@@ -1,0 +1,14 @@
+README.md
+pyproject.toml
+src/aineed/__init__.py
+src/aineed/cli.py
+src/aineed/registry.py
+src/aineed/requirement.py
+src/aineed.egg-info/PKG-INFO
+src/aineed.egg-info/SOURCES.txt
+src/aineed.egg-info/dependency_links.txt
+src/aineed.egg-info/entry_points.txt
+src/aineed.egg-info/top_level.txt
+tests/test_cli.py
+tests/test_registry.py
+tests/test_requirement.py

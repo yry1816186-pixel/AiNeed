@@ -1,0 +1,2 @@
+[console_scripts]
+aineed = aineed.cli:main
