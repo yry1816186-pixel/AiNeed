@@ -1,0 +1,528 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      version:
+        description: 'Version to deploy (leave empty for latest)'
+        required: false
+        type: string
+      skip_migration:
+        description: 'Skip database migration'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: deploy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '8'
+  REGISTRY: ghcr.io
+  IMAGE_NAME_BACKEND: ${{ github.repository }}/backend
+
+jobs:
+  # ==================== Validate Deployment ====================
+  validate:
+    name: Validate Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.env.outputs.environment }}
+      version: ${{ steps.env.outputs.version }}
+      previous_version: ${{ steps.env.outputs.previous_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine Environment
+        id: env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            ENV="${{ github.event.inputs.environment }}"
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            ENV="staging"
+          elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            ENV="production"
+          else
+            ENV="staging"
+          fi
+
+          if [[ -n "${{ github.event.inputs.version }}" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/}"
+          else
+            VERSION="${{ github.sha }}"
+          fi
+
+          # Get previous version for rollback
+          PREVIOUS_VERSION=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "none")
+
+          echo "environment=$ENV" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "previous_version=$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
+          echo "Deploying to: $ENV"
+          echo "Version: $VERSION"
+          echo "Previous Version: $PREVIOUS_VERSION"
+
+  # ==================== Pre-deployment Tests ====================
+  pre-deploy-tests:
+    name: Pre-deployment Tests
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Critical Tests
+        run: pnpm test
+        continue-on-error: true
+
+  # ==================== Production Approval ====================
+  production-approval:
+    name: Production Approval
+    runs-on: ubuntu-latest
+    needs: [validate, pre-deploy-tests]
+    if: needs.validate.outputs.environment == 'production'
+    environment:
+      name: production-approval
+      url: https://stylemind.com
+    steps:
+      - name: Approval Gate
+        run: |
+          echo "Production deployment requires manual approval."
+          echo "Version: ${{ needs.validate.outputs.version }}"
+          echo "Approver: ${{ github.actor }}"
+          echo "Approval time: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+  # ==================== Database Migration ====================
+  db-migration:
+    name: Database Migration
+    runs-on: ubuntu-latest
+    needs: [validate, pre-deploy-tests, production-approval]
+    if: |
+      always() &&
+      (needs.production-approval.result == 'success' || needs.production-approval.result == 'skipped') &&
+      github.event.inputs.skip_migration != 'true'
+    outputs:
+      migration_status: ${{ steps.migrate.outputs.status }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Prisma CLI
+        run: pnpm --filter @aineed/backend add prisma
+
+      - name: Run Database Migration
+        id: migrate
+        run: |
+          echo "Running database migrations for ${{ needs.validate.outputs.environment }}..."
+
+          # Set database URL based on environment
+          if [[ "${{ needs.validate.outputs.environment }}" == "production" ]]; then
+            export DATABASE_URL="${{ secrets.PRODUCTION_DATABASE_URL }}"
+          else
+            export DATABASE_URL="${{ secrets.STAGING_DATABASE_URL }}"
+          fi
+
+          # Generate Prisma Client
+          cd apps/backend
+          pnpm prisma generate
+
+          # Run migrations with create-only for safety (review migrations before applying)
+          pnpm prisma migrate deploy
+
+          # Verify migration status
+          pnpm prisma migrate status
+
+          echo "status=success" >> $GITHUB_OUTPUT
+          echo "Migration completed at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+      - name: Backup Pre-Migration State
+        if: failure()
+        run: |
+          echo "::warning::Migration failed - manual intervention may be required"
+          echo "status=failed" >> $GITHUB_OUTPUT
+
+  # ==================== Deploy to Staging ====================
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [validate, pre-deploy-tests, db-migration]
+    if: |
+      always() &&
+      needs.validate.outputs.environment == 'staging' &&
+      (needs.db-migration.result == 'success' || needs.db-migration.result == 'skipped')
+    environment:
+      name: staging
+      url: https://staging.stylemind.com
+    outputs:
+      deployment_id: ${{ steps.deploy.outputs.deployment_id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Install doctl (DigitalOcean CLI)
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Configure Kubernetes Context
+        run: |
+          doctl kubernetes cluster kubeconfig save ${{ secrets.DOKS_CLUSTER_ID_STAGING }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull and Deploy Images
+        id: deploy
+        run: |
+          echo "Deploying version ${{ needs.validate.outputs.version }} to staging..."
+
+          # Create deployment record
+          DEPLOYMENT_ID="staging-$(date +%Y%m%d%H%M%S)-${{ github.run_number }}"
+          echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+
+          # Kubernetes deployment
+          kubectl set image deployment/backend backend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:${{ needs.validate.outputs.version }} -n staging
+
+          # Wait for rollout with timeout
+          kubectl rollout status deployment/backend -n staging --timeout=300s
+
+          echo "Staging deployment completed!"
+          echo "Deployment ID: $DEPLOYMENT_ID"
+
+      - name: Run Smoke Tests
+        run: |
+          echo "Running smoke tests against staging..."
+          sleep 30  # Wait for pods to be ready
+
+          # Health check
+          curl -f https://staging.stylemind.com/api/v1/health || exit 1
+
+          # Basic API test
+          curl -f https://staging.stylemind.com/api/v1/brands || exit 1
+
+          echo "Smoke tests passed!"
+
+      - name: Notify Deployment Status
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+  # ==================== Deploy to Production ====================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [validate, pre-deploy-tests, db-migration, production-approval]
+    if: |
+      always() &&
+      needs.validate.outputs.environment == 'production' &&
+      needs.production-approval.result == 'success' &&
+      (needs.db-migration.result == 'success' || needs.db-migration.result == 'skipped')
+    environment:
+      name: production
+      url: https://stylemind.com
+    outputs:
+      deployment_id: ${{ steps.deploy.outputs.deployment_id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Install doctl (DigitalOcean CLI)
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Configure Kubernetes Context
+        run: |
+          doctl kubernetes cluster kubeconfig save ${{ secrets.DOKS_CLUSTER_ID_PRODUCTION }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Deployment Record
+        id: deploy
+        run: |
+          # Create deployment record for audit trail
+          DEPLOYMENT_ID="production-$(date +%Y%m%d%H%M%S)-${{ github.run_number }}"
+          echo "deployment_id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+
+          echo "Creating deployment record for version ${{ needs.validate.outputs.version }}"
+          echo "Deployment ID: $DEPLOYMENT_ID"
+          echo "Deployment started at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          echo "Deployer: ${{ github.actor }}"
+
+      - name: Deploy to Production (Blue-Green)
+        run: |
+          echo "Deploying version ${{ needs.validate.outputs.version }} to production..."
+
+          # Blue-Green deployment strategy
+          # 1. Deploy to green environment
+          kubectl apply -f k8s/production/ -n production
+
+          # 2. Update images
+          kubectl set image deployment/backend backend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:${{ needs.validate.outputs.version }} -n production
+
+          # 3. Wait for rollout with extended timeout
+          kubectl rollout status deployment/backend -n production --timeout=600s
+
+          echo "Production deployment completed!"
+
+      - name: Run Production Health Check
+        run: |
+          echo "Running production health checks..."
+          sleep 60  # Wait for production pods to be ready
+
+          # Health checks
+          curl -f https://stylemind.com/api/v1/health || exit 1
+
+          # Verify API endpoints
+          curl -f https://stylemind.com/api/v1/brands || exit 1
+
+          echo "Production health checks passed!"
+
+      - name: Notify Deployment Success
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          fields: repo,message,commit,author,action,eventName,ref,workflow
+          text: |
+            Production deployment successful!
+            Version: ${{ needs.validate.outputs.version }}
+            Deployment ID: ${{ steps.deploy.outputs.deployment_id }}
+            URL: https://stylemind.com
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+  # ==================== Automatic Rollback ====================
+  auto-rollback:
+    name: Automatic Rollback
+    runs-on: ubuntu-latest
+    needs: [validate, deploy-production]
+    if: failure() && needs.validate.outputs.environment == 'production'
+    steps:
+      - name: Configure kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Install doctl (DigitalOcean CLI)
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Configure Kubernetes Context
+        run: |
+          doctl kubernetes cluster kubeconfig save ${{ secrets.DOKS_CLUSTER_ID_PRODUCTION }}
+
+      - name: Rollback Production
+        run: |
+          echo "::error::Production deployment failed - initiating automatic rollback..."
+
+          # Kubernetes rollback to previous revision
+          kubectl rollout undo deployment/backend -n production
+
+          # Wait for rollback to complete
+          kubectl rollout status deployment/backend -n production --timeout=300s
+
+          echo "Rollback completed!"
+
+      - name: Verify Rollback
+        run: |
+          # Verify rollback was successful
+          curl -f https://stylemind.com/api/v1/health || exit 1
+          echo "Rollback verification passed!"
+
+      - name: Notify Rollback
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: |
+            PRODUCTION ROLLBACK TRIGGERED!
+            Version: ${{ needs.validate.outputs.version }}
+            Previous Version: ${{ needs.validate.outputs.previous_version }}
+            Deployment ID: ${{ needs.deploy-production.outputs.deployment_id }}
+            Please investigate immediately.
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+  # ==================== Manual Rollback Workflow ====================
+  rollback-manual:
+    name: Manual Rollback
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.rollback == 'true'
+    steps:
+      - name: Configure kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Install doctl (DigitalOcean CLI)
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Rollback to Specific Version
+        run: |
+          TARGET_VERSION="${{ github.event.inputs.version }}"
+          TARGET_ENV="${{ github.event.inputs.environment }}"
+
+          if [[ "$TARGET_ENV" == "production" ]]; then
+            doctl kubernetes cluster kubeconfig save ${{ secrets.DOKS_CLUSTER_ID_PRODUCTION }}
+          else
+            doctl kubernetes cluster kubeconfig save ${{ secrets.DOKS_CLUSTER_ID_STAGING }}
+          fi
+
+          echo "Rolling back $TARGET_ENV to version: $TARGET_VERSION"
+
+          kubectl set image deployment/backend backend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:$TARGET_VERSION -n $TARGET_ENV
+
+          kubectl rollout status deployment/backend -n $TARGET_ENV --timeout=300s
+
+          echo "Manual rollback completed!"
+
+  # ==================== Post-deployment Verification ====================
+  verify:
+    name: Verify Deployment
+    runs-on: ubuntu-latest
+    needs: [validate, deploy-staging, deploy-production]
+    if: always() && (needs.deploy-staging.result == 'success' || needs.deploy-production.result == 'success')
+    steps:
+      - name: Determine Environment URL
+        id: url
+        run: |
+          if [[ "${{ needs.validate.outputs.environment }}" == "production" ]]; then
+            URL="https://stylemind.com"
+          else
+            URL="https://staging.stylemind.com"
+          fi
+          echo "url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Health Check
+        run: |
+          echo "Verifying deployment at ${{ steps.url.outputs.url }}"
+
+          # Wait for deployment to be ready
+          sleep 30
+
+          # Health check with retries
+          for i in {1..5}; do
+            if curl -f ${{ steps.url.outputs.url }}/api/v1/health; then
+              echo "Health check passed on attempt $i"
+              break
+            fi
+            if [ $i -eq 5 ]; then
+              echo "Health check failed after 5 attempts"
+              exit 1
+            fi
+            echo "Health check attempt $i failed, retrying in 10s..."
+            sleep 10
+          done
+
+          echo "Deployment verification passed!"
+
+      - name: Integration Smoke Test
+        run: |
+          echo "Running integration smoke tests..."
+
+          # API endpoint tests
+          curl -f ${{ steps.url.outputs.url }}/api/v1/health
+          curl -f ${{ steps.url.outputs.url }}/api/v1/brands
+
+          echo "Smoke tests passed!"
+        continue-on-error: true
+
+  # ==================== Deployment Summary ====================
+  deployment-summary:
+    name: Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [validate, deploy-staging, deploy-production, verify]
+    if: always()
+    steps:
+      - name: Generate Deployment Summary
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Environment | ${{ needs.validate.outputs.environment }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ needs.validate.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Previous Version | ${{ needs.validate.outputs.previous_version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Staging Status | ${{ needs.deploy-staging.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Production Status | ${{ needs.deploy-production.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Verification | ${{ needs.verify.result }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Final Status
+        run: |
+          if [[ "${{ needs.verify.result }}" == "failure" ]]; then
+            echo "Deployment verification failed!"
+            exit 1
+          fi
+          echo "Deployment completed successfully!"

@@ -1,0 +1,132 @@
+# ============================================
+# AiNeed (StyleMind) Project - Git Ignore Rules
+# Core code only → GitHub | Resources stay local
+# ============================================
+
+# --- IDE / Editor Artifacts ---
+.agent/
+.agent_github/
+.agent_state/
+.claude/
+.idea/
+.trae/
+.vscode/
+*.swp
+*.swo
+
+# --- Secrets & Env Files ---
+.env
+.env.*
+!.env.example
+!.env.security.example
+*.keystore
+*.jks
+secrets/
+.secrets/
+
+# --- Package Managers ---
+node_modules/
+**/node_modules/
+**/node_modules.partial*/
+.pnpm-store/
+package-lock.json
+yarn.lock
+.pnpm-debug.log
+
+# --- Python ---
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+**/.pytest_cache/
+**/.mypy_cache/
+venv/
+env/
+**/venv/
+**/env/
+ml/venv/
+.venv-ml/
+
+# --- Build Outputs ---
+dist/
+build/
+**/dist/
+**/build/
+**/android-dist/
+**/dist-test/
+*.tsbuildinfo
+*.apk
+*.aab
+*.ipa
+
+# --- Expo / React Native ---
+.expo/
+**/.expo/
+coverage/
+
+# --- Android ---
+**/.cxx/
+**/.gradle/
+**/local.properties
+android/app/build/
+
+# --- iOS ---
+ios/build/
+ios/Pods/
+
+# --- HarmonyOS ---
+**/.hvigor/
+**/.appanalyzer/
+**/oh_modules/
+**/.ohpm/
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.cache
+cloudflared.exe
+
+# --- ML: Models & Weights (LOCAL ONLY - too large) ---
+ml/models/
+ml/data/
+ml/scripts/models/
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.bin
+checkpoints/
+data/
+datasets/
+models/
+paper/
+
+# --- ML: Release signing ---
+ml/release.keystore
+
+# --- ML: Inference temp images ---
+ml/inference/*.png
+
+# --- SQL dump files (local data) ---
+scripts/*.sql
+
+# --- Screenshots / Delivery Artifacts (non-core) ---
+delivery/*.png
+delivery/*.jpg
+delivery/*.jpeg
+docs/runtime_screenshots/
+docs/plans/screenshots/
+
+# --- Archive / Template ---
+archive/
+C/
+nul
+_template/
+
+# --- Prisma compiled output ---
+apps/backend/prisma/compiled/
+
+# --- Misc ---
+SKILL.md

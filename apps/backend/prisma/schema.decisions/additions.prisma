@@ -1,0 +1,59 @@
+// ==================== 决策引擎系统 ====================
+
+// Note: These models extend User Prisma client功能
+
+// Learn more about个性化推荐方法，请阅读参考文献
+// https://arxiv.org/abs/abs/ieee/等
+
+// UserDecision: - 用户决策记录
+// DecisionSession - 决策会话
+// 鷻加到User模型的relations中
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  phone     String?  @unique
+  password  String
+  nickname  String?
+  avatar    String?
+  gender    Gender?
+  birthDate DateTime?
+  isActive  Boolean  @default(true)
+
+
+  followerCount  Int @default(0)
+  followingCount Int @default(0)
+  isVerified     Boolean @default(false)
+  bio            String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile     UserProfile?
+  photos      UserPhoto[]
+  tryOns      VirtualTryOn[]
+  favorites   Favorite[]
+  customizations CustomizationRequest[]
+  cartItems   CartItem[]
+  orders      Order[]
+  addresses   UserAddress[]
+  behaviors   UserBehavior[]
+  userClothings UserClothing[]
+  outfits    Outfit[]
+  aiStylistSessions AiStylistSession[]
+  styleProfiles     StyleProfile[]
+
+  userDecisions UserDecision[]
+  decisionSessions DecisionSession[]
+
+  posts         CommunityPost[]
+  postLikes     PostLike[]
+  postComments  PostComment[]
+  followers     UserFollow[]  @relation("UserFollowers")
+  following     UserFollow[]  @relation("UserFollowing")
+  decisions     UserDecision[]
+
+  @@index([email])
+  @@index([phone])
+}
+
