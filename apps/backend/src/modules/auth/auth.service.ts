@@ -16,9 +16,7 @@ import { StructuredLoggerService, ContextualLogger } from "../../common/logging/
 import * as bcrypt from "../../common/security/bcrypt";
 
 import { RegisterDto, LoginDto, AuthResponseDto } from "./dto/auth.dto";
-
-const MAX_LOGIN_ATTEMPTS = 5;
-const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
+import { AuthHelpersService } from "./auth.helpers";
 
 /**
  * JWT payload interface for access and refresh tokens.
@@ -41,50 +39,10 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private redisService: RedisService,
+    private authHelpersService: AuthHelpersService,
     loggingService: StructuredLoggerService,
   ) {
     this.logger = loggingService.createChildLogger(AuthService.name);
-  }
-
-  private getLoginAttemptsKey(email: string): string {
-    return `auth:login_attempts:${email.toLowerCase()}`;
-  }
-
-  private getLockoutKey(email: string): string {
-    return `auth:lockout:${email.toLowerCase()}`;
-  }
-
-  private async isAccountLocked(email: string): Promise<boolean> {
-    const lockoutKey = this.getLockoutKey(email);
-    return this.redisService.exists(lockoutKey);
-  }
-
-  private async recordFailedAttempt(email: string): Promise<number> {
-    const key = this.getLoginAttemptsKey(email);
-    const attempts = await this.redisService.incr(key);
-    
-    if (attempts === 1) {
-      await this.redisService.expire(key, 3600); // 1 hour window
-    }
-    
-    if (attempts >= MAX_LOGIN_ATTEMPTS) {
-      const lockoutKey = this.getLockoutKey(email);
-      await this.redisService.setWithTtl(lockoutKey, "1", LOCKOUT_DURATION_MS);
-      this.logger.warn("账户已锁定", { email, attempts, lockoutDuration: "15min" });
-    }
-    
-    return attempts;
-  }
-
-  private async resetFailedAttempts(email: string): Promise<void> {
-    const key = this.getLoginAttemptsKey(email);
-    await this.redisService.del(key);
-  }
-
-  private async getRemainingAttempts(email: string): Promise<number> {
-    const key = this.getLoginAttemptsKey(email);
-    const attempts = await this.redisService.get(key);
-    return MAX_LOGIN_ATTEMPTS - (parseInt(attempts || "0", 10));
   }
 
   private buildAuthResponse(
@@ -148,22 +106,25 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    const user = await this.prisma.user.create({
-      data: {
-        email: dto.email,
-        password: hashedPassword,
-        nickname: dto.nickname,
-        phone: dto.phone,
-      },
-    });
+    const [user] = await this.prisma.$transaction(async (tx) => {
+      const createdUser = await tx.user.create({
+        data: {
+          email: dto.email,
+          password: hashedPassword,
+          nickname: dto.nickname,
+          phone: dto.phone,
+        },
+      });
 
-    await this.prisma.userProfile.create({
-      data: { userId: user.id },
+      await tx.userProfile.create({
+        data: { userId: createdUser.id },
+      });
+
+      return [createdUser];
     });
 
     const tokens = await this.generateTokens(user.id, user.email);
 
-    // 保存 refresh token 到数据库
     await this.saveRefreshToken(user.id, tokens.refreshToken);
 
     this.logger.log("用户注册成功", { userId: user.id, email: user.email });
@@ -174,41 +135,10 @@ export class AuthService {
   async login(dto: LoginDto): Promise<AuthResponseDto> {
     this.logger.log("用户登录请求", { email: dto.email });
 
-    // Check if account is locked
-    if (await this.isAccountLocked(dto.email)) {
-      this.logger.warn("登录失败：账户已锁定", { email: dto.email });
-      throw new UnauthorizedException("账户已被锁定，请15分钟后再试");
-    }
-
-    const user = await this.prisma.user.findUnique({
-      where: { email: dto.email },
-    });
-
-    if (!user) {
-      await this.recordFailedAttempt(dto.email);
-      const remaining = await this.getRemainingAttempts(dto.email);
-      this.logger.warn("登录失败：用户不存在", { email: dto.email, remainingAttempts: remaining });
-      throw new UnauthorizedException(`邮箱或密码错误，剩余尝试次数: ${remaining}`);
-    }
-
-    const isPasswordValid = await bcrypt.compare(dto.password, user.password);
-    if (!isPasswordValid) {
-      const attempts = await this.recordFailedAttempt(dto.email);
-      const remaining = MAX_LOGIN_ATTEMPTS - attempts;
-      this.logger.warn("登录失败：密码错误", { email: dto.email, remainingAttempts: remaining });
-      if (remaining > 0) {
-        throw new UnauthorizedException(`邮箱或密码错误，剩余尝试次数: ${remaining}`);
-      } else {
-        throw new UnauthorizedException("账户已被锁定，请15分钟后再试");
-      }
-    }
-
-    // Reset failed attempts on successful login
-    await this.resetFailedAttempts(dto.email);
+    const user = await this.authHelpersService.validateCredentials(dto.email, dto.password);
 
     const tokens = await this.generateTokens(user.id, user.email);
 
-    // 保存 refresh token 到数据库
     await this.saveRefreshToken(user.id, tokens.refreshToken);
 
     this.logger.log("用户登录成功", { userId: user.id, email: user.email });

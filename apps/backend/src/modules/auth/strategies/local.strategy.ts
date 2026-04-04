@@ -2,12 +2,8 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
 
-import { AuthService } from "../auth.service";
+import { AuthHelpersService } from "../auth.helpers";
 
-/**
- * Validated user type returned after successful authentication.
- * Contains only safe user fields that can be attached to the request.
- */
 export interface ValidatedUser {
   id: string;
   email: string;
@@ -18,12 +14,18 @@ export interface ValidatedUser {
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private authService: AuthService) {
+  constructor(private authHelpersService: AuthHelpersService) {
     super({ usernameField: "email" });
   }
 
   async validate(email: string, password: string): Promise<ValidatedUser> {
-    const user = await this.authService.login({ email, password });
-    return user.user;
+    const user = await this.authHelpersService.validateCredentials(email, password);
+    return {
+      id: user.id,
+      email: user.email,
+      nickname: user.nickname ?? undefined,
+      avatar: user.avatar ?? undefined,
+      createdAt: user.createdAt,
+    };
   }
 }

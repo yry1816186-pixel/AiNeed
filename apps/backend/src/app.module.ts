@@ -50,6 +50,7 @@ import { TryOnModule } from "./modules/try-on/try-on.module";
 import { UsersModule } from "./modules/users/users.module";
 import { WeatherModule } from "./modules/weather/weather.module";
 import { WSModule } from "./modules/ws/ws.module";
+import { DemoModule } from "./modules/demo/demo.module";
 
 @Module({
   imports: [
@@ -117,6 +118,7 @@ import { WSModule } from "./modules/ws/ws.module";
     WSModule,
     AISafetyModule,
     CodeRagModule,
+    DemoModule,
   ],
 })
 export class AppModule implements NestModule {

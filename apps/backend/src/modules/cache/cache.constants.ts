@@ -111,7 +111,7 @@ export class CacheKeyBuilder {
     return `${CACHE_KEYS.OUTFIT_LIST}:${userId}${pagination}`;
   }
 
-  static outfitRecommendations(userId: string, options?: Record<string, any>): string {
+  static outfitRecommendations(userId: string, options?: Record<string, unknown>): string {
     const optionsHash = options ? `:${JSON.stringify(options)}` : "";
     return `${CACHE_KEYS.OUTFIT_RECOMMENDATIONS}:${userId}${optionsHash}`;
   }
@@ -120,7 +120,7 @@ export class CacheKeyBuilder {
     return `${CACHE_KEYS.OUTFIT_DETAIL}:${outfitId}`;
   }
 
-  static clothingList(filters: Record<string, any>): string {
+  static clothingList(filters: Record<string, unknown>): string {
     const filterHash = JSON.stringify(filters);
     return `${CACHE_KEYS.CLOTHING_LIST}:${filterHash}`;
   }

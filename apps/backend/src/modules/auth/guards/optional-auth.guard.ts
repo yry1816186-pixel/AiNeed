@@ -22,7 +22,7 @@ export class OptionalAuthGuard extends AuthGuard("jwt") {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleRequest<TUser = JwtUserPayload>(err: Error | null, user: TUser | false, info: any, context: ExecutionContext): TUser | null {
+  handleRequest<TUser = JwtUserPayload>(err: Error | null, user: TUser | false, info: unknown, context: ExecutionContext): TUser | null {
     // 不抛出错误，允许无用户访问
     return user || null;
   }

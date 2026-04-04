@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
-interface RetrievalResultItem {
+export interface RetrievalResultItem {
   id: string;
   content: string;
   file_path: string;
@@ -16,7 +16,7 @@ interface RetrievalResultItem {
   score: number;
 }
 
-interface SearchResponse {
+export interface SearchResponse {
   results: RetrievalResultItem[];
   total: number;
   query_time_ms: number;
@@ -25,7 +25,7 @@ interface SearchResponse {
 @Injectable()
 export class CodeRagService implements OnModuleInit {
   private readonly logger = new Logger(CodeRagService.name);
-  private qdrantUrl: string;
+  private qdrantUrl!: string;
   private pythonRagUrl: string | null = null;
   private useDirectQdrant: boolean = true;
 
@@ -35,8 +35,8 @@ export class CodeRagService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.qdrantUrl = this.configService.get<string>('QDRANT_URL', 'http://127.0.0.1:6333');
-    this.pythonRagUrl = this.configService.get<string>('PYTHON_RAG_URL', null);
+    this.qdrantUrl = this.configService.get<string>('QDRANT_URL', 'http://127.0.0.1:6333') ?? 'http://127.0.0.1:6333';
+    this.pythonRagUrl = this.configService.get<string>('PYTHON_RAG_URL') ?? null;
     this.useDirectQdrant = !this.pythonRagUrl;
     this.logger.log(
       `CodeRAG initialized - Qdrant: ${this.qdrantUrl}, Mode: ${this.useDirectQdrant ? 'direct' : 'python-proxy'}`,
@@ -146,16 +146,17 @@ export class CodeRagService implements OnModuleInit {
     let totalChars = 0;
 
     sections.push(`# Relevant Code Context (${results.length} matches found)\n\n`);
-    totalChars += sections[0].length;
+    totalChars += sections[0]!.length;
 
     for (let i = 0; i < results.length; i++) {
       const r = results[i];
+      if (!r) continue;
       const maxChunkChars = Math.floor(maxChars / Math.max(results.length, 1));
-      const truncated = r.content.length > maxChunkChars
-        ? r.content.slice(0, maxChunkChars) + '\n... (truncated)'
-        : r.content;
+      const truncated = (r?.content ?? '').length > maxChunkChars
+        ? (r?.content ?? '').slice(0, maxChunkChars) + '\n... (truncated)'
+        : (r?.content ?? '');
 
-      const header = `## ${r.file_path} (L${r.start_line}-${r.end_line}) [${r.chunk_type}${r.name ? `: ${r.name}` : ''}] score=${r.score.toFixed(2)}`;
+      const header = `## ${r.file_path} (L${r.start_line}-${r.end_line}) [${r.chunk_type}${r.name ? `: ${r.name}` : ''}] score=${(r.score ?? 0).toFixed(2)}`;
       const body = `\`\`\`\n${truncated}\n\`\`\``;
       const entry = `\n### Match ${i + 1}\n${header}\n${body}\n`;
 
@@ -219,7 +220,7 @@ export class CodeRagService implements OnModuleInit {
       const infoResponse = await firstValueFrom(
         this.httpService.get(`${this.qdrantUrl}/collections/aineed_code_index`),
       );
-      const collectionInfo = infoResponse.result;
+      const collectionInfo = (infoResponse.data as any)?.result;
 
       const scrollResponse = await firstValueFrom(
         this.httpService.post(`${this.qdrantUrl}/collections/aineed_code_index/points/scroll`, {

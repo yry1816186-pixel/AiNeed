@@ -1,9 +1,14 @@
 version: '3.8'
 
+networks:
+  ainetwork:
+    driver: bridge
+
 services:
   postgres:
     image: postgres:16-alpine
     container_name: stylemind-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
@@ -17,6 +22,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - ainetwork
     deploy:
       resources:
         limits:
@@ -34,6 +41,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: stylemind-redis
+    restart: unless-stopped
     # Redis persistence enabled with AOF (append-only file) for durability
     command: >
       redis-server
@@ -52,6 +60,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - ainetwork
     deploy:
       resources:
         limits:
@@ -69,6 +79,7 @@ services:
   minio:
     image: minio/minio:RELEASE.2024-11-07T00-52-20Z
     container_name: stylemind-minio
+    restart: unless-stopped
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY is required}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:?MINIO_SECRET_KEY is required}
@@ -83,6 +94,8 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    networks:
+      - ainetwork
     deploy:
       resources:
         limits:
@@ -100,6 +113,7 @@ services:
   qdrant:
     image: qdrant/qdrant:v1.12.1
     container_name: stylemind-qdrant
+    restart: unless-stopped
     ports:
       - "6333:6333"
       - "6334:6334"
@@ -112,6 +126,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - ainetwork
     deploy:
       resources:
         limits:
@@ -126,21 +142,72 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # CatVTON Virtual Try-On Service (replaces IDM-VTON which requires 14GB+ VRAM)
+  # CatVTON runs on RTX 4060 8GB VRAM (~4GB usage)
+  catvton:
+    build:
+      context: ./ml
+      dockerfile: Dockerfile.catvton
+    container_name: stylemind-catvton
+    restart: unless-stopped
+    environment:
+      CATVTON_HOST: 0.0.0.0
+      CATVTON_PORT: 8001
+      CATVTON_MODEL_PATH: /app/models/catvton
+      HF_ENDPOINT: ${HF_ENDPOINT:-https://hf-mirror.com}
+      CUDA_VISIBLE_DEVICES: "0"
+      # GPU memory limit to prevent OOM (RTX 4060 has 8GB, CatVTON uses ~4GB)
+      PYTORCH_CUDA_ALLOC_CONF: max_split_size_mb:4096
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./ml/models:/app/models:ro
+      - ./ml/data:/app/data:ro
+    # Requires NVIDIA runtime for GPU access
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+          # Reserve GPU for CatVTON inference
+        reservations:
+          cpus: '1'
+          memory: 2G
+          devices:
+            - capabilities: [gpu]
+              device_ids: ['0']
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    networks:
+      - ainetwork
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
   ai-service:
     build:
       context: ./ml
       dockerfile: Dockerfile
     container_name: stylemind-ai
+    restart: unless-stopped
     environment:
       AI_SERVICE_HOST: 0.0.0.0
-      AI_SERVICE_PORT: 8001
+      AI_SERVICE_PORT: 8002
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENAI_API_ENDPOINT: ${OPENAI_API_ENDPOINT:-https://api.openai.com/v1}
       OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
       QDRANT_URL: http://qdrant:6333
-      REDIS_URL: redis://redis:6379
+      REDIS_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD is required}@redis:6379
+      GLM_API_KEY: ${GLM_API_KEY}
+      ZHIPU_API_KEY: ${ZHIPU_API_KEY}
     ports:
-      - "8001:8001"
+      - "8002:8002"
     volumes:
       - ./ml/models:/app/models:ro
       - ./ml/data:/app/data:ro
@@ -150,44 +217,13 @@ services:
       qdrant:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 60s
-    deploy:
-      resources:
-        limits:
-          cpus: '4'
-          memory: 8G
-        reservations:
-          cpus: '1'
-          memory: 2G
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  idm-vton:
-    build:
-      context: ./ml
-      dockerfile: Dockerfile.idm-vton
-    container_name: stylemind-idm-vton
-    environment:
-      IDM_VTON_HOST: 0.0.0.0
-      IDM_VTON_PORT: 8002
-      IDM_VTON_MODEL_PATH: /app/models/idm-vton
-    ports:
-      - "8002:8002"
-    volumes:
-      - ./ml/models:/app/models:ro
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8002/status"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
+    networks:
+      - ainetwork
     deploy:
       resources:
         limits:
@@ -208,19 +244,23 @@ services:
       context: ./ml
       dockerfile: Dockerfile.worker
     container_name: stylemind-task-worker
+    restart: unless-stopped
     environment:
       REDIS_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD is required}@redis:6379
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       MAX_CONCURRENT_TASKS: ${MAX_CONCURRENT_TASKS:-3}
       GLM_API_KEY: ${GLM_API_KEY}
       ZHIPU_API_KEY: ${ZHIPU_API_KEY}
+      QDRANT_URL: http://qdrant:6333
+      CATVTON_ENDPOINT: http://catvton:8001
     depends_on:
       redis:
         condition: service_healthy
-      ai-service:
+      catvton:
         condition: service_healthy
-    restart: unless-stopped
     command: ["python", "-m", "services.task_worker", "--all"]
+    networks:
+      - ainetwork
     deploy:
       resources:
         limits:
@@ -240,24 +280,29 @@ services:
       context: .
       dockerfile: apps/backend/Dockerfile
     container_name: stylemind-backend
+    restart: unless-stopped
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/stylemind?schema=public
       REDIS_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD is required}@redis:6379
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET is required}
       JWT_ACCESS_EXPIRES_IN: ${JWT_ACCESS_EXPIRES_IN:-15m}
       JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
-      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY is required}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY?:ENCRYPTION_KEY is required}
+      CSRF_SECRET: ${CSRF_SECRET:-aineed-csrf-secret}
       MINIO_ENDPOINT: minio
       MINIO_PORT: 9000
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY is required}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:?MINIO_SECRET_KEY is required}
-      MINIO_BUCKET: stylemind
+      MINIO_BUCKET: aineed
       MINIO_USE_SSL: "false"
       QDRANT_URL: http://qdrant:6333
-      AI_SERVICE_URL: http://ai-service:8001
-      CATVTON_ENDPOINT: http://ai-service:8001
-      IDM_VTON_ENDPOINT: http://idm-vton:8002
+      AI_SERVICE_URL: http://ai-service:8002
+      CATVTON_ENDPOINT: http://catvton:8001
+      GLM_API_KEY: ${GLM_API_KEY}
+      GLM_API_ENDPOINT: ${GLM_API_ENDPOINT:-https://open.bigmodel.cn/api/paas/v4}
+      GLM_MODEL: ${GLM_MODEL:-glm-5}
       PORT: 3001
     ports:
       - "3001:3001"
@@ -270,9 +315,9 @@ services:
         condition: service_healthy
       qdrant:
         condition: service_healthy
-      ai-service:
+      catvton:
         condition: service_healthy
-      idm-vton:
+      ai-service:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/v1/health"]
@@ -280,6 +325,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    networks:
+      - ainetwork
     deploy:
       resources:
         limits:
@@ -302,15 +349,16 @@ services:
   prometheus:
     image: prom/prometheus:v2.48.0
     container_name: stylemind-prometheus
+    restart: unless-stopped
     ports:
       - "9090:9090"
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./monitoring/alerts/alert.rules.yml:/etc/prometheus/alert.rules.yml:ro
-      - prometheus_data:/prometheus
+      - prometheus_data:/prom
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.path=/prom'
       - '--storage.tsdb.retention.time=15d'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
@@ -321,6 +369,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - ainetwork
     # Resource limits for Prometheus
     deploy:
       resources:
@@ -330,12 +380,17 @@ services:
         reservations:
           cpus: '0.25'
           memory: 512M
-    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # Grafana - 可视化仪表板
   grafana:
     image: grafana/grafana:10.2.2
     container_name: stylemind-grafana
+    restart: unless-stopped
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD is required}
@@ -359,6 +414,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - ainetwork
     # Resource limits for Grafana
     deploy:
       resources:
@@ -368,12 +425,17 @@ services:
         reservations:
           cpus: '0.1'
           memory: 256M
-    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # PostgreSQL Exporter
   postgres-exporter:
     image: quay.io/prometheuscommunity/postgres-exporter:v0.12.1
     container_name: stylemind-postgres-exporter
+    restart: unless-stopped
     environment:
       DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/stylemind?sslmode=disable"
     ports:
@@ -381,12 +443,19 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    restart: unless-stopped
+    networks:
+      - ainetwork
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # Redis Exporter
   redis-exporter:
     image: oliver006/redis_exporter:v1.55.0
     container_name: stylemind-redis-exporter
+    restart: unless-stopped
     environment:
       REDIS_ADDR: "redis://redis:6379"
       REDIS_PASSWORD: "${REDIS_PASSWORD:?REDIS_PASSWORD is required}"
@@ -395,12 +464,19 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-    restart: unless-stopped
+    networks:
+      - ainetwork
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # Node Exporter - 系统指标
   node-exporter:
     image: prom/node-exporter:v1.7.0
     container_name: stylemind-node-exporter
+    restart: unless-stopped
     ports:
       - "9100:9100"
     volumes:
@@ -412,7 +488,13 @@ services:
       - '--path.sysfs=/host/sys'
       - '--path.rootfs=/rootfs'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
-    restart: unless-stopped
+    networks:
+      - ainetwork
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # cAdvisor - 容器指标
   # SECURITY NOTE: privileged mode is required for cAdvisor to access container metrics.
@@ -425,6 +507,7 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.2
     container_name: stylemind-cadvisor
+    restart: unless-stopped
     ports:
       - "8080:8080"
     volumes:
@@ -449,7 +532,13 @@ services:
         reservations:
           cpus: '0.1'
           memory: 128M
-    restart: unless-stopped
+    networks:
+      - ainetwork
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   postgres_data:

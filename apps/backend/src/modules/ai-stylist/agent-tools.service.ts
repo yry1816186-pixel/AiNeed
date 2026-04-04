@@ -473,11 +473,11 @@ export class AgentToolsService {
       return {
         timestamp: fullContext.timestamp,
         environment: fullContext.environment,
-        git: section === "git" ? fullContext.git : undefined as any,
-        database: section === "database" ? fullContext.database : undefined as any,
-        services: section === "services" ? fullContext.services : undefined as any,
-        resources: section === "resources" ? fullContext.resources : undefined as any,
-        projectFiles: section === "files" ? fullContext.projectFiles : undefined as any,
+        git: section === "git" ? fullContext.git : undefined,
+        database: section === "database" ? fullContext.database : undefined,
+        services: section === "services" ? fullContext.services : undefined,
+        resources: section === "resources" ? fullContext.resources : undefined,
+        projectFiles: section === "files" ? fullContext.projectFiles : undefined,
       };
     }
     return fullContext;

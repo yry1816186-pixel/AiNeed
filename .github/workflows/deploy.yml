@@ -326,8 +326,8 @@ jobs:
           echo "Deploying version ${{ needs.validate.outputs.version }} to production..."
 
           # Blue-Green deployment strategy
-          # 1. Deploy to green environment
-          kubectl apply -f k8s/production/ -n production
+          # 1. Apply base K8s manifests (namespace, configmap, secrets, etc.)
+          kubectl apply -f k8s/ -n production
 
           # 2. Update images
           kubectl set image deployment/backend backend=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:${{ needs.validate.outputs.version }} -n production

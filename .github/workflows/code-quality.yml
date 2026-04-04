@@ -45,8 +45,8 @@ jobs:
         run: cd apps/backend && npx eslint . --ext .ts,.tsx --format json --output-file eslint-backend-report.json
         continue-on-error: true
 
-      - name: Run ESLint - Frontend
-        run: cd apps/web && npx eslint . --ext .ts,.tsx --format json --output-file eslint-frontend-report.json
+      - name: Run ESLint - Frontend (Mobile)
+        run: cd apps/mobile && npx eslint . --ext .ts,.tsx --format json --output-file eslint-mobile-report.json
         continue-on-error: true
 
       - name: Upload ESLint Reports
@@ -55,7 +55,7 @@ jobs:
           name: eslint-reports
           path: |
             apps/backend/eslint-backend-report.json
-            apps/web/eslint-frontend-report.json
+            apps/mobile/eslint-mobile-report.json
           retention-days: 7
 
       - name: Annotate PR with ESLint errors
@@ -121,8 +121,8 @@ jobs:
       - name: TypeScript Check - Backend
         run: cd apps/backend && npx tsc --noEmit --project tsconfig.build.json
 
-      - name: TypeScript Check - Frontend
-        run: cd apps/web && npx tsc --noEmit
+      - name: TypeScript Check - Frontend (Mobile)
+        run: cd apps/mobile && npx tsc --noEmit
 
   # ==================== Dependency Security Audit ====================
   audit:
@@ -223,8 +223,10 @@ jobs:
           DATABASE_URL: postgresql://localhost:5432/test
           JWT_SECRET: test-secret
 
-      - name: Run Tests with Coverage - Frontend
-        run: cd apps/web && pnpm test -- --coverage --ci || true
+      - name: Run Tests with Coverage - Frontend (Mobile)
+        run: cd apps/mobile && pnpm test -- --coverage --ci || true
+        env:
+          API_BASE_URL: http://localhost:3001/api/v1
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master

@@ -23,13 +23,36 @@ const aliases = {
 };
 
 const config = {
+  // 🚀 优化模块序列化 - 减少启动时的 native bridge 调用
+  serializer: {
+    getModulesRunBeforeMainModulePath() {
+      return require.resolve('react-native/Libraries/Core/InitializeCore');
+    },
+  },
+
   transformer: {
     getTransformOptions: async () => ({
       transform: {
         experimentalImportSupport: false,
-        inlineRequires: true,
+        inlineRequires: true, // ✅ 已启用内联 requires
       },
     }),
+    // 🚀 代码压缩配置 - 进一步减小 bundle 体积
+    minifierConfig: {
+      keep_fnames: false, // 不保留函数名（减小体积）
+      mangle: {
+        keep_classnames: false, // 不保留类名（减小体积）
+      },
+      output: {
+        comments: false, // 移除注释
+        ascii_only: true, // 仅 ASCII 字符（减小体积）
+      },
+      compress: {
+        drop_console: __DEV__ ? false : true, // 生产环境移除 console
+        drop_debugger: __DEV__ ? false : true, // 生产环境移除 debugger
+        passes: 2, // 压缩轮次
+      },
+    },
   },
   resolver: {
     nodeModulesPaths: [

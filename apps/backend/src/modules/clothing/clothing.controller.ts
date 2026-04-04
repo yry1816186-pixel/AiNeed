@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
+import { Controller, Get, Param, Query, UsePipes, ValidationPipe } from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
@@ -6,7 +6,6 @@ import {
   ApiQuery,
   ApiParam,
 } from "@nestjs/swagger";
-import { ClothingCategory } from "@prisma/client";
 
 import { ClothingService } from "./clothing.service";
 import {
@@ -22,6 +21,14 @@ import {
 
 @ApiTags("clothing")
 @Controller("clothing")
+@UsePipes(
+  new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+    transformOptions: { enableImplicitConversion: true },
+  }),
+)
 export class ClothingController {
   constructor(private clothingService: ClothingService) {}
 
@@ -30,80 +37,6 @@ export class ClothingController {
     summary: "获取服装列表",
     description:
       "获取服装商品列表，支持按分类、品牌、价格区间、颜色、尺码、标签筛选，支持分页和排序。",
-  })
-  @ApiQuery({
-    name: "category",
-    required: false,
-    enum: ClothingCategory,
-    description: "服装分类筛选",
-  })
-  @ApiQuery({
-    name: "brandId",
-    required: false,
-    type: String,
-    description: "品牌 ID 筛选",
-    format: "uuid",
-  })
-  @ApiQuery({
-    name: "minPrice",
-    required: false,
-    type: Number,
-    description: "最低价格筛选（元）",
-    example: 100,
-  })
-  @ApiQuery({
-    name: "maxPrice",
-    required: false,
-    type: Number,
-    description: "最高价格筛选（元）",
-    example: 1000,
-  })
-  @ApiQuery({
-    name: "colors",
-    required: false,
-    type: String,
-    description: "颜色筛选，多个颜色用逗号分隔",
-    example: "black,white,blue",
-  })
-  @ApiQuery({
-    name: "sizes",
-    required: false,
-    type: String,
-    description: "尺码筛选，多个尺码用逗号分隔",
-    example: "S,M,L,XL",
-  })
-  @ApiQuery({
-    name: "tags",
-    required: false,
-    type: String,
-    description: "标签筛选，多个标签用逗号分隔",
-    example: "春季,商务,休闲",
-  })
-  @ApiQuery({
-    name: "page",
-    required: false,
-    type: Number,
-    description: "页码，从 1 开始，默认 1",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "limit",
-    required: false,
-    type: Number,
-    description: "每页数量，默认 20，最大 100",
-    example: 20,
-  })
-  @ApiQuery({
-    name: "sortBy",
-    required: false,
-    enum: ["price", "createdAt", "viewCount", "likeCount"],
-    description: "排序字段，默认 createdAt",
-  })
-  @ApiQuery({
-    name: "sortOrder",
-    required: false,
-    enum: ["asc", "desc"],
-    description: "排序方向，默认 desc",
   })
   @ApiResponse({
     status: 200,
@@ -114,31 +47,19 @@ export class ClothingController {
     status: 400,
     description: "请求参数错误（无效的分类、价格区间等）",
   })
-  async getItems(
-    @Query("category") category?: ClothingCategory,
-    @Query("brandId") brandId?: string,
-    @Query("minPrice") minPrice?: string,
-    @Query("maxPrice") maxPrice?: string,
-    @Query("colors") colors?: string,
-    @Query("sizes") sizes?: string,
-    @Query("tags") tags?: string,
-    @Query("page") page?: string,
-    @Query("limit") limit?: string,
-    @Query("sortBy") sortBy?: "price" | "createdAt" | "viewCount" | "likeCount",
-    @Query("sortOrder") sortOrder?: "asc" | "desc",
-  ) {
+  async getItems(@Query() query: GetClothingQueryDto) {
     return this.clothingService.getItems({
-      category,
-      brandId,
-      minPrice: minPrice ? parseFloat(minPrice) : undefined,
-      maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
-      colors: colors?.split(",").filter(Boolean),
-      sizes: sizes?.split(",").filter(Boolean),
-      tags: tags?.split(",").filter(Boolean),
-      page: page ? parseInt(page, 10) : 1,
-      limit: limit ? parseInt(limit, 10) : 20,
-      sortBy: sortBy || "createdAt",
-      sortOrder: sortOrder || "desc",
+      category: query.category,
+      brandId: query.brandId,
+      minPrice: query.minPrice,
+      maxPrice: query.maxPrice,
+      colors: query.colors?.split(",").map((s) => s.trim()).filter(Boolean),
+      sizes: query.sizes?.split(",").map((s) => s.trim()).filter(Boolean),
+      tags: query.tags?.split(",").map((s) => s.trim()).filter(Boolean),
+      page: query.page,
+      limit: query.limit,
+      sortBy: query.sortBy,
+      sortOrder: query.sortOrder,
     });
   }
 

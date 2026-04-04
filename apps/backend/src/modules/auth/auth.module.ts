@@ -8,6 +8,7 @@ import { RedisModule } from "../../common/redis/redis.module";
 
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
+import { AuthHelpersService } from "./auth.helpers";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { LocalStrategy } from "./strategies/local.strategy";
 
@@ -47,7 +48,7 @@ const logger = new Logger("AuthModule");
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy],
+  providers: [AuthService, AuthHelpersService, JwtStrategy, LocalStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

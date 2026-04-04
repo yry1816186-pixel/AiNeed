@@ -10,6 +10,10 @@ import { RecommendationsModule } from "../recommendations/recommendations.module
 import { AgentToolsService } from "./agent-tools.service";
 import { AiStylistController } from "./ai-stylist.controller";
 import { AiStylistService } from "./ai-stylist.service";
+import { AiStylistSessionService } from "./services/session.service";
+import { AiStylistChatService } from "./services/chat.service";
+import { AiStylistContextService } from "./services/context.service";
+import { AiStylistRecommendationService } from "./services/recommendation.service";
 import { DecisionEngineService } from "./decision-engine.service";
 import { LlmProviderService } from "./llm-provider.service";
 import { NlSlotExtractorService } from "./nl-slot-extractor.service";
@@ -20,12 +24,26 @@ import { SystemContextService } from "./system-context.service";
   controllers: [AiStylistController],
   providers: [
     AiStylistService,
+    AiStylistSessionService,
+    AiStylistChatService,
+    AiStylistContextService,
+    AiStylistRecommendationService,
     AgentToolsService,
     DecisionEngineService,
     LlmProviderService,
     NlSlotExtractorService,
     SystemContextService,
   ],
-  exports: [AiStylistService, AgentToolsService, DecisionEngineService, LlmProviderService, SystemContextService],
+  exports: [
+    AiStylistService,
+    AiStylistSessionService,
+    AiStylistChatService,
+    AiStylistContextService,
+    AiStylistRecommendationService,
+    AgentToolsService,
+    DecisionEngineService,
+    LlmProviderService,
+    SystemContextService,
+  ],
 })
 export class AiStylistModule {}

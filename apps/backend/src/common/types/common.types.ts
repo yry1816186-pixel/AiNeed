@@ -139,8 +139,8 @@ export interface PrismaQueryEvent {
 export interface PrismaExtensionContext {
   model: string;
   operation: string;
-  args: Prisma.Args<any, any>;
-  query: (args: Prisma.Args<any, any>) => Promise<any>;
+  args: Record<string, unknown>;
+  query: (args: Record<string, unknown>) => Promise<unknown>;
 }
 
 /**

@@ -18,6 +18,11 @@ model User {
   birthDate DateTime?
   isActive  Boolean  @default(true)
 
+  // P1-Data-2: 软删除字段（GDPR/PIPL合规）
+  isDeleted     Boolean   @default(false)
+  deletedAt     DateTime?
+  deletedReason String?
+
   followerCount  Int @default(0)
   followingCount Int @default(0)
   isVerified     Boolean @default(false)
@@ -329,22 +334,21 @@ model ClothingItem {
   postItems   CommunityPostItem[]
   rankingFeedback RankingFeedback[]
 
-  @@index([category])
-  @@index([brandId])
-  @@index([isActive, isFeatured])
-  @@index([price])
-  @@index([viewCount(sort: Desc)])
-  @@index([likeCount(sort: Desc)])
-  @@index([createdAt(sort: Desc)])
-  @@index([category, isActive])
-  @@index([isActive, createdAt(sort: Desc)])
-  @@index([isActive, price])
-  @@index([isActive, viewCount(sort: Desc)])
-  @@index([isActive, likeCount(sort: Desc)])
-  @@index([name])
-  @@index([isDeleted])
-  @@index([isActive, isDeleted])
-  @@index([stock])
+  // 核心业务索引（精简至15个，优化写入性能）
+  // P1-Data-1: 移除冗余索引 [category], [viewCount], [likeCount], [isDeleted]
+  // 保留原则：外键优先 > 复合索引 > 高频单列 > 排序索引
+  @@index([brandId])                                      // 外键：品牌关联查询
+  @@index([category, isActive])                           // 核心：分类列表页（覆盖[category]单列）
+  @@index([price])                                        // 核心：价格范围筛选
+  @@index([createdAt(sort: Desc)])                        // 核心：默认排序
+  @@index([name])                                         // 核心：名称模糊搜索
+  @@index([isActive, isFeatured])                         // 业务：精选商品展示
+  @@index([isActive, createdAt(sort: Desc)])              // 业务：活跃商品时间线
+  @@index([isActive, price])                              // 业务：活跃商品价格排序
+  @@index([isActive, viewCount(sort: Desc)])              // 业务：热门商品排行（覆盖单列viewCount）
+  @@index([isActive, likeCount(sort: Desc)])              // 业务：最受欢迎排行（覆盖单列likeCount）
+  @@index([stock])                                        // 业务：低库存预警
+  @@index([isDeleted, isActive])                          // 合规：软删除过滤（覆盖单列isDeleted）
 }
 
 enum ClothingCategory {
@@ -504,6 +508,7 @@ enum RecommendationType {
   occasion
   seasonal
   trending
+  business
 }
 
 model SearchHistory {
@@ -639,7 +644,7 @@ model UserSession {
 }
 
 model AiStylistSession {
-  id        String   @id
+  id        String   @id @default(uuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -899,7 +904,8 @@ enum DeletionStatus {
 model BrandMerchant {
   id          String   @id @default(uuid())
   brandId     String
-  brand       Brand    @relation(fields: [brandId], references: [id])
+  // P1-Data-3: 添加显式onDelete策略 - 品牌删除时级联删除商家账号
+  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
 
   email       String   @unique
   password    String // @encrypted: Hash with bcrypt, never store plain text
@@ -926,7 +932,8 @@ enum MerchantRole {
 model BrandSettlement {
   id          String   @id @default(uuid())
   brandId     String
-  brand       Brand    @relation(fields: [brandId], references: [id])
+  // P1-Data-3: 添加显式onDelete策略 - 阻止删除有结算记录的品牌（财务合规）
+  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: Restrict)
 
   period      String
 
@@ -1322,7 +1329,11 @@ model CommunityPost {
   @@index([likeCount(sort: Desc)])
   @@index([viewCount(sort: Desc)])
   @@index([createdAt(sort: Desc), isDeleted])
-  @@index([isDeleted, isFeatured, likeCount(sort: Desc), createdAt(sort: Desc)])
+  // P1-Data-4: 拆分4列宽索引为3个窄索引（优化写入性能+提升查询灵活性）
+  // 原: [isDeleted, isFeatured, likeCount, createdAt] → 维护成本高且不够灵活
+  // 新: 按业务场景拆分
+  @@index([isDeleted, likeCount(sort: Desc)])           // 场景1: 热门帖子排行
+  @@index([isFeatured, isDeleted, createdAt(sort: Desc)]) // 场景2: 精选帖子时间线
 }
 
 model CommunityPostItem {

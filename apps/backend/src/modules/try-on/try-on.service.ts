@@ -194,7 +194,7 @@ export class TryOnService {
     });
 
     if (!tryOn) {
-      throw new NotFoundException("璇曡。璁板綍涓嶅瓨鍦?");
+      throw new NotFoundException("试衣记录不存在");
     }
 
     if (!tryOn.resultImageUrl) {

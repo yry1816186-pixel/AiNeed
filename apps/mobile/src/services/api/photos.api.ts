@@ -5,6 +5,15 @@ import type { FormDataValue } from "../../types";
 
 export type PhotoType = "front" | "side" | "full_body" | "half_body" | "face";
 
+/**
+ * React Native FormData 文件条目类型
+ */
+interface RNFileBody {
+  uri: string;
+  name: string;
+  type: string;
+}
+
 interface PhotoUploadPayload {
   id: string;
   url: string;
@@ -75,7 +84,7 @@ export const photosApi = {
       uri: imageUri,
       name: filename,
       type: fileType,
-    } as any);
+    } as RNFileBody);
     formData.append("type", type);
 
     const response = await apiClient.upload<PhotoUploadPayload>(

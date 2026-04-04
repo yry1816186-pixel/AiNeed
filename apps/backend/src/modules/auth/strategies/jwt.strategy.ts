@@ -7,18 +7,6 @@ import { AuthService } from "../auth.service";
 
 const logger = new Logger("JwtStrategy");
 
-function extractJwtFromQuery(request?: {
-  query?: Record<string, string | string[] | undefined>;
-}) {
-  const rawValue = request?.query?.access_token;
-
-  if (Array.isArray(rawValue)) {
-    return rawValue[0] ?? null;
-  }
-
-  return rawValue ?? null;
-}
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -36,10 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
-        extractJwtFromQuery,
-      ]),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: jwtSecret,
     });

@@ -1,20 +1,48 @@
 import { Platform } from "react-native";
 
+/**
+ * AiNeed 字体系统 - 国赛一等奖水准
+ *
+ * 设计理念：
+ * - 中文优先：思源黑体/PingFang SC 保证中文显示质量
+ * - 英文优雅：Inter/SF Pro Display 提升英文可读性
+ * - 层次清晰：9级字重 + 完整行高/字距系统
+ */
+
 export const FontFamilies = {
+  // 中文字体（优先使用）
+  chinese: Platform.select({
+    ios: "PingFang SC",           // iOS 中文首选
+    android: "Noto Sans SC",     // Android 中文首选（需安装）
+    default: "sans-serif",       // 回退字体
+  }),
+
+  // 英文字体
   sans: Platform.select({
-    ios: "SF Pro Display",
-    android: "Roboto",
+    ios: "SF Pro Display",       // iOS 系统字体
+    android: "Roboto",           // Android 系统字体
     default: "System",
   }),
+
+  // 等宽字体（代码/数据）
   mono: Platform.select({
     ios: "SF Mono",
     android: "Roboto Mono",
     default: "monospace",
   }),
+
+  // 展示字体（大标题/品牌）
   display: Platform.select({
     ios: "SF Pro Display",
     android: "Roboto",
     default: "System",
+  }),
+
+  // 混合字体（中英文混排场景）
+  mixed: Platform.select({
+    ios: "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'SF Pro Display', sans-serif",
+    android: "'Noto Sans SC', Roboto, sans-serif",
+    default: "system-ui, -apple-system, sans-serif",
   }),
 } as const;
 

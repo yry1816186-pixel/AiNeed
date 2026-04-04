@@ -5,12 +5,18 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import * as Haptics from '@/src/polyfills/expo-haptics';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import * as Haptics from '@/src/polyfills/expo-haptics';
 import { clothingApi } from '../services/api/clothing.api';
 import type { RootStackParamList } from '../types/navigation';
 import type { ClothingItem, ClothingCategory, ClothingStyle, Season, Occasion } from '../types/clothing';
 import { CATEGORY_LABELS, STYLE_LABELS, SEASON_LABELS, OCCASION_LABELS } from '../types/clothing';
+
+// 引入增强主题令牌
+import { colors } from '../theme/tokens/colors';
+import { typography } from '../theme/tokens/typography';
+import { spacing } from '../theme/tokens/spacing';
+import { shadows } from '../theme/tokens/shadows';
 import { theme } from '../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');

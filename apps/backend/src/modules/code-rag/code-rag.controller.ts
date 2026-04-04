@@ -59,7 +59,7 @@ export class CodeRagController {
     });
 
     if (dto.formatForLlm) {
-      const context = await this.codeRagService.formatContextForLLm(
+      const context = await this.codeRagService.formatContextForLLM(
         results.results,
         dto.maxContextChars,
       );
@@ -97,7 +97,7 @@ export class CodeRagController {
     });
 
     if (format === 'llm' || format === 'context') {
-      const context = await this.codeRagService.formatContextForLLm(results.results);
+      const context = await this.codeRagService.formatContextForLLM(results.results);
       return { context, matches_count: results.total };
     }
 
@@ -135,7 +135,7 @@ export class CodeRagController {
     ]);
 
     const codeContext = searchResults.results.length
-      ? await this.codeRagService.formatContextForLLm(searchResults.results, 6000)
+      ? await this.codeRagService.formatContextForLLM(searchResults.results, 6000)
       : '';
 
     return {

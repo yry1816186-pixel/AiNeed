@@ -2,7 +2,7 @@ import { IsString, IsOptional, IsInt, Min, Max, IsBoolean } from 'class-validato
 
 export class CodeRagSearchDto {
   @IsString()
-  query: string;
+  query!: string;
 
   @IsOptional()
   @IsInt()
@@ -39,5 +39,5 @@ export class CodeRagSearchDto {
 
 export class CodeRagFileContextDto {
   @IsString()
-  filePath: string;
+  filePath!: string;
 }

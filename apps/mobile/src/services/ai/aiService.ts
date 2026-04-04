@@ -7,6 +7,16 @@ const AI_SERVICE_URL = requireMobileUrl(
   "AI_SERVICE_URL",
 );
 
+/**
+ * React Native FormData 文件条目类型
+ * RN 的 FormData 不完全符合 Web 标准，需要此类型注解
+ */
+interface RNFileBody {
+  uri: string;
+  name: string;
+  type: string;
+}
+
 class AIService {
   private baseUrl: string;
 
@@ -43,7 +53,7 @@ class AIService {
       uri: imageUri,
       name: filename,
       type,
-    } as any);
+    } as RNFileBody);
 
     const response = await fetch(`${this.baseUrl}/api/analyze`, {
       method: "POST",
@@ -76,7 +86,7 @@ class AIService {
       uri: imageUri,
       name: filename,
       type,
-    } as any);
+    } as RNFileBody);
 
     const response = await fetch(`${this.baseUrl}/api/body-analysis`, {
       method: "POST",

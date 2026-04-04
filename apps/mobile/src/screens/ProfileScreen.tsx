@@ -13,12 +13,20 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
+import Animated, { FadeInUp, SlideInRight } from 'react-native-reanimated';
 import { useAuthStore } from '../stores/index';
 import { authApi } from '../services/api/auth.api';
 import { userApi } from '../services/api/auth.api';
 import type { UserStats, User } from '../types/user';
 import type { RootStackParamList } from '../types/navigation';
 import { theme } from '../theme';
+
+// 引入增强主题令牌
+import { colors } from '../theme/tokens/colors';
+import { typography } from '../theme/tokens/typography';
+import { spacing } from '../theme/tokens/spacing';
+import { shadows } from '../theme/tokens/shadows';
 import { withErrorBoundary } from '../components/ErrorBoundary';
 
 type ProfileNavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -138,30 +146,43 @@ export const ProfileScreenComponent: React.FC = () => {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[theme.colors.primary]} />
         }
       >
-        {/* Profile Card */}
-        <View style={styles.profileCard}>
-          <View style={styles.avatarContainer}>
-            {user?.avatar ? (
-              <Image source={{ uri: user.avatar }} style={styles.avatarImage} />
-            ) : (
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{avatarInitial}</Text>
-              </View>
-            )}
-            <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>{displayName}</Text>
-              <Text style={styles.profileEmail}>{displayEmail}</Text>
-            </View>
-          </View>
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => navigation.navigate('Settings')}
-            accessibilityLabel="编辑个人资料"
-            accessibilityRole="button"
+        {/* Profile Card - 升级版（渐变背景 + 大圆角） */}
+        <Animated.View entering={FadeInUp.duration(600).springify()}>
+          <LinearGradient
+            colors={[colors.gradients.coralRose[0], colors.gradients.coralRose[1]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.profileCard}
           >
-            <Text style={styles.editButtonText}>编辑资料</Text>
-          </TouchableOpacity>
-        </View>
+            <View style={styles.avatarContainer}>
+              {user?.avatar ? (
+                <Image source={{ uri: user.avatar }} style={styles.avatarImage} />
+              ) : (
+                <View style={styles.avatar}>
+                  <Text style={styles.avatarText}>{avatarInitial}</Text>
+                </View>
+              )}
+              <View style={styles.profileInfo}>
+                <Text style={styles.profileName}>{displayName}</Text>
+                <Text style={styles.profileEmail}>{displayEmail}</Text>
+                <View style={styles.memberBadge}>
+                  <Ionicons name="diamond" size={12} color="#FFFFFF" />
+                  <Text style={styles.memberBadgeText}>VIP会员</Text>
+                </View>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => navigation.navigate('Settings')}
+              accessibilityLabel="编辑个人资料"
+              accessibilityRole="button"
+            >
+              <Ionicons name="create-outline" size={16} color="#FFFFFF" />
+              <Text style={styles.editButtonText}>编辑资料</Text>
+            </TouchableOpacity>
+          </LinearGradient>
+        </Animated.View>
 
         {/* Stats Cards */}
         {loading ? (
@@ -227,107 +248,156 @@ export const ProfileScreenComponent: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.neutral[50] },
   header: {
-    padding: 20,
-    backgroundColor: theme.colors.surface,
+    padding: spacing.layout.screenPadding,
+    backgroundColor: colors.neutral.white,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.neutral[200],
+    ...shadows.presets.xs,
   },
-  headerTitle: { fontSize: 24, fontWeight: '700', color: theme.colors.text },
+  headerTitle: {
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.bold as any,
+    color: colors.neutral[900],
+  },
   content: { flex: 1 },
+
+  // ===== Profile Card（升级版 - 渐变背景）=====
   profileCard: {
-    backgroundColor: theme.colors.primary,
-    margin: 20,
-    borderRadius: theme.BorderRadius.lg,
-    padding: 20,
+    margin: spacing.layout.screenPadding,
+    borderRadius: spacing.borderRadius['2xl'],
+    padding: spacing.layout.modalPadding,
+    ...shadows.presets.lg,
   },
   avatarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: theme.colors.overlayWhiteMed,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: 'rgba(255,255,255,0.3)',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.5)',
   },
   avatarText: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: theme.colors.surface,
+    fontSize: typography.fontSize['2xl'],
+    fontWeight: typography.fontWeight.bold as any,
+    color: '#FFFFFF',
   },
   avatarImage: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.5)',
   },
-  profileInfo: { marginLeft: 16, flex: 1 },
-  profileName: { fontSize: 20, fontWeight: '600', color: theme.colors.surface },
-  profileEmail: { fontSize: 14, color: theme.colors.overlayWhiteHigh, marginTop: 4 },
+  profileInfo: {
+    marginLeft: 16,
+    flex: 1,
+  },
+  profileName: {
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.bold as any,
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  profileEmail: {
+    fontSize: typography.fontSize.sm,
+    color: 'rgba(255,255,255,0.85)',
+    marginTop: 2,
+  },
+  memberBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  memberBadgeText: {
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.bold as any,
+    color: '#FFFFFF',
+    marginLeft: 4,
+  },
   editButton: {
     marginTop: 16,
     alignSelf: 'flex-start',
-    backgroundColor: theme.colors.overlayWhiteMid,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.25)',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 20,
+    gap: 6,
   },
   editButtonText: {
-    color: theme.colors.surface,
-    fontSize: 13,
-    fontWeight: '500',
+    color: '#FFFFFF',
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold as any,
   },
+
+  // ===== Stats Cards（升级版）=====
   statsLoading: {
-    paddingVertical: 24,
+    paddingVertical: spacing.layout.sectionGap,
     alignItems: 'center',
   },
   statsRow: {
     flexDirection: 'row',
-    marginHorizontal: 20,
-    marginBottom: 20,
+    marginHorizontal: spacing.layout.screenPadding,
+    marginBottom: spacing.layout.cardGap,
     gap: 12,
   },
   statCard: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.BorderRadius.lg,
-    padding: 16,
+    backgroundColor: colors.neutral.white,
+    borderRadius: spacing.borderRadius.xl,
+    padding: spacing.layout.cardPadding,
     alignItems: 'center',
+    ...shadows.presets.sm,
   },
   statValue: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: theme.colors.primary,
+    fontSize: typography.fontSize['2xl'],
+    fontWeight: typography.fontWeight.bold as any,
+    color: colors.brand.warmPrimary,
   },
   statLabel: {
-    fontSize: 12,
-    color: theme.colors.textSecondary,
-    marginTop: 4,
+    fontSize: typography.fontSize.sm,
+    color: colors.neutral[500],
+    marginTop: 6,
   },
+
+  // ===== Menu Section（升级版）=====
   menuSection: {
-    backgroundColor: theme.colors.surface,
-    marginHorizontal: 20,
-    borderRadius: theme.BorderRadius.lg,
+    backgroundColor: colors.neutral.white,
+    marginHorizontal: spacing.layout.screenPadding,
+    borderRadius: spacing.borderRadius.xl,
     overflow: 'hidden',
     marginBottom: 40,
+    ...shadows.presets.md,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    gap: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
+    padding: spacing.layout.listItemPadding,
+    gap: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.neutral[200],
   },
   menuItemLast: {
     borderBottomWidth: 0,
   },
   menuText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.medium as any,
   },
 });
 

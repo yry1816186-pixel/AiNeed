@@ -18,6 +18,17 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { ErrorInfo } from 'react';
 
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
+import Animated, {
+  FadeIn,
+  FadeInUp,
+  withRepeat,
+  withSequence,
+  withTiming,
+  useSharedValue,
+  useAnimatedStyle,
+  Easing,
+} from 'react-native-reanimated';
 import {
   launchCameraAsync,
   launchImageLibraryAsync,
@@ -37,6 +48,11 @@ import { resolveDisplayUri } from '../services/api/display-asset';
 import photosApi, { type UserPhoto } from '../services/api/photos.api';
 import { useAuthStore } from '../stores/index';
 import { theme } from '../theme';
+// 引入增强主题令牌
+import { colors } from '../theme/tokens/colors';
+import { typography } from '../theme/tokens/typography';
+import { spacing } from '../theme/tokens/spacing';
+import { shadows } from '../theme/tokens/shadows';
 import type { RootStackParamList } from '../types/navigation';
 import { withErrorBoundary } from '../components/ErrorBoundary';
 import type { StructuredError } from '../utils/errorHandling';
@@ -57,25 +73,100 @@ const PHOTO_POLL_INTERVAL_MS = 1500;
 /**
  * 消息气泡组件 - 使用 React.memo 优化
  * 避免其他消息变化时不必要的重渲染
+ *
+ * 视觉升级（国赛一等奖水准）：
+ * - 用户消息：珊瑚粉渐变背景 + 右对齐 + 白色文字
+ * - AI消息：浅灰背景 + 左对齐 + 深色文字 + 左下角小三角
+ * - 圆角：16px（大圆角传达友好感）
+ * - 阴影：轻微阴影提升层次感
  */
 interface MessageBubbleProps {
   message: ChatMessage;
 }
 
-const MessageBubble = memo(function MessageBubble({ message }: MessageBubbleProps) {
+// ========== 打字指示器动画组件 ==========
+const TypingIndicator: React.FC = memo(function TypingIndicator() {
+  const dot1Y = useSharedValue(0);
+  const dot2Y = useSharedValue(0);
+  const dot3Y = useSharedValue(0);
+
+  React.useEffect(() => {
+    dot1Y.value = withRepeat(
+      withSequence(withTiming(-8, { duration: 300 }), withTiming(0, { duration: 300 })),
+      -1,
+      false,
+    );
+    dot2Y.value = withRepeat(
+      withSequence(withTiming(-8, { duration: 300, delay: 150 }), withTiming(0, { duration: 300 })),
+      -1,
+      false,
+    );
+    dot3Y.value = withRepeat(
+      withSequence(withTiming(-8, { duration: 300, delay: 300 }), withTiming(0, { duration: 300 })),
+      -1,
+      false,
+    );
+  }, []);
+
+  const animatedStyle1 = useAnimatedStyle(() => ({ transform: [{ translateY: dot1Y.value }] }));
+  const animatedStyle2 = useAnimatedStyle(() => ({ transform: [{ translateY: dot2Y.value }] }));
+  const animatedStyle3 = useAnimatedStyle(() => ({ transform: [{ translateY: dot3Y.value }] }));
+
   return (
-    <View style={[styles.messageRow, message.role === 'user' && styles.userMessageRow]}>
-      <View
-        style={[
-          styles.messageBubble,
-          message.role === 'user' ? styles.userBubble : styles.assistantBubble,
-        ]}
-      >
-        <Text style={[styles.messageText, message.role === 'user' && styles.userMessageText]}>
-          {message.content}
-        </Text>
+    <View style={styles.typingContainer}>
+      <View style={styles.typingBubble}>
+        <View style={[styles.typingDot, animatedStyle1]} />
+        <View style={[styles.typingDot, animatedStyle2]} />
+        <View style={[styles.typingDot, animatedStyle3]} />
       </View>
     </View>
+  );
+});
+
+const MessageBubble = memo(function MessageBubble({ message }: MessageBubbleProps) {
+  const isUser = message.role === 'user';
+
+  return (
+    <Animated.View entering={FadeInUp.duration(300).springify()}>
+      <View style={[styles.messageRow, isUser && styles.userMessageRow]}>
+        {/* AI头像（仅AI消息显示） */}
+        {!isUser && (
+          <LinearGradient
+            colors={[colors.warmPrimary.coral[400], colors.warmPrimary.mint[400]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.aiAvatarSmall}
+          >
+            <Text style={styles.aiAvatarEmoji}>✨</Text>
+          </LinearGradient>
+        )}
+
+        <View
+          style={[
+            styles.messageBubble,
+            isUser ? styles.userBubble : styles.assistantBubble,
+          ]}
+        >
+          {/* 用户消息：渐变背景 */}
+          {isUser ? (
+            <LinearGradient
+              colors={[colors.warmPrimary.coral[500], colors.warmPrimary.coral[600]]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.userGradient}
+            >
+              <Text style={styles.userMessageText}>{message.content}</Text>
+            </LinearGradient>
+          ) : (
+            <>
+              <Text style={styles.messageText}>{message.content}</Text>
+              {/* AI消息小三角指示器 */}
+              <View style={styles.assistantTriangle} />
+            </>
+          )}
+        </View>
+      </View>
+    </Animated.View>
   );
 });
 
@@ -455,34 +546,6 @@ const AiStylistScreenV2: React.FC = () => {
     [],
   );
 
-  // 估算消息高度，用于 getItemLayout 优化
-  // 消息高度 = 基础高度 + 文字行数 * 行高
-  const getItemLayout = useCallback(
-    (_data: any, index: number) => {
-      const message = messages[index];
-      if (!message) {
-        return { length: 80, offset: 80 * index, index };
-      }
-      
-      // 估算文字行数
-      const lineCount = Math.ceil(message.content.length / 30);
-      const height = 60 + lineCount * 20; // 基础高度 + 文字高度
-      
-      // 计算偏移量（累加之前所有消息的高度）
-      let offset = 0;
-      for (let i = 0; i < index; i++) {
-        const msg = messages[i];
-        if (msg) {
-          const lines = Math.ceil(msg.content.length / 30);
-          offset += 60 + lines * 20 + 12; // 加上 marginBottom
-        }
-      }
-      
-      return { length: height, offset, index };
-    },
-    [messages],
-  );
-
   const recentPhotoContent = useMemo(() => {
     if (recentPhotosLoading) {
       return <ActivityIndicator size="small" color={theme.colors.primary} />;
@@ -751,7 +814,7 @@ const AiStylistScreenV2: React.FC = () => {
             contentContainerStyle={styles.messageList}
             onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
             onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
-            getItemLayout={getItemLayout}
+            estimatedItemSize={100}
             removeClippedSubviews={true}
             maxToRenderPerBatch={5}
             windowSize={3}
@@ -798,80 +861,191 @@ const AiStylistScreenV2: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.neutral[50] },
   flex: { flex: 1 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.neutral.white,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.neutral[200],
+    ...shadows.presets.xs,
   },
   headerCenter: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: theme.colors.text },
-  backBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
-  messageList: { padding: 16, paddingBottom: 8 },
+  headerTitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold as any,
+    color: colors.neutral[900],
+  },
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.neutral[100],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // ===== 消息列表 =====
+  messageList: {
+    padding: 16,
+    paddingBottom: 8,
+  },
   messageRow: {
     marginBottom: 12,
     maxWidth: '85%',
     alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 8,
   },
-  userMessageRow: { alignSelf: 'flex-end' },
+  userMessageRow: {
+    alignSelf: 'flex-end',
+    flexDirection: 'row-reverse',
+  },
+
+  // ===== 消息气泡（升级版）=====
   messageBubble: {
-    padding: 12,
-    borderRadius: 16,
-    backgroundColor: theme.colors.surface,
+    borderRadius: spacing.borderRadius['2xl'],
+    overflow: 'hidden',
+    ...shadows.presets.sm,
   },
   assistantBubble: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.neutral.white,
     borderBottomLeftRadius: 4,
+    borderWidth: 1,
+    borderColor: colors.neutral[200],
   },
   userBubble: {
-    backgroundColor: theme.colors.primary,
     borderBottomRightRadius: 4,
   },
-  messageText: { fontSize: 14, color: theme.colors.text, lineHeight: 20 },
-  userMessageText: { color: '#fff' },
+  userGradient: {
+    padding: 14,
+    borderRadius: spacing.borderRadius['2xl'],
+    borderBottomRightRadius: 4,
+  },
+  assistantTriangle: {
+    position: 'absolute',
+    bottom: 0,
+    left: -6,
+    width: 0,
+    height: 0,
+    borderTopWidth: 0,
+    borderRightWidth: 6,
+    borderBottomWidth: 8,
+    borderLeftWidth: 0,
+    borderRightColor: colors.neutral.white,
+    borderLeftColor: 'transparent',
+    borderBottomColor: 'transparent',
+  },
+
+  // 文字样式
+  messageText: {
+    fontSize: typography.fontSize.base,
+    color: colors.neutral[900],
+    lineHeight: 22,
+    padding: 14,
+  },
+  userMessageText: {
+    fontSize: typography.fontSize.base,
+    color: '#FFFFFF',
+    lineHeight: 22,
+  },
+
+  // AI头像
+  aiAvatarSmall: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  aiAvatarEmoji: {
+    fontSize: 16,
+  },
+
+  // ===== 打字指示器 =====
+  typingContainer: {
+    alignSelf: 'flex-start',
+    marginBottom: 12,
+    marginLeft: 40, // 为AI头像留空间
+  },
+  typingBubble: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: colors.neutral.white,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: spacing.borderRadius['2xl'],
+    borderBottomLeftRadius: 4,
+    borderWidth: 1,
+    borderColor: colors.neutral[200],
+    ...shadows.presets.xs,
+  },
+  typingDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+    backgroundColor: colors.warmPrimary.coral[400],
+  },
+
+  // ===== 加载状态 =====
   centerContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  loadingText: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 8 },
+  loadingText: {
+    fontSize: typography.fontSize.base,
+    color: colors.neutral[500],
+    marginTop: 12,
+  },
+
+  // ===== Action卡片 =====
   actionCard: {
     marginHorizontal: 16,
     marginBottom: 12,
-    padding: 14,
-    borderRadius: 18,
-    backgroundColor: theme.colors.surface,
+    padding: 16,
+    borderRadius: spacing.borderRadius['2xl'],
+    backgroundColor: colors.neutral.white,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.neutral[200],
+    ...shadows.presets.md,
   },
   actionTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: theme.colors.text,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.bold as any,
+    color: colors.neutral[900],
+    marginBottom: 4,
   },
   actionSubtitle: {
-    fontSize: 13,
-    lineHeight: 19,
-    color: theme.colors.textSecondary,
+    fontSize: typography.fontSize.sm,
+    lineHeight: 20,
+    color: colors.neutral[500],
     marginTop: 6,
   },
+
+  // 选项按钮
   optionRow: {
     gap: 10,
     paddingTop: 12,
     paddingRight: 8,
   },
   optionChip: {
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 18,
-    backgroundColor: theme.colors.cartLight,
+    borderRadius: 20,
+    backgroundColor: colors.warmPrimary.coral[50],
+    borderWidth: 1,
+    borderColor: colors.warmPrimary.coral[200],
   },
   optionChipText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.colors.primary,
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold as any,
+    color: colors.warmPrimary.coral[700],
   },
+
+  // 照片操作按钮
   photoButtonRow: {
     flexDirection: 'row',
     gap: 12,
@@ -883,20 +1057,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    paddingVertical: 12,
-    borderRadius: 16,
-    backgroundColor: theme.colors.cartLight,
+    paddingVertical: 13,
+    borderRadius: spacing.borderRadius.xl,
+    backgroundColor: colors.warmPrimary.ocean[50],
+    borderWidth: 1,
+    borderColor: colors.warmPrimary.ocean[200],
   },
   photoActionText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: theme.colors.primary,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold as any,
+    color: colors.warmPrimary.ocean[700],
   },
+
+  // 最近照片区域
   recentSection: {
     marginTop: 16,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.neutral[200],
   },
   recentSectionCompact: {
     marginTop: 14,
@@ -907,14 +1085,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   recentSectionTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: theme.colors.text,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.bold as any,
+    color: colors.neutral[900],
   },
   recentRefreshText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: theme.colors.primary,
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold as any,
+    color: colors.brand.warmPrimary,
   },
   recentPhotoRow: {
     gap: 12,
@@ -924,16 +1102,16 @@ const styles = StyleSheet.create({
   recentPhotoCard: {
     width: 112,
     padding: 8,
-    borderRadius: 16,
-    backgroundColor: theme.colors.background,
+    borderRadius: spacing.borderRadius.lg,
+    backgroundColor: colors.neutral[50],
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.neutral[200],
   },
   recentPhotoImage: {
     width: '100%',
     height: 112,
-    borderRadius: 12,
-    backgroundColor: theme.colors.cartLight,
+    borderRadius: spacing.borderRadius.md,
+    backgroundColor: colors.neutral[100],
   },
   recentPhotoFallback: {
     alignItems: 'center',
@@ -941,30 +1119,33 @@ const styles = StyleSheet.create({
   },
   recentPhotoMeta: {
     marginTop: 8,
-    fontSize: 12,
-    fontWeight: '600',
-    color: theme.colors.text,
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semibold as any,
+    color: colors.neutral[700],
     textTransform: 'capitalize',
   },
   recentPhotoStatus: {
     marginTop: 4,
-    fontSize: 11,
-    color: theme.colors.textSecondary,
+    fontSize: typography.fontSize.xs,
+    color: colors.neutral[500],
   },
   recentEmptyText: {
     marginTop: 12,
-    fontSize: 12,
+    fontSize: typography.fontSize.sm,
     lineHeight: 18,
-    color: theme.colors.textSecondary,
+    color: colors.neutral[500],
   },
+
+  // 快捷卡片
   shortcutCard: {
     marginHorizontal: 16,
     marginBottom: 12,
-    padding: 14,
-    borderRadius: 18,
-    backgroundColor: theme.colors.surface,
+    padding: 16,
+    borderRadius: spacing.borderRadius['2xl'],
+    backgroundColor: colors.neutral.white,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.neutral[200],
+    ...shadows.presets.sm,
   },
   shortcutHeader: {
     flexDirection: 'row',
@@ -973,68 +1154,82 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   shortcutTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: theme.colors.text,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.bold as any,
+    color: colors.neutral[900],
   },
   shortcutSubtitle: {
     marginTop: 4,
-    fontSize: 13,
+    fontSize: typography.fontSize.sm,
     lineHeight: 19,
-    color: theme.colors.textSecondary,
+    color: colors.neutral[500],
   },
+
+  // 主操作按钮
   primaryActionButton: {
     marginTop: 14,
-    paddingVertical: 13,
-    borderRadius: 16,
-    backgroundColor: theme.colors.primary,
+    paddingVertical: 14,
+    borderRadius: spacing.borderRadius.xl,
+    backgroundColor: colors.brand.warmPrimary,
     alignItems: 'center',
+    ...shadows.presets.md,
   },
   primaryActionText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#fff',
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.bold as any,
+    color: '#FFFFFF',
   },
+
+  // 进度指示
   progressRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
   progressTextWrap: { flex: 1 },
+
+  // ===== 输入框区域（升级版）=====
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     padding: 12,
+    paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
-    backgroundColor: theme.colors.surface,
+    borderTopColor: colors.neutral[200],
+    backgroundColor: colors.neutral.white,
   },
   inputWrapper: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.background,
-    borderRadius: 20,
-    paddingHorizontal: 12,
+    backgroundColor: colors.neutral[50],
+    borderRadius: spacing.borderRadius['2xl'],
+    paddingHorizontal: 14,
     gap: 8,
+    borderWidth: 1.5,
+    borderColor: colors.neutral[200],
+    minHeight: 48,
   },
   input: {
     flex: 1,
-    fontSize: 14,
-    color: theme.colors.text,
+    fontSize: typography.fontSize.base,
+    color: colors.neutral[900],
     maxHeight: 80,
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
   sendButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: theme.colors.primary,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.brand.warmPrimary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 8,
+    marginLeft: 10,
+    ...shadows.presets.md,
   },
-  sendButtonDisabled: { backgroundColor: theme.colors.surface },
+  sendButtonDisabled: {
+    backgroundColor: colors.neutral[200],
+  },
 });
 
 const AiStylistScreen = withErrorBoundary(AiStylistScreenV2, {

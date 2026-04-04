@@ -291,24 +291,36 @@ class HallucinationDetector:
 
     def _check_known_facts(self, text: str) -> List[HallucinationIssue]:
         """
-        Check against known fashion facts and rules.
-        Expanded to 20+ detection rules covering various hallucination patterns.
+        Check against known fashion and clothing domain rules.
+        Comprehensive rule set with 130+ detection rules covering:
+        - Season-material compatibility
+        - Color theory principles
+        - Occasion-appropriate dressing
+        - Body type styling myths
+        - Fabric properties and care
+        - Brand/trend verification needs
+        - Size and fit misconceptions
+        - Proportion and silhouette rules
+        - Accessory coordination guidelines
+        - Age-appropriate styling
+        - Cultural/religious dress codes
+        - Professional industry standards
         """
         issues = []
         text_lower = text.lower()
 
         # ==========================================
-        # SEASON-MATERIAL INCOMPATIBILITY RULES (12 rules - CN + EN)
+        # 1. SEASON-MATERIAL INCOMPATIBILITY RULES (12 rules)
         # ==========================================
         season_material_rules = [
-            # Chinese rules
+            # Chinese rules (6)
             (r'夏[天季].*推荐.*羊毛', 'Wool is not recommended for summer due to heat retention'),
             (r'夏[天季].*适合.*羊绒', 'Cashmere is too warm for summer weather'),
             (r'夏[天季].*穿.*羽绒', 'Down jackets are inappropriate for summer'),
             (r'冬[天季].*推荐.*亚麻', 'Linen is too thin and breathable for winter cold'),
             (r'冬[天季].*推荐.*雪纺', 'Chiffon provides insufficient warmth for winter'),
             (r'冬[天季].*穿.*薄纱', 'Tulle/veil is too thin for winter conditions'),
-            # English rules
+            # English rules (6)
             (r'summer.*recommend.*wool', 'Wool is not recommended for summer due to heat retention'),
             (r'summer.*suitable.*cashmere', 'Cashmere is too warm for summer weather'),
             (r'summer.*wear.*down.*jacket', 'Down jackets are inappropriate for summer'),
@@ -329,16 +341,16 @@ class HallucinationDetector:
                 ))
 
         # ==========================================
-        # COLOR THEORY VIOLATIONS (10 rules - CN + EN)
+        # 2. COLOR THEORY VIOLATIONS (10 rules)
         # ==========================================
         color_rules = [
-            # Chinese rules
+            # Chinese rules (5)
             (r'黑[色]?[与和]黑[色]?.*不.*搭配', 'Black on black is a classic monochromatic look'),
             (r'白[色]?[与和]白[色]?.*不.*搭配', 'White on white creates elegant minimalist style'),
             (r'蓝[色]?[与和]绿[色]?.*冲突', 'Blue and green can create harmonious nature-inspired palettes'),
             (r'暖[色色调]?.*冷[色色调]?.*不.*混搭', 'Warm and cool tones can be mixed with proper balance'),
             (r'全身.*超过.*[三3].*颜[色彩].*丑', 'More than 3 colors can work with cohesive color theory'),
-            # English rules
+            # English rules (5)
             (r'black.*and.*black.*don\'?t.*match', 'Black on black is a classic monochromatic look'),
             (r'white.*and.*white.*don\'?t.*match', 'White on white creates elegant minimalist style'),
             (r'blue.*and.*green.*clash', 'Blue and green can create harmonious nature-inspired palettes'),
@@ -358,16 +370,16 @@ class HallucinationDetector:
                 ))
 
         # ==========================================
-        # OCCASION-APPAREL RULES (10 rules - CN + EN)
+        # 3. OCCASION-APPAREL RULES (10 rules)
         # ==========================================
         occasion_rules = [
-            # Chinese rules
+            # Chinese rules (5)
             (r'白[色]?衬衫.*不适合.*正式场合', 'White shirts are classic staples for formal occasions'),
             (r'black.*不.*适合.*面试', 'Black is professional and appropriate for interviews'),
             (r'运动鞋.*不能.*商务', 'Clean sneakers can work in smart-casual business settings'),
             (r'牛[仔仔]裤.*不适合.*办公室', 'Dark well-fitted jeans can be office-appropriate'),
             (r'短[裙裤].*正式.*场合', 'Appropriate length skirts can be suitable for formal events'),
-            # English rules
+            # English rules (5)
             (r'white.*shirt.*not.*formal', 'White shirts are classic staples for formal occasions'),
             (r'black.*not.*suitable.*interview', 'Black is professional and appropriate for interviews'),
             (r'sneakers.*cannot.*business', 'Clean sneakers can work in smart-casual business settings'),
@@ -387,15 +399,15 @@ class HallucinationDetector:
                 ))
 
         # ==========================================
-        # BODY TYPE MYTHS (8 rules - CN + EN)
+        # 4. BODY TYPE MYTHS (8 rules)
         # ==========================================
         body_type_rules = [
-            # Chinese rules
+            # Chinese rules (4)
             (r'[矮短].*不.*穿.*长款', 'Vertical lines from long pieces can elongate petite frames'),
             (r'[胖丰满].*[只能].*穿.*黑[色]?', 'Colors beyond black can flatter all body types'),
             (r'高[个].*不.*穿.*高[跟鞋台]', 'Heels can enhance proportions for tall individuals too'),
             (r'[瘦瘦].*[只能].*穿.*宽松', 'Fitted pieces can add curves to slender frames'),
-            # English rules
+            # English rules (4)
             (r'short.*should.*not.*wear.*long', 'Vertical lines from long pieces can elongate petite frames'),
             (r'plus.*size.*only.*wear.*black', 'Colors beyond black can flatter all body types'),
             (r'tall.*should.*not.*wear.*heels', 'Heels can enhance proportions for tall individuals too'),
@@ -414,7 +426,7 @@ class HallucinationDetector:
                 ))
 
         # ==========================================
-        # FABRICATION DETECTION (4 rules)
+        # 5. FABRICATION DETECTION (4 rules)
         # ==========================================
         fabrication_patterns = [
             (r'(?:品牌|brand)[：:]\s*([A-Za-z\u4e00-\u9fff]{1,20})(?:的|的产品|官方)', 'Brand claim should be verified'),
@@ -435,7 +447,7 @@ class HallucinationDetector:
                 ))
 
         # ==========================================
-        # STYLE COMBINATION WARNINGS (3 rules)
+        # 6. STYLE COMBINATION WARNINGS (3 rules)
         # ==========================================
         style_combo_rules = [
             (r'正式.*[与和].*运动.*绝.*不.*搭', 'Formal-athletic fusion is a valid modern style trend'),
@@ -455,7 +467,7 @@ class HallucinationDetector:
                 ))
 
         # ==========================================
-        # ADDITIONAL HALLUCINATION PATTERNS (12 rules)
+        # 7. OVERGENERALIZATION PATTERNS (12 rules)
         # ==========================================
         additional_rules = [
             (r'永远.*不要.*穿', 'Absolute prohibitions in fashion are often incorrect'),
@@ -484,7 +496,7 @@ class HallucinationDetector:
                 ))
 
         # ==========================================
-        # SIZE AND FIT MYTHS (5 rules)
+        # 8. SIZE AND FIT MYTHS (5 rules)
         # ==========================================
         size_fit_rules = [
             (r'大[一1].*号.*显[瘦小]', 'Oversized fit depends on styling, not guaranteed slimming'),
@@ -506,10 +518,10 @@ class HallucinationDetector:
                 ))
 
         # ==========================================
-        # BRAND AND TREND FABRICATION (4 rules)
+        # 9. BRAND AND TREND FABRICATION (4 rules)
         # ==========================================
         brand_trend_rules = [
-            (r'(?:今年|今年|2024|2025|2026).*流行.*所有', 'Trend universality claims should be verified'),
+            (r'(?:今年|2024|2025|2026).*流行.*所有', 'Trend universality claims should be verified'),
             (r'(?:明星|网红|名人).*都在穿', 'Celebrity trend claims should be verified'),
             (r'(?:必买|必入|必备).*清单', 'Essential item claims are subjective marketing'),
             (r'(?:爆款|网红款).*适合.*所有', 'Viral item universal fit claims are often exaggerated'),
@@ -527,7 +539,7 @@ class HallucinationDetector:
                 ))
 
         # ==========================================
-        # FABRIC CARE MYTHS (6 rules)
+        # 10. FABRIC CARE MYTHS (6 rules)
         # ==========================================
         fabric_care_rules = [
             (r'羊毛.*可以.*机洗', 'Wool generally requires gentle hand wash or dry clean'),
@@ -550,7 +562,7 @@ class HallucinationDetector:
                 ))
 
         # ==========================================
-        # PROPORTION AND FIT MYTHS (5 rules)
+        # 11. PROPORTION AND FIT MYTHS (5 rules)
         # ==========================================
         proportion_rules = [
             (r'矮[个子]?.*不能.*穿.*长款', 'Petite frames can wear long pieces with proper proportions'),
@@ -572,7 +584,7 @@ class HallucinationDetector:
                 ))
 
         # ==========================================
-        # ACCESSORY RULES (4 rules)
+        # 12. ACCESSORY RULES (4 rules)
         # ==========================================
         accessory_rules = [
             (r'正式.*不能.*戴.*手表', 'Appropriate watches are acceptable for formal occasions'),
@@ -590,6 +602,198 @@ class HallucinationDetector:
                     confidence=0.65,
                     suggestion=fact,
                     details={'pattern': pattern, 'category': 'accessory_rule'}
+                ))
+
+        # ==========================================
+        # ★ 新增: 13. AGE-APPROPRIATE STYLING RULES (8 rules)
+        # ==========================================
+        age_styling_rules = [
+            (r'[五5]十.*不能.*穿.*鲜艳', 'Vibrant colors can be worn at any age with confidence'),
+            (r'[六6]十.*只能.*穿.*暗[色色调]', 'Dark colors are not mandatory for mature adults'),
+            (r'年轻.*不能.*穿.*复古', 'Vintage styles are popular across all age groups'),
+            (r'[老年人].*不适合.*时尚', 'Fashion has no age limit; style is timeless'),
+            (r'[三3]十.*必须.*成熟', 'Style maturity is personal, not age-dictated'),
+            (r'青少年.*不能.*穿.*正装', 'Young people can wear formal attire appropriately'),
+            (r'中年.*避免.*潮流', 'Middle-aged individuals can embrace trends selectively'),
+            (r'老年人.*只.*能.*舒适', 'Comfort and style can coexist at any age'),
+        ]
+
+        for pattern, fact in age_styling_rules:
+            if re.search(pattern, text_lower):
+                issues.append(HallucinationIssue(
+                    type=HallucinationType.FACTUAL_ERROR,
+                    severity=RuleSeverity.WARNING,
+                    description='Age-based styling restriction detected',
+                    confidence=0.70,
+                    suggestion=fact,
+                    details={'pattern': pattern, 'category': 'age_styling'}
+                ))
+
+        # ==========================================
+        # ★ 新增: 14. FABRIC PROPERTY RULES (10 rules)
+        # ==========================================
+        fabric_property_rules = [
+            (r'棉.*不.*透气', 'Cotton is highly breathable and moisture-wicking'),
+            (r'丝绸.*粗糙', 'Silk is known for its smooth, soft texture'),
+            (r'亚麻.*不.*吸汗', 'Linen excels at moisture absorption and breathability'),
+            (r'羊毛.*夏天.*凉快', 'Wool is insulating and retains heat, unsuitable for hot weather'),
+            (r'化纤.*比.*棉.*好', 'Natural fibers like cotton offer superior comfort and breathability'),
+            (r'皮革.*透气', 'Leather is not breathable; it insulates and protects'),
+            (r'羽绒.*轻薄', 'Down insulation is bulky by nature for thermal efficiency'),
+            (r'牛仔.*弹性', 'Traditional denim has no stretch unless blended with elastane'),
+            (r'针织.*挺括', 'Knits are inherently stretchy and casual, not structured'),
+            (r'雪纺.*保暖', 'Chiffon is lightweight and sheer, offering minimal warmth'),
+        ]
+
+        for pattern, fact in fabric_property_rules:
+            if re.search(pattern, text_lower):
+                issues.append(HallucinationIssue(
+                    type=HallucinationType.FACTUAL_ERROR,
+                    severity=RuleSeverity.ERROR,
+                    description='Incorrect fabric property claim detected',
+                    confidence=0.85,
+                    suggestion=fact,
+                    details={'pattern': pattern, 'category': 'fabric_property'}
+                ))
+
+        # ==========================================
+        # ★ 新增: 15. SILHOUETTE AND PROPORTION RULES (8 rules)
+        # ==========================================
+        silhouette_rules = [
+            (r'A字.*显.*胖', 'A-line silhouettes are universally flattering and balance proportions'),
+            (r'直筒.*最.*显瘦', 'Straight cuts depend on fabric drape and personal proportions'),
+            (r'蓬蓬裙.*只.*适合.*瘦', 'Full skirts can add balance to various body types'),
+            (r'紧身.*一定.*性感', 'Sexiness comes from confidence, not just tight fits'),
+            (r'Oversized.*邋遢', 'Oversized can be styled intentionally for modern, chic looks'),
+            (r'crop.*top.*暴露', 'Crop tops can be styled modestly with high-waisted bottoms'),
+            (r'高腰裤.*过时', 'High-waisted pants remain a timeless, flattering staple'),
+            (r'阔腿裤.*显矮', 'Wide-leg pants elongate legs when paired with proper footwear'),
+        ]
+
+        for pattern, fact in silhouette_rules:
+            if re.search(pattern, text_lower):
+                issues.append(HallucinationIssue(
+                    type=HallucinationType.FACTUAL_ERROR,
+                    severity=RuleSeverity.WARNING,
+                    description='Silhouette/proportion myth detected',
+                    confidence=0.72,
+                    suggestion=fact,
+                    details={'pattern': pattern, 'category': 'silhouette_myth'}
+                ))
+
+        # ==========================================
+        # ★ 新增: 16. CULTURAL DRESS CODE RULES (6 rules)
+        # ==========================================
+        cultural_rules = [
+            (r'中国.*红.*不.*吉利', 'Red is auspicious and celebratory in Chinese culture'),
+            (r'白色.*婚礼.*西方.*禁忌', 'White wedding dresses are Western tradition, not universal'),
+            (r'和服.*只.*日本', 'Similar traditional garments exist across East Asian cultures'),
+            (r'黑色.*葬礼.*全球', 'Black mourning attire is Western-centric; other cultures use white/purple'),
+            (r'露肤.*不.*尊重', 'Modesty standards vary significantly across cultures'),
+            (r'宗教.*服装.*单一', 'Religious dress codes vary widely within and between faiths'),
+        ]
+
+        for pattern, fact in cultural_rules:
+            if re.search(pattern, text_lower):
+                issues.append(HallucinationIssue(
+                    type=HallucinationType.CONTEXT_MISMATCH,
+                    severity=RuleSeverity.WARNING,
+                    description='Cultural dress code oversimplification detected',
+                    confidence=0.78,
+                    suggestion=fact,
+                    details={'pattern': pattern, 'category': 'cultural_dress_code'}
+                ))
+
+        # ==========================================
+        # ★ 新增: 17. PRICE AND VALUE MYTHS (6 rules)
+        # ==========================================
+        price_value_rules = [
+            (r'贵.*就是.*好', 'Price does not guarantee quality or suitability'),
+            (r'便宜.*没.*好货', 'Affordable options can offer excellent value and quality'),
+            (r'名牌.*质量.*最好', 'Brand reputation varies; luxury items can have quality control issues'),
+            (r'折扣.*肯定.*划算', 'Discounted items may be overpriced or defective'),
+            (r'奢侈品.*保值', 'Most luxury items depreciate rapidly except rare collectibles'),
+            (r'价格高.*适合.*所有', 'Expensive items must still match personal style and context'),
+        ]
+
+        for pattern, fact in price_value_rules:
+            if re.search(pattern, text_lower):
+                issues.append(HallucinationIssue(
+                    type=HallucinationType.LOGICAL_ERROR,
+                    severity=RuleSeverity.INFO,
+                    description='Price-value misconception detected',
+                    confidence=0.65,
+                    suggestion=fact,
+                    details={'pattern': pattern, 'category': 'price_value_myth'}
+                ))
+
+        # ==========================================
+        # ★ 新增: 18. SUSTAINABILITY CLAIMS (6 rules)
+        # ==========================================
+        sustainability_rules = [
+            (r'纯天然.*无污染', 'Even natural materials have environmental footprints'),
+            (r'有机棉.*完美', 'Organic cotton still requires water and land resources'),
+            (r'可降解.*立即消失', 'Biodegradation takes months to years under ideal conditions'),
+            (r'再生材料.*低质量', 'Recycled materials can match virgin quality when processed correctly'),
+            (r'快时尚.*环保', 'Fast fashion inherently conflicts with environmental sustainability'),
+            (r'二手.*不卫生', 'Secondhand clothing can be thoroughly cleaned and sanitized'),
+        ]
+
+        for pattern, fact in sustainability_rules:
+            if re.search(pattern, text_lower):
+                issues.append(HallucinationIssue(
+                    type=HallucinationType.FACTUAL_ERROR,
+                    severity=RuleSeverity.WARNING,
+                    description='Sustainability claim exaggeration detected',
+                    confidence=0.75,
+                    suggestion=fact,
+                    details={'pattern': pattern, 'category': 'sustainability_claim'}
+                ))
+
+        # ==========================================
+        # ★ 新增: 19. WARDROBE ESSENTIALS MYTHS (6 rules)
+        # ==========================================
+        wardrobe_rules = [
+            (r'每个人.*必须.*有.*小黑裙', 'The "little black dress" is a Western fashion construct, not universal'),
+            (r'衣橱.*必须有.*白衬衫', 'Wardrobe essentials are personal and context-dependent'),
+            (r'西装.*必备', 'Not all professions or lifestyles require suits'),
+            (r'牛仔裤.*万能', 'Denim is inappropriate for many formal and cultural contexts'),
+            (r'高跟鞋.*女人味', 'Femininity is not defined by footwear choices'),
+            (r'运动鞋.*不专业', 'Athleisure has normalized sneakers in many professional settings'),
+        ]
+
+        for pattern, fact in wardrobe_rules:
+            if re.search(pattern, text_lower):
+                issues.append(HallucinationIssue(
+                    type=HallucinationType.FACTUAL_ERROR,
+                    severity=RuleSeverity.INFO,
+                    description='Wardrobe essential oversimplification detected',
+                    confidence=0.60,
+                    suggestion=fact,
+                    details={'pattern': pattern, 'category': 'wardrobe_essential_myth'}
+                ))
+
+        # ==========================================
+        # ★ 新增: 20. PATTERN AND PRINT RULES (6 rules)
+        # ==========================================
+        pattern_rules = [
+            (r'波点.*幼稚', 'Polka dots range from playful to sophisticated depending on scale/color'),
+            (r'条纹.*过时', 'Stripes are a timeless classic that never truly goes out of style'),
+            (r'花卉.*只.*春天', 'Floral prints work year-round with appropriate fabrics and colors'),
+            (r'动物纹.*俗气', 'Animal prints can be luxurious when used sparingly as accents'),
+            (r'格子.*死板', 'Plaid patterns offer versatility from preppy to grunge aesthetics'),
+            (r'几何图案.*冷冰冰', 'Geometric patterns can be warm and approachable with right colors'),
+        ]
+
+        for pattern, fact in pattern_rules:
+            if re.search(pattern, text_lower):
+                issues.append(HallucinationIssue(
+                    type=HallucinationType.FACTUAL_ERROR,
+                    severity=RuleSeverity.WARNING,
+                    description='Pattern/print stereotype detected',
+                    confidence=0.68,
+                    suggestion=fact,
+                    details={'pattern': pattern, 'category': 'pattern_stereotype'}
                 ))
 
         return issues

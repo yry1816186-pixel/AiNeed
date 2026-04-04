@@ -18,6 +18,15 @@ interface ExtensionContext {
 }
 
 /**
+ * $allOperations 回调参数类型
+ * Prisma 内部类型的简化版本，允许访问 where 属性
+ */
+interface OperationArgs {
+  where?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+/**
  * Soft Delete Prisma Extension
  *
  * 自动为所有查询添加软删除过滤 (isDeleted: false)
@@ -35,7 +44,7 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
     query: {
       $allModels: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        async $allOperations({ args, query, model }: { args: any; query: (args: any) => Promise<any>; model: string }) {
+        async $allOperations({ args, query, model }: { args: OperationArgs; query: (args: OperationArgs) => Promise<unknown>; model: string }) {
           // 需要软删除的模型列表
           const softDeleteModels = [
             'ClothingItem',
@@ -46,10 +55,10 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
 
           // 如果是软删除模型，自动添加 isDeleted: false 过滤
           if (softDeleteModels.includes(model)) {
-            const currentWhere = args.where || {};
+            const currentWhere = (args.where || {}) as Record<string, unknown>;
 
             // 处理 findFirst, findMany, findUnique, update, delete 等
-            if (!currentWhere.isDeleted) {
+            if (!('isDeleted' in currentWhere)) {
               // 为 where 子句添加软删除过滤
               args.where = {
                 ...currentWhere,
@@ -109,6 +118,9 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
 
 /**
  * 创建带有软删除扩展的 Prisma 客户端
+ *
+ * 注意: $extends 的参数类型在 @prisma/client 中未完整导出，
+ * 使用 any 是当前唯一可行的方案（已知的 Prisma 类型系统限制）
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createSoftDeletePrismaClient<T extends { $extends: (extension: any) => any }>(

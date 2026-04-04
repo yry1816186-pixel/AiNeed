@@ -3,11 +3,11 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   Image,
   ActivityIndicator,
   RefreshControl,
+  FlatList,
   Animated,
   Alert,
   PanResponder,
@@ -228,40 +228,6 @@ export const CartScreenComponent: React.FC = () => {
     );
   }
 
-  if (items.length === 0) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>购物车</Text>
-        </View>
-        <ScrollView
-          style={styles.content}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              colors={[theme.colors.primary]}
-              tintColor={theme.colors.primary}
-            />
-          }
-        >
-          <View style={styles.emptyContainer}>
-            <Ionicons name="cart-outline" size={64} color={theme.colors.textTertiary} />
-            <Text style={styles.emptyText}>购物车是空的</Text>
-            <Text style={styles.emptySubtext}>去发现你喜欢的服装吧</Text>
-            <TouchableOpacity
-              style={styles.emptyButton}
-              onPress={() => navigation.navigate('MainTabs', { screen: 'Explore' } as never)}
-              accessibilityLabel="去逛逛"
-            >
-              <Text style={styles.emptyButtonText}>去逛逛</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -275,8 +241,59 @@ export const CartScreenComponent: React.FC = () => {
         )}
       </View>
 
-      <ScrollView
-        style={styles.content}
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item: cartItem }) => (
+          <CartItemCard
+            item={cartItem}
+            isSelected={selectedIds.has(cartItem.id)}
+            isUpdating={updatingIds.has(cartItem.id)}
+            onToggleSelect={() => toggleSelect(cartItem.id)}
+            onQuantityChange={(qty) => handleQuantityChange(cartItem.id, qty)}
+            onDelete={() => handleDelete(cartItem.id)}
+          />
+        )}
+        ListHeaderComponent={
+          <View style={styles.selectAllRow}>
+            <TouchableOpacity
+              style={styles.checkboxTouchable}
+              onPress={toggleSelectAll}
+              activeOpacity={0.7}
+              accessibilityLabel={allSelected ? '取消全选' : '全选'}
+            >
+              <View
+                style={[
+                  styles.checkbox,
+                  allSelected && styles.checkboxChecked,
+                  someSelected && styles.checkboxIndeterminate,
+                ]}
+              >
+                {allSelected && (
+                  <Ionicons name="checkmark" size={14} color={theme.colors.surface} />
+                )}
+                {someSelected && !allSelected && (
+                  <Ionicons name="remove" size={14} color={theme.colors.surface} />
+                )}
+              </View>
+              <Text style={styles.selectAllText}>全选</Text>
+            </TouchableOpacity>
+          </View>
+        }
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Ionicons name="cart-outline" size={64} color={theme.colors.textTertiary} />
+            <Text style={styles.emptyText}>购物车是空的</Text>
+            <Text style={styles.emptySubtext}>去发现你喜欢的服装吧</Text>
+            <TouchableOpacity
+              style={styles.emptyButton}
+              onPress={() => navigation.navigate('MainTabs', { screen: 'Explore' } as never)}
+              accessibilityLabel="去逛逛"
+            >
+              <Text style={styles.emptyButtonText}>去逛逛</Text>
+            </TouchableOpacity>
+          </View>
+        }
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -285,46 +302,12 @@ export const CartScreenComponent: React.FC = () => {
             tintColor={theme.colors.primary}
           />
         }
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, items.length === 0 && { flex: 1 }]}
         showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.selectAllRow}>
-          <TouchableOpacity
-            style={styles.checkboxTouchable}
-            onPress={toggleSelectAll}
-            activeOpacity={0.7}
-            accessibilityLabel={allSelected ? '取消全选' : '全选'}
-          >
-            <View
-              style={[
-                styles.checkbox,
-                allSelected && styles.checkboxChecked,
-                someSelected && styles.checkboxIndeterminate,
-              ]}
-            >
-              {allSelected && (
-                <Ionicons name="checkmark" size={14} color={theme.colors.surface} />
-              )}
-              {someSelected && !allSelected && (
-                <Ionicons name="remove" size={14} color={theme.colors.surface} />
-              )}
-            </View>
-            <Text style={styles.selectAllText}>全选</Text>
-          </TouchableOpacity>
-        </View>
-
-        {items.map((cartItem) => (
-          <CartItemCard
-            key={cartItem.id}
-            item={cartItem}
-            isSelected={selectedIds.has(cartItem.id)}
-            isUpdating={updatingIds.has(cartItem.id)}
-            onToggleSelect={() => toggleSelect(cartItem.id)}
-            onQuantityChange={(qty) => handleQuantityChange(cartItem.id, qty)}
-            onDelete={() => handleDelete(cartItem.id)}
-          />
-        ))}
-      </ScrollView>
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={8}
+        windowSize={5}
+      />
 
       <View style={styles.footer}>
         <TouchableOpacity

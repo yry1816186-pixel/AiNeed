@@ -9,7 +9,7 @@ export interface EmailOptions {
   html?: string;
   text?: string;
   template?: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   attachments?: Array<{
     filename: string;
     content: Buffer | string;
@@ -498,9 +498,9 @@ export class EmailService implements OnModuleInit {
    */
   private renderTemplate(
     templateName: string,
-    context: Record<string, any>,
+    context: Record<string, unknown>,
   ): string {
-    const templates: Record<string, (ctx: Record<string, any>) => string> = {
+    const templates: Record<string, (ctx: Record<string, unknown>) => string> = {
       welcome: this.welcomeTemplate,
       "password-reset": this.passwordResetTemplate,
       "email-verification": this.emailVerificationTemplate,
@@ -519,7 +519,7 @@ export class EmailService implements OnModuleInit {
     return template.call(this, context);
   }
 
-  private welcomeTemplate(ctx: Record<string, any>): string {
+  private welcomeTemplate(ctx: Record<string, unknown>): string {
     return `
       <!DOCTYPE html>
       <html>

@@ -47,6 +47,7 @@ export const RegisterScreen: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const nicknameInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
@@ -73,8 +74,11 @@ export const RegisterScreen: React.FC = () => {
     if (password !== confirmPassword) {
       return '两次输入的密码不一致';
     }
+    if (!agreedToTerms) {
+      return '请阅读并同意用户服务协议和隐私政策';
+    }
     return null;
-  }, [email, password, confirmPassword]);
+  }, [email, password, confirmPassword, agreedToTerms]);
 
   const handleRegister = useCallback(async () => {
     Keyboard.dismiss();
@@ -230,16 +234,46 @@ export const RegisterScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
 
+            <View style={styles.termsRow}>
+              <TouchableOpacity
+                style={[styles.checkbox, agreedToTerms && styles.checkboxChecked]}
+                onPress={() => setAgreedToTerms((prev) => !prev)}
+                activeOpacity={0.7}
+                disabled={isLoading}
+                accessibilityLabel={agreedToTerms ? '取消同意' : '同意协议'}
+              >
+                {agreedToTerms && (
+                  <Ionicons name="checkmark" size={14} color={theme.colors.surface} />
+                )}
+              </TouchableOpacity>
+              <Text style={styles.termsText}>我已阅读并同意</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('TermsOfService')}
+                disabled={isLoading}
+                hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
+              >
+                <Text style={styles.termsLink}>《用户服务协议》</Text>
+              </TouchableOpacity>
+              <Text style={styles.termsText}>和</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('PrivacyPolicy')}
+                disabled={isLoading}
+                hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
+              >
+                <Text style={styles.termsLink}>《隐私政策》</Text>
+              </TouchableOpacity>
+            </View>
+
             <TouchableOpacity
               style={[
                 styles.registerButton,
-                isLoading && styles.registerButtonDisabled,
+                (isLoading || !agreedToTerms) && styles.registerButtonDisabled,
               ]}
               onPress={handleRegister}
-              disabled={isLoading}
+              disabled={isLoading || !agreedToTerms}
               activeOpacity={0.7}
               accessibilityLabel="注册"
-              accessibilityState={{ disabled: isLoading }}
+              accessibilityState={{ disabled: isLoading || !agreedToTerms }}
             >
               {isLoading ? (
                 <ActivityIndicator size="small" color={theme.colors.surface} />
@@ -300,6 +334,30 @@ const styles = StyleSheet.create({
   },
   registerButtonDisabled: { backgroundColor: theme.colors.primaryLight },
   registerButtonText: { fontSize: 16, fontWeight: '600', color: theme.colors.surface },
+  termsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginTop: 4,
+    marginBottom: 8,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: theme.colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+    backgroundColor: theme.colors.surface,
+  },
+  checkboxChecked: {
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
+  },
+  termsText: { fontSize: 13, color: theme.colors.textSecondary },
+  termsLink: { fontSize: 13, color: theme.colors.primary, fontWeight: '500' },
   loginLink: { alignItems: 'center', marginTop: 16 },
   loginText: { fontSize: 14, color: theme.colors.primary },
 });

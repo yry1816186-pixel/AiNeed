@@ -683,7 +683,7 @@ export const favoriteApi = {
 };
 
 export const searchApi = {
-  async searchClothing(filters: SearchFilters): Promise<ApiResponse<any[]>> {
+  async searchClothing(filters: SearchFilters): Promise<ApiResponse<ClothingItem[]>> {
     return apiClient.post("/search/clothing", filters);
   },
 
