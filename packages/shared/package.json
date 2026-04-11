@@ -1,0 +1,14 @@
+{
+  "name": "@aineed/shared",
+  "version": "1.0.0",
+  "description": "AiNeed 共享类型定义",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

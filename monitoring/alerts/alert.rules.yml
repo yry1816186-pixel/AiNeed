@@ -1,0 +1,400 @@
+# AiNeed Alert Rules
+# Prometheus alerting rules for critical system metrics
+
+groups:
+  # ===================
+  # LLM/AI Service Alerts
+  # ===================
+  - name: llm_alerts
+    rules:
+      # LLM 错误率超过 5%
+      - alert: LLMHighErrorRate
+        expr: |
+          sum(rate(llm_errors_total[5m])) / sum(rate(llm_calls_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          service: ai-service
+        annotations:
+          summary: "LLM 错误率过高"
+          description: "LLM 服务错误率为 {{ $value | humanizePercentage }}，超过 5% 阈值。请检查 AI 服务状态。"
+
+      # LLM 响应时间超过 10 秒
+      - alert: LLMHighLatency
+        expr: |
+          histogram_quantile(0.95, sum(rate(llm_call_duration_seconds_bucket[5m])) by (le)) > 10
+        for: 3m
+        labels:
+          severity: warning
+          service: ai-service
+        annotations:
+          summary: "LLM 响应延迟过高"
+          description: "LLM P95 延迟为 {{ $value | humanizeDuration }}，超过 10 秒阈值。"
+
+      # LLM Token 消耗异常增长
+      - alert: LLMTokenSpike
+        expr: |
+          (sum(rate(llm_tokens_total[1h])) - sum(rate(llm_tokens_total[1h] offset 1h))) / sum(rate(llm_tokens_total[1h] offset 1h)) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: ai-service
+        annotations:
+          summary: "LLM Token 消耗异常增长"
+          description: "Token 消耗相比上一小时增长了 {{ $value | humanizePercentage }}，可能存在异常调用。"
+
+      # AI 服务不可用
+      - alert: AIServiceDown
+        expr: up{job="ai-service"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: ai-service
+        annotations:
+          summary: "AI 服务不可用"
+          description: "AI 服务已停止响应超过 1 分钟，请立即检查。"
+
+      # GPU 内存不足
+      - alert: GPUMemoryWarning
+        expr: |
+          sum(gpu_memory_used_bytes) / sum(gpu_memory_total_bytes) > 0.85
+        for: 2m
+        labels:
+          severity: warning
+          service: ai-service
+        annotations:
+          summary: "GPU 内存使用过高"
+          description: "GPU 内存使用率为 {{ $value | humanizePercentage }}，可能影响推理性能。"
+
+      # GPU 内存严重不足
+      - alert: GPUMemoryCritical
+        expr: |
+          sum(gpu_memory_used_bytes) / sum(gpu_memory_total_bytes) > 0.95
+        for: 1m
+        labels:
+          severity: critical
+          service: ai-service
+        annotations:
+          summary: "GPU 内存严重不足"
+          description: "GPU 内存使用率为 {{ $value | humanizePercentage }}，服务可能即将崩溃。"
+
+  # ===================
+  # API Performance Alerts
+  # ===================
+  - name: api_alerts
+    rules:
+      # API 响应时间超过 2 秒
+      - alert: APIHighLatency
+        expr: |
+          histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 2
+        for: 3m
+        labels:
+          severity: warning
+          service: backend
+        annotations:
+          summary: "API 响应延迟过高"
+          description: "API P95 延迟为 {{ $value | humanizeDuration }}，超过 2 秒阈值。"
+
+      # API 错误率超过 5%
+      - alert: APIHighErrorRate
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "API 5xx 错误率过高"
+          description: "API 5xx 错误率为 {{ $value | humanizePercentage }}，超过 5% 阈值。"
+
+      # 后端服务不可用
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "后端服务不可用"
+          description: "后端服务已停止响应超过 1 分钟，请立即检查。"
+
+      # 请求速率异常下降
+      - alert: RequestRateDrop
+        expr: |
+          (sum(rate(http_requests_total[5m])) - sum(rate(http_requests_total[5m] offset 1h))) / sum(rate(http_requests_total[5m] offset 1h)) < -0.5
+        for: 5m
+        labels:
+          severity: warning
+          service: backend
+        annotations:
+          summary: "请求速率异常下降"
+          description: "请求速率相比一小时前下降了 {{ $value | humanizePercentage }}，可能存在问题。"
+
+  # ===================
+  # Database Alerts
+  # ===================
+  - name: database_alerts
+    rules:
+      # PostgreSQL 连接池耗尽
+      - alert: PostgresConnectionPoolExhausted
+        expr: |
+          pg_stat_activity_count / pg_settings_max_connections > 0.9
+        for: 2m
+        labels:
+          severity: critical
+          service: postgres
+        annotations:
+          summary: "PostgreSQL 连接池即将耗尽"
+          description: "PostgreSQL 连接使用率为 {{ $value | humanizePercentage }}，连接池即将耗尽。"
+
+      # PostgreSQL 复制延迟
+      - alert: PostgresReplicationLag
+        expr: |
+          pg_replication_lag_seconds > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: postgres
+        annotations:
+          summary: "PostgreSQL 复制延迟过高"
+          description: "PostgreSQL 复制延迟为 {{ $value | humanizeDuration }}，可能影响数据一致性。"
+
+      # PostgreSQL 死锁
+      - alert: PostgresDeadlocks
+        expr: |
+          rate(pg_stat_database_deadlocks[5m]) > 0
+        for: 2m
+        labels:
+          severity: warning
+          service: postgres
+        annotations:
+          summary: "PostgreSQL 检测到死锁"
+          description: "PostgreSQL 死锁速率为 {{ $value }}/s，请检查数据库查询。"
+
+      # PostgreSQL 服务不可用
+      - alert: PostgresDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: postgres
+        annotations:
+          summary: "PostgreSQL 服务不可用"
+          description: "PostgreSQL 服务已停止响应超过 1 分钟，请立即检查。"
+
+      # Redis 内存不足
+      - alert: RedisMemoryHigh
+        expr: |
+          redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 2m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis 内存使用过高"
+          description: "Redis 内存使用率为 {{ $value | humanizePercentage }}，可能导致写入失败。"
+
+      # Redis 服务不可用
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis 服务不可用"
+          description: "Redis 服务已停止响应超过 1 分钟，请立即检查。"
+
+      # Qdrant 向量数据库不可用
+      - alert: QdrantDown
+        expr: up{job="qdrant"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: qdrant
+        annotations:
+          summary: "Qdrant 服务不可用"
+          description: "Qdrant 向量数据库已停止响应超过 1 分钟，请立即检查。"
+
+  # ===================
+  # System Resource Alerts
+  # ===================
+  - name: system_alerts
+    rules:
+      # CPU 使用率过高
+      - alert: HighCPUUsage
+        expr: |
+          100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "CPU 使用率过高"
+          description: "CPU 使用率为 {{ $value | humanize }}%，超过 90% 阈值。"
+
+      # CPU 使用率严重过高
+      - alert: CriticalCPUUsage
+        expr: |
+          100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 95
+        for: 3m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "CPU 使用率严重过高"
+          description: "CPU 使用率为 {{ $value | humanize }}%，超过 95% 阈值，服务可能不稳定。"
+
+      # 内存使用率过高
+      - alert: HighMemoryUsage
+        expr: |
+          100 * (1 - ((node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes)) > 90
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "内存使用率过高"
+          description: "内存使用率为 {{ $value | humanize }}%，超过 90% 阈值。"
+
+      # 内存使用率严重过高
+      - alert: CriticalMemoryUsage
+        expr: |
+          100 * (1 - ((node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes)) > 95
+        for: 3m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "内存使用率严重过高"
+          description: "内存使用率为 {{ $value | humanize }}%，超过 95% 阈值，可能触发 OOM。"
+
+      # 磁盘空间不足
+      - alert: DiskSpaceLow
+        expr: |
+          (node_filesystem_avail_bytes{mountpoint="/",fstype!="tmpfs"} / node_filesystem_size_bytes{mountpoint="/",fstype!="tmpfs"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "磁盘空间不足"
+          description: "根分区剩余空间仅为 {{ $value | humanize }}%，请及时清理。"
+
+      # 磁盘空间严重不足
+      - alert: DiskSpaceCritical
+        expr: |
+          (node_filesystem_avail_bytes{mountpoint="/",fstype!="tmpfs"} / node_filesystem_size_bytes{mountpoint="/",fstype!="tmpfs"}) * 100 < 5
+        for: 2m
+        labels:
+          severity: critical
+          service: system
+        annotations:
+          summary: "磁盘空间严重不足"
+          description: "根分区剩余空间仅为 {{ $value | humanize }}%，服务可能无法运行。"
+
+      # 磁盘 I/O 等待过高
+      - alert: HighDiskIOWait
+        expr: |
+          rate(node_cpu_seconds_total{mode="iowait"}[5m]) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "磁盘 I/O 等待过高"
+          description: "磁盘 I/O 等待时间为 {{ $value | humanizeDuration }}，可能影响性能。"
+
+  # ===================
+  # Business Alerts
+  # ===================
+  - name: business_alerts
+    rules:
+      # 虚拟试衣转化率下降
+      - alert: TryOnConversionDrop
+        expr: |
+          (sum(rate(try_on_completed_total[1h])) / sum(rate(try_on_requests_total[1h]))) < 0.5
+        for: 30m
+        labels:
+          severity: warning
+          service: ai-service
+        annotations:
+          summary: "虚拟试衣转化率下降"
+          description: "虚拟试衣完成率仅为 {{ $value | humanizePercentage }}，可能影响用户体验。"
+
+      # 推荐点击率异常低
+      - alert: LowRecommendationCTR
+        expr: |
+          (sum(rate(recommendations_clicked_total[1h])) / sum(rate(recommendations_served_total[1h]))) < 0.01
+        for: 1h
+        labels:
+          severity: warning
+          service: ai-service
+        annotations:
+          summary: "推荐点击率异常低"
+          description: "推荐点击率仅为 {{ $value | humanizePercentage }}，推荐质量可能存在问题。"
+
+      # 订单创建失败率过高
+      - alert: HighOrderFailureRate
+        expr: |
+          sum(rate(orders_failed_total[5m])) / sum(rate(orders_created_total[5m])) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "订单创建失败率过高"
+          description: "订单创建失败率为 {{ $value | humanizePercentage }}，可能影响营收。"
+
+      # 支付失败率过高
+      - alert: HighPaymentFailureRate
+        expr: |
+          sum(rate(payments_failed_total[5m])) / sum(rate(payments_initiated_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "支付失败率过高"
+          description: "支付失败率为 {{ $value | humanizePercentage }}，请检查支付网关状态。"
+
+  # ===================
+  # Container Alerts
+  # ===================
+  - name: container_alerts
+    rules:
+      # 容器频繁重启
+      - alert: ContainerRestartLoop
+        expr: |
+          increase(container_restart_count[1h]) > 3
+        for: 5m
+        labels:
+          severity: warning
+          service: docker
+        annotations:
+          summary: "容器频繁重启"
+          description: "容器 {{ $labels.name }} 在过去 1 小时内重启了 {{ $value }} 次，请检查日志。"
+
+      # 容器 CPU 限制接近
+      - alert: ContainerCPULimit
+        expr: |
+          rate(container_cpu_usage_seconds_total[5m]) / container_spec_cpu_quota * container_spec_cpu_period > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: docker
+        annotations:
+          summary: "容器 CPU 使用接近限制"
+          description: "容器 {{ $labels.name }} CPU 使用率接近限制，可能导致性能下降。"
+
+      # 容器内存限制接近
+      - alert: ContainerMemoryLimit
+        expr: |
+          container_memory_usage_bytes / container_spec_memory_limit_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: docker
+        annotations:
+          summary: "容器内存使用接近限制"
+          description: "容器 {{ $labels.name }} 内存使用率接近限制，可能被 OOM 终止。"

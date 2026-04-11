@@ -1,0 +1,9 @@
+{
+  "modelVersion": "5.0.0",
+  "description": "AiNeed - 智能私人形象定制",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@ohos/hypium": "1.0.27"
+  }
+}

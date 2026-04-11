@@ -1,0 +1,1454 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  phone     String?  @unique // @encrypted: PII - encrypt in Service layer before storage
+  password  String // @encrypted: Hash with bcrypt, never store plain text
+  nickname  String?
+  avatar    String?
+  gender    Gender?
+  birthDate DateTime?
+  isActive  Boolean  @default(true)
+
+  // P1-Data-2: 软删除字段（GDPR/PIPL合规）
+  isDeleted     Boolean   @default(false)
+  deletedAt     DateTime?
+  deletedReason String?
+
+  followerCount  Int @default(0)
+  followingCount Int @default(0)
+  isVerified     Boolean @default(false)
+  bio            String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile     UserProfile?
+  photos      UserPhoto[]
+  tryOns      VirtualTryOn[]
+  favorites   Favorite[]
+  customizations CustomizationRequest[]
+  cartItems   CartItem[]
+  orders      Order[]
+  addresses   UserAddress[]
+  behaviors   UserBehavior[]
+  userClothings UserClothing[]
+  outfits    Outfit[]
+  aiStylistSessions AiStylistSession[]
+  userDecisions UserDecision[]
+  styleProfiles     StyleProfile[]
+  rankingFeedback   RankingFeedback[]
+  styleRecommendations StyleRecommendation[]
+  notifications     Notification[]
+  paymentOrders     PaymentOrder[]
+  userSubscriptions UserSubscription[]
+
+  posts         CommunityPost[]
+  postLikes     PostLike[]
+  postComments  PostComment[]
+  followers     UserFollow[]  @relation("UserFollowers")
+  following     UserFollow[]  @relation("UserFollowing")
+  refreshTokens RefreshToken[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([isActive])
+  @@index([createdAt(sort: Desc)])
+}
+
+enum Gender {
+  male
+  female
+  other
+}
+
+model UserProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bodyType      BodyType?
+  skinTone      SkinTone?
+  faceShape     FaceShape?
+            colorSeason   ColorSeason?
+
+  height    Float?
+  weight    Float?
+  shoulder  Float?
+  bust      Float?
+  waist     Float?
+  hip       Float?
+  inseam    Float?
+
+  stylePreferences Json?
+  colorPreferences  Json?
+
+  priceRangeMin  Float?
+  priceRangeMax  Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([bodyType])
+  @@index([skinTone])
+  @@index([colorSeason])
+}
+
+model UserBehavior {
+  id          String   @id @default(uuid())
+  userId      String
+  itemId      String?
+  type        String
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([userId, type, createdAt])
+  @@index([itemId])
+  @@index([createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+model RankingFeedback {
+  id          String   @id @default(uuid())
+  userId      String
+  itemId      String
+  action      String
+  weight      Decimal  @db.Decimal(5, 4)
+  createdAt   DateTime @default(now())
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item        ClothingItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([itemId])
+  @@index([userId, itemId])
+  @@index([createdAt(sort: Desc)])
+  @@index([userId, action])
+  @@index([itemId, action])
+}
+
+model SystemConfig {
+  key         String   @id
+  value       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StyleProfile {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String
+  occasion    String
+  description String
+  keywords    String[]
+  palette     String[]
+  confidence  Int      @default(70)
+  isDefault   Boolean  @default(false)
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([occasion])
+  @@index([userId, isDefault])
+  @@index([userId, isActive])
+}
+
+enum BodyType {
+  rectangle
+  triangle
+  inverted_triangle
+  hourglass
+  oval
+}
+
+enum SkinTone {
+  fair
+  light
+  medium
+  olive
+  tan
+  dark
+}
+
+enum FaceShape {
+  oval
+  round
+  square
+  heart
+  oblong
+  diamond
+}
+
+enum ColorSeason {
+  spring
+  summer
+  autumn
+  winter
+}
+
+model UserPhoto {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type          PhotoType
+  url           String
+  thumbnailUrl  String?
+  originalName  String?
+  mimeType      String?
+  size          Int?
+  
+  analysisResult    Json?
+  analysisStatus    AnalysisStatus @default(pending)
+  analyzedAt        DateTime?
+  
+  createdAt DateTime @default(now())
+
+  tryOns    VirtualTryOn[]
+
+  @@index([userId])
+  @@index([type])
+  @@index([analysisStatus])
+  @@index([userId, analysisStatus])
+}
+
+enum PhotoType {
+  front
+  side
+  full_body
+  half_body
+  face
+}
+
+enum AnalysisStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
+model Brand {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  logo        String?
+  description String?
+  website     String?
+  categories  String[]
+  priceRange  PriceRange @default(mid_range)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // 商家信息
+  contactEmail   String? // @encrypted: PII - consider encrypting for compliance
+  contactPhone   String? // @encrypted: PII - consider encrypting for compliance
+  businessLicense String?
+  verified        Boolean  @default(false)
+  verifiedAt      DateTime?
+
+  // 结算信息
+  bankName       String?
+  bankAccount    String?
+  commissionRate Decimal @default(0.10) @db.Decimal(5, 4)
+
+  products    ClothingItem[]
+  merchants   BrandMerchant[]
+  settlements BrandSettlement[]
+
+  @@index([slug])
+  @@index([verified])
+}
+
+enum PriceRange {
+  budget
+  mid_range
+  premium
+  luxury
+}
+
+model ClothingItem {
+  id          String   @id @default(uuid())
+  brandId     String?
+  brand       Brand?   @relation(fields: [brandId], references: [id], onDelete: SetNull)
+
+  name        String
+  description String?
+  sku         String?  @unique
+
+  category    ClothingCategory
+  subcategory String?
+
+  colors      String[]
+  sizes       String[]
+  tags        String[]
+
+  price       Decimal  @db.Decimal(10, 2)
+  originalPrice Decimal? @db.Decimal(10, 2)
+  currency    String   @default("CNY")
+
+  // FIX-BL-006: 库存管理字段 (修复时间: 2026-03-19)
+  stock       Int      @default(0)
+  lowStockThreshold Int @default(10)
+
+  images      String[]
+  mainImage   String?
+
+  externalUrl String?
+  externalId  String?
+
+  attributes  Json?
+
+  isActive    Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  isDeleted   Boolean  @default(false)
+  deletedAt   DateTime?
+
+  viewCount   Int      @default(0)
+  likeCount   Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  favorites   Favorite[]
+  tryOns      VirtualTryOn[]
+  salesStats  ProductSalesStats[]
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  postItems   CommunityPostItem[]
+  rankingFeedback RankingFeedback[]
+
+  // 核心业务索引（精简至15个，优化写入性能）
+  // P1-Data-1: 移除冗余索引 [category], [viewCount], [likeCount], [isDeleted]
+  // 保留原则：外键优先 > 复合索引 > 高频单列 > 排序索引
+  @@index([brandId])                                      // 外键：品牌关联查询
+  @@index([category, isActive])                           // 核心：分类列表页（覆盖[category]单列）
+  @@index([price])                                        // 核心：价格范围筛选
+  @@index([createdAt(sort: Desc)])                        // 核心：默认排序
+  @@index([name])                                         // 核心：名称模糊搜索
+  @@index([isActive, isFeatured])                         // 业务：精选商品展示
+  @@index([isActive, createdAt(sort: Desc)])              // 业务：活跃商品时间线
+  @@index([isActive, price])                              // 业务：活跃商品价格排序
+  @@index([isActive, viewCount(sort: Desc)])              // 业务：热门商品排行（覆盖单列viewCount）
+  @@index([isActive, likeCount(sort: Desc)])              // 业务：最受欢迎排行（覆盖单列likeCount）
+  @@index([stock])                                        // 业务：低库存预警
+  @@index([isDeleted, isActive])                          // 合规：软删除过滤（覆盖单列isDeleted）
+}
+
+enum ClothingCategory {
+  tops
+  bottoms
+  dresses
+  outerwear
+  footwear
+  accessories
+  activewear
+  swimwear
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  itemId    String
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item      ClothingItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+
+  @@unique([userId, itemId])
+  @@index([userId])
+  @@index([itemId])
+  @@index([createdAt(sort: Desc)])
+}
+
+model VirtualTryOn {
+  id        String   @id @default(uuid())
+  userId    String
+  photoId   String
+  itemId    String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photo     UserPhoto @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  item      ClothingItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  resultImageUrl String?
+  status        TryOnStatus @default(pending)
+  errorMessage  String?
+
+  createdAt DateTime @default(now())
+  completedAt DateTime?
+
+  @@index([userId])
+  @@index([status])
+  @@index([itemId])
+  @@index([userId, status])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([photoId, status])
+  @@index([userId, photoId])
+  @@index([userId, photoId, itemId, status]) // 优化: 用于 createTryOnRequest 批量查询
+}
+
+enum TryOnStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
+model CustomizationRequest {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type            CustomizationType
+  title           String?
+  description     String  @db.Text
+  referenceImages String[]
+  preferences     Json?
+
+  status      CustomizationStatus @default(draft)
+
+  selectedQuoteId String?
+  quotes      CustomizationQuote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([userId, status])
+  @@index([type])
+  @@index([createdAt(sort: Desc)])
+}
+
+enum CustomizationType {
+  tailored
+  bespoke
+  alteration
+  design
+}
+
+enum CustomizationStatus {
+  draft
+  submitted
+  quoting
+  confirmed
+  in_progress
+  completed
+  cancelled
+}
+
+model CustomizationQuote {
+  id          String   @id @default(uuid())
+  requestId   String
+  request     CustomizationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  providerId     String
+  providerName   String
+  providerLogo   String?
+
+  price          Decimal  @db.Decimal(10, 2)
+  currency       String @default("CNY")
+  estimatedDays  Int
+
+  description    String  @db.Text
+  terms          String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([requestId])
+  @@index([requestId, createdAt(sort: Desc)])
+}
+
+model StyleRecommendation {
+  id        String   @id @default(uuid())
+  userId    String
+
+  type      RecommendationType
+  items     Json
+  reason    String?  @db.Text
+  score     Decimal  @db.Decimal(5, 4)
+
+  isViewed  Boolean  @default(false)
+  isLiked   Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([userId, type])
+  @@index([userId, isViewed])
+  @@index([createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([type, createdAt(sort: Desc)])
+  @@index([userId, type, createdAt(sort: Desc)])
+}
+
+enum RecommendationType {
+  daily
+  occasion
+  seasonal
+  trending
+  business
+}
+
+model SearchHistory {
+  id        String   @id @default(uuid())
+  userId    String?
+  sessionId String?
+
+  query     String
+  filters   Json?
+  results   Int
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([sessionId, createdAt(sort: Desc)])
+  @@index([query])
+  @@index([userId, query])
+}
+
+model AIAnalysisCache {
+  id          String   @id @default(uuid())
+  imageHash   String   @unique
+  analysisType String
+  result      Json
+  confidence  Decimal @db.Decimal(5, 4)
+
+  hitCount    Int      @default(1)
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+
+  @@index([imageHash])
+  @@index([analysisType])
+  @@index([expiresAt])
+  @@index([analysisType, expiresAt])
+}
+
+// ==================== 用户行为追踪系统 ====================
+
+model UserBehaviorEvent {
+  id          String   @id @default(uuid())
+  userId      String?
+  sessionId   String
+  anonymousId String?
+
+  eventType   BehaviorEventType
+  category    String
+  action      String
+
+  targetType  String?
+  targetId    String?
+  metadata    Json?
+
+  source      String?
+  referrer    String?
+  deviceInfo  Json?
+  location    Json?
+
+  duration    Int?
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([eventType, createdAt])
+  @@index([targetType, targetId])
+  @@index([userId, eventType, createdAt(sort: Desc)])
+  @@index([category, action, createdAt(sort: Desc)])
+}
+
+enum BehaviorEventType {
+  page_view
+  item_view
+  search
+  filter
+  click
+  scroll
+  try_on_start
+  try_on_complete
+  favorite
+  unfavorite
+  share
+  add_to_cart
+  remove_from_cart
+  purchase
+  recommendation_view
+  recommendation_click
+  post_create
+  post_like
+  post_comment
+  user_follow
+}
+
+model UserPreferenceWeight {
+  id          String   @id @default(uuid())
+  userId      String
+
+  category    String
+  key         String
+  weight      Decimal @db.Decimal(5, 4)
+  source      String
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, category, key])
+  @@index([userId])
+}
+
+model UserSession {
+  id            String   @id @default(uuid())
+  userId        String?
+  anonymousId   String?
+
+  deviceType    String?
+  os            String?
+  browser       String?
+  screenWidth   Int?
+
+  referrer      String?
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+
+  startedAt     DateTime @default(now())
+  endedAt       DateTime?
+  duration      Int?
+  pageViews     Int      @default(0)
+
+  @@index([userId])
+  @@index([anonymousId])
+}
+
+model AiStylistSession {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  payload   Json
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, updatedAt])
+  @@index([expiresAt])
+}
+
+model UserDecision {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId       String
+  nodeId          String
+  nodeType        String
+  chosenOptionId  String
+  rejectedOptionIds String[]
+  decisionTime    Int
+  timestamp       DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId, sessionId])
+  @@index([sessionId, nodeId])
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+// ==================== 会员订阅系统 ====================
+
+model MembershipPlan {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  displayName String
+  price       Decimal  @db.Decimal(10, 2)
+  currency    String   @default("CNY")
+
+  features    Json
+
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subscriptions UserSubscription[]
+
+  @@index([isActive, sortOrder])
+  @@index([isActive, price])
+}
+
+model UserSubscription {
+  id          String   @id @default(uuid())
+  userId      String
+  planId      String
+
+  status      SubscriptionStatus @default(active)
+
+  startedAt   DateTime
+  expiresAt   DateTime
+  cancelledAt DateTime?
+
+  paymentMethod String?
+  autoRenew     Boolean @default(true)
+
+  usageThisMonth Json @default("{}")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan        MembershipPlan @relation(fields: [planId], references: [id])
+  paymentOrders PaymentOrder[]
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([userId, status])
+  @@index([status, expiresAt])
+  @@index([userId, expiresAt])
+}
+
+enum SubscriptionStatus {
+  active
+  expired
+  cancelled
+  past_due
+}
+
+model PaymentOrder {
+  id            String   @id @default(uuid())
+  userId        String
+  subscriptionId String?
+
+  amount        Decimal  @db.Decimal(10, 2)
+  currency      String   @default("CNY")
+
+  status        PaymentStatus @default(pending)
+
+  paymentMethod String?
+  paymentId     String?
+
+  metadata      Json?
+
+  paidAt        DateTime?
+  refundedAt    DateTime?
+  createdAt     DateTime @default(now())
+
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription  UserSubscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([status])
+  @@index([paymentId])
+  @@index([userId, status])
+  @@index([status, createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+enum PaymentStatus {
+  pending
+  paid
+  failed
+  refunded
+  cancelled
+}
+
+// ==================== 通知系统 ====================
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+
+  type        NotificationType
+  title       String
+  content     String   @db.Text
+  data        Json?
+
+  targetType  String?
+  targetId    String?
+
+  isRead      Boolean  @default(false)
+  readAt      DateTime?
+
+  isPushed    Boolean  @default(false)
+  pushedAt    DateTime?
+
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, isRead])
+  @@index([createdAt(sort: Desc)])
+  @@index([type])
+}
+
+enum NotificationType {
+  subscription_activated
+  subscription_expiring
+  renewal_failed
+  try_on_completed
+  try_on_failed
+  daily_recommendation
+  price_drop
+  new_follower
+  comment
+  like
+  system_update
+  privacy_reminder
+}
+
+model UserNotificationSetting {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+
+  email     Json
+  push      Json
+  inApp     Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ==================== 数据合规 ====================
+
+model UserConsent {
+  id          String   @id @default(uuid())
+  userId      String
+
+  consentType String
+  granted     Boolean
+  grantedAt   DateTime?
+  revokedAt   DateTime?
+
+  version     String
+  ipAddress   String?
+  userAgent   String?
+
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, consentType])
+  @@index([userId])
+}
+
+model DataExportRequest {
+  id          String   @id @default(uuid())
+  userId      String
+
+  status      ExportStatus @default(pending)
+  format      String       @default("json")
+
+  downloadUrl String?
+  expiresAt   DateTime?
+
+  requestedAt DateTime @default(now())
+  completedAt DateTime?
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum ExportStatus {
+  pending
+  processing
+  completed
+  expired
+}
+
+model DataDeletionRequest {
+  id          String   @id @default(uuid())
+  userId      String
+
+  status      DeletionStatus @default(pending)
+
+  reason      String?
+
+  requestedAt DateTime @default(now())
+  processedAt DateTime?
+  completedAt DateTime?
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum DeletionStatus {
+  pending
+  processing
+  completed
+  cancelled
+}
+
+// ==================== 商家系统 ====================
+
+model BrandMerchant {
+  id          String   @id @default(uuid())
+  brandId     String
+  // P1-Data-3: 添加显式onDelete策略 - 品牌删除时级联删除商家账号
+  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  email       String   @unique
+  password    String // @encrypted: Hash with bcrypt, never store plain text
+  name        String
+  role        MerchantRole @default(admin)
+
+  isActive    Boolean  @default(true)
+  lastLoginAt DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([brandId])
+  @@index([email])
+  @@index([brandId, isActive])
+}
+
+enum MerchantRole {
+  admin
+  editor
+  viewer
+}
+
+model BrandSettlement {
+  id          String   @id @default(uuid())
+  brandId     String
+  // P1-Data-3: 添加显式onDelete策略 - 阻止删除有结算记录的品牌（财务合规）
+  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: Restrict)
+
+  period      String
+
+  totalSales      Decimal  @db.Decimal(12, 2)
+  commission      Decimal  @db.Decimal(10, 2)
+  netAmount       Decimal  @db.Decimal(12, 2)
+
+  status      SettlementStatus @default(pending)
+
+  paidAt      DateTime?
+
+  createdAt   DateTime @default(now())
+
+  @@unique([brandId, period])
+  @@index([brandId])
+  @@index([status])
+  @@index([status, createdAt(sort: Desc)])
+}
+
+enum SettlementStatus {
+  pending
+  processing
+  paid
+}
+
+model ProductSalesStats {
+  id          String   @id @default(uuid())
+  itemId      String
+  item        ClothingItem @relation(fields: [itemId], references: [id])
+
+  date        DateTime @db.Date
+
+  views       Int      @default(0)
+  clicks      Int      @default(0)
+  tryOns      Int      @default(0)
+  favorites   Int      @default(0)
+  addToCart   Int      @default(0)
+  purchases   Int      @default(0)
+  revenue     Decimal  @db.Decimal(12, 2) @default(0)
+
+  @@unique([itemId, date])
+  @@index([date])
+  @@index([date, purchases(sort: Desc)])
+  @@index([date, revenue(sort: Desc)])
+}
+
+// ==================== 支付系统 ====================
+
+model PaymentRecord {
+  id              String    @id @default(uuid())
+  orderId         String    @unique
+  userId          String
+
+  provider        String    // alipay, wechat
+  amount          Decimal   @db.Decimal(10, 2)
+  currency        String    @default("CNY")
+
+  status          PaymentRecordStatus @default(pending)
+
+  tradeNo         String?   @unique // 第三方交易号
+  qrCode          String?   // 二维码链接
+
+  paidAt          DateTime?
+  expiredAt       DateTime?
+  refundedAt      DateTime?
+  cancelledAt     DateTime?
+
+  failedReason    String?
+  notifyData      Json?
+
+  metadata        Json?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  refunds         RefundRecord[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([provider])
+  @@index([createdAt])
+  @@index([userId, status])
+  @@index([status, createdAt])
+}
+
+enum PaymentRecordStatus {
+  pending
+  paid
+  failed
+  refunded
+  cancelled
+  closed
+}
+
+model RefundRecord {
+  id              String    @id @default(uuid())
+  paymentRecordId String
+
+  amount          Decimal   @db.Decimal(10, 2)
+  reason          String?
+
+  status          RefundRecordStatus @default(processing)
+  refundNo        String?   @unique // 第三方退款号
+
+  failedReason    String?
+  refundedAt      DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  paymentRecord   PaymentRecord @relation(fields: [paymentRecordId], references: [id])
+
+  @@index([paymentRecordId])
+  @@index([status])
+}
+
+enum RefundRecordStatus {
+  processing
+  success
+  failed
+}
+
+// ==================== 购物车系统 ====================
+
+model CartItem {
+  id        String   @id @default(uuid())
+  userId    String
+  itemId    String
+  
+  color     String
+  size      String
+  quantity  Int      @default(1)
+  selected  Boolean  @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item      ClothingItem  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, itemId, color, size])
+  @@index([userId])
+  @@index([itemId])
+}
+
+// ==================== 订单系统 ====================
+
+model Order {
+  id            String   @id @default(uuid())
+  orderNo       String   @unique
+  userId        String
+
+  status        OrderStatus @default(pending)
+
+  totalAmount   Decimal  @db.Decimal(10, 2)
+  shippingFee   Decimal  @db.Decimal(10, 2) @default(0)
+  discountAmount Decimal @db.Decimal(10, 2) @default(0)
+  finalAmount   Decimal  @db.Decimal(10, 2)
+
+  paymentMethod String?
+  paymentTime   DateTime?
+  paidAt        DateTime?
+
+  shipTime      DateTime?
+  receiveTime   DateTime?
+
+  expressCompany String?
+  expressNo     String?
+
+  remark        String?  @db.Text
+
+  isDeleted     Boolean  @default(false)
+  deletedAt     DateTime?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items         OrderItem[]
+  address       OrderAddress?
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([userId, status])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status, createdAt])
+  @@index([isDeleted])
+  @@index([userId, isDeleted])
+}
+
+enum OrderStatus {
+  pending
+  paid
+  processing
+  shipped
+  delivered
+  cancelled
+  refunded
+}
+
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  itemId      String
+  
+  itemName    String
+  itemImage   String
+  color       String
+  size        String
+  quantity    Int
+  price       Decimal  @db.Decimal(10, 2)
+  
+  createdAt   DateTime @default(now())
+  
+  order       Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  item        ClothingItem @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  
+  @@index([orderId])
+  @@index([itemId])
+}
+
+model OrderAddress {
+  id          String   @id @default(uuid())
+  orderId     String   @unique
+
+  name        String
+  phone       String // @encrypted: PII - consider encrypting for compliance
+  province    String
+  city        String
+  district    String
+  address     String // @encrypted: PII - consider encrypting for compliance
+
+  createdAt   DateTime @default(now())
+
+  order       Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+// ==================== 用户地址 ====================
+
+model UserAddress {
+  id          String   @id @default(uuid())
+  userId      String
+
+  name        String
+  phone       String // @encrypted: PII - consider encrypting for compliance
+  province    String
+  city        String
+  district    String
+  address     String // @encrypted: PII - consider encrypting for compliance
+
+  isDefault   Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, isDefault])
+}
+
+// ==================== 用户衣橱系统 ====================
+
+model UserClothing {
+  id          String   @id @default(uuid())
+  userId      String
+
+  imageUri    String
+  thumbnailUri String?
+
+  category    String
+  subcategory String?
+  name        String?
+  brand       String?
+
+  colors      String[]
+  style       String[]
+  seasons     String[]
+  occasions   String[]
+  tags        String[]
+
+  wearCount   Int      @default(0)
+  lastWorn    DateTime?
+  isFavorite  Boolean  @default(false)
+
+  notes       String?  @db.Text
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfitItems OutfitItem[]
+
+  @@index([userId])
+  @@index([category])
+  @@index([isFavorite])
+  @@index([userId, category])
+  @@index([userId, isFavorite])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([lastWorn(sort: Desc)])
+}
+
+model Outfit {
+  id          String   @id @default(uuid())
+  userId      String
+
+  name        String?
+  description String?  @db.Text
+
+  coverImage  String?
+
+  occasions   String[]
+  seasons     String[]
+  style       String?
+
+  wearCount   Int      @default(0)
+  lastWorn    DateTime?
+  isFavorite  Boolean  @default(false)
+
+  rating      Decimal? @db.Decimal(2, 1)
+  notes       String?  @db.Text
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       OutfitItem[]
+
+  @@index([userId])
+  @@index([isFavorite])
+  @@index([userId, isFavorite])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([rating(sort: Desc)])
+}
+
+model OutfitItem {
+  id          String   @id @default(uuid())
+  outfitId    String
+  clothingId  String
+  
+  positionX   Float    @default(0.5)
+  positionY   Float    @default(0.5)
+  width       Float    @default(0.3)
+  height      Float    @default(0.3)
+  rotation    Float    @default(0)
+  zIndex      Int      @default(0)
+  
+  notes       String?
+  
+  createdAt   DateTime @default(now())
+  
+  outfit      Outfit       @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  clothing    UserClothing @relation(fields: [clothingId], references: [id], onDelete: Cascade)
+  
+  @@index([outfitId])
+  @@index([clothingId])
+}
+
+model CommunityPost {
+  id          String   @id @default(uuid())
+  authorId    String
+  title       String
+  content     String   @db.Text
+  images      String[]
+  tags        String[]
+  category    String   @default("outfit_share")
+
+  viewCount   Int      @default(0)
+  likeCount   Int      @default(0)
+  commentCount Int     @default(0)
+  shareCount  Int      @default(0)
+
+  isFeatured  Boolean  @default(false)
+  isDeleted   Boolean  @default(false)
+  deletedAt   DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes       PostLike[]
+  comments    PostComment[]
+  relatedItems CommunityPostItem[]
+
+  @@index([authorId])
+  @@index([category])
+  @@index([createdAt])
+  @@index([isDeleted])
+  @@index([authorId, isDeleted])
+  @@index([category, isDeleted])
+  @@index([isFeatured, isDeleted])
+  @@index([likeCount(sort: Desc)])
+  @@index([viewCount(sort: Desc)])
+  @@index([createdAt(sort: Desc), isDeleted])
+  // P1-Data-4: 拆分4列宽索引为3个窄索引（优化写入性能+提升查询灵活性）
+  // 原: [isDeleted, isFeatured, likeCount, createdAt] → 维护成本高且不够灵活
+  // 新: 按业务场景拆分
+  @@index([isDeleted, likeCount(sort: Desc)])           // 场景1: 热门帖子排行
+  @@index([isFeatured, isDeleted, createdAt(sort: Desc)]) // 场景2: 精选帖子时间线
+}
+
+model CommunityPostItem {
+  id        String   @id @default(uuid())
+  postId    String
+  itemId    String
+  createdAt DateTime @default(now())
+  
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  item      ClothingItem  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  @@unique([postId, itemId])
+  @@index([postId])
+  @@index([itemId])
+}
+
+model PostLike {
+  id        String   @id @default(uuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      CommunityPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, postId])
+  @@index([userId])
+  @@index([postId])
+}
+
+model PostComment {
+  id        String   @id @default(uuid())
+  authorId  String
+  postId    String
+  parentId  String?
+  content   String   @db.Text
+  images    String[]
+  
+  likeCount Int      @default(0)
+  isDeleted Boolean  @default(false)
+  deletedAt DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  author    User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post      CommunityPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent    PostComment?   @relation("CommentReplies", fields: [parentId], references: [id], onDelete: SetNull)
+  replies   PostComment[]  @relation("CommentReplies")
+  
+  @@index([authorId])
+  @@index([postId])
+  @@index([parentId])
+  @@index([postId, createdAt(sort: Desc)])
+  @@index([postId, isDeleted])
+}
+
+model UserFollow {
+  id           String   @id @default(uuid())
+  followerId   String
+  followingId  String
+  createdAt    DateTime @default(now())
+
+  follower     User  @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following    User  @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+// ==================== Refresh Token ====================
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+}
+
+// ==================== 审计日志 ====================
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?
+
+  action      String
+  entityType  String
+  entityId    String
+
+  oldValues   Json?
+  newValues   Json?
+
+  ipAddress   String?
+  userAgent   String?
+
+  metadata    Json?
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([entityType, createdAt(sort: Desc)])
+  @@index([action, createdAt(sort: Desc)])
+  @@index([action, entityType, createdAt(sort: Desc)])
+}
+

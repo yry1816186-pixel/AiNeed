@@ -1,0 +1,44 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "AiNeed intelligent personal styling assistant"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "AiNeed entry ability"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "AiNeed"
+    },
+    {
+      "name": "home_tab",
+      "value": "Home"
+    },
+    {
+      "name": "wardrobe_tab",
+      "value": "Wardrobe"
+    },
+    {
+      "name": "ai_stylist_tab",
+      "value": "AI Stylist"
+    },
+    {
+      "name": "tryon_tab",
+      "value": "Try On"
+    },
+    {
+      "name": "profile_tab",
+      "value": "Profile"
+    },
+    {
+      "name": "camera_permission_reason",
+      "value": "Camera access is required to capture outfit and body analysis photos."
+    },
+    {
+      "name": "media_permission_reason",
+      "value": "Media access is required to upload and save wardrobe and try-on images."
+    }
+  ]
+}

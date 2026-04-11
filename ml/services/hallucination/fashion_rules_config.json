@@ -1,0 +1,290 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-03-13",
+  
+  "color_mappings": {
+    "红色": "red",
+    "蓝色": "blue",
+    "绿色": "green",
+    "黄色": "yellow",
+    "橙色": "orange",
+    "紫色": "purple",
+    "粉色": "pink",
+    "黑色": "black",
+    "白色": "white",
+    "灰色": "gray",
+    "棕色": "brown",
+    "米色": "beige",
+    "藏青": "navy",
+    "酒红": "burgundy",
+    "墨绿": "dark_green",
+    "卡其": "khaki",
+    "驼色": "camel",
+    "军绿": "army_green",
+    "藏蓝": "navy",
+    "深蓝": "dark_blue",
+    "浅蓝": "light_blue",
+    "深灰": "dark_gray",
+    "浅灰": "light_gray",
+    "杏色": "apricot",
+    "薄荷绿": "mint",
+    "珊瑚色": "coral",
+    "芥末黄": "mustard",
+    "铁锈红": "rust",
+    "奶油色": "cream",
+    "象牙白": "ivory",
+    "炭灰": "charcoal",
+    "天蓝": "sky_blue",
+    "宝蓝": "royal_blue",
+    "靛蓝": "indigo",
+    "橄榄绿": "olive",
+    "森林绿": "forest_green",
+    "薰衣草紫": "lavender",
+    "玫瑰粉": "rose",
+    "裸色": "nude",
+    "巧克力色": "chocolate",
+    "咖啡色": "coffee"
+  },
+
+  "color_harmony_rules": {
+    "complementary": {
+      "red": ["green"],
+      "blue": ["orange"],
+      "yellow": ["purple"],
+      "orange": ["blue"],
+      "green": ["red"],
+      "purple": ["yellow"]
+    },
+    "analogous": {
+      "red": ["orange", "purple"],
+      "orange": ["red", "yellow"],
+      "yellow": ["orange", "green"],
+      "green": ["yellow", "blue"],
+      "blue": ["green", "purple"],
+      "purple": ["blue", "red"]
+    }
+  },
+
+  "clashing_colors": [
+    ["red", "pink"],
+    ["orange", "red", "pink"],
+    ["neon_green", "hot_pink"]
+  ],
+
+  "occasion_rules": {
+    "business": {
+      "formality_level": "business",
+      "required_items": ["dress_shirt", "dress_pants", "closed_toe_shoes"],
+      "forbidden_items": ["shorts", "flip_flops", "tank_tops", "ripped_jeans"],
+      "recommended_fabrics": ["wool", "cotton", "silk", "linen"],
+      "avoid_fabrics": ["denim", "jersey", "velvet"],
+      "color_guidelines": {
+        "recommended": ["navy", "black", "gray", "white", "beige", "burgundy"],
+        "avoid": ["neon", "bright_orange", "hot_pink"]
+      }
+    },
+    "casual": {
+      "formality_level": "casual",
+      "required_items": [],
+      "forbidden_items": [],
+      "recommended_fabrics": ["cotton", "denim", "jersey", "linen"],
+      "avoid_fabrics": [],
+      "color_guidelines": {
+        "recommended": ["any"],
+        "avoid": []
+      }
+    },
+    "formal": {
+      "formality_level": "formal",
+      "required_items": ["dress_shirt", "dress_pants_or_skirt", "dress_shoes"],
+      "forbidden_items": ["jeans", "sneakers", "t_shirts", "shorts"],
+      "recommended_fabrics": ["silk", "satin", "velvet", "fine_wool"],
+      "avoid_fabrics": ["denim", "cotton_jersey", "polyester"],
+      "color_guidelines": {
+        "recommended": ["black", "navy", "burgundy", "emerald", "gold"],
+        "avoid": ["neon", "loud_patterns"]
+      }
+    },
+    "date": {
+      "formality_level": "smart_casual",
+      "required_items": [],
+      "forbidden_items": ["stained_clothes", "wrinkled_clothes"],
+      "recommended_fabrics": ["cotton", "silk", "cashmere", "linen"],
+      "avoid_fabrics": ["polyester"],
+      "color_guidelines": {
+        "recommended": ["red", "burgundy", "navy", "black", "soft_pinks"],
+        "avoid": ["neon_green", "bright_orange"]
+      }
+    },
+    "interview": {
+      "formality_level": "business",
+      "required_items": ["professional_top", "professional_bottom"],
+      "forbidden_items": ["jeans", "sneakers", "revealing_clothes", "wrinkled_clothes"],
+      "recommended_fabrics": ["wool", "cotton", "blend"],
+      "avoid_fabrics": ["leather", "denim", "shiny_materials"],
+      "color_guidelines": {
+        "recommended": ["navy", "black", "gray", "white", "light_blue"],
+        "avoid": ["red", "neon", "bright_colors", "busy_patterns"]
+      }
+    },
+    "party": {
+      "formality_level": "smart_casual",
+      "required_items": [],
+      "forbidden_items": [],
+      "recommended_fabrics": ["silk", "satin", "velvet", "sequin"],
+      "avoid_fabrics": [],
+      "color_guidelines": {
+        "recommended": ["any"],
+        "avoid": []
+      }
+    },
+    "wedding_guest": {
+      "formality_level": "formal",
+      "required_items": [],
+      "forbidden_items": ["white", "overly_casual", "jeans", "sneakers"],
+      "recommended_fabrics": ["chiffon", "silk", "lace", "fine_wool"],
+      "avoid_fabrics": ["denim", "cotton_jersey"],
+      "color_guidelines": {
+        "recommended": ["pastels", "jewel_tones", "florals"],
+        "avoid": ["white", "cream", "black_for_day_weddings"]
+      }
+    },
+    "workout": {
+      "formality_level": "casual",
+      "required_items": ["athletic_shoes"],
+      "forbidden_items": ["jeans", "dress_shoes", "jewelry"],
+      "recommended_fabrics": ["moisture_wicking", "spandex", "nylon", "polyester"],
+      "avoid_fabrics": ["cotton", "denim", "wool"],
+      "color_guidelines": {
+        "recommended": ["any"],
+        "avoid": []
+      }
+    },
+    "beach": {
+      "formality_level": "casual",
+      "required_items": [],
+      "forbidden_items": ["formal_wear", "high_heels"],
+      "recommended_fabrics": ["cotton", "linen", "swimwear_materials"],
+      "avoid_fabrics": ["wool", "leather", "silk"],
+      "color_guidelines": {
+        "recommended": ["bright", "pastels", "white", "navy"],
+        "avoid": ["dark_heavy_colors"]
+      }
+    }
+  },
+
+  "season_rules": {
+    "spring": {
+      "temperature_range": [10, 22],
+      "recommended_materials": ["cotton", "linen", "light_wool", "chambray"],
+      "avoid_materials": ["heavy_wool", "fur", "thick_fleece"],
+      "color_palettes": ["pastels", "florals", "light_neutrals", "soft_colors"],
+      "essential_items": ["light_jacket", "cardigan", "light_scarf"],
+      "avoid_items": ["heavy_coats", "thick_sweaters", "fur_boots"]
+    },
+    "summer": {
+      "temperature_range": [25, 40],
+      "recommended_materials": ["cotton", "linen", "rayon", "silk", "bamboo"],
+      "avoid_materials": ["wool", "polyester", "fleece", "leather"],
+      "color_palettes": ["whites", "pastels", "bright_colors", "nudes"],
+      "essential_items": ["breathable_top", "shorts_or_skirt", "sandals"],
+      "avoid_items": ["heavy_fabrics", "dark_colors", "boots", "sweaters"]
+    },
+    "autumn": {
+      "temperature_range": [8, 20],
+      "recommended_materials": ["wool", "cotton", "corduroy", "tweed", "cashmere"],
+      "avoid_materials": ["sheer_fabrics", "linen"],
+      "color_palettes": ["earth_tones", "burgundy", "mustard", "olive", "brown"],
+      "essential_items": ["light_coat", "sweater", "boots", "scarf"],
+      "avoid_items": ["flip_flops", "shorts", "tank_tops"]
+    },
+    "winter": {
+      "temperature_range": [-10, 10],
+      "recommended_materials": ["wool", "cashmere", "down", "fleece", "leather"],
+      "avoid_materials": ["linen", "cotton", "sheer_fabrics"],
+      "color_palettes": ["dark_colors", "jewel_tones", "neutrals", "black"],
+      "essential_items": ["heavy_coat", "sweater", "boots", "gloves", "scarf", "hat"],
+      "avoid_items": ["sandals", "shorts", "light_dresses", "linen"]
+    }
+  },
+
+  "body_type_rules": {
+    "hourglass": {
+      "characteristics": ["balanced_bust_hips", "defined_waist"],
+      "styling_goals": ["highlight_waist", "maintain_proportions"],
+      "recommended_silhouettes": ["fitted", "wrap_dresses", "belted_styles", "peplum"],
+      "avoid_silhouettes": ["boxy", "shapeless", "oversized"],
+      "focal_points": ["waist"]
+    },
+    "pear": {
+      "characteristics": ["narrower_shoulders", "wider_hips", "defined_waist"],
+      "styling_goals": ["balance_upper_body", "elongate_legs"],
+      "recommended_silhouettes": ["a_line", "fit_and_flare", "boat_neck", "off_shoulder"],
+      "avoid_silhouettes": ["tight_bottoms", "hip_details", "clam_diggers"],
+      "focal_points": ["upper_body", "waist"]
+    },
+    "apple": {
+      "characteristics": ["fuller_midsection", "slimmer_legs", "broad_shoulders"],
+      "styling_goals": ["elongate_torso", "show_legs"],
+      "recommended_silhouettes": ["empire_waist", "v_neck", "wrap_styles", "flowy"],
+      "avoid_silhouettes": ["tight_waist", "crop_tops", "clinging_fabrics"],
+      "focal_points": ["legs", "decolletage"]
+    },
+    "rectangle": {
+      "characteristics": ["similar_measurements", "less_defined_waist"],
+      "styling_goals": ["create_curves", "define_waist"],
+      "recommended_silhouettes": ["peplum", "ruched", "layered", "belted"],
+      "avoid_silhouettes": ["shapeless", "straight_cut"],
+      "focal_points": ["waist", "creating_volume"]
+    },
+    "inverted_triangle": {
+      "characteristics": ["broad_shoulders", "narrower_hips"],
+      "styling_goals": ["balance_lower_body", "soften_shoulders"],
+      "recommended_silhouettes": ["wide_leg", "a_line", "v_neck", "scoop_neck"],
+      "avoid_silhouettes": ["shoulder_pads", "boat_neck", "tight_top_loose_bottom"],
+      "focal_points": ["lower_body", "vertical_lines"]
+    }
+  },
+
+  "item_mappings": {
+    "衬衫": "dress_shirt",
+    "T恤": "t_shirt",
+    "毛衣": "sweater",
+    "外套": "jacket",
+    "西装": "blazer",
+    "卫衣": "hoodie",
+    "针织衫": "knit_top",
+    "雪纺衫": "chiffon_top",
+    "背心": "tank_top",
+    "吊带": "camisole",
+    "牛仔裤": "jeans",
+    "西裤": "dress_pants",
+    "休闲裤": "casual_pants",
+    "短裤": "shorts",
+    "短裙": "skirt",
+    "长裙": "long_skirt",
+    "连衣裙": "dress",
+    "阔腿裤": "wide_leg_pants",
+    "运动鞋": "sneakers",
+    "高跟鞋": "high_heels",
+    "平底鞋": "flats",
+    "靴子": "boots",
+    "凉鞋": "sandals",
+    "拖鞋": "flip_flops",
+    "围巾": "scarf",
+    "帽子": "hat",
+    "手套": "gloves",
+    "腰带": "belt",
+    "手表": "watch",
+    "项链": "necklace"
+  },
+
+  "validation_settings": {
+    "max_colors": 4,
+    "severity_levels": {
+      "error": "Major violation, likely hallucination",
+      "warning": "Minor violation, needs review",
+      "info": "Style suggestion, not a violation"
+    }
+  }
+}

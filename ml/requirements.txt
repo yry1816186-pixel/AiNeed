@@ -1,0 +1,78 @@
+# Core dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+Pillow>=9.5.0
+opencv-python>=4.8.0
+
+# ML Models
+transformers>=4.30.0
+ultralytics>=8.0.0
+mediapipe>=0.10.0
+
+# Diffusion Models (IDM-VTON)
+diffusers>=0.24.0
+accelerate>=0.24.0
+safetensors>=0.4.0
+xformers>=0.0.22
+
+# Clustering
+scikit-learn>=1.3.0
+
+# Web Framework
+fastapi>=0.100.0
+uvicorn>=0.23.0
+python-multipart>=0.0.6
+pydantic>=2.0.0
+
+# Utilities
+aiofiles>=23.0.0
+python-dotenv>=1.0.0
+
+# Model Download
+huggingface-hub>=0.17.0
+
+# Performance
+onnxruntime>=1.16.0
+onnxruntime-gpu>=1.16.0
+
+# Monitoring
+prometheus-client>=0.18.0
+
+# ============ RAG System Dependencies (2026 Standard) ============
+
+# Vector Database
+qdrant-client>=1.7.0
+
+# Chinese NLP for BM25
+jieba>=0.42.0
+
+# Sentence Transformers for embeddings and reranking
+sentence-transformers>=2.2.0
+
+# BGE Reranker support
+FlagEmbedding>=1.2.0
+
+# RAGAS Evaluation (optional - for production evaluation)
+# ragas>=0.1.0  # Uncomment if using RAGAS library
+
+# Async HTTP for external APIs
+httpx>=0.25.0
+aiohttp>=3.9.0
+
+# Progress bars
+tqdm>=4.66.0
+
+# Data validation
+pydantic-settings>=2.0.0
+
+# System monitoring for health checks
+psutil>=5.9.0
+
+# ============ Async Task Queue Dependencies ============
+
+# Redis async client for task queue
+redis[hiredis]>=5.0.0
+
+# Async task queue (alternative to BullMQ for Python)
+# arq>=0.25.0  # Uncomment if using arq for more complex workflows

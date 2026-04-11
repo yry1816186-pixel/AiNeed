@@ -1,0 +1,299 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type of tests to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - unit
+          - integration
+          - e2e
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '8'
+
+jobs:
+  # ==================== Unit Tests - Backend ====================
+  unit-backend:
+    name: Unit Tests - Backend
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'unit' || github.event_name != 'workflow_dispatch'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd apps/backend && pnpm db:generate
+
+      - name: Run Unit Tests
+        run: cd apps/backend && pnpm test -- --passWithNoTests --coverage --ci --testPathIgnorePatterns="integration|e2e"
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test-jwt-secret
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-unit-coverage
+          path: apps/backend/coverage
+          retention-days: 7
+
+  # ==================== Unit Tests - Frontend (Mobile) ====================
+  unit-frontend:
+    name: Unit Tests - Mobile
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'unit' || github.event_name != 'workflow_dispatch'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Unit Tests
+        run: cd apps/mobile && pnpm test -- --passWithNoTests --coverage --ci
+        env:
+          API_BASE_URL: http://localhost:3001/api/v1
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-unit-coverage
+          path: apps/mobile/coverage
+          retention-days: 7
+
+  # ==================== Integration Tests - Backend ====================
+  integration-backend:
+    name: Integration Tests - Backend
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'integration' || github.event_name != 'workflow_dispatch'
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: stylemind_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd apps/backend && pnpm db:generate
+
+      - name: Setup Test Database
+        run: cd apps/backend && npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/stylemind_test
+
+      - name: Run Integration Tests
+        run: cd apps/backend && pnpm test -- --passWithNoTests --testPathPattern="integration" --coverage --ci
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/stylemind_test
+          JWT_SECRET: test-jwt-secret
+          REDIS_URL: redis://localhost:6379
+          NODE_ENV: test
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-integration-coverage
+          path: apps/backend/coverage
+          retention-days: 7
+
+  # ==================== E2E Tests ====================
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'e2e' || github.event_name != 'workflow_dispatch'
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: stylemind_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd apps/backend && pnpm db:generate
+
+      - name: Setup Test Database
+        run: cd apps/backend && npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/stylemind_e2e
+
+      - name: Build Backend
+        run: cd apps/backend && pnpm build
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/stylemind_e2e
+          JWT_SECRET: e2e-test-jwt-secret
+          JWT_REFRESH_SECRET: e2e-test-refresh-secret
+          REDIS_URL: redis://localhost:6379
+
+      - name: Build Frontend (Mobile)
+        run: echo "Mobile app uses APK build pipeline in build.yml"
+
+      - name: Run Backend E2E Tests
+        run: cd apps/backend && pnpm test:e2e --passWithNoTests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/stylemind_e2e
+          JWT_SECRET: e2e-test-jwt-secret
+          JWT_REFRESH_SECRET: e2e-test-refresh-secret
+          REDIS_URL: redis://localhost:6379
+          NODE_ENV: test
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+        continue-on-error: true
+
+      - name: Run Frontend E2E Tests (Playwright)
+        run: |
+          echo "Frontend E2E tests - configure Playwright as needed"
+          # Uncomment when Playwright is configured:
+          # npx playwright test
+        continue-on-error: true
+
+      - name: Upload E2E Screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-screenshots
+          path: |
+            test-results
+            playwright-report
+            apps/backend/test-results
+          retention-days: 7
+
+      - name: Upload E2E Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-coverage
+          path: apps/backend/coverage
+          retention-days: 7
+
+  # ==================== Test Summary ====================
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [unit-backend, unit-mobile, integration-backend]
+    if: always()
+    steps:
+      - name: Generate Test Summary
+        run: |
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend Unit Tests | ${{ needs.unit-backend.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Mobile Unit Tests | ${{ needs.unit-mobile.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend Integration Tests | ${{ needs.integration-backend.result }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Check Test Status
+        run: |
+          if [[ "${{ needs.unit-backend.result }}" == "failure" || "${{ needs.unit-mobile.result }}" == "failure" || "${{ needs.integration-backend.result }}" == "failure" ]]; then
+            echo "Some tests failed!"
+            exit 1
+          fi
+          echo "All tests passed!"

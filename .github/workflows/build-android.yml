@@ -1,0 +1,71 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "apps/mobile/**"
+      - "packages/**"
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.11.0"
+          cache: "pnpm"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8.15.0
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Decode release keystore
+        if: ${{ secrets.AINEED_UPLOAD_STORE_FILE_BASE64 != '' }}
+        working-directory: apps/mobile/android/app
+        run: echo "${{ secrets.AINEED_UPLOAD_STORE_FILE_BASE64 }}" | base64 --decode > aineed-release.keystore
+
+      - name: Build debug APK
+        working-directory: apps/mobile/android
+        run: ./gradlew assembleDebug
+
+      - name: Build release APK
+        if: ${{ secrets.AINEED_UPLOAD_STORE_FILE_BASE64 != '' && secrets.AINEED_UPLOAD_STORE_PASSWORD != '' && secrets.AINEED_UPLOAD_KEY_ALIAS != '' && secrets.AINEED_UPLOAD_KEY_PASSWORD != '' }}
+        working-directory: apps/mobile/android
+        env:
+          AINEED_UPLOAD_STORE_FILE: aineed-release.keystore
+          AINEED_UPLOAD_STORE_PASSWORD: ${{ secrets.AINEED_UPLOAD_STORE_PASSWORD }}
+          AINEED_UPLOAD_KEY_ALIAS: ${{ secrets.AINEED_UPLOAD_KEY_ALIAS }}
+          AINEED_UPLOAD_KEY_PASSWORD: ${{ secrets.AINEED_UPLOAD_KEY_PASSWORD }}
+        run: ./gradlew assembleRelease
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: |
+            apps/mobile/android/app/build/outputs/apk/debug/*.apk
+            apps/mobile/android/app/build/outputs/apk/release/*.apk
+          retention-days: 30

@@ -1,0 +1,328 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run weekly on Sunday at 00:00 UTC
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+concurrency:
+  group: code-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '8'
+
+jobs:
+  # ==================== ESLint ====================
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run ESLint - Backend
+        run: cd apps/backend && npx eslint . --ext .ts,.tsx --format json --output-file eslint-backend-report.json
+        continue-on-error: true
+
+      - name: Run ESLint - Frontend (Mobile)
+        run: cd apps/mobile && npx eslint . --ext .ts,.tsx --format json --output-file eslint-mobile-report.json
+        continue-on-error: true
+
+      - name: Upload ESLint Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: eslint-reports
+          path: |
+            apps/backend/eslint-backend-report.json
+            apps/mobile/eslint-mobile-report.json
+          retention-days: 7
+
+      - name: Annotate PR with ESLint errors
+        uses: reviewdog/action-eslint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          eslint_flags: '--ext .ts,.tsx'
+          workdir: apps/backend
+        continue-on-error: true
+
+  # ==================== Prettier ====================
+  prettier:
+    name: Prettier Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check Formatting
+        run: npx prettier --check "**/*.{ts,tsx,js,jsx,json,md,css,scss}" --ignore-path .gitignore
+        continue-on-error: true
+
+  # ==================== TypeScript Strict Check ====================
+  typescript:
+    name: TypeScript Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd apps/backend && pnpm db:generate
+
+      - name: TypeScript Check - Backend
+        run: cd apps/backend && npx tsc --noEmit --project tsconfig.build.json
+
+      - name: TypeScript Check - Frontend (Mobile)
+        run: cd apps/mobile && npx tsc --noEmit
+
+  # ==================== Dependency Security Audit ====================
+  audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Security Audit
+        run: pnpm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: Run npm audit for detailed report
+        run: npx npm-audit-reporter-json || true
+        continue-on-error: true
+
+      - name: Upload Audit Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-report
+          path: audit-report.json
+          retention-days: 7
+        continue-on-error: true
+
+  # ==================== CodeQL Analysis ====================
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['javascript-typescript']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:${{ matrix.language }}'
+
+  # ==================== SonarCloud Analysis ====================
+  sonarcloud:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd apps/backend && pnpm db:generate
+
+      - name: Run Tests with Coverage - Backend
+        run: cd apps/backend && pnpm test -- --coverage --ci || true
+        env:
+          DATABASE_URL: postgresql://localhost:5432/test
+          JWT_SECRET: test-secret
+
+      - name: Run Tests with Coverage - Frontend (Mobile)
+        run: cd apps/mobile && pnpm test -- --coverage --ci || true
+        env:
+          API_BASE_URL: http://localhost:3001/api/v1
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        continue-on-error: true
+
+  # ==================== Unused Dependencies ====================
+  unused-deps:
+    name: Check Unused Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check Unused Dependencies - Backend
+        run: cd apps/backend && npx depcheck
+        continue-on-error: true
+
+      - name: Check Unused Dependencies - Frontend
+        run: cd apps/web && npx depcheck
+        continue-on-error: true
+
+  # ==================== Bundle Size Check ====================
+  bundle-size:
+    name: Bundle Size Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Frontend
+        run: cd apps/web && pnpm build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+          NEXT_PUBLIC_WS_URL: ws://localhost:3001
+
+      - name: Analyze Bundle Size
+        run: |
+          echo "Bundle size analysis placeholder"
+          # Add bundle analyzer configuration as needed
+        continue-on-error: true
+
+  # ==================== Quality Summary ====================
+  quality-summary:
+    name: Quality Summary
+    runs-on: ubuntu-latest
+    needs: [eslint, prettier, typescript, audit, codeql]
+    if: always()
+    steps:
+      - name: Generate Quality Summary
+        run: |
+          echo "## Code Quality Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| ESLint | ${{ needs.eslint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Prettier | ${{ needs.prettier.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| TypeScript | ${{ needs.typescript.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dependency Audit | ${{ needs.audit.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| CodeQL | ${{ needs.codeql.result }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Quality Gate
+        run: |
+          if [[ "${{ needs.typescript.result }}" == "failure" ]]; then
+            echo "TypeScript check failed - quality gate failed!"
+            exit 1
+          fi
+          echo "Code quality checks completed!"
