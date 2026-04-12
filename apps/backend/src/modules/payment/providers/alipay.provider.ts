@@ -1,5 +1,6 @@
 import * as crypto from "crypto";
 
+import axios from "axios";
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
@@ -526,16 +527,20 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
    * HTTP GET 请求
    */
   private async httpGet(url: string): Promise<string> {
-    // 使用 fetch 或 http 模块
-    const https = await import("https");
-    return new Promise((resolve, reject) => {
-      https
-        .get(url, (res) => {
-          let data = "";
-          res.on("data", (chunk) => (data += chunk));
-          res.on("end", () => resolve(data));
-        })
-        .on("error", reject);
-    });
+    try {
+      const response = await axios.get(url, {
+        timeout: 30000,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return typeof response.data === "string"
+        ? response.data
+        : JSON.stringify(response.data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "未知错误";
+      this.logger.error(`Alipay HTTP GET failed: ${message}`);
+      throw error;
+    }
   }
 }

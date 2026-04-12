@@ -9,6 +9,9 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { AnalysisStatus, PhotoType } from "@prisma/client";
 
+import { stripExifFromBuffer } from "../../common/security/image-sanitizer";
+import { MalwareScannerService } from "../../common/security/malware-scanner.service";
+import { validateImageFile as sharedValidateImageFile } from "../../common/security/upload-validator";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { StorageService } from "../../common/storage/storage.service";
 
@@ -35,6 +38,7 @@ export class PhotosService {
     private storage: StorageService,
     private aiAnalysis: AiAnalysisService,
     private configService: ConfigService,
+    private malwareScanner: MalwareScannerService,
   ) {}
 
   async uploadPhoto(
@@ -44,8 +48,17 @@ export class PhotosService {
   ): Promise<PhotoUploadResult> {
     this.validateImageFile(file);
 
-    const { url, thumbnailUrl } = await this.storage.uploadImage(
-      file,
+    const scanResult = await this.malwareScanner.scanImageBuffer(file.buffer, file.originalname);
+    if (!scanResult.safe) {
+      throw new BadRequestException(`文件安全扫描未通过: ${scanResult.threats.join(", ")}`);
+    }
+
+    const sanitizedBuffer = await stripExifFromBuffer(file.buffer);
+    const sanitizedFile = { ...file, buffer: sanitizedBuffer };
+
+    const { url, thumbnailUrl } = await this.storage.uploadEncrypted(
+      userId,
+      sanitizedFile,
       "photos",
     );
 
@@ -368,44 +381,7 @@ export class PhotosService {
   }
 
   private validateImageFile(file: Express.Multer.File): void {
-    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!allowedMimeTypes.includes(file.mimetype)) {
-      throw new BadRequestException("仅支持 JPEG、PNG 和 WebP 格式的图片");
-    }
-
-    const maxSize = 10 * 1024 * 1024;
-    if (file.size > maxSize) {
-      throw new BadRequestException("图片大小不能超过 10MB");
-    }
-
-    if (!this.validateMagicBytes(file.buffer)) {
-      throw new BadRequestException("文件内容与声明类型不匹配，可能存在安全风险");
-    }
-  }
-
-  private validateMagicBytes(buffer: Buffer): boolean {
-    if (buffer.length < 4) {
-      return false;
-    }
-
-    const jpegSignature = [0xff, 0xd8, 0xff];
-    const pngSignature = [0x89, 0x50, 0x4e, 0x47];
-    const webpSignature = [0x52, 0x49, 0x46, 0x46];
-
-    const firstBytes = Array.from(buffer.slice(0, 4));
-
-    const isJpeg = jpegSignature.every((byte, index) => firstBytes[index] === byte);
-    const isPng = pngSignature.every((byte, index) => firstBytes[index] === byte);
-    const isWebpRiff = webpSignature.every((byte, index) => firstBytes[index] === byte);
-
-    if (isWebpRiff && buffer.length >= 12) {
-      const webpMarker = buffer.slice(8, 12).toString("ascii");
-      if (webpMarker === "WEBP") {
-        return true;
-      }
-    }
-
-    return isJpeg || isPng;
+    sharedValidateImageFile(file);
   }
 
   private generateImageHash(buffer: Buffer): string {

@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
+import { MalwareScannerService } from "../../common/security/malware-scanner.service";
 import { PhotosController } from "./photos.controller";
 import { PhotosService } from "./photos.service";
 import { AccessoryRecommendationService } from "./services/accessory-recommendation.service";
@@ -17,6 +18,7 @@ import { MakeupAnalysisService } from "./services/makeup-analysis.service";
   controllers: [PhotosController],
   providers: [
     PhotosService,
+    MalwareScannerService,
     AiAnalysisService,
     BodyShapeAnalyzer,
     ColorSeasonAnalyzer,

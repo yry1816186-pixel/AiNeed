@@ -10,6 +10,7 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
+  emailHash String?  @unique
   phone     String?  @unique // @encrypted: PII - encrypt in Service layer before storage
   password  String // @encrypted: Hash with bcrypt, never store plain text
   nickname  String?
@@ -27,6 +28,11 @@ model User {
   followingCount Int @default(0)
   isVerified     Boolean @default(false)
   bio            String? @db.Text
+
+  // Per-user encryption key fields
+  encryptionKeySalt String?
+  encryptedDek      String?
+  keyVersion        Int       @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -391,6 +397,9 @@ model VirtualTryOn {
   resultImageUrl String?
   status        TryOnStatus @default(pending)
   errorMessage  String?
+  provider      String?
+  processingTime Float?
+  confidence    Float?
 
   createdAt DateTime @default(now())
   completedAt DateTime?

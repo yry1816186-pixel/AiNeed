@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import * as bcrypt from "../../common/security/bcrypt";
+import { createHash } from "crypto";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { RedisService } from "../../common/redis/redis.service";
@@ -33,9 +34,17 @@ export class AuthHelpersService {
       throw new UnauthorizedException("账户已被锁定，请15分钟后再试");
     }
 
-    const user = await this.prisma.user.findUnique({
-      where: { email },
+    const emailHash = createHash("sha256").update(email.toLowerCase().trim()).digest("hex");
+
+    let user = await this.prisma.user.findUnique({
+      where: { emailHash },
     });
+
+    if (!user) {
+      user = await this.prisma.user.findUnique({
+        where: { email },
+      });
+    }
 
     if (!user) {
       const remaining = await this.recordFailedAttempt(email);

@@ -1,4 +1,6 @@
 import * as crypto from "crypto";
+import * as fs from "fs";
+import * as path from "path";
 
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -623,9 +625,49 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
    * 获取 HTTPS Agent（包含证书）
    */
   private getHttpsAgent(): https.Agent | undefined {
-    // 实际实现中应该加载商户证书
-    // 简化处理，使用默认 Agent
-    return undefined;
+    try {
+      const certFilePath = this.certPath;
+      const keyFilePath = this.keyPath;
+
+      if (certFilePath && keyFilePath) {
+        if (fs.existsSync(certFilePath) && fs.existsSync(keyFilePath)) {
+          const cert = fs.readFileSync(certFilePath);
+          const key = fs.readFileSync(keyFilePath);
+
+          return new https.Agent({
+            cert,
+            key,
+            rejectUnauthorized: true,
+          });
+        }
+
+        this.logger.warn(
+          `WeChat certificate files not found: cert=${certFilePath}, key=${keyFilePath}`,
+        );
+      }
+
+      const certEnv = this.configService.get<string>("WECHAT_CERT_CONTENT");
+      const keyEnv = this.configService.get<string>("WECHAT_KEY_CONTENT");
+
+      if (certEnv && keyEnv) {
+        return new https.Agent({
+          cert: Buffer.from(certEnv, "utf8"),
+          key: Buffer.from(keyEnv, "utf8"),
+          rejectUnauthorized: true,
+        });
+      }
+
+      this.logger.warn(
+        "WeChat merchant certificate not configured. " +
+          "Set WECHAT_CERT_PATH/WECHAT_KEY_PATH or WECHAT_CERT_CONTENT/WECHAT_KEY_CONTENT. " +
+          "Using default Agent (some V3 API calls may fail).",
+      );
+      return undefined;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to create HTTPS agent: ${message}`);
+      return undefined;
+    }
   }
 
   /**

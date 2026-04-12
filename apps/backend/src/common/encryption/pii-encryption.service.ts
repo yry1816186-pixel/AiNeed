@@ -4,7 +4,8 @@ import { ConfigService } from "@nestjs/config";
 import { EncryptionService } from "./encryption.service";
 
 export const PII_FIELDS = {
-  User: ["phone", "idNumber"],
+  User: ["phone", "idNumber", "email"],
+  UserProfile: ["shoulder", "bust", "waist", "hip", "inseam", "height", "weight"],
   UserAddress: ["phone", "address", "recipientName"],
   OrderAddress: ["phone", "address", "recipientName"],
   Brand: ["contactEmail", "contactPhone"],

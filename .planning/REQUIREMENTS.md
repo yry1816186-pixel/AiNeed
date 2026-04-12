@@ -1,212 +1,102 @@
 # Requirements: AiNeed
 
 **Defined:** 2026-04-13
-**Core Value:** 用户能真实体验 AI 虚拟试衣并获得精准的个性化穿搭推荐
+**Core Value:** 基于用户画像的精准 AI 穿搭推荐，用多模态 API 生成换装效果图
 
-## v1 Requirements
+## MVP Requirements (v1)
 
-Requirements for commercial-grade launch. Each maps to roadmap phases.
+### Phase 1: 用户画像 & 风格测试
 
-### ML Integration
+- [ ] **PROF-01**: 用户能填写身体数据（身高/体重/体型/肤色/脸型）并持久化到 UserProfile
+- [ ] **PROF-02**: 新用户通过多步骤风格测试问卷（场合偏好/色彩偏好/风格关键词）
+- [ ] **PROF-03**: 风格测试结果生成 StyleProfile 并可视化展示
+- [ ] **PROF-04**: 用户能随时编辑和更新个人画像信息
+- [ ] **PROF-05**: 移动端有完整的画像展示和编辑页面
 
-- [ ] **ML-01**: User can upload photo and receive virtual try-on result within 15 seconds
-- [ ] **ML-02**: Try-on preserves garment details (logo, pattern, color accuracy)
-- [ ] **ML-03**: ML inference has circuit breaker with cloud API fallback when GPU unavailable
-- [ ] **ML-04**: All ML calls processed through BullMQ queue with status updates via WebSocket
-- [ ] **ML-05**: Try-on results are cached (same photo + garment combo returns cached result)
-- [ ] **ML-06**: GPU memory managed with lazy model loading and single-model-at-a-time policy
-- [ ] **ML-07**: ML service health check endpoints for monitoring
+### Phase 2: AI 造型师
 
-### AI Stylist
+- [ ] **AIS-01**: 用户能与 AI 造型师进行多轮文字对话获取穿搭建议
+- [ ] **AIS-02**: AI 造型师基于用户体型、肤色、风格偏好推荐完整穿搭方案
+- [ ] **AIS-03**: AI 造型师集成天气数据，推荐适合当前天气的服装
+- [ ] **AIS-04**: 对话历史保存，用户关闭 App 后能恢复之前的对话
+- [ ] **AIS-05**: AI 回复经过安全过滤，不包含不当内容
+- [ ] **AIS-06**: GLM API 调用有限流和降级机制
 
-- [ ] **AIS-01**: User can have multi-turn fashion consultation conversation with AI stylist
-- [ ] **AIS-02**: AI stylist provides outfit suggestions based on user's style profile and preferences
-- [ ] **AIS-03**: AI stylist integrates weather data for weather-appropriate suggestions
-- [ ] **AIS-04**: AI stylist conversation history is saved and resumable
-- [ ] **AIS-05**: AI content filtered through safety layer before delivery to user
+### Phase 3: 虚拟试衣
 
-### Recommendations
+- [ ] **VTO-01**: 用户能上传个人照片（正面全身照）用于试衣
+- [ ] **VTO-02**: 选择推荐服装后，系统调用 GLM 图生图 API 生成换装效果图
+- [ ] **VTO-03**: 换装效果在 30 秒内返回，有实时进度提示（WebSocket + 轮询）
+- [ ] **VTO-04**: 试衣结果保存到历史记录，用户能随时查看
+- [ ] **VTO-05**: 同一照片+服装组合有缓存，不重复调用 API
+- [ ] **VTO-06**: 试衣图保存在 MinIO，可分享和下载
 
-- [ ] **REC-01**: User receives personalized clothing recommendations based on style profile
-- [ ] **REC-02**: "Complete the look" suggestions pair complementary items
-- [ ] **REC-03**: New users receive recommendations via onboarding style quiz results
-- [ ] **REC-04**: Recommendation engine improves based on user interaction feedback
-- [ ] **REC-05**: Color harmony analysis scores outfit compatibility
+### Phase 4: 推荐引擎
 
-### Commerce
+- [ ] **REC-01**: 首页展示"为你推荐"信息流，基于用户画像和风格偏好
+- [ ] **REC-02**: 查看商品时展示"搭配推荐"（上下装、配饰）
+- [ ] **REC-03**: 新用户完成风格测试后立即看到相关推荐
+- [ ] **REC-04**: 用户的收藏/试衣/购买行为能改善推荐精准度
+- [ ] **REC-05**: 推荐结果包含色彩搭配评分
 
-- [ ] **COMM-01**: User can browse product catalog with filtering by category, price, brand, size
-- [ ] **COMM-02**: User can add items to cart with size and color selection
-- [ ] **COMM-03**: User can complete checkout with Alipay payment integration
-- [ ] **COMM-04**: User can complete checkout with WeChat Pay integration
-- [ ] **COMM-05**: User receives order confirmation and can track order status
-- [ ] **COMM-06**: User can request refund within policy window
-- [ ] **COMM-07**: Merchant can list products with images, pricing, and inventory
-- [ ] **COMM-08**: Merchant can manage orders (confirm, ship, complete)
-- [ ] **COMM-09**: Merchant dashboard shows sales analytics and key metrics
+### Phase 5: 电商闭环
 
-### Community
-
-- [ ] **SOC-01**: User can post try-on results to community feed with caption
-- [ ] **SOC-02**: User can like and comment on community posts
-- [ ] **SOC-03**: User can follow other users and see their posts in feed
-- [ ] **SOC-04**: AI pre-screening filters inappropriate content before publication
-- [ ] **SOC-05**: User can report content for manual review
-- [ ] **SOC-06**: Community feed supports infinite scroll with pagination
-
-### Mobile UX
-
-- [ ] **UX-01**: App launches to usable state within 3 seconds
-- [ ] **UX-02**: Onboarding flow includes style quiz for profile initialization
-- [ ] **UX-03**: Image upload shows progress indicator with retry on failure
-- [ ] **UX-04**: All feed screens use lazy loading with skeleton placeholders
-- [ ] **UX-05**: Dark and light theme support with smooth transitions
-- [ ] **UX-06**: Haptic feedback on key interactions (like, add to cart, purchase)
-- [ ] **UX-07**: Offline indicator shown when network unavailable, queued actions sync on reconnect
-
-### Notifications
-
-- [ ] **NOTIF-01**: User receives push notification for order status changes
-- [ ] **NOTIF-02**: User receives push notification for community interactions (likes, comments, follows)
-- [ ] **NOTIF-03**: User can configure notification preferences per category
-- [ ] **NOTIF-04**: In-app notification center shows all notifications with read/unread state
-
-### Privacy & Security
-
-- [ ] **SEC-01**: User photos encrypted at rest with per-user encryption key
-- [ ] **SEC-02**: Body measurement data encrypted and never exposed in API responses
-- [ ] **SEC-03**: EXIF data stripped from uploaded images
-- [ ] **SEC-04**: API rate limiting configured per endpoint group
-- [ ] **SEC-05**: File upload validation (MIME type check, size limits, malware scan)
-- [ ] **SEC-06**: User consent flow for photo and body data processing
-- [ ] **SEC-07**: Auto-deletion policy for expired try-on results
-
-### Quality Engineering
-
-- [ ] **QA-01**: Backend unit test coverage >= 80% for all modules
-- [ ] **QA-02**: Integration tests for critical flows (auth, try-on, payment, order)
-- [ ] **QA-03**: E2E tests for mobile core user journey
-- [ ] **QA-04**: API contract tests ensure backward compatibility
-- [ ] **QA-05**: Performance benchmarks for key API endpoints (try-on < 15s, feed < 500ms)
-- [ ] **QA-06**: CI pipeline blocks merge on test failure
-
-### DevOps & Monitoring
-
-- [ ] **OPS-01**: Sentry error tracking on backend (unified with mobile Sentry)
-- [ ] **OPS-02**: Structured logging with request correlation IDs
-- [ ] **OPS-03**: Custom Prometheus metrics for ML inference latency and success rate
-- [ ] **OPS-04**: Grafana dashboards for business metrics (try-ons/day, conversion rate)
-- [ ] **OPS-05**: Automated deployment pipeline with rollback capability
-- [ ] **OPS-06**: Database backup and recovery procedures documented and tested
-
-## v2 Requirements
-
-Deferred to future release.
-
-### Advanced AI
-
-- **AIS-V2-01**: Multi-angle virtual try-on (front, side, back)
-- **AIS-V2-02**: Video try-on capability
-- **AIS-V2-03**: Body measurement estimation from photos
-- **AIS-V2-04**: Celebrity/style icon matching
-
-### Advanced Commerce
-
-- **COMM-V2-01**: Subscription box (curated monthly picks)
-- **COMM-V2-02**: Loyalty points system
-- **COMM-V2-03**: AI-powered size recommendation
-- **COMM-V2-04**: Style challenge/competition system
-
-### Platform
-
-- **PLAT-V2-01**: Merchant API for third-party integration
-- **PLAT-V2-02**: Web version of the platform
-- **PLAT-V2-03**: Internationalization (English support)
-- **PLAT-V2-04**: A/B testing framework for ML models
-
-## Out of Scope
-
-| Feature | Reason |
-|---------|--------|
-| Real-time AR try-on | Hardware-dependent, premature for v1 |
-| 3D body scanning | Over-engineered, expensive |
-| Cryptocurrency payment | Not mainstream in target market |
-| Real-name verification | Too much friction for v1 |
-| GraphQL API | REST + Swagger sufficient |
-| Microservices migration | Modular monolith adequate until scale demands otherwise |
+- [ ] **COMM-01**: 用户能按分类、价格、品牌筛选商品
+- [ ] **COMM-02**: 购物车支持选尺码/颜色，能修改数量
+- [ ] **COMM-03**: 支持支付宝支付集成
+- [ ] **COMM-04**: 支付后收到订单确认，能查看订单状态（确认/发货/完成）
+- [ ] **COMM-05**: 商家能管理商品（创建/编辑/上下架）
+- [ ] **COMM-06**: 商家能管理订单（确认/发货/完成）
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ML-01 | Phase 1 | Pending |
-| ML-02 | Phase 1 | Pending |
-| ML-03 | Phase 1 | Pending |
-| ML-04 | Phase 1 | Pending |
-| ML-05 | Phase 1 | Pending |
-| ML-06 | Phase 1 | Pending |
-| ML-07 | Phase 1 | Pending |
+| PROF-01 | Phase 1 | Pending |
+| PROF-02 | Phase 1 | Pending |
+| PROF-03 | Phase 1 | Pending |
+| PROF-04 | Phase 1 | Pending |
+| PROF-05 | Phase 1 | Pending |
 | AIS-01 | Phase 2 | Pending |
 | AIS-02 | Phase 2 | Pending |
 | AIS-03 | Phase 2 | Pending |
 | AIS-04 | Phase 2 | Pending |
 | AIS-05 | Phase 2 | Pending |
-| SEC-01 | Phase 3 | Pending |
-| SEC-02 | Phase 3 | Pending |
-| SEC-03 | Phase 3 | Pending |
-| SEC-04 | Phase 3 | Pending |
-| SEC-05 | Phase 3 | Pending |
-| SEC-06 | Phase 3 | Pending |
-| SEC-07 | Phase 3 | Pending |
-| UX-01 | Phase 4 | Pending |
-| UX-02 | Phase 4 | Pending |
-| UX-03 | Phase 4 | Pending |
-| UX-04 | Phase 4 | Pending |
-| UX-05 | Phase 4 | Pending |
-| UX-06 | Phase 4 | Pending |
-| UX-07 | Phase 4 | Pending |
+| AIS-06 | Phase 2 | Pending |
+| VTO-01 | Phase 3 | Pending |
+| VTO-02 | Phase 3 | Pending |
+| VTO-03 | Phase 3 | Pending |
+| VTO-04 | Phase 3 | Pending |
+| VTO-05 | Phase 3 | Pending |
+| VTO-06 | Phase 3 | Pending |
+| REC-01 | Phase 4 | Pending |
+| REC-02 | Phase 4 | Pending |
+| REC-03 | Phase 4 | Pending |
+| REC-04 | Phase 4 | Pending |
+| REC-05 | Phase 4 | Pending |
 | COMM-01 | Phase 5 | Pending |
 | COMM-02 | Phase 5 | Pending |
 | COMM-03 | Phase 5 | Pending |
 | COMM-04 | Phase 5 | Pending |
 | COMM-05 | Phase 5 | Pending |
 | COMM-06 | Phase 5 | Pending |
-| COMM-07 | Phase 5 | Pending |
-| COMM-08 | Phase 5 | Pending |
-| COMM-09 | Phase 5 | Pending |
-| SOC-01 | Phase 6 | Pending |
-| SOC-02 | Phase 6 | Pending |
-| SOC-03 | Phase 6 | Pending |
-| SOC-04 | Phase 6 | Pending |
-| SOC-05 | Phase 6 | Pending |
-| SOC-06 | Phase 6 | Pending |
-| NOTIF-01 | Phase 7 | Pending |
-| NOTIF-02 | Phase 7 | Pending |
-| NOTIF-03 | Phase 7 | Pending |
-| NOTIF-04 | Phase 7 | Pending |
-| REC-01 | Phase 8 | Pending |
-| REC-02 | Phase 8 | Pending |
-| REC-03 | Phase 8 | Pending |
-| REC-04 | Phase 8 | Pending |
-| REC-05 | Phase 8 | Pending |
-| QA-01 | Phase 9 | Pending |
-| QA-02 | Phase 9 | Pending |
-| QA-03 | Phase 9 | Pending |
-| QA-04 | Phase 9 | Pending |
-| QA-05 | Phase 9 | Pending |
-| QA-06 | Phase 9 | Pending |
-| OPS-01 | Phase 10 | Pending |
-| OPS-02 | Phase 10 | Pending |
-| OPS-03 | Phase 10 | Pending |
-| OPS-04 | Phase 10 | Pending |
-| OPS-05 | Phase 10 | Pending |
-| OPS-06 | Phase 10 | Pending |
 
-**Coverage:**
-- v1 requirements: 47 total
-- Mapped to phases: 47
-- Unmapped: 0
+**Coverage:** 28 requirements, all mapped to phases.
+
+## v2 (Deferred)
+
+| Feature | Reason |
+|---------|--------|
+| 社区功能 (发帖/评论/关注) | v1 专注核心 AI 体验 |
+| 推送通知 | v2 功能 |
+| 微信支付 | v1 先支付宝 |
+| 退款流程 | v2 完善 |
+| 商家数据看板 | v2 完善 |
+| Web 端 | 移动端优先 |
+| 国际化 | v1 先中文 |
+| 完整监控 (Prometheus/Grafana) | v2 |
+| 完整测试覆盖 (80%+) | v2 |
 
 ---
 *Requirements defined: 2026-04-13*
-*Last updated: 2026-04-13 after roadmap creation*
+*Last updated: 2026-04-13 after roadmap redesign*

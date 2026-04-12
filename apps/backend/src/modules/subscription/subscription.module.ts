@@ -1,5 +1,6 @@
 import { Module, OnModuleInit } from "@nestjs/common";
 import { ScheduleModule } from "@nestjs/schedule";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 import { PrismaModule } from "../../common/prisma/prisma.module";
 import { AuthModule } from "../auth/auth.module";
@@ -9,7 +10,7 @@ import { SubscriptionController } from "./subscription.controller";
 import { SubscriptionService } from "./subscription.service";
 
 @Module({
-  imports: [ScheduleModule.forRoot(), PrismaModule, AuthModule],
+  imports: [ScheduleModule.forRoot(), EventEmitterModule, PrismaModule, AuthModule],
   controllers: [SubscriptionController],
   providers: [SubscriptionService, PaymentEventListener],
   exports: [SubscriptionService],

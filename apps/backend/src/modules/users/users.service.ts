@@ -7,14 +7,14 @@ import {
 import { User, Gender } from "@prisma/client";
 
 import { EncryptionService } from "../../common/encryption";
+import { PIIEncryptionService, PII_FIELDS } from "../../common/encryption/pii-encryption.service";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import * as bcrypt from "../../common/security/bcrypt";
 import { CacheKeyBuilder, CACHE_TTL } from "../cache/cache.constants";
 import { CacheService } from "../cache/cache.service";
 
 
-const PII_FIELDS = ["phone", "address", "realName"] as const;
-type PiiField = (typeof PII_FIELDS)[number];
+type UserPiiField = (typeof PII_FIELDS)["User"][number];
 
 export interface UpdateUserDto {
   nickname?: string;
@@ -55,33 +55,15 @@ export class UsersService {
     private prisma: PrismaService,
     private cacheService: CacheService,
     private encryptionService: EncryptionService,
+    private piiEncryptionService: PIIEncryptionService,
   ) {}
 
   private encryptPii(data: Record<string, any>): Record<string, any> {
-    const encrypted = { ...data };
-    for (const field of PII_FIELDS) {
-      if (encrypted[field] && !this.encryptionService.isEncrypted(encrypted[field])) {
-        encrypted[field] = this.encryptionService.encrypt(encrypted[field]);
-      }
-    }
-    return encrypted;
+    return this.piiEncryptionService.encryptPII("User", data);
   }
 
   private decryptPii(data: Record<string, any>): UserWithDecrypted {
-    const decrypted = { ...data };
-    for (const field of PII_FIELDS) {
-      if (decrypted[field] && this.encryptionService.isEncrypted(decrypted[field])) {
-        try {
-          decrypted[field] = this.encryptionService.decrypt(decrypted[field]);
-        } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : String(error);
-          this.logger.error(
-            `Failed to decrypt PII field '${field}': ${errorMessage}. Field value may be corrupted or encrypted with different key.`,
-          );
-        }
-      }
-    }
-    return decrypted as UserWithDecrypted;
+    return this.piiEncryptionService.decryptPII("User", data) as UserWithDecrypted;
   }
 
   async findById(id: string): Promise<UserResponse | null> {

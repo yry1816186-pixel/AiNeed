@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Post, Body, UseGuards, Request } from "@nestjs/common";
+import { Controller, Get, Put, Post, Body, UseGuards, UseInterceptors, Request } from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
@@ -8,6 +8,7 @@ import {
 } from "@nestjs/swagger";
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-data.interceptor";
 
 import { ProfileService, UpdateProfileDto as ServiceUpdateProfileDto } from "./profile.service";
 import { UserProfileService, UpdateProfileDto as UserUpdateProfileDto } from "./services/user-profile.service";
@@ -44,6 +45,7 @@ class SuccessResponseDto {
 @ApiTags("profile")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(SensitiveDataInterceptor)
 @Controller("profile")
 export class ProfileController {
   constructor(

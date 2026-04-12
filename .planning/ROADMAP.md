@@ -2,175 +2,80 @@
 
 ## Overview
 
-AiNeed is an AI-powered fashion platform moving from scaffolded prototype to commercial production. The journey starts by making the core AI features actually work (virtual try-on + AI stylist), then secures user data, polishes the mobile experience, builds the commerce loop, adds social engagement, personalizes recommendations, and hardens quality and operations for launch. The existing 35 backend modules and 28 mobile screens provide scaffolding; this roadmap fills in real business logic and AI integration.
+AiNeed MVP 路线图：5 Phase 从用户画像到商业闭环。核心用户旅程：建立画像 → AI 造型师推荐 → 虚拟试衣看效果 → 智能推荐发现 → 购买。现有 34 个后端模块和 34 个移动端页面提供骨架，本路线图填充真实业务逻辑和 GLM API 集成。
 
 ## Phases
 
-**Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
-
-Decimal phases appear between their surrounding integers in numeric order.
-
-- [ ] **Phase 1: ML Pipeline & Virtual Try-On** - Core AI inference pipeline working end-to-end with GPU management and queue processing
-- [ ] **Phase 2: AI Stylist Integration** - Multi-turn fashion consultation with GLM API, safety filtering, and conversation persistence
-- [ ] **Phase 3: Privacy & Data Security** - Photo encryption, EXIF stripping, upload validation, consent flows, and rate limiting
-- [ ] **Phase 4: Mobile UX & Performance** - App launch speed, onboarding quiz, upload UX, theming, offline handling, haptic feedback
-- [ ] **Phase 5: Commerce & Payment** - Product catalog, cart, Alipay/WeChat Pay checkout, order tracking, refunds, merchant dashboard
-- [ ] **Phase 6: Community & Content Moderation** - Community feed with posts, likes, comments, follows, AI content screening, reporting
-- [ ] **Phase 7: Notifications** - Push notifications for orders and community, preference management, in-app notification center
-- [ ] **Phase 8: Recommendation Engine** - Personalized clothing recommendations, style quiz integration, color harmony, feedback loop
-- [ ] **Phase 9: Quality Engineering** - 80%+ test coverage, integration tests, E2E mobile tests, API contract tests, performance benchmarks, CI
-- [ ] **Phase 10: DevOps & Production Readiness** - Sentry, structured logging, Prometheus/Grafana dashboards, deployment pipeline, backup procedures
+- [ ] **Phase 1: 用户画像 & 风格测试** — 完善个人信息 + 风格问卷 → 建立个人风格档案
+- [ ] **Phase 2: AI 造型师** — GLM API 多轮对话 + 基于画像的穿搭推荐 + 天气集成
+- [ ] **Phase 3: 虚拟试衣** — GLM 文生图/图生图 API → 用户看到自己穿推荐衣服的效果
+- [ ] **Phase 4: 推荐引擎** — 基于画像 + 交互历史的个性化推荐，色彩搭配评分
+- [ ] **Phase 5: 电商闭环** — 商品浏览 + 购物车 + 支付宝/微信支付 + 订单管理
 
 ## Phase Details
 
-### Phase 1: ML Pipeline & Virtual Try-On
-**Goal**: Users can upload a photo and a garment image and receive a virtual try-on result within 15 seconds, with reliable GPU management and cloud fallback
-**Depends on**: Nothing (first phase -- existing scaffold provides base infrastructure)
-**Requirements**: ML-01, ML-02, ML-03, ML-04, ML-05, ML-06, ML-07
-**Success Criteria** (what must be TRUE):
-  1. User uploads a person photo and garment image, and receives a virtual try-on result within 15 seconds
-  2. Try-on results preserve garment details (logos, patterns, colors appear correctly on the generated image)
-  3. When GPU inference fails, the system automatically falls back to cloud API without user-visible errors
-  4. User sees real-time processing status updates (queued, processing, complete) via WebSocket
-  5. Repeated try-on with the same photo+garment combination returns the cached result instantly
-**Plans**: TBD
+### Phase 1: 用户画像 & 风格测试
+**Goal**: 新用户注册后能完成个人画像建立和风格测试，AI 系统获得精准的用户理解基础
+**Depends on**: 无（已有认证系统和用户画像骨架）
+**Success Criteria**:
+  1. 用户能填写身体数据（身高/体重/体型/肤色/脸型）并保存到 UserProfile
+  2. 新用户通过多步骤风格测试问卷（场合偏好/色彩偏好/风格关键词选择）
+  3. 风格测试结果生成 StyleProfile 并可视化展示给用户
+  4. 用户能随时编辑和更新个人画像信息
+  5. 移动端有完整的画像展示和编辑页面
 
-### Phase 2: AI Stylist Integration
-**Goal**: Users can have meaningful multi-turn fashion conversations with an AI stylist that understands their preferences and context
-**Depends on**: Phase 1 (ML pipeline provides the AI service foundation and user photo processing)
-**Requirements**: AIS-01, AIS-02, AIS-03, AIS-04, AIS-05
-**Success Criteria** (what must be TRUE):
-  1. User can have a multi-turn text conversation with the AI stylist about fashion advice
-  2. AI stylist suggests complete outfits based on the user's style profile, body type, and preferences
-  3. AI stylist incorporates current weather data to recommend weather-appropriate clothing
-  4. User can close and reopen the app, then resume a previous AI stylist conversation from where they left off
-  5. AI stylist responses are filtered through a safety layer that blocks inappropriate or harmful content
-**Plans**: TBD
+### Phase 2: AI 造型师
+**Goal**: 用户能与 AI 造型师进行多轮对话，获取基于个人画像的精准穿搭建议
+**Depends on**: Phase 1（需要用户画像和风格档案数据）
+**Success Criteria**:
+  1. 用户能与 AI 造型师进行多轮文字对话获取穿搭建议
+  2. AI 造型师基于用户的体型、肤色、风格偏好推荐完整穿搭方案
+  3. AI 造型师集成天气数据，推荐适合当前天气的服装
+  4. 对话历史保存，用户关闭 App 后能恢复之前的对话
+  5. AI 回复经过安全过滤，不包含不当内容
+  6. GLM API 调用有限流和降级机制
 
-### Phase 3: Privacy & Data Security
-**Goal**: All user photos and body data are encrypted, validated, and handled with proper consent -- meeting PIPL compliance requirements
-**Depends on**: Phase 1 (photo upload pipeline exists), Phase 2 (AI processing uses user data)
-**Requirements**: SEC-01, SEC-02, SEC-03, SEC-04, SEC-05, SEC-06, SEC-07
-**Success Criteria** (what must be TRUE):
-  1. User photos stored on disk are encrypted with per-user keys and cannot be read without the key
-  2. Body measurement data in API responses is never returned in plaintext
-  3. Uploaded images have EXIF metadata (GPS, camera info) stripped before storage
-  4. API endpoints enforce rate limits, and abusers receive 429 responses after threshold
-  5. User explicitly consents to photo and body data processing before any upload proceeds
-  6. Expired try-on results are automatically deleted after the retention period
-**Plans**: TBD
+### Phase 3: 虚拟试衣
+**Goal**: 用户上传照片后，能通过 GLM 多模态 API 看到自己穿推荐服装的效果图
+**Depends on**: Phase 2（需要造型师推荐的服装）+ 用户上传照片
+**Success Criteria**:
+  1. 用户能上传个人照片（正面全身照）
+  2. 选择推荐服装后，系统调用 GLM 图生图 API 生成换装效果图
+  3. 换装效果在 30 秒内返回，有实时进度提示
+  4. 试衣结果保存到历史记录，用户能随时查看
+  5. 同一照片+服装组合有缓存，不重复调用 API
 
-### Phase 4: Mobile UX & Performance
-**Goal**: The mobile app feels fast, polished, and delightful with smooth onboarding, responsive interactions, and offline resilience
-**Depends on**: Phase 1 (try-on pipeline working), Phase 2 (AI stylist available), Phase 3 (secure upload flows)
-**Requirements**: UX-01, UX-02, UX-03, UX-04, UX-05, UX-06, UX-07
-**Success Criteria** (what must be TRUE):
-  1. App launches from cold start to usable state within 3 seconds
-  2. New user completes a style quiz during onboarding that initializes their style profile
-  3. Image upload shows a progress bar with percentage and a retry button if upload fails
-  4. Feed screens display skeleton placeholders while loading content, then smoothly replace with real data
-  5. User can toggle between dark and light theme with smooth visual transition
-  6. User feels haptic feedback when performing key actions (liking, adding to cart, purchasing)
-  7. When network drops, user sees an offline indicator and queued actions sync automatically on reconnect
-**Plans**: TBD
-**UI hint**: yes
+### Phase 4: 推荐引擎
+**Goal**: 用户获得个性化的服装推荐，推荐质量随交互不断提升
+**Depends on**: Phase 1（画像数据）, Phase 2（造型师对话数据）, Phase 3（试衣偏好数据）
+**Success Criteria**:
+  1. 首页展示"为你推荐"信息流，基于用户画像和风格偏好
+  2. 查看某件商品时，展示"搭配推荐"（上下装、配饰）
+  3. 新用户完成风格测试后立即看到相关推荐
+  4. 用户的收藏/试衣/购买行为能改善推荐精准度
+  5. 推荐结果包含色彩搭配评分
 
-### Phase 5: Commerce & Payment
-**Goal**: Users can browse products, complete purchases via Alipay or WeChat Pay, and track orders; merchants can list products and manage orders
-**Depends on**: Phase 3 (secure data handling), Phase 4 (polished mobile UX for shopping flows)
-**Requirements**: COMM-01, COMM-02, COMM-03, COMM-04, COMM-05, COMM-06, COMM-07, COMM-08, COMM-09
-**Success Criteria** (what must be TRUE):
-  1. User can browse a product catalog and filter by category, price range, brand, and size
-  2. User adds items to cart with selected size and color, then completes checkout via Alipay or WeChat Pay
-  3. User receives an order confirmation after payment and can track order status (confirmed, shipped, delivered)
-  4. User can request a refund within the policy window and see the refund status
-  5. Merchant can create product listings with images, pricing, inventory count, and variants
-  6. Merchant can view incoming orders, confirm them, mark as shipped, and complete them
-  7. Merchant sees a dashboard with sales analytics including revenue, order count, and top products
-**Plans**: TBD
-**UI hint**: yes
-
-### Phase 6: Community & Content Moderation
-**Goal**: Users share try-on results in a vibrant community feed with AI-powered content moderation keeping it safe
-**Depends on**: Phase 1 (try-on results to share), Phase 4 (polished feed UX)
-**Requirements**: SOC-01, SOC-02, SOC-03, SOC-04, SOC-05, SOC-06
-**Success Criteria** (what must be TRUE):
-  1. User can post a try-on result to the community feed with a text caption
-  2. User can like and comment on other users' community posts
-  3. User can follow other users and see followed users' posts in their feed
-  4. All community posts pass through AI content screening before publication, with inappropriate content blocked
-  5. User can report a post for manual review, and the report is visible to moderators
-  6. Community feed scrolls infinitely with smooth pagination and no visible loading jumps
-**Plans**: TBD
-**UI hint**: yes
-
-### Phase 7: Notifications
-**Goal**: Users stay informed about order updates and community interactions through push notifications they can control
-**Depends on**: Phase 5 (order status events), Phase 6 (community interaction events)
-**Requirements**: NOTIF-01, NOTIF-02, NOTIF-03, NOTIF-04
-**Success Criteria** (what must be TRUE):
-  1. User receives a push notification when their order status changes (confirmed, shipped, delivered)
-  2. User receives a push notification for community interactions (new like, comment, or follower)
-  3. User can toggle notification preferences per category (orders, community, promotions) in settings
-  4. User can open an in-app notification center that shows all notifications with read/unread state
-**Plans**: TBD
-**UI hint**: yes
-
-### Phase 8: Recommendation Engine
-**Goal**: Users receive personalized clothing recommendations that improve over time based on their interactions and style profile
-**Depends on**: Phase 2 (AI service integration), Phase 4 (style quiz data), Phase 5 (product catalog and interaction data)
-**Requirements**: REC-01, REC-02, REC-03, REC-04, REC-05
-**Success Criteria** (what must be TRUE):
-  1. User sees a personalized "Recommended for You" section based on their style profile and past interactions
-  2. User viewing a product sees "Complete the Look" suggestions for complementary items
-  3. New user who completed the onboarding style quiz immediately sees relevant recommendations
-  4. User's like/dislike actions on recommendations visibly improve future suggestion relevance
-  5. Recommendation results include a color harmony score indicating how well items pair together
-**Plans**: TBD
-**UI hint**: yes
-
-### Phase 9: Quality Engineering
-**Goal**: The codebase has comprehensive automated test coverage, CI gates, and performance benchmarks ensuring commercial-grade reliability
-**Depends on**: Phase 1 through Phase 8 (all features implemented and available for testing)
-**Requirements**: QA-01, QA-02, QA-03, QA-04, QA-05, QA-06
-**Success Criteria** (what must be TRUE):
-  1. Backend test suite achieves >= 80% line coverage across all modules, verified by CI
-  2. Integration tests cover the four critical flows: auth, try-on, payment, and order lifecycle
-  3. E2E tests verify the core mobile user journey from login through try-on to purchase
-  4. API contract tests run on every PR and block merge if backward compatibility breaks
-  5. Performance benchmarks confirm try-on API responds within 15s and feed API within 500ms
-  6. CI pipeline runs all tests on every commit and prevents merging when tests fail
-**Plans**: TBD
-
-### Phase 10: DevOps & Production Readiness
-**Goal**: The platform has full observability, automated deployment, and recovery procedures ready for production traffic
-**Depends on**: Phase 9 (tests passing, CI pipeline operational)
-**Requirements**: OPS-01, OPS-02, OPS-03, OPS-04, OPS-05, OPS-06
-**Success Criteria** (what must be TRUE):
-  1. Backend errors are captured in Sentry with full stack traces, correlated with mobile app errors
-  2. All backend log entries include a request correlation ID that traces the full request lifecycle
-  3. Prometheus exposes custom metrics for ML inference latency and success rate, visible in Grafana
-  4. Grafana dashboards display business metrics: try-ons per day, conversion rate, active users
-  5. Deployment pipeline deploys to staging/production with a single command and supports one-click rollback
-  6. Database backup procedure is documented, tested, and restoration verified at least once
-**Plans**: TBD
+### Phase 5: 电商闭环
+**Goal**: 用户能从推荐/试衣直接进入购买流程，完成支付
+**Depends on**: Phase 3（试衣引导购买）, Phase 4（推荐引导发现）
+**Success Criteria**:
+  1. 用户能按分类、价格、品牌筛选商品
+  2. 购物车支持选尺码/颜色，能修改数量
+  3. 支持支付宝支付
+  4. 支付后收到订单确认，能查看订单状态
+  5. 商家能管理商品和订单
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 1 through 10
+**Execution Order:** 1 → 2 → 3 → 4 → 5
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. ML Pipeline & Virtual Try-On | 0/? | Not started | - |
-| 2. AI Stylist Integration | 0/? | Not started | - |
-| 3. Privacy & Data Security | 0/? | Not started | - |
-| 4. Mobile UX & Performance | 0/? | Not started | - |
-| 5. Commerce & Payment | 0/? | Not started | - |
-| 6. Community & Content Moderation | 0/? | Not started | - |
-| 7. Notifications | 0/? | Not started | - |
-| 8. Recommendation Engine | 0/? | Not started | - |
-| 9. Quality Engineering | 0/? | Not started | - |
-| 10. DevOps & Production Readiness | 0/? | Not started | - |
+| Phase | Status | Completed |
+|-------|--------|-----------|
+| 1. 用户画像 & 风格测试 | Not started | - |
+| 2. AI 造型师 | Not started | - |
+| 3. 虚拟试衣 | Not started | - |
+| 4. 推荐引擎 | Not started | - |
+| 5. 电商闭环 | Not started | - |
+
+---
+*Last updated: 2026-04-13 after project cleanup and roadmap redesign*

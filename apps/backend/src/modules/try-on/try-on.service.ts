@@ -9,11 +9,13 @@ import { TryOnStatus, Prisma } from "@prisma/client";
 import Redis from "ioredis";
 
 import { StructuredLoggerService, ContextualLogger } from "../../common/logging";
+import { NotificationService } from "../../common/gateway/notification.service";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { REDIS_CLIENT } from "../../common/redis/redis.service";
 import { StorageService } from "../../common/storage/storage.service";
+import { QueueService } from "../queue/queue.service";
 
-import { TryOnOrchestratorService } from "./services/tryon-orchestrator.service";
+import { generateStableCacheKey } from "./services/ai-tryon-provider.interface";
 
 export interface CreateTryOnResult {
   id: string;
@@ -41,24 +43,24 @@ export interface TryOnHistoryItem {
   };
 }
 
+const MAX_CONCURRENT_TRYONS_PER_USER = 3;
+
 @Injectable()
 export class TryOnService {
   private readonly logger: ContextualLogger;
 
   constructor(
     private prisma: PrismaService,
-    private orchestrator: TryOnOrchestratorService,
     private configService: ConfigService,
     private storage: StorageService,
+    private queueService: QueueService,
+    private notificationService: NotificationService,
     @Inject(REDIS_CLIENT) private redis: Redis,
     loggingService: StructuredLoggerService,
   ) {
     this.logger = loggingService.createChildLogger(TryOnService.name);
   }
 
-  /**
-   * 创建虚拟试衣请求
-   */
   async createTryOnRequest(
     userId: string,
     photoId: string,
@@ -66,35 +68,41 @@ export class TryOnService {
   ): Promise<CreateTryOnResult> {
     this.logger.log("创建试衣请求", { userId, photoId, itemId });
 
-    // 批量查询：照片、商品、已完成的试衣记录、正在处理的试衣记录
-    const [photo, item, existingTryOn, pendingTryOn] = await Promise.all([
-      this.prisma.userPhoto.findFirst({
-        where: { id: photoId, userId },
-        select: { id: true, url: true, type: true },
-      }),
-      this.prisma.clothingItem.findUnique({
-        where: { id: itemId },
-        select: { id: true, images: true, category: true },
-      }),
-      this.prisma.virtualTryOn.findFirst({
-        where: {
-          userId,
-          photoId,
-          itemId,
-          status: TryOnStatus.completed,
-        },
-        select: { id: true, status: true },
-      }),
-      this.prisma.virtualTryOn.findFirst({
-        where: {
-          userId,
-          photoId,
-          itemId,
-          status: { in: [TryOnStatus.pending, TryOnStatus.processing] },
-        },
-        select: { id: true, status: true },
-      }),
-    ]);
+    const [photo, item, existingTryOn, pendingTryOn, activeCount] =
+      await Promise.all([
+        this.prisma.userPhoto.findFirst({
+          where: { id: photoId, userId },
+          select: { id: true, url: true, type: true },
+        }),
+        this.prisma.clothingItem.findUnique({
+          where: { id: itemId },
+          select: { id: true, images: true, category: true, mainImage: true },
+        }),
+        this.prisma.virtualTryOn.findFirst({
+          where: {
+            userId,
+            photoId,
+            itemId,
+            status: TryOnStatus.completed,
+          },
+          select: { id: true, status: true },
+        }),
+        this.prisma.virtualTryOn.findFirst({
+          where: {
+            userId,
+            photoId,
+            itemId,
+            status: { in: [TryOnStatus.pending, TryOnStatus.processing] },
+          },
+          select: { id: true, status: true },
+        }),
+        this.prisma.virtualTryOn.count({
+          where: {
+            userId,
+            status: { in: [TryOnStatus.pending, TryOnStatus.processing] },
+          },
+        }),
+      ]);
 
     if (!photo) {
       throw new NotFoundException("照片不存在");
@@ -104,7 +112,6 @@ export class TryOnService {
       throw new NotFoundException("服装商品不存在");
     }
 
-    // 检查是否有已完成的相同试衣请求（缓存命中）
     if (existingTryOn) {
       this.logger.log("返回缓存的试衣结果", {
         tryOnId: existingTryOn.id,
@@ -119,7 +126,6 @@ export class TryOnService {
       };
     }
 
-    // 检查是否有正在处理的相同请求
     if (pendingTryOn) {
       this.logger.log("试衣请求正在处理中", {
         tryOnId: pendingTryOn.id,
@@ -129,11 +135,44 @@ export class TryOnService {
       return {
         id: pendingTryOn.id,
         status: pendingTryOn.status,
-        estimatedWaitTime: 30, // 预估等待时间（秒）
+        estimatedWaitTime: 30,
       };
     }
 
-    // 创建新的试衣请求
+    if (activeCount >= MAX_CONCURRENT_TRYONS_PER_USER) {
+      throw new BadRequestException(
+        `您已有 ${activeCount} 个试衣任务正在处理中，请等待完成后再试`,
+      );
+    }
+
+    const stableCacheKey = generateStableCacheKey(photoId, itemId, item.category);
+    const cachedResult = await this.redis.get(stableCacheKey);
+    if (cachedResult) {
+      const cached = JSON.parse(cachedResult) as { resultImageUrl: string };
+      const tryOn = await this.prisma.virtualTryOn.create({
+        data: {
+          userId,
+          photoId,
+          itemId,
+          status: TryOnStatus.completed,
+          resultImageUrl: cached.resultImageUrl,
+          completedAt: new Date(),
+          provider: "cache",
+        },
+      });
+      this.logger.log("Redis缓存命中，直接返回结果", {
+        tryOnId: tryOn.id,
+        userId,
+        photoId,
+        itemId,
+      });
+      return {
+        id: tryOn.id,
+        status: TryOnStatus.completed,
+        estimatedWaitTime: 0,
+      };
+    }
+
     const tryOn = await this.prisma.virtualTryOn.create({
       data: {
         userId,
@@ -143,30 +182,39 @@ export class TryOnService {
       },
     });
 
-    this.logger.log("试衣请求已创建", {
+    this.logger.log("试衣请求已创建，加入BullMQ队列", {
       tryOnId: tryOn.id,
       userId,
       photoId,
       itemId,
     });
 
-    // 异步处理试衣
-    const itemImage = item.images[0];
-    if (!itemImage) {
+    const clothingImageUrl = item.mainImage || item.images[0];
+    if (!clothingImageUrl) {
       throw new BadRequestException("服装商品缺少展示图片");
     }
-    this.processTryOnAsync(tryOn.id, photo.url, itemImage, item.category);
+
+    await this.queueService.addVirtualTryOnTask(
+      userId,
+      photoId,
+      itemId,
+      item.category ?? undefined,
+    );
+
+    await this.notificationService.sendCustomNotification(userId, {
+      type: "system",
+      title: "试衣任务已排队",
+      message: "您的虚拟试衣任务已提交，正在排队处理",
+      data: { tryOnId: tryOn.id, status: "queued" },
+    });
 
     return {
       id: tryOn.id,
       status: tryOn.status,
-      estimatedWaitTime: 45, // 预估等待时间（秒）
+      estimatedWaitTime: 45,
     };
   }
 
-  /**
-   * 获取试衣状态和结果
-   */
   async getTryOnStatus(tryOnId: string, userId: string) {
     const tryOn = await this.prisma.virtualTryOn.findFirst({
       where: { id: tryOnId, userId },
@@ -198,16 +246,12 @@ export class TryOnService {
     }
 
     if (!tryOn.resultImageUrl) {
-      throw new NotFoundException("璇曠┛缁撴灉鍥句笉瀛樺湪");
+      throw new NotFoundException("试衣结果图不存在");
     }
 
     return this.storage.fetchRemoteAsset(tryOn.resultImageUrl);
   }
 
-  /**
-   * 获取用户试衣历史 - 优化版
-   * 使用数据库级别的聚合和窗口函数，减少内存计算
-   */
   async getUserTryOnHistory(
     userId: string,
     page: number = 1,
@@ -243,7 +287,6 @@ export class TryOnService {
       this.prisma.virtualTryOn.count({ where }),
     ]);
 
-    // 批量处理所有 attachResultDataUri 操作
     const itemsWithDataUri = await Promise.all(
       items.map((item) => this.attachResultDataUri(item)),
     );
@@ -257,16 +300,24 @@ export class TryOnService {
     };
   }
 
-  /**
-   * 删除试衣记录
-   */
   async deleteTryOn(tryOnId: string, userId: string): Promise<void> {
     const tryOn = await this.prisma.virtualTryOn.findFirst({
       where: { id: tryOnId, userId },
+      select: { id: true, resultImageUrl: true },
     });
 
     if (!tryOn) {
       throw new NotFoundException("试衣记录不存在");
+    }
+
+    if (tryOn.resultImageUrl) {
+      try {
+        await this.storage.delete(tryOn.resultImageUrl);
+        this.logger.debug("已删除MinIO结果图片", { tryOnId, url: tryOn.resultImageUrl });
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.warn("删除MinIO结果图片失败", { tryOnId, error: msg });
+      }
     }
 
     await this.prisma.virtualTryOn.delete({
@@ -274,109 +325,6 @@ export class TryOnService {
     });
   }
 
-  /**
-   * 异步处理试衣请求
-   */
-  private async processTryOnAsync(
-    tryOnId: string,
-    userPhotoUrl: string,
-    clothingImageUrl: string,
-    category?: string,
-  ): Promise<void> {
-    try {
-      // 更新状态为处理中
-      await this.prisma.virtualTryOn.update({
-        where: { id: tryOnId },
-        data: { status: TryOnStatus.processing },
-      });
-
-      // 发布状态更新事件
-      await this.publishStatusUpdate(tryOnId, TryOnStatus.processing);
-
-      // 调用试衣编排器
-      const result = await this.orchestrator.executeTryOn({
-        personImageUrl: userPhotoUrl,
-        garmentImageUrl: clothingImageUrl,
-        category: this.mapCategory(category),
-      });
-
-      // 更新试衣结果
-      await this.prisma.virtualTryOn.update({
-        where: { id: tryOnId },
-        data: {
-          status: TryOnStatus.completed,
-          resultImageUrl: result.resultImageUrl,
-          completedAt: new Date(),
-        },
-      });
-
-      // 发布完成事件
-      await this.publishStatusUpdate(
-        tryOnId,
-        TryOnStatus.completed,
-        result.resultImageUrl,
-      );
-
-      this.logger.log("试衣处理完成", {
-        tryOnId,
-        provider: result.provider,
-      });
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      this.logger.error("试衣处理失败", error instanceof Error ? error.stack : undefined, {
-        tryOnId,
-        error: errorMessage,
-      });
-
-      // 更新失败状态
-      await this.prisma.virtualTryOn.update({
-        where: { id: tryOnId },
-        data: {
-          status: TryOnStatus.failed,
-          errorMessage: errorMessage,
-        },
-      });
-
-      // 发布失败事件
-      await this.publishStatusUpdate(
-        tryOnId,
-        TryOnStatus.failed,
-        null,
-        errorMessage,
-      );
-    }
-  }
-
-  /**
-   * 发布状态更新到 Redis
-   */
-  private async publishStatusUpdate(
-    tryOnId: string,
-    status: TryOnStatus,
-    resultImageUrl?: string | null,
-    error?: string,
-  ): Promise<void> {
-    try {
-      await this.redis.publish(
-        "tryon:status",
-        JSON.stringify({
-          tryOnId,
-          status,
-          resultImageUrl,
-          error,
-          timestamp: new Date().toISOString(),
-        }),
-      );
-      this.logger.debug("试衣状态已发布", { tryOnId, status });
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      this.logger.warn("发布试衣状态失败", { tryOnId, error: errorMessage });
-    }
-  }
-
-  /**
-   * 映射服装类别到试衣 API 格式
-   */
   private async attachResultDataUri<T extends { resultImageUrl?: string | null }>(
     tryOn: T,
   ): Promise<T & { resultImageDataUri?: string | null }> {
@@ -403,27 +351,5 @@ export class TryOnService {
         resultImageDataUri: null,
       };
     }
-  }
-
-  private mapCategory(
-    category?: string,
-  ): "upper_body" | "lower_body" | "full_body" | "dress" {
-    const categoryMap: Record<
-      string,
-      "upper_body" | "lower_body" | "full_body" | "dress"
-    > = {
-      tops: "upper_body",
-      shirts: "upper_body",
-      jackets: "upper_body",
-      pants: "lower_body",
-      jeans: "lower_body",
-      skirts: "lower_body",
-      shorts: "lower_body",
-      dresses: "dress",
-      jumpsuits: "full_body",
-      suits: "full_body",
-    };
-
-    return categoryMap[category?.toLowerCase() || ""] || "upper_body";
   }
 }

@@ -347,13 +347,29 @@ export const clothingApi = {
     sort?: ClothingSortOptions;
     page?: number;
     limit?: number;
+    minPrice?: number;
+    maxPrice?: number;
+    brandId?: string;
+    sizes?: string[];
   }): Promise<ApiResponse<PaginatedResponse<ClothingItem>>> {
-    const response = await apiClient.get<BackendClothingListResponse>("/clothing", {
-      ...params?.filter,
-      ...params?.sort,
+    const queryParams: Record<string, string | number | undefined> = {
       page: params?.page,
-      pageSize: params?.limit,
-    });
+      limit: params?.limit,
+      category: params?.filter?.category as string | undefined,
+      minPrice: params?.minPrice,
+      maxPrice: params?.maxPrice,
+      brandId: params?.brandId,
+      colors: params?.filter?.seasons?.join(","),
+      sizes: params?.sizes?.join(","),
+      sortBy: params?.sort?.sortBy,
+      sortOrder: params?.sort?.sortOrder,
+    };
+
+    const filteredParams = Object.fromEntries(
+      Object.entries(queryParams).filter(([, v]) => v !== undefined && v !== null),
+    );
+
+    const response = await apiClient.get<BackendClothingListResponse>("/clothing", filteredParams);
 
     if (!response.success || !response.data) {
       return {
@@ -538,10 +554,18 @@ export const clothingApi = {
   async search(
     query: string,
     filter?: ClothingFilter,
+    extraParams?: {
+      minPrice?: number;
+      maxPrice?: number;
+      sizes?: string[];
+    },
   ): Promise<ApiResponse<ClothingItem[]>> {
     const response = await apiClient.post<BackendClothingItem[]>("/clothing/search", {
       query,
       filter,
+      minPrice: extraParams?.minPrice,
+      maxPrice: extraParams?.maxPrice,
+      sizes: extraParams?.sizes,
     });
 
     if (!response.success || !response.data) {

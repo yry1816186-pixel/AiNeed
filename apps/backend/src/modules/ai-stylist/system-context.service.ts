@@ -38,7 +38,7 @@ export interface ServiceHealthStatus {
   redis: { status: "up" | "down"; latencyMs: number; connectedClients?: number };
   minio: { status: "up" | "down" | "unknown"; latencyMs: number };
   qdrant: { status: "up" | "down" | "unknown"; latencyMs: number };
-  catvton: { status: "up" | "down" | "unknown"; latencyMs: number };
+  catvton: { status: "up" | "down" | "unknown"; latencyMs: number }; // kept for backward compat, will be removed
   llmProvider: { provider: string; model: string; status: "configured" | "not_configured" };
 }
 

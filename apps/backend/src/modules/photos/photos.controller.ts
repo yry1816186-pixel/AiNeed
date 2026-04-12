@@ -25,12 +25,14 @@ import type { Response } from "express";
 
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-data.interceptor";
 
 import { PhotosService } from "./photos.service";
 
 @ApiTags("photos")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(SensitiveDataInterceptor)
 @Controller("photos")
 export class PhotosController {
   private readonly logger = new Logger(PhotosController.name);

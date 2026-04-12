@@ -5,6 +5,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Prisma, MembershipPlan, UserSubscription, BehaviorEventType } from "@prisma/client";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
@@ -12,6 +13,16 @@ import {
   MEMBERSHIP_PLANS,
   MembershipPlanConfig,
 } from "../../config/membership-plans";
+
+export interface SubscriptionRenewalPayload {
+  userId: string;
+  planId: string;
+  planName: string;
+  amount: number;
+  currency: string;
+  paymentMethod: string;
+  subscriptionId: string;
+}
 
 export interface PermissionCheckResult {
   allowed: boolean;
@@ -46,7 +57,10 @@ interface PaymentResult {
 export class SubscriptionService {
   private readonly logger = new Logger(SubscriptionService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   /**
    * 获取所有会员计划
@@ -384,7 +398,55 @@ export class SubscriptionService {
       return { success: false, error: "No active subscription found" };
     }
 
-    return { success: true };
+    const amount =
+      typeof plan.price === "number"
+        ? plan.price
+        : (plan.price as { toNumber?: () => number }).toNumber?.() ||
+          Number(plan.price);
+
+    if (amount === 0) {
+      return { success: true };
+    }
+
+    try {
+      const paymentOrder = await this.prisma.paymentOrder.create({
+        data: {
+          userId,
+          amount,
+          currency: plan.currency || "CNY",
+          paymentMethod: subscription.paymentMethod || "alipay",
+          status: "pending",
+          metadata: {
+            planId: plan.id,
+            planName: plan.name,
+            subscriptionId: subscription.id,
+            isRenewal: true,
+          },
+        },
+      });
+
+      const payload: SubscriptionRenewalPayload = {
+        userId,
+        planId: plan.id,
+        planName: plan.name,
+        amount,
+        currency: plan.currency || "CNY",
+        paymentMethod: subscription.paymentMethod || "alipay",
+        subscriptionId: subscription.id,
+      };
+
+      this.eventEmitter.emit("subscription.renewal.required", payload);
+
+      this.logger.log(
+        `Created renewal payment order ${paymentOrder.id} for subscription ${subscription.id}`,
+      );
+
+      return { success: true };
+    } catch (error) {
+      const message = this.getErrorMessage(error);
+      this.logger.error(`Failed to create renewal payment: ${message}`);
+      return { success: false, error: message };
+    }
   }
 
   private async sendExpirationReminder(subscription: SubscriptionWithPlan): Promise<void> {

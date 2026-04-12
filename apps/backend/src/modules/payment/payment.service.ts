@@ -5,8 +5,9 @@ import {
   Logger,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { Cron } from "@nestjs/schedule";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, OrderStatus } from "@prisma/client";
 
 import { StructuredLoggerService, ContextualLogger } from "../../common/logging";
 import { PrismaService } from "../../common/prisma/prisma.service";
@@ -632,6 +633,82 @@ export class PaymentService {
       const errorMessage = error instanceof Error ? error.message : "未知错误";
       this.logger.error("支付宝签名验证失败", undefined, { error: errorMessage });
       return false;
+    }
+  }
+
+  /**
+   * 自动关闭超时未支付订单（每5分钟执行）
+   */
+  @Cron("*/5 * * * *")
+  async handleCloseExpiredPayments(): Promise<void> {
+    const expiredThreshold = new Date();
+    expiredThreshold.setMinutes(expiredThreshold.getMinutes() - 30);
+
+    const expiredRecords = await this.prisma.paymentRecord.findMany({
+      where: {
+        status: "pending",
+        expiredAt: { lt: new Date() },
+        createdAt: { lt: expiredThreshold },
+      },
+      take: 50,
+    });
+
+    if (expiredRecords.length === 0) {
+      return;
+    }
+
+    this.logger.log(`Found ${expiredRecords.length} expired payment records to close`);
+
+    for (const record of expiredRecords) {
+      try {
+        const provider = this.getProvider(record.provider as PaymentProvider);
+        await provider.closeOrder(record.orderId);
+
+        await this.prisma.paymentRecord.update({
+          where: { id: record.id },
+          data: {
+            status: "closed",
+            cancelledAt: new Date(),
+          },
+        });
+
+        await this.prisma.order.updateMany({
+          where: {
+            id: record.orderId,
+            status: OrderStatus.pending,
+          },
+          data: {
+            status: OrderStatus.cancelled,
+          },
+        });
+
+        const orderWithItems = await this.prisma.order.findUnique({
+          where: { id: record.orderId },
+          include: { items: true },
+        });
+
+        if (orderWithItems) {
+          for (const item of orderWithItems.items) {
+            await this.prisma.clothingItem.update({
+              where: { id: item.itemId },
+              data: { stock: { increment: item.quantity } },
+            });
+          }
+        }
+
+        this.eventEmitter.emit(PAYMENT_EVENTS.PAYMENT_CLOSED, {
+          userId: record.userId,
+          orderId: record.orderId,
+          paymentRecordId: record.id,
+        });
+
+        this.logger.log(`Closed expired payment: ${record.orderId}`);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        this.logger.error(
+          `Failed to close expired payment ${record.orderId}: ${message}`,
+        );
+      }
     }
   }
 }

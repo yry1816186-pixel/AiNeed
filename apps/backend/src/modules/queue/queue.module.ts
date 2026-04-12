@@ -1,5 +1,5 @@
 import { BullModule } from '@nestjs/bullmq';
-import { Module, Logger } from '@nestjs/common';
+import { Module, Logger, forwardRef } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { GatewayModule } from '../../common/gateway/gateway.module';
@@ -24,7 +24,7 @@ const logger = new Logger('QueueModule');
     // Import GatewayModule to access NotificationService
     GatewayModule,
     AIModule,
-    TryOnModule,
+    forwardRef(() => TryOnModule),
     // Register BullMQ with Redis connection
     BullModule.forRootAsync({
       imports: [ConfigModule],

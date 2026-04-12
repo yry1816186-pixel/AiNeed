@@ -42,6 +42,7 @@
     "react-native-share": "^11.0.0",
     "react-native-svg": "15.8.0",
     "react-native-vector-icons": "^10.2.0",
+    "socket.io-client": "^4.7.0",
     "zustand": "^5.0.5"
   },
   "devDependencies": {

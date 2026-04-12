@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { LlmProviderService } from "../../ai-stylist/llm-provider.service";
 
 export interface RecommendationContext {
   userId: string;
@@ -152,7 +153,10 @@ export class RecommendationExplainerService {
   private readonly logger = new Logger(RecommendationExplainerService.name);
   private readonly useLLM: boolean;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private llmProviderService: LlmProviderService,
+  ) {
     this.useLLM =
       this.configService.get<string>("ENABLE_LLM_EXPLANATIONS", "true") ===
       "true";
@@ -161,7 +165,28 @@ export class RecommendationExplainerService {
   async generateExplanation(
     context: RecommendationContext,
   ): Promise<GeneratedExplanation> {
+    if (this.useLLM && context.score > 0.5) {
+      try {
+        return await this.generateLLMExplanation(context);
+      } catch (error) {
+        this.logger.debug(`LLM explanation failed, falling back to template: ${error}`);
+      }
+    }
     return this.generateTemplateExplanation(context);
+  }
+
+  private async generateLLMExplanation(
+    context: RecommendationContext,
+  ): Promise<GeneratedExplanation> {
+    const prompt = this.buildExplanationPrompt(context);
+
+    const response = await this.llmProviderService.chat({
+      messages: [{ role: "user", content: prompt }],
+      maxTokens: 400,
+      temperature: 0.3,
+    });
+
+    return this.parseLLMResponse(response.content, context);
   }
 
   async explain(

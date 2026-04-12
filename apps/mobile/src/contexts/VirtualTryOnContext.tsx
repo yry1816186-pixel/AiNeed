@@ -9,6 +9,7 @@ import React, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TryOnResult } from "../services/api/tryon.api";
 import { virtualTryOnService } from "../services/ai";
+import { photosApi, type PhotoType } from "../services/api/photos.api";
 
 const VTO_STORAGE_KEY = "@virtual_tryons";
 
@@ -61,14 +62,14 @@ function virtualTryOnReducer(
 
 interface VirtualTryOnContextValue extends VirtualTryOnState {
   loadHistory: () => Promise<void>;
-  tryOn: (
-    personImageUri: string,
-    clothingImageUri: string,
+  tryOnWithIds: (
+    photoId: string,
+    itemId: string,
   ) => Promise<TryOnResult | null>;
-  tryOnMultiple: (
+  tryOnWithImages: (
     personImageUri: string,
-    clothingImageUris: string[],
-  ) => Promise<TryOnResult[]>;
+    clothingItemId: string,
+  ) => Promise<TryOnResult | null>;
   deleteResult: (id: string) => Promise<void>;
   setCurrentResult: (result: TryOnResult | null) => void;
   clearError: () => void;
@@ -113,19 +114,16 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const tryOn = useCallback(
+  const tryOnWithIds = useCallback(
     async (
-      personImageUri: string,
-      clothingImageUri: string,
+      photoId: string,
+      itemId: string,
     ): Promise<TryOnResult | null> => {
       dispatch({ type: "SET_PROCESSING", payload: true });
       dispatch({ type: "SET_ERROR", payload: null });
 
       try {
-        const result = await virtualTryOnService.tryOn(
-          personImageUri,
-          clothingImageUri,
-        );
+        const result = await virtualTryOnService.tryOn(photoId, itemId);
 
         if (result.status === "completed") {
           dispatch({ type: "ADD_RESULT", payload: result });
@@ -150,39 +148,44 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
     [state.history],
   );
 
-  const tryOnMultiple = useCallback(
+  const tryOnWithImages = useCallback(
     async (
       personImageUri: string,
-      clothingImageUris: string[],
-    ): Promise<TryOnResult[]> => {
+      clothingItemId: string,
+    ): Promise<TryOnResult | null> => {
       dispatch({ type: "SET_PROCESSING", payload: true });
       dispatch({ type: "SET_ERROR", payload: null });
 
       try {
-        const results = await virtualTryOnService.tryOnMultiple(
+        const uploadResponse = await photosApi.upload(
           personImageUri,
-          clothingImageUris,
+          "full_body" as PhotoType,
         );
-        const completedResults = results.filter(
-          (r) => r.status === "completed",
-        );
+        if (!uploadResponse.success || !uploadResponse.data) {
+          throw new Error(uploadResponse.error?.message || "照片上传失败");
+        }
 
-        completedResults.forEach((result) => {
+        const photoId = uploadResponse.data.id;
+        const result = await virtualTryOnService.tryOn(photoId, clothingItemId);
+
+        if (result.status === "completed") {
           dispatch({ type: "ADD_RESULT", payload: result });
-        });
-
-        const updatedHistory = [...completedResults, ...state.history];
-        await saveToStorage(updatedHistory);
+          dispatch({ type: "SET_CURRENT", payload: result });
+          const updatedHistory = [result, ...state.history];
+          await saveToStorage(updatedHistory);
+        } else {
+          dispatch({ type: "SET_ERROR", payload: "Virtual try-on failed" });
+        }
 
         dispatch({ type: "SET_PROCESSING", payload: false });
-        return results;
+        return result;
       } catch (error) {
         dispatch({
           type: "SET_ERROR",
           payload: error instanceof Error ? error.message : "Unknown error",
         });
         dispatch({ type: "SET_PROCESSING", payload: false });
-        return [];
+        return null;
       }
     },
     [state.history],
@@ -208,8 +211,8 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
   const value: VirtualTryOnContextValue = {
     ...state,
     loadHistory,
-    tryOn,
-    tryOnMultiple,
+    tryOnWithIds,
+    tryOnWithImages,
     deleteResult,
     setCurrentResult,
     clearError,

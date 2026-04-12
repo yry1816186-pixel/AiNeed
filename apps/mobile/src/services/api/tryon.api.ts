@@ -353,6 +353,93 @@ export const recommendationsApi = {
   > {
     return apiClient.get("/recommendations/style-guide");
   },
+
+  async getCompleteTheLook(
+    clothingId: string,
+  ): Promise<
+    ApiResponse<{
+      anchor: {
+        id: string;
+        name: string;
+        category: string;
+        imageUrl: string;
+        price?: number;
+      };
+      suggestions: {
+        top: Array<{
+          id: string;
+          name: string;
+          imageUrl: string;
+          price?: number;
+          brand?: string;
+          matchScore: number;
+          reason: string;
+        }>;
+        bottom: Array<{
+          id: string;
+          name: string;
+          imageUrl: string;
+          price?: number;
+          brand?: string;
+          matchScore: number;
+          reason: string;
+        }>;
+        shoes: Array<{
+          id: string;
+          name: string;
+          imageUrl: string;
+          price?: number;
+          brand?: string;
+          matchScore: number;
+          reason: string;
+        }>;
+        accessories: Array<{
+          id: string;
+          name: string;
+          imageUrl: string;
+          price?: number;
+          brand?: string;
+          matchScore: number;
+          reason: string;
+        }>;
+      };
+      harmonyScore: number;
+      harmonyRule: string;
+      harmonyDescription: string;
+    }>
+  > {
+    return apiClient.get(`/recommendations/complete-the-look/${clothingId}`);
+  },
+
+  async submitFeedback(params: {
+    clothingId: string;
+    action: "like" | "dislike" | "ignore";
+    recommendationId?: string;
+    reason?: string;
+  }): Promise<ApiResponse<{ success: boolean; message: string }>> {
+    return apiClient.post("/recommendations/feedback", params);
+  },
+
+  async submitBatchFeedback(
+    items: Array<{
+      clothingId: string;
+      action: "like" | "dislike" | "ignore";
+      recommendationId?: string;
+    }>,
+  ): Promise<ApiResponse<{ success: boolean; message: string }>> {
+    return apiClient.post("/recommendations/feedback/batch", { items });
+  },
+
+  async getColdStartRecommendations(
+    limit?: number,
+  ): Promise<ApiResponse<RecommendedItem[]>> {
+    return getNormalizedRecommendations(
+      "/recommendations/cold-start",
+      { limit },
+      "COLD_START_UNAVAILABLE",
+      "Failed to load cold start recommendations",
+    );
+  },
 };
 
 export default { tryOnApi, recommendationsApi };

@@ -3,6 +3,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import sharp from "sharp";
 
+import { sanitizeImage } from "../../../common/security/image-sanitizer";
 import { StorageService } from "../../../common/storage/storage.service";
 
 import {
@@ -113,7 +114,7 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
     const canvasHeight = 1024;
     const placement = this.getPlacement(category, canvasWidth, canvasHeight);
 
-    const personCanvas = await sharp(personImage, { failOn: "none" })
+    const personCanvas = await sanitizeImage(sharp(personImage, { failOn: "none" }))
       .rotate()
       .resize(canvasWidth, canvasHeight, {
         fit: "cover",
@@ -122,7 +123,7 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
       .png()
       .toBuffer();
 
-    const garmentOverlay = await sharp(garmentImage, { failOn: "none" })
+    const garmentOverlay = await sanitizeImage(sharp(garmentImage, { failOn: "none" }))
       .rotate()
       .resize(placement.width, placement.height, {
         fit: "contain",
@@ -143,7 +144,7 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
       </svg>`,
     );
 
-    return sharp(personCanvas)
+    return sanitizeImage(sharp(personCanvas))
       .composite([
         {
           input: transparentGarment,
@@ -197,7 +198,7 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
   private async makeNearWhitePixelsTransparent(
     imageBuffer: Buffer,
   ): Promise<Buffer> {
-    const { data, info } = await sharp(imageBuffer)
+    const { data, info } = await sanitizeImage(sharp(imageBuffer))
       .ensureAlpha()
       .raw()
       .toBuffer({ resolveWithObject: true });
@@ -223,6 +224,6 @@ export class LocalPreviewTryOnProvider implements TryOnProvider {
       data[index + 3] = Math.round(alpha * 0.9);
     }
 
-    return sharp(data, { raw: info }).png().toBuffer();
+    return sanitizeImage(sharp(data, { raw: info })).png().toBuffer();
   }
 }

@@ -4,6 +4,9 @@ import * as Minio from "minio";
 import sharp from "sharp";
 import { v4 as uuidv4 } from "uuid";
 
+import { sanitizeImage } from "../security/image-sanitizer";
+import { UserKeyService } from "../security/user-key.service";
+
 /**
  * Multer 文件类型定义
  * 用于处理上传的文件
@@ -27,7 +30,10 @@ export class StorageService {
   private readonly minioClient: Minio.Client;
   private readonly bucket: string;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private userKeyService: UserKeyService,
+  ) {
     const accessKey = this.configService.get<string>("MINIO_ACCESS_KEY");
     const secretKey = this.configService.get<string>("MINIO_SECRET_KEY");
     
@@ -101,7 +107,7 @@ export class StorageService {
     originalFilename: string,
   ): Promise<string | undefined> {
     try {
-      const thumbnail = await sharp(file.buffer)
+      const thumbnail = await sanitizeImage(sharp(file.buffer))
         .resize(300, 300, { fit: "cover" })
         .toBuffer();
 
@@ -224,5 +230,69 @@ export class StorageService {
   async fetchRemoteAssetDataUri(url: string): Promise<string> {
     const asset = await this.fetchRemoteAsset(url);
     return `data:${asset.contentType};base64,${asset.body.toString("base64")}`;
+  }
+
+  async uploadEncrypted(
+    userId: string,
+    file: MulterFile,
+    folder: string = "uploads",
+  ): Promise<{ url: string; thumbnailUrl?: string }> {
+    const encryptedBuffer = await this.userKeyService.encryptBufferForUser(
+      userId,
+      file.buffer,
+    );
+
+    const ext = file.originalname.split(".").pop() || "jpg";
+    const filename = `${folder}/${uuidv4()}.${ext}.enc`;
+
+    await this.minioClient.putObject(
+      this.bucket,
+      filename,
+      encryptedBuffer,
+      encryptedBuffer.length,
+      {
+        "Content-Type": "application/octet-stream",
+        "X-Encrypted": "true",
+        "X-Original-Content-Type": file.mimetype,
+      },
+    );
+
+    const url = await this.getFileUrl(filename);
+
+    let thumbnailUrl: string | undefined;
+    if (folder === "photos") {
+      thumbnailUrl = await this.createThumbnail(file, filename);
+    }
+
+    return { url, thumbnailUrl };
+  }
+
+  async downloadEncrypted(
+    userId: string,
+    filenameOrUrl: string,
+  ): Promise<Buffer> {
+    const filename = this.extractFilename(filenameOrUrl);
+    const dataStream = await this.minioClient.getObject(this.bucket, filename);
+    const chunks: Buffer[] = [];
+
+    for await (const chunk of dataStream) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+
+    const encryptedBuffer = Buffer.concat(chunks);
+    return this.userKeyService.decryptBufferForUser(userId, encryptedBuffer);
+  }
+
+  private extractFilename(filenameOrUrl: string): string {
+    try {
+      const url = new URL(filenameOrUrl);
+      let filename = url.pathname.substring(1);
+      if (filename.startsWith(`${this.bucket}/`)) {
+        filename = filename.substring(this.bucket.length + 1);
+      }
+      return filename;
+    } catch {
+      return filenameOrUrl;
+    }
   }
 }

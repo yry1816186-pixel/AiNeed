@@ -38,6 +38,7 @@ import {
   ForbiddenException,
   ValidationErrorItem,
 } from "../exceptions";
+import { SentryService } from "../sentry/sentry.service";
 
 /**
  * 验证错误项接口（兼容旧格式）
@@ -135,6 +136,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
     private readonly asyncLocalStorage?: AsyncLocalStorage<RequestContext>,
     @Optional()
     private readonly logger?: StructuredLoggerService,
+    @Optional()
+    private readonly sentryService?: SentryService,
   ) {
     this.isProduction = process.env.NODE_ENV === "production";
     if (this.logger) {
@@ -150,16 +153,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    // 构建错误响应
     const errorResponse = this.buildErrorResponse(exception, request);
 
-    // 记录错误日志
     this.logError(exception, request, errorResponse);
 
-    // 获取HTTP状态码
+    this.reportToSentry(exception, request, errorResponse);
+
     const statusCode = this.getStatusCode(exception);
 
-    // 发送响应
     response.status(statusCode).json(errorResponse);
   }
 
@@ -635,7 +636,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
   private maskIp(ip: string | undefined): string {
     if (!ip) return "unknown";
 
-    // IPv4: 192.168.1.100 -> 192.168.*.*
     if (ip.includes(".")) {
       const parts = ip.split(".");
       if (parts.length === 4) {
@@ -643,7 +643,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       }
     }
 
-    // IPv6: 保留前两段
     if (ip.includes(":")) {
       const parts = ip.split(":");
       if (parts.length >= 2) {
@@ -652,5 +651,53 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     return ip;
+  }
+
+  private reportToSentry(
+    exception: unknown,
+    request: Request,
+    errorResponse: ErrorResponse,
+  ): void {
+    if (!this.sentryService?.isEnabled()) return;
+
+    const statusCode = this.getStatusCode(exception);
+
+    if (statusCode < 500 && !(exception instanceof Prisma.PrismaClientKnownRequestError)) {
+      return;
+    }
+
+    const requestId = this.getRequestId();
+    const sanitizedBody = this.sanitizeRequestBody(request.body);
+
+    this.sentryService.setTag("error_code", String(errorResponse.code));
+    this.sentryService.setTag("http_method", request.method);
+    this.sentryService.setTag("http_status", String(statusCode));
+
+    if (requestId) {
+      this.sentryService.setTag("request_id", requestId);
+    }
+
+    const store = this.asyncLocalStorage?.getStore();
+    if (store?.userId) {
+      this.sentryService.setUser({ id: store.userId });
+    }
+
+    this.sentryService.captureException(exception, {
+      request: {
+        method: request.method,
+        url: request.url,
+        query: request.query,
+        body: sanitizedBody,
+        headers: {
+          "user-agent": request.headers["user-agent"]?.substring(0, 100),
+          "content-type": request.headers["content-type"],
+        },
+      },
+      errorResponse: {
+        code: errorResponse.code,
+        message: errorResponse.message,
+        requestId,
+      },
+    });
   }
 }

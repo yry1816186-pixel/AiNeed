@@ -1,7 +1,17 @@
-import { ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { ClothingCategory } from "@prisma/client";
 import { Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from "class-validator";
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  IsArray,
+  IsIn,
+  ValidateNested,
+} from "class-validator";
 
 /**
  * 获取推荐查询参数 DTO
@@ -42,6 +52,60 @@ export class GetRecommendationsQueryDto {
   @Min(1)
   @Max(100)
   limit?: number = 20;
+}
+
+export class SubmitFeedbackDto {
+  @ApiProperty({
+    description: "服装ID",
+  })
+  @IsString()
+  clothingId!: string;
+
+  @ApiProperty({
+    description: "反馈类型",
+    enum: ["like", "dislike", "ignore"],
+  })
+  @IsIn(["like", "dislike", "ignore"])
+  action!: "like" | "dislike" | "ignore";
+
+  @ApiPropertyOptional({
+    description: "推荐来源ID",
+  })
+  @IsOptional()
+  @IsString()
+  recommendationId?: string;
+
+  @ApiPropertyOptional({
+    description: "反馈原因",
+  })
+  @IsOptional()
+  @IsString()
+  reason?: string;
+}
+
+export class SubmitBatchFeedbackDto {
+  @ApiProperty({
+    description: "批量反馈列表",
+    type: [SubmitFeedbackDto],
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SubmitFeedbackDto)
+  items!: SubmitFeedbackDto[];
+}
+
+export class GetCompleteTheLookQueryDto {
+  @ApiPropertyOptional({
+    description: "返回数量，默认3",
+    default: 3,
+    type: Number,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(10)
+  limit?: number = 3;
 }
 
 /**

@@ -36,6 +36,7 @@ import {
   SearchSuggestions,
   SearchResultList,
   LoadingOverlay,
+  PRICE_RANGES,
 } from '../components/search/SearchScreenParts';
 
 const DEBOUNCE_MS = 300;
@@ -58,6 +59,8 @@ export const SearchScreen: React.FC = () => {
   const [selectedSeason, setSelectedSeason] = useState<Season | null>(null);
   const [selectedOccasion, setSelectedOccasion] =
     useState<Occasion | null>(null);
+  const [selectedPriceRange, setSelectedPriceRange] = useState<number | null>(null);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
 
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -70,6 +73,15 @@ export const SearchScreen: React.FC = () => {
       occasions: selectedOccasion ? [selectedOccasion] : undefined,
     }),
     [selectedCategory, selectedSeason, selectedOccasion],
+  );
+
+  const currentExtraParams = useMemo(
+    () => ({
+      minPrice: selectedPriceRange !== null ? PRICE_RANGES[selectedPriceRange].min : undefined,
+      maxPrice: selectedPriceRange !== null ? PRICE_RANGES[selectedPriceRange].max : undefined,
+      sizes: selectedSizes.length > 0 ? selectedSizes : undefined,
+    }),
+    [selectedPriceRange, selectedSizes],
   );
 
   const loadInitialData = useCallback(async () => {
@@ -102,10 +114,15 @@ export const SearchScreen: React.FC = () => {
   }, [loadInitialData]);
 
   const performSearch = useCallback(
-    async (searchQuery: string, filter: ClothingFilter) => {
+    async (
+      searchQuery: string,
+      filter: ClothingFilter,
+      extraParams?: { minPrice?: number; maxPrice?: number; sizes?: string[] },
+    ) => {
       const trimmed = searchQuery.trim();
       const hasFilters =
-        !!filter.category || !!filter.seasons?.length || !!filter.occasions?.length;
+        !!filter.category || !!filter.seasons?.length || !!filter.occasions?.length ||
+        extraParams?.minPrice !== undefined || extraParams?.maxPrice !== undefined || !!extraParams?.sizes?.length;
 
       if (!trimmed && !hasFilters) {
         setResults([]);
@@ -117,7 +134,7 @@ export const SearchScreen: React.FC = () => {
       setHasSearched(true);
 
       try {
-        const response = await clothingApi.search(trimmed, filter);
+        const response = await clothingApi.search(trimmed, filter, extraParams);
         if (response.success && response.data) {
           setResults(response.data);
           if (trimmed) {
@@ -156,7 +173,7 @@ export const SearchScreen: React.FC = () => {
 
     const delay = hasQuery ? DEBOUNCE_MS : 0;
     debounceTimer.current = setTimeout(() => {
-      void performSearch(query, currentFilter);
+      void performSearch(query, currentFilter, currentExtraParams);
     }, delay);
 
     return () => {
@@ -166,6 +183,7 @@ export const SearchScreen: React.FC = () => {
     };
   }, [
     currentFilter,
+    currentExtraParams,
     performSearch,
     query,
     selectedCategory,
@@ -175,8 +193,8 @@ export const SearchScreen: React.FC = () => {
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
-    await performSearch(query, currentFilter);
-  }, [currentFilter, performSearch, query]);
+    await performSearch(query, currentFilter, currentExtraParams);
+  }, [currentFilter, currentExtraParams, performSearch, query]);
 
   const handleTagPress = useCallback((tag: string) => {
     setQuery(tag);
@@ -196,6 +214,8 @@ export const SearchScreen: React.FC = () => {
     setSelectedCategory(null);
     setSelectedSeason(null);
     setSelectedOccasion(null);
+    setSelectedPriceRange(null);
+    setSelectedSizes([]);
   }, []);
 
   const handleImageSelected = useCallback(async (uri: string) => {
@@ -283,17 +303,19 @@ export const SearchScreen: React.FC = () => {
       setSelectedCategory(category);
       setShowFilters(true);
       setHasSearched(true);
-      void performSearch('', { ...currentFilter, category });
+      void performSearch('', { ...currentFilter, category }, currentExtraParams);
     },
-    [currentFilter, performSearch],
+    [currentFilter, currentExtraParams, performSearch],
   );
 
   const hasActiveFilters =
-    !!selectedCategory || !!selectedSeason || !!selectedOccasion;
+    !!selectedCategory || !!selectedSeason || !!selectedOccasion || selectedPriceRange !== null || selectedSizes.length > 0;
   const activeFilterCount = [
     selectedCategory,
     selectedSeason,
     selectedOccasion,
+    selectedPriceRange !== null ? 'price' : null,
+    selectedSizes.length > 0 ? 'sizes' : null,
   ].filter(Boolean).length;
 
   const renderContent = () => {
@@ -423,10 +445,14 @@ export const SearchScreen: React.FC = () => {
         selectedCategory={selectedCategory}
         selectedSeason={selectedSeason}
         selectedOccasion={selectedOccasion}
+        selectedPriceRange={selectedPriceRange}
+        selectedSizes={selectedSizes}
         hasActiveFilters={hasActiveFilters}
         setSelectedCategory={setSelectedCategory}
         setSelectedSeason={setSelectedSeason}
         setSelectedOccasion={setSelectedOccasion}
+        setSelectedPriceRange={setSelectedPriceRange}
+        setSelectedSizes={setSelectedSizes}
         onClearFilters={handleClearFilters}
       />
 

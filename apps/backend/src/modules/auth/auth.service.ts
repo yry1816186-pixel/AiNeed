@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { randomUUID, createHash } from "crypto";
 
 import {
   Injectable,
@@ -95,7 +95,11 @@ export class AuthService {
   async register(dto: RegisterDto): Promise<AuthResponseDto> {
     this.logger.log("用户注册请求", { email: dto.email, hasNickname: !!dto.nickname });
 
+    const emailHash = createHash("sha256").update(dto.email.toLowerCase().trim()).digest("hex");
+
     const existingUser = await this.prisma.user.findUnique({
+      where: { emailHash },
+    }) || await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
 
@@ -110,6 +114,7 @@ export class AuthService {
       const createdUser = await tx.user.create({
         data: {
           email: dto.email,
+          emailHash: createHash("sha256").update(dto.email.toLowerCase().trim()).digest("hex"),
           password: hashedPassword,
           nickname: dto.nickname,
           phone: dto.phone,

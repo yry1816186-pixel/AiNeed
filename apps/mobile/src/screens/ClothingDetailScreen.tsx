@@ -260,6 +260,14 @@ export const ClothingDetailScreen: React.FC = () => {
           <Ionicons name='trash-outline' size={20} color={theme.colors.error} />
           <Text style={styles.deleteButtonText}>删除</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.tryOnButton}
+          onPress={() => navigation.navigate('VirtualTryOn', { clothingId })}
+          accessibilityLabel="虚拟试衣"
+        >
+          <Ionicons name="sparkles" size={20} color="#FFFFFF" />
+          <Text style={styles.tryOnButtonText}>试穿</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.editButton} onPress={handleEdit} accessibilityLabel="编辑服装">
           <LinearGradient colors={['#4F46E5', '#7C3AED']} style={styles.editButtonGradient} />
           <Text style={styles.editButtonText}>编辑</Text>
@@ -308,6 +316,8 @@ const styles = StyleSheet.create({
   footer: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', gap: 12, padding: 20, backgroundColor: theme.colors.surface, borderTopWidth: 1, borderTopColor: theme.colors.border },
   deleteButton: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 12, borderWidth: 1, borderColor: theme.colors.error },
   deleteButtonText: { fontSize: 16, fontWeight: '500', color: theme.colors.error },
+  tryOnButton: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 12, backgroundColor: '#5BCEA6' },
+  tryOnButtonText: { fontSize: 16, fontWeight: '600', color: '#FFFFFF' },
   editButton: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 14, borderRadius: 12, overflow: 'hidden' },
   editButtonGradient: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
   editButtonText: { fontSize: 16, fontWeight: '600', color: theme.colors.surface },

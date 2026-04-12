@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -9,133 +9,230 @@ import {
   ScrollView,
   Alert,
   Dimensions,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import Animated, {
-  FadeIn,
-  FadeInUp,
-  FadeInRight,
-  SlideInLeft,
-  SlideInRight,
-  withSpring,
-  useSharedValue,
-  useAnimatedStyle,
-  runOnJS,
-} from 'react-native-reanimated';
-import { launchImageLibrary, type ImagePickerResponse } from 'react-native-image-picker';
+} from "react-native";
+import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import Animated, { FadeInUp, SlideInLeft } from "react-native-reanimated";
+import { launchImageLibrary, type ImagePickerResponse } from "react-native-image-picker";
+import { pickImageSecurely, type SecureImagePickerResult, ImageValidationError } from "../../utils/imagePicker";
+import { photosApi } from "../../services/api/photos.api";
+import { tryOnApi, type TryOnResult } from "../../services/api/tryon.api";
+import { clothingApi } from "../../services/api/clothing.api";
+import { wsService, type TryOnEventPayload } from "../../services/websocket";
+import type { ClothingItem } from "../../types/clothing";
+import { colors } from "../../theme/tokens/colors";
+import { typography } from "../../theme/tokens/typography";
+import { spacing } from "../../theme/tokens/spacing";
+import { shadows } from "../../theme/tokens/shadows";
 
-// 引入增强主题令牌
-import { colors } from '../../theme/tokens/colors';
-import { typography } from '../../theme/tokens/typography';
-import { spacing } from '../../theme/tokens/spacing';
-import { shadows } from '../../theme/tokens/shadows';
-import { theme } from '../../theme';
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const POLL_INTERVAL = 3000;
+const POLL_MAX_ATTEMPTS = 60;
+const UPLOAD_TIMEOUT = 30000;
 
-interface TryOnResult {
-  id: string;
-  personImage: string;
-  clothingImage: string;
-  resultImage: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  createdAt: string;
-}
+type TryOnPhase = "idle" | "uploading" | "queued" | "processing" | "completed" | "failed";
 
 export const TryOnScreen: React.FC = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const isFocused = useIsFocused();
+  const routeParams = route.params as { clothingId?: string } | undefined;
+
   const [personImage, setPersonImage] = useState<string | null>(null);
   const [clothingImage, setClothingImage] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [clothingItem, setClothingItem] = useState<ClothingItem | null>(null);
+  const [phase, setPhase] = useState<TryOnPhase>("idle");
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<TryOnResult | null>(null);
-  const [showAfter, setShowAfter] = useState(false); // Before/After 切换
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // 动画值
-  const scaleValue = useSharedValue(1);
+  const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollAttemptsRef = useRef(0);
+  const wsUnsubscribeRef = useRef<(() => void) | null>(null);
 
-  // 模拟进度动画
-  const simulateProgress = useCallback(() => {
-    let currentProgress = 0;
-    const interval = setInterval(() => {
-      currentProgress += Math.random() * 15;
-      if (currentProgress >= 100) {
-        currentProgress = 100;
-        clearInterval(interval);
-        setTimeout(() => setShowAfter(true), 500);
+  useEffect(() => {
+    if (routeParams?.clothingId) {
+      loadClothingItem(routeParams.clothingId);
+    }
+    wsService.connect();
+    return () => {
+      cleanup();
+    };
+  }, []);
+
+  const loadClothingItem = useCallback(async (id: string) => {
+    const response = await clothingApi.getById(id);
+    if (response.success && response.data) {
+      setClothingItem(response.data);
+      if (response.data.imageUri) {
+        setClothingImage(response.data.imageUri);
       }
-      setProgress(Math.min(currentProgress, 100));
-    }, 300);
-    return interval;
+    }
   }, []);
 
-  const pickPersonImage = useCallback(() => {
-    launchImageLibrary(
-      { mediaType: 'photo', quality: 0.8 },
-      (response: ImagePickerResponse) => {
-        if (response.didCancel) return;
-        if (response.errorCode) {
-          Alert.alert('错误', response.errorMessage || '选择图片失败');
-          return;
-        }
-        if (response.assets && response.assets[0]) {
-          setPersonImage(response.assets[0].uri || null);
-        }
-      },
-    );
+  const cleanup = useCallback(() => {
+    if (pollTimerRef.current) {
+      clearInterval(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+    if (wsUnsubscribeRef.current) {
+      wsUnsubscribeRef.current();
+      wsUnsubscribeRef.current = null;
+    }
   }, []);
 
-  const pickClothingImage = useCallback(() => {
-    launchImageLibrary(
-      { mediaType: 'photo', quality: 0.8 },
-      (response: ImagePickerResponse) => {
-        if (response.didCancel) return;
-        if (response.errorCode) {
-          Alert.alert('错误', response.errorMessage || '选择图片失败');
+  const onTryOnResolved = useCallback(
+    (tryOnId: string, status: "completed" | "failed", errorMessage?: string) => {
+      cleanup();
+      if (status === "completed") {
+        setProgress(100);
+        tryOnApi.getStatus(tryOnId).then((statusResponse) => {
+          if (statusResponse.success && statusResponse.data) {
+            setResult(statusResponse.data);
+          }
+        });
+        setPhase("completed");
+      } else {
+        setPhase("failed");
+        setErrorMessage(errorMessage || "试衣处理失败");
+      }
+    },
+    [cleanup],
+  );
+
+  const startPolling = useCallback(
+    (tryOnId: string) => {
+      pollAttemptsRef.current = 0;
+      cleanup();
+
+      wsUnsubscribeRef.current = wsService.onTryOnComplete(tryOnId, (payload: TryOnEventPayload) => {
+        onTryOnResolved(tryOnId, payload.status, payload.errorMessage);
+      });
+
+      pollTimerRef.current = setInterval(async () => {
+        pollAttemptsRef.current++;
+
+        if (pollAttemptsRef.current > POLL_MAX_ATTEMPTS) {
+          onTryOnResolved(tryOnId, "failed", "试衣超时，请稍后重试");
           return;
         }
-        if (response.assets && response.assets[0]) {
-          setClothingImage(response.assets[0].uri || null);
+
+        if (!isFocused) return;
+
+        const statusResponse = await tryOnApi.getStatus(tryOnId);
+        if (!statusResponse.success || !statusResponse.data) return;
+
+        const tryOnData = statusResponse.data;
+
+        if (tryOnData.status === "completed" || tryOnData.status === "failed") {
+          onTryOnResolved(tryOnId, tryOnData.status, tryOnData.errorMessage);
+        } else if (tryOnData.status === "processing") {
+          setPhase("processing");
+          setProgress(Math.min(90, 30 + pollAttemptsRef.current * 2));
+        } else {
+          setPhase("queued");
+          setProgress(Math.min(30, pollAttemptsRef.current * 3));
         }
-      },
-    );
+      }, POLL_INTERVAL);
+    },
+    [isFocused, cleanup, onTryOnResolved],
+  );
+
+  const pickPersonImage = useCallback(async () => {
+    try {
+      const result = await pickImageSecurely();
+      if (result) {
+        setPersonImage(result.uri);
+      }
+    } catch (error) {
+      const msg = error instanceof ImageValidationError ? error.message : "选择图片失败";
+      Alert.alert("错误", msg);
+    }
+  }, []);
+
+  const pickClothingImage = useCallback(async () => {
+    try {
+      const result = await pickImageSecurely();
+      if (result) {
+        setClothingImage(result.uri);
+        setClothingItem(null);
+      }
+    } catch (error) {
+      const msg = error instanceof ImageValidationError ? error.message : "选择图片失败";
+      Alert.alert("错误", msg);
+    }
   }, []);
 
   const handleTryOn = useCallback(async () => {
-    if (!personImage || !clothingImage) {
-      Alert.alert('提示', '请先选择人物照片和服装图片');
+    if (!personImage) {
+      Alert.alert("提示", "请先选择人物照片");
+      return;
+    }
+    if (!clothingImage && !clothingItem) {
+      Alert.alert("提示", "请先选择服装图片");
       return;
     }
 
-    setIsProcessing(true);
-    setProgress(0);
-    setShowAfter(false);
-
-    // 启动模拟进度
-    const progressInterval = simulateProgress();
+    setPhase("uploading");
+    setProgress(5);
+    setErrorMessage(null);
+    setResult(null);
 
     try {
-      // TODO: 调用实际API
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      setProgress(10);
+      const uploadResponse = await photosApi.upload(personImage, "full_body");
 
-      setResult({
-        id: Date.now().toString(),
-        personImage: personImage!,
-        clothingImage: clothingImage!,
-        resultImage: personImage!, // 模拟结果
-        status: 'completed',
-        createdAt: new Date().toISOString(),
-      });
+      if (!uploadResponse.success || !uploadResponse.data) {
+        throw new Error(uploadResponse.error?.message || "人物照片上传失败");
+      }
+
+      const photoId = uploadResponse.data.id;
+      setProgress(25);
+
+      const itemId = clothingItem?.id;
+      if (!itemId) {
+        throw new Error("缺少服装信息，请重新选择服装");
+      }
+
+      setPhase("queued");
+      setProgress(35);
+
+      const createResponse = await tryOnApi.create(photoId, itemId);
+
+      if (!createResponse.success || !createResponse.data) {
+        throw new Error(createResponse.error?.message || "创建试衣请求失败");
+      }
+
+      const tryOnId = createResponse.data.id;
+      setProgress(40);
+
+      startPolling(tryOnId);
     } catch (error) {
-      Alert.alert('错误', '虚拟试衣失败，请检查后端服务是否运行');
-    } finally {
-      clearInterval(progressInterval);
-      setIsProcessing(false);
-      setProgress(100);
+      setPhase("failed");
+      setErrorMessage(error instanceof Error ? error.message : "虚拟试衣失败，请重试");
     }
-  }, [personImage, clothingImage, simulateProgress]);
+  }, [personImage, clothingImage, clothingItem, startPolling]);
+
+  const handleRetry = useCallback(() => {
+    setPhase("idle");
+    setProgress(0);
+    setResult(null);
+    setErrorMessage(null);
+  }, []);
+
+  const phaseLabel: Record<TryOnPhase, string> = {
+    idle: "",
+    uploading: "上传照片中...",
+    queued: "排队等待中...",
+    processing: "AI 处理中...",
+    completed: "试衣完成！",
+    failed: "试衣失败",
+  };
+
+  const isProcessing = phase === "uploading" || phase === "queued" || phase === "processing";
+  const canStart = personImage && (clothingImage || clothingItem) && !isProcessing;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -153,7 +250,7 @@ export const TryOnScreen: React.FC = () => {
               <Text style={styles.headerSubtitle}>上传照片即可体验黑科技试衣效果</Text>
               <View style={styles.headerBadge}>
                 <Ionicons name="flash" size={14} color="#FFFFFF" />
-                <Text style={styles.headerBadgeText}>3秒出结果</Text>
+                <Text style={styles.headerBadgeText}>AI 驱动</Text>
               </View>
             </View>
             <Ionicons name="body-outline" size={80} color="rgba(255,255,255,0.9)" />
@@ -175,11 +272,12 @@ export const TryOnScreen: React.FC = () => {
             style={[styles.imagePicker, personImage && styles.imagePickerFilled]}
             onPress={pickPersonImage}
             activeOpacity={0.7}
+            disabled={isProcessing}
           >
             {personImage ? (
               <>
                 <Image source={{ uri: personImage }} style={styles.previewImage} />
-                <TouchableOpacity style={styles.changeButton}>
+                <TouchableOpacity style={styles.changeButton} disabled={isProcessing}>
                   <Ionicons name="camera-outline" size={16} color="#FFFFFF" />
                   <Text style={styles.changeButtonText}>更换</Text>
                 </TouchableOpacity>
@@ -205,17 +303,21 @@ export const TryOnScreen: React.FC = () => {
               <Text style={styles.stepNumberText}>2</Text>
             </View>
             <Text style={styles.sectionTitle}>选择服装图片</Text>
+            {clothingItem && (
+              <Text style={styles.clothingNameHint}>{clothingItem.name}</Text>
+            )}
           </View>
 
           <TouchableOpacity
             style={[styles.imagePicker, clothingImage && styles.imagePickerFilled]}
             onPress={pickClothingImage}
             activeOpacity={0.7}
+            disabled={isProcessing}
           >
             {clothingImage ? (
               <>
                 <Image source={{ uri: clothingImage }} style={styles.previewImage} />
-                <TouchableOpacity style={styles.changeButton}>
+                <TouchableOpacity style={styles.changeButton} disabled={isProcessing}>
                   <Ionicons name="images-outline" size={16} color="#FFFFFF" />
                   <Text style={styles.changeButtonText}>更换</Text>
                 </TouchableOpacity>
@@ -235,49 +337,60 @@ export const TryOnScreen: React.FC = () => {
 
       {/* ========== 开始试衣按钮 ========== */}
       <Animated.View entering={FadeInUp.delay(400).springify()}>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            (!personImage || !clothingImage || isProcessing) && styles.buttonDisabled,
-          ]}
-          onPress={handleTryOn}
-          disabled={!personImage || !clothingImage || isProcessing}
-          activeOpacity={0.8}
-        >
-          {isProcessing ? (
-            <View style={styles.processingContent}>
-              <ActivityIndicator size="small" color="#FFFFFF" />
-              <Text style={styles.buttonText}>AI 处理中... {Math.round(progress)}%</Text>
-            </View>
-          ) : (
-            <>
-              <Ionicons name="sparkles" size={20} color="#FFFFFF" />
-              <Text style={styles.buttonText}>开始 AI 试衣</Text>
-              <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
-            </>
-          )}
-        </TouchableOpacity>
+        {phase === "failed" ? (
+          <TouchableOpacity style={styles.retryButton} onPress={handleRetry} activeOpacity={0.8}>
+            <Ionicons name="refresh" size={20} color="#FFFFFF" />
+            <Text style={styles.buttonText}>重试</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={[styles.button, !canStart && styles.buttonDisabled]}
+            onPress={handleTryOn}
+            disabled={!canStart}
+            activeOpacity={0.8}
+          >
+            {isProcessing ? (
+              <View style={styles.processingContent}>
+                <ActivityIndicator size="small" color="#FFFFFF" />
+                <Text style={styles.buttonText}>
+                  {phaseLabel[phase]} {progress > 0 ? `${Math.round(progress)}%` : ""}
+                </Text>
+              </View>
+            ) : (
+              <>
+                <Ionicons name="sparkles" size={20} color="#FFFFFF" />
+                <Text style={styles.buttonText}>开始 AI 试衣</Text>
+                <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
+              </>
+            )}
+          </TouchableOpacity>
+        )}
       </Animated.View>
 
-      {/* ========== 进度条（处理中显示）========== */}
+      {/* ========== 进度条 ========== */}
       {isProcessing && (
         <Animated.View entering={FadeInUp.duration(300)}>
           <View style={styles.progressContainer}>
             <View style={styles.progressBarBg}>
-              <Animated.View
-                style={[
-                  styles.progressBarFill,
-                  { width: `${progress}%` },
-                ]}
-              />
+              <Animated.View style={[styles.progressBarFill, { width: `${progress}%` }]} />
             </View>
             <Text style={styles.progressText}>{Math.round(progress)}%</Text>
           </View>
         </Animated.View>
       )}
 
-      {/* ========== 结果展示（Before/After 对比视图）========== */}
-      {result && !isProcessing && (
+      {/* ========== 错误提示 ========== */}
+      {phase === "failed" && errorMessage && (
+        <Animated.View entering={FadeInUp.duration(300)}>
+          <View style={styles.errorSection}>
+            <Ionicons name="alert-circle" size={24} color={colors.semantic.error.main} />
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          </View>
+        </Animated.View>
+      )}
+
+      {/* ========== 结果展示 ========== */}
+      {result && phase === "completed" && (
         <Animated.View entering={FadeInUp.delay(200).springify()}>
           <View style={styles.resultSection}>
             <View style={styles.resultHeader}>
@@ -285,44 +398,32 @@ export const TryOnScreen: React.FC = () => {
               <Text style={styles.resultTitle}>试衣完成！</Text>
             </View>
 
-            {/* Before/After 对比卡片 */}
             <View style={styles.comparisonContainer}>
-              {/* Before */}
               <View style={styles.comparisonCard}>
                 <View style={styles.comparisonLabel}>
                   <Text style={styles.comparisonLabelText}>原始照片</Text>
                 </View>
-                <Image
-                  source={{ uri: result.personImage }}
-                  style={styles.comparisonImage}
-                />
+                <Image source={{ uri: personImage! }} style={styles.comparisonImage} />
               </View>
 
-              {/* 箭头 */}
               <View style={styles.arrowContainer}>
                 <Ionicons name="arrow-forward" size={28} color={colors.brand.warmPrimary} />
               </View>
 
-              {/* After */}
               <View style={[styles.comparisonCard, styles.comparisonCardAfter]}>
                 <View style={[styles.comparisonLabel, styles.comparisonLabelAfter]}>
                   <Ionicons name="sparkles" size={12} color="#FFFFFF" />
-                  <Text style={[styles.comparisonLabelText, { color: '#FFFFFF' }]}>AI 试衣效果</Text>
+                  <Text style={[styles.comparisonLabelText, { color: "#FFFFFF" }]}>AI 试衣效果</Text>
                 </View>
                 <Image
-                  source={{ uri: showAfter ? result.resultImage : result.personImage }}
+                  source={{
+                    uri: result.resultImageDataUri || result.resultImageUrl || personImage!,
+                  }}
                   style={styles.comparisonImage}
                 />
-                {!showAfter && (
-                  <View style={styles.overlay}>
-                    <ActivityIndicator size="large" color={colors.warmPrimary.mint[500]} />
-                    <Text style={styles.overlayText}>生成中...</Text>
-                  </View>
-                )}
               </View>
             </View>
 
-            {/* 操作按钮组 */}
             <View style={styles.actionButtons}>
               <TouchableOpacity style={styles.actionButtonSecondary}>
                 <Ionicons name="share-social-outline" size={20} color={colors.warmPrimary.ocean[700]} />
@@ -340,7 +441,6 @@ export const TryOnScreen: React.FC = () => {
   );
 };
 
-// ========== 样式表（使用新主题令牌）==========
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -351,57 +451,55 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
 
-  // ===== Header =====
   headerSection: {
     marginBottom: spacing.layout.sectionGap,
-    borderRadius: spacing.borderRadius['2xl'],
-    overflow: 'hidden',
+    borderRadius: spacing.borderRadius["2xl"],
+    overflow: "hidden",
     ...shadows.presets.lg,
   },
   headerGradient: {
     padding: spacing.layout.modalPadding,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   headerContent: {
     flex: 1,
   },
   headerTitle: {
-    fontSize: typography.fontSize['2xl'],
+    fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold as any,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     marginBottom: 8,
   },
   headerSubtitle: {
     fontSize: typography.fontSize.base,
-    color: 'rgba(255,255,255,0.9)',
+    color: "rgba(255,255,255,0.9)",
     lineHeight: 22,
     marginBottom: 12,
   },
   headerBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.25)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.25)",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   headerBadgeText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold as any,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     marginLeft: 6,
   },
 
-  // ===== Section =====
   section: {
     marginBottom: spacing.layout.cardGap,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
     marginBottom: 12,
   },
@@ -410,38 +508,42 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
     backgroundColor: colors.brand.warmPrimary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   stepNumberText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold as any,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   sectionTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold as any,
     color: colors.neutral[900],
   },
+  clothingNameHint: {
+    fontSize: typography.fontSize.sm,
+    color: colors.warmPrimary.ocean[600],
+    fontWeight: typography.fontWeight.medium as any,
+  },
 
-  // ===== Image Picker =====
   imagePicker: {
     borderRadius: spacing.borderRadius.xl,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderWidth: 2,
     borderColor: colors.neutral[300],
-    borderStyle: 'dashed',
+    borderStyle: "dashed",
     backgroundColor: colors.neutral.white,
   },
   imagePickerFilled: {
     borderWidth: 2,
-    borderStyle: 'solid',
+    borderStyle: "solid",
     borderColor: colors.warmPrimary.mint[300],
   },
   placeholder: {
     height: 220,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
   placeholderIconContainer: {
@@ -449,8 +551,8 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 36,
     backgroundColor: colors.neutral[100],
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 16,
   },
   placeholderTitle: {
@@ -463,20 +565,20 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.sm,
     color: colors.neutral[500],
     marginTop: 6,
-    textAlign: 'center',
+    textAlign: "center",
   },
   previewImage: {
-    width: '100%',
+    width: "100%",
     height: 220,
-    resizeMode: 'cover',
+    resizeMode: "cover",
   },
   changeButton: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 12,
     right: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.6)",
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 16,
@@ -485,14 +587,13 @@ const styles = StyleSheet.create({
   changeButtonText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semibold as any,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
 
-  // ===== Button =====
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.brand.warmPrimary,
     borderRadius: spacing.borderRadius.xl,
     paddingVertical: 16,
@@ -506,18 +607,28 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold as any,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   processingContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
+  retryButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.semantic.error.main,
+    borderRadius: spacing.borderRadius.xl,
+    paddingVertical: 16,
+    gap: 10,
+    ...shadows.presets.lg,
+    marginBottom: 16,
+  },
 
-  // ===== Progress Bar =====
   progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
     marginBottom: 20,
   },
@@ -526,10 +637,10 @@ const styles = StyleSheet.create({
     height: 8,
     backgroundColor: colors.neutral[200],
     borderRadius: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressBarFill: {
-    height: '100%',
+    height: "100%",
     backgroundColor: colors.warmPrimary.mint[500],
     borderRadius: 4,
   },
@@ -539,16 +650,30 @@ const styles = StyleSheet.create({
     color: colors.warmPrimary.mint[600],
   },
 
-  // ===== Result Section =====
+  errorSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: colors.semantic.error.light,
+    padding: 16,
+    borderRadius: spacing.borderRadius.lg,
+    marginBottom: 16,
+  },
+  errorText: {
+    flex: 1,
+    fontSize: typography.fontSize.base,
+    color: colors.semantic.error.dark,
+  },
+
   resultSection: {
     backgroundColor: colors.neutral.white,
-    borderRadius: spacing.borderRadius['2xl'],
+    borderRadius: spacing.borderRadius["2xl"],
     padding: spacing.layout.cardPadding,
     ...shadows.presets.lg,
   },
   resultHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginBottom: 20,
   },
@@ -558,17 +683,16 @@ const styles = StyleSheet.create({
     color: colors.neutral[900],
   },
 
-  // Comparison Cards
   comparisonContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
     marginBottom: 20,
   },
   comparisonCard: {
     flex: 1,
     borderRadius: spacing.borderRadius.lg,
-    overflow: 'hidden',
+    overflow: "hidden",
     backgroundColor: colors.neutral[100],
   },
   comparisonCardAfter: {
@@ -579,8 +703,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.neutral[200],
     paddingHorizontal: 12,
     paddingVertical: 6,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
   },
   comparisonLabelAfter: {
@@ -592,47 +716,28 @@ const styles = StyleSheet.create({
     color: colors.neutral[700],
   },
   comparisonImage: {
-    width: '100%',
+    width: "100%",
     aspectRatio: 3 / 4,
-    resizeMode: 'cover',
+    resizeMode: "cover",
   },
   arrowContainer: {
     width: 32,
     height: 32,
     borderRadius: 16,
     backgroundColor: colors.warmPrimary.coral[50],
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
-  // Overlay for loading state
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  overlayText: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.medium as any,
-    color: colors.neutral[700],
-  },
-
-  // Action Buttons
   actionButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
   },
   actionButtonSecondary: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     paddingVertical: 13,
     borderRadius: spacing.borderRadius.xl,
@@ -647,9 +752,9 @@ const styles = StyleSheet.create({
   },
   actionButtonPrimary: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     paddingVertical: 13,
     borderRadius: spacing.borderRadius.xl,
@@ -659,7 +764,7 @@ const styles = StyleSheet.create({
   actionButtonTextPrimary: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold as any,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
 });
 

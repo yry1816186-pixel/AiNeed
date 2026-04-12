@@ -5,6 +5,8 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
 
+import { sanitizeImage } from "../../../common/security/image-sanitizer";
+
 interface AliyunBodyAnalysisResult {
   BodyType?: string;
   UpperBodyRatio?: number;
@@ -196,7 +198,7 @@ export class AiAnalysisService {
     imageBuffer: Buffer,
   ): Promise<BodyFaceAnalysisResult> {
     const sharp = (await import("sharp")).default;
-    const image = sharp(imageBuffer, { failOn: "none" }).rotate();
+    const image = sanitizeImage(sharp(imageBuffer, { failOn: "none" })).rotate();
     const [metadata, stats] = await Promise.all([image.metadata(), image.stats()]);
 
     const width = metadata.width ?? 1;

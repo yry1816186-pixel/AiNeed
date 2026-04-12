@@ -108,6 +108,10 @@ export const HomeScreen: React.FC = () => {
     navigation.navigate('AiStylist');
   }, [navigation]);
 
+  const handleVirtualTryOnPress = useCallback(() => {
+    navigation.navigate('VirtualTryOn', {});
+  }, [navigation]);
+
   const handleRecommendationPress = useCallback((id: string) => {
     navigation.navigate('RecommendationDetail', { recommendationId: id });
   }, [navigation]);
@@ -191,6 +195,23 @@ export const HomeScreen: React.FC = () => {
                 <Text style={styles.closetProgressBadgeText}>75%</Text>
               </View>
             </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.tryOnCard} onPress={handleVirtualTryOnPress} activeOpacity={0.85}>
+            <LinearGradient
+              colors={['#6EC1E4', '#5BCEA6']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.tryOnGradient}
+            >
+              <View style={styles.tryOnInfo}>
+                <Text style={styles.tryOnTitle}>AI 虚拟试衣</Text>
+                <Text style={styles.tryOnSubtitle}>上传照片，一键试穿</Text>
+              </View>
+              <View style={styles.tryOnIconContainer}>
+                <Ionicons name="sparkles" size={28} color="#FFFFFF" />
+              </View>
+            </LinearGradient>
           </TouchableOpacity>
 
           <View style={styles.recsSection}>
@@ -373,6 +394,43 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: '#FFFFFF',
+  },
+  tryOnCard: {
+    borderRadius: 24,
+    marginBottom: 24,
+    overflow: 'hidden',
+    shadowColor: '#6EC1E4',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  tryOnGradient: {
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  tryOnInfo: {
+    flex: 1,
+  },
+  tryOnTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginBottom: 4,
+  },
+  tryOnSubtitle: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.85)',
+  },
+  tryOnIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   recsSection: {
     marginBottom: 20,

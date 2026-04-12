@@ -145,8 +145,8 @@ export class CodeRagController {
         tech_stack: {
           backend: 'NestJS 11.x + TypeScript + Prisma + PostgreSQL',
           mobile: 'React Native 0.76.8 (Expo 52) + TypeScript',
-          ml: 'Python + PyTorch + CatVTON + GLM-5',
-          infrastructure: 'Redis + Qdrant + MinIO + Docker/K8s',
+          ml: 'Python + FastAPI + GLM-5 (ZhipuAI)',
+          infrastructure: 'Redis + MinIO + Docker',
         },
         architecture: 'Monorepo (apps/backend, apps/mobile, ml/, packages/)',
         api_base: '/api/v1/',

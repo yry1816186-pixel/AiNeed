@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Param, Body, Query, UseGuards } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiQuery } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 import { ClothingCategory } from "@prisma/client";
@@ -14,9 +14,16 @@ import {
   GetOccasionRecommendationsQueryDto,
   GetTrendingQueryDto,
   GetDiscoverQueryDto,
+  SubmitFeedbackDto,
+  SubmitBatchFeedbackDto,
 } from "./dto";
 import { RecommendationsService } from "./recommendations.service";
 import { AdvancedRecommendationService } from "./services/advanced-recommendation.service";
+import { OutfitCompletionService } from "./services/outfit-completion.service";
+import {
+  BehaviorTrackingService,
+  type BehaviorAction,
+} from "./services/behavior-tracking.service";
 
 /**
  * 服装项响应
@@ -122,6 +129,8 @@ export class RecommendationsController {
   constructor(
     private recommendationsService: RecommendationsService,
     private advancedRecommendationService: AdvancedRecommendationService,
+    private outfitCompletionService: OutfitCompletionService,
+    private behaviorTrackingService: BehaviorTrackingService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -380,5 +389,119 @@ export class RecommendationsController {
         limit ? parseInt(limit) : 20,
       );
     }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("complete-the-look/:clothingId")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "获取搭配推荐（Complete the Look）",
+    description:
+      "基于选中的服装，推荐互补的搭配单品（上装/下装/鞋/配饰），包含色彩和谐度评分。",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "搭配推荐结果",
+  })
+  async getCompleteTheLook(
+    @CurrentUser("id") userId: string,
+    @Param("clothingId") clothingId: string,
+  ) {
+    return this.outfitCompletionService.getCompleteTheLook(clothingId, userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("feedback")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "提交推荐反馈",
+    description:
+      "用户对推荐结果进行反馈（like/dislike/ignore），反馈将用于改进后续推荐质量。",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "反馈已记录",
+  })
+  async submitFeedback(
+    @CurrentUser("id") userId: string,
+    @Body() dto: SubmitFeedbackDto,
+  ) {
+    const actionMap: Record<string, BehaviorAction> = {
+      like: "like",
+      dislike: "dislike",
+      ignore: "click",
+    };
+
+    await this.behaviorTrackingService.track({
+      userId,
+      action: actionMap[dto.action] || "click",
+      clothingId: dto.clothingId,
+      context: {
+        recommendationId: dto.recommendationId,
+        source: "recommendation_feedback",
+      },
+    });
+
+    return { success: true, message: "反馈已记录" };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("feedback/batch")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "批量提交推荐反馈",
+    description: "批量提交多条推荐反馈，适用于滑动推荐等场景。",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "批量反馈已记录",
+  })
+  async submitBatchFeedback(
+    @CurrentUser("id") userId: string,
+    @Body() dto: SubmitBatchFeedbackDto,
+  ) {
+    const actionMap: Record<string, BehaviorAction> = {
+      like: "like",
+      dislike: "dislike",
+      ignore: "click",
+    };
+
+    await this.behaviorTrackingService.trackBatch(
+      dto.items.map((item) => ({
+        userId,
+        action: actionMap[item.action] || "click" as BehaviorAction,
+        clothingId: item.clothingId,
+        context: {
+          recommendationId: item.recommendationId,
+          source: "recommendation_feedback_batch",
+        },
+      })),
+    );
+
+    return { success: true, message: `已记录 ${dto.items.length} 条反馈` };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("cold-start")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "获取冷启动推荐",
+    description:
+      "为新用户提供的推荐接口，基于 onboarding style quiz 结果生成初始推荐，无需历史行为数据。",
+  })
+  @ApiQuery({
+    name: "limit",
+    required: false,
+    type: Number,
+    description: "返回数量，默认20",
+  })
+  async getColdStartRecommendations(
+    @CurrentUser("id") userId: string,
+    @Query("limit") limit?: string,
+  ) {
+    return this.recommendationsService.getPersonalizedRecommendations(
+      userId,
+      { limit: limit ? parseInt(limit) : 20 },
+    );
   }
 }

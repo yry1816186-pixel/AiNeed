@@ -1,0 +1,242 @@
+import {
+  Injectable,
+  Logger,
+} from "@nestjs/common";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RedisService } from "../../../common/redis/redis.service";
+
+export type BehaviorAction =
+  | "view"
+  | "click"
+  | "like"
+  | "dislike"
+  | "addToCart"
+  | "purchase"
+  | "tryOn"
+  | "share";
+
+export interface TrackBehaviorInput {
+  userId: string;
+  action: BehaviorAction;
+  clothingId: string;
+  context?: {
+    source?: string;
+    recommendationId?: string;
+    searchQuery?: string;
+    duration?: number;
+  };
+}
+
+const ACTION_WEIGHTS: Record<BehaviorAction, number> = {
+  view: 0.1,
+  click: 0.3,
+  like: 0.6,
+  dislike: -0.5,
+  addToCart: 0.7,
+  purchase: 1.0,
+  tryOn: 0.8,
+  share: 0.5,
+};
+
+@Injectable()
+export class BehaviorTrackingService {
+  private readonly logger = new Logger(BehaviorTrackingService.name);
+
+  constructor(
+    private prisma: PrismaService,
+    private redisService: RedisService,
+  ) {}
+
+  async track(input: TrackBehaviorInput): Promise<void> {
+    const { userId, action, clothingId, context } = input;
+
+    try {
+      await this.prisma.userBehavior.create({
+        data: {
+          userId,
+          itemId: clothingId,
+          type: action,
+        },
+      });
+    } catch (error) {
+      this.logger.warn(`Failed to track behavior: ${error}`);
+    }
+
+    if (context) {
+      try {
+        await this.prisma.userBehaviorEvent.create({
+          data: {
+            userId,
+            sessionId: context.recommendationId || "rec",
+            eventType: "INTERACTION" as any,
+            category: "recommendation",
+            action,
+            targetType: "clothing",
+            targetId: clothingId,
+            metadata: context,
+            source: context.source,
+          },
+        });
+      } catch (error) {
+        this.logger.debug(`Event tracking skipped: ${error}`);
+      }
+    }
+
+    await this.updatePreferenceCache(userId, action, clothingId);
+  }
+
+  async trackBatch(inputs: TrackBehaviorInput[]): Promise<void> {
+    for (const input of inputs) {
+      await this.track(input);
+    }
+  }
+
+  async getUserBehaviorSummary(
+    userId: string,
+    days: number = 30,
+  ): Promise<{
+    totalActions: number;
+    categoryPreferences: Record<string, number>;
+    stylePreferences: Record<string, number>;
+    colorPreferences: Record<string, number>;
+    recentItems: string[];
+  }> {
+    const since = new Date();
+    since.setDate(since.getDate() - days);
+
+    const behaviors = await this.prisma.userBehavior.findMany({
+      where: {
+        userId,
+        createdAt: { gte: since },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+    });
+
+    const itemIds = [...new Set(behaviors.map((b) => b.itemId).filter(Boolean) as string[])];
+
+    const items = await this.prisma.clothingItem.findMany({
+      where: { id: { in: itemIds } },
+      select: {
+        id: true,
+        category: true,
+        tags: true,
+        color: true,
+      },
+    });
+
+    const itemMap = new Map(items.map((i) => [i.id, i]));
+
+    const categoryPrefs: Record<string, number> = {};
+    const stylePrefs: Record<string, number> = {};
+    const colorPrefs: Record<string, number> = {};
+    const recentItems: string[] = [];
+
+    for (const b of behaviors) {
+      const weight = ACTION_WEIGHTS[b.type as BehaviorAction] || 0.1;
+      const itemId = b.itemId;
+      if (!itemId) continue;
+
+      const item = itemMap.get(itemId);
+      if (item) {
+        const cat = item.category as string;
+        categoryPrefs[cat] = (categoryPrefs[cat] || 0) + weight;
+
+        if (item.tags && Array.isArray(item.tags)) {
+          for (const tag of item.tags as string[]) {
+            stylePrefs[tag] = (stylePrefs[tag] || 0) + weight * 0.5;
+          }
+        }
+
+        if (item.color) {
+          colorPrefs[item.color] = (colorPrefs[item.color] || 0) + weight;
+        }
+      }
+
+      if (!recentItems.includes(itemId)) {
+        recentItems.push(itemId);
+      }
+    }
+
+    return {
+      totalActions: behaviors.length,
+      categoryPreferences: categoryPrefs,
+      stylePreferences: stylePrefs,
+      colorPreferences: colorPrefs,
+      recentItems: recentItems.slice(0, 50),
+    };
+  }
+
+  async getExcludedItemIds(userId: string): Promise<Set<string>> {
+    const excluded = new Set<string>();
+
+    const purchased = await this.prisma.orderItem.findMany({
+      where: { order: { userId } },
+      select: { itemId: true },
+    });
+    for (const item of purchased) {
+      excluded.add(item.itemId);
+    }
+
+    const favorited = await this.prisma.favorite.findMany({
+      where: { userId },
+      select: { itemId: true },
+    });
+    for (const item of favorited) {
+      excluded.add(item.itemId);
+    }
+
+    const recentViews = await this.prisma.userBehavior.findMany({
+      where: {
+        userId,
+        type: "view",
+        createdAt: {
+          gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        },
+      },
+      select: { itemId: true },
+      take: 50,
+    });
+    for (const item of recentViews) {
+      if (item.itemId) excluded.add(item.itemId);
+    }
+
+    return excluded;
+  }
+
+  private async updatePreferenceCache(
+    userId: string,
+    action: BehaviorAction,
+    clothingId: string,
+  ): Promise<void> {
+    try {
+      const redis = this.redisService.getClient();
+      const cacheKey = `user:pref:${userId}`;
+      const weight = ACTION_WEIGHTS[action] || 0.1;
+
+      const clothing = await this.prisma.clothingItem.findUnique({
+        where: { id: clothingId },
+        select: { category: true, tags: true, color: true },
+      });
+
+      if (!clothing) return;
+
+      const category = clothing.category as string;
+      const color = clothing.color || "";
+      const tags = (clothing.tags as string[]) || [];
+
+      const multi = redis.multi();
+      multi.hincrbyfloat(cacheKey, `cat:${category}`, weight);
+      if (color) {
+        multi.hincrbyfloat(cacheKey, `color:${color}`, weight);
+      }
+      for (const tag of tags) {
+        multi.hincrbyfloat(cacheKey, `style:${tag}`, weight * 0.5);
+      }
+      multi.expire(cacheKey, 30 * 24 * 60 * 60);
+      await multi.exec();
+    } catch (error) {
+      this.logger.debug(`Preference cache update skipped: ${error}`);
+    }
+  }
+}

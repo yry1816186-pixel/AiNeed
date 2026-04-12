@@ -48,6 +48,16 @@ export const OCCASIONS: Occasion[] = [
   'gym',
 ];
 
+export const PRICE_RANGES = [
+  { label: '¥0-99', min: 0, max: 99 },
+  { label: '¥100-299', min: 100, max: 299 },
+  { label: '¥300-599', min: 300, max: 599 },
+  { label: '¥600-999', min: 600, max: 999 },
+  { label: '¥1000+', min: 1000, max: undefined },
+] as const;
+
+export const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'] as const;
+
 export function getCategoryIcon(category: ClothingCategory): string {
   const icons: Record<ClothingCategory, string> = {
     tops: 'shirt-outline',
@@ -128,10 +138,14 @@ interface FilterPanelProps {
   selectedCategory: ClothingCategory | null;
   selectedSeason: Season | null;
   selectedOccasion: Occasion | null;
+  selectedPriceRange: number | null;
+  selectedSizes: string[];
   hasActiveFilters: boolean;
   setSelectedCategory: (v: ClothingCategory | null) => void;
   setSelectedSeason: (v: Season | null) => void;
   setSelectedOccasion: (v: Occasion | null) => void;
+  setSelectedPriceRange: (v: number | null) => void;
+  setSelectedSizes: (v: string[]) => void;
   onClearFilters: () => void;
 }
 
@@ -141,10 +155,14 @@ export const FilterPanel: React.FC<FilterPanelProps> = React.memo(
     selectedCategory,
     selectedSeason,
     selectedOccasion,
+    selectedPriceRange,
+    selectedSizes,
     hasActiveFilters,
     setSelectedCategory,
     setSelectedSeason,
     setSelectedOccasion,
+    setSelectedPriceRange,
+    setSelectedSizes,
     onClearFilters,
   }) {
     if (!showFilters) {
@@ -174,6 +192,62 @@ export const FilterPanel: React.FC<FilterPanelProps> = React.memo(
           selected={selectedOccasion}
           onSelect={setSelectedOccasion}
         />
+
+        <View style={styles.filterGroup}>
+          <Text style={styles.filterGroupTitle}>价格</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <TouchableOpacity
+              style={[styles.filterChip, selectedPriceRange === null && styles.filterChipActive]}
+              onPress={() => setSelectedPriceRange(null)}
+            >
+              <Text style={[styles.filterChipText, selectedPriceRange === null && styles.filterChipTextActive]}>
+                全部
+              </Text>
+            </TouchableOpacity>
+            {PRICE_RANGES.map((range, index) => (
+              <TouchableOpacity
+                key={range.label}
+                style={[styles.filterChip, selectedPriceRange === index && styles.filterChipActive]}
+                onPress={() => setSelectedPriceRange(selectedPriceRange === index ? null : index)}
+              >
+                <Text style={[styles.filterChipText, selectedPriceRange === index && styles.filterChipTextActive]}>
+                  {range.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        <View style={styles.filterGroup}>
+          <Text style={styles.filterGroupTitle}>尺码</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <TouchableOpacity
+              style={[styles.filterChip, selectedSizes.length === 0 && styles.filterChipActive]}
+              onPress={() => setSelectedSizes([])}
+            >
+              <Text style={[styles.filterChipText, selectedSizes.length === 0 && styles.filterChipTextActive]}>
+                全部
+              </Text>
+            </TouchableOpacity>
+            {SIZE_OPTIONS.map((size) => (
+              <TouchableOpacity
+                key={size}
+                style={[styles.filterChip, selectedSizes.includes(size) && styles.filterChipActive]}
+                onPress={() => {
+                  setSelectedSizes(
+                    selectedSizes.includes(size)
+                      ? selectedSizes.filter((s) => s !== size)
+                      : [...selectedSizes, size],
+                  );
+                }}
+              >
+                <Text style={[styles.filterChipText, selectedSizes.includes(size) && styles.filterChipTextActive]}>
+                  {size}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
 
         {hasActiveFilters ? (
           <TouchableOpacity

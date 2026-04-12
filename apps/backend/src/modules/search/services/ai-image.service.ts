@@ -7,6 +7,7 @@ import { ConfigService } from "@nestjs/config";
 import axios from "axios";
 
 import { allowUnverifiedAiFallbacks } from "../../../common/config/runtime-flags";
+import { sanitizeImage } from "../../../common/security/image-sanitizer";
 import {
   type AliyunStyleItem,
   type AliyunAnalysisResponse,
@@ -293,7 +294,7 @@ export class AIImageService {
 
   private async analyzeLocally(imageBuffer: Buffer): Promise<AIAnalysisResult> {
     const sharp = (await import("sharp")).default;
-    const image = sharp(imageBuffer, { failOn: "none" }).rotate();
+    const image = sanitizeImage(sharp(imageBuffer, { failOn: "none" })).rotate();
     const [metadata, stats] = await Promise.all([image.metadata(), image.stats()]);
 
     const width = metadata.width ?? 1;

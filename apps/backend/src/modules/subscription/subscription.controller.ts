@@ -13,7 +13,7 @@ import { RequestWithUser } from "../../common/types/common.types";
 
 import { SubscriptionService } from "./subscription.service";
 
-@Controller("subscription")
+@Controller("subscriptions")
 @UseGuards(AuthGuard)
 export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) {}

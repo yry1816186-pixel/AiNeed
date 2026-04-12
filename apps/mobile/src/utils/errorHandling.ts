@@ -391,13 +391,23 @@ export class ErrorReporter {
    * 上报到 Sentry
    */
   private static reportToSentry(error: StructuredError): void {
+    const tags: Record<string, string> = {
+      category: error.category,
+      severity: error.severity,
+      recoveryStrategy: error.recoveryStrategy,
+    };
+
+    if (error.code) {
+      tags.code = error.code;
+    }
+
+    const requestId = error.context?.requestId;
+    if (typeof requestId === "string") {
+      tags.request_id = requestId;
+    }
+
     Sentry.captureException(error.originalError, {
-      tags: {
-        category: error.category,
-        severity: error.severity,
-        recoveryStrategy: error.recoveryStrategy,
-        code: error.code,
-      },
+      tags,
       extra: {
         userMessage: error.userMessage,
         technicalMessage: error.technicalMessage,

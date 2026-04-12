@@ -12,6 +12,7 @@ import { EncryptionModule } from "./common/encryption/encryption.module";
 import { GatewayModule } from "./common/gateway/gateway.module";
 import { CsrfModule } from "./common/guards/csrf/csrf.module";
 import { LoggingModule } from "./common/logging";
+import { SentryModule } from "./common/sentry";
 import { SoftDeleteMiddleware } from "./common/middleware";
 import { PrismaModule } from "./common/prisma/prisma.module";
 import { RedisModule } from "./common/redis/redis.module";
@@ -79,6 +80,7 @@ import { DemoModule } from "./modules/demo/demo.module";
       },
     }),
     LoggingModule.forRoot(),
+    SentryModule.forRoot(),
     PrismaModule,
     RedisModule,
     StorageModule,

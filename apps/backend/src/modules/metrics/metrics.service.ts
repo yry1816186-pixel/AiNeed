@@ -265,6 +265,24 @@ export const storageUploadBytes = new Counter({
   labelNames: ['bucket'] as const,
 });
 
+export const gpuMemoryUsedBytes = new Gauge({
+  name: 'gpu_memory_used_bytes',
+  help: 'GPU memory currently used in bytes',
+  labelNames: ['device'] as const,
+});
+
+export const gpuMemoryTotalBytes = new Gauge({
+  name: 'gpu_memory_total_bytes',
+  help: 'Total GPU memory in bytes',
+  labelNames: ['device'] as const,
+});
+
+export const gpuModelLoaded = new Gauge({
+  name: 'gpu_model_loaded',
+  help: 'Whether the ML model is loaded (1=loaded, 0=not loaded)',
+  labelNames: ['model'] as const,
+});
+
 @Injectable()
 export class MetricsService {
   // HTTP 请求记录方法
@@ -440,5 +458,14 @@ export class MetricsService {
   recordStorageUpload(bucket: string, type: string, bytes: number) {
     storageUploads.labels(bucket, type).inc();
     storageUploadBytes.labels(bucket).inc(bytes);
+  }
+
+  updateGpuMemory(device: string, usedBytes: number, totalBytes: number) {
+    gpuMemoryUsedBytes.labels(device).set(usedBytes);
+    gpuMemoryTotalBytes.labels(device).set(totalBytes);
+  }
+
+  updateModelLoaded(model: string, loaded: boolean) {
+    gpuModelLoaded.labels(model).set(loaded ? 1 : 0);
   }
 }

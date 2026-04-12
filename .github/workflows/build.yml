@@ -57,6 +57,18 @@ jobs:
       - name: Build Backend
         run: cd apps/backend && pnpm build
 
+      - name: Upload Sentry Sourcemaps
+        if: vars.SENTRY_AUTH_TOKEN != ''
+        run: |
+          cd apps/backend
+          npx @sentry/cli sourcemaps upload \
+            --org ${{ vars.SENTRY_ORG }} \
+            --project ${{ vars.SENTRY_PROJECT_BACKEND }} \
+            --release aineed-backend@${{ steps.version.outputs.version }} \
+            ./dist
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
       - name: Extract Version
         id: version
         run: |

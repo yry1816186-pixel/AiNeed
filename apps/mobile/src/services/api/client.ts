@@ -136,7 +136,13 @@ class ApiClient {
     );
 
     this.client.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        const requestId = response.headers["x-request-id"];
+        if (requestId && typeof requestId === "string") {
+          (response as unknown as Record<string, unknown>).__requestId = requestId;
+        }
+        return response;
+      },
       async (error: AxiosError<ApiError>) => {
         const originalRequest = error.config;
 
