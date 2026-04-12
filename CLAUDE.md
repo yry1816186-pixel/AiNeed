@@ -274,3 +274,391 @@ cd apps/mobile; npx react-native run-android
 - `delivery/competition/AiNeed_Business_Plan.md` - 商业计划书
 - `delivery/competition/AiNeed_Competition_Highlights.md` - 比赛加分项
 - `delivery/competition/AiNeed_Demo_Script.md` - 路演脚本
+
+<!-- GSD:project-start source:PROJECT.md -->
+## Project
+
+**AiNeed - 智能私人形象定制与服装设计助手平台**
+
+AiNeed 是一个 AI 驱动的移动端平台，为用户提供智能私人形象定制和服装设计服务。通过虚拟试衣、AI 造型师、个性化推荐和社区功能，让 AI 成为用户的专属形象顾问。后端 NestJS + React Native 移动端 + Python ML 服务的 pnpm monorepo 架构，已具备 35 个后端模块和 28 个移动端页面。
+
+**Core Value:** 用户能真实体验 AI 虚拟试衣并获得精准的个性化穿搭推荐，这是产品体验闭环的核心。
+
+### Constraints
+
+- **GPU**: RTX 4060 8GB VRAM — ML 模型选择受限于显存
+- **Tech Stack**: 已锁定 NestJS + React Native + Python，不更换框架
+- **数据库**: PostgreSQL 16 + Redis 7，不更换存储方案
+- **Package Manager**: pnpm workspace，不更换
+- **API 版本**: 当前 v1，URI versioning
+<!-- GSD:project-end -->
+
+<!-- GSD:stack-start source:codebase/STACK.md -->
+## Technology Stack
+
+## Languages & Runtime
+| Language | Version | Usage |
+|----------|---------|-------|
+| TypeScript | ^6.0.2 (root), ^5.0.4 (mobile) | Primary language for backend + mobile |
+| Python | 3.11+ | ML services, inference servers, data pipelines |
+| SQL | PostgreSQL 16 | Database schema, migrations |
+| YAML | Docker Compose, K8s manifests | Infrastructure config |
+- Node.js >=20.0.0
+- pnpm 8.15.0 (workspace monorepo)
+- React Native 0.76.8 (mobile)
+- NestJS 11.x (backend)
+## Backend Stack
+| Category | Technology | Version | Purpose |
+|----------|-----------|---------|---------|
+| Framework | @nestjs/core | ^11.1.0 | HTTP server, DI, modules |
+| ORM | Prisma | ^5.22.0 | Database schema, queries, migrations |
+| Database | PostgreSQL | 16-alpine | Primary data store |
+| Cache | Redis (ioredis) | ^5.3.2 | Session, caching, rate limiting |
+| Queue | BullMQ | ^5.71.0 | Background job processing |
+| Auth | Passport + JWT | passport-jwt ^4.0.1 | Authentication |
+| Validation | class-validator + Zod | ^0.14.1 / ^3.22.4 | Input validation |
+| API Docs | @nestjs/swagger | ^11.2.0 | OpenAPI/Swagger documentation |
+| WebSocket | socket.io | ^4.6.1 | Real-time communication |
+| Monitoring | Prometheus + Grafana | prom-client ^15.1.0 | Metrics collection |
+| Search | Qdrant | @qdrant/js-client-rest ^1.17.0 | Vector search (Code RAG) |
+| Storage | MinIO | minio ^7.1.3 | Object storage |
+| Email | Nodemailer | ^7.0.7 | Email delivery |
+| Security | Helmet, csurf, bcryptjs | Multiple | HTTP security, CSRF, password hashing |
+| Image | Sharp | ^0.33.2 | Image processing |
+| Resilience | Opossum | ^8.1.4 | Circuit breaker pattern |
+| HTTP Client | Axios | ^1.13.6 | External API calls |
+| Schedule | @nestjs/schedule | ^6.0.0 | Cron jobs, task scheduling |
+## Mobile Stack
+| Category | Technology | Version | Purpose |
+|----------|-----------|---------|---------|
+| Framework | React Native | 0.76.8 | Cross-platform mobile |
+| UI Library | React Native Paper | ^5.12.0 | Material Design components |
+| Navigation | React Navigation 6 | ^6.1.18 | Screen navigation, bottom tabs |
+| State | Zustand | ^5.0.5 | Global state management |
+| Data Fetching | TanStack Query | ^5.81.0 | Server state, caching |
+| Animations | Reanimated | 3.16.7 | Smooth animations |
+| Gesture | Gesture Handler | ^2.20.2 | Touch interactions |
+| HTTP | Axios | ^1.12.2 | API client |
+| Storage | Encrypted Storage | ^4.0.3 | Secure local storage |
+| Error Tracking | Sentry | 6.9.0 | Crash reporting |
+| Date | date-fns | ^4.1.0 | Date formatting |
+## Shared Packages
+| Package | Purpose |
+|---------|---------|
+| `packages/types` | Shared TypeScript type definitions (tsup build, CJS+ESM) |
+| `packages/shared` | Shared utilities (tsc build) |
+## ML/AI Stack
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| Virtual Try-On | CatVTON | AI-powered virtual clothing try-on |
+| Body Analysis | Custom model | Body shape analysis |
+| Clothing Segmentation | Custom model | Garment segmentation from images |
+| Recommendation | SASRec | Sequential recommendation model |
+| Trend Prediction | Custom model | Fashion trend forecasting |
+| Embeddings | sentence-transformers | Text/code embeddings |
+| Vector DB | Qdrant | Code RAG semantic search |
+| Aesthetic Scoring | Custom model | Outfit aesthetic evaluation |
+| IP-Adapter | Custom implementation | Image prompt adapter |
+## Infrastructure
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| Containers | Docker + Docker Compose | Local development, deployment |
+| Orchestration | Kubernetes | Production deployment |
+| Monitoring | Prometheus + Grafana + Alertmanager | Observability stack |
+| CI/CD | GitHub Actions | Automated builds, tests |
+| Object Storage | MinIO | S3-compatible file storage |
+## Build Tools
+| Tool | Version | Purpose |
+|------|---------|---------|
+| pnpm | 8.15.0 | Workspace monorepo management |
+| NestJS CLI | ^11.0.16 | Backend scaffolding |
+| tsup | ^8.0.2 | Shared types build |
+| Jest | ^29.7.0 | Testing (backend + mobile) |
+| ESLint | ^8.x | Code linting |
+| Prettier | ^2.8.8 / ^3.8.1 | Code formatting |
+| TypeScript | ^5.0.4 / ^6.0.2 | Type checking |
+## Configuration Files
+| File | Location | Purpose |
+|------|----------|---------|
+| `package.json` | Root | Monorepo workspace config |
+| `pnpm-workspace.yaml` | Root | Workspace package definitions |
+| `.env.example` | Root | Environment template |
+| `.env.security.example` | Root | Security-focused env template |
+| `docker-compose.yml` | Root | Full stack Docker setup |
+| `docker-compose.dev.yml` | Root | Development Docker setup |
+| `prisma/schema.prisma` | `apps/backend/` | Database schema |
+| `tsconfig.json` | Multiple | TypeScript configuration |
+| `.prettierrc` | Root | Code formatting rules |
+| `CLAUDE.md` | Root | Claude Code instructions |
+<!-- GSD:stack-end -->
+
+<!-- GSD:conventions-start source:CONVENTIONS.md -->
+## Conventions
+
+## Naming Patterns
+- Backend services: `kebab-case.service.ts` (e.g., `auth.service.ts`, `clothing.service.ts`)
+- Backend controllers: `kebab-case.controller.ts` (e.g., `auth.controller.ts`, `clothing.controller.ts`)
+- Backend modules: `kebab-case.module.ts` (e.g., `auth.module.ts`)
+- Backend DTOs: `kebab-case.dto.ts` (e.g., `auth.dto.ts`)
+- Backend specs: `kebab-case.service.spec.ts` (unit), `kebab-case.e2e-spec.ts` (e2e)
+- Backend helpers: `kebab-case.helpers.ts` (e.g., `auth.helpers.ts`)
+- Backend index/barrel files: `index.ts` for re-exports
+- Mobile screens: `PascalCaseScreen.tsx` (e.g., `HomeScreen.tsx`, `LoginScreen.tsx`)
+- Mobile stores: `camelCaseStore.ts` (e.g., `clothingStore.ts`, `uiStore.ts`)
+- Mobile API services: `kebab-case.api.ts` (e.g., `auth.api.ts`, `clothing.api.ts`)
+- Mobile hooks: `useCamelCase.ts` (e.g., `useAsync.ts`, `useDebounce.ts`)
+- Mobile components: directories with `PascalCase` files inside (e.g., `components/ErrorBoundary/`)
+- Mobile types: grouped by domain (e.g., `types/user.ts`, `types/api.ts`, `types/navigation.ts`)
+- camelCase for all functions (e.g., `register()`, `login()`, `validateUser()`)
+- Async functions use `async/await`, not raw Promises
+- Private helper methods prefixed with descriptive names (e.g., `buildAuthResponse()`, `generateTokens()`, `saveRefreshToken()`)
+- camelCase for all variables (e.g., `mockPrismaService`, `accessToken`, `featuredItems`)
+- Constants in UPPER_SNAKE_CASE at module scope (e.g., `PASSWORD_REGEX`, `PASSWORD_ERROR_MSG`, `CACHE_TTL`)
+- Readonly arrays/types defined with `const` and `as const` (e.g., `const GenderValues = ["male", "female", "other"] as const`)
+- PascalCase for interfaces and types (e.g., `AuthResponseDto`, `ClothingFilter`, `PaginatedResponse<T>`)
+- Suffix DTOs with `Dto` (e.g., `RegisterDto`, `LoginDto`, `RefreshTokenDto`)
+- Suffix state interfaces with `State` in Zustand stores (e.g., `ClothingState`, `AuthState`)
+- Enum values are camelCase strings (e.g., `Gender.Male = 'male'`, `BodyType.Hourglass = 'hourglass'`)
+- Generic utility types defined in `apps/mobile/src/types/index.ts`: `Nullable<T>`, `Optional<T>`, `Maybe<T>`, `DeepPartial<T>`
+- PascalCase (e.g., `AuthService`, `ClothingService`, `AllExceptionsFilter`)
+- Suffix with function (e.g., `*Service`, `*Controller`, `*Filter`, `*Guard`, `*Interceptor`, `*Exception`)
+- NestJS Injectable classes annotated with `@Injectable()`, `@Controller()`, etc.
+## Code Style
+- Prettier configured at root `.prettierrc`
+- Semi-colons: required
+- Quotes: double quotes
+- Tab width: 2 spaces
+- Trailing comma: ES5
+- Print width: 100 characters
+- Arrow parens: always
+- End of line: LF
+- Backend ESLint config: `apps/backend/.eslintrc.json`
+- Mobile ESLint config: `apps/mobile/.eslintrc.json`
+- `@typescript-eslint/no-explicit-any`: warn
+- `@typescript-eslint/no-unused-vars`: error (args/vars prefixed with `_` ignored)
+- `@typescript-eslint/no-floating-promises`: error
+- `@typescript-eslint/no-misused-promises`: error
+- `@typescript-eslint/prefer-nullish-coalescing`: warn
+- `@typescript-eslint/prefer-optional-chain`: warn
+- `import/order`: error (enforced groups: builtin, external, internal, parent, sibling, index; alphabetized)
+- `import/no-cycle`: error
+- `no-console`: warn (allow `warn`, `error`)
+- `prefer-const`: error
+- `eqeqeq`: error (always)
+- `curly`: error (all)
+- `@typescript-eslint/no-explicit-any`: warn
+- `@typescript-eslint/no-floating-promises`: error
+- `no-console`: warn (allow `warn`, `error`)
+- `prefer-const`: error
+- `eqeqeq`: error (always)
+- `curly`: error (all)
+## TypeScript Configuration
+- Target: ES2022
+- Module: CommonJS
+- Strict mode enabled: `strict`, `strictNullChecks`, `noImplicitAny`, `strictBindCallApply`, `noUncheckedIndexedAccess`, `noImplicitReturns`, `forceConsistentCasingInFileNames`, `noFallthroughCasesInSwitch`
+- Path alias: `@/*` maps to `./src/*`
+- Decorators enabled: `experimentalDecorators`, `emitDecoratorMetadata`
+- Target: ESNext
+- Module: CommonJS
+- Strict mode enabled
+- Path alias: `@/*` maps to `./*`
+- Polyfill path aliases for Expo modules (e.g., `expo-router`, `expo-image-picker`)
+## Import Organization
+- Backend: `@/*` -> `./src/*` (configured in `tsconfig.json` and `jest.config.js` `moduleNameMapper`)
+- Mobile: `@/*` -> `./*` (configured in `tsconfig.json`)
+- Jest resolution for backend uses custom resolver at `apps/backend/jest.resolver.js` (handles pnpm monorepo module resolution)
+## Error Handling
+- `AllExceptionsFilter` (`apps/backend/src/common/filters/all-exceptions.filter.ts`): Global catch-all filter
+- `BusinessException` (`apps/backend/src/common/exceptions/business.exception.ts`): Custom business logic errors with error codes, error keys, and details
+- `ValidationException` (`apps/backend/src/common/exceptions/validation.exception.ts`): Input validation errors
+- `NotFoundException` (`apps/backend/src/common/exceptions/not-found.exception.ts`): Resource not found
+- `ForbiddenException` (`apps/backend/src/common/exceptions/forbidden.exception.ts`): Permission denied
+- XX: Error category (40=client, 50=server)
+- YY: Specific error type
+- Z: Severity (0=low, 9=high)
+- P2002 (unique constraint) -> 40901
+- P2025 (record not found) -> 40401
+- P2003 (foreign key) -> 40402
+- P2011 (null constraint) -> 42201
+- `ApiClient` class (`apps/mobile/src/services/api/client.ts`) wraps all HTTP calls
+- Returns `ApiResponse<T>` with `{ success: boolean; data?: T; error?: ApiError }`
+- Automatic token refresh on 401 with queue for concurrent requests
+- Retry with exponential backoff via `getWithRetry()`
+- Backend uses `class-validator` decorators on DTO classes
+- Global `ValidationPipe` with `whitelist: true` and `forbidNonWhitelisted: true`
+- XSS sanitization pipe: `apps/backend/src/common/pipes/xss-sanitization.pipe.ts`
+- Chinese error messages in validation decorators (e.g., `"请输入有效的邮箱地址"`)
+## Logging
+- Sentry integration: `apps/mobile/src/services/sentry.ts`
+- `console.log`, `console.debug`, `console.info` are mocked to `jest.fn()` in both backend and mobile test setups
+## Comments
+- File-level JSDoc/TSDoc with `@fileoverview` tag (used in backend common modules, e.g., `all-exceptions.filter.ts`, `business.exception.ts`, `structured-logger.service.ts`)
+- Inline comments in Chinese for business logic explanation (e.g., `// 删除该用户的所有 refresh tokens（强制登出所有设备）`)
+- Bug fix annotations: `// FIX-BL-003: 密码找回功能 (修复时间: 2026-03-19)`
+- Used extensively in `packages/types/src/index.ts` with `@description`, `@example`, field-level comments
+- Used in backend common modules (filters, exceptions, interceptors) with `@fileoverview`, `@class`, `@example`
+- Used for DTO classes and their properties with `@ApiProperty` / `@ApiPropertyOptional` decorators for Swagger
+- Not used consistently in mobile code or backend service methods
+## Function Design
+- DTOs for controller input (validated by class-validator)
+- Named parameters over positional for complex functions
+- Optional parameters marked with `?` or use defaults
+- Backend services return typed objects (e.g., `Promise<AuthResponseDto>`, `Promise<{ accessToken: string; refreshToken: string }>`)
+- Mobile API client returns `ApiResponse<T>` wrapper
+- Mobile stores use Zustand patterns: `set()` with state spread
+## Module Design
+- Module-per-feature pattern: each business domain has its own directory under `apps/backend/src/modules/`
+- Module structure: `{module-name}.module.ts`, `{module-name}.controller.ts`, `{module-name}.service.ts`, `dto/`, optionally `guards/`, `strategies/`, `decorators/`, `services/`
+- DTOs exported via barrel `index.ts` files (e.g., `dto/index.ts` re-exports from `dto/auth.dto.ts`)
+- Common/shared code in `apps/backend/src/common/` with its own barrel exports
+- Backend barrel files (`index.ts`) re-export with `export * from "./..."` pattern
+- Mobile stores barrel at `apps/mobile/src/stores/index.ts` re-exports all stores
+- Mobile types barrel at `apps/mobile/src/types/index.ts` re-exports from `@aineed/types` and local type files
+- `apps/backend/src/common/filters/index.ts`
+- `apps/backend/src/common/exceptions/index.ts`
+- `apps/backend/src/modules/auth/dto/index.ts`
+- `apps/mobile/src/stores/index.ts`
+- `apps/mobile/src/types/index.ts`
+- `apps/mobile/src/services/api/index.ts`
+## API Conventions
+## State Management (Mobile)
+## Lazy Loading (Mobile)
+<!-- GSD:conventions-end -->
+
+<!-- GSD:architecture-start source:ARCHITECTURE.md -->
+## Architecture
+
+## High-Level Architecture
+```
+```
+## Monorepo Structure
+| Workspace | Path | Purpose |
+|-----------|------|---------|
+| Backend | `apps/backend/` | NestJS API server |
+| Mobile | `apps/mobile/` | React Native app |
+| Types | `packages/types/` | Shared TypeScript types |
+| Shared | `packages/shared/` | Shared utilities |
+## Backend Architecture
+### Pattern: Modular Monolith (NestJS)
+### Module Layers
+```
+```
+### All Modules (35 total)
+| Category | Modules |
+|----------|---------|
+| **Core** | `auth`, `users`, `profile`, `database`, `health` |
+| **Fashion** | `clothing`, `try-on`, `style-profiles`, `recommendations`, `customization` |
+| **Commerce** | `cart`, `order`, `payment`, `subscription`, `merchant`, `brands` |
+| **AI** | `ai`, `ai-stylist`, `ai-safety`, `code-rag` |
+| **Social** | `community`, `photos`, `favorites`, `search` |
+| **Infrastructure** | `cache`, `queue`, `ws`, `analytics`, `metrics`, `notification` |
+| **Other** | `address`, `weather`, `demo`, `privacy` |
+### Common Layer
+| Directory | Purpose |
+|-----------|---------|
+| `config/` | Application configuration |
+| `guards/` | Auth guards (JWT, roles) |
+| `interceptors/` | Logging, transform interceptors |
+| `filters/` | Exception filters (global error handler) |
+| `pipes/` | Validation pipes (XSS sanitization) |
+| `middleware/` | Metrics, error handler middleware |
+| `prisma/` | Prisma client service |
+| `redis/` | Redis service |
+| `storage/` | MinIO storage service |
+| `security/` | Encryption, security utilities |
+| `email/` | Email service |
+| `circuit-breaker/` | Opossum circuit breaker |
+| `logging/` | Logging utilities |
+| `soft-delete/` | Soft delete mixin |
+| `gateway/` | WebSocket gateway base |
+| `types/` | Common TypeScript types |
+| `dto/` | Common DTOs |
+| `exceptions/` | Custom exceptions |
+### Request Flow
+```
+```
+### Data Flow
+```
+```
+## Mobile Architecture
+### Pattern: Screen-based with Zustand + TanStack Query
+```
+```
+### State Management
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| Server State | TanStack Query ^5.81.0 | API data, caching, refetching |
+| Global UI State | Zustand ^5.0.5 | UI preferences, auth state |
+| Stores | `stores/clothingStore.ts` | Clothing-specific state |
+| Stores | `stores/wardrobeStore.ts` | Wardrobe state |
+| Stores | `stores/uiStore.ts` | UI state |
+### Directory Organization
+| Directory | Purpose |
+|-----------|---------|
+| `screens/` | 28 screen components (one per route) |
+| `components/` | Reusable UI components, organized by domain |
+| `services/api/` | API client layer |
+| `services/ai/` | AI-specific services |
+| `services/speech/` | Speech recognition |
+| `stores/` | Zustand stores |
+| `hooks/` | Custom React hooks |
+| `contexts/` | React context providers |
+| `navigation/` | Navigation configuration |
+| `theme/` | Theme system with tokens |
+| `i18n/` | Internationalization |
+| `utils/` | Utility functions |
+| `config/` | App configuration |
+| `types/` | TypeScript types |
+## Database Architecture
+### Schema (Prisma)
+- `User` - Central entity with relations to nearly everything
+- `UserProfile` - Body type, skin tone, face shape
+- `UserPhoto` - User uploaded photos
+- `Clothing` / `ClothingVariant` - Fashion items
+- `VirtualTryOn` - Try-on results
+- `StyleProfile` - User style preferences
+- `Order` / `CartItem` / `PaymentOrder` - E-commerce
+- `CommunityPost` / `PostLike` / `PostComment` - Social
+- `AiStylistSession` / `UserDecision` - AI interactions
+- `StyleRecommendation` / `RankingFeedback` - Recommendations
+- UUID primary keys
+- Soft delete on User (GDPR/PIPL compliance)
+- Indexes on frequently queried fields
+- Cascade deletes where appropriate
+## ML/AI Pipeline
+```
+```
+## Entry Points
+| Entry Point | Location | Purpose |
+|-------------|----------|---------|
+| Backend API | `apps/backend/src/main.ts` | NestJS bootstrap, port 3001 |
+| Mobile App | `apps/mobile/` | React Native entry |
+| ML Services | `ml/inference/*.py` | Individual AI model servers |
+| Code RAG CLI | `ml/services/code_rag/index_cli.py` | Code indexing |
+<!-- GSD:architecture-end -->
+
+<!-- GSD:skills-start source:skills/ -->
+## Project Skills
+
+No project skills found. Add skills to any of: `.claude/skills/`, `.agents/skills/`, `.cursor/skills/`, or `.github/skills/` with a `SKILL.md` index file.
+<!-- GSD:skills-end -->
+
+<!-- GSD:workflow-start source:GSD defaults -->
+## GSD Workflow Enforcement
+
+Before using Edit, Write, or other file-changing tools, start work through a GSD command so planning artifacts and execution context stay in sync.
+
+Use these entry points:
+- `/gsd-quick` for small fixes, doc updates, and ad-hoc tasks
+- `/gsd-debug` for investigation and bug fixing
+- `/gsd-execute-phase` for planned phase work
+
+Do not make direct repo edits outside a GSD workflow unless the user explicitly asks to bypass it.
+<!-- GSD:workflow-end -->
+
+<!-- GSD:profile-start -->
+## Developer Profile
+
+> Profile not yet configured. Run `/gsd-profile-user` to generate your developer profile.
+> This section is managed by `generate-claude-profile` -- do not edit manually.
+<!-- GSD:profile-end -->

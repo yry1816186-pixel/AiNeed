@@ -139,22 +139,74 @@ Deferred to future release.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ML-01 through ML-07 | Phase 1 | Pending |
-| AIS-01 through AIS-05 | Phase 1 | Pending |
-| SEC-01 through SEC-07 | Phase 2 | Pending |
-| UX-01 through UX-07 | Phase 3 | Pending |
-| COMM-01 through COMM-09 | Phase 4 | Pending |
-| SOC-01 through SOC-06 | Phase 5 | Pending |
-| NOTIF-01 through NOTIF-04 | Phase 5 | Pending |
-| REC-01 through REC-05 | Phase 6 | Pending |
-| QA-01 through QA-06 | Phase 7 | Pending |
-| OPS-01 through OPS-06 | Phase 8 | Pending |
+| ML-01 | Phase 1 | Pending |
+| ML-02 | Phase 1 | Pending |
+| ML-03 | Phase 1 | Pending |
+| ML-04 | Phase 1 | Pending |
+| ML-05 | Phase 1 | Pending |
+| ML-06 | Phase 1 | Pending |
+| ML-07 | Phase 1 | Pending |
+| AIS-01 | Phase 2 | Pending |
+| AIS-02 | Phase 2 | Pending |
+| AIS-03 | Phase 2 | Pending |
+| AIS-04 | Phase 2 | Pending |
+| AIS-05 | Phase 2 | Pending |
+| SEC-01 | Phase 3 | Pending |
+| SEC-02 | Phase 3 | Pending |
+| SEC-03 | Phase 3 | Pending |
+| SEC-04 | Phase 3 | Pending |
+| SEC-05 | Phase 3 | Pending |
+| SEC-06 | Phase 3 | Pending |
+| SEC-07 | Phase 3 | Pending |
+| UX-01 | Phase 4 | Pending |
+| UX-02 | Phase 4 | Pending |
+| UX-03 | Phase 4 | Pending |
+| UX-04 | Phase 4 | Pending |
+| UX-05 | Phase 4 | Pending |
+| UX-06 | Phase 4 | Pending |
+| UX-07 | Phase 4 | Pending |
+| COMM-01 | Phase 5 | Pending |
+| COMM-02 | Phase 5 | Pending |
+| COMM-03 | Phase 5 | Pending |
+| COMM-04 | Phase 5 | Pending |
+| COMM-05 | Phase 5 | Pending |
+| COMM-06 | Phase 5 | Pending |
+| COMM-07 | Phase 5 | Pending |
+| COMM-08 | Phase 5 | Pending |
+| COMM-09 | Phase 5 | Pending |
+| SOC-01 | Phase 6 | Pending |
+| SOC-02 | Phase 6 | Pending |
+| SOC-03 | Phase 6 | Pending |
+| SOC-04 | Phase 6 | Pending |
+| SOC-05 | Phase 6 | Pending |
+| SOC-06 | Phase 6 | Pending |
+| NOTIF-01 | Phase 7 | Pending |
+| NOTIF-02 | Phase 7 | Pending |
+| NOTIF-03 | Phase 7 | Pending |
+| NOTIF-04 | Phase 7 | Pending |
+| REC-01 | Phase 8 | Pending |
+| REC-02 | Phase 8 | Pending |
+| REC-03 | Phase 8 | Pending |
+| REC-04 | Phase 8 | Pending |
+| REC-05 | Phase 8 | Pending |
+| QA-01 | Phase 9 | Pending |
+| QA-02 | Phase 9 | Pending |
+| QA-03 | Phase 9 | Pending |
+| QA-04 | Phase 9 | Pending |
+| QA-05 | Phase 9 | Pending |
+| QA-06 | Phase 9 | Pending |
+| OPS-01 | Phase 10 | Pending |
+| OPS-02 | Phase 10 | Pending |
+| OPS-03 | Phase 10 | Pending |
+| OPS-04 | Phase 10 | Pending |
+| OPS-05 | Phase 10 | Pending |
+| OPS-06 | Phase 10 | Pending |
 
 **Coverage:**
 - v1 requirements: 47 total
 - Mapped to phases: 47
-- Unmapped: 0 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-13*
-*Last updated: 2026-04-13 after initial definition*
+*Last updated: 2026-04-13 after roadmap creation*
