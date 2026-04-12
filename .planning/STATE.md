@@ -5,42 +5,43 @@
 See: .planning/PROJECT.md (updated 2026-04-13)
 
 **Core value:** 基于用户画像的精准 AI 穿搭推荐，用多模态 API 生成换装效果图
-**Current focus:** 路线图已确认，准备启动 Phase 1 (用户画像 & 风格测试)
+**Current focus:** 路线图已从 5 Phase 扩展到 8 Phase，Phase 1 上下文已收集，准备启动规划
 
 ## Current Position
 
-Phase: 1 of 5 (用户画像 & 风格测试)
-Status: Ready to start
-Last activity: 2026-04-13 -- 项目清理 + 路线图重设计完成
+Phase: 1 of 8 (用户画像 & 风格测试)
+Status: Context gathered, ready for planning
+Last activity: 2026-04-13 -- 全面需求头脑风暴 + 路线图重构
 
 Progress: [░░░░░░░░░░] 0%
 
-## Roadmap (5 Phase MVP)
+## Roadmap (8 Phase MVP)
 
 1. 用户画像 & 风格测试 ← **CURRENT**
 2. AI 造型师
 3. 虚拟试衣
 4. 推荐引擎
 5. 电商闭环
+6. 社区 & 博主生态
+7. 定制服务 & 品牌合作
+8. 私人形象顾问对接
 
-## Cleanup Summary (2026-04-13)
+## Session Summary (2026-04-13)
 
-### Deleted
-- V3/, DELIVERY-V3/, delivery/ — 并行版本和竞赛文档
-- k8s/, monitoring/ — K8s 和 Prometheus+Grafana
-- ml/inference/, ml/src/, ml/dataset_tools/, ml/models/ — 本地推理代码
-- ml/services/ 中过度工程化服务（联邦学习、数字孪生、RAG、幻觉检测等）
+### Changes
+- REQUIREMENTS.md: 53 → 92 条需求，覆盖 8 Phase
+- ROADMAP.md: 5 Phase → 8 Phase（新增社区/定制/私人顾问）
+- 新增 Phase 1 CONTEXT.md 和 DISCUSSION-LOG.md
 
-### Modified
-- CLAUDE.md: 665 行 → 164 行
-- README.md: 886 行 → 69 行
-- docker-compose.yml: 608 行 → 139 行
-- docker-compose.dev.yml: 移除 Qdrant
-- apps/backend: 移除 CatVTON provider 和 GPU 监控
-- .planning/: 全部重写
-
-### Kept (GLM API Core)
-- ml/services/ — 34 文件，GLM API 调用封装核心
+### Key Decisions
+- 注册：手机号+验证码 + 微信一键登录
+- 引导：基本信息强制，照片/风格测试可选
+- 拍照：实时参考线引导，照片永久保留
+- 风格测试：图片选择式 5-8 题
+- 试衣 API：Doubao-Seedream 为主，GLM 备选
+- 社区：提前到 MVP Phase 6
+- 定制：2D 模板编辑器 + 品牌扫码
+- 私人顾问：平台撮合模式
 
 ## Technical Debt
 
@@ -56,5 +57,5 @@ Progress: [░░░░░░░░░░] 0%
 ## Session Continuity
 
 Last session: 2026-04-13
-Stopped at: 项目清理完成，路线图确认，准备启动 Phase 1
-Next: `/gsd-plan-phase 1` 启动用户画像 & 风格测试开发
+Stopped at: Phase 1 上下文收集完成
+Next: `/gsd-plan-phase 1` 启动用户画像 & 风格测试规划
