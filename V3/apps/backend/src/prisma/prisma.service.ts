@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 @Injectable()
 export class PrismaService
@@ -9,8 +10,9 @@ export class PrismaService
   private readonly logger = new Logger(PrismaService.name);
 
   constructor() {
+    const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
     super({
-      datasourceUrl: process.env.DATABASE_URL,
+      adapter,
       log: [
         { emit: 'event', level: 'query' },
         { emit: 'event', level: 'error' },
@@ -24,12 +26,12 @@ export class PrismaService
       await this.$connect();
       this.logger.log('Prisma connected to database');
 
-      (this as Record<string, unknown>).$on('error', (event: unknown) => {
-        this.logger.error('Prisma error', String(event));
+      (this as unknown as { $on: (event: 'error', callback: (e: Prisma.LogEvent) => void) => void }).$on('error', (event: Prisma.LogEvent) => {
+        this.logger.error('Prisma error', String(event.message));
       });
 
-      (this as Record<string, unknown>).$on('warn', (event: unknown) => {
-        this.logger.warn('Prisma warning', String(event));
+      (this as unknown as { $on: (event: 'warn', callback: (e: Prisma.LogEvent) => void) => void }).$on('warn', (event: Prisma.LogEvent) => {
+        this.logger.warn('Prisma warning', String(event.message));
       });
     } catch (error) {
       this.logger.error('Failed to connect to database', String(error));

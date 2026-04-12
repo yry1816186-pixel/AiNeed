@@ -9,7 +9,6 @@ import {
 } from './providers/embedding-provider.interface';
 import { ApiEmbeddingProvider } from './providers/api-embedding.provider';
 import { MockEmbeddingProvider } from './providers/mock-embedding.provider';
-import { PrismaService } from '../../prisma/prisma.service';
 
 const EmbeddingProviderFactory = {
   provide: EMBEDDING_PROVIDER_TOKEN,
@@ -25,7 +24,7 @@ const EmbeddingProviderFactory = {
 
 @Module({
   controllers: [EmbeddingController],
-  providers: [EmbeddingService, QdrantService, PrismaService, EmbeddingProviderFactory],
+  providers: [EmbeddingService, QdrantService, EmbeddingProviderFactory],
   exports: [EmbeddingService, QdrantService],
 })
 export class EmbeddingModule {}

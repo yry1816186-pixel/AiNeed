@@ -21,7 +21,7 @@ export class DesignResponseDto {
   @ApiProperty() id!: string;
   @ApiProperty() userId!: string;
   @ApiProperty() name!: string;
-  @ApiProperty({ type: 'object' }) designData!: Record<string, unknown>;
+  @ApiProperty() designData!: Record<string, unknown>;
   @ApiPropertyOptional() patternImageUrl?: string;
   @ApiPropertyOptional() previewImageUrl?: string;
   @ApiProperty() productType!: string;
@@ -45,7 +45,7 @@ export class ProductTemplateResponseDto {
   @ApiProperty() uvMapUrl!: string;
   @ApiPropertyOptional() previewModelUrl?: string;
   @ApiProperty({ type: [String] }) availableSizes!: string[];
-  @ApiProperty({ type: 'object' }) printArea!: Record<string, unknown>;
+  @ApiProperty() printArea!: Record<string, unknown>;
   @ApiPropertyOptional() podProvider?: string;
   @ApiPropertyOptional() podProductId?: string;
   @ApiProperty() isActive!: boolean;

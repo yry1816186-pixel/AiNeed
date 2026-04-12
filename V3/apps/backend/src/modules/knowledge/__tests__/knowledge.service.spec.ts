@@ -5,7 +5,6 @@ import { KnowledgeQueryDto, KnowledgeCategory } from '../dto/query-rules.dto';
 
 describe('KnowledgeService', () => {
   let service: KnowledgeService;
-  let neo4jService: Neo4jService;
 
   const mockNeo4jService = {
     read: jest.fn(),
@@ -29,7 +28,6 @@ describe('KnowledgeService', () => {
     }).compile();
 
     service = module.get<KnowledgeService>(KnowledgeService);
-    neo4jService = module.get<Neo4jService>(Neo4jService);
   });
 
   it('should be defined', () => {
@@ -365,6 +363,313 @@ describe('KnowledgeService', () => {
       expect(result.length).toBe(2);
       expect(result.some((r) => r.category === 'color')).toBe(true);
       expect(result.some((r) => r.category === 'body_type')).toBe(true);
+    });
+
+    it('should query with minStrength filter for color rules', async () => {
+      const records = [
+        createMockRecord({
+          fromColor: 'black',
+          toColor: 'white',
+          relationType: 'COMPLEMENTS',
+          strength: 0.95,
+          reason: 'Classic',
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const query: KnowledgeQueryDto = {
+        colors: ['black'],
+        minStrength: 0.5,
+      };
+
+      const result = await service.queryKnowledge(query);
+
+      expect(result.length).toBeGreaterThan(0);
+      // Verify that the cypher contains the strength filter
+      const callArgs = mockNeo4jService.read.mock.calls[0];
+      expect(callArgs[0]).toContain('minStrength');
+    });
+
+    it('should query with minStrength filter for season rules', async () => {
+      const records = [
+        createMockRecord({
+          targetType: 'Color',
+          targetName: 'white',
+          relationType: 'RECOMMENDS_COLOR',
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const query: KnowledgeQueryDto = {
+        season: 'summer',
+        minStrength: 0.5,
+      };
+
+      const result = await service.queryKnowledge(query);
+
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0].category).toBe('season');
+    });
+
+    it('should query with minStrength filter for style rules', async () => {
+      const records = [
+        createMockRecord({
+          styleA: 'minimalist',
+          styleB: 'casual',
+          strength: 0.8,
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const query: KnowledgeQueryDto = {
+        style: 'minimalist',
+        minStrength: 0.5,
+      };
+
+      const result = await service.queryKnowledge(query);
+
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0].category).toBe('style');
+    });
+
+    it('should query color rules with multiple colors', async () => {
+      const records = [
+        createMockRecord({
+          fromColor: 'black',
+          toColor: 'white',
+          relationType: 'COMPLEMENTS',
+          strength: 0.95,
+          reason: 'Classic',
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const query: KnowledgeQueryDto = {
+        colors: ['black', 'navy_blue', 'camel'],
+      };
+
+      const result = await service.queryKnowledge(query);
+
+      expect(result.length).toBeGreaterThan(0);
+      // Verify multiple color params were passed
+      const callArgs = mockNeo4jService.read.mock.calls[0];
+      expect(callArgs[1]).toHaveProperty('color0', 'black');
+      expect(callArgs[1]).toHaveProperty('color1', 'navy_blue');
+      expect(callArgs[1]).toHaveProperty('color2', 'camel');
+    });
+
+    it('should generate "dont" ruleType for CONFLICTS_WITH color relations', async () => {
+      const records = [
+        createMockRecord({
+          fromColor: 'red',
+          toColor: 'green',
+          relationType: 'CONFLICTS_WITH',
+          strength: 0.85,
+          reason: 'Clash',
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const query: KnowledgeQueryDto = {
+        colors: ['red'],
+      };
+
+      const result = await service.queryKnowledge(query);
+
+      expect(result[0].ruleType).toBe('dont');
+      expect(result[0].recommendation).toContain('冲突');
+    });
+
+    it('should generate "dont" ruleType for AVOID_FOR body type relations', async () => {
+      const records = [
+        createMockRecord({
+          bodyType: 'hourglass',
+          clothingType: 'oversized_top',
+          action: 'AVOID_FOR',
+          recommendation: 'Avoid oversized',
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const query: KnowledgeQueryDto = {
+        bodyType: 'hourglass',
+      };
+
+      const result = await service.queryKnowledge(query);
+
+      expect(result[0].ruleType).toBe('dont');
+    });
+
+    it('should generate "dont" ruleType for non-REQUIRES occasion relations', async () => {
+      const records = [
+        createMockRecord({
+          targetType: 'Clothing',
+          targetName: 'sneakers',
+          relationType: 'FORBIDS',
+          requirements: 'No sneakers at work',
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const query: KnowledgeQueryDto = {
+        occasion: 'work',
+      };
+
+      const result = await service.queryKnowledge(query);
+
+      expect(result[0].ruleType).toBe('dont');
+      expect(result[0].recommendation).toContain('禁忌');
+    });
+  });
+
+  describe('toNumber edge cases', () => {
+    it('should handle null strength values in findColorHarmony', async () => {
+      const records = [
+        createMockRecord({
+          fromColor: 'black',
+          toColor: 'white',
+          relationType: 'COMPLEMENTS',
+          strength: null,
+          reason: 'Classic',
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const result = await service.findColorHarmony('black');
+
+      expect(result[0].strength).toBe(0);
+    });
+
+    it('should handle undefined strength values', async () => {
+      const records = [
+        createMockRecord({
+          fromColor: 'red',
+          toColor: 'blue',
+          relationType: 'CONFLICTS_WITH',
+          strength: undefined,
+          reason: null,
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const result = await service.findColorConflicts('red');
+
+      expect(result[0].strength).toBe(0);
+      expect(result[0].reason).toBeUndefined();
+    });
+
+    it('should handle numeric string strength values', async () => {
+      const records = [
+        createMockRecord({
+          fromColor: 'black',
+          toColor: 'white',
+          relationType: 'COMPLEMENTS',
+          strength: '0.8',
+          reason: 'Classic',
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const result = await service.findColorHarmony('black');
+
+      expect(result[0].strength).toBe(0.8);
+    });
+  });
+
+  describe('toStringArray edge cases', () => {
+    it('should handle null examples and alternatives in body type rules', async () => {
+      const records = [
+        createMockRecord({
+          bodyType: 'hourglass',
+          clothingType: 'dress',
+          action: 'SUITABLE_FOR',
+          recommendation: 'Wrap dress',
+          examples: null,
+          alternatives: null,
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const result = await service.findBodyTypeRules('hourglass');
+
+      expect(result[0].examples).toEqual([]);
+      expect(result[0].alternatives).toEqual([]);
+    });
+
+    it('should handle empty array for occasion rules', async () => {
+      mockNeo4jService.read
+        .mockResolvedValueOnce({ records: [] })
+        .mockResolvedValueOnce({ records: [] });
+
+      const result = await service.findOccasionRules('unknown');
+
+      expect(result.requiredStyles).toEqual([]);
+      expect(result.forbiddenItems).toEqual([]);
+      expect(result.requirements).toBeUndefined();
+    });
+
+    it('should handle null recommendation in body type rules', async () => {
+      const records = [
+        createMockRecord({
+          bodyType: 'hourglass',
+          clothingType: 'dress',
+          action: 'SUITABLE_FOR',
+          recommendation: null,
+          examples: ['wrap dress'],
+          alternatives: ['pencil skirt'],
+        }),
+      ];
+      mockNeo4jService.read.mockResolvedValue({ records });
+
+      const result = await service.findBodyTypeRules('hourglass');
+
+      expect(result[0].recommendation).toBe('');
+      expect(result[0].examples).toEqual(['wrap dress']);
+      expect(result[0].alternatives).toEqual(['pencil skirt']);
+    });
+  });
+
+  describe('findOccasionRules with requirements', () => {
+    it('should include requirements when available', async () => {
+      const styleRecords = [
+        createMockRecord({
+          requiredStyles: ['business'],
+          requirements: 'Professional attire required',
+        }),
+      ];
+      const forbiddenRecords = [
+        createMockRecord({
+          forbiddenItems: ['sneakers'],
+        }),
+      ];
+      mockNeo4jService.read
+        .mockResolvedValueOnce({ records: styleRecords })
+        .mockResolvedValueOnce({ records: forbiddenRecords });
+
+      const result = await service.findOccasionRules('work');
+
+      expect(result.requirements).toBe('Professional attire required');
+    });
+
+    it('should not include requirements when styleRecord has none', async () => {
+      const styleRecords = [
+        createMockRecord({
+          requiredStyles: ['casual'],
+          requirements: null,
+        }),
+      ];
+      const forbiddenRecords = [
+        createMockRecord({
+          forbiddenItems: [],
+        }),
+      ];
+      mockNeo4jService.read
+        .mockResolvedValueOnce({ records: styleRecords })
+        .mockResolvedValueOnce({ records: forbiddenRecords });
+
+      const result = await service.findOccasionRules('casual');
+
+      expect(result.requirements).toBeUndefined();
     });
   });
 });

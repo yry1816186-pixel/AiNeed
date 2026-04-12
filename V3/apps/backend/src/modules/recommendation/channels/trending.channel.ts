@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 import { RecommendationRedisProvider } from '../redis.provider';
 import {
   IRecommendationChannel,
@@ -14,11 +14,11 @@ import {
 export class TrendingChannel implements IRecommendationChannel {
   readonly channelType = 'trending' as const;
   private readonly logger = new Logger(TrendingChannel.name);
-  private readonly redis;
+  private readonly redis: RecommendationRedisProvider['client'];
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly redisProvider: RecommendationRedisProvider,
+    redisProvider: RecommendationRedisProvider,
   ) {
     this.redis = redisProvider.client;
   }
@@ -44,17 +44,18 @@ export class TrendingChannel implements IRecommendationChannel {
     const itemScores = this.parseZrangeResults(results);
     const clothingIds = itemScores.map((r) => r.id);
 
+    const filteredIds = filters?.excludeIds
+      ? clothingIds.filter((cid: string) => !filters.excludeIds?.includes(cid))
+      : clothingIds;
+
     const items = await this.prisma.clothingItem.findMany({
       where: {
-        id: { in: clothingIds },
+        id: { in: filteredIds },
         isActive: true,
-        ...(filters?.excludeIds && filters.excludeIds.length > 0
-          ? { id: { notIn: filters.excludeIds } }
-          : {}),
       },
     });
 
-    const itemMap = new Map(items.map((item) => [item.id, item]));
+    const itemMap = new Map<string, ChannelCandidate['clothing']>(items.map((item: ChannelCandidate['clothing']) => [item.id, item]));
 
     const candidates: ChannelCandidate[] = [];
     for (const { id, score } of itemScores) {
@@ -75,7 +76,7 @@ export class TrendingChannel implements IRecommendationChannel {
   async getTrending(
     category: string | undefined,
     limit: number,
-    timeRange: string,
+    _timeRange: string,
   ): Promise<Array<{ clothingId: string; score: number }>> {
     const key = `${REDIS_TRENDING_PREFIX}:${category ?? 'all'}`;
 
@@ -85,7 +86,10 @@ export class TrendingChannel implements IRecommendationChannel {
     }
 
     const results = await this.redis.zrevrange(key, 0, limit - 1, 'WITHSCORES');
-    return this.parseZrangeResults(results);
+    return this.parseZrangeResults(results).map((r) => ({
+      clothingId: r.id,
+      score: r.score,
+    }));
   }
 
   async trackInteraction(

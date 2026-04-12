@@ -3,7 +3,7 @@ import {
   IsOptional,
   IsUUID,
   IsArray,
-  IsJsonObject,
+  IsObject,
   MaxLength,
   IsInt,
   Min,
@@ -18,9 +18,9 @@ export class UpdateDesignDto {
   @MaxLength(200)
   name?: string;
 
-  @ApiPropertyOptional({ description: '设计数据(JSON)', type: 'object' })
+  @ApiPropertyOptional({ description: '设计数据(JSON)' })
   @IsOptional()
-  @IsJsonObject()
+  @IsObject()
   designData?: Record<string, unknown>;
 
   @ApiPropertyOptional({ description: '产品类型' })

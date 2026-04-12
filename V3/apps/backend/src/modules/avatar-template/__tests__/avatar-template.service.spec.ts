@@ -189,11 +189,8 @@ describe('AvatarTemplateService', () => {
 
       await service.create(dtoWithoutClothing);
 
-      expect(prisma.avatarTemplate.create).toHaveBeenCalledWith({
-        data: expect.objectContaining({
-          defaultClothingMap: undefined,
-        }),
-      });
+      const callArgs = prisma.avatarTemplate.create.mock.calls[0][0];
+      expect(callArgs.data).not.toHaveProperty('defaultClothingMap');
     });
   });
 

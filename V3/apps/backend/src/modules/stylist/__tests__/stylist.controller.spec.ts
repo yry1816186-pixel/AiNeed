@@ -51,7 +51,7 @@ describe('StylistController', () => {
 
       const result = await controller.getSessions('user-1');
       expect(result).toEqual(expectedResult);
-      expect(service.getSessions).toHaveBeenCalledWith('user-1');
+      expect(service.getSessions).toHaveBeenCalledWith('user-1', undefined, undefined);
     });
   });
 
@@ -97,7 +97,7 @@ describe('StylistController', () => {
 
       const result = await controller.getMessages('user-1', 'session-1');
       expect(result).toEqual(expectedResult);
-      expect(service.getMessages).toHaveBeenCalledWith('user-1', 'session-1');
+      expect(service.getMessages).toHaveBeenCalledWith('user-1', 'session-1', undefined, undefined);
     });
   });
 

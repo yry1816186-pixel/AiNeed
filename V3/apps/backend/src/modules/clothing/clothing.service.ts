@@ -3,7 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { ClothingQueryDto, ClothingSortOption } from './dto/clothing-query.dto';
 import { CreateClothingDto } from './dto/create-clothing.dto';
 
-interface CategoryNode {
+export interface CategoryNode {
   id: string;
   name: string;
   nameEn: string | null;
@@ -362,7 +362,10 @@ export class ClothingService {
 
     for (const node of nodeMap.values()) {
       if (node.parentId && nodeMap.has(node.parentId)) {
-        nodeMap.get(node.parentId)!.children.push(node);
+        const parent = nodeMap.get(node.parentId);
+        if (parent) {
+          parent.children.push(node);
+        }
       } else {
         roots.push(node);
       }

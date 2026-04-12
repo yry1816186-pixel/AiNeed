@@ -116,12 +116,12 @@ describe('LlmService', () => {
     });
 
     it('should use mock provider directly in development with no API keys', async () => {
-      jest.spyOn(configService, 'get').mockImplementation((key: string, defaultValue?: string) => {
+      jest.spyOn(configService, 'get').mockImplementation(((key: string, defaultValue?: string) => {
         if (key === 'APP_ENV') return 'development';
         if (key === 'ZHIPU_API_KEY') return '';
         if (key === 'DEEPSEEK_API_KEY') return '';
         return defaultValue ?? '';
-      });
+      }) as unknown as typeof configService.get);
 
       const devService = new LlmService(configService, glm5Provider, deepseekProvider, mockProvider);
       const result = await devService.chat(mockMessages);
@@ -192,6 +192,151 @@ describe('LlmService', () => {
     it('should return zhipu when GLM-5 API key is available', () => {
       const provider = service.getActiveProvider();
       expect(provider).toBe('zhipu');
+    });
+
+    it('should return deepseek when GLM-5 has no API key but DeepSeek does', () => {
+      jest.spyOn(configService, 'get').mockImplementation(((key: string, defaultValue?: string) => {
+        if (key === 'ZHIPU_API_KEY') return '';
+        if (key === 'DEEPSEEK_API_KEY') return 'test-deepseek-key';
+        if (key === 'APP_ENV') return 'production';
+        return defaultValue ?? '';
+      }) as unknown as typeof configService.get);
+
+      const prodService = new LlmService(configService, glm5Provider, deepseekProvider, mockProvider);
+      expect(prodService.getActiveProvider()).toBe('deepseek');
+    });
+  });
+
+  describe('chatStream', () => {
+    it('should yield chunks from the provider', async () => {
+      async function* mockStream() {
+        yield { content: 'Hello', done: false };
+        yield { content: ' World', done: false };
+        yield { content: '', done: true };
+      }
+
+      jest.spyOn(glm5Provider, 'chatStream').mockImplementation(mockStream);
+
+      const chunks: Array<{ content: string; done: boolean }> = [];
+      for await (const chunk of service.chatStream(mockMessages)) {
+        chunks.push(chunk);
+      }
+
+      expect(chunks).toHaveLength(3);
+      expect(chunks[0].content).toBe('Hello');
+      expect(chunks[2].done).toBe(true);
+    });
+
+    it('should use mock provider for stream in development with no API keys', async () => {
+      jest.spyOn(configService, 'get').mockImplementation(((key: string, defaultValue?: string) => {
+        if (key === 'APP_ENV') return 'development';
+        if (key === 'ZHIPU_API_KEY') return '';
+        if (key === 'DEEPSEEK_API_KEY') return '';
+        return defaultValue ?? '';
+      }) as unknown as typeof configService.get);
+
+      async function* mockStream() {
+        yield { content: 'Mock', done: true };
+      }
+      jest.spyOn(mockProvider, 'chatStream').mockImplementation(mockStream);
+
+      const devService = new LlmService(configService, glm5Provider, deepseekProvider, mockProvider);
+      const chunks: Array<{ content: string; done: boolean }> = [];
+      for await (const chunk of devService.chatStream(mockMessages)) {
+        chunks.push(chunk);
+      }
+
+      expect(chunks).toHaveLength(1);
+      expect(chunks[0].content).toBe('Mock');
+    });
+
+    it('should yield error event when all stream providers fail', async () => {
+      jest.spyOn(glm5Provider, 'chatStream').mockImplementation(async function* () {
+        yield { content: 'First', done: false };
+        throw new HttpException('GLM-5 stream error', 502);
+      });
+      jest.spyOn(deepseekProvider, 'chatStream').mockImplementation(async function* () {
+        yield { content: 'Fallback', done: false };
+        throw new HttpException('DeepSeek stream error', 502);
+      });
+
+      const chunks: Array<{ content: string; done: boolean }> = [];
+      try {
+        for await (const chunk of service.chatStream(mockMessages)) {
+          chunks.push(chunk);
+        }
+      } catch {
+        // Expected - stream errors propagate
+      }
+
+      // At least the primary provider yielded before error
+      expect(chunks.length).toBeGreaterThanOrEqual(1);
+      expect(chunks[0].content).toBe('First');
+    });
+
+    it('should throw when all providers fail for stream', async () => {
+      jest.spyOn(glm5Provider, 'chatStream').mockImplementation(async function* () {
+        throw new HttpException('GLM-5 stream error', 502);
+      });
+      jest.spyOn(deepseekProvider, 'chatStream').mockImplementation(async function* () {
+        throw new HttpException('DeepSeek stream error', 502);
+      });
+
+      const chunks: Array<{ content: string; done: boolean }> = [];
+      try {
+        for await (const chunk of service.chatStream(mockMessages)) {
+          chunks.push(chunk);
+        }
+        fail('Should have thrown');
+      } catch (error) {
+        expect(error).toBeDefined();
+      }
+    });
+  });
+
+  describe('generateImage in development', () => {
+    it('should use mock provider when no GLM-5 API key in development', async () => {
+      jest.spyOn(configService, 'get').mockImplementation(((key: string, defaultValue?: string) => {
+        if (key === 'APP_ENV') return 'development';
+        if (key === 'ZHIPU_API_KEY') return '';
+        return defaultValue ?? '';
+      }) as unknown as typeof configService.get);
+
+      const devService = new LlmService(configService, glm5Provider, deepseekProvider, mockProvider);
+      const result = await devService.generateImage('test prompt');
+
+      expect(result).toBeDefined();
+      expect(mockProvider.generateImage).toHaveBeenCalledWith('test prompt', undefined);
+    });
+  });
+
+  describe('executeWithFallback edge cases', () => {
+    it('should throw SERVICE_UNAVAILABLE when no provider available', async () => {
+      jest.spyOn(configService, 'get').mockImplementation(((key: string, defaultValue?: string) => {
+        if (key === 'ZHIPU_API_KEY') return '';
+        if (key === 'DEEPSEEK_API_KEY') return '';
+        if (key === 'APP_ENV') return 'production';
+        return defaultValue ?? '';
+      }) as unknown as typeof configService.get);
+
+      // In production mode with no API keys, no provider passes the hasApiKey check
+      // except mock which always returns true
+      const prodService = new LlmService(configService, glm5Provider, deepseekProvider, mockProvider);
+
+      // Mock provider fails too
+      jest.spyOn(mockProvider, 'chat').mockRejectedValueOnce(new Error('Mock also fails'));
+
+      await expect(prodService.chat(mockMessages)).rejects.toThrow();
+    });
+  });
+
+  describe('toHttpException', () => {
+    it('should convert non-HttpException errors to HttpException', async () => {
+      jest.spyOn(glm5Provider, 'chat').mockRejectedValueOnce(new Error('Network error'));
+      jest.spyOn(deepseekProvider, 'chat').mockRejectedValueOnce(new Error('Also failed'));
+      jest.spyOn(mockProvider, 'chat').mockRejectedValueOnce(new Error('Mock failed too'));
+
+      await expect(service.chat(mockMessages)).rejects.toThrow(HttpException);
     });
   });
 });

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TrendingChannel } from '../channels/trending.channel';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 import { RecommendationRedisProvider } from '../redis.provider';
 
 const mockClothingItem = (id: string, overrides: Record<string, unknown> = {}) => ({
@@ -86,7 +86,7 @@ describe('TrendingChannel', () => {
       jest.spyOn(prisma.clothingItem, 'findMany').mockResolvedValue([
         mockClothingItem('item-1'),
         mockClothingItem('item-2'),
-      ]);
+      ] as never);
 
       const result = await channel.recommend('user-1', 10);
 
@@ -119,9 +119,9 @@ describe('TrendingChannel', () => {
       redisClient.zrevrange.mockResolvedValue(['item-1', '50']);
       jest.spyOn(prisma.clothingItem, 'findMany').mockResolvedValue([
         mockClothingItem('item-1'),
-      ]);
+      ] as never);
 
-      const result = await channel.recommend('user-1', 10);
+      await channel.recommend('user-1', 10);
 
       expect(prisma.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -141,7 +141,7 @@ describe('TrendingChannel', () => {
       expect(prisma.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            id: { notIn: ['ex-1'] },
+            id: { in: ['item-1'] },
           }),
         }),
       );
@@ -206,7 +206,7 @@ describe('TrendingChannel', () => {
       redisClient.zrevrange.mockResolvedValue([]);
       jest.spyOn(prisma.userInteraction, 'findMany').mockResolvedValue([]);
 
-      const result = await channel.getTrending('all', 10, 'week');
+      await channel.getTrending('all', 10, 'week');
 
       expect(prisma.userInteraction.findMany).toHaveBeenCalled();
     });
@@ -219,7 +219,7 @@ describe('TrendingChannel', () => {
         { clothingId: 'item-1', interactionType: 'view' },
         { clothingId: 'item-1', interactionType: 'like' },
         { clothingId: 'item-2', interactionType: 'purchase' },
-      ]);
+      ] as never);
 
       await channel.recommend('user-1', 10);
 

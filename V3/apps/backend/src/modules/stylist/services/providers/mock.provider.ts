@@ -79,7 +79,7 @@ const MOCK_OUTFIT_RESPONSE = JSON.stringify({
 export class MockProvider implements ILLMProvider {
   private readonly logger = new Logger(MockProvider.name);
 
-  async chat(messages: ChatMessage[], options?: ChatOptions): Promise<ChatResponse> {
+  async chat(messages: ChatMessage[], _options?: ChatOptions): Promise<ChatResponse> {
     this.logger.log(`Mock chat called with ${messages.length} messages`);
 
     const lastMessage = messages[messages.length - 1];
@@ -95,7 +95,7 @@ export class MockProvider implements ILLMProvider {
     };
   }
 
-  async *chatStream(messages: ChatMessage[], options?: ChatOptions): AsyncIterable<ChatChunk> {
+  async *chatStream(messages: ChatMessage[], _options?: ChatOptions): AsyncIterable<ChatChunk> {
     this.logger.log(`Mock chatStream called with ${messages.length} messages`);
 
     const lastMessage = messages[messages.length - 1];
@@ -109,7 +109,7 @@ export class MockProvider implements ILLMProvider {
     yield { content: '', done: true };
   }
 
-  async generateImage(prompt: string, options?: ImageOptions): Promise<ImageResponse> {
+  async generateImage(prompt: string, _options?: ImageOptions): Promise<ImageResponse> {
     this.logger.log(`Mock generateImage called with prompt: ${prompt.substring(0, 50)}...`);
 
     return {

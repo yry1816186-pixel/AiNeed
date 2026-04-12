@@ -33,6 +33,7 @@ interface WardrobeItemDelegate {
   update(args: Record<string, unknown>): Promise<unknown>;
   delete(args: Record<string, unknown>): Promise<unknown>;
   count(args: Record<string, unknown>): Promise<number>;
+  groupBy(args: Record<string, unknown>): Promise<unknown[]>;
 }
 
 interface ClothingItemDelegate {
@@ -156,26 +157,43 @@ export class WardrobeService {
   }
 
   async getStats(userId: string): Promise<WardrobeStatsResponse> {
-    const items = (await this.db.wardrobeItem.findMany({
-      where: { userId },
-      select: {
-        category: true,
-        color: true,
-        clothingId: true,
-      },
-    })) as Array<{ category: string | null; color: string | null; clothingId: string | null }>;
+    const [categoryGroups, colorGroups, clothingItems] = await Promise.all([
+      this.db.wardrobeItem.groupBy({
+        by: ['category'],
+        where: { userId, category: { not: null } },
+        _count: { category: true },
+      }),
+      this.db.wardrobeItem.groupBy({
+        by: ['color'],
+        where: { userId, color: { not: null } },
+        _count: { color: true },
+      }),
+      this.db.wardrobeItem.findMany({
+        where: { userId, clothingId: { not: null } },
+        select: { clothingId: true },
+      }),
+    ]);
 
-    const byCategory = this.aggregateField(items, 'category');
-    const byColor = this.aggregateField(items, 'color');
+    const totalCount = await this.db.wardrobeItem.count({ where: { userId } });
 
-    const clothingIds = items
-      .map((item: { clothingId: string | null }) => item.clothingId)
-      .filter((cid: string | null): cid is string => cid !== null);
+    const byCategory: Record<string, number> = {};
+    for (const g of categoryGroups as Array<{ category: string; _count: { category: number } }>) {
+      byCategory[g.category] = g._count.category;
+    }
+
+    const byColor: Record<string, number> = {};
+    for (const g of colorGroups as Array<{ color: string; _count: { color: number } }>) {
+      byColor[g.color] = g._count.color;
+    }
+
+    const clothingIds = (clothingItems as Array<{ clothingId: string | null }>)
+      .map((item) => item.clothingId)
+      .filter((cid): cid is string => cid !== null);
 
     const { bySeason, byStyle } = await this.aggregateFromClothing(clothingIds);
 
     return {
-      total: items.length,
+      total: totalCount,
       byCategory,
       byColor,
       bySeason,
@@ -214,30 +232,31 @@ export class WardrobeService {
   }
 
   private async buildListStats(userId: string): Promise<WardrobeListStats> {
-    const items = (await this.db.wardrobeItem.findMany({
-      where: { userId },
-      select: { category: true, color: true },
-    })) as Array<{ category: string | null; color: string | null }>;
+    const [categoryGroups, colorGroups, totalCount] = await Promise.all([
+      this.db.wardrobeItem.groupBy({
+        by: ['category'],
+        where: { userId, category: { not: null } },
+        _count: { category: true },
+      }),
+      this.db.wardrobeItem.groupBy({
+        by: ['color'],
+        where: { userId, color: { not: null } },
+        _count: { color: true },
+      }),
+      this.db.wardrobeItem.count({ where: { userId } }),
+    ]);
 
-    return {
-      byCategory: this.aggregateField(items, 'category'),
-      byColor: this.aggregateField(items, 'color'),
-      totalCount: items.length,
-    };
-  }
-
-  private aggregateField(
-    items: Array<{ category: string | null; color: string | null }>,
-    field: 'category' | 'color',
-  ): Record<string, number> {
-    const result: Record<string, number> = {};
-    for (const item of items) {
-      const value = item[field];
-      if (value) {
-        result[value] = (result[value] ?? 0) + 1;
-      }
+    const byCategory: Record<string, number> = {};
+    for (const g of categoryGroups as Array<{ category: string; _count: { category: number } }>) {
+      byCategory[g.category] = g._count.category;
     }
-    return result;
+
+    const byColor: Record<string, number> = {};
+    for (const g of colorGroups as Array<{ color: string; _count: { color: number } }>) {
+      byColor[g.color] = g._count.color;
+    }
+
+    return { byCategory, byColor, totalCount };
   }
 
   private async aggregateFromClothing(clothingIds: string[]) {

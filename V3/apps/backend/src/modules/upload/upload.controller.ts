@@ -3,31 +3,41 @@ import {
   Post,
   Delete,
   Param,
+  UseGuards,
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
   BadRequestException,
   Query,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiBearerAuth, ApiTags, ApiParam, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { UploadService } from './upload.service';
 import type { UploadType } from './upload.service';
-import type {
+import {
   UploadResponseDto,
   BatchUploadResponseDto,
 } from './dto/upload-response.dto';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
-const VALID_UPLOAD_TYPES = ['avatar', 'clothing', 'design', 'post'] as const;
+const VALID_UPLOAD_TYPES = ['avatar', 'clothing', 'design', 'post', 'outfit-image'] as const;
 
+@ApiTags('Upload')
 @Controller('upload')
 @ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
   @Post('image')
-  @ApiOperation({ summary: 'Upload a single image' })
+  @ApiOperation({ summary: '上传单张图片', description: '上传单张图片到MinIO，支持JPEG/PNG/WebP格式，最大10MB' })
   @ApiConsumes('multipart/form-data')
+  @ApiQuery({ name: 'type', required: false, enum: ['avatar', 'clothing', 'design', 'post', 'outfit-image'], description: '上传类型(默认post)' })
+  @ApiResponse({ status: 201, description: '上传成功', type: UploadResponseDto })
+  @ApiResponse({ status: 400, description: '文件类型不支持或文件过大' })
+  @ApiResponse({ status: 401, description: '未认证' })
   @UseInterceptors(
     FileInterceptor('file', {
       limits: { fileSize: 10 * 1024 * 1024 },
@@ -60,8 +70,12 @@ export class UploadController {
   }
 
   @Post('images')
-  @ApiOperation({ summary: 'Upload multiple images (max 9)' })
+  @ApiOperation({ summary: '批量上传图片', description: '批量上传最多9张图片到MinIO，支持JPEG/PNG/WebP格式，单张最大10MB' })
   @ApiConsumes('multipart/form-data')
+  @ApiQuery({ name: 'type', required: false, enum: ['avatar', 'clothing', 'design', 'post', 'outfit-image'], description: '上传类型(默认post)' })
+  @ApiResponse({ status: 201, description: '上传成功', type: BatchUploadResponseDto })
+  @ApiResponse({ status: 400, description: '文件类型不支持或文件过大' })
+  @ApiResponse({ status: 401, description: '未认证' })
   @UseInterceptors(
     FilesInterceptor('files', 9, {
       limits: { fileSize: 10 * 1024 * 1024 },
@@ -91,7 +105,14 @@ export class UploadController {
   }
 
   @Delete(':key')
-  @ApiOperation({ summary: 'Delete an uploaded file' })
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  @ApiOperation({ summary: '删除已上传文件(管理员)', description: '根据文件key删除MinIO中的文件，仅管理员可用' })
+  @ApiParam({ name: 'key', description: '文件key' })
+  @ApiResponse({ status: 200, description: '删除成功' })
+  @ApiResponse({ status: 404, description: '文件不存在' })
+  @ApiResponse({ status: 401, description: '未认证' })
+  @ApiResponse({ status: 403, description: '权限不足' })
   async deleteFile(@Param('key') key: string): Promise<{ success: boolean }> {
     await this.uploadService.deleteFile(key);
     return { success: true };

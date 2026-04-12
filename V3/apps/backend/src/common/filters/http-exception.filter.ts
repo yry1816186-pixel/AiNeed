@@ -45,8 +45,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
         code = 'NOT_FOUND';
       }
     } else if (exception instanceof Error) {
-      message = exception.message;
       this.logger.error(exception.message, exception.stack);
+      message = 'Internal server error';
     } else {
       this.logger.error('Unknown exception', String(exception));
     }

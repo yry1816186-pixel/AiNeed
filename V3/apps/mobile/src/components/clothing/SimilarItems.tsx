@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { colors, spacing, radius, typography, shadows } from '../../theme';
@@ -25,7 +25,7 @@ export const SimilarItems: React.FC<SimilarItemsProps> = ({ title, items }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
-      <Animated.ScrollView
+      <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
@@ -44,7 +44,6 @@ export const SimilarItems: React.FC<SimilarItemsProps> = ({ title, items }) => {
               style={styles.cardImage}
               contentFit="cover"
               transition={200}
-              placeholder={require('../../../assets/placeholder-clothing.png')}
             />
             <View style={styles.cardInfo}>
               <Text style={styles.cardBrand} numberOfLines={1}>
@@ -64,12 +63,10 @@ export const SimilarItems: React.FC<SimilarItemsProps> = ({ title, items }) => {
             </View>
           </TouchableOpacity>
         ))}
-      </Animated.ScrollView>
+      </ScrollView>
     </View>
   );
 };
-
-const Animated = require('react-native-reanimated');
 
 const styles = StyleSheet.create({
   container: {

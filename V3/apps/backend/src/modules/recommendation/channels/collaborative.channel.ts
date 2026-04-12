@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 import {
   IRecommendationChannel,
   ChannelCandidate,
@@ -49,19 +49,29 @@ export class CollaborativeChannel implements IRecommendationChannel {
       take: limit * 4,
     });
 
-    const scoredItems = await Promise.all(
-      candidateItems.map(async (item) => {
-        const interactionCount = await this.countSimilarUserInteractions(
-          similarUserIds,
-          item.id,
-        );
-        const score = Math.min(interactionCount / (similarUserIds.length * 2), 1);
-        const reason = this.generateReason(interactionCount, similarUserIds.length);
-        return { clothing: item, score, reason };
-      }),
-    );
+    const interactionCounts = await this.prisma.userInteraction.groupBy({
+      by: ['clothingId'],
+      where: {
+        userId: { in: similarUserIds },
+        clothingId: { in: candidateItems.map((item: { id: string }) => item.id) },
+        interactionType: { in: ['like', 'favorite', 'purchase'] },
+      },
+      _count: { id: true },
+    });
 
-    scoredItems.sort((a, b) => b.score - a.score);
+    const countMap = new Map<string, number>();
+    for (const row of interactionCounts) {
+      countMap.set(row.clothingId, row._count.id);
+    }
+
+    const scoredItems: ChannelCandidate[] = candidateItems.map((item: ChannelCandidate['clothing']) => {
+      const interactionCount = countMap.get(item.id) ?? 0;
+      const score = Math.min(interactionCount / (similarUserIds.length * 2), 1);
+      const reason = this.generateReason(interactionCount, similarUserIds.length);
+      return { clothing: item, score, reason };
+    });
+
+    scoredItems.sort((a: ChannelCandidate, b: ChannelCandidate) => b.score - a.score);
     return scoredItems.slice(0, limit);
   }
 
@@ -78,34 +88,43 @@ export class CollaborativeChannel implements IRecommendationChannel {
       return [];
     }
 
-    const userFavoriteIds = new Set(userFavorites.map((f) => f.targetId));
+    const userFavoriteIds = userFavorites.map((f: { targetId: string }) => f.targetId);
 
-    const otherUsers = await this.prisma.favorite.findMany({
+    const sharedFavoriters = await this.prisma.favorite.findMany({
       where: {
         targetType: 'clothing',
+        targetId: { in: userFavoriteIds },
         userId: { not: userId },
       },
       select: { userId: true, targetId: true },
+      take: 5000,
     });
 
     const userItemMap = new Map<string, Set<string>>();
-    for (const fav of otherUsers) {
-      if (!userItemMap.has(fav.userId)) {
-        userItemMap.set(fav.userId, new Set());
+    for (const fav of sharedFavoriters) {
+      const favUserId: string = fav.userId;
+      const favTargetId: string = fav.targetId;
+      if (!userItemMap.has(favUserId)) {
+        userItemMap.set(favUserId, new Set<string>());
       }
-      userItemMap.get(fav.userId)!.add(fav.targetId);
+      const userItems = userItemMap.get(favUserId);
+      if (userItems) {
+        userItems.add(favTargetId);
+      }
     }
+
+    const userFavoriteIdSet = new Set<string>(userFavoriteIds);
 
     const similarities: Array<{ userId: string; similarity: number }> = [];
     for (const [otherUserId, otherItems] of userItemMap) {
-      const similarity = this.jaccardSimilarity(userFavoriteIds, otherItems);
+      const similarity = this.jaccardSimilarity(userFavoriteIdSet, otherItems);
       if (similarity > 0.1) {
         similarities.push({ userId: otherUserId, similarity });
       }
     }
 
-    similarities.sort((a, b) => b.similarity - a.similarity);
-    return similarities.slice(0, 20).map((s) => s.userId);
+    similarities.sort((a: { similarity: number }, b: { similarity: number }) => b.similarity - a.similarity);
+    return similarities.slice(0, 20).map((s: { userId: string }) => s.userId);
   }
 
   private jaccardSimilarity(setA: Set<string>, setB: Set<string>): number {
@@ -124,21 +143,7 @@ export class CollaborativeChannel implements IRecommendationChannel {
       select: { clothingId: true },
       distinct: ['clothingId'],
     });
-    return interactions.map((i) => i.clothingId);
-  }
-
-  private async countSimilarUserInteractions(
-    similarUserIds: string[],
-    clothingId: string,
-  ): Promise<number> {
-    const count = await this.prisma.userInteraction.count({
-      where: {
-        userId: { in: similarUserIds },
-        clothingId,
-        interactionType: { in: ['like', 'favorite', 'purchase'] },
-      },
-    });
-    return count;
+    return interactions.map((i: { clothingId: string }) => i.clothingId);
   }
 
   private parseBudgetRange(

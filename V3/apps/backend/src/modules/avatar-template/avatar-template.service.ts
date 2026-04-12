@@ -1,4 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateTemplateDto } from './dto/update-template.dto';
@@ -68,9 +69,11 @@ export class AvatarTemplateService {
       data: {
         name: dto.name,
         gender: dto.gender,
-        drawingConfig: dto.drawingConfig as unknown as Record<string, unknown>,
-        parameters: dto.parameters as unknown as Record<string, unknown>,
-        defaultClothingMap: dto.defaultClothingMap as unknown as Record<string, unknown> | undefined,
+        drawingConfig: dto.drawingConfig as unknown as Prisma.InputJsonValue,
+        parameters: dto.parameters as unknown as Prisma.InputJsonValue,
+        ...(dto.defaultClothingMap !== undefined && {
+          defaultClothingMap: dto.defaultClothingMap as unknown as Prisma.InputJsonValue,
+        }),
       },
     });
 
@@ -95,21 +98,16 @@ export class AvatarTemplateService {
       ? { ...((existing?.parameters as Record<string, unknown>) ?? {}), ...dto.parameters }
       : undefined;
 
+    const data: Record<string, unknown> = {};
+    if (dto.name !== undefined) data.name = dto.name;
+    if (dto.gender !== undefined) data.gender = dto.gender;
+    if (mergedDrawingConfig !== undefined) data.drawingConfig = mergedDrawingConfig;
+    if (mergedParameters !== undefined) data.parameters = mergedParameters;
+    if (dto.defaultClothingMap !== undefined) data.defaultClothingMap = dto.defaultClothingMap;
+
     const template = await this.prisma.avatarTemplate.update({
       where: { id },
-      data: {
-        ...(dto.name !== undefined && { name: dto.name }),
-        ...(dto.gender !== undefined && { gender: dto.gender }),
-        ...(mergedDrawingConfig !== undefined && {
-          drawingConfig: mergedDrawingConfig as unknown as Record<string, unknown>,
-        }),
-        ...(mergedParameters !== undefined && {
-          parameters: mergedParameters as unknown as Record<string, unknown>,
-        }),
-        ...(dto.defaultClothingMap !== undefined && {
-          defaultClothingMap: dto.defaultClothingMap as unknown as Record<string, unknown>,
-        }),
-      },
+      data: data as Prisma.Args<typeof this.prisma.avatarTemplate, 'update'>['data'],
     });
 
     return template;

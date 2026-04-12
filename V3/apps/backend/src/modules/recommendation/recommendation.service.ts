@@ -4,7 +4,6 @@ import { ContentBasedChannel } from './channels/content-based.channel';
 import { CollaborativeChannel } from './channels/collaborative.channel';
 import { TrendingChannel } from './channels/trending.channel';
 import {
-  IRecommendationChannel,
   ChannelCandidate,
   RecommendationFilters,
   RecommendationChannelType,
@@ -24,16 +23,13 @@ interface FusedCandidate {
 @Injectable()
 export class RecommendationService {
   private readonly logger = new Logger(RecommendationService.name);
-  private readonly channels: IRecommendationChannel[];
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly contentBasedChannel: ContentBasedChannel,
     private readonly collaborativeChannel: CollaborativeChannel,
     private readonly trendingChannel: TrendingChannel,
-  ) {
-    this.channels = [contentBasedChannel, collaborativeChannel, trendingChannel];
-  }
+  ) {}
 
   async getPersonalizedRecommendations(
     userId: string,
@@ -63,9 +59,9 @@ export class RecommendationService {
       reason: c.reasons.join('；'),
     }));
 
-    const dominantChannel = items.length > 0
+    const dominantChannel: RecommendationChannelType = items.length > 0
       ? candidates[0].dominantChannel
-      : 'content' as const;
+      : 'content';
 
     return { items, channel: dominantChannel };
   }
@@ -75,7 +71,7 @@ export class RecommendationService {
     const trendingResults = await this.trendingChannel.getTrending(
       query.category,
       limit,
-      query.timeRange,
+      query.timeRange ?? 'week',
     );
 
     if (trendingResults.length === 0) {
@@ -90,16 +86,16 @@ export class RecommendationService {
       },
     });
 
-    const itemMap = new Map(items.map((item) => [item.id, item]));
+    const itemMap = new Map(items.map((item: { id: string }) => [item.id, item]));
     const scoreMap = new Map(trendingResults.map((r) => [r.clothingId, r.score]));
 
     const result = clothingIds
-      .map((id) => {
+      .map((id: string) => {
         const clothing = itemMap.get(id);
         const score = scoreMap.get(id) ?? 0;
         return clothing ? { clothing, score: Math.round(score * 100) / 100 } : null;
       })
-      .filter((item): item is NonNullable<typeof item> => item !== null);
+      .filter((item: { clothing: unknown; score: number } | null): item is NonNullable<typeof item> => item !== null);
 
     return { items: result };
   }
@@ -228,11 +224,7 @@ export class RecommendationService {
         existing.weightedScore += c.score * weight;
         existing.reasons.push(c.reason);
         if (c.score * weight > existing.weightedScore * 0.5) {
-          existing.dominantChannel = c.reason.includes('品味相似')
-            ? 'collaborative'
-            : c.reason.includes('热门')
-              ? 'trending'
-              : 'content';
+          existing.dominantChannel = this.inferChannelFromReason(c.reason);
         }
       } else {
         candidateMap.set(c.clothing.id, {
@@ -240,21 +232,23 @@ export class RecommendationService {
           clothing: c.clothing,
           weightedScore: c.score * weight,
           reasons: [c.reason],
-          dominantChannel: c.reason.includes('品味相似')
-            ? 'collaborative'
-            : c.reason.includes('热门')
-              ? 'trending'
-              : 'content',
+          dominantChannel: this.inferChannelFromReason(c.reason),
         });
       }
     }
+  }
+
+  private inferChannelFromReason(reason: string): RecommendationChannelType {
+    if (reason.includes('品味相似')) return 'collaborative';
+    if (reason.includes('热门')) return 'trending';
+    return 'content';
   }
 
   private sortAndDeduplicate(
     candidateMap: Map<string, FusedCandidate>,
   ): FusedCandidate[] {
     const candidates = Array.from(candidateMap.values());
-    candidates.sort((a, b) => b.weightedScore - a.weightedScore);
+    candidates.sort((a: FusedCandidate, b: FusedCandidate) => b.weightedScore - a.weightedScore);
     return candidates;
   }
 
@@ -287,16 +281,16 @@ export class RecommendationService {
       take: 50,
     });
 
-    const sourceStyleSet = new Set(sourceItem.styleTags);
+    const sourceStyleSet = new Set<string>(sourceItem.styleTags);
 
-    const scored = candidates.map((item) => {
-      const itemStyleSet = new Set(item.styleTags);
+    const scored: SimilarItemResult[] = candidates.map((item: { styleTags: string[] } & SimilarItemResult['clothing']) => {
+      const itemStyleSet = new Set<string>(item.styleTags);
       const similarity = this.computeJaccard(sourceStyleSet, itemStyleSet);
       return { clothing: item, similarity };
     });
 
-    scored.sort((a, b) => b.similarity - a.similarity);
-    return scored.filter((s) => s.similarity > 0).slice(0, 10);
+    scored.sort((a: SimilarItemResult, b: SimilarItemResult) => b.similarity - a.similarity);
+    return scored.filter((s: SimilarItemResult) => s.similarity > 0).slice(0, 10);
   }
 
   private computeJaccard(setA: Set<string>, setB: Set<string>): number {

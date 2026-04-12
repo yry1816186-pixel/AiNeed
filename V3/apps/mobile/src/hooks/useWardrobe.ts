@@ -5,6 +5,9 @@ import {
   type ClothingCategory,
 } from '../services/wardrobe.service';
 
+export type { ClothingCategory } from '../services/wardrobe.service';
+export type { WardrobeItem, WardrobeStatsResponse, WardrobeListResponse } from '../services/wardrobe.service';
+
 export const WARDROBE_KEYS = {
   all: ['wardrobe'] as const,
   list: (params: WardrobeListParams) => ['wardrobe', 'list', params] as const,

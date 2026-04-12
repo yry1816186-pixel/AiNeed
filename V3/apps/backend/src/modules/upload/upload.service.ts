@@ -5,7 +5,7 @@ import type { IStorageProvider } from './providers/storage-provider.interface';
 import { STORAGE_PROVIDER_TOKEN } from './providers/storage-provider.interface';
 import { UploadResponseDto, BatchUploadResponseDto } from './dto/upload-response.dto';
 
-export type UploadType = 'avatar' | 'clothing' | 'design' | 'post';
+export type UploadType = 'avatar' | 'clothing' | 'design' | 'post' | 'outfit-image';
 
 const ALLOWED_MIME_TYPES = new Set([
   'image/jpeg',
@@ -16,6 +16,12 @@ const ALLOWED_MIME_TYPES = new Set([
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_BATCH_COUNT = 9;
+
+const MAGIC_BYTES: Record<string, number[]> = {
+  'image/jpeg': [0xff, 0xd8, 0xff],
+  'image/png': [0x89, 0x50, 0x4e, 0x47],
+  'image/webp': [0x52, 0x49, 0x46, 0x46],
+};
 
 @Injectable()
 export class UploadService {
@@ -74,6 +80,24 @@ export class UploadService {
     await this.storageProvider.delete(key);
   }
 
+  async uploadBuffer(
+    buffer: Buffer,
+    key: string,
+    mimeType: string,
+    _type: UploadType = 'post',
+  ): Promise<UploadResponseDto> {
+    const result = await this.storageProvider.upload(buffer, key, mimeType);
+    const dimensions = await this.extractDimensions(buffer);
+
+    return {
+      url: result.url,
+      key: result.key,
+      size: buffer.length,
+      mimeType,
+      ...dimensions,
+    };
+  }
+
   private validateFile(file: Express.Multer.File): void {
     if (!file) {
       throw new BadRequestException('No file provided');
@@ -89,6 +113,21 @@ export class UploadService {
       throw new BadRequestException(
         `Invalid file type: ${file.mimetype}. Allowed types: ${[...ALLOWED_MIME_TYPES].join(', ')}`,
       );
+    }
+
+    this.validateMagicBytes(file);
+  }
+
+  private validateMagicBytes(file: Express.Multer.File): void {
+    const expectedBytes = MAGIC_BYTES[file.mimetype];
+    if (!expectedBytes || !file.buffer || file.buffer.length < expectedBytes.length) {
+      throw new BadRequestException('File content does not match declared type');
+    }
+
+    for (let i = 0; i < expectedBytes.length; i++) {
+      if (file.buffer[i] !== expectedBytes[i]) {
+        throw new BadRequestException('File content does not match declared type');
+      }
     }
   }
 

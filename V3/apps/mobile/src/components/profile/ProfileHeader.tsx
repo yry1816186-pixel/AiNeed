@@ -10,12 +10,47 @@ import { Svg, Circle, Path } from 'react-native-svg';
 import { colors, typography, spacing, radius } from '../../theme';
 import { Text } from '../ui/Text';
 import { Button } from '../ui/Button';
+import { useNotificationStore } from '../../stores/notification.store';
 import type { ProfileData } from '../../services/user.service';
 
 interface ProfileHeaderProps {
   profile: ProfileData;
   onEditProfile: () => void;
   onChangeAvatar: () => void;
+}
+
+function NotificationBell() {
+  const unreadCount = useNotificationStore((s) => s.unreadCount);
+  const openPanel = useNotificationStore((s) => s.openPanel);
+
+  return (
+    <TouchableOpacity
+      style={bellStyles.container}
+      onPress={openPanel}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={`通知${unreadCount > 0 ? `，${unreadCount}条未读` : ''}`}
+    >
+      <Svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <Path
+          d="M11 2C7.68629 2 5 4.68629 5 8V13L3 16H19L17 13V8C17 4.68629 14.3137 2 11 2Z"
+          stroke={colors.textPrimary}
+          strokeWidth="1.5"
+          strokeLinejoin="round"
+        />
+        <Path
+          d="M9 16C9 17.1046 9.89543 18 11 18C12.1046 18 13 17.1046 13 16"
+          stroke={colors.textPrimary}
+          strokeWidth="1.5"
+        />
+      </Svg>
+      {unreadCount > 0 && (
+        <View style={bellStyles.badge}>
+          <View style={bellStyles.badgeDot} />
+        </View>
+      )}
+    </TouchableOpacity>
+  );
 }
 
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -66,9 +101,12 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       </TouchableOpacity>
 
       <View style={styles.info}>
-        <Text variant="h3" style={styles.nickname}>
-          {profile.nickname ?? '未设置昵称'}
-        </Text>
+        <View style={styles.nameRow}>
+          <Text variant="h3" style={styles.nickname}>
+            {profile.nickname ?? '未设置昵称'}
+          </Text>
+          <NotificationBell />
+        </View>
         {profile.bio ? (
           <Text variant="bodySmall" color={colors.textTertiary} style={styles.bio} numberOfLines={1}>
             {profile.bio}
@@ -141,5 +179,35 @@ const styles = StyleSheet.create({
   },
   editButtonText: {
     fontSize: 13,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+});
+
+const bellStyles = StyleSheet.create({
+  container: {
+    position: 'relative',
+    padding: spacing.xs,
+  },
+  badge: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    backgroundColor: colors.accent,
+    borderRadius: 5,
+    minWidth: 10,
+    height: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 2,
+  },
+  badgeDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: colors.textInverse,
   },
 });

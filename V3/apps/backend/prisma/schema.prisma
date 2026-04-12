@@ -1,9 +1,11 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider   = "postgresql"
+  extensions = [vector]
 }
 
 model User {
@@ -52,6 +54,7 @@ model User {
   designReports         DesignReport[]     @relation("DesignReporter")
   designReportsReviewed DesignReport[]     @relation("DesignReviewer")
 
+  @@index([role])
   @@map("users")
 }
 
@@ -60,8 +63,8 @@ model BodyProfile {
   userId         String   @unique @map("user_id") @db.Uuid
   bodyType       String?  @map("body_type")
   colorSeason    String?  @map("color_season")
-  measurements   Json?
-  analysisResult Json?    @map("analysis_result")
+  measurements   Json?    @default("{}")
+  analysisResult Json?    @default("{}") @map("analysis_result")
   sourceImageUrl String?  @map("source_image_url")
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
@@ -83,6 +86,7 @@ model UserStylePreference {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("user_style_preferences")
 }
 
@@ -94,16 +98,17 @@ model Category {
   parentId  String?    @map("parent_id") @db.Uuid
   sortOrder Int        @default(0) @map("sort_order")
 
-  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
   children    Category[] @relation("CategoryHierarchy")
   clothingItems ClothingItem[]
 
+  @@index([parentId])
   @@map("categories")
 }
 
 model Brand {
   id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name        String
+  name        String  @unique
   logoUrl     String? @map("logo_url")
   description String?
 
@@ -132,12 +137,13 @@ model ClothingItem {
   sourceUrl     String?   @map("source_url")
   purchaseUrl   String?   @map("purchase_url")
   sourceName    String?   @map("source_name")
+  embedding     Unsupported("vector(1024)")?
   isActive      Boolean   @default(true) @map("is_active")
   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
-  brand       Brand?          @relation(fields: [brandId], references: [id])
-  category    Category?       @relation(fields: [categoryId], references: [id])
+  brand       Brand?          @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  category    Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   outfitItems OutfitItem[]
   interactions UserInteraction[]
   tryonResults TryonResult[]
@@ -146,6 +152,8 @@ model ClothingItem {
   @@index([categoryId])
   @@index([brandId])
   @@index([gender])
+  @@index([isActive, createdAt])
+  @@index([isActive, gender])
   @@map("clothing_items")
 }
 
@@ -162,10 +170,14 @@ model Outfit {
   commentsCount  Int          @default(0) @map("comments_count")
   createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
 
-  user           User?        @relation(fields: [userId], references: [id])
+  user           User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
   items          OutfitItem[]
   communityPosts CommunityPost[]
 
+  @@index([userId])
+  @@index([isPublic, createdAt])
+  @@index([occasion])
+  @@index([season])
   @@map("outfits")
 }
 
@@ -177,8 +189,11 @@ model OutfitItem {
   sortOrder   Int     @default(0) @map("sort_order")
 
   outfit      Outfit       @relation(fields: [outfitId], references: [id], onDelete: Cascade)
-  clothingItem ClothingItem @relation(fields: [clothingId], references: [id])
+  clothingItem ClothingItem @relation(fields: [clothingId], references: [id], onDelete: Cascade)
 
+  @@index([outfitId])
+  @@index([clothingId])
+  @@unique([outfitId, clothingId, slot])
   @@map("outfit_items")
 }
 
@@ -186,13 +201,14 @@ model ChatSession {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
   title     String?
-  context   Json?
+  context   Json?    @default("{}")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages ChatMessage[]
 
+  @@index([userId])
   @@map("chat_sessions")
 }
 
@@ -201,7 +217,7 @@ model ChatMessage {
   sessionId String   @map("session_id") @db.Uuid
   role      String
   content   String
-  metadata  Json?
+  metadata  Json?    @default("{}")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   session ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
@@ -218,13 +234,14 @@ model TryonResult {
   resultImageUrl String?  @map("result_image_url")
   provider       String?
   status         String   @default("pending")
-  metadata       Json?
+  metadata       Json?    @default("{}")
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  clothingItem  ClothingItem @relation(fields: [clothingId], references: [id])
+  clothingItem  ClothingItem @relation(fields: [clothingId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+  @@index([clothingId])
   @@map("tryon_results")
 }
 
@@ -234,13 +251,15 @@ model UserInteraction {
   clothingId      String   @map("clothing_id") @db.Uuid
   interactionType String   @map("interaction_type")
   durationMs      Int?     @map("duration_ms")
-  context         Json?
+  context         Json?    @default("{}")
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  clothingItem ClothingItem @relation(fields: [clothingId], references: [id])
+  clothingItem ClothingItem @relation(fields: [clothingId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+  @@index([clothingId])
+  @@index([interactionType])
   @@map("user_interactions")
 }
 
@@ -257,8 +276,11 @@ model WardrobeItem {
   addedAt     DateTime @default(now()) @map("added_at") @db.Timestamptz
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  clothingItem ClothingItem? @relation(fields: [clothingId], references: [id])
+  clothingItem ClothingItem? @relation(fields: [clothingId], references: [id], onDelete: SetNull)
 
+  @@index([userId])
+  @@index([clothingId])
+  @@index([category])
   @@map("wardrobe_items")
 }
 
@@ -273,6 +295,7 @@ model Favorite {
 
   @@unique([userId, targetType, targetId])
   @@index([targetType, targetId])
+  @@index([userId])
   @@map("favorites")
 }
 
@@ -285,6 +308,8 @@ model StyleRule {
   priority       Int     @default(0)
   isActive       Boolean @default(true) @map("is_active")
 
+  @@index([category, ruleType])
+  @@index([isActive])
   @@map("style_rules")
 }
 
@@ -305,12 +330,13 @@ model CommunityPost {
   updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  outfit   Outfit?        @relation(fields: [outfitId], references: [id])
+  outfit   Outfit?        @relation(fields: [outfitId], references: [id], onDelete: SetNull)
   comments PostComment[]
 
   @@index([userId, createdAt])
   @@index([isFeatured, createdAt])
   @@index([status])
+  @@index([status, createdAt])
   @@map("community_posts")
 }
 
@@ -323,12 +349,13 @@ model PostComment {
   likesCount Int      @default(0) @map("likes_count")
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
 
-  post   PostComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  post   PostComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies PostComment[] @relation("CommentReplies")
   communityPost CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
   user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([postId, createdAt])
+  @@index([userId])
   @@map("post_comments")
 }
 
@@ -343,6 +370,7 @@ model UserFollow {
 
   @@unique([followerId, followingId])
   @@index([followingId])
+  @@index([followerId])
   @@map("user_follows")
 }
 
@@ -383,6 +411,7 @@ model DirectMessage {
   sender User     @relation("DirectMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([roomId, createdAt])
+  @@index([senderId])
   @@map("direct_messages")
 }
 
@@ -400,6 +429,7 @@ model Notification {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+  @@index([userId, isRead])
   @@map("notifications")
 }
 
@@ -417,6 +447,8 @@ model AvatarTemplate {
 
   userAvatars UserAvatar[]
 
+  @@index([gender, isActive])
+  @@index([isActive, sortOrder])
   @@map("avatar_templates")
 }
 
@@ -425,16 +457,17 @@ model UserAvatar {
   userId        String   @map("user_id") @db.Uuid
   templateId    String   @map("template_id") @db.Uuid
   avatarParams  Json     @map("avatar_params")
-  clothingMap   Json?    @map("clothing_map")
+  clothingMap   Json?    @default("{}") @map("clothing_map")
   thumbnailUrl  String?  @map("thumbnail_url")
   isActive      Boolean  @default(true) @map("is_active")
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  template AvatarTemplate @relation(fields: [templateId], references: [id])
+  template AvatarTemplate @relation(fields: [templateId], references: [id], onDelete: Restrict)
 
   @@index([userId])
+  @@index([templateId])
   @@map("user_avatars")
 }
 
@@ -451,6 +484,7 @@ model CustomDesign {
   price            Int?
   likesCount       Int       @default(0) @map("likes_count")
   purchasesCount   Int       @default(0) @map("purchases_count")
+  downloadsCount   Int       @default(0) @map("downloads_count")
   tags             String[]
   status           String    @default("draft")
   createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
@@ -463,7 +497,9 @@ model CustomDesign {
 
   @@index([userId, createdAt])
   @@index([isPublic, createdAt])
+  @@index([isPublic, status])
   @@index([productType])
+  @@index([status])
   @@map("custom_designs")
 }
 
@@ -481,15 +517,16 @@ model CustomOrder {
   podOrderId      String?  @map("pod_order_id")
   trackingNumber  String?  @map("tracking_number")
   shippingAddress Json     @map("shipping_address")
-  paymentInfo     Json?    @map("payment_info")
+  paymentInfo     Json?    @default("{}") @map("payment_info")
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  design CustomDesign @relation(fields: [designId], references: [id])
+  design CustomDesign @relation(fields: [designId], references: [id], onDelete: Restrict)
 
   @@index([userId, createdAt])
   @@index([status])
+  @@index([designId])
   @@map("custom_orders")
 }
 
@@ -508,6 +545,7 @@ model ProductTemplate {
   isActive        Boolean @default(true) @map("is_active")
 
   @@index([productType, material])
+  @@index([isActive])
   @@map("product_templates")
 }
 
@@ -529,18 +567,19 @@ model DesignReport {
   designId     String   @map("design_id") @db.Uuid
   reason       String
   description  String?
-  reviewResult Json?    @map("review_result")
+  reviewResult Json?    @default("{}") @map("review_result")
   status       String   @default("pending")
   reviewedBy   String?  @map("reviewed_by") @db.Uuid
   reviewedAt   DateTime? @map("reviewed_at") @db.Timestamptz
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
 
-  reporter   User         @relation("DesignReporter", fields: [reporterId], references: [id])
-  design     CustomDesign @relation(fields: [designId], references: [id])
-  reviewer   User?        @relation("DesignReviewer", fields: [reviewedBy], references: [id])
+  reporter   User         @relation("DesignReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  design     CustomDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
+  reviewer   User?        @relation("DesignReviewer", fields: [reviewedBy], references: [id], onDelete: SetNull)
 
   @@index([designId])
   @@index([status])
+  @@index([reporterId])
   @@map("design_reports")
 }
 
@@ -566,13 +605,15 @@ model BespokeStudio {
   createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
-  user          User           @relation(fields: [userId], references: [id])
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   bespokeOrders BespokeOrder[]
   bespokeQuotes BespokeQuote[]
   bespokeReviews BespokeReview[]
 
   @@index([city])
   @@index([isVerified, rating])
+  @@index([isActive])
+  @@index([userId])
   @@map("bespoke_studios")
 }
 
@@ -586,7 +627,7 @@ model BespokeOrder {
   referenceImages  String[]  @map("reference_images")
   budgetRange      String?   @map("budget_range")
   deadline         DateTime? @db.Date
-  measurements     Json?
+  measurements     Json?     @default("{}")
   assignedStylistId String?  @map("assigned_stylist_id") @db.Uuid
   statusHistory    Json      @default("[]") @map("status_history")
   completedAt      DateTime? @map("completed_at") @db.Timestamptz
@@ -596,8 +637,8 @@ model BespokeOrder {
   updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  studio         BespokeStudio   @relation(fields: [studioId], references: [id])
-  assignedStylist User?          @relation("BespokeAssignedStylist", fields: [assignedStylistId], references: [id])
+  studio         BespokeStudio   @relation(fields: [studioId], references: [id], onDelete: Restrict)
+  assignedStylist User?          @relation("BespokeAssignedStylist", fields: [assignedStylistId], references: [id], onDelete: SetNull)
   bespokeMessages BespokeMessage[]
   bespokeQuotes  BespokeQuote[]
   bespokeReview  BespokeReview?
@@ -619,9 +660,10 @@ model BespokeMessage {
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   order  BespokeOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  sender User         @relation(fields: [senderId], references: [id])
+  sender User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([orderId, createdAt])
+  @@index([senderId])
   @@map("bespoke_messages")
 }
 
@@ -638,9 +680,10 @@ model BespokeQuote {
   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
 
   order  BespokeOrder  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  studio BespokeStudio @relation(fields: [studioId], references: [id])
+  studio BespokeStudio @relation(fields: [studioId], references: [id], onDelete: Restrict)
 
   @@index([orderId, createdAt])
+  @@index([studioId])
   @@map("bespoke_quotes")
 }
 
@@ -655,12 +698,13 @@ model BespokeReview {
   isAnonymous Boolean  @default(false) @map("is_anonymous")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
 
-  order  BespokeOrder  @relation(fields: [orderId], references: [id])
+  order  BespokeOrder  @relation(fields: [orderId], references: [id], onDelete: Cascade)
   user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  studio BespokeStudio @relation(fields: [studioId], references: [id])
+  studio BespokeStudio @relation(fields: [studioId], references: [id], onDelete: Cascade)
 
   @@unique([orderId])
   @@index([studioId, createdAt])
+  @@index([userId])
   @@map("bespoke_reviews")
 }
 
@@ -672,7 +716,7 @@ model OutfitImage {
   imageUrl   String?  @map("image_url")
   status     String   @default("pending")
   cost       Int      @default(0)
-  metadata   Json?
+  metadata   Json?    @default("{}")
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

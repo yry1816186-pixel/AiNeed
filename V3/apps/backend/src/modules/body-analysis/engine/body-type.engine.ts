@@ -70,37 +70,46 @@ function determineByRatios(measurements: Measurements): BodyType {
     return determineByBmiAndGender(measurements);
   }
 
+  // shoulderWidth is linear (distance across shoulders), hip/waist are circumferences.
+  // A typical female shoulderWidth ~38cm with hip circumference ~90cm gives ratio ~0.42.
+  // Ratios below ~0.38 indicate narrow shoulders (pear), above ~0.46 indicate broad
+  // shoulders (inverted_triangle), and the 0.38-0.46 band is balanced.
   const shoulderHipRatio = shoulderWidth / hip;
   const waistHipRatio = waist / hip;
-  const shoulderWaistRatio = shoulderWidth / waist;
 
   if (gender === 'female' || gender === 'other') {
-    if (waistHipRatio < 0.75 && shoulderHipRatio < 0.9) {
-      return 'hourglass';
+    // Inverted triangle: shoulders notably wider than hips
+    if (shoulderHipRatio >= 0.46) {
+      return 'inverted_triangle';
     }
-    if (waistHipRatio >= 0.85 && shoulderHipRatio < 0.95) {
-      return 'apple';
-    }
-    if (shoulderHipRatio < 0.85 && waistHipRatio >= 0.75 && waistHipRatio < 0.85) {
+    // Pear: shoulders notably narrower than hips
+    if (shoulderHipRatio < 0.38) {
       return 'pear';
     }
-    if (shoulderHipRatio >= 1.0) {
-      return 'inverted_triangle';
+    // Apple: high waist relative to hips, regardless of shoulder balance
+    if (waistHipRatio >= 0.85) {
+      return 'apple';
+    }
+    // Hourglass: balanced shoulders/hips with well-defined waist
+    if (waistHipRatio < 0.78) {
+      return 'hourglass';
     }
     return 'rectangle';
   }
 
-  if (shoulderWaistRatio >= 1.4 && shoulderHipRatio >= 1.05) {
+  // Male logic
+  // Males typically have broader shoulders, so the balanced band shifts up slightly.
+  // Inverted triangle: broad shoulders relative to hips
+  if (shoulderHipRatio >= 0.46) {
     return 'inverted_triangle';
   }
+  // Apple: high waist relative to hips
   if (waistHipRatio >= 0.9) {
     return 'apple';
   }
-  if (shoulderHipRatio < 0.9 && waistHipRatio < 0.85) {
+  // Pear: shoulders narrower than hips
+  if (shoulderHipRatio < 0.38) {
     return 'pear';
-  }
-  if (shoulderWaistRatio >= 1.25 && waistHipRatio < 0.85) {
-    return 'hourglass';
   }
   return 'rectangle';
 }

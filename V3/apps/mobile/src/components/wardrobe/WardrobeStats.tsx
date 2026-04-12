@@ -79,36 +79,27 @@ function DonutChart({ categories }: { categories: WardrobeStatsResponse['categor
   });
 
   return (
-    <Svg width={CHART_SIZE} height={CHART_SIZE} viewBox={`0 0 ${CHART_SIZE} ${CHART_SIZE}`}>
-      <Circle
-        cx={CHART_CENTER}
-        cy={CHART_CENTER}
-        r={CHART_RADIUS}
-        fill="none"
-        stroke={colors.gray100}
-        strokeWidth={CHART_STROKE}
-      />
-      {arcs}
-      <Text
-        x={CHART_CENTER}
-        y={CHART_CENTER - 6}
-        textAnchor="middle"
-        fill={colors.textPrimary}
-        fontSize={20}
-        fontWeight="700"
-      >
-        {total}
-      </Text>
-      <Text
-        x={CHART_CENTER}
-        y={CHART_CENTER + 14}
-        textAnchor="middle"
-        fill={colors.textTertiary}
-        fontSize={11}
-      >
-        件服装
-      </Text>
-    </Svg>
+    <View style={chartStyles.wrapper}>
+      <Svg width={CHART_SIZE} height={CHART_SIZE} viewBox={`0 0 ${CHART_SIZE} ${CHART_SIZE}`}>
+        <Circle
+          cx={CHART_CENTER}
+          cy={CHART_CENTER}
+          r={CHART_RADIUS}
+          fill="none"
+          stroke={colors.gray100}
+          strokeWidth={CHART_STROKE}
+        />
+        {arcs}
+      </Svg>
+      <View style={chartStyles.centerLabel}>
+        <Text variant="h2" align="center" style={chartStyles.centerNumber}>
+          {total}
+        </Text>
+        <Text variant="caption" color={colors.textTertiary} align="center">
+          件服装
+        </Text>
+      </View>
+    </View>
   );
 }
 
@@ -269,5 +260,21 @@ const styles = StyleSheet.create({
   },
   totalLabel: {
     lineHeight: typography.body2.lineHeight,
+  },
+});
+
+const chartStyles = StyleSheet.create({
+  wrapper: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  centerLabel: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  centerNumber: {
+    lineHeight: typography.h2.lineHeight,
   },
 });

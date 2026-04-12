@@ -1,9 +1,120 @@
 import { api } from './api';
 import type { ApiResponse } from '../types';
+import { colors } from '../theme';
 
-export type ProductCategory = 'tshirt' | 'hoodie' | 'hat' | 'bag' | 'phone_case';
+export type CustomOrderStatus = 'pending' | 'paid' | 'producing' | 'shipped' | 'completed' | 'cancelled';
 
-export type OrderStatus = 'pending_payment' | 'producing' | 'shipped' | 'delivered';
+export type ProductType = 'tshirt' | 'hoodie' | 'hat' | 'bag' | 'phone_case';
+
+export interface ShippingAddress {
+  id?: string;
+  name: string;
+  phone: string;
+  province: string;
+  city: string;
+  district: string;
+  address: string;
+  detail?: string;
+  postalCode?: string;
+  isDefault?: boolean;
+}
+
+export interface CustomOrder {
+  id: string;
+  userId: string;
+  designId: string;
+  productType: ProductType;
+  material: string;
+  size: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  status: CustomOrderStatus;
+  podOrderId?: string;
+  trackingNumber?: string;
+  shippingAddress: ShippingAddress;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderTimeline {
+  submittedAt: string;
+  paidAt?: string;
+  producingAt?: string;
+  shippedAt?: string;
+  completedAt?: string;
+  cancelledAt?: string;
+}
+
+export interface CustomOrderDetail extends CustomOrder {
+  timeline: OrderTimeline;
+  designName?: string;
+  designThumbnail?: string;
+}
+
+export interface TrackingNode {
+  time: string;
+  description: string;
+  location: string;
+}
+
+export interface TrackingInfo {
+  trackingNumber: string;
+  carrier: string;
+  nodes: TrackingNode[];
+}
+
+export interface TrackingResponse {
+  orderId: string;
+  status: CustomOrderStatus;
+  tracking: TrackingInfo;
+}
+
+export interface CreateCustomOrderPayload {
+  design_id: string;
+  product_type: ProductType;
+  material: string;
+  size: string;
+  quantity?: number;
+  shipping_address: ShippingAddress;
+}
+
+export interface CustomOrderListResponse {
+  items: CustomOrder[];
+  total: number;
+}
+
+export const PRODUCT_TYPE_LABELS: Record<ProductType, string> = {
+  tshirt: 'T恤',
+  hoodie: '卫衣',
+  hat: '帽子',
+  bag: '包包',
+  phone_case: '手机壳',
+};
+
+export const ORDER_STATUS_LABELS: Record<CustomOrderStatus, string> = {
+  pending: '待付款',
+  paid: '已付款',
+  producing: '生产中',
+  shipped: '已发货',
+  completed: '已完成',
+  cancelled: '已取消',
+};
+
+export const ORDER_STATUS_VARIANT: Record<CustomOrderStatus, 'default' | 'accent' | 'success' | 'warning' | 'error' | 'info'> = {
+  pending: 'warning',
+  paid: 'info',
+  producing: 'default',
+  shipped: 'info',
+  completed: 'success',
+  cancelled: 'error',
+};
+
+export function formatPrice(cents: number): string {
+  return `¥${(cents / 100).toFixed(2)}`;
+}
+
+export type ProductCategory = ProductType;
 
 export interface PrintArea {
   x: number;
@@ -15,7 +126,7 @@ export interface PrintArea {
 export interface ProductColor {
   name: string;
   hex: string;
-  image: string;
+  image?: string;
 }
 
 export interface ProductTemplate {
@@ -23,7 +134,7 @@ export interface ProductTemplate {
   name: string;
   category: ProductCategory;
   baseImage: string;
-  printArea: PrintArea;
+  printArea: { x: number; y: number; width: number; height: number };
   colors: ProductColor[];
   sizes: string[];
   price: number;
@@ -32,134 +143,94 @@ export interface ProductTemplate {
   description: string;
 }
 
-export interface DesignData {
-  id: string;
-  imageUrl: string;
-  name: string;
-  category: ProductCategory;
-  templateId: string;
-  position: { x: number; y: number };
-  scale: number;
-  rotation: number;
-}
+export type CreateOrderPayload = CreateCustomOrderPayload;
 
-export interface ShippingAddress {
-  id?: string;
-  name: string;
-  phone: string;
-  province: string;
-  city: string;
-  district: string;
-  detail: string;
-  isDefault?: boolean;
-}
-
-export interface CreateOrderPayload {
-  designId: string;
-  templateId: string;
-  color: string;
-  size: string;
-  quantity: number;
-  shippingAddress: ShippingAddress;
-}
-
-export interface CustomOrder {
-  id: string;
-  orderNo: string;
-  designId: string;
-  designImageUrl: string;
-  templateId: string;
-  productName: string;
-  productCategory: ProductCategory;
-  color: string;
-  size: string;
-  quantity: number;
-  unitPrice: number;
-  shippingFee: number;
-  totalPrice: number;
-  status: OrderStatus;
-  shippingAddress: ShippingAddress;
-  trackingNumber?: string;
-  trackingCompany?: string;
-  estimatedDelivery?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface OrderListResponse {
-  orders: CustomOrder[];
-  total: number;
-}
-
-export const PRODUCT_PRICE_MAP: Record<ProductCategory, { min: number; max: number; cost: number; shipping: number }> = {
-  tshirt: { min: 89, max: 149, cost: 30, shipping: 10 },
-  hoodie: { min: 159, max: 249, cost: 60, shipping: 15 },
-  hat: { min: 59, max: 89, cost: 20, shipping: 8 },
-  bag: { min: 99, max: 179, cost: 35, shipping: 12 },
-  phone_case: { min: 39, max: 69, cost: 10, shipping: 8 },
+export const PRODUCT_PRICE_MAP: Record<ProductType, { cost: number; price: number }> = {
+  tshirt: { cost: 30, price: 129 },
+  hoodie: { cost: 60, price: 199 },
+  hat: { cost: 20, price: 69 },
+  bag: { cost: 35, price: 129 },
+  phone_case: { cost: 10, price: 49 },
 };
 
-export const PRODUCT_LABEL_MAP: Record<ProductCategory, string> = {
-  tshirt: 'T恤',
-  hoodie: '卫衣',
-  hat: '帽子',
-  bag: '包包',
-  phone_case: '手机壳',
-};
+export const PRODUCT_LABEL_MAP: Record<ProductType, string> = PRODUCT_TYPE_LABELS;
 
-export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
-  pending_payment: '待付款',
-  producing: '生产中',
-  shipped: '已发货',
-  delivered: '已送达',
-};
+export const ORDER_STATUS_LABEL = ORDER_STATUS_LABELS;
 
-export const ORDER_STATUS_COLOR: Record<OrderStatus, string> = {
-  pending_payment: '#FF9800',
-  producing: '#2196F3',
-  shipped: '#4CAF50',
-  delivered: '#1A1A2E',
+export const ORDER_STATUS_COLOR: Record<CustomOrderStatus, string> = {
+  pending: colors.warning,
+  paid: colors.info,
+  producing: colors.textSecondary,
+  shipped: colors.info,
+  completed: colors.success,
+  cancelled: colors.error,
 };
 
 export const customOrderService = {
-  createOrder: async (payload: CreateOrderPayload): Promise<CustomOrder> => {
-    const { data } = await api.post<ApiResponse<CustomOrder>>(
-      '/custom-orders',
-      payload,
-    );
-    if (!data.success || !data.data) {
-      throw new Error(data.error?.message ?? '创建订单失败');
-    }
-    return data.data;
+  create(payload: CreateCustomOrderPayload): Promise<CustomOrder> {
+    return api
+      .post<ApiResponse<CustomOrder>>('/custom-orders', payload)
+      .then(({ data }) => {
+        if (!data.success || !data.data) {
+          throw new Error(data.error?.message ?? '创建订单失败');
+        }
+        return data.data;
+      });
   },
 
-  getOrders: async (): Promise<OrderListResponse> => {
-    const { data } = await api.get<ApiResponse<OrderListResponse>>(
-      '/custom-orders',
-    );
-    if (!data.success || !data.data) {
-      throw new Error(data.error?.message ?? '获取订单列表失败');
-    }
-    return data.data;
+  getList(status?: CustomOrderStatus): Promise<CustomOrderListResponse> {
+    const params = status ? { status } : {};
+    return api
+      .get<ApiResponse<CustomOrderListResponse>>('/custom-orders', { params })
+      .then(({ data }) => {
+        if (!data.success || !data.data) {
+          throw new Error(data.error?.message ?? '获取订单列表失败');
+        }
+        return data.data;
+      });
   },
 
-  getOrder: async (id: string): Promise<CustomOrder> => {
-    const { data } = await api.get<ApiResponse<CustomOrder>>(
-      `/custom-orders/${id}`,
-    );
-    if (!data.success || !data.data) {
-      throw new Error(data.error?.message ?? '获取订单详情失败');
-    }
-    return data.data;
+  getDetail(orderId: string): Promise<CustomOrderDetail> {
+    return api
+      .get<ApiResponse<CustomOrderDetail>>(`/custom-orders/${orderId}`)
+      .then(({ data }) => {
+        if (!data.success || !data.data) {
+          throw new Error(data.error?.message ?? '获取订单详情失败');
+        }
+        return data.data;
+      });
   },
 
-  getProductTemplates: async (): Promise<ProductTemplate[]> => {
-    const { data } = await api.get<ApiResponse<ProductTemplate[]>>(
-      '/customize/product-templates',
-    );
-    if (!data.success || !data.data) {
-      throw new Error(data.error?.message ?? '获取产品模板失败');
-    }
-    return data.data;
+  cancel(orderId: string): Promise<CustomOrder> {
+    return api
+      .patch<ApiResponse<CustomOrder>>(`/custom-orders/${orderId}/cancel`)
+      .then(({ data }) => {
+        if (!data.success || !data.data) {
+          throw new Error(data.error?.message ?? '取消订单失败');
+        }
+        return data.data;
+      });
+  },
+
+  pay(orderId: string): Promise<CustomOrder> {
+    return api
+      .post<ApiResponse<CustomOrder>>(`/custom-orders/${orderId}/pay`)
+      .then(({ data }) => {
+        if (!data.success || !data.data) {
+          throw new Error(data.error?.message ?? '支付失败');
+        }
+        return data.data;
+      });
+  },
+
+  track(orderId: string): Promise<TrackingResponse> {
+    return api
+      .get<ApiResponse<TrackingResponse>>(`/custom-orders/${orderId}/track`)
+      .then(({ data }) => {
+        if (!data.success || !data.data) {
+          throw new Error(data.error?.message ?? '获取物流信息失败');
+        }
+        return data.data;
+      });
   },
 };

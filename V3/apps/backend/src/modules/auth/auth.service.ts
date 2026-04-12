@@ -8,7 +8,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ISmsProvider } from './providers/sms-provider.interface';
+import type { ISmsProvider } from './providers/sms-provider.interface';
 import { SendCodeDto } from './dto/send-code.dto';
 import { VerifyCodeDto } from './dto/verify-code.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
@@ -19,6 +19,7 @@ import {
   JwtPayload,
   UserInfoDto,
 } from './dto/auth-response.dto';
+import * as crypto from 'crypto';
 
 interface RedisClient {
   get(key: string): Promise<string | null>;
@@ -28,6 +29,7 @@ interface RedisClient {
 
 const SMS_CODE_TTL = 300;
 const SMS_LIMIT_TTL = 60;
+const SMS_VERIFY_MAX_ATTEMPTS = 5;
 const REFRESH_TOKEN_TTL = 7 * 24 * 60 * 60;
 
 @Injectable()
@@ -69,9 +71,24 @@ export class AuthService {
 
   async verifyCode(dto: VerifyCodeDto): Promise<AuthResponseDto> {
     const codeKey = `sms:code:${dto.phone}`;
+    const attemptsKey = `sms:attempts:${dto.phone}`;
+
+    const attempts = Number(await this.redis.get(attemptsKey)) || 0;
+    if (attempts >= SMS_VERIFY_MAX_ATTEMPTS) {
+      await this.redis.del(codeKey);
+      throw new HttpException(
+        {
+          error: 'RATE_LIMIT_EXCEEDED',
+          message: '验证码尝试次数过多，请重新获取',
+        },
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
+
     const storedCode = await this.redis.get(codeKey);
 
-    if (!storedCode || storedCode !== dto.code) {
+    if (!storedCode || storedCode.length !== dto.code.length || !crypto.timingSafeEqual(Buffer.from(storedCode), Buffer.from(dto.code))) {
+      await this.redis.set(attemptsKey, String(attempts + 1), 'EX', SMS_CODE_TTL);
       throw new HttpException(
         {
           error: 'AUTH_INVALID_CREDENTIALS',
@@ -82,6 +99,7 @@ export class AuthService {
     }
 
     await this.redis.del(codeKey);
+    await this.redis.del(attemptsKey);
 
     const user = await this.findOrCreateUser(dto.phone);
     return this.generateAuthTokens(user);
@@ -192,12 +210,15 @@ export class AuthService {
       type: 'refresh' as const,
     };
 
+    const accessExpiresIn = this.configService.get<string>('JWT_ACCESS_EXPIRES_IN', '15m');
+    const refreshExpiresIn = this.configService.get<string>('JWT_REFRESH_EXPIRES_IN', '7d');
+
     const accessToken = this.jwtService.sign(accessPayload, {
-      expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRES_IN', '15m'),
+      expiresIn: accessExpiresIn as '15m',
     });
 
     const refreshToken = this.jwtService.sign(refreshPayload, {
-      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN', '7d'),
+      expiresIn: refreshExpiresIn as '7d',
     });
 
     const refreshKey = `refresh:${user.id}`;

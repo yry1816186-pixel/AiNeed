@@ -37,15 +37,19 @@ const prismaMockFactory = () => ({
   },
   clothingItem: {
     findUnique: jest.fn(),
+    findMany: jest.fn().mockResolvedValue([]),
   },
   outfit: {
     findUnique: jest.fn(),
+    findMany: jest.fn().mockResolvedValue([]),
   },
   communityPost: {
     findUnique: jest.fn(),
+    findMany: jest.fn().mockResolvedValue([]),
   },
   customDesign: {
     findUnique: jest.fn(),
+    findMany: jest.fn().mockResolvedValue([]),
   },
 });
 
@@ -190,7 +194,7 @@ describe('FavoritesService', () => {
     it('should return paginated favorites with targets', async () => {
       prisma.favorite.findMany.mockResolvedValue([mockFavorite]);
       prisma.favorite.count.mockResolvedValue(1);
-      prisma.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
+      prisma.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
       const result = await service.findAll(USER_ID, undefined, 1, 20);
 
@@ -204,7 +208,7 @@ describe('FavoritesService', () => {
     it('should filter by targetType', async () => {
       prisma.favorite.findMany.mockResolvedValue([mockFavorite]);
       prisma.favorite.count.mockResolvedValue(1);
-      prisma.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
+      prisma.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
       await service.findAll(USER_ID, 'clothing', 1, 20);
 
@@ -236,7 +240,7 @@ describe('FavoritesService', () => {
     it('should handle null target gracefully', async () => {
       prisma.favorite.findMany.mockResolvedValue([mockFavorite]);
       prisma.favorite.count.mockResolvedValue(1);
-      prisma.clothingItem.findUnique.mockResolvedValue(null);
+      prisma.clothingItem.findMany.mockResolvedValue([]);
 
       const result = await service.findAll(USER_ID, undefined, 1, 20);
 

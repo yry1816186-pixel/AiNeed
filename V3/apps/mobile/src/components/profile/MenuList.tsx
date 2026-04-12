@@ -10,7 +10,7 @@ interface MenuItem {
   onPress: () => void;
 }
 
-interface MenuGroup {
+export interface MenuGroup {
   title: string;
   items: MenuItem[];
 }

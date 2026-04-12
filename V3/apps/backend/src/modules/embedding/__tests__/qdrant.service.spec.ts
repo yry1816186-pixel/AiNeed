@@ -1,22 +1,18 @@
 import { Test } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { QdrantService } from '../qdrant.service';
+import { QdrantService, QdrantPayload } from '../qdrant.service';
 
 describe('QdrantService', () => {
   let service: QdrantService;
 
-  const mockQdrantClient = {
-    getCollections: jest.fn().mockResolvedValue({ collections: [] }),
-    createCollection: jest.fn().mockResolvedValue({}),
-    upsert: jest.fn().mockResolvedValue({}),
-    search: jest.fn().mockResolvedValue([]),
-    delete: jest.fn().mockResolvedValue({}),
-    deleteCollection: jest.fn().mockResolvedValue({}),
+  const mockClient = {
+    getCollections: jest.fn(),
+    createCollection: jest.fn(),
+    upsert: jest.fn(),
+    search: jest.fn(),
+    delete: jest.fn(),
+    deleteCollection: jest.fn(),
   };
-
-  jest.mock('@qdrant/js-client-rest', () => ({
-    QdrantClient: jest.fn().mockImplementation(() => mockQdrantClient),
-  }));
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -37,6 +33,7 @@ describe('QdrantService', () => {
     }).compile();
 
     service = module.get<QdrantService>(QdrantService);
+    (service as unknown as { client: typeof mockClient }).client = mockClient;
   });
 
   afterEach(() => {
@@ -45,13 +42,13 @@ describe('QdrantService', () => {
 
   describe('ensureCollection', () => {
     it('should create collection when it does not exist', async () => {
-      mockQdrantClient.getCollections.mockResolvedValueOnce({
+      mockClient.getCollections.mockResolvedValueOnce({
         collections: [],
       });
 
       await service.ensureCollection();
 
-      expect(mockQdrantClient.createCollection).toHaveBeenCalledWith(
+      expect(mockClient.createCollection).toHaveBeenCalledWith(
         'aineed_fashion',
         expect.objectContaining({
           vectors: expect.objectContaining({
@@ -63,20 +60,20 @@ describe('QdrantService', () => {
     });
 
     it('should not create collection when it already exists', async () => {
-      mockQdrantClient.getCollections.mockResolvedValueOnce({
+      mockClient.getCollections.mockResolvedValueOnce({
         collections: [{ name: 'aineed_fashion' }],
       });
 
       await service.ensureCollection();
 
-      expect(mockQdrantClient.createCollection).not.toHaveBeenCalled();
+      expect(mockClient.createCollection).not.toHaveBeenCalled();
     });
   });
 
   describe('upsert', () => {
     it('should upsert a single point', async () => {
       const vector = new Array(1024).fill(0.1);
-      const payload = {
+      const payload: QdrantPayload = {
         clothingId: 'test-1',
         name: 'Test Item',
         category: 'T-Shirts',
@@ -84,9 +81,11 @@ describe('QdrantService', () => {
         colors: ['black'],
       };
 
+      mockClient.upsert.mockResolvedValueOnce({});
+
       await service.upsert('test-1', vector, payload);
 
-      expect(mockQdrantClient.upsert).toHaveBeenCalledWith(
+      expect(mockClient.upsert).toHaveBeenCalledWith(
         'aineed_fashion',
         expect.objectContaining({
           points: expect.arrayContaining([
@@ -128,9 +127,11 @@ describe('QdrantService', () => {
         },
       ];
 
+      mockClient.upsert.mockResolvedValueOnce({});
+
       await service.batchUpsert(points);
 
-      expect(mockQdrantClient.upsert).toHaveBeenCalledWith(
+      expect(mockClient.upsert).toHaveBeenCalledWith(
         'aineed_fashion',
         expect.objectContaining({
           points: expect.arrayContaining([
@@ -143,7 +144,7 @@ describe('QdrantService', () => {
 
     it('should handle empty points array', async () => {
       await service.batchUpsert([]);
-      expect(mockQdrantClient.upsert).not.toHaveBeenCalled();
+      expect(mockClient.upsert).not.toHaveBeenCalled();
     });
   });
 
@@ -164,14 +165,14 @@ describe('QdrantService', () => {
         },
       ];
 
-      mockQdrantClient.search.mockResolvedValueOnce(mockResults);
+      mockClient.search.mockResolvedValueOnce(mockResults);
 
       const results = await service.search(vector, 10, 0.7);
 
       expect(results).toHaveLength(1);
       expect(results[0].id).toBe('test-1');
       expect(results[0].score).toBe(0.95);
-      expect(mockQdrantClient.search).toHaveBeenCalledWith(
+      expect(mockClient.search).toHaveBeenCalledWith(
         'aineed_fashion',
         expect.objectContaining({
           vector,
@@ -186,11 +187,11 @@ describe('QdrantService', () => {
       const vector = new Array(1024).fill(0.1);
       const filters = { colors: ['black', 'white'] };
 
-      mockQdrantClient.search.mockResolvedValueOnce([]);
+      mockClient.search.mockResolvedValueOnce([]);
 
       await service.search(vector, 10, 0.7, filters);
 
-      expect(mockQdrantClient.search).toHaveBeenCalledWith(
+      expect(mockClient.search).toHaveBeenCalledWith(
         'aineed_fashion',
         expect.objectContaining({
           filter: expect.objectContaining({
@@ -207,7 +208,7 @@ describe('QdrantService', () => {
 
     it('should return empty results when no matches', async () => {
       const vector = new Array(1024).fill(0.1);
-      mockQdrantClient.search.mockResolvedValueOnce([]);
+      mockClient.search.mockResolvedValueOnce([]);
 
       const results = await service.search(vector, 10, 0.7);
 
@@ -217,9 +218,11 @@ describe('QdrantService', () => {
 
   describe('delete', () => {
     it('should delete a point by clothing ID', async () => {
+      mockClient.delete.mockResolvedValueOnce({});
+
       await service.delete('test-1');
 
-      expect(mockQdrantClient.delete).toHaveBeenCalledWith('aineed_fashion', {
+      expect(mockClient.delete).toHaveBeenCalledWith('aineed_fashion', {
         points: ['test-1'],
       });
     });
@@ -227,25 +230,165 @@ describe('QdrantService', () => {
 
   describe('deleteCollection', () => {
     it('should delete the collection', async () => {
+      mockClient.deleteCollection.mockResolvedValueOnce({});
+
       await service.deleteCollection();
 
-      expect(mockQdrantClient.deleteCollection).toHaveBeenCalledWith('aineed_fashion');
+      expect(mockClient.deleteCollection).toHaveBeenCalledWith('aineed_fashion');
     });
   });
 
   describe('isHealthy', () => {
     it('should return true when Qdrant is available', async () => {
-      mockQdrantClient.getCollections.mockResolvedValueOnce({ collections: [] });
+      mockClient.getCollections.mockResolvedValueOnce({ collections: [] });
 
       const result = await service.isHealthy();
       expect(result).toBe(true);
     });
 
     it('should return false when Qdrant is unavailable', async () => {
-      mockQdrantClient.getCollections.mockRejectedValueOnce(new Error('Connection refused'));
+      mockClient.getCollections.mockRejectedValueOnce(new Error('Connection refused'));
 
       const result = await service.isHealthy();
       expect(result).toBe(false);
+    });
+  });
+
+  // --- Error paths ---
+
+  describe('onModuleInit', () => {
+    it('should initialize successfully when collection exists', async () => {
+      mockClient.getCollections.mockResolvedValueOnce({
+        collections: [{ name: 'aineed_fashion' }],
+      });
+
+      await service.onModuleInit();
+
+      // Should not throw
+    });
+
+    it('should catch and log error when initialization fails', async () => {
+      mockClient.getCollections.mockRejectedValueOnce(new Error('init failed'));
+
+      // Should not throw -- the error is caught internally
+      await service.onModuleInit();
+    });
+  });
+
+  describe('ensureCollection - error paths', () => {
+    it('should throw when getCollections fails', async () => {
+      mockClient.getCollections.mockRejectedValueOnce(new Error('connection lost'));
+
+      await expect(service.ensureCollection()).rejects.toThrow('connection lost');
+    });
+  });
+
+  describe('upsert - error path', () => {
+    it('should throw when client.upsert fails', async () => {
+      const vector = new Array(1024).fill(0.1);
+      const payload = {
+        clothingId: 'test-1',
+        name: 'Test Item',
+        category: 'T-Shirts',
+        styleTags: ['casual'],
+        colors: ['black'],
+      };
+
+      mockClient.upsert.mockRejectedValueOnce(new Error('write failed'));
+
+      await expect(service.upsert('test-1', vector, payload)).rejects.toThrow('write failed');
+    });
+  });
+
+  describe('batchUpsert - error path', () => {
+    it('should throw when client.upsert fails in batch', async () => {
+      const vector = new Array(1024).fill(0.1);
+      const points = [
+        {
+          clothingId: 'test-1',
+          vector,
+          payload: {
+            clothingId: 'test-1',
+            name: 'Item 1',
+            category: 'T-Shirts',
+            styleTags: ['casual'],
+            colors: ['black'],
+          },
+        },
+      ];
+
+      mockClient.upsert.mockRejectedValueOnce(new Error('batch write failed'));
+
+      await expect(service.batchUpsert(points)).rejects.toThrow('batch write failed');
+    });
+  });
+
+  describe('search - error path', () => {
+    it('should throw when client.search fails', async () => {
+      const vector = new Array(1024).fill(0.1);
+
+      mockClient.search.mockRejectedValueOnce(new Error('search timeout'));
+
+      await expect(service.search(vector, 10, 0.7)).rejects.toThrow('search timeout');
+    });
+  });
+
+  describe('delete - error path', () => {
+    it('should throw when client.delete fails', async () => {
+      mockClient.delete.mockRejectedValueOnce(new Error('delete failed'));
+
+      await expect(service.delete('test-1')).rejects.toThrow('delete failed');
+    });
+  });
+
+  describe('deleteCollection - error path', () => {
+    it('should throw when client.deleteCollection fails', async () => {
+      mockClient.deleteCollection.mockRejectedValueOnce(new Error('cannot delete'));
+
+      await expect(service.deleteCollection()).rejects.toThrow('cannot delete');
+    });
+  });
+
+  describe('search - buildFilter edge cases', () => {
+    it('should handle filters with scalar (non-array) values', async () => {
+      const vector = new Array(1024).fill(0.1);
+      const filters = { category: 'T-Shirts' };
+
+      mockClient.search.mockResolvedValueOnce([]);
+
+      await service.search(vector, 10, 0.7, filters);
+
+      expect(mockClient.search).toHaveBeenCalledWith(
+        'aineed_fashion',
+        expect.objectContaining({
+          filter: expect.objectContaining({
+            must: expect.arrayContaining([
+              expect.objectContaining({
+                key: 'category',
+                match: expect.objectContaining({ value: 'T-Shirts' }),
+              }),
+            ]),
+          }),
+        }),
+      );
+    });
+
+    it('should handle filters with mixed array and scalar values', async () => {
+      const vector = new Array(1024).fill(0.1);
+      const filters = {
+        colors: ['black', 'white'],
+        category: 'Pants',
+      };
+
+      mockClient.search.mockResolvedValueOnce([]);
+
+      await service.search(vector, 10, 0.7, filters);
+
+      const call = mockClient.search.mock.calls[0][1] as Record<string, unknown>;
+      const filter = call.filter as Record<string, unknown>;
+      const conditions = filter.must as Array<Record<string, unknown>>;
+
+      expect(conditions).toHaveLength(2);
     });
   });
 });

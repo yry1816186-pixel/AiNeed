@@ -5,9 +5,11 @@ import {
   Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 import { LlmService } from './services/llm.service';
 import { KnowledgeService } from '../knowledge/knowledge.service';
 import { CreateSessionDto } from './dto/create-session.dto';
+import { sanitizeHtml } from '../../common/utils/sanitize.util';
 import {
   createFullPrompt,
   type PromptBuilderConfig,
@@ -57,17 +59,26 @@ export class StylistService {
     };
   }
 
-  async getSessions(userId: string) {
-    const sessions = await this.prisma.chatSession.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        messages: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
+  async getSessions(userId: string, page = 1, limit = 20) {
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.min(100, Math.max(1, limit));
+    const skip = (safePage - 1) * safeLimit;
+
+    const [sessions, total] = await Promise.all([
+      this.prisma.chatSession.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: safeLimit,
+        include: {
+          messages: {
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+          },
         },
-      },
-    });
+      }),
+      this.prisma.chatSession.count({ where: { userId } }),
+    ]);
 
     const items = sessions.map((session) => ({
       id: session.id,
@@ -76,7 +87,7 @@ export class StylistService {
       createdAt: session.createdAt.toISOString(),
     }));
 
-    return { items };
+    return { items, total, page: safePage, limit: safeLimit, totalPages: Math.ceil(total / safeLimit) };
   }
 
   async deleteSession(userId: string, sessionId: string) {
@@ -97,7 +108,7 @@ export class StylistService {
     return { id: sessionId };
   }
 
-  async getMessages(userId: string, sessionId: string) {
+  async getMessages(userId: string, sessionId: string, page = 1, limit = 50) {
     const session = await this.prisma.chatSession.findUnique({
       where: { id: sessionId },
     });
@@ -110,10 +121,19 @@ export class StylistService {
       throw new ForbiddenException({ code: 'FORBIDDEN', message: '无权访问此会话' });
     }
 
-    const messages = await this.prisma.chatMessage.findMany({
-      where: { sessionId },
-      orderBy: { createdAt: 'asc' },
-    });
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.min(200, Math.max(1, limit));
+    const skip = (safePage - 1) * safeLimit;
+
+    const [messages, total] = await Promise.all([
+      this.prisma.chatMessage.findMany({
+        where: { sessionId },
+        orderBy: { createdAt: 'asc' },
+        skip,
+        take: safeLimit,
+      }),
+      this.prisma.chatMessage.count({ where: { sessionId } }),
+    ]);
 
     const items = messages.map((msg) => ({
       id: msg.id,
@@ -123,7 +143,7 @@ export class StylistService {
       createdAt: msg.createdAt.toISOString(),
     }));
 
-    return { items };
+    return { items, total, page: safePage, limit: safeLimit, totalPages: Math.ceil(total / safeLimit) };
   }
 
   async saveUserMessage(sessionId: string, content: string) {
@@ -131,7 +151,7 @@ export class StylistService {
       data: {
         sessionId,
         role: 'user',
-        content,
+        content: sanitizeHtml(content),
       },
     });
   }
@@ -146,7 +166,7 @@ export class StylistService {
         sessionId,
         role: 'assistant',
         content,
-        metadata: metadata ?? undefined,
+        metadata: metadata as Prisma.InputJsonValue ?? undefined,
       },
     });
   }
@@ -274,12 +294,12 @@ export class StylistService {
   }
 
   async buildSystemPromptForUser(userId: string): Promise<string> {
-    const [userProfile, bodyAnalysis, wardrobeItems, knowledgeSnippets, trends] =
+    const userProfile = await this.getUserProfile(userId);
+    const [bodyAnalysis, wardrobeItems, knowledgeSnippets, trends] =
       await Promise.all([
-        this.getUserProfile(userId),
         this.getBodyAnalysis(userId),
         this.getWardrobeItems(userId),
-        this.getKnowledgeSnippets(await this.getUserProfile(userId)),
+        this.getKnowledgeSnippets(userProfile),
         this.getTrends(),
       ]);
 
@@ -396,7 +416,7 @@ export class StylistService {
       }
 
       const textContent = response.replace(OUTFIT_JSON_REGEX, '').trim();
-      return { textContent: textContent || outfit.overallReason ?? '', outfit };
+      return { textContent: textContent || (outfit.overallReason ?? ''), outfit };
     } catch {
       return { textContent: response, outfit: null };
     }

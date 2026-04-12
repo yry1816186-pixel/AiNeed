@@ -1,31 +1,24 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   customOrderService,
-  type CreateOrderPayload,
+  type CreateCustomOrderPayload,
   type CustomOrder,
-  type ProductTemplate,
-  type OrderListResponse,
+  type CustomOrderListResponse,
+  type CustomOrderDetail,
+  type CustomOrderStatus,
 } from '../services/custom-order.service';
 
-export function useProductTemplates() {
-  return useQuery<ProductTemplate[]>({
-    queryKey: ['custom-orders', 'product-templates'],
-    queryFn: customOrderService.getProductTemplates,
-    staleTime: 10 * 60 * 1000,
-  });
-}
-
-export function useCustomOrders() {
-  return useQuery<OrderListResponse>({
-    queryKey: ['custom-orders', 'list'],
-    queryFn: customOrderService.getOrders,
+export function useCustomOrders(status?: CustomOrderStatus) {
+  return useQuery<CustomOrderListResponse>({
+    queryKey: ['custom-orders', 'list', status],
+    queryFn: () => customOrderService.getList(status),
   });
 }
 
 export function useCustomOrder(id: string) {
-  return useQuery<CustomOrder>({
+  return useQuery<CustomOrderDetail>({
     queryKey: ['custom-orders', 'detail', id],
-    queryFn: () => customOrderService.getOrder(id),
+    queryFn: () => customOrderService.getDetail(id),
     enabled: id.length > 0,
   });
 }
@@ -33,8 +26,8 @@ export function useCustomOrder(id: string) {
 export function useCreateOrder() {
   const queryClient = useQueryClient();
 
-  return useMutation<CustomOrder, Error, CreateOrderPayload>({
-    mutationFn: customOrderService.createOrder,
+  return useMutation<CustomOrder, Error, CreateCustomOrderPayload>({
+    mutationFn: customOrderService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['custom-orders'] });
     },

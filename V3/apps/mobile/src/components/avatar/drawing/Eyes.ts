@@ -1,10 +1,6 @@
 import { Skia } from '@shopify/react-native-skia';
 import type { EyeStyle, DrawingContext } from '../types';
 
-const EYE_WHITES = '#FFFFFF';
-const EYE_PUPIL = '#1A1A1A';
-const EYE_HIGHLIGHT = '#FFFFFF';
-
 interface EyeDrawResult {
   leftEyePath: ReturnType<typeof Skia.Path.Make>;
   rightEyePath: ReturnType<typeof Skia.Path.Make>;
@@ -12,9 +8,6 @@ interface EyeDrawResult {
   rightPupilPath: ReturnType<typeof Skia.Path.Make>;
   leftHighlightPath: ReturnType<typeof Skia.Path.Make>;
   rightHighlightPath: ReturnType<typeof Skia.Path.Make>;
-  paint: ReturnType<typeof Skia.Paint>;
-  whitePaint: ReturnType<typeof Skia.Paint>;
-  highlightPaint: ReturnType<typeof Skia.Paint>;
   squint: number;
 }
 
@@ -26,12 +19,7 @@ function drawRoundEyes(
 ): { eye: ReturnType<typeof Skia.Path.Make>; pupil: ReturnType<typeof Skia.Path.Make>; highlight: ReturnType<typeof Skia.Path.Make> } {
   const eyeH = r * (1 - squint * 0.6);
   const eye = Skia.Path.Make();
-  eye.addOval({
-    x: cx - r,
-    y: cy - eyeH,
-    width: r * 2,
-    height: eyeH * 2,
-  });
+  eye.addOval({ x: cx - r, y: cy - eyeH, width: r * 2, height: eyeH * 2 });
 
   const pupilR = r * 0.5;
   const pupil = Skia.Path.Make();
@@ -86,12 +74,7 @@ function drawCatEyes(
   const pupilW = r * 0.25;
   const pupilH = r * 0.45;
   const pupil = Skia.Path.Make();
-  pupil.addOval({
-    x: cx - pupilW,
-    y: cy - pupilH,
-    width: pupilW * 2,
-    height: pupilH * 2,
-  });
+  pupil.addOval({ x: cx - pupilW, y: cy - pupilH, width: pupilW * 2, height: pupilH * 2 });
 
   const hlR = r * 0.15;
   const highlight = Skia.Path.Make();
@@ -143,18 +126,6 @@ export function drawEyes(ctx: DrawingContext): EyeDrawResult {
   const left = drawer(cx - eyeSpacing, eyeY, eyeR, squint);
   const right = drawer(cx + eyeSpacing, eyeY, eyeR, squint);
 
-  const paint = Skia.Paint();
-  paint.setAntiAlias(true);
-  paint.setColor(Skia.Color(EYE_PUPIL));
-
-  const whitePaint = Skia.Paint();
-  whitePaint.setAntiAlias(true);
-  whitePaint.setColor(Skia.Color(EYE_WHITES));
-
-  const highlightPaint = Skia.Paint();
-  highlightPaint.setAntiAlias(true);
-  highlightPaint.setColor(Skia.Color(EYE_HIGHLIGHT));
-
   return {
     leftEyePath: left.eye,
     rightEyePath: right.eye,
@@ -162,9 +133,6 @@ export function drawEyes(ctx: DrawingContext): EyeDrawResult {
     rightPupilPath: right.pupil,
     leftHighlightPath: left.highlight,
     rightHighlightPath: right.highlight,
-    paint,
-    whitePaint,
-    highlightPaint,
     squint,
   };
 }

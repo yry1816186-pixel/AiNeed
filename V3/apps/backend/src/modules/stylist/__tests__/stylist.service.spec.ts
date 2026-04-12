@@ -110,10 +110,12 @@ function createMockPrismaService() {
       ]),
       findUnique: jest.fn().mockResolvedValue(mockSession),
       delete: jest.fn().mockResolvedValue(mockSession),
+      count: jest.fn().mockResolvedValue(1),
     },
     chatMessage: {
       create: jest.fn().mockResolvedValue(mockMessage),
       findMany: jest.fn().mockResolvedValue([mockMessage]),
+      count: jest.fn().mockResolvedValue(1),
     },
     user: {
       findUnique: jest.fn().mockResolvedValue(mockUser),

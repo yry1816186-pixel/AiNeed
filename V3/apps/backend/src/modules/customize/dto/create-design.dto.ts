@@ -3,7 +3,7 @@ import {
   IsOptional,
   IsUUID,
   IsArray,
-  IsJsonObject,
+  IsObject,
   MaxLength,
   IsInt,
   Min,
@@ -18,9 +18,8 @@ export class CreateDesignDto {
 
   @ApiProperty({
     description: '设计数据(JSON: 图案位置/缩放/旋转/文字等)',
-    type: 'object',
   })
-  @IsJsonObject()
+  @IsObject()
   designData!: Record<string, unknown>;
 
   @ApiProperty({ description: '产品类型', example: 'tshirt' })

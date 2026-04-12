@@ -100,7 +100,7 @@ export default function WardrobeScreen() {
 
   const handleZonePress = useCallback((zone: BodyZone) => {
     const category = BODY_ZONE_TO_CATEGORY[zone];
-    setSelectedCategory((prev) => (prev === category ? null : category));
+    setSelectedCategory((prev: ClothingCategory | null) => (prev === category ? null : category));
   }, []);
 
   const handleFilterSelect = useCallback((category: ClothingCategory | null) => {

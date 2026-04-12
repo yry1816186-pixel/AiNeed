@@ -15,35 +15,35 @@ export enum KnowledgeCategory {
 export class QueryColorHarmonyDto {
   @ApiProperty({ description: '颜色名称', example: 'red' })
   @IsString()
-  color: string;
+  color = '';
 }
 
 export class QueryColorConflictDto {
   @ApiProperty({ description: '颜色名称', example: 'red' })
   @IsString()
-  color: string;
+  color = '';
 }
 
 export class QueryBodyTypeDto {
   @ApiProperty({ description: '体型类型', example: 'hourglass' })
   @IsString()
-  type: string;
+  type = '';
 }
 
 export class QueryOccasionDto {
   @ApiProperty({ description: '场合名称', example: 'work' })
   @IsString()
-  occasion: string;
+  occasion = '';
 }
 
 export class QueryStyleCompatibilityDto {
   @ApiProperty({ description: '风格A', example: 'minimalist' })
   @IsString()
-  styleA: string;
+  styleA = '';
 
   @ApiProperty({ description: '风格B', example: 'streetwear' })
   @IsString()
-  styleB: string;
+  styleB = '';
 }
 
 export class KnowledgeQueryDto {

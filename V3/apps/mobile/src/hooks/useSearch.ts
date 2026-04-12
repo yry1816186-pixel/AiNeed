@@ -119,10 +119,10 @@ export function useSearch() {
   }, []);
 
   const handleLoadMore = useCallback(() => {
-    if (searchQuery.data && !searchQuery.isFetchingNextPage) {
+    if (searchQuery.data && !searchQuery.isFetching) {
       setPage((prev) => prev + 1);
     }
-  }, [searchQuery.data, searchQuery.isFetchingNextPage]);
+  }, [searchQuery.data, searchQuery.isFetching]);
 
   const isSearching = debouncedQuery.length > 0;
   const isTyping = query.length > 0 && !isSearching;

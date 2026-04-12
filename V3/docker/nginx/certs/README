@@ -1,0 +1,8 @@
+# Place SSL certificates here:
+# - fullchain.pem  (certificate chain)
+# - privkey.pem    (private key)
+#
+# For Let's Encrypt:
+#   certbot certonly --standalone -d aineed.com -d www.aineed.com
+#   cp /etc/letsencrypt/live/aineed.com/fullchain.pem .
+#   cp /etc/letsencrypt/live/aineed.com/privkey.pem .

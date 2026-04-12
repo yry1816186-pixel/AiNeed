@@ -1,7 +1,8 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { ISearchProvider, SEARCH_PROVIDER, IndexableDocument } from './providers/search-provider.interface';
-import { DatabaseProvider } from './providers/database.provider.js';
+import { PrismaService } from '../../prisma/prisma.service';
+import type { ISearchProvider } from './providers/search-provider.interface';
+import { SEARCH_PROVIDER, IndexableDocument } from './providers/search-provider.interface';
+import { DatabaseProvider } from './providers/database.provider';
 import {
   SearchResult,
   SearchFilters,

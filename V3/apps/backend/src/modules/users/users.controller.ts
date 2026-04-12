@@ -9,7 +9,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -17,7 +17,7 @@ import { UpdatePreferencesDto } from './dto/update-preferences.dto';
 import { UpdateBodyProfileDto } from './dto/update-body-profile.dto';
 import { UpdateAvatarDto } from './dto/user-response.dto';
 
-@ApiTags('用户')
+@ApiTags('Users')
 @ApiBearerAuth()
 @Controller('users')
 @UseGuards(AuthGuard('jwt'))
@@ -25,13 +25,18 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('me')
-  @ApiOperation({ summary: '获取当前用户完整信息' })
+  @ApiOperation({ summary: '获取当前用户完整信息', description: '返回当前认证用户的完整资料，含风格偏好和体型档案' })
+  @ApiResponse({ status: 200, description: '返回用户完整信息' })
+  @ApiResponse({ status: 401, description: '未认证' })
   async getProfile(@CurrentUser('id') userId: string) {
     return this.usersService.getProfile(userId);
   }
 
   @Patch('me')
-  @ApiOperation({ summary: '更新用户基本信息' })
+  @ApiOperation({ summary: '更新用户基本信息', description: '更新昵称、性别、身高等基本信息' })
+  @ApiResponse({ status: 200, description: '更新成功' })
+  @ApiResponse({ status: 400, description: '参数验证失败' })
+  @ApiResponse({ status: 401, description: '未认证' })
   async updateProfile(
     @CurrentUser('id') userId: string,
     @Body() dto: UpdateProfileDto,
@@ -40,7 +45,10 @@ export class UsersController {
   }
 
   @Patch('me/preferences')
-  @ApiOperation({ summary: '更新风格偏好' })
+  @ApiOperation({ summary: '更新风格偏好', description: '更新风格标签、场合标签、颜色偏好、预算范围' })
+  @ApiResponse({ status: 200, description: '更新成功' })
+  @ApiResponse({ status: 400, description: '参数验证失败' })
+  @ApiResponse({ status: 401, description: '未认证' })
   async updatePreferences(
     @CurrentUser('id') userId: string,
     @Body() dto: UpdatePreferencesDto,
@@ -49,7 +57,10 @@ export class UsersController {
   }
 
   @Patch('me/body-profile')
-  @ApiOperation({ summary: '更新体型档案' })
+  @ApiOperation({ summary: '更新体型档案', description: '更新体型类型、色彩季型、身体测量数据' })
+  @ApiResponse({ status: 200, description: '更新成功' })
+  @ApiResponse({ status: 400, description: '参数验证失败' })
+  @ApiResponse({ status: 401, description: '未认证' })
   async updateBodyProfile(
     @CurrentUser('id') userId: string,
     @Body() dto: UpdateBodyProfileDto,
@@ -59,7 +70,10 @@ export class UsersController {
 
   @Post('me/avatar')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '上传头像（更新avatar_url）' })
+  @ApiOperation({ summary: '上传头像', description: '更新用户头像URL' })
+  @ApiResponse({ status: 200, description: '头像更新成功' })
+  @ApiResponse({ status: 400, description: '参数验证失败' })
+  @ApiResponse({ status: 401, description: '未认证' })
   async updateAvatar(
     @CurrentUser('id') userId: string,
     @Body() dto: UpdateAvatarDto,

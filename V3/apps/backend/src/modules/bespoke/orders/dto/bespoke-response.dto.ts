@@ -1,14 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  BespokeOrderStatus,
-  BespokeQuoteStatus,
+  BESPOKE_ORDER_STATUSES,
+  BESPOKE_QUOTE_STATUSES,
 } from './bespoke.dto';
 
 export class BespokeOrderResponseDto {
   @ApiProperty() id!: string;
   @ApiProperty() userId!: string;
   @ApiProperty() studioId!: string;
-  @ApiProperty({ enum: BespokeOrderStatus }) status!: string;
+  @ApiProperty({ enum: BESPOKE_ORDER_STATUSES }) status!: string;
   @ApiPropertyOptional() title?: string;
   @ApiProperty() description!: string;
   @ApiPropertyOptional({ type: [String] }) referenceImages?: string[];
@@ -66,7 +66,7 @@ export class BespokeQuoteResponseDto {
   @ApiPropertyOptional() estimatedDays?: number;
   @ApiPropertyOptional() validUntil?: string;
   @ApiPropertyOptional() notes?: string;
-  @ApiProperty({ enum: BespokeQuoteStatus }) status!: string;
+  @ApiProperty({ enum: BESPOKE_QUOTE_STATUSES }) status!: string;
   @ApiProperty() createdAt!: string;
 }
 

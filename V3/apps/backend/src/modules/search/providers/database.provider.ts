@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service.js';
+import { PrismaService } from '../../../prisma/prisma.service';
+import type { Prisma } from '@prisma/client';
 import { ISearchProvider, IndexableDocument } from './search-provider.interface';
 import {
   SearchResult,
@@ -11,38 +12,6 @@ import {
   UserSearchResult,
 } from '../dto/search-response.dto';
 import { SearchType } from '../dto/search-query.dto';
-
-type ClothingItemWithBrand = {
-  id: string;
-  name: string;
-  description: string | null;
-  price: { toNumber: () => number } | null;
-  originalPrice: { toNumber: () => number } | null;
-  currency: string;
-  imageUrls: string[];
-  colors: string[];
-  styleTags: string[];
-  purchaseUrl: string | null;
-  brand: { name: string } | null;
-};
-
-type PostWithUser = {
-  id: string;
-  title: string | null;
-  content: string;
-  imageUrls: string[];
-  tags: string[];
-  likesCount: number;
-  commentsCount: number;
-  user: { id: string; nickname: string | null; avatarUrl: string | null };
-};
-
-type UserSearchRow = {
-  id: string;
-  nickname: string | null;
-  avatarUrl: string | null;
-  gender: string | null;
-};
 
 @Injectable()
 export class DatabaseProvider implements ISearchProvider {
@@ -88,8 +57,8 @@ export class DatabaseProvider implements ISearchProvider {
     return result;
   }
 
-  private buildClothingWhere(query: string, filters: SearchFilters) {
-    const where: Record<string, unknown> = {
+  private buildClothingWhere(query: string, filters: SearchFilters): Prisma.ClothingItemWhereInput {
+    const where: Prisma.ClothingItemWhereInput = {
       isActive: true,
       OR: [
         { name: { contains: query, mode: 'insensitive' } },
@@ -98,7 +67,7 @@ export class DatabaseProvider implements ISearchProvider {
       ],
     };
 
-    const andConditions: Record<string, unknown>[] = [];
+    const andConditions: Prisma.ClothingItemWhereInput[] = [];
 
     if (filters.colors.length > 0) {
       andConditions.push({ colors: { hasSome: filters.colors } });
@@ -159,21 +128,19 @@ export class DatabaseProvider implements ISearchProvider {
         this.prisma.clothingItem.count({ where }),
       ]);
 
-      const items: ClothingSearchResult[] = (rows as ClothingItemWithBrand[]).map(
-        (item: ClothingItemWithBrand) => ({
-          id: item.id,
-          name: item.name,
-          description: item.description,
-          price: item.price ? item.price.toNumber() : null,
-          originalPrice: item.originalPrice ? item.originalPrice.toNumber() : null,
-          currency: item.currency,
-          imageUrls: item.imageUrls,
-          colors: item.colors,
-          styleTags: item.styleTags,
-          brandName: item.brand?.name ?? null,
-          purchaseUrl: item.purchaseUrl,
-        }),
-      );
+      const items: ClothingSearchResult[] = rows.map((item) => ({
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        price: item.price ? item.price.toNumber() : null,
+        originalPrice: item.originalPrice ? item.originalPrice.toNumber() : null,
+        currency: item.currency,
+        imageUrls: item.imageUrls,
+        colors: item.colors,
+        styleTags: item.styleTags,
+        brandName: item.brand?.name ?? null,
+        purchaseUrl: item.purchaseUrl,
+      }));
 
       return { items, total };
     } catch (error) {
@@ -187,7 +154,7 @@ export class DatabaseProvider implements ISearchProvider {
     pagination: SearchPagination,
   ): Promise<{ items: PostSearchResult[]; total: number }> {
     try {
-      const where = {
+      const where: Prisma.CommunityPostWhereInput = {
         status: 'published',
         OR: [
           { title: { contains: query, mode: 'insensitive' } },
@@ -211,20 +178,18 @@ export class DatabaseProvider implements ISearchProvider {
         this.prisma.communityPost.count({ where }),
       ]);
 
-      const items: PostSearchResult[] = (rows as PostWithUser[]).map(
-        (item: PostWithUser) => ({
-          id: item.id,
-          title: item.title,
-          content: item.content,
-          imageUrls: item.imageUrls,
-          tags: item.tags,
-          likesCount: item.likesCount,
-          commentsCount: item.commentsCount,
-          userId: item.user.id,
-          userNickname: item.user.nickname,
-          userAvatarUrl: item.user.avatarUrl,
-        }),
-      );
+      const items: PostSearchResult[] = rows.map((item) => ({
+        id: item.id,
+        title: item.title,
+        content: item.content,
+        imageUrls: item.imageUrls,
+        tags: item.tags,
+        likesCount: item.likesCount,
+        commentsCount: item.commentsCount,
+        userId: item.user.id,
+        userNickname: item.user.nickname,
+        userAvatarUrl: item.user.avatarUrl,
+      }));
 
       return { items, total };
     } catch (error) {
@@ -238,7 +203,7 @@ export class DatabaseProvider implements ISearchProvider {
     pagination: SearchPagination,
   ): Promise<{ items: UserSearchResult[]; total: number }> {
     try {
-      const where = {
+      const where: Prisma.UserWhereInput = {
         OR: [
           { nickname: { contains: query, mode: 'insensitive' } },
         ],
@@ -262,14 +227,12 @@ export class DatabaseProvider implements ISearchProvider {
         this.prisma.user.count({ where }),
       ]);
 
-      const items: UserSearchResult[] = (rows as UserSearchRow[]).map(
-        (item: UserSearchRow) => ({
-          id: item.id,
-          nickname: item.nickname,
-          avatarUrl: item.avatarUrl,
-          gender: item.gender,
-        }),
-      );
+      const items: UserSearchResult[] = rows.map((item) => ({
+        id: item.id,
+        nickname: item.nickname,
+        avatarUrl: item.avatarUrl,
+        gender: item.gender,
+      }));
 
       return { items, total };
     } catch (error) {
@@ -290,7 +253,7 @@ export class DatabaseProvider implements ISearchProvider {
         distinct: ['name'],
       });
 
-      return clothingItems.map((item: { name: string }) => ({
+      return clothingItems.map((item) => ({
         text: item.name,
         type: 'clothing',
         count: 0,

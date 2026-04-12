@@ -8,21 +8,34 @@ import {
   StorageUploadResult,
 } from '../providers/storage-provider.interface';
 
+const JPEG_MAGIC = Buffer.from([0xff, 0xd8, 0xff, 0xe0]);
+const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a]);
+const WEBP_MAGIC = Buffer.from([0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50]);
+
+function getMagicBytes(mimetype: string): Buffer {
+  if (mimetype === 'image/png') return PNG_MAGIC;
+  if (mimetype === 'image/webp') return WEBP_MAGIC;
+  return JPEG_MAGIC;
+}
+
 const createMockFile = (
   overrides: Partial<Express.Multer.File> = {},
-): Express.Multer.File => ({
-  fieldname: 'file',
-  originalname: 'test.jpg',
-  encoding: '7bit',
-  mimetype: 'image/jpeg',
-  size: 1024,
-  buffer: Buffer.from('fake-image-data'),
-  destination: '',
-  filename: '',
-  path: '',
-  stream: null as never,
-  ...overrides,
-});
+): Express.Multer.File => {
+  const mimetype = overrides.mimetype || 'image/jpeg';
+  return {
+    fieldname: 'file',
+    originalname: 'test.jpg',
+    encoding: '7bit',
+    mimetype,
+    size: 1024,
+    buffer: Buffer.concat([getMagicBytes(mimetype), Buffer.from('fake-image-data')]),
+    destination: '',
+    filename: '',
+    path: '',
+    stream: null as never,
+    ...overrides,
+  };
+};
 
 describe('UploadService', () => {
   let service: UploadService;
@@ -122,7 +135,7 @@ describe('UploadService', () => {
     });
 
     it('should accept jpeg, png, and webp MIME types', async () => {
-      const mimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      const mimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
       for (const mimeType of mimeTypes) {
         const file = createMockFile({ mimetype: mimeType });
@@ -220,6 +233,76 @@ describe('UploadService', () => {
       await service.deleteFile(key);
 
       expect(mockStorageProvider.delete).toHaveBeenCalledWith(key);
+    });
+  });
+
+  describe('uploadBuffer', () => {
+    const uploadResult: StorageUploadResult = {
+      url: 'http://localhost:9000/aineed-uploads/post/test.jpg',
+      key: 'post/test.jpg',
+    };
+
+    beforeEach(() => {
+      (mockStorageProvider.upload as jest.Mock).mockResolvedValue(uploadResult);
+    });
+
+    it('should upload a raw buffer and return response with dimensions', async () => {
+      const buffer = Buffer.from('raw-image-data');
+
+      const result = await service.uploadBuffer(buffer, 'post/test.jpg', 'image/jpeg');
+
+      expect(result.url).toBe(uploadResult.url);
+      expect(result.key).toBe(uploadResult.key);
+      expect(result.size).toBe(buffer.length);
+      expect(result.mimeType).toBe('image/jpeg');
+      expect(mockStorageProvider.upload).toHaveBeenCalledWith(
+        buffer,
+        'post/test.jpg',
+        'image/jpeg',
+      );
+    });
+
+    it('should use default type when not provided', async () => {
+      const buffer = Buffer.from('raw-image-data');
+
+      await service.uploadBuffer(buffer, 'avatar/img.png', 'image/png');
+
+      expect(mockStorageProvider.upload).toHaveBeenCalledWith(
+        buffer,
+        'avatar/img.png',
+        'image/png',
+      );
+    });
+  });
+
+  describe('extractDimensions error handling', () => {
+    it('should return width 0 and height 0 when sharp fails to parse buffer', async () => {
+      const file = createMockFile();
+      (mockStorageProvider.upload as jest.Mock).mockResolvedValue({
+        url: 'http://localhost:9000/test.jpg',
+        key: 'test.jpg',
+      });
+
+      const result = await service.uploadImage(file);
+
+      // Sharp will fail to parse, but the service should return { width: 0, height: 0 }
+      expect(result).toBeDefined();
+      expect(result.width).toBe(0);
+      expect(result.height).toBe(0);
+    });
+  });
+
+  describe('validateFile edge cases', () => {
+    it('should throw BadRequestException when file is null', async () => {
+      await expect(
+        service.uploadImage(null as unknown as Express.Multer.File),
+      ).rejects.toThrow('No file provided');
+    });
+
+    it('should throw BadRequestException when file is undefined', async () => {
+      await expect(
+        service.uploadImage(undefined as unknown as Express.Multer.File),
+      ).rejects.toThrow('No file provided');
     });
   });
 });

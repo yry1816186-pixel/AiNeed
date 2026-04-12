@@ -2,14 +2,12 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
-  Logger,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateFavoriteDto, TargetType } from './dto/create-favorite.dto';
 
 @Injectable()
 export class FavoritesService {
-  private readonly logger = new Logger(FavoritesService.name);
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -93,20 +91,8 @@ export class FavoritesService {
       this.prisma.favorite.count({ where }),
     ]);
 
-    const itemsWithTarget = await Promise.all(
-      favorites.map(async (fav: { id: string; targetType: string; targetId: string; createdAt: Date }) => {
-        const target = await this.fetchTarget(
-          fav.targetType as TargetType,
-          fav.targetId,
-        );
-        return {
-          id: fav.id,
-          targetType: fav.targetType,
-          targetId: fav.targetId,
-          target,
-          createdAt: fav.createdAt.toISOString(),
-        };
-      }),
+    const itemsWithTarget = await this.batchFetchTargets(
+      favorites as Array<{ id: string; targetType: string; targetId: string; createdAt: Date }>,
     );
 
     return {
@@ -117,7 +103,84 @@ export class FavoritesService {
     };
   }
 
+  private async batchFetchTargets(
+    favorites: Array<{ id: string; targetType: string; targetId: string; createdAt: Date }>,
+  ): Promise<Array<{ id: string; targetType: string; targetId: string; target: Record<string, unknown> | null; createdAt: string }>> {
+    const grouped = new Map<string, string[]>();
+    for (const fav of favorites) {
+      const ids = grouped.get(fav.targetType) ?? [];
+      ids.push(fav.targetId);
+      grouped.set(fav.targetType, ids);
+    }
+
+    const targetMap = new Map<string, Record<string, unknown> | null>();
+
+    const typeQueries: Promise<void>[] = [];
+
+    const clothingIds = grouped.get('clothing') ?? [];
+    if (clothingIds.length > 0) {
+      typeQueries.push(
+        this.prisma.clothingItem.findMany({
+          where: { id: { in: clothingIds } },
+          select: { id: true, name: true, price: true, imageUrls: true, gender: true, colors: true },
+        }).then((items) => {
+          for (const item of items) targetMap.set(`clothing:${item.id}`, item as unknown as Record<string, unknown>);
+        }),
+      );
+    }
+
+    const outfitIds = grouped.get('outfit') ?? [];
+    if (outfitIds.length > 0) {
+      typeQueries.push(
+        this.prisma.outfit.findMany({
+          where: { id: { in: outfitIds } },
+          select: { id: true, name: true, occasion: true, season: true, styleTags: true, isPublic: true },
+        }).then((items) => {
+          for (const item of items) targetMap.set(`outfit:${item.id}`, item as unknown as Record<string, unknown>);
+        }),
+      );
+    }
+
+    const postIds = grouped.get('post') ?? [];
+    if (postIds.length > 0) {
+      typeQueries.push(
+        this.prisma.communityPost.findMany({
+          where: { id: { in: postIds } },
+          select: { id: true, title: true, content: true, imageUrls: true, tags: true, likesCount: true },
+        }).then((items) => {
+          for (const item of items) targetMap.set(`post:${item.id}`, item as unknown as Record<string, unknown>);
+        }),
+      );
+    }
+
+    const designIds = grouped.get('design') ?? [];
+    if (designIds.length > 0) {
+      typeQueries.push(
+        this.prisma.customDesign.findMany({
+          where: { id: { in: designIds } },
+          select: { id: true, name: true, productType: true, previewImageUrl: true, likesCount: true, tags: true },
+        }).then((items) => {
+          for (const item of items) targetMap.set(`design:${item.id}`, item as unknown as Record<string, unknown>);
+        }),
+      );
+    }
+
+    await Promise.all(typeQueries);
+
+    return favorites.map((fav) => ({
+      id: fav.id,
+      targetType: fav.targetType,
+      targetId: fav.targetId,
+      target: targetMap.get(`${fav.targetType}:${fav.targetId}`) ?? null,
+      createdAt: fav.createdAt.toISOString(),
+    }));
+  }
+
   async check(userId: string, targetType: string, targetIds: string[]) {
+    if (targetIds.length === 0) {
+      return { results: [] };
+    }
+
     const favorites = await this.prisma.favorite.findMany({
       where: {
         userId,
@@ -187,76 +250,4 @@ export class FavoritesService {
     }
   }
 
-  private async fetchTarget(
-    targetType: TargetType,
-    targetId: string,
-  ): Promise<Record<string, unknown> | null> {
-    try {
-      switch (targetType) {
-        case 'clothing': {
-          const item = await this.prisma.clothingItem.findUnique({
-            where: { id: targetId },
-            select: {
-              id: true,
-              name: true,
-              price: true,
-              imageUrls: true,
-              gender: true,
-              colors: true,
-            },
-          });
-          return item as unknown as Record<string, unknown> | null;
-        }
-        case 'outfit': {
-          const item = await this.prisma.outfit.findUnique({
-            where: { id: targetId },
-            select: {
-              id: true,
-              name: true,
-              occasion: true,
-              season: true,
-              styleTags: true,
-              isPublic: true,
-            },
-          });
-          return item as unknown as Record<string, unknown> | null;
-        }
-        case 'post': {
-          const item = await this.prisma.communityPost.findUnique({
-            where: { id: targetId },
-            select: {
-              id: true,
-              title: true,
-              content: true,
-              imageUrls: true,
-              tags: true,
-              likesCount: true,
-            },
-          });
-          return item as unknown as Record<string, unknown> | null;
-        }
-        case 'design': {
-          const item = await this.prisma.customDesign.findUnique({
-            where: { id: targetId },
-            select: {
-              id: true,
-              name: true,
-              productType: true,
-              previewImageUrl: true,
-              likesCount: true,
-              tags: true,
-            },
-          });
-          return item as unknown as Record<string, unknown> | null;
-        }
-        default:
-          return null;
-      }
-    } catch (error) {
-      this.logger.warn(
-        `Failed to fetch target ${targetType}/${targetId}: ${String(error)}`,
-      );
-      return null;
-    }
-  }
 }

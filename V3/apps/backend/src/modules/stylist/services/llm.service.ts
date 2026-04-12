@@ -26,9 +26,9 @@ export class LlmService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly glm5Provider: Glm5Provider,
-    private readonly deepseekProvider: DeepSeekProvider,
-    private readonly mockProvider: MockProvider,
+    glm5Provider: Glm5Provider,
+    deepseekProvider: DeepSeekProvider,
+    mockProvider: MockProvider,
   ) {
     this.providers = new Map<ProviderTier, ILLMProvider>([
       ['glm5', glm5Provider],
@@ -39,10 +39,18 @@ export class LlmService {
     this.isDevelopment = this.configService.get<string>('APP_ENV', 'development') === 'development';
   }
 
+  private getMockProvider(): ILLMProvider {
+    const mock = this.providers.get('mock');
+    if (!mock) {
+      throw new HttpException('Mock provider not available', HttpStatus.SERVICE_UNAVAILABLE);
+    }
+    return mock;
+  }
+
   async chat(messages: ChatMessage[], options?: ChatOptions): Promise<ChatResponse> {
     if (this.isDevelopment && !this.hasApiKey('glm5') && !this.hasApiKey('deepseek')) {
       this.logger.log('No API keys configured, using mock provider');
-      return this.mockProvider.chat(messages, options);
+      return this.getMockProvider().chat(messages, options);
     }
 
     return this.executeWithFallback((provider) => provider.chat(messages, options));
@@ -51,7 +59,7 @@ export class LlmService {
   async *chatStream(messages: ChatMessage[], options?: ChatOptions): AsyncIterable<ChatChunk> {
     if (this.isDevelopment && !this.hasApiKey('glm5') && !this.hasApiKey('deepseek')) {
       this.logger.log('No API keys configured, using mock provider for stream');
-      yield* this.mockProvider.chatStream(messages, options);
+      yield* this.getMockProvider().chatStream(messages, options);
       return;
     }
 
@@ -72,7 +80,7 @@ export class LlmService {
   async generateImage(prompt: string, options?: ImageOptions): Promise<ImageResponse> {
     if (this.isDevelopment && !this.hasApiKey('glm5')) {
       this.logger.log('No GLM-5 API key configured, using mock provider for image');
-      return this.mockProvider.generateImage(prompt, options);
+      return this.getMockProvider().generateImage(prompt, options);
     }
 
     return this.executeWithFallback(
@@ -116,10 +124,10 @@ export class LlmService {
     }
 
     if (this.isDevelopment) {
-      return this.mockProvider;
+      return this.getMockProvider();
     }
 
-    return this.mockProvider;
+    return this.getMockProvider();
   }
 
   private getNextProvider(current: ILLMProvider): ILLMProvider | null {
@@ -151,7 +159,6 @@ export class LlmService {
       if (!provider) continue;
 
       if (tier !== 'mock' && !this.hasApiKey(tier)) continue;
-      if (tier === 'mock' && !this.isDevelopment && tiers === undefined) continue;
 
       try {
         return await operation(provider);

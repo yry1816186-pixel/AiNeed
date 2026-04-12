@@ -16,16 +16,28 @@ export class LocalProvider implements IStorageProvider {
     this.ensureDir(this.uploadDir);
   }
 
+  private validateKey(key: string): void {
+    if (key.includes('..') || key.startsWith('/')) {
+      throw new Error(`Invalid storage key: path traversal detected`);
+    }
+  }
+
   async upload(
     buffer: Buffer,
     key: string,
     _mimeType: string,
   ): Promise<StorageUploadResult> {
-    const filePath = path.join(this.uploadDir, key);
-    const dir = path.dirname(filePath);
+    this.validateKey(key);
+
+    const resolvedPath = path.resolve(this.uploadDir, key);
+    if (!resolvedPath.startsWith(path.resolve(this.uploadDir))) {
+      throw new Error(`Invalid storage key: path traversal detected`);
+    }
+
+    const dir = path.dirname(resolvedPath);
     this.ensureDir(dir);
 
-    await fs.promises.writeFile(filePath, buffer);
+    await fs.promises.writeFile(resolvedPath, buffer);
 
     return {
       url: this.getUrl(key),
@@ -34,7 +46,14 @@ export class LocalProvider implements IStorageProvider {
   }
 
   async delete(key: string): Promise<void> {
-    const filePath = path.join(this.uploadDir, key);
+    this.validateKey(key);
+
+    const resolvedPath = path.resolve(this.uploadDir, key);
+    if (!resolvedPath.startsWith(path.resolve(this.uploadDir))) {
+      throw new Error(`Invalid storage key: path traversal detected`);
+    }
+
+    const filePath = resolvedPath;
     try {
       await fs.promises.access(filePath, fs.constants.F_OK);
       await fs.promises.unlink(filePath);

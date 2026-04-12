@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional, IsIn, IsInt, Min } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsIn, IsInt, Min, MaxLength } from 'class-validator';
 
 export class CreateRoomDto {
   @ApiProperty({ description: '对方用户ID', example: '550e8400-e29b-41d4-a716-446655440000' })
@@ -12,6 +12,7 @@ export class SendMessageDto {
   @ApiProperty({ description: '消息内容', example: '你好！' })
   @IsString()
   @IsNotEmpty()
+  @MaxLength(5000)
   content!: string;
 
   @ApiPropertyOptional({ description: '消息类型', enum: ['text', 'image'], default: 'text' })

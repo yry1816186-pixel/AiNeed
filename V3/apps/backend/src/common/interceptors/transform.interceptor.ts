@@ -13,7 +13,7 @@ export class TransformInterceptor<T>
   implements NestInterceptor<T, ApiResponse<T>>
 {
   intercept(
-    context: ExecutionContext,
+    _context: ExecutionContext,
     next: CallHandler,
   ): Observable<ApiResponse<T>> {
     return next.handle().pipe(
@@ -21,11 +21,6 @@ export class TransformInterceptor<T>
         if (data && typeof data === 'object' && 'success' in data) {
           return data as ApiResponse<T>;
         }
-
-        const response: ApiResponse<T> = {
-          success: true,
-          data,
-        };
 
         if (
           data &&
@@ -37,11 +32,17 @@ export class TransformInterceptor<T>
             items: T[];
             meta: ResponseMeta;
           };
-          response.data = paginatedData.items;
-          response.meta = paginatedData.meta;
+          return {
+            success: true,
+            data: paginatedData.items,
+            meta: paginatedData.meta,
+          } as ApiResponse<T>;
         }
 
-        return response;
+        return {
+          success: true,
+          data,
+        } as ApiResponse<T>;
       }),
     );
   }

@@ -48,11 +48,11 @@ export class Neo4jService implements OnModuleInit, OnModuleDestroy {
   }
 
   getReadSession(): Session {
-    return this.getDriver().session({ accessMode: neo4j.session.READ });
+    return this.getDriver().session({ defaultAccessMode: neo4j.session.READ });
   }
 
   getWriteSession(): Session {
-    return this.getDriver().session({ accessMode: neo4j.session.WRITE });
+    return this.getDriver().session({ defaultAccessMode: neo4j.session.WRITE });
   }
 
   async read(cypher: string, params: Record<string, unknown> = {}): Promise<Result> {

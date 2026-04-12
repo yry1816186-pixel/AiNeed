@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { View, StyleSheet, Dimensions, type LayoutChangeEvent } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withTiming,
   withSpring,
   runOnJS,
 } from 'react-native-reanimated';
@@ -12,7 +11,7 @@ import { Image } from 'expo-image';
 import { colors, spacing, radius } from '../../theme';
 import type { ClothingImage } from '../../services/clothing.service';
 
-const SCREEN_WIDTH = Dimensions.get('window').screenWidth;
+const SCREEN_WIDTH = Dimensions.get('window').width;
 const IMAGE_HEIGHT = SCREEN_WIDTH * 1.2;
 
 interface ImageCarouselProps {
@@ -21,7 +20,14 @@ interface ImageCarouselProps {
 
 const AnimatedImage = Animated.createAnimatedComponent(Image);
 
-function CarouselItem({ image, index, activeIndex }: { image: ClothingImage; index: number; activeIndex: number }) {
+function CarouselItem({
+  image,
+  index,
+}: {
+  image: ClothingImage;
+  index: number;
+  activeIndex: number;
+}) {
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
   const translateX = useSharedValue(0);
@@ -103,7 +109,6 @@ function CarouselItem({ image, index, activeIndex }: { image: ClothingImage; ind
           style={styles.image}
           contentFit="cover"
           transition={200}
-          placeholder={require('../../../assets/placeholder-clothing.png')}
           accessibilityLabel={image.alt ?? `服装图片 ${index + 1}`}
         />
       </Animated.View>
@@ -114,16 +119,24 @@ function CarouselItem({ image, index, activeIndex }: { image: ClothingImage; ind
 export const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const handleScroll = useCallback((event: { nativeEvent: { contentOffset: { x: number }; layoutMeasurement: { width: number } } }) => {
-    const offsetX = event.nativeEvent.contentOffset.x;
-    const layoutWidth = event.nativeEvent.layoutMeasurement.width;
-    if (layoutWidth > 0) {
-      const newIndex = Math.round(offsetX / layoutWidth);
-      if (newIndex !== activeIndex && newIndex >= 0 && newIndex < images.length) {
-        setActiveIndex(newIndex);
+  const handleScroll = useCallback(
+    (event: {
+      nativeEvent: {
+        contentOffset: { x: number };
+        layoutMeasurement: { width: number };
+      };
+    }) => {
+      const offsetX = event.nativeEvent.contentOffset.x;
+      const layoutWidth = event.nativeEvent.layoutMeasurement.width;
+      if (layoutWidth > 0) {
+        const newIndex = Math.round(offsetX / layoutWidth);
+        if (newIndex !== activeIndex && newIndex >= 0 && newIndex < images.length) {
+          setActiveIndex(newIndex);
+        }
       }
-    }
-  }, [activeIndex, images.length]);
+    },
+    [activeIndex, images.length],
+  );
 
   if (images.length === 0) {
     return (
@@ -142,7 +155,6 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
           showsHorizontalScrollIndicator={false}
           onScroll={handleScroll}
           scrollEventThrottle={16}
-          scrollEnabled={true}
           decelerationRate="fast"
         >
           {images.map((image, index) => (
@@ -171,9 +183,9 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
 
         <View style={styles.imageCounter}>
           <View style={styles.counterBadge}>
-            <Animated.Text style={styles.counterText}>
+            <Text style={styles.counterText}>
               {activeIndex + 1}/{images.length}
-            </Animated.Text>
+            </Text>
           </View>
         </View>
       </View>

@@ -1,73 +1,76 @@
 import { IsString, IsInt, IsOptional, Min, Max } from 'class-validator';
+import { Logger } from '@nestjs/common';
+
+const logger = new Logger('EnvValidation');
 
 export class EnvironmentVariables {
   @IsString()
-  DATABASE_URL: string;
+  DATABASE_URL!: string;
 
   @IsString()
-  REDIS_URL: string;
+  REDIS_URL!: string;
 
   @IsString()
-  JWT_SECRET: string;
+  JWT_SECRET!: string;
 
   @IsString()
-  JWT_ACCESS_EXPIRES_IN: string;
+  JWT_ACCESS_EXPIRES_IN!: string;
 
   @IsString()
-  JWT_REFRESH_EXPIRES_IN: string;
+  JWT_REFRESH_EXPIRES_IN!: string;
 
   @IsString()
-  MINIO_ENDPOINT: string;
+  MINIO_ENDPOINT!: string;
 
   @IsInt()
   @Min(1)
   @Max(65535)
-  MINIO_PORT: number;
+  MINIO_PORT!: number;
 
   @IsString()
-  MINIO_ACCESS_KEY: string;
+  MINIO_ACCESS_KEY!: string;
 
   @IsString()
-  MINIO_SECRET_KEY: string;
+  MINIO_SECRET_KEY!: string;
 
   @IsString()
-  MINIO_BUCKET: string;
-
-  @IsString()
-  @IsOptional()
-  ZHIPU_API_KEY: string;
+  MINIO_BUCKET!: string;
 
   @IsString()
   @IsOptional()
-  ZHIPU_MODEL: string;
+  ZHIPU_API_KEY!: string;
 
   @IsString()
   @IsOptional()
-  DEEPSEEK_API_KEY: string;
+  ZHIPU_MODEL!: string;
 
   @IsString()
   @IsOptional()
-  SMS_PROVIDER: string;
+  DEEPSEEK_API_KEY!: string;
 
   @IsString()
   @IsOptional()
-  ALIYUN_SMS_ACCESS_KEY: string;
+  SMS_PROVIDER!: string;
 
   @IsString()
   @IsOptional()
-  ALIYUN_SMS_SECRET_KEY: string;
+  ALIYUN_SMS_ACCESS_KEY!: string;
 
   @IsString()
   @IsOptional()
-  ALIYUN_SMS_SIGN_NAME: string;
+  ALIYUN_SMS_SECRET_KEY!: string;
 
   @IsString()
   @IsOptional()
-  ALIYUN_SMS_TEMPLATE_CODE: string;
+  ALIYUN_SMS_SIGN_NAME!: string;
 
   @IsString()
   @IsOptional()
-  QDRANT_URL: string;
+  ALIYUN_SMS_TEMPLATE_CODE!: string;
+
+  @IsString()
+  @IsOptional()
+  QDRANT_URL!: string;
 
   @IsString()
   @IsOptional()
@@ -79,39 +82,67 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  NEO4J_URL: string;
+  NEO4J_URL!: string;
 
   @IsString()
   @IsOptional()
-  NEO4J_USER: string;
+  NEO4J_USER!: string;
 
   @IsString()
   @IsOptional()
-  NEO4J_PASSWORD: string;
+  NEO4J_PASSWORD!: string;
 
   @IsString()
   @IsOptional()
-  ELASTICSEARCH_URL: string;
+  ELASTICSEARCH_URL!: string;
 
   @IsInt()
   @IsOptional()
-  APP_PORT: number;
+  APP_PORT!: number;
 
   @IsString()
   @IsOptional()
-  APP_ENV: string;
+  APP_ENV!: string;
 
   @IsString()
   @IsOptional()
-  CORS_ORIGIN: string;
+  CORS_ORIGIN!: string;
 
   @IsInt()
   @IsOptional()
-  RATE_LIMIT_TTL: number;
+  RATE_LIMIT_TTL!: number;
 
   @IsInt()
   @IsOptional()
-  RATE_LIMIT_MAX: number;
+  RATE_LIMIT_MAX!: number;
+}
+
+const WEAK_SECRETS = new Set([
+  'your-256-bit-secret-change-in-production',
+  'your-jwt-secret-change-in-production',
+  'secret',
+  'password',
+  'changeme',
+  'jwt-secret',
+  'my-secret',
+]);
+
+function validateSecretStrength(key: string, value: string, env: string): void {
+  if (WEAK_SECRETS.has(value.toLowerCase())) {
+    if (env === 'production') {
+      throw new Error(
+        `SECURITY: ${key} uses a known weak default value. This is not allowed in production.`,
+      );
+    }
+    logger.warn(
+      `WARNING: ${key} uses a weak default value. Change it before deploying to production.`,
+    );
+  }
+  if (value.length < 32 && env === 'production') {
+    throw new Error(
+      `SECURITY: ${key} must be at least 32 characters in production. Current length: ${value.length}`,
+    );
+  }
 }
 
 export function validate(config: Record<string, unknown>): EnvironmentVariables {
@@ -133,8 +164,11 @@ export function validate(config: Record<string, unknown>): EnvironmentVariables 
     if (config[key] === undefined || config[key] === null || config[key] === '') {
       throw new Error(`Missing required environment variable: ${key}`);
     }
-    (validatedConfig as Record<string, unknown>)[key] = config[key];
+    (validatedConfig as unknown as Record<string, unknown>)[key] = config[key];
   }
+
+  const env = String(config.APP_ENV || config.NODE_ENV || 'development');
+  validateSecretStrength('JWT_SECRET', String(config.JWT_SECRET || ''), env);
 
   const optionalKeys: (keyof EnvironmentVariables)[] = [
     'ZHIPU_API_KEY',
@@ -161,18 +195,24 @@ export function validate(config: Record<string, unknown>): EnvironmentVariables 
 
   for (const key of optionalKeys) {
     if (config[key] !== undefined && config[key] !== null) {
-      (validatedConfig as Record<string, unknown>)[key] = config[key];
+      (validatedConfig as unknown as Record<string, unknown>)[key] = config[key];
     }
   }
 
   validatedConfig.APP_PORT = Number(validatedConfig.APP_PORT) || 3001;
   validatedConfig.APP_ENV = validatedConfig.APP_ENV || 'development';
-  validatedConfig.CORS_ORIGIN = validatedConfig.CORS_ORIGIN || '*';
+  validatedConfig.CORS_ORIGIN = validatedConfig.CORS_ORIGIN || 'http://localhost:3000';
   validatedConfig.RATE_LIMIT_TTL = Number(validatedConfig.RATE_LIMIT_TTL) || 60;
   validatedConfig.RATE_LIMIT_MAX = Number(validatedConfig.RATE_LIMIT_MAX) || 100;
   validatedConfig.QDRANT_URL = validatedConfig.QDRANT_URL || 'http://localhost:6333';
   validatedConfig.EMBEDDING_SERVICE_URL = validatedConfig.EMBEDDING_SERVICE_URL || 'http://localhost:8003';
   validatedConfig.EMBEDDING_MODEL = validatedConfig.EMBEDDING_MODEL || 'bge-m3';
+
+  if (validatedConfig.CORS_ORIGIN === '*' && env === 'production') {
+    throw new Error(
+      'SECURITY: CORS_ORIGIN=* is not allowed in production. Specify allowed origins.',
+    );
+  }
 
   return validatedConfig;
 }

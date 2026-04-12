@@ -16,6 +16,7 @@ const mockDb = {
     update: jest.fn(),
     delete: jest.fn(),
     count: jest.fn(),
+    groupBy: jest.fn().mockResolvedValue([]),
   },
   clothingItem: {
     findUnique: jest.fn(),
@@ -57,28 +58,29 @@ describe('WardrobeService', () => {
 
   describe('findAll', () => {
     it('should return paginated wardrobe items with stats', async () => {
-      mockDb.wardrobeItem.findMany
-        .mockResolvedValueOnce([mockWardrobeItem])
-        .mockResolvedValueOnce([
-          { category: '上装', color: '黑色' },
-          { category: '下装', color: '白色' },
-        ]);
-      mockDb.wardrobeItem.count.mockResolvedValueOnce(1);
+      mockDb.wardrobeItem.findMany.mockResolvedValueOnce([mockWardrobeItem]);
+      mockDb.wardrobeItem.count
+        .mockResolvedValueOnce(1)
+        .mockResolvedValueOnce(1);
+      mockDb.wardrobeItem.groupBy
+        .mockResolvedValueOnce([{ category: '上装', _count: { category: 1 } }, { category: '下装', _count: { category: 1 } }])
+        .mockResolvedValueOnce([{ color: '黑色', _count: { color: 1 } }, { color: '白色', _count: { color: 1 } }]);
 
       const result = await service.findAll({ userId, page: 1, limit: 20 });
 
       expect(result.items).toEqual([mockWardrobeItem]);
       expect(result.total).toBe(1);
-      expect(result.stats.totalCount).toBe(2);
+      expect(result.stats.totalCount).toBe(1);
       expect(result.stats.byCategory).toEqual({ 上装: 1, 下装: 1 });
       expect(result.stats.byColor).toEqual({ 黑色: 1, 白色: 1 });
     });
 
     it('should apply category filter', async () => {
-      mockDb.wardrobeItem.findMany
+      mockDb.wardrobeItem.findMany.mockResolvedValueOnce([]);
+      mockDb.wardrobeItem.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+      mockDb.wardrobeItem.groupBy
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce([]);
-      mockDb.wardrobeItem.count.mockResolvedValueOnce(0);
 
       await service.findAll({ userId, category: '上装' });
 
@@ -90,10 +92,11 @@ describe('WardrobeService', () => {
     });
 
     it('should apply color and brand filters', async () => {
-      mockDb.wardrobeItem.findMany
+      mockDb.wardrobeItem.findMany.mockResolvedValueOnce([]);
+      mockDb.wardrobeItem.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+      mockDb.wardrobeItem.groupBy
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce([]);
-      mockDb.wardrobeItem.count.mockResolvedValueOnce(0);
 
       await service.findAll({ userId, color: '黑色', brand: 'Nike' });
 
@@ -105,10 +108,11 @@ describe('WardrobeService', () => {
     });
 
     it('should sort by added_at_asc', async () => {
-      mockDb.wardrobeItem.findMany
+      mockDb.wardrobeItem.findMany.mockResolvedValueOnce([]);
+      mockDb.wardrobeItem.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+      mockDb.wardrobeItem.groupBy
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce([]);
-      mockDb.wardrobeItem.count.mockResolvedValueOnce(0);
 
       await service.findAll({ userId, sort: 'added_at_asc' });
 
@@ -118,10 +122,11 @@ describe('WardrobeService', () => {
     });
 
     it('should sort by category', async () => {
-      mockDb.wardrobeItem.findMany
+      mockDb.wardrobeItem.findMany.mockResolvedValueOnce([]);
+      mockDb.wardrobeItem.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+      mockDb.wardrobeItem.groupBy
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce([]);
-      mockDb.wardrobeItem.count.mockResolvedValueOnce(0);
 
       await service.findAll({ userId, sort: 'category' });
 
@@ -131,10 +136,11 @@ describe('WardrobeService', () => {
     });
 
     it('should sort by color', async () => {
-      mockDb.wardrobeItem.findMany
+      mockDb.wardrobeItem.findMany.mockResolvedValueOnce([]);
+      mockDb.wardrobeItem.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+      mockDb.wardrobeItem.groupBy
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce([]);
-      mockDb.wardrobeItem.count.mockResolvedValueOnce(0);
 
       await service.findAll({ userId, sort: 'color' });
 
@@ -144,10 +150,11 @@ describe('WardrobeService', () => {
     });
 
     it('should default to added_at_desc sort', async () => {
-      mockDb.wardrobeItem.findMany
+      mockDb.wardrobeItem.findMany.mockResolvedValueOnce([]);
+      mockDb.wardrobeItem.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+      mockDb.wardrobeItem.groupBy
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce([]);
-      mockDb.wardrobeItem.count.mockResolvedValueOnce(0);
 
       await service.findAll({ userId });
 
@@ -157,10 +164,11 @@ describe('WardrobeService', () => {
     });
 
     it('should handle empty stats gracefully', async () => {
-      mockDb.wardrobeItem.findMany
+      mockDb.wardrobeItem.findMany.mockResolvedValueOnce([]);
+      mockDb.wardrobeItem.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+      mockDb.wardrobeItem.groupBy
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce([]);
-      mockDb.wardrobeItem.count.mockResolvedValueOnce(0);
 
       const result = await service.findAll({ userId });
 
@@ -353,12 +361,15 @@ describe('WardrobeService', () => {
 
   describe('getStats', () => {
     it('should return aggregated stats', async () => {
+      mockDb.wardrobeItem.groupBy
+        .mockResolvedValueOnce([{ category: '上装', _count: { category: 2 } }, { category: '下装', _count: { category: 1 } }])
+        .mockResolvedValueOnce([{ color: '黑色', _count: { color: 2 } }, { color: '白色', _count: { color: 1 } }]);
       mockDb.wardrobeItem.findMany.mockResolvedValueOnce([
-        { category: '上装', color: '黑色', clothingId: 'c1' },
-        { category: '上装', color: '白色', clothingId: 'c2' },
-        { category: '下装', color: '黑色', clothingId: 'c3' },
-        { category: null, color: null, clothingId: null },
+        { clothingId: 'c1' },
+        { clothingId: 'c2' },
+        { clothingId: 'c3' },
       ]);
+      mockDb.wardrobeItem.count.mockResolvedValueOnce(4);
       mockDb.clothingItem.findMany.mockResolvedValueOnce([
         { seasons: ['spring', 'summer'], styleTags: ['casual', 'street'] },
         { seasons: ['summer'], styleTags: ['casual'] },
@@ -383,7 +394,11 @@ describe('WardrobeService', () => {
     });
 
     it('should return empty stats when wardrobe is empty', async () => {
+      mockDb.wardrobeItem.groupBy
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([]);
       mockDb.wardrobeItem.findMany.mockResolvedValueOnce([]);
+      mockDb.wardrobeItem.count.mockResolvedValueOnce(0);
 
       const result = await service.getStats(userId);
 
@@ -396,9 +411,11 @@ describe('WardrobeService', () => {
     });
 
     it('should skip items with null clothingId for season/style stats', async () => {
-      mockDb.wardrobeItem.findMany.mockResolvedValueOnce([
-        { category: '上装', color: '黑色', clothingId: null },
-      ]);
+      mockDb.wardrobeItem.groupBy
+        .mockResolvedValueOnce([{ category: '上装', _count: { category: 1 } }])
+        .mockResolvedValueOnce([{ color: '黑色', _count: { color: 1 } }]);
+      mockDb.wardrobeItem.findMany.mockResolvedValueOnce([]);
+      mockDb.wardrobeItem.count.mockResolvedValueOnce(1);
 
       const result = await service.getStats(userId);
 

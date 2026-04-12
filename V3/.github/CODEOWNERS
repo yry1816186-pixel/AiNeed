@@ -1,0 +1,4 @@
+* @project-owner
+
+apps/backend/ @backend-reviewer
+apps/mobile/ @mobile-reviewer

@@ -95,11 +95,13 @@ function scoreSeason(input: ColorSeasonInput): Record<ColorSeason, number> {
   const isLightHair = input.hairColor === 'blonde' || input.hairColor === 'light_brown';
   const isLightEyes = input.eyeColor === 'blue' || input.eyeColor === 'green' || input.eyeColor === 'gray';
 
+  const isMediumWarmSkin = input.skinTone === 'olive';
   const isDeepSkin = input.skinTone === 'dark' || input.skinTone === 'tan';
   const isDeepHair = input.hairColor === 'black' || input.hairColor === 'dark_brown';
   const isDeepEyes = input.eyeColor === 'black' || input.eyeColor === 'dark_brown';
 
   if (isLightSkin) { scores.spring += 1; scores.summer += 1; }
+  if (isMediumWarmSkin) { scores.autumn += 1; }
   if (isDeepSkin) { scores.autumn += 1; scores.winter += 1; }
   if (isLightHair) { scores.spring += 0.5; scores.summer += 0.5; }
   if (isDeepHair) { scores.autumn += 0.5; scores.winter += 0.5; }

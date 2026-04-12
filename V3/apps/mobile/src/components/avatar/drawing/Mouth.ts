@@ -6,7 +6,6 @@ const MOUTH_DARK = '#B85A52';
 
 interface MouthDrawResult {
   mouthPath: ReturnType<typeof Skia.Path.Make>;
-  paint: ReturnType<typeof Skia.Paint>;
 }
 
 function drawSmileMouth(cx: number, cy: number, headRadius: number): ReturnType<typeof Skia.Path.Make> {
@@ -57,23 +56,15 @@ export function drawMouth(ctx: DrawingContext): MouthDrawResult {
   const drawer = MOUTH_DRAWERS[params.mouthStyle];
   const mouthPath = drawer(cx, adjustedCy, headRadius);
 
-  const paint = Skia.Paint();
-  paint.setAntiAlias(true);
-  paint.setColor(Skia.Color(MOUTH_COLOR));
-
-  return { mouthPath, paint };
+  return { mouthPath };
 }
 
-export function drawNose(ctx: DrawingContext): { nosePath: ReturnType<typeof Skia.Path.Make>; paint: ReturnType<typeof Skia.Paint> } {
+export function drawNose(ctx: DrawingContext): { nosePath: ReturnType<typeof Skia.Path.Make> } {
   const { cx, cy, headRadius, transform } = ctx;
   const noseY = cy + headRadius * 0.15 + transform.headTranslateY;
   const noseR = headRadius * 0.04;
   const nosePath = Skia.Path.Make();
   nosePath.addCircle(cx, noseY, noseR);
 
-  const paint = Skia.Paint();
-  paint.setAntiAlias(true);
-  paint.setColor(Skia.Color(MOUTH_DARK));
-
-  return { nosePath, paint };
+  return { nosePath };
 }

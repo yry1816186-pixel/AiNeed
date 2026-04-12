@@ -31,7 +31,7 @@ export class StudioResponseDto {
 }
 
 export class StudioDetailResponseDto extends StudioResponseDto {
-  @ApiPropertyOptional({ type: StudioOwnerDto }) owner!: StudioOwnerDto;
+  declare owner: StudioOwnerDto;
 }
 
 export class StudioReviewDto {

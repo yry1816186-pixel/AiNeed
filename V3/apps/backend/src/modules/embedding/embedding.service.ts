@@ -1,5 +1,5 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '../../prisma/prisma.service';
 import { QdrantService, QdrantPayload } from './qdrant.service';
 import { EMBEDDING_PROVIDER_TOKEN } from './providers/embedding-provider.interface';
 import type { IEmbeddingProvider } from './providers/embedding-provider.interface';
@@ -16,13 +16,13 @@ import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class EmbeddingService {
   private readonly logger = new Logger(EmbeddingService.name);
-  private readonly prisma: PrismaClient;
+  private readonly prisma: PrismaService;
 
   constructor(
     @Inject(EMBEDDING_PROVIDER_TOKEN)
     private readonly embeddingProvider: IEmbeddingProvider,
     private readonly qdrantService: QdrantService,
-    prisma: PrismaClient,
+    prisma: PrismaService,
   ) {
     this.prisma = prisma;
   }

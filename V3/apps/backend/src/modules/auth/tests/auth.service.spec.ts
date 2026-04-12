@@ -134,7 +134,10 @@ describe('AuthService', () => {
 
   describe('verifyCode', () => {
     it('应验证成功并返回token（已有用户）', async () => {
-      redis.get.mockResolvedValue('123456');
+      redis.get.mockImplementation((key: string) => {
+        if (key.startsWith('sms:attempts:')) return Promise.resolve('0');
+        return Promise.resolve('123456');
+      });
       mockPrismaUser.findUnique.mockResolvedValue(mockUser);
 
       const result = await service.verifyCode({
@@ -149,7 +152,10 @@ describe('AuthService', () => {
     });
 
     it('应自动注册新用户', async () => {
-      redis.get.mockResolvedValue('654321');
+      redis.get.mockImplementation((key: string) => {
+        if (key.startsWith('sms:attempts:')) return Promise.resolve('0');
+        return Promise.resolve('654321');
+      });
       mockPrismaUser.findUnique.mockResolvedValue(null);
       mockPrismaUser.create.mockResolvedValue({
         ...mockUser,
@@ -171,7 +177,10 @@ describe('AuthService', () => {
     });
 
     it('应在验证码错误时抛出异常', async () => {
-      redis.get.mockResolvedValue('999999');
+      redis.get.mockImplementation((key: string) => {
+        if (key.startsWith('sms:attempts:')) return Promise.resolve('0');
+        return Promise.resolve('999999');
+      });
 
       await expect(
         service.verifyCode({ phone: '13800138000', code: '123456' }),
@@ -187,7 +196,10 @@ describe('AuthService', () => {
     });
 
     it('应在验证码过期时抛出异常', async () => {
-      redis.get.mockResolvedValue(null);
+      redis.get.mockImplementation((key: string) => {
+        if (key.startsWith('sms:attempts:')) return Promise.resolve('0');
+        return Promise.resolve(null);
+      });
 
       await expect(
         service.verifyCode({ phone: '13800138000', code: '123456' }),

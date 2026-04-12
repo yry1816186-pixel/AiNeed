@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api, API_BASE_URL } from './api';
 import type {
   StylistSession,
   StylistMessage,
@@ -79,10 +79,6 @@ export function connectSseStream(
 ): AbortController {
   const controller = new AbortController();
   const effectiveSignal = signal ?? controller.signal;
-
-  const API_BASE_URL = __DEV__
-    ? 'http://10.0.2.2:3001/api/v1'
-    : 'https://api.aineed.com/api/v1';
 
   const token =
     typeof window !== 'undefined'

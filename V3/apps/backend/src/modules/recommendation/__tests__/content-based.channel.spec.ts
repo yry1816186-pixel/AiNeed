@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ContentBasedChannel } from '../channels/content-based.channel';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 
 const mockClothingItem = (id: string, overrides: Record<string, unknown> = {}) => ({
   id,
@@ -25,6 +25,17 @@ const mockClothingItem = (id: string, overrides: Record<string, unknown> = {}) =
   isActive: true,
   createdAt: new Date(),
   updatedAt: new Date(),
+  ...overrides,
+});
+
+const mockPreference = (overrides: Record<string, unknown> = {}) => ({
+  id: 'pref-1',
+  userId: 'user-1',
+  styleTags: ['minimalist', 'casual'],
+  occasionTags: ['work'],
+  colorPreferences: ['black', 'white'],
+  budgetRange: null,
+  createdAt: new Date(),
   ...overrides,
 });
 
@@ -60,15 +71,9 @@ describe('ContentBasedChannel', () => {
 
   describe('recommend', () => {
     it('should return candidates based on user style preferences', async () => {
-      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue({
-        id: 'pref-1',
-        userId: 'user-1',
-        styleTags: ['minimalist', 'casual'],
-        occasionTags: ['work'],
-        colorPreferences: ['black', 'white'],
-        budgetRange: '100-500',
-        createdAt: new Date(),
-      });
+      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue(
+        mockPreference() as never,
+      );
 
       jest.spyOn(prisma.clothingItem, 'findMany').mockResolvedValue([
         mockClothingItem('item-1', {
@@ -81,7 +86,7 @@ describe('ContentBasedChannel', () => {
           colors: ['red'],
           occasions: ['party'],
         }),
-      ]);
+      ] as never);
 
       const result = await channel.recommend('user-1', 10);
 
@@ -94,7 +99,7 @@ describe('ContentBasedChannel', () => {
       jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue(null);
       jest.spyOn(prisma.clothingItem, 'findMany').mockResolvedValue([
         mockClothingItem('item-1'),
-      ]);
+      ] as never);
 
       const result = await channel.recommend('user-1', 10);
 
@@ -102,15 +107,9 @@ describe('ContentBasedChannel', () => {
     });
 
     it('should sort candidates by score descending', async () => {
-      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue({
-        id: 'pref-1',
-        userId: 'user-1',
-        styleTags: ['minimalist'],
-        occasionTags: [],
-        colorPreferences: ['black'],
-        budgetRange: null,
-        createdAt: new Date(),
-      });
+      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue(
+        mockPreference({ styleTags: ['minimalist'], colorPreferences: ['black'], occasionTags: [] }) as never,
+      );
 
       jest.spyOn(prisma.clothingItem, 'findMany').mockResolvedValue([
         mockClothingItem('low-match', {
@@ -123,7 +122,7 @@ describe('ContentBasedChannel', () => {
           colors: ['black'],
           occasions: [],
         }),
-      ]);
+      ] as never);
 
       const result = await channel.recommend('user-1', 10);
 
@@ -133,15 +132,9 @@ describe('ContentBasedChannel', () => {
     });
 
     it('should apply occasion filter', async () => {
-      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue({
-        id: 'pref-1',
-        userId: 'user-1',
-        styleTags: ['minimalist'],
-        occasionTags: [],
-        colorPreferences: [],
-        budgetRange: null,
-        createdAt: new Date(),
-      });
+      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue(
+        mockPreference({ styleTags: ['minimalist'], occasionTags: [], colorPreferences: [] }) as never,
+      );
 
       jest.spyOn(prisma.clothingItem, 'findMany').mockResolvedValue([]);
 
@@ -157,15 +150,9 @@ describe('ContentBasedChannel', () => {
     });
 
     it('should apply style filter', async () => {
-      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue({
-        id: 'pref-1',
-        userId: 'user-1',
-        styleTags: ['minimalist'],
-        occasionTags: [],
-        colorPreferences: [],
-        budgetRange: null,
-        createdAt: new Date(),
-      });
+      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue(
+        mockPreference({ styleTags: ['minimalist'], occasionTags: [], colorPreferences: [] }) as never,
+      );
 
       jest.spyOn(prisma.clothingItem, 'findMany').mockResolvedValue([]);
 
@@ -181,15 +168,9 @@ describe('ContentBasedChannel', () => {
     });
 
     it('should exclude specified IDs', async () => {
-      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue({
-        id: 'pref-1',
-        userId: 'user-1',
-        styleTags: [],
-        occasionTags: [],
-        colorPreferences: [],
-        budgetRange: null,
-        createdAt: new Date(),
-      });
+      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue(
+        mockPreference({ styleTags: [], occasionTags: [], colorPreferences: [] }) as never,
+      );
 
       jest.spyOn(prisma.clothingItem, 'findMany').mockResolvedValue([]);
 
@@ -205,15 +186,9 @@ describe('ContentBasedChannel', () => {
     });
 
     it('should apply budget range filter', async () => {
-      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue({
-        id: 'pref-1',
-        userId: 'user-1',
-        styleTags: [],
-        occasionTags: [],
-        colorPreferences: [],
-        budgetRange: '100-500',
-        createdAt: new Date(),
-      });
+      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue(
+        mockPreference({ styleTags: [], occasionTags: [], colorPreferences: [], budgetRange: '100-500' }) as never,
+      );
 
       jest.spyOn(prisma.clothingItem, 'findMany').mockResolvedValue([]);
 
@@ -229,15 +204,9 @@ describe('ContentBasedChannel', () => {
     });
 
     it('should generate meaningful reason text', async () => {
-      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue({
-        id: 'pref-1',
-        userId: 'user-1',
-        styleTags: ['minimalist'],
-        occasionTags: ['work'],
-        colorPreferences: ['black'],
-        budgetRange: null,
-        createdAt: new Date(),
-      });
+      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue(
+        mockPreference({ styleTags: ['minimalist'], occasionTags: ['work'], colorPreferences: ['black'] }) as never,
+      );
 
       jest.spyOn(prisma.clothingItem, 'findMany').mockResolvedValue([
         mockClothingItem('item-1', {
@@ -245,7 +214,7 @@ describe('ContentBasedChannel', () => {
           colors: ['black'],
           occasions: ['work'],
         }),
-      ]);
+      ] as never);
 
       const result = await channel.recommend('user-1', 10);
 
@@ -254,18 +223,12 @@ describe('ContentBasedChannel', () => {
     });
 
     it('should respect limit parameter', async () => {
-      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue({
-        id: 'pref-1',
-        userId: 'user-1',
-        styleTags: [],
-        occasionTags: [],
-        colorPreferences: [],
-        budgetRange: null,
-        createdAt: new Date(),
-      });
+      jest.spyOn(prisma.userStylePreference, 'findFirst').mockResolvedValue(
+        mockPreference({ styleTags: [], occasionTags: [], colorPreferences: [] }) as never,
+      );
 
       jest.spyOn(prisma.clothingItem, 'findMany').mockResolvedValue(
-        Array.from({ length: 30 }, (_, i) => mockClothingItem(`item-${i}`)),
+        Array.from({ length: 30 }, (_, i) => mockClothingItem(`item-${i}`)) as never,
       );
 
       const result = await channel.recommend('user-1', 5);

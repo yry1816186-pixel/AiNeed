@@ -63,8 +63,8 @@ export class AvatarService {
   private readonly templateDelegate: TemplateDelegate;
 
   constructor(private readonly prisma: PrismaService) {
-    this.avatarDelegate = (this.prisma as Record<string, unknown>)['userAvatar'] as AvatarDelegate;
-    this.templateDelegate = (this.prisma as Record<string, unknown>)['avatarTemplate'] as TemplateDelegate;
+    this.avatarDelegate = (this.prisma as unknown as Record<string, unknown>)['userAvatar'] as AvatarDelegate;
+    this.templateDelegate = (this.prisma as unknown as Record<string, unknown>)['avatarTemplate'] as TemplateDelegate;
   }
 
   async create(userId: string, dto: CreateAvatarDto) {

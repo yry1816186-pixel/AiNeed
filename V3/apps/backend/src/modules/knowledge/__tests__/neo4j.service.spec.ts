@@ -2,9 +2,32 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { Neo4jService } from '../neo4j.service';
 
+jest.mock('neo4j-driver', () => {
+  const mockSession = {
+    run: jest.fn().mockResolvedValue({ records: [] }),
+    close: jest.fn().mockResolvedValue(undefined),
+  };
+  const mockDriver = {
+    session: jest.fn(() => mockSession),
+    verifyConnectivity: jest.fn().mockResolvedValue(undefined),
+    close: jest.fn().mockResolvedValue(undefined),
+  };
+  return {
+    driver: jest.fn(() => mockDriver),
+    auth: {
+      basic: jest.fn((user: string, password: string) => ({ user, password })),
+    },
+    session: {
+      READ: 'READ',
+      WRITE: 'WRITE',
+    },
+  };
+});
+
+import neo4j from 'neo4j-driver';
+
 describe('Neo4jService', () => {
   let service: Neo4jService;
-  let configService: ConfigService;
 
   const mockConfigService = {
     get: jest.fn((key: string) => {
@@ -17,15 +40,15 @@ describe('Neo4jService', () => {
     }),
   };
 
-  const mockSession = {
-    run: jest.fn(),
+  const getMockDriver = () => (neo4j.driver as jest.Mock).mock.results[0]?.value ?? {
+    session: jest.fn(),
+    verifyConnectivity: jest.fn().mockResolvedValue(undefined),
     close: jest.fn().mockResolvedValue(undefined),
   };
 
-  const mockDriver = {
-    session: jest.fn(() => mockSession),
-    verifyConnectivity: jest.fn().mockResolvedValue(undefined),
-    close: jest.fn().mockResolvedValue(undefined),
+  const getMockSession = () => {
+    const driver = getMockDriver();
+    return driver.session();
   };
 
   beforeEach(async () => {
@@ -39,9 +62,6 @@ describe('Neo4jService', () => {
     }).compile();
 
     service = module.get<Neo4jService>(Neo4jService);
-    configService = module.get<ConfigService>(ConfigService);
-
-    (service as unknown as { driver: unknown }).driver = mockDriver;
   });
 
   it('should be defined', () => {
@@ -50,33 +70,35 @@ describe('Neo4jService', () => {
 
   describe('onModuleInit', () => {
     it('should initialize driver with config values', async () => {
-      const driverSpy = jest.spyOn(require('neo4j-driver'), 'driver').mockReturnValue(mockDriver);
       await service.onModuleInit();
 
-      expect(configService.get).toHaveBeenCalledWith('NEO4J_URL');
-      expect(configService.get).toHaveBeenCalledWith('NEO4J_USER');
-      expect(configService.get).toHaveBeenCalledWith('NEO4J_PASSWORD');
-      driverSpy.mockRestore();
-    });
-
-    it('should use default values when config is missing', async () => {
-      mockConfigService.get.mockReturnValue(undefined);
-      const driverSpy = jest.spyOn(require('neo4j-driver'), 'driver').mockReturnValue(mockDriver);
-      await service.onModuleInit();
-
-      expect(driverSpy).toHaveBeenCalledWith(
+      expect(neo4j.driver).toHaveBeenCalledWith(
         'bolt://localhost:7687',
         expect.anything(),
         expect.any(Object),
       );
-      driverSpy.mockRestore();
+      expect(mockConfigService.get).toHaveBeenCalledWith('NEO4J_URL');
+      expect(mockConfigService.get).toHaveBeenCalledWith('NEO4J_USER');
+      expect(mockConfigService.get).toHaveBeenCalledWith('NEO4J_PASSWORD');
+    });
+
+    it('should use default values when config is missing', async () => {
+      mockConfigService.get.mockReturnValue(undefined as unknown as string);
+      await service.onModuleInit();
+
+      expect(neo4j.driver).toHaveBeenCalledWith(
+        'bolt://localhost:7687',
+        expect.anything(),
+        expect.any(Object),
+      );
     });
   });
 
   describe('onModuleDestroy', () => {
     it('should close the driver', async () => {
+      await service.onModuleInit();
       await service.onModuleDestroy();
-      expect(mockDriver.close).toHaveBeenCalled();
+      expect(getMockDriver().close).toHaveBeenCalled();
     });
 
     it('should handle null driver gracefully', async () => {
@@ -86,9 +108,10 @@ describe('Neo4jService', () => {
   });
 
   describe('getDriver', () => {
-    it('should return the driver when initialized', () => {
+    it('should return the driver when initialized', async () => {
+      await service.onModuleInit();
       const driver = service.getDriver();
-      expect(driver).toBe(mockDriver);
+      expect(driver).toBeDefined();
     });
 
     it('should throw when driver is not initialized', () => {
@@ -98,94 +121,103 @@ describe('Neo4jService', () => {
   });
 
   describe('getReadSession', () => {
-    it('should return a read session', () => {
+    it('should return a read session', async () => {
+      await service.onModuleInit();
       const session = service.getReadSession();
-      expect(mockDriver.session).toHaveBeenCalledWith(
-        expect.objectContaining({ accessMode: 'READ' }),
+      expect(getMockDriver().session).toHaveBeenCalledWith(
+        expect.objectContaining({ defaultAccessMode: 'READ' }),
       );
-      expect(session).toBe(mockSession);
+      expect(session).toBeDefined();
     });
   });
 
   describe('getWriteSession', () => {
-    it('should return a write session', () => {
+    it('should return a write session', async () => {
+      await service.onModuleInit();
       const session = service.getWriteSession();
-      expect(mockDriver.session).toHaveBeenCalledWith(
-        expect.objectContaining({ accessMode: 'WRITE' }),
+      expect(getMockDriver().session).toHaveBeenCalledWith(
+        expect.objectContaining({ defaultAccessMode: 'WRITE' }),
       );
-      expect(session).toBe(mockSession);
+      expect(session).toBeDefined();
     });
   });
 
   describe('read', () => {
     it('should execute read query and close session', async () => {
-      const mockResult = { records: [], summary: {} };
-      mockSession.run.mockResolvedValue(mockResult);
+      await service.onModuleInit();
+      const mockResult = { records: [] };
+      getMockSession().run.mockResolvedValue(mockResult);
 
       const result = await service.read('MATCH (n) RETURN n', { limit: 10 });
 
-      expect(mockSession.run).toHaveBeenCalledWith('MATCH (n) RETURN n', { limit: 10 });
-      expect(mockSession.close).toHaveBeenCalled();
+      expect(getMockSession().run).toHaveBeenCalledWith('MATCH (n) RETURN n', { limit: 10 });
+      expect(getMockSession().close).toHaveBeenCalled();
       expect(result).toBe(mockResult);
     });
 
     it('should close session even on error', async () => {
-      mockSession.run.mockRejectedValue(new Error('Query failed'));
+      await service.onModuleInit();
+      getMockSession().run.mockRejectedValue(new Error('Query failed'));
 
       await expect(service.read('INVALID CYPHER')).rejects.toThrow('Query failed');
-      expect(mockSession.close).toHaveBeenCalled();
+      expect(getMockSession().close).toHaveBeenCalled();
     });
   });
 
   describe('write', () => {
     it('should execute write query and close session', async () => {
-      const mockResult = { records: [], summary: {} };
-      mockSession.run.mockResolvedValue(mockResult);
+      await service.onModuleInit();
+      const mockResult = { records: [] };
+      getMockSession().run.mockResolvedValue(mockResult);
 
       const result = await service.write('CREATE (n:Test) RETURN n', { name: 'test' });
 
-      expect(mockSession.run).toHaveBeenCalledWith('CREATE (n:Test) RETURN n', { name: 'test' });
-      expect(mockSession.close).toHaveBeenCalled();
+      expect(getMockSession().run).toHaveBeenCalledWith('CREATE (n:Test) RETURN n', { name: 'test' });
+      expect(getMockSession().close).toHaveBeenCalled();
       expect(result).toBe(mockResult);
     });
 
     it('should close session even on write error', async () => {
-      mockSession.run.mockRejectedValue(new Error('Write failed'));
+      await service.onModuleInit();
+      getMockSession().run.mockRejectedValue(new Error('Write failed'));
 
       await expect(service.write('INVALID')).rejects.toThrow('Write failed');
-      expect(mockSession.close).toHaveBeenCalled();
+      expect(getMockSession().close).toHaveBeenCalled();
     });
   });
 
   describe('healthCheck', () => {
     it('should return true when Neo4j is healthy', async () => {
+      await service.onModuleInit();
       const mockRecord = {
         get: jest.fn((key: string) => {
           if (key === 'health') return { toNumber: () => 1 };
           return null;
         }),
       };
-      mockSession.run.mockResolvedValue({ records: [mockRecord] });
+      getMockSession().run.mockResolvedValue({ records: [mockRecord] });
 
       const healthy = await service.healthCheck();
       expect(healthy).toBe(true);
     });
 
     it('should return false when Neo4j is unhealthy', async () => {
-      mockSession.run.mockRejectedValue(new Error('Connection refused'));
+      await service.onModuleInit();
+      getMockSession().run.mockRejectedValue(new Error('Connection refused'));
 
       const healthy = await service.healthCheck();
       expect(healthy).toBe(false);
     });
 
     it('should return false when query returns unexpected result', async () => {
+      await service.onModuleInit();
       const mockRecord = {
         get: jest.fn((key: string) => {
           if (key === 'health') return { toNumber: () => 0 };
           return null;
         }),
       };
-      mockSession.run.mockResolvedValue({ records: [mockRecord] });
+      getMockSession().run.mockResolvedValue({ records: [mockRecord] });
 
       const healthy = await service.healthCheck();
       expect(healthy).toBe(false);

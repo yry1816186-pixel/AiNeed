@@ -243,5 +243,245 @@ describe('EmbeddingService', () => {
       expect(result.taskId).toBeDefined();
       expect(result.total).toBe(0);
     });
+
+    it('should index all items via setImmediate and log completion', async () => {
+      const clothingIds = ['batch-1', 'batch-2'];
+
+      jest.useFakeTimers();
+
+      // Reset mock implementations for clean test
+      mockPrismaService.clothingItem.findUnique
+        .mockReset()
+        .mockResolvedValueOnce({
+          id: 'batch-1',
+          name: 'Item 1',
+          description: 'Desc 1',
+          styleTags: ['casual'],
+          colors: ['black'],
+          materials: ['cotton'],
+          category: { name: 'T-Shirts' },
+        })
+        .mockResolvedValueOnce({
+          id: 'batch-2',
+          name: 'Item 2',
+          description: 'Desc 2',
+          styleTags: ['formal'],
+          colors: ['navy'],
+          materials: ['wool'],
+          category: { name: 'Pants' },
+        });
+
+      (mockQdrantService.upsert as jest.Mock).mockReset().mockResolvedValue(undefined);
+      (mockPrismaService.$executeRaw as jest.Mock).mockReset().mockResolvedValue(1);
+      (embeddingProvider.embed as jest.Mock).mockReset().mockResolvedValue(generateMockVector(1));
+
+      await service.batchIndexClothing(clothingIds);
+
+      // Advance timers to run the setImmediate callback
+      await jest.advanceTimersByTimeAsync(1000);
+
+      expect(mockQdrantService.upsert).toHaveBeenCalledTimes(2);
+
+      jest.useRealTimers();
+    });
+
+    it('should handle individual index failures gracefully in batch', async () => {
+      const clothingIds = ['good-1', 'bad-1'];
+
+      jest.useFakeTimers();
+
+      mockPrismaService.clothingItem.findUnique
+        .mockReset()
+        .mockResolvedValueOnce({
+          id: 'good-1',
+          name: 'Good Item',
+          description: 'Good',
+          styleTags: [],
+          colors: [],
+          materials: [],
+          category: null,
+        })
+        .mockResolvedValueOnce(null); // bad-1 will cause "not found" error
+
+      (mockQdrantService.upsert as jest.Mock).mockReset().mockResolvedValue(undefined);
+      (mockPrismaService.$executeRaw as jest.Mock).mockReset().mockResolvedValue(1);
+      (embeddingProvider.embed as jest.Mock).mockReset().mockResolvedValue(generateMockVector(2));
+
+      await service.batchIndexClothing(clothingIds);
+
+      await jest.advanceTimersByTimeAsync(1000);
+
+      // good-1 should succeed, bad-1 should fail but be caught
+      expect(mockQdrantService.upsert).toHaveBeenCalledTimes(1);
+
+      jest.useRealTimers();
+    });
+  });
+
+  describe('searchSimilar - edge cases', () => {
+    it('should filter out qdrant results with no matching clothing in DB', async () => {
+      const qdrantResults = [
+        {
+          id: 'qdrant-1',
+          score: 0.95,
+          payload: {
+            clothingId: 'clothing-missing',
+            name: 'Missing Item',
+            category: 'T-Shirts',
+            styleTags: ['casual'],
+            colors: ['black'],
+          },
+        },
+      ];
+
+      mockQdrantService.search.mockResolvedValueOnce(qdrantResults);
+      // DB returns empty -- clothing not found
+      mockPrismaService.clothingItem.findMany.mockResolvedValueOnce([]);
+
+      const result = await service.searchSimilar('missing item', 10, 0.7);
+
+      expect(result.items).toHaveLength(0);
+      expect(result.total).toBe(0);
+    });
+
+    it('should handle clothing items with null category and null price', async () => {
+      const qdrantResults = [
+        {
+          id: 'qdrant-1',
+          score: 0.9,
+          payload: {
+            clothingId: 'clothing-1',
+            name: 'No Category',
+            category: null,
+            styleTags: [],
+            colors: [],
+          },
+        },
+      ];
+
+      mockQdrantService.search.mockResolvedValueOnce(qdrantResults);
+      mockPrismaService.clothingItem.findMany.mockResolvedValueOnce([
+        {
+          id: 'clothing-1',
+          name: 'No Category',
+          category: null,
+          styleTags: [],
+          colors: [],
+          price: null,
+          imageUrls: [],
+        },
+      ]);
+
+      const result = await service.searchSimilar('no category item', 10, 0.7);
+
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].clothing.category).toBeNull();
+      expect(result.items[0].clothing.price).toBeNull();
+    });
+
+    it('should map decimal price to Number', async () => {
+      const qdrantResults = [
+        {
+          id: 'qdrant-1',
+          score: 0.88,
+          payload: {
+            clothingId: 'clothing-1',
+            name: 'Priced Item',
+            category: 'T-Shirts',
+            styleTags: [],
+            colors: [],
+          },
+        },
+      ];
+
+      mockQdrantService.search.mockResolvedValueOnce(qdrantResults);
+      mockPrismaService.clothingItem.findMany.mockResolvedValueOnce([
+        {
+          id: 'clothing-1',
+          name: 'Priced Item',
+          category: { name: 'T-Shirts' },
+          styleTags: [],
+          colors: [],
+          price: '99.99',
+          imageUrls: ['http://example.com/img.jpg'],
+        },
+      ]);
+
+      const result = await service.searchSimilar('priced', 10, 0.7);
+
+      expect(result.items[0].clothing.price).toBe(99.99);
+    });
+
+    it('should return pgvector fallback results with correct structure', async () => {
+      mockQdrantService.search.mockRejectedValueOnce(new Error('Qdrant down'));
+      mockPrismaService.$queryRaw.mockResolvedValueOnce([
+        {
+          id: 'pg-1',
+          name: 'PG Item',
+          category_name: 'Pants',
+          style_tags: ['formal'],
+          colors: ['navy'],
+          price: null,
+          image_urls: [],
+          similarity: 0.75,
+        },
+      ]);
+
+      const result = await service.searchSimilar('formal pants', 10, 0.7);
+
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].clothingId).toBe('pg-1');
+      expect(result.items[0].score).toBe(0.75);
+      expect(result.items[0].clothing.name).toBe('PG Item');
+    });
+  });
+
+  describe('indexClothing - buildClothingText edge cases', () => {
+    it('should build text without optional fields when they are null/empty', async () => {
+      mockPrismaService.clothingItem.findUnique.mockResolvedValueOnce({
+        id: 'cloth-minimal',
+        name: 'Minimal Item',
+        description: null,
+        styleTags: [],
+        colors: [],
+        materials: [],
+        category: null,
+      });
+      mockQdrantService.upsert.mockResolvedValue(undefined);
+      mockPrismaService.$executeRaw.mockResolvedValue(1);
+
+      await service.indexClothing('cloth-minimal');
+
+      const embedCall = (embeddingProvider.embed as jest.Mock).mock.calls[0][0] as string;
+      expect(embedCall).toBe('Minimal Item');
+      expect(embedCall).not.toContain('分类');
+      expect(embedCall).not.toContain('风格');
+      expect(embedCall).not.toContain('颜色');
+      expect(embedCall).not.toContain('材质');
+    });
+
+    it('should include all fields in text when all are present', async () => {
+      mockPrismaService.clothingItem.findUnique.mockResolvedValueOnce({
+        id: 'cloth-full',
+        name: 'Full Item',
+        description: 'Great shirt',
+        styleTags: ['casual', 'streetwear'],
+        colors: ['black', 'white'],
+        materials: ['cotton', 'polyester'],
+        category: { name: 'T-Shirts' },
+      });
+      mockQdrantService.upsert.mockResolvedValue(undefined);
+      mockPrismaService.$executeRaw.mockResolvedValue(1);
+
+      await service.indexClothing('cloth-full');
+
+      const embedCall = (embeddingProvider.embed as jest.Mock).mock.calls[0][0] as string;
+      expect(embedCall).toContain('Full Item');
+      expect(embedCall).toContain('Great shirt');
+      expect(embedCall).toContain('分类: T-Shirts');
+      expect(embedCall).toContain('风格: casual, streetwear');
+      expect(embedCall).toContain('颜色: black, white');
+      expect(embedCall).toContain('材质: cotton, polyester');
+    });
   });
 });

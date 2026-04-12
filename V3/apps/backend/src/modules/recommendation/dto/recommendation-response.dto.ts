@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import type { ClothingItem } from '@prisma/client';
-import { RecommendationChannelType } from '../channels/channel.interface';
+import type { RecommendationChannelType } from '../channels/channel.interface';
 
-export class RecommendationItemDto {
+class RecommendationItemDto {
   @ApiProperty({ description: '服装信息' })
   clothing!: ClothingItem;
 
@@ -13,7 +13,7 @@ export class RecommendationItemDto {
   reason!: string;
 }
 
-export class RecommendationResponseDto {
+class RecommendationResponseDto {
   @ApiProperty({ description: '推荐列表', type: [RecommendationItemDto] })
   items!: RecommendationItemDto[];
 
@@ -21,7 +21,7 @@ export class RecommendationResponseDto {
   channel!: RecommendationChannelType;
 }
 
-export class SimilarItemDto {
+class SimilarItemDto {
   @ApiProperty({ description: '服装信息' })
   clothing!: ClothingItem;
 
@@ -29,12 +29,12 @@ export class SimilarItemDto {
   similarity!: number;
 }
 
-export class SimilarResponseDto {
+class SimilarResponseDto {
   @ApiProperty({ description: '相似商品列表', type: [SimilarItemDto] })
   items!: SimilarItemDto[];
 }
 
-export class TrendingItemDto {
+class TrendingItemDto {
   @ApiProperty({ description: '服装信息' })
   clothing!: ClothingItem;
 
@@ -42,12 +42,22 @@ export class TrendingItemDto {
   score!: number;
 }
 
-export class TrendingResponseDto {
+class TrendingResponseDto {
   @ApiProperty({ description: '热门商品列表', type: [TrendingItemDto] })
   items!: TrendingItemDto[];
 }
 
-export class TrackInteractionResponseDto {
+class TrackInteractionResponseDto {
   @ApiProperty({ description: '是否记录成功' })
   recorded!: boolean;
 }
+
+export {
+  RecommendationItemDto,
+  RecommendationResponseDto,
+  SimilarItemDto,
+  SimilarResponseDto,
+  TrendingItemDto,
+  TrendingResponseDto,
+  TrackInteractionResponseDto,
+};

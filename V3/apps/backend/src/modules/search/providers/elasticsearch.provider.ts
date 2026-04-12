@@ -1,11 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Client } from '@elastic/elasticsearch';
-import type {
-  SearchResponse,
-  SearchHit,
-  GetResult,
-} from '@elastic/elasticsearch/lib/api/types';
 import {
   ISearchProvider,
   IndexableDocument,
@@ -51,6 +46,17 @@ interface EsPostSource {
   user_avatar_url?: string;
 }
 
+type EsSearchResponse = {
+  hits: {
+    total?: number | { value: number };
+    hits: Array<{
+      _id: string;
+      _score?: number;
+      _source?: EsClothingSource | EsPostSource;
+    }>;
+  };
+};
+
 @Injectable()
 export class ElasticsearchProvider implements ISearchProvider, OnModuleInit {
   private readonly logger = new Logger(ElasticsearchProvider.name);
@@ -83,9 +89,9 @@ export class ElasticsearchProvider implements ISearchProvider, OnModuleInit {
     try {
       const clothingExists = await this.client.indices.exists({ index: CLOTHING_INDEX });
       if (!clothingExists) {
-        await this.client.indices.create({
-          index: CLOTHING_INDEX,
-          body: {
+        await this.client.indices.create(
+          {
+            index: CLOTHING_INDEX,
             settings: {
               analysis: {
                 analyzer: {
@@ -107,15 +113,16 @@ export class ElasticsearchProvider implements ISearchProvider, OnModuleInit {
               },
             },
           },
-        });
+          { ignore: [400] },
+        );
         this.logger.log(`Created index: ${CLOTHING_INDEX}`);
       }
 
       const postsExists = await this.client.indices.exists({ index: POSTS_INDEX });
       if (!postsExists) {
-        await this.client.indices.create({
-          index: POSTS_INDEX,
-          body: {
+        await this.client.indices.create(
+          {
+            index: POSTS_INDEX,
             settings: {
               analysis: {
                 analyzer: {
@@ -134,7 +141,8 @@ export class ElasticsearchProvider implements ISearchProvider, OnModuleInit {
               },
             },
           },
-        });
+          { ignore: [400] },
+        );
         this.logger.log(`Created index: ${POSTS_INDEX}`);
       }
     } catch (error) {
@@ -211,9 +219,11 @@ export class ElasticsearchProvider implements ISearchProvider, OnModuleInit {
     return { gte: min, lte: max };
   }
 
-  private extractTotal(hitsTotal: SearchResponse<unknown>['hits']['total']): number {
+  private extractTotal(hitsTotal: unknown): number {
     if (typeof hitsTotal === 'number') return hitsTotal;
-    if (hitsTotal && typeof hitsTotal === 'object' && 'value' in hitsTotal) return hitsTotal.value;
+    if (hitsTotal && typeof hitsTotal === 'object' && 'value' in (hitsTotal as Record<string, unknown>)) {
+      return (hitsTotal as { value: number }).value;
+    }
     return 0;
   }
 
@@ -226,7 +236,8 @@ export class ElasticsearchProvider implements ISearchProvider, OnModuleInit {
       const filterClauses = this.buildClothingFilters(filters);
       const from = (pagination.page - 1) * pagination.limit;
 
-      const searchBody: Record<string, unknown> = {
+      const response = await this.client.search({
+        index: CLOTHING_INDEX,
         from,
         size: pagination.limit,
         query: {
@@ -259,34 +270,27 @@ export class ElasticsearchProvider implements ISearchProvider, OnModuleInit {
             },
           },
         },
-      };
-
-      const response = await this.client.search<EsClothingSource>({
-        index: CLOTHING_INDEX,
-        body: searchBody,
-      });
+      }) as unknown as EsSearchResponse;
 
       const hits = response.hits?.hits ?? [];
       const total = this.extractTotal(response.hits?.total);
 
-      const items: ClothingSearchResult[] = hits.map(
-        (hit: SearchHit<EsClothingSource>) => {
-          const src = hit._source;
-          return {
-            id: src?.id ?? hit._id,
-            name: src?.name ?? '',
-            description: src?.description ?? null,
-            price: src?.price ?? null,
-            originalPrice: src?.original_price ?? null,
-            currency: src?.currency ?? 'CNY',
-            imageUrls: src?.image_urls ?? [],
-            colors: src?.colors ?? [],
-            styleTags: src?.style_tags ?? [],
-            brandName: src?.brand_name ?? null,
-            purchaseUrl: src?.purchase_url ?? null,
-          };
-        },
-      );
+      const items: ClothingSearchResult[] = hits.map((hit) => {
+        const src = hit._source as EsClothingSource | undefined;
+        return {
+          id: src?.id ?? hit._id,
+          name: src?.name ?? '',
+          description: src?.description ?? null,
+          price: src?.price ?? null,
+          originalPrice: src?.original_price ?? null,
+          currency: src?.currency ?? 'CNY',
+          imageUrls: src?.image_urls ?? [],
+          colors: src?.colors ?? [],
+          styleTags: src?.style_tags ?? [],
+          brandName: src?.brand_name ?? null,
+          purchaseUrl: src?.purchase_url ?? null,
+        };
+      });
 
       return { items, total };
     } catch (error) {
@@ -302,42 +306,38 @@ export class ElasticsearchProvider implements ISearchProvider, OnModuleInit {
     try {
       const from = (pagination.page - 1) * pagination.limit;
 
-      const response = await this.client.search<EsPostSource>({
+      const response = await this.client.search({
         index: POSTS_INDEX,
-        body: {
-          from,
-          size: pagination.limit,
-          query: {
-            multi_match: {
-              query,
-              fields: ['title^3', 'content^2', 'tags'],
-              analyzer: 'ik_smart',
-              type: 'best_fields',
-            },
+        from,
+        size: pagination.limit,
+        query: {
+          multi_match: {
+            query,
+            fields: ['title^3', 'content^2', 'tags'],
+            analyzer: 'ik_smart',
+            type: 'best_fields',
           },
         },
-      });
+      }) as unknown as EsSearchResponse;
 
       const hits = response.hits?.hits ?? [];
       const total = this.extractTotal(response.hits?.total);
 
-      const items: PostSearchResult[] = hits.map(
-        (hit: SearchHit<EsPostSource>) => {
-          const src = hit._source;
-          return {
-            id: src?.id ?? hit._id,
-            title: src?.title ?? null,
-            content: src?.content ?? '',
-            imageUrls: src?.image_urls ?? [],
-            tags: src?.tags ?? [],
-            likesCount: src?.likes_count ?? 0,
-            commentsCount: src?.comments_count ?? 0,
-            userId: src?.user_id ?? '',
-            userNickname: src?.user_nickname ?? null,
-            userAvatarUrl: src?.user_avatar_url ?? null,
-          };
-        },
-      );
+      const items: PostSearchResult[] = hits.map((hit) => {
+        const src = hit._source as EsPostSource | undefined;
+        return {
+          id: src?.id ?? hit._id,
+          title: src?.title ?? null,
+          content: src?.content ?? '',
+          imageUrls: src?.image_urls ?? [],
+          tags: src?.tags ?? [],
+          likesCount: src?.likes_count ?? 0,
+          commentsCount: src?.comments_count ?? 0,
+          userId: src?.user_id ?? '',
+          userNickname: src?.user_nickname ?? null,
+          userAvatarUrl: src?.user_avatar_url ?? null,
+        };
+      });
 
       return { items, total };
     } catch (error) {
@@ -348,27 +348,26 @@ export class ElasticsearchProvider implements ISearchProvider, OnModuleInit {
 
   async suggest(prefix: string, limit: number): Promise<SuggestionItem[]> {
     try {
-      const response = await this.client.search<EsClothingSource>({
+      const response = await this.client.search({
         index: CLOTHING_INDEX,
-        body: {
-          size: limit,
-          query: {
-            prefix: {
-              name: { value: prefix },
-            },
+        size: limit,
+        query: {
+          prefix: {
+            name: { value: prefix },
           },
-          _source: ['name'],
         },
-      });
+        _source: ['name'],
+      }) as unknown as EsSearchResponse;
 
       const hits = response.hits?.hits ?? [];
-      const suggestions: SuggestionItem[] = hits.map(
-        (hit: SearchHit<EsClothingSource>) => ({
-          text: hit._source?.name ?? '',
+      const suggestions: SuggestionItem[] = hits.map((hit) => {
+        const src = hit._source as EsClothingSource | undefined;
+        return {
+          text: src?.name ?? '',
           type: 'clothing',
           count: hit._score ?? 0,
-        }),
-      );
+        };
+      });
 
       return suggestions.filter((s) => s.text.length > 0);
     } catch (error) {
@@ -398,7 +397,7 @@ export class ElasticsearchProvider implements ISearchProvider, OnModuleInit {
         index: indexName,
         id,
         refresh: 'wait_for',
-      } as Parameters<typeof this.client.delete>[0]);
+      });
     } catch (error) {
       this.logger.warn(`Elasticsearch remove failed for ${id}: ${String(error)}`);
     }
@@ -409,5 +408,3 @@ export const ELASTICSEARCH_PROVIDER = {
   provide: SEARCH_PROVIDER,
   useClass: ElasticsearchProvider,
 };
-
-void GetResult;

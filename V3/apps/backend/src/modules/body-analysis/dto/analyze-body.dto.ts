@@ -13,13 +13,13 @@ export class AnalyzeBodyDto {
   @IsNumber()
   @Min(100)
   @Max(250)
-  height: number;
+  height!: number;
 
   @ApiProperty({ description: '体重(kg)', minimum: 30, maximum: 300 })
   @IsNumber()
   @Min(30)
   @Max(300)
-  weight: number;
+  weight!: number;
 
   @ApiPropertyOptional({ description: '肩宽(cm)', minimum: 20, maximum: 80 })
   @IsOptional()
@@ -45,5 +45,5 @@ export class AnalyzeBodyDto {
   @ApiProperty({ description: '性别', enum: ['male', 'female', 'other'] })
   @IsString()
   @IsIn(['male', 'female', 'other'])
-  gender: 'male' | 'female' | 'other';
+  gender!: 'male' | 'female' | 'other';
 }

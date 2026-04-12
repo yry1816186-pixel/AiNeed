@@ -82,6 +82,42 @@ describe('UploadController', () => {
 
       expect(service.uploadImage).toHaveBeenCalledWith(file, 'avatar');
     });
+
+    it('should default to post type for unknown type values', async () => {
+      const file = createMockFile();
+      mockUploadService.uploadImage.mockResolvedValue(uploadResponse);
+
+      await controller.uploadImage(file, 'unknown-type');
+
+      expect(service.uploadImage).toHaveBeenCalledWith(file, 'post');
+    });
+
+    it('should accept outfit-image type', async () => {
+      const file = createMockFile();
+      mockUploadService.uploadImage.mockResolvedValue(uploadResponse);
+
+      await controller.uploadImage(file, 'outfit-image');
+
+      expect(service.uploadImage).toHaveBeenCalledWith(file, 'outfit-image');
+    });
+
+    it('should accept design type', async () => {
+      const file = createMockFile();
+      mockUploadService.uploadImage.mockResolvedValue(uploadResponse);
+
+      await controller.uploadImage(file, 'design');
+
+      expect(service.uploadImage).toHaveBeenCalledWith(file, 'design');
+    });
+
+    it('should default to post when type is undefined', async () => {
+      const file = createMockFile();
+      mockUploadService.uploadImage.mockResolvedValue(uploadResponse);
+
+      await controller.uploadImage(file, undefined);
+
+      expect(service.uploadImage).toHaveBeenCalledWith(file, 'post');
+    });
   });
 
   describe('uploadImages', () => {
@@ -123,6 +159,24 @@ describe('UploadController', () => {
       await controller.uploadImages(files, 'clothing');
 
       expect(service.uploadImages).toHaveBeenCalledWith(files, 'clothing');
+    });
+
+    it('should default to post type for unknown type values', async () => {
+      const files = [createMockFile()];
+      mockUploadService.uploadImages.mockResolvedValue({ items: [] });
+
+      await controller.uploadImages(files, 'invalid');
+
+      expect(service.uploadImages).toHaveBeenCalledWith(files, 'post');
+    });
+
+    it('should default to post when type is undefined', async () => {
+      const files = [createMockFile()];
+      mockUploadService.uploadImages.mockResolvedValue({ items: [] });
+
+      await controller.uploadImages(files, undefined);
+
+      expect(service.uploadImages).toHaveBeenCalledWith(files, 'post');
     });
   });
 

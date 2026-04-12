@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 import {
   IRecommendationChannel,
   ChannelCandidate,
@@ -45,7 +45,7 @@ export class ContentBasedChannel implements IRecommendationChannel {
       orderBy: { createdAt: 'desc' },
     });
 
-    const candidates = items.map((item) => {
+    const candidates: ChannelCandidate[] = items.map((item: ChannelCandidate['clothing']) => {
       const score = this.calculateScore(
         item,
         styleTags,
@@ -61,7 +61,7 @@ export class ContentBasedChannel implements IRecommendationChannel {
       return { clothing: item, score, reason };
     });
 
-    candidates.sort((a, b) => b.score - a.score);
+    candidates.sort((a: ChannelCandidate, b: ChannelCandidate) => b.score - a.score);
     return candidates.slice(0, limit);
   }
 
@@ -150,6 +150,25 @@ export class ContentBasedChannel implements IRecommendationChannel {
     return matchCount / userSet.size;
   }
 
+  private static readonly STYLE_ZH: Record<string, string> = {
+    minimalist: '简约', casual: '休闲', streetwear: '街头', formal: '正式',
+    sport: '运动', vintage: '复古', preppy: '学院', bohemian: '波西米亚',
+    classic: '经典', trendy: '潮流', elegant: '优雅', punk: '朋克',
+    korean: '韩系', japanese: '日系', chinese: '国潮', retro: '复古',
+  };
+
+  private static readonly COLOR_ZH: Record<string, string> = {
+    black: '黑色', white: '白色', red: '红色', blue: '蓝色', green: '绿色',
+    yellow: '黄色', pink: '粉色', purple: '紫色', orange: '橙色', brown: '棕色',
+    gray: '灰色', grey: '灰色', beige: '米色', navy: '藏蓝', khaki: '卡其色',
+    cream: '奶油色', burgundy: '酒红', olive: '橄榄绿', camel: '驼色',
+  };
+
+  private static readonly OCCASION_ZH: Record<string, string> = {
+    work: '工作', casual: '日常', date: '约会', sport: '运动',
+    formal: '正式', party: '聚会', campus: '校园', travel: '旅行',
+  };
+
   private generateReason(
     item: { styleTags: string[]; colors: string[]; occasions: string[] },
     styleTags: string[],
@@ -162,21 +181,24 @@ export class ContentBasedChannel implements IRecommendationChannel {
       styleTags.includes(t),
     );
     if (matchedStyles.length > 0) {
-      reasons.push(`与您偏好的${matchedStyles.join('、')}风格匹配`);
+      const zh = matchedStyles.map((s) => ContentBasedChannel.STYLE_ZH[s] ?? s);
+      reasons.push(`与您偏好的${zh.join('、')}风格匹配`);
     }
 
     const matchedColors = item.colors.filter((c) =>
       colorPreferences.includes(c),
     );
     if (matchedColors.length > 0) {
-      reasons.push(`包含您喜欢的${matchedColors.join('、')}色系`);
+      const zh = matchedColors.map((c) => ContentBasedChannel.COLOR_ZH[c] ?? c);
+      reasons.push(`包含您喜欢的${zh.join('、')}色系`);
     }
 
     const matchedOccasions = item.occasions.filter((o) =>
       occasionTags.includes(o),
     );
     if (matchedOccasions.length > 0) {
-      reasons.push(`适合${matchedOccasions.join('、')}场合`);
+      const zh = matchedOccasions.map((o) => ContentBasedChannel.OCCASION_ZH[o] ?? o);
+      reasons.push(`适合${zh.join('、')}场合`);
     }
 
     return reasons.length > 0 ? reasons.join('，') : '基于您的风格偏好推荐';

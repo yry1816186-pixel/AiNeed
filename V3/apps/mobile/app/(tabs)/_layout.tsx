@@ -3,6 +3,10 @@ import { StyleSheet, TouchableOpacity, Platform, View } from 'react-native';
 import { Svg, Path, Circle } from 'react-native-svg';
 import { colors, typography } from '../../src/theme';
 import { useRouter } from 'expo-router';
+import { useNotificationStore } from '../../src/stores/notification.store';
+import { NotificationPanel } from '../../src/components/ui/NotificationPanel';
+import { useAuthStore } from '../../src/stores/auth.store';
+import { useEffect } from 'react';
 
 function HomeIcon({ focused }: { focused: boolean }) {
   const color = focused ? colors.accent : colors.textTertiary;
@@ -49,18 +53,27 @@ function WardrobeIcon({ focused }: { focused: boolean }) {
   );
 }
 
-function ProfileIcon({ focused }: { focused: boolean }) {
+function ProfileIconWithBadge({ focused }: { focused: boolean }) {
+  const unreadCount = useNotificationStore((s) => s.unreadCount);
   const color = focused ? colors.accent : colors.textTertiary;
+
   return (
-    <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-      <Circle cx="12" cy="8" r="4" stroke={color} strokeWidth="1.8" />
-      <Path
-        d="M4 21C4 16.5817 7.58172 13 12 13C16.4183 13 20 16.5817 20 21"
-        stroke={color}
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-    </Svg>
+    <View>
+      <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <Circle cx="12" cy="8" r="4" stroke={color} strokeWidth="1.8" />
+        <Path
+          d="M4 21C4 16.5817 7.58172 13 12 13C16.4183 13 20 16.5817 20 21"
+          stroke={color}
+          strokeWidth="1.8"
+          strokeLinecap="round"
+        />
+      </Svg>
+      {unreadCount > 0 && (
+        <View style={badgeStyles.badge}>
+          <View style={badgeStyles.badgeDot} />
+        </View>
+      )}
+    </View>
   );
 }
 
@@ -80,71 +93,110 @@ function CenterButton() {
 }
 
 export default function TabsLayout() {
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const startPolling = useNotificationStore((s) => s.startPolling);
+  const stopPolling = useNotificationStore((s) => s.stopPolling);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      startPolling();
+    } else {
+      stopPolling();
+    }
+    return () => {
+      stopPolling();
+    };
+  }, [isAuthenticated, startPolling, stopPolling]);
+
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: colors.accent,
-        tabBarInactiveTintColor: colors.textTertiary,
-        tabBarStyle: {
-          backgroundColor: colors.background,
-          borderTopWidth: 1,
-          borderTopColor: colors.divider,
-          height: Platform.OS === 'ios' ? 88 : 64,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
-          paddingTop: 6,
-          elevation: 0,
-        },
-        tabBarLabelStyle: {
-          ...typography.caption,
-          marginTop: 2,
-        },
-        headerStyle: {
-          backgroundColor: colors.background,
-          elevation: 0,
-          shadowOpacity: 0,
-        },
-        headerTintColor: colors.textPrimary,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: '首页',
-          tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
+    <>
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: colors.accent,
+          tabBarInactiveTintColor: colors.textTertiary,
+          tabBarStyle: {
+            backgroundColor: colors.background,
+            borderTopWidth: 1,
+            borderTopColor: colors.divider,
+            height: Platform.OS === 'ios' ? 88 : 64,
+            paddingBottom: Platform.OS === 'ios' ? 28 : 8,
+            paddingTop: 6,
+            elevation: 0,
+          },
+          tabBarLabelStyle: {
+            ...typography.caption,
+            marginTop: 2,
+          },
+          headerStyle: {
+            backgroundColor: colors.background,
+            elevation: 0,
+            shadowOpacity: 0,
+          },
+          headerTintColor: colors.textPrimary,
         }}
-      />
-      <Tabs.Screen
-        name="stylist"
-        options={{
-          title: '造型',
-          tabBarIcon: ({ focused }) => <StylistIcon focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="actions"
-        options={{
-          title: '',
-          tabBarIcon: () => <View style={{ width: 1, height: 1 }} />,
-          tabBarButton: () => <CenterButton />,
-        }}
-      />
-      <Tabs.Screen
-        name="wardrobe"
-        options={{
-          title: '衣橱',
-          tabBarIcon: ({ focused }) => <WardrobeIcon focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: '我的',
-          tabBarIcon: ({ focused }) => <ProfileIcon focused={focused} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: '首页',
+            tabBarIcon: ({ focused }) => <HomeIcon focused={focused} />,
+          }}
+        />
+        <Tabs.Screen
+          name="stylist"
+          options={{
+            title: '造型',
+            tabBarIcon: ({ focused }) => <StylistIcon focused={focused} />,
+          }}
+        />
+        <Tabs.Screen
+          name="actions"
+          options={{
+            title: '',
+            tabBarIcon: () => <View style={{ width: 1, height: 1 }} />,
+            tabBarButton: () => <CenterButton />,
+          }}
+        />
+        <Tabs.Screen
+          name="wardrobe"
+          options={{
+            title: '衣橱',
+            tabBarIcon: ({ focused }) => <WardrobeIcon focused={focused} />,
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: '我的',
+            tabBarIcon: ({ focused }) => <ProfileIconWithBadge focused={focused} />,
+          }}
+        />
+      </Tabs>
+      <NotificationPanel />
+    </>
   );
 }
+
+const badgeStyles = StyleSheet.create({
+  badge: {
+    position: 'absolute',
+    top: -2,
+    right: -4,
+    backgroundColor: colors.accent,
+    borderRadius: 6,
+    minWidth: 12,
+    height: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 2,
+  },
+  badgeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.textInverse,
+  },
+});
 
 const styles = StyleSheet.create({
   centerButton: {

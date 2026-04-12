@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Neo4jService } from './neo4j.service';
 import {
   ColorRelationDto,
@@ -11,8 +11,6 @@ import { KnowledgeQueryDto } from './dto/query-rules.dto';
 
 @Injectable()
 export class KnowledgeService {
-  private readonly logger = new Logger(KnowledgeService.name);
-
   constructor(private readonly neo4jService: Neo4jService) {}
 
   async findColorHarmony(color: string): Promise<ColorRelationDto[]> {

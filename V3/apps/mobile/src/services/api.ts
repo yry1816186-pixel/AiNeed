@@ -56,4 +56,4 @@ api.interceptors.response.use(
   },
 );
 
-export { api };
+export { api, API_BASE_URL };

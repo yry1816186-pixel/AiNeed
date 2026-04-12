@@ -2,41 +2,41 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class BodyAnalysisResponseDto {
   @ApiProperty({ description: '体型类型' })
-  bodyType: string;
+  bodyType!: string;
 
   @ApiProperty({ description: '体型描述' })
-  description: string;
+  description!: string;
 
   @ApiProperty({ description: '适合风格', type: [String] })
-  suitableStyles: string[];
+  suitableStyles!: string[];
 
   @ApiProperty({ description: '避免风格', type: [String] })
-  avoidStyles: string[];
+  avoidStyles!: string[];
 
   @ApiProperty({ description: '色彩季型' })
-  colorSeason: string;
+  colorSeason!: string;
 }
 
 export class ColorSeasonResponseDto {
   @ApiProperty({ description: '色彩季型' })
-  season: string;
+  season!: string;
 
   @ApiProperty({ description: '适合颜色', type: [String] })
-  suitableColors: string[];
+  suitableColors!: string[];
 
   @ApiProperty({ description: '避免颜色', type: [String] })
-  avoidColors: string[];
+  avoidColors!: string[];
 
   @ApiProperty({ description: '描述' })
-  description: string;
+  description!: string;
 }
 
 export class BodyProfileResponseDto {
   @ApiProperty({ description: '档案ID' })
-  id: string;
+  id!: string;
 
   @ApiProperty({ description: '用户ID' })
-  userId: string;
+  userId!: string;
 
   @ApiProperty({ description: '体型类型', required: false })
   bodyType?: string;
@@ -51,8 +51,8 @@ export class BodyProfileResponseDto {
   analysisResult?: Record<string, unknown>;
 
   @ApiProperty({ description: '创建时间' })
-  createdAt: string;
+  createdAt!: string;
 
   @ApiProperty({ description: '更新时间' })
-  updatedAt: string;
+  updatedAt!: string;
 }
