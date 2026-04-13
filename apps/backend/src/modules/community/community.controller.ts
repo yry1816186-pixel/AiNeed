@@ -79,7 +79,8 @@ export class CommunityController {
   @ApiOperation({ summary: "获取帖子列表", description: "分页获取社区帖子列表，支持按分类、标签、作者筛选" })
   @ApiResponse({ status: 200, description: "获取成功" })
   async getPosts(@Query() query: PostQueryDto, @Request() req: RequestWithUser) {
-    return this.communityService.getPosts(query, req.user?.id);
+    const adminMode = req.user?.role === 'admin';
+    return this.communityService.getPosts(query, req.user?.id, adminMode);
   }
 
   @Get("trending")
@@ -147,7 +148,8 @@ export class CommunityController {
   @ApiResponse({ status: 404, description: "帖子不存在" })
   @ApiParam({ name: "id", description: "帖子 ID" })
   async getPostById(@Param("id") id: string, @Request() req: RequestWithUser) {
-    return this.communityService.getPostById(id, req.user?.id);
+    const adminMode = req.user?.role === 'admin';
+    return this.communityService.getPostById(id, req.user?.id, adminMode);
   }
 
   @Put("posts/:id")
