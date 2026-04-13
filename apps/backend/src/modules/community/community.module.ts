@@ -9,6 +9,7 @@ import { QueueModule } from '../queue/queue.module';
 import { CommunityController } from './community.controller';
 import { CommunityService } from './community.service';
 import { ContentModerationService, CONTENT_MODERATION_QUEUE } from './content-moderation.service';
+import { AdminCommunityController } from '../admin/admin-community.controller';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { ContentModerationService, CONTENT_MODERATION_QUEUE } from './content-mo
     forwardRef(() => QueueModule),
     BullModule.registerQueue({ name: CONTENT_MODERATION_QUEUE }),
   ],
-  controllers: [CommunityController],
+  controllers: [CommunityController, AdminCommunityController],
   providers: [CommunityService, ContentModerationService],
   exports: [CommunityService, ContentModerationService],
 })
