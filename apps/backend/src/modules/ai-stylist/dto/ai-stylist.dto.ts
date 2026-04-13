@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { PhotoType } from "@prisma/client";
 import {
   IsEnum,
+  IsIn,
   IsObject,
   IsOptional,
   IsString,
@@ -181,4 +182,112 @@ export class RateSessionDto {
   @IsString({ message: "反馈必须是字符串" })
   @MaxLength(500, { message: "反馈长度不能超过500个字符" })
   feedback?: string;
+}
+
+/**
+ * 旧版无状态聊天 DTO
+ */
+export class LegacyChatDto {
+  @ApiProperty({
+    example: "我要一套面试穿搭",
+    description: "用户消息",
+    minLength: 1,
+    maxLength: 2000,
+  })
+  @IsString({ message: "消息内容必须是字符串" })
+  @MinLength(1, { message: "消息内容不能为空" })
+  @MaxLength(2000, { message: "消息长度不能超过2000个字符" })
+  message!: string;
+
+  @ApiPropertyOptional({
+    description: "对话历史",
+    type: "array",
+    example: [{ role: "user", content: "你好" }],
+  })
+  @IsOptional()
+  @IsArray({ message: "对话历史必须是数组" })
+  @ValidateNested({ each: true })
+  @Type(() => ChatHistoryItemDto)
+  conversationHistory?: ChatHistoryItemDto[];
+}
+
+/**
+ * 对话历史条目 DTO
+ */
+export class ChatHistoryItemDto {
+  @ApiProperty({
+    enum: ["user", "assistant", "system"],
+    description: "角色",
+  })
+  @IsString({ message: "角色必须是字符串" })
+  @IsIn(["user", "assistant", "system"], { message: "角色必须是 user、assistant 或 system" })
+  role!: "user" | "assistant" | "system";
+
+  @ApiProperty({
+    description: "消息内容",
+  })
+  @IsString({ message: "消息内容必须是字符串" })
+  content!: string;
+}
+
+/**
+ * 穿搭方案反馈 DTO
+ */
+export class SubmitFeedbackDto {
+  @ApiProperty({
+    description: "穿搭方案索引",
+    example: 0,
+    minimum: 0,
+  })
+  @IsNumber({}, { message: "穿搭方案索引必须是数字" })
+  @Min(0, { message: "穿搭方案索引不能为负数" })
+  outfitIndex!: number;
+
+  @ApiProperty({
+    enum: ["like", "dislike"],
+    description: "反馈类型：like(点赞)、dislike(点踩)",
+  })
+  @IsString({ message: "反馈类型必须是字符串" })
+  @IsIn(["like", "dislike"], { message: "反馈类型必须是 like 或 dislike" })
+  action!: "like" | "dislike";
+
+  @ApiPropertyOptional({
+    description: "具体服装项ID",
+  })
+  @IsOptional()
+  @IsString({ message: "服装项ID必须是字符串" })
+  itemId?: string;
+
+  @ApiPropertyOptional({
+    description: "评分，1-5 星",
+    example: 4,
+    minimum: 1,
+    maximum: 5,
+  })
+  @IsOptional()
+  @IsNumber({}, { message: "评分必须是数字" })
+  @Min(1, { message: "评分最小为 1" })
+  @Max(5, { message: "评分最大为 5" })
+  rating?: number;
+
+  @ApiPropertyOptional({
+    enum: ["too_expensive", "not_suitable", "wrong_color", "wrong_style", "other"],
+    description: "不喜欢原因：too_expensive(太贵)、not_suitable(不适合)、wrong_color(颜色不对)、wrong_style(风格不符)、other(其他)",
+  })
+  @IsOptional()
+  @IsString({ message: "不喜欢原因必须是字符串" })
+  @IsIn(
+    ["too_expensive", "not_suitable", "wrong_color", "wrong_style", "other"],
+    { message: "不喜欢原因必须是有效枚举值" },
+  )
+  dislikeReason?: string;
+
+  @ApiPropertyOptional({
+    description: "不喜欢原因详细说明",
+    maxLength: 500,
+  })
+  @IsOptional()
+  @IsString({ message: "详细说明必须是字符串" })
+  @MaxLength(500, { message: "详细说明长度不能超过500个字符" })
+  dislikeDetail?: string;
 }

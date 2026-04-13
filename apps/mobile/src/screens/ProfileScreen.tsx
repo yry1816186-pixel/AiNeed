@@ -18,6 +18,8 @@ import Animated, { FadeInUp, SlideInRight } from 'react-native-reanimated';
 import { useAuthStore } from '../stores/index';
 import { authApi } from '../services/api/auth.api';
 import { userApi } from '../services/api/auth.api';
+import { ProfileCompletenessBar } from '../components/profile/ProfileCompletenessBar';
+import { useProfileStore } from '../stores/profileStore';
 import type { UserStats, User } from '../types/user';
 import type { RootStackParamList } from '../types/navigation';
 import { theme } from '../theme';
@@ -28,12 +30,14 @@ import { typography } from '../theme/tokens/typography';
 import { spacing } from '../theme/tokens/spacing';
 import { shadows } from '../theme/tokens/shadows';
 import { withErrorBoundary } from '../components/ErrorBoundary';
+import { logger } from '../utils/logger';
 
 type ProfileNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const ProfileScreenComponent: React.FC = () => {
   const navigation = useNavigation<ProfileNavigationProp>();
   const { user, logout } = useAuthStore();
+  const { completeness, loadCompleteness } = useProfileStore();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -54,7 +58,8 @@ export const ProfileScreenComponent: React.FC = () => {
 
   useEffect(() => {
     fetchStats();
-  }, [fetchStats]);
+    loadCompleteness();
+  }, [fetchStats, loadCompleteness]);
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
@@ -77,6 +82,41 @@ export const ProfileScreenComponent: React.FC = () => {
   const avatarInitial = displayName.charAt(0).toUpperCase();
 
   const menuItems = [
+    {
+      icon: 'create-outline' as const,
+      label: '编辑画像',
+      accessibilityLabel: '编辑画像',
+      color: theme.colors.primary,
+      onPress: () => navigation.navigate('ProfileEdit' as never),
+    },
+    {
+      icon: 'body-outline' as const,
+      label: '体型分析',
+      accessibilityLabel: '体型分析',
+      color: theme.colors.textSecondary,
+      onPress: () => navigation.navigate('BodyAnalysis' as never),
+    },
+    {
+      icon: 'color-palette-outline' as const,
+      label: '色彩分析',
+      accessibilityLabel: '色彩分析',
+      color: theme.colors.textSecondary,
+      onPress: () => navigation.navigate('ColorAnalysis' as never),
+    },
+    {
+      icon: 'sparkles-outline' as const,
+      label: '风格测试',
+      accessibilityLabel: '风格测试',
+      color: theme.colors.textSecondary,
+      onPress: () => navigation.navigate('StyleQuiz' as never),
+    },
+    {
+      icon: 'share-outline' as const,
+      label: '分享我的风格',
+      accessibilityLabel: '分享我的风格',
+      color: theme.colors.textSecondary,
+      onPress: () => navigation.navigate('SharePoster' as never),
+    },
     {
       icon: 'settings-outline' as const,
       label: '设置',
@@ -184,6 +224,17 @@ export const ProfileScreenComponent: React.FC = () => {
           </LinearGradient>
         </Animated.View>
 
+        {/* Profile Completeness Bar */}
+        {completeness && (
+          <View style={styles.completenessContainer}>
+            <ProfileCompletenessBar
+              percentage={completeness.percentage}
+              missingFields={completeness.missingFields}
+              onPress={() => navigation.navigate('ProfileEdit' as never)}
+            />
+          </View>
+        )}
+
         {/* Stats Cards */}
         {loading ? (
           <View style={styles.statsLoading}>
@@ -241,6 +292,12 @@ export const ProfileScreenComponent: React.FC = () => {
               <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
             </TouchableOpacity>
           ))}
+        </View>
+
+        {/* Learning tip */}
+        <View style={styles.learningTip}>
+          <Ionicons name="information-circle-outline" size={16} color={theme.colors.textTertiary} />
+          <Text style={styles.learningTipText}>你的画像会随使用越来越精准</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -398,6 +455,28 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.medium as any,
+  },
+  completenessContainer: {
+    marginHorizontal: spacing.layout.screenPadding,
+    backgroundColor: colors.neutral.white,
+    borderRadius: spacing.borderRadius.xl,
+    padding: spacing.layout.cardPadding,
+    marginBottom: spacing.layout.cardGap,
+    ...shadows.presets.sm,
+  },
+  learningTip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingHorizontal: spacing.layout.screenPadding,
+    paddingVertical: spacing.layout.sectionGap,
+    marginBottom: 20,
+  },
+  learningTipText: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.regular as any,
+    color: colors.neutral[500],
   },
 });
 

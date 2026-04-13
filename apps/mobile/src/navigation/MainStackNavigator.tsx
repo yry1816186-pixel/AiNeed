@@ -45,6 +45,10 @@ const VirtualTryOnScreen = lazy(() => import('../screens/VirtualTryOnScreen'));
 const CommunityFeedScreen = lazy(() => import('../screens/CommunityScreen'));
 
 const ProfileMainScreen = lazy(() => import('../screens/ProfileScreen'));
+const ProfileEditScreen = lazy(() => import('../screens/ProfileEditScreen').then((m) => ({ default: m.ProfileEditScreen })));
+const BodyAnalysisScreen = lazy(() => import('../screens/BodyAnalysisScreen').then((m) => ({ default: m.BodyAnalysisScreen })));
+const ColorAnalysisScreen = lazy(() => import('../screens/ColorAnalysisScreen').then((m) => ({ default: m.ColorAnalysisScreen })));
+const SharePosterScreen = lazy(() => import('../screens/SharePosterScreen').then((m) => ({ default: m.SharePosterScreen })));
 const StyleQuizScreen = lazy(() => import('../screens/style-quiz/StyleQuizScreen').then((m) => ({ default: m.StyleQuizScreen })));
 const WardrobeScreen = lazy(() => import('../screens/WardrobeScreen'));
 const FavoritesScreen = lazy(() => import('../screens/FavoritesScreen').then((m) => ({ default: m.FavoritesScreen })));
@@ -173,19 +177,19 @@ export function ProfileStackNavigator() {
         {() => <Suspense fallback={screenLoader}><ProfileMainScreen /></Suspense>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="ProfileEdit">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 1, title: 'ProfileEdit' } }} />}
+        {() => <Suspense fallback={screenLoader}><ProfileEditScreen /></Suspense>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="StyleQuiz">
         {() => <Suspense fallback={screenLoader}><StyleQuizScreen /></Suspense>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="BodyAnalysis">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 1, title: 'BodyAnalysis' } }} />}
+        {() => <Suspense fallback={screenLoader}><BodyAnalysisScreen /></Suspense>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="ColorAnalysis">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 1, title: 'ColorAnalysis' } }} />}
+        {() => <Suspense fallback={screenLoader}><ColorAnalysisScreen /></Suspense>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="SharePoster">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 1, title: 'SharePoster' } }} />}
+        {() => <Suspense fallback={screenLoader}><SharePosterScreen /></Suspense>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Wardrobe">
         {() => <Suspense fallback={screenLoader}><WardrobeScreen /></Suspense>}
