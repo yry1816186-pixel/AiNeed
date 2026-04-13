@@ -1,0 +1,294 @@
+import React, { useRef, useCallback, useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { Ionicons } from "../polyfills/expo-vector-icons";
+import { LinearGradient } from "../polyfills/expo-linear-gradient";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
+import { useProfileStore } from "../stores/profileStore";
+import { useAuthStore } from "../stores/index";
+import { ScreenLayout, Header } from "../components/layout/ScreenLayout";
+import type { RootStackParamList } from "../types/navigation";
+
+type SharePosterNavProp = NavigationProp<RootStackParamList>;
+
+const PLACEHOLDER_PALETTE = ["#C67B5C", "#D9A441", "#B5A08C", "#8B9A7D", "#E8B451"];
+
+export const SharePosterScreen: React.FC = () => {
+  const navigation = useNavigation<SharePosterNavProp>();
+  const viewShotRef = useRef<View>(null);
+  const { profile, colorAnalysis, loadProfile, loadColorAnalysis } = useProfileStore();
+  const user = useAuthStore((s) => s.user);
+  const [isSharing, setIsSharing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        await Promise.all([loadProfile(), loadColorAnalysis()]);
+      } catch {
+        // Continue with whatever data loaded
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    load();
+  }, [loadProfile, loadColorAnalysis]);
+
+  const handleShare = useCallback(async () => {
+    setIsSharing(true);
+    try {
+      // In production: capture ViewShot and open Share dialog
+      // const uri = await captureRef(viewShotRef, { format: "png", quality: 0.9 });
+      // await Share.open({ url: uri, title: "我的风格画像" });
+      Alert.alert("分享", "分享功能即将上线");
+    } catch {
+      // Share cancelled or failed
+    } finally {
+      setIsSharing(false);
+    }
+  }, []);
+
+  const displayName = profile?.nickname ?? user?.email?.split("@")[0] ?? "用户";
+  const avatarInitial = displayName.charAt(0).toUpperCase();
+  const palette = colorAnalysis?.bestColors?.slice(0, 5) ?? PLACEHOLDER_PALETTE;
+
+  if (isLoading) {
+    return (
+      <ScreenLayout
+        header={
+          <Header
+            title="分享海报"
+            leftAction={
+              <TouchableOpacity onPress={() => navigation.goBack()} accessibilityLabel="返回" accessibilityRole="button">
+                <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+              </TouchableOpacity>
+            }
+          />
+        }
+        backgroundColor={Colors.neutral[50]}
+      >
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <Text style={styles.loadingText}>加载海报...</Text>
+        </View>
+      </ScreenLayout>
+    );
+  }
+
+  return (
+    <ScreenLayout
+      header={
+        <Header
+          title="分享海报"
+          leftAction={
+            <TouchableOpacity onPress={() => navigation.goBack()} accessibilityLabel="返回" accessibilityRole="button">
+              <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+            </TouchableOpacity>
+          }
+        />
+      }
+      backgroundColor={Colors.neutral[50]}
+      footer={
+        <View style={styles.footerBar}>
+          <TouchableOpacity
+            style={styles.shareButton}
+            onPress={handleShare}
+            disabled={isSharing}
+            activeOpacity={0.8}
+            accessibilityLabel="分享我的风格"
+            accessibilityRole="button"
+          >
+            <LinearGradient
+              colors={["#C67B5C", "#B5A08C"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.shareGradient}
+            >
+              {isSharing ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <>
+                  <Ionicons name="share-outline" size={20} color="#FFFFFF" />
+                  <Text style={styles.shareButtonText}>分享我的风格</Text>
+                </>
+              )}
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      }
+    >
+      <View style={styles.content}>
+        {/* Poster preview card */}
+        <View ref={viewShotRef} style={styles.posterCard} collapsable={false}>
+          <LinearGradient
+            colors={["#C67B5C", "#B5A08C"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            style={styles.posterGradient}
+          >
+            {/* User info */}
+            <View style={styles.posterHeader}>
+              <View style={styles.posterAvatar}>
+                <Text style={styles.posterAvatarText}>{avatarInitial}</Text>
+              </View>
+              <Text style={styles.posterName}>{displayName}</Text>
+            </View>
+
+            {/* Style type section */}
+            <View style={styles.posterSection}>
+              <Text style={styles.posterSectionTitle}>我的风格画像</Text>
+              <Text style={styles.posterStyleType}>
+                {colorAnalysis?.colorSeason?.label ?? "风格探索中"}
+              </Text>
+            </View>
+
+            {/* Color palette */}
+            <View style={styles.posterSection}>
+              <Text style={styles.posterSectionTitle}>我的色彩</Text>
+              <View style={styles.posterPalette}>
+                {palette.map((color, index) => (
+                  <View
+                    key={index}
+                    style={[styles.posterColorDot, { backgroundColor: color }]}
+                  />
+                ))}
+              </View>
+            </View>
+
+            {/* App branding */}
+            <View style={styles.posterBranding}>
+              <Ionicons name="shirt-outline" size={16} color="rgba(255,255,255,0.7)" />
+              <Text style={styles.posterBrandingText}>AiNeed - AI私人形象定制</Text>
+            </View>
+          </LinearGradient>
+        </View>
+      </View>
+    </ScreenLayout>
+  );
+};
+
+const styles = StyleSheet.create({
+  content: {
+    flex: 1,
+    paddingHorizontal: Spacing[5],
+    paddingTop: Spacing[4],
+    alignItems: "center",
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: 16,
+    color: theme.colors.textTertiary,
+    marginTop: Spacing[3],
+  },
+  posterCard: {
+    width: "100%",
+    maxWidth: 340,
+    borderRadius: BorderRadius["2xl"],
+    overflow: "hidden",
+    ...Shadows.lg,
+  },
+  posterGradient: {
+    padding: Spacing[6],
+    minHeight: 460,
+  },
+  posterHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing[3],
+    marginBottom: Spacing[6],
+  },
+  posterAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.5)",
+  },
+  posterAvatarText: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  posterName: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  posterSection: {
+    marginBottom: Spacing[6],
+  },
+  posterSectionTitle: {
+    fontSize: 12,
+    fontWeight: "400",
+    color: "rgba(255, 255, 255, 0.7)",
+    marginBottom: Spacing[2],
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  posterStyleType: {
+    fontSize: 28,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  posterPalette: {
+    flexDirection: "row",
+    gap: Spacing[3],
+  },
+  posterColorDot: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  posterBranding: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing[2],
+    justifyContent: "center",
+    marginTop: Spacing[8],
+  },
+  posterBrandingText: {
+    fontSize: 12,
+    fontWeight: "400",
+    color: "rgba(255, 255, 255, 0.6)",
+  },
+  footerBar: {
+    paddingHorizontal: Spacing[5],
+    paddingVertical: Spacing[3],
+    paddingBottom: Spacing[5],
+  },
+  shareButton: {
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+    minHeight: 52,
+  },
+  shareGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing[2],
+    paddingVertical: Spacing[4],
+  },
+  shareButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+});
+
+export default SharePosterScreen;
