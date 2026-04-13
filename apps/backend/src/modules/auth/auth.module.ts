@@ -11,6 +11,9 @@ import { AuthService } from "./auth.service";
 import { AuthHelpersService } from "./auth.helpers";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { LocalStrategy } from "./strategies/local.strategy";
+import { WechatStrategy } from "./strategies/wechat.strategy";
+import { WechatService } from "./services/wechat.service";
+import { AliyunSmsService, MockSmsService, SmsService } from "./services/sms.service";
 
 
 const logger = new Logger("AuthModule");
@@ -48,7 +51,23 @@ const logger = new Logger("AuthModule");
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthHelpersService, JwtStrategy, LocalStrategy],
+  providers: [
+    AuthService,
+    AuthHelpersService,
+    JwtStrategy,
+    LocalStrategy,
+    WechatService,
+    WechatStrategy,
+    SmsService,
+    {
+      provide: "ISmsService",
+      useFactory: (configService: ConfigService) => {
+        const provider = configService.get<string>("SMS_PROVIDER", "mock");
+        return provider === "aliyun" ? new AliyunSmsService(configService) : new MockSmsService();
+      },
+      inject: [ConfigService],
+    },
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}
