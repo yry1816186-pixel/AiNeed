@@ -61,6 +61,12 @@ export class CreatePostDto {
   @IsArray()
   @IsString({ each: true })
   outfitCardIds?: string[];
+
+  @ApiPropertyOptional({ description: "单品标注列表", example: ["外套", "内搭"] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  itemAnnotations?: string[];
 }
 
 export class UpdatePostDto {

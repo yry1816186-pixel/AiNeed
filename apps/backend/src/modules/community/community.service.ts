@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException, ConflictException, ForbiddenException, Inject } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
+import { Cron } from "@nestjs/schedule";
 import Redis from "ioredis";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
@@ -1049,6 +1050,13 @@ export class CommunityService {
         totalPages: Math.ceil(total / pageSize),
       },
     };
+  }
+
+  @Cron("*/10 * * * *")
+  handleHotScoreRecalculation() {
+    this.recalculateHotScores().catch((err) => {
+      this.logger.error(`Hot score recalculation failed: ${err.message}`);
+    });
   }
 
   async recalculateHotScores() {
