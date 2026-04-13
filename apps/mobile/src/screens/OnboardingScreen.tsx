@@ -4,6 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  ScrollView,
+  TextInput,
   Dimensions,
   Alert,
   ActivityIndicator,
@@ -12,8 +14,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import Animated, {
   FadeIn,
-  FadeOut,
-  Layout,
   useAnimatedStyle,
   withSpring,
   useSharedValue,
@@ -23,35 +23,49 @@ import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp as NavProp } from "@react-navigation/native";
 import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
 import { profileApi } from "../services/api/profile.api";
+import { PhotoGuideOverlay } from "../components/photo/PhotoGuideOverlay";
+import { PrivacyConsentModal } from "../components/privacy/PrivacyConsentModal";
 import type { RootStackParamList } from "../types/navigation";
-import {
-  StyleStep,
-  ColorStep,
-  BodyStep,
-  AIIntroStep,
-} from "../components/onboarding/OnboardingSteps";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ONBOARDING_COMPLETE_KEY = "@aineed:onboarding_complete";
 
 type NavigationProp = NavProp<RootStackParamList>;
+type OnboardingStep = "BASIC_INFO" | "PHOTO" | "QUIZ" | "COMPLETE";
 
-const TOTAL_STEPS = 4;
+const STEPS: OnboardingStep[] = ["BASIC_INFO", "PHOTO", "QUIZ", "COMPLETE"];
+const TOTAL_STEPS = 3; // BASIC_INFO, PHOTO, QUIZ (COMPLETE is terminal)
+
+const GENDER_OPTIONS = [
+  { id: "female", label: "女", icon: "woman-outline" as const },
+  { id: "male", label: "男", icon: "man-outline" as const },
+  { id: "other", label: "其他", icon: "person-outline" as const },
+];
+
+const AGE_RANGES = ["18-24", "25-30", "31-40", "40+"];
 
 export const OnboardingScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [selectedStyles, setSelectedStyles] = useState<Set<string>>(new Set());
-  const [selectedColors, setSelectedColors] = useState<Set<string>>(new Set());
-  const [height, setHeight] = useState("");
-  const [weight, setWeight] = useState("");
-  const [bodyType, setBodyType] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState<OnboardingStep>("BASIC_INFO");
   const [isSaving, setIsSaving] = useState(false);
-  const progressValue = useSharedValue(0);
+
+  // Step 0: BASIC_INFO state
+  const [gender, setGender] = useState<string | null>(null);
+  const [ageRange, setAgeRange] = useState<string | null>(null);
+
+  // Step 1: PHOTO state
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [showCameraGuide, setShowCameraGuide] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+
+  const progressValue = useSharedValue(1 / TOTAL_STEPS);
+
+  const currentStepIndex = STEPS.indexOf(currentStep);
 
   const updateProgress = useCallback(
-    (step: number) => {
-      progressValue.value = withSpring((step + 1) / TOTAL_STEPS, {
+    (step: OnboardingStep) => {
+      const idx = STEPS.indexOf(step);
+      progressValue.value = withSpring(Math.min(idx + 1, TOTAL_STEPS) / TOTAL_STEPS, {
         damping: 15,
         stiffness: 120,
       });
@@ -63,98 +77,67 @@ export const OnboardingScreen: React.FC = () => {
     width: `${progressValue.value * 100}%`,
   }));
 
-  const handleToggleStyle = useCallback((id: string) => {
-    setSelectedStyles((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  }, []);
-
-  const handleToggleColor = useCallback((id: string) => {
-    setSelectedColors((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-  }, []);
-
   const canProceed = useCallback((): boolean => {
     switch (currentStep) {
-      case 0:
-        return selectedStyles.size > 0;
-      case 1:
-        return selectedColors.size > 0;
-      case 2:
-        return true;
-      case 3:
-        return true;
+      case "BASIC_INFO":
+        return gender !== null && ageRange !== null;
+      case "PHOTO":
+        return true; // photo is optional, skip is allowed
+      case "QUIZ":
+        return true; // quiz is optional, skip is allowed
       default:
         return false;
     }
-  }, [currentStep, selectedStyles, selectedColors]);
+  }, [currentStep, gender, ageRange]);
 
   const handleNext = useCallback(() => {
-    if (currentStep < TOTAL_STEPS - 1) {
-      setCurrentStep((prev) => prev + 1);
-      updateProgress(currentStep + 1);
-    } else {
+    if (currentStep === "BASIC_INFO") {
+      const nextStep: OnboardingStep = "PHOTO";
+      setCurrentStep(nextStep);
+      updateProgress(nextStep);
+    } else if (currentStep === "PHOTO") {
+      const nextStep: OnboardingStep = "QUIZ";
+      setCurrentStep(nextStep);
+      updateProgress(nextStep);
+    } else if (currentStep === "QUIZ") {
       handleComplete();
     }
   }, [currentStep, updateProgress]);
 
   const handleBack = useCallback(() => {
-    if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1);
-      updateProgress(currentStep - 1);
+    if (currentStep === "PHOTO") {
+      setCurrentStep("BASIC_INFO");
+      updateProgress("BASIC_INFO");
+    } else if (currentStep === "QUIZ") {
+      setCurrentStep("PHOTO");
+      updateProgress("PHOTO");
     }
   }, [currentStep, updateProgress]);
 
   const handleSkip = useCallback(() => {
-    handleComplete();
-  }, []);
+    if (currentStep === "PHOTO") {
+      handleNext();
+    } else if (currentStep === "QUIZ") {
+      handleComplete();
+    }
+  }, [currentStep, handleNext]);
 
   const handleComplete = useCallback(async () => {
     setIsSaving(true);
     try {
       const updateData: Record<string, unknown> = {
-        stylePreferences: {
-          preferredStyles: Array.from(selectedStyles),
-          avoidedStyles: [],
-          preferredColors: Array.from(selectedColors),
-          avoidedColors: [],
-          fitGoals: [],
-        },
+        gender: gender ?? undefined,
+        ageRange: ageRange ?? undefined,
       };
 
-      const parsedHeight = parseFloat(height);
-      const parsedWeight = parseFloat(weight);
-      if (!isNaN(parsedHeight) && parsedHeight > 0) {
-        updateData.height = parsedHeight;
-      }
-      if (!isNaN(parsedWeight) && parsedWeight > 0) {
-        updateData.weight = parsedWeight;
-      }
-      if (bodyType) {
-        updateData.bodyType = bodyType;
-      }
-
-      await profileApi.updateProfile(updateData);
+      await profileApi.updateProfile(updateData as any);
       await AsyncStorage.setItem(ONBOARDING_COMPLETE_KEY, "true");
 
       navigation.reset({
         index: 0,
         routes: [{ name: "MainTabs" }],
       });
-    } catch (error) {
+    } catch {
       await AsyncStorage.setItem(ONBOARDING_COMPLETE_KEY, "true");
       navigation.reset({
         index: 0,
@@ -163,7 +146,26 @@ export const OnboardingScreen: React.FC = () => {
     } finally {
       setIsSaving(false);
     }
-  }, [selectedStyles, selectedColors, height, weight, bodyType, navigation]);
+  }, [gender, ageRange, navigation]);
+
+  const handlePhotoUpload = useCallback(() => {
+    setShowPrivacyModal(true);
+  }, []);
+
+  const handlePrivacyConfirm = useCallback(() => {
+    setShowPrivacyModal(false);
+    setShowCameraGuide(true);
+  }, []);
+
+  const handlePrivacyCancel = useCallback(() => {
+    setShowPrivacyModal(false);
+  }, []);
+
+  const handleTakePhoto = useCallback(() => {
+    // Placeholder: in production this would open camera via expo-image-picker
+    setShowCameraGuide(false);
+    setPhotoUri("placeholder://photo-taken");
+  }, []);
 
   const renderProgressBar = () => (
     <View style={styles.progressContainer}>
@@ -171,41 +173,205 @@ export const OnboardingScreen: React.FC = () => {
         <Animated.View style={[styles.progressFill, progressStyle]} />
       </View>
       <Text style={styles.progressText}>
-        {currentStep + 1} / {TOTAL_STEPS}
+        {Math.min(currentStepIndex + 1, TOTAL_STEPS)} / {TOTAL_STEPS}
       </Text>
     </View>
   );
 
+  const renderBasicInfoStep = () => (
+    <Animated.View entering={FadeIn.duration(350)} style={styles.stepContent}>
+      <View style={styles.stepHeader}>
+        <Text style={styles.stepTitle}>基本信息</Text>
+        <Text style={styles.stepSubtitle}>帮助我们更好地了解你</Text>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.formContent}>
+        {/* Gender selector */}
+        <View style={styles.sectionBlock}>
+          <Text style={styles.sectionLabel}>
+            性别 <Text style={styles.requiredAsterisk}>*</Text>
+          </Text>
+          <View style={styles.genderRow}>
+            {GENDER_OPTIONS.map((option) => {
+              const isSelected = gender === option.id;
+              return (
+                <TouchableOpacity
+                  key={option.id}
+                  style={[
+                    styles.genderPill,
+                    isSelected && styles.genderPillSelected,
+                  ]}
+                  onPress={() => setGender(option.id)}
+                  activeOpacity={0.7}
+                  accessibilityLabel={option.label}
+                  accessibilityRole="button"
+                >
+                  <Ionicons
+                    name={option.icon}
+                    size={20}
+                    color={isSelected ? "#FFFFFF" : theme.colors.textSecondary}
+                  />
+                  <Text
+                    style={[
+                      styles.genderPillText,
+                      isSelected && styles.genderPillTextSelected,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Age range selector */}
+        <View style={styles.sectionBlock}>
+          <Text style={styles.sectionLabel}>
+            年龄段 <Text style={styles.requiredAsterisk}>*</Text>
+          </Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.ageRow}>
+            {AGE_RANGES.map((range) => {
+              const isSelected = ageRange === range;
+              return (
+                <TouchableOpacity
+                  key={range}
+                  style={[
+                    styles.agePill,
+                    isSelected && styles.agePillSelected,
+                  ]}
+                  onPress={() => setAgeRange(range)}
+                  activeOpacity={0.7}
+                  accessibilityLabel={range}
+                  accessibilityRole="button"
+                >
+                  <Text
+                    style={[
+                      styles.agePillText,
+                      isSelected && styles.agePillTextSelected,
+                    ]}
+                  >
+                    {range}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      </ScrollView>
+    </Animated.View>
+  );
+
+  const renderPhotoStep = () => (
+    <Animated.View entering={FadeIn.duration(350)} style={styles.stepContent}>
+      <View style={styles.stepHeader}>
+        <Text style={styles.stepTitle}>上传你的照片</Text>
+        <Text style={styles.stepSubtitle}>让风格分析更精准</Text>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.formContent}>
+        <TouchableOpacity
+          style={styles.uploadArea}
+          onPress={handlePhotoUpload}
+          activeOpacity={0.7}
+          accessibilityLabel="点击上传照片"
+          accessibilityRole="button"
+        >
+          <Ionicons name="camera-outline" size={40} color={theme.colors.textTertiary} />
+          <Text style={styles.uploadLabel}>点击上传</Text>
+          <Text style={styles.uploadHint}>仅用于体型分析和试衣效果生成</Text>
+        </TouchableOpacity>
+
+        {photoUri && (
+          <View style={styles.photoUploadedContainer}>
+            <Ionicons name="checkmark-circle" size={20} color={Colors.semantic.success} />
+            <Text style={styles.photoUploadedText}>照片已选择</Text>
+          </View>
+        )}
+
+        {/* Camera guide overlay */}
+        {showCameraGuide && (
+          <View style={styles.cameraGuideContainer}>
+            <PhotoGuideOverlay visible={showCameraGuide} />
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={handleTakePhoto}
+              activeOpacity={0.7}
+              accessibilityLabel="拍照"
+              accessibilityRole="button"
+            >
+              <Ionicons name="camera" size={24} color="#FFFFFF" />
+              <Text style={styles.captureButtonText}>拍照</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
+
+      {/* Skip option */}
+      <TouchableOpacity
+        style={styles.skipButton}
+        onPress={handleSkip}
+        activeOpacity={0.7}
+        accessibilityLabel="跳过这一步"
+        accessibilityRole="button"
+      >
+        <Text style={styles.skipText}>跳过这一步</Text>
+      </TouchableOpacity>
+
+      <PrivacyConsentModal
+        visible={showPrivacyModal}
+        onConfirm={handlePrivacyConfirm}
+        onCancel={handlePrivacyCancel}
+      />
+    </Animated.View>
+  );
+
+  const renderQuizStep = () => (
+    <Animated.View entering={FadeIn.duration(350)} style={styles.stepContent}>
+      <View style={styles.stepHeader}>
+        <Text style={styles.stepTitle}>风格测试</Text>
+        <Text style={styles.stepSubtitle}>发现你的专属风格</Text>
+      </View>
+      <View style={styles.quizPlaceholder}>
+        <Ionicons name="sparkles-outline" size={48} color={theme.colors.primary} />
+        <Text style={styles.quizPlaceholderTitle}>风格测试</Text>
+        <Text style={styles.quizPlaceholderSubtitle}>
+          通过几道图片选择题，帮你找到最适合的风格方向
+        </Text>
+        <TouchableOpacity
+          style={styles.quizStartButton}
+          onPress={() => {
+            navigation.navigate("StyleQuiz");
+          }}
+          activeOpacity={0.7}
+          accessibilityLabel="开始测试"
+          accessibilityRole="button"
+        >
+          <Text style={styles.quizStartButtonText}>开始测试</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Skip option */}
+      <TouchableOpacity
+        style={styles.skipButton}
+        onPress={handleSkip}
+        activeOpacity={0.7}
+        accessibilityLabel="跳过"
+        accessibilityRole="button"
+      >
+        <Text style={styles.skipText}>跳过</Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+
   const renderCurrentStep = () => {
     switch (currentStep) {
-      case 0:
-        return (
-          <StyleStep
-            selectedStyles={selectedStyles}
-            onToggleStyle={handleToggleStyle}
-          />
-        );
-      case 1:
-        return (
-          <ColorStep
-            selectedColors={selectedColors}
-            onToggleColor={handleToggleColor}
-          />
-        );
-      case 2:
-        return (
-          <BodyStep
-            height={height}
-            weight={weight}
-            bodyType={bodyType}
-            onHeightChange={setHeight}
-            onWeightChange={setWeight}
-            onBodyTypeChange={setBodyType}
-            onSkip={handleSkip}
-          />
-        );
-      case 3:
-        return <AIIntroStep />;
+      case "BASIC_INFO":
+        return renderBasicInfoStep();
+      case "PHOTO":
+        return renderPhotoStep();
+      case "QUIZ":
+        return renderQuizStep();
+      case "COMPLETE":
+        return null;
       default:
         return null;
     }
@@ -216,11 +382,13 @@ export const OnboardingScreen: React.FC = () => {
       {renderProgressBar()}
       <View style={styles.content}>{renderCurrentStep()}</View>
       <View style={styles.footer}>
-        {currentStep > 0 && (
+        {currentStep !== "BASIC_INFO" && (
           <TouchableOpacity
             style={styles.backButton}
             onPress={handleBack}
             activeOpacity={0.7}
+            accessibilityLabel="上一步"
+            accessibilityRole="button"
           >
             <Ionicons
               name="arrow-back"
@@ -239,15 +407,17 @@ export const OnboardingScreen: React.FC = () => {
           onPress={handleNext}
           disabled={!canProceed() || isSaving}
           activeOpacity={0.7}
+          accessibilityLabel={currentStep === "QUIZ" ? "完成" : "下一步"}
+          accessibilityRole="button"
         >
           {isSaving ? (
             <ActivityIndicator size="small" color={theme.colors.surface} />
           ) : (
             <>
               <Text style={styles.nextButtonText}>
-                {currentStep === TOTAL_STEPS - 1 ? "开始体验" : "下一步"}
+                {currentStep === "QUIZ" ? "完成" : "下一步"}
               </Text>
-              {currentStep < TOTAL_STEPS - 1 && (
+              {currentStep !== "QUIZ" && (
                 <Ionicons
                   name="arrow-forward"
                   size={18}
@@ -290,12 +460,201 @@ const styles = StyleSheet.create({
     marginLeft: Spacing[3],
     fontSize: 12,
     color: theme.colors.textTertiary,
-    fontWeight: "500",
+    fontWeight: "400",
     minWidth: 40,
   },
   content: {
     flex: 1,
     overflow: "hidden",
+  },
+  stepContent: {
+    flex: 1,
+  },
+  stepHeader: {
+    paddingHorizontal: Spacing[5],
+    paddingTop: Spacing[6],
+    paddingBottom: Spacing[4],
+  },
+  stepTitle: {
+    fontSize: 28,
+    fontWeight: "600",
+    color: theme.colors.text,
+    letterSpacing: -0.5,
+    lineHeight: 34,
+  },
+  stepSubtitle: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+    marginTop: Spacing[2],
+    lineHeight: 24,
+    fontWeight: "400",
+  },
+  formContent: {
+    paddingHorizontal: Spacing[5],
+    paddingBottom: Spacing[6],
+  },
+  sectionBlock: {
+    marginBottom: Spacing[6],
+  },
+  sectionLabel: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: theme.colors.textSecondary,
+    marginBottom: Spacing[3],
+  },
+  requiredAsterisk: {
+    color: "#C44536",
+  },
+  genderRow: {
+    flexDirection: "row",
+    gap: Spacing[3],
+  },
+  genderPill: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: Colors.neutral[50],
+    borderRadius: BorderRadius.xl,
+    paddingVertical: Spacing[4],
+    gap: Spacing[2],
+    borderWidth: 1.5,
+    borderColor: "transparent",
+  },
+  genderPillSelected: {
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
+  },
+  genderPillText: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: theme.colors.textSecondary,
+  },
+  genderPillTextSelected: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+  },
+  ageRow: {
+    flexDirection: "row",
+    gap: Spacing[2],
+  },
+  agePill: {
+    backgroundColor: Colors.neutral[50],
+    borderRadius: BorderRadius.full,
+    paddingHorizontal: Spacing[5],
+    paddingVertical: Spacing[3],
+    borderWidth: 1.5,
+    borderColor: "transparent",
+  },
+  agePillSelected: {
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
+  },
+  agePillText: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: theme.colors.textSecondary,
+  },
+  agePillTextSelected: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+  },
+  uploadArea: {
+    borderWidth: 2,
+    borderColor: Colors.neutral[200],
+    borderStyle: "dashed",
+    borderRadius: BorderRadius.xl,
+    paddingVertical: Spacing[8],
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing[3],
+  },
+  uploadLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: theme.colors.textSecondary,
+  },
+  uploadHint: {
+    fontSize: 12,
+    fontWeight: "400",
+    color: theme.colors.textTertiary,
+    marginTop: Spacing[1],
+  },
+  photoUploadedContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing[2],
+    marginTop: Spacing[3],
+  },
+  photoUploadedText: {
+    fontSize: 14,
+    color: Colors.semantic.success,
+    fontWeight: "500",
+  },
+  cameraGuideContainer: {
+    height: 300,
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+    marginTop: Spacing[4],
+    backgroundColor: "#000000",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    paddingBottom: Spacing[4],
+  },
+  captureButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: theme.colors.primary,
+    borderRadius: BorderRadius.xl,
+    paddingHorizontal: Spacing[6],
+    paddingVertical: Spacing[3],
+    gap: Spacing[2],
+  },
+  captureButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  skipButton: {
+    paddingHorizontal: Spacing[5],
+    paddingVertical: Spacing[3],
+    alignSelf: "center",
+  },
+  skipText: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: theme.colors.textTertiary,
+  },
+  quizPlaceholder: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: Spacing[5],
+    gap: Spacing[3],
+  },
+  quizPlaceholderTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: theme.colors.text,
+  },
+  quizPlaceholderSubtitle: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: theme.colors.textSecondary,
+    textAlign: "center",
+    lineHeight: 24,
+  },
+  quizStartButton: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: BorderRadius.xl,
+    paddingHorizontal: Spacing[8],
+    paddingVertical: Spacing[4],
+    marginTop: Spacing[3],
+  },
+  quizStartButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
   footer: {
     flexDirection: "row",
@@ -312,9 +671,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[2],
   },
   backButtonText: {
-    fontSize: 14,
+    fontSize: 16,
     color: theme.colors.textSecondary,
-    fontWeight: "500",
+    fontWeight: "400",
   },
   footerSpacer: {
     flex: 1,
