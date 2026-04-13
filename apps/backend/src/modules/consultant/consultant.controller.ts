@@ -33,6 +33,7 @@ import {
   ConsultantMatchRequestDto,
   BatchCreateAvailabilityDto,
   AvailableSlotsQueryDto,
+  RequestWithdrawalDto,
 } from "./dto";
 
 @ApiTags("consultant")
@@ -262,5 +263,43 @@ export class ConsultantController {
     @Param("id") id: string,
   ) {
     return this.consultantService.payFinalPayment(req.user.id, id);
+  }
+
+  // ==================== 顾问收入 & 提现 ====================
+
+  @Get("earnings")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "获取顾问收入", description: "获取顾问收入列表和汇总信息" })
+  @ApiResponse({ status: 200, description: "成功返回收入信息" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async getEarnings(
+    @Request() req: RequestWithUser,
+    @Query("consultantId") consultantId: string,
+  ) {
+    return this.consultantService.getEarnings(consultantId, req.user.id);
+  }
+
+  @Post("withdrawals")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "申请提现", description: "顾问申请提现收入到银行账户" })
+  @ApiResponse({ status: 201, description: "提现申请已创建" })
+  @ApiResponse({ status: 400, description: "可提现金额不足" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async requestWithdrawal(
+    @Request() req: RequestWithUser,
+    @Body() dto: RequestWithdrawalDto,
+  ) {
+    return this.consultantService.requestWithdrawal(
+      dto.consultantId,
+      req.user.id,
+      dto.amount,
+      {
+        bankName: dto.bankName,
+        bankAccount: dto.bankAccount,
+        accountHolder: dto.accountHolder,
+      },
+    );
   }
 }

@@ -639,4 +639,104 @@ export class ConsultantService {
 
     return updated;
   }
+
+  // ==================== 顾问收入 & 提现 ====================
+
+  /**
+   * 获取顾问收入列表和汇总
+   */
+  async getEarnings(consultantId: string, userId: string) {
+    const consultant = await this.prisma.consultantProfile.findUnique({
+      where: { id: consultantId },
+    });
+    if (!consultant) throw new NotFoundException("顾问不存在");
+    if (consultant.userId !== userId)
+      throw new ForbiddenException("无权查看此顾问收入");
+
+    const [earnings, totalEarned, pendingAmount, settledAmount] =
+      await Promise.all([
+        this.prisma.consultantEarning.findMany({
+          where: { consultantId },
+          orderBy: { createdAt: "desc" },
+          take: 50,
+        }),
+        this.prisma.consultantEarning.aggregate({
+          where: { consultantId },
+          _sum: { netAmount: true },
+        }),
+        this.prisma.consultantEarning.aggregate({
+          where: { consultantId, status: "pending" },
+          _sum: { netAmount: true },
+        }),
+        this.prisma.consultantEarning.aggregate({
+          where: { consultantId, status: "settled" },
+          _sum: { netAmount: true },
+        }),
+      ]);
+
+    return {
+      earnings,
+      summary: {
+        totalEarned: totalEarned._sum.netAmount || 0,
+        pendingAmount: pendingAmount._sum.netAmount || 0,
+        settledAmount: settledAmount._sum.netAmount || 0,
+      },
+    };
+  }
+
+  /**
+   * 申请提现 - 校验可提现余额后创建提现记录
+   */
+  async requestWithdrawal(
+    consultantId: string,
+    userId: string,
+    amount: number,
+    bankInfo: {
+      bankName: string;
+      bankAccount: string;
+      accountHolder: string;
+    },
+  ) {
+    const consultant = await this.prisma.consultantProfile.findUnique({
+      where: { id: consultantId },
+    });
+    if (!consultant) throw new NotFoundException("顾问不存在");
+    if (consultant.userId !== userId)
+      throw new ForbiddenException("无权操作");
+
+    // 查询可提现余额（pending 状态的收入）
+    const pendingAmount = await this.prisma.consultantEarning.aggregate({
+      where: { consultantId, status: "pending" },
+      _sum: { netAmount: true },
+    });
+
+    const available = Number(pendingAmount._sum.netAmount || 0);
+    if (amount > available) {
+      throw new BadRequestException(
+        `可提现金额不足，当前可提现: ${available}`,
+      );
+    }
+
+    if (amount <= 0) {
+      throw new BadRequestException("提现金额必须大于0");
+    }
+
+    const withdrawal = await this.prisma.consultantWithdrawal.create({
+      data: {
+        consultantId,
+        userId,
+        amount: new Prisma.Decimal(amount),
+        status: "pending",
+        bankName: bankInfo.bankName,
+        bankAccount: bankInfo.bankAccount,
+        accountHolder: bankInfo.accountHolder,
+      },
+    });
+
+    this.logger.log(
+      `顾问 ${consultantId} 申请提现 ${amount}，提现ID: ${withdrawal.id}`,
+    );
+
+    return withdrawal;
+  }
 }
