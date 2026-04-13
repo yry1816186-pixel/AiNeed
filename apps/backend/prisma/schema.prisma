@@ -49,6 +49,8 @@ model User {
   orders      Order[]
   addresses   UserAddress[]
   behaviors   UserBehavior[]
+  behaviorEvents     UserBehaviorEvent[]
+  recommendationCaches RecommendationCache[]
   userClothings UserClothing[]
   outfits    Outfit[]
   aiStylistSessions AiStylistSession[]
@@ -60,7 +62,7 @@ model User {
   paymentOrders     PaymentOrder[]
   userSubscriptions UserSubscription[]
 
-  posts         CommunityPost[]
+  posts         CommunityPost[] @relation("AuthorPosts")
   postLikes     PostLike[]
   postComments  PostComment[]
   followers     UserFollow[]  @relation("UserFollowers")
@@ -70,10 +72,20 @@ model User {
   quizAnswers   QuizAnswer[]
   quizResults   StyleQuizResult[]
 
+  bloggerLevel  String?
+  bloggerScore  Float?    @default(0)
+  bloggerBadge  String?
+  bookmarks     PostBookmark[]
+  bloggerProducts BloggerProduct[]
+  contentReports ContentReport[] @relation("ReporterReports")
+
   // Phase 8: 顾问系统关联
   consultantProfile ConsultantProfile?
   serviceBookings   ServiceBooking[]
   chatRooms         ChatRoom[]
+  consultantReviews   ConsultantReview[]
+  consultantEarnings  ConsultantEarning[]
+  consultantWithdrawals ConsultantWithdrawal[]
 
   consents             UserConsent[]
   notificationSetting  UserNotificationSetting?
@@ -632,6 +644,23 @@ model UserBehaviorEvent {
   @@index([targetType, targetId])
   @@index([userId, eventType, createdAt(sort: Desc)])
   @@index([category, action, createdAt(sort: Desc)])
+  @@index([userId, createdAt])
+  @@index([targetId, action])
+  @@index([userId, action, createdAt])
+
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum InteractionWeight {
+  view
+  click
+  like
+  favorite
+  addToCart
+  purchase
+  tryOn
+  share
+  dislike
 }
 
 enum BehaviorEventType {
@@ -873,6 +902,12 @@ enum NotificationType {
   new_follower
   comment
   like
+  bookmark
+  reply_mention
+  blogger_product_sold
+  content_approved
+  content_rejected
+  report_resolved
   system_update
   privacy_reminder
 }
@@ -1370,16 +1405,25 @@ model CommunityPost {
   shareCount  Int      @default(0)
 
   isFeatured  Boolean  @default(false)
+  isHidden    Boolean  @default(false)
   isDeleted   Boolean  @default(false)
   deletedAt   DateTime?
+
+  bookmarkCount     Int      @default(0)
+  hotScore          Float    @default(0)
+  moderationStatus  String   @default("approved")
+  reportCount       Int      @default(0)
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author      User           @relation("AuthorPosts", fields: [authorId], references: [id], onDelete: Cascade)
   likes       PostLike[]
   comments    PostComment[]
   relatedItems CommunityPostItem[]
+  bookmarks   PostBookmark[]
+  moderationLogs ContentModerationLog[]
+  reports     ContentReport[] @relation("PostReports")
 
   @@index([authorId])
   @@index([category])
@@ -1646,18 +1690,25 @@ model ConsultantProfile {
   reviewCount        Int      @default(0)
   bio                String?  @db.Text
   avatar             String?
+  location           String?  @db.Text
+  responseTimeAvg    Int?
   status             ConsultantStatus @default(pending)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  bookings   ServiceBooking[]
-  chatRooms  ChatRoom[]
+  bookings      ServiceBooking[]
+  chatRooms     ChatRoom[]
+  reviews       ConsultantReview[]
+  availabilities ConsultantAvailability[]
+  earnings      ConsultantEarning[]
+  withdrawals   ConsultantWithdrawal[]
 
   @@index([userId])
   @@index([status])
   @@index([status, rating])
   @@index([rating(sort: Desc)])
+  @@index([location])
 }
 
 enum ServiceType {
@@ -1690,6 +1741,12 @@ model ServiceBooking {
   cancelReason      String?
   price             Decimal  @db.Decimal(10, 2)
   currency          String   @default("CNY")
+  depositAmount       Decimal?  @db.Decimal(10, 2)
+  finalPaymentAmount  Decimal?  @db.Decimal(10, 2)
+  platformFee         Decimal?  @db.Decimal(10, 2) @default(0)
+  consultantPayout    Decimal?  @db.Decimal(10, 2) @default(0)
+  depositPaidAt       DateTime?
+  finalPaidAt         DateTime?
   completedAt       DateTime?
   cancelledAt       DateTime?
 
@@ -1698,6 +1755,8 @@ model ServiceBooking {
 
   user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   consultant ConsultantProfile @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+  review     ConsultantReview?
+  earning    ConsultantEarning?
 
   @@index([userId])
   @@index([consultantId])
@@ -1719,6 +1778,7 @@ enum MessageType {
   image
   file
   system
+  proposal
 }
 
 model ChatRoom {
@@ -1765,6 +1825,112 @@ model ChatMessage {
   @@index([senderId])
   @@index([roomId, isRead])
   @@index([senderId, isRead])
+}
+
+// ==================== 顾问评价 & 可用性 & 收益 & 提现 ====================
+
+enum EarningStatus {
+  pending
+  settled
+  failed
+}
+
+enum WithdrawalStatus {
+  pending
+  processing
+  completed
+  rejected
+}
+
+model ConsultantReview {
+  id            String   @id @default(uuid())
+  bookingId     String   @unique
+  userId        String
+  consultantId  String
+
+  rating        Int      // 1-5
+  content       String?  @db.Text
+  tags          Json     // string[]
+  beforeImages  Json     // string[]
+  afterImages   Json     // string[]
+  isAnonymous   Boolean  @default(false)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consultant    ConsultantProfile @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+  booking       ServiceBooking    @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([consultantId])
+  @@index([userId])
+  @@index([consultantId, rating])
+  @@index([createdAt])
+}
+
+model ConsultantAvailability {
+  id            String   @id @default(uuid())
+  consultantId  String
+  dayOfWeek     Int      // 0=周日, 1=周一, ..., 6=周六
+  startTime     String   // "09:00"
+  endTime       String   // "18:00"
+  slotDuration  Int      @default(60) // 每个时段时长(分钟)
+  isAvailable   Boolean  @default(true)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  consultant    ConsultantProfile @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+
+  @@index([consultantId])
+  @@index([consultantId, dayOfWeek])
+  @@unique([consultantId, dayOfWeek, startTime])
+}
+
+model ConsultantEarning {
+  id              String   @id @default(uuid())
+  consultantId    String
+  bookingId       String   @unique
+  userId          String
+  amount          Decimal  @db.Decimal(10, 2)
+  platformFee     Decimal  @db.Decimal(10, 2)
+  netAmount       Decimal  @db.Decimal(10, 2)
+  status          EarningStatus @default(pending)
+  settlementDate  DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consultant      ConsultantProfile @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+  booking         ServiceBooking    @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([consultantId])
+  @@index([status])
+  @@index([consultantId, status])
+}
+
+model ConsultantWithdrawal {
+  id              String   @id @default(uuid())
+  consultantId    String
+  userId          String
+  amount          Decimal  @db.Decimal(10, 2)
+  status          WithdrawalStatus @default(pending)
+  bankName        String?
+  bankAccount     String?
+  accountHolder   String?
+  rejectedReason  String?
+  processedAt     DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consultant      ConsultantProfile @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+
+  @@index([consultantId])
+  @@index([status])
+  @@index([consultantId, status])
 }
 
 // ==================== 灵感衣橱分类系统 ====================
@@ -1815,6 +1981,38 @@ model WardrobeCollectionItem {
   @@index([userId])
 }
 
+// ==================== 推荐引擎缓存系统 ====================
+
+model RecommendationCache {
+  id          String   @id @default(cuid())
+  userId      String
+  category    String
+  subCategory String?
+  results     Json
+  version     String   @default("v1")
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, category, subCategory, version])
+  @@index([userId, category, expiresAt])
+  @@map("recommendation_caches")
+}
+
+model KnowledgeGraphEntity {
+  id          String   @id @default(cuid())
+  entityType  String
+  entityId    String
+  syncedAt    DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@unique([entityType, entityId])
+  @@index([entityType])
+  @@map("knowledge_graph_entities")
+}
+
 // ==================== Feature Flag 系统 ====================
 
 model FeatureFlag {
@@ -1851,5 +2049,76 @@ model FeatureFlagEvaluation {
   @@index([userId])
   @@index([evaluatedAt])
   @@map("feature_flag_evaluations")
+}
+
+// ==================== 社区扩展：收藏/举报/博主商品/审核 ====================
+
+model PostBookmark {
+  id            String   @id @default(cuid())
+  userId        String
+  postId        String
+  collectionId  String?
+  createdAt     DateTime @default(now())
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post          CommunityPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([userId])
+  @@index([postId])
+}
+
+model ContentReport {
+  id          String   @id @default(cuid())
+  reporterId  String
+  contentType String
+  contentId   String
+  reason      String
+  status      String   @default("pending")
+  reviewedBy  String?
+  reviewNote  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reporter    User            @relation("ReporterReports", fields: [reporterId], references: [id], onDelete: Cascade)
+  post        CommunityPost?  @relation("PostReports", fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([reporterId, contentType, contentId])
+  @@index([contentType, contentId])
+  @@index([status])
+}
+
+model BloggerProduct {
+  id            String   @id @default(cuid())
+  bloggerId     String
+  type          String
+  title         String
+  description   String?
+  price         Decimal  @db.Decimal(10, 2)
+  images        String[]
+  relatedItemId String?
+  status        String   @default("active")
+  salesCount    Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  blogger       User     @relation(fields: [bloggerId], references: [id], onDelete: Cascade)
+
+  @@index([bloggerId])
+  @@index([status])
+}
+
+model ContentModerationLog {
+  id          String   @id @default(cuid())
+  contentType String
+  contentId   String
+  action      String
+  reason      String?
+  moderatorId String?
+  createdAt   DateTime @default(now())
+
+  post        CommunityPost? @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@index([contentType, contentId])
 }
 
