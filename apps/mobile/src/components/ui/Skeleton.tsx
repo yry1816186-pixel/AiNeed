@@ -1,409 +1,108 @@
-import React, { useEffect, useRef } from "react";
-import { View, StyleSheet, ViewStyle, Dimensions, Animated } from "react-native";
-import { Colors, Spacing, BorderRadius } from "../../theme";
+import React, { useEffect, useRef } from 'react';
+import { View, StyleSheet, ViewStyle, Animated, DimensionValue } from 'react-native';
+import { colors } from '../../theme/colors';
+import { spacing } from '../../theme/spacing';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
-function SkeletonPlaceholder({
-  backgroundColor,
-  highlightColor,
-  speed,
-  children,
-}: {
-  backgroundColor: string;
-  highlightColor: string;
-  speed: number;
-  children: React.ReactNode;
-}) {
+function useShimmerAnimation(speed = 1200) {
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const animation = Animated.loop(
       Animated.sequence([
-        Animated.timing(animatedValue, {
-          toValue: 1,
-          duration: speed,
-          useNativeDriver: true,
-        }),
-        Animated.timing(animatedValue, {
-          toValue: 0,
-          duration: speed,
-          useNativeDriver: true,
-        }),
-      ])
+        Animated.timing(animatedValue, { toValue: 1, duration: speed, useNativeDriver: true }),
+        Animated.timing(animatedValue, { toValue: 0, duration: speed, useNativeDriver: true }),
+      ]),
     );
     animation.start();
     return () => animation.stop();
   }, [animatedValue, speed]);
 
-  const opacity = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0.3],
-  });
-
-  return (
-    <Animated.View style={{ opacity }}>{children}</Animated.View>
-  );
+  return animatedValue.interpolate({ inputRange: [0, 1], outputRange: [1, 0.3] });
 }
 
-interface SkeletonProps {
-  width?: number;
+export interface SkeletonProps {
+  width?: DimensionValue;
   height?: number;
   borderRadius?: number;
   style?: ViewStyle;
 }
 
-export function Skeleton({
-  width = SCREEN_WIDTH,
+export const Skeleton: React.FC<SkeletonProps> = ({
+  width = '100%',
   height = 20,
-  borderRadius = BorderRadius.md,
+  borderRadius = spacing.borderRadius.md,
   style,
-}: SkeletonProps) {
-  return (
-    <SkeletonPlaceholder
-      backgroundColor={Colors.neutral[200]}
-      highlightColor={Colors.neutral[100]}
-      speed={1200}
-    >
-      <View style={[{ width, height, borderRadius }, style]} />
-    </SkeletonPlaceholder>
-  );
-}
+}) => {
+  const opacity = useShimmerAnimation();
+  return <Animated.View style={[{ width, height, borderRadius, backgroundColor: colors.neutral[200], opacity }, style]} />;
+};
 
-interface ProductCardSkeletonProps {
+export interface CircleSkeletonProps {
+  size?: number;
   style?: ViewStyle;
 }
 
-export function ProductCardSkeleton({ style }: ProductCardSkeletonProps) {
-  return (
-    <SkeletonPlaceholder
-      backgroundColor={Colors.neutral[200]}
-      highlightColor={Colors.neutral[100]}
-      speed={1200}
-    >
-      <View style={[styles.productCard, style]}>
-        <View style={styles.productImage} />
-        <View style={styles.productContent}>
-          <View style={styles.productTitle} />
-          <View style={styles.productMeta} />
-          <View style={styles.productPrice} />
-        </View>
-      </View>
-    </SkeletonPlaceholder>
-  );
-}
+export const CircleSkeleton: React.FC<CircleSkeletonProps> = ({ size = 48, style }) => {
+  const opacity = useShimmerAnimation();
+  return <Animated.View style={[{ width: size, height: size, borderRadius: size / 2, backgroundColor: colors.neutral[200], opacity }, style]} />;
+};
 
-interface ProductListSkeletonProps {
-  count?: number;
-  columns?: number;
-  style?: ViewStyle;
-}
-
-export function ProductListSkeleton({
-  count = 6,
-  columns = 2,
-  style,
-}: ProductListSkeletonProps) {
-  return (
-    <View style={[styles.listContainer, style]}>
-      {Array.from({ length: count }).map((_, index) => (
-        <ProductCardSkeleton
-          key={index}
-          style={{ width: `${100 / columns - 2}%` }}
-        />
-      ))}
-    </View>
-  );
-}
-
-interface RecommendationCardSkeletonProps {
-  style?: ViewStyle;
-}
-
-export function RecommendationCardSkeleton({
-  style,
-}: RecommendationCardSkeletonProps) {
-  return (
-    <SkeletonPlaceholder
-      backgroundColor={Colors.neutral[200]}
-      highlightColor={Colors.neutral[100]}
-      speed={1200}
-    >
-      <View style={[styles.recommendationCard, style]}>
-        <View style={styles.recommendationHeader}>
-          <View style={styles.recommendationTitle} />
-          <View style={styles.recommendationTags}>
-            <View style={styles.tag} />
-            <View style={styles.tag} />
-          </View>
-        </View>
-        <View style={styles.recommendationItems}>
-          <View style={styles.recommendationItem} />
-          <View style={styles.recommendationItem} />
-          <View style={styles.recommendationItem} />
-        </View>
-      </View>
-    </SkeletonPlaceholder>
-  );
-}
-
-interface ProfileSkeletonProps {
-  style?: ViewStyle;
-}
-
-export function ProfileSkeleton({ style }: ProfileSkeletonProps) {
-  return (
-    <SkeletonPlaceholder
-      backgroundColor={Colors.neutral[200]}
-      highlightColor={Colors.neutral[100]}
-      speed={1200}
-    >
-      <View style={[styles.profileContainer, style]}>
-        <View style={styles.avatar} />
-        <View style={styles.userName} />
-        <View style={styles.userBio} />
-        <View style={styles.statsRow}>
-          <View style={styles.statItem}>
-            <View style={styles.statValue} />
-            <View style={styles.statLabel} />
-          </View>
-          <View style={styles.statItem}>
-            <View style={styles.statValue} />
-            <View style={styles.statLabel} />
-          </View>
-          <View style={styles.statItem}>
-            <View style={styles.statValue} />
-            <View style={styles.statLabel} />
-          </View>
-        </View>
-      </View>
-    </SkeletonPlaceholder>
-  );
-}
-
-interface TextSkeletonProps {
+export interface TextSkeletonProps {
   lines?: number;
   lineHeight?: number;
   lastLineWidth?: number;
   style?: ViewStyle;
 }
 
-export function TextSkeleton({
+export const TextSkeleton: React.FC<TextSkeletonProps> = ({
   lines = 3,
   lineHeight = 16,
   lastLineWidth = 60,
   style,
-}: TextSkeletonProps) {
+}) => {
+  const opacity = useShimmerAnimation();
   return (
-    <SkeletonPlaceholder
-      backgroundColor={Colors.neutral[200]}
-      highlightColor={Colors.neutral[100]}
-      speed={1200}
-    >
-      <View style={[styles.textContainer, style]}>
-        {Array.from({ length: lines }).map((_, index) => (
-          <View
-            key={index}
-            style={{
-              width: index === lines - 1 ? `${lastLineWidth}%` : "100%",
-              height: lineHeight,
-              borderRadius: BorderRadius.sm,
-              marginBottom: index < lines - 1 ? Spacing[2] : 0,
-            }}
-          />
-        ))}
-      </View>
-    </SkeletonPlaceholder>
+    <View style={[{ width: '100%' }, style]}>
+      {Array.from({ length: lines }).map((_, index) => (
+        <Animated.View
+          key={index}
+          style={{
+            width: index === lines - 1 ? `${lastLineWidth}%` : '100%',
+            height: lineHeight,
+            borderRadius: spacing.borderRadius.sm,
+            backgroundColor: colors.neutral[200],
+            marginBottom: index < lines - 1 ? spacing.scale[2] : 0,
+            opacity,
+          }}
+        />
+      ))}
+    </View>
   );
-}
+};
 
-interface CircleSkeletonProps {
-  size?: number;
+export interface CardSkeletonProps {
   style?: ViewStyle;
 }
 
-export function CircleSkeleton({ size = 48, style }: CircleSkeletonProps) {
+export const CardSkeleton: React.FC<CardSkeletonProps> = ({ style }) => {
+  const opacity = useShimmerAnimation();
   return (
-    <SkeletonPlaceholder
-      backgroundColor={Colors.neutral[200]}
-      highlightColor={Colors.neutral[100]}
-      speed={1200}
-    >
-      <View
-        style={[{ width: size, height: size, borderRadius: size / 2 }, style]}
-      />
-    </SkeletonPlaceholder>
-  );
-}
-
-interface WardrobeSkeletonProps {
-  count?: number;
-  style?: ViewStyle;
-}
-
-export function WardrobeSkeleton({ count = 6, style }: WardrobeSkeletonProps) {
-  return (
-    <SkeletonPlaceholder
-      backgroundColor={Colors.neutral[200]}
-      highlightColor={Colors.neutral[100]}
-      speed={1200}
-    >
-      <View style={[styles.wardrobeGrid, style]}>
-        {Array.from({ length: count }).map((_, index) => (
-          <View key={index} style={styles.wardrobeItem}>
-            <View style={styles.wardrobeImage} />
-            <View style={styles.wardrobeInfo}>
-              <View style={styles.wardrobeName} />
-              <View style={styles.wardrobeBrand} />
-            </View>
-          </View>
-        ))}
+    <Animated.View style={[styles.card, { opacity }, style]}>
+      <View style={[styles.cardImage, { backgroundColor: colors.neutral[100] }]} />
+      <View style={styles.cardContent}>
+        <View style={[styles.line, { width: '70%', backgroundColor: colors.neutral[200] }]} />
+        <View style={[styles.line, { width: '50%', backgroundColor: colors.neutral[200] }]} />
+        <View style={[styles.line, { width: '40%', height: 18, backgroundColor: colors.neutral[200] }]} />
       </View>
-    </SkeletonPlaceholder>
+    </Animated.View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  productCard: {
-    backgroundColor: Colors.neutral[0],
-    borderRadius: BorderRadius.xl,
-    overflow: "hidden",
-    marginBottom: Spacing[3],
-  },
-  productImage: {
-    width: "100%",
-    height: 180,
-  },
-  productContent: {
-    padding: Spacing[3],
-    gap: Spacing[2],
-  },
-  productTitle: {
-    width: "70%",
-    height: 14,
-    borderRadius: BorderRadius.sm,
-  },
-  productMeta: {
-    width: "50%",
-    height: 12,
-    borderRadius: BorderRadius.sm,
-  },
-  productPrice: {
-    width: "40%",
-    height: 18,
-    borderRadius: BorderRadius.sm,
-  },
-  listContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing[3],
-    padding: Spacing[4],
-  },
-  recommendationCard: {
-    backgroundColor: Colors.neutral[0],
-    borderRadius: BorderRadius["2xl"],
-    padding: Spacing[4],
-    marginBottom: Spacing[4],
-  },
-  recommendationHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: Spacing[3],
-  },
-  recommendationTitle: {
-    width: "40%",
-    height: 18,
-    borderRadius: BorderRadius.sm,
-  },
-  recommendationTags: {
-    flexDirection: "row",
-    gap: Spacing[2],
-  },
-  tag: {
-    width: 50,
-    height: 20,
-    borderRadius: BorderRadius.full,
-  },
-  recommendationItems: {
-    flexDirection: "row",
-    gap: Spacing[3],
-  },
-  recommendationItem: {
-    width: 100,
-    height: 120,
-    borderRadius: BorderRadius.lg,
-  },
-  profileContainer: {
-    alignItems: "center",
-    padding: Spacing[6],
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: Spacing[4],
-  },
-  userName: {
-    width: 120,
-    height: 20,
-    borderRadius: BorderRadius.sm,
-    marginBottom: Spacing[2],
-  },
-  userBio: {
-    width: 200,
-    height: 14,
-    borderRadius: BorderRadius.sm,
-    marginBottom: Spacing[4],
-  },
-  statsRow: {
-    flexDirection: "row",
-    gap: Spacing[6],
-  },
-  statItem: {
-    alignItems: "center",
-  },
-  statValue: {
-    width: 40,
-    height: 24,
-    borderRadius: BorderRadius.sm,
-    marginBottom: Spacing[1],
-  },
-  statLabel: {
-    width: 50,
-    height: 12,
-    borderRadius: BorderRadius.sm,
-  },
-  textContainer: {
-    width: "100%",
-  },
-  wardrobeGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing[3],
-    padding: Spacing[4],
-  },
-  wardrobeItem: {
-    width: "48%",
-    borderRadius: BorderRadius.xl,
-    overflow: "hidden",
-    backgroundColor: Colors.neutral[0],
-  },
-  wardrobeImage: {
-    width: "100%",
-    height: 160,
-  },
-  wardrobeInfo: {
-    padding: Spacing[3],
-    gap: Spacing[1],
-  },
-  wardrobeName: {
-    width: "70%",
-    height: 14,
-    borderRadius: BorderRadius.sm,
-  },
-  wardrobeBrand: {
-    width: "50%",
-    height: 12,
-    borderRadius: BorderRadius.sm,
-  },
+  card: { backgroundColor: colors.neutral.white, borderRadius: spacing.borderRadius.xl, overflow: 'hidden' },
+  cardImage: { width: '100%', height: 180 },
+  cardContent: { padding: spacing.aliases.md, gap: spacing.scale[2] },
+  line: { height: 14, borderRadius: spacing.borderRadius.sm },
 });
+
+export default Skeleton;

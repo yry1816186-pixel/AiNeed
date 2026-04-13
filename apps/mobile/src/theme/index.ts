@@ -1,43 +1,96 @@
-import { Dimensions, Platform, StatusBar } from "react-native";
-import { DesignTokens } from "./tokens/design-tokens";
+import { Dimensions, Platform, StatusBar } from 'react-native';
+import { DesignTokens } from './tokens/design-tokens';
 import {
-  Colors,
-  Typography,
-  Spacing,
-  BorderRadius,
-  Shadows,
+  Colors as LegacyColors,
+  Typography as LegacyTypography,
+  Spacing as LegacySpacing,
+  BorderRadius as LegacyBorderRadius,
+  Shadows as LegacyShadows,
   Layout,
   Animation,
   ZIndex,
   gradients,
-} from "./compat";
+} from './compat';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const isIOS = Platform.OS === "ios";
-const isAndroid = Platform.OS === "android";
+import { colors, type XunOColors } from './colors';
+import { typography, type XunOTypography } from './typography';
+import { spacing, type XunOSpacing } from './spacing';
+import { shadows, type XunOShadows } from './shadows';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const isIOS = Platform.OS === 'ios';
+
+export const xunoTheme = {
+  colors,
+  typography,
+  spacing,
+  shadows,
+
+  semantic: {
+    primary: colors.primary[500],
+    primaryLight: colors.primary[400],
+    primaryDark: colors.primary[600],
+    secondary: colors.secondary[500],
+    secondaryLight: colors.secondary[400],
+    secondaryDark: colors.secondary[600],
+    background: colors.neutral[50],
+    surface: colors.neutral.white,
+    text: colors.neutral[900],
+    textSecondary: colors.neutral[600],
+    textTertiary: colors.neutral[500],
+    border: colors.neutral[200],
+    success: colors.semantic.success,
+    error: colors.semantic.error,
+    warning: colors.semantic.warning,
+    info: colors.semantic.info,
+  },
+
+  layout: {
+    screen: { width: SCREEN_WIDTH, height: SCREEN_HEIGHT },
+    safeArea: {
+      top: isIOS ? 44 : StatusBar.currentHeight || 24,
+      bottom: isIOS ? 34 : 16,
+    },
+  },
+
+  zIndex: {
+    base: 0,
+    docked: 10,
+    dropdown: 20,
+    sticky: 30,
+    modalBackdrop: 50,
+    modal: 60,
+    popover: 70,
+    toast: 90,
+    overlay: 100,
+  },
+} as const;
+
+export type XunOTheme = typeof xunoTheme;
+
+export { colors, typography, spacing, shadows };
+export type { XunOColors, XunOTypography, XunOSpacing, XunOShadows };
 
 export const theme = {
   colors: {
-    primary: Colors.primary[500],
-    primaryLight: Colors.primary[400],
-    primaryDark: Colors.primary[600],
-    secondary: Colors.sage[500],
-    secondaryLight: Colors.sage[400],
-    secondaryDark: Colors.sage[600],
-    background: Colors.neutral[50],
-    surface: Colors.neutral.white,
-    text: Colors.neutral[900],
-    textSecondary: Colors.neutral[600],
-    textTertiary: Colors.neutral[500],
-    border: Colors.neutral[200],
-    success: Colors.success[500],
-    error: Colors.error[500],
-    warning: Colors.warning[500],
-    info: Colors.info[500],
-    neutral: Colors.neutral,
-    brand: Colors.brand,
-
-    // Semantic UI colors
+    primary: LegacyColors.primary[500],
+    primaryLight: LegacyColors.primary[400],
+    primaryDark: LegacyColors.primary[600],
+    secondary: LegacyColors.sage[500],
+    secondaryLight: LegacyColors.sage[400],
+    secondaryDark: LegacyColors.sage[600],
+    background: LegacyColors.neutral[50],
+    surface: LegacyColors.neutral.white,
+    text: LegacyColors.neutral[900],
+    textSecondary: LegacyColors.neutral[600],
+    textTertiary: LegacyColors.neutral[500],
+    border: LegacyColors.neutral[200],
+    success: LegacyColors.success[500],
+    error: LegacyColors.error[500],
+    warning: LegacyColors.warning[500],
+    info: LegacyColors.info[500],
+    neutral: LegacyColors.neutral,
+    brand: LegacyColors.brand,
     like: '#FF4757',
     likeLight: '#FFF0F0',
     cartLight: '#F0F0FF',
@@ -45,13 +98,9 @@ export const theme = {
     goldDark: '#D9A441',
     purple: '#9C27B0',
     amber: '#FFB300',
-
-    // Placeholder & divider colors
     placeholderBg: '#E2E8F0',
     subtleBg: '#F1F3F4',
     divider: '#F1F3F4',
-
-    // Overlay colors
     overlayDark: 'rgba(0,0,0,0.45)',
     overlayDarkLight: 'rgba(0,0,0,0.3)',
     overlayLight: 'rgba(255,255,255,0.9)',
@@ -66,11 +115,11 @@ export const theme = {
     overlayGoldBorder: 'rgba(255,184,0,0.4)',
     overlayWhite: 'rgba(255,255,255,0.85)',
   },
-  Colors,
-  Typography,
-  Spacing,
-  BorderRadius,
-  Shadows,
+  Colors: LegacyColors,
+  Typography: LegacyTypography,
+  Spacing: LegacySpacing,
+  BorderRadius: LegacyBorderRadius,
+  Shadows: LegacyShadows,
   Layout,
   Animation,
   ZIndex,
@@ -79,11 +128,11 @@ export const theme = {
 
 export default theme;
 export {
-  Colors,
-  Typography,
-  Spacing,
-  BorderRadius,
-  Shadows,
+  LegacyColors as Colors,
+  LegacyTypography as Typography,
+  LegacySpacing as Spacing,
+  LegacyBorderRadius as BorderRadius,
+  LegacyShadows as Shadows,
   Layout,
   Animation,
   ZIndex,
