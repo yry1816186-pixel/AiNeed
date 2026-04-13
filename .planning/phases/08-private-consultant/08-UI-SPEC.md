@@ -1,10 +1,11 @@
 ---
 phase: 08
 slug: private-consultant
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-04-14
+reviewed_at: 2026-04-14
 ---
 
 # Phase 08 — UI Design Contract
@@ -48,9 +49,9 @@ Exceptions: 44px minimum touch target for interactive elements (per WCAG 2.5.5)
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
 | Body | 16px | 400 (Regular) | 1.5 |
-| Label | 14px | 500 (Medium) | 1.5 |
+| Label | 14px | 400 (Regular) | 1.5 |
 | Heading | 24px | 600 (Semibold) | 1.2 |
-| Display | 36px | 700 (Bold) | 1.2 |
+| Display | 36px | 600 (Semibold) | 1.2 |
 
 ---
 
@@ -254,7 +255,7 @@ Accent reserved for: primary CTA buttons, active tab indicators, match percentag
 |-------------|----------------|
 | Touch targets | Minimum 44px (exception to 4px grid) |
 | Color contrast | Accent #C67B5C on white = 3.2:1 (AA for large text), use #A85A3A for small text (4.6:1 AA) |
-| Screen reader | All images have accessibilityLabel, ChatBubble has role="link" for proposals |
+| Screen reader | All images have accessibilityLabel, icon-only buttons: share="分享顾问", image picker="选择图片", download="下载文件", ChatBubble has role="link" for proposals |
 | Focus order | Calendar → time slots → notes → CTA (logical top-to-bottom) |
 | Error announcements | Toast with accessibilityLiveRegion="assertive" |
 
@@ -272,11 +273,11 @@ Accent reserved for: primary CTA buttons, active tab indicators, match percentag
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-04-14
