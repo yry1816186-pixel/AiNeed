@@ -1,6 +1,6 @@
-# CSRF Guard Module
+﻿# CSRF Guard Module
 
-Provides CSRF (Cross-Site Request Forgery) protection for the AiNeed backend API.
+Provides CSRF (Cross-Site Request Forgery) protection for the xuno backend API.
 
 ## Quick Start
 

@@ -1,0 +1,36 @@
+﻿# ============================================================
+# Grafana 仪表板自动配置
+# ============================================================
+# Grafana 启动时自动从指定目录加载仪表板 JSON 文件
+# 仪表板文件放置于 /var/lib/grafana/dashboards 目录下
+# ============================================================
+
+apiVersion: 1
+
+providers:
+  # --------------------------------------------------
+  # xuno 仪表板提供者
+  # --------------------------------------------------
+  # 从文件系统自动加载仪表板定义
+  - name: 'xuno Dashboards'
+    orgId: 1
+    # 仪表板在 Grafana 侧边栏中的文件夹名称
+    folder: 'xuno'
+    # 仪表板类型：从文件系统加载
+    type: 'file'
+    # 是否禁止通过 UI 删除自动加载的仪表板
+    disableDeletion: false
+    # 是否允许从 UI 更新自动加载的仪表板
+    # 设为 true 时，UI 修改会在重启后保留
+    allowUiUpdates: true
+    # 仪表板 JSON 文件所在目录
+    # 对应 docker-compose 中挂载的 /var/lib/grafana/dashboards 路径
+    options:
+      path: '/var/lib/grafana/dashboards'
+      # 子目录也作为文件夹分类
+      foldersFromFilesStructure: true
+    # 仪表板扫描间隔（秒）
+    # 每 30 秒检查一次目录变化，自动加载新增仪表板
+    updateIntervalSeconds: 30
+    # 仪表板排序规则
+    folderUid: 'xuno-dashboards'

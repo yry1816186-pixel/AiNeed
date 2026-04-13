@@ -1,0 +1,274 @@
+﻿# ============================================================
+# xuno AI 服务告警规则
+# 基于 Python AI 服务 (FastAPI) Prometheus 指标
+#
+# 业务约束 (来源: CONTEXT.md):
+#   CC-04: 每用户每日 AI 造型师 10 次、虚拟试衣 3 次
+#   CC-06: 全局预算熔断 — 设平台每日总预算，超预算降级
+#   CC-07: AI 宕机降级
+#
+# 关键指标来源:
+#   - ai_service_calls_total (labels: endpoint)
+#   - ai_service_errors_total (labels: endpoint, error_type)
+#   - ai_service_duration_seconds (labels: endpoint)
+#   - try_on_requests_total, try_on_completed_total, try_on_errors_total (labels: error_type)
+#   - try_on_duration_seconds
+#   - ai_stylist_conversations_total, ai_stylist_messages_total (labels: direction)
+#   - gpu_memory_used_bytes, gpu_memory_total_bytes (labels: device)
+#   - gpu_model_loaded (labels: model)
+# ============================================================
+
+groups:
+  # ----------------------------------------------------------
+  # AI 服务核心告警
+  # 覆盖: 错误率、延迟、预算熔断
+  # ----------------------------------------------------------
+  - name: ai.service.alerts
+    rules:
+      # AI 服务调用失败率超过 10%，持续 5 分钟
+      # 触发条件: errors / calls > 10%
+      # 影响: AI 功能不可用，触发 CC-07 降级策略
+      - alert: AIServiceErrorRateHigh
+        expr: |
+          (
+            sum(rate(ai_service_errors_total[5m]))
+            /
+            sum(rate(ai_service_calls_total[5m]))
+          ) > 0.10
+        for: 5m
+        labels:
+          severity: critical
+          team: ai
+          service: stylemind-ai
+          category: availability
+        annotations:
+          summary: "AI 服务调用失败率过高"
+          description: >-
+            AI 服务调用失败率已达 {{ $value | humanizePercentage }}，
+            超过 10% 阈值，持续 5 分钟。
+            当前错误速率: {{ printf `sum(rate(ai_service_errors_total[5m]))` | query | first | value | humanize }} errors/s。
+            根据 CC-07 策略，应考虑启动 AI 宕机降级方案。
+            请检查 GLM API 状态、网络连通性和错误类型分布。
+          runbook_url: "https://wiki.xuno.internal/runbooks/ai-service-error-rate-high"
+
+      # AI 每日成本预算接近 80%
+      # 触发条件: 当日累计 AI 调用量 * 单次预估成本 > 日预算的 80%
+      # 影响: 超预算将触发 CC-06 全局预算熔断降级
+      # 注意: 此处使用 ai_service_calls_total 的日增量作为代理指标
+      #       实际成本 = 调用量 * 单次成本 (GLM-4V ~0.05元/次, GLM-4 ~0.01元/次)
+      - alert: AICostBudgetApproaching
+        expr: |
+          (
+            sum(increase(ai_service_calls_total[24h]))
+            * 0.03
+          ) > on() (xuno_ai_daily_budget_dollars * 0.80)
+        for: 10m
+        labels:
+          severity: warning
+          team: ai
+          service: stylemind-ai
+          category: cost
+        annotations:
+          summary: "AI 每日成本预算接近 80% 阈值"
+          description: >-
+            AI 服务当日累计调用量已达 {{ printf `sum(increase(ai_service_calls_total[24h]))` | query | first | value | humanize }} 次，
+            预估成本接近日预算的 80%。
+            根据 CC-06 策略，应准备启动全局预算熔断降级:
+            - 降低非核心 AI 功能优先级
+            - 限制单用户调用频率 (CC-04: 造型师 10次/日, 试衣 3次/日)
+            - 切换到低成本模型 (如 GLM-4 替代 GLM-4V)
+          runbook_url: "https://wiki.xuno.internal/runbooks/ai-cost-budget-approaching"
+
+      # AI 任务队列积压超过 100
+      # 触发条件: BullMQ 队列等待任务数 > 100
+      # 影响: 用户等待时间过长，体验下降
+      # 注意: 使用 BullMQ 队列指标 bull_queue_waiting_count 作为代理
+      #       如果该指标不可用，可通过任务完成速率与请求速率差值估算
+      - alert: AIQueueBacklogHigh
+        expr: |
+          bull_queue_waiting_count{queue_name=~"ai-.*"} > 100
+        for: 5m
+        labels:
+          severity: warning
+          team: ai
+          service: stylemind-task-worker
+          category: performance
+        annotations:
+          summary: "AI 任务队列积压过高"
+          description: >-
+            AI 任务队列 {{ $labels.queue_name }} 等待任务数已达 {{ $value }}，
+            超过 100 阈值，持续 5 分钟。
+            可能原因: AI 服务处理能力不足、下游 API 限流、Worker 实例不足。
+            建议增加 Worker 实例数或检查下游服务状态。
+          runbook_url: "https://wiki.xuno.internal/runbooks/ai-queue-backlog-high"
+
+      # AI 服务 P95 延迟超过 30 秒，持续 5 分钟
+      # 触发条件: ai_service_duration_seconds P95 > 30s
+      # 影响: 用户等待时间过长，可能导致前端超时
+      - alert: AIServiceLatencyHigh
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(ai_service_duration_seconds_bucket[5m])) by (le, endpoint)
+          ) > 30
+        for: 5m
+        labels:
+          severity: warning
+          team: ai
+          service: stylemind-ai
+          category: performance
+        annotations:
+          summary: "AI 服务 P95 延迟过高"
+          description: >-
+            AI 服务端点 {{ $labels.endpoint }} 的 P95 延迟已达 {{ $value | humanizeDuration }}，
+            超过 30 秒阈值，持续 5 分钟。
+            可能原因: GLM API 响应慢、网络延迟、请求排队。
+            请检查下游 API 延迟和队列积压情况。
+          runbook_url: "https://wiki.xuno.internal/runbooks/ai-service-latency-high"
+
+  # ----------------------------------------------------------
+  # 虚拟试衣服务告警
+  # 覆盖: 试衣失败率、处理时长
+  # 业务约束: CC-04 每用户每日虚拟试衣 3 次
+  # ----------------------------------------------------------
+  - name: ai.tryon.alerts
+    rules:
+      # 虚拟试衣错误率超过 15%，持续 10 分钟
+      # 触发条件: try_on_errors / try_on_requests > 15%
+      # 影响: 核心功能不可用，用户流失
+      - alert: TryOnFailureRateHigh
+        expr: |
+          (
+            sum(rate(try_on_errors_total[10m]))
+            /
+            sum(rate(try_on_requests_total[10m]))
+          ) > 0.15
+        for: 10m
+        labels:
+          severity: critical
+          team: ai
+          service: stylemind-catvton
+          category: availability
+        annotations:
+          summary: "虚拟试衣失败率过高"
+          description: >-
+            虚拟试衣错误率已达 {{ $value | humanizePercentage }}，
+            超过 15% 阈值，持续 10 分钟。
+            错误类型分布: 请查看 try_on_errors_total 按 error_type 分组。
+            常见错误: GPU OOM、模型加载失败、图片处理超时。
+            请检查 CatVTON 服务日志和 GPU 状态。
+          runbook_url: "https://wiki.xuno.internal/runbooks/tryon-failure-rate-high"
+
+      # 虚拟试衣 P95 处理时长超过 120 秒，持续 10 分钟
+      # 触发条件: try_on_duration_seconds P95 > 120s
+      # 影响: 用户等待时间过长，体验极差
+      - alert: TryOnProcessingSlow
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(try_on_duration_seconds_bucket[10m])) by (le)
+          ) > 120
+        for: 10m
+        labels:
+          severity: warning
+          team: ai
+          service: stylemind-catvton
+          category: performance
+        annotations:
+          summary: "虚拟试衣处理速度过慢"
+          description: >-
+            虚拟试衣 P95 处理时长已达 {{ $value | humanizeDuration }}，
+            超过 120 秒阈值，持续 10 分钟。
+            可能原因: GPU 资源竞争、模型推理慢、图片分辨率过高。
+            CatVTON 在 RTX 4060 8GB 上正常推理约 30-60 秒。
+            请检查 GPU 利用率和是否有多个推理任务并发。
+          runbook_url: "https://wiki.xuno.internal/runbooks/tryon-processing-slow"
+
+  # ----------------------------------------------------------
+  # GPU 资源告警
+  # 覆盖: GPU 显存使用率、模型加载状态
+  # 硬件: RTX 4060 8GB VRAM (CatVTON 使用约 4GB)
+  # ----------------------------------------------------------
+  - name: ai.gpu.alerts
+    rules:
+      # GPU 显存使用率超过 90%，持续 5 分钟
+      # 触发条件: gpu_memory_used / gpu_memory_total > 90%
+      # 影响: 可能导致 CUDA OOM，推理任务失败
+      - alert: GPUMemoryHigh
+        expr: |
+          (
+            sum(gpu_memory_used_bytes) by (device)
+            /
+            sum(gpu_memory_total_bytes) by (device)
+          ) > 0.90
+        for: 5m
+        labels:
+          severity: critical
+          team: ai
+          service: stylemind-catvton
+          category: gpu
+        annotations:
+          summary: "GPU 显存使用率过高"
+          description: >-
+            GPU 设备 {{ $labels.device }} 显存使用率已达 {{ $value | humanizePercentage }}，
+            超过 90% 阈值，持续 5 分钟。
+            RTX 4060 总显存 8GB，CatVTON 正常使用约 4GB。
+            可能原因: 推理任务堆积、显存泄漏、模型重复加载。
+            存在 CUDA OOM 风险，请检查推理任务并发数。
+          runbook_url: "https://wiki.xuno.internal/runbooks/gpu-memory-high"
+
+      # GPU 模型未加载超过 5 分钟
+      # 触发条件: gpu_model_loaded == 0 持续 5m
+      # 影响: 无法提供推理服务，所有 AI 请求将失败
+      - alert: GPUModelNotLoaded
+        expr: gpu_model_loaded == 0
+        for: 5m
+        labels:
+          severity: critical
+          team: ai
+          service: stylemind-catvton
+          category: gpu
+        annotations:
+          summary: "GPU 模型未加载"
+          description: >-
+            GPU 模型 {{ $labels.model }} 已超过 5 分钟未处于加载状态。
+            CatVTON 模型未加载意味着虚拟试衣功能完全不可用。
+            可能原因: 模型加载失败、服务重启、GPU 驱动异常。
+            请检查 CatVTON 服务日志和 GPU 驱动状态。
+          runbook_url: "https://wiki.xuno.internal/runbooks/gpu-model-not-loaded"
+
+  # ----------------------------------------------------------
+  # AI 造型师可用性告警
+  # 业务约束: CC-04 每用户每日 AI 造型师 10 次
+  # ----------------------------------------------------------
+  - name: ai.stylist.alerts
+    rules:
+      # AI 造型师在营业时间 (8:00-24:00) 超过 10 分钟无响应
+      # 触发条件: 10 分钟内 ai_stylist_messages_total{direction="outbound"} 增量为 0
+      # 影响: 核心对话功能不可用，用户无法获得穿搭建议
+      # 注意: 仅在营业时间触发，非营业时间不告警
+      - alert: AIStylistUnavailable
+        expr: |
+          (
+            sum(increase(ai_stylist_messages_total{direction="outbound"}[10m])) == 0
+            and
+            hour() >= 8
+            and
+            hour() < 24
+            and
+            sum(increase(ai_stylist_conversations_total[10m])) > 0
+          )
+        for: 10m
+        labels:
+          severity: critical
+          team: ai
+          service: stylemind-ai
+          category: availability
+        annotations:
+          summary: "AI 造型师服务不可用"
+          description: >-
+            AI 造型师在营业时间 (8:00-24:00) 内超过 10 分钟无响应输出，
+            但仍有新的对话请求进入。
+            根据 CC-07 策略，应启动 AI 宕机降级方案:
+            - 展示预设穿搭建议作为兜底
+            - 提示用户"造型师暂时离线"
+            - 记录未响应对话以便后续补偿
+          runbook_url: "https://wiki.xuno.internal/runbooks/ai-stylist-unavailable"

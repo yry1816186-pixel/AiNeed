@@ -1,6 +1,6 @@
-# API Keys 配置指南
+﻿# API Keys 配置指南
 
-本文档说明如何配置 AiNeed 项目所需的各种 API Keys。
+本文档说明如何配置 xuno 项目所需的各种 API Keys。
 
 ## 快速配置清单
 

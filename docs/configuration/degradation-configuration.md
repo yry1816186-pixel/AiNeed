@@ -1,8 +1,8 @@
-# AI Service Degradation Configuration
+﻿# AI Service Degradation Configuration
 
 ## Overview
 
-The AiNeed application implements a service degradation strategy to maintain availability when external AI services are slow or unavailable. This document describes the configuration options and how to tune degradation behavior.
+The xuno application implements a service degradation strategy to maintain availability when external AI services are slow or unavailable. This document describes the configuration options and how to tune degradation behavior.
 
 ## Architecture
 

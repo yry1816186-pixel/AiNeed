@@ -1,4 +1,4 @@
-# APK Verification
+﻿# APK Verification
 
 审计时间：2026-03-10
 
@@ -33,10 +33,10 @@
 ### 当前已完成的相关修复
 - release 签名不再复用 debug keystore
 - 生产构建必须显式提供：
-  - `AINEED_UPLOAD_STORE_FILE`
-  - `AINEED_UPLOAD_STORE_PASSWORD`
-  - `AINEED_UPLOAD_KEY_ALIAS`
-  - `AINEED_UPLOAD_KEY_PASSWORD`
+  - `xuno_UPLOAD_STORE_FILE`
+  - `xuno_UPLOAD_STORE_PASSWORD`
+  - `xuno_UPLOAD_KEY_ALIAS`
+  - `xuno_UPLOAD_KEY_PASSWORD`
   - `EXPO_PUBLIC_API_URL`
   - `EXPO_PUBLIC_AI_SERVICE_URL`
   - `EAS_PROJECT_ID`

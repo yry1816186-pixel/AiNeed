@@ -32,10 +32,29 @@ function getDefaultAiServiceUrl(): string {
   return "";
 }
 
+/**
+ * Resolve the unverified mobile demos flag with priority logic:
+ * 1. ENABLE_UNVERIFIED_MOBILE_DEMOS === true → true (explicit enable overrides everything)
+ * 2. DISABLE_UNVERIFIED_MOBILE_DEMOS === true → false (explicit disable overrides default)
+ * 3. Otherwise → isDev (default: enabled in dev, disabled in prod)
+ */
+export function resolveUnverifiedMobileDemosFlag(
+  enable?: boolean,
+  disable?: boolean,
+  isDev?: boolean,
+): boolean {
+  if (enable === true) return true;
+  if (disable === true) return false;
+  return isDev ?? __DEV__;
+}
+
 export const mobileRuntimeConfig = {
   apiUrl: normalizeUrl(extra.API_URL) || getDefaultApiUrl(),
   aiServiceUrl: normalizeUrl(extra.AI_SERVICE_URL) || getDefaultAiServiceUrl(),
-  enableUnverifiedMobileDemos: __DEV__ || extra.DISABLE_UNVERIFIED_MOBILE_DEMOS !== true,
+  enableUnverifiedMobileDemos: resolveUnverifiedMobileDemosFlag(
+    extra.ENABLE_UNVERIFIED_MOBILE_DEMOS,
+    extra.DISABLE_UNVERIFIED_MOBILE_DEMOS,
+  ),
 };
 
 export function requireMobileUrl(value: string, label: string): string {

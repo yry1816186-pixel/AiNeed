@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+﻿import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -339,7 +339,7 @@ export const SettingsScreen: React.FC = () => {
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>AiNeed v1.0.0</Text>
+          <Text style={styles.footerText}>寻裳 v1.0.0</Text>
         </View>
       </ScrollView>
 

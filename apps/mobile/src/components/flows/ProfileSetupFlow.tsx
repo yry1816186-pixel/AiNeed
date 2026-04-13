@@ -163,7 +163,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
 
         <AnimatedView style={textAnimatedStyle}>
           <GlowText
-            text="欢迎使用 AiNeed"
+            text="欢迎使用寻裳"
             style={styles.welcomeTitle}
             glowColor={Colors.primary[400]}
           />
@@ -650,7 +650,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
             glowColor={Colors.primary[400]}
           />
           <Text style={styles.completeSubtitle}>
-            {nickname}，欢迎来到 AiNeed{"\n"}开始你的时尚之旅吧
+            {nickname}，欢迎来到寻裳{"\n"}开始你的时尚之旅吧
           </Text>
         </AnimatedView>
 

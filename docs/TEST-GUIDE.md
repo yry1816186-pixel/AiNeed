@@ -1,4 +1,4 @@
-# AiNeed 功能测试指南
+﻿# xuno 功能测试指南
 
 ## 📋 测试前准备
 
@@ -6,7 +6,7 @@
 
 #### 启动主API服务
 ```bash
-cd C:/AiNeed/apps/backend
+cd C:/xuno/apps/backend
 npm install
 npm run dev
 ```
@@ -14,7 +14,7 @@ npm run dev
 
 #### 启动AI服务
 ```bash
-cd C:/AiNeed/apps/backend
+cd C:/xuno/apps/backend
 npm run ai-service
 ```
 服务地址：http://localhost:8001
@@ -70,7 +70,7 @@ adb install app-release.apk
 
 2. 启动应用
 ```bash
-adb shell am start -n com.aineed.app/.MainActivity
+adb shell am start -n com.xuno.app/.MainActivity
 ```
 
 3. 测试底部导航
@@ -478,8 +478,8 @@ adb shell am start -n com.aineed.app/.MainActivity
 **步骤：**
 ```bash
 # 冷启动测试
-adb shell am force-stop com.aineed.app
-adb shell am start-activity -W com.aineed.app/.MainActivity
+adb shell am force-stop com.xuno.app
+adb shell am start-activity -W com.xuno.app/.MainActivity
 ```
 
 **预期结果：**
@@ -490,7 +490,7 @@ adb shell am start-activity -W com.aineed.app/.MainActivity
 
 **步骤：**
 ```bash
-adb shell dumpsys meminfo com.aineed.app
+adb shell dumpsys meminfo com.xuno.app
 ```
 
 **预期结果：**
@@ -585,10 +585,10 @@ adb shell dumpsys meminfo com.aineed.app
 ### 查看应用日志
 ```bash
 # 实时查看日志
-adb logcat | grep -i "aineed"
+adb logcat | grep -i "xuno"
 
 # 保存日志到文件
-adb logcat > aineed_log.txt
+adb logcat > xuno_log.txt
 ```
 
 ### 查看网络请求
@@ -600,13 +600,13 @@ adb logcat | grep -i "network"
 ### 清除应用数据
 ```bash
 # 清除应用数据
-adb shell pm clear com.aineed.app
+adb shell pm clear com.xuno.app
 ```
 
 ### 重新安装
 ```bash
 # 卸载应用
-adb uninstall com.aineed.app
+adb uninstall com.xuno.app
 
 # 重新安装
 adb install app-release.apk

@@ -19,7 +19,7 @@ export class StorageService {
 
   async init(context: Context): Promise<void> {
     try {
-      this.preferences = await preferences.getPreferences(context, 'aineed_storage');
+      this.preferences = await preferences.getPreferences(context, 'xuno_storage');
     } catch (error) {
       console.error('Storage init failed:', error);
     }

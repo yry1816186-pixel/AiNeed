@@ -21,9 +21,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.aineed.app'
+    namespace 'com.xuno.app'
     defaultConfig {
-        applicationId 'com.aineed.app'
+        applicationId 'com.xuno.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -42,17 +42,17 @@ android {
             keyPassword 'android'
         }
         release {
-            def keystorePwd = System.getenv('AINEED_KEYSTORE_PASSWORD') ?: (project.hasProperty('RELEASE_STORE_PASSWORD') ? RELEASE_STORE_PASSWORD : null)
-            def keyPwd = System.getenv('AINEED_KEY_PASSWORD') ?: (project.hasProperty('RELEASE_KEY_PASSWORD') ? RELEASE_KEY_PASSWORD : null)
+            def keystorePwd = System.getenv('XUNO_KEYSTORE_PASSWORD') ?: (project.hasProperty('RELEASE_STORE_PASSWORD') ? RELEASE_STORE_PASSWORD : null)
+            def keyPwd = System.getenv('XUNO_KEY_PASSWORD') ?: (project.hasProperty('RELEASE_KEY_PASSWORD') ? RELEASE_KEY_PASSWORD : null)
             if (project.hasProperty('RELEASE_STORE_FILE')) {
                 storeFile file(RELEASE_STORE_FILE)
                 storePassword keystorePwd
                 keyAlias RELEASE_KEY_ALIAS
                 keyPassword keyPwd
             } else {
-                storeFile file('aineed-release.keystore')
+                storeFile file('xuno-release.keystore')
                 storePassword keystorePwd
-                keyAlias 'aineed'
+                keyAlias 'xuno'
                 keyPassword keyPwd
             }
         }

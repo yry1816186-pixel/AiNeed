@@ -49,6 +49,20 @@ export interface OutfitRecommendation {
   [category: string]: SimilarItem[];
 }
 
+export interface ColorRecommendation {
+  bestColors: string[];
+  avoidColors: string[];
+  metalTone: string;
+}
+
+export interface AIStats {
+  totalItems: number;
+  totalEmbeddings: number;
+  lastUpdateTime: string;
+  modelVersion: string;
+  [key: string]: unknown;
+}
+
 @Injectable()
 export class AIIntegrationService implements OnModuleInit {
   private readonly logger = new Logger(AIIntegrationService.name);
@@ -257,7 +271,7 @@ export class AIIntegrationService implements OnModuleInit {
   async getColorRecommendations(
     colorSeason: string,
     category?: string,
-  ): Promise<any> {
+  ): Promise<ColorRecommendation> {
     try {
       const response = await this.aiClient.get(
         `/api/colors/${encodeURIComponent(colorSeason)}`,
@@ -290,7 +304,7 @@ export class AIIntegrationService implements OnModuleInit {
     }
   }
 
-  async getStats(): Promise<any> {
+  async getStats(): Promise<AIStats | null> {
     try {
       const response = await this.aiClient.get("/api/stats");
       return response.data.data;
@@ -374,18 +388,20 @@ export class AIIntegrationService implements OnModuleInit {
     };
   }
 
-  private getFallbackColorRecommendations(colorSeason: string): any {
-    const recommendations: Record<string, any> = {
+  private getFallbackColorRecommendations(colorSeason: string): ColorRecommendation {
+    const defaultRecommendation: ColorRecommendation = {
+      bestColors: ["lavender", "soft pink", "powder blue"],
+      avoidColors: ["bright orange", "mustard"],
+      metalTone: "silver",
+    };
+
+    const recommendations: Record<string, ColorRecommendation> = {
       spring: {
         bestColors: ["coral", "peach", "golden yellow", "cream"],
         avoidColors: ["black", "burgundy"],
         metalTone: "gold",
       },
-      summer: {
-        bestColors: ["lavender", "soft pink", "powder blue"],
-        avoidColors: ["bright orange", "mustard"],
-        metalTone: "silver",
-      },
+      summer: defaultRecommendation,
       autumn: {
         bestColors: ["rust", "olive", "camel", "mustard"],
         avoidColors: ["bright pink", "pure white"],
@@ -398,7 +414,7 @@ export class AIIntegrationService implements OnModuleInit {
       },
     };
 
-    return recommendations[colorSeason] || recommendations.summer;
+    return recommendations[colorSeason] ?? defaultRecommendation;
   }
 
   async isHealthy(): Promise<boolean> {

@@ -55,7 +55,7 @@ class TempFileManager:
         self._initialized = True
         self._temp_files: Set[str] = set()
         self._file_info: dict[str, TempFileInfo] = {}
-        self._temp_dir = Path(tempfile.gettempdir()) / "aineed_temp"
+        self._temp_dir = Path(tempfile.gettempdir()) / "xuno_temp"
         self._temp_dir.mkdir(exist_ok=True)
         self._cleanup_interval = 300
         self._max_age_hours = 24
@@ -83,7 +83,7 @@ class TempFileManager:
     def create_temp_file(
         self,
         suffix: str = "",
-        prefix: str = "aineed_",
+        prefix: str = "xuno_",
         purpose: str = "general"
     ) -> str:
         """
@@ -115,7 +115,7 @@ class TempFileManager:
         self,
         content: bytes,
         suffix: str = "",
-        prefix: str = "aineed_",
+        prefix: str = "xuno_",
         purpose: str = "general"
     ) -> str:
         """
@@ -227,7 +227,7 @@ class TempFileManager:
     def temp_file_context(
         self,
         suffix: str = "",
-        prefix: str = "aineed_",
+        prefix: str = "xuno_",
         purpose: str = "general"
     ):
         """

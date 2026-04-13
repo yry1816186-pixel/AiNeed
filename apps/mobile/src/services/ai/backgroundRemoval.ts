@@ -18,13 +18,15 @@ interface FalResponse {
   }[];
 }
 
+declare const process: any;
+
 class BackgroundRemovalService {
   private apiKey: string;
 
   constructor() {
     this.apiKey =
       Constants.expoConfig?.extra?.FAL_KEY ||
-      process.env.EXPO_PUBLIC_FAL_KEY ||
+      (typeof process !== 'undefined' ? process.env?.EXPO_PUBLIC_FAL_KEY : undefined) ||
       "";
   }
 

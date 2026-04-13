@@ -308,13 +308,3 @@ export class PhoneRegisterDto {
   @Length(2, 20)
   nickname?: string;
 }
-
-export class WechatLoginDto {
-  @ApiProperty({
-    description: "微信授权码，通过微信OAuth2获取",
-    example: "wechat_auth_code_example"
-  })
-  @IsString()
-  @IsNotEmpty()
-  code!: string;
-}

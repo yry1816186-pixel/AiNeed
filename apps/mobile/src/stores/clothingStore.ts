@@ -45,6 +45,11 @@ interface PaginationState {
   total: number;
 }
 
+export interface ClothingSortOptions {
+  sortBy: ClothingFilter['sortBy'];
+  sortOrder: 'asc' | 'desc';
+}
+
 interface ClothingState {
   items: ClothingItem[];
   featuredItems: ClothingItem[];

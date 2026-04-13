@@ -54,7 +54,7 @@ export class CreatePaymentDto {
 
   @ApiPropertyOptional({
     description: "商品标题",
-    example: "AiNeed 专业版会员 - 月度订阅",
+    example: "寻裳专业版会员 - 月度订阅",
   })
   @IsOptional()
   @IsString()

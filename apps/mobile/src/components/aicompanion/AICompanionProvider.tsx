@@ -29,8 +29,8 @@ import {
   SpeechRecognitionResult,
 } from "../../services/speech/speechRecognition";
 
-const POSITION_STORAGE_KEY = "@aineed_companion_position";
-const SESSION_STORAGE_KEY = "@aineed_stylist_session";
+const POSITION_STORAGE_KEY = "@xuno_companion_position";
+const SESSION_STORAGE_KEY = "@xuno_stylist_session";
 
 export interface ExtendedChatMessage extends ChatMessage {
   actionType?: AiStylistActionType;

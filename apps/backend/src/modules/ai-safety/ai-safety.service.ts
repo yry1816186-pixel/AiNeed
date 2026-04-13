@@ -339,7 +339,7 @@ export class AISafetyService {
 
     // Temperature consistency check
     if (context.temperature !== undefined) {
-      const tempMatch = response.match(/(-?\d+)\s*[°度]?C/i);
+      const tempMatch = response.match(/(-?\d+)\s*[°度]C?/i);
       const mentionedTempText = tempMatch?.[1];
       if (mentionedTempText) {
         const mentionedTemp = parseInt(mentionedTempText, 10);

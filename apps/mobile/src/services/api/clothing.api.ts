@@ -361,8 +361,8 @@ export const clothingApi = {
       brandId: params?.brandId,
       colors: params?.filter?.seasons?.join(","),
       sizes: params?.sizes?.join(","),
-      sortBy: params?.sort?.sortBy,
-      sortOrder: params?.sort?.sortOrder,
+      sortBy: params?.sort?.field,
+      sortOrder: params?.sort?.direction,
     };
 
     const filteredParams = Object.fromEntries(

@@ -1,10 +1,10 @@
 # =============================================================================
-# AiNeed Backup Cron Configuration
+# XunO Backup Cron Configuration
 # =============================================================================
 # 安装方法:
-#   1. 复制此文件到 /etc/cron.d/aineed-backup
+#   1. 复制此文件到 /etc/cron.d/xuno-backup
 #   2. 确保环境变量已配置 (或使用 systemd timer 替代)
-#   3. 给予正确权限: chmod 644 /etc/cron.d/aineed-backup
+#   3. 给予正确权限: chmod 644 /etc/cron.d/xuno-backup
 #
 # 或者使用 crontab -e 编辑用户 crontab:
 #   将下面的定时任务复制到 crontab 文件中
@@ -19,10 +19,10 @@ BACKUP_DIR=/backups
 RETENTION_DAYS=30
 
 # 每天凌晨 2:00 执行完整备份
-0 2 * * * root /opt/aineed/scripts/backup/backup.sh --full --upload >> /var/log/aineed/backup.log 2>&1
+0 2 * * * root /opt/xuno/scripts/backup/backup.sh --full --upload >> /var/log/xuno/backup.log 2>&1
 
 # 每小时执行数据库增量备份 (可选)
-# 0 * * * * root /opt/aineed/scripts/backup/backup.sh --db-only >> /var/log/aineed/backup-hourly.log 2>&1
+# 0 * * * * root /opt/xuno/scripts/backup/backup.sh --db-only >> /var/log/xuno/backup-hourly.log 2>&1
 
 # 每周日凌晨 3:00 清理旧备份并上传到冷存储
-# 0 3 * * 0 root /opt/aineed/scripts/backup/backup.sh --full --upload && /opt/aineed/scripts/backup/cleanup-cold-storage.sh >> /var/log/aineed/backup-weekly.log 2>&1
+# 0 3 * * 0 root /opt/xuno/scripts/backup/backup.sh --full --upload && /opt/xuno/scripts/backup/cleanup-cold-storage.sh >> /var/log/xuno/backup-weekly.log 2>&1

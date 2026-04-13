@@ -1,0 +1,130 @@
+{
+  "success": {
+    "id": "cmpl-8a5b6c7d8e9f0a1b2c3d4e5f",
+    "object": "chat.completion",
+    "created": 1715673600,
+    "model": "glm-5",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "根据您的体型和偏好，我为您推荐以下面试穿搭方案：\n\n1. **上装**：深蓝色修身西装外套，剪裁利落，适合商务场合\n2. **内搭**：白色真丝衬衫，领口细节精致\n3. **下装**：黑色高腰西裤，直筒版型修饰腿型\n4. **鞋履**：黑色尖头低跟鞋，舒适又有气场\n\n这套搭配以深蓝+黑白的经典配色为主，既专业又不失个人风格。"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 256,
+      "completion_tokens": 180,
+      "total_tokens": 436
+    }
+  },
+  "success_with_tool_calls": {
+    "id": "cmpl-9b6c7d8e9f0a1b2c3d4e5f6g",
+    "object": "chat.completion",
+    "created": 1715673700,
+    "model": "glm-5",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_abc123def456",
+              "type": "function",
+              "function": {
+                "name": "search_clothing",
+                "arguments": "{\"query\": \"商务面试西装\", \"filters\": {\"category\": \"outerwear\", \"styles\": [\"formal\"]}, \"limit\": 5}"
+              }
+            }
+          ]
+        },
+        "finish_reason": "tool_calls"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 312,
+      "completion_tokens": 45,
+      "total_tokens": 357
+    }
+  },
+  "success_structured_json": {
+    "id": "cmpl-7c8d9e0f1a2b3c4d5e6f7g8h",
+    "object": "chat.completion",
+    "created": 1715673800,
+    "model": "glm-5",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"occasion\":\"商务面试\",\"styles\":[\"formal\",\"professional\"],\"budget\":{\"min\":800,\"max\":2000},\"recommendedItems\":[{\"category\":\"outerwear\",\"name\":\"深蓝修身西装\",\"price\":1299},{\"category\":\"tops\",\"name\":\"白色真丝衬衫\",\"price\":599},{\"category\":\"bottoms\",\"name\":\"黑色高腰西裤\",\"price\":699}]}"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 280,
+      "completion_tokens": 120,
+      "total_tokens": 400
+    }
+  },
+  "success_short_response": {
+    "id": "cmpl-5d6e7f8a9b0c1d2e3f4a5b6c",
+    "object": "chat.completion",
+    "created": 1715673900,
+    "model": "glm-5",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "好的，我来为您推荐几套通勤穿搭方案。"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 150,
+      "completion_tokens": 15,
+      "total_tokens": 165
+    }
+  },
+  "error_rate_limit": {
+    "error": {
+      "code": "1301",
+      "message": "Rate limit exceeded. Please retry after 60 seconds.",
+      "type": "rate_limit_error"
+    }
+  },
+  "error_auth_failed": {
+    "error": {
+      "code": "1101",
+      "message": "Invalid API key provided.",
+      "type": "authentication_error"
+    }
+  },
+  "error_server_error": {
+    "error": {
+      "code": "1500",
+      "message": "Internal server error. Please try again later.",
+      "type": "server_error"
+    }
+  },
+  "error_context_too_long": {
+    "error": {
+      "code": "1201",
+      "message": "Request exceeds maximum context length. Please reduce the number of messages or message length.",
+      "type": "invalid_request_error"
+    }
+  },
+  "metadata": {
+    "provider": "zhipu",
+    "apiEndpoint": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+    "model": "glm-5",
+    "description": "ZhipuAI GLM-5 chat completion response fixtures. Includes success responses (plain text, tool calls, structured JSON, short) and error responses (rate limit, auth, server, context length)."
+  }
+}

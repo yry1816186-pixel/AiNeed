@@ -4,7 +4,7 @@ const { spawn, spawnSync } = require("child_process");
 const path = require("path");
 
 const PACKAGER_URL = "http://127.0.0.1:8081/status";
-const APP_ID = "com.aineed.app";
+const APP_ID = "com.xuno.app";
 
 // Windows上需要完整路径
 const adbPath = process.env.ANDROID_HOME

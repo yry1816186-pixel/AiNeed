@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+﻿import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 
 import { PaymentService } from "../payment.service";
@@ -28,7 +28,7 @@ export class SubscriptionRenewalListener {
         amount: payload.amount,
         provider,
         method: PaymentMethod.QRCODE,
-        subject: `AiNeed ${payload.planName}会员续费`,
+        subject: `xuno ${payload.planName}会员续费`,
         body: `自动续费 - ${payload.planName}会员月度订阅`,
         expireMinutes: 30,
       };

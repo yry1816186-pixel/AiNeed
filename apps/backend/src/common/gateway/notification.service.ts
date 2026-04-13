@@ -20,6 +20,20 @@ export class NotificationService {
     });
   }
 
+  async notifyTryOnProgress(
+    userId: string,
+    tryOnId: string,
+    progress: number,
+    stage: string,
+  ) {
+    return this.notificationGateway.sendNotification(userId, {
+      type: "try_on_progress",
+      title: "试衣进度更新",
+      message: `试衣进度: ${progress}%`,
+      data: { tryOnId, progress, stage, timestamp: new Date().toISOString() },
+    });
+  }
+
   async notifyNewRecommendation(userId: string, count: number) {
     return this.notificationGateway.sendNotification(userId, {
       type: "recommendation",

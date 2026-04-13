@@ -25,6 +25,7 @@ import Animated, {
   withRepeat,
   withSequence,
   withTiming,
+  withDelay,
   useSharedValue,
   useAnimatedStyle,
   Easing,
@@ -97,12 +98,12 @@ const TypingIndicator: React.FC = memo(function TypingIndicator() {
       false,
     );
     dot2Y.value = withRepeat(
-      withSequence(withTiming(-8, { duration: 300, delay: 150 }), withTiming(0, { duration: 300 })),
+      withDelay(150, withSequence(withTiming(-8, { duration: 300 }), withTiming(0, { duration: 300 }))),
       -1,
       false,
     );
     dot3Y.value = withRepeat(
-      withSequence(withTiming(-8, { duration: 300, delay: 300 }), withTiming(0, { duration: 300 })),
+      withDelay(300, withSequence(withTiming(-8, { duration: 300 }), withTiming(0, { duration: 300 }))),
       -1,
       false,
     );
@@ -814,7 +815,6 @@ const AiStylistScreenV2: React.FC = () => {
             contentContainerStyle={styles.messageList}
             onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
             onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
-            estimatedItemSize={100}
             removeClippedSubviews={true}
             maxToRenderPerBatch={5}
             windowSize={3}

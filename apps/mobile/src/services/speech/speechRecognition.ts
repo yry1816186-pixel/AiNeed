@@ -1,3 +1,5 @@
+declare const process: any;
+
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Platform, PermissionsAndroid, PermissionStatus } from "react-native";
 import * as FileSystem from '@/src/polyfills/expo-file-system';
@@ -32,8 +34,8 @@ export interface SpeechRecognitionConfig {
 
 const SPEECH_SERVICE_CONFIG = {
   apiUrl:
-    process.env.EXPO_PUBLIC_SPEECH_API_URL || "https://api.example.com/speech",
-  apiKey: process.env.EXPO_PUBLIC_SPEECH_API_KEY || "",
+    (typeof process !== 'undefined' ? process.env?.EXPO_PUBLIC_SPEECH_API_URL : undefined) || "https://api.example.com/speech",
+  apiKey: (typeof process !== 'undefined' ? process.env?.EXPO_PUBLIC_SPEECH_API_KEY : undefined) || "",
   defaultLanguage: "zh-CN",
   defaultTimeout: 30000,
 };

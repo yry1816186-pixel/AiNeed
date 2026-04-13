@@ -14,7 +14,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiResponse, ApiQuery, ApiParam } from "@nestjs/swagger";
 import axios from "axios";
 
 import { OptionalAuthGuard } from "../auth/guards/optional-auth.guard";
@@ -24,6 +24,7 @@ import { SearchService } from "./search.service";
 import { VisualSearchService } from "./services/visual-search.service";
 
 @ApiTags("search")
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller("search")
 export class SearchController {
@@ -33,7 +34,16 @@ export class SearchController {
   ) {}
 
   @Get()
-  @ApiOperation({ summary: "搜索商品" })
+  @ApiOperation({ summary: "搜索商品", description: "根据关键词搜索服装商品，支持分类、价格区间、排序和分页。" })
+  @ApiQuery({ name: "q", required: true, type: String, description: "搜索关键词", example: "连衣裙" })
+  @ApiQuery({ name: "category", required: false, type: String, description: "服装分类筛选" })
+  @ApiQuery({ name: "minPrice", required: false, type: Number, description: "最低价格筛选（元）" })
+  @ApiQuery({ name: "maxPrice", required: false, type: Number, description: "最高价格筛选（元）" })
+  @ApiQuery({ name: "sortBy", required: false, enum: ["relevance", "price_asc", "price_desc", "popular"], description: "排序方式" })
+  @ApiQuery({ name: "page", required: false, type: Number, description: "页码，默认1", example: 1 })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "每页数量，默认20", example: 20 })
+  @ApiResponse({ status: 200, description: "搜索结果列表" })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
   async search(
     @Query("q") query: string,
     @Query("category") category?: string,
@@ -57,15 +67,22 @@ export class SearchController {
   @Post("image")
   @UseGuards(OptionalAuthGuard)
   @ApiConsumes("multipart/form-data")
-  @ApiOperation({ summary: "以图搜图 - 上传图片搜索" })
+  @ApiOperation({ summary: "以图搜图 - 上传图片搜索", description: "上传图片进行视觉相似搜索，支持 JPEG、PNG、WebP 格式，最大 10MB。" })
   @ApiBody({
     schema: {
       type: "object",
       properties: {
-        file: { type: "string", format: "binary" },
+        file: { type: "string", format: "binary", description: "图片文件（支持 JPEG、PNG、WebP 格式，最大 10MB）" },
       },
+      required: ["file"],
     },
   })
+  @ApiQuery({ name: "category", required: false, type: String, description: "服装分类筛选" })
+  @ApiQuery({ name: "minPrice", required: false, type: Number, description: "最低价格筛选（元）" })
+  @ApiQuery({ name: "maxPrice", required: false, type: Number, description: "最高价格筛选（元）" })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "返回数量，默认20", example: 20 })
+  @ApiResponse({ status: 200, description: "视觉搜索结果列表" })
+  @ApiResponse({ status: 400, description: "请上传图片文件或图片格式/大小不符合要求" })
   @UseInterceptors(FileInterceptor("file"))
   async searchByImageUpload(
     @UploadedFile() file: Express.Multer.File,
@@ -99,7 +116,23 @@ export class SearchController {
   }
 
   @Post("image/url")
-  @ApiOperation({ summary: "以图搜图 - 通过图片URL搜索" })
+  @ApiOperation({ summary: "以图搜图 - 通过图片URL搜索", description: "通过图片URL进行视觉相似搜索，仅支持公网可访问的图片地址。" })
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        imageUrl: { type: "string", description: "图片URL地址", example: "https://example.com/dress.jpg" },
+      },
+      required: ["imageUrl"],
+    },
+  })
+  @ApiQuery({ name: "category", required: false, type: String, description: "服装分类筛选" })
+  @ApiQuery({ name: "minPrice", required: false, type: Number, description: "最低价格筛选（元）" })
+  @ApiQuery({ name: "maxPrice", required: false, type: Number, description: "最高价格筛选（元）" })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "返回数量，默认20", example: 20 })
+  @ApiResponse({ status: 200, description: "视觉搜索结果列表" })
+  @ApiResponse({ status: 400, description: "图片URL无效或无法访问" })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
   async searchByImageUrl(
     @Body() body: { imageUrl: string },
     @Query("category") category?: string,
@@ -122,7 +155,11 @@ export class SearchController {
   }
 
   @Get("suggestions")
-  @ApiOperation({ summary: "获取搜索建议" })
+  @ApiOperation({ summary: "获取搜索建议", description: "根据输入的关键词前缀返回搜索建议列表。" })
+  @ApiQuery({ name: "q", required: true, type: String, description: "搜索关键词前缀", example: "连衣" })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "返回数量，默认10", example: 10 })
+  @ApiResponse({ status: 200, description: "搜索建议列表" })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
   async getSuggestions(
     @Query("q") query: string,
     @Query("limit") limit?: string,
@@ -134,7 +171,12 @@ export class SearchController {
   }
 
   @Get("similar/:id")
-  @ApiOperation({ summary: "获取相似商品" })
+  @ApiOperation({ summary: "获取相似商品", description: "根据指定商品ID查找视觉相似的商品。" })
+  @ApiParam({ name: "id", description: "商品ID", type: String, format: "uuid" })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "返回数量，默认10", example: 10 })
+  @ApiResponse({ status: 200, description: "相似商品列表" })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
+  @ApiResponse({ status: 404, description: "商品不存在" })
   async getSimilarItems(
     @Param("id") itemId: string,
     @Query("limit") limit?: string,
@@ -146,7 +188,10 @@ export class SearchController {
   }
 
   @Get("trending")
-  @ApiOperation({ summary: "获取热门搜索" })
+  @ApiOperation({ summary: "获取热门搜索", description: "获取当前热门搜索关键词列表，基于全平台搜索统计。" })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "返回数量，默认10", example: 10 })
+  @ApiResponse({ status: 200, description: "热门搜索关键词列表" })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
   async getTrendingSearches(@Query("limit") limit?: string) {
     // 返回热门搜索关键词
     const trendingKeywords = [
@@ -169,7 +214,9 @@ export class SearchController {
   }
 
   @Get("categories")
-  @ApiOperation({ summary: "获取搜索分类" })
+  @ApiOperation({ summary: "获取搜索分类", description: "获取搜索可用的服装分类列表，包含分类ID、名称和图标。" })
+  @ApiResponse({ status: 200, description: "搜索分类列表" })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
   async getSearchCategories() {
     return {
       categories: [

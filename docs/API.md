@@ -1,6 +1,6 @@
-# AiNeed API 文档
+﻿# xuno API 文档
 
-本文档详细说明 AiNeed 后端 API 接口规范。
+本文档详细说明 xuno 后端 API 接口规范。
 
 ---
 
@@ -42,7 +42,7 @@ http://localhost:3001/api/docs
 
 ### JWT 认证
 
-AiNeed 使用 JWT (JSON Web Token) 进行身份认证。
+xuno 使用 JWT (JSON Web Token) 进行身份认证。
 
 #### 获取 Token
 
@@ -974,6 +974,6 @@ ws://localhost:3001/ws
 
 ## 联系支持
 
-- API 问题: api@aineed.com
-- 技术支持: support@aineed.com
-- GitHub Issues: https://github.com/your-org/aineed/issues
+- API 问题: api@xuno.com
+- 技术支持: support@xuno.com
+- GitHub Issues: https://github.com/your-org/xuno/issues

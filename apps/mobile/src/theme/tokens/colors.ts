@@ -1,7 +1,7 @@
 import { DesignTokens } from "./design-tokens";
 
 /**
- * AiNeed 增强色彩系统 - 国赛一等奖水准
+ * 寻裳 增强色彩系统 - 国赛一等奖水准
  *
  * 设计理念：
  * - 温暖亲和：珊瑚粉/薄荷绿传达友好感

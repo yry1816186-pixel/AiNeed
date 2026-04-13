@@ -195,7 +195,7 @@ export class AgentToolsService {
   async executeFunctionCall(call: FunctionCall): Promise<FunctionResult> {
     this.logger.log(`Executing function: ${call.name}`);
     try {
-      let result: UserProfileResult | ClothingSearchResult | OutfitRecommendationResult | VirtualTryOnResult | UserDecisionResult | SystemContextResult;
+      let result: UserProfileResult | ClothingSearchResult | OutfitRecommendationResult | VirtualTryOnResult | UserDecisionResult | SystemContextResult | Partial<SystemContextResult>;
       
       switch (call.name) {
         case "get_user_profile": {
@@ -391,7 +391,7 @@ export class AgentToolsService {
       where: { id: outfit.itemId },
     });
     if (!item) {throw new NotFoundException("Item not found");}
-    const garmentImageUrl = item.images[0];
+    const garmentImageUrl = item.images[0] || "";
     if (!garmentImageUrl) {
       throw new Error("Item does not have a usable image");
     }
@@ -465,7 +465,7 @@ export class AgentToolsService {
   }
 
   // Tool 6: Get System Context
-  async getSystemContext(input: GetSystemContextInput): Promise<SystemContextResult> {
+  async getSystemContext(input: GetSystemContextInput): Promise<SystemContextResult | Partial<SystemContextResult>> {
     const { refresh = false, section } = input;
     const fullContext = await this.systemContextService.getFullContext(refresh);
 
@@ -478,7 +478,7 @@ export class AgentToolsService {
         services: section === "services" ? fullContext.services : undefined,
         resources: section === "resources" ? fullContext.resources : undefined,
         projectFiles: section === "files" ? fullContext.projectFiles : undefined,
-      };
+      } as Partial<SystemContextResult>;
     }
     return fullContext;
   }

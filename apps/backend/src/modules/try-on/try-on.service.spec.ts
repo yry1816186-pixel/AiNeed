@@ -9,6 +9,9 @@ import { TryOnStatus } from "@prisma/client";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { REDIS_CLIENT } from "../../common/redis/redis.service";
 import { StorageService } from "../../common/storage/storage.service";
+import { StructuredLoggerService } from "../../common/logging/structured-logger.service";
+import { NotificationService } from "../../common/gateway/notification.service";
+import { QueueService } from "../queue/queue.service";
 
 import { TryOnOrchestratorService } from "./services/tryon-orchestrator.service";
 import { TryOnService } from "./try-on.service";
@@ -44,11 +47,39 @@ describe("TryOnService", () => {
 
   const mockRedis = {
     publish: jest.fn(),
+    get: jest.fn().mockResolvedValue(null),
+    set: jest.fn().mockResolvedValue("OK"),
+    del: jest.fn().mockResolvedValue(1),
   };
 
   const mockStorageService = {
     fetchRemoteAsset: jest.fn(),
     fetchRemoteAssetDataUri: jest.fn(),
+  };
+
+  const mockQueueService = {
+    addJob: jest.fn().mockResolvedValue({ id: "mock-job-id" }),
+    getJobStatus: jest.fn().mockResolvedValue(null),
+    getQueueStats: jest.fn().mockResolvedValue({ waiting: 0, active: 0, completed: 0, failed: 0 }),
+    addVirtualTryOnTask: jest.fn().mockResolvedValue({ taskId: "mock-task-id", status: "pending" }),
+    addStyleAnalysisTask: jest.fn().mockResolvedValue({ taskId: "mock-task-id", status: "pending" }),
+    addImageAnalysisTask: jest.fn().mockResolvedValue({ taskId: "mock-task-id", status: "pending" }),
+  };
+
+  const mockNotificationService = {
+    sendNotification: jest.fn().mockResolvedValue(undefined),
+    sendPushNotification: jest.fn().mockResolvedValue(undefined),
+    sendCustomNotification: jest.fn().mockResolvedValue(undefined),
+    notifyUser: jest.fn().mockResolvedValue(undefined),
+  };
+
+  const mockStructuredLoggerService = {
+    createChildLogger: jest.fn().mockReturnValue({
+      log: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn(),
+    }),
   };
 
   const mockPhoto = {
@@ -100,6 +131,18 @@ describe("TryOnService", () => {
         {
           provide: StorageService,
           useValue: mockStorageService,
+        },
+        {
+          provide: QueueService,
+          useValue: mockQueueService,
+        },
+        {
+          provide: NotificationService,
+          useValue: mockNotificationService,
+        },
+        {
+          provide: StructuredLoggerService,
+          useValue: mockStructuredLoggerService,
         },
       ],
     }).compile();
@@ -216,6 +259,7 @@ describe("TryOnService", () => {
     it("应该返回试衣状态", async () => {
       const tryOnWithRelations = {
         ...mockTryOn,
+        resultImageDataUri: null,
         photo: mockPhoto,
         item: mockClothingItem,
       };
@@ -372,8 +416,10 @@ describe("TryOnService", () => {
         "item-id",
       );
 
-      // Redis publish 应该被调用
-      expect(mockRedis.publish).toHaveBeenCalled();
+      // 验证队列任务被添加
+      expect(mockQueueService.addVirtualTryOnTask).toHaveBeenCalled();
+      // 验证通知被发送
+      expect(mockNotificationService.sendCustomNotification).toHaveBeenCalled();
     });
   });
 
@@ -397,6 +443,7 @@ describe("TryOnService", () => {
     it("应该拒绝图片数组为 null 的服装", async () => {
       const itemWithNullImages = {
         ...mockClothingItem,
+        mainImage: null,
         images: null,
       };
 

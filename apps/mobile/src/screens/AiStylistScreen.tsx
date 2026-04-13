@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState, memo, useMemo } from 'react';
+﻿import React, { useCallback, useEffect, useRef, useState, memo, useMemo } from 'react';
 import {
   View,
   Text,
@@ -495,7 +495,7 @@ export const AiStylistScreen: React.FC = () => {
 
   // 使用 getItemLayout 优化 FlatList 性能
   const getItemLayout = useCallback(
-    (_data: readonly ChatMessage[] | null, index: number) => ({
+    (_data: any, index: number) => ({
       length: MESSAGE_ITEM_HEIGHT,
       offset: MESSAGE_ITEM_HEIGHT * index,
       index,

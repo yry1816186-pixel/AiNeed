@@ -7,17 +7,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { Public } from '../auth/decorators/public.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CodeRagService } from './code-rag.service';
 import { CodeRagSearchDto, CodeRagFileContextDto } from './dto/code-rag.dto';
 
 @ApiTags('code-rag')
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('code-rag')
 export class CodeRagController {
   constructor(private readonly codeRagService: CodeRagService) {}
 
-  @Public()
   @Get('status')
   @ApiOperation({
     summary: 'Check code index status',
@@ -29,7 +29,6 @@ export class CodeRagController {
     return this.codeRagService.getIndexStatus();
   }
 
-  @Public()
   @Get('summary')
   @ApiOperation({
     summary: 'Get project code summary',
@@ -41,7 +40,6 @@ export class CodeRagController {
     return this.codeRagService.getProjectSummary();
   }
 
-  @Public()
   @Post('search')
   @ApiOperation({
     summary: 'Search codebase semantically',
@@ -77,7 +75,6 @@ export class CodeRagController {
     return results;
   }
 
-  @Public()
   @Get('search')
   @ApiOperation({
     summary: 'Quick search (GET)',
@@ -104,7 +101,6 @@ export class CodeRagController {
     return results;
   }
 
-  @Public()
   @Post('file-context')
   @ApiOperation({
     summary: 'Get file context',
@@ -115,7 +111,6 @@ export class CodeRagController {
     return this.codeRagService.getFileContext(dto.filePath);
   }
 
-  @Public()
   @Get('context-for-ai')
   @ApiOperation({
     summary: 'Get formatted context for Cloud AI',
@@ -140,7 +135,7 @@ export class CodeRagController {
 
     return {
       project_info: {
-        name: 'AiNeed',
+        name: '寻裳',
         type: 'Full-stack AI Fashion Platform',
         tech_stack: {
           backend: 'NestJS 11.x + TypeScript + Prisma + PostgreSQL',

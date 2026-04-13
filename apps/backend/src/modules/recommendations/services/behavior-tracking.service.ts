@@ -2,6 +2,7 @@ import {
   Injectable,
   Logger,
 } from "@nestjs/common";
+import { BehaviorEventType } from "@prisma/client";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
 
@@ -68,7 +69,7 @@ export class BehaviorTrackingService {
           data: {
             userId,
             sessionId: context.recommendationId || "rec",
-            eventType: "INTERACTION" as any,
+            eventType: "click" as BehaviorEventType,
             category: "recommendation",
             action,
             targetType: "clothing",
@@ -86,9 +87,8 @@ export class BehaviorTrackingService {
   }
 
   async trackBatch(inputs: TrackBehaviorInput[]): Promise<void> {
-    for (const input of inputs) {
-      await this.track(input);
-    }
+    // 批量并行追踪行为，避免串行 N+1
+    await Promise.all(inputs.map((input) => this.track(input)));
   }
 
   async getUserBehaviorSummary(
@@ -121,7 +121,7 @@ export class BehaviorTrackingService {
         id: true,
         category: true,
         tags: true,
-        color: true,
+        colors: true,
       },
     });
 
@@ -148,8 +148,10 @@ export class BehaviorTrackingService {
           }
         }
 
-        if (item.color) {
-          colorPrefs[item.color] = (colorPrefs[item.color] || 0) + weight;
+        if (item.colors && Array.isArray(item.colors)) {
+          for (const c of item.colors) {
+            colorPrefs[c] = (colorPrefs[c] || 0) + weight;
+          }
         }
       }
 
@@ -216,13 +218,13 @@ export class BehaviorTrackingService {
 
       const clothing = await this.prisma.clothingItem.findUnique({
         where: { id: clothingId },
-        select: { category: true, tags: true, color: true },
+        select: { category: true, tags: true, colors: true },
       });
 
       if (!clothing) return;
 
       const category = clothing.category as string;
-      const color = clothing.color || "";
+      const color = clothing.colors?.[0] || "";
       const tags = (clothing.tags as string[]) || [];
 
       const multi = redis.multi();

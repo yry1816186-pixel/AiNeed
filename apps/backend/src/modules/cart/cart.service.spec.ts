@@ -9,6 +9,8 @@ describe("CartService", () => {
   let service: CartService;
   let prisma: PrismaService;
 
+  const decimal = (n: number) => ({ toNumber: () => n });
+
   const mockPrismaService = {
     cartItem: {
       findMany: jest.fn(),
@@ -129,7 +131,7 @@ describe("CartService", () => {
         isActive: true,
         colors: ["black"],
         sizes: ["M"],
-        price: 100,
+        price: decimal(100),
         images: ["image1.jpg"],
         brand: null,
       });
@@ -140,7 +142,22 @@ describe("CartService", () => {
       mockPrismaService.cartItem.update.mockResolvedValue({
         id: "cart-1",
         quantity: 2,
-        item: { id: itemId },
+        item: {
+          id: itemId,
+          name: "Test Item",
+          description: null,
+          category: "tops",
+          colors: ["black"],
+          sizes: ["M"],
+          price: decimal(100),
+          originalPrice: null,
+          currency: "CNY",
+          images: ["image1.jpg"],
+          tags: [],
+          viewCount: 0,
+          likeCount: 0,
+          brand: null,
+        },
       });
 
       const result = await service.addItem(userId, itemId, "black", "M", 1);
@@ -154,7 +171,7 @@ describe("CartService", () => {
         isActive: true,
         colors: ["black"],
         sizes: ["M"],
-        price: 100,
+        price: decimal(100),
         images: ["image1.jpg"],
         brand: null,
       });
@@ -166,7 +183,22 @@ describe("CartService", () => {
         size: "M",
         quantity: 1,
         selected: true,
-        item: { id: itemId },
+        item: {
+          id: itemId,
+          name: "Test Item",
+          description: null,
+          category: "tops",
+          colors: ["black"],
+          sizes: ["M"],
+          price: decimal(100),
+          originalPrice: null,
+          currency: "CNY",
+          images: ["image1.jpg"],
+          tags: [],
+          viewCount: 0,
+          likeCount: 0,
+          brand: null,
+        },
       });
 
       const result = await service.addItem(userId, itemId, "black", "M", 1);
@@ -201,7 +233,22 @@ describe("CartService", () => {
       mockPrismaService.cartItem.update.mockResolvedValue({
         id: "cart-1",
         quantity: 2,
-        item: {},
+        item: {
+          id: "item-1",
+          name: "Test Item",
+          description: null,
+          category: "tops",
+          colors: ["black"],
+          sizes: ["M"],
+          price: decimal(100),
+          originalPrice: null,
+          currency: "CNY",
+          images: ["image1.jpg"],
+          tags: [],
+          viewCount: 0,
+          likeCount: 0,
+          brand: null,
+        },
       });
 
       const result = await service.updateItem("user-1", "cart-1", {
@@ -218,7 +265,22 @@ describe("CartService", () => {
       mockPrismaService.cartItem.update.mockResolvedValue({
         id: "cart-1",
         selected: false,
-        item: {},
+        item: {
+          id: "item-1",
+          name: "Test Item",
+          description: null,
+          category: "tops",
+          colors: ["black"],
+          sizes: ["M"],
+          price: decimal(100),
+          originalPrice: null,
+          currency: "CNY",
+          images: ["image1.jpg"],
+          tags: [],
+          viewCount: 0,
+          likeCount: 0,
+          brand: null,
+        },
       });
 
       const result = await service.updateItem("user-1", "cart-1", {

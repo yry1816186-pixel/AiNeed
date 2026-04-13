@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   tagText: {
     fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.bold as any,
+    fontWeight: typography.fontWeight.bold,
     color: '#FFFFFF',
   },
   favoriteButton: {
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold as any,
+    fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[900],
     textAlign: 'center',
     marginBottom: 4,

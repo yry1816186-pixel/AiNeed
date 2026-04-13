@@ -1,0 +1,264 @@
+﻿# ============================================================
+# xuno 数据库与存储告警规则
+# 基于 postgres-exporter、redis-exporter、node-exporter 指标
+#
+# 数据层架构:
+#   - PostgreSQL 16: 主数据库 (stylemind-postgres, 4GB 内存限制)
+#   - Redis 7: 缓存 + 队列 (stylemind-redis, 2GB 内存限制)
+#   - MinIO: 对象存储 (stylemind-minio, 2GB 内存限制)
+#   - Qdrant: 向量数据库 (stylemind-qdrant, 4GB 内存限制)
+# ============================================================
+
+groups:
+  # ----------------------------------------------------------
+  # PostgreSQL 告警
+  # 基于 postgres-exporter 指标
+  # 关键指标:
+  #   - pg_stat_activity_count (连接数)
+  #   - pg_stat_database_* (事务/查询统计)
+  #   - pg_settings_max_connections (最大连接数)
+  #   - pg_replication_lag (复制延迟)
+  #   - pg_stat_database_deadlocks (死锁)
+  # ----------------------------------------------------------
+  - name: database.postgresql.alerts
+    rules:
+      # PostgreSQL 活跃连接数超过最大连接数的 80%
+      # 触发条件: 活跃连接 / max_connections > 80%
+      # 影响: 新连接被拒绝，服务不可用
+      - alert: PostgreSQLConnectionPoolNearExhaustion
+        expr: |
+          (
+            pg_stat_activity_count{state="active"}
+            /
+            pg_settings_max_connections
+          ) > 0.80
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+          service: stylemind-postgres
+          category: database
+        annotations:
+          summary: "PostgreSQL 连接数接近上限"
+          description: >-
+            PostgreSQL 活跃连接数已达 max_connections 的 {{ $value | humanizePercentage }}，
+            超过 80% 阈值，持续 5 分钟。
+            当前活跃连接: {{ printf `pg_stat_activity_count{state="active"}` | query | first | value | humanize }}，
+            最大连接数: {{ printf `pg_settings_max_connections` | query | first | value | humanize }}。
+            可能原因: 连接泄漏、慢查询占用连接、并发请求激增。
+            请检查 pg_stat_activity 中的长时间运行查询。
+          runbook_url: "https://wiki.xuno.internal/runbooks/postgres-connection-exhaustion"
+
+      # PostgreSQL 慢查询: P99 查询延迟超过 1 秒
+      # 触发条件: 查询延迟 P99 > 1s
+      # 影响: 请求响应变慢，连接池被占用
+      # 注意: 使用 pg_stat_statements 的 mean_exec_time 作为代理指标
+      - alert: PostgreSQLSlowQuery
+        expr: |
+          pg_stat_statements_mean_exec_seconds > 1
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+          service: stylemind-postgres
+          category: database
+        annotations:
+          summary: "PostgreSQL 检测到慢查询"
+          description: >-
+            PostgreSQL 检测到平均查询执行时间超过 1 秒，
+            当前值: {{ $value | humanizeDuration }}。
+            查询 ID: {{ $labels.queryid }}。
+            请使用 EXPLAIN ANALYZE 分析该查询的执行计划，
+            检查是否缺少索引或存在全表扫描。
+          runbook_url: "https://wiki.xuno.internal/runbooks/postgres-slow-query"
+
+      # PostgreSQL 磁盘使用率超过 85%
+      # 触发条件: 数据库磁盘使用 > 85%
+      # 影响: 写入性能下降，可能导致磁盘满导致服务中断
+      - alert: PostgreSQLDiskUsageHigh
+        expr: |
+          (
+            pg_database_size_bytes{datname="stylemind"}
+            /
+            node_filesystem_size_bytes{mountpoint="/var/lib/postgresql/data"}
+          ) > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+          service: stylemind-postgres
+          category: storage
+        annotations:
+          summary: "PostgreSQL 磁盘使用率过高"
+          description: >-
+            PostgreSQL 数据库 (stylemind) 磁盘使用率已达 {{ $value | humanizePercentage }}，
+            超过 85% 阈值，持续 10 分钟。
+            数据库大小: {{ printf `pg_database_size_bytes{datname="stylemind"}` | query | first | value | humanize1024 }}B。
+            请检查是否需要: 清理旧数据、执行 VACUUM、扩展磁盘容量。
+          runbook_url: "https://wiki.xuno.internal/runbooks/postgres-disk-usage-high"
+
+      # PostgreSQL 复制延迟超过 30 秒
+      # 触发条件: pg_replication_lag > 30s
+      # 影响: 从库数据不一致，读取到过期数据
+      # 注意: 仅在配置了流复制的生产环境中适用
+      - alert: PostgreSQLReplicationLag
+        expr: |
+          pg_replication_lag > 30
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+          service: stylemind-postgres
+          category: replication
+        annotations:
+          summary: "PostgreSQL 复制延迟过高"
+          description: >-
+            PostgreSQL 复制延迟已达 {{ $value | humanizeDuration }}，
+            超过 30 秒阈值，持续 5 分钟。
+            从库数据可能不一致，读取请求可能返回过期数据。
+            可能原因: 主库写入压力大、网络延迟、从库性能不足。
+            请检查网络连通性和从库 I/O 状态。
+          runbook_url: "https://wiki.xuno.internal/runbooks/postgres-replication-lag"
+
+      # PostgreSQL 检测到死锁
+      # 触发条件: 5 分钟内死锁数 > 0
+      # 影响: 事务回滚，数据写入失败
+      - alert: PostgreSQLDeadlockDetected
+        expr: |
+          increase(pg_stat_database_deadlocks{datname="stylemind"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+          team: platform
+          service: stylemind-postgres
+          category: database
+        annotations:
+          summary: "PostgreSQL 检测到死锁"
+          description: >-
+            PostgreSQL 在过去 5 分钟内检测到 {{ $value }} 次死锁。
+            死锁会导致事务回滚，影响数据写入。
+            请检查应用层的事务逻辑，确保按一致顺序获取锁。
+            使用 pg_locks 视图排查当前锁等待情况。
+          runbook_url: "https://wiki.xuno.internal/runbooks/postgres-deadlock"
+
+      # PostgreSQL 事务率异常低 (低于 10/min)
+      # 触发条件: 事务率 < 10/min，且非维护窗口
+      # 影响: 可能表示应用无法连接数据库或请求量异常下降
+      - alert: PostgreSQLTransactionRateLow
+        expr: |
+          (
+            rate(pg_stat_database_xact_commit{datname="stylemind"}[5m])
+            +
+            rate(pg_stat_database_xact_rollback{datname="stylemind"}[5m])
+          ) * 60 < 10
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+          service: stylemind-postgres
+          category: database
+        annotations:
+          summary: "PostgreSQL 事务率异常低"
+          description: >-
+            PostgreSQL 事务率已降至 {{ $value | humanize }} 次/分钟，
+            低于 10 次/分钟阈值，持续 10 分钟。
+            可能原因: 应用连接失败、流量异常下降、数据库不可达。
+            请检查后端服务连接状态和数据库健康检查。
+          runbook_url: "https://wiki.xuno.internal/runbooks/postgres-transaction-rate-low"
+
+  # ----------------------------------------------------------
+  # Redis 告警
+  # 基于 redis-exporter 指标
+  # 关键指标:
+  #   - redis_memory_used_bytes / redis_memory_max_bytes
+  #   - redis_connected_clients
+  #   - redis_rejected_connections_total
+  #   - redis_keyspace_hits_total / redis_keyspace_misses_total
+  # ----------------------------------------------------------
+  - name: database.redis.alerts
+    rules:
+      # Redis 内存使用率超过 80% 的 maxmemory
+      # 触发条件: used_memory / maxmemory > 80%
+      # 影响: 触发 key 淘汰策略，缓存命中率下降
+      - alert: RedisMemoryUsageHigh
+        expr: |
+          (
+            redis_memory_used_bytes
+            /
+            redis_memory_max_bytes
+          ) > 0.80
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+          service: stylemind-redis
+          category: cache
+        annotations:
+          summary: "Redis 内存使用率过高"
+          description: >-
+            Redis 内存使用率已达 {{ $value | humanizePercentage }}，
+            超过 80% 阈值，持续 5 分钟。
+            当前内存使用: {{ printf `redis_memory_used_bytes` | query | first | value | humanize1024 }}B，
+            最大内存限制: {{ printf `redis_memory_max_bytes` | query | first | value | humanize1024 }}B。
+            Redis 配置限制 2GB。超过 maxmemory 将触发淘汰策略。
+            请检查大 key 和过期策略配置。
+          runbook_url: "https://wiki.xuno.internal/runbooks/redis-memory-usage-high"
+
+      # Redis 拒绝连接数 > 0
+      # 触发条件: redis_rejected_connections_total 增量 > 0
+      # 影响: 新连接被拒绝，服务不可用
+      - alert: RedisConnectionRejected
+        expr: |
+          increase(redis_rejected_connections_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+          service: stylemind-redis
+          category: cache
+        annotations:
+          summary: "Redis 拒绝了新的连接请求"
+          description: >-
+            Redis 在过去 5 分钟内拒绝了 {{ $value }} 个连接请求。
+            通常原因: 已达到 maxclients 限制。
+            当前连接数: {{ printf `redis_connected_clients` | query | first | value | humanize }}。
+            请检查客户端连接泄漏或增加 maxclients 配置。
+          runbook_url: "https://wiki.xuno.internal/runbooks/redis-connection-rejected"
+
+  # ----------------------------------------------------------
+  # MinIO 对象存储告警
+  # 基于 MinIO Server 的 Prometheus 指标端点
+  # 关键指标:
+  #   - minio_cluster_disk_free_bytes / minio_cluster_disk_total_bytes
+  #   - minio_s3_requests_total
+  #   - minio_s3_errors_total
+  # ----------------------------------------------------------
+  - name: database.minio.alerts
+    rules:
+      # MinIO 磁盘使用率超过 85%
+      # 触发条件: 磁盘使用率 > 85%
+      # 影响: 图片/文件上传失败，核心业务中断
+      - alert: MinIODiskUsageHigh
+        expr: |
+          (
+            1 - (
+              minio_cluster_disk_free_bytes
+              /
+              minio_cluster_disk_total_bytes
+            )
+          ) > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+          service: stylemind-minio
+          category: storage
+        annotations:
+          summary: "MinIO 磁盘使用率过高"
+          description: >-
+            MinIO 磁盘使用率已达 {{ $value | humanizePercentage }}，
+            超过 85% 阈值，持续 10 分钟。
+            MinIO 存储用户上传图片、试衣效果图等核心数据。
+            磁盘满将导致图片上传和试衣功能完全不可用。
+            请清理过期文件或扩展存储容量。
+          runbook_url: "https://wiki.xuno.internal/runbooks/minio-disk-usage-high"

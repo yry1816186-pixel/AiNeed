@@ -1,4 +1,4 @@
-# AiNeed APK 编译指南
+﻿# xuno APK 编译指南
 
 ## 📋 编译前准备
 
@@ -36,7 +36,7 @@ eas login
 
 #### 3. 配置项目
 ```bash
-cd C:/AiNeed/apps/mobile
+cd C:/xuno/apps/mobile
 eas build:configure
 ```
 
@@ -60,20 +60,20 @@ eas build --platform android --profile production
 
 #### 1. 安装依赖
 ```bash
-cd C:/AiNeed/apps/mobile
+cd C:/xuno/apps/mobile
 npm install
 ```
 
 #### 2. 使用Android Studio编译（推荐）
 1. 打开 Android Studio
 2. 选择 `File → Open`
-3. 选择路径：`C:/AiNeed/apps/mobile/android`
+3. 选择路径：`C:/xuno/apps/mobile/android`
 4. 等待Gradle Sync完成
 5. 菜单：`Build → Build Bundle(s) / APK(s) → Build APK(s)`
 
 #### 3. 使用命令行编译
 ```bash
-cd C:/AiNeed/apps/mobile/android
+cd C:/xuno/apps/mobile/android
 
 # Windows
 gradlew.bat assembleRelease
@@ -84,7 +84,7 @@ gradlew.bat assembleRelease
 
 #### 4. APK位置
 ```
-C:/AiNeed/apps/mobile/android/app/build/outputs/apk/release/app-release.apk
+C:/xuno/apps/mobile/android/app/build/outputs/apk/release/app-release.apk
 ```
 
 ---
@@ -92,7 +92,7 @@ C:/AiNeed/apps/mobile/android/app/build/outputs/apk/release/app-release.apk
 ## 📱 方法3：使用项目编译脚本
 
 ```bash
-cd C:/AiNeed
+cd C:/xuno
 compile-apk.bat
 ```
 
@@ -106,7 +106,7 @@ compile-apk.bat
 adb devices
 
 # 安装APK
-adb install C:/AiNeed/apps/mobile/android/app/build/outputs/apk/release/app-release.apk
+adb install C:/xuno/apps/mobile/android/app/build/outputs/apk/release/app-release.apk
 ```
 
 ### 安装到真机
@@ -122,7 +122,7 @@ adb install C:/AiNeed/apps/mobile/android/app/build/outputs/apk/release/app-rele
 ### 问题1：Gradle编译失败
 ```bash
 # 清理构建缓存
-cd C:/AiNeed/apps/mobile/android
+cd C:/xuno/apps/mobile/android
 gradlew.bat clean
 
 # 重新编译
@@ -139,7 +139,7 @@ gradlew.bat assembleRelease
 ```
 
 ### 问题3：内存不足
-编辑 `C:/AiNeed/apps/mobile/android/gradle.properties`：
+编辑 `C:/xuno/apps/mobile/android/gradle.properties`：
 ```properties
 org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m
 ```

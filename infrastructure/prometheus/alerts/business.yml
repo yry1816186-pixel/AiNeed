@@ -1,0 +1,207 @@
+# ============================================================
+# 寻裳 业务告警规则
+# 基于业务指标监控核心转化漏斗和用户行�?#
+# 业务约束 (来源: CONTEXT.md):
+#   CC-02: MVP 全免�? Phase 5 后引入付�?#   CC-04: 每用户每�?AI 造型�?10 次、虚拟试�?3 �?#
+# 核心转化漏斗:
+#   注册 -> 创建画像 -> AI 造型师对�?-> 虚拟试衣 -> 推荐点击 -> 下单
+#
+# 关键指标来源:
+#   - user_registrations_total (labels: source)
+#   - style_profiles_created_total
+#   - ai_stylist_conversations_total
+#   - try_on_requests_total, try_on_completed_total
+#   - payments_initiated_total, payments_completed_total, payments_failed_total (labels: method, reason)
+#   - orders_created_total (labels: status)
+#   - recommendations_served_total, recommendations_clicked_total (labels: type)
+#   - subscriptions_created_total (labels: plan)
+# ============================================================
+
+groups:
+  # ----------------------------------------------------------
+  # 用户注册与画像告�?  # 覆盖: 注册转化率、画像完成率
+  # ----------------------------------------------------------
+  - name: business.onboarding.alerts
+    rules:
+      # 注册完成率低�?30%，持�?1 小时
+      # 触发条件: 注册成功 / 注册开�?< 30%
+      # 影响: 用户获取效率低，获客成本�?      # 注意: 如果没有注册开始指标，使用注册速率异常低作为替�?      - alert: RegistrationConversionLow
+        expr: |
+          (
+            sum(rate(user_registrations_total[1h]))
+            /
+            (sum(rate(user_registrations_total[1h])) + sum(rate(user_registrations_failed_total[1h])))
+          ) < 0.30
+        for: 1h
+        labels:
+          severity: warning
+          team: product
+          service: stylemind-backend
+          category: business
+        annotations:
+          summary: "用户注册完成率过�?
+          description: >-
+            用户注册完成率已降至 {{ $value | humanizePercentage }}�?            低于 30% 阈值，持续 1 小时�?            当前注册速率: {{ printf `sum(rate(user_registrations_total[1h]))` | query | first | value | humanize }} �?秒�?            可能原因: 注册流程体验差、验证码发送失败、第三方登录异常�?            请检查注册流程各环节的转化漏斗和错误日志�?          runbook_url: "https://wiki.xuno.app/runbooks/registration-conversion-low"
+
+      # 用户画像完成率低�?40%，持�?1 小时
+      # 触发条件: style_profiles_created / user_registrations < 40%
+      # 影响: 用户画像不完整导致推荐质量差，影响后续转�?      - alert: UserProfileCompletionLow
+        expr: |
+          (
+            sum(rate(style_profiles_created_total[1h]))
+            /
+            sum(rate(user_registrations_total[1h]))
+          ) < 0.40
+        for: 1h
+        labels:
+          severity: warning
+          team: product
+          service: stylemind-backend
+          category: business
+        annotations:
+          summary: "用户画像完成率过�?
+          description: >-
+            用户画像完成率已降至 {{ $value | humanizePercentage }}�?            低于 40% 阈值，持续 1 小时�?            大量注册用户未完成画像填写，将导�?AI 推荐质量下降�?            可能原因: 画像填写流程过长、引导不够明确、用户流失�?            建议优化画像填写体验，减少必填项或增加渐进式填写引导�?          runbook_url: "https://wiki.xuno.app/runbooks/user-profile-completion-low"
+
+  # ----------------------------------------------------------
+  # AI 功能使用告警
+  # 覆盖: AI 造型师完成率、虚拟试衣完成率
+  # 业务约束: CC-04 每用户每�?AI 造型�?10 次、虚拟试�?3 �?  # ----------------------------------------------------------
+  - name: business.ai.alerts
+    rules:
+      # AI 造型师完成率低于 80%，持�?30 分钟
+      # 触发条件: 完成的对�?/ 发起的对�?< 80%
+      # 影响: 核心功能体验差，用户无法获得穿搭建议
+      - alert: AICompletionRateLow
+        expr: |
+          (
+            sum(rate(ai_stylist_conversations_total{status="completed"}[30m]))
+            /
+            sum(rate(ai_stylist_conversations_total[30m]))
+          ) < 0.80
+        for: 30m
+        labels:
+          severity: warning
+          team: product
+          service: stylemind-ai
+          category: business
+        annotations:
+          summary: "AI 造型师对话完成率过低"
+          description: >-
+            AI 造型师对话完成率已降�?{{ $value | humanizePercentage }}�?            低于 80% 阈值，持续 30 分钟�?            大量用户发起对话后未完成，可能是 AI 响应质量差或延迟过高�?            根据 CC-04，每用户每日限制 10 次，低完成率意味着用户浪费了宝贵配额�?            请检�?AI 服务延迟和响应质量�?          runbook_url: "https://wiki.xuno.app/runbooks/ai-completion-rate-low"
+
+      # 虚拟试衣完成率低�?70%，持�?30 分钟
+      # 触发条件: try_on_completed / try_on_requests < 70%
+      # 影响: 核心体验受损，用户无法看到穿搭效�?      - alert: TryOnCompletionRateLow
+        expr: |
+          (
+            sum(rate(try_on_completed_total[30m]))
+            /
+            sum(rate(try_on_requests_total[30m]))
+          ) < 0.70
+        for: 30m
+        labels:
+          severity: warning
+          team: product
+          service: stylemind-catvton
+          category: business
+        annotations:
+          summary: "虚拟试衣完成率过�?
+          description: >-
+            虚拟试衣完成率已降至 {{ $value | humanizePercentage }}�?            低于 70% 阈值，持续 30 分钟�?            根据 CC-04，每用户每日限制 3 次试衣，低完成率严重影响用户体验�?            可能原因: CatVTON 推理失败、GPU 资源不足、图片处理异常�?            请检查试衣错误类型分布和 GPU 状态�?          runbook_url: "https://wiki.xuno.app/runbooks/tryon-completion-rate-low"
+
+  # ----------------------------------------------------------
+  # 交易与订单告�?  # 覆盖: 支付成功率、订单失败率
+  # 业务约束: CC-02 MVP 全免�? Phase 5 后引入付�?  # 注意: 当前阶段 (MVP) 支付相关告警为预留，Phase 5 后激�?  # ----------------------------------------------------------
+  - name: business.transaction.alerts
+    rules:
+      # 支付成功率低�?95%，持�?30 分钟
+      # 触发条件: payments_completed / payments_initiated < 95%
+      # 影响: 收入损失，用户支付体验差
+      # 注意: Phase 5 后生效，MVP 阶段此告警可能无数据
+      - alert: PaymentSuccessRateLow
+        expr: |
+          (
+            sum(rate(payments_completed_total[30m]))
+            /
+            sum(rate(payments_initiated_total[30m]))
+          ) < 0.95
+        for: 30m
+        labels:
+          severity: critical
+          team: product
+          service: stylemind-backend
+          category: business
+        annotations:
+          summary: "支付成功率过�?
+          description: >-
+            支付成功率已降至 {{ $value | humanizePercentage }}�?            低于 95% 阈值，持续 30 分钟�?            当前支付失败原因分布: 请查�?payments_failed_total �?reason 分组�?            可能原因: 支付渠道异常、金额校验失败、网络超时�?            支付是核心商业指标，请立即排查并联系支付服务商�?          runbook_url: "https://wiki.xuno.app/runbooks/payment-success-rate-low"
+
+      # 订单失败率超�?10%，持�?30 分钟
+      # 触发条件: orders{status="failed"} / orders_total > 10%
+      # 影响: 用户下单失败，收入损�?      - alert: OrderFailureRateHigh
+        expr: |
+          (
+            sum(rate(orders_created_total{status="failed"}[30m]))
+            /
+            sum(rate(orders_created_total[30m]))
+          ) > 0.10
+        for: 30m
+        labels:
+          severity: warning
+          team: product
+          service: stylemind-backend
+          category: business
+        annotations:
+          summary: "订单失败率过�?
+          description: >-
+            订单失败率已�?{{ $value | humanizePercentage }}�?            超过 10% 阈值，持续 30 分钟�?            可能原因: 库存不足、支付失败、商品信息异常�?            请检查订单失败的具体原因分布�?          runbook_url: "https://wiki.xuno.app/runbooks/order-failure-rate-high"
+
+  # ----------------------------------------------------------
+  # 推荐与用户活跃度告警
+  # 覆盖: 推荐点击率、用户活跃度下降
+  # ----------------------------------------------------------
+  - name: business.engagement.alerts
+    rules:
+      # 推荐点击率低�?5%，持�?1 小时
+      # 触发条件: recommendations_clicked / recommendations_served < 5%
+      # 影响: 推荐质量差，无法有效引导用户消费
+      - alert: RecommendationClickThroughLow
+        expr: |
+          (
+            sum(rate(recommendations_clicked_total[1h]))
+            /
+            sum(rate(recommendations_served_total[1h]))
+          ) < 0.05
+        for: 1h
+        labels:
+          severity: warning
+          team: product
+          service: stylemind-backend
+          category: business
+        annotations:
+          summary: "推荐点击率过�?
+          description: >-
+            推荐点击率已降至 {{ $value | humanizePercentage }}�?            低于 5% 阈值，持续 1 小时�?            推荐类型: {{ $labels.type }}�?            低点击率意味着推荐内容与用户需求不匹配�?            可能原因: 画像数据不足、推荐算法偏差、展示位置不佳�?            请检查推荐算法效果和用户画像完整度�?          runbook_url: "https://wiki.xuno.app/runbooks/recommendation-ctr-low"
+
+      # 活跃用户数相比昨日同一时段下降超过 50%
+      # 触发条件: 当前活跃用户 / 昨日同时段活跃用�?< 50%
+      # 影响: 可能存在严重的服务故障或外部因素影响
+      # 注意: 使用 5 分钟活跃用户数进行对�?      - alert: UserEngagementDrop
+        expr: |
+          (
+            sum(xuno_active_users_5m)
+            /
+            sum(xuno_active_users_5m offset 1d)
+          ) < 0.50
+        for: 30m
+        labels:
+          severity: critical
+          team: product
+          service: stylemind-backend
+          category: business
+        annotations:
+          summary: "用户活跃度异常下�?
+          description: >-
+            当前活跃用户数相比昨日同一时段下降�?{{ $value | humanizePercentage }}�?            降幅超过 50%，持�?30 分钟�?            当前活跃用户: {{ printf `sum(xuno_active_users_5m)` | query | first | value | humanize }}�?            昨日同时�? {{ printf `sum(xuno_active_users_5m offset 1d)` | query | first | value | humanize }}�?            可能原因: 核心服务宕机、DNS 解析异常、App 版本更新导致崩溃�?            请立即检查所有核心服务的健康状态和错误率�?          runbook_url: "https://wiki.xuno.app/runbooks/user-engagement-drop"
+

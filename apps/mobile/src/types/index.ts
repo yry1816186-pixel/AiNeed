@@ -1,4 +1,4 @@
-// Re-export shared types from @aineed/types
+﻿// Re-export shared types from @xuno/types
 export type {
   User,
   UserProfile,
@@ -31,7 +31,7 @@ export type {
   ApiResponse,
   ApiError,
   PaginatedResponse,
-} from '@aineed/types';
+} from '@xuno/types';
 
 export {
   Gender as SharedGender,
@@ -48,7 +48,7 @@ export {
   CustomizationType as SharedCustomizationType,
   CustomizationStatus as SharedCustomizationStatus,
   PriceRange as SharedPriceRange,
-} from '@aineed/types';
+} from '@xuno/types';
 
 // Mobile-specific types (not in shared package)
 export * from "./clothing";

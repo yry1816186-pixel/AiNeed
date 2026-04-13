@@ -36,7 +36,7 @@ export const SUPPORTED_LANGUAGES: Language[] = [
   { code: "ko-KR", name: "Korean", nativeName: "한국어", direction: "ltr" },
 ];
 
-const LANGUAGE_STORAGE_KEY = "@aineed/language";
+const LANGUAGE_STORAGE_KEY = "@xuno/language";
 
 interface TranslationStrings {
   common: {

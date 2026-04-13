@@ -1,0 +1,230 @@
+﻿# ============================================================
+# xuno 后端服务告警规则
+# 基于 NestJS 后端 Prometheus 指标
+# 关键指标来源:
+#   - http_requests_total (labels: method, route, status_code)
+#   - http_request_duration_seconds (labels: method, route, status_code)
+#   - db_connections_active, db_connections_idle
+#   - db_query_duration_seconds (labels: query_type, table)
+#   - redis_connections_active
+#   - redis_cache_hits_total, redis_cache_misses_total
+# ============================================================
+
+groups:
+  # ----------------------------------------------------------
+  # HTTP 请求相关告警
+  # 覆盖: 5xx 错误率、4xx 错误率、P99 延迟
+  # ----------------------------------------------------------
+  - name: backend.http.alerts
+    rules:
+      # 5xx 错误率超过 5%，持续 5 分钟
+      # 触发条件: 5xx 请求 / 总请求 > 5%
+      # 影响: 用户请求失败，可能存在服务端 Bug 或下游服务异常
+      - alert: BackendErrorRateHigh
+        expr: |
+          (
+            sum(rate(http_requests_total{status_code=~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          team: backend
+          service: stylemind-backend
+          category: http
+        annotations:
+          summary: "后端 5xx 错误率过高"
+          description: >-
+            后端服务 5xx 错误率已达 {{ $value | humanizePercentage }}，
+            超过 5% 阈值，持续 5 分钟。
+            当前 5xx 请求速率: {{ printf `sum(rate(http_requests_total{status_code=~"5.."}[5m]))` | query | first | value | humanize }} req/s。
+            请检查后端日志排查具体错误原因。
+          runbook_url: "https://wiki.xuno.internal/runbooks/backend-error-rate-high"
+
+      # 4xx 错误率超过 20%，持续 5 分钟
+      # 触发条件: 4xx 请求 / 总请求 > 20%
+      # 影响: 大量客户端请求被拒绝，可能存在 API 误用或客户端 Bug
+      - alert: BackendHighErrorRate4xx
+        expr: |
+          (
+            sum(rate(http_requests_total{status_code=~"4.."}[5m]))
+            /
+            sum(rate(http_requests_total[5m]))
+          ) > 0.20
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+          service: stylemind-backend
+          category: http
+        annotations:
+          summary: "后端 4xx 错误率偏高"
+          description: >-
+            后端服务 4xx 错误率已达 {{ $value | humanizePercentage }}，
+            超过 20% 阈值，持续 5 分钟。
+            可能原因: 客户端请求参数错误、认证失败、路由配置问题。
+            请检查具体 4xx 状态码分布以定位问题。
+          runbook_url: "https://wiki.xuno.internal/runbooks/backend-4xx-rate-high"
+
+      # P99 延迟超过 3 秒，持续 5 分钟
+      # 触发条件: http_request_duration_seconds P99 > 3s
+      # 影响: 用户体验严重下降，可能导致请求超时
+      - alert: BackendP99LatencyHigh
+        expr: |
+          histogram_quantile(0.99,
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (le)
+          ) > 3
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+          service: stylemind-backend
+          category: http
+        annotations:
+          summary: "后端 P99 延迟过高"
+          description: >-
+            后端服务 P99 延迟已达 {{ $value | humanizeDuration }}，
+            超过 3 秒阈值，持续 5 分钟。
+            可能原因: 数据库慢查询、下游服务延迟、内存压力。
+            请检查慢查询日志和资源使用情况。
+          runbook_url: "https://wiki.xuno.internal/runbooks/backend-p99-latency-high"
+
+  # ----------------------------------------------------------
+  # 容器资源相关告警
+  # 基于 cAdvisor 指标
+  # 覆盖: CPU 使用率、内存使用率
+  # ----------------------------------------------------------
+  - name: backend.resource.alerts
+    rules:
+      # 后端容器 CPU 使用率超过 80%，持续 5 分钟
+      # 触发条件: 容器 CPU 使用率 > 80%
+      # 影响: 请求处理变慢，可能触发 OOM Killer
+      - alert: BackendHighCPU
+        expr: |
+          (
+            sum(rate(container_cpu_usage_seconds_total{name="stylemind-backend"}[5m]))
+            /
+            sum(container_spec_cpu_quota{name="stylemind-backend"} / container_spec_cpu_period{name="stylemind-backend"})
+          ) > 0.80
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+          service: stylemind-backend
+          category: resource
+        annotations:
+          summary: "后端容器 CPU 使用率过高"
+          description: >-
+            后端容器 (stylemind-backend) CPU 使用率已达 {{ $value | humanizePercentage }}，
+            超过 80% 阈值，持续 5 分钟。
+            当前 CPU 限制: 2 核。建议检查是否有 CPU 密集型操作或考虑扩容。
+          runbook_url: "https://wiki.xuno.internal/runbooks/backend-high-cpu"
+
+      # 后端容器内存使用率超过 85% 限制，持续 5 分钟
+      # 触发条件: 容器内存使用 / 内存限制 > 85%
+      # 影响: 可能触发 OOM Killer 导致服务重启
+      - alert: BackendMemoryHigh
+        expr: |
+          (
+            container_memory_working_set_bytes{name="stylemind-backend"}
+            /
+            container_spec_memory_limit_bytes{name="stylemind-backend"}
+          ) > 0.85
+        for: 5m
+        labels:
+          severity: critical
+          team: backend
+          service: stylemind-backend
+          category: resource
+        annotations:
+          summary: "后端容器内存使用率过高"
+          description: >-
+            后端容器 (stylemind-backend) 内存使用率已达 {{ $value | humanizePercentage }}，
+            超过 85% 阈值，持续 5 分钟。
+            当前内存限制: 2GB。存在 OOM 风险，请检查内存泄漏或考虑增加内存限制。
+          runbook_url: "https://wiki.xuno.internal/runbooks/backend-memory-high"
+
+  # ----------------------------------------------------------
+  # 数据库连接池相关告警
+  # 基于 Prisma 连接池指标
+  # 覆盖: 连接池耗尽、慢查询
+  # ----------------------------------------------------------
+  - name: backend.database.alerts
+    rules:
+      # 数据库活跃连接数超过最大连接数的 80%
+      # 触发条件: db_connections_active > 16 (假设最大 20)
+      # 影响: 新请求无法获取数据库连接，导致请求超时
+      - alert: DatabaseConnectionPoolExhausted
+        expr: db_connections_active > 16
+        for: 5m
+        labels:
+          severity: critical
+          team: backend
+          service: stylemind-backend
+          category: database
+        annotations:
+          summary: "数据库连接池接近耗尽"
+          description: >-
+            数据库活跃连接数已达 {{ $value }}，超过最大连接数 (20) 的 80% 阈值 (16)，
+            持续 5 分钟。
+            当前空闲连接数: {{ printf `db_connections_idle` | query | first | value | humanize }}。
+            可能原因: 慢查询占用连接、连接泄漏、并发请求激增。
+            请检查慢查询日志并确认连接是否正确释放。
+          runbook_url: "https://wiki.xuno.internal/runbooks/db-connection-pool-exhausted"
+
+      # 数据库查询 P99 延迟超过 1 秒，持续 5 分钟
+      # 触发条件: db_query_duration_seconds P99 > 1s
+      # 影响: 请求响应变慢，可能拖垮连接池
+      - alert: SlowQueryDetected
+        expr: |
+          histogram_quantile(0.99,
+            sum(rate(db_query_duration_seconds_bucket[5m])) by (le, query_type, table)
+          ) > 1
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+          service: stylemind-backend
+          category: database
+        annotations:
+          summary: "检测到数据库慢查询"
+          description: >-
+            数据库查询 P99 延迟已达 {{ $value | humanizeDuration }}，
+            超过 1 秒阈值，持续 5 分钟。
+            涉及查询类型: {{ $labels.query_type }}，表: {{ $labels.table }}。
+            请检查该表的索引使用情况和查询计划。
+          runbook_url: "https://wiki.xuno.internal/runbooks/slow-query-detected"
+
+  # ----------------------------------------------------------
+  # Redis 缓存相关告警
+  # 基于 Redis 连接和缓存命中率指标
+  # 覆盖: 缓存命中率低
+  # ----------------------------------------------------------
+  - name: backend.redis.alerts
+    rules:
+      # Redis 缓存命中率低于 50%，持续 10 分钟
+      # 触发条件: cache_hits / (cache_hits + cache_misses) < 50%
+      # 影响: 大量请求穿透到数据库，增加数据库压力
+      - alert: RedisCacheHitRateLow
+        expr: |
+          (
+            sum(rate(redis_cache_hits_total[10m]))
+            /
+            (sum(rate(redis_cache_hits_total[10m])) + sum(rate(redis_cache_misses_total[10m])))
+          ) < 0.50
+        for: 10m
+        labels:
+          severity: warning
+          team: backend
+          service: stylemind-backend
+          category: cache
+        annotations:
+          summary: "Redis 缓存命中率过低"
+          description: >-
+            Redis 缓存命中率已降至 {{ $value | humanizePercentage }}，
+            低于 50% 阈值，持续 10 分钟。
+            大量请求穿透到数据库，可能导致数据库压力增大。
+            可能原因: 缓存键过期策略不当、缓存空间不足、热点数据未命中。
+            请检查 Redis 内存使用情况和缓存配置。
+          runbook_url: "https://wiki.xuno.internal/runbooks/redis-cache-hit-rate-low"

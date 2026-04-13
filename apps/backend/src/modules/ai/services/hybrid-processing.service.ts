@@ -66,6 +66,15 @@ export interface SegmentationResult {
   attributes: Record<string, unknown>;
 }
 
+/**
+ * API 返回的推荐商品项结构
+ */
+interface ApiRecommendationItem {
+  id: string;
+  score: number;
+  reasons?: string[];
+}
+
 export interface NetworkQuality {
   bandwidth: number;
   latency: number;
@@ -343,7 +352,7 @@ export class HybridProcessingService {
         if (response.data?.success) {
           return {
             type: "recommendation",
-            items: response.data.data.items.map((item: any) => ({
+            items: response.data.data.items.map((item: ApiRecommendationItem) => ({
               itemId: item.id,
               score: item.score,
               reasons: item.reasons || [],
@@ -407,7 +416,7 @@ export class HybridProcessingService {
         if (response.data?.success) {
           return {
             type: "recommendation",
-            items: response.data.data.items.map((item: any) => ({
+            items: response.data.data.items.map((item: ApiRecommendationItem) => ({
               itemId: item.id,
               score: item.score,
               reasons: item.reasons || [],

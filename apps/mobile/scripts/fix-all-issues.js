@@ -316,7 +316,7 @@ ${indent1}}`;
 }
 
 console.log("=".repeat(60));
-console.log("AiNeed APK Build - Comprehensive Fix Script v3");
+console.log("寻裳 APK Build - Comprehensive Fix Script v3");
 console.log("=".repeat(60));
 console.log("");
 

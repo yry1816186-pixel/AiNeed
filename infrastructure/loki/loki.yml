@@ -1,0 +1,212 @@
+﻿# ============================================================
+# xuno 项目 Loki 日志聚合配置
+# 版本: Loki 2.9.x - Simple Scalable 模式（单实例部署）
+# 说明: 用于集中收集、存储和查询所有服务的日志
+# ============================================================
+
+# 认证配置 - 内部网络无需认证
+auth_enabled: false
+
+# ----------------------------------------------------------
+# 服务器配置
+# ----------------------------------------------------------
+server:
+  # HTTP API 监听地址，供 Promtail 推送日志和 Grafana 查询
+  http_listen_address: 0.0.0.0
+  http_listen_port: 3100
+
+  # GRPC 监听地址，用于集群内部通信（单实例仍需配置）
+  grpc_listen_address: 0.0.0.0
+  grpc_listen_port: 9096
+
+  # 日志级别
+  log_level: info
+
+  # HTTP/GRPC 超时设置
+  http_server_read_timeout: 30s
+  http_server_write_timeout: 30s
+  grpc_server_max_recv_msg_size: 104857600   # 100MB
+  grpc_server_max_send_msg_size: 104857600   # 100MB
+
+# ----------------------------------------------------------
+# 分布式模式配置（Simple Scalable）
+# 当前单实例运行，所有角色分配给同一节点
+# ----------------------------------------------------------
+memberlist:
+  # 集群节点列表，单实例仅自身
+  join_members:
+    - loki:7946
+
+  # 死节点检测超时
+  dead_peer_reclaim_interval: 30s
+
+  # 集群通信端口
+  bind_port: 7946
+
+  # Gossip 协议配置
+  gossip_interval: 1s
+  gossip_nodes: 3
+  retry_join_backoff: 1s
+  retry_join_backoff_max: 5m
+
+# ----------------------------------------------------------
+# 入口分发器配置
+# ----------------------------------------------------------
+ingester:
+  # 日志写入后的生命周期配置
+  lifecycler:
+    address: 127.0.0.1
+    ring:
+      # 一致性哈希环配置
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+
+    # 心跳超时
+    heartbeat_timeout: 60s
+
+  # Chunk 刷新间隔 - 每 1 分钟将内存中的日志块写入存储
+  chunk_flush_period: 1m
+
+  # Chunk 空闲超时 - 超过此时间未写入则刷新
+  chunk_idle_period: 5m
+
+  # Chunk 最大保留时间
+  chunk_retain_period: 30s
+
+  # Chunk 最大大小（默认 1500 行）
+  chunk_target_size: 1572864   # 1.5MB
+
+  # WAL（预写日志）配置 - 确保写入不丢失
+  wal:
+    enabled: true
+    dir: /loki/wal
+    # WAL 检查点间隔
+    checkpoint_duration: 5m
+    # WAL 恢复模式
+    recover_on_startup: true
+
+# ----------------------------------------------------------
+# Schema 配置 - 定义日志索引和存储方式
+# 使用 v13 schema，boltdb-shipper 索引 + filesystem 存储
+# ----------------------------------------------------------
+schema_config:
+  configs:
+    - from: 2024-01-01
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h   # 每天一个索引文件
+
+# ----------------------------------------------------------
+# 存储配置 - 本地文件系统存储
+# ----------------------------------------------------------
+storage_config:
+  # BoltDB Shipper 索引配置
+  boltdb_shipper:
+    active_index_directory: /loki/boltdb-shipper-active
+    cache_location: /loki/boltdb-shipper-cache
+    # 共享存储索引同步间隔
+    shared_store: filesystem
+    # 索引缓存过期时间
+    cache_ttl: 24h
+
+  # 文件系统存储配置
+  filesystem:
+    directory: /loki/storage
+
+# ----------------------------------------------------------
+# 压缩器配置 - 负责日志保留和过期清理
+# ----------------------------------------------------------
+compactor:
+  working_directory: /loki/compactor
+  compaction_interval: 10m
+  # 日志保留策略
+  retention_enabled: true
+  retention_delete_delay: 2h
+  retention_delete_worker_count: 150
+  delete_request_store: filesystem
+
+# ----------------------------------------------------------
+# 限制配置 - 防止日志洪泛和资源耗尽
+# ----------------------------------------------------------
+limits_config:
+  # 查询限制
+  max_query_length: 721h                    # 最大查询时间范围 30 天
+  max_entries_limit_per_query: 5000         # 单次查询最大返回条目数
+  max_query_series: 10000                   # 单次查询最大序列数
+  max_query_parallelism: 32                 # 查询并行度
+
+  # 摄入限制
+  ingestion_rate_strategy: global           # 全局限流
+  ingestion_rate_mb: 10                     # 每秒最大摄入速率 10MB
+  ingestion_burst_size_mb: 20              # 摄入突发上限 20MB
+  per_stream_rate_limit: 5MB               # 单流限速
+  per_stream_rate_limit_burst: 10MB        # 单流突发上限
+
+  # 日志行限制
+  max_line_size: 256KB                      # 单行日志最大大小
+  max_line_size_truncate: true              # 超过最大行大小时截断而非拒绝
+
+  # Cardinality 限制 - 防止高基数标签导致索引膨胀
+  max_streams_per_user: 0                   # 0 表示不限制（单租户场景）
+  max_global_streams_per_user: 0
+
+  # 拒绝旧日志（超过 30 天的日志不接收）
+  reject_old_samples: true
+  reject_old_samples_max_age: 30d
+
+  # 创建时间窗口
+  creation_grace_period: 10m
+
+# ----------------------------------------------------------
+# 查询前端配置 - 查询调度和缓存
+# ----------------------------------------------------------
+query_range:
+  # 查询结果缓存
+  results_cache:
+    cache:
+      enable_fifocache: true
+      fifocache:
+        max_size_items: 1024
+        validity: 24h
+
+  # 查询分片
+  parallelise_shardable_queries: true
+  cache_results: true
+
+# ----------------------------------------------------------
+# 运行时配置
+# ----------------------------------------------------------
+runtime_config:
+  file: /etc/loki/runtime.yaml
+
+# ----------------------------------------------------------
+# 分析器配置 - 自动日志模式识别
+# ----------------------------------------------------------
+analytics:
+  reporting_enabled: false
+
+# ----------------------------------------------------------
+# 日志保留全局配置
+# ----------------------------------------------------------
+table_manager:
+  retention_deletes_enabled: true
+  retention_period: 360h   # 15 天保留期（360 小时）
+
+# ----------------------------------------------------------
+# 成员列表配置（覆盖默认）
+# ----------------------------------------------------------
+common:
+  path_prefix: /loki
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+  replication_factor: 1
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: inmemory

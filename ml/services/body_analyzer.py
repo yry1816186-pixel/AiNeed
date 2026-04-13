@@ -1,9 +1,9 @@
-"""
+﻿"""
 增强版体型分析与服装适配模块
 基于MediaPipe Pose提取33个身体关键点，计算身体比例，推断体型分类
 提供服装适配建议算法，与推荐系统集成
 
-Author: AiNeed ML Team
+Author: xuno ML Team
 Version: 2.0.0
 """
 

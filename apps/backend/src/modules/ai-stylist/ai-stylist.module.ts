@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 
 import { CircuitBreakerModule } from "../../common/circuit-breaker";
 import { PrismaModule } from "../../common/prisma/prisma.module";
@@ -21,7 +21,7 @@ import { NlSlotExtractorService } from "./nl-slot-extractor.service";
 import { SystemContextService } from "./system-context.service";
 
 @Module({
-  imports: [RecommendationsModule, PhotosModule, AIModule, RedisModule, CircuitBreakerModule, PrismaModule],
+  imports: [forwardRef(() => RecommendationsModule), PhotosModule, AIModule, RedisModule, CircuitBreakerModule, PrismaModule],
   controllers: [AiStylistController],
   providers: [
     AiStylistService,

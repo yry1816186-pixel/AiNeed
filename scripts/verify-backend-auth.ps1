@@ -1,4 +1,4 @@
-param(
+﻿param(
   [int]$Port = 3010
 )
 
@@ -21,7 +21,7 @@ if (Test-Path $logPath) {
   Remove-Item $logPath -Force
 }
 
-$startCommand = "set PORT=$Port&& pnpm.cmd --filter @aineed/backend start > `"$logPath`" 2>&1"
+$startCommand = "set PORT=$Port&& pnpm.cmd --filter @xuno/backend start > `"$logPath`" 2>&1"
 $process = Start-Process -FilePath "cmd.exe" -ArgumentList "/c", $startCommand -WorkingDirectory $repoRoot -PassThru
 
 function Stop-BackendProcess {
@@ -96,7 +96,7 @@ try {
     Start-Sleep -Seconds 2
     if (Test-Path $logPath) {
       $logContent = Get-Content $logPath -Raw
-      if ($logContent -match "Nest application successfully started" -or $logContent -match "AiNeed API running on:") {
+      if ($logContent -match "Nest application successfully started" -or $logContent -match "xuno API running on:") {
         $started = $true
         break
       }

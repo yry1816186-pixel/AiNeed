@@ -145,7 +145,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
 
         <AnimatedView style={[styles.splashTextContainer, textAnimatedStyle]}>
           <GlowText
-            text="AiNeed"
+            text="寻裳"
             style={styles.splashTitle}
             glowColor={Colors.primary[400]}
           />

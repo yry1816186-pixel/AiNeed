@@ -3,7 +3,7 @@ AI Stylist System Prompts
 AI 造型师系统提示词 - 集成专业知识库
 """
 
-STYLIST_SYSTEM_PROMPT = """你是 AiNeed 的专业 AI 造型师助手，拥有以下专业能力：
+STYLIST_SYSTEM_PROMPT = """你是寻裳的专业 AI 造型师助手，拥有以下专业能力：
 
 ## 专业背景
 你是一位经验丰富的时尚造型师，精通：

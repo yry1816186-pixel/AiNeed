@@ -1,10 +1,10 @@
-# @aineed/types
+﻿# @xuno/types
 
-Shared TypeScript type definitions for the AiNeed platform.
+Shared TypeScript type definitions for the xuno platform.
 
 ## Overview
 
-This package contains all shared interfaces, enums, and types used across the AiNeed ecosystem:
+This package contains all shared interfaces, enums, and types used across the xuno ecosystem:
 
 - **Frontend** (Next.js application)
 - **Backend** (NestJS API server)
@@ -32,7 +32,7 @@ import {
   ClothingItem,
   ApiResponse,
   PaginatedResponse
-} from '@aineed/types';
+} from '@xuno/types';
 
 // Use types in your code
 const user: User = {
@@ -137,7 +137,7 @@ The build outputs:
 ### User Profile
 
 ```typescript
-import { UserProfile, BodyType, SkinTone, ColorSeason } from '@aineed/types';
+import { UserProfile, BodyType, SkinTone, ColorSeason } from '@xuno/types';
 
 const profile: UserProfile = {
   id: 'profile_123',
@@ -154,7 +154,7 @@ const profile: UserProfile = {
 ### Clothing Item
 
 ```typescript
-import { ClothingItem, ClothingCategory, StyleCategory } from '@aineed/types';
+import { ClothingItem, ClothingCategory, StyleCategory } from '@xuno/types';
 
 const item: ClothingItem = {
   id: 'item_001',
@@ -178,7 +178,7 @@ const item: ClothingItem = {
 ### API Response
 
 ```typescript
-import { ApiResponse, PaginatedResponse, ClothingItem } from '@aineed/types';
+import { ApiResponse, PaginatedResponse, ClothingItem } from '@xuno/types';
 
 // Success response
 const successResponse: ApiResponse<User> = {

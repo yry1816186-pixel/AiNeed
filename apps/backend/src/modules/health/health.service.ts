@@ -14,6 +14,7 @@ export interface HealthStatus {
     database: ComponentHealth;
     redis: ComponentHealth;
     storage: ComponentHealth;
+    mlService: ComponentHealth;
   };
 }
 
@@ -37,13 +38,14 @@ export class HealthService {
   ) {}
 
   async checkHealth(): Promise<HealthStatus> {
-    const [database, redis, storage] = await Promise.all([
+    const [database, redis, storage, mlService] = await Promise.all([
       this.checkDatabase(),
       this.checkRedis(),
       this.checkStorage(),
+      this.checkMLService(),
     ]);
 
-    const allChecks = [database, redis, storage];
+    const allChecks = [database, redis, storage, mlService];
     const downCount = allChecks.filter((c) => c.status === "down").length;
     const upCount = allChecks.filter((c) => c.status === "up").length;
 
@@ -65,6 +67,7 @@ export class HealthService {
         database,
         redis,
         storage,
+        mlService,
       },
     };
   }
@@ -144,6 +147,50 @@ export class HealthService {
     }
   }
 
+  async checkMLService(): Promise<ComponentHealth> {
+    const start = Date.now();
+    const mlServiceUrl = this.configService.get<string>(
+      "ML_SERVICE_URL",
+      "http://localhost:8001",
+    );
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000);
+
+      const response = await fetch(`${mlServiceUrl}/health`, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (!response.ok) {
+        return {
+          status: "down",
+          latency: Date.now() - start,
+          message: `ML service returned status ${response.status}`,
+          details: { url: mlServiceUrl },
+        };
+      }
+
+      return {
+        status: "up",
+        latency: Date.now() - start,
+        message: "ML service is healthy",
+        details: { url: mlServiceUrl },
+      };
+    } catch (error) {
+      this.logger.error(`ML service health check failed: ${error}`);
+      return {
+        status: "down",
+        latency: Date.now() - start,
+        message: "ML service connection failed",
+        details: {
+          url: mlServiceUrl,
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+      };
+    }
+  }
+
   getLiveness(): { status: string; timestamp: string } {
     return {
       status: "alive",
@@ -155,16 +202,18 @@ export class HealthService {
     ready: boolean;
     checks: Record<string, boolean>;
   }> {
-    const [db, redis, storage] = await Promise.all([
+    const [db, redis, storage, mlService] = await Promise.all([
       this.checkDatabase(),
       this.checkRedis(),
       this.checkStorage(),
+      this.checkMLService(),
     ]);
 
     const checks = {
       database: db.status === "up",
       redis: redis.status === "up",
       storage: storage.status === "up",
+      mlService: mlService.status === "up",
     };
 
     const coreReady = checks.database && checks.redis && checks.storage;

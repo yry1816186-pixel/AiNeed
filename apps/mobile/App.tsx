@@ -26,13 +26,14 @@ import { authApi } from './src/services/api/auth.api';
 import { analytics } from './src/services/analytics';
 
 // ✅ 首屏必需组件 - 同步导入（6个 Tab + Login/Register）
-import { HomeScreen } from './src/screens/HomeScreen';
+import HomeScreen from './src/screens/home/HomeScreen';
 import { SearchScreen } from './src/screens/SearchScreen';
 import { CartScreen } from './src/screens/CartScreen';
 import { WardrobeScreen } from './src/screens/WardrobeScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { HeartScreen } from './src/screens/HeartScreen';
 import { LoginScreen } from './src/screens/LoginScreen';
+import { PhoneLoginScreen } from './src/screens/PhoneLoginScreen';
 import { RegisterScreen } from './src/screens/RegisterScreen';
 
 // 🚀 非首屏组件 - 懒加载（按需加载，减少初始 bundle ~40-60%）
@@ -42,7 +43,7 @@ const OrdersScreen = lazy(() => import('./src/screens/OrdersScreen'));
 const OrderDetailScreen = lazy(() => import('./src/screens/OrderDetailScreen'));
 const NotificationsScreen = lazy(() => import('./src/screens/NotificationsScreen'));
 const NotificationSettingsScreen = lazy(() => import('./src/screens/NotificationSettingsScreen'));
-const FavoritesScreen = lazy(() => import('./src/screens/FavoritesScreen'));
+const FavoritesScreen = lazy(() => import('./src/screens/FavoritesScreen').then(m => ({ default: m.FavoritesScreen })));
 const AiStylistScreen = lazy(() => import('./src/screens/AiStylistScreenV2'));
 const ClothingDetailScreen = lazy(() => import('./src/screens/ClothingDetailScreen'));
 const OutfitDetailScreen = lazy(() => import('./src/screens/OutfitDetailScreen'));
@@ -51,7 +52,7 @@ const RecommendationDetailScreen = lazy(() => import('./src/screens/Recommendati
 const CommunityScreen = lazy(() => import('./src/screens/CommunityScreen'));
 const VirtualTryOnScreen = lazy(() => import('./src/screens/VirtualTryOnScreen'));
 const AICompanionProvider = lazy(() => import('./src/components/aicompanion/AICompanionProvider').then(m => ({ default: m.AICompanionProvider })));
-const OnboardingScreen = lazy(() => import('./src/screens/OnboardingScreen'));
+const OnboardingScreen = lazy(() => import('./src/screens/onboarding/OnboardingWizard'));
 const CustomizationScreen = lazy(() => import('./src/screens/CustomizationScreen'));
 const SubscriptionScreen = lazy(() => import('./src/screens/SubscriptionScreen'));
 const LegalScreen = lazy(() => import('./src/screens/LegalScreen'));
@@ -76,7 +77,7 @@ const queryClient = new QueryClient({
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
-const APP_LINK_PREFIX = 'aineed://';
+const APP_LINK_PREFIX = 'xuno://';
 
 const DEV_TEST_ACCOUNT_CONFIG = {
   enabled: __DEV__,
@@ -210,7 +211,7 @@ function SplashScreen() {
       <View style={styles.logoContainer}>
         <Ionicons name="shirt-outline" size={48} color={theme.colors.surface} />
       </View>
-      <Text style={styles.brandName}>AiNeed</Text>
+      <Text style={styles.brandName}>寻裳</Text>
       <ActivityIndicator
         size="large"
         color={theme.colors.primary}
@@ -530,6 +531,7 @@ export default function App() {
                 >
                   <Stack.Screen name="MainTabs" component={MainTabs} />
                   <Stack.Screen name="Login" component={LoginScreen} />
+                  <Stack.Screen name="PhoneLogin" component={PhoneLoginScreen} />
                   <Stack.Screen name="Register" component={RegisterScreen} />
 
                   {/* 🚀 懒加载页面 - 使用 Suspense 包裹 */}

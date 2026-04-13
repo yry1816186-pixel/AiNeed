@@ -1,4 +1,4 @@
-import { Module, Global } from "@nestjs/common";
+﻿import { Module, Global } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Pool } from "pg";
 
@@ -18,7 +18,7 @@ export interface DatabasePoolConfig {
       useFactory: (configService: ConfigService) => {
         const databaseUrl = configService.get<string>(
           "DATABASE_URL",
-          "postgresql://localhost:5432/aineed",
+          "postgresql://localhost:5432/xuno",
         );
 
         const poolConfig: DatabasePoolConfig = {

@@ -1,0 +1,287 @@
+﻿# ============================================================
+# AlertManager 配置 - xuno 可观测性告警路由与通知
+# ============================================================
+# 功能说明：
+#   1. 接收 Prometheus 发送的告警
+#   2. 按团队/严重级别进行分组、抑制、静默
+#   3. 通过邮件、钉钉、Webhook、PagerDuty 等渠道通知
+# ============================================================
+
+# ----------------------------------------------------------
+# 全局配置 - 默认参数与通知通道凭证
+# ----------------------------------------------------------
+global:
+  # 告警自动恢复超时：若告警在 5 分钟内未收到更新，视为已恢复
+  resolve_timeout: 5m
+
+  # SMTP 邮件服务配置（生产环境请替换为真实值）
+  smtp_smarthost: 'smtp.example.com:587'
+  smtp_from: 'alertmanager@xuno.com'
+  smtp_auth_username: 'alertmanager@xuno.com'
+  smtp_auth_password: '${SMTP_AUTH_PASSWORD}'
+  smtp_require_tls: true
+
+  # Webhook 请求的全局 HTTP 配置
+  http_config:
+    # 请求超时
+    timeout: 10s
+    # TLS 跳过验证（仅开发环境使用，生产环境必须配置 CA）
+    tls_config:
+      insecure_skip_verify: false
+
+# ----------------------------------------------------------
+# 告警路由树 - 按标签匹配决定通知策略
+# ----------------------------------------------------------
+# 路由匹配规则从上到下依次匹配，第一个匹配的路由生效
+# 子路由继承父路由的配置，可覆盖
+route:
+  # 默认接收器：所有未匹配的告警发送到邮件
+  receiver: 'email-notifications'
+
+  # 默认分组依据：按告警名称和集群分组
+  group_by: ['alertname', 'cluster']
+
+  # 首次告警等待时间：收到第一个告警后等待 30 秒，
+  # 若同组内有新告警则合并发送，避免频繁通知
+  group_wait: 30s
+
+  # 同组告警间隔：已发送过通知的组，新告警合并间隔 5 分钟
+  group_interval: 5m
+
+  # 重复通知间隔：同一告警 4 小时后仍未恢复则重复通知
+  repeat_interval: 4h
+
+  # 子路由定义
+  routes:
+    # --------------------------------------------------
+    # 1. 严重告警路由 (severity=critical)
+    #    最高优先级，立即通知，同时发送 Webhook 和邮件
+    # --------------------------------------------------
+    - matchers:
+        - severity = critical
+      receiver: 'critical-alerts'
+      group_by: ['alertname', 'cluster', 'namespace']
+      group_wait: 10s       # 严重告警仅等待 10 秒即发送
+      group_interval: 1m    # 同组 1 分钟合并一次
+      repeat_interval: 1h   # 1 小时后重复通知
+      # 严重告警同时发送邮件
+      routes:
+        - receiver: 'email-notifications'
+          continue: true    # continue=true 表示继续匹配后续路由
+
+    # --------------------------------------------------
+    # 2. AI 服务告警路由 (team=ai)
+    #    AI 造型师、虚拟试衣、体型分析等服务异常
+    #    发送到钉钉 AI 团队群 + 邮件
+    # --------------------------------------------------
+    - matchers:
+        - team = ai
+      receiver: 'dingtalk-ai-team'
+      group_by: ['alertname', 'service']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 2h
+      routes:
+        - receiver: 'email-notifications'
+          continue: true
+
+    # --------------------------------------------------
+    # 3. 数据库告警路由 (team=database)
+    #    PostgreSQL/Redis/Qdrant 异常
+    #    发送到钉钉 DBA 团队群 + 邮件
+    # --------------------------------------------------
+    - matchers:
+        - team = database
+      receiver: 'dingtalk-db-team'
+      group_by: ['alertname', 'instance']
+      group_wait: 1m        # 数据库告警等待 1 分钟合并
+      group_interval: 10m   # 10 分钟合并一次
+      repeat_interval: 3h
+      routes:
+        - receiver: 'email-notifications'
+          continue: true
+
+    # --------------------------------------------------
+    # 4. 业务告警路由 (team=business)
+    #    订单、支付、用户转化等业务指标异常
+    #    仅发送邮件，低频通知
+    # --------------------------------------------------
+    - matchers:
+        - team = business
+      receiver: 'email-notifications'
+      group_by: ['alertname', 'business_line']
+      group_wait: 5m        # 业务告警等待 5 分钟合并
+      group_interval: 30m   # 30 分钟合并一次
+      repeat_interval: 12h  # 12 小时后才重复通知
+
+# ----------------------------------------------------------
+# 抑制规则 - 高优先级告警抑制低优先级告警
+# ----------------------------------------------------------
+inhibit_rules:
+  # 规则 1：同一告警名称下，critical 级别抑制 warning 级别
+  # 避免同一问题同时发送严重和警告通知
+  - source_matchers:
+      - severity = critical
+    target_matchers:
+      - severity = warning
+    equal: ['alertname', 'cluster', 'namespace']
+
+  # 规则 2：节点宕机时，抑制该节点上所有其他告警
+  # 节点不可用时，其上的服务告警无意义
+  - source_matchers:
+      - alertname = NodeDown
+    target_matchers:
+      - severity =~ "warning|info"
+    equal: ['instance']
+
+# ----------------------------------------------------------
+# 接收器定义 - 各通知渠道的具体配置
+# ----------------------------------------------------------
+receivers:
+  # --------------------------------------------------
+  # 1. 邮件通知 - 默认通知渠道
+  # --------------------------------------------------
+  - name: 'email-notifications'
+    email_configs:
+      - to: 'ops-team@xuno.com'
+        send_resolved: true    # 恢复时也发送邮件
+        headers:
+          Subject: '[xuno Alert] {{ .GroupLabels.alertname }} - {{ .Status | toUpper }}'
+        # HTML 邮件模板
+        html: |
+          <h2>xuno 告警通知</h2>
+          <p><strong>状态：</strong>{{ .Status | toUpper }}</p>
+          <p><strong>告警名称：</strong>{{ .GroupLabels.alertname }}</p>
+          {{ range .Alerts }}
+          <hr>
+          <p><strong>严重级别：</strong>{{ .Labels.severity }}</p>
+          <p><strong>摘要：</strong>{{ .Annotations.summary }}</p>
+          <p><strong>详情：</strong>{{ .Annotations.description }}</p>
+          <p><strong>触发时间：</strong>{{ .StartsAt.Format "2006-01-02 15:04:05" }}</p>
+          {{ if .EndsAt }}<p><strong>恢复时间：</strong>{{ .EndsAt.Format "2006-01-02 15:04:05" }}</p>{{ end }}
+          {{ end }}
+
+  # --------------------------------------------------
+  # 2. 严重告警通知 - Webhook + 邮件 + PagerDuty
+  # --------------------------------------------------
+  - name: 'critical-alerts'
+    # Webhook 通知（可对接企业内部告警平台）
+    webhook_configs:
+      - url: 'http://stylemind-backend:3001/api/v1/webhooks/alerts'
+        send_resolved: true
+        http_config:
+          timeout: 10s
+          authorization:
+            type: 'Bearer'
+            credentials: '${ALERT_WEBHOOK_TOKEN}'
+    # 同时发送邮件
+    email_configs:
+      - to: 'critical-alerts@xuno.com'
+        send_resolved: true
+        headers:
+          Subject: '[CRITICAL] xuno - {{ .GroupLabels.alertname }}'
+    # PagerDuty 集成（生产环境替换为真实 Service Key）
+    pagerduty_configs:
+      - service_key: '${PAGERDUTY_SERVICE_KEY}'
+        severity: '{{ .Labels.severity }}'
+        description: '{{ .GroupLabels.alertname }}: {{ .Annotations.summary }}'
+        details:
+          alertname: '{{ .GroupLabels.alertname }}'
+          severity: '{{ .Labels.severity }}'
+          team: '{{ .Labels.team }}'
+          description: '{{ .Annotations.description }}'
+
+  # --------------------------------------------------
+  # 3. 钉钉通知 - AI 团队
+  #    覆盖 AI 造型师、虚拟试衣、体型分析等服务告警
+  # --------------------------------------------------
+  - name: 'dingtalk-ai-team'
+    webhook_configs:
+      - url: '${DINGTALK_AI_WEBHOOK_URL}'
+        send_resolved: true
+        http_config:
+          timeout: 10s
+          headers:
+            Content-Type: 'application/json'
+        # 钉钉消息模板 - Markdown 格式
+        # 包含告警名称、状态、严重级别、摘要、详情、时间、仪表板链接
+        body: |
+          {
+            "msgtype": "markdown",
+            "markdown": {
+              "title": "xuno AI服务告警",
+              "text": "## xuno AI 服务告警\n\n" +
+                "**告警名称：** {{ .GroupLabels.alertname }}\n\n" +
+                "**状态：** {{ if eq .Status \"firing\" }}<font color=#FF0000>FIRING</font>{{ else }}<font color=#00FF00>RESOLVED</font>{{ end }}\n\n" +
+                "**严重级别：** {{ .CommonLabels.severity }}\n\n" +
+                "**摘要：** {{ .CommonAnnotations.summary }}\n\n" +
+                "**详情：** {{ .CommonAnnotations.description }}\n\n" +
+                "**触发时间：** {{ .StartsAt.Format \"2006-01-02 15:04:05\" }}\n\n" +
+                "{{ if eq .Status \"resolved\" }}**恢复时间：** {{ .EndsAt.Format \"2006-01-02 15:04:05\" }}\n\n{{ end }}" +
+                "**仪表板：** [Grafana](http://stylemind-grafana:3000/d/ai-overview)\n\n" +
+                "---\n" +
+                "{{ range .Alerts }}- {{ .Annotations.summary }}\n{{ end }}"
+            }
+          }
+
+  # --------------------------------------------------
+  # 4. 钉钉通知 - DBA 团队
+  #    覆盖 PostgreSQL、Redis、Qdrant 数据库告警
+  # --------------------------------------------------
+  - name: 'dingtalk-db-team'
+    webhook_configs:
+      - url: '${DINGTALK_DB_WEBHOOK_URL}'
+        send_resolved: true
+        http_config:
+          timeout: 10s
+          headers:
+            Content-Type: 'application/json'
+        body: |
+          {
+            "msgtype": "markdown",
+            "markdown": {
+              "title": "xuno 数据库告警",
+              "text": "## xuno 数据库告警\n\n" +
+                "**告警名称：** {{ .GroupLabels.alertname }}\n\n" +
+                "**状态：** {{ if eq .Status \"firing\" }}<font color=#FF0000>FIRING</font>{{ else }}<font color=#00FF00>RESOLVED</font>{{ end }}\n\n" +
+                "**严重级别：** {{ .CommonLabels.severity }}\n\n" +
+                "**摘要：** {{ .CommonAnnotations.summary }}\n\n" +
+                "**详情：** {{ .CommonAnnotations.description }}\n\n" +
+                "**触发时间：** {{ .StartsAt.Format \"2006-01-02 15:04:05\" }}\n\n" +
+                "{{ if eq .Status \"resolved\" }}**恢复时间：** {{ .EndsAt.Format \"2006-01-02 15:04:05\" }}\n\n{{ end }}" +
+                "**仪表板：** [Grafana](http://stylemind-grafana:3000/d/database-overview)\n\n" +
+                "---\n" +
+                "{{ range .Alerts }}- {{ .Annotations.summary }}\n{{ end }}"
+            }
+          }
+
+  # --------------------------------------------------
+  # 5. 钉钉通知 - 业务团队
+  #    覆盖订单、支付、用户转化等业务指标告警
+  # --------------------------------------------------
+  - name: 'dingtalk-business-team'
+    webhook_configs:
+      - url: '${DINGTALK_BUSINESS_WEBHOOK_URL}'
+        send_resolved: true
+        http_config:
+          timeout: 10s
+          headers:
+            Content-Type: 'application/json'
+        body: |
+          {
+            "msgtype": "markdown",
+            "markdown": {
+              "title": "xuno 业务告警",
+              "text": "## xuno 业务告警\n\n" +
+                "**告警名称：** {{ .GroupLabels.alertname }}\n\n" +
+                "**状态：** {{ if eq .Status \"firing\" }}<font color=#FF0000>FIRING</font>{{ else }}<font color=#00FF00>RESOLVED</font>{{ end }}\n\n" +
+                "**严重级别：** {{ .CommonLabels.severity }}\n\n" +
+                "**摘要：** {{ .CommonAnnotations.summary }}\n\n" +
+                "**详情：** {{ .CommonAnnotations.description }}\n\n" +
+                "**触发时间：** {{ .StartsAt.Format \"2006-01-02 15:04:05\" }}\n\n" +
+                "{{ if eq .Status \"resolved\" }}**恢复时间：** {{ .EndsAt.Format \"2006-01-02 15:04:05\" }}\n\n{{ end }}" +
+                "**仪表板：** [Grafana](http://stylemind-grafana:3000/d/business-overview)\n\n" +
+                "---\n" +
+                "{{ range .Alerts }}- {{ .Annotations.summary }}\n{{ end }}"
+            }
+          }

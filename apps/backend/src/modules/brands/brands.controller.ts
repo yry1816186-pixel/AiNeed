@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiQuery } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam } from "@nestjs/swagger";
 import { ClothingCategory, PriceRange } from "@prisma/client";
 
 import { BrandsService } from "./brands.service";
@@ -11,6 +11,7 @@ export class BrandsController {
 
   @Get()
   @ApiOperation({ summary: "获取所有品牌列表" })
+  @ApiResponse({ status: 200, description: "获取成功" })
   @ApiQuery({ name: "category", enum: ClothingCategory, required: false })
   @ApiQuery({ name: "priceRange", enum: PriceRange, required: false })
   @ApiQuery({ name: "page", type: Number, required: false })
@@ -31,6 +32,7 @@ export class BrandsController {
 
   @Get("featured")
   @ApiOperation({ summary: "获取推荐品牌" })
+  @ApiResponse({ status: 200, description: "获取成功" })
   @ApiQuery({ name: "limit", type: Number, required: false })
   async getFeaturedBrands(@Query("limit") limit?: string) {
     return this.brandsService.getFeaturedBrands(
@@ -40,18 +42,24 @@ export class BrandsController {
 
   @Get("price-ranges")
   @ApiOperation({ summary: "获取价格区间统计" })
+  @ApiResponse({ status: 200, description: "获取成功" })
   async getPriceRangeStats() {
     return this.brandsService.getPriceRangeStats();
   }
 
   @Get("category/:category")
   @ApiOperation({ summary: "按分类获取品牌" })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  @ApiParam({ name: "category", enum: ClothingCategory, description: "服装分类" })
   async getBrandsByCategory(@Param("category") category: ClothingCategory) {
     return this.brandsService.getBrandsByCategory(category);
   }
 
   @Get(":slug")
   @ApiOperation({ summary: "获取品牌详情" })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  @ApiResponse({ status: 404, description: "品牌不存在" })
+  @ApiParam({ name: "slug", description: "品牌标识" })
   async getBrandBySlug(@Param("slug") slug: string) {
     return this.brandsService.getBrandBySlug(slug);
   }

@@ -119,7 +119,7 @@ class OfflineCacheService {
 
     // 内存没有则从磁盘读取
     if (!entry) {
-      entry = await this.loadKeyToMemory(CACHE_KEYS.FULL_DEMO_DATA);
+      entry = (await this.loadKeyToMemory(CACHE_KEYS.FULL_DEMO_DATA)) ?? undefined;
     }
 
     if (!entry) return null;
@@ -169,7 +169,7 @@ class OfflineCacheService {
    * 检查 Demo 模式是否启用
    */
   async isDemoModeEnabled(): Promise<boolean> {
-    const raw = await AsyncStorage.getItem(CACHE_KEYS.DEMMO_MODE_ENABLED);
+    const raw = await AsyncStorage.getItem(CACHE_KEYS.DEMO_MODE_ENABLED);
     return raw === 'true';
   }
 
@@ -183,7 +183,7 @@ class OfflineCacheService {
       AsyncStorage.getAllKeys(),
     ]);
 
-    const demoKeys = keys.filter((k) => k.startsWith(OFFLINE_CACHE_PREFIX) && k !== CACHE_KEYS.DEMMO_MODE_ENABLED);
+    const demoKeys = keys.filter((k) => k.startsWith(OFFLINE_CACHE_PREFIX) && k !== CACHE_KEYS.DEMO_MODE_ENABLED);
 
     // 计算总缓存大小
     let totalSize = 0;

@@ -60,7 +60,7 @@ Declared values from `theme/tokens/spacing.ts` (all multiples of 4):
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| md | 6px | Input fields |
+| md | 6px | Input fields (deliberate exception -- smaller radius for text inputs to visually distinguish from buttons) |
 | lg | 8px | Secondary buttons |
 | xl | 12px | Primary buttons, input groups, CTA buttons |
 | 2xl | 16px | Large cards |
@@ -73,22 +73,37 @@ Exceptions: Button min-height 52px (from LoginScreen/RegisterScreen convention),
 
 ## Typography
 
-From `theme/tokens/typography.ts`. This project uses a rich type scale; the Phase 1 screens use these specific combinations:
+Consolidated to 4 sizes and 2 weights for Phase 1. The original codebase uses a richer scale; this contract establishes the canonical subset for all Phase 1 screens.
 
 | Role | Size | Weight | Line Height | Usage |
 |------|------|--------|-------------|-------|
-| Hero / Screen Title | 32px | 700 (bold) | 1.2 | Login "welcome back", onboarding step titles |
-| H2 / Section Title | 24px | 600 (semibold) | 32px | Quiz question titles, profile section titles |
-| H3 / Card Title | 20px | 600 (semibold) | 28px | Onboarding wizard step title, card headings |
-| H4 / Subheading | 18px | 600 (semibold) | 26px | Profile report section titles |
-| Body | 16px | 400 (regular) | 24px | Body text, input text, descriptions |
-| Body Small | 14px | 400 (regular) | 20px | Secondary text, quiz subtitles, labels |
-| Caption | 12px | 500 (medium) | 16px | Step counter, hints, metadata |
-| Overline | 10px | 700 (bold) | 14px | Category labels, extreme small text |
-| Button | 16px | 600 (semibold) | 24px | All CTA buttons, wide letter-spacing |
-| Label | 14px | 500 (medium) | 20px | Form labels, wide letter-spacing |
+| Caption | 12px | 400 (regular) | 16px | Step counters, hints, metadata, category labels, hex labels, overline-style text |
+| Body | 16px | 400 (regular) | 24px | Body text, input text, descriptions, secondary text, quiz subtitles, labels, form labels, occasion items, subtitle text |
+| Section Heading | 20px | 600 (semibold) | 28px | Card titles, section titles, onboarding step titles, profile report section titles, quiz question titles, user names on cards |
+| Primary Heading | 28px | 600 (semibold) | 34px | Screen titles, hero text, quiz result title, confidence score value |
 
-Font weights in use: 400 (regular), 500 (medium), 600 (semibold), 700 (bold). No other weights for Phase 1.
+**Weight rules:**
+- 400 (regular): all body text, captions, descriptions, metadata, input text, secondary content
+- 600 (semibold): all headings, CTA button text, selected/active labels, confidence values
+
+**Mapping from legacy sizes:**
+- 10px (overline) --> merged into 12px caption at weight 400
+- 12px (caption/step counter) --> kept as 12px, weight changed from 500 to 400
+- 13px (section label / confidence label) --> merged into 12px caption
+- 14px (body small / labels / register link / age pills / tag text) --> merged into 16px body at weight 400
+- 15px (occasion items / step subtitle) --> merged into 16px body at weight 400
+- 16px (body) --> kept as 16px body
+- 18px (H4 / profile section titles) --> merged into 20px section heading
+- 20px (H3 / card title) --> kept as 20px section heading
+- 22px (brand name) --> merged into 20px section heading at weight 600
+- 24px (H2 / quiz question title) --> merged into 20px section heading
+- 26px (basic info step title) --> merged into 28px primary heading
+- 32px (hero / screen title) --> consolidated to 28px primary heading
+
+**Special cases:**
+- Button text: 16px at weight 600 (semibold) -- same size as body but heavier weight to distinguish as interactive
+- Tag text: 16px at weight 400 (same as body) -- visual distinction comes from background color and pill shape
+- Confidence value: 28px at weight 600 (uses primary heading role)
 
 ---
 
@@ -103,7 +118,7 @@ From `theme/tokens/colors.ts` and `tailwind.config.js`. The design language uses
 | Dominant (60%) | #FAFAF8 (neutral-50) | Screen backgrounds, scroll areas | Backgrounds |
 | Secondary (30%) | #FFFFFF (neutral-white) | Cards, surfaces, modals, input backgrounds | Elevated surfaces |
 | Accent (10%) | #C67B5C (terracotta / primary-500) | CTA buttons, selected states, progress bars, links, brand elements | CTAs + selections |
-| Brand Gradient | #C67B5C to #B5A08C | Summary cards, hero sections | Decorative |
+| Brand Gradient | #C67B5C to #B5A08C | Summary cards, hero sections, poster accents | Decorative |
 
 ### Semantic Colors
 
@@ -154,8 +169,8 @@ Accent reserved for: CTA buttons (login, next step, submit quiz), selected state
 | Element | Specification |
 |---------|--------------|
 | Brand logo | 72x72 rounded-xl, terracotta background, white shirt icon |
-| Brand name | 22px bold, terracotta color, letter-spacing 1.2 |
-| Screen title | 32px bold, neutral-900 |
+| Brand name | 20px semibold, terracotta color, letter-spacing 1.2 |
+| Screen title | 28px semibold, neutral-900 |
 | Subtitle | 16px regular, neutral-600, mt-8 mb-32 |
 | Input group | Row, neutral-50 background, border-radius 12, px-16 py-14, icon + text input |
 | Input text | 16px regular, neutral-900 |
@@ -165,7 +180,7 @@ Accent reserved for: CTA buttons (login, next step, submit quiz), selected state
 | Divider | Row with lines + "or" text, neutral-200 lines |
 | WeChat button | #07C160 background, white icon + text 16px semibold, min-height 52 |
 | Phone login button | Transparent bg, terracotta border, terracotta text |
-| Register link | 14px, terracotta color, centered |
+| Register link | 16px regular, terracotta color, centered |
 
 **Copywriting:**
 - Title: "welcome back" / Subtitle: "log in to your account"
@@ -204,11 +219,11 @@ Accent reserved for: CTA buttons (login, next step, submit quiz), selected state
 |---------|--------------|
 | Progress track | 3px height, neutral-200, full width, rounded-full |
 | Progress fill | Terracotta, animated width with spring (damping 15, stiffness 120) |
-| Step counter | 12px medium, neutral-500, min-width 36 |
+| Step counter | 12px regular, neutral-500, min-width 36 |
 | Step title | 20px semibold, neutral-900 |
 | Step transitions | SlideInRight / SlideOutLeft via reanimated |
-| Back button | Row, arrow-back icon 20px + "previous step" 14px medium, neutral-600 |
-| Skip button | 14px medium, neutral-500 text |
+| Back button | Row, arrow-back icon 20px + "previous step" 16px regular, neutral-600 |
+| Skip button | 16px regular, neutral-500 text |
 | Next button | Terracotta bg, row, "next step" 16px semibold white + arrow-forward 18px, border-radius xl, min-height 52, brand shadow |
 | Disabled next | opacity 0.4 |
 | Footer padding | px-20, py-16, pb-24 (safe area) |
@@ -225,14 +240,14 @@ Accent reserved for: CTA buttons (login, next step, submit quiz), selected state
 
 | Element | Specification |
 |---------|--------------|
-| Step title | 26px bold, neutral-900, letter-spacing -0.5, line-height 34 |
-| Step subtitle | 15px regular, neutral-600, mt-8, line-height 22 |
-| Section label | 13px medium, neutral-600 + red asterisk (required) or "optional" tag |
-| Gender cards | Row, flex-1 each, neutral-50 bg, border-radius xl, py-16, centered icon 24px + label 14px medium |
+| Step title | 28px semibold, neutral-900, letter-spacing -0.5, line-height 34 |
+| Step subtitle | 16px regular, neutral-600, mt-8, line-height 24 |
+| Section label | 12px regular, neutral-600 + red asterisk (required) or "optional" tag |
+| Gender cards | Row, flex-1 each, neutral-50 bg, border-radius xl, py-16, centered icon 24px + label 16px regular |
 | Gender selected | Terracotta bg, white icon + text |
-| Age pills | Horizontal scroll, neutral-50 bg, rounded-full, px-20 py-12, 14px medium |
+| Age pills | Horizontal scroll, neutral-50 bg, rounded-full, px-20 py-12, 16px regular |
 | Age selected | Terracotta bg, white text |
-| Height/weight input | Row, flex-1 each, neutral-50 bg, border-radius lg, px-12, height 48, border neutral-200, unit suffix 14px neutral-500 |
+| Height/weight input | Row, flex-1 each, neutral-50 bg, border-radius lg, px-12, height 48, border neutral-200, unit suffix 16px neutral-500 |
 | Error text | 12px, error color, mt-8 |
 
 **Copywriting:**
@@ -279,14 +294,14 @@ Accent reserved for: CTA buttons (login, next step, submit quiz), selected state
 |---------|--------------|
 | Background | neutral-50 |
 | Quiz progress | Custom QuizProgress component, current step / total steps |
-| Question title | h3 style (24px semibold, neutral-900) |
-| Question subtitle | body style (16px regular, neutral-500) |
+| Question title | 20px semibold, neutral-900 |
+| Question subtitle | 16px regular, neutral-500 |
 | Image grid | 2 columns, row wrap, mx-(-8), each item 50% width px-8 mb-16 |
 | Image card | QuizImageCard, selectable, border highlight on selected |
 | Selected state | Terracotta border or ring |
 | Bottom bar | Row, white bg, border-top neutral-200, shadow md, safe area bottom padding |
-| Previous button | Flex-1, neutral-100 bg, neutral-700 text, height 48, border-radius lg |
-| Next button | Flex-1, primary-500 bg, white text, height 48, border-radius lg, ml-12 |
+| Previous button | Flex-1, neutral-100 bg, neutral-700 text 16px regular, height 48, border-radius lg |
+| Next button | Flex-1, primary-500 bg, white text 16px semibold, height 48, border-radius lg, ml-12 |
 | Disabled buttons | opacity 0.4 |
 | Last question CTA | "view results" instead of "next question" |
 | Loading | centered ActivityIndicator + "loading style test..." |
@@ -307,19 +322,19 @@ Accent reserved for: CTA buttons (login, next step, submit quiz), selected state
 |---------|--------------|
 | Background | theme.colors.background (neutral-50) |
 | Header confetti | 12 colored dots, absolute positioned, 60-70% opacity |
-| Title | 28px bold, neutral-900, centered, "your style profile" |
-| Subtitle | 14px regular, neutral-600, centered |
+| Title | 28px semibold, neutral-900, centered, "your style profile" |
+| Subtitle | 16px regular, neutral-600, centered |
 | Section titles | 16px semibold, neutral-900 |
-| Style tags | Row wrap, gap 8, each tag px-16 py-8, rounded-2xl, rotating colors (terracotta, sage, accent, rose, sky, emerald), white text 14px medium |
-| Color palette | Row wrap, gap 12, each swatch 40x40 circle + hex label 10px neutral-500 |
-| Occasion items | Row, gap 12, py-8 px-12, white bg, border, border-radius lg, icon 20px primary + text 15px |
+| Style tags | Row wrap, gap 8, each tag px-16 py-8, rounded-2xl, rotating colors (terracotta, sage, accent, rose, sky, emerald), white text 16px regular |
+| Color palette | Row wrap, gap 12, each swatch 40x40 circle + hex label 12px neutral-500 |
+| Occasion items | Row, gap 12, py-8 px-12, white bg, border, border-radius lg, icon 20px primary + text 16px regular |
 | Confidence circle | 120x120, 8px border ring, neutral-200 track, primary fill |
-| Confidence value | 32px bold, primary color |
+| Confidence value | 28px semibold, primary color |
 | Confidence unit | 16px semibold, primary |
-| Confidence label | 13px, neutral-600 |
+| Confidence label | 12px regular, neutral-600 |
 | Primary button | Terracotta bg, py-16, border-radius xl, "view full profile" 16px semibold white |
-| Outlined button | Row centered, py-16, border-radius xl, 1.5px terracotta border, share icon + "share" 16px semibold terracotta |
-| Retake button | py-12, centered, "retake test" 14px neutral-500 underline |
+| Outlined button | Row centered, py-16, border-radius xl, 1.5px terracotta border, share icon + "share my style profile" 16px semibold terracotta |
+| Retake button | py-12, centered, "retake test" 16px regular neutral-500 underline |
 | Animations | FadeInUp with staggered delays (0, 100, 200, 300, 400, 500ms) |
 
 **Copywriting:**
@@ -328,7 +343,7 @@ Accent reserved for: CTA buttons (login, next step, submit quiz), selected state
 - Sections: "style tags" / "color preferences" / "occasion preferences" / "match degree"
 - Confidence label: "style match confidence"
 - CTA: "view full profile"
-- Share: "share"
+- Share: "share my style profile"
 - Retake: "retake test"
 - Share message: "I completed the style test on AiNeed! My style tags: {tags joined}"
 
@@ -338,17 +353,17 @@ Accent reserved for: CTA buttons (login, next step, submit quiz), selected state
 
 | Element | Specification |
 |---------|--------------|
-| Header | Row, back chevron + "style profile report" 18px bold + spacer, white bg, bottom hairline border, xs shadow |
-| Summary card | LinearGradient coralRose (#FF6B6B to #FF8E8E), border-radius 24, p-24, lg shadow |
-| Avatar | 64x64 circle, white 30% bg, initial 24px bold white, 2px white 50% border |
-| User name | 20px bold, white |
-| Personality line | 14px medium, white 90% opacity |
+| Header | Row, back chevron + "style profile report" 20px semibold + spacer, white bg, bottom hairline border, xs shadow |
+| Summary card | LinearGradient terracotta-to-beige (#C67B5C to #B5A08C), border-radius 24, p-24, lg shadow |
+| Avatar | 64x64 circle, white 30% bg, initial 20px semibold white, 2px white 50% border |
+| User name | 20px semibold, white |
+| Personality line | 16px regular, white 90% opacity |
 | Completion bar | 6px height track (white 30%), white fill, border-radius 3 |
-| Completion text | 12px medium, white 85% |
+| Completion text | 12px regular, white 85% |
 | Collapsible cards | BodyTypeCard, ColorSeasonCard, StyleTagsCard with toggle |
 | Share poster | SharePosterPreview component |
 | Bottom bar | Fixed, white bg, hairline top border, md shadow, px-20, py-16 |
-| Share button | LinearGradient oceanDeep (#167FFB to #33AAFF), row, icon + text, border-radius xl |
+| Share button | LinearGradient terracotta-to-beige (#C67B5C to #B5A08C), row, icon + text, border-radius xl |
 | Empty state | Centered, color-wand icon 64px neutral-300, title, subtitle, gradient CTA button |
 | Loading | Centered spinner + "generating your style profile..." |
 
@@ -502,7 +517,7 @@ LoginScreen --> PhoneLoginScreen (or WeChat direct)
 | Registry | Blocks Used | Safety Gate |
 |----------|-------------|-------------|
 | shadcn official | not applicable | React Native project -- no shadcn |
-| npm packages | react-native-paper, react-native-svg, react-native-reanimated, react-native-body-highlighter (new), expo-auth-session (new) | All verified in npm registry, reviewed source |
+| npm packages | react-native-paper, react-native-svg, react-native-reanimated, react-native-body-highlighter (new), expo-auth-session (new) | All verified in npm registry, reviewed source -- 2026-04-14 |
 
 No third-party shadcn registries. New npm packages listed in RESEARCH.md Standard Stack section. All versions verified against npm registry on 2026-04-13.
 

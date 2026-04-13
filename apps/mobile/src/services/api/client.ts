@@ -13,12 +13,16 @@ import {
   PaginationParams,
 } from "../../types";
 import { AuthTokens } from "../../types/user";
+import { AppError, AppErrorCode, classifyAxiosError } from "./error";
 
 const API_URL = requireMobileUrl(mobileRuntimeConfig.apiUrl, "API_URL");
 const USER_KEY = "user_data";
 const CACHE_PREFIX = "api_cache_";
 const CACHE_TTL = 5 * 60 * 1000;
 const MAX_CACHE_SIZE = 100;
+const DEFAULT_TIMEOUT = 30_000;
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_BASE_DELAY = 1000;
 
 interface CacheEntry<T> {
   data: T;
@@ -99,13 +103,19 @@ class LRUCache<T> {
 
 type AuthExpiredCallback = () => void;
 
+interface PendingRequest {
+  resolve: (token: string) => void;
+  reject: (error: unknown) => void;
+}
+
 class ApiClient {
   private client: AxiosInstance;
   private token: string | null = null;
   private cache = new LRUCache<unknown>();
   private isRefreshing = false;
-  private refreshSubscribers: Array<(token: string) => void> = [];
+  private pendingRequests: PendingRequest[] = [];
   private onAuthExpiredCallback: AuthExpiredCallback | null = null;
+  private inFlightRequests = new Map<string, Promise<ApiResponse<unknown>>>();
 
   onAuthExpired(callback: AuthExpiredCallback): void {
     this.onAuthExpiredCallback = callback;
@@ -114,7 +124,7 @@ class ApiClient {
   constructor() {
     this.client = axios.create({
       baseURL: API_URL,
-      timeout: 30000,
+      timeout: DEFAULT_TIMEOUT,
       headers: {
         "Content-Type": "application/json",
       },
@@ -130,6 +140,11 @@ class ApiClient {
         if (this.token) {
           config.headers.Authorization = `Bearer ${this.token}`;
         }
+        if (__DEV__) {
+          console.log(
+            `[API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`,
+          );
+        }
         return config;
       },
       (error) => Promise.reject(error),
@@ -139,51 +154,74 @@ class ApiClient {
       (response) => {
         const requestId = response.headers["x-request-id"];
         if (requestId && typeof requestId === "string") {
-          (response as unknown as Record<string, unknown>).__requestId = requestId;
+          (
+            response as unknown as Record<string, unknown>
+          ).__requestId = requestId;
+        }
+        if (__DEV__) {
+          console.log(
+            `[API] ${response.status} ${response.config.url}`,
+          );
         }
         return response;
       },
       async (error: AxiosError<ApiError>) => {
-        const originalRequest = error.config;
+        const originalRequest = error.config as InternalAxiosRequestConfig & {
+          _retry?: boolean;
+        };
 
         if (error.response?.status !== 401) {
           return Promise.reject(error);
         }
 
-        if (originalRequest?.url === "/auth/refresh") {
+        if (
+          originalRequest?.url === "/auth/refresh" ||
+          originalRequest?._retry
+        ) {
           await this.clearAuth();
-          return Promise.reject(error);
+          return Promise.reject(
+            classifyAxiosError(error),
+          );
         }
 
         if (this.isRefreshing) {
-          return new Promise((resolve) => {
-            this.refreshSubscribers.push((newToken: string) => {
-              if (originalRequest) {
-                originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              }
-              resolve(this.client(originalRequest!));
+          return new Promise((resolve, reject) => {
+            this.pendingRequests.push({
+              resolve: (newToken: string) => {
+                if (originalRequest) {
+                  originalRequest.headers.Authorization = `Bearer ${newToken}`;
+                }
+                resolve(this.client(originalRequest));
+              },
+              reject,
             });
           });
         }
 
         this.isRefreshing = true;
+        originalRequest._retry = true;
 
         try {
           const newToken = await this.attemptTokenRefresh();
           this.isRefreshing = false;
 
-          this.refreshSubscribers.forEach((cb) => cb(newToken));
-          this.refreshSubscribers = [];
+          this.pendingRequests.forEach(({ resolve }) => resolve(newToken));
+          this.pendingRequests = [];
 
           if (originalRequest) {
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
           }
-          return this.client(originalRequest!);
-        } catch {
+          return this.client(originalRequest);
+        } catch (refreshError) {
           this.isRefreshing = false;
-          this.refreshSubscribers = [];
+          this.pendingRequests.forEach(({ reject }) => reject(refreshError));
+          this.pendingRequests = [];
           await this.clearAuth();
-          return Promise.reject(error);
+          return Promise.reject(
+            new AppError(AppErrorCode.TOKEN_REFRESH_FAILED, undefined, {
+              originalError: refreshError,
+            }),
+          );
         }
       },
     );
@@ -224,6 +262,8 @@ class ApiClient {
     await secureStorage.deleteItem(SECURE_STORAGE_KEYS.REFRESH_TOKEN);
     await secureStorage.deleteItem(SECURE_STORAGE_KEYS.USER_DATA);
     await AsyncStorage.removeItem(USER_KEY);
+    this.cache.clear();
+    this.inFlightRequests.clear();
     this.onAuthExpiredCallback?.();
   }
 
@@ -256,7 +296,6 @@ class ApiClient {
     return this.token;
   }
 
-  // Cache methods
   private getCacheKey(url: string, params?: Record<string, unknown>): string {
     return `${CACHE_PREFIX}${url}${params ? JSON.stringify(params) : ""}`;
   }
@@ -277,11 +316,10 @@ class ApiClient {
     return this.cache.size;
   }
 
-  // Retry logic
   private async retryWithBackoff<T>(
     fn: () => Promise<ApiResponse<T>>,
-    maxRetries: number = 3,
-    delay: number = 1000,
+    maxRetries: number = MAX_RETRY_ATTEMPTS,
+    delay: number = RETRY_BASE_DELAY,
   ): Promise<ApiResponse<T>> {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
@@ -301,14 +339,30 @@ class ApiClient {
     };
   }
 
+  private deduplicate<T>(
+    key: string,
+    fetcher: () => Promise<ApiResponse<T>>,
+  ): Promise<ApiResponse<T>> {
+    const existing = this.inFlightRequests.get(key);
+    if (existing) {
+      return existing as Promise<ApiResponse<T>>;
+    }
+
+    const promise = fetcher().finally(() => {
+      this.inFlightRequests.delete(key);
+    });
+
+    this.inFlightRequests.set(key, promise);
+    return promise;
+  }
+
   async get<T>(
     url: string,
     params?: Record<string, unknown>,
-    options?: { useCache?: boolean; retry?: number },
+    options?: { useCache?: boolean; retry?: number; deduplicate?: boolean },
   ): Promise<ApiResponse<T>> {
     const cacheKey = this.getCacheKey(url, params);
 
-    // Check cache if enabled
     if (options?.useCache) {
       const cached = this.getFromCache<T>(cacheKey);
       if (cached) {
@@ -316,25 +370,36 @@ class ApiClient {
       }
     }
 
-    try {
-      const response = await this.client.get(url, { params });
-      const result = { success: true, data: response.data };
+    const fetcher = async (): Promise<ApiResponse<T>> => {
+      try {
+        const response = await this.client.get(url, { params });
+        const result = { success: true, data: response.data as T };
 
-      // Store in cache if enabled
-      if (options?.useCache) {
-        this.setCache(cacheKey, response.data);
+        if (options?.useCache) {
+          this.setCache(cacheKey, response.data);
+        }
+
+        return result;
+      } catch (error) {
+        return this.handleError(error as AxiosError<ApiError>);
       }
+    };
 
-      return result;
-    } catch (error) {
-      return this.handleError(error as AxiosError<ApiError>);
+    if (options?.deduplicate) {
+      return this.deduplicate(cacheKey, fetcher);
     }
+
+    if (options?.retry && options.retry > 1) {
+      return this.retryWithBackoff(fetcher, options.retry);
+    }
+
+    return fetcher();
   }
 
   async post<T>(url: string, data?: unknown): Promise<ApiResponse<T>> {
     try {
       const response = await this.client.post(url, data);
-      return { success: true, data: response.data };
+      return { success: true, data: response.data as T };
     } catch (error) {
       return this.handleError(error as AxiosError<ApiError>);
     }
@@ -343,7 +408,7 @@ class ApiClient {
   async put<T>(url: string, data?: unknown): Promise<ApiResponse<T>> {
     try {
       const response = await this.client.put(url, data);
-      return { success: true, data: response.data };
+      return { success: true, data: response.data as T };
     } catch (error) {
       return this.handleError(error as AxiosError<ApiError>);
     }
@@ -352,7 +417,7 @@ class ApiClient {
   async patch<T>(url: string, data?: unknown): Promise<ApiResponse<T>> {
     try {
       const response = await this.client.patch(url, data);
-      return { success: true, data: response.data };
+      return { success: true, data: response.data as T };
     } catch (error) {
       return this.handleError(error as AxiosError<ApiError>);
     }
@@ -361,7 +426,7 @@ class ApiClient {
   async delete<T>(url: string): Promise<ApiResponse<T>> {
     try {
       const response = await this.client.delete(url);
-      return { success: true, data: response.data };
+      return { success: true, data: response.data as T };
     } catch (error) {
       return this.handleError(error as AxiosError<ApiError>);
     }
@@ -372,7 +437,7 @@ class ApiClient {
       const response = await this.client.post(url, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      return { success: true, data: response.data };
+      return { success: true, data: response.data as T };
     } catch (error) {
       return this.handleError(error as AxiosError<ApiError>);
     }
@@ -385,11 +450,10 @@ class ApiClient {
     return this.get<PaginatedResponse<T>>(url, params);
   }
 
-  // Convenience method with retry
   async getWithRetry<T>(
     url: string,
     params?: Record<string, unknown>,
-    maxRetries: number = 3,
+    maxRetries: number = MAX_RETRY_ATTEMPTS,
   ): Promise<ApiResponse<T>> {
     return this.retryWithBackoff(() => this.get<T>(url, params), maxRetries);
   }

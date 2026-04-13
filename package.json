@@ -1,26 +1,27 @@
 {
-  "name": "aineed",
+  "name": "xuno",
   "version": "1.0.0",
   "private": true,
-  "description": "AiNeed - 智能私人形象定制与服装设计助手平台 (移动端)",
+  "description": "寻裳 - 智能私人形象定制与服装设计助手平台 (移动端)",
   "scripts": {
-    "dev": "pnpm --filter @aineed/backend dev",
-    "dev:backend": "pnpm --filter @aineed/backend dev",
-    "dev:mobile": "pnpm --filter @aineed/mobile dev",
+    "dev": "pnpm --filter @xuno/backend dev",
+    "dev:backend": "pnpm --filter @xuno/backend dev",
+    "dev:mobile": "pnpm --filter @xuno/mobile dev",
+    "dev:admin": "pnpm --filter @xuno/admin dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
     "audit:file-matrix": "node scripts/audit/generate-file-review-matrix.mjs",
-    "db:generate": "pnpm --filter @aineed/backend db:generate",
-    "db:push": "pnpm --filter @aineed/backend db:push",
-    "db:studio": "pnpm --filter @aineed/backend db:studio",
-    "postinstall": "node scripts/build/patch-codegen.mjs"
+    "db:generate": "pnpm --filter @xuno/backend db:generate",
+    "db:push": "pnpm --filter @xuno/backend db:push",
+    "db:studio": "pnpm --filter @xuno/backend db:studio",
+    "postinstall": "echo skip"
   },
   "devDependencies": {
     "@react-native/codegen": "^0.84.1",
     "concurrently": "^9.2.1",
     "expo-modules-autolinking": "~55.0.11",
-    "typescript": "^6.0.2"
+    "typescript": "^5.7.3"
   },
   "pnpm": {
     "overrides": {

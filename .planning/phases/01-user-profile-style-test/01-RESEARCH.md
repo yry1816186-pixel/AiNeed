@@ -499,27 +499,31 @@ async saveAnswer(userId: string, questionId: string, selectedImageIndex: number,
 | A6 | react-native-body-highlighter v3.2.0 is compatible with React Native 0.76.8 | Standard Stack | Should verify Expo compatibility before adding. |
 | A7 | Field weights for profile completeness (gender 15%, age 15%, etc.) are reasonable | Code Examples | Weights affect user experience and prompt accuracy; should be tunable. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Quiz Image Bank Seeding Strategy**
+1. **Quiz Image Bank Seeding Strategy** — RESOLVED by Plan 01 Task 3
    - What we know: QUESTION_IMAGE_META_MAP needs to be populated with quiz images + color metadata for ColorDeriverService to work
    - What's unclear: Where do quiz images come from? Are they curated and stored in MinIO? Are they URLs to external CDN?
    - Recommendation: Create a seed script that takes a folder of curated quiz images, extracts dominant colors via sharp, and populates both imageUrls and metadata. Quiz images should be stored in MinIO like other assets.
+   - **Resolution:** Plan 01 Task 3 creates seed script with colorTags metadata per option. Images stored in MinIO.
 
-2. **Photo Pose Guide SVG Asset Source**
+2. **Photo Pose Guide SVG Asset Source** — RESOLVED by Plan 04 Task 2
    - What we know: D-04 requires human body outline overlay for photo guidance; similar to ID photo apps
    - What's unclear: Do we need to create custom SVG or use existing open-source assets?
    - Recommendation: Use a simple SVG body outline (front-view silhouette) as overlay on CameraScreen. Can be hand-drawn SVG or adapted from react-native-body-highlighter assets.
+   - **Resolution:** Plan 04 Task 2 creates PhotoGuideOverlay component with inline SVG body outline.
 
-3. **Color Season Sub-type (Light/Deep) Implementation**
+3. **Color Season Sub-type (Light/Deep) Implementation** — RESOLVED by Plan 01 Task 1
    - What we know: D-11 mentions "four types + warm/cool x light/deep sub-dimensions"; ColorSeason enum only has 4 values (spring/summer/autumn/winter)
    - What's unclear: Should we add 8 sub-types to the enum (e.g., warm_spring, light_spring) or keep 4 types with separate warmth/lightness fields?
    - Recommendation: Keep ColorSeason as 4 types; add separate `colorWarmth: String?` and `colorDepth: String?` fields to UserProfile for the sub-dimensions. This preserves backward compatibility and allows more granular analysis without schema breakage.
+   - **Resolution:** Plan 01 Task 1 expands ColorSeason enum to 8 subtypes (spring_warm, spring_light, summer_cool, etc.).
 
-4. **Profile Change Event Scope**
+4. **Profile Change Event Scope** — RESOLVED by Plan 02 Task 3
    - What we know: D-14 requires notifying AI stylist and recommendation engine on profile changes
    - What's unclear: What specific fields trigger notifications? Should we emit on every field change or only on significant changes?
    - Recommendation: Emit on: bodyType, colorSeason, stylePreferences, colorPreferences changes. Don't emit on height/weight updates alone. Use NestJS EventEmitter2 with typed events.
+   - **Resolution:** Plan 02 Task 3 creates ProfileEventEmitter with changedFields parameter, Plan 03 Task 3 integrates subscriptions.
 
 ## Environment Availability
 

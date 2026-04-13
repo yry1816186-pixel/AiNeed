@@ -10,13 +10,13 @@ import { QdrantClient } from "@qdrant/js-client-rest";
 export interface VectorPoint {
   id: string;
   vector: number[];
-  payload?: Record<string, any>;
+  payload?: Record<string, unknown>;
 }
 
 export interface SearchResult {
   id: string;
   score: number;
-  payload?: Record<string, any>;
+  payload?: Record<string, unknown>;
 }
 
 export interface VectorFilter {
@@ -41,7 +41,7 @@ export class QdrantService implements OnModuleInit, OnModuleDestroy {
   private isConnected = false;
   private memoryStore: Map<
     string,
-    { vector: number[]; payload: Record<string, any> }
+    { vector: number[]; payload: Record<string, unknown> }
   > = new Map();
 
   constructor(private configService: ConfigService) {}
@@ -269,8 +269,7 @@ export class QdrantService implements OnModuleInit, OnModuleDestroy {
     return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private convertFilter(filter: VectorFilter): any {
+  private convertFilter(filter: VectorFilter): { must?: unknown[]; should?: unknown[] } | undefined {
     const qdrantFilter: { must?: unknown[]; should?: unknown[] } = {};
 
     if (filter.must && filter.must.length > 0) {
@@ -312,7 +311,7 @@ export class QdrantService implements OnModuleInit, OnModuleDestroy {
 
   async getVector(
     id: string,
-  ): Promise<{ vector: number[]; payload: Record<string, any> } | null> {
+  ): Promise<{ vector: number[]; payload: Record<string, unknown> } | null> {
     if (this.isConnected && this.client) {
       const points = await this.client.retrieve(this.collectionName, {
         ids: [id],
@@ -324,7 +323,7 @@ export class QdrantService implements OnModuleInit, OnModuleDestroy {
       if (point) {
         return {
           vector: point.vector as number[],
-          payload: point.payload as Record<string, any>,
+          payload: point.payload as Record<string, unknown>,
         };
       }
       return null;

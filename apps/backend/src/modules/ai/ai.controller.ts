@@ -11,7 +11,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBody, ApiConsumes } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 import { ClothingCategory } from "@prisma/client";
 
@@ -73,8 +73,19 @@ export class AIController {
   @Post("analyze")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(FileInterceptor("image", IMAGE_UPLOAD_OPTIONS))
-  @ApiOperation({ summary: "图像分析", description: "分析上传的图像内容" })
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({ summary: "图像分析", description: "上传图片进行AI内容分析，支持 JPEG、PNG、WebP 格式，最大 10MB。" })
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        image: { type: "string", format: "binary", description: "待分析的图片文件" },
+      },
+      required: ["image"],
+    },
+  })
   @ApiResponse({ status: 200, description: "分析结果" })
+  @ApiResponse({ status: 400, description: "请上传图像文件" })
   @ApiResponse({ status: 401, description: "未授权" })
   async analyzeImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
@@ -92,9 +103,11 @@ export class AIController {
 
   @Post("analyze/:itemId")
   @Throttle({ default: { limit: 20, ttl: 60000 } })
-  @ApiOperation({ summary: "商品图像分析", description: "分析指定商品的图像" })
+  @ApiOperation({ summary: "商品图像分析", description: "分析指定商品的图像，获取AI分析结果。" })
+  @ApiParam({ name: "itemId", description: "商品ID", type: String, format: "uuid" })
   @ApiResponse({ status: 200, description: "分析结果" })
   @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "商品不存在" })
   async analyzeItem(@Param("itemId") itemId: string) {
     const result = await this.aiService.analyzeImage(`items/${itemId}`);
 
@@ -108,8 +121,19 @@ export class AIController {
   @Post("body-analysis")
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @UseInterceptors(FileInterceptor("image", IMAGE_UPLOAD_OPTIONS))
-  @ApiOperation({ summary: "身体分析", description: "分析用户身体数据" })
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({ summary: "身体分析", description: "上传用户照片进行身体数据分析，支持 JPEG、PNG、WebP 格式，最大 10MB。" })
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        image: { type: "string", format: "binary", description: "用户照片文件" },
+      },
+      required: ["image"],
+    },
+  })
   @ApiResponse({ status: 200, description: "身体分析结果" })
+  @ApiResponse({ status: 400, description: "请上传图像文件" })
   @ApiResponse({ status: 401, description: "未授权" })
   async analyzeBody(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
@@ -128,8 +152,21 @@ export class AIController {
   @Post("similar")
   @Throttle({ default: { limit: 15, ttl: 60000 } })
   @UseInterceptors(FileInterceptor("image", IMAGE_UPLOAD_OPTIONS))
-  @ApiOperation({ summary: "相似商品搜索", description: "基于图像搜索相似商品" })
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({ summary: "相似商品搜索", description: "上传图片搜索视觉相似的商品，支持 JPEG、PNG、WebP 格式，最大 10MB。" })
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        image: { type: "string", format: "binary", description: "搜索参考图片文件" },
+      },
+      required: ["image"],
+    },
+  })
+  @ApiQuery({ name: "topK", required: false, type: Number, description: "返回数量，默认10", example: 10 })
+  @ApiQuery({ name: "category", required: false, enum: ClothingCategory, description: "服装分类筛选" })
   @ApiResponse({ status: 200, description: "相似商品列表" })
+  @ApiResponse({ status: 400, description: "请上传图像文件" })
   @ApiResponse({ status: 401, description: "未授权" })
   async findSimilar(
     @UploadedFile() file: Express.Multer.File,
@@ -155,9 +192,13 @@ export class AIController {
 
   @Get("similar/:itemId")
   @Throttle({ default: { limit: 30, ttl: 60000 } })
-  @ApiOperation({ summary: "商品相似推荐", description: "获取与指定商品相似的商品" })
+  @ApiOperation({ summary: "商品相似推荐", description: "根据指定商品ID获取相似商品推荐。" })
+  @ApiParam({ name: "itemId", description: "商品ID", type: String, format: "uuid" })
+  @ApiQuery({ name: "topK", required: false, type: Number, description: "返回数量，默认10", example: 10 })
+  @ApiQuery({ name: "category", required: false, enum: ClothingCategory, description: "服装分类筛选" })
   @ApiResponse({ status: 200, description: "相似商品列表" })
   @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "商品不存在" })
   async findSimilarByItemId(
     @Param("itemId") itemId: string,
     @Query("topK") topK?: string,
@@ -178,8 +219,21 @@ export class AIController {
 
   @Post("outfit")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: "穿搭推荐", description: "基于商品推荐穿搭组合" })
+  @ApiOperation({ summary: "穿搭推荐", description: "基于指定商品推荐搭配组合，可指定体型、场合等偏好。" })
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        baseItemId: { type: "string", description: "基础商品ID", format: "uuid" },
+        userBodyType: { type: "string", description: "用户体型（如：slim、average、athletic）" },
+        occasion: { type: "string", description: "场合（如：daily、work、party）" },
+        topK: { type: "number", description: "返回数量，默认5", example: 5 },
+      },
+      required: ["baseItemId"],
+    },
+  })
   @ApiResponse({ status: 200, description: "穿搭推荐结果" })
+  @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
   async recommendOutfit(
     @Body()
@@ -207,7 +261,9 @@ export class AIController {
 
   @Get("colors/:season")
   @Throttle({ default: { limit: 30, ttl: 60000 } })
-  @ApiOperation({ summary: "色彩推荐", description: "根据色彩季型获取推荐颜色" })
+  @ApiOperation({ summary: "色彩推荐", description: "根据色彩季型（如春、夏、秋、冬）获取推荐颜色。" })
+  @ApiParam({ name: "season", description: "色彩季型", type: String, example: "spring" })
+  @ApiQuery({ name: "category", required: false, type: String, description: "服装分类筛选" })
   @ApiResponse({ status: 200, description: "色彩推荐结果" })
   @ApiResponse({ status: 401, description: "未授权" })
   async getColorRecommendations(
@@ -241,9 +297,11 @@ export class AIController {
 
   @Post("enrich/:itemId")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: "商品AI增强", description: "为指定商品添加AI分析结果" })
+  @ApiOperation({ summary: "商品AI增强", description: "为指定商品添加AI分析结果，包括标签、颜色、风格等属性。" })
+  @ApiParam({ name: "itemId", description: "商品ID", type: String, format: "uuid" })
   @ApiResponse({ status: 200, description: "增强成功" })
   @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "商品不存在" })
   async enrichItem(@Param("itemId") itemId: string) {
     await this.aiService.enrichItemWithAI(itemId, `items/${itemId}`);
 
@@ -255,7 +313,15 @@ export class AIController {
 
   @Post("batch-enrich")
   @Throttle({ default: { limit: 2, ttl: 60000 } })
-  @ApiOperation({ summary: "批量商品AI增强", description: "批量为商品添加AI分析结果" })
+  @ApiOperation({ summary: "批量商品AI增强", description: "批量为商品添加AI分析结果，按限制数量处理。" })
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        limit: { type: "number", description: "处理数量限制，默认100", example: 100 },
+      },
+    },
+  })
   @ApiResponse({ status: 200, description: "批量增强结果" })
   @ApiResponse({ status: 401, description: "未授权" })
   async batchEnrichItems(@Body() body: { limit?: number }) {

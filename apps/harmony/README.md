@@ -1,6 +1,6 @@
-# AiNeed 鸿蒙端 (HarmonyOS)
+# 寻裳 鸿蒙端 (HarmonyOS)
 
-基于 ArkUI-X 框架开发的鸿蒙原生应用，与 AiNeed 主项目共享后端 API 服务。
+基于 ArkUI-X 框架开发的鸿蒙原生应用，与寻裳主项目共享后端 API 服务。
 
 ## 技术栈
 

@@ -1,8 +1,8 @@
-@echo off
+﻿@echo off
 setlocal enabledelayedexpansion
 
 echo ========================================
-echo AiNeed HarmonyOS Build Script
+echo 寻裳 HarmonyOS Build Script
 echo ========================================
 
 set "HVIGORW=C:\Program Files\Huawei\DevEco Studio\tools\hvigor\bin\hvigorw.bat"

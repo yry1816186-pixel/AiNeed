@@ -25,6 +25,7 @@ import type { Response } from "express";
 
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { AiQuotaGuard, SetQuotaType } from "../security/rate-limit/ai-quota.guard";
 
 import {
   CreateTryOnDto,
@@ -42,6 +43,8 @@ export class TryOnController {
   constructor(private readonly tryOnService: TryOnService) {}
 
   @Post()
+  @UseGuards(AiQuotaGuard)
+  @SetQuotaType('try-on')
   @ApiOperation({
     summary: "创建虚拟试衣请求",
     description:
@@ -116,7 +119,24 @@ export class TryOnController {
       query.page ?? 1,
       query.limit ?? 20,
       query.status,
+      query.category,
+      query.scene,
+      query.dateFrom,
+      query.dateTo,
     );
+  }
+
+  @Get("daily-quota")
+  @ApiOperation({
+    summary: "获取每日试衣配额",
+    description: "获取当前用户今日的试衣配额使用情况。",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "获取成功",
+  })
+  async getDailyQuota(@CurrentUser("id") userId: string) {
+    return this.tryOnService.getDailyQuota(userId);
   }
 
   @Get(":id")
@@ -197,6 +217,34 @@ export class TryOnController {
     res.setHeader("Content-Type", asset.contentType);
     res.setHeader("Cache-Control", asset.cacheControl);
     res.send(asset.body);
+  }
+
+  @Post(":id/retry")
+  @UseGuards(AiQuotaGuard)
+  @SetQuotaType("try-on")
+  @ApiOperation({
+    summary: "重试试衣",
+    description: "对指定试衣记录重新生成结果，每日限制3次免费重试。",
+  })
+  @ApiParam({
+    name: "id",
+    description: "原始试衣记录ID",
+    type: String,
+    format: "uuid",
+  })
+  @ApiResponse({
+    status: 201,
+    description: "重试请求创建成功",
+  })
+  @ApiResponse({
+    status: 400,
+    description: "今日免费重试次数已用完",
+  })
+  async retryTryOn(
+    @CurrentUser("id") userId: string,
+    @Param("id") tryOnId: string,
+  ) {
+    return this.tryOnService.retryTryOn(tryOnId, userId);
   }
 
   @Delete(":id")

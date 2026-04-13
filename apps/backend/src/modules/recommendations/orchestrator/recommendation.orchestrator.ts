@@ -220,8 +220,8 @@ export class RecommendationOrchestrator {
       tops: result.tops ? mapItems(result.tops) : undefined,
       bottoms: result.bottoms ? mapItems(result.bottoms) : undefined,
       accessories: result.accessories ? mapItems(result.accessories) : undefined,
-      footwear: (result as any).footwear ? mapItems((result as any).footwear) : undefined,
-      outerwear: (result as any).outerwear ? mapItems((result as any).outerwear) : undefined,
+      footwear: "footwear" in result && result.footwear ? mapItems(result.footwear as OutfitItem[]) : undefined,
+      outerwear: "outerwear" in result && result.outerwear ? mapItems(result.outerwear as OutfitItem[]) : undefined,
       overallScore: result.overallScore,
     };
   }

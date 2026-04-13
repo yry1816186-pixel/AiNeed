@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+﻿import { Injectable, Logger } from "@nestjs/common";
 
 import { EmailService } from "../../common/email/email.service";
 import { PrismaService } from "../../common/prisma/prisma.service";
@@ -226,7 +226,7 @@ export class PrivacyService {
       await this.prisma.user.update({
         where: { id: userId },
         data: {
-          email: `deleted_${userId}@aineed.com`,
+          email: `deleted_${userId}@xuno.com`,
           phone: null,
           nickname: "已注销用户",
           avatar: null,

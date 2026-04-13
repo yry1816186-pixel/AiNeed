@@ -81,7 +81,7 @@ export class ClothingDataSourceService {
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'AiNeed/1.0',
+        'User-Agent': 'XunO/1.0',
       },
     });
 

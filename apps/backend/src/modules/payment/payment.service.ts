@@ -136,7 +136,7 @@ export class PaymentService {
     const options: CreatePaymentOptions = {
       orderId: paymentRecord.orderId,
       amount: paymentRecord.amount.toNumber(),
-      subject: dto.subject || orderInfo.subject || "AiNeed 会员订阅",
+      subject: dto.subject || orderInfo.subject || "寻裳会员订阅",
       body: dto.body,
       method: dto.method,
       clientIp: dto.clientIp,
@@ -310,13 +310,25 @@ export class PaymentService {
             status: status === "paid" ? "paid" : "failed",
             tradeNo,
             paidAt,
-            notifyData: callbackData as unknown as never, // Prisma Json 类型转换
+            notifyData: JSON.parse(JSON.stringify(callbackData)),
           },
         });
 
         // 如果支付成功，激活订阅
         if (status === "paid") {
           await this.activateSubscription(record.userId, record.orderId);
+
+          // 更新关联的 Order 状态为 paid
+          await tx.order.updateMany({
+            where: {
+              id: record.orderId,
+              status: OrderStatus.pending,
+            },
+            data: {
+              status: OrderStatus.paid,
+              paymentTime: new Date(),
+            },
+          });
         }
       });
 
@@ -579,14 +591,14 @@ export class PaymentService {
             Number(paymentOrder.amount);
       return {
         amount,
-        subject: `AiNeed ${metadata?.planName || "会员"}订阅`,
+        subject: `寻裳 ${metadata?.planName || "会员"}订阅`,
       };
     }
 
     // 默认返回
     return {
       amount: 0,
-      subject: "AiNeed 服务",
+      subject: "寻裳服务",
     };
   }
 
@@ -687,13 +699,15 @@ export class PaymentService {
           include: { items: true },
         });
 
-        if (orderWithItems) {
-          for (const item of orderWithItems.items) {
-            await this.prisma.clothingItem.update({
-              where: { id: item.itemId },
-              data: { stock: { increment: item.quantity } },
-            });
-          }
+        if (orderWithItems && orderWithItems.items.length > 0) {
+          await this.prisma.$transaction(
+            orderWithItems.items.map((item) =>
+              this.prisma.clothingItem.update({
+                where: { id: item.itemId },
+                data: { stock: { increment: item.quantity } },
+              }),
+            ),
+          );
         }
 
         this.eventEmitter.emit(PAYMENT_EVENTS.PAYMENT_CLOSED, {

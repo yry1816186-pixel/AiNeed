@@ -1,5 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
 
@@ -8,7 +9,24 @@ import { SubscriptionService } from "./subscription.service";
 
 describe("SubscriptionService", () => {
   let service: SubscriptionService;
-  let prisma: any;
+  let prisma: {
+    userSubscription: {
+      findFirst: jest.Mock;
+      create: jest.Mock;
+      update: jest.Mock;
+    };
+    membershipPlan: {
+      findMany: jest.Mock;
+      findUnique: jest.Mock;
+      findFirst: jest.Mock;
+    };
+    paymentOrder: {
+      create: jest.Mock;
+    };
+    userBehaviorEvent: {
+      count: jest.Mock;
+    };
+  };
 
   const mockPrisma = {
     userSubscription: {
@@ -33,12 +51,17 @@ describe("SubscriptionService", () => {
     get: jest.fn(),
   };
 
+  const mockEventEmitter = {
+    emit: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SubscriptionService,
         { provide: PrismaService, useValue: mockPrisma },
         { provide: ConfigService, useValue: mockConfigService },
+        { provide: EventEmitter2, useValue: mockEventEmitter },
       ],
     }).compile();
 

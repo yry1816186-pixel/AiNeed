@@ -1,5 +1,5 @@
 /**
- * AiNeed Design System - 统一设计令牌
+ * 寻裳 Design System - 统一设计令牌
  *
  * 设计理念：
  * - 高端时尚品牌感

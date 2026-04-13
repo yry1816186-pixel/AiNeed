@@ -1,7 +1,7 @@
-import { Platform } from "react-native";
+import { Platform, type TextStyle } from "react-native";
 
 /**
- * AiNeed 字体系统 - 国赛一等奖水准
+ * 寻裳 字体系统 - 国赛一等奖水准
  *
  * 设计理念：
  * - 中文优先：思源黑体/PingFang SC 保证中文显示质量
@@ -63,16 +63,16 @@ export const FontSizes = {
   hero: 64,
 } as const;
 
-export const FontWeights = {
-  thin: "100" as const,
-  light: "300" as const,
-  regular: "400" as const,
-  medium: "500" as const,
-  semibold: "600" as const,
-  bold: "700" as const,
-  extrabold: "800" as const,
-  black: "900" as const,
-} as const;
+export const FontWeights: Record<string, TextStyle['fontWeight']> = {
+  thin: "100",
+  light: "300",
+  regular: "400",
+  medium: "500",
+  semibold: "600",
+  bold: "700",
+  extrabold: "800",
+  black: "900",
+};
 
 export const LineHeights = {
   none: 1,

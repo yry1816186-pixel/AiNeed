@@ -86,8 +86,10 @@ export class StyleAnalysisProcessor extends WorkerHost {
   }
 }
 
+const VIRTUAL_TRYON_TIMEOUT = 30000;
+
 @Processor(QUEUE_NAMES.VIRTUAL_TRYON, {
-  concurrency: 1,
+  concurrency: 3,
 })
 export class VirtualTryOnProcessor extends WorkerHost {
   private readonly logger = new Logger(VirtualTryOnProcessor.name);
@@ -101,7 +103,21 @@ export class VirtualTryOnProcessor extends WorkerHost {
   }
 
   async process(job: Job<VirtualTryOnJobData>): Promise<unknown> {
-    const { jobId, userId, photoId, userPhotoUrl, clothingImageUrl, itemId } = job.data;
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject(new Error("Virtual try-on timed out after 30s")),
+        VIRTUAL_TRYON_TIMEOUT,
+      ),
+    );
+
+    return Promise.race([this.executeTryOnFlow(job), timeoutPromise]);
+  }
+
+  private async executeTryOnFlow(
+    job: Job<VirtualTryOnJobData>,
+  ): Promise<unknown> {
+    const { jobId, userId, photoId, userPhotoUrl, clothingImageUrl, itemId } =
+      job.data;
 
     this.logger.log(`Processing virtual try-on job ${jobId}`);
 
@@ -116,8 +132,12 @@ export class VirtualTryOnProcessor extends WorkerHost {
     });
 
     if (!tryOnRecord) {
-      this.logger.warn(`No pending VirtualTryOn record found for job ${jobId}`);
-      throw new Error(`No pending VirtualTryOn record for userId=${userId}, photoId=${photoId}, itemId=${itemId}`);
+      this.logger.warn(
+        `No pending VirtualTryOn record found for job ${jobId}`,
+      );
+      throw new Error(
+        `No pending VirtualTryOn record for userId=${userId}, photoId=${photoId}, itemId=${itemId}`,
+      );
     }
 
     await this.prisma.virtualTryOn.update({
@@ -125,21 +145,31 @@ export class VirtualTryOnProcessor extends WorkerHost {
       data: { status: "processing" },
     });
 
-    await this.notificationService.sendCustomNotification(userId, {
-      type: "system",
-      title: "虚拟试衣开始处理",
-      message: "您的虚拟试衣正在处理中，请稍候...",
-      data: { tryOnId: tryOnRecord.id, jobId, status: "processing" },
-    });
+    await this.notificationService.notifyTryOnProgress(
+      userId,
+      tryOnRecord.id,
+      10,
+      "processing",
+    );
 
-    await job.updateProgress(25);
+    await job.updateProgress(10);
 
     if (!userPhotoUrl || !clothingImageUrl) {
-      throw new Error("userPhotoUrl and clothingImageUrl are required for virtual try-on");
+      throw new Error(
+        "userPhotoUrl and clothingImageUrl are required for virtual try-on",
+      );
     }
 
     const category = mapTryOnCategory(job.data.category);
     const cacheKey = generateStableCacheKey(photoId, itemId, category);
+
+    await this.notificationService.notifyTryOnProgress(
+      userId,
+      tryOnRecord.id,
+      30,
+      "generating",
+    );
+    await job.updateProgress(30);
 
     const result = await this.tryOnOrchestratorService.executeTryOn(
       {
@@ -150,7 +180,13 @@ export class VirtualTryOnProcessor extends WorkerHost {
       cacheKey,
     );
 
-    await job.updateProgress(75);
+    await this.notificationService.notifyTryOnProgress(
+      userId,
+      tryOnRecord.id,
+      70,
+      "generating",
+    );
+    await job.updateProgress(70);
 
     await this.prisma.virtualTryOn.update({
       where: { id: tryOnRecord.id },
@@ -164,7 +200,13 @@ export class VirtualTryOnProcessor extends WorkerHost {
       },
     });
 
-    await job.updateProgress(100);
+    await this.notificationService.notifyTryOnProgress(
+      userId,
+      tryOnRecord.id,
+      90,
+      "processing",
+    );
+    await job.updateProgress(90);
 
     return {
       jobId,

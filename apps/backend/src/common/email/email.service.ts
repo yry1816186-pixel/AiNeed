@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+﻿import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import * as nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
@@ -65,9 +65,9 @@ export class EmailService implements OnModuleInit {
   constructor(private readonly configService: ConfigService) {
     this.fromEmail = this.configService.get<string>(
       "SMTP_FROM_EMAIL",
-      "noreply@aineed.com",
+      "noreply@xuno.app",
     );
-    this.fromName = this.configService.get<string>("SMTP_FROM_NAME", "AiNeed");
+    this.fromName = this.configService.get<string>("SMTP_FROM_NAME", "寻裳");
     this.frontendUrl = this.configService.get<string>(
       "FRONTEND_URL",
       "http://localhost:3000",
@@ -230,7 +230,7 @@ export class EmailService implements OnModuleInit {
         contentType: att.contentType,
       })),
       headers: {
-        "X-Mailer": "AiNeed Mailer",
+        "X-Mailer": "寻裳 Mailer",
         "X-Priority": "3",
       },
     };
@@ -338,7 +338,7 @@ export class EmailService implements OnModuleInit {
 
     return this.send({
       to: email,
-      subject: "欢迎使用 AiNeed",
+      subject: "欢迎使用寻裳",
       html,
     });
   }
@@ -360,7 +360,7 @@ export class EmailService implements OnModuleInit {
 
     return this.send({
       to: email,
-      subject: "重置您的密码 - AiNeed",
+      subject: "重置您的密码 - 寻裳",
       html,
     });
   }
@@ -382,7 +382,7 @@ export class EmailService implements OnModuleInit {
 
     return this.send({
       to: email,
-      subject: "验证您的邮箱 - AiNeed",
+      subject: "验证您的邮箱 - 寻裳",
       html,
     });
   }
@@ -429,7 +429,7 @@ export class EmailService implements OnModuleInit {
 
     return this.send({
       to: email,
-      subject: "订阅确认 - AiNeed",
+      subject: "订阅确认 - 寻裳",
       html,
     });
   }
@@ -453,7 +453,7 @@ export class EmailService implements OnModuleInit {
 
     return this.send({
       to: email,
-      subject: `订单确认 #${orderNo} - AiNeed`,
+      subject: `订单确认 #${orderNo} - 寻裳`,
       html,
     });
   }
@@ -484,7 +484,7 @@ export class EmailService implements OnModuleInit {
 
     return this.send({
       to: email,
-      subject: `定制服务更新 - ${statusText[status] || status} - AiNeed`,
+      subject: `定制服务更新 - ${statusText[status] || status} - 寻裳`,
       html,
     });
   }
@@ -537,11 +537,11 @@ export class EmailService implements OnModuleInit {
       <body>
         <div class="container">
           <div class="header">
-            <h1>🎨 欢迎来到 AiNeed</h1>
+            <h1>🎨 欢迎来到寻裳</h1>
           </div>
           <div class="content">
             <p>亲爱的 <strong>${ctx.nickname}</strong>，</p>
-            <p>感谢您注册 AiNeed，您的专属 AI 造型师已准备就绪！</p>
+            <p>感谢您注册寻裳，您的专属 AI 造型师已准备就绪！</p>
             <p>我们将帮助您：</p>
             <ul>
               <li>✨ 分析您的体型和色彩特征</li>
@@ -553,7 +553,7 @@ export class EmailService implements OnModuleInit {
             <p>如有任何问题，请随时联系我们的客服团队。</p>
           </div>
           <div class="footer">
-            <p>© ${ctx.year} AiNeed. All rights reserved.</p>
+            <p>© ${ctx.year} 寻裳. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -584,7 +584,7 @@ export class EmailService implements OnModuleInit {
           </div>
           <div class="content">
             <p>您好，</p>
-            <p>您收到了此邮件是因为您（或其他人）请求重置 AiNeed 账户的密码。</p>
+            <p>您收到了此邮件是因为您（或其他人）请求重置 寻裳 账户的密码。</p>或其他人）请求重置 AiNeed 账户的密码。</p>
             <p style="text-align: center;">
               <a href="${ctx.resetUrl}" class="button">重置密码</a>
             </p>
@@ -639,7 +639,7 @@ export class EmailService implements OnModuleInit {
             <p>⏰ 此链接将在 ${ctx.expiresIn} 后失效。</p>
           </div>
           <div class="footer">
-            <p>© ${ctx.year} AiNeed. All rights reserved.</p>
+            <p>© ${ctx.year} 寻裳. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -670,8 +670,8 @@ export class EmailService implements OnModuleInit {
             ${ctx.content}
           </div>
           <div class="footer">
-            <p>此邮件由 AiNeed 自动发送，请勿直接回复。</p>
-            <p>© ${ctx.year} AiNeed. All rights reserved.</p>
+            <p>此邮件由 寻裳 自动发送，请勿直接回复。</p>
+            <p>© ${ctx.year} 寻裳. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -715,7 +715,7 @@ export class EmailService implements OnModuleInit {
             <p>感谢您的支持！如有任何问题，请随时联系我们的客服团队。</p>
           </div>
           <div class="footer">
-            <p>© ${ctx.year} AiNeed. All rights reserved.</p>
+            <p>© ${ctx.year} 寻裳. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -784,7 +784,7 @@ export class EmailService implements OnModuleInit {
             </p>
           </div>
           <div class="footer">
-            <p>© ${ctx.year} AiNeed. All rights reserved.</p>
+            <p>© ${ctx.year} 寻裳. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -825,7 +825,7 @@ export class EmailService implements OnModuleInit {
             </p>
           </div>
           <div class="footer">
-            <p>© ${ctx.year} AiNeed. All rights reserved.</p>
+            <p>© ${ctx.year} 寻裳. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -850,7 +850,7 @@ export class EmailService implements OnModuleInit {
       <body>
         <div class="container">
           <div class="header">
-            <h1>AiNeed</h1>
+            <h1>寻裳</h1>
           </div>
           <div class="content">
             <pre>${JSON.stringify(ctx, null, 2)}</pre>

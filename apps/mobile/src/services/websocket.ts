@@ -11,11 +11,20 @@ type TryOnEventPayload = {
   errorMessage?: string;
 };
 
+type TryOnProgressPayload = {
+  tryOnId: string;
+  progress: number;
+  stage: "uploading" | "processing" | "generating" | "completed" | "failed";
+  timestamp: string;
+};
+
 type TryOnEventListener = (payload: TryOnEventPayload) => void;
+type TryOnProgressListener = (payload: TryOnProgressPayload) => void;
 
 class WebSocketService {
   private socket: Socket | null = null;
   private tryOnListeners: Map<string, Set<TryOnEventListener>> = new Map();
+  private progressListeners: Map<string, Set<TryOnProgressListener>> = new Map();
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
 
@@ -62,6 +71,17 @@ class WebSocketService {
       }
     });
 
+    this.socket.on("try_on_progress", (payload: TryOnProgressPayload) => {
+      const listeners = this.progressListeners.get(payload.tryOnId);
+      if (listeners) {
+        listeners.forEach((listener) => listener(payload));
+      }
+      const wildcardListeners = this.progressListeners.get("*");
+      if (wildcardListeners) {
+        wildcardListeners.forEach((listener) => listener(payload));
+      }
+    });
+
     this.socket.on("connect_error", () => {
       this.reconnectAttempts++;
     });
@@ -78,6 +98,7 @@ class WebSocketService {
       this.socket = null;
     }
     this.tryOnListeners.clear();
+    this.progressListeners.clear();
   }
 
   onTryOnComplete(tryOnId: string, listener: TryOnEventListener): () => void {
@@ -97,11 +118,31 @@ class WebSocketService {
     };
   }
 
+  onTryOnProgress(
+    tryOnId: string,
+    listener: TryOnProgressListener,
+  ): () => void {
+    if (!this.progressListeners.has(tryOnId)) {
+      this.progressListeners.set(tryOnId, new Set());
+    }
+    this.progressListeners.get(tryOnId)!.add(listener);
+
+    return () => {
+      const listeners = this.progressListeners.get(tryOnId);
+      if (listeners) {
+        listeners.delete(listener);
+        if (listeners.size === 0) {
+          this.progressListeners.delete(tryOnId);
+        }
+      }
+    };
+  }
+
   isConnected(): boolean {
     return this.socket?.connected ?? false;
   }
 }
 
 export const wsService = new WebSocketService();
-export type { TryOnEventPayload, TryOnEventListener };
+export type { TryOnEventPayload, TryOnEventListener, TryOnProgressPayload, TryOnProgressListener };
 export default wsService;

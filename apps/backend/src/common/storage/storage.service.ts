@@ -59,7 +59,7 @@ export class StorageService {
       accessKey,
       secretKey,
     });
-    this.bucket = this.configService.get<string>("MINIO_BUCKET", "aineed");
+    this.bucket = this.configService.get<string>("MINIO_BUCKET", "xuno");
     this.logger.log(`StorageService initialized with endpoint: ${endpoint}, bucket: ${this.bucket}`);
     this.ensureBucket();
   }
@@ -100,6 +100,20 @@ export class StorageService {
     }
 
     return { url, thumbnailUrl };
+  }
+
+  async uploadBuffer(
+    filename: string,
+    buffer: Buffer,
+    contentType: string = 'application/octet-stream',
+  ): Promise<void> {
+    await this.minioClient.putObject(
+      this.bucket,
+      filename,
+      buffer,
+      buffer.length,
+      { 'Content-Type': contentType },
+    );
   }
 
   private async createThumbnail(
@@ -185,6 +199,15 @@ export class StorageService {
    * @param filename 文件名
    * @param expiresIn 过期时间（秒）
    */
+  async fileExists(filename: string): Promise<boolean> {
+    try {
+      await this.minioClient.statObject(this.bucket, filename);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async getFileUrl(
     filename: string,
     expiresIn: number = 86400,
@@ -230,6 +253,50 @@ export class StorageService {
   async fetchRemoteAssetDataUri(url: string): Promise<string> {
     const asset = await this.fetchRemoteAsset(url);
     return `data:${asset.contentType};base64,${asset.body.toString("base64")}`;
+  }
+
+  async generateWatermarkedImage(
+    imageUrl: string,
+    watermarkText: string = "寻裳 AI 试衣",
+  ): Promise<string> {
+    const asset = await this.fetchRemoteAsset(imageUrl);
+    const imageBuffer = asset.body;
+
+    const svgWatermark = `
+      <svg width="300" height="40">
+        <text x="0" y="28" font-family="sans-serif" font-size="24" fill="white" opacity="0.6">
+          ${watermarkText}
+        </text>
+      </svg>`;
+
+    const watermarkedBuffer = await sharp(imageBuffer)
+      .composite([
+        {
+          input: Buffer.from(svgWatermark),
+          gravity: "southeast",
+        },
+      ])
+      .png()
+      .toBuffer();
+
+    const filename = `tryon-results/watermarked/${uuidv4()}.png`;
+    await this.minioClient.putObject(
+      this.bucket,
+      filename,
+      watermarkedBuffer,
+      watermarkedBuffer.length,
+      { "Content-Type": "image/png" },
+    );
+
+    return this.getFileUrl(filename);
+  }
+
+  async getCDNUrl(path: string): Promise<string> {
+    const cdnBaseUrl = this.configService.get<string>("CDN_BASE_URL");
+    if (cdnBaseUrl) {
+      return `${cdnBaseUrl}/${path}`;
+    }
+    return this.getFileUrl(path);
   }
 
   async uploadEncrypted(

@@ -775,10 +775,14 @@ export class RecommendationsService {
 
   private getColorSeasonName(season: ColorSeason): string {
     const names: Record<ColorSeason, string> = {
-      [ColorSeason.spring]: "春季",
-      [ColorSeason.summer]: "夏季",
-      [ColorSeason.autumn]: "秋季",
-      [ColorSeason.winter]: "冬季",
+      [ColorSeason.spring_warm]: "春季暖型",
+      [ColorSeason.spring_light]: "春季亮型",
+      [ColorSeason.summer_cool]: "夏季冷型",
+      [ColorSeason.summer_light]: "夏季亮型",
+      [ColorSeason.autumn_warm]: "秋季暖型",
+      [ColorSeason.autumn_deep]: "秋季深型",
+      [ColorSeason.winter_cool]: "冬季冷型",
+      [ColorSeason.winter_deep]: "冬季深型",
     };
     return names[season] || season;
   }
@@ -856,24 +860,44 @@ export class RecommendationsService {
 
   private getColorSeasonGuide(season: ColorSeason): string[] {
     const guides: Record<ColorSeason, string[]> = {
-      [ColorSeason.spring]: [
+      [ColorSeason.spring_warm]: [
         "暖色调非常适合您，如珊瑚色、桃色",
         "避免过于冷峻的灰黑色",
         "金色饰品比银色更适合",
       ],
-      [ColorSeason.summer]: [
+      [ColorSeason.spring_light]: [
+        "明亮清新的色彩最适合您",
+        "浅桃色、鹅黄色、淡绿色都是好选择",
+        "金色饰品比银色更适合",
+      ],
+      [ColorSeason.summer_cool]: [
         "柔和的冷色调最适合您",
         "粉色、薰衣草色、浅蓝色都是好选择",
         "银色饰品比金色更适合",
       ],
-      [ColorSeason.autumn]: [
+      [ColorSeason.summer_light]: [
+        "柔和淡雅的色彩最适合您",
+        "浅粉、淡紫、雾霾蓝都是好选择",
+        "银色饰品比金色更适合",
+      ],
+      [ColorSeason.autumn_warm]: [
         "大地色系是您的最佳选择",
         "驼色、棕色、橄榄绿都很适合",
         "金色和铜色饰品非常适合",
       ],
-      [ColorSeason.winter]: [
+      [ColorSeason.autumn_deep]: [
+        "浓郁深沉的色彩最适合您",
+        "砖红色、深棕色、墨绿色都很适合",
+        "金色和铜色饰品非常适合",
+      ],
+      [ColorSeason.winter_cool]: [
         "高饱和度的冷色调最适合",
         "正红色、纯白色、黑色都很适合",
+        "银色饰品是最佳选择",
+      ],
+      [ColorSeason.winter_deep]: [
+        "深邃对比强烈的色彩最适合",
+        "深红、纯黑、宝蓝都很适合",
         "银色饰品是最佳选择",
       ],
     };

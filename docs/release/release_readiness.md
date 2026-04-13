@@ -1,4 +1,4 @@
-# Release Readiness
+﻿# Release Readiness
 
 发布日期评估时间：2026-03-10
 
@@ -72,7 +72,7 @@
 
 ## 已通过项
 
-- `pnpm --filter @aineed/backend build`
+- `pnpm --filter @xuno/backend build`
 - `node scripts/audit/generate-file-review-matrix.mjs`
 - `pnpm licenses list --json`
 

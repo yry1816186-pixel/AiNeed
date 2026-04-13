@@ -1,4 +1,4 @@
-# AiNeed
+# 寻裳 (XunO)
 
 AI 驱动的智能私人形象定制平台。基于用户画像（体型/肤色/风格/场合），提供精准穿搭推荐，通过多模态 AI 生成换装效果图。
 
@@ -12,7 +12,7 @@ AI 驱动的智能私人形象定制平台。基于用户画像（体型/肤色/
 ## 技术架构
 
 ```
-AiNeed/                    # pnpm monorepo
+XunO/                     # pnpm monorepo
 ├── apps/backend/          # NestJS 11.x API (TypeScript)
 ├── apps/mobile/           # React Native 0.76.8 (Expo 52)
 ├── ml/services/           # Python AI 服务层 (GLM API)

@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException, BadRequestException, Optional } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { Prisma, PriceRange } from "@prisma/client";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
 import {
@@ -54,7 +54,7 @@ export class StyleQuizService {
     });
   }
 
-  async getQuizzes(query: StyleQuizQueryDto): Promise<PaginatedResponse<any>> {
+  async getQuizzes(query: StyleQuizQueryDto): Promise<PaginatedResponse<Prisma.StyleQuizGetPayload<{ include: { _count: { select: { questions: true; results: true } } } }>>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(query);
 
     const where: Prisma.StyleQuizWhereInput = {};
@@ -304,7 +304,7 @@ export class StyleQuizService {
 
   // ==================== 测试结果 ====================
 
-  async getQuizResults(userId: string, query: QuizResultQueryDto): Promise<PaginatedResponse<any>> {
+  async getQuizResults(userId: string, query: QuizResultQueryDto): Promise<PaginatedResponse<Prisma.StyleQuizResultGetPayload<{ include: { quiz: { select: { id: true; title: true } } } }>>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(query);
 
     const where: Prisma.StyleQuizResultWhereInput = { userId };
@@ -377,7 +377,7 @@ export class StyleQuizService {
           occasionPreferences: data.occasionPreferences,
           colorPreferences: data.colorPreferences,
           styleKeywords: data.styleKeywords,
-          priceRange: data.priceRange as any,
+          priceRange: data.priceRange as PriceRange,
           confidenceScore: data.confidenceScore,
           isLatest: true,
         },

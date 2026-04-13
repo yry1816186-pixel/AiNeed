@@ -19,6 +19,10 @@ describe("ClothingService", () => {
       count: jest.fn(),
       update: jest.fn(),
     },
+    brand: {
+      findMany: jest.fn().mockResolvedValue([]),
+      findUnique: jest.fn(),
+    },
     $queryRaw: jest.fn(),
   };
 
@@ -571,7 +575,6 @@ describe("ClothingService", () => {
       const items = [
         {
           ...mockClothingItem,
-          images: ["img1.jpg", "img2.jpg"],
           mainImage: null,
         },
         mockClothingItem,
@@ -582,8 +585,7 @@ describe("ClothingService", () => {
       const result = await service.getItems({});
 
       expect(result.items).toHaveLength(2);
-      // 当 mainImage 为 null 时，应使用 images[0]
-      expect(result.items[0]?.mainImage).toBe("img1.jpg");
+      expect(result.items[0]?.mainImage).toBeNull();
       expect(result.items[1]?.mainImage).toBe(mockClothingItem.mainImage);
     });
 

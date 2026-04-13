@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+﻿import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authApi } from '../services/api/auth.api';
+import { smsApi } from '../services/api/sms.api';
+import { wechatAuth } from '../services/auth/wechat';
 import { useAuthStore } from '../stores/index';
 import { theme } from '../theme';
 import type { RootStackParamList } from '../types/navigation';
@@ -29,6 +31,7 @@ export const LoginScreen: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [wechatLoading, setWechatLoading] = useState(false);
 
   const validateInputs = useCallback((): string | null => {
     const trimmedEmail = email.trim();
@@ -63,6 +66,28 @@ export const LoginScreen: React.FC = () => {
     return '网络连接失败，请检查网络后重试';
   };
 
+  const handleLoginSuccess = useCallback(async (user: { id: string; email: string; nickname?: string; avatar?: string; createdAt?: string; updatedAt?: string }, token: string) => {
+    setToken(token);
+    setUser({
+      ...user,
+      createdAt: user.createdAt || new Date().toISOString(),
+      updatedAt: user.updatedAt || new Date().toISOString(),
+    });
+
+    const onboardingComplete = await AsyncStorage.getItem('@aineed:onboarding_complete');
+    if (onboardingComplete === 'true') {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'MainTabs' }],
+      });
+    } else {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Onboarding' }],
+      });
+    }
+  }, [setToken, setUser, navigation]);
+
   const handleLogin = useCallback(async () => {
     Keyboard.dismiss();
 
@@ -82,21 +107,7 @@ export const LoginScreen: React.FC = () => {
 
       if (response.success && response.data) {
         const { user, token } = response.data;
-        setToken(token);
-        setUser(user);
-
-        const onboardingComplete = await AsyncStorage.getItem('@aineed:onboarding_complete');
-        if (onboardingComplete === 'true') {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'MainTabs' }],
-          });
-        } else {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Onboarding' }],
-          });
-        }
+        await handleLoginSuccess(user, token);
       } else {
         Alert.alert(
           '登录失败',
@@ -109,7 +120,32 @@ export const LoginScreen: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [email, password, validateInputs, setToken, setUser, navigation]);
+  }, [email, password, validateInputs, handleLoginSuccess]);
+
+  const handleWechatLogin = useCallback(async () => {
+    setWechatLoading(true);
+    try {
+      const response = await wechatAuth.loginWithWechat();
+      if (response.success && response.data) {
+        const { user, accessToken } = response.data;
+        await handleLoginSuccess(user, accessToken);
+      } else {
+        Alert.alert(
+          '微信登录失败',
+          response.error?.message || '请稍后重试',
+        );
+      }
+    } catch (error: unknown) {
+      const message = getErrorMessage(error);
+      Alert.alert('微信登录失败', message);
+    } finally {
+      setWechatLoading(false);
+    }
+  }, [handleLoginSuccess]);
+
+  const handlePhoneLogin = useCallback(() => {
+    navigation.navigate('PhoneLogin' as never);
+  }, [navigation]);
 
   const handleForgotPassword = useCallback(async () => {
     const trimmedEmail = email.trim();
@@ -164,7 +200,7 @@ export const LoginScreen: React.FC = () => {
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
-            disabled={isLoading}
+            disabled={isLoading || wechatLoading}
             accessibilityLabel="返回"
           >
             <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
@@ -175,7 +211,7 @@ export const LoginScreen: React.FC = () => {
             <View style={styles.logoContainer}>
               <Ionicons name="shirt-outline" size={36} color={theme.colors.surface} />
             </View>
-            <Text style={styles.brandName}>AiNeed</Text>
+            <Text style={styles.brandName}>寻裳</Text>
           </View>
           <Text style={styles.title}>欢迎回来</Text>
           <Text style={styles.subtitle}>登录您的账户</Text>
@@ -191,7 +227,7 @@ export const LoginScreen: React.FC = () => {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
-                editable={!isLoading}
+                editable={!isLoading && !wechatLoading}
                 returnKeyType="next"
                 accessibilityLabel="邮箱地址"
                 onSubmitEditing={() => {
@@ -213,7 +249,7 @@ export const LoginScreen: React.FC = () => {
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
-                editable={!isLoading}
+                editable={!isLoading && !wechatLoading}
                 returnKeyType="go"
                 accessibilityLabel="密码"
                 onSubmitEditing={handleLogin}
@@ -222,7 +258,7 @@ export const LoginScreen: React.FC = () => {
                 onPress={() => setShowPassword((prev) => !prev)}
                 style={styles.eyeButton}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                disabled={isLoading}
+                disabled={isLoading || wechatLoading}
                 accessibilityLabel={showPassword ? '隐藏密码' : '显示密码'}
               >
                 <Ionicons
@@ -236,7 +272,7 @@ export const LoginScreen: React.FC = () => {
             <TouchableOpacity
               style={styles.forgotPasswordLink}
               onPress={handleForgotPassword}
-              disabled={isLoading}
+              disabled={isLoading || wechatLoading}
               accessibilityLabel="忘记密码"
             >
               <Text style={styles.forgotPasswordText}>忘记密码？</Text>
@@ -248,7 +284,7 @@ export const LoginScreen: React.FC = () => {
                 isLoading && styles.loginButtonDisabled,
               ]}
               onPress={handleLogin}
-              disabled={isLoading}
+              disabled={isLoading || wechatLoading}
               activeOpacity={0.7}
               accessibilityLabel="登录"
               accessibilityRole="button"
@@ -260,10 +296,46 @@ export const LoginScreen: React.FC = () => {
               )}
             </TouchableOpacity>
 
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>或</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <TouchableOpacity
+              style={styles.wechatButton}
+              onPress={handleWechatLogin}
+              disabled={isLoading || wechatLoading}
+              activeOpacity={0.7}
+              accessibilityLabel="微信登录"
+              accessibilityRole="button"
+            >
+              {wechatLoading ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <>
+                  <Ionicons name="logo-wechat" size={22} color="#FFFFFF" />
+                  <Text style={styles.wechatButtonText}>微信一键登录</Text>
+                </>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.phoneLoginButton}
+              onPress={handlePhoneLogin}
+              disabled={isLoading || wechatLoading}
+              activeOpacity={0.7}
+              accessibilityLabel="手机号登录"
+              accessibilityRole="button"
+            >
+              <Ionicons name="phone-portrait-outline" size={20} color={theme.colors.primary} />
+              <Text style={styles.phoneLoginText}>手机号登录</Text>
+            </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.registerLink}
               onPress={() => navigation.navigate('Register')}
-              disabled={isLoading}
+              disabled={isLoading || wechatLoading}
               accessibilityLabel="没有账户？立即注册"
             >
               <Text style={styles.registerText}>没有账户？立即注册</Text>
@@ -334,6 +406,44 @@ const styles = StyleSheet.create({
   },
   loginButtonDisabled: { backgroundColor: theme.colors.primaryLight },
   loginButtonText: { fontSize: 16, fontWeight: '600', color: theme.colors.surface },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 8,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: theme.colors.border || '#E5E5E5',
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    fontSize: 14,
+    color: theme.colors.textTertiary,
+  },
+  wechatButton: {
+    backgroundColor: '#07C160',
+    borderRadius: theme.BorderRadius.md,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    minHeight: 52,
+  },
+  wechatButtonText: { fontSize: 16, fontWeight: '600', color: '#FFFFFF' },
+  phoneLoginButton: {
+    backgroundColor: theme.colors.background,
+    borderRadius: theme.BorderRadius.md,
+    paddingVertical: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+  },
+  phoneLoginText: { fontSize: 16, fontWeight: '500', color: theme.colors.primary },
   registerLink: { alignItems: 'center', marginTop: 16 },
   registerText: { fontSize: 14, color: theme.colors.primary },
 });

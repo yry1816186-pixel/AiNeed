@@ -1,6 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { TryOnStatus } from "@prisma/client";
-import { IsInt, IsNotEmpty, IsOptional, IsUUID, Min } from "class-validator";
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+} from "class-validator";
 
 /**
  * 创建虚拟试衣请求 DTO
@@ -23,6 +30,22 @@ export class CreateTryOnDto {
   @IsUUID()
   @IsNotEmpty()
   itemId!: string;
+
+  @ApiPropertyOptional({
+    description: "服装分类（upper_body/lower_body/dress/full_body）",
+    example: "upper_body",
+  })
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @ApiPropertyOptional({
+    description: "场景标签（通勤/约会/运动等）",
+    example: "通勤",
+  })
+  @IsOptional()
+  @IsString()
+  scene?: string;
 }
 
 /**
@@ -88,6 +111,38 @@ export class GetTryOnHistoryQueryDto {
   })
   @IsOptional()
   status?: TryOnStatus;
+
+  @ApiPropertyOptional({
+    description: "按服装分类筛选",
+    example: "upper_body",
+  })
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @ApiPropertyOptional({
+    description: "按场景标签筛选",
+    example: "通勤",
+  })
+  @IsOptional()
+  @IsString()
+  scene?: string;
+
+  @ApiPropertyOptional({
+    description: "起始日期（YYYY-MM-DD）",
+    example: "2026-01-01",
+  })
+  @IsOptional()
+  @IsString()
+  dateFrom?: string;
+
+  @ApiPropertyOptional({
+    description: "结束日期（YYYY-MM-DD）",
+    example: "2026-12-31",
+  })
+  @IsOptional()
+  @IsString()
+  dateTo?: string;
 }
 
 /**

@@ -89,6 +89,18 @@ export const tryOnApi = {
       },
     };
   },
+
+  async deleteTryOn(id: string): Promise<ApiResponse<void>> {
+    return apiClient.delete(`/try-on/${id}`);
+  },
+
+  async retryTryOn(id: string): Promise<ApiResponse<{ id: string; status: string }>> {
+    return apiClient.post(`/try-on/${id}/retry`);
+  },
+
+  async getDailyQuota(): Promise<ApiResponse<{ used: number; limit: number; remaining: number }>> {
+    return apiClient.get("/try-on/daily-quota");
+  },
 };
 
 export interface RecommendedItem {

@@ -37,7 +37,7 @@ export function navigate<T extends keyof RootStackParamList>(
 ): void {
   if (navigationRef.isReady()) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    navigationRef.navigate(name as string, params as Record<string, unknown>);
+    (navigationRef as any).navigate(name as string, params as Record<string, unknown>);
   }
 }
 

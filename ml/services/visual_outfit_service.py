@@ -61,7 +61,7 @@ class VisualOutfitService:
         self.jd_app_key = os.getenv("JD_APP_KEY")
         self.jd_app_secret = os.getenv("JD_APP_SECRET")
         
-        self.idm_vton_url = os.getenv("IDM_VTON_URL", "http://localhost:8002")
+        self.virtual_tryon_url = os.getenv("VIRTUAL_TRYON_URL", "http://localhost:8001")
     
     async def generate_visual_outfit(
         self,
@@ -535,41 +535,36 @@ class VisualOutfitService:
         user_image: UserImageInfo,
         outfit_plan: VisualOutfitPlan
     ) -> Optional[str]:
-        """
-        调用 IDM-VTON 生成虚拟试衣效果
-        """
         try:
             top_item = None
-            bottom_item = None
-            
             for item in outfit_plan.items:
                 if item.category in ["上装", "上衣", "衬衫", "针织衫"]:
                     top_item = item
-                elif item.category in ["下装", "裤子", "裙子", "牛仔裤"]:
-                    bottom_item = item
-            
+                    break
+
             if not top_item:
                 return None
-            
+
             async with aiohttp.ClientSession() as session:
                 payload = {
-                    "person_image": user_image.url,
-                    "cloth_image": top_item.image_url,
-                    "category": "upper_body"
+                    "person_image_url": user_image.url,
+                    "garment_image_url": top_item.image_url,
+                    "category": "upper_body",
                 }
-                
+
                 async with session.post(
-                    f"{self.idm_vton_url}/api/tryon",
+                    f"{self.virtual_tryon_url}/api/v1/virtual-tryon/generate",
                     json=payload,
-                    timeout=aiohttp.ClientTimeout(total=120)
+                    timeout=aiohttp.ClientTimeout(total=30),
                 ) as response:
                     if response.status == 200:
                         result = await response.json()
-                        return result.get("result_url")
-        
+                        if result.get("success"):
+                            return result.get("result_url")
+
         except Exception as e:
             print(f"虚拟试衣生成失败: {e}")
-        
+
         return None
 
 

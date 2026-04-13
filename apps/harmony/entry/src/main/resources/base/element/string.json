@@ -2,15 +2,15 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "AiNeed intelligent personal styling assistant"
+      "value": "寻裳 intelligent personal styling assistant"
     },
     {
       "name": "EntryAbility_desc",
-      "value": "AiNeed entry ability"
+      "value": "寻裳 entry ability"
     },
     {
       "name": "EntryAbility_label",
-      "value": "AiNeed"
+      "value": "寻裳"
     },
     {
       "name": "home_tab",

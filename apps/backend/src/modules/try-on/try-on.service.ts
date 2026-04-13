@@ -44,6 +44,8 @@ export interface TryOnHistoryItem {
 }
 
 const MAX_CONCURRENT_TRYONS_PER_USER = 3;
+const DAILY_RETRY_LIMIT = 3;
+const DAILY_RETRY_KEY_PREFIX = "tryon:daily";
 
 @Injectable()
 export class TryOnService {
@@ -67,6 +69,8 @@ export class TryOnService {
     itemId: string,
   ): Promise<CreateTryOnResult> {
     this.logger.log("创建试衣请求", { userId, photoId, itemId });
+
+    await this.checkDailyRetryLimit(userId);
 
     const [photo, item, existingTryOn, pendingTryOn, activeCount] =
       await Promise.all([
@@ -189,7 +193,7 @@ export class TryOnService {
       itemId,
     });
 
-    const clothingImageUrl = item.mainImage || item.images[0];
+    const clothingImageUrl = item.mainImage || (item.images && item.images[0]) || "";
     if (!clothingImageUrl) {
       throw new BadRequestException("服装商品缺少展示图片");
     }
@@ -200,6 +204,8 @@ export class TryOnService {
       itemId,
       item.category ?? undefined,
     );
+
+    await this.incrementDailyRetryCount(userId);
 
     await this.notificationService.sendCustomNotification(userId, {
       type: "system",
@@ -257,11 +263,30 @@ export class TryOnService {
     page: number = 1,
     limit: number = 20,
     status?: TryOnStatus,
+    category?: string,
+    scene?: string,
+    dateFrom?: string,
+    dateTo?: string,
   ) {
     const skip = (page - 1) * limit;
     const where: Prisma.VirtualTryOnWhereInput = { userId };
     if (status) {
       where.status = status;
+    }
+    if (category) {
+      where.category = category;
+    }
+    if (scene) {
+      where.scene = scene;
+    }
+    if (dateFrom || dateTo) {
+      where.createdAt = {};
+      if (dateFrom) {
+        (where.createdAt as Prisma.DateTimeFilter).gte = new Date(dateFrom);
+      }
+      if (dateTo) {
+        (where.createdAt as Prisma.DateTimeFilter).lte = new Date(dateTo);
+      }
     }
 
     const [items, total] = await Promise.all([
@@ -323,6 +348,112 @@ export class TryOnService {
     await this.prisma.virtualTryOn.delete({
       where: { id: tryOnId },
     });
+  }
+
+  async retryTryOn(
+    tryOnId: string,
+    userId: string,
+  ): Promise<CreateTryOnResult> {
+    const original = await this.prisma.virtualTryOn.findFirst({
+      where: { id: tryOnId, userId },
+    });
+
+    if (!original) {
+      throw new NotFoundException("试衣记录不存在");
+    }
+
+    await this.checkDailyRetryLimit(userId);
+
+    const retryCount = (original.retryCount ?? 0) + 1;
+
+    const tryOn = await this.prisma.virtualTryOn.create({
+      data: {
+        userId,
+        photoId: original.photoId,
+        itemId: original.itemId,
+        status: TryOnStatus.pending,
+        category: original.category,
+        scene: original.scene,
+        parentTryOnId: original.id,
+        retryCount,
+      },
+    });
+
+    const item = await this.prisma.clothingItem.findUnique({
+      where: { id: original.itemId },
+      select: { category: true, mainImage: true, images: true },
+    });
+
+    const clothingImageUrl =
+      item?.mainImage || (item?.images && item.images[0]) || "";
+
+    await this.queueService.addVirtualTryOnTask(
+      userId,
+      original.photoId,
+      original.itemId,
+      item?.category ?? undefined,
+    );
+
+    await this.incrementDailyRetryCount(userId);
+
+    return {
+      id: tryOn.id,
+      status: tryOn.status,
+      estimatedWaitTime: 45,
+    };
+  }
+
+  async getDailyQuota(userId: string): Promise<{
+    used: number;
+    limit: number;
+    remaining: number;
+  }> {
+    const used = await this.getDailyRetryCount(userId);
+    return {
+      used,
+      limit: DAILY_RETRY_LIMIT,
+      remaining: Math.max(0, DAILY_RETRY_LIMIT - used),
+    };
+  }
+
+  private getDailyRetryKey(userId: string): string {
+    const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    return `${DAILY_RETRY_KEY_PREFIX}:${userId}:${today}`;
+  }
+
+  private async getDailyRetryCount(userId: string): Promise<number> {
+    const key = this.getDailyRetryKey(userId);
+    const count = await this.redis.get(key);
+    return count ? parseInt(count, 10) : 0;
+  }
+
+  private async checkDailyRetryLimit(userId: string): Promise<void> {
+    const used = await this.getDailyRetryCount(userId);
+    if (used >= DAILY_RETRY_LIMIT) {
+      throw new BadRequestException(
+        "今日免费试衣次数已用完，明天再来吧",
+      );
+    }
+  }
+
+  private async incrementDailyRetryCount(userId: string): Promise<void> {
+    const key = this.getDailyRetryKey(userId);
+    const now = new Date();
+    const endOfDay = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1,
+    );
+    const ttlSeconds = Math.floor(
+      (endOfDay.getTime() - now.getTime()) / 1000,
+    );
+
+    const pipeline = this.redis.pipeline();
+    pipeline.incr(key);
+    if (ttlSeconds > 0) {
+      pipeline.expire(key, ttlSeconds);
+    }
+    await pipeline.exec();
   }
 
   private async attachResultDataUri<T extends { resultImageUrl?: string | null }>(

@@ -1,4 +1,4 @@
-# AiNeed Backup & Restore Runbook
+﻿# xuno Backup & Restore Runbook
 
 ## Backup Schedule
 
@@ -47,7 +47,7 @@ scripts\backup\backup.bat --full --upload
 ### Verify Backup Integrity
 
 After backup completes, check:
-1. Backup directory exists: `C:\backups\aineed_backup_YYYYMMDD\`
+1. Backup directory exists: `C:\backups\xuno_backup_YYYYMMDD\`
 2. All expected files present: `postgres_*.sql.gz`, `redis_*.rdb`, `minio_*.tar.gz`, `qdrant_*.tar.gz`
 3. File sizes are non-zero
 4. (Linux) SHA256 checksums match `manifest.json`
@@ -60,35 +60,35 @@ After backup completes, check:
 
 **Linux:**
 ```bash
-./scripts/backup/restore.sh /backups/aineed_backup_YYYYMMDD
+./scripts/backup/restore.sh /backups/xuno_backup_YYYYMMDD
 ```
 
 **With Verification:**
 ```bash
-./scripts/backup/restore.sh --verify /backups/aineed_backup_YYYYMMDD
+./scripts/backup/restore.sh --verify /backups/xuno_backup_YYYYMMDD
 ```
 
 ### Selective Restore
 
 ```bash
 # PostgreSQL only
-./scripts/backup/restore.sh --postgres /backups/aineed_backup_YYYYMMDD
+./scripts/backup/restore.sh --postgres /backups/xuno_backup_YYYYMMDD
 
 # Redis only
-./scripts/backup/restore.sh --redis /backups/aineed_backup_YYYYMMDD
+./scripts/backup/restore.sh --redis /backups/xuno_backup_YYYYMMDD
 
 # MinIO only
-./scripts/backup/restore.sh --minio /backups/aineed_backup_YYYYMMDD
+./scripts/backup/restore.sh --minio /backups/xuno_backup_YYYYMMDD
 
 # Qdrant only
-./scripts/backup/restore.sh --qdrant /backups/aineed_backup_YYYYMMDD
+./scripts/backup/restore.sh --qdrant /backups/xuno_backup_YYYYMMDD
 ```
 
 ### Manual PostgreSQL Restore
 
 ```bash
 # 1. Decompress backup
-gunzip -c /backups/aineed_backup_YYYYMMDD/postgres_TIMESTAMP.sql.gz > restore.sql
+gunzip -c /backups/xuno_backup_YYYYMMDD/postgres_TIMESTAMP.sql.gz > restore.sql
 
 # 2. Stop backend to prevent writes
 docker-compose stop backend
@@ -110,7 +110,7 @@ curl http://localhost:3001/api/v1/health/ready
 docker-compose stop redis
 
 # 2. Copy RDB file
-docker cp /backups/aineed_backup_YYYYMMDD/redis_TIMESTAMP.rdb stylemind-redis:/data/dump.rdb
+docker cp /backups/xuno_backup_YYYYMMDD/redis_TIMESTAMP.rdb stylemind-redis:/data/dump.rdb
 
 # 3. Start Redis
 docker-compose start redis

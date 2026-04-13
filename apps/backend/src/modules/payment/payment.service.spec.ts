@@ -41,6 +41,12 @@ describe("PaymentService", () => {
         paymentRecord: {
           update: jest.fn(),
         },
+        order: {
+          updateMany: jest.fn(),
+        },
+        clothingItem: {
+          update: jest.fn(),
+        },
       }),
     ),
   };

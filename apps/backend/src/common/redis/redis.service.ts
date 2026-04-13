@@ -3,7 +3,7 @@ import Redis from "ioredis";
 
 export const REDIS_CLIENT = "REDIS_CLIENT";
 
-export const REDIS_KEY_PREFIX = "aineed";
+export const REDIS_KEY_PREFIX = "xuno";
 export const REDIS_KEY_SEPARATOR = ":";
 
 export class RedisKeyBuilder {

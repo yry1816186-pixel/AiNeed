@@ -2,6 +2,7 @@ import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { EncryptionService } from "../../common/encryption";
+import { PIIEncryptionService } from "../../common/encryption/pii-encryption.service";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import * as bcrypt from "../../common/security/bcrypt";
 import { CacheService } from "../cache/cache.service";
@@ -45,6 +46,12 @@ describe("UsersService", () => {
     verifyHash: jest.fn((value: string, hash: string) => hash === `hash:${value}`),
   };
 
+  const mockPiiEncryptionService = {
+    encryptPII: jest.fn((model: string, data: any) => data),
+    decryptPII: jest.fn((model: string, data: any) => data),
+    isEncrypted: jest.fn(() => false),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -60,6 +67,10 @@ describe("UsersService", () => {
         {
           provide: EncryptionService,
           useValue: mockEncryptionService,
+        },
+        {
+          provide: PIIEncryptionService,
+          useValue: mockPiiEncryptionService,
         },
       ],
     }).compile();

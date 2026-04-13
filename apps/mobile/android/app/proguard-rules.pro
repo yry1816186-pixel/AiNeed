@@ -45,8 +45,8 @@
 -keep class com.zustand.** { *; }
 
 # App packages
--keep class com.aineed.app.** { *; }
--keep class com.aineed.app.BuildConfig { *; }
+-keep class com.xuno.app.** { *; }
+-keep class com.xuno.app.BuildConfig { *; }
 
 # OkHttp / Network
 -dontwarn okhttp3.**

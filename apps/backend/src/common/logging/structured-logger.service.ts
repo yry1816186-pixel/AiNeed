@@ -110,7 +110,7 @@ export class StructuredLoggerService implements LoggerService {
   ) {
     this.asyncLocalStorage = asyncLocalStorage || new AsyncLocalStorage<RequestContext>();
     this.isProduction = this.configService.get<string>("NODE_ENV") === "production";
-    this.serviceName = this.configService.get<string>("SERVICE_NAME", "aineed-backend");
+    this.serviceName = this.configService.get<string>("SERVICE_NAME", "xuno-backend");
     this.logLevel = this.configService.get<LogLevel>("LOG_LEVEL", "info");
   }
 

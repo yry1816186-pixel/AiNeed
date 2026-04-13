@@ -5,8 +5,10 @@ import {
   Logger,
   BadRequestException,
   NotFoundException,
+  Optional,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { Cron } from "@nestjs/schedule";
 import { AnalysisStatus, PhotoType } from "@prisma/client";
 
 import { stripExifFromBuffer } from "../../common/security/image-sanitizer";
@@ -14,6 +16,8 @@ import { MalwareScannerService } from "../../common/security/malware-scanner.ser
 import { validateImageFile as sharedValidateImageFile } from "../../common/security/upload-validator";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { StorageService } from "../../common/storage/storage.service";
+import { OnboardingService } from "../onboarding/onboarding.service";
+import { QueueService } from "../queue/queue.service";
 
 import { AiAnalysisService } from "./services/ai-analysis.service";
 import "multer"; // 引入 Express.Multer.File 类型声明
@@ -39,6 +43,8 @@ export class PhotosService {
     private aiAnalysis: AiAnalysisService,
     private configService: ConfigService,
     private malwareScanner: MalwareScannerService,
+    private queueService: QueueService,
+    @Optional() private onboardingService: OnboardingService | null,
   ) {}
 
   async uploadPhoto(
@@ -75,7 +81,17 @@ export class PhotosService {
       },
     });
 
-    this.analyzePhotoAsync(photo.id, file.buffer);
+    // 使用 BullMQ 队列异步分析照片
+    await this.queueService.addImageAnalysisTask(userId, url, 'full');
+
+    // 推进 onboarding 步骤：照片上传完成后从 PHOTO 推进到 STYLE_TEST
+    if (this.onboardingService) {
+      try {
+        await this.onboardingService.skipStep(userId, "PHOTO");
+      } catch {
+        // 用户可能不在 PHOTO 步骤，忽略错误
+      }
+    }
 
     return {
       id: photo.id,
@@ -185,14 +201,14 @@ export class PhotosService {
     });
 
     if (!photo) {
-      throw new NotFoundException("鐓х墖涓嶅瓨鍦?");
+      throw new NotFoundException("照片不存在");
     }
 
     const assetUrl =
       variant === "thumbnail" ? photo.thumbnailUrl ?? photo.url : photo.url;
 
     if (!assetUrl) {
-      throw new NotFoundException("鐓х墖璧勪骇涓嶅瓨鍦?");
+      throw new NotFoundException("照片资产不存在");
     }
 
     return this.storage.fetchRemoteAsset(assetUrl);
@@ -400,5 +416,35 @@ export class PhotosService {
       );
       return url; // Return original URL as fallback instead of null
     }
+  }
+
+  /**
+   * Recovery cron: retry photos stuck in "processing" status for over 10 minutes.
+   * Runs every 10 minutes. Resets stuck photos to "pending" so they can be re-analyzed.
+   */
+  @Cron("*/10 * * * *")
+  async recoverStuckAnalyses(): Promise<void> {
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+
+    const stuckPhotos = await this.prisma.userPhoto.findMany({
+      where: {
+        analysisStatus: AnalysisStatus.processing,
+        createdAt: { lt: tenMinutesAgo },
+      },
+      take: 20,
+    });
+
+    if (stuckPhotos.length === 0) return;
+
+    this.logger.warn(`Found ${stuckPhotos.length} photos stuck in processing, resetting to pending`);
+
+    await this.prisma.userPhoto.updateMany({
+      where: {
+        id: { in: stuckPhotos.map((p) => p.id) },
+      },
+      data: {
+        analysisStatus: AnalysisStatus.pending,
+      },
+    });
   }
 }

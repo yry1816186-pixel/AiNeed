@@ -1,0 +1,550 @@
+# Phase 1: 用户画像 & 风格测试 — 执行计划
+
+**Created:** 2026-04-13
+**Status:** Ready for execution
+**Requirements:** PROF-01 ~ PROF-13 (13 条)
+**Decisions:** D-01 ~ D-15, CC-01 ~ CC-48
+
+---
+
+## 一、现有代码资产盘点
+
+### 1.1 后端可直接复用
+
+| 模块 | 位置 | 复用内容 | 复用类型 |
+|------|------|----------|----------|
+| Auth | `modules/auth/` | JWT 双 Token 机制、@Public/@CurrentUser 装饰器、账户锁定、RefreshToken rotation | **直接复用** |
+| Profile | `modules/profile/` | 体型分析引擎(5种体型)、色彩分析(4季型)、BMI/腰臀比计算、行为学习驱动画像更新 | **直接复用** |
+| Photos | `modules/photos/` | EXIF stripping、AES 加密存储、MinIO 上传、异步 AI 分析、缩略图生成 | **直接复用** |
+| Style-Profiles | `modules/style-profiles/` | 风格档案 CRUD、关键词/调色板/置信度 | **直接复用** |
+| Style-Quiz | `modules/style-quiz/` | 问卷 CRUD、答题提交(单题+批量)、结果保存、isLatest 标记 | **直接复用** |
+| Privacy | `modules/privacy/` | GDPR/PIPL 合规、数据导出/删除 | **直接复用** |
+| Subscription | `modules/subscription/` | 订阅系统基础、guards | **直接复用** |
+| Common | `src/common/` | PrismaService、RedisService、StructuredLogger、bcrypt、image-sanitizer、upload-validator | **直接复用** |
+| Photos 子服务 | `modules/photos/services/` | BodyImageAnalysisService、AiAnalysisService、ColorSeasonAnalyzer、BodyShapeAnalyzer、FaceShapeAnalyzer | **直接复用** |
+
+### 1.2 后端需扩展
+
+| 模块 | 扩展内容 | 扩展类型 |
+|------|----------|----------|
+| Auth | 微信 OAuth2.0 登录(wechatOpenId/UnionId)、手机号+验证码登录、短信服务集成 | **扩展** |
+| Auth DTO | WechatLoginDto、PhoneLoginDto、PhoneRegisterDto | **扩展** |
+| User 模型 | 新增 wechatOpenId、wechatUnionId、authProvider 字段 | **扩展** |
+| Profile | 画像完整度计算 API、画像变更事件通知(AI 造型师/推荐引擎) | **扩展** |
+| Photos | 照片质量检测前置校验(清晰度/光线/构图)、多尺寸图片生成(缩略图/中等/原图) | **扩展** |
+| Style-Quiz | 色彩偏好隐性推导算法(从图片选择行为推导)、风格测试进度自动保存、四维度分析引擎 | **扩展** |
+| Style-Quiz | 分享海报生成 API(基于 ShareTemplate 模型) | **扩展** |
+
+### 1.3 后端需新建
+
+| 模块 | 新建内容 | 新建类型 |
+|------|----------|----------|
+| SMS Service | 阿里云/腾讯云短信发送服务、验证码生成与 Redis 存储/校验 | **新建** |
+| Wechat Auth Strategy | 微信 OAuth2.0 Passport Strategy | **新建** |
+| Profile Completeness | 画像完整度计算服务(百分比+缺失项列表) | **新建** |
+| Profile Event Emitter | 画像变更事件发布(AI 造型师/推荐引擎订阅) | **新建** |
+| Photo Quality Validator | 照片质量检测服务(清晰度/光线/构图评分) | **新建** |
+| Share Poster Service | 分享海报生成服务(基于 ShareTemplate + Canvas/Puppeteer) | **新建** |
+| Quiz Progress Service | 风格测试进度自动保存服务(Redis 缓存) | **新建** |
+| Color Derivation Engine | 色彩偏好隐性推导引擎(从图片选择行为推导色彩偏好) | **新建** |
+
+### 1.4 移动端可直接复用
+
+| 组件/服务 | 位置 | 复用内容 | 复用类型 |
+|-----------|------|----------|----------|
+| OnboardingSteps | `components/onboarding/OnboardingSteps.tsx` | StyleStep/ColorStep/BodyStep 组件设计 | **直接复用** |
+| ApiClient | `services/api/client.ts` | Token 刷新、LRU 缓存、重试、统一错误处理 | **直接复用** |
+| authApi | `services/api/auth.api.ts` | 登录/注册/刷新/用户信息 | **直接复用** |
+| profileApi | `services/api/profile.api.ts` | 画像 CRUD、体型/色彩分析 | **直接复用** |
+| photosApi | `services/api/photos.api.ts` | 照片上传/管理 | **直接复用** |
+| styleProfilesApi | `services/api/style-profiles.api.ts` | 风格画像 CRUD | **直接复用** |
+| AuthStore | `stores/index.ts` | 认证状态管理 | **直接复用** |
+| AnalysisStore | `stores/index.ts` | 分析结果状态 | **直接复用** |
+| ScreenLayout | `components/layout/ScreenLayout.tsx` | 页面布局模板 | **直接复用** |
+| EmptyState | `components/emptyList/EmptyState.tsx` | 空状态展示 | **直接复用** |
+| LoadingStates | `components/loading/LoadingStates.tsx` | 加载状态 | **直接复用** |
+| imagePicker | `utils/imagePicker.ts` | 图片选择工具 | **直接复用** |
+| secureStorage | `utils/secureStorage.ts` | 安全存储 | **直接复用** |
+| useForm | `hooks/useForm.ts` | 表单管理 | **直接复用** |
+| useAsync | `hooks/useAsync.ts` | 异步操作 | **直接复用** |
+
+### 1.5 移动端需扩展
+
+| 组件/服务 | 扩展内容 | 扩展类型 |
+|-----------|----------|----------|
+| OnboardingScreen | 重构为多步骤引导(基本信息→照片→风格测试)，增加性别/年龄段必填步骤 | **扩展** |
+| LoginScreen | 增加微信登录按钮、手机号登录入口 | **扩展** |
+| RegisterScreen | 增加手机号注册入口 | **扩展** |
+| ProfileScreen | 增加画像完整度指示器、画像编辑入口、分析结果展示 | **扩展** |
+| HomeScreen | 增加画像补全提示 banner | **扩展** |
+| AuthStore | 增加 wechatLogin/phoneLogin action | **扩展** |
+| 导航路由 | 增加 ProfileEdit/BodyAnalysis/ColorAnalysis/StyleQuiz/SharePoster 路由 | **扩展** |
+
+### 1.6 移动端需新建
+
+| 组件/服务 | 新建内容 | 新建类型 |
+|-----------|----------|----------|
+| ProfileEditScreen | 画像编辑主页面(基本信息+身材数据+风格偏好) | **新建** |
+| BodyAnalysisScreen | 体型分析可视化报告(体型分类+身体比例可视化+穿搭建议) | **新建** |
+| ColorAnalysisScreen | 色彩季型可视化报告(调色板+适合/不适合颜色+推荐理由) | **新建** |
+| StyleQuizScreen | 风格测试图片选择式问卷(5-8题，每题4-6张图) | **新建** |
+| SharePosterScreen | 分享海报生成与预览 | **新建** |
+| PhotoGuideOverlay | 拍照实时参考线引导组件(人体轮廓+姿势提示) | **新建** |
+| PhotoQualityIndicator | 照片质量检测反馈组件 | **新建** |
+| ProfileCompletenessBar | 画像完整度进度条组件 | **新建** |
+| ProfileStore | 统一画像状态管理(Zustand) | **新建** |
+| StyleQuizStore | 风格测试状态管理(进度/答案/结果) | **新建** |
+| styleQuizApi | 风格测试 API 服务层 | **新建** |
+| smsApi | 短信验证码 API 服务层 | **新建** |
+| wechatAuth | 微信登录工具(wechat-react-native / expo-wechat) | **新建** |
+| PrivacyConsentModal | 隐私承诺弹窗组件 | **新建** |
+
+---
+
+## 二、需求→任务映射
+
+### PROF-01: 双轨道体型分析
+
+**需求**: 用户可通过照片分析（MediaPipe + GLM）或手动输入建立体型数据
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-01a | 后端: Profile 模块已有照片分析+手动输入双通道，验证 API 完整性 | 直接复用 | 无 |
+| T-01b | 移动端: 新建 BodyAnalysisScreen 展示分析结果(体型分类+身体比例可视化+穿搭建议) | 新建 | T-01a |
+| T-01c | 移动端: ProfileEditScreen 增加手动输入身材数据表单(height/weight/shoulder/bust/waist/hip/inseam) | 扩展 | T-01a |
+
+### PROF-02: 拍照实时参考线引导
+
+**需求**: 上传照片时显示人体轮廓参考线 + 姿势提示，支持相册上传
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-02a | 移动端: 新建 PhotoGuideOverlay 组件(人体轮廓 SVG + 姿势提示文案 + 实时对齐检测) | 新建 | 无 |
+| T-02b | 移动端: 照片上传流程集成 PhotoGuideOverlay(相机模式显示参考线，相册模式跳过) | 扩展 | T-02a |
+| T-02c | 后端: Photos 模块已有相机/相册上传支持，验证完整性 | 直接复用 | 无 |
+
+### PROF-03: 照片质量检测
+
+**需求**: 自动检测照片质量（清晰度/光线/构图），不合格提示重新上传或自动增强
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-03a | 后端: 新建 PhotoQualityValidator 服务(基于 sharp 检测清晰度/亮度/构图评分) | 新建 | 无 |
+| T-03b | 后端: PhotosController.uploadPhoto 集成质量检测前置校验(不合格返回 400 + 质量报告) | 扩展 | T-03a |
+| T-03c | 移动端: 新建 PhotoQualityIndicator 组件(质量评分可视化 + 重拍/自动增强选项) | 新建 | T-03b |
+| T-03d | 移动端: 照片上传流程集成质量检测反馈 | 扩展 | T-03c |
+
+### PROF-04: 体型分析可视化报告
+
+**需求**: 体型分类(5种) + 身体比例可视化 + 肤色分析 + 色彩季型 + 个性化穿搭建议摘要；支持生成可分享海报
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-04a | 后端: Profile 模块已有 getBodyAnalysis + getColorAnalysis + getStyleRecommendations，验证完整性 | 直接复用 | 无 |
+| T-04b | 移动端: 新建 BodyAnalysisScreen(体型分类卡片 + 身体比例 SVG 可视化 + 穿搭建议摘要) | 新建 | T-04a |
+| T-04c | 移动端: 新建 ColorAnalysisScreen(色彩季型卡片 + 调色板展示 + 适合/不适合颜色 + 推荐理由) | 新建 | T-04a |
+| T-04d | 后端: 新建 SharePosterService(基于 ShareTemplate 模型 + Puppeteer/Canvas 生成海报图片) | 新建 | 无 |
+| T-04e | 后端: 新建 POST /profile/share-poster 端点(接收画像数据 → 生成海报 → 返回图片 URL) | 新建 | T-04d |
+| T-04f | 移动端: 新建 SharePosterScreen(海报预览 + 保存到相册 + 分享到微信/朋友圈) | 新建 | T-04e |
+
+### PROF-05: 双通道注册
+
+**需求**: 手机号+验证码注册和微信一键登录
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-05a | 后端: 新建 SmsService(阿里云/腾讯云短信发送 + 验证码生成 + Redis 存储/校验) | 新建 | 无 |
+| T-05b | 后端: AuthController 新增 POST /auth/phone-login (手机号+验证码登录) | 扩展 | T-05a |
+| T-05c | 后端: AuthController 新增 POST /auth/phone-register (手机号+验证码注册) | 扩展 | T-05a |
+| T-05d | 后端: User 模型新增 wechatOpenId(unique)、wechatUnionId、authProvider(enum) 字段 | 扩展 | 无 |
+| T-05e | 后端: 新建 WechatAuthStrategy(微信 OAuth2.0 授权码换 Token) | 新建 | T-05d |
+| T-05f | 后端: AuthController 新增 POST /auth/wechat (微信授权码换 JWT) | 扩展 | T-05e |
+| T-05g | 后端: AuthService 新增 loginWithWechat / loginWithPhone / registerWithPhone 方法 | 扩展 | T-05a, T-05e |
+| T-05h | 后端: 新建 PhoneLoginDto、PhoneRegisterDto、WechatLoginDto | 新建 | 无 |
+| T-05i | 移动端: LoginScreen 增加微信登录按钮 + 手机号登录入口 | 扩展 | T-05f, T-05b |
+| T-05j | 移动端: 新建 smsApi(发送验证码 + 验证码登录/注册) | 新建 | T-05a |
+| T-05k | 移动端: 新建 wechatAuth 工具(微信 SDK 集成 + 授权码获取) | 新建 | T-05e |
+| T-05l | 移动端: AuthStore 增加 wechatLogin / phoneLogin action | 扩展 | T-05j, T-05k |
+
+### PROF-06: 强制基本信息收集
+
+**需求**: 注册后必须填写性别和年龄段
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-06a | 后端: RegisterDto 增加 gender 必填字段 + birthDate(推导年龄段) | 扩展 | 无 |
+| T-06b | 后端: AuthService.register 事务中创建 UserProfile 并写入 gender + birthDate | 扩展 | T-06a |
+| T-06c | 移动端: OnboardingScreen 重构 Step 0 为必填基本信息(性别选择 + 年龄段选择) | 扩展 | T-06a |
+| T-06d | 移动端: 基本信息步骤不可跳过，验证后才能继续 | 扩展 | T-06c |
+
+### PROF-07: 最短链路引导
+
+**需求**: 基本信息(必填) → 照片上传(可选) → 风格测试(可选) → 进入首页；首页持续提示补全
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-07a | 移动端: OnboardingScreen 重构为 3 步引导(基本信息→照片上传→风格测试) | 扩展 | T-06c, T-02b, T-08a |
+| T-07b | 移动端: 照片上传和风格测试步骤增加"跳过"按钮 | 扩展 | T-07a |
+| T-07c | 后端: 新建 ProfileCompletenessService(计算画像完整度百分比 + 缺失项列表) | 新建 | 无 |
+| T-07d | 后端: ProfileController 新增 GET /profile/completeness 端点 | 新建 | T-07c |
+| T-07e | 移动端: 新建 ProfileCompletenessBar 组件(进度条 + 缺失项提示) | 新建 | T-07d |
+| T-07f | 移动端: HomeScreen 增加画像补全提示 banner(完整度 < 80% 时显示) | 扩展 | T-07e |
+| T-07g | 移动端: ProfileScreen 增加画像完整度指示器 + 编辑入口 | 扩展 | T-07e |
+
+### PROF-08: 风格测试图片选择式问卷
+
+**需求**: 5-8 题图片选择（每题 4-6 张穿搭图片），趣味性强
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-08a | 后端: StyleQuiz 模块已有完整 CRUD + 答题提交 + 结果保存，验证完整性 | 直接复用 | 无 |
+| T-08b | 后端: 新建 QuizProgressService(每题自动保存进度到 Redis，重新进入从上次位置继续) | 新建 | 无 |
+| T-08c | 后端: StyleQuizController 新增 GET /quizzes/:quizId/progress + POST /quizzes/:quizId/progress | 新建 | T-08b |
+| T-08d | 后端: 数据库 seed 脚本新增默认风格测试题库(5-8题，每题4-6张图片URL) | 新建 | 无 |
+| T-08e | 移动端: 新建 styleQuizApi(获取问卷/提交答案/获取进度/保存进度/获取结果) | 新建 | T-08a, T-08c |
+| T-08f | 移动端: 新建 StyleQuizStore(当前问卷/进度/答案/结果状态管理，持久化到 AsyncStorage) | 新建 | T-08e |
+| T-08g | 移动端: 新建 StyleQuizScreen(图片选择式问卷 UI，卡片式展示，滑动切换题目) | 新建 | T-08f |
+| T-08h | 移动端: 风格测试每选一题自动保存进度，重新进入从上次位置继续 | 扩展 | T-08g |
+
+### PROF-09: 色彩偏好隐性推导
+
+**需求**: 不直接问色彩偏好，通过图片选择行为隐性推导
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-09a | 后端: 新建 ColorDerivationEngine(从图片选择行为推导色彩偏好：每张图片有色彩标签，用户选择汇总推导) | 新建 | 无 |
+| T-09b | 后端: StyleQuizService.batchSubmitAnswers 集成色彩推导(答题完成后自动推导色彩偏好) | 扩展 | T-09a, T-08a |
+| T-09c | 后端: 推导结果写入 StyleQuizResult.colorPreferences + UserProfile.colorPreferences | 扩展 | T-09b |
+| T-09d | 移动端: StyleQuizScreen 展示色彩推导结果(调色板形式，与色彩分析报告联动) | 扩展 | T-09b |
+
+### PROF-10: 色彩季型系统
+
+**需求**: 四型（春夏秋冬）+ 细分维度（暖/冷 × 浅/深），呈现为调色板形式
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-10a | 后端: Profile 模块已有 ColorSeason enum(spring/summer/autumn/winter)，验证细分维度支持 | 直接复用 | 无 |
+| T-10b | 后端: ColorAnalysis 扩展增加暖冷×浅深细分维度(warm_spring/cool_summer/warm_autumn/cool_winter 等) | 扩展 | T-10a |
+| T-10c | 后端: Schema ColorSeason enum 扩展为 8 细分值(spring_warm/spring_light/summer_cool/summer_light/autumn_warm/autumn_deep/winter_cool/winter_deep) | 扩展 | 无 |
+| T-10d | 移动端: ColorAnalysisScreen 展示细分色彩季型 + 调色板(适合色+不适合色+推荐理由) | 扩展 | T-10b |
+
+### PROF-11: 伴随式画像构建
+
+**需求**: 用户行为数据持续优化画像
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-11a | 后端: UserProfileService.updateProfileFromBehavior 已实现行为学习驱动画像更新 | 直接复用 | 无 |
+| T-11b | 后端: UserBehavior 模型已有行为记录，UserBehaviorEvent 模型已有埋点 | 直接复用 | 无 |
+| T-11c | 后端: ProfileController POST /profile/refresh-from-behavior 已有手动触发端点 | 直接复用 | 无 |
+| T-11d | 后端: 新增行为事件自动触发画像更新(浏览/收藏/试衣/购买后自动调用 updateProfileFromBehavior) | 扩展 | T-11a |
+| T-11e | 移动端: ProfileScreen 展示"画像随使用越来越精准"提示文案 | 扩展 | 无 |
+
+### PROF-12: 照片加密永久存储
+
+**需求**: AES-256-GCM 加密存储在 MinIO，永久保留，用户可手动删除；上传页面展示隐私承诺
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-12a | 后端: Photos 模块已有 AES 加密 + MinIO 存储 + 永久保留 + 删除功能 | 直接复用 | 无 |
+| T-12b | 移动端: 新建 PrivacyConsentModal 组件("仅用于体型分析和试衣效果生成"文案) | 新建 | 无 |
+| T-12c | 移动端: 照片上传页面集成隐私承诺展示(上传前弹窗确认) | 扩展 | T-12b |
+
+### PROF-13: 画像数据同步
+
+**需求**: UserProfile/StyleProfile 变更后自动通知 AI 造型师和推荐引擎
+
+| 任务ID | 任务 | 类型 | 依赖 |
+|--------|------|------|------|
+| T-13a | 后端: 新建 ProfileEventEmitter 服务(画像变更后发布事件到 Redis Pub/Sub 或 BullMQ) | 新建 | 无 |
+| T-13b | 后端: ProfileService.updateProfile / UserProfileService.updateProfileFromBehavior 集成事件发布 | 扩展 | T-13a |
+| T-13c | 后端: StyleQuizService.saveQuizResult 集成事件发布(风格测试结果变更) | 扩展 | T-13a |
+| T-13d | 后端: AI 造型师模块和推荐引擎模块订阅画像变更事件，更新上下文 | 扩展 | T-13a |
+
+---
+
+## 三、任务分组与执行顺序
+
+### Group A: 数据模型与基础设施（无 UI 依赖，最先执行）
+
+```
+T-05d ─── User 模型新增微信字段 + ColorSeason 扩展
+T-10c ─── Schema ColorSeason enum 扩展为 8 细分值
+T-05h ─── 新建 PhoneLoginDto / WechatLoginDto
+T-08d ─── 数据库 seed 默认风格测试题库
+```
+
+**产出**: Prisma migration + DTO 文件 + seed 脚本
+
+### Group B: 后端核心服务（依赖 Group A）
+
+```
+T-05a ─── SmsService (短信服务)
+T-05e ─── WechatAuthStrategy (微信 OAuth)
+T-03a ─── PhotoQualityValidator (照片质量检测)
+T-07c ─── ProfileCompletenessService (画像完整度)
+T-08b ─── QuizProgressService (风格测试进度)
+T-09a ─── ColorDerivationEngine (色彩隐性推导)
+T-04d ─── SharePosterService (分享海报)
+T-13a ─── ProfileEventEmitter (画像变更事件)
+```
+
+**产出**: 8 个新服务类
+
+### Group C: 后端 API 集成（依赖 Group A + B）
+
+```
+T-05b/c/f/g ─── Auth 扩展(手机号/微信登录)
+T-06a/b ─── Auth 扩展(强制基本信息)
+T-03b ─── Photos 扩展(质量检测前置校验)
+T-07d ─── Profile 新增完整度端点
+T-08c ─── StyleQuiz 新增进度端点
+T-09b/c ─── StyleQuiz 集成色彩推导
+T-10b ─── Profile 扩展色彩细分
+T-04e ─── Profile 新增分享海报端点
+T-11d ─── Profile 扩展行为自动触发
+T-13b/c/d ─── 画像变更事件集成
+```
+
+**产出**: 完整的后端 API
+
+### Group D: 移动端基础设施（依赖 Group C 的 API）
+
+```
+T-05j ─── smsApi
+T-05k ─── wechatAuth
+T-08e ─── styleQuizApi
+T-07e ─── ProfileCompletenessBar 组件
+T-02a ─── PhotoGuideOverlay 组件
+T-03c ─── PhotoQualityIndicator 组件
+T-12b ─── PrivacyConsentModal 组件
+```
+
+**产出**: API 层 + 可复用组件
+
+### Group E: 移动端状态管理（依赖 Group D）
+
+```
+T-05l ─── AuthStore 扩展
+T-08f ─── StyleQuizStore 新建
+T-01a 验证 ─── ProfileStore 新建(统一画像状态)
+```
+
+**产出**: Store 层
+
+### Group F: 移动端页面（依赖 Group D + E）
+
+```
+T-06c/d ─── OnboardingScreen 重构(基本信息必填)
+T-07a/b ─── OnboardingScreen 重构(3步引导)
+T-05i ─── LoginScreen 扩展(微信/手机号)
+T-01b/c ─── ProfileEditScreen 新建
+T-04b ─── BodyAnalysisScreen 新建
+T-04c ─── ColorAnalysisScreen 新建
+T-04f ─── SharePosterScreen 新建
+T-08g/h ─── StyleQuizScreen 新建
+T-02b ─── 照片上传集成参考线
+T-03d ─── 照片上传集成质量检测
+T-07f ─── HomeScreen 画像补全提示
+T-07g ─── ProfileScreen 画像完整度
+T-09d ─── StyleQuizScreen 色彩推导结果
+T-10d ─── ColorAnalysisScreen 细分季型
+T-11e ─── ProfileScreen 伴随学习提示
+T-12c ─── 照片上传隐私承诺
+```
+
+**产出**: 完整的移动端页面
+
+### Group G: 集成测试与验收（依赖 Group F）
+
+```
+T-G1 ─── 后端 API 集成测试
+T-G2 ─── 移动端 E2E 测试(注册→引导→画像→风格测试完整流程)
+T-G3 ─── 跨模块集成验证(画像变更→AI 造型师/推荐引擎通知)
+```
+
+---
+
+## 四、依赖关系图
+
+```
+Group A (Schema + DTO)
+  │
+  ▼
+Group B (8 个新服务)
+  │
+  ▼
+Group C (API 集成)
+  │
+  ▼
+Group D (移动端 API + 组件)
+  │
+  ▼
+Group E (Store 层)
+  │
+  ▼
+Group F (页面)
+  │
+  ▼
+Group G (集成测试)
+```
+
+**关键路径**: T-05d → T-05a → T-05g → T-05i → T-07a → T-08g → T-G2
+
+**可并行**: Group B 的 8 个服务可并行开发；Group D 的 API 层和组件可并行开发；Group F 的各页面可并行开发。
+
+---
+
+## 五、详细任务清单
+
+### Group A: 数据模型与基础设施
+
+| ID | 任务 | 文件 | 验收标准 | 估时 |
+|----|------|------|----------|------|
+| T-05d | User 模型新增 wechatOpenId(unique)、wechatUnionId、authProvider(enum: email/phone/wechat) | `prisma/schema.prisma` | migration 成功，现有数据 authProvider 默认 email | 0.5h |
+| T-10c | ColorSeason enum 扩展为 8 细分值 | `prisma/schema.prisma` | migration 成功，现有 4 值映射到新 8 值 | 0.5h |
+| T-05h | 新建 PhoneLoginDto、PhoneRegisterDto、WechatLoginDto | `modules/auth/dto/auth.dto.ts` | class-validator 验证完整 | 0.5h |
+| T-08d | 数据库 seed 默认风格测试题库(1 套问卷 6 题，每题 4-6 张图片) | `prisma/seed-style-quiz.ts` | seed 脚本执行成功，API 可查询到题库 | 1h |
+
+### Group B: 后端核心服务
+
+| ID | 任务 | 文件 | 验收标准 | 估时 |
+|----|------|------|----------|------|
+| T-05a | SmsService: 阿里云短信发送 + 验证码生成(6位) + Redis 存储(5min TTL) + 校验(含频率限制 1次/min) | `modules/auth/services/sms.service.ts` | 单元测试通过，验证码发送/校验正确 | 2h |
+| T-05e | WechatAuthStrategy: 微信 OAuth2.0 授权码换 access_token + openid + unionid | `modules/auth/strategies/wechat.strategy.ts` | 单元测试通过，mock 微信 API 返回正确 | 2h |
+| T-03a | PhotoQualityValidator: 基于 sharp 检测清晰度(Laplacian variance)、亮度(mean pixel value)、构图(人脸位置+三分法) | `modules/photos/services/photo-quality-validator.service.ts` | 单元测试通过，各指标评分合理 | 2h |
+| T-07c | ProfileCompletenessService: 计算 UserProfile 各字段填充率(基本信息30%+身材数据25%+风格偏好20%+色彩15%+照片10%) | `modules/profile/services/profile-completeness.service.ts` | 单元测试通过，各场景完整度计算正确 | 1.5h |
+| T-08b | QuizProgressService: 每题自动保存进度到 Redis(key: quiz:progress:{userId}:{quizId})，重新进入从上次位置继续 | `modules/style-quiz/services/quiz-progress.service.ts` | 单元测试通过，进度保存/恢复正确 | 1.5h |
+| T-09a | ColorDerivationEngine: 每张图片有色彩标签(warm/cool/neutral + 色系)，用户选择汇总推导色彩偏好 | `modules/style-quiz/services/color-derivation.service.ts` | 单元测试通过，推导结果合理 | 2h |
+| T-04d | SharePosterService: 基于 ShareTemplate.layoutConfig + Puppeteer 生成海报图片，上传到 MinIO | `modules/profile/services/share-poster.service.ts` | 单元测试通过，海报生成成功 | 2h |
+| T-13a | ProfileEventEmitter: 画像变更后发布事件到 Redis Pub/Sub(channel: profile:updated)，含 userId + 变更字段列表 | `modules/profile/services/profile-event-emitter.service.ts` | 单元测试通过，事件发布/订阅正确 | 1.5h |
+
+### Group C: 后端 API 集成
+
+| ID | 任务 | 文件 | 验收标准 | 估时 |
+|----|------|------|----------|------|
+| T-05g | AuthService 新增 loginWithWechat / loginWithPhone / registerWithPhone 方法 | `modules/auth/auth.service.ts` | 集成测试通过，三种登录方式均返回 JWT | 3h |
+| T-05b | AuthController 新增 POST /auth/phone-login | `modules/auth/auth.controller.ts` | Swagger 文档 + 限流 5/min | 0.5h |
+| T-05c | AuthController 新增 POST /auth/phone-register | `modules/auth/auth.controller.ts` | Swagger 文档 + 限流 5/min | 0.5h |
+| T-05f | AuthController 新增 POST /auth/wechat | `modules/auth/auth.controller.ts` | Swagger 文档 + 限流 5/min | 0.5h |
+| T-06a | RegisterDto 增加 gender 必填字段 | `modules/auth/dto/auth.dto.ts` | class-validator @IsEnum(Gender) @IsNotEmpty | 0.5h |
+| T-06b | AuthService.register 事务中创建 UserProfile 并写入 gender + birthDate | `modules/auth/auth.service.ts` | 集成测试通过 | 0.5h |
+| T-03b | PhotosController.uploadPhoto 集成质量检测前置校验 | `modules/photos/photos.controller.ts` | 不合格返回 400 + 质量报告 | 1h |
+| T-07d | ProfileController 新增 GET /profile/completeness | `modules/profile/profile.controller.ts` | 返回 { percentage, missingFields[] } | 0.5h |
+| T-08c | StyleQuizController 新增进度端点 | `modules/style-quiz/style-quiz.controller.ts` | GET/POST progress 端点工作正常 | 1h |
+| T-09b | StyleQuizService.batchSubmitAnswers 集成色彩推导 | `modules/style-quiz/style-quiz.service.ts` | 答题完成后自动推导色彩偏好 | 1h |
+| T-09c | 推导结果写入 StyleQuizResult + UserProfile | `modules/style-quiz/style-quiz.service.ts` | 数据库写入正确 | 0.5h |
+| T-10b | ProfileService.getColorAnalysis 扩展暖冷×浅深细分 | `modules/profile/profile.service.ts` | 返回细分色彩季型 | 1h |
+| T-04e | ProfileController 新增 POST /profile/share-poster | `modules/profile/profile.controller.ts` | 返回海报图片 URL | 0.5h |
+| T-11d | 行为事件自动触发画像更新 | `modules/profile/profile.service.ts` | 浏览/收藏/试衣后自动更新画像 | 1h |
+| T-13b | ProfileService.updateProfile 集成事件发布 | `modules/profile/profile.service.ts` | 变更后发布 profile:updated 事件 | 0.5h |
+| T-13c | StyleQuizService.saveQuizResult 集成事件发布 | `modules/style-quiz/style-quiz.service.ts` | 测试结果保存后发布事件 | 0.5h |
+| T-13d | AI 造型师/推荐引擎订阅画像变更事件 | `modules/ai-stylist/`, `modules/recommendations/` | 收到事件后更新上下文 | 1h |
+
+### Group D: 移动端基础设施
+
+| ID | 任务 | 文件 | 验收标准 | 估时 |
+|----|------|------|----------|------|
+| T-05j | smsApi: sendCode(phone) + loginWithPhone(phone, code) + registerWithPhone(phone, code, nickname?) | `services/api/sms.api.ts` | API 调用正确 | 1h |
+| T-05k | wechatAuth: 微信 SDK 集成 + authorize() + getAuthCode() | `services/auth/wechat.ts` | 微信授权流程完整 | 2h |
+| T-08e | styleQuizApi: getQuiz / submitAnswer / batchSubmit / getProgress / saveProgress / getResult | `services/api/style-quiz.api.ts` | API 调用正确 | 1h |
+| T-07e | ProfileCompletenessBar: 进度条 + 百分比 + 缺失项提示 + 点击跳转编辑 | `components/profile/ProfileCompletenessBar.tsx` | 组件渲染正确 | 1h |
+| T-02a | PhotoGuideOverlay: 人体轮廓 SVG + 姿势提示文案 + 透明度叠加层 | `components/photo/PhotoGuideOverlay.tsx` | 组件渲染正确，覆盖相机预览 | 2h |
+| T-03c | PhotoQualityIndicator: 质量评分(清晰度/光线/构图) + 重拍/自动增强按钮 | `components/photo/PhotoQualityIndicator.tsx` | 组件渲染正确 | 1h |
+| T-12b | PrivacyConsentModal: 隐私承诺文案 + 确认/取消按钮 | `components/privacy/PrivacyConsentModal.tsx` | 组件渲染正确 | 0.5h |
+
+### Group E: 移动端状态管理
+
+| ID | 任务 | 文件 | 验收标准 | 估时 |
+|----|------|------|----------|------|
+| T-05l | AuthStore 增加 wechatLogin / phoneLogin / phoneRegister action | `stores/index.ts` | 状态更新正确 | 1h |
+| T-08f | StyleQuizStore: currentQuiz / progress / answers / result / isLoading，AsyncStorage 持久化 | `stores/styleQuizStore.ts` | 状态管理正确 | 1.5h |
+| T-01a-ext | ProfileStore: profile / completeness / bodyAnalysis / colorAnalysis，统一画像状态 | `stores/profileStore.ts` | 状态管理正确 | 1.5h |
+
+### Group F: 移动端页面
+
+| ID | 任务 | 文件 | 验收标准 | 估时 |
+|----|------|------|----------|------|
+| T-06c | OnboardingScreen Step 0: 性别选择(3选1) + 年龄段选择(6选1)，必填 | `screens/OnboardingScreen.tsx` | 必填验证，未填不可继续 | 1.5h |
+| T-06d | 基本信息步骤不可跳过 | `screens/OnboardingScreen.tsx` | 跳过按钮隐藏/禁用 | 0.5h |
+| T-07a | OnboardingScreen 重构为 3 步引导(基本信息→照片上传→风格测试) | `screens/OnboardingScreen.tsx` | 3 步流程完整 | 2h |
+| T-07b | 照片上传和风格测试步骤增加"跳过"按钮 | `screens/OnboardingScreen.tsx` | 跳过后进入下一步 | 0.5h |
+| T-05i | LoginScreen 增加微信登录按钮 + 手机号登录入口 | `screens/LoginScreen.tsx` | 两种登录方式可用 | 1.5h |
+| T-01b | BodyAnalysisScreen: 体型分类卡片 + 身体比例 SVG 可视化 + 穿搭建议摘要 | `screens/BodyAnalysisScreen.tsx` | 数据展示正确 | 2h |
+| T-01c | ProfileEditScreen: 基本信息编辑 + 身材数据表单 + 风格偏好编辑 | `screens/ProfileEditScreen.tsx` | 编辑保存正确 | 2h |
+| T-04b | BodyAnalysisScreen 完整可视化报告 | `screens/BodyAnalysisScreen.tsx` | 5种体型展示 + SVG 比例图 | 1.5h |
+| T-04c | ColorAnalysisScreen: 色彩季型卡片 + 调色板 + 适合/不适合颜色 | `screens/ColorAnalysisScreen.tsx` | 数据展示正确 | 2h |
+| T-04f | SharePosterScreen: 海报预览 + 保存到相册 + 分享 | `screens/SharePosterScreen.tsx` | 海报生成和分享可用 | 1.5h |
+| T-08g | StyleQuizScreen: 图片选择式问卷 UI，卡片式展示 | `screens/StyleQuizScreen.tsx` | 6 题流程完整 | 3h |
+| T-08h | 风格测试每选一题自动保存进度 | `screens/StyleQuizScreen.tsx` | 退出重进从上次位置继续 | 0.5h |
+| T-02b | 照片上传流程集成 PhotoGuideOverlay | `screens/OnboardingScreen.tsx` 或新页面 | 相机模式显示参考线 | 1h |
+| T-03d | 照片上传流程集成质量检测反馈 | 同上 | 质量不合格提示重拍 | 1h |
+| T-07f | HomeScreen 增加画像补全提示 banner | `screens/HomeScreen.tsx` | 完整度 < 80% 时显示 | 0.5h |
+| T-07g | ProfileScreen 增加画像完整度指示器 + 编辑入口 | `screens/ProfileScreen.tsx` | 点击跳转 ProfileEdit | 1h |
+| T-09d | StyleQuizScreen 展示色彩推导结果 | `screens/StyleQuizScreen.tsx` | 调色板形式展示 | 0.5h |
+| T-10d | ColorAnalysisScreen 展示细分色彩季型 | `screens/ColorAnalysisScreen.tsx` | 8 细分值展示 | 0.5h |
+| T-11e | ProfileScreen 展示伴随学习提示 | `screens/ProfileScreen.tsx` | 文案展示正确 | 0.5h |
+| T-12c | 照片上传页面集成隐私承诺展示 | 照片上传相关页面 | 上传前弹窗确认 | 0.5h |
+
+### Group G: 集成测试与验收
+
+| ID | 任务 | 文件 | 验收标准 | 估时 |
+|----|------|------|----------|------|
+| T-G1 | 后端 API 集成测试(手机号注册→登录→画像→风格测试→分析→海报) | `modules/*/test/` | 全流程通过 | 3h |
+| T-G2 | 移动端 E2E 测试(注册→引导→画像→风格测试完整流程) | `e2e/` | 全流程通过 | 3h |
+| T-G3 | 跨模块集成验证(画像变更→AI 造型师/推荐引擎通知) | `modules/*/test/` | 事件通知正确 | 1.5h |
+
+---
+
+## 六、验收标准（对应 ROADMAP Success Criteria）
+
+| # | Success Criterion | 对应任务 | 验收方法 |
+|---|-------------------|----------|----------|
+| 1 | 用户可通过手机号+验证码或微信一键登录注册 | T-05a~g, T-05i~l | 注册→登录→获取 JWT 全流程 |
+| 2 | 注册后强制填写基本信息（性别/年龄段），照片和风格测试可跳过 | T-06a~d, T-07a~b | 基本信息不可跳过，其他步骤可跳过 |
+| 3 | 照片上传有实时参考线引导和隐私承诺展示 | T-02a~b, T-12b~c | 相机模式显示参考线，上传前显示隐私承诺 |
+| 4 | 风格测试为图片选择式问卷（5-8题），色彩偏好隐性推导 | T-08a~h, T-09a~d | 问卷流程完整，色彩推导结果合理 |
+| 5 | 画像结果以可视化报告展示，支持分享海报 | T-04a~f | 体型/色彩分析报告展示，海报生成和分享 |
+| 6 | 照片加密永久存储，用户可删除 | T-12a | 照片 AES 加密存储，删除功能可用 |
+
+---
+
+## 七、风险与缓解
+
+| 风险 | 概率 | 影响 | 缓解措施 |
+|------|------|------|----------|
+| 微信开放平台审核周期长 | 中 | 高 | 先用测试号开发，审核期间仅开放手机号登录 |
+| 风格测试图片素材缺失 | 高 | 中 | 使用 AI 生成穿搭图片作为初始素材，后续替换为真实素材 |
+| Puppeteer 海报生成在 Docker 中性能差 | 中 | 中 | 备选方案：使用 Canvas (node-canvas) 替代 Puppeteer |
+| ColorSeason 扩展为 8 值需数据迁移 | 低 | 中 | 编写迁移脚本，4 值自动映射到 8 值(spring→spring_warm 等) |
+| 照片质量检测算法阈值不准 | 中 | 低 | 初始阈值宽松，根据用户反馈调整；提供"仍然上传"选项 |
+| 画像变更事件通知延迟 | 低 | 低 | 事件驱动 + 定时轮询双保险 |
+
+---
+
+## 八、跨切面决策遵循检查
+
+| 决策 | 遵循方式 |
+|------|----------|
+| CC-01 一次性补齐数据模型 | Schema 已有 StyleQuiz/QuizQuestion/QuizAnswer/StyleQuizResult/ShareTemplate/WardrobeCollection/ConsultantProfile/ServiceBooking/ChatRoom/ChatMessage |
+| CC-02 MVP 全免费 | Phase 1 不涉及付费功能，Subscription guards 仅做配额检查 |
+| CC-04 用户维度 AI 限制 | ProfileEventEmitter 中集成配额检查 |
+| CC-08 URL Path 版本化 | 所有新端点使用 `/api/v1/` 前缀 |
+| CC-09 JSON:API 规范式响应 | 新端点遵循 data/included/errors/meta 结构 |
+| CC-10 Cursor 分页 | 列表端点统一 cursor-based 分页 |
+| CC-11 引导式空状态 | 画像空状态有图标+文案+行动按钮 |
+| CC-12 骨架屏加载 | 画像/分析页面使用骨架屏 |
+| CC-13 MVP 只做浅色模式 | 所有新页面仅浅色模式 |
+| CC-14 简单网络错误提示 | "网络不给力" + 重试按钮 |
+| CC-15 渐进式图片加载 | 照片先加载缩略图再加载高清图 |
+| CC-17 基本无障碍合规 | accessibilityLabel 等基本属性 |
+| CC-18 统一重试机制 | 所有可操作操作有重试按钮 |
+| CC-19 选择性字段加密 | 手机号加密存储，性别/年龄段不加密 |
+| CC-23 TDD 严格模式 | 核心服务先写测试再写代码 |
+| CC-42 风格测试中断恢复 | QuizProgressService 每题自动保存 |
+
+---
+
+*Phase 1 Plan created: 2026-04-13*
+*Total tasks: 55 (Group A: 4, B: 8, C: 17, D: 7, E: 3, F: 20, G: 3)*
+*Estimated effort: ~75 hours*

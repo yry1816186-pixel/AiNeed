@@ -1,3 +1,4 @@
+import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
@@ -26,7 +27,24 @@ describe("HealthService", () => {
     getFileUrl: jest.fn(),
   };
 
+  const mockConfigService = {
+    get: jest.fn((key: string, defaultValue?: string) => {
+      const config: Record<string, string> = {
+        ML_SERVICE_URL: "http://localhost:8001",
+      };
+      return config[key] ?? defaultValue;
+    }),
+  };
+
+  let originalFetch: typeof globalThis.fetch;
+
   beforeEach(async () => {
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+    } as Response);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         HealthService,
@@ -42,6 +60,10 @@ describe("HealthService", () => {
           provide: StorageService,
           useValue: mockStorageService,
         },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService,
+        },
       ],
     }).compile();
 
@@ -53,6 +75,7 @@ describe("HealthService", () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    globalThis.fetch = originalFetch;
   });
 
   describe("checkHealth", () => {
@@ -72,6 +95,7 @@ describe("HealthService", () => {
       expect(result.checks.database.status).toBe("up");
       expect(result.checks.redis.status).toBe("up");
       expect(result.checks.storage.status).toBe("up");
+      expect(result.checks.mlService.status).toBe("up");
       expect(result.uptime).toBeDefined();
       expect(result.timestamp).toBeDefined();
     });
@@ -105,6 +129,9 @@ describe("HealthService", () => {
       mockStorageService.getFileUrl.mockRejectedValue(
         new Error("Connection refused"),
       );
+      (globalThis.fetch as jest.Mock).mockRejectedValue(
+        new Error("Connection refused"),
+      );
 
       const result = await service.checkHealth();
 
@@ -112,6 +139,7 @@ describe("HealthService", () => {
       expect(result.checks.database.status).toBe("down");
       expect(result.checks.redis.status).toBe("down");
       expect(result.checks.storage.status).toBe("down");
+      expect(result.checks.mlService.status).toBe("down");
     });
   });
 

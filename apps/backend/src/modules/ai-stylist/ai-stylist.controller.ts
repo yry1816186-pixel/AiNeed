@@ -28,6 +28,8 @@ import { PhotoType } from "@prisma/client";
 
 import { AuthGuard } from "../auth/guards/auth.guard";
 import { AuthenticatedRequest } from "../../common/types/auth.types";
+import { AiQuotaGuard, SetQuotaType } from "../security/rate-limit/ai-quota.guard";
+import { AiQuotaService } from "../security/rate-limit/ai-quota.service";
 
 import { AiStylistService } from "./ai-stylist.service";
 import { SystemContextService } from "./system-context.service";
@@ -35,6 +37,8 @@ import {
   CreateStylistSessionDto,
   SendStylistMessageDto,
   UploadStylistPhotoDto,
+  LegacyChatDto,
+  SubmitFeedbackDto,
 } from "./dto/ai-stylist.dto";
 
 /**
@@ -150,6 +154,7 @@ export class AiStylistController {
   constructor(
     private readonly stylistService: AiStylistService,
     private readonly systemContextService: SystemContextService,
+    private readonly aiQuotaService: AiQuotaService,
   ) {}
 
   @Post("sessions")
@@ -245,6 +250,8 @@ export class AiStylistController {
   }
 
   @Post("sessions/:sessionId/messages")
+  @UseGuards(AiQuotaGuard)
+  @SetQuotaType('ai-stylist')
   @ApiOperation({
     summary: "发送 AI 造型师消息",
     description: "向指定会话发送消息，AI 将根据上下文返回穿搭建议。",
@@ -359,6 +366,8 @@ export class AiStylistController {
   }
 
   @Post("sessions/:sessionId/resolve")
+  @UseGuards(AiQuotaGuard)
+  @SetQuotaType('ai-stylist')
   @ApiOperation({
     summary: "生成 AI 造型师穿搭方案",
     description: "根据会话中的消息和照片，生成完整的穿搭方案推荐。",
@@ -430,38 +439,14 @@ export class AiStylistController {
   }
 
   @Post("chat")
+  @UseGuards(AiQuotaGuard)
+  @SetQuotaType('ai-stylist')
   @ApiOperation({
     summary: "兼容旧版的无状态 AI 聊天接口",
     description: "无状态的 AI 聊天接口，每次请求需要传入完整的对话历史。建议使用 sessions 接口替代。",
     deprecated: true,
   })
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        message: {
-          type: "string",
-          description: "用户消息",
-          example: "我要一套面试穿搭",
-        },
-        conversationHistory: {
-          type: "array",
-          description: "对话历史",
-          items: {
-            type: "object",
-            properties: {
-              role: {
-                type: "string",
-                enum: ["user", "assistant", "system"],
-              },
-              content: { type: "string" },
-            },
-          },
-        },
-      },
-      required: ["message"],
-    },
-  })
+  @ApiBody({ type: LegacyChatDto })
   @ApiResponse({
     status: 201,
     description: "回复成功",
@@ -478,11 +463,7 @@ export class AiStylistController {
   })
   async chat(
     @Request() req: AuthenticatedRequest,
-    @Body()
-    body: {
-      message: string;
-      conversationHistory?: Array<{ role: string; content: string }>;
-    },
+    @Body() body: LegacyChatDto,
   ) {
     return this.stylistService.chat(
       req.user.id,
@@ -496,6 +477,23 @@ export class AiStylistController {
           typeof item.content === "string",
       ) as Array<{ role: "user" | "assistant" | "system"; content: string }>,
     );
+  }
+
+  @Get("quota")
+  @ApiOperation({
+    summary: "查询 AI 造型师配额",
+    description: "获取当前用户的 AI 造型师每日配额使用情况，包括已用次数、限额和重置时间。",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "获取成功",
+  })
+  @ApiResponse({
+    status: 401,
+    description: "未授权，需要提供有效的 Access Token",
+  })
+  async getQuota(@Request() req: AuthenticatedRequest) {
+    return this.aiQuotaService.getQuotaStatus(req.user.id);
   }
 
   @Get("suggestions")
@@ -558,28 +556,7 @@ export class AiStylistController {
     type: String,
     format: "uuid",
   })
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        outfitIndex: {
-          type: "number",
-          description: "穿搭方案索引",
-          example: 0,
-        },
-        action: {
-          type: "string",
-          enum: ["like", "dislike"],
-          description: "反馈类型：like(点赞)、dislike(点踩)",
-        },
-        itemId: {
-          type: "string",
-          description: "可选，具体服装项ID",
-        },
-      },
-      required: ["outfitIndex", "action"],
-    },
-  })
+  @ApiBody({ type: SubmitFeedbackDto })
   @ApiResponse({
     status: 201,
     description: "反馈提交成功",
@@ -600,8 +577,7 @@ export class AiStylistController {
   async submitFeedback(
     @Request() req: AuthenticatedRequest,
     @Param("sessionId") sessionId: string,
-    @Body()
-    body: { outfitIndex: number; action: "like" | "dislike"; itemId?: string },
+    @Body() body: SubmitFeedbackDto,
   ) {
     return this.stylistService.submitFeedback(
       req.user.id,

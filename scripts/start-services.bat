@@ -1,7 +1,7 @@
-@echo off
+﻿@echo off
 chcp 65001 >nul
 echo ========================================
-echo    AiNeed 服务启动脚本
+echo    xuno 服务启动脚本
 echo ========================================
 echo.
 
@@ -36,19 +36,19 @@ echo       环境变量检查通过
 
 echo.
 echo [3/4] 启动基础服务...
-docker start postgres 2>nul || docker run -d --name postgres -e POSTGRES_USER=aineed -e POSTGRES_PASSWORD=%POSTGRES_PASSWORD% -e POSTGRES_DB=aineed -p 5432:5432 postgres:15
+docker start postgres 2>nul || docker run -d --name postgres -e POSTGRES_USER=xuno -e POSTGRES_PASSWORD=%POSTGRES_PASSWORD% -e POSTGRES_DB=xuno -p 5432:5432 postgres:15
 docker start redis 2>nul || docker run -d --name redis --requirepass %REDIS_PASSWORD% -p 6379:6379 redis:7
 docker start minio 2>nul || docker run -d --name minio -e MINIO_ROOT_USER=minioadmin -e MINIO_ROOT_PASSWORD=%MINIO_ROOT_PASSWORD% -p 9000:9000 -p 9001:9001 minio/minio server /data --console-address ":9001"
 echo       基础服务启动完成
 
 echo.
 echo [4/4] 启动后端服务...
-start "AiNeed Backend" cmd /k "cd /d c:\AiNeed\apps\backend && pnpm dev"
+start "xuno Backend" cmd /k "cd /d c:\xuno\apps\backend && pnpm dev"
 echo       后端服务启动中... (http://localhost:3001)
 
 echo.
 echo [5/5] 启动 AI 服务...
-start "AiNeed AI" cmd /k "cd /d c:\AiNeed\ml && python start_all_services.py"
+start "xuno AI" cmd /k "cd /d c:\xuno\ml && python start_all_services.py"
 echo       AI 服务启动中... (http://localhost:8001-8003)
 
 echo.

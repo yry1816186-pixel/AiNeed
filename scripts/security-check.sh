@@ -1,7 +1,7 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 # ============================================
-# AiNeed Security Check Script
+# xuno Security Check Script
 # ============================================
 # This script checks for common security issues
 # Run: bash scripts/security-check.sh
@@ -19,7 +19,7 @@ ERRORS=0
 WARNINGS=0
 
 echo "========================================"
-echo "AiNeed Security Check"
+echo "xuno Security Check"
 echo "========================================"
 echo ""
 

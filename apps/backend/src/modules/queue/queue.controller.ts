@@ -107,7 +107,7 @@ class CreateRecommendationDto {
   topK?: number;
 }
 
-@ApiTags('AI Task Queue')
+@ApiTags('queue')
 @ApiBearerAuth()
 @Controller('queue')
 @UseGuards(JwtAuthGuard)

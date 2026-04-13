@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { theme } from '../theme';
 import { StyleSheet } from 'react-native';
 import { withErrorBoundary } from '../components/ErrorBoundary';
+import { logger } from '../utils/logger';
 
 // Wrapper that provides navigation-based back action
 // instead of expo-router's router.back()
@@ -44,10 +45,10 @@ const VirtualTryOnScreen = withErrorBoundary(VirtualTryOnScreenComponent, {
   screenName: 'VirtualTryOnScreen',
   maxRetries: 2,
   onError: (error, errorInfo, structuredError) => {
-    console.error('[VirtualTryOnScreen] Error:', structuredError);
+    logger.error('[VirtualTryOnScreen] Error:', structuredError);
   },
   onReset: () => {
-    console.log('[VirtualTryOnScreen] Error boundary reset');
+    logger.log('[VirtualTryOnScreen] Error boundary reset');
   },
 });
 

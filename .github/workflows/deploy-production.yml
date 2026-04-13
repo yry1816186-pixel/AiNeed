@@ -1,0 +1,463 @@
+name: Deploy Production
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g. v1.0.0)'
+        required: false
+        type: string
+      skip_migration:
+        description: 'Skip database migration'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '8'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/backend
+
+jobs:
+  prepare:
+    name: Prepare Deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      previous_version: ${{ steps.version.outputs.previous_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine Version
+        id: version
+        run: |
+          if [[ -n "${{ github.event.inputs.version }}" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          elif [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/}"
+          else
+            VERSION="v0.0.0-$(echo ${{ github.sha }} | cut -c1-7)"
+          fi
+
+          PREVIOUS_VERSION=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "none")
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "previous_version=$PREVIOUS_VERSION" >> $GITHUB_OUTPUT
+          echo "Deploying version: $VERSION"
+          echo "Previous version: $PREVIOUS_VERSION"
+
+  approval:
+    name: Production Approval
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: prepare
+    environment:
+      name: production
+      url: https://stylemind.com
+    steps:
+      - name: Approval Gate
+        run: |
+          echo "Production deployment requires manual approval."
+          echo "Version: ${{ needs.prepare.outputs.version }}"
+          echo "Previous Version: ${{ needs.prepare.outputs.previous_version }}"
+          echo "Approver: ${{ github.actor }}"
+          echo "Approval time: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+  build-and-push:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: approval
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-store-${{ runner.os }}-
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ needs.prepare.outputs.version }}
+            type=raw,value=latest
+            type=sha,prefix=
+
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/backend/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Generate build summary
+        run: |
+          echo "## Production Docker Build" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ needs.prepare.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tags | ${{ needs.prepare.outputs.version }}, latest |" >> $GITHUB_STEP_SUMMARY
+          echo "| Digest | \`${{ steps.build.outputs.digest }}\` |" >> $GITHUB_STEP_SUMMARY
+
+  db-migration:
+    name: Database Migration
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [prepare, approval, build-and-push]
+    if: github.event.inputs.skip_migration != 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-store-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Backup Database
+        id: backup
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_PORT || 22 }}
+          script: |
+            BACKUP_FILE="stylemind_prod_${{ needs.prepare.outputs.version }}_$(date +%Y%m%d%H%M%S).sql.gz"
+            pg_dump ${{ secrets.PRODUCTION_DATABASE_URL }} | gzip > /tmp/$BACKUP_FILE
+            echo "Backup created: $BACKUP_FILE"
+            echo "backup_file=$BACKUP_FILE" >> $GITHUB_OUTPUT
+
+      - name: Run Database Migration
+        run: |
+          cd apps/backend
+          pnpm prisma generate
+          pnpm prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+
+      - name: Verify Migration Status
+        run: |
+          cd apps/backend
+          pnpm prisma migrate status
+        env:
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+
+      - name: Generate migration summary
+        if: always()
+        run: |
+          echo "## Database Migration" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ needs.prepare.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | ${{ job.status }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Backup | ${{ steps.backup.outputs.backup_file }} |" >> $GITHUB_STEP_SUMMARY
+
+  deploy-blue:
+    name: Deploy (Blue-Green)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [prepare, build-and-push, db-migration]
+    if: always() && (needs.db-migration.result == 'success' || needs.db-migration.result == 'skipped')
+    outputs:
+      active_slot: ${{ steps.deploy.outputs.active_slot }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH (Blue-Green)
+        id: deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_PORT || 22 }}
+          script: |
+            cd ${{ secrets.PRODUCTION_DEPLOY_PATH }}
+
+            CURRENT_SLOT=$(cat /tmp/current_slot 2>/dev/null || echo "blue")
+            if [[ "$CURRENT_SLOT" == "blue" ]]; then
+              TARGET_SLOT="green"
+            else
+              TARGET_SLOT="blue"
+            fi
+
+            echo "Current active slot: $CURRENT_SLOT"
+            echo "Deploying to slot: $TARGET_SLOT"
+
+            export IMAGE_TAG="${{ needs.prepare.outputs.version }}"
+            export REGISTRY="${{ env.REGISTRY }}"
+            export IMAGE_NAME="${{ env.IMAGE_NAME }}"
+            export SLOT="$TARGET_SLOT"
+
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
+
+            docker compose -f docker-compose.production.yml pull backend-${TARGET_SLOT}
+            docker compose -f docker-compose.production.yml up -d backend-${TARGET_SLOT}
+
+            echo "Waiting for $TARGET_SLOT slot to be ready..."
+            sleep 20
+
+            echo "$TARGET_SLOT" > /tmp/current_slot
+            echo "active_slot=$TARGET_SLOT" >> $GITHUB_OUTPUT
+
+            echo "Deployment to $TARGET_SLOT slot completed at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [prepare, deploy-blue]
+    steps:
+      - name: Health Check with Retries
+        id: health
+        run: |
+          echo "Running production health checks..."
+
+          for i in {1..15}; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://stylemind.com/api/v1/health || echo "000")
+            if [[ "$HTTP_CODE" == "200" ]]; then
+              echo "Health check passed on attempt $i (HTTP $HTTP_CODE)"
+              echo "healthy=true" >> $GITHUB_OUTPUT
+              break
+            fi
+            if [ $i -eq 15 ]; then
+              echo "Health check failed after 15 attempts (last HTTP code: $HTTP_CODE)"
+              echo "healthy=false" >> $GITHUB_OUTPUT
+              exit 1
+            fi
+            echo "Attempt $i: HTTP $HTTP_CODE, retrying in 10s..."
+            sleep 10
+          done
+
+      - name: Verify API Endpoints
+        run: |
+          curl -sf https://stylemind.com/api/v1/health || exit 1
+          echo "All production health checks passed!"
+
+      - name: Generate health check summary
+        if: always()
+        run: |
+          echo "## Production Health Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ needs.prepare.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Active Slot | ${{ needs.deploy-blue.outputs.active_slot }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Healthy | ${{ steps.health.outputs.healthy }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| URL | https://stylemind.com |" >> $GITHUB_STEP_SUMMARY
+
+  switch-traffic:
+    name: Switch Traffic
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [prepare, deploy-blue, health-check]
+    if: needs.health-check.result == 'success'
+    steps:
+      - name: Switch traffic to new slot
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_PORT || 22 }}
+          script: |
+            cd ${{ secrets.PRODUCTION_DEPLOY_PATH }}
+            TARGET_SLOT="${{ needs.deploy-blue.outputs.active_slot }}"
+            echo "Switching traffic to $TARGET_SLOT slot..."
+            docker compose -f docker-compose.production.yml exec nginx nginx -s reload
+            echo "Traffic switched to $TARGET_SLOT at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+  auto-rollback:
+    name: Auto Rollback
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [prepare, deploy-blue, health-check]
+    if: failure() && needs.health-check.result == 'failure'
+    steps:
+      - name: Rollback to previous version
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          port: ${{ secrets.PRODUCTION_PORT || 22 }}
+          script: |
+            cd ${{ secrets.PRODUCTION_DEPLOY_PATH }}
+
+            PREVIOUS_VERSION="${{ needs.prepare.outputs.previous_version }}"
+            CURRENT_SLOT=$(cat /tmp/current_slot 2>/dev/null || echo "blue")
+
+            if [[ "$CURRENT_SLOT" == "blue" ]]; then
+              ROLLBACK_SLOT="green"
+            else
+              ROLLBACK_SLOT="blue"
+            fi
+
+            echo "Rolling back to slot: $ROLLBACK_SLOT"
+            echo "Rolling back to version: $PREVIOUS_VERSION"
+
+            if [[ "$PREVIOUS_VERSION" != "none" ]]; then
+              export IMAGE_TAG="$PREVIOUS_VERSION"
+              export REGISTRY="${{ env.REGISTRY }}"
+              export IMAGE_NAME="${{ env.IMAGE_NAME }}"
+              export SLOT="$ROLLBACK_SLOT"
+
+              docker compose -f docker-compose.production.yml pull backend-${ROLLBACK_SLOT}
+              docker compose -f docker-compose.production.yml up -d backend-${ROLLBACK_SLOT}
+              echo "$ROLLBACK_SLOT" > /tmp/current_slot
+            fi
+
+            echo "Rollback completed at $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+      - name: Verify Rollback
+        run: |
+          for i in {1..10}; do
+            if curl -sf https://stylemind.com/api/v1/health; then
+              echo "Rollback verification passed on attempt $i"
+              break
+            fi
+            if [ $i -eq 10 ]; then
+              echo "Rollback verification failed - manual intervention required!"
+              exit 1
+            fi
+            sleep 10
+          done
+
+      - name: Generate rollback summary
+        if: always()
+        run: |
+          echo "## Production Rollback" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Failed Version | ${{ needs.prepare.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Rolled Back To | ${{ needs.prepare.outputs.previous_version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | ${{ job.status }} |" >> $GITHUB_STEP_SUMMARY
+
+  notify:
+    name: Notify Slack
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [prepare, build-and-push, deploy-blue, health-check, switch-traffic, auto-rollback]
+    if: always()
+    steps:
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ needs.health-check.result == 'success' && 'success' || 'failure' }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow
+          text: |
+            Production Deployment ${{ needs.health-check.result == 'success' && 'SUCCEEDED' || 'FAILED' }}
+            Version: ${{ needs.prepare.outputs.version }}
+            Previous: ${{ needs.prepare.outputs.previous_version }}
+            Active Slot: ${{ needs.deploy-blue.outputs.active_slot }}
+            URL: https://stylemind.com
+            ${{ needs.auto-rollback.result == 'success' && 'Rollback: COMPLETED' || '' }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        continue-on-error: true
+
+  audit:
+    name: Audit Log
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [prepare, health-check, auto-rollback]
+    if: always()
+    steps:
+      - name: Generate Audit Log
+        run: |
+          echo "## Production Deployment Audit Log" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ needs.prepare.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Previous Version | ${{ needs.prepare.outputs.previous_version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Actor | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Ref | ${{ github.ref }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| SHA | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Run ID | ${{ github.run_id }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Run Number | ${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Health Check | ${{ needs.health-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Rollback | ${{ needs.auto-rollback.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Timestamp | $(date -u +"%Y-%m-%dT%H:%M:%SZ") |" >> $GITHUB_STEP_SUMMARY

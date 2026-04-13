@@ -478,16 +478,13 @@ async function main() {
         colors: item.colors,
         sizes: item.sizes,
         tags: item.tags,
-        material: item.material,
+        attributes: { material: item.material, sourceUrl: item.sourceUrl },
         externalId: item.externalId,
-        sourceUrl: item.sourceUrl,
         isActive: true,
         isDeleted: false,
         isFeatured: Math.random() > 0.7,
         viewCount: Math.floor(Math.random() * 1000),
         likeCount: Math.floor(Math.random() * 500),
-        rating: 3.5 + Math.random() * 1.5,
-        reviewCount: Math.floor(Math.random() * 200),
       },
     });
     created++;

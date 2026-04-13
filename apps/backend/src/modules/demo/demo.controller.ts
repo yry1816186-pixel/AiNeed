@@ -1,9 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DemoService } from './demo.service';
 
-@ApiTags('Demo - 比赛演示')
-@Controller('api/v1/demo')
+@ApiTags('demo')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
+@Controller('demo')
 export class DemoController {
   constructor(private readonly demoService: DemoService) {}
 

@@ -10,4 +10,4 @@ configureReanimatedLogger({
   strict: false,
 });
 
-AppRegistry.registerComponent('aineed', () => App);
+AppRegistry.registerComponent('XunO', () => App);

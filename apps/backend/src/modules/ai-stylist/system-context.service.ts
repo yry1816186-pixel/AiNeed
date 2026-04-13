@@ -1,5 +1,6 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+﻿import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { cpus } from "os";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { RedisService } from "../../common/redis/redis.service";
 
@@ -38,7 +39,6 @@ export interface ServiceHealthStatus {
   redis: { status: "up" | "down"; latencyMs: number; connectedClients?: number };
   minio: { status: "up" | "down" | "unknown"; latencyMs: number };
   qdrant: { status: "up" | "down" | "unknown"; latencyMs: number };
-  catvton: { status: "up" | "down" | "unknown"; latencyMs: number }; // kept for backward compat, will be removed
   llmProvider: { provider: string; model: string; status: "configured" | "not_configured" };
 }
 
@@ -141,7 +141,7 @@ export class SystemContextService implements OnModuleInit {
 
     try {
       const { execSync } = await import("child_process");
-      const cwd = this.configService.get<string>("PROJECT_ROOT", "C:\\AiNeed");
+      const cwd = this.configService.get<string>("PROJECT_ROOT", "C:\\xuno");
 
       const runCmd = (cmd: string): string => {
         try {
@@ -352,20 +352,6 @@ export class SystemContextService implements OnModuleInit {
       // keep -1
     }
 
-    let catvtonLatency = -1;
-    const catvtonEndpoint =
-      this.configService.get<string>("CATVTON_ENDPOINT", "http://localhost:8001") ||
-      "http://localhost:8001";
-    try {
-      const start = Date.now();
-      const response = await fetch(`${catvtonEndpoint}/health`, {
-        signal: AbortSignal.timeout(3000),
-      });
-      catvtonLatency = response.ok ? Date.now() - start : -1;
-    } catch {
-      // keep -1
-    }
-
     const llmKey = this.configService.get<string>("GLM_API_KEY", "") ||
       this.configService.get<string>("DEEPSEEK_API_KEY", "") ||
       this.configService.get<string>("AI_STYLIST_API_KEY", "");
@@ -397,10 +383,6 @@ export class SystemContextService implements OnModuleInit {
         status: qdrantLatency >= 0 ? "up" : "down",
         latencyMs: Math.max(0, qdrantLatency),
       },
-      catvton: {
-        status: catvtonLatency >= 0 ? "up" : "down",
-        latencyMs: Math.max(0, catvtonLatency),
-      },
       llmProvider: {
         provider: llmKey ? "configured" : "none",
         model: llmProviderName,
@@ -411,7 +393,7 @@ export class SystemContextService implements OnModuleInit {
 
   async getSystemResources(): Promise<SystemResources> {
     const memUsage = process.memoryUsage();
-    const cpus = require("os").cpus();
+    cpus();
 
     let cpuUsage = 0;
     try {
@@ -454,7 +436,7 @@ export class SystemContextService implements OnModuleInit {
     try {
       const fs = await import("fs/promises");
       const path = await import("path");
-      const rootDir = this.configService.get<string>("PROJECT_ROOT", "C:\\AiNeed");
+      const rootDir = this.configService.get<string>("PROJECT_ROOT", "C:\\xuno");
 
       const [tsFiles, pythonFiles, backendModules, mlServices] =
         await Promise.all([
@@ -565,7 +547,6 @@ export class SystemContextService implements OnModuleInit {
         `### 服务状态`,
         `- PostgreSQL: ${ctx.services.postgresql.status} (${ctx.services.postgresql.latencyMs}ms)`,
         `- Redis: ${ctx.services.redis.status} (${ctx.services.redis.latencyMs}ms)`,
-        `- CatVTON: ${ctx.services.catvton.status} (${ctx.services.catvton.latencyMs}ms)`,
         `- Qdrant: ${ctx.services.qdrant.status} (${ctx.services.qdrant.latencyMs}ms)`,
         `- MinIO: ${ctx.services.minio.status} (${ctx.services.minio.latencyMs}ms)`,
         `- LLM: ${ctx.services.llmProvider.provider}/${ctx.services.llmProvider.model}`,

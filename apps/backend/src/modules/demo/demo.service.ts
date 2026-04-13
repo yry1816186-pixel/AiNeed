@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+﻿import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 
 @Injectable()
@@ -297,10 +297,10 @@ export class DemoService {
         avgPrice: Math.round(Number(priceStats._avg.price || 0)),
       },
       demoAccounts: [
-        { email: 'demo@aineed.ai', role: 'Demo演示账号', recommended: true },
+        { email: 'demo@xuno.ai', role: 'Demo演示账号', recommended: true },
         { email: 'judge@competition.ai', role: '评委体验账号', recommended: true },
         { email: 'test@example.com', role: '功能测试账号', recommended: false },
-        { email: 'admin@aineed.ai', role: '管理员账号', recommended: false },
+        { email: 'admin@xuno.ai', role: '管理员账号', recommended: false },
       ],
     };
   }

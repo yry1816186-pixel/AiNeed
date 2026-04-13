@@ -291,10 +291,10 @@ export class VisualSearchService {
     const attrs = getClothingAttributes(item.attributes);
     if (attrs) {
       if (attrs.style && attrs.style.length > 0) {
-        reasons.push(`${attrs.style[0]}风格`);
+        reasons.push(`${attrs.style[0] ?? ""}风格`);
       }
       if (attrs.occasions && attrs.occasions.length > 0) {
-        reasons.push(`适合${attrs.occasions[0]}`);
+        reasons.push(`适合${attrs.occasions[0] ?? ""}`);
       }
     }
 
@@ -319,7 +319,7 @@ export class VisualSearchService {
         }
       }
     }
-    return itemColors[0] || null;
+    return itemColors[0] ?? null;
   }
 
   private mapAnalysisToFeatures(analysis: AIAnalysisResult): ImageFeatures {
@@ -465,7 +465,7 @@ export class VisualSearchService {
         ),
       );
       if (commonColors.length > 0) {
-        reasons.push(`相同${commonColors[0]}色系`);
+        reasons.push(`相同${commonColors[0] ?? ""}色系`);
       }
     }
 

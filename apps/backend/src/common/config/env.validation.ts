@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Environment Variable Validation
  *
  * This module provides validation for critical environment variables
@@ -46,7 +46,7 @@ function validateJwtSecret(
     /your-.*-here/i,
     /<.*>/,
     /change.*production/i,
-    /aineed-dev-secret/i,
+    /xuno-dev-secret/i,
   ];
 
   for (const pattern of placeholderPatterns) {

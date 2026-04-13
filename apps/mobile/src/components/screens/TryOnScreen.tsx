@@ -19,7 +19,7 @@ import { pickImageSecurely, type SecureImagePickerResult, ImageValidationError }
 import { photosApi } from "../../services/api/photos.api";
 import { tryOnApi, type TryOnResult } from "../../services/api/tryon.api";
 import { clothingApi } from "../../services/api/clothing.api";
-import { wsService, type TryOnEventPayload } from "../../services/websocket";
+import { wsService, type TryOnEventPayload, type TryOnProgressPayload } from "../../services/websocket";
 import type { ClothingItem } from "../../types/clothing";
 import { colors } from "../../theme/tokens/colors";
 import { typography } from "../../theme/tokens/typography";
@@ -31,6 +31,20 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const POLL_INTERVAL = 3000;
 const POLL_MAX_ATTEMPTS = 60;
 const UPLOAD_TIMEOUT = 30000;
+const TIP_ROTATION_INTERVAL = 5000;
+const TIMEOUT_WARNING_MS = 30000;
+const TIMEOUT_DEGRADE_MS = 60000;
+
+const STYLE_TIPS = [
+  "深色上衣配浅色下装，视觉拉长腿部比例",
+  "同色系搭配更显高级感",
+  "V 领上衣修饰脸型，适合圆脸和方脸",
+  "高腰设计是显腿长的秘密武器",
+  "叠穿时内搭比外搭长 2-3cm 更有层次",
+  "暖色调适合暖肤色，冷色调适合冷肤色",
+  "配饰是点睛之笔，一条腰带改变全身比例",
+  "全身不超过 3 种主色调，简约即高级",
+];
 
 type TryOnPhase = "idle" | "uploading" | "queued" | "processing" | "completed" | "failed";
 
@@ -47,10 +61,15 @@ export const TryOnScreen: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<TryOnResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [currentTip, setCurrentTip] = useState(0);
+  const [timeoutWarning, setTimeoutWarning] = useState<string | null>(null);
 
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pollAttemptsRef = useRef(0);
   const wsUnsubscribeRef = useRef<(() => void) | null>(null);
+  const wsProgressUnsubscribeRef = useRef<(() => void) | null>(null);
+  const tipTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startTimeRef = useRef<number>(0);
 
   useEffect(() => {
     if (routeParams?.clothingId) {
@@ -81,6 +100,15 @@ export const TryOnScreen: React.FC = () => {
       wsUnsubscribeRef.current();
       wsUnsubscribeRef.current = null;
     }
+    if (wsProgressUnsubscribeRef.current) {
+      wsProgressUnsubscribeRef.current();
+      wsProgressUnsubscribeRef.current = null;
+    }
+    if (tipTimerRef.current) {
+      clearInterval(tipTimerRef.current);
+      tipTimerRef.current = null;
+    }
+    setTimeoutWarning(null);
   }, []);
 
   const onTryOnResolved = useCallback(
@@ -105,14 +133,36 @@ export const TryOnScreen: React.FC = () => {
   const startPolling = useCallback(
     (tryOnId: string) => {
       pollAttemptsRef.current = 0;
+      startTimeRef.current = Date.now();
       cleanup();
 
       wsUnsubscribeRef.current = wsService.onTryOnComplete(tryOnId, (payload: TryOnEventPayload) => {
         onTryOnResolved(tryOnId, payload.status, payload.errorMessage);
       });
 
+      wsProgressUnsubscribeRef.current = wsService.onTryOnProgress(
+        tryOnId,
+        (payload: TryOnProgressPayload) => {
+          setProgress(payload.progress);
+          if (payload.stage === "generating") {
+            setPhase("processing");
+          }
+        },
+      );
+
+      tipTimerRef.current = setInterval(() => {
+        setCurrentTip((prev) => (prev + 1) % STYLE_TIPS.length);
+      }, TIP_ROTATION_INTERVAL);
+
       pollTimerRef.current = setInterval(async () => {
         pollAttemptsRef.current++;
+
+        const elapsed = Date.now() - startTimeRef.current;
+        if (elapsed > TIMEOUT_DEGRADE_MS && !timeoutWarning) {
+          setTimeoutWarning("生成时间较长，是否使用预览模式查看？");
+        } else if (elapsed > TIMEOUT_WARNING_MS && !timeoutWarning) {
+          setTimeoutWarning("AI 正在努力生成中，请稍候...");
+        }
 
         if (pollAttemptsRef.current > POLL_MAX_ATTEMPTS) {
           onTryOnResolved(tryOnId, "failed", "试衣超时，请稍后重试");
@@ -137,7 +187,7 @@ export const TryOnScreen: React.FC = () => {
         }
       }, POLL_INTERVAL);
     },
-    [isFocused, cleanup, onTryOnResolved],
+    [isFocused, cleanup, onTryOnResolved, timeoutWarning],
   );
 
   const pickPersonImage = useCallback(async () => {
@@ -376,6 +426,16 @@ export const TryOnScreen: React.FC = () => {
             </View>
             <Text style={styles.progressText}>{Math.round(progress)}%</Text>
           </View>
+          <View style={styles.tipContainer}>
+            <Ionicons name="bulb-outline" size={16} color={colors.warmPrimary.coral[500]} />
+            <Text style={styles.tipText}>{STYLE_TIPS[currentTip]}</Text>
+          </View>
+          {timeoutWarning && (
+            <View style={styles.timeoutWarning}>
+              <Ionicons name="time-outline" size={16} color={colors.warmPrimary.ocean[500]} />
+              <Text style={styles.timeoutWarningText}>{timeoutWarning}</Text>
+            </View>
+          )}
         </Animated.View>
       )}
 
@@ -648,6 +708,38 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold as any,
     color: colors.warmPrimary.mint[600],
+  },
+
+  tipContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: colors.warmPrimary.coral[50],
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: spacing.borderRadius.lg,
+    marginTop: 12,
+  },
+  tipText: {
+    flex: 1,
+    fontSize: typography.fontSize.sm,
+    color: colors.warmPrimary.coral[700],
+    lineHeight: 20,
+  },
+  timeoutWarning: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: colors.warmPrimary.ocean[50],
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: spacing.borderRadius.lg,
+    marginTop: 8,
+  },
+  timeoutWarningText: {
+    flex: 1,
+    fontSize: typography.fontSize.sm,
+    color: colors.warmPrimary.ocean[700],
   },
 
   errorSection: {

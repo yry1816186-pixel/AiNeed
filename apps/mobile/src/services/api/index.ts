@@ -43,3 +43,6 @@ export {
   type QuizResult as StyleQuizResult,
   type QuizProgress,
 } from "./style-quiz.api";
+export { AppError, AppErrorCode, classifyAxiosError, toAppError, getErrorMessage } from "./error";
+export type { TokenPair } from "../auth/token";
+export { tokenManager } from "../auth/token";

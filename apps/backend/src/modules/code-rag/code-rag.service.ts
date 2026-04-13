@@ -2,6 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { AxiosError } from 'axios';
 
 export interface RetrievalResultItem {
   id: string;
@@ -20,6 +21,94 @@ export interface SearchResponse {
   results: RetrievalResultItem[];
   total: number;
   query_time_ms: number;
+}
+
+export interface SearchOptions {
+  topK?: number;
+  filterModule?: string;
+  filterLanguage?: string;
+  filterPathContains?: string;
+  filterChunkType?: string;
+  minScore?: number;
+}
+
+interface QdrantPoint {
+  id: string | number;
+  score: number;
+  payload?: {
+    content?: string;
+    metadata?: {
+      file_path?: string;
+      start_line?: number;
+      end_line?: number;
+      language?: string;
+      chunk_type?: string;
+      name?: string | null;
+      module?: string;
+    };
+  };
+}
+
+interface FileContextChunk {
+  id: string | number;
+  content: string;
+  start_line: number;
+  end_line: number;
+  score: number;
+}
+
+export interface FileContext {
+  file_path: string;
+  chunks: FileContextChunk[];
+  total_chunks: number;
+  line_range: [number, number];
+}
+
+interface QdrantCollectionInfo {
+  result?: {
+    points_count?: number;
+    vectors_count?: number;
+    status?: string;
+    config?: {
+      params?: {
+        vectors?: {
+          size?: number;
+        };
+      };
+    };
+  };
+}
+
+export interface ProjectSummary {
+  total_code_chunks: number;
+  collection_info: {
+    name: string;
+    vectors_count: number;
+    status: string;
+  };
+  languages: Record<string, number>;
+  top_modules: Record<string, number>;
+  chunk_types: Record<string, number>;
+  error?: string;
+}
+
+export interface IndexStatus {
+  indexed: boolean;
+  message?: string;
+  error?: string;
+  collection?: string;
+  total_chunks?: number;
+  vector_size?: number;
+  status?: string;
+}
+
+interface QdrantFilterCondition {
+  key: string;
+  match: { value: string };
+}
+
+interface QdrantFilter {
+  must?: QdrantFilterCondition[];
 }
 
 @Injectable()
@@ -43,14 +132,7 @@ export class CodeRagService implements OnModuleInit {
     );
   }
 
-  async search(query: string, options: {
-    topK?: number;
-    filterModule?: string;
-    filterLanguage?: string;
-    filterPathContains?: string;
-    filterChunkType?: string;
-    minScore?: number;
-  } = {}): Promise<SearchResponse> {
+  async search(query: string, options: SearchOptions = {}): Promise<SearchResponse> {
     const startTime = Date.now();
 
     if (this.useDirectQdrant) {
@@ -61,14 +143,14 @@ export class CodeRagService implements OnModuleInit {
 
   private async searchViaQdrant(
     query: string,
-    options: Record<string, any>,
+    options: SearchOptions,
     startTime: number,
   ): Promise<SearchResponse> {
     try {
       const vector = await this.generateQueryVector(query);
 
       const response = await firstValueFrom(
-        this.httpService.post(`${this.qdrantUrl}/collections/aineed_code_index/points/search`, {
+        this.httpService.post(`${this.qdrantUrl}/collections/xuno_code_index/points/search`, {
           vector: vector,
           limit: (options.topK || 10) * 3,
           with_payload: true,
@@ -77,7 +159,7 @@ export class CodeRagService implements OnModuleInit {
         }),
       );
 
-      let results = (response.data.result || []).map((point: any) => ({
+      let results = (response.data.result || []).map((point: QdrantPoint) => ({
         id: point.id,
         content: point.payload?.content || '',
         file_path: point.payload?.metadata?.file_path || '',
@@ -91,13 +173,15 @@ export class CodeRagService implements OnModuleInit {
       }));
 
       if (options.filterPathContains) {
+        const filterPath = options.filterPathContains;
         results = results.filter((r: RetrievalResultItem) =>
-          r.file_path.includes(options.filterPathContains),
+          r.file_path.includes(filterPath),
         );
       }
 
-      if (options.minScore) {
-        results = results.filter((r: RetrievalResultItem) => r.score >= options.minScore);
+      if (options.minScore !== undefined) {
+        const minScore = options.minScore;
+        results = results.filter((r: RetrievalResultItem) => r.score >= minScore);
       }
 
       results = results.slice(0, options.topK || 10);
@@ -107,18 +191,22 @@ export class CodeRagService implements OnModuleInit {
         total: results.length,
         query_time_ms: Date.now() - startTime,
       };
-    } catch (error: any) {
-      if (error.response?.status === 404) {
+    } catch (error) {
+      if (this.isAxiosError(error) && error.response?.status === 404) {
         return { results: [], total: 0, query_time_ms: Date.now() - startTime };
       }
-      this.logger.error(`Qdrant search failed: ${error.message}`);
+      this.logger.error(`Qdrant search failed: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     }
   }
 
+  private isAxiosError(error: unknown): error is AxiosError {
+    return (error as AxiosError).isAxiosError === true;
+  }
+
   private async searchViaPythonProxy(
     query: string,
-    options: Record<string, any>,
+    options: SearchOptions,
     startTime: number,
   ): Promise<SearchResponse> {
     const response = await firstValueFrom(
@@ -146,7 +234,7 @@ export class CodeRagService implements OnModuleInit {
     let totalChars = 0;
 
     sections.push(`# Relevant Code Context (${results.length} matches found)\n\n`);
-    totalChars += sections[0]!.length;
+    totalChars += (sections[0] ?? "").length;
 
     for (let i = 0; i < results.length; i++) {
       const r = results[i];
@@ -171,12 +259,12 @@ export class CodeRagService implements OnModuleInit {
     return sections.join('');
   }
 
-  async getFileContext(filePath: string): Promise<any> {
+  async getFileContext(filePath: string): Promise<FileContext | null> {
     try {
       const vector = await this.generateQueryVector(filePath);
 
       const response = await firstValueFrom(
-        this.httpService.post(`${this.qdrantUrl}/collections/aineed_code_index/points/search`, {
+        this.httpService.post(`${this.qdrantUrl}/collections/xuno_code_index/points/search`, {
           vector,
           limit: 50,
           with_payload: true,
@@ -189,14 +277,14 @@ export class CodeRagService implements OnModuleInit {
       );
 
       const docs = (response.data.result || [])
-        .map((p: any) => ({
+        .map((p: QdrantPoint) => ({
           id: p.id,
           content: p.payload?.content || '',
           start_line: p.payload?.metadata?.start_line || 0,
           end_line: p.payload?.metadata?.end_line || 0,
           score: p.score,
         }))
-        .sort((a: any, b: any) => a.start_line - b.start_line);
+        .sort((a: FileContextChunk, b: FileContextChunk) => a.start_line - b.start_line);
 
       if (!docs.length) return null;
 
@@ -205,25 +293,25 @@ export class CodeRagService implements OnModuleInit {
         chunks: docs,
         total_chunks: docs.length,
         line_range: [
-          Math.min(...docs.map((d: any) => d.start_line)),
-          Math.max(...docs.map((d: any) => d.end_line)),
+          Math.min(...docs.map((d: FileContextChunk) => d.start_line)),
+          Math.max(...docs.map((d: FileContextChunk) => d.end_line)),
         ],
       };
-    } catch (error: any) {
-      this.logger.error(`getFileContext failed: ${error.message}`);
+    } catch (error) {
+      this.logger.error(`getFileContext failed: ${error instanceof Error ? error.message : String(error)}`);
       return null;
     }
   }
 
-  async getProjectSummary(): Promise<any> {
+  async getProjectSummary(): Promise<ProjectSummary> {
     try {
       const infoResponse = await firstValueFrom(
-        this.httpService.get(`${this.qdrantUrl}/collections/aineed_code_index`),
+        this.httpService.get(`${this.qdrantUrl}/collections/xuno_code_index`),
       );
-      const collectionInfo = (infoResponse.data as any)?.result;
+      const collectionInfo = (infoResponse.data as QdrantCollectionInfo)?.result;
 
       const scrollResponse = await firstValueFrom(
-        this.httpService.post(`${this.qdrantUrl}/collections/aineed_code_index/points/scroll`, {
+        this.httpService.post(`${this.qdrantUrl}/collections/xuno_code_index/points/scroll`, {
           limit: 5000,
           with_payload: true,
           with_vectors: false,
@@ -251,11 +339,11 @@ export class CodeRagService implements OnModuleInit {
         .slice(0, 15);
 
       return {
-        total_code_chunks: collectionInfo?.result?.points_count || docs.length,
+        total_code_chunks: collectionInfo?.points_count || docs.length,
         collection_info: {
-          name: 'aineed_code_index',
-          vectors_count: collectionInfo?.result?.vectors_count || 0,
-          status: collectionInfo?.result?.status || 'unknown',
+          name: 'xuno_code_index',
+          vectors_count: collectionInfo?.vectors_count || 0,
+          status: collectionInfo?.status || 'unknown',
         },
         languages: Object.fromEntries(
           Object.entries(languages).sort(([, a], [, b]) => (b as number) - (a as number)),
@@ -263,12 +351,17 @@ export class CodeRagService implements OnModuleInit {
         top_modules: Object.fromEntries(sortedModules),
         chunk_types: chunkTypes,
       };
-    } catch (error: any) {
-      this.logger.error(`getProjectSummary failed: ${error.message}`);
+    } catch (error) {
+      this.logger.error(`getProjectSummary failed: ${error instanceof Error ? error.message : String(error)}`);
 
         return {
           total_code_chunks: 0,
-          error: error.message,
+          error: error instanceof Error ? error.message : String(error),
+          collection_info: {
+            name: 'xuno_code_index',
+            vectors_count: 0,
+            status: 'error',
+          },
           languages: {},
           top_modules: {},
           chunk_types: {},
@@ -276,10 +369,10 @@ export class CodeRagService implements OnModuleInit {
     }
   }
 
-  async getIndexStatus(): Promise<any> {
+  async getIndexStatus(): Promise<IndexStatus> {
     try {
       const response = await firstValueFrom(
-        this.httpService.get(`${this.qdrantUrl}/collections/aineed_code_index`),
+        this.httpService.get(`${this.qdrantUrl}/collections/xuno_code_index`),
       );
 
       const result = response.data?.result;
@@ -289,21 +382,21 @@ export class CodeRagService implements OnModuleInit {
 
       return {
         indexed: true,
-        collection: 'aineed_code_index',
+        collection: 'xuno_code_index',
         total_chunks: result.points_count || 0,
         vector_size: result.config?.params?.vectors?.size || 384,
         status: result.status || 'unknown',
       };
-    } catch (error: any) {
-      if (error.response?.status === 404) {
+    } catch (error) {
+      if (this.isAxiosError(error) && error.response?.status === 404) {
         return { indexed: false, message: 'Collection not found. Run code indexer first.' };
       }
-      return { indexed: false, error: error.message };
+      return { indexed: false, error: error instanceof Error ? error.message : String(error) };
     }
   }
 
-  private buildFilter(options: Record<string, any>): any {
-    const must: any[] = [];
+  private buildFilter(options: SearchOptions): QdrantFilter | undefined {
+    const must: QdrantFilterCondition[] = [];
 
     if (options.filterModule) {
       must.push({ key: 'metadata.module', match: { value: options.filterModule } });

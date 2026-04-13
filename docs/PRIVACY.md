@@ -1,4 +1,4 @@
-# AiNeed 隐私政策
+﻿# xuno 隐私政策
 
 **最后更新日期：2026年3月13日**
 
@@ -102,7 +102,7 @@
 
 ### 如何行使权利
 - App 设置 > 隐私设置
-- 邮箱：privacy@aineed.ai
+- 邮箱：privacy@xuno.ai
 - 客服热线：400-XXX-XXXX
 
 ## 6. Cookie 政策
@@ -133,7 +133,7 @@
 如有隐私相关问题，请联系：
 
 **隐私保护负责人**
-- 邮箱：privacy@aineed.ai
+- 邮箱：privacy@xuno.ai
 - 地址：中国
 
 **投诉渠道**

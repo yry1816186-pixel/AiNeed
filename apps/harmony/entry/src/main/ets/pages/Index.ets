@@ -3,7 +3,7 @@
 struct Index {
   build() {
     Column() {
-      Text('AiNeed Harmony Baseline')
+      Text('寻裳 Harmony Baseline')
         .fontSize(24)
         .fontWeight(FontWeight.Bold)
         .fontColor($r('app.color.primary_color'))

@@ -1,7 +1,8 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 
 import { PrismaModule } from "../../common/prisma/prisma.module";
 import { OnboardingModule } from "../onboarding/onboarding.module";
+import { ProfileModule } from "../profile/profile.module";
 
 import { StyleQuizController } from "./style-quiz.controller";
 import { StyleQuizService } from "./style-quiz.service";
@@ -12,7 +13,7 @@ import { QuizProgressService } from "./services/quiz-progress.service";
 import { ColorDerivationEngine } from "./services/color-derivation.service";
 
 @Module({
-  imports: [PrismaModule, OnboardingModule],
+  imports: [PrismaModule, OnboardingModule, forwardRef(() => ProfileModule)],
   controllers: [StyleQuizController],
   providers: [
     StyleQuizService,

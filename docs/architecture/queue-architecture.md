@@ -1,8 +1,8 @@
-# Queue Architecture Documentation
+﻿# Queue Architecture Documentation
 
 ## Overview
 
-AiNeed uses a unified queue architecture based on **BullMQ** for all asynchronous task processing. This document describes the queue system architecture, configuration, and best practices.
+xuno uses a unified queue architecture based on **BullMQ** for all asynchronous task processing. This document describes the queue system architecture, configuration, and best practices.
 
 ## Architecture Decision
 

@@ -151,7 +151,7 @@ export function ShareOutfit({ outfit }: ShareOutfitProps) {
 
     const shareOptions: ShareOptions = {
       title: outfit.title,
-      message: `👗 ${outfit.title}\n\n${itemsText}\n\n来自 AiNeed 智能穿搭推荐`,
+      message: `👗 ${outfit.title}\n\n${itemsText}\n\n来自寻裳智能穿搭推荐`,
     };
 
     try {

@@ -1,4 +1,4 @@
-# APP 全量深度体检报告（移动端本轮）
+﻿# APP 全量深度体检报告（移动端本轮）
 
 - 日期：2026-03-15
 - 体检范围：`apps/mobile`、`apps/mobile/android`
@@ -99,7 +99,7 @@
    - https://www.nativewind.dev/docs/tailwind/installation
 
 7. 本地权威开源证据：当前安装包 `nativewind@2.0.11` 的 `package.json`
-   - 路径：`/mnt/c/AiNeed/node_modules/nativewind/package.json`
+   - 路径：`/mnt/c/xuno/node_modules/nativewind/package.json`
    - 关键事实：其 `devDependencies.tailwindcss` 为 `3.1.8`
 
 ## 结论

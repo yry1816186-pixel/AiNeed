@@ -1,4 +1,4 @@
-import { ConfigService } from "@nestjs/config";
+﻿import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { EmailService, EmailOptions, EmailResult } from "./email.service";
@@ -15,8 +15,8 @@ describe("EmailService", () => {
         SMTP_USER: undefined,
         SMTP_PASS: undefined,
         SMTP_SECURE: false,
-        SMTP_FROM_EMAIL: "noreply@aineed.com",
-        SMTP_FROM_NAME: "AiNeed",
+        SMTP_FROM_EMAIL: "noreply@xuno.com",
+        SMTP_FROM_NAME: "xuno",
         SMTP_MAX_RETRIES: 3,
         SMTP_RETRY_BASE_DELAY: 100,
         SMTP_RETRY_MAX_DELAY: 1000,

@@ -14,7 +14,7 @@ import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { theme } from '../theme';
 
-const NOTIFICATIONS_KEY = '@aineed_notifications';
+const NOTIFICATIONS_KEY = '@xuno_notifications';
 
 type NotificationType = 'order' | 'recommendation' | 'system';
 
@@ -43,7 +43,7 @@ const generateSeedNotifications = (): AppNotification[] => {
     {
       id: generateId(),
       type: 'system',
-      title: '欢迎使用 AiNeed',
+      title: '欢迎使用寻裳',
       body: '您的 AI 穿搭助手已就绪，开始探索智能推荐吧！',
       read: false,
       createdAt: new Date(now - 1000 * 60 * 5).toISOString(),

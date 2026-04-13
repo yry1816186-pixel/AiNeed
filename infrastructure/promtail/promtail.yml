@@ -1,0 +1,429 @@
+﻿# ============================================================
+# xuno 项目 Promtail 日志采集配置
+# 版本: Promtail 2.9.x
+# 说明: 从 Docker 容器采集日志并推送到 Loki
+# ============================================================
+
+# ----------------------------------------------------------
+# Promtail 自身服务配置
+# ----------------------------------------------------------
+server:
+  # HTTP 监听地址 - 用于健康检查和指标暴露
+  http_listen_address: 0.0.0.0
+  http_listen_port: 9080
+
+  # GRPC 监听地址 - 设为 0 表示不启用 GRPC 服务
+  grpc_listen_address: 0.0.0.0
+  grpc_listen_port: 0
+
+  # 健康检查配置
+  health_check:
+    enabled: true
+
+# ----------------------------------------------------------
+# 位置文件 - 记录每个日志流的读取偏移量
+# 防止 Promtail 重启后重复采集或遗漏日志
+# ----------------------------------------------------------
+positions:
+  filename: /tmp/positions.yaml
+  # 同步间隔 - 偏移量写入磁盘的频率
+  sync_period: 10s
+
+# ----------------------------------------------------------
+# Loki 客户端配置 - 日志推送目标
+# ----------------------------------------------------------
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    # 推送超时
+    timeout: 30s
+    # 批处理配置 - 减少网络请求次数
+    batchwait: 1s          # 等待 1 秒或批次满后发送
+    batchsize: 1048576     # 批次最大 1MB
+    # 重试配置
+    backoff_config:
+      min_period: 500ms
+      max_period: 5m
+      max_retries: 10
+    # 外部标签 - 所有日志流都会附加这些标签
+    external_labels:
+      project: 'xuno'
+      environment: 'production'
+
+# ----------------------------------------------------------
+# 抓取配置 - 定义日志采集源和处理管道
+# ----------------------------------------------------------
+scrape_configs:
+  # ==========================================================
+  # 全局预处理阶段 - 在所有管道之前应用
+  # ==========================================================
+
+  # ==========================================================
+  # Docker 服务发现 - 自动发现运行中的容器
+  # ==========================================================
+  - job_name: docker
+    # Docker 服务发现配置
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        # 刷新间隔 - 定期检查新容器
+        refresh_interval: 5s
+        # 过滤条件 - 只采集 ainetwork 网络上的容器
+        filters:
+          - name: network
+            values: ["ainetwork"]
+
+    # 为发现的容器添加标签
+    relabel_configs:
+      # 从 Docker 容器元数据提取容器名称
+      - source_labels: ['__meta_docker_container_name']
+        target_label: 'container'
+        # 去除容器名称前缀的 /
+        regex: '/(.*)'
+        replacement: '${1}'
+
+      # 提取 compose 项目名称
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_project']
+        target_label: 'compose_project'
+
+      # 提取 compose 服务名称
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        target_label: 'compose_service'
+
+      # 提取容器 ID（短 ID）
+      - source_labels: ['__meta_docker_container_id']
+        target_label: 'container_id'
+        regex: '([a-f0-9]{12}).*'
+        replacement: '${1}'
+
+      # 添加主机标签
+      - target_label: 'host'
+        replacement: 'xuno-server'
+
+    # ----------------------------------------------------------
+    # 日志文件路径 - Docker json-file 日志驱动路径
+    # ----------------------------------------------------------
+    pipeline_stages:
+      # === 全局预处理阶段 ===
+
+      # 使用 Docker 容器日志路径
+      - docker: {}
+
+      # 从 Docker 日志提取时间戳
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+
+      # 丢弃空日志行
+      - drop:
+          expression: '^\s*$'
+
+      # 限制日志行长度为 10000 字符
+      - limit:
+          max_line_size: 10000
+          drop: false    # 超长行截断而非丢弃
+
+      # ==========================================================
+      # Backend 服务日志管道 (stylemind-backend)
+      # NestJS JSON 格式日志: { timestamp, level, message, context, traceId }
+      # ==========================================================
+      - match:
+          selector: '{container=~"stylemind-backend"}'
+          stages:
+            # JSON 解析 - 提取结构化字段
+            - json:
+                expressions:
+                  timestamp: timestamp
+                  level: level
+                  message: message
+                  context: context
+                  traceId: traceId
+                  route: route
+
+            # 设置日志级别标签
+            - labels:
+                level:
+                service:
+                route:
+                traceId:
+
+            # 固定服务标签
+            - static_labels:
+                service: backend
+
+            # 使用日志中的时间戳替代 Docker 时间戳
+            - timestamp:
+                source: timestamp
+                format: RFC3339
+
+            # 设置日志消息内容
+            - output:
+                source: message
+
+      # ==========================================================
+      # AI 服务日志管道 (stylemind-ai)
+      # FastAPI JSON 格式日志: { timestamp, level, message, endpoint }
+      # ==========================================================
+      - match:
+          selector: '{container=~"stylemind-ai"}'
+          stages:
+            # JSON 解析
+            - json:
+                expressions:
+                  timestamp: timestamp
+                  level: level
+                  message: message
+                  endpoint: endpoint
+                  model: model
+                  duration_ms: duration_ms
+
+            # 设置标签
+            - labels:
+                level:
+                service:
+                endpoint:
+                model:
+
+            # 固定服务标签
+            - static_labels:
+                service: ai-service
+
+            # 使用日志中的时间戳
+            - timestamp:
+                source: timestamp
+                format: RFC3339
+
+            # 设置日志消息内容
+            - output:
+                source: message
+
+      # ==========================================================
+      # CatVTON 服务日志管道 (stylemind-catvton)
+      # Python JSON 格式日志: { timestamp, level, message }
+      # ==========================================================
+      - match:
+          selector: '{container=~"stylemind-catvton"}'
+          stages:
+            # JSON 解析
+            - json:
+                expressions:
+                  timestamp: timestamp
+                  level: level
+                  message: message
+                  gpu_usage: gpu_usage
+
+            # 设置标签
+            - labels:
+                level:
+                service:
+
+            # 固定服务标签
+            - static_labels:
+                service: catvton
+
+            # 使用日志中的时间戳
+            - timestamp:
+                source: timestamp
+                format: RFC3339
+
+            # 设置日志消息内容
+            - output:
+                source: message
+
+      # ==========================================================
+      # Task Worker 日志管道 (stylemind-task-worker)
+      # BullMQ Worker JSON 格式日志: { timestamp, level, message, task_type }
+      # ==========================================================
+      - match:
+          selector: '{container=~"stylemind-task-worker"}'
+          stages:
+            # JSON 解析
+            - json:
+                expressions:
+                  timestamp: timestamp
+                  level: level
+                  message: message
+                  task_type: task_type
+                  job_id: job_id
+                  duration_ms: duration_ms
+
+            # 设置标签
+            - labels:
+                level:
+                service:
+                task_type:
+
+            # 固定服务标签
+            - static_labels:
+                service: task-worker
+
+            # 使用日志中的时间戳
+            - timestamp:
+                source: timestamp
+                format: RFC3339
+
+            # 设置日志消息内容
+            - output:
+                source: message
+
+      # ==========================================================
+      # PostgreSQL 日志管道 (stylemind-postgres)
+      # PostgreSQL 文本格式日志，需正则解析
+      # 格式示例: 2024-01-15 10:30:45.123 UTC [123] LOG:  message
+      # ==========================================================
+      - match:
+          selector: '{container=~"stylemind-postgres"}'
+          stages:
+            # 正则解析 PostgreSQL 日志格式
+            - regex:
+                expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+ \w+) \[(?P<pid>\d+)\] (?P<level>\w+):\s+(?P<message>.*)$'
+
+            # 映射 PostgreSQL 日志级别到标准级别
+            - template:
+                source: level
+                template: '{{ if eq .Value "LOG" }}info{{ else if eq .Value "WARNING" }}warn{{ else if eq .Value "ERROR" }}error{{ else if eq .Value "FATAL" }}fatal{{ else if eq .Value "PANIC" }}critical{{ else }}{{ .Value }}{{ end }}'
+
+            # 设置标签
+            - labels:
+                level:
+                service:
+
+            # 固定服务标签
+            - static_labels:
+                service: postgres
+
+            # 使用日志中的时间戳
+            - timestamp:
+                source: timestamp
+                format: '2006-01-02 15:04:05.999 MST'
+
+            # 设置日志消息内容
+            - output:
+                source: message
+
+      # ==========================================================
+      # Redis 日志管道 (stylemind-redis)
+      # Redis 文本格式日志，级别信息较少
+      # ==========================================================
+      - match:
+          selector: '{container=~"stylemind-redis"}'
+          stages:
+            # Redis 日志级别提取
+            # 格式示例: 1:M 15 Jan 2024 10:30:45.123 * Ready to accept connections
+            - regex:
+                expression: '^\d+:[A-Z] \d+ \w+ \d+ [\d:.]+\s+(?P<level>[*#\.])\s+(?P<message>.*)$'
+
+            # 映射 Redis 日志级别符号到标准级别
+            - template:
+                source: level
+                template: '{{ if eq .Value "*" }}info{{ else if eq .Value "#" }}warn{{ else if eq .Value "." }}debug{{ else }}{{ .Value }}{{ end }}'
+
+            # 设置标签
+            - labels:
+                level:
+                service:
+
+            # 固定服务标签
+            - static_labels:
+                service: redis
+
+            # 设置日志消息内容
+            - output:
+                source: message
+
+      # ==========================================================
+      # MinIO 日志管道 (stylemind-minio)
+      # MinIO JSON 格式日志: { level, time, message, source }
+      # ==========================================================
+      - match:
+          selector: '{container=~"stylemind-minio"}'
+          stages:
+            # JSON 解析
+            - json:
+                expressions:
+                  level: level
+                  time: time
+                  message: message
+                  source: source
+                  api: api
+
+            # 设置标签
+            - labels:
+                level:
+                service:
+
+            # 固定服务标签
+            - static_labels:
+                service: minio
+
+            # 使用日志中的时间戳
+            - timestamp:
+                source: time
+                format: RFC3339
+
+            # 设置日志消息内容
+            - output:
+                source: message
+
+      # ==========================================================
+      # 默认日志管道 - 兜底处理所有其他容器
+      # 先尝试 JSON 解析，失败则按纯文本处理
+      # ==========================================================
+      - match:
+          selector: '{container=~".+", service=""}'
+          stages:
+            # 尝试 JSON 解析
+            - json:
+                expressions:
+                  timestamp: timestamp
+                  level: level
+                  message: message
+                # 解析失败时不报错，继续后续阶段
+                ignore_malformed: true
+
+            # 如果 JSON 解析成功提取了 message，使用它
+            - template:
+                source: message
+                template: '{{ if .Value }}{{ .Value }}{{ end }}'
+
+            # 设置标签 - 使用容器名称作为服务名
+            - labels:
+                level:
+                service:
+
+            # 使用容器名称作为服务标签
+            - labeldrop:
+                - service
+
+            - static_labels:
+                service: docker_{{ .container }}
+
+            # 如果 JSON 解析提取了时间戳则使用
+            - match:
+                selector: '{container=~".+", service=~"docker_.+"}'
+                stages:
+                  - timestamp:
+                      source: timestamp
+                      format: RFC3339
+                      # 解析失败时回退到 Docker 时间戳
+                      fallback_formats:
+                        - RFC3339Nano
+
+# ----------------------------------------------------------
+# 全局管道阶段 - 应用于所有日志流
+# ----------------------------------------------------------
+global_pipeline_stages:
+  # 添加主机标签
+  - static_labels:
+      host: xuno-server
+
+  # 添加 compose 项目标签
+  - static_labels:
+      compose_project: xuno
+
+  # 丢弃空日志行
+  - drop:
+      expression: '^\s*$'
+
+  # 限制日志行长度
+  - limit:
+      max_line_size: 10000
+      drop: false

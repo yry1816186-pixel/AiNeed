@@ -1,5 +1,5 @@
 import { Controller, Get } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiResponse, ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 import { Public } from "../auth/decorators/public.decorator";
 
@@ -9,10 +9,19 @@ import { HealthService } from "./health.service";
  * 健康检查响应 DTO
  */
 class HealthResponseDto {
+  @ApiProperty({ description: "系统状态", example: "ok", enum: ["ok", "error", "degraded"] })
   status!: "ok" | "error" | "degraded";
+
+  @ApiProperty({ description: "时间戳", example: "2026-04-13T12:00:00.000Z" })
   timestamp!: string;
+
+  @ApiProperty({ description: "运行时间（秒）", example: 86400 })
   uptime!: number;
+
+  @ApiProperty({ description: "版本号", example: "1.0.0" })
   version!: string;
+
+  @ApiPropertyOptional({ description: "各依赖项检查结果" })
   checks?: Record<string, { status: string; message?: string }>;
 }
 
@@ -20,7 +29,10 @@ class HealthResponseDto {
  * 存活检查响应 DTO
  */
 class LivenessResponseDto {
+  @ApiProperty({ description: "存活状态", example: "ok" })
   status!: "ok";
+
+  @ApiProperty({ description: "时间戳", example: "2026-04-13T12:00:00.000Z" })
   timestamp!: string;
 }
 
@@ -28,8 +40,13 @@ class LivenessResponseDto {
  * 就绪检查响应 DTO
  */
 class ReadinessResponseDto {
+  @ApiProperty({ description: "就绪状态", example: "ok", enum: ["ok", "error", "degraded"] })
   status!: "ok" | "error" | "degraded";
+
+  @ApiProperty({ description: "时间戳", example: "2026-04-13T12:00:00.000Z" })
   timestamp!: string;
+
+  @ApiProperty({ description: "各依赖项检查结果" })
   checks!: Record<string, { status: string; message?: string }>;
 }
 

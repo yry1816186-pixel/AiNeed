@@ -5,9 +5,12 @@ import { PhotoType, AnalysisStatus } from "@prisma/client";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { StorageService } from "../../common/storage/storage.service";
+import { MalwareScannerService } from "../../common/security/malware-scanner.service";
 
 import { PhotosService } from "./photos.service";
 import { AiAnalysisService } from "./services/ai-analysis.service";
+import { OnboardingService } from "../onboarding/onboarding.service";
+import { QueueService } from "../queue/queue.service";
 
 import "multer"; // 引入 Express.Multer.File 类型声明
 
@@ -39,7 +42,10 @@ describe("PhotosService", () => {
 
   const mockStorageService = {
     uploadImage: jest.fn(),
+    uploadEncrypted: jest.fn(),
     deleteFile: jest.fn(),
+    fetchRemoteAssetDataUri: jest.fn(),
+    fetchRemoteAsset: jest.fn(),
   };
 
   const mockAiAnalysisService = {
@@ -48,6 +54,21 @@ describe("PhotosService", () => {
 
   const mockConfigService = {
     get: jest.fn(),
+  };
+
+  const mockMalwareScannerService = {
+    scanImageBuffer: jest.fn().mockResolvedValue({ safe: true, threats: [] }),
+  };
+
+  const mockOnboardingService = {
+    skipStep: jest.fn().mockResolvedValue({ success: true }),
+  };
+
+  const mockQueueService = {
+    addImageAnalysisTask: jest.fn().mockResolvedValue({ taskId: "mock-task-id", status: "pending" }),
+    addJob: jest.fn().mockResolvedValue({ id: "mock-job-id" }),
+    getJobStatus: jest.fn().mockResolvedValue(null),
+    getQueueStats: jest.fn().mockResolvedValue({ waiting: 0, active: 0, completed: 0, failed: 0 }),
   };
 
   const createMockFile = (): Express.Multer.File => ({
@@ -98,6 +119,18 @@ describe("PhotosService", () => {
           provide: ConfigService,
           useValue: mockConfigService,
         },
+        {
+          provide: MalwareScannerService,
+          useValue: mockMalwareScannerService,
+        },
+        {
+          provide: OnboardingService,
+          useValue: mockOnboardingService,
+        },
+        {
+          provide: QueueService,
+          useValue: mockQueueService,
+        },
       ],
     }).compile();
 
@@ -114,7 +147,7 @@ describe("PhotosService", () => {
   describe("uploadPhoto", () => {
     it("应该成功上传照片", async () => {
       const mockFile = createMockFile();
-      mockStorageService.uploadImage.mockResolvedValue({
+      mockStorageService.uploadEncrypted.mockResolvedValue({
         url: "https://storage.example.com/photos/test.jpg",
         thumbnailUrl: "https://storage.example.com/thumbnails/test.jpg",
       });
@@ -131,7 +164,7 @@ describe("PhotosService", () => {
         "https://storage.example.com/photos/user-id/photo-id.jpg",
       );
       expect(result.type).toBe(PhotoType.full_body);
-      expect(mockStorageService.uploadImage).toHaveBeenCalled();
+      expect(mockStorageService.uploadEncrypted).toHaveBeenCalled();
       expect(mockPrismaService.userPhoto.create).toHaveBeenCalled();
     });
 
@@ -169,6 +202,20 @@ describe("PhotosService", () => {
       expect(mockPrismaService.userPhoto.findMany).toHaveBeenCalledWith({
         where: { userId: "test-user-id" },
         orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          userId: true,
+          type: true,
+          url: true,
+          thumbnailUrl: true,
+          originalName: true,
+          mimeType: true,
+          size: true,
+          analysisResult: true,
+          analysisStatus: true,
+          analyzedAt: true,
+          createdAt: true,
+        },
       });
     });
 
@@ -183,6 +230,20 @@ describe("PhotosService", () => {
       expect(mockPrismaService.userPhoto.findMany).toHaveBeenCalledWith({
         where: { userId: "test-user-id", type: PhotoType.full_body },
         orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          userId: true,
+          type: true,
+          url: true,
+          thumbnailUrl: true,
+          originalName: true,
+          mimeType: true,
+          size: true,
+          analysisResult: true,
+          analysisStatus: true,
+          analyzedAt: true,
+          createdAt: true,
+        },
       });
     });
   });

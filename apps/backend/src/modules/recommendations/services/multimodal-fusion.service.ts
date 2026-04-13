@@ -12,7 +12,7 @@ import { PrismaService } from "../../../common/prisma/prisma.service";
 interface MultimodalFeatures {
   visual: number[];
   textual: number[];
-  attributes: Record<string, any>;
+  attributes: Record<string, unknown>;
 }
 
 interface FusionConfig {
@@ -171,20 +171,20 @@ export class MultimodalFusionService {
     }
 
     const visualFeatures = await this.extractVisualFeatures(
-      item.images[0] || "",
+      item.images[0] ?? "",
     );
 
     const textContent = [
       item.name,
       item.description || "",
-      ...((item.attributes as any)?.style || []),
+      ...((item.attributes as Record<string, unknown>)?.style as string[] || []),
     ].join(" ");
     const textualFeatures = await this.extractTextualFeatures(textContent);
 
     return {
       visual: visualFeatures,
       textual: textualFeatures,
-      attributes: item.attributes as Record<string, any>,
+      attributes: item.attributes as Record<string, unknown>,
     };
   }
 
@@ -290,7 +290,7 @@ export class MultimodalFusionService {
     return vec.map((v) => v / norm);
   }
 
-  private attributesToVector(attributes: Record<string, any>): number[] {
+  private attributesToVector(attributes: Record<string, unknown>): number[] {
     const vector: number[] = [];
 
     if (attributes.style) {
@@ -345,8 +345,8 @@ export class MultimodalFusionService {
   }
 
   private calculateAttributeCompatibility(
-    attrs1: Record<string, any>,
-    attrs2: Record<string, any>,
+    attrs1: Record<string, unknown>,
+    attrs2: Record<string, unknown>,
   ): number {
     let score = 0.5;
 
@@ -376,8 +376,8 @@ export class MultimodalFusionService {
 
   private generateCompatibilityReasons(
     scores: { visual: number; textual: number; attribute: number },
-    attrs1: Record<string, any>,
-    attrs2: Record<string, any>,
+    attrs1: Record<string, unknown>,
+    attrs2: Record<string, unknown>,
   ): string[] {
     const reasons: string[] = [];
 

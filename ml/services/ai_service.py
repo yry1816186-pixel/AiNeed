@@ -28,7 +28,7 @@ ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
 ALLOWED_IMAGE_DIRS = [
     Path(os.environ.get("DATA_DIR", "/data/images")),
-    Path(tempfile.gettempdir()) / "aineed",
+    Path(tempfile.gettempdir()) / "xuno",
 ]
 
 def validate_image_path(user_path: str) -> str:
@@ -135,7 +135,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="AiNeed Fashion AI Service",
+    title="XunO Fashion AI Service",
     description="智能服装推荐API - 支持风格理解、搭配推荐",
     version="2.0.0",
     lifespan=lifespan
@@ -568,7 +568,7 @@ def _validate_image_type(content: bytes, filename: str) -> str:
 def _create_secure_temp_file(content: bytes, suffix: str) -> str:
     """Create a secure temporary file with unique name."""
     temp_dir = tempfile.gettempdir()
-    unique_name = f"aineed_{uuid.uuid4().hex}{suffix}"
+    unique_name = f"xuno_{uuid.uuid4().hex}{suffix}"
     temp_path = os.path.join(temp_dir, unique_name)
     
     with open(temp_path, "wb") as f:
@@ -923,6 +923,13 @@ try:
     print("幻觉检测 API 路由已加载")
 except Exception as e:
     print(f"幻觉检测 API 加载失败: {e}")
+
+try:
+    from api.routes.photo_quality import router as photo_quality_router
+    app.include_router(photo_quality_router)
+    print("照片质量检测 API 路由已加载")
+except Exception as e:
+    print(f"照片质量检测 API 加载失败: {e}")
 
 
 if __name__ == "__main__":

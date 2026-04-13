@@ -5,6 +5,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { RedisModule } from '../../common/redis/redis.module';
 
 import { AIWebSocketGateway } from './ws.gateway';
+import { AppGateway } from './gateways/app.gateway';
+import { AIGateway } from './gateways/ai.gateway';
+import { EventBusService } from './services/event-bus.service';
 
 @Global()
 @Module({
@@ -25,7 +28,7 @@ import { AIWebSocketGateway } from './ws.gateway';
       inject: [ConfigService],
     }),
   ],
-  providers: [AIWebSocketGateway],
-  exports: [AIWebSocketGateway],
+  providers: [AIWebSocketGateway, AppGateway, AIGateway, EventBusService],
+  exports: [AIWebSocketGateway, AppGateway, AIGateway, EventBusService],
 })
 export class WSModule {}

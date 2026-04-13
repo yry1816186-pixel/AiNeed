@@ -1,9 +1,16 @@
 {
-  "name": "@aineed/shared",
+  "name": "@xuno/shared",
   "version": "1.0.0",
-  "description": "AiNeed 共享类型定义",
+  "description": "寻裳 前后端共享类型定义与验证规则",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch"

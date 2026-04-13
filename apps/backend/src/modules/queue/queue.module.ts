@@ -7,6 +7,7 @@ import { AIModule } from '../ai/ai.module';
 import { TryOnModule } from '../try-on/try-on.module';
 
 import { QUEUE_NAMES } from './queue.constants';
+import { QueueName } from './queue-config';
 import { QueueController } from './queue.controller';
 import {
   QueueProcessor,
@@ -14,6 +15,7 @@ import {
   VirtualTryOnProcessor,
   WardrobeMatchProcessor,
 } from './queue.processor';
+import { QueueMonitorService } from './queue-monitor.service';
 import { QueueService } from './queue.service';
 
 
@@ -79,16 +81,22 @@ const logger = new Logger('QueueModule');
       { name: QUEUE_NAMES.STYLE_ANALYSIS },
       { name: QUEUE_NAMES.VIRTUAL_TRYON },
       { name: QUEUE_NAMES.WARDROBE_MATCH },
+      { name: QueueName.BODY_ANALYSIS },
+      { name: QueueName.PHOTO_PROCESSING },
+      { name: QueueName.AI_GENERATION },
+      { name: QueueName.NOTIFICATION },
+      { name: QueueName.DATA_EXPORT },
     ),
   ],
   controllers: [QueueController],
   providers: [
     QueueService,
+    QueueMonitorService,
     QueueProcessor,
     StyleAnalysisProcessor,
     VirtualTryOnProcessor,
     WardrobeMatchProcessor,
   ],
-  exports: [QueueService],
+  exports: [QueueService, QueueMonitorService],
 })
 export class QueueModule {}

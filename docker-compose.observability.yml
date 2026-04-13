@@ -1,0 +1,436 @@
+# ============================================================
+# 寻裳 Observability Stack
+# ============================================================
+# 用途：独立部署完整的监控、日志、告警可观测性基础设施
+# 使用方式：
+#   docker-compose -f docker-compose.yml -f docker-compose.observability.yml up -d
+# 说明：
+#   本文件扩展主 docker-compose.yml，后者已定义 postgres、redis、minio、
+#   qdrant、catvton、ai-service、ai-task-worker、backend 等核心服务。
+#   ainetwork 网络由主文件创建，此处声明为 external。
+# ============================================================
+
+version: '3.8'
+
+networks:
+  # 使用主 docker-compose.yml 中已定义的 ainetwork 网络
+  ainetwork:
+    external: true
+
+services:
+  # ==========================================================
+  # Prometheus - 指标采集与存储
+  # ==========================================================
+  # 核心时序数据库，采集各服务暴露的 /metrics 端点
+  # 告警规则通过 alertmanager 转发
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: stylemind-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      # Prometheus 主配置文件
+      - ./infrastructure/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      # 告警规则目录
+      - ./infrastructure/prometheus/alerts:/etc/prometheus/alerts:ro
+      # 持久化存储
+      - prometheus_data:/prom
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prom'
+      - '--storage.tsdb.retention.time=15d'     # 保留 15 天指标数据
+      - '--storage.tsdb.retention.size=10GB'    # 最大存储 10GB
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle'                # 允许热加载配置
+      - '--web.enable-admin-api'                # 启用管理 API（删除数据等）
+    depends_on:
+      - alertmanager
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ainetwork
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================================
+  # AlertManager - 告警路由与通知
+  # ==========================================================
+  # 接收 Prometheus 告警，按规则分组、抑制、静默后发送通知
+  alertmanager:
+    image: prom/alertmanager:v0.26.0
+    container_name: stylemind-alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      # AlertManager 主配置文件
+      - ./infrastructure/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      # 持久化静默和通知状态
+      - alertmanager_data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=http://localhost:9093'
+      - '--cluster.listen-address='              # 单实例模式，禁用集群通信
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9093/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ainetwork
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================================
+  # Grafana - 可视化仪表板
+  # ==========================================================
+  # 统一可视化平台，支持 Prometheus、Loki、PostgreSQL 数据源
+  grafana:
+    image: grafana/grafana:10.2.2
+    container_name: stylemind-grafana
+    restart: unless-stopped
+    environment:
+      # 管理员账号（首次启动生效，后续修改需通过 API 或数据库）
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      # 禁止用户自助注册
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      # 安装额外数据源插件
+      GF_INSTALL_PLUGINS: redis-datasource,grafana-postgresql-datasource
+      # 启用告警功能
+      GF_ALERTING_ENABLED: "true"
+      GF_UNIFIED_ALERTING_ENABLED: "true"
+      # 日志级别
+      GF_LOG_LEVEL: ${GRAFANA_LOG_LEVEL:-info}
+    ports:
+      - "3002:3000"
+    volumes:
+      # 持久化仪表板和配置
+      - grafana_data:/var/lib/grafana
+      # 数据源自动配置
+      - ./infrastructure/grafana/provisioning:/etc/grafana/provisioning:ro
+      # 预置仪表板 JSON
+      - ./infrastructure/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+      - loki
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ainetwork
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.1'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================================
+  # Loki - 日志聚合引擎
+  # ==========================================================
+  # 轻量级日志存储，配合 Promtail 采集容器日志
+  # 通过 LogQL 查询语言在 Grafana 中检索日志
+  loki:
+    image: grafana/loki:2.9.3
+    container_name: stylemind-loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      # Loki 配置文件
+      - ./infrastructure/loki/loki.yml:/etc/loki/local-config.yaml:ro
+      # 持久化日志数据
+      - loki_data:/loki
+    command:
+      - '-config.file=/etc/loki/local-config.yaml'
+      - '-config.expand-env=true'
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ainetwork
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================================
+  # Promtail - 日志采集代理
+  # ==========================================================
+  # 采集 Docker 容器标准输出日志，发送到 Loki
+  # 通过 Docker 标签自动识别服务名称
+  promtail:
+    image: grafana/promtail:2.9.3
+    container_name: stylemind-promtail
+    restart: unless-stopped
+    volumes:
+      # Promtail 配置文件
+      - ./infrastructure/promtail/promtail.yml:/etc/promtail/config.yml:ro
+      # 读取 Docker 容器日志文件
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      # Docker Socket 用于服务发现
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      - '-config.file=/etc/promtail/config.yml'
+      - '-config.expand-env=true'
+    depends_on:
+      - loki
+    networks:
+      - ainetwork
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.05'
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================================
+  # Node Exporter - 主机系统指标采集
+  # ==========================================================
+  # 采集 CPU、内存、磁盘、网络等主机级指标
+  # 用于监控宿主机资源使用情况
+  node-exporter:
+    image: prom/node-exporter:v1.7.0
+    container_name: stylemind-node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      # 忽略虚拟文件系统挂载点
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      # 忽略虚拟文件系统类型
+      - '--collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$$'
+    networks:
+      - ainetwork
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 32M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================================
+  # cAdvisor - 容器指标采集
+  # ==========================================================
+  # 采集每个容器的 CPU、内存、网络、磁盘 IO 指标
+  # 用于容器级别的资源监控和异常检测
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    container_name: stylemind-cadvisor
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    # 安全说明：不使用 privileged 模式，仅添加必要的 Linux capabilities
+    privileged: false
+    cap_add:
+      - SYS_ADMIN       # 允许读取 cgroup 信息
+      - SYS_PTRACE      # 允许追踪进程信息
+    devices:
+      - /dev/kmsg       # 读取内核消息缓冲区
+    networks:
+      - ainetwork
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================================
+  # PostgreSQL Exporter - 数据库指标采集
+  # ==========================================================
+  # 采集 PostgreSQL 连接数、查询性能、锁等待、复制延迟等指标
+  # 依赖主 docker-compose.yml 中的 postgres 服务
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.12.1
+    container_name: stylemind-postgres-exporter
+    restart: unless-stopped
+    environment:
+      # PostgreSQL 连接字符串（使用 ainetwork 内部网络连接）
+      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/stylemind?sslmode=disable"
+      # 启用自定义指标采集
+      PG_EXPORTER_EXTEND_QUERY_PATH: ""
+    ports:
+      - "9187:9187"
+    networks:
+      - ainetwork
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.05'
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================================
+  # Redis Exporter - 缓存指标采集
+  # ==========================================================
+  # 采集 Redis 内存使用、命中率、连接数、慢查询等指标
+  # 依赖主 docker-compose.yml 中的 redis 服务
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.55.0
+    container_name: stylemind-redis-exporter
+    restart: unless-stopped
+    environment:
+      # Redis 连接地址（使用 ainetwork 内部网络）
+      REDIS_ADDR: "redis://redis:6379"
+      # Redis 密码
+      REDIS_PASSWORD: "${REDIS_PASSWORD:?REDIS_PASSWORD is required}"
+      # 启用 Key 级别指标（谨慎使用，Key 多时影响性能）
+      REDIS_EXPORTER_CHECK_KEYS: "bull:*"
+    ports:
+      - "9121:9121"
+    networks:
+      - ainetwork
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 32M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ==========================================================
+  # MinIO Exporter - 对象存储指标采集
+  # ==========================================================
+  # 采集 MinIO 存储使用量、请求延迟、带宽等指标
+  # 依赖主 docker-compose.yml 中的 minio 服务
+  minio-exporter:
+    image: jessestuart/minio-exporter:v0.1.0
+    container_name: stylemind-minio-exporter
+    restart: unless-stopped
+    environment:
+      # MinIO 端点地址
+      MINIO_ENDPOINT: "http://minio:9000"
+      # MinIO 访问凭证
+      MINIO_ACCESS_KEY: "${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY is required}"
+      MINIO_SECRET_KEY: "${MINIO_SECRET_KEY:?MINIO_SECRET_KEY is required}"
+    ports:
+      - "9290:9290"
+    networks:
+      - ainetwork
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 32M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# ==========================================================
+# 命名卷 - 持久化存储
+# ==========================================================
+volumes:
+  # Prometheus 指标数据（15 天保留期）
+  prometheus_data:
+    driver: local
+  # Grafana 仪表板和配置
+  grafana_data:
+    driver: local
+  # Loki 日志数据
+  loki_data:
+    driver: local
+  # AlertManager 静默和通知状态
+  alertmanager_data:
+    driver: local

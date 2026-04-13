@@ -6,7 +6,6 @@ const MAX_DIMENSION = 4096;
 const SECURE_PICKER_OPTIONS: ImageLibraryOptions = {
   mediaType: "photo",
   quality: 0.8,
-  includeExif: false,
   includeBase64: false,
   selectionLimit: 1,
 };
@@ -33,7 +32,6 @@ export async function pickImageSecurely(
   const mergedOptions: ImageLibraryOptions = {
     ...SECURE_PICKER_OPTIONS,
     ...options,
-    includeExif: false,
   };
 
   return new Promise((resolve, reject) => {

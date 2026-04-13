@@ -5,7 +5,7 @@ import { PrismaService } from "../../../common/prisma/prisma.service";
 interface KnowledgeNode {
   id: string;
   type: "item" | "category" | "style" | "occasion" | "brand" | "user";
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
 }
 
 interface KnowledgeEdge {
@@ -201,9 +201,9 @@ export class KnowledgeGraphService {
         weight: 1.0,
       });
 
-      const attrs = item.attributes as any;
+      const attrs = item.attributes as Record<string, unknown> | null;
       if (attrs?.style) {
-        attrs.style.forEach((s: string) => {
+        (attrs.style as string[]).forEach((s: string) => {
           this.graph.edges.push({
             source: nodeId,
             target: `style_${s}`,
@@ -214,7 +214,7 @@ export class KnowledgeGraphService {
       }
 
       if (attrs?.occasions) {
-        attrs.occasions.forEach((o: string) => {
+        (attrs.occasions as string[]).forEach((o: string) => {
           this.graph.edges.push({
             source: nodeId,
             target: `occasion_${o}`,

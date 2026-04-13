@@ -325,7 +325,7 @@ export class OrderService {
           ? PaymentDtoProvider.WECHAT
           : PaymentDtoProvider.ALIPAY,
       method: PaymentDtoMethod.QRCODE,
-      subject: `AiNeed 订单 ${order.orderNo}`,
+      subject: `寻裳订单 ${order.orderNo}`,
     });
 
     if (paymentResult.success) {

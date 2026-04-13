@@ -480,7 +480,7 @@ export const CheckoutScreen: React.FC = () => {
                 <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.navigate("Orders" as never)} accessibilityLabel="查看订单">
                   <Text style={styles.primaryText}>查看订单</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.secondaryButtonWide} onPress={() => navigation.navigate("MainTabs" as never, { screen: "Home" } as never)} accessibilityLabel="返回首页">
+                <TouchableOpacity style={styles.secondaryButtonWide} onPress={() => (navigation as any).navigate("MainTabs", { screen: "Home" })} accessibilityLabel="返回首页">
                   <Text style={styles.secondaryText}>返回首页</Text>
                 </TouchableOpacity>
               </View>

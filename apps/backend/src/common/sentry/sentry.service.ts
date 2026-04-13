@@ -1,10 +1,11 @@
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
-import { Injectable, OnModuleDestroy } from "@nestjs/common";
+import { Injectable, OnModuleDestroy, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class SentryService implements OnModuleDestroy {
+  private readonly logger = new Logger(SentryService.name);
   private readonly dsn: string;
   private readonly enabled: boolean;
 
@@ -17,7 +18,7 @@ export class SentryService implements OnModuleDestroy {
         this.configService.get<string>("NODE_ENV") === "production"
           ? "production"
           : "development";
-      const release = `aineed-backend@${this.configService.get<string>("npm_package_version", "1.0.0")}`;
+      const release = `xuno-backend@${this.configService.get<string>("npm_package_version", "1.0.0")}`;
 
       Sentry.init({
         dsn: this.dsn,
@@ -28,14 +29,14 @@ export class SentryService implements OnModuleDestroy {
         profilesSampleRate: environment === "production" ? 0.1 : 0.2,
         attachStacktrace: true,
         sendDefaultPii: false,
-        serverName: this.configService.get<string>("SERVICE_NAME", "aineed-backend"),
+        serverName: this.configService.get<string>("SERVICE_NAME", "xuno-backend"),
       });
 
-      console.log(
-        `[Sentry] Initialized: env=${environment}, release=${release}`,
+      this.logger.log(
+        `Sentry initialized: env=${environment}, release=${release}`,
       );
     } else {
-      console.log("[Sentry] Disabled: SENTRY_DSN not configured");
+      this.logger.debug("Sentry disabled: SENTRY_DSN not configured");
     }
   }
 

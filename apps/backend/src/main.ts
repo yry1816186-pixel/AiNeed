@@ -1,13 +1,13 @@
 import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
+import { SwaggerModule } from "@nestjs/swagger";
 import compression from "compression";
 import { Request, Response, NextFunction } from "express";
-// @ts-ignore
 import helmet from "helmet";
 
 import { AppModule } from "./app.module";
+import { createSwaggerConfig } from "./config/swagger.config";
 import { AllExceptionsFilter } from "./common/filters";
 import { MetricsMiddleware } from "./common/middleware/metrics.middleware";
 import { ErrorHandlerMiddleware } from "./common/middleware/error-handler.middleware";
@@ -87,33 +87,7 @@ async function bootstrap() {
 
   // Swagger API 文档配置 - 仅在非生产环境启用
   if (process.env.NODE_ENV !== "production") {
-    const config = new DocumentBuilder()
-      .setTitle("AiNeed API")
-      .setDescription("智能私人形象定制与服装设计助手平台 API")
-      .setVersion("1.0")
-      .addBearerAuth()
-      .addTag("auth", "认证相关接口 - 登录、注册、密码重置")
-      .addTag("users", "用户管理 - 用户信息、设置")
-      .addTag("profile", "形象档案 - 个人形象数据管理")
-      .addTag("photos", "照片管理 - 上传、分析用户照片")
-      .addTag("clothing", "服装商品 - 服装浏览、搜索")
-      .addTag("try-on", "虚拟试衣 - AI 试衣功能")
-      .addTag("recommendations", "风格推荐 - 个性化推荐")
-      .addTag("customization", "私人定制 - 定制服务")
-      .addTag("search", "搜索功能 - 全局搜索")
-      .addTag("favorites", "收藏功能 - 收藏管理")
-      .addTag("brands", "品牌管理 - 品牌信息")
-      .addTag("analytics", "数据分析 - 用户行为分析")
-      .addTag("subscription", "订阅管理 - 会员订阅")
-      .addTag("notification", "通知系统 - 消息通知")
-      .addTag("privacy", "隐私设置 - 隐私管理")
-      .addTag("merchant", "商家后台 - 商家管理")
-      .addTag("ai-stylist", "AI造型师 - AI 咨询服务")
-      .addTag("payment", "支付系统 - 支付、退款")
-      .addTag("ai-safety", "AI安全 - 内容审核与过滤")
-      .addTag("code-rag", "代码RAG - 代码语义搜索（供云端AI获取项目上下文）")
-      .addTag("health", "健康检查 - 系统状态")
-      .build();
+    const config = createSwaggerConfig();
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup("api/docs", app, document, {
@@ -131,10 +105,10 @@ async function bootstrap() {
   await app.listen(port);
 
   if (process.env.NODE_ENV !== "production") {
-    console.log(`🚀 AiNeed API running on: http://localhost:${port}/api`);
+    console.log(`🚀 寻裳 API running on: http://localhost:${port}/api`);
     console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
   } else {
-    console.log(`🚀 AiNeed API running in production mode on port ${port}`);
+    console.log(`🚀 寻裳 API running in production mode on port ${port}`);
   }
 }
 

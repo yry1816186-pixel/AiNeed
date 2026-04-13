@@ -3,8 +3,20 @@ import {
   Logger,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { ClothingCategory } from "@prisma/client";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { QdrantService } from "./qdrant.service";
+
+type ClothingItemWithBrand = {
+  id: string;
+  name: string;
+  category: string;
+  colors: string[];
+  tags: string[];
+  images: string[];
+  price: { toNumber(): number } | null;
+  brand: { name: string } | null;
+};
 
 export interface OutfitCompletionResult {
   anchor: {
@@ -142,7 +154,7 @@ export class OutfitCompletionService {
   }
 
   private async findComplementaryItems(
-    anchor: any,
+    anchor: ClothingItemWithBrand,
     targetCategory: string,
     anchorColors: string[],
     anchorStyles: string[],
@@ -153,7 +165,7 @@ export class OutfitCompletionService {
 
     const dbItems = await this.prisma.clothingItem.findMany({
       where: {
-        category: targetCategory as any,
+        category: targetCategory as ClothingCategory,
         id: { not: anchor.id },
         ...(userId
           ? {

@@ -1,6 +1,6 @@
-#!/bin/bash
+﻿#!/bin/bash
 # =============================================================================
-# AiNeed Restore Script
+# xuno Restore Script
 # =============================================================================
 # This script restores backups of:
 # - PostgreSQL database
@@ -19,8 +19,8 @@
 #   -h, --help     Show this help message
 #
 # Example:
-#   ./restore.sh --postgres /backups/aineed_backup_20240315_120000
-#   ./restore.sh --all /backups/aineed_backup_20240315_120000
+#   ./restore.sh --postgres /backups/xuno_backup_20240315_120000
+#   ./restore.sh --all /backups/xuno_backup_20240315_120000
 # =============================================================================
 
 set -euo pipefail
@@ -373,7 +373,7 @@ restore_qdrant() {
 # =============================================================================
 main() {
     log_info "=========================================="
-    log_info "Starting AiNeed Restore"
+    log_info "Starting xuno Restore"
     log_info "=========================================="
     log_info "Backup path: ${BACKUP_PATH}"
     log_info "Services to restore:"

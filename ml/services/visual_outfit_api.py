@@ -118,6 +118,7 @@ async def generate_virtual_tryon(
     try:
         import aiohttp
         
+        # TODO: Replace IDM-VTON with GLM multimodal API for virtual try-on
         idm_vton_url = os.getenv("IDM_VTON_URL", "http://localhost:8002")
         
         async with aiohttp.ClientSession() as session:

@@ -576,7 +576,7 @@ export const BrandLoader: React.FC<BrandLoaderProps> = ({
   size = "medium",
   style,
   showText = true,
-  text = "AiNeed",
+  text = "寻裳",
 }) => {
   const scale = useSharedValue(0.8);
   const opacity = useSharedValue(0.5);

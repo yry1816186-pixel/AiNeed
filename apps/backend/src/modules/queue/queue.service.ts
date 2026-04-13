@@ -117,7 +117,7 @@ export class QueueService implements OnModuleInit {
       throw new NotFoundException('Clothing item not found');
     }
 
-    const clothingImageUrl = item.mainImage || item.images[0];
+    const clothingImageUrl = item.mainImage || item.images[0] || "";
     if (!clothingImageUrl) {
       throw new BadRequestException('Clothing item has no usable image');
     }

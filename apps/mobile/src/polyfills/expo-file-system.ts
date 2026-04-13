@@ -6,11 +6,11 @@ export const EncodingType = {
 } as const;
 
 export const documentDirectory = Platform.OS === 'android' 
-  ? 'file:///data/user/0/com.aineed/files/' 
+  ? 'file:///data/user/0/com.xuno/files/' 
   : `${Platform.OS === 'ios' ? 'file://' : ''}${Platform.OS === 'ios' ? '' : ''}`;
 
 export const cacheDirectory = Platform.OS === 'android'
-  ? 'file:///data/user/0/com.aineed/cache/'
+  ? 'file:///data/user/0/com.xuno/cache/'
   : documentDirectory;
 
 export async function readAsStringAsync(uri: string, options?: { encoding?: string }): Promise<string> {

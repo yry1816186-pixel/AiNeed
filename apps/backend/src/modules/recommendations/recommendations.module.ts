@@ -9,7 +9,7 @@
  * The RecommendationOrchestrator provides a unified facade for all operations.
  */
 
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
 import { PrismaModule } from "../../common/prisma/prisma.module";
@@ -27,7 +27,9 @@ import { UnifiedRecommendationEngine } from "./services/unified-recommendation.e
 import { OutfitCompletionService } from "./services/outfit-completion.service";
 import { BehaviorTrackingService } from "./services/behavior-tracking.service";
 import { ProfileEventSubscriberService } from "./services/profile-event-subscriber.service";
+import { Neo4jService } from "./services/neo4j.service";
 import { QdrantService } from "./services/qdrant.service";
+import { RecommendationCacheService } from "./services/recommendation-cache.service";
 import {
   CollaborativeSubmodule,
   ContentSubmodule,
@@ -39,7 +41,7 @@ import {
     PrismaModule,
     ConfigModule,
     AIModule,
-    AiStylistModule,
+    forwardRef(() => AiStylistModule),
     RedisModule,
     CacheModule,
     // Algorithm submodules
@@ -65,8 +67,12 @@ import {
     BehaviorTrackingService,
     // Profile event subscriber
     ProfileEventSubscriberService,
+    // Neo4j knowledge graph
+    Neo4jService,
     // Vector search
     QdrantService,
+    // Recommendation cache
+    RecommendationCacheService,
   ],
   exports: [
     // Primary exports - use orchestrator for new code
@@ -81,8 +87,12 @@ import {
     OutfitCompletionService,
     // Behavior tracking
     BehaviorTrackingService,
+    // Neo4j knowledge graph
+    Neo4jService,
     // Vector search
     QdrantService,
+    // Recommendation cache
+    RecommendationCacheService,
   ],
 })
 export class RecommendationsModule {}

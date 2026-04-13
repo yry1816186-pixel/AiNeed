@@ -1,8 +1,8 @@
-# API Versioning Strategy
+﻿# API Versioning Strategy
 
 ## Overview
 
-AiNeed API uses **URI-based versioning** as the primary versioning strategy, which provides clear, explicit version identifiers in the API path.
+xuno API uses **URI-based versioning** as the primary versioning strategy, which provides clear, explicit version identifiers in the API path.
 
 ## Versioning Format
 
@@ -93,7 +93,7 @@ export class UsersV1Controller {
 ### Request Headers
 ```http
 X-API-Version: 1  # Explicit version request (optional with URI versioning)
-Accept: application/vnd.aineed.v1+json  # Content negotiation alternative
+Accept: application/vnd.xuno.v1+json  # Content negotiation alternative
 ```
 
 ### Response Headers

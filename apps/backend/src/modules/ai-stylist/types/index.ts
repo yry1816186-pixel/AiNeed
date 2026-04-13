@@ -245,6 +245,7 @@ export interface DatabaseStatsInfo {
   completedTryOns: number;
   totalPhotos: number;
   analyzedPhotos: number;
+  totalFeedbackRecords: number;
   recentUsers24h: number;
   recentTryOns24h: number;
 }
@@ -253,7 +254,6 @@ export interface ServiceHealthInfo {
   backend: { status: string; uptimeMs: number; version: string };
   postgresql: { status: string; latencyMs: number };
   redis: { status: string; latencyMs: number };
-  catvton: { status: string; latencyMs: number };
   qdrant: { status: string; latencyMs: number };
   minio: { status: string; latencyMs: number };
   llmProvider: { provider: string; model: string; status: string };
@@ -281,11 +281,11 @@ export interface ProjectFilesInfo {
 export interface SystemContextResult {
   timestamp: string;
   environment: string;
-  git?: GitContextInfo;
-  database?: DatabaseStatsInfo;
-  services?: ServiceHealthInfo;
-  resources?: SystemResourcesInfo;
-  projectFiles?: ProjectFilesInfo;
+  git: GitContextInfo;
+  database: DatabaseStatsInfo;
+  services: ServiceHealthInfo;
+  resources: SystemResourcesInfo;
+  projectFiles: ProjectFilesInfo;
 }
 
 export interface GetSystemContextInput {

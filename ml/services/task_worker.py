@@ -284,6 +284,7 @@ class TaskWorker:
         clothing_image_base64 = task.get("clothingImageBase64")
 
         # IDM-VTON service configuration
+        # TODO: Replace IDM-VTON with GLM multimodal API for virtual try-on
         idm_vton_url = os.getenv("IDM_VTON_URL", "http://localhost:8001")
         idm_vton_timeout = int(os.getenv("IDM_VTON_TIMEOUT", "120"))
 

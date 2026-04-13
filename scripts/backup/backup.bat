@@ -1,6 +1,6 @@
-@echo off
+﻿@echo off
 REM =============================================================================
-REM AiNeed Backup Script (Windows)
+REM xuno Backup Script (Windows)
 REM =============================================================================
 REM This script performs comprehensive backups of:
 REM - PostgreSQL database
@@ -23,7 +23,7 @@ if not defined BACKUP_DIR set BACKUP_DIR=C:\backups
 for /f "tokens=1-6 delims= " %%a in ('wmic os get localdatetime ^| find "."') do set TIMESTAMP=%%a
 set TIMESTAMP=%TIMESTAMP:~0,8%_%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%
 set TIMESTAMP=%TIMESTAMP: =0%
-set BACKUP_NAME=aineed_backup_%TIMESTAMP%
+set BACKUP_NAME=xuno_backup_%TIMESTAMP%
 set BACKUP_PATH=%BACKUP_DIR%\%BACKUP_NAME%
 set RETENTION_DAYS=30
 
@@ -233,7 +233,7 @@ REM ============================================================================
 call :log_info Cleaning up backups older than %RETENTION_DAYS% days...
 
 set DELETED_COUNT=0
-forfiles /p "%BACKUP_DIR%" /m "aineed_backup_*" /d -%RETENTION_DAYS% /c "cmd /c if @isdir==TRUE rd /s /q @path & set /a DELETED_COUNT+=1" 2>nul
+forfiles /p "%BACKUP_DIR%" /m "xuno_backup_*" /d -%RETENTION_DAYS% /c "cmd /c if @isdir==TRUE rd /s /q @path & set /a DELETED_COUNT+=1" 2>nul
 
 call :log_info Cleanup completed
 

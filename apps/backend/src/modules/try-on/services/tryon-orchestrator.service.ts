@@ -10,7 +10,8 @@ import {
   TryOnResponse,
   generateStableCacheKey,
 } from "./ai-tryon-provider.interface";
-import { CloudTryOnProvider } from "./cloud-tryon.provider";
+import { DoubaoSeedreamProvider } from "./doubao-seedream.provider";
+import { GlmTryOnProvider } from "./glm-tryon.provider";
 import { LocalPreviewTryOnProvider } from "./local-preview.provider";
 
 @Injectable()
@@ -22,12 +23,14 @@ export class TryOnOrchestratorService {
 
   constructor(
     private configService: ConfigService,
-    private cloudTryOnProvider: CloudTryOnProvider,
+    private doubaoSeedreamProvider: DoubaoSeedreamProvider,
+    private glmTryOnProvider: GlmTryOnProvider,
     private localPreviewProvider: LocalPreviewTryOnProvider,
     @Inject(REDIS_CLIENT) private redis: Redis,
   ) {
     this.providers = [
-      this.cloudTryOnProvider,
+      this.doubaoSeedreamProvider,
+      this.glmTryOnProvider,
       this.localPreviewProvider,
     ].sort((a, b) => a.priority - b.priority);
 

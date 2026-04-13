@@ -7,13 +7,13 @@ NOTE: KMP_DUPLICATE_LIB_OK removed - ensure clean OpenMP environment
 """
 
 import os
-# Removed: os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 
+import numpy as np
 import asyncio
 import time
 import json
 import hashlib
-from typing import Dict, List, Optional, Any, Callable
+from typing import Dict, List, Optional, Any, Callable, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum

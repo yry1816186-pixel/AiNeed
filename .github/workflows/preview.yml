@@ -1,0 +1,263 @@
+name: Preview Environment
+
+on:
+  pull_request:
+    types: [opened, synchronize, closed]
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '8'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/backend
+
+jobs:
+  build-preview:
+    name: Build Preview Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event.action != 'closed'
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-store-${{ runner.os }}-
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=pr-${{ github.event.pull_request.number }}
+            type=sha,prefix=pr-${{ github.event.pull_request.number }}-
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./apps/backend/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=preview
+
+  deploy-preview:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build-preview
+    if: github.event.action != 'closed'
+    outputs:
+      preview_url: ${{ steps.deploy.outputs.preview_url }}
+    steps:
+      - name: Deploy preview container via SSH
+        id: deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PREVIEW_HOST }}
+          username: ${{ secrets.PREVIEW_USER }}
+          key: ${{ secrets.PREVIEW_SSH_KEY }}
+          port: ${{ secrets.PREVIEW_PORT || 22 }}
+          script: |
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            IMAGE_TAG="${{ needs.build-preview.outputs.image_tag }}"
+            CONTAINER_NAME="preview-${PR_NUMBER}"
+            PORT=$((30000 + PR_NUMBER))
+            PREVIEW_URL="http://preview-${PR_NUMBER}:${PORT}"
+
+            docker rm -f ${CONTAINER_NAME} 2>/dev/null || true
+
+            docker run -d \
+              --name ${CONTAINER_NAME} \
+              --network preview \
+              -e NODE_ENV=preview \
+              -e PORT=3001 \
+              -p ${PORT}:3001 \
+              --label "preview.pr=${PR_NUMBER}" \
+              --label "preview.sha=${{ github.sha }}" \
+              --label "preview.created=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+              --restart unless-stopped \
+              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:pr-${PR_NUMBER}
+
+            echo "Waiting for preview container to start..."
+            sleep 10
+
+            for i in {1..10}; do
+              if curl -sf http://localhost:${PORT}/api/v1/health; then
+                echo "Preview container is healthy"
+                break
+              fi
+              if [ $i -eq 10 ]; then
+                echo "Preview container health check failed"
+                exit 1
+              fi
+              sleep 5
+            done
+
+            echo "preview_url=${PREVIEW_URL}" >> $GITHUB_OUTPUT
+            echo "Preview deployed: ${PREVIEW_URL}"
+
+      - name: Generate deploy summary
+        run: |
+          echo "## Preview Environment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| PR Number | ${{ github.event.pull_request.number }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Preview URL | ${{ steps.deploy.outputs.preview_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Image Tag | pr-${{ github.event.pull_request.number }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| SHA | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+
+  comment-pr:
+    name: Comment Preview URL
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: deploy-preview
+    if: github.event.action != 'closed'
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const previewUrl = '${{ needs.deploy-preview.outputs.preview_url }}';
+            const sha = '${{ github.sha }}'.substring(0, 7);
+
+            const body = `## Preview Environment Ready
+
+            | Property | Value |
+            |----------|-------|
+            | Preview URL | ${previewUrl} |
+            | Health Check | ${previewUrl}/api/v1/health |
+            | PR | #${prNumber} |
+            | Commit | ${sha} |
+
+            The preview environment will be automatically cleaned up when this PR is closed.`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const existingComment = comments.find(c =>
+              c.user.login === 'github-actions[bot]' &&
+              c.body.includes('Preview Environment Ready')
+            );
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: body
+              });
+            }
+
+  cleanup-preview:
+    name: Cleanup Preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event.action == 'closed'
+    steps:
+      - name: Remove preview container
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PREVIEW_HOST }}
+          username: ${{ secrets.PREVIEW_USER }}
+          key: ${{ secrets.PREVIEW_SSH_KEY }}
+          port: ${{ secrets.PREVIEW_PORT || 22 }}
+          script: |
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            CONTAINER_NAME="preview-${PR_NUMBER}"
+
+            echo "Cleaning up preview environment for PR #${PR_NUMBER}..."
+
+            docker rm -f ${CONTAINER_NAME} 2>/dev/null || true
+
+            echo "Preview environment for PR #${PR_NUMBER} has been cleaned up"
+
+      - name: Delete preview image from GHCR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+
+            try {
+              const { data: packages } = await github.rest.packages.getAllPackageVersionsForPackageOwnedByAuthenticatedUser({
+                package_type: 'container',
+                package_name: `${repo}/backend`,
+              });
+
+              for (const pkg of packages) {
+                if (pkg.metadata?.container?.tags?.some(tag => tag.startsWith(`pr-${prNumber}`))) {
+                  await github.rest.packages.deletePackageVersionForAuthenticatedUser({
+                    package_type: 'container',
+                    package_name: `${repo}/backend`,
+                    package_version_id: pkg.id,
+                  });
+                  console.log(`Deleted package version: ${pkg.id}`);
+                }
+              }
+            } catch (error) {
+              console.log(`Cleanup note: ${error.message}`);
+            }
+
+      - name: Generate cleanup summary
+        run: |
+          echo "## Preview Cleanup" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Preview environment for PR #${{ github.event.pull_request.number }} has been cleaned up."

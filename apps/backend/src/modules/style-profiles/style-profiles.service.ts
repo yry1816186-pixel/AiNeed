@@ -7,28 +7,7 @@ import {
 
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { BehaviorTrackerService } from "../analytics/services/behavior-tracker.service";
-
-export interface CreateStyleProfileDto {
-  name: string;
-  occasion: string;
-  description: string;
-  keywords: string[];
-  palette: string[];
-  confidence?: number;
-  isDefault?: boolean;
-  isActive?: boolean;
-}
-
-export interface UpdateStyleProfileDto {
-  name?: string;
-  occasion?: string;
-  description?: string;
-  keywords?: string[];
-  palette?: string[];
-  confidence?: number;
-  isDefault?: boolean;
-  isActive?: boolean;
-}
+import { CreateStyleProfileDto, UpdateStyleProfileDto } from "./dto";
 
 @Injectable()
 export class StyleProfilesService {

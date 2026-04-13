@@ -1,0 +1,59 @@
+# Violence - 暴力
+kill
+murder
+杀人
+砍人
+bomb
+爆炸
+袭击
+血腥
+屠杀
+bomb-making
+
+# Hate Speech - 仇恨言论
+hate speech
+种族歧视
+性别歧视
+纳粹
+法西斯
+slur
+
+# Sexual Content - 色情内容
+porn
+nude
+色情
+裸体
+性交
+adult content
+淫秽
+
+# Fraud - 诈骗
+诈骗
+传销
+pyramid scheme
+phishing
+钓鱼
+fake ID
+假币
+
+# Illegal Activity - 违法活动
+drug trafficking
+毒品
+走私
+smuggle
+洗钱
+money laundering
+非法赌博
+illegal gambling
+武器交易
+arms dealing
+
+# Political Sensitive - 政治敏感
+颠覆政权
+分裂国家
+恐怖组织
+terrorist organization
+极端主义
+extremism
+邪教
+cult

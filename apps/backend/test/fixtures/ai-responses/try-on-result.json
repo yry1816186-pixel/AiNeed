@@ -1,0 +1,85 @@
+{
+  "success": {
+    "success": true,
+    "result_image_url": "https://storage.xuno.app/tryon-results/tryon-20260413-001.png",
+    "processing_time": 8500,
+    "confidence": 0.85,
+    "provider": "cloud-tryon",
+    "metadata": {
+      "category": "upper",
+      "apiEndpoint": "https://api.fashn.ai/v1/run"
+    }
+  },
+  "success_fashn_format": {
+    "output": [
+      "https://storage.xuno.app/tryon-results/fashn-20260413-001.png"
+    ],
+    "id": "run_abc123def456",
+    "status": "completed",
+    "created_at": "2026-04-13T10:30:00Z",
+    "completed_at": "2026-04-13T10:30:12Z",
+    "error": null,
+    "meta": {
+      "category": "upper",
+      "num_inference_steps": 30,
+      "guidance_scale": 2.5
+    }
+  },
+  "success_base64_result": {
+    "success": true,
+    "result_image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+    "processing_time": 9200,
+    "confidence": 0.82,
+    "provider": "cloud-tryon",
+    "metadata": {
+      "category": "lower",
+      "apiEndpoint": "https://api.fashn.ai/v1/run"
+    }
+  },
+  "processing": {
+    "id": "run_xyz789abc012",
+    "status": "processing",
+    "output": [],
+    "created_at": "2026-04-13T10:31:00Z",
+    "completed_at": null,
+    "error": null,
+    "meta": {
+      "category": "upper",
+      "num_inference_steps": 30,
+      "guidance_scale": 2.5
+    }
+  },
+  "error_no_result_image": {
+    "success": false,
+    "result_image_url": null,
+    "processing_time": 5000,
+    "confidence": null,
+    "provider": "cloud-tryon",
+    "error": "Cloud try-on API returned no result image",
+    "metadata": {
+      "category": "upper",
+      "apiEndpoint": "https://api.fashn.ai/v1/run"
+    }
+  },
+  "error_rate_limit": {
+    "detail": "Rate limit exceeded. Please retry after 60 seconds.",
+    "status_code": 429
+  },
+  "error_auth_failed": {
+    "detail": "Invalid API key.",
+    "status_code": 401
+  },
+  "error_server_error": {
+    "detail": "Internal server error. Please try again later.",
+    "status_code": 500
+  },
+  "error_bad_request": {
+    "detail": "Invalid image format. Please provide a valid JPEG or PNG image.",
+    "status_code": 400
+  },
+  "metadata": {
+    "provider": "fashn-ai",
+    "apiEndpoint": "https://api.fashn.ai/v1/run",
+    "description": "Virtual try-on result fixtures. Includes success responses (standard format, fashn.ai native format, base64), processing state, and error responses (no result, rate limit, auth, server, bad request)."
+  }
+}

@@ -1,6 +1,6 @@
 @Component
 export struct Home {
-  @State message: string = 'AiNeed - 智能私人形象定制';
+  @State message: string = '寻裳 - 智能私人形象定制';
 
   build() {
     Column() {

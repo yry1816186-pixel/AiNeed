@@ -74,13 +74,15 @@ const OCCASION_LIST: Occasion[] = [
   "formal_event",
 ];
 
+declare const process: any;
+
 class ClothingCategorizationService {
   private apiKey: string;
 
   constructor() {
     this.apiKey =
       Constants.expoConfig?.extra?.OPENAI_KEY ||
-      process.env.EXPO_PUBLIC_OPENAI_KEY ||
+      (typeof process !== 'undefined' ? process.env?.EXPO_PUBLIC_OPENAI_KEY : undefined) ||
       "";
   }
 

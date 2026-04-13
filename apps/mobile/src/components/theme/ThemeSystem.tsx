@@ -49,8 +49,8 @@ import {
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 
-const THEME_STORAGE_KEY = "@aineed_theme";
-const ACCENT_COLOR_KEY = "@aineed_accent";
+const THEME_STORAGE_KEY = "@xuno_theme";
+const ACCENT_COLOR_KEY = "@xuno_accent";
 
 /** Ionicons 图标名称联合类型 */
 type ThemeIoniconsIconName =

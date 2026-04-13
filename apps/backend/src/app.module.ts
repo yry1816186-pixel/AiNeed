@@ -9,6 +9,7 @@ import { MulterModule } from "@nestjs/platform-express";
 
 import { envValidationFactory } from "./common/config/env.validation";
 import { EncryptionModule } from "./common/encryption/encryption.module";
+import { EmailModule } from "./common/email/email.module";
 import { GatewayModule } from "./common/gateway/gateway.module";
 import { CsrfModule } from "./common/guards/csrf/csrf.module";
 import { LoggingModule } from "./common/logging";
@@ -28,11 +29,16 @@ import { AuthModule } from "./modules/auth/auth.module";
 import { BrandsModule } from "./modules/brands/brands.module";
 import { CacheModule } from "./modules/cache/cache.module";
 import { CartModule } from "./modules/cart/cart.module";
+import { ChatModule } from "./modules/chat/chat.module";
 import { ClothingModule } from "./modules/clothing/clothing.module";
 import { CommunityModule } from "./modules/community/community.module";
+import { ConsultantModule } from "./modules/consultant/consultant.module";
+import { SecurityModule } from "./modules/security/security.module";
 import { CustomizationModule } from "./modules/customization/customization.module";
 import { DatabaseModule } from "./modules/database/database.module";
+import { DemoModule } from "./modules/demo/demo.module";
 import { FavoritesModule } from "./modules/favorites/favorites.module";
+import { FeatureFlagModule } from "./modules/feature-flags/feature-flag.module";
 import { HealthModule } from "./modules/health/health.module";
 import { MerchantModule } from "./modules/merchant/merchant.module";
 import { MetricsModule } from "./modules/metrics/metrics.module";
@@ -45,13 +51,16 @@ import { ProfileModule } from "./modules/profile/profile.module";
 import { QueueModule } from "./modules/queue/queue.module";
 import { RecommendationsModule } from "./modules/recommendations/recommendations.module";
 import { SearchModule } from "./modules/search/search.module";
+import { ShareTemplateModule } from "./modules/share-template/share-template.module";
 import { StyleProfilesModule } from "./modules/style-profiles/style-profiles.module";
+import { StyleQuizModule } from "./modules/style-quiz/style-quiz.module";
 import { SubscriptionModule } from "./modules/subscription/subscription.module";
 import { TryOnModule } from "./modules/try-on/try-on.module";
 import { UsersModule } from "./modules/users/users.module";
+import { WardrobeCollectionModule } from "./modules/wardrobe-collection/wardrobe-collection.module";
 import { WeatherModule } from "./modules/weather/weather.module";
 import { WSModule } from "./modules/ws/ws.module";
-import { DemoModule } from "./modules/demo/demo.module";
+import { SystemReadinessService } from "./modules/system/system-readiness.service";
 
 @Module({
   imports: [
@@ -75,8 +84,8 @@ import { DemoModule } from "./modules/demo/demo.module";
     ScheduleModule.forRoot(),
     MulterModule.register({
       limits: {
-        fileSize: 10 * 1024 * 1024, // 全局默认 10MB 文件大小限制
-        files: 1, // 默认单次请求最多 1 个文件
+        fileSize: 10 * 1024 * 1024,
+        files: 1,
       },
     }),
     LoggingModule.forRoot(),
@@ -87,6 +96,8 @@ import { DemoModule } from "./modules/demo/demo.module";
     GatewayModule,
     CsrfModule,
     SoftDeleteModule,
+    SecurityModule,
+    EmailModule,
     DatabaseModule,
     CacheModule,
     AuthModule,
@@ -121,11 +132,17 @@ import { DemoModule } from "./modules/demo/demo.module";
     AISafetyModule,
     CodeRagModule,
     DemoModule,
+    StyleQuizModule,
+    ShareTemplateModule,
+    WardrobeCollectionModule,
+    ConsultantModule,
+    ChatModule,
+    FeatureFlagModule,
   ],
+  providers: [SystemReadinessService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // 应用软删除中间件到所有路由
     consumer.apply(SoftDeleteMiddleware).forRoutes('*');
   }
 }

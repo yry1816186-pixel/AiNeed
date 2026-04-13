@@ -44,7 +44,7 @@ export function useRouter() {
     
     navigate: useCallback((href: string, params?: NavigationParams) => {
       const path = href.replace(/^\//, '');
-      navigation.navigate(path as never, params as never);
+      navigation.navigate(path as any, params as any);
     }, [navigation]),
   };
 }
@@ -134,7 +134,7 @@ export const router = {
     const nav = getNav();
     if (nav) {
       const path = href.replace(/^\//, '');
-      nav.navigate(path as never, params as never);
+      nav.navigate(path as any, params as any);
     }
   },
   replace: (href: string, params?: NavigationParams) => {

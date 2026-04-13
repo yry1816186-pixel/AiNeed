@@ -1,5 +1,6 @@
 import React from 'react';
-import { FlatList, FlatListProps, View } from 'react-native';
+import { FlatList, FlatListProps } from 'react-native';
+import { FlashList as ShopifyFlashList } from '@shopify/flash-list';
 
 export interface FlashListProps<T> extends Omit<FlatListProps<T>, 'renderItem'> {
   data: T[];
@@ -10,6 +11,7 @@ export interface FlashListProps<T> extends Omit<FlatListProps<T>, 'renderItem'> 
   ListEmptyComponent?: React.ComponentType | React.ReactElement | null;
 }
 
+// Use the real @shopify/flash-list FlashList instead of degrading to FlatList
 export function FlashList<T>({
   data,
   renderItem,
@@ -20,9 +22,10 @@ export function FlashList<T>({
   ...props
 }: FlashListProps<T>): React.ReactElement {
   return (
-    <FlatList
+    <ShopifyFlashList
       data={data}
       renderItem={renderItem}
+      estimatedItemSize={estimatedItemSize}
       ListHeaderComponent={ListHeaderComponent}
       ListFooterComponent={ListFooterComponent}
       ListEmptyComponent={ListEmptyComponent}

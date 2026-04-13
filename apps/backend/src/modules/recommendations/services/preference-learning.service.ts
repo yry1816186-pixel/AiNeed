@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { BehaviorEventType, Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
@@ -53,12 +54,12 @@ export class PreferenceLearningService {
       data: {
         userId: input.userId,
         sessionId: input.sessionId || `session-${Date.now()}`,
-        eventType: input.eventType as any,
+        eventType: input.eventType as BehaviorEventType,
         category: "stylist",
         action: input.eventType,
         targetType: input.targetType,
         targetId: input.targetId,
-        metadata: input.metadata as any,
+        metadata: input.metadata as Prisma.InputJsonValue,
       },
     });
 

@@ -1,6 +1,6 @@
-#!/bin/bash
+﻿#!/bin/bash
 # =============================================================================
-# AiNeed Backup Script
+# xuno Backup Script
 # =============================================================================
 # This script performs comprehensive backups of:
 # - PostgreSQL database
@@ -32,7 +32,7 @@ set -euo pipefail
 # Configuration
 BACKUP_DIR="${BACKUP_DIR:-/backups}"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_NAME="aineed_backup_${TIMESTAMP}"
+BACKUP_NAME="xuno_backup_${TIMESTAMP}"
 BACKUP_PATH="${BACKUP_DIR}/${BACKUP_NAME}"
 RETENTION_DAYS="${RETENTION_DAYS:-30}"
 
@@ -307,7 +307,7 @@ cleanup_old_backups() {
             DELETED_COUNT=$((DELETED_COUNT + 1))
             log_info "Deleted old backup: $dir"
         fi
-    done < <(find "${BACKUP_DIR}" -maxdepth 1 -type d -name "aineed_backup_*" -mtime +${RETENTION_DAYS})
+    done < <(find "${BACKUP_DIR}" -maxdepth 1 -type d -name "xuno_backup_*" -mtime +${RETENTION_DAYS})
 
     log_info "Cleanup completed. Deleted ${DELETED_COUNT} old backup(s)"
 }
@@ -345,7 +345,7 @@ EOF
 # =============================================================================
 main() {
     log_info "=========================================="
-    log_info "Starting AiNeed Backup"
+    log_info "Starting xuno Backup"
     log_info "=========================================="
     log_info "Backup type: $([ "${FULL_BACKUP}" == "true" ] && echo "Full" || echo "Database only")"
     log_info "Timestamp: ${TIMESTAMP}"

@@ -1,16 +1,16 @@
-# ML Service Quick Start Guide
+﻿# ML Service Quick Start Guide
 
 ## Quick Commands
 
 ### Start Service
 ```bash
-cd C:\AiNeed\ml
+cd C:\xuno\ml
 start_service.bat
 ```
 
 ### Verify Installation
 ```bash
-cd C:\AiNeed\ml
+cd C:\xuno\ml
 venv\Scripts\activate
 python test_dependencies.py
 ```
@@ -64,9 +64,9 @@ These limitations are acceptable for development and testing.
 ## Environment Variables
 
 Already configured in `.env`:
-- `HF_HOME=C:/AiNeed/ml/models/cache`
-- `TRANSFORMERS_CACHE=C:/AiNeed/ml/models/cache`
-- `TORCH_HOME=C:/AiNeed/ml/models/torch`
+- `HF_HOME=C:/xuno/ml/models/cache`
+- `TRANSFORMERS_CACHE=C:/xuno/ml/models/cache`
+- `TORCH_HOME=C:/xuno/ml/models/torch`
 
 ---
 
@@ -84,7 +84,7 @@ Already configured in `.env`:
 ### Service won't start?
 ```bash
 # Check dependencies
-cd C:\AiNeed\ml
+cd C:\xuno\ml
 venv\Scripts\activate
 python test_dependencies.py
 ```
@@ -92,7 +92,7 @@ python test_dependencies.py
 ### Import errors?
 ```bash
 # Reinstall dependencies
-cd C:\AiNeed\ml
+cd C:\xuno\ml
 venv\Scripts\activate
 pip install -r requirements.txt
 ```

@@ -1,4 +1,4 @@
-import csv
+﻿import csv
 import os
 import sys
 import json
@@ -9,8 +9,8 @@ from decimal import Decimal
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-DATASET_PATH = r"C:\AiNeed\datasets\fashion-dataset\fashion-dataset\styles.csv"
-IMAGES_PATH = r"C:\AiNeed\datasets\fashion-dataset\fashion-dataset\images"
+DATASET_PATH = r"C:\xuno\datasets\fashion-dataset\fashion-dataset\styles.csv"
+IMAGES_PATH = r"C:\xuno\datasets\fashion-dataset\fashion-dataset\images"
 API_BASE = "http://127.0.0.1:3001/api/v1"
 
 CATEGORY_MAP = {

@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   title: {
-    fontWeight: typography.fontWeight.bold as any,
+    fontWeight: typography.fontWeight.bold,
     color: '#FFFFFF',
   },
   fullWidth: {

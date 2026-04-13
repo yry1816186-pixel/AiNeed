@@ -8,7 +8,7 @@ const workspaceRoot = path.resolve(projectRoot, '../..');
 const ws = workspaceRoot.replace(/[/\\]/g, '[/\\\\]');
 
 const aliases = {
-  '@aineed/types': path.resolve(projectRoot, '../../packages/types/src/index.ts'),
+  '@xuno/types': path.resolve(projectRoot, '../../packages/types/src/index.ts'),
   // Polyfills for Expo modules used in source but not available in bare RN
   'expo-router': path.resolve(projectRoot, 'src/polyfills/expo-router.tsx'),
   'expo-image-picker': path.resolve(projectRoot, 'src/polyfills/expo-image-picker.ts'),

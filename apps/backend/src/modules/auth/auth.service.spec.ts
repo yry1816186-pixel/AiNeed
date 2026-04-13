@@ -12,12 +12,38 @@ import { RedisService } from "../../common/redis/redis.service";
 import * as bcrypt from "../../common/security/bcrypt";
 
 import { AuthService } from "./auth.service";
+import { ISmsService } from "./services/sms.service";
+import { WechatService } from "./services/wechat.service";
+import { AuthHelpersService } from "./auth.helpers";
+import { StructuredLoggerService } from "../../common/logging/structured-logger.service";
 
 // Mock bcrypt
 jest.mock("../../common/security/bcrypt", () => ({
   hash: jest.fn(),
   compare: jest.fn(),
 }));
+
+const mockSmsService = {
+  sendCode: jest.fn(),
+};
+
+const mockWechatService = {
+  getAccessToken: jest.fn(),
+  getUserInfo: jest.fn(),
+};
+
+const mockAuthHelpersService = {
+  validateCredentials: jest.fn(),
+};
+
+const mockLoggingService = {
+  createChildLogger: jest.fn().mockReturnValue({
+    log: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    error: jest.fn(),
+  }),
+};
 
 describe("AuthService", () => {
   let service: AuthService;
@@ -26,9 +52,10 @@ describe("AuthService", () => {
   let configService: ConfigService;
   let redisService: RedisService;
 
-  const mockPrismaService = {
+  const mockPrismaService: Record<string, any> = {
     user: {
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
     },
@@ -41,6 +68,7 @@ describe("AuthService", () => {
       delete: jest.fn(),
       deleteMany: jest.fn(),
     },
+    $transaction: jest.fn((fn: any) => fn(mockPrismaService)),
   };
 
   const mockJwtService = {
@@ -103,6 +131,22 @@ describe("AuthService", () => {
         {
           provide: RedisService,
           useValue: mockRedisService,
+        },
+        {
+          provide: AuthHelpersService,
+          useValue: mockAuthHelpersService,
+        },
+        {
+          provide: "ISmsService",
+          useValue: mockSmsService,
+        },
+        {
+          provide: WechatService,
+          useValue: mockWechatService,
+        },
+        {
+          provide: StructuredLoggerService,
+          useValue: mockLoggingService,
         },
       ],
     }).compile();
@@ -189,8 +233,7 @@ describe("AuthService", () => {
     };
 
     it("应该成功登录", async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockAuthHelpersService.validateCredentials.mockResolvedValue(mockUser);
       mockJwtService.sign.mockReturnValue("test-access-token");
       mockPrismaService.refreshToken.create.mockResolvedValue({});
 
@@ -199,24 +242,26 @@ describe("AuthService", () => {
       expect(result.user.email).toBe(loginDto.email);
       expect(result.accessToken).toBe("test-access-token");
       expect(result.refreshToken).toBeDefined();
-      expect(bcrypt.compare).toHaveBeenCalledWith(
+      expect(mockAuthHelpersService.validateCredentials).toHaveBeenCalledWith(
+        loginDto.email,
         loginDto.password,
-        mockUser.password,
       );
     });
 
     it("应该拒绝不存在的用户", async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue(null);
+      mockAuthHelpersService.validateCredentials.mockRejectedValue(
+        new UnauthorizedException("邮箱或密码错误"),
+      );
 
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException,
       );
-      expect(bcrypt.compare).not.toHaveBeenCalled();
     });
 
     it("应该拒绝错误的密码", async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+      mockAuthHelpersService.validateCredentials.mockRejectedValue(
+        new UnauthorizedException("邮箱或密码错误"),
+      );
 
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException,
@@ -224,8 +269,7 @@ describe("AuthService", () => {
     });
 
     it("应该在登录时生成并保存refresh token", async () => {
-      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockAuthHelpersService.validateCredentials.mockResolvedValue(mockUser);
       mockJwtService.sign.mockReturnValue("test-access-token");
       mockPrismaService.refreshToken.create.mockResolvedValue({});
 
@@ -367,9 +411,7 @@ describe("AuthService", () => {
     it("应该生成带有正确过期时间的accessToken", async () => {
       mockJwtService.sign.mockReturnValue("test-token");
 
-      // 通过login方法间接测试generateTokens
-      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockAuthHelpersService.validateCredentials.mockResolvedValue(mockUser);
       mockPrismaService.refreshToken.create.mockResolvedValue({});
 
       await service.login({ email: "test@example.com", password: "Password123" });
@@ -387,14 +429,11 @@ describe("AuthService", () => {
     it("应该使用configService中的refresh secret", async () => {
       mockJwtService.sign.mockReturnValue("test-token");
 
-      // 通过login方法间接测试
-      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockAuthHelpersService.validateCredentials.mockResolvedValue(mockUser);
       mockPrismaService.refreshToken.create.mockResolvedValue({});
 
       await service.login({ email: "test@example.com", password: "Password123" });
 
-      // 验证refresh token使用了正确的secret
       expect(mockJwtService.sign).toHaveBeenNthCalledWith(
         2,
         expect.objectContaining({
@@ -445,7 +484,9 @@ describe("AuthService", () => {
     };
 
     it("应该在账户被锁定时拒绝登录", async () => {
-      mockRedisService.exists.mockResolvedValue(true);
+      mockAuthHelpersService.validateCredentials.mockRejectedValue(
+        new UnauthorizedException("账户已被锁定，请15分钟后再试"),
+      );
 
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException,
@@ -456,56 +497,42 @@ describe("AuthService", () => {
     });
 
     it("应该在密码错误时记录失败尝试", async () => {
-      mockRedisService.exists.mockResolvedValue(false);
-      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
-      mockRedisService.incr.mockResolvedValue(1);
+      mockAuthHelpersService.validateCredentials.mockRejectedValue(
+        new UnauthorizedException("邮箱或密码错误，剩余尝试次数: 4"),
+      );
 
       await expect(service.login(loginDto)).rejects.toThrow(
         UnauthorizedException,
       );
-
-      expect(mockRedisService.incr).toHaveBeenCalledWith(
-        expect.stringContaining("auth:login_attempts:"),
-      );
     });
 
     it("应该在达到最大尝试次数后锁定账户", async () => {
-      mockRedisService.exists.mockResolvedValue(false);
-      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
-      mockRedisService.incr.mockResolvedValue(5);
+      mockAuthHelpersService.validateCredentials.mockRejectedValue(
+        new UnauthorizedException("账户已被锁定，请15分钟后再试"),
+      );
 
       await expect(service.login(loginDto)).rejects.toThrow(
         "账户已被锁定，请15分钟后再试",
       );
-
-      expect(mockRedisService.setWithTtl).toHaveBeenCalledWith(
-        expect.stringContaining("auth:lockout:"),
-        "1",
-        expect.any(Number),
-      );
     });
 
-    it("应该在登录成功后重置失败尝试计数", async () => {
-      mockRedisService.exists.mockResolvedValue(false);
-      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+    it("应该在登录成功后通过 authHelpersService 验证凭据", async () => {
+      mockAuthHelpersService.validateCredentials.mockResolvedValue(mockUser);
       mockJwtService.sign.mockReturnValue("test-access-token");
       mockPrismaService.refreshToken.create.mockResolvedValue({});
 
       await service.login(loginDto);
 
-      expect(mockRedisService.del).toHaveBeenCalledWith(
-        expect.stringContaining("auth:login_attempts:"),
+      expect(mockAuthHelpersService.validateCredentials).toHaveBeenCalledWith(
+        loginDto.email,
+        loginDto.password,
       );
     });
 
     it("应该显示剩余尝试次数", async () => {
-      mockRedisService.exists.mockResolvedValue(false);
-      mockPrismaService.user.findUnique.mockResolvedValue(null);
-      mockRedisService.incr.mockResolvedValue(2);
-      mockRedisService.get.mockResolvedValue("2");
+      mockAuthHelpersService.validateCredentials.mockRejectedValue(
+        new UnauthorizedException("邮箱或密码错误，剩余尝试次数: 3"),
+      );
 
       await expect(service.login(loginDto)).rejects.toThrow(
         "邮箱或密码错误，剩余尝试次数: 3",
@@ -635,8 +662,7 @@ describe("AuthService", () => {
         nickname: null,
       };
 
-      mockPrismaService.user.findUnique.mockResolvedValue(userWithNullNickname);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockAuthHelpersService.validateCredentials.mockResolvedValue(userWithNullNickname);
       mockJwtService.sign.mockReturnValue("test-access-token");
       mockPrismaService.refreshToken.create.mockResolvedValue({});
 
@@ -654,8 +680,7 @@ describe("AuthService", () => {
         avatar: null,
       };
 
-      mockPrismaService.user.findUnique.mockResolvedValue(userWithNullAvatar);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockAuthHelpersService.validateCredentials.mockResolvedValue(userWithNullAvatar);
       mockJwtService.sign.mockReturnValue("test-access-token");
       mockPrismaService.refreshToken.create.mockResolvedValue({});
 
@@ -665,6 +690,165 @@ describe("AuthService", () => {
       });
 
       expect(result.user.avatar).toBeUndefined();
+    });
+  });
+
+  describe("sendSmsCode", () => {
+    it("应该成功发送验证码", async () => {
+      mockRedisService.exists.mockResolvedValue(false);
+      mockRedisService.setWithTtl.mockResolvedValue("OK");
+      mockSmsService.sendCode = jest.fn().mockResolvedValue(undefined);
+
+      await service.sendSmsCode("13800138000");
+
+      expect(mockRedisService.setWithTtl).toHaveBeenCalledWith("sms:code:13800138000", expect.any(String), 300000);
+      expect(mockRedisService.setWithTtl).toHaveBeenCalledWith("sms:throttle:13800138000", "1", 60000);
+      expect(mockSmsService.sendCode).toHaveBeenCalledWith("13800138000", expect.any(String));
+    });
+
+    it("应该在限流期内拒绝发送", async () => {
+      mockRedisService.exists.mockResolvedValue(true);
+
+      await expect(service.sendSmsCode("13800138000")).rejects.toThrow(BadRequestException);
+      await expect(service.sendSmsCode("13800138000")).rejects.toThrow("发送过于频繁，请60秒后再试");
+    });
+  });
+
+  describe("verifySmsCode", () => {
+    it("验证码正确时应返回 true", async () => {
+      mockRedisService.get.mockImplementation((key: string) => {
+        if (key.startsWith("sms:attempts:")) return Promise.resolve("0");
+        if (key.startsWith("sms:code:")) return Promise.resolve("123456");
+        return Promise.resolve(null);
+      });
+      mockRedisService.del.mockResolvedValue(1);
+
+      const result = await service.verifySmsCode("13800138000", "123456");
+
+      expect(result).toBe(true);
+      expect(mockRedisService.del).toHaveBeenCalledWith("sms:code:13800138000");
+    });
+
+    it("验证码错误时应返回 false", async () => {
+      mockRedisService.get.mockImplementation((key: string) => {
+        if (key.startsWith("sms:attempts:")) return Promise.resolve("0");
+        if (key.startsWith("sms:code:")) return Promise.resolve("654321");
+        return Promise.resolve(null);
+      });
+
+      const result = await service.verifySmsCode("13800138000", "123456");
+
+      expect(result).toBe(false);
+    });
+
+    it("验证码不存在时应返回 false", async () => {
+      mockRedisService.get.mockImplementation((key: string) => {
+        if (key.startsWith("sms:attempts:")) return Promise.resolve("0");
+        return Promise.resolve(null);
+      });
+
+      const result = await service.verifySmsCode("13800138000", "123456");
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe("loginWithPhone", () => {
+    it("已注册用户应该成功登录", async () => {
+      mockRedisService.get.mockImplementation((key: string) => {
+        if (key.startsWith("sms:attempts:")) return Promise.resolve("0");
+        if (key.startsWith("sms:code:")) return Promise.resolve("123456");
+        return Promise.resolve(null);
+      });
+      mockRedisService.del.mockResolvedValue(1);
+      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+      mockJwtService.sign.mockReturnValue("test-access-token");
+      mockPrismaService.refreshToken.create.mockResolvedValue({});
+
+      const result = await service.loginWithPhone("13800138000", "123456");
+
+      expect(result.accessToken).toBe("test-access-token");
+      expect(result.refreshToken).toBeDefined();
+    });
+
+    it("未注册用户应该自动注册并登录", async () => {
+      const newUser = { ...mockUser, phone: "13800138000" };
+      mockRedisService.get.mockImplementation((key: string) => {
+        if (key.startsWith("sms:attempts:")) return Promise.resolve("0");
+        if (key.startsWith("sms:code:")) return Promise.resolve("123456");
+        return Promise.resolve(null);
+      });
+      mockRedisService.del.mockResolvedValue(1);
+      mockPrismaService.user.findUnique.mockResolvedValue(null);
+      (bcrypt.hash as jest.Mock).mockResolvedValue("hashed-password");
+      mockPrismaService.user.create.mockResolvedValue(newUser);
+      mockPrismaService.userProfile.create.mockResolvedValue({});
+      mockJwtService.sign.mockReturnValue("test-access-token");
+      mockPrismaService.refreshToken.create.mockResolvedValue({});
+
+      const result = await service.loginWithPhone("13800138000", "123456");
+
+      expect(result.accessToken).toBe("test-access-token");
+      expect(mockPrismaService.user.create).toHaveBeenCalled();
+    });
+
+    it("验证码无效时应该拒绝登录", async () => {
+      mockRedisService.get.mockResolvedValue(null);
+
+      await expect(service.loginWithPhone("13800138000", "123456")).rejects.toThrow(UnauthorizedException);
+      await expect(service.loginWithPhone("13800138000", "123456")).rejects.toThrow("验证码无效或已过期");
+    });
+  });
+
+  describe("loginWithWechat", () => {
+    it("已注册微信用户应该成功登录", async () => {
+      const wechatUser = { ...mockUser, wechatOpenId: "test-openid" };
+      mockWechatService.getAccessToken = jest.fn().mockResolvedValue({
+        access_token: "test-token",
+        openid: "test-openid",
+        expires_in: 7200,
+        refresh_token: "test-refresh",
+        scope: "snsapi_userinfo",
+      });
+      mockPrismaService.user.findFirst.mockResolvedValue(wechatUser);
+      mockJwtService.sign.mockReturnValue("test-access-token");
+      mockPrismaService.refreshToken.create.mockResolvedValue({});
+
+      const result = await service.loginWithWechat("test-code");
+
+      expect(result.accessToken).toBe("test-access-token");
+    });
+
+    it("未注册微信用户应该自动注册", async () => {
+      mockWechatService.getAccessToken = jest.fn().mockResolvedValue({
+        access_token: "test-token",
+        openid: "new-openid",
+        expires_in: 7200,
+        refresh_token: "test-refresh",
+        scope: "snsapi_userinfo",
+      });
+      mockWechatService.getUserInfo = jest.fn().mockResolvedValue({
+        openid: "new-openid",
+        nickname: "微信用户",
+        headimgurl: "https://example.com/avatar.jpg",
+      });
+      mockPrismaService.user.findFirst.mockResolvedValue(null);
+      (bcrypt.hash as jest.Mock).mockResolvedValue("hashed-password");
+      mockPrismaService.user.create.mockResolvedValue({ ...mockUser, wechatOpenId: "new-openid" });
+      mockPrismaService.userProfile.create.mockResolvedValue({});
+      mockJwtService.sign.mockReturnValue("test-access-token");
+      mockPrismaService.refreshToken.create.mockResolvedValue({});
+
+      const result = await service.loginWithWechat("test-code");
+
+      expect(result.accessToken).toBe("test-access-token");
+      expect(mockPrismaService.user.create).toHaveBeenCalled();
+    });
+
+    it("微信授权失败时应该拒绝登录", async () => {
+      mockWechatService.getAccessToken = jest.fn().mockRejectedValue(new UnauthorizedException("微信授权失败"));
+
+      await expect(service.loginWithWechat("invalid-code")).rejects.toThrow(UnauthorizedException);
     });
   });
 });

@@ -22,6 +22,7 @@ export interface JoinRoomData {
 export interface NotificationPayload {
   type:
     | "try_on_complete"
+    | "try_on_progress"
     | "recommendation"
     | "price_drop"
     | "customization_update"

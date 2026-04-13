@@ -11,7 +11,7 @@ import { AuthService } from "./auth.service";
 import { AuthHelpersService } from "./auth.helpers";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { LocalStrategy } from "./strategies/local.strategy";
-import { WechatStrategy } from "./strategies/wechat.strategy";
+import { WechatAuthStrategy } from "./strategies/wechat.strategy";
 import { WechatService } from "./services/wechat.service";
 import { AliyunSmsService, MockSmsService, SmsService } from "./services/sms.service";
 
@@ -57,7 +57,7 @@ const logger = new Logger("AuthModule");
     JwtStrategy,
     LocalStrategy,
     WechatService,
-    WechatStrategy,
+    WechatAuthStrategy,
     SmsService,
     {
       provide: "ISmsService",

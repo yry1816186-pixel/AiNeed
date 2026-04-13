@@ -1,8 +1,8 @@
-# 🚀 AiNeed APK 快速开始指南
+﻿# 🚀 xuno APK 快速开始指南
 
 ## 📋 概述
 
-本指南帮助您快速编译 AiNeed Android APK 并进行功能测试。
+本指南帮助您快速编译 xuno Android APK 并进行功能测试。
 
 ---
 
@@ -42,7 +42,7 @@ npm install
 
 #### 步骤2：使用 Android Studio 编译
 1. 打开 Android Studio
-2. 打开项目：`File → Open → C:/AiNeed/apps/mobile/android`
+2. 打开项目：`File → Open → C:/xuno/apps/mobile/android`
 3. 等待 Gradle Sync
 4. 编译：`Build → Build Bundle(s) / APK(s) → Build APK(s)`
 
@@ -81,7 +81,7 @@ test-apk.bat
 adb install apps/mobile/android/app/build/outputs/apk/release/app-release.apk
 
 # 启动应用
-adb shell am start -n com.aineed.app/.MainActivity
+adb shell am start -n com.xuno.app/.MainActivity
 ```
 
 ---
@@ -167,10 +167,10 @@ npm run dev
 **解决方案：**
 ```bash
 # 查看日志
-adb logcat | findstr /i "aineed"
+adb logcat | findstr /i "xuno"
 
 # 清除应用数据
-adb shell pm clear com.aineed.app
+adb shell pm clear com.xuno.app
 ```
 
 ---
@@ -190,7 +190,7 @@ adb shell pm clear com.aineed.app
 ## 📁 文件结构
 
 ```
-C:/AiNeed/
+C:/xuno/
 ├── compile-apk.bat          # 编译脚本
 ├── test-apk.bat             # 测试脚本
 ├── docs/

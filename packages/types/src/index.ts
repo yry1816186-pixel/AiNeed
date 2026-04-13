@@ -1,12 +1,12 @@
 /**
- * @fileoverview Core type definitions for the AiNeed platform.
+ * @fileoverview Core type definitions for the 寻裳 platform.
  * This module contains all shared TypeScript interfaces, enums, and types
  * used across the frontend, backend, and ML services.
- * @module @aineed/types
+ * @module @xuno/types
  */
 
 /**
- * Represents a user in the AiNeed platform.
+ * Represents a user in the 寻裳 platform.
  * @description Contains basic user information including authentication details and profile metadata.
  * @example
  * ```typescript
@@ -15,7 +15,7 @@
  *   email: 'user@example.com',
  *   phone: '+8613800138000',
  *   nickname: 'Fashion Lover',
- *   avatar: 'https://cdn.aineed.com/avatars/usr_123456.jpg',
+ *   avatar: 'https://cdn.xuno.app/avatars/usr_123456.jpg',
  *   gender: Gender.Female,
  *   birthDate: new Date('1990-01-15'),
  *   createdAt: new Date('2024-01-01'),
@@ -293,8 +293,8 @@ export enum StyleCategory {
  *   id: 'photo_123',
  *   userId: 'usr_123456',
  *   type: PhotoType.FullBody,
- *   url: 'https://cdn.aineed.com/photos/photo_123.jpg',
- *   thumbnailUrl: 'https://cdn.aineed.com/photos/photo_123_thumb.jpg',
+ *   url: 'https://cdn.xuno.app/photos/photo_123.jpg',
+ *   thumbnailUrl: 'https://cdn.xuno.app/photos/photo_123_thumb.jpg',
  *   status: PhotoStatus.Analyzed,
  *   createdAt: new Date('2024-06-15')
  * };
@@ -403,7 +403,7 @@ export interface PhotoAnalysisResult {
  *   sizes: ['XS', 'S', 'M', 'L'],
  *   price: 899,
  *   currency: 'CNY',
- *   images: ['https://cdn.aineed.com/items/item_123_1.jpg'],
+ *   images: ['https://cdn.xuno.app/items/item_123_1.jpg'],
  *   tags: ['linen', 'blazer', 'summer', 'office'],
  *   attributes: {
  *     style: [StyleCategory.Business, StyleCategory.Casual],
@@ -524,7 +524,7 @@ export interface ClothingAttributes {
  *   userId: 'usr_123456',
  *   photoId: 'photo_456',
  *   clothingItemId: 'item_789',
- *   resultImageUrl: 'https://cdn.aineed.com/tryon/tryon_123_result.jpg',
+ *   resultImageUrl: 'https://cdn.xuno.app/tryon/tryon_123_result.jpg',
  *   status: TryOnStatus.Completed,
  *   createdAt: new Date('2024-06-15'),
  *   completedAt: new Date('2024-06-15T10:35:00Z')
@@ -640,7 +640,7 @@ export interface RecommendedItem {
  *   userId: 'usr_123456',
  *   type: CustomizationType.Tailored,
  *   description: 'Need a fitted blazer adjusted for shoulder width',
- *   referenceImages: ['https://cdn.aineed.com/ref/img1.jpg'],
+ *   referenceImages: ['https://cdn.xuno.app/ref/img1.jpg'],
  *   preferences: { fabric: 'Wool', lining: 'Silk' },
  *   status: CustomizationStatus.Quoting,
  *   quotes: [quote1, quote2],
@@ -739,7 +739,7 @@ export interface CustomizationQuote {
  * const brand: Brand = {
  *   id: 'brand_zara',
  *   name: 'ZARA',
- *   logo: 'https://cdn.aineed.com/brands/zara_logo.png',
+ *   logo: 'https://cdn.xuno.app/brands/zara_logo.png',
  *   description: 'Spanish fast-fashion retailer',
  *   website: 'https://www.zara.com',
  *   categories: [ClothingCategory.Tops, ClothingCategory.Bottoms, ClothingCategory.Dresses],

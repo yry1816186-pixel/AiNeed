@@ -4,13 +4,13 @@ import { ConfigService } from "@nestjs/config";
 export interface Vector {
   id: string;
   values: number[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface SimilarityResult {
   id: string;
   score: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 @Injectable()
