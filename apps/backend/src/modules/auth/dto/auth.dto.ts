@@ -6,6 +6,9 @@ import {
   MaxLength,
   IsOptional,
   IsIn,
+  IsNotEmpty,
+  IsEnum,
+  Length,
   Matches,
   IsDateString,
   Validate,
@@ -201,7 +204,7 @@ export class ForgotPasswordDto {
 }
 
 export class ResetPasswordDto {
-  @ApiProperty({ 
+  @ApiProperty({
     description: "密码重置令牌，通过邮件发送",
     example: "a1b2c3d4e5f6g7h8i9j0"
   })
@@ -209,8 +212,8 @@ export class ResetPasswordDto {
   @MinLength(1, { message: "令牌不能为空" })
   token!: string;
 
-  @ApiProperty({ 
-    example: "NewPassword123", 
+  @ApiProperty({
+    example: "NewPassword123",
     description: "新密码，必须为8-32位，包含大小写字母和数字",
     minLength: 8,
     maxLength: 32,
@@ -222,7 +225,7 @@ export class ResetPasswordDto {
   @Matches(PASSWORD_REGEX, { message: PASSWORD_ERROR_MSG })
   newPassword!: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     example: "NewPassword123",
     description: "确认新密码，必须与新密码一致"
   })
@@ -230,4 +233,88 @@ export class ResetPasswordDto {
   @IsString({ message: "确认密码必须是字符串" })
   @Validate(IsPasswordMatchConstraint, ["newPassword"])
   confirmNewPassword?: string;
+}
+
+export class PhoneLoginDto {
+  @ApiProperty({
+    example: "13800138000",
+    description: "中国大陆手机号码",
+    pattern: "^1[3-9]\\d{9}$"
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^1[3-9]\d{9}$/, { message: "Invalid Chinese phone number" })
+  phone!: string;
+
+  @ApiProperty({
+    example: "123456",
+    description: "短信验证码，6位数字",
+    minLength: 6,
+    maxLength: 6
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Length(6, 6)
+  code!: string;
+}
+
+export class PhoneRegisterDto {
+  @ApiProperty({
+    example: "13800138000",
+    description: "中国大陆手机号码",
+    pattern: "^1[3-9]\\d{9}$"
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^1[3-9]\d{9}$/, { message: "Invalid Chinese phone number" })
+  phone!: string;
+
+  @ApiProperty({
+    example: "123456",
+    description: "短信验证码，6位数字",
+    minLength: 6,
+    maxLength: 6
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Length(6, 6)
+  code!: string;
+
+  @ApiProperty({
+    enum: GenderValues,
+    description: "性别，用于个性化推荐",
+    example: "male"
+  })
+  @IsEnum(GenderValues, { message: "Gender is required for personalized recommendations" })
+  @IsNotEmpty({ message: "Gender is required for personalized recommendations" })
+  gender!: Gender;
+
+  @ApiPropertyOptional({
+    example: "1990-01-01",
+    description: "出生日期，用于推导年龄段"
+  })
+  @IsOptional()
+  @IsString()
+  birthDate?: string;
+
+  @ApiPropertyOptional({
+    example: "张三",
+    description: "用户昵称",
+    minLength: 2,
+    maxLength: 20
+  })
+  @IsString()
+  @IsOptional()
+  @Length(2, 20)
+  nickname?: string;
+}
+
+export class WechatLoginDto {
+  @ApiProperty({
+    description: "微信授权码，通过微信OAuth2获取",
+    example: "wechat_auth_code_example"
+  })
+  @IsString()
+  @IsNotEmpty()
+  code!: string;
 }
