@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException, ConflictException, ForbiddenException, Inject } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException, ConflictException, ForbiddenException, Inject, Optional } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { Cron } from "@nestjs/schedule";
 import Redis from "ioredis";
@@ -6,6 +6,8 @@ import Redis from "ioredis";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { StorageService } from "../../common/storage/storage.service";
 import { REDIS_CLIENT, RedisKeyBuilder } from "../../common/redis/redis.service";
+
+import { ContentModerationService } from "./content-moderation.service";
 
 import {
   CreatePostDto,
@@ -27,6 +29,7 @@ export class CommunityService {
     private readonly prisma: PrismaService,
     private readonly storage: StorageService,
     @Inject(REDIS_CLIENT) private readonly redis: Redis,
+    @Optional() private readonly contentModerationService: ContentModerationService,
   ) {}
 
   async createPost(userId: string, dto: CreatePostDto) {
@@ -79,10 +82,21 @@ export class CommunityService {
       },
     });
 
+    if (this.contentModerationService) {
+      await this.contentModerationService.moderateContent(
+        'post',
+        post.id,
+        post.content,
+        post.images as string[] | undefined,
+      ).catch((err) => {
+        this.logger.warn(`Content moderation failed for post ${post.id}: ${err.message}`);
+      });
+    }
+
     return post;
   }
 
-  async getPosts(query: PostQueryDto, userId?: string) {
+  async getPosts(query: PostQueryDto, userId?: string, adminMode = false) {
     const {
       page = 1,
       pageSize = 20,
@@ -93,6 +107,10 @@ export class CommunityService {
     } = query;
 
     const where: Prisma.CommunityPostWhereInput = { isDeleted: false };
+
+    if (!adminMode) {
+      where.moderationStatus = "approved";
+    }
 
     if (category) {
       where.category = category;
@@ -495,6 +513,16 @@ export class CommunityService {
           content: dto.content.substring(0, 50),
           data: { postId, commentId: comment.id },
         },
+      });
+    }
+
+    if (this.contentModerationService) {
+      await this.contentModerationService.moderateContent(
+        'comment',
+        comment.id,
+        dto.content,
+      ).catch((err) => {
+        this.logger.warn(`Content moderation failed for comment ${comment.id}: ${err.message}`);
       });
     }
 
@@ -964,6 +992,15 @@ export class CommunityService {
           },
         });
       }
+    }
+
+    if (this.contentModerationService) {
+      await this.contentModerationService.handleReportThreshold(
+        dto.contentType,
+        dto.contentId,
+      ).catch((err) => {
+        this.logger.warn(`Handle report threshold failed for ${dto.contentType}/${dto.contentId}: ${err.message}`);
+      });
     }
 
     return report;
