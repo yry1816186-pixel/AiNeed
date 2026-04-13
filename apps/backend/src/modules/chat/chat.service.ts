@@ -383,6 +383,16 @@ export class ChatService {
     return { unreadCount: count };
   }
 
+  /**
+   * 判断用户是否为指定顾问身份
+   */
+  async isConsultant(userId: string, consultantId: string): Promise<boolean> {
+    const consultant = await this.prisma.consultantProfile.findUnique({
+      where: { id: consultantId },
+    });
+    return consultant?.userId === userId;
+  }
+
   // ==================== 私有方法 ====================
 
   /**

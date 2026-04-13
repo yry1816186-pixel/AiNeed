@@ -115,12 +115,46 @@ export interface NewLikePayload {
 
 export type CommunityEventPayload = NewPostPayload | NewCommentPayload | NewLikePayload;
 
+export const CHAT_EVENTS = {
+  MESSAGE_CREATED: 'chat.message_created',
+  MESSAGE_READ: 'chat.message_read',
+  TYPING_START: 'chat.typing_start',
+  TYPING_STOP: 'chat.typing_stop',
+} as const;
+
+export type ChatEventType = typeof CHAT_EVENTS[keyof typeof CHAT_EVENTS];
+
+export interface ChatMessageCreatedPayload {
+  roomId: string;
+  messageId: string;
+  senderId: string;
+  senderType: string;
+  messageType: string;
+  content: string;
+}
+
+export interface ChatMessageReadPayload {
+  roomId: string;
+  readerId: string;
+  lastMessageId?: string;
+}
+
+export interface ChatTypingPayload {
+  roomId: string;
+  userId: string;
+  senderType: string;
+  isTyping: boolean;
+}
+
+export type ChatEventPayload = ChatMessageCreatedPayload | ChatMessageReadPayload | ChatTypingPayload;
+
 export type WSEventType =
   | ProfileEventType
   | AIEventType
   | QuizEventType
   | NotificationEventType
-  | CommunityEventType;
+  | CommunityEventType
+  | ChatEventType;
 
 export interface WSEvent<T = unknown> {
   type: WSEventType;
