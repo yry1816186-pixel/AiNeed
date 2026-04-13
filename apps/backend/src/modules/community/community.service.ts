@@ -264,9 +264,14 @@ export class CommunityService {
     };
   }
 
-  async getPostById(postId: string, userId?: string) {
+  async getPostById(postId: string, userId?: string, adminMode = false) {
+    const where: Prisma.CommunityPostWhereInput = { id: postId, isDeleted: false };
+    if (!adminMode) {
+      where.moderationStatus = "approved";
+    }
+
     const post = await this.prisma.communityPost.findUnique({
-      where: { id: postId, isDeleted: false },
+      where,
       include: {
         author: {
           select: {
