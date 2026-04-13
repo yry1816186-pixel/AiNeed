@@ -430,11 +430,19 @@ model VirtualTryOn {
   item      ClothingItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   resultImageUrl String?
+  watermarkedImageUrl String?
   status        TryOnStatus @default(pending)
   errorMessage  String?
   provider      String?
   processingTime Float?
   confidence    Float?
+  category      String?
+  scene         String?
+  retryCount    Int        @default(0)
+  parentTryOnId String?
+
+  parentTryOn   VirtualTryOn?  @relation("TryOnRetry", fields: [parentTryOnId], references: [id])
+  retries       VirtualTryOn[] @relation("TryOnRetry")
 
   createdAt DateTime @default(now())
   completedAt DateTime?
@@ -446,7 +454,9 @@ model VirtualTryOn {
   @@index([userId, createdAt(sort: Desc)])
   @@index([photoId, status])
   @@index([userId, photoId])
-  @@index([userId, photoId, itemId, status]) // 优化: 用于 createTryOnRequest 批量查询
+  @@index([userId, photoId, itemId, status])
+  @@index([category])
+  @@index([parentTryOnId])
 }
 
 enum TryOnStatus {
@@ -693,12 +703,16 @@ model AiStylistSession {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   payload   Json
+  status    String   @default("active")
+
   expiresAt DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId, updatedAt])
+  @@index([userId, status])
+  @@index([userId, createdAt])
   @@index([expiresAt])
 }
 
