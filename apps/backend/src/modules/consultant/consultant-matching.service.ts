@@ -158,9 +158,13 @@ export class ConsultantMatchingService {
    * 位置维度评分：同城优先
    * 权重 20%
    */
-  private calcLocationScore(userProfile: Record<string, unknown> | null, consultant: Record<string, unknown>): number {
-    if (!(userProfile as Record<string, unknown>)?.location || !consultant.location) return 0.5;
-    return (userProfile as Record<string, unknown>).location === consultant.location ? 1.0 : 0.3;
+  private calcLocationScore(
+    userProfile: { profile: Record<string, unknown> | null; styleProfiles: Array<Record<string, unknown>> } | null,
+    consultant: Record<string, unknown>,
+  ): number {
+    const userLocation = userProfile?.profile?.location;
+    if (!userLocation || !consultant.location) return 0.5;
+    return userLocation === consultant.location ? 1.0 : 0.3;
   }
 
   /**
@@ -169,10 +173,10 @@ export class ConsultantMatchingService {
    */
   private buildMatchReasons(scores: Record<string, number>, consultant: Record<string, unknown>): string[] {
     const reasons: string[] = [];
-    if (scores.profile >= 0.6) reasons.push(MATCH_REASONS.profile);
-    if (scores.keywords >= 0.6) reasons.push(MATCH_REASONS.keywords);
-    if (scores.specialty >= 0.6) reasons.push(MATCH_REASONS.specialty);
-    if (scores.location >= 0.8) reasons.push(MATCH_REASONS.location);
+    if ((scores.profile ?? 0) >= 0.6) reasons.push(MATCH_REASONS.profile);
+    if ((scores.keywords ?? 0) >= 0.6) reasons.push(MATCH_REASONS.keywords);
+    if ((scores.specialty ?? 0) >= 0.6) reasons.push(MATCH_REASONS.specialty);
+    if ((scores.location ?? 0) >= 0.8) reasons.push(MATCH_REASONS.location);
     if (Number(consultant.rating) >= 4.5) reasons.push(MATCH_REASONS.topRated);
     if (reasons.length === 0) reasons.push(MATCH_REASONS.specialty);
     return reasons.slice(0, 3);

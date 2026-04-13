@@ -10,6 +10,7 @@ describe("ConsultantMatchingService", () => {
   let prisma: {
     consultantProfile: { findMany: jest.Mock };
     userProfile: { findUnique: jest.Mock };
+    styleProfile: { findMany: jest.Mock };
   };
 
   const mockConsultants = [
@@ -51,18 +52,20 @@ describe("ConsultantMatchingService", () => {
     },
   ];
 
-  const mockUserProfile = {
+  const mockUserStyleProfiles = [
+    { keywords: ["职场穿搭", "日常穿搭"], occasion: "work" },
+  ];
+
+  const mockUserProfileData = {
     userId: "test-user",
     location: "北京",
-    styleProfile: {
-      preferredStyles: ["职场穿搭", "日常穿搭"],
-    },
   };
 
   beforeEach(async () => {
     prisma = {
       consultantProfile: { findMany: jest.fn() },
-      userProfile: { findUnique: jest.fn() },
+      userProfile: { findUnique: jest.fn().mockResolvedValue(mockUserProfileData) },
+      styleProfile: { findMany: jest.fn().mockResolvedValue(mockUserStyleProfiles) },
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -82,7 +85,6 @@ describe("ConsultantMatchingService", () => {
   describe("findMatches", () => {
     it("should return max 5 results sorted by matchPercentage descending", async () => {
       prisma.consultantProfile.findMany.mockResolvedValue(mockConsultants);
-      prisma.userProfile.findUnique.mockResolvedValue(mockUserProfile);
 
       const dto = new ConsultantMatchRequestDto();
       dto.serviceType = ServiceTypeDto.STYLING_CONSULTATION;
@@ -102,7 +104,6 @@ describe("ConsultantMatchingService", () => {
 
     it("should return empty array when no active consultants", async () => {
       prisma.consultantProfile.findMany.mockResolvedValue([]);
-      prisma.userProfile.findUnique.mockResolvedValue(mockUserProfile);
 
       const dto = new ConsultantMatchRequestDto();
       dto.serviceType = ServiceTypeDto.STYLING_CONSULTATION;
@@ -113,7 +114,6 @@ describe("ConsultantMatchingService", () => {
 
     it("should include matchPercentage (0-99) and matchReasons in each result", async () => {
       prisma.consultantProfile.findMany.mockResolvedValue(mockConsultants);
-      prisma.userProfile.findUnique.mockResolvedValue(mockUserProfile);
 
       const dto = new ConsultantMatchRequestDto();
       dto.serviceType = ServiceTypeDto.STYLING_CONSULTATION;
@@ -133,22 +133,22 @@ describe("ConsultantMatchingService", () => {
   describe("calcProfileScore", () => {
     it("should return high score when user style preferences overlap with consultant specialties", async () => {
       prisma.consultantProfile.findMany.mockResolvedValue(mockConsultants);
-      prisma.userProfile.findUnique.mockResolvedValue(mockUserProfile);
 
       const dto = new ConsultantMatchRequestDto();
       dto.serviceType = ServiceTypeDto.STYLING_CONSULTATION;
 
       const results = await service.findMatches("test-user", dto);
 
-      // consultant-1 has "职场穿搭" which overlaps with user's preferredStyles
+      // consultant-1 has "职场穿搭" which overlaps with user's styleProfile keywords
       const consultant1 = results.find((r) => r.consultantId === "consultant-1");
       expect(consultant1).toBeDefined();
       expect(consultant1!.matchPercentage).toBeGreaterThan(0);
     });
 
-    it("should return 0.5 when user has no style profile", async () => {
+    it("should handle gracefully when user has no style profile", async () => {
       prisma.consultantProfile.findMany.mockResolvedValue(mockConsultants);
       prisma.userProfile.findUnique.mockResolvedValue(null);
+      prisma.styleProfile.findMany.mockResolvedValue([]);
 
       const dto = new ConsultantMatchRequestDto();
       dto.serviceType = ServiceTypeDto.STYLING_CONSULTATION;
@@ -161,7 +161,6 @@ describe("ConsultantMatchingService", () => {
   describe("calcKeywordScore", () => {
     it("should return high score when request notes match consultant specialties", async () => {
       prisma.consultantProfile.findMany.mockResolvedValue(mockConsultants);
-      prisma.userProfile.findUnique.mockResolvedValue(mockUserProfile);
 
       const dto = new ConsultantMatchRequestDto();
       dto.serviceType = ServiceTypeDto.STYLING_CONSULTATION;
@@ -177,7 +176,6 @@ describe("ConsultantMatchingService", () => {
   describe("calcSpecialtyScore", () => {
     it("should return high score when service type matches consultant specialties", async () => {
       prisma.consultantProfile.findMany.mockResolvedValue(mockConsultants);
-      prisma.userProfile.findUnique.mockResolvedValue(mockUserProfile);
 
       const dto = new ConsultantMatchRequestDto();
       dto.serviceType = ServiceTypeDto.COLOR_ANALYSIS;
@@ -193,7 +191,6 @@ describe("ConsultantMatchingService", () => {
   describe("calcLocationScore", () => {
     it("should give higher score to same-city consultants", async () => {
       prisma.consultantProfile.findMany.mockResolvedValue(mockConsultants);
-      prisma.userProfile.findUnique.mockResolvedValue(mockUserProfile);
 
       const dto = new ConsultantMatchRequestDto();
       dto.serviceType = ServiceTypeDto.STYLING_CONSULTATION;
@@ -201,8 +198,6 @@ describe("ConsultantMatchingService", () => {
       const results = await service.findMatches("test-user", dto);
 
       // User is in Beijing, consultant-1 and consultant-3 are also in Beijing
-      // They should generally rank higher than consultant-2 (Shanghai)
-      // (assuming other scores are comparable)
       const beijingConsultants = results.filter(
         (r) => r.consultantId === "consultant-1" || r.consultantId === "consultant-3",
       );
@@ -213,7 +208,6 @@ describe("ConsultantMatchingService", () => {
   describe("buildMatchReasons", () => {
     it("should generate match reasons based on dimension scores", async () => {
       prisma.consultantProfile.findMany.mockResolvedValue(mockConsultants);
-      prisma.userProfile.findUnique.mockResolvedValue(mockUserProfile);
 
       const dto = new ConsultantMatchRequestDto();
       dto.serviceType = ServiceTypeDto.STYLING_CONSULTATION;
