@@ -31,3 +31,15 @@ export {
   type PostComment,
   type UserProfile as CommunityUserProfile,
 } from "./community.api";
+export { featureFlagApi } from "./feature-flag.api";
+export { quizApi } from "../quizService";
+export { smsApi } from "./sms.api";
+export {
+  styleQuizApi,
+  type QuizData,
+  type QuizQuestionData,
+  type QuizOption,
+  type AnswerResponse,
+  type QuizResult as StyleQuizResult,
+  type QuizProgress,
+} from "./style-quiz.api";
