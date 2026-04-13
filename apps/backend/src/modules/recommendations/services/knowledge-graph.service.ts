@@ -1,6 +1,7 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, Optional } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { Neo4jService } from "./neo4j.service";
 
 interface KnowledgeNode {
   id: string;
@@ -21,49 +22,95 @@ interface RecommendationPath {
   score: number;
 }
 
-interface ClothingKnowledgeGraph {
-  nodes: Map<string, KnowledgeNode>;
-  edges: KnowledgeEdge[];
-}
-
 @Injectable()
 export class KnowledgeGraphService {
   private readonly logger = new Logger(KnowledgeGraphService.name);
-  private graph: ClothingKnowledgeGraph = {
+  private graph: {
+    nodes: Map<string, KnowledgeNode>;
+    edges: KnowledgeEdge[];
+  } = {
     nodes: new Map(),
     edges: [],
   };
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Optional() private neo4jService?: Neo4jService,
+  ) {}
+
+  private get useNeo4j(): boolean {
+    return !!this.neo4jService?.isReady();
+  }
 
   async buildGraph(): Promise<void> {
     this.logger.log("Building clothing knowledge graph...");
 
+    if (this.useNeo4j) {
+      await this.buildGraphFromNeo4j();
+    } else {
+      await this.buildInMemoryGraph();
+    }
+
+    this.logger.log(
+      `Graph built: ${this.graph.nodes.size} nodes, ${this.graph.edges.length} edges (mode: ${this.useNeo4j ? "Neo4j" : "in-memory"})`,
+    );
+  }
+
+  private async buildGraphFromNeo4j(): Promise<void> {
+    try {
+      const itemResults = await this.neo4jService!.runReadQuery<{
+        id: string;
+        name: string;
+        category: string;
+      }>(
+        `MATCH (i:Item) RETURN i.id AS id, i.name AS name, i.category AS category LIMIT 2000`,
+      );
+
+      itemResults.forEach((item) => {
+        const nodeId = `item_${item.id}`;
+        this.graph.nodes.set(nodeId, {
+          id: nodeId,
+          type: "item",
+          properties: { name: item.name, category: item.category },
+        });
+      });
+
+      const relationResults = await this.neo4jService!.runReadQuery<{
+        sourceId: string;
+        targetId: string;
+        relation: string;
+        weight: number;
+      }>(
+        `MATCH (a)-[r]->(b) RETURN a.id AS sourceId, b.id AS targetId, type(r) AS relation, r.weight AS weight LIMIT 5000`,
+      );
+
+      relationResults.forEach((rel) => {
+        this.graph.edges.push({
+          source: `item_${rel.sourceId}`,
+          target: `item_${rel.targetId}`,
+          relation: rel.relation,
+          weight: Number(rel.weight) || 0.5,
+        });
+      });
+    } catch (error) {
+      this.logger.warn(`Neo4j graph build failed, falling back to in-memory: ${error}`);
+      await this.buildInMemoryGraph();
+    }
+  }
+
+  private async buildInMemoryGraph(): Promise<void> {
     await this.buildCategoryNodes();
     await this.buildStyleNodes();
     await this.buildOccasionNodes();
     await this.buildItemNodes();
     await this.buildItemRelations();
-
-    this.logger.log(
-      `Graph built: ${this.graph.nodes.size} nodes, ${this.graph.edges.length} edges`,
-    );
   }
 
   private async buildCategoryNodes(): Promise<void> {
     const categories = [
-      "tops",
-      "bottoms",
-      "dresses",
-      "outerwear",
-      "footwear",
-      "accessories",
-      "activewear",
-      "swimwear",
-      "intimates",
-      "suits",
+      "tops", "bottoms", "dresses", "outerwear", "footwear",
+      "accessories", "activewear", "swimwear", "intimates", "suits",
     ];
-
     categories.forEach((cat) => {
       const nodeId = `category_${cat}`;
       this.graph.nodes.set(nodeId, {
@@ -76,20 +123,10 @@ export class KnowledgeGraphService {
 
   private async buildStyleNodes(): Promise<void> {
     const styles = [
-      "casual",
-      "formal",
-      "business",
-      "sporty",
-      "bohemian",
-      "minimalist",
-      "streetwear",
-      "vintage",
-      "romantic",
-      "edgy",
-      "classic",
-      "trendy",
+      "casual", "formal", "business", "sporty", "bohemian",
+      "minimalist", "streetwear", "vintage", "romantic", "edgy",
+      "classic", "trendy",
     ];
-
     styles.forEach((style) => {
       const nodeId = `style_${style}`;
       this.graph.nodes.set(nodeId, {
@@ -98,22 +135,16 @@ export class KnowledgeGraphService {
         properties: { name: style },
       });
     });
-
     this.addStyleCompatibilityRules();
   }
 
   private addStyleCompatibilityRules(): void {
     const compatiblePairs = [
-      ["casual", "sporty"],
-      ["casual", "streetwear"],
-      ["formal", "business"],
-      ["formal", "classic"],
-      ["bohemian", "vintage"],
-      ["minimalist", "classic"],
-      ["romantic", "vintage"],
-      ["edgy", "streetwear"],
+      ["casual", "sporty"], ["casual", "streetwear"],
+      ["formal", "business"], ["formal", "classic"],
+      ["bohemian", "vintage"], ["minimalist", "classic"],
+      ["romantic", "vintage"], ["edgy", "streetwear"],
     ];
-
     compatiblePairs.forEach(([style1, style2]) => {
       this.graph.edges.push({
         source: `style_${style1}`,
@@ -126,20 +157,9 @@ export class KnowledgeGraphService {
 
   private async buildOccasionNodes(): Promise<void> {
     const occasions = [
-      "daily",
-      "work",
-      "date",
-      "party",
-      "sport",
-      "travel",
-      "wedding",
-      "interview",
-      "beach",
-      "gym",
-      "dinner",
-      "meeting",
+      "daily", "work", "date", "party", "sport", "travel",
+      "wedding", "interview", "beach", "gym", "dinner", "meeting",
     ];
-
     occasions.forEach((occasion) => {
       const nodeId = `occasion_${occasion}`;
       this.graph.nodes.set(nodeId, {
@@ -148,7 +168,6 @@ export class KnowledgeGraphService {
         properties: { name: occasion },
       });
     });
-
     this.addOccasionStyleRules();
   }
 
@@ -161,7 +180,6 @@ export class KnowledgeGraphService {
       daily: ["casual", "minimalist", "streetwear"],
       wedding: ["formal", "classic", "romantic"],
     };
-
     Object.entries(occasionStyleMap).forEach(([occasion, styles]) => {
       styles.forEach((style) => {
         this.graph.edges.push({
@@ -212,7 +230,6 @@ export class KnowledgeGraphService {
           });
         });
       }
-
       if (attrs?.occasions) {
         (attrs.occasions as string[]).forEach((o: string) => {
           this.graph.edges.push({
@@ -228,7 +245,6 @@ export class KnowledgeGraphService {
 
   private async buildItemRelations(): Promise<void> {
     const cooccurrence = await this.analyzeCooccurrence();
-
     cooccurrence.forEach((pair) => {
       this.graph.edges.push({
         source: `item_${pair.item1}`,
@@ -248,14 +264,12 @@ export class KnowledgeGraphService {
     });
 
     const cooccurrence: Map<string, Map<string, number>> = new Map();
-
     const ordersMap = new Map<string, string[]>();
     orderItems.forEach((oi) => {
-      const orderId = oi.orderId;
-      if (!ordersMap.has(orderId)) {
-        ordersMap.set(orderId, []);
+      if (!ordersMap.has(oi.orderId)) {
+        ordersMap.set(oi.orderId, []);
       }
-      ordersMap.get(orderId)!.push(oi.itemId);
+      ordersMap.get(oi.orderId)!.push(oi.itemId);
     });
 
     ordersMap.forEach((items) => {
@@ -263,48 +277,135 @@ export class KnowledgeGraphService {
         for (let j = i + 1; j < items.length; j++) {
           const firstItem = items[i];
           const secondItem = items[j];
-          if (!firstItem || !secondItem) {
-            continue;
-          }
-
+          if (!firstItem || !secondItem) continue;
           const key1 = firstItem < secondItem ? firstItem : secondItem;
           const key2 = firstItem < secondItem ? secondItem : firstItem;
-
-          if (!cooccurrence.has(key1)) {
-            cooccurrence.set(key1, new Map());
-          }
+          if (!cooccurrence.has(key1)) cooccurrence.set(key1, new Map());
           const currentRow = cooccurrence.get(key1);
-          if (!currentRow) {
-            continue;
-          }
-
-          const current = currentRow.get(key2) ?? 0;
-          currentRow.set(key2, current + 1);
+          if (!currentRow) continue;
+          currentRow.set(key2, (currentRow.get(key2) ?? 0) + 1);
         }
       }
     });
 
     const results: Array<{ item1: string; item2: string; score: number }> = [];
     const maxCooccur = Math.max(
-      ...Array.from(cooccurrence.values()).flatMap((m) =>
-        Array.from(m.values()),
-      ),
+      ...Array.from(cooccurrence.values()).flatMap((m) => Array.from(m.values())),
       1,
     );
 
     cooccurrence.forEach((innerMap, item1) => {
       innerMap.forEach((count, item2) => {
-        if (count >= 2) {
-          results.push({
-            item1,
-            item2,
-            score: count / maxCooccur,
-          });
-        }
+        if (count >= 2) results.push({ item1, item2, score: count / maxCooccur });
       });
     });
-
     return results.slice(0, 500);
+  }
+
+  async syncItemsToNeo4j(): Promise<void> {
+    if (!this.useNeo4j) {
+      this.logger.warn("Neo4j not available, skipping sync");
+      return;
+    }
+
+    const items = await this.prisma.clothingItem.findMany({
+      where: { isActive: true },
+      take: 5000,
+    });
+
+    for (const item of items) {
+      const attrs = item.attributes as Record<string, unknown> | null;
+      await this.neo4jService!.runWriteQuery(
+        `MERGE (i:Item {id: $id})
+         SET i.name = $name, i.category = $category, i.price = $price,
+             i.brandId = $brandId, i.updatedAt = datetime()`,
+        {
+          id: item.id,
+          name: item.name,
+          category: item.category,
+          price: item.price,
+          brandId: item.brandId,
+        },
+      );
+
+      if (attrs?.style) {
+        for (const style of attrs.style as string[]) {
+          await this.neo4jService!.runWriteQuery(
+            `MERGE (s:Style {name: $style})
+             MERGE (i:Item {id: $itemId})
+             MERGE (i)-[:HAS_STYLE {weight: 0.8}]->(s)`,
+            { style, itemId: item.id },
+          );
+        }
+      }
+
+      if (attrs?.occasions) {
+        for (const occasion of attrs.occasions as string[]) {
+          await this.neo4jService!.runWriteQuery(
+            `MERGE (o:Occasion {name: $occasion})
+             MERGE (i:Item {id: $itemId})
+             MERGE (i)-[:SUITABLE_FOR {weight: 0.7}]->(o)`,
+            { occasion, itemId: item.id },
+          );
+        }
+      }
+
+      await this.neo4jService!.runWriteQuery(
+        `MERGE (c:Category {name: $category})
+         MERGE (i:Item {id: $itemId})
+         MERGE (i)-[:BELONGS_TO {weight: 1.0}]->(c)`,
+        { category: item.category, itemId: item.id },
+      );
+    }
+
+    this.logger.log(`Synced ${items.length} items to Neo4j`);
+  }
+
+  async getRecommendationsByStylePath(
+    itemId: string,
+    maxDepth: number = 3,
+  ): Promise<Array<{ itemId: string; score: number; path: string[] }>> {
+    if (this.useNeo4j) {
+      try {
+        const results = await this.neo4jService!.runReadQuery<{
+          targetId: string;
+          score: number;
+          pathLabels: string[];
+        }>(
+          `MATCH path = (i:Item {id: $itemId})-[*1..${maxDepth}]-(target:Item)
+           WHERE target.id <> $itemId
+           WITH target, path,
+                reduce(s = 0, r IN relationships(path) | s + COALESCE(r.weight, 0.5)) / length(path) AS avgWeight,
+                [n IN nodes(path) | labels(n)[0]] AS pathLabels
+           RETURN target.id AS targetId, avgWeight * pow(0.9, length(path) - 1) AS score, pathLabels
+           ORDER BY score DESC LIMIT 20`,
+          { itemId },
+        );
+        return results.map((r) => ({
+          itemId: r.targetId,
+          score: Number(r.score),
+          path: r.pathLabels,
+        }));
+      } catch (error) {
+        this.logger.warn(`Neo4j style path query failed: ${error}`);
+      }
+    }
+
+    return this.getInMemoryStylePathRecommendations(itemId, maxDepth);
+  }
+
+  private getInMemoryStylePathRecommendations(
+    itemId: string,
+    maxDepth: number,
+  ): Array<{ itemId: string; score: number; path: string[] }> {
+    const compatibleItems = this.findCompatibleItemsByStyle(itemId);
+    return compatibleItems
+      .filter((item) => item.item.id !== `item_${itemId}`)
+      .map((item) => ({
+        itemId: item.item.id.replace("item_", ""),
+        score: item.score,
+        path: ["Item", "Style", "Item"],
+      }));
   }
 
   findPaths(
@@ -314,9 +415,7 @@ export class KnowledgeGraphService {
   ): RecommendationPath[] {
     const paths: RecommendationPath[] = [];
     const visited = new Set<string>();
-
     this.dfs(startId, endId, [], [], visited, paths, maxDepth);
-
     return paths.sort((a, b) => b.score - a.score).slice(0, 10);
   }
 
@@ -329,20 +428,17 @@ export class KnowledgeGraphService {
     results: RecommendationPath[],
     maxDepth: number,
   ): void {
-    if (nodePath.length > maxDepth) {return;}
-
+    if (nodePath.length > maxDepth) return;
     const currentNode = this.graph.nodes.get(current);
-    if (!currentNode) {return;}
-
+    if (!currentNode) return;
     visited.add(current);
     nodePath.push(currentNode);
 
     if (current === target) {
-      const score = this.calculatePathScore(edgePath);
       results.push({
         nodes: [...nodePath],
         edges: [...edgePath],
-        score,
+        score: this.calculatePathScore(edgePath),
       });
       nodePath.pop();
       visited.delete(current);
@@ -350,54 +446,37 @@ export class KnowledgeGraphService {
     }
 
     const outgoingEdges = this.graph.edges.filter((e) => e.source === current);
-
     for (const edge of outgoingEdges) {
       if (!visited.has(edge.target)) {
         edgePath.push(edge);
-        this.dfs(
-          edge.target,
-          target,
-          nodePath,
-          edgePath,
-          visited,
-          results,
-          maxDepth,
-        );
+        this.dfs(edge.target, target, nodePath, edgePath, visited, results, maxDepth);
         edgePath.pop();
       }
     }
-
     nodePath.pop();
     visited.delete(current);
   }
 
   private calculatePathScore(edges: KnowledgeEdge[]): number {
-    if (edges.length === 0) {return 0;}
-    const avgWeight =
-      edges.reduce((sum, e) => sum + e.weight, 0) / edges.length;
-    const lengthPenalty = Math.pow(0.9, edges.length - 1);
-    return avgWeight * lengthPenalty;
+    if (edges.length === 0) return 0;
+    const avgWeight = edges.reduce((sum, e) => sum + e.weight, 0) / edges.length;
+    return avgWeight * Math.pow(0.9, edges.length - 1);
   }
 
   findRelatedItems(itemId: string, relationTypes?: string[]): KnowledgeNode[] {
-    const related: KnowledgeNode[] = [];
     const nodePrefix = `item_${itemId}`;
-
-    const relevantEdges = this.graph.edges.filter((e) => {
-      const matches =
-        (e.source === nodePrefix || e.target === nodePrefix) &&
-        (!relationTypes || relationTypes.includes(e.relation));
-      return matches;
-    });
-
-    relevantEdges.forEach((edge) => {
-      const relatedId = edge.source === nodePrefix ? edge.target : edge.source;
-      const node = this.graph.nodes.get(relatedId);
-      if (node?.type === "item") {
-        related.push(node);
-      }
-    });
-
+    const related: KnowledgeNode[] = [];
+    this.graph.edges
+      .filter(
+        (e) =>
+          (e.source === nodePrefix || e.target === nodePrefix) &&
+          (!relationTypes || relationTypes.includes(e.relation)),
+      )
+      .forEach((edge) => {
+        const relatedId = edge.source === nodePrefix ? edge.target : edge.source;
+        const node = this.graph.nodes.get(relatedId);
+        if (node?.type === "item") related.push(node);
+      });
     return related;
   }
 
@@ -406,14 +485,13 @@ export class KnowledgeGraphService {
   ): Array<{ item: KnowledgeNode; score: number }> {
     const nodePrefix = `item_${itemId}`;
     const itemNode = this.graph.nodes.get(nodePrefix);
-    if (!itemNode) {return [];}
+    if (!itemNode) return [];
 
     const itemStyles = this.graph.edges
       .filter((e) => e.source === nodePrefix && e.relation === "has_style")
       .map((e) => e.target);
 
     const compatibleItems: Map<string, number> = new Map();
-
     itemStyles.forEach((styleId) => {
       const compatibleStyles = this.graph.edges
         .filter(
@@ -427,36 +505,28 @@ export class KnowledgeGraphService {
         this.graph.edges
           .filter((e) => e.target === compStyle && e.relation === "has_style")
           .forEach((e) => {
-            const current = compatibleItems.get(e.source) || 0;
-            compatibleItems.set(e.source, current + 0.2);
+            compatibleItems.set(e.source, (compatibleItems.get(e.source) || 0) + 0.2);
           });
       });
     });
 
     const results: Array<{ item: KnowledgeNode; score: number }> = [];
-    compatibleItems.forEach((score, itemId) => {
-      const node = this.graph.nodes.get(itemId);
-      if (node && itemId !== nodePrefix) {
-        results.push({ item: node, score: Math.min(score, 1) });
-      }
+    compatibleItems.forEach((score, id) => {
+      const node = this.graph.nodes.get(id);
+      if (node && id !== nodePrefix) results.push({ item: node, score: Math.min(score, 1) });
     });
-
     return results.sort((a, b) => b.score - a.score).slice(0, 20);
   }
 
   getItemsForOccasion(occasion: string): KnowledgeNode[] {
     const occasionNode = `occasion_${occasion}`;
     const items: KnowledgeNode[] = [];
-
     this.graph.edges
       .filter((e) => e.target === occasionNode && e.relation === "suitable_for")
       .forEach((e) => {
         const node = this.graph.nodes.get(e.source);
-        if (node?.type === "item") {
-          items.push(node);
-        }
+        if (node?.type === "item") items.push(node);
       });
-
     return items;
   }
 
@@ -466,11 +536,9 @@ export class KnowledgeGraphService {
     typeDistribution: Record<string, number>;
   } {
     const typeDistribution: Record<string, number> = {};
-
     this.graph.nodes.forEach((node) => {
       typeDistribution[node.type] = (typeDistribution[node.type] || 0) + 1;
     });
-
     return {
       nodeCount: this.graph.nodes.size,
       edgeCount: this.graph.edges.length,

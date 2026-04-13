@@ -6,6 +6,8 @@ import { PrismaService } from "../../common/prisma/prisma.service";
 import { StyleQuizService } from "./style-quiz.service";
 import { ColorDeriverService } from "./services/color-deriver";
 import { StyleKeywordExtractorService } from "./services/style-keyword-extractor";
+import { ColorDerivationEngine } from "./services/color-derivation.service";
+import { ProfileEventEmitter } from "../profile/services/profile-event-emitter.service";
 
 jest.mock("./services/question-selector", () => ({
   QuestionSelectorService: class QuestionSelectorService {
@@ -42,7 +44,19 @@ describe("StyleQuizService", () => {
     }),
   };
 
-  const mockPrismaService: Record<string, unknown> = {
+  const mockColorDerivationEngine = {
+    deriveColorPreferences: jest.fn().mockReturnValue({
+      colorPalette: [],
+    }),
+  };
+
+  const mockProfileEventEmitter = {
+    emitQuizResultSaved: jest.fn().mockResolvedValue(undefined),
+    emitProfileUpdated: jest.fn().mockResolvedValue(undefined),
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mockPrismaService: any = {
     user: {
       findUnique: jest.fn(),
     },
@@ -69,6 +83,9 @@ describe("StyleQuizService", () => {
       updateMany: jest.fn(),
       count: jest.fn(),
     },
+    userProfile: {
+      upsert: jest.fn(),
+    },
     $transaction: jest.fn((fn: (prisma: typeof mockPrismaService) => Promise<unknown>) => fn(mockPrismaService)),
   };
 
@@ -93,6 +110,14 @@ describe("StyleQuizService", () => {
         {
           provide: StyleKeywordExtractorService,
           useValue: mockStyleKeywordExtractorService,
+        },
+        {
+          provide: ColorDerivationEngine,
+          useValue: mockColorDerivationEngine,
+        },
+        {
+          provide: ProfileEventEmitter,
+          useValue: mockProfileEventEmitter,
         },
       ],
     }).compile();

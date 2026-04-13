@@ -11,10 +11,14 @@ import { ProfileService, BodyAnalysisResult, ColorAnalysisResult } from "../prof
 import { getTemplateByColorSeason, PosterTemplate, ColorSeasonConfig } from "../templates";
 
 const COLOR_SEASON_DISPLAY_NAMES: Record<ColorSeason, string> = {
-  [ColorSeason.spring]: "春季型",
-  [ColorSeason.summer]: "夏季型",
-  [ColorSeason.autumn]: "秋季型",
-  [ColorSeason.winter]: "冬季型",
+  [ColorSeason.spring_warm]: "春季暖型",
+  [ColorSeason.spring_light]: "春季清型",
+  [ColorSeason.summer_cool]: "夏季冷型",
+  [ColorSeason.summer_light]: "夏季清型",
+  [ColorSeason.autumn_warm]: "秋季暖型",
+  [ColorSeason.autumn_deep]: "秋季深型",
+  [ColorSeason.winter_cool]: "冬季冷型",
+  [ColorSeason.winter_deep]: "冬季深型",
 };
 
 const QR_CODE_CONTENT = "https://xuno.app/download";

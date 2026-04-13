@@ -12,7 +12,7 @@ import { RedisService } from "../../common/redis/redis.service";
 import * as bcrypt from "../../common/security/bcrypt";
 
 import { AuthService } from "./auth.service";
-import { ISmsService } from "./services/sms.service";
+import { ISmsService, SmsService } from "./services/sms.service";
 import { WechatService } from "./services/wechat.service";
 import { AuthHelpersService } from "./auth.helpers";
 import { StructuredLoggerService } from "../../common/logging/structured-logger.service";
@@ -25,6 +25,10 @@ jest.mock("../../common/security/bcrypt", () => ({
 
 const mockSmsService = {
   sendCode: jest.fn(),
+};
+
+const mockSmsVerificationService = {
+  verifyCode: jest.fn(),
 };
 
 const mockWechatService = {
@@ -139,6 +143,10 @@ describe("AuthService", () => {
         {
           provide: "ISmsService",
           useValue: mockSmsService,
+        },
+        {
+          provide: SmsService,
+          useValue: mockSmsVerificationService,
         },
         {
           provide: WechatService,

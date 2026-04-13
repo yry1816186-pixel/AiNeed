@@ -9,6 +9,7 @@ import {
 } from "@prisma/client";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
+import { ProfileEventEmitter } from "./services/profile-event-emitter.service";
 
 import { ProfileService } from "./profile.service";
 
@@ -29,6 +30,11 @@ describe("ProfileService", () => {
     },
   };
 
+  const mockProfileEventEmitter = {
+    emitProfileUpdated: jest.fn().mockResolvedValue(undefined),
+    emitQuizResultSaved: jest.fn().mockResolvedValue(undefined),
+  };
+
   const mockUser = {
     id: "test-user-id",
     email: "test@example.com",
@@ -42,7 +48,7 @@ describe("ProfileService", () => {
       bodyType: BodyType.hourglass,
       skinTone: SkinTone.medium,
       faceShape: FaceShape.oval,
-      colorSeason: ColorSeason.summer,
+      colorSeason: ColorSeason.summer_cool,
       height: 165,
       weight: 55,
       shoulder: 38,
@@ -60,7 +66,7 @@ describe("ProfileService", () => {
     bodyType: BodyType.hourglass,
     skinTone: SkinTone.medium,
     faceShape: FaceShape.oval,
-    colorSeason: ColorSeason.summer,
+    colorSeason: ColorSeason.summer_cool,
     height: 165,
     weight: 55,
     shoulder: 38,
@@ -79,6 +85,10 @@ describe("ProfileService", () => {
         {
           provide: PrismaService,
           useValue: mockPrismaService,
+        },
+        {
+          provide: ProfileEventEmitter,
+          useValue: mockProfileEventEmitter,
         },
       ],
     }).compile();
@@ -249,47 +259,47 @@ describe("ProfileService", () => {
 
       const result = await service.getColorAnalysis("test-user-id");
 
-      expect(result.colorSeason).toBe(ColorSeason.summer);
-      expect(result.colorSeasonName).toBe("夏季型");
+      expect(result.colorSeason).toBe(ColorSeason.summer_cool);
+      expect(result.colorSeasonName).toBe("冷夏型");
       expect(result.bestColors).toBeInstanceOf(Array);
       expect(result.neutralColors).toBeInstanceOf(Array);
       expect(result.avoidColors).toBeInstanceOf(Array);
     });
 
-    it("应该返回春季型分析", async () => {
+    it("应该返回暖春型分析", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue({
         ...mockProfile,
-        colorSeason: ColorSeason.spring,
+        colorSeason: ColorSeason.spring_warm,
       });
 
       const result = await service.getColorAnalysis("test-user-id");
 
-      expect(result.colorSeason).toBe(ColorSeason.spring);
-      expect(result.colorSeasonName).toBe("春季型");
+      expect(result.colorSeason).toBe(ColorSeason.spring_warm);
+      expect(result.colorSeasonName).toBe("暖春型");
     });
 
-    it("应该返回秋季型分析", async () => {
+    it("应该返回暖秋型分析", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue({
         ...mockProfile,
-        colorSeason: ColorSeason.autumn,
+        colorSeason: ColorSeason.autumn_warm,
       });
 
       const result = await service.getColorAnalysis("test-user-id");
 
-      expect(result.colorSeason).toBe(ColorSeason.autumn);
-      expect(result.colorSeasonName).toBe("秋季型");
+      expect(result.colorSeason).toBe(ColorSeason.autumn_warm);
+      expect(result.colorSeasonName).toBe("暖秋型");
     });
 
-    it("应该返回冬季型分析", async () => {
+    it("应该返回冷冬型分析", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue({
         ...mockProfile,
-        colorSeason: ColorSeason.winter,
+        colorSeason: ColorSeason.winter_cool,
       });
 
       const result = await service.getColorAnalysis("test-user-id");
 
-      expect(result.colorSeason).toBe(ColorSeason.winter);
-      expect(result.colorSeasonName).toBe("冬季型");
+      expect(result.colorSeason).toBe(ColorSeason.winter_cool);
+      expect(result.colorSeasonName).toBe("冷冬型");
     });
 
     it("应该返回空结果当没有 profile 时", async () => {

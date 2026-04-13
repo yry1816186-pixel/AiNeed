@@ -277,7 +277,11 @@ export class StyleQuizService {
         .map((a) => a.selectedOption as string);
 
       if (selectedOptions.length > 0) {
-        const colorResult = this.colorDerivation.deriveColorPreferences(selectedOptions);
+        // Map selected option strings into the shape expected by ColorDerivationEngine
+        const colorInput = selectedOptions.map((option) => ({
+          colorTags: [{ hex: option, category: "derived", weight: 1.0 }],
+        }));
+        const colorResult = this.colorDerivation.deriveColorPreferences(colorInput);
         if (colorResult.colorPalette.length > 0) {
           this.logger.log(`Derived ${colorResult.colorPalette.length} colors for user ${userId} from quiz ${dto.quizId}`);
 

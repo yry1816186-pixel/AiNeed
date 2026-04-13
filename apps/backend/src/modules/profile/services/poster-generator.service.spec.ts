@@ -64,7 +64,7 @@ describe("PosterGeneratorService", () => {
       email: "test@example.com",
       profile: {
         bodyType: "hourglass",
-        colorSeason: "spring",
+        colorSeason: "spring_warm",
         stylePreferences: ["casual", "elegant"],
       },
     }),
@@ -79,8 +79,8 @@ describe("PosterGeneratorService", () => {
       avoidStyles: ["过于宽松的款式"],
     }),
     getColorAnalysis: jest.fn().mockResolvedValue({
-      colorSeason: "spring",
-      colorSeasonName: "春季型",
+      colorSeason: "spring_warm",
+      colorSeasonName: "春季暖型",
       bestColors: ["珊瑚色", "桃色", "杏色"],
       neutralColors: ["暖米色", "驼色"],
       avoidColors: ["纯黑色"],

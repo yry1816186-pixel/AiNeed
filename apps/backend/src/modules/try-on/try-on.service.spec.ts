@@ -45,16 +45,27 @@ describe("TryOnService", () => {
     getAvailableProviders: jest.fn().mockReturnValue(["kolors", "mock"]),
   };
 
+  const mockPipeline = {
+    incr: jest.fn().mockReturnThis(),
+    expire: jest.fn().mockReturnThis(),
+    exec: jest.fn().mockResolvedValue([
+      [null, 1],
+      [null, 1],
+    ]),
+  };
+
   const mockRedis = {
     publish: jest.fn(),
     get: jest.fn().mockResolvedValue(null),
     set: jest.fn().mockResolvedValue("OK"),
     del: jest.fn().mockResolvedValue(1),
+    pipeline: jest.fn().mockReturnValue(mockPipeline),
   };
 
   const mockStorageService = {
     fetchRemoteAsset: jest.fn(),
     fetchRemoteAssetDataUri: jest.fn(),
+    delete: jest.fn().mockResolvedValue(undefined),
   };
 
   const mockQueueService = {

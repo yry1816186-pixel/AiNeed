@@ -15,22 +15,42 @@ export interface ColorSeasonConfig {
 }
 
 const seasonConfigs: Record<ColorSeason, ColorSeasonConfig> = {
-  [ColorSeason.spring]: {
+  [ColorSeason.spring_warm]: {
     template: springTemplate,
     colorHexes: springColorHexes,
     colorNames: springColorNames,
   },
-  [ColorSeason.summer]: {
+  [ColorSeason.spring_light]: {
+    template: springTemplate,
+    colorHexes: springColorHexes,
+    colorNames: springColorNames,
+  },
+  [ColorSeason.summer_cool]: {
     template: summerTemplate,
     colorHexes: summerColorHexes,
     colorNames: summerColorNames,
   },
-  [ColorSeason.autumn]: {
+  [ColorSeason.summer_light]: {
+    template: summerTemplate,
+    colorHexes: summerColorHexes,
+    colorNames: summerColorNames,
+  },
+  [ColorSeason.autumn_warm]: {
     template: autumnTemplate,
     colorHexes: autumnColorHexes,
     colorNames: autumnColorNames,
   },
-  [ColorSeason.winter]: {
+  [ColorSeason.autumn_deep]: {
+    template: autumnTemplate,
+    colorHexes: autumnColorHexes,
+    colorNames: autumnColorNames,
+  },
+  [ColorSeason.winter_cool]: {
+    template: winterTemplate,
+    colorHexes: winterColorHexes,
+    colorNames: winterColorNames,
+  },
+  [ColorSeason.winter_deep]: {
     template: winterTemplate,
     colorHexes: winterColorHexes,
     colorNames: winterColorNames,
