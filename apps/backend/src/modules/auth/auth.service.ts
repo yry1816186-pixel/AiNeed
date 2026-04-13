@@ -1,7 +1,8 @@
-import { randomUUID, createHash } from "crypto";
+import { randomUUID, createHash, timingSafeEqual } from "crypto";
 
 import {
   Injectable,
+  Inject,
   UnauthorizedException,
   ConflictException,
   Logger,
@@ -15,8 +16,11 @@ import { RedisService } from "../../common/redis/redis.service";
 import { StructuredLoggerService, ContextualLogger } from "../../common/logging/structured-logger.service";
 import * as bcrypt from "../../common/security/bcrypt";
 
-import { RegisterDto, LoginDto, AuthResponseDto } from "./dto/auth.dto";
+import { RegisterDto, LoginDto, AuthResponseDto, PhoneRegisterDto } from "./dto/auth.dto";
 import { AuthHelpersService } from "./auth.helpers";
+import { SmsService } from "./services/sms.service";
+import { ISmsService } from "./services/sms.service";
+import { WechatService } from "./services/wechat.service";
 
 /**
  * JWT payload interface for access and refresh tokens.
@@ -40,6 +44,9 @@ export class AuthService {
     private configService: ConfigService,
     private redisService: RedisService,
     private authHelpersService: AuthHelpersService,
+    @Inject("ISmsService") private smsService: ISmsService,
+    private readonly smsVerificationService: SmsService,
+    private wechatService: WechatService,
     loggingService: StructuredLoggerService,
   ) {
     this.logger = loggingService.createChildLogger(AuthService.name);
@@ -64,7 +71,6 @@ export class AuthService {
         createdAt: user.createdAt,
       },
       accessToken: tokens.accessToken,
-      token: tokens.accessToken,
       refreshToken: tokens.refreshToken,
     };
   }
@@ -292,7 +298,7 @@ export class AuthService {
 
     const resetUrl = `${this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000')}/reset-password?token=${resetToken}`;
 
-    this.logger.log("密码重置邮件已发送", { email, resetUrl });
+    this.logger.log("密码重置邮件已发送", { email });
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
@@ -320,5 +326,201 @@ export class AuthService {
     });
 
     this.logger.log("密码重置成功", { userId });
+  }
+
+  async sendSmsCode(phone: string): Promise<void> {
+    const throttleKey = `sms:throttle:${phone}`;
+    const isThrottled = await this.redisService.exists(throttleKey);
+    if (isThrottled) {
+      throw new BadRequestException("发送过于频繁，请60秒后再试");
+    }
+
+    const code = String(Math.floor(100000 + Math.random() * 900000));
+    const codeKey = `sms:code:${phone}`;
+
+    await this.redisService.setWithTtl(codeKey, code, 300000);
+    await this.redisService.setWithTtl(throttleKey, "1", 60000);
+
+    await this.smsService.sendCode(phone, code);
+
+    this.logger.log("短信验证码已发送", { phone });
+  }
+
+  async verifySmsCode(phone: string, code: string): Promise<boolean> {
+    const attemptsKey = `sms:attempts:${phone}`;
+    const attempts = parseInt(await this.redisService.get(attemptsKey) || "0", 10);
+    if (attempts >= 5) {
+      throw new BadRequestException("验证码尝试次数过多，请重新获取");
+    }
+
+    const codeKey = `sms:code:${phone}`;
+    const storedCode = await this.redisService.get(codeKey);
+
+    if (!storedCode) {
+      return false;
+    }
+
+    const a = Buffer.from(storedCode, "utf-8");
+    const b = Buffer.from(code, "utf-8");
+    const isMatch = a.length === b.length && timingSafeEqual(a, b);
+
+    if (!isMatch) {
+      await this.redisService.setWithTtl(attemptsKey, String(attempts + 1), 300000);
+      return false;
+    }
+
+    await this.redisService.del(codeKey);
+    await this.redisService.del(attemptsKey);
+    return true;
+  }
+
+  async loginWithPhone(phone: string, code: string): Promise<AuthResponseDto> {
+    this.logger.log("手机号验证码登录请求", { phone });
+
+    const isValid = await this.verifySmsCode(phone, code);
+    if (!isValid) {
+      this.logger.warn("手机号登录失败：验证码无效", { phone });
+      throw new UnauthorizedException("验证码无效或已过期");
+    }
+
+    let user = await this.prisma.user.findUnique({
+      where: { phone },
+    });
+
+    if (!user) {
+      const [createdUser] = await this.prisma.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+          data: {
+            email: `${phone}@sms.placeholder`,
+            emailHash: createHash("sha256").update(`${phone}@sms.placeholder`.toLowerCase().trim()).digest("hex"),
+            password: await bcrypt.hash(randomUUID(), 10),
+            phone,
+            nickname: `用户${phone.slice(-4)}`,
+          },
+        });
+
+        await tx.userProfile.create({
+          data: { userId: newUser.id },
+        });
+
+        return [newUser];
+      });
+      user = createdUser;
+      this.logger.log("手机号新用户自动注册", { userId: user.id, phone });
+    }
+
+    const tokens = await this.generateTokens(user.id, user.email);
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
+
+    this.logger.log("手机号登录成功", { userId: user.id, phone });
+
+    return this.buildAuthResponse(user, tokens);
+  }
+
+  async loginWithWechat(code: string): Promise<AuthResponseDto> {
+    this.logger.log("微信登录请求");
+
+    const tokenResponse = await this.wechatService.getAccessToken(code);
+    const { openid, unionid } = tokenResponse;
+
+    let user = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { wechatOpenId: openid } as any,
+          ...(unionid ? [{ wechatUnionId: unionid } as any] : []),
+        ],
+      },
+    });
+
+    if (!user) {
+      const wechatUserInfo = await this.wechatService.getUserInfo(
+        tokenResponse.access_token,
+        openid,
+      );
+
+      const [createdUser] = await this.prisma.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+          data: {
+            email: `wechat_${openid}@placeholder`,
+            emailHash: createHash("sha256").update(`wechat_${openid}@placeholder`.toLowerCase().trim()).digest("hex"),
+            password: await bcrypt.hash(randomUUID(), 10),
+            wechatOpenId: openid,
+            ...(unionid ? { wechatUnionId: unionid } : {}),
+            nickname: wechatUserInfo.nickname ?? `微信用户${openid.slice(-4)}`,
+            avatar: wechatUserInfo.headimgurl ?? null,
+          } as any,
+        });
+
+        await tx.userProfile.create({
+          data: { userId: newUser.id },
+        });
+
+        return [newUser];
+      });
+      user = createdUser;
+      this.logger.log("微信新用户自动注册", { userId: user.id, openid });
+    }
+
+    const tokens = await this.generateTokens(user.id, user.email);
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
+
+    this.logger.log("微信登录成功", { userId: user.id, openid });
+
+    return this.buildAuthResponse(user, tokens);
+  }
+
+  /**
+   * Register a new user with phone number and SMS verification code.
+   * Gender is mandatory (enforced by PhoneRegisterDto @IsNotEmpty).
+   * Uses SmsService.verifyCode for timing-safe verification from Plan 02.
+   */
+  async registerWithPhone(dto: PhoneRegisterDto): Promise<AuthResponseDto> {
+    this.logger.log("手机号注册请求", { phone: dto.phone });
+
+    const isValid = await this.smsVerificationService.verifyCode(dto.phone, dto.code);
+    if (!isValid) {
+      this.logger.warn("手机号注册失败：验证码无效", { phone: dto.phone });
+      throw new UnauthorizedException("验证码无效或已过期");
+    }
+
+    const existingUser = await this.prisma.user.findUnique({
+      where: { phone: dto.phone },
+    });
+
+    if (existingUser) {
+      this.logger.warn("手机号注册失败：手机号已存在", { phone: dto.phone });
+      throw new ConflictException("该手机号已注册");
+    }
+
+    const [user] = await this.prisma.$transaction(async (tx) => {
+      const placeholderEmail = `${dto.phone}@sms.placeholder`;
+      const createdUser = await tx.user.create({
+        data: {
+          email: placeholderEmail,
+          emailHash: createHash("sha256").update(placeholderEmail.toLowerCase().trim()).digest("hex"),
+          password: await bcrypt.hash(randomUUID(), 10),
+          phone: dto.phone,
+          nickname: dto.nickname ?? `用户${dto.phone.slice(-4)}`,
+          gender: dto.gender as any,
+          ...(dto.birthDate ? { birthDate: new Date(dto.birthDate) } : {}),
+        },
+      });
+
+      await tx.userProfile.create({
+        data: {
+          userId: createdUser.id,
+          ...(dto.gender ? { gender: dto.gender as any } : {}),
+        },
+      });
+
+      return [createdUser];
+    });
+
+    const tokens = await this.generateTokens(user.id, user.email);
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
+
+    this.logger.log("手机号注册成功", { userId: user.id, phone: dto.phone });
+
+    return this.buildAuthResponse(user, tokens);
   }
 }

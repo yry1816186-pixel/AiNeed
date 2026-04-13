@@ -23,8 +23,15 @@ import {
   RefreshTokenDto,
   ForgotPasswordDto,
   ResetPasswordDto,
+  WechatLoginDto,
+  PhoneLoginDto,
+  PhoneRegisterDto,
+  SendSmsCodeDto,
+  SmsLoginDto,
 } from "./dto";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
+import { SmsThrottleGuard } from "./guards/sms-throttle.guard";
+import { Public } from "./decorators/public.decorator";
 
 interface RequestWithUser {
   user: {
@@ -124,6 +131,31 @@ export class AuthController {
   })
   async login(@Body() dto: LoginDto): Promise<AuthResponseDto> {
     return this.authService.login(dto);
+  }
+
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Post("wechat/login")
+  @ApiOperation({
+    summary: "微信一键登录",
+    description: "使用微信 OAuth2.0 授权码登录，未注册用户将自动注册。",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "登录成功",
+    type: AuthResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "微信授权失败",
+  })
+  @ApiResponse({
+    status: 429,
+    description: "请求过于频繁",
+  })
+  async loginWithWechat(
+    @Body() dto: WechatLoginDto,
+  ): Promise<AuthResponseDto> {
+    return this.authService.loginWithWechat(dto.code);
   }
 
   @Throttle({ default: { limit: 10, ttl: 60000 } }) // 10 requests per minute for refresh
@@ -262,5 +294,126 @@ export class AuthController {
   ): Promise<{ success: boolean }> {
     await this.authService.resetPassword(dto.token, dto.newPassword);
     return { success: true };
+  }
+
+  @UseGuards(SmsThrottleGuard)
+  @Throttle({ default: { limit: 1, ttl: 60000 } })
+  @Post("sms/send")
+  @ApiOperation({
+    summary: "发送短信验证码",
+    description: "向指定手机号发送6位数字验证码，同一手机号60秒内只能发送一次。",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "验证码已发送",
+    type: SuccessResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: "手机号格式错误或发送过于频繁",
+  })
+  @ApiResponse({
+    status: 429,
+    description: "请求过于频繁",
+  })
+  async sendSmsCode(
+    @Body() dto: SendSmsCodeDto,
+  ): Promise<{ success: boolean; message: string }> {
+    await this.authService.sendSmsCode(dto.phone);
+    return { success: true, message: "验证码已发送" };
+  }
+
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Post("sms/login")
+  @ApiOperation({
+    summary: "手机号验证码登录",
+    description: "使用手机号和短信验证码登录，未注册手机号将自动注册。",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "登录成功",
+    type: AuthResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: "验证码无效或已过期",
+  })
+  @ApiResponse({
+    status: 429,
+    description: "请求过于频繁",
+  })
+  async loginWithPhone(
+    @Body() dto: SmsLoginDto,
+  ): Promise<AuthResponseDto> {
+    return this.authService.loginWithPhone(dto.phone, dto.code);
+  }
+
+  // ========== Plan 03: New phone/WeChat endpoints with @Public() decorator ==========
+
+  @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Post("phone-login")
+  @ApiOperation({
+    summary: "手机号验证码登录 (Plan 03)",
+    description: "使用手机号和短信验证码登录。未注册手机号将自动注册。",
+  })
+  @ApiResponse({ status: 200, description: "登录成功", type: AuthResponseDto })
+  @ApiResponse({ status: 401, description: "验证码无效或已过期" })
+  @ApiResponse({ status: 429, description: "请求过于频繁" })
+  async phoneLogin(
+    @Body() dto: PhoneLoginDto,
+  ): Promise<AuthResponseDto> {
+    return this.authService.loginWithPhone(dto.phone, dto.code);
+  }
+
+  @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Post("phone-register")
+  @ApiOperation({
+    summary: "手机号注册 (Plan 03)",
+    description: "使用手机号和短信验证码注册新用户。性别为必填字段。",
+  })
+  @ApiResponse({ status: 201, description: "注册成功", type: AuthResponseDto })
+  @ApiResponse({ status: 400, description: "参数错误" })
+  @ApiResponse({ status: 401, description: "验证码无效或已过期" })
+  @ApiResponse({ status: 409, description: "手机号已注册" })
+  @ApiResponse({ status: 429, description: "请求过于频繁" })
+  async phoneRegister(
+    @Body() dto: PhoneRegisterDto,
+  ): Promise<AuthResponseDto> {
+    return this.authService.registerWithPhone(dto);
+  }
+
+  @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Post("wechat")
+  @ApiOperation({
+    summary: "微信一键登录 (Plan 03)",
+    description: "使用微信 OAuth2.0 授权码登录。未注册用户将自动注册。",
+  })
+  @ApiResponse({ status: 200, description: "登录成功", type: AuthResponseDto })
+  @ApiResponse({ status: 401, description: "微信授权失败" })
+  @ApiResponse({ status: 429, description: "请求过于频繁" })
+  async wechatLogin(
+    @Body() dto: WechatLoginDto,
+  ): Promise<AuthResponseDto> {
+    return this.authService.loginWithWechat(dto.code);
+  }
+
+  @Public()
+  @Throttle({ default: { limit: 1, ttl: 60000 } })
+  @Post("send-code")
+  @ApiOperation({
+    summary: "发送短信验证码 (Plan 03)",
+    description: "向指定手机号发送6位数字验证码，同一手机号60秒内只能发送一次。",
+  })
+  @ApiResponse({ status: 200, description: "验证码已发送" })
+  @ApiResponse({ status: 400, description: "手机号格式错误或发送过于频繁" })
+  @ApiResponse({ status: 429, description: "请求过于频繁" })
+  async sendCode(
+    @Body() dto: SendSmsCodeDto,
+  ): Promise<{ success: boolean; message: string }> {
+    await this.authService.sendSmsCode(dto.phone);
+    return { success: true, message: "验证码已发送" };
   }
 }
