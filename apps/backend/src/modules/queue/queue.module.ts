@@ -100,6 +100,7 @@ const logger = new Logger('QueueModule');
     StyleAnalysisProcessor,
     VirtualTryOnProcessor,
     WardrobeMatchProcessor,
+    ContentModerationProcessor,
   ],
   exports: [QueueService, QueueMonitorService],
 })
