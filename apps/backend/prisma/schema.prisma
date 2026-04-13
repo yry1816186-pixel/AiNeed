@@ -12,6 +12,9 @@ model User {
   email     String   @unique
   emailHash String?  @unique
   phone     String?  @unique // @encrypted: PII - encrypt in Service layer before storage
+  wechatOpenId String? @unique
+  wechatUnionId String? @unique
+  authProvider AuthProvider @default(email)
   password  String // @encrypted: Hash with bcrypt, never store plain text
   nickname  String?
   avatar    String?
@@ -63,6 +66,17 @@ model User {
   followers     UserFollow[]  @relation("UserFollowers")
   following     UserFollow[]  @relation("UserFollowing")
   refreshTokens RefreshToken[]
+  wardrobeCollections WardrobeCollection[]
+  quizAnswers   QuizAnswer[]
+  quizResults   StyleQuizResult[]
+
+  // Phase 8: 顾问系统关联
+  consultantProfile ConsultantProfile?
+  serviceBookings   ServiceBooking[]
+  chatRooms         ChatRoom[]
+
+  consents             UserConsent[]
+  notificationSetting  UserNotificationSetting?
 
   @@index([email])
   @@index([phone])
@@ -74,6 +88,12 @@ enum Gender {
   male
   female
   other
+}
+
+enum AuthProvider {
+  email
+  phone
+  wechat
 }
 
 model UserProfile {
@@ -99,6 +119,10 @@ model UserProfile {
 
   priceRangeMin  Float?
   priceRangeMax  Float?
+
+  onboardingStep        OnboardingStep @default(BASIC_INFO)
+  onboardingCompletedAt DateTime?
+  skippedOnboardingSteps String[] @default([])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -175,6 +199,13 @@ model StyleProfile {
   @@index([userId, isActive])
 }
 
+enum OnboardingStep {
+  BASIC_INFO
+  PHOTO
+  STYLE_TEST
+  COMPLETED
+}
+
 enum BodyType {
   rectangle
   triangle
@@ -202,10 +233,14 @@ enum FaceShape {
 }
 
 enum ColorSeason {
-  spring
-  summer
-  autumn
-  winter
+  spring_warm
+  spring_light
+  summer_cool
+  summer_light
+  autumn_warm
+  autumn_deep
+  winter_cool
+  winter_deep
 }
 
 model UserPhoto {
@@ -838,6 +873,8 @@ model UserNotificationSetting {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // ==================== 数据合规 ====================
@@ -859,6 +896,8 @@ model UserConsent {
 
   @@unique([userId, consentType])
   @@index([userId])
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model DataExportRequest {
@@ -1459,5 +1498,344 @@ model AuditLog {
   @@index([entityType, createdAt(sort: Desc)])
   @@index([action, createdAt(sort: Desc)])
   @@index([action, entityType, createdAt(sort: Desc)])
+}
+
+// ==================== 风格测试问卷系统 ====================
+
+enum QuizQuestionType {
+  visual_choice
+  text_choice
+  slider
+}
+
+model StyleQuiz {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  coverImage  String?
+
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  questions   QuizQuestion[]
+  results     StyleQuizResult[]
+
+  @@index([isActive])
+  @@index([createdAt(sort: Desc)])
+}
+
+model QuizQuestion {
+  id           String          @id @default(uuid())
+  quizId       String
+  quiz         StyleQuiz       @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  content      String
+  imageUrls    String[]
+  questionType QuizQuestionType
+  dimension    String
+  sortOrder    Int
+  isActive     Boolean         @default(true)
+
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  answers      QuizAnswer[]
+
+  @@index([quizId])
+  @@index([dimension])
+  @@index([quizId, sortOrder])
+}
+
+model QuizAnswer {
+  id                 String       @id @default(uuid())
+  userId             String
+  questionId         String
+
+  selectedImageIndex Int?
+  selectedOption     String?
+  sliderValue        Float?
+  responseTimeMs     Int?
+
+  createdAt          DateTime     @default(now())
+
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question           QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([questionId])
+  @@index([userId, questionId])
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+model StyleQuizResult {
+  id                 String     @id @default(uuid())
+  userId             String
+  quizId             String
+
+  occasionPreferences Json
+  colorPreferences    Json
+  styleKeywords       String[]
+  priceRange          PriceRange @default(mid_range)
+  confidenceScore     Decimal    @db.Decimal(5, 4)
+  isLatest            Boolean    @default(false)
+
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz                StyleQuiz  @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([quizId])
+  @@index([userId, isLatest])
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+// ==================== 分享海报模板 ====================
+
+model ShareTemplate {
+  id              String   @id @default(uuid())
+  name            String
+  description     String?
+  backgroundImageUrl String
+  layoutConfig    Json
+  isActive        Boolean  @default(true)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+// ==================== 顾问系统 ====================
+
+enum ConsultantStatus {
+  pending
+  active
+  suspended
+  inactive
+}
+
+model ConsultantProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  studioName         String
+  specialties        Json
+  yearsOfExperience  Int
+  certifications     Json
+  portfolioCases     Json
+  rating             Decimal  @db.Decimal(2, 1) @default(0)
+  reviewCount        Int      @default(0)
+  bio                String?  @db.Text
+  avatar             String?
+  status             ConsultantStatus @default(pending)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings   ServiceBooking[]
+  chatRooms  ChatRoom[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([status, rating])
+  @@index([rating(sort: Desc)])
+}
+
+enum ServiceType {
+  styling_consultation
+  wardrobe_audit
+  shopping_companion
+  color_analysis
+  special_event
+}
+
+enum BookingStatus {
+  pending
+  confirmed
+  in_progress
+  completed
+  cancelled
+  no_show
+}
+
+model ServiceBooking {
+  id            String   @id @default(uuid())
+  userId        String
+  consultantId  String
+
+  serviceType       ServiceType
+  scheduledAt       DateTime
+  durationMinutes   Int      @default(60)
+  status            BookingStatus @default(pending)
+  notes             String?  @db.Text
+  cancelReason      String?
+  price             Decimal  @db.Decimal(10, 2)
+  currency          String   @default("CNY")
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consultant ConsultantProfile @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([consultantId])
+  @@index([status])
+  @@index([scheduledAt])
+  @@index([userId, status])
+  @@index([consultantId, status])
+  @@index([consultantId, scheduledAt])
+  @@index([userId, createdAt])
+}
+
+enum SenderType {
+  user
+  consultant
+}
+
+enum MessageType {
+  text
+  image
+  file
+  system
+}
+
+model ChatRoom {
+  id                String   @id @default(uuid())
+  userId            String
+  consultantId      String
+
+  lastMessageAt     DateTime?
+  lastMessagePreview String?
+  isActive          Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consultant ConsultantProfile @relation(fields: [consultantId], references: [id], onDelete: Cascade)
+  messages   ChatMessage[]
+
+  @@index([consultantId])
+  @@index([userId, consultantId])
+  @@index([lastMessageAt])
+  @@index([userId, isActive])
+  @@index([consultantId, isActive])
+}
+
+model ChatMessage {
+  id          String   @id @default(uuid())
+  roomId      String
+  senderId    String
+  senderType  SenderType
+  content     String   @db.Text
+  messageType MessageType @default(text)
+  imageUrl    String?
+  fileUrl     String?
+  isRead      Boolean  @default(false)
+  readAt      DateTime?
+
+  createdAt   DateTime @default(now())
+
+  room        ChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([roomId, createdAt])
+  @@index([senderId])
+  @@index([roomId, isRead])
+  @@index([senderId, isRead])
+}
+
+// ==================== 灵感衣橱分类系统 ====================
+
+enum CollectionItemType {
+  post
+  outfit
+  try_on
+}
+
+model WardrobeCollection {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String
+  icon        String?
+  coverImage  String?
+  sortOrder   Int      @default(0)
+  isDefault   Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items       WardrobeCollectionItem[]
+
+  @@index([userId])
+  @@index([userId, sortOrder])
+  @@index([userId, isDefault])
+}
+
+model WardrobeCollectionItem {
+  id           String             @id @default(uuid())
+  collectionId String
+  collection   WardrobeCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  userId       String
+  itemType     CollectionItemType
+  itemId       String
+  sortOrder    Int                @default(0)
+
+  createdAt    DateTime           @default(now())
+
+  @@unique([collectionId, itemType, itemId])
+  @@index([collectionId])
+  @@index([collectionId, sortOrder])
+  @@index([itemType, itemId])
+  @@index([userId])
+}
+
+// ==================== Feature Flag 系统 ====================
+
+model FeatureFlag {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  name        String
+  description String?
+  type        String   @default("boolean")
+  value       Json     @default("{}")
+  enabled     Boolean  @default(true)
+  rules       Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  evaluations FeatureFlagEvaluation[]
+
+  @@index([key])
+  @@index([enabled])
+  @@index([type])
+  @@map("feature_flags")
+}
+
+model FeatureFlagEvaluation {
+  id        String    @id @default(uuid())
+  flagId    String
+  flag      FeatureFlag @relation(fields: [flagId], references: [id], onDelete: Cascade)
+  userId    String?
+  variant   String?
+  result    Boolean   @default(false)
+  attributes Json?
+  evaluatedAt DateTime @default(now())
+
+  @@index([flagId])
+  @@index([userId])
+  @@index([evaluatedAt])
+  @@map("feature_flag_evaluations")
 }
 
