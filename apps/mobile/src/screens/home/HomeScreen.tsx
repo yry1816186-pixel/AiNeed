@@ -174,23 +174,26 @@ const HomeScreen: React.FC = () => {
             </TouchableOpacity>
           );
 
-        case 'recommendationPlaceholder':
+        case 'recommendationHeader':
           return (
-            <View style={styles.placeholderCard}>
-              <View style={styles.placeholderIconWrap}>
-                <Ionicons
-                  name="sparkles-outline"
-                  size={32}
-                  color={DesignTokens.colors.brand.terracotta}
-                />
-              </View>
-              <Text style={styles.placeholderTitle}>
-                个性化推荐即将上线
-              </Text>
-              <Text style={styles.placeholderSubtitle}>
-                完善你的画像，解锁 AI 专属穿搭推荐
-              </Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>为你推荐</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('RecommendationFeed' as never)}
+              >
+                <Text style={styles.sectionMore}>查看全部</Text>
+              </TouchableOpacity>
             </View>
+          );
+
+        case 'recommendationItem':
+          return (
+            <RecommendationCard
+              item={(item as { type: 'recommendationItem'; item: FeedItem }).item}
+              onPress={(feedItem) =>
+                navigation.navigate('ClothingDetail' as never, { id: feedItem.id } as never)
+              }
+            />
           );
 
         default:
@@ -217,7 +220,7 @@ const HomeScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <FlashList<HomeSection>
-        data={SECTIONS}
+        data={sections}
         renderItem={renderItem}
         estimatedItemSize={120}
         contentContainerStyle={[
@@ -225,6 +228,10 @@ const HomeScreen: React.FC = () => {
           { paddingTop: insets.top + 16 },
         ]}
         showsVerticalScrollIndicator={false}
+        onEndReached={() => {
+          if (hasMore && !isFeedLoading) loadMore();
+        }}
+        onEndReachedThreshold={0.3}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -263,34 +270,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     fontWeight: DesignTokens.typography.fontWeights.regular as TextStyle['fontWeight'],
   },
-  placeholderCard: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
-    borderRadius: 20,
-    padding: 32,
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 8,
-    ...DesignTokens.shadows.sm,
+    marginTop: 20,
+    marginBottom: 12,
   },
-  placeholderIconWrap: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  placeholderTitle: {
+  sectionTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: DesignTokens.typography.fontWeights.semibold as TextStyle['fontWeight'],
     color: DesignTokens.colors.text.primary,
-    marginBottom: 8,
   },
-  placeholderSubtitle: {
-    fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.tertiary,
-    textAlign: 'center',
-    lineHeight: DesignTokens.typography.sizes.base * DesignTokens.typography.lineHeights.normal,
+  sectionMore: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: DesignTokens.colors.brand.terracotta,
+    fontWeight: DesignTokens.typography.fontWeights.medium as TextStyle['fontWeight'],
   },
 });
 

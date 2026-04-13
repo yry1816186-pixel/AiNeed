@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { GatewayModule } from '../../common/gateway/gateway.module';
 import { AIModule } from '../ai/ai.module';
+import { CommunityModule } from '../community/community.module';
 import { TryOnModule } from '../try-on/try-on.module';
 
 import { QUEUE_NAMES } from './queue.constants';
@@ -14,6 +15,7 @@ import {
   StyleAnalysisProcessor,
   VirtualTryOnProcessor,
   WardrobeMatchProcessor,
+  ContentModerationProcessor,
 } from './queue.processor';
 import { QueueMonitorService } from './queue-monitor.service';
 import { QueueService } from './queue.service';
@@ -26,6 +28,7 @@ const logger = new Logger('QueueModule');
     // Import GatewayModule to access NotificationService
     GatewayModule,
     AIModule,
+    forwardRef(() => CommunityModule),
     forwardRef(() => TryOnModule),
     // Register BullMQ with Redis connection
     BullModule.forRootAsync({
