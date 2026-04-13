@@ -7,8 +7,10 @@ import {
   Max,
   MinLength,
   IsBoolean,
+  ValidateNested,
 } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 
 // ==================== 枚举 ====================
 
@@ -22,6 +24,7 @@ export enum MessageTypeDto {
   IMAGE = "image",
   FILE = "file",
   SYSTEM = "system",
+  PROPOSAL = "proposal",
 }
 
 // ==================== 聊天室 DTO ====================
@@ -59,6 +62,28 @@ export class ChatRoomQueryDto {
   isActive?: boolean;
 }
 
+// ==================== 方案卡片 DTO ====================
+
+export class ProposalMessageDto {
+  @ApiProperty({ description: "方案标题", example: "春季职场穿搭方案" })
+  @IsString()
+  @MinLength(1)
+  title!: string;
+
+  @ApiProperty({ description: "方案摘要", example: "基于您的暖春色彩季型，推荐3套通勤穿搭" })
+  @IsString()
+  summary!: string;
+
+  @ApiPropertyOptional({ description: "方案详情 JSON", example: { items: [], colorPalette: [] } })
+  @IsOptional()
+  details?: Record<string, unknown>;
+
+  @ApiPropertyOptional({ description: "关联的灵感衣橱收藏 ID" })
+  @IsOptional()
+  @IsString()
+  wardrobeCollectionId?: string;
+}
+
 // ==================== 聊天消息 DTO ====================
 
 export class CreateChatMessageDto {
@@ -89,6 +114,12 @@ export class CreateChatMessageDto {
   @IsOptional()
   @IsString()
   fileUrl?: string;
+
+  @ApiPropertyOptional({ description: "方案卡片数据（messageType=proposal 时必填）" })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ProposalMessageDto)
+  proposalData?: ProposalMessageDto;
 }
 
 export class MessageQueryDto {
