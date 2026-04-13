@@ -22,6 +22,7 @@ import { RequestWithUser } from "../../common/types/common.types";
 
 import { ConsultantService } from "./consultant.service";
 import { ConsultantMatchingService } from "./consultant-matching.service";
+import { ConsultantAvailabilityService } from "./consultant-availability.service";
 import {
   CreateConsultantProfileDto,
   UpdateConsultantProfileDto,
@@ -30,6 +31,8 @@ import {
   UpdateServiceBookingDto,
   BookingQueryDto,
   ConsultantMatchRequestDto,
+  BatchCreateAvailabilityDto,
+  AvailableSlotsQueryDto,
 } from "./dto";
 
 @ApiTags("consultant")
@@ -38,6 +41,7 @@ export class ConsultantController {
   constructor(
     private readonly consultantService: ConsultantService,
     private readonly consultantMatchingService: ConsultantMatchingService,
+    private readonly availabilityService: ConsultantAvailabilityService,
   ) {}
 
   // ==================== 顾问档案 ====================
@@ -112,6 +116,40 @@ export class ConsultantController {
     @Body() dto: ConsultantMatchRequestDto,
   ) {
     return this.consultantMatchingService.findMatches(req.user.id, dto);
+  }
+
+  // ==================== 顾问排期 ====================
+
+  @Get("availability")
+  @ApiOperation({ summary: "获取顾问排期", description: "获取顾问每周可用时段模板" })
+  @ApiResponse({ status: 200, description: "成功返回排期模板" })
+  async getAvailability(@Query("consultantId") consultantId: string) {
+    return this.availabilityService.getAvailability(consultantId);
+  }
+
+  @Get("available-slots")
+  @ApiOperation({ summary: "获取可用时段", description: "获取指定日期的可用时段列表" })
+  @ApiResponse({ status: 200, description: "成功返回可用时段" })
+  async getAvailableSlots(@Query() query: AvailableSlotsQueryDto) {
+    return this.availabilityService.getAvailableSlots(query);
+  }
+
+  @Post("availability")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "设置排期模板", description: "顾问设置每周可用时段模板" })
+  @ApiResponse({ status: 201, description: "设置成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async setAvailability(
+    @Request() req: RequestWithUser,
+    @Body() dto: BatchCreateAvailabilityDto,
+    @Query("consultantId") consultantId: string,
+  ) {
+    return this.availabilityService.setAvailability(
+      consultantId,
+      req.user.id,
+      dto,
+    );
   }
 
   // ==================== 服务预约 ====================
