@@ -21,6 +21,7 @@ import { AuthGuard } from "../auth/guards/auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
 
 import { ConsultantService } from "./consultant.service";
+import { ConsultantMatchingService } from "./consultant-matching.service";
 import {
   CreateConsultantProfileDto,
   UpdateConsultantProfileDto,
@@ -28,12 +29,16 @@ import {
   CreateServiceBookingDto,
   UpdateServiceBookingDto,
   BookingQueryDto,
+  ConsultantMatchRequestDto,
 } from "./dto";
 
 @ApiTags("consultant")
 @Controller("consultant")
 export class ConsultantController {
-  constructor(private readonly consultantService: ConsultantService) {}
+  constructor(
+    private readonly consultantService: ConsultantService,
+    private readonly consultantMatchingService: ConsultantMatchingService,
+  ) {}
 
   // ==================== 顾问档案 ====================
 
@@ -92,6 +97,21 @@ export class ConsultantController {
     @Body() dto: UpdateConsultantProfileDto,
   ) {
     return this.consultantService.updateProfile(req.user.id, id, dto);
+  }
+
+  // ==================== 智能匹配 ====================
+
+  @Post("match")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "智能匹配顾问", description: "根据用户需求智能匹配最合适的造型顾问" })
+  @ApiResponse({ status: 200, description: "返回匹配的顾问列表" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async matchConsultants(
+    @Request() req: RequestWithUser,
+    @Body() dto: ConsultantMatchRequestDto,
+  ) {
+    return this.consultantMatchingService.findMatches(req.user.id, dto);
   }
 
   // ==================== 服务预约 ====================
