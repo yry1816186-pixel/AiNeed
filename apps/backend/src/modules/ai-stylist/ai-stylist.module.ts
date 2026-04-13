@@ -14,6 +14,7 @@ import { AiStylistSessionService } from "./services/session.service";
 import { AiStylistChatService } from "./services/chat.service";
 import { AiStylistContextService } from "./services/context.service";
 import { AiStylistRecommendationService } from "./services/recommendation.service";
+import { ProfileEventSubscriberService } from "./services/profile-event-subscriber.service";
 import { DecisionEngineService } from "./decision-engine.service";
 import { LlmProviderService } from "./llm-provider.service";
 import { NlSlotExtractorService } from "./nl-slot-extractor.service";
@@ -28,6 +29,7 @@ import { SystemContextService } from "./system-context.service";
     AiStylistChatService,
     AiStylistContextService,
     AiStylistRecommendationService,
+    ProfileEventSubscriberService,
     AgentToolsService,
     DecisionEngineService,
     LlmProviderService,

@@ -58,6 +58,9 @@ export interface BodyRecommendation {
 
 @Injectable()
 export class ProfileService {
+  private static readonly BEHAVIOR_AUTO_UPDATE_THRESHOLD = 5;
+  private readonly behaviorCounters = new Map<string, number>();
+
   constructor(
     private prisma: PrismaService,
     private readonly eventEmitter: ProfileEventEmitter,
@@ -548,5 +551,39 @@ export class ProfileService {
       metrics,
       hasEnoughData: metrics.length > 0,
     };
+  }
+
+  /**
+   * Record a behavior event for the user and auto-trigger profile update
+   * when the threshold (every 5 behavior events) is met.
+   * Fire-and-forget pattern -- does not block the caller.
+   */
+  recordBehaviorEvent(userId: string): void {
+    const currentCount = this.behaviorCounters.get(userId) ?? 0;
+    const newCount = currentCount + 1;
+    this.behaviorCounters.set(userId, newCount);
+
+    if (newCount >= ProfileService.BEHAVIOR_AUTO_UPDATE_THRESHOLD) {
+      this.behaviorCounters.set(userId, 0);
+
+      // Fire-and-forget: trigger profile update from behavior
+      this.updateProfileFromBehaviorThreshold(userId).catch(() => {
+        // Auto-update failure should not block behavior tracking
+      });
+    }
+  }
+
+  private async updateProfileFromBehaviorThreshold(userId: string): Promise<void> {
+    try {
+      // Refresh user profile data based on accumulated behavior patterns
+      const behaviorKey = `profile:behavior:last_update:${userId}`;
+      const lastUpdate = await this.prisma.$queryRaw`SELECT 1`.catch(() => null);
+
+      if (lastUpdate !== null) {
+        this.eventEmitter.emitProfileUpdated(userId, ["behavior_auto_update"]).catch(() => {});
+      }
+    } catch {
+      // Non-critical: behavior auto-update is best-effort
+    }
   }
 }

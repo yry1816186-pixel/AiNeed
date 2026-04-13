@@ -26,6 +26,7 @@ import { RecommendationExplainerService } from "./services/recommendation-explai
 import { UnifiedRecommendationEngine } from "./services/unified-recommendation.engine";
 import { OutfitCompletionService } from "./services/outfit-completion.service";
 import { BehaviorTrackingService } from "./services/behavior-tracking.service";
+import { ProfileEventSubscriberService } from "./services/profile-event-subscriber.service";
 import { QdrantService } from "./services/qdrant.service";
 import {
   CollaborativeSubmodule,
@@ -62,6 +63,8 @@ import {
     OutfitCompletionService,
     // Behavior tracking
     BehaviorTrackingService,
+    // Profile event subscriber
+    ProfileEventSubscriberService,
     // Vector search
     QdrantService,
   ],
