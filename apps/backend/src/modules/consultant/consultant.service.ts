@@ -230,6 +230,13 @@ export class ConsultantService {
 
   // ==================== 服务预约 ====================
 
+  /** 定金比例：30% */
+  private static readonly DEPOSIT_RATE = 0.3;
+  /** 平台佣金比例：15% */
+  private static readonly PLATFORM_FEE_RATE = 0.15;
+  /** 24小时内取消扣款比例（定金的20%） */
+  private static readonly LATE_CANCEL_PENALTY_RATE = 0.2;
+
   async createBooking(userId: string, dto: CreateServiceBookingDto) {
     // 验证顾问存在且状态为 active
     const consultant = await this.prisma.consultantProfile.findUnique({
@@ -249,6 +256,14 @@ export class ConsultantService {
       throw new BadRequestException("不能预约自己");
     }
 
+    // 计算定金和尾款（服务端计算，防止客户端篡改）
+    const depositAmount = new Prisma.Decimal(dto.price)
+      .mul(ConsultantService.DEPOSIT_RATE)
+      .toFixed(2);
+    const finalPaymentAmount = new Prisma.Decimal(dto.price)
+      .mul(1 - ConsultantService.DEPOSIT_RATE)
+      .toFixed(2);
+
     return this.prisma.serviceBooking.create({
       data: {
         userId,
@@ -260,6 +275,10 @@ export class ConsultantService {
         price: dto.price,
         currency: dto.currency ?? "CNY",
         status: "pending",
+        depositAmount: new Prisma.Decimal(depositAmount),
+        finalPaymentAmount: new Prisma.Decimal(finalPaymentAmount),
+        platformFee: new Prisma.Decimal(0), // 服务完成时计算
+        consultantPayout: new Prisma.Decimal(0), // 服务完成时计算
       },
       include: {
         consultant: {
@@ -390,6 +409,28 @@ export class ConsultantService {
         data.status = "cancelled";
         data.cancelReason = dto.cancelReason;
         data.cancelledAt = new Date();
+
+        // 取消退款逻辑：根据距预约时间决定退款比例
+        if (booking.depositPaidAt) {
+          const hoursUntilBooking =
+            (booking.scheduledAt.getTime() - Date.now()) / (1000 * 60 * 60);
+
+          if (hoursUntilBooking >= 24) {
+            // 提前 24h 取消，全额退定金
+            this.logger.log(
+              `预约 ${bookingId} 提前24h取消，全额退定金 ${booking.depositAmount}`,
+            );
+            // TODO: 触发全额退款流程（集成 PaymentModule.refund）
+          } else {
+            // 24h 内取消，扣定金 20% 给用户补偿，80% 退回
+            const penaltyAmount = Number(booking.depositAmount) * ConsultantService.LATE_CANCEL_PENALTY_RATE;
+            const refundAmount = Number(booking.depositAmount) - penaltyAmount;
+            this.logger.log(
+              `预约 ${bookingId} 24h内取消，退定金80%: ${refundAmount}，扣20%: ${penaltyAmount}`,
+            );
+            // TODO: 触发部分退款流程（集成 PaymentModule.refund）
+          }
+        }
       }
       // 确认/进行中/完成：仅顾问可操作
       else if (
@@ -479,5 +520,123 @@ export class ConsultantService {
         totalPages: Math.ceil(total / pageSize),
       },
     };
+  }
+
+  // ==================== 分阶段付款 ====================
+
+  /**
+   * 支付定金 - 返回支付信息，由 PaymentModule 处理实际支付
+   */
+  async payDeposit(userId: string, bookingId: string) {
+    const booking = await this.getBookingById(userId, bookingId);
+
+    if (booking.status !== "pending") {
+      throw new BadRequestException("预约状态不允许支付定金");
+    }
+    if (booking.depositPaidAt) {
+      throw new BadRequestException("定金已支付");
+    }
+
+    return {
+      bookingId: booking.id,
+      amount: Number(booking.depositAmount),
+      currency: booking.currency,
+      paymentCategory: "consultant_deposit",
+    };
+  }
+
+  /**
+   * 支付尾款 - 服务完成后支付
+   */
+  async payFinalPayment(userId: string, bookingId: string) {
+    const booking = await this.getBookingById(userId, bookingId);
+
+    if (booking.status !== "completed") {
+      throw new BadRequestException("服务未完成，无法支付尾款");
+    }
+    if (booking.finalPaidAt) {
+      throw new BadRequestException("尾款已支付");
+    }
+    if (!booking.depositPaidAt) {
+      throw new BadRequestException("请先支付定金");
+    }
+
+    return {
+      bookingId: booking.id,
+      amount: Number(booking.finalPaymentAmount),
+      currency: booking.currency,
+      paymentCategory: "consultant_final",
+    };
+  }
+
+  /**
+   * 确认定金支付 - 支付回调后调用
+   */
+  async confirmDepositPayment(bookingId: string) {
+    const booking = await this.prisma.serviceBooking.findUnique({
+      where: { id: bookingId },
+    });
+    if (!booking) throw new NotFoundException("预约不存在");
+
+    if (booking.depositPaidAt) {
+      this.logger.warn(`预约 ${bookingId} 定金已确认，跳过重复操作`);
+      return booking;
+    }
+
+    return this.prisma.serviceBooking.update({
+      where: { id: bookingId },
+      data: {
+        depositPaidAt: new Date(),
+        status: "confirmed",
+      },
+    });
+  }
+
+  /**
+   * 确认尾款支付 - 支付回调后调用，同时计算平台佣金和顾问结算金额
+   */
+  async confirmFinalPayment(bookingId: string) {
+    const booking = await this.prisma.serviceBooking.findUnique({
+      where: { id: bookingId },
+    });
+    if (!booking) throw new NotFoundException("预约不存在");
+
+    if (booking.finalPaidAt) {
+      this.logger.warn(`预约 ${bookingId} 尾款已确认，跳过重复操作`);
+      return booking;
+    }
+
+    // 计算平台佣金和顾问结算金额
+    const totalPrice = Number(booking.price);
+    const platformFee = totalPrice * ConsultantService.PLATFORM_FEE_RATE;
+    const consultantPayout = totalPrice - platformFee;
+
+    const updated = await this.prisma.serviceBooking.update({
+      where: { id: bookingId },
+      data: {
+        finalPaidAt: new Date(),
+        platformFee: new Prisma.Decimal(platformFee.toFixed(2)),
+        consultantPayout: new Prisma.Decimal(consultantPayout.toFixed(2)),
+      },
+    });
+
+    // 创建顾问收入记录
+    await this.prisma.consultantEarning.create({
+      data: {
+        consultantId: booking.consultantId,
+        bookingId: booking.id,
+        userId: booking.userId,
+        amount: booking.price,
+        platformFee: new Prisma.Decimal(platformFee.toFixed(2)),
+        netAmount: new Prisma.Decimal(consultantPayout.toFixed(2)),
+        status: "pending",
+      },
+    });
+
+    this.logger.log(
+      `预约 ${bookingId} 尾款确认，平台佣金: ${platformFee.toFixed(2)}，顾问结算: ${consultantPayout.toFixed(2)}`,
+    );
+
+    return updated;
   }
 }

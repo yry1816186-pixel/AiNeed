@@ -231,4 +231,36 @@ export class ConsultantController {
       query,
     );
   }
+
+  // ==================== 分阶段付款 ====================
+
+  @Post("bookings/:id/pay-deposit")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "支付定金", description: "为预约支付30%定金，支付后预约状态变为confirmed" })
+  @ApiResponse({ status: 200, description: "返回支付信息" })
+  @ApiResponse({ status: 400, description: "预约状态不允许支付" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiParam({ name: "id", description: "预约ID" })
+  async payDeposit(
+    @Request() req: RequestWithUser,
+    @Param("id") id: string,
+  ) {
+    return this.consultantService.payDeposit(req.user.id, id);
+  }
+
+  @Post("bookings/:id/pay-final")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "支付尾款", description: "服务完成后支付70%尾款" })
+  @ApiResponse({ status: 200, description: "返回支付信息" })
+  @ApiResponse({ status: 400, description: "服务未完成或定金未支付" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiParam({ name: "id", description: "预约ID" })
+  async payFinalPayment(
+    @Request() req: RequestWithUser,
+    @Param("id") id: string,
+  ) {
+    return this.consultantService.payFinalPayment(req.user.id, id);
+  }
 }
