@@ -9,6 +9,11 @@ import { ContentSubmodule } from "../recommendations/submodules";
 import { ProfileController } from "./profile.controller";
 import { ProfileService } from "./profile.service";
 import { UserProfileService } from "./services/user-profile.service";
+import { PosterGeneratorService } from "./services/poster-generator.service";
+import { ProfileCompletenessService } from "./services/profile-completeness.service";
+import { SharePosterService } from "./services/share-poster.service";
+import { ProfileEventEmitter } from "./services/profile-event-emitter.service";
+import { PosterController } from "./poster.controller";
 
 @Module({
   imports: [
@@ -18,8 +23,8 @@ import { UserProfileService } from "./services/user-profile.service";
     ContentSubmodule,
     AnalyticsModule,
   ],
-  controllers: [ProfileController],
-  providers: [ProfileService, UserProfileService],
-  exports: [ProfileService, UserProfileService],
+  controllers: [ProfileController, PosterController],
+  providers: [ProfileService, UserProfileService, PosterGeneratorService, ProfileCompletenessService, SharePosterService, ProfileEventEmitter],
+  exports: [ProfileService, UserProfileService, PosterGeneratorService, ProfileCompletenessService, SharePosterService, ProfileEventEmitter],
 })
 export class ProfileModule {}

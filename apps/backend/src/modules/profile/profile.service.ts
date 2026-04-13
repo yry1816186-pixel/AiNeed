@@ -10,6 +10,7 @@ import {
 
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { StylePreference } from "../../common/types/common.types";
+import { ProfileEventEmitter } from "./services/profile-event-emitter.service";
 
 export interface UpdateProfileDto {
   nickname?: string;
@@ -57,7 +58,10 @@ export interface BodyRecommendation {
 
 @Injectable()
 export class ProfileService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly eventEmitter: ProfileEventEmitter,
+  ) {}
 
   async getProfile(userId: string) {
     const user = await this.prisma.user.findUnique({
@@ -176,6 +180,14 @@ export class ProfileService {
         update: profileData as Prisma.UserProfileUpdateInput,
       });
     }
+
+    // Determine changed fields for event emission
+    const changedFields = Object.keys(dto).filter((key) => dto[key as keyof UpdateProfileDto] !== undefined);
+
+    // Emit profile:updated event (fire-and-forget)
+    this.eventEmitter.emitProfileUpdated(userId, changedFields).catch(() => {
+      // Event emission failure should not block profile updates
+    });
 
     return this.getProfile(userId);
   }
@@ -352,70 +364,70 @@ export class ProfileService {
     }
 
     const colorGuides: Record<ColorSeason, ColorAnalysisResult> = {
-      [ColorSeason.spring]: {
-        colorSeason: ColorSeason.spring,
-        colorSeasonName: "春季型",
-        bestColors: [
-          "珊瑚色",
-          "桃色",
-          "杏色",
-          "暖黄色",
-          "草绿色",
-          "天蓝色",
-          "象牙白",
-        ],
+      // 8-subtype ColorSeason (warm/cool x light/deep matrix)
+      [ColorSeason.spring_warm]: {
+        colorSeason: ColorSeason.spring_warm,
+        colorSeasonName: "暖春型",
+        bestColors: ["珊瑚色", "蜜桃色", "杏色", "明黄色", "暖绿色", "象牙白", "奶油黄"],
         neutralColors: ["暖米色", "驼色", "棕褐色", "奶油白"],
-        avoidColors: ["纯黑色", "冷灰色", "深紫红色", "冰蓝色"],
-        metalPreference: "金色饰品比银色更适合您，暖色调的珠宝能衬托您的肤色",
+        avoidColors: ["纯黑色", "冷灰色", "冰蓝色", "深紫红色"],
+        metalPreference: "金色饰品最佳，暖色调的琥珀和珊瑚材质也能衬托肤色",
       },
-      [ColorSeason.summer]: {
-        colorSeason: ColorSeason.summer,
-        colorSeasonName: "夏季型",
-        bestColors: [
-          "粉色",
-          "薰衣草色",
-          "浅蓝色",
-          "玫瑰色",
-          "薄荷绿",
-          "淡紫色",
-          "雾蓝色",
-        ],
+      [ColorSeason.spring_light]: {
+        colorSeason: ColorSeason.spring_light,
+        colorSeasonName: "浅春型",
+        bestColors: ["浅珊瑚", "浅桃色", "嫩黄色", "浅绿", "天蓝", "淡粉", "米白"],
+        neutralColors: ["浅米色", "奶油白", "浅灰", "淡粉白"],
+        avoidColors: ["深棕色", "黑色", "深紫色", "深蓝色"],
+        metalPreference: "浅金色和玫瑰金饰品最佳，避免过于厚重的金属色",
+      },
+      [ColorSeason.summer_cool]: {
+        colorSeason: ColorSeason.summer_cool,
+        colorSeasonName: "冷夏型",
+        bestColors: ["薰衣草紫", "雾蓝色", "玫瑰粉", "薄荷绿", "浅灰蓝", "淡紫", "藕荷色"],
         neutralColors: ["柔和灰色", "米白色", "淡粉色", "浅灰蓝色"],
-        avoidColors: ["橙色", "深黄色", "鲜艳的红色", "暖棕色"],
-        metalPreference: "银色饰品比金色更适合您，珍珠和玫瑰金也是很好的选择",
+        avoidColors: ["橙色", "深黄色", "鲜艳红色", "暖棕色"],
+        metalPreference: "银色和铂金饰品最佳，珍珠也是很好的选择",
       },
-      [ColorSeason.autumn]: {
-        colorSeason: ColorSeason.autumn,
-        colorSeasonName: "秋季型",
-        bestColors: [
-          "驼色",
-          "棕色",
-          "橄榄绿",
-          "铁锈红",
-          "芥末黄",
-          "南瓜色",
-          "酒红色",
-        ],
-        neutralColors: ["米色", "奶油色", "深棕色", "军绿色"],
+      [ColorSeason.summer_light]: {
+        colorSeason: ColorSeason.summer_light,
+        colorSeasonName: "浅夏型",
+        bestColors: ["浅粉", "淡蓝", "薄荷绿", "淡紫", "浅灰粉", "冰蓝", "米白"],
+        neutralColors: ["浅灰", "米白", "淡粉白", "浅灰蓝"],
+        avoidColors: ["深红", "深蓝", "深绿", "黑色"],
+        metalPreference: "银色饰品最佳，浅色珍珠和玫瑰金也很适合",
+      },
+      [ColorSeason.autumn_warm]: {
+        colorSeason: ColorSeason.autumn_warm,
+        colorSeasonName: "暖秋型",
+        bestColors: ["驼色", "棕色", "橄榄绿", "铁锈红", "芥末黄", "南瓜色", "酒红"],
+        neutralColors: ["米色", "奶油色", "深棕色", "军绿"],
         avoidColors: ["纯白色", "冷蓝色", "亮粉色", "荧光色"],
-        metalPreference:
-          "金色和铜色饰品非常适合您，琥珀和玳瑁材质也是很好的选择",
+        metalPreference: "金色和铜色饰品非常适合，琥珀和玳瑁材质也是很好选择",
       },
-      [ColorSeason.winter]: {
-        colorSeason: ColorSeason.winter,
-        colorSeasonName: "冬季型",
-        bestColors: [
-          "正红色",
-          "纯白色",
-          "黑色",
-          "宝蓝色",
-          "翠绿色",
-          "深紫色",
-          "玫红色",
-        ],
+      [ColorSeason.autumn_deep]: {
+        colorSeason: ColorSeason.autumn_deep,
+        colorSeasonName: "深秋型",
+        bestColors: ["深棕色", "巧克力棕", "深橄榄绿", "深酒红", "暗红", "深金黄", "墨绿"],
+        neutralColors: ["深棕色", "黑色", "深米色", "军绿"],
+        avoidColors: ["纯白色", "浅粉色", "荧光色", "冰蓝色"],
+        metalPreference: "古铜色和深金色饰品最佳，玳瑁和深色宝石也很好",
+      },
+      [ColorSeason.winter_cool]: {
+        colorSeason: ColorSeason.winter_cool,
+        colorSeasonName: "冷冬型",
+        bestColors: ["正红色", "纯白色", "宝蓝色", "翠绿色", "深紫色", "玫红色", "藏青"],
         neutralColors: ["纯白色", "黑色", "深灰色", "藏青色"],
         avoidColors: ["橙色", "暖黄色", "棕色", "橄榄绿"],
-        metalPreference: "银色饰品是您的最佳选择，钻石和白金也非常适合",
+        metalPreference: "银色和铂金饰品是最佳选择，钻石和白金也非常适合",
+      },
+      [ColorSeason.winter_deep]: {
+        colorSeason: ColorSeason.winter_deep,
+        colorSeasonName: "深冬型",
+        bestColors: ["深红色", "黑色", "深蓝色", "深紫色", "墨绿色", "酒红", "深玫红"],
+        neutralColors: ["黑色", "深灰色", "藏青", "深酒红灰"],
+        avoidColors: ["浅粉", "浅蓝", "米色", "淡黄色"],
+        metalPreference: "深色金属饰品最佳，黑银和深色宝石也很适合",
       },
     };
 

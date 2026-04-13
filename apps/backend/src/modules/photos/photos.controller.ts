@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Logger,
   Param,
   Post,
@@ -18,6 +20,9 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
 import { PhotoType } from "@prisma/client";
@@ -28,6 +33,12 @@ import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-data.interceptor";
 
 import { PhotosService } from "./photos.service";
+import { PhotoQualityValidator } from "./services/photo-quality-validator.service";
+import {
+  PhotoUploadResultDto,
+  PhotoResponseDto,
+  SuccessResponseDto,
+} from "./dto";
 
 @ApiTags("photos")
 @ApiBearerAuth()
@@ -37,29 +48,54 @@ import { PhotosService } from "./photos.service";
 export class PhotosController {
   private readonly logger = new Logger(PhotosController.name);
 
-  constructor(private readonly photosService: PhotosService) {}
+  constructor(
+    private readonly photosService: PhotosService,
+    private readonly photoQualityValidator: PhotoQualityValidator,
+  ) {}
 
   @Post("upload")
-  @ApiOperation({ summary: "Upload a user photo" })
+  @ApiOperation({ summary: "上传用户照片", description: "上传用户照片，支持正面照、侧面照、全身照、半身照、面部照。上传后自动触发 AI 体型和面部分析。" })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
       type: "object",
       properties: {
-        file: { type: "string", format: "binary" },
+        file: { type: "string", format: "binary", description: "照片文件" },
         type: {
           type: "string",
           enum: ["front", "side", "full_body", "half_body", "face"],
+          description: "照片类型",
         },
       },
     },
   })
+  @ApiResponse({ status: 201, description: "上传成功", type: PhotoUploadResultDto })
+  @ApiResponse({ status: 400, description: "文件格式不支持或文件过大" })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
   @UseInterceptors(FileInterceptor("file"))
   async uploadPhoto(
     @CurrentUser("id") userId: string,
     @UploadedFile() file: Express.Multer.File,
     @Body("type") type: PhotoType,
   ) {
+    // Photo quality validation before storage
+    const qualityReport = await this.photoQualityValidator.validateQuality(file.buffer);
+    if (!qualityReport.passed) {
+      this.logger.warn(`Photo quality insufficient for user ${userId}: overall=${qualityReport.overall}`);
+      throw new HttpException(
+        {
+          error: "Photo quality insufficient",
+          details: {
+            clarity: qualityReport.clarity,
+            brightness: qualityReport.brightness,
+            composition: qualityReport.composition,
+            overall: qualityReport.overall,
+          },
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     return this.photosService.uploadPhoto(
       userId,
       file,
@@ -68,7 +104,10 @@ export class PhotosController {
   }
 
   @Get()
-  @ApiOperation({ summary: "Get user photos" })
+  @ApiOperation({ summary: "获取用户照片列表", description: "获取当前用户的所有照片，可按类型筛选。" })
+  @ApiQuery({ name: "type", description: "按照片类型筛选", enum: PhotoType, required: false })
+  @ApiResponse({ status: 200, description: "获取成功", type: [PhotoResponseDto] })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
   async getUserPhotos(
     @CurrentUser("id") userId: string,
     @Query("type") type?: PhotoType,
@@ -77,7 +116,11 @@ export class PhotosController {
   }
 
   @Get(":id")
-  @ApiOperation({ summary: "Get photo detail" })
+  @ApiOperation({ summary: "获取照片详情", description: "根据照片 ID 获取单张照片的详细信息。" })
+  @ApiParam({ name: "id", description: "照片 ID", format: "uuid" })
+  @ApiResponse({ status: 200, description: "获取成功", type: PhotoResponseDto })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
+  @ApiResponse({ status: 404, description: "照片不存在" })
   async getPhotoById(
     @CurrentUser("id") userId: string,
     @Param("id") photoId: string,
@@ -86,7 +129,11 @@ export class PhotosController {
   }
 
   @Get(":id/asset")
-  @ApiOperation({ summary: "Get photo original asset" })
+  @ApiOperation({ summary: "获取照片原图", description: "获取照片的原始文件资源。" })
+  @ApiParam({ name: "id", description: "照片 ID", format: "uuid" })
+  @ApiResponse({ status: 200, description: "获取成功，返回图片二进制流" })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
+  @ApiResponse({ status: 404, description: "照片不存在" })
   async getPhotoAsset(
     @CurrentUser("id") userId: string,
     @Param("id") photoId: string,
@@ -105,7 +152,11 @@ export class PhotosController {
   }
 
   @Get(":id/thumbnail")
-  @ApiOperation({ summary: "Get photo thumbnail asset" })
+  @ApiOperation({ summary: "获取照片缩略图", description: "获取照片的缩略图资源。" })
+  @ApiParam({ name: "id", description: "照片 ID", format: "uuid" })
+  @ApiResponse({ status: 200, description: "获取成功，返回缩略图二进制流" })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
+  @ApiResponse({ status: 404, description: "照片不存在" })
   async getPhotoThumbnail(
     @CurrentUser("id") userId: string,
     @Param("id") photoId: string,
@@ -124,7 +175,11 @@ export class PhotosController {
   }
 
   @Delete(":id")
-  @ApiOperation({ summary: "Delete photo" })
+  @ApiOperation({ summary: "删除照片", description: "删除指定照片及其关联的存储文件。" })
+  @ApiParam({ name: "id", description: "照片 ID", format: "uuid" })
+  @ApiResponse({ status: 200, description: "删除成功", type: SuccessResponseDto })
+  @ApiResponse({ status: 400, description: "照片不存在" })
+  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
   async deletePhoto(
     @CurrentUser("id") userId: string,
     @Param("id") photoId: string,

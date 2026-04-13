@@ -12,6 +12,8 @@ import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-da
 
 import { ProfileService, UpdateProfileDto as ServiceUpdateProfileDto } from "./profile.service";
 import { UserProfileService, UpdateProfileDto as UserUpdateProfileDto } from "./services/user-profile.service";
+import { ProfileCompletenessService } from "./services/profile-completeness.service";
+import { SharePosterService } from "./services/share-poster.service";
 import {
   UpdateProfileDto,
   UserProfileResponseDto,
@@ -51,6 +53,8 @@ export class ProfileController {
   constructor(
     private profileService: ProfileService,
     private userProfileService: UserProfileService,
+    private completenessService: ProfileCompletenessService,
+    private sharePosterService: SharePosterService,
   ) {}
 
   @Get()
@@ -263,7 +267,7 @@ export class ProfileController {
   })
   async updateStylePreferences(
     @Request() req: AuthenticatedRequest,
-    @Body() body: { styles: string[] },
+    @Body() body: UpdateStylePreferencesDto,
   ) {
     await this.userProfileService.updateStylePreferences(
       req.user.id,
@@ -293,7 +297,7 @@ export class ProfileController {
   })
   async updateColorPreferences(
     @Request() req: AuthenticatedRequest,
-    @Body() body: { colors: string[] },
+    @Body() body: UpdateColorPreferencesDto,
   ) {
     await this.userProfileService.updateColorPreferences(
       req.user.id,
@@ -323,12 +327,12 @@ export class ProfileController {
   })
   async updatePriceRange(
     @Request() req: AuthenticatedRequest,
-    @Body() body: { min: number | null; max: number | null },
+    @Body() body: UpdatePriceRangeDto,
   ) {
     await this.userProfileService.updatePriceRange(
       req.user.id,
-      body.min,
-      body.max,
+      body.min ?? null,
+      body.max ?? null,
     );
     return { success: true };
   }
@@ -350,5 +354,62 @@ export class ProfileController {
   async refreshFromBehavior(@Request() req: AuthenticatedRequest) {
     await this.userProfileService.updateProfileFromBehavior(req.user.id);
     return { success: true };
+  }
+
+  // ========== Plan 03: Profile completeness and share poster endpoints ==========
+
+  @Get("completeness")
+  @ApiOperation({
+    summary: "获取用户画像完整度",
+    description: "计算用户画像的完成百分比和缺失字段列表。",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "获取成功",
+  })
+  @ApiResponse({
+    status: 401,
+    description: "未授权，需要提供有效的 Access Token",
+  })
+  async getCompleteness(@Request() req: AuthenticatedRequest) {
+    const profile = await this.profileService.getProfile(req.user.id);
+    const result = this.completenessService.calculateCompleteness({
+      gender: profile.gender,
+      birthDate: profile.birthDate ? new Date(profile.birthDate) : null,
+      nickname: profile.nickname,
+      height: profile.profile?.height ?? null,
+      weight: profile.profile?.weight ?? null,
+      bodyType: profile.profile?.bodyType ?? null,
+      colorSeason: profile.profile?.colorSeason ?? null,
+      styleProfiles: profile.profile?.stylePreferences as unknown[] ?? [],
+      stylePreferences: profile.profile?.stylePreferences as unknown[] ?? [],
+      colorPreferences: profile.profile?.colorPreferences ?? [],
+      photos: [],
+    });
+    return { data: { percentage: result.percentage, missingFields: result.missingFields } };
+  }
+
+  @Post("share-poster")
+  @ApiOperation({
+    summary: "生成分享海报",
+    description: "根据用户画像和最新风格测试结果生成分享海报图片。",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "海报生成成功",
+  })
+  @ApiResponse({
+    status: 401,
+    description: "未授权，需要提供有效的 Access Token",
+  })
+  async generateSharePoster(@Request() req: AuthenticatedRequest) {
+    const profile = await this.profileService.getProfile(req.user.id);
+    const imageUrl = await this.sharePosterService.generatePoster(req.user.id, {
+      nickname: profile.nickname ?? "用户",
+      avatar: profile.avatar,
+      styleTypeName: profile.profile?.bodyType ?? undefined,
+      colorPalette: (profile.profile?.colorPreferences as string[]) ?? [],
+    });
+    return { data: { imageUrl } };
   }
 }
