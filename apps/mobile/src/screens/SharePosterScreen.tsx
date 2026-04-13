@@ -10,6 +10,7 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { LinearGradient } from "../polyfills/expo-linear-gradient";
+import Share from "react-native-share";
 import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
 import { useProfileStore } from "../stores/profileStore";
 import { useAuthStore } from "../stores/index";
@@ -44,16 +45,33 @@ export const SharePosterScreen: React.FC = () => {
   const handleShare = useCallback(async () => {
     setIsSharing(true);
     try {
-      // In production: capture ViewShot and open Share dialog
-      // const uri = await captureRef(viewShotRef, { format: "png", quality: 0.9 });
-      // await Share.open({ url: uri, title: "我的风格画像" });
-      Alert.alert("分享", "分享功能即将上线");
-    } catch {
-      // Share cancelled or failed
+      const styleLabel = colorAnalysis?.colorSeason?.label ?? "风格探索中";
+      const paletteHex = palette.join(", ");
+
+      // Try image capture if react-native-view-shot is available
+      let shareOptions: { title: string; message: string; url?: string };
+      try {
+        const { captureRef } = require("react-native-view-shot");
+        const uri = await captureRef(viewShotRef, { format: "png", quality: 0.9 });
+        shareOptions = { title: "我的风格画像", message: `我的风格画像 - ${styleLabel}`, url: uri };
+      } catch {
+        // view-shot not available, share text with style info
+        shareOptions = {
+          title: "我的风格画像",
+          message: `我在 AiNeed 上发现了我的风格画像: ${styleLabel}\n色彩: ${paletteHex}`,
+        };
+      }
+
+      await Share.open(shareOptions);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "";
+      if (!msg.includes("cancelled") && !msg.includes("CANCEL")) {
+        Alert.alert("分享失败", "请稍后重试");
+      }
     } finally {
       setIsSharing(false);
     }
-  }, []);
+  }, [colorAnalysis?.colorSeason?.label, palette]);
 
   const displayName = profile?.nickname ?? user?.email?.split("@")[0] ?? "用户";
   const avatarInitial = displayName.charAt(0).toUpperCase();

@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Image,
   RefreshControl,
-  type FontWeight,
 } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,9 +15,12 @@ import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
 import { recommendationsApi, type RecommendedItem } from '../services/api/tryon.api';
 import apiClient from '../services/api/client';
 import { useAuthStore } from '../stores/index';
+import { useProfileStore } from '../stores/profileStore';
 import type { RootStackParamList } from '../types/navigation';
 import { withErrorBoundary } from '../components/ErrorBoundary';
 import { ImageWithPlaceholder } from '../components/common';
+import { ProfileCompletenessBar } from '../components/profile/ProfileCompletenessBar';
+import { theme, Colors } from '../theme';
 
 const HORIZONTAL_PADDING = 20;
 
@@ -40,6 +42,8 @@ export const HomeScreen: React.FC = () => {
   });
   const [loadingState, setLoadingState] = useState<LoadingState>('idle');
   const [refreshing, setRefreshing] = useState(false);
+
+  const { completeness, loadCompleteness } = useProfileStore();
 
   const displayName = user?.nickname || user?.email?.split('@')[0] || 'Maya';
 
@@ -65,7 +69,8 @@ export const HomeScreen: React.FC = () => {
     }
     setLoadingState('loading');
     void fetchData();
-  }, [authToken, fetchData, isAuthenticated]);
+    void loadCompleteness();
+  }, [authToken, fetchData, isAuthenticated, loadCompleteness]);
 
   const handleRefresh = useCallback(async () => {
     if (!authToken || !isAuthenticated) {
@@ -130,7 +135,7 @@ export const HomeScreen: React.FC = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor="#FF6B9D"
+            tintColor={theme.colors.primary}
           />
         }
       >
@@ -139,6 +144,14 @@ export const HomeScreen: React.FC = () => {
             <Text style={styles.dateText}>Tuesday, October 24</Text>
             <Text style={styles.greetingText}>Hello, {displayName}</Text>
           </View>
+
+          {completeness && completeness.percentage < 80 && (
+            <ProfileCompletenessBar
+              percentage={completeness.percentage}
+              missingFields={completeness.missingFields}
+              onPress={() => navigation.navigate('ProfileEdit')}
+            />
+          )}
 
           <TouchableOpacity
             style={styles.aiCompanionCard}
@@ -176,9 +189,9 @@ export const HomeScreen: React.FC = () => {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.searchBar} onPress={handleSearchPress}>
-            <Ionicons name="search-outline" size={22} color="#8E8E93" />
+            <Ionicons name="search-outline" size={22} color={theme.colors.textTertiary} />
             <Text style={styles.searchText}>Search outfits, items...</Text>
-            <Ionicons name="mic-outline" size={22} color="#8E8E93" />
+            <Ionicons name="mic-outline" size={22} color={theme.colors.textTertiary} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.closetCard} onPress={handleClosetPress}>
@@ -218,7 +231,7 @@ export const HomeScreen: React.FC = () => {
             <View style={styles.recsHeader}>
               <Text style={styles.recsTitle}>Daily Recommendations</Text>
               <TouchableOpacity onPress={handleHeartPress}>
-                <Ionicons name="chevron-forward" size={20} color="#8E8E93" />
+                <Ionicons name="chevron-forward" size={20} color={theme.colors.textTertiary} />
               </TouchableOpacity>
             </View>
             <ScrollView
@@ -250,7 +263,7 @@ export const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F7',
+    backgroundColor: theme.colors.background,
   },
   scrollView: {
     flex: 1,
@@ -266,17 +279,17 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 15,
-    color: '#8E8E93',
+    color: theme.colors.textTertiary,
     marginBottom: 4,
   },
   greetingText: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#1C1C1E',
+    color: theme.colors.text,
     letterSpacing: -0.5,
   },
   aiCompanionCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: 28,
     padding: 24,
     marginBottom: 20,
@@ -294,7 +307,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   bubble: {
-    backgroundColor: '#F8F8F8',
+    backgroundColor: theme.colors.subtleBg,
     borderRadius: 16,
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -302,7 +315,7 @@ const styles = StyleSheet.create({
   bubbleText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1C1C1E',
+    color: theme.colors.text,
   },
   aiAvatarContainer: {
     marginVertical: 12,
@@ -325,7 +338,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: 24,
     paddingHorizontal: 20,
     paddingVertical: 16,
@@ -339,11 +352,11 @@ const styles = StyleSheet.create({
   searchText: {
     flex: 1,
     fontSize: 17,
-    color: '#8E8E93',
+    color: theme.colors.textTertiary,
     marginHorizontal: 12,
   },
   closetCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: 24,
     padding: 20,
     marginBottom: 24,
@@ -362,12 +375,12 @@ const styles = StyleSheet.create({
   closetTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#1C1C1E',
+    color: theme.colors.text,
     marginBottom: 4,
   },
   closetProgress: {
     fontSize: 15,
-    color: '#8E8E93',
+    color: theme.colors.textTertiary,
   },
   closetAvatarContainer: {
     position: 'relative',
@@ -377,13 +390,13 @@ const styles = StyleSheet.create({
     height: 76,
     borderRadius: 38,
     borderWidth: 3,
-    borderColor: '#FFB6C1',
+    borderColor: Colors.rose[400],
   },
   closetProgressBadge: {
     position: 'absolute',
     bottom: -4,
     right: -4,
-    backgroundColor: '#FF6B9D',
+    backgroundColor: Colors.rose[400],
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -444,7 +457,7 @@ const styles = StyleSheet.create({
   recsTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#1C1C1E',
+    color: theme.colors.text,
   },
   recsList: {
     paddingRight: 20,
@@ -457,12 +470,12 @@ const styles = StyleSheet.create({
     width: 130,
     height: 170,
     borderRadius: 20,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: theme.colors.placeholderBg,
   },
   recTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1C1C1E',
+    color: theme.colors.text,
     marginTop: 10,
   },
 });
