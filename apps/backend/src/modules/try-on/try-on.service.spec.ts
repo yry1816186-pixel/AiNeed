@@ -612,19 +612,19 @@ describe("TryOnService", () => {
       expect(mockPrismaService.virtualTryOn.create).toHaveBeenCalled();
     });
 
-    it("应该处理 Redis 发布失败", async () => {
+    it("应该处理 incrementDailyRetryCount 失败", async () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(
         mockClothingItem,
       );
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
       mockPrismaService.virtualTryOn.create.mockResolvedValue(mockTryOn);
-      mockRedis.publish.mockRejectedValue(new Error("Redis error"));
+      mockPipeline.exec.mockRejectedValueOnce(new Error("Redis pipeline error"));
 
-      // 不应该抛出异常，只是记录警告
+      // incrementDailyRetryCount 中 pipeline 失败会导致请求抛出异常
       await expect(
         service.createTryOnRequest("test-user-id", "photo-id", "item-id"),
-      ).resolves.toBeDefined();
+      ).rejects.toThrow("Redis pipeline error");
     });
   });
 });

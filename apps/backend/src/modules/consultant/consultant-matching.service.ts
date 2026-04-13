@@ -90,28 +90,39 @@ export class ConsultantMatchingService {
 
   /**
    * 获取用户画像（含风格偏好）
+   * UserProfile.stylePreferences (Json) 存储风格偏好
+   * StyleProfile 通过 userId 关联到 User
    */
   private async getUserProfile(userId: string) {
-    const profile = await this.prisma.userProfile.findUnique({
-      where: { userId },
-      include: { styleProfile: true },
-    });
-    return profile;
+    const [profile, styleProfiles] = await Promise.all([
+      this.prisma.userProfile.findUnique({ where: { userId } }),
+      this.prisma.styleProfile.findMany({
+        where: { userId, isActive: true },
+        select: { keywords: true, occasion: true },
+      }),
+    ]);
+    return { profile, styleProfiles };
   }
 
   /**
    * 画像维度评分：用户风格偏好与顾问专长的重叠度
    * 权重 30%
    */
-  private calcProfileScore(userProfile: Record<string, unknown> | null, consultant: Record<string, unknown>): number {
-    if (!userProfile?.styleProfile) return 0.5;
+  private calcProfileScore(
+    userProfile: { profile: Record<string, unknown> | null; styleProfiles: Array<Record<string, unknown>> } | null,
+    consultant: Record<string, unknown>,
+  ): number {
+    if (!userProfile?.styleProfiles || userProfile.styleProfiles.length === 0) return 0.5;
     const specialties = (consultant.specialties as string[]) || [];
-    const stylePrefs = ((userProfile.styleProfile as Record<string, unknown>)?.preferredStyles as string[]) || [];
-    if (stylePrefs.length === 0) return 0.5;
-    const overlap = stylePrefs.filter((s: string) =>
+    // 收集用户所有活跃风格的关键词
+    const userKeywords = userProfile.styleProfiles.flatMap(
+      (sp) => (sp.keywords as string[]) || [],
+    );
+    if (userKeywords.length === 0) return 0.5;
+    const overlap = userKeywords.filter((s: string) =>
       specialties.some((sp: string) => sp.includes(s) || s.includes(sp)),
     );
-    return overlap.length / Math.max(stylePrefs.length, 1);
+    return overlap.length / Math.max(userKeywords.length, 1);
   }
 
   /**

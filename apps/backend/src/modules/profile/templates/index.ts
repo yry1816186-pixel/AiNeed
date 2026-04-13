@@ -61,5 +61,5 @@ export function getTemplateByColorSeason(season: ColorSeason | null): ColorSeaso
   if (season && seasonConfigs[season]) {
     return seasonConfigs[season];
   }
-  return seasonConfigs[ColorSeason.spring];
+  return seasonConfigs[ColorSeason.spring_warm];
 }

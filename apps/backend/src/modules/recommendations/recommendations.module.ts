@@ -30,6 +30,7 @@ import { ProfileEventSubscriberService } from "./services/profile-event-subscrib
 import { Neo4jService } from "./services/neo4j.service";
 import { QdrantService } from "./services/qdrant.service";
 import { RecommendationCacheService } from "./services/recommendation-cache.service";
+import { SASRecClientService } from "./services/sasrec-client.service";
 import {
   CollaborativeSubmodule,
   ContentSubmodule,
@@ -73,6 +74,8 @@ import {
     QdrantService,
     // Recommendation cache
     RecommendationCacheService,
+    // SASRec client
+    SASRecClientService,
   ],
   exports: [
     // Primary exports - use orchestrator for new code
@@ -93,6 +96,8 @@ import {
     QdrantService,
     // Recommendation cache
     RecommendationCacheService,
+    // SASRec client
+    SASRecClientService,
   ],
 })
 export class RecommendationsModule {}
