@@ -86,6 +86,7 @@ const logger = new Logger('QueueModule');
       { name: QueueName.AI_GENERATION },
       { name: QueueName.NOTIFICATION },
       { name: QueueName.DATA_EXPORT },
+      { name: QueueName.CONTENT_MODERATION },
     ),
   ],
   controllers: [QueueController],

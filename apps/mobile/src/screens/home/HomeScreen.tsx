@@ -13,12 +13,15 @@ import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { FlashList } from '@/src/polyfills/flash-list';
 import { useHomeStore } from '../../stores/homeStore';
 import { useAuthStore } from '../../stores/index';
+import { useRecommendationFeedStore } from '../../stores/recommendationFeedStore';
 import { DesignTokens } from '../../theme/tokens/design-tokens';
 import { withErrorBoundary } from '../../components/ErrorBoundary';
 import { WeatherGreeting } from './components/WeatherGreeting';
 import { ProfileCompletionBanner } from './components/ProfileCompletionBanner';
 import QuickActions from './components/QuickActions';
+import { RecommendationCard } from '../../components/recommendations/RecommendationFeedCard';
 import type { RootStackParamList } from '../../types/navigation';
+import type { FeedItem } from '../../services/api/recommendation-feed.api';
 
 const HORIZONTAL_PADDING = 20;
 
@@ -27,14 +30,14 @@ type HomeSection =
   | { type: 'banner' }
   | { type: 'quickActions' }
   | { type: 'search' }
-  | { type: 'recommendationPlaceholder' };
+  | { type: 'recommendationHeader' }
+  | { type: 'recommendationItem'; item: FeedItem };
 
-const SECTIONS: HomeSection[] = [
+const BASE_SECTIONS: HomeSection[] = [
   { type: 'greeting' },
   { type: 'banner' },
   { type: 'quickActions' },
   { type: 'search' },
-  { type: 'recommendationPlaceholder' },
 ];
 
 const HomeScreen: React.FC = () => {
@@ -52,6 +55,14 @@ const HomeScreen: React.FC = () => {
     fetchProfileCompletion,
   } = useHomeStore();
 
+  const {
+    items: feedItems,
+    isLoading: isFeedLoading,
+    fetchFeed,
+    loadMore,
+    hasMore,
+  } = useRecommendationFeedStore();
+
   const [refreshing, setRefreshing] = useState(false);
 
   const displayName = user?.nickname || user?.email?.split('@')[0] || '用户';
@@ -59,16 +70,24 @@ const HomeScreen: React.FC = () => {
   useEffect(() => {
     void fetchProfileCompletion();
     void fetchWeather(39.9042, 116.4074);
-  }, [fetchProfileCompletion, fetchWeather]);
+    void fetchFeed(true);
+  }, [fetchProfileCompletion, fetchWeather, fetchFeed]);
+
+  const sections: HomeSection[] = [
+    ...BASE_SECTIONS,
+    { type: 'recommendationHeader' as const },
+    ...feedItems.map((item): HomeSection => ({ type: 'recommendationItem', item })),
+  ];
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([
       fetchProfileCompletion(),
       fetchWeather(39.9042, 116.4074),
+      fetchFeed(true),
     ]);
     setRefreshing(false);
-  }, [fetchProfileCompletion, fetchWeather]);
+  }, [fetchProfileCompletion, fetchWeather, fetchFeed]);
 
   const handleSearchPress = useCallback(() => {
     navigation.navigate('Explore');

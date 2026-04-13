@@ -10,6 +10,7 @@ export enum QueueName {
   STYLE_ANALYSIS = 'style_analysis',
   VIRTUAL_TRYON = 'virtual_tryon',
   WARDROBE_MATCH = 'wardrobe_match',
+  CONTENT_MODERATION = 'content_moderation',
 }
 
 export interface QueueConfigOptions {
@@ -117,6 +118,14 @@ export const QUEUE_CONFIGS: Record<QueueName, QueueConfigOptions> = {
     backoff: { type: 'exponential', delay: 1000 },
     removeOnComplete: { count: 100, age: 86400 },
     removeOnFail: { count: 50, age: 604800 },
+    timeout: 30000,
+  },
+  [QueueName.CONTENT_MODERATION]: {
+    concurrency: 5,
+    attempts: 3,
+    backoff: { type: 'exponential', delay: 1000 },
+    removeOnComplete: { count: 200, age: 86400 },
+    removeOnFail: { count: 100, age: 604800 },
     timeout: 30000,
   },
 };

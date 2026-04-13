@@ -5,8 +5,10 @@ import { Job } from "bullmq";
 import { NotificationService } from "../../common/gateway/notification.service";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { TryOnOrchestratorService } from "../try-on/services/tryon-orchestrator.service";
+import { ContentModerationService } from "../community/content-moderation.service";
 
 import { QUEUE_NAMES, JOB_STATUS } from "./queue.constants";
+import { QueueName } from "./queue-config";
 import { generateStableCacheKey } from "../try-on/services/ai-tryon-provider.interface";
 
 interface VirtualTryOnJobData {
@@ -274,5 +276,20 @@ export class WardrobeMatchProcessor extends WorkerHost {
   async process(job: Job<WardrobeMatchJobData>): Promise<unknown> {
     this.logger.log(`Processing wardrobe match job ${job.data.jobId}`);
     return { jobId: job.data.jobId, status: "completed" };
+  }
+}
+
+@Processor(QueueName.CONTENT_MODERATION)
+export class ContentModerationProcessor extends WorkerHost {
+  private readonly logger = new Logger(ContentModerationProcessor.name);
+
+  constructor(private readonly contentModerationService: ContentModerationService) {
+    super();
+  }
+
+  async process(job: Job): Promise<unknown> {
+    this.logger.log(`Processing content moderation job ${job.id}`);
+    await this.contentModerationService.processModerationQueue(job);
+    return { jobId: job.id, status: "completed" };
   }
 }
