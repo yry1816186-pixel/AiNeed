@@ -31,6 +31,7 @@ import { Neo4jService } from "./services/neo4j.service";
 import { QdrantService } from "./services/qdrant.service";
 import { RecommendationCacheService } from "./services/recommendation-cache.service";
 import { SASRecClientService } from "./services/sasrec-client.service";
+import { RecommendationFeedService } from "./services/recommendation-feed.service";
 import {
   CollaborativeSubmodule,
   ContentSubmodule,
@@ -76,6 +77,8 @@ import {
     RecommendationCacheService,
     // SASRec client
     SASRecClientService,
+    // Feed service
+    RecommendationFeedService,
   ],
   exports: [
     // Primary exports - use orchestrator for new code
@@ -98,6 +101,8 @@ import {
     RecommendationCacheService,
     // SASRec client
     SASRecClientService,
+    // Feed service
+    RecommendationFeedService,
   ],
 })
 export class RecommendationsModule {}

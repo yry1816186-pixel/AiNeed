@@ -1423,7 +1423,7 @@ model CommunityPost {
   relatedItems CommunityPostItem[]
   bookmarks   PostBookmark[]
   moderationLogs ContentModerationLog[]
-  reports     ContentReport[] @relation("PostReports")
+  reports     ContentReport[]
 
   @@index([authorId])
   @@index([category])
@@ -2081,7 +2081,7 @@ model ContentReport {
   updatedAt   DateTime @updatedAt
 
   reporter    User            @relation("ReporterReports", fields: [reporterId], references: [id], onDelete: Cascade)
-  post        CommunityPost?  @relation("PostReports", fields: [contentId], references: [id], onDelete: Cascade)
+  post        CommunityPost?  @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
   @@unique([reporterId, contentType, contentId])
   @@index([contentType, contentId])

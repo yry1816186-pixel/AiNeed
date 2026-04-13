@@ -199,3 +199,63 @@ export class GetDiscoverQueryDto {
   @Max(100)
   limit?: number = 20;
 }
+
+export class GetFeedDto {
+  @ApiPropertyOptional({
+    description: "Feed 分类",
+    enum: ["daily", "occasion", "trending", "explore"],
+    default: "daily",
+  })
+  @IsOptional()
+  @IsString()
+  @IsIn(["daily", "occasion", "trending", "explore"])
+  category?: string = "daily";
+
+  @ApiPropertyOptional({
+    description: "子分类（commute, date, sport, interview, casual, travel）",
+  })
+  @IsOptional()
+  @IsString()
+  subCategory?: string;
+
+  @ApiPropertyOptional({
+    description: "页码，默认1",
+    default: 1,
+    type: Number,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page?: number = 1;
+
+  @ApiPropertyOptional({
+    description: "每页数量，默认10",
+    default: 10,
+    type: Number,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(50)
+  pageSize?: number = 10;
+}
+
+export class FeedItemDto {
+  id!: string;
+  mainImage!: string;
+  brand!: { id: string; name: string } | null;
+  price!: number;
+  originalPrice?: number;
+  styleTags!: string[];
+  colorHarmony!: { score: number; colors: string[] };
+  matchReason!: string;
+  category!: string;
+}
+
+export class FeedResponseDto {
+  items!: FeedItemDto[];
+  total!: number;
+  hasMore!: boolean;
+}

@@ -14,6 +14,7 @@ import {
   GetOccasionRecommendationsQueryDto,
   GetTrendingQueryDto,
   GetDiscoverQueryDto,
+  GetFeedDto,
   SubmitFeedbackDto,
   SubmitBatchFeedbackDto,
 } from "./dto";
@@ -24,6 +25,7 @@ import {
   BehaviorTrackingService,
   type BehaviorAction,
 } from "./services/behavior-tracking.service";
+import { RecommendationFeedService } from "./services/recommendation-feed.service";
 
 /**
  * 服装项响应
@@ -131,6 +133,7 @@ export class RecommendationsController {
     private advancedRecommendationService: AdvancedRecommendationService,
     private outfitCompletionService: OutfitCompletionService,
     private behaviorTrackingService: BehaviorTrackingService,
+    private feedService: RecommendationFeedService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -194,6 +197,28 @@ export class RecommendationsController {
       },
     );
     return { items: result, total: result.length };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("feed")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "获取推荐 Feed（分页）",
+    description:
+      "获取分页推荐 Feed，支持 daily/occasion/trending/explore 四种分类。返回包含 colorHarmony 和 matchReason 的 FeedItem。",
+  })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  async getFeed(
+    @CurrentUser("id") userId: string,
+    @Query() dto: GetFeedDto,
+  ) {
+    return this.feedService.getFeed(
+      userId,
+      (dto.category as "daily" | "occasion" | "trending" | "explore") || "daily",
+      dto.subCategory,
+      dto.page || 1,
+      dto.pageSize || 10,
+    );
   }
 
   @UseGuards(JwtAuthGuard)

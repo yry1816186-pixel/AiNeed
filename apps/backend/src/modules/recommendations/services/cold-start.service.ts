@@ -73,6 +73,108 @@ export class ColdStartService {
 
   constructor(private prisma: PrismaService) {}
 
+  async getDemographicRecommendations(
+    userId: string,
+    topK: number = 10,
+  ): Promise<Array<{ itemId: string; score: number; reason: string }>> {
+    const profile = await this.prisma.userProfile.findUnique({ where: { userId } });
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) return [];
+
+    const reasons: string[] = [];
+
+    if (user.gender) {
+      reasons.push(`适合${user.gender === "MALE" ? "男性" : "女性"}`);
+    }
+
+    if (profile?.colorSeason) {
+      reasons.push(`适合你的${this.translateColorSeason(profile.colorSeason)}色彩`);
+    }
+
+    if (profile?.bodyType) {
+      reasons.push(`适配${profile.bodyType}体型`);
+    }
+
+    const items = await this.prisma.clothingItem.findMany({
+      where: { isActive: true },
+      take: topK * 3,
+      orderBy: { createdAt: "desc" },
+    });
+
+    const scored = items.map((item) => ({
+      itemId: item.id,
+      score: 50 + this.deterministicOffset(userId, item.id, 30),
+      reason: reasons.join("，") || "为你精选推荐",
+    }));
+
+    return scored.slice(0, topK);
+  }
+
+  async getHybridRecommendations(
+    userId: string,
+    topK: number = 10,
+  ): Promise<Array<{ itemId: string; score: number; reason: string }>> {
+    const profile = await this.prisma.userProfile.findUnique({ where: { userId } });
+    const hasProfile = !!profile;
+
+    const [demographic, popular] = await Promise.all([
+      this.getDemographicRecommendations(userId, topK),
+      this.getPopularRecommendations(topK),
+    ]);
+
+    const weights = {
+      demographic: hasProfile ? 0.5 : 0.2,
+      popular: hasProfile ? 0.3 : 0.6,
+    };
+
+    const merged = new Map<string, { score: number; reason: string }>();
+    for (const item of demographic) {
+      merged.set(item.itemId, { score: item.score * weights.demographic, reason: item.reason });
+    }
+    for (const item of popular) {
+      const existing = merged.get(item.itemId);
+      if (existing) {
+        existing.score += item.score * weights.popular;
+      } else {
+        merged.set(item.itemId, { score: item.score * weights.popular, reason: item.reason });
+      }
+    }
+
+    return Array.from(merged.entries())
+      .map(([itemId, data]) => ({ itemId, ...data }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, topK);
+  }
+
+  private async getPopularRecommendations(
+    topK: number,
+  ): Promise<Array<{ itemId: string; score: number; reason: string }>> {
+    const items = await this.prisma.clothingItem.findMany({
+      where: { isActive: true },
+      orderBy: [{ viewCount: "desc" }, { likeCount: "desc" }],
+      take: topK,
+      select: { id: true },
+    });
+
+    return items.map((item) => ({
+      itemId: item.id,
+      score: 50,
+      reason: "热门推荐",
+    }));
+  }
+
+  private translateColorSeason(season: string): string {
+    const map: Record<string, string> = {
+      spring_warm: "暖春", spring_light: "浅春",
+      summer_cool: "凉夏", summer_light: "浅夏",
+      autumn_warm: "暖秋", autumn_deep: "深秋",
+      winter_cool: "冷冬", winter_deep: "深冬",
+      spring: "春", summer: "夏", autumn: "秋", winter: "冬",
+    };
+    return map[season] || season;
+  }
+
   async handleNewUser(
     userId: string,
     profile?: UserProfile,

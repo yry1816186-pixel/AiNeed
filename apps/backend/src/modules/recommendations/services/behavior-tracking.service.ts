@@ -2,9 +2,10 @@ import {
   Injectable,
   Logger,
 } from "@nestjs/common";
-import { BehaviorEventType } from "@prisma/client";
+import { BehaviorEventType, InteractionWeight } from "@prisma/client";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
+import { RecommendationCacheService } from "./recommendation-cache.service";
 
 export type BehaviorAction =
   | "view"
@@ -46,6 +47,7 @@ export class BehaviorTrackingService {
   constructor(
     private prisma: PrismaService,
     private redisService: RedisService,
+    private cacheService: RecommendationCacheService,
   ) {}
 
   async track(input: TrackBehaviorInput): Promise<void> {
@@ -63,27 +65,29 @@ export class BehaviorTrackingService {
       this.logger.warn(`Failed to track behavior: ${error}`);
     }
 
-    if (context) {
-      try {
-        await this.prisma.userBehaviorEvent.create({
-          data: {
-            userId,
-            sessionId: context.recommendationId || "rec",
-            eventType: "click" as BehaviorEventType,
-            category: "recommendation",
-            action,
-            targetType: "clothing",
-            targetId: clothingId,
-            metadata: context,
-            source: context.source,
-          },
-        });
-      } catch (error) {
-        this.logger.debug(`Event tracking skipped: ${error}`);
-      }
+    try {
+      const weightMap: Record<string, number> = {
+        view: 1, click: 2, like: 3, favorite: 4,
+        addToCart: 5, purchase: 8, tryOn: 6, share: 4, dislike: -2,
+      };
+      const rawValue = weightMap[action] || 1;
+      await this.prisma.userBehaviorEvent.create({
+        data: {
+          userId,
+          itemId: clothingId,
+          action: action as InteractionWeight,
+          value: rawValue,
+          rawValue,
+          context: context || undefined,
+          itemType: "clothing",
+        },
+      });
+    } catch (error) {
+      this.logger.debug(`Event tracking skipped: ${error}`);
     }
 
     await this.updatePreferenceCache(userId, action, clothingId);
+    await this.invalidateRecommendationCache(userId);
   }
 
   async trackBatch(inputs: TrackBehaviorInput[]): Promise<void> {
@@ -239,6 +243,36 @@ export class BehaviorTrackingService {
       await multi.exec();
     } catch (error) {
       this.logger.debug(`Preference cache update skipped: ${error}`);
+    }
+  }
+
+  private calculateTimeDecay(createdAt: Date, halfLifeHours: number = 168): number {
+    const ageHours = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60);
+    return Math.pow(0.5, ageHours / halfLifeHours);
+  }
+
+  async getDecayedBehaviors(
+    userId: string,
+    limit: number = 100,
+  ): Promise<Array<{ itemId: string; action: string; value: number }>> {
+    const events = await this.prisma.userBehaviorEvent.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+    });
+
+    return events.map((event) => ({
+      itemId: event.itemId || "",
+      action: event.action || "view",
+      value: (event.rawValue || 1) * this.calculateTimeDecay(event.createdAt),
+    }));
+  }
+
+  private async invalidateRecommendationCache(userId: string): Promise<void> {
+    try {
+      await this.cacheService.invalidate(userId);
+    } catch (error) {
+      this.logger.debug(`Cache invalidation skipped: ${error}`);
     }
   }
 }

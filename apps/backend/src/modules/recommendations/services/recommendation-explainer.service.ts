@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { PrismaService } from "../../../common/prisma/prisma.service";
 import { LlmProviderService } from "../../ai-stylist/llm-provider.service";
 
 export interface RecommendationContext {
@@ -156,6 +157,7 @@ export class RecommendationExplainerService {
   constructor(
     private configService: ConfigService,
     private llmProviderService: LlmProviderService,
+    private prisma: PrismaService,
   ) {
     this.useLLM =
       this.configService.get<string>("ENABLE_LLM_EXPLANATIONS", "true") ===
@@ -459,5 +461,124 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
     contexts: RecommendationContext[],
   ): Promise<GeneratedExplanation>[] {
     return contexts.map((ctx) => this.generateExplanation(ctx));
+  }
+
+  async generateReason(params: {
+    userId: string;
+    itemId: string;
+    scores: Record<string, number>;
+    userProfile?: Record<string, unknown>;
+    itemDetails?: Record<string, unknown>;
+    colorHarmony?: { score: number; details: unknown[] };
+  }): Promise<string> {
+    const { scores, userProfile, itemDetails, colorHarmony } = params;
+
+    const reasons: string[] = [];
+
+    if ((scores.ruleScore || 0) > 70) {
+      const bodyType = userProfile?.bodyType as string | undefined;
+      const bodyTypeFit = (itemDetails?.attributes as Record<string, unknown>)?.bodyTypeFit as string[] | undefined;
+      if (bodyType && bodyTypeFit?.includes(bodyType)) {
+        reasons.push(`适合你的${bodyType}体型`);
+      }
+    }
+
+    if ((scores.colorScore || 0) > 60 && userProfile?.colorSeason) {
+      reasons.push(`适合你的${this.translateColorSeason(userProfile.colorSeason as string)}色彩`);
+    }
+
+    if (colorHarmony && colorHarmony.score > 70) {
+      reasons.push(`色彩搭配和谐度${colorHarmony.score}%`);
+    }
+
+    if ((scores.cfScore || 0) > 0.5) {
+      reasons.push("与你品味相似的用户也喜欢");
+    }
+
+    if ((scores.kgScore || 0) > 0.5) {
+      reasons.push("风格搭配推荐");
+    }
+
+    if (reasons.length >= 2) {
+      return reasons.slice(0, 2).join("，");
+    }
+
+    try {
+      const prompt = `为以下穿搭推荐生成1句话的推荐理由（15字以内）：
+用户画像：${JSON.stringify({ gender: userProfile?.gender, colorSeason: userProfile?.colorSeason, bodyType: userProfile?.bodyType })}
+商品：${JSON.stringify({ name: itemDetails?.name, category: itemDetails?.category, style: (itemDetails?.attributes as Record<string, unknown>)?.style })}
+评分：${JSON.stringify(scores)}
+色彩和谐度：${colorHarmony?.score || "N/A"}%
+
+推荐理由：`;
+
+      const glmResponse = await this.callGLM(prompt);
+      return glmResponse || reasons.join("，") || "为你精选推荐";
+    } catch {
+      return reasons.join("，") || "为你精选推荐";
+    }
+  }
+
+  private async callGLM(prompt: string): Promise<string | null> {
+    const apiKey = this.configService.get("GLM_API_KEY");
+    if (!apiKey) return null;
+
+    try {
+      const response = await fetch(
+        "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "glm-4-flash",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 50,
+            temperature: 0.7,
+          }),
+        },
+      );
+
+      const data = (await response.json()) as {
+        choices?: Array<{ message?: { content?: string } }>;
+      };
+      return data.choices?.[0]?.message?.content?.trim() || null;
+    } catch {
+      return null;
+    }
+  }
+
+  async batchGenerateReasons(
+    items: Array<{ itemId: string; scores: Record<string, number> }>,
+    userId: string,
+  ): Promise<Map<string, string>> {
+    const userProfile = await this.prisma.userProfile.findUnique({
+      where: { userId },
+    });
+    const reasonMap = new Map<string, string>();
+
+    for (const item of items) {
+      const reason = await this.generateReason({
+        userId,
+        itemId: item.itemId,
+        scores: item.scores,
+        userProfile: userProfile as unknown as Record<string, unknown>,
+      });
+      reasonMap.set(item.itemId, reason);
+    }
+
+    return reasonMap;
+  }
+
+  private translateColorSeason(season: string): string {
+    const map: Record<string, string> = {
+      spring_warm: "暖春", spring_light: "浅春",
+      summer_cool: "凉夏", summer_light: "浅夏",
+      autumn_warm: "暖秋", autumn_deep: "深秋",
+      winter_cool: "冷冬", winter_deep: "深冬",
+    };
+    return map[season] || season;
   }
 }

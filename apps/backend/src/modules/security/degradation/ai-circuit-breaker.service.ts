@@ -162,9 +162,9 @@ export class AiCircuitBreakerService {
 
     await this.redis.set(this.key(serviceName, 'lastFailure'), String(Date.now()));
 
-    const globalCount = await this.redis.incr(this.globalKey());
+    const globalCount = await this.redis.incr(this.getGlobalFailureKey());
     if (globalCount === 1) {
-      await this.redis.pexpire(this.globalKey(), this.config.windowMs);
+      await this.redis.pexpire(this.getGlobalFailureKey(), this.config.windowMs);
     }
 
     if (newCount >= this.config.failureThreshold) {
@@ -209,7 +209,7 @@ export class AiCircuitBreakerService {
   }
 
   private async getGlobalFailureCount(): Promise<number> {
-    const raw = await this.redis.get(this.globalKey());
+    const raw = await this.redis.get(this.getGlobalFailureKey());
     return raw ? parseInt(raw, 10) : 0;
   }
 
