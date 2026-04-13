@@ -164,4 +164,88 @@ export class CommentQueryDto {
   @Min(1)
   @Max(50)
   pageSize?: number = 20;
+
+  @ApiPropertyOptional({ description: "每条评论的回复数量", example: 2, default: 2 })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(10)
+  repliesLimit?: number = 2;
+}
+
+export class BookmarkPostDto {
+  @ApiProperty({ description: "是否收藏", example: true })
+  @IsBoolean()
+  bookmarked!: boolean;
+
+  @ApiPropertyOptional({ description: "收藏夹 ID", example: "collection_001" })
+  @IsOptional()
+  @IsString()
+  collectionId?: string;
+}
+
+export class SharePostDto {
+  @ApiPropertyOptional({ description: "分享平台", example: "wechat" })
+  @IsOptional()
+  @IsString()
+  platform?: string;
+}
+
+export class CreateReportDto {
+  @ApiProperty({ description: "内容类型", example: "post" })
+  @IsString()
+  contentType!: string;
+
+  @ApiProperty({ description: "内容 ID", example: "post_001" })
+  @IsString()
+  contentId!: string;
+
+  @ApiProperty({ description: "举报原因", example: "包含不当内容" })
+  @IsString()
+  reason!: string;
+}
+
+export class ReportQueryDto {
+  @ApiPropertyOptional({ description: "页码", example: 1, default: 1 })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  page?: number = 1;
+
+  @ApiPropertyOptional({ description: "每页数量", example: 20, default: 20 })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  pageSize?: number = 20;
+
+  @ApiPropertyOptional({ description: "举报状态", example: "pending" })
+  @IsOptional()
+  @IsString()
+  status?: string;
+
+  @ApiPropertyOptional({ description: "内容类型", example: "post" })
+  @IsOptional()
+  @IsString()
+  contentType?: string;
+}
+
+export class TrendingQueryDto {
+  @ApiPropertyOptional({ description: "页码", example: 1, default: 1 })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  page?: number = 1;
+
+  @ApiPropertyOptional({ description: "每页数量", example: 20, default: 20 })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  pageSize?: number = 20;
+
+  @ApiPropertyOptional({ description: "趋势类型", example: "tags" })
+  @IsOptional()
+  @IsString()
+  type?: string;
 }

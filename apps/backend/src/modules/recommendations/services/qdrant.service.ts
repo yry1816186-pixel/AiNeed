@@ -36,7 +36,7 @@ export interface VectorFilter {
 export class QdrantService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(QdrantService.name);
   private client: QdrantClient | null = null;
-  private readonly collectionName = "clothing_items";
+  private readonly collectionName: string;
   private readonly vectorDimension = 512;
   private isConnected = false;
   private memoryStore: Map<
@@ -44,7 +44,11 @@ export class QdrantService implements OnModuleInit, OnModuleDestroy {
     { vector: number[]; payload: Record<string, unknown> }
   > = new Map();
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) {
+    this.collectionName =
+      this.configService.get<string>("QDRANT_COLLECTION_CLOTHING") ||
+      "clothing_items";
+  }
 
   async onModuleInit() {
     const qdrantUrl = this.configService.get<string>("QDRANT_URL");
@@ -356,5 +360,38 @@ export class QdrantService implements OnModuleInit, OnModuleDestroy {
 
   isReady(): boolean {
     return this.isConnected || this.memoryStore.size > 0;
+  }
+
+  async ensureCollection(
+    name: string,
+    vectorSize: number = 512,
+  ): Promise<void> {
+    if (!this.client) return;
+
+    try {
+      const collections = await this.client.getCollections();
+      const exists = collections.collections.some((c) => c.name === name);
+      if (!exists) {
+        await this.client.createCollection(name, {
+          vectors: { size: vectorSize, distance: "Cosine" },
+          optimizers_config: { indexing_threshold: 10000 },
+        });
+        this.logger.log(`Created Qdrant collection: ${name}`);
+      }
+    } catch (error) {
+      this.logger.error(`Failed to ensure collection: ${error}`);
+    }
+  }
+
+  async upsertClothingItem(
+    itemId: string,
+    vector: number[],
+    metadata: Record<string, unknown>,
+  ): Promise<void> {
+    await this.upsertVector({
+      id: itemId,
+      vector,
+      payload: metadata,
+    });
   }
 }

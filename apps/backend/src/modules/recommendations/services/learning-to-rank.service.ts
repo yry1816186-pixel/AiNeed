@@ -2,6 +2,21 @@ import { Injectable, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
+export interface LTRFeature {
+  name: string;
+  weight: number;
+  minValue: number;
+  maxValue: number;
+  normalize: boolean;
+}
+
+export interface LTRConfig {
+  features: LTRFeature[];
+  learningRate: number;
+  regularization: number;
+  maxIterations: number;
+}
+
 export interface RankingFeatures {
   itemId: string;
   contentScore: number;
@@ -53,6 +68,21 @@ export class LearningToRankService {
 
   private readonly LEARNING_RATE = 0.01;
   private readonly MIN_SAMPLES = 100;
+
+  private defaultConfig: LTRConfig = {
+    features: [
+      { name: "ruleScore", weight: 0.2, minValue: 0, maxValue: 100, normalize: true },
+      { name: "colorScore", weight: 0.15, minValue: 0, maxValue: 100, normalize: true },
+      { name: "cfScore", weight: 0.2, minValue: 0, maxValue: 1, normalize: true },
+      { name: "kgScore", weight: 0.15, minValue: 0, maxValue: 1, normalize: true },
+      { name: "sasrecScore", weight: 0.15, minValue: 0, maxValue: 1, normalize: true },
+      { name: "vectorScore", weight: 0.1, minValue: 0, maxValue: 1, normalize: true },
+      { name: "popularityScore", weight: 0.05, minValue: 0, maxValue: 1, normalize: true },
+    ],
+    learningRate: 0.01,
+    regularization: 0.001,
+    maxIterations: 100,
+  };
 
   constructor(private prisma: PrismaService) {
     this.loadWeights();
@@ -326,5 +356,61 @@ export class LearningToRankService {
   setWeights(newWeights: Partial<FeatureWeights>): void {
     this.weights = { ...this.weights, ...newWeights };
     this.normalizeWeights();
+  }
+
+  predict(
+    features: Record<string, number>,
+    config?: Partial<LTRConfig>,
+  ): number {
+    const cfg = { ...this.defaultConfig, ...config };
+    let score = 0;
+    for (const feature of cfg.features) {
+      const value = features[feature.name] || 0;
+      const normalized = feature.normalize
+        ? (value - feature.minValue) /
+          (feature.maxValue - feature.minValue || 1)
+        : value;
+      score += feature.weight * Math.max(0, Math.min(1, normalized));
+    }
+    return score;
+  }
+
+  async trainModel(
+    feedbackData: Array<{
+      features: Record<string, number>;
+      label: number;
+    }>,
+  ): Promise<void> {
+    const cfg = this.defaultConfig;
+    for (let iter = 0; iter < cfg.maxIterations; iter++) {
+      let totalLoss = 0;
+      for (const sample of feedbackData) {
+        const prediction = this.predict(sample.features);
+        const error = prediction - sample.label;
+        totalLoss += error * error;
+        for (const feature of cfg.features) {
+          const value = sample.features[feature.name] || 0;
+          const normalized = feature.normalize
+            ? (value - feature.minValue) /
+              (feature.maxValue - feature.minValue || 1)
+            : value;
+          feature.weight -=
+            cfg.learningRate *
+            (error * normalized + cfg.regularization * feature.weight);
+          feature.weight = Math.max(0, feature.weight);
+        }
+      }
+      if (totalLoss / feedbackData.length < 0.001) break;
+    }
+    const totalWeight = cfg.features.reduce((sum, f) => sum + f.weight, 0);
+    if (totalWeight > 0) {
+      cfg.features.forEach((f) => (f.weight /= totalWeight));
+    }
+  }
+
+  getFeatureWeights(): Record<string, number> {
+    return Object.fromEntries(
+      this.defaultConfig.features.map((f) => [f.name, f.weight]),
+    );
   }
 }

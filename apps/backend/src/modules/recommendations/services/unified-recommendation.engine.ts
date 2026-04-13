@@ -41,7 +41,17 @@ import { RecommendationExplainerService } from "./recommendation-explainer.servi
 import { SASRecService } from "./sasrec.service";
 import { VectorSimilarityService } from "./vector-similarity.service";
 
-// 导入类型定义
+export interface DataMaturitySignals {
+  totalUsers: number;
+  totalInteractions: number;
+  userInteractions: number;
+  sequenceLength: number;
+  hasProfile: boolean;
+  hasColorSeason: boolean;
+  cfDataAvailable: boolean;
+  kgDataAvailable: boolean;
+  sasrecDataAvailable: boolean;
+}
 
 @Injectable()
 export class UnifiedRecommendationEngine {
@@ -170,25 +180,88 @@ export class UnifiedRecommendationEngine {
 
     const weights = { ...this.defaultWeights };
 
-    // Adjust collaborative filtering weight based on interaction count
     if (behaviorSummary.totalInteractions < this.MIN_INTERACTIONS_FOR_CF) {
       weights.collaborative = 0.05;
-      weights.popularity += 0.15; // Shift weight to popularity
+      weights.popularity += 0.15;
     }
 
-    // Adjust SASRec weight based on sequence length
     if (behaviorSummary.recentItems.length < this.MIN_INTERACTIONS_FOR_SASREC) {
       weights.sasrec = 0.05;
-      weights.contentBased += 0.15; // Shift weight to content-based
+      weights.contentBased += 0.15;
     }
 
-    // Normalize weights to sum to 1
     const totalWeight = Object.values(weights).reduce((sum, w) => sum + w, 0);
     for (const key of Object.keys(weights)) {
       weights[key as keyof StrategyWeights] /= totalWeight;
     }
 
     return weights;
+  }
+
+  getAdaptiveWeightsFromSignals(signals: DataMaturitySignals): StrategyWeights & { vector: number } {
+    if (signals.userInteractions < 5) {
+      return {
+        contentBased: signals.hasProfile ? 0.4 : 0.6,
+        collaborative: 0,
+        knowledgeGraph: signals.kgDataAvailable ? 0.15 : 0,
+        theoryBased: signals.hasColorSeason ? 0.3 : 0.15,
+        sasrec: 0,
+        popularity: 0.1,
+        vector: 0.05,
+      };
+    }
+
+    if (signals.totalInteractions < 10000 || !signals.cfDataAvailable) {
+      return {
+        contentBased: 0.25,
+        collaborative: 0.1,
+        knowledgeGraph: signals.kgDataAvailable ? 0.15 : 0.05,
+        theoryBased: 0.2,
+        sasrec: signals.sequenceLength >= 3 ? 0.05 : 0,
+        popularity: 0.15,
+        vector: 0.1,
+      };
+    }
+
+    return {
+      contentBased: 0.15,
+      collaborative: 0.2,
+      knowledgeGraph: 0.15,
+      theoryBased: 0.15,
+      sasrec: signals.sasrecDataAvailable ? 0.1 : 0,
+      popularity: 0.1,
+      vector: 0.1,
+    };
+  }
+
+  async assessDataMaturity(userId: string): Promise<DataMaturitySignals> {
+    const [totalUsers, totalInteractions, userBehaviors, userProfile] =
+      await Promise.all([
+        this.prisma.user.count(),
+        this.prisma.userBehavior.count(),
+        this.prisma.userBehavior.findMany({
+          where: { userId },
+          orderBy: { createdAt: "desc" },
+          take: 50,
+        }),
+        this.prisma.userProfile.findUnique({ where: { userId } }),
+      ]);
+
+    const sequenceLength = userBehaviors.filter(
+      (b) => b.type === "view" || b.type === "click",
+    ).length;
+
+    return {
+      totalUsers,
+      totalInteractions,
+      userInteractions: userBehaviors.length,
+      sequenceLength,
+      hasProfile: !!userProfile,
+      hasColorSeason: !!userProfile?.colorSeason,
+      cfDataAvailable: totalInteractions >= 10000,
+      kgDataAvailable: true,
+      sasrecDataAvailable: false,
+    };
   }
 
   /**
