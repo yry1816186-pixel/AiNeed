@@ -150,13 +150,13 @@
 
 ### Phase 5.5: App 上架准备 & 推送通知 (7 requirements)
 
-- [ ] **LAUNCH-01**: 应用商店合规 — App Store & Google Play 合规检查：数据收集声明、权限使用说明、隐私政策链接、年龄分级；确保无违规 API 使用
-- [ ] **LAUNCH-02**: 隐私政策与用户协议 — 完整的隐私政策页面（数据收集/使用/存储/删除说明）；用户服务协议；注册时强制同意，后续可在设置中查看；版本更新时重新确认
-- [ ] **LAUNCH-03**: FCM 推送集成 — Android 端集成 Firebase Cloud Messaging；支持通知渠道分类（订单/推荐/社区/系统）；通知点击跳转到对应页面
-- [ ] **LAUNCH-04**: APNs 推送集成 — iOS 端集成 Apple Push Notification service；后端统一推送服务抽象层（FCM/APNs 透明切换）；推送证书管理
-- [ ] **LAUNCH-05**: 通知模板系统 — 4 类通知模板：订单通知（支付成功/发货/签收）、推荐通知（每日推荐/新风格）、社区通知（点赞/评论/关注）、系统通知（版本更新/活动）；模板支持变量替换
-- [ ] **LAUNCH-06**: 通知偏好管理 — 用户可按通知类型开关推送（订单/推荐/社区/系统）；支持免打扰时段设置；通知设置同步到服务端
-- [ ] **LAUNCH-07**: 上架素材准备 — App 图标（1024x1024）、启动页、应用截图（6.7"/6.5"/5.5" 三种尺寸）、应用描述和关键词（ASO 优化）、分类选择
+- [x] **LAUNCH-01**: 应用商店合规 — App Store & Google Play 合规检查：数据收集声明、权限使用说明、隐私政策链接、年龄分级；确保无违规 API 使用
+- [x] **LAUNCH-02**: 隐私政策与用户协议 — 完整的隐私政策页面（数据收集/使用/存储/删除说明）；用户服务协议；注册时强制同意，后续可在设置中查看；版本更新时重新确认
+- [x] **LAUNCH-03**: FCM 推送集成 — Android 端集成 Firebase Cloud Messaging；支持通知渠道分类（订单/推荐/社区/系统）；通知点击跳转到对应页面
+- [x] **LAUNCH-04**: APNs 推送集成 — iOS 端集成 Apple Push Notification service；后端统一推送服务抽象层（FCM/APNs 透明切换）；推送证书管理
+- [x] **LAUNCH-05**: 通知模板系统 — 4 类通知模板：订单通知（支付成功/发货/签收）、推荐通知（每日推荐/新风格）、社区通知（点赞/评论/关注）、系统通知（版本更新/活动）；模板支持变量替换
+- [x] **LAUNCH-06**: 通知偏好管理 — 用户可按通知类型开关推送（订单/推荐/社区/系统）；支持免打扰时段设置；通知设置同步到服务端
+- [x] **LAUNCH-07**: 上架素材准备 — App 图标（1024x1024）、启动页、应用截图（6.7"/6.5"/5.5" 三种尺寸）、应用描述和关键词（ASO 优化）、分类选择
 
 ### Phase 9: 运营后台 & 性能优化 & 数据种子 (8 requirements)
 
@@ -288,13 +288,13 @@
 | INFRA-07 | Phase 0 | Pending | 基础设施讨论 |
 | INFRA-08 | Phase 0 | Pending | 基础设施讨论 |
 | INFRA-09 | Phase 0 | Pending | 基础设施讨论 |
-| LAUNCH-01 | Phase 5.5 | Pending | 上架准备讨论 |
-| LAUNCH-02 | Phase 5.5 | Pending | 上架准备讨论 |
-| LAUNCH-03 | Phase 5.5 | Pending | 上架准备讨论 |
-| LAUNCH-04 | Phase 5.5 | Pending | 上架准备讨论 |
-| LAUNCH-05 | Phase 5.5 | Pending | 上架准备讨论 |
-| LAUNCH-06 | Phase 5.5 | Pending | 上架准备讨论 |
-| LAUNCH-07 | Phase 5.5 | Pending | 上架准备讨论 |
+| LAUNCH-01 | Phase 5.5 | Complete | 上架准备讨论 |
+| LAUNCH-02 | Phase 5.5 | Complete | 上架准备讨论 |
+| LAUNCH-03 | Phase 5.5 | Complete | 上架准备讨论 |
+| LAUNCH-04 | Phase 5.5 | Complete | 上架准备讨论 |
+| LAUNCH-05 | Phase 5.5 | Complete | 上架准备讨论 |
+| LAUNCH-06 | Phase 5.5 | Complete | 上架准备讨论 |
+| LAUNCH-07 | Phase 5.5 | Complete | 上架准备讨论 |
 | OPS-01 | Phase 9 | Pending | 运营后台讨论 |
 | OPS-02 | Phase 9 | Pending | 运营后台讨论 |
 | OPS-03 | Phase 9 | Pending | 运营后台讨论 |
