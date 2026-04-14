@@ -99,12 +99,18 @@ export class AiStylistService {
     userId: string,
     sessionId: string,
     message: string,
+    weatherContext?: string,
   ): Promise<ChatResult> {
     return this.chatService.sendMessage(
       userId,
       sessionId,
       message,
-      (session, msg) => this.processMessageInSession(session, msg),
+      (session, msg) => {
+        if (weatherContext) {
+          session.state.slots.weather = weatherContext;
+        }
+        return this.processMessageInSession(session, msg);
+      },
     );
   }
 
@@ -193,6 +199,9 @@ export class AiStylistService {
     outfitIndex: number,
     action: "like" | "dislike",
     itemId?: string,
+    rating?: number,
+    dislikeReason?: string,
+    dislikeDetail?: string,
   ): Promise<{ success: boolean; message: string }> {
     return this.recommendationService.submitFeedback(
       userId,
@@ -200,6 +209,9 @@ export class AiStylistService {
       outfitIndex,
       action,
       itemId,
+      rating,
+      dislikeReason,
+      dislikeDetail,
     );
   }
 

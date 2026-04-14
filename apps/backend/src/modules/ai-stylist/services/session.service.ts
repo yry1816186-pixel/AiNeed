@@ -39,11 +39,19 @@ export interface StylistSession {
   state: StylistSessionState;
   result?: StylistResolution;
   feedback?: {
-    likes: Array<{ outfitIndex: number; itemId?: string; timestamp: string }>;
+    likes: Array<{
+      outfitIndex: number;
+      itemId?: string;
+      timestamp: string;
+      rating?: number;
+    }>;
     dislikes: Array<{
       outfitIndex: number;
       itemId?: string;
       timestamp: string;
+      rating?: number;
+      dislikeReason?: string;
+      dislikeDetail?: string;
     }>;
   };
 }

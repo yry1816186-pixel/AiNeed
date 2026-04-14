@@ -33,12 +33,19 @@ import { AiQuotaService } from "../security/rate-limit/ai-quota.service";
 
 import { AiStylistService } from "./ai-stylist.service";
 import { SystemContextService } from "./system-context.service";
+import { OutfitPlanService } from "./services/outfit-plan.service";
+import { ItemReplacementService } from "./services/item-replacement.service";
+import { SessionArchiveService } from "./services/session-archive.service";
+import { PresetQuestionsService } from "./services/preset-questions.service";
+import { WeatherIntegrationService } from "./services/weather-integration.service";
 import {
   CreateStylistSessionDto,
   SendStylistMessageDto,
   UploadStylistPhotoDto,
   LegacyChatDto,
   SubmitFeedbackDto,
+  GetAlternativesQueryDto,
+  ReplaceItemDto,
 } from "./dto/ai-stylist.dto";
 
 /**
@@ -155,6 +162,11 @@ export class AiStylistController {
     private readonly stylistService: AiStylistService,
     private readonly systemContextService: SystemContextService,
     private readonly aiQuotaService: AiQuotaService,
+    private readonly outfitPlanService: OutfitPlanService,
+    private readonly itemReplacementService: ItemReplacementService,
+    private readonly sessionArchiveService: SessionArchiveService,
+    private readonly presetQuestionsService: PresetQuestionsService,
+    private readonly weatherIntegrationService: WeatherIntegrationService,
   ) {}
 
   @Post("sessions")
@@ -285,10 +297,22 @@ export class AiStylistController {
     @Param("sessionId") sessionId: string,
     @Body() body: SendStylistMessageDto,
   ) {
+    let weatherContext: string | undefined;
+    if (body.latitude !== undefined && body.longitude !== undefined) {
+      const weather = await this.weatherIntegrationService.getWeatherContext(
+        body.latitude,
+        body.longitude,
+      );
+      if (weather) {
+        weatherContext = weather.slotString;
+      }
+    }
+
     return this.stylistService.sendMessage(
       req.user.id,
       sessionId,
       body.message,
+      weatherContext,
     );
   }
 
@@ -438,6 +462,133 @@ export class AiStylistController {
     return this.stylistService.deleteSession(req.user.id, sessionId);
   }
 
+  @Get("sessions/:sessionId/outfit-plan")
+  @ApiOperation({
+    summary: "获取穿搭方案页数据",
+    description: "获取指定会话的穿搭方案页数据，包含整体效果图描述、单品列表和推荐理由。",
+  })
+  @ApiParam({ name: "sessionId", description: "会话ID", type: String, format: "uuid" })
+  @ApiResponse({
+    status: 200,
+    description: "获取成功",
+    schema: {
+      type: "object",
+      properties: {
+        sessionId: { type: "string" },
+        lookSummary: { type: "string" },
+        whyItFits: { type: "array", items: { type: "string" } },
+        weatherInfo: { type: "object" },
+        outfits: { type: "array" },
+        createdAt: { type: "string" },
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "会话不存在或未生成方案" })
+  async getOutfitPlan(
+    @Request() req: AuthenticatedRequest,
+    @Param("sessionId") sessionId: string,
+  ) {
+    return this.outfitPlanService.getOutfitPlan(req.user.id, sessionId);
+  }
+
+  @Get("sessions/:sessionId/items/alternatives")
+  @ApiOperation({
+    summary: "获取同类商品替代列表",
+    description: "获取指定会话中某单品的同类替代商品列表，已按用户画像过滤排序。",
+  })
+  @ApiParam({ name: "sessionId", description: "会话ID", type: String, format: "uuid" })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  @ApiResponse({ status: 404, description: "会话或单品不存在" })
+  async getAlternatives(
+    @Request() req: AuthenticatedRequest,
+    @Param("sessionId") sessionId: string,
+    @Query() query: GetAlternativesQueryDto,
+  ) {
+    return this.itemReplacementService.getAlternatives(
+      req.user.id,
+      sessionId,
+      query.outfitIndex,
+      query.itemIndex,
+      query.limit,
+    );
+  }
+
+  @Post("sessions/:sessionId/items/replace")
+  @ApiOperation({
+    summary: "替换单品",
+    description: "将方案中的指定单品替换为新商品，自动更新方案总价和推荐理由。",
+  })
+  @ApiParam({ name: "sessionId", description: "会话ID", type: String, format: "uuid" })
+  @ApiBody({ type: ReplaceItemDto })
+  @ApiResponse({ status: 201, description: "替换成功" })
+  @ApiResponse({ status: 404, description: "会话或商品不存在" })
+  async replaceItem(
+    @Request() req: AuthenticatedRequest,
+    @Param("sessionId") sessionId: string,
+    @Body() body: ReplaceItemDto,
+  ) {
+    return this.itemReplacementService.replaceItem(
+      req.user.id,
+      sessionId,
+      body.outfitIndex,
+      body.itemIndex,
+      body.newItemId,
+    );
+  }
+
+  @Get("sessions/calendar")
+  @ApiOperation({
+    summary: "获取方案日历视图",
+    description: "获取指定月份有穿搭方案的日期列表，用于日历视图展示。",
+  })
+  @ApiQuery({ name: "year", required: true, type: Number, description: "年份", example: 2026 })
+  @ApiQuery({ name: "month", required: true, type: Number, description: "月份(1-12)", example: 4 })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  async getCalendarDays(
+    @Request() req: AuthenticatedRequest,
+    @Query("year") year: string,
+    @Query("month") month: string,
+  ) {
+    return this.sessionArchiveService.getCalendarDays(
+      req.user.id,
+      parseInt(year, 10),
+      parseInt(month, 10),
+    );
+  }
+
+  @Get("sessions/date/:date")
+  @ApiOperation({
+    summary: "获取指定日期的方案列表",
+    description: "获取指定日期（YYYY-MM-DD）的所有穿搭方案。",
+  })
+  @ApiParam({ name: "date", description: "日期，格式 YYYY-MM-DD", type: String, example: "2026-04-14" })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  async getSessionsByDate(
+    @Request() req: AuthenticatedRequest,
+    @Param("date") date: string,
+  ) {
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(date)) {
+      throw new BadRequestException("日期格式必须为 YYYY-MM-DD");
+    }
+    return this.sessionArchiveService.getSessionsByDate(req.user.id, date);
+  }
+
+  @Get("preset-questions")
+  @ApiOperation({
+    summary: "获取预设引导问题",
+    description: "获取 AI 造型师的预设引导问题列表，新用户首次进入时展示。同时返回是否为新用户的标识。",
+  })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  async getPresetQuestions(@Request() req: AuthenticatedRequest) {
+    const [questions, isNewUser] = await Promise.all([
+      this.presetQuestionsService.getPresetQuestions(),
+      this.presetQuestionsService.isNewUser(req.user.id),
+    ]);
+    return { questions, isNewUser };
+  }
+
   @Post("chat")
   @UseGuards(AiQuotaGuard)
   @SetQuotaType('ai-stylist')
@@ -585,6 +736,9 @@ export class AiStylistController {
       body.outfitIndex,
       body.action,
       body.itemId,
+      body.rating,
+      body.dislikeReason,
+      body.dislikeDetail,
     );
   }
 

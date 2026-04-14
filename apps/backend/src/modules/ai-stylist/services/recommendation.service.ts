@@ -238,6 +238,9 @@ export class AiStylistRecommendationService {
     outfitIndex: number,
     action: "like" | "dislike",
     itemId?: string,
+    rating?: number,
+    dislikeReason?: string,
+    dislikeDetail?: string,
   ): Promise<{ success: boolean; message: string }> {
     const session = await this.sessionService.loadPersistedSession(userId, sessionId);
     if (!session) {
@@ -271,18 +274,26 @@ export class AiStylistRecommendationService {
     if (!session.feedback) {
       session.feedback = { likes: [], dislikes: [] };
     }
+
+    const feedbackEntry: Record<string, unknown> = {
+      outfitIndex,
+      itemId,
+      timestamp: new Date().toISOString(),
+    };
+    if (rating !== undefined) {
+      feedbackEntry.rating = rating;
+    }
+    if (dislikeReason) {
+      feedbackEntry.dislikeReason = dislikeReason;
+    }
+    if (dislikeDetail) {
+      feedbackEntry.dislikeDetail = dislikeDetail;
+    }
+
     if (action === "like") {
-      session.feedback.likes.push({
-        outfitIndex,
-        itemId,
-        timestamp: new Date().toISOString(),
-      });
+      session.feedback.likes.push(feedbackEntry as typeof session.feedback.likes[number]);
     } else {
-      session.feedback.dislikes.push({
-        outfitIndex,
-        itemId,
-        timestamp: new Date().toISOString(),
-      });
+      session.feedback.dislikes.push(feedbackEntry as typeof session.feedback.dislikes[number]);
     }
 
     await this.sessionService.persistSession(session);

@@ -29,17 +29,75 @@ export class WeatherService {
   private readonly logger = new Logger(WeatherService.name);
   private readonly apiKey: string;
   private readonly baseUrl = "https://api.openweathermap.org/data/2.5/weather";
+  private readonly qweatherApiKey: string;
+  private readonly qweatherBaseUrl: string;
 
   constructor(private configService: ConfigService) {
     this.apiKey = this.configService.get<string>("OPENWEATHER_API_KEY", "");
+    this.qweatherApiKey = this.configService.get<string>("QWEATHER_API_KEY", "");
+    this.qweatherBaseUrl = this.configService.get<string>(
+      "QWEATHER_BASE_URL",
+      "https://devapi.qweather.com/v7",
+    );
+  }
+
+  /**
+   * 和风天气（QWeather）查询 — 国内更准确
+   */
+  async getWeatherByLocationQWeather(
+    latitude: number,
+    longitude: number,
+  ): Promise<WeatherData | null> {
+    if (!this.qweatherApiKey) {
+      return null;
+    }
+
+    try {
+      const lookupUrl = `${this.qweatherBaseUrl}/geo/lookup?location=${longitude},${latitude}&key=${this.qweatherApiKey}`;
+      const lookupResp = await fetch(lookupUrl);
+      const lookupData = await lookupResp.json();
+
+      if (lookupData.code !== "200" || !lookupData.location?.[0]?.id) {
+        throw new Error(`QWeather geo lookup failed: ${lookupData.code}`);
+      }
+
+      const locationId = lookupData.location[0].id;
+      const locationName = lookupData.location[0].name;
+
+      const weatherUrl = `${this.qweatherBaseUrl}/weather/now?location=${locationId}&key=${this.qweatherApiKey}&lang=zh`;
+      const weatherResp = await fetch(weatherUrl);
+      const weatherData = await weatherResp.json();
+
+      if (weatherData.code !== "200" || !weatherData.now) {
+        throw new Error(`QWeather weather fetch failed: ${weatherData.code}`);
+      }
+
+      const now = weatherData.now;
+      return {
+        temperature: parseInt(now.temp, 10),
+        condition: now.text,
+        humidity: parseInt(now.humidity, 10),
+        windSpeed: parseFloat(now.windSpeed),
+        location: locationName,
+        suggestion: this.getWeatherSuggestion(parseInt(now.temp, 10), now.text),
+      };
+    } catch (error) {
+      this.logger.error(`QWeather fetch failed: ${error}`);
+      return null;
+    }
   }
 
   async getWeatherByLocation(
     latitude: number,
     longitude: number,
   ): Promise<WeatherData | null> {
+    const qweatherResult = await this.getWeatherByLocationQWeather(latitude, longitude);
+    if (qweatherResult) {
+      return qweatherResult;
+    }
+
     if (!this.apiKey) {
-      this.logger.warn("OpenWeather API key not configured");
+      this.logger.warn("No weather API key configured, using mock data");
       return this.getMockWeather();
     }
 

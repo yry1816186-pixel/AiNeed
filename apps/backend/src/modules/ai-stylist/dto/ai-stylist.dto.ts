@@ -18,6 +18,49 @@ import {
 import { Type } from "class-transformer";
 
 /**
+ * 获取同类商品替代列表查询参数 DTO
+ */
+export class GetAlternativesQueryDto {
+  @ApiProperty({ description: "穿搭方案索引", example: 0, minimum: 0 })
+  @IsNumber({}, { message: "方案索引必须是数字" })
+  @Min(0, { message: "方案索引不能为负数" })
+  outfitIndex!: number;
+
+  @ApiProperty({ description: "单品索引", example: 0, minimum: 0 })
+  @IsNumber({}, { message: "单品索引必须是数字" })
+  @Min(0, { message: "单品索引不能为负数" })
+  itemIndex!: number;
+
+  @ApiPropertyOptional({ description: "返回数量上限", example: 10, minimum: 1, maximum: 50, default: 10 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: "limit 必须是数字" })
+  @Min(1, { message: "limit 最小为 1" })
+  @Max(50, { message: "limit 最大为 50" })
+  limit?: number = 10;
+}
+
+/**
+ * 替换单品 DTO
+ */
+export class ReplaceItemDto {
+  @ApiProperty({ description: "新商品ID", example: "uuid-of-new-item" })
+  @IsString({ message: "新商品ID必须是字符串" })
+  @IsUUID("4", { message: "新商品ID必须是有效的 UUID v4" })
+  newItemId!: string;
+
+  @ApiProperty({ description: "穿搭方案索引", example: 0, minimum: 0 })
+  @IsNumber({}, { message: "方案索引必须是数字" })
+  @Min(0, { message: "方案索引不能为负数" })
+  outfitIndex!: number;
+
+  @ApiProperty({ description: "单品索引", example: 0 })
+  @IsNumber({}, { message: "单品索引必须是数字" })
+  @Min(0, { message: "单品索引不能为负数" })
+  itemIndex!: number;
+}
+
+/**
  * 创建 AI 造型师会话 DTO
  */
 export class CreateStylistSessionDto {
@@ -79,6 +122,24 @@ export class SendStylistMessageDto {
   @IsArray({ message: "照片 ID 列表必须是数组" })
   @IsUUID("4", { each: true, message: "每个照片 ID 必须是有效的 UUID" })
   photoIds?: string[];
+
+  @ApiPropertyOptional({
+    description: "用户当前纬度，用于获取天气数据",
+    example: 39.9042,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: "纬度必须是数字" })
+  latitude?: number;
+
+  @ApiPropertyOptional({
+    description: "用户当前经度，用于获取天气数据",
+    example: 116.4074,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: "经度必须是数字" })
+  longitude?: number;
 }
 
 /**
