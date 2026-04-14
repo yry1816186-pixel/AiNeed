@@ -15,6 +15,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp, SlideInLeft } from "react-native-reanimated";
 import { launchImageLibrary, type ImagePickerResponse } from "react-native-image-picker";
+import Share from "react-native-share";
 import { pickImageSecurely, type SecureImagePickerResult, ImageValidationError } from "../../utils/imagePicker";
 import { photosApi } from "../../services/api/photos.api";
 import { tryOnApi, type TryOnResult } from "../../services/api/tryon.api";
@@ -272,6 +273,57 @@ export const TryOnScreen: React.FC = () => {
     setErrorMessage(null);
   }, []);
 
+  const handleShare = useCallback(async () => {
+    const imageUrl = result?.resultImageDataUri || result?.resultImageUrl;
+    if (!imageUrl) {
+      Alert.alert("提示", "没有可分享的试衣结果");
+      return;
+    }
+    try {
+      await Share.open({
+        title: "寻裳 AI 试衣效果",
+        message: "看看我的 AI 虚拟试衣效果！",
+        url: imageUrl.startsWith("data:") ? imageUrl : imageUrl,
+        type: imageUrl.startsWith("data:image/png") ? "image/png" : "image/jpeg",
+      });
+    } catch (error: unknown) {
+      // User cancelled sharing - not an error
+      if (error instanceof Error && error.message?.includes("cancel")) {
+        return;
+      }
+      Alert.alert("提示", "分享失败，请重试");
+    }
+  }, [result]);
+
+  const handleSaveToAlbum = useCallback(async () => {
+    const imageUrl = result?.resultImageUrl;
+    if (!imageUrl) {
+      Alert.alert("提示", "没有可保存的试衣结果");
+      return;
+    }
+    try {
+      // Download image and share via system save option
+      await Share.open({
+        title: "保存试衣结果",
+        url: imageUrl,
+        type: "image/jpeg",
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message?.includes("cancel")) {
+        return;
+      }
+      Alert.alert("提示", "保存失败，请重试");
+    }
+  }, [result]);
+
+  const handleTryMore = useCallback(() => {
+    setClothingImage(null);
+    setClothingItem(null);
+    setResult(null);
+    setPhase("idle");
+    setProgress(0);
+  }, []);
+
   const phaseLabel: Record<TryOnPhase, string> = {
     idle: "",
     uploading: "上传照片中...",
@@ -485,15 +537,19 @@ export const TryOnScreen: React.FC = () => {
             </View>
 
             <View style={styles.actionButtons}>
-              <TouchableOpacity style={styles.actionButtonSecondary}>
+              <TouchableOpacity style={styles.actionButtonSecondary} onPress={handleShare}>
                 <Ionicons name="share-social-outline" size={20} color={colors.warmPrimary.ocean[700]} />
                 <Text style={styles.actionButtonTextSecondary}>分享结果</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.actionButtonPrimary}>
+              <TouchableOpacity style={styles.actionButtonPrimary} onPress={handleSaveToAlbum}>
                 <Ionicons name="download-outline" size={20} color="#FFFFFF" />
                 <Text style={styles.actionButtonTextPrimary}>保存到相册</Text>
               </TouchableOpacity>
             </View>
+            <TouchableOpacity style={styles.tryMoreButton} onPress={handleTryMore}>
+              <Ionicons name="shirt-outline" size={18} color={colors.brand.warmPrimary} />
+              <Text style={styles.tryMoreButtonText}>试穿更多</Text>
+            </TouchableOpacity>
           </View>
         </Animated.View>
       )}
@@ -857,6 +913,23 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold as any,
     color: "#FFFFFF",
+  },
+  tryMoreButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 13,
+    borderRadius: spacing.borderRadius.xl,
+    backgroundColor: colors.neutral[100],
+    marginTop: 12,
+    borderWidth: 1.5,
+    borderColor: colors.neutral[300],
+  },
+  tryMoreButtonText: {
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold as any,
+    color: colors.brand.warmPrimary,
   },
 });
 

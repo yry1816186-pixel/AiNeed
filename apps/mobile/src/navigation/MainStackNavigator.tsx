@@ -42,6 +42,7 @@ const AIStylistScreen = lazy(() => import('../screens/AiStylistScreen'));
 const SessionCalendarScreen = lazy(() => import('../screens/SessionCalendarScreen'));
 
 const VirtualTryOnScreen = lazy(() => import('../screens/VirtualTryOnScreen'));
+const TryOnHistoryScreenLazy = lazy(() => import('../components/screens/TryOnHistoryScreen').then((m) => ({ default: m.TryOnHistoryScreen })));
 
 const CommunityFeedScreen = lazy(() => import('../screens/CommunityScreen'));
 
@@ -136,7 +137,7 @@ export function TryOnStackNavigator() {
         {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 3, title: 'TryOnResult' } }} />}
       </TryOnStack.Screen>
       <TryOnStack.Screen name="TryOnHistory">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 3, title: 'TryOnHistory' } }} />}
+        {() => <Suspense fallback={screenLoader}><TryOnHistoryScreenLazy /></Suspense>}
       </TryOnStack.Screen>
     </TryOnStack.Navigator>
   );
