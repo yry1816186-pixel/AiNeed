@@ -130,11 +130,19 @@ export const aiStylistApi = {
   sendMessage: (
     sessionId: string,
     message: string,
-  ): Promise<ApiResponse<AiStylistSessionResponse>> =>
-    apiClient.post<AiStylistSessionResponse>(
+    latitude?: number,
+    longitude?: number,
+  ): Promise<ApiResponse<AiStylistSessionResponse>> => {
+    const payload: Record<string, unknown> = { message };
+    if (latitude !== undefined && longitude !== undefined) {
+      payload.latitude = latitude;
+      payload.longitude = longitude;
+    }
+    return apiClient.post<AiStylistSessionResponse>(
       `/ai-stylist/sessions/${sessionId}/messages`,
-      { message },
-    ),
+      payload,
+    );
+  },
 
   uploadPhoto: (
     sessionId: string,
@@ -179,6 +187,61 @@ export const aiStylistApi = {
 
   getSuggestions: (): Promise<ApiResponse<AiStylistSuggestionResponse>> =>
     apiClient.get<AiStylistSuggestionResponse>("/ai-stylist/suggestions"),
+
+  getOutfitPlan: (
+    sessionId: string,
+  ): Promise<ApiResponse<unknown>> =>
+    apiClient.get(`/ai-stylist/sessions/${sessionId}/outfit-plan`),
+
+  getAlternatives: (
+    sessionId: string,
+    outfitIndex: number,
+    itemIndex: number,
+    limit: number = 10,
+  ): Promise<ApiResponse<unknown>> =>
+    apiClient.get(
+      `/ai-stylist/sessions/${sessionId}/items/alternatives?outfitIndex=${outfitIndex}&itemIndex=${itemIndex}&limit=${limit}`,
+    ),
+
+  replaceItem: (
+    sessionId: string,
+    outfitIndex: number,
+    itemIndex: number,
+    newItemId: string,
+  ): Promise<ApiResponse<unknown>> =>
+    apiClient.post(
+      `/ai-stylist/sessions/${sessionId}/items/replace`,
+      { outfitIndex, itemIndex, newItemId },
+    ),
+
+  submitFeedback: (
+    sessionId: string,
+    data: {
+      outfitIndex: number;
+      action: "like" | "dislike";
+      itemId?: string;
+      rating?: number;
+      dislikeReason?: string;
+    },
+  ): Promise<ApiResponse<{ success: boolean; message: string }>> =>
+    apiClient.post(
+      `/ai-stylist/sessions/${sessionId}/feedback`,
+      data,
+    ),
+
+  getPresetQuestions: (): Promise<ApiResponse<unknown>> =>
+    apiClient.get("/ai-stylist/preset-questions"),
+
+  getCalendarDays: (
+    year: number,
+    month: number,
+  ): Promise<ApiResponse<unknown>> =>
+    apiClient.get(`/ai-stylist/sessions/calendar?year=${year}&month=${month}`),
+
+  getSessionsByDate: (
+    date: string,
+  ): Promise<ApiResponse<unknown>> =>
+    apiClient.get(`/ai-stylist/sessions/date/${date}`),
 };
 
 export default aiStylistApi;

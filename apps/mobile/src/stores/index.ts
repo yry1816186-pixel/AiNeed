@@ -18,6 +18,7 @@ export * from "./photoStore";
 export * from "./homeStore";
 export * from "./user.store";
 export * from "./app.store";
+export * from "./aiStylistStore";
 
 interface AuthState {
   user: User | null;
