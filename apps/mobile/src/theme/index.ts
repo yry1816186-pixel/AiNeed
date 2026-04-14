@@ -175,6 +175,9 @@ export const Colors = {
     950: "#022C22",
   },
 
+  // AUXILIARY ONLY: Accent colors are for categorical highlights (tags, charts, status indicators).
+  // NEVER use accent colors for primary actions, CTAs, or brand identity.
+  // Brand Terracotta (#C67B5C) must be used for all primary actions and brand elements.
   accent: {
     50: "#F5F3FF",
     100: "#EDE9FE",

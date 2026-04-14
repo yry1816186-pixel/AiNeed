@@ -72,6 +72,8 @@ export const DesignTokens = {
       spring: { label: "春季型", colors: ["#FF6B6B", "#FFA07A", "#FFD700", "#98FB98"], bg: "#FFF5F0" },
       summer: { label: "夏季型", colors: ["#87CEEB", "#DDA0DD", "#B0C4DE", "#F0E68C"], bg: "#F0F5FF" },
       autumn: { label: "秋季型", colors: ["#D2691E", "#B8860B", "#8B4513", "#CD853F"], bg: "#FFF8F0" },
+      // #1A1A2E is a seasonal accent for winter palette only, NOT a brand primary color.
+      // Terracotta (#C67B5C) is the sole brand primary.
       winter: { label: "冬季型", colors: ["#1A1A2E", "#E94560", "#FFFFFF", "#C0C0C0"], bg: "#F5F5FA" },
     },
   },
@@ -306,7 +308,7 @@ export const darkTokens = {
     },
     text: {
       primary: "#F5F2ED",
-      secondary: "#A8A098",
+      secondary: "#B8B0A8",
       tertiary: "#9B958E",
       inverse: "#191613",
       brand: "#D68B6C",

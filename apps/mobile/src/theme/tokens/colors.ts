@@ -10,6 +10,9 @@ import { DesignTokens } from "./design-tokens";
  */
 
 // ========== 主色调 - 温暖亲和配色 ==========
+// AUXILIARY ONLY: These warm color systems are for categorical highlights and decorative use.
+// They are NOT brand colors. Terracotta (#C67B5C) is the sole brand primary.
+// NEVER use these as primary action buttons, CTAs, or brand identity elements.
 export const WarmPrimaryColors = {
   // 珊瑚粉主色系（温暖、亲和、女性化）
   coral: {
@@ -64,10 +67,10 @@ export const BrandColors = {
   error: DesignTokens.colors.semantic.error,
   info: DesignTokens.colors.semantic.info,
 
-  // 新增温暖亲和主色
-  warmPrimary: WarmPrimaryColors.coral[500],      // #FF6B6B 珊瑚粉
-  warmSecondary: WarmPrimaryColors.mint[500],     // #51CF66 薄荷绿
-  warmAccent: WarmPrimaryColors.ocean[500],       // #167FFB 深海蓝
+  // Auxiliary warm colors - for decorative/categorical use only, NOT brand identity
+  warmPrimary: WarmPrimaryColors.coral[500],      // #FF6B6B 珊瑚粉 (auxiliary)
+  warmSecondary: WarmPrimaryColors.mint[500],     // #51CF66 薄荷绿 (auxiliary)
+  warmAccent: WarmPrimaryColors.ocean[500],       // #167FFB 深海蓝 (auxiliary)
 } as const;
 
 export const NeutralColors = DesignTokens.colors.neutral;
@@ -116,19 +119,19 @@ export const GradientPresets = {
     "rgba(255,255,255,0)",
   ] as [string, string, ...string[]],
 
-  // 新增温暖亲和渐变
-  coralRose: ['#FF6B6B', '#FF8E8E'] as [string, string],           // 珊瑚粉渐变
-  mintFresh: ['#51CF66', '#69DB7C'] as [string, string],            // 薄荷绿渐变
-  oceanDeep: ['#167FFB', '#33AAFF'] as [string, string],            // 深海蓝渐变
-  sunsetWarm: ['#FF6B6B', '#FFD93D'] as [string, string],           // 日落暖色
-  springBloom: ['#FF6B6B', '#51CF66'] as [string, string],          // 春日绽放
-  oceanMint: ['#167FFB', '#51CF66'] as [string, string],            // 海洋薄荷
-  coralOcean: ['#FF6B6B', '#167FFB'] as [string, string],           // 珊瑚海洋
+  // Auxiliary warm gradients - for decorative/categorical use only, NOT brand identity
+  coralRose: ['#FF6B6B', '#FF8E8E'] as [string, string],           // 珊瑚粉渐变 (auxiliary)
+  mintFresh: ['#51CF66', '#69DB7C'] as [string, string],            // 薄荷绿渐变 (auxiliary)
+  oceanDeep: ['#167FFB', '#33AAFF'] as [string, string],            // 深海蓝渐变 (auxiliary)
+  sunsetWarm: ['#FF6B6B', '#FFD93D'] as [string, string],           // 日落暖色 (auxiliary)
+  springBloom: ['#FF6B6B', '#51CF66'] as [string, string],          // 春日绽放 (auxiliary)
+  oceanMint: ['#167FFB', '#51CF66'] as [string, string],            // 海洋薄荷 (auxiliary)
+  coralOcean: ['#FF6B6B', '#167FFB'] as [string, string],           // 珊瑚海洋 (auxiliary)
 
-  // 高级质感渐变
-  luxuryGold: ['#FFD700', '#FFA500'] as [string, string],           // 奢华金
-  elegantPurple: ['#9C27B0', '#673AB7'] as [string, string],        // 优雅紫
-  romanticPink: ['#FF6B9D', '#FFB6C1'] as [string, string],         // 浪漫粉
+  // Auxiliary luxury gradients - for decorative/categorical use only
+  luxuryGold: ['#FFD700', '#FFA500'] as [string, string],           // 奢华金 (auxiliary)
+  elegantPurple: ['#9C27B0', '#673AB7'] as [string, string],        // 优雅紫 (auxiliary)
+  romanticPink: ['#FF6B9D', '#FFB6C1'] as [string, string],         // 浪漫粉 (auxiliary)
 } as const;
 
 export const SemanticColors = {
@@ -180,8 +183,8 @@ export const colors = {
   semantic: SemanticColors,
   fashion: FashionColors,
 
-  // 新增温暖亲和色系
-  warmPrimary: WarmPrimaryColors,  // 完整的温暖亲和色阶
+  // Auxiliary warm color scales - for decorative/categorical use only
+  warmPrimary: WarmPrimaryColors,  // complete warm auxiliary color scales
 };
 
 export default colors;
