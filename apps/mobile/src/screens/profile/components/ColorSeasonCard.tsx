@@ -11,6 +11,7 @@ import {
   Stop,
 } from 'react-native-svg';
 import { colors } from '@/src/theme/tokens/colors';
+import { DesignTokens } from '@/src/theme/tokens/design-tokens';
 import { typography } from '@/src/theme/tokens/typography';
 import { spacing } from '@/src/theme/tokens/spacing';
 import { shadows } from '@/src/theme/tokens/shadows';
@@ -47,18 +48,20 @@ const SEASON_TAGS: Record<string, { warm: string; depth: string }> = {
   winter: { warm: '冷', depth: '深' },
 };
 
+// Derive season gradient colors from DesignTokens.colorSeasons palette
 const SEASON_GRADIENT: Record<string, [string, string]> = {
-  spring: ['#FF7F7F', '#FFD700'],
-  summer: ['#E6E6FA', '#87CEEB'],
-  autumn: ['#C19A6B', '#B7410E'],
-  winter: ['#4169E1', '#301934'],
+  spring: [DesignTokens.colors.colorSeasons.spring.colors[0], DesignTokens.colors.colorSeasons.spring.colors[2]],
+  summer: [DesignTokens.colors.colorSeasons.summer.colors[0], DesignTokens.colors.colorSeasons.summer.colors[1]],
+  autumn: [DesignTokens.colors.colorSeasons.autumn.colors[0], DesignTokens.colors.colorSeasons.autumn.colors[2]],
+  winter: [DesignTokens.colors.colorSeasons.winter.colors[0], DesignTokens.colors.colorSeasons.winter.colors[1]],
 };
 
+// Derive season labels from DesignTokens.colorSeasons
 const SEASON_LABELS: Record<string, string> = {
-  spring: '春季型',
-  summer: '夏季型',
-  autumn: '秋季型',
-  winter: '冬季型',
+  spring: DesignTokens.colors.colorSeasons.spring.label,
+  summer: DesignTokens.colors.colorSeasons.summer.label,
+  autumn: DesignTokens.colors.colorSeasons.autumn.label,
+  winter: DesignTokens.colors.colorSeasons.winter.label,
 };
 
 const METAL_LABELS: Record<string, string> = {
