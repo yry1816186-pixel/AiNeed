@@ -79,6 +79,15 @@ export const CACHE_TTL = {
 
   // 超长缓存: 24小时
   VERY_LONG: 24 * 60 * 60,
+
+  // Phase 9: Performance-specific TTLs
+  PRODUCT_DETAIL: 5 * 60,       // 5 min
+  PRODUCT_LIST: 2 * 60,         // 2 min
+  RECOMMENDATION: 3 * 60,       // 3 min
+  CATEGORY: 10 * 60,            // 10 min
+  DASHBOARD_STATS: 5 * 60,      // 5 min
+  USER_PROFILE_CACHE: 10 * 60,  // 10 min
+  SEARCH_RESULTS: 60,           // 1 min
 } as const;
 
 /**
@@ -144,4 +153,32 @@ export class CacheKeyBuilder {
   static brandDetail(brandId: string): string {
     return `${CACHE_KEYS.BRAND_DETAIL}:${brandId}`;
   }
+
+  // Phase 9: Performance-specific key builders
+  static recommendations(userId: string, type: string): string {
+    return `cache:rec:${userId}:${type}`;
+  }
+
+  static categoryList(): string {
+    return "cache:category:all";
+  }
+
+  static dashboardStats(period: string): string {
+    return `cache:dashboard:${period}`;
+  }
+
+  static searchResults(query: string, filters: Record<string, unknown>): string {
+    const hash = JSON.stringify({ q: query, f: filters });
+    return `cache:search:${hash}`;
+  }
 }
+
+// Phase 9: Cache invalidation patterns by event
+export const CACHE_INVALIDATION_PATTERNS: Record<string, string[]> = {
+  "product.updated": ["cache:product:*", "cache:category:*"],
+  "product.created": ["cache:product:*", "cache:category:*"],
+  "product.deleted": ["cache:product:*", "cache:category:*"],
+  "order.created": ["cache:dashboard:*"],
+  "order.updated": ["cache:dashboard:*"],
+  "user.profile_updated": ["cache:profile:*", "user:profile:*"],
+};

@@ -16,3 +16,11 @@ export {
   type ProductImageProps,
   type BannerImageProps,
 } from './ImageWithPlaceholder';
+export {
+  OptimizedImage,
+  type OptimizedImageProps,
+} from './OptimizedImage';
+export {
+  VirtualizedList,
+  type VirtualizedListProps,
+} from './VirtualizedList';

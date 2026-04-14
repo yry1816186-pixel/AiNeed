@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiQuery } from "@ne
 import { Throttle } from "@nestjs/throttler";
 import { ClothingCategory } from "@prisma/client";
 
+import { CacheKey, CacheTTL } from "../../common/decorators/cache.decorators";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Public } from "../auth/decorators/public.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
@@ -138,6 +139,8 @@ export class RecommendationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
+  @CacheKey("recommendations:personalized")
+  @CacheTTL(180)
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取个性化推荐",
@@ -201,6 +204,8 @@ export class RecommendationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get("feed")
+  @CacheKey("recommendations:feed")
+  @CacheTTL(180)
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取推荐 Feed（分页）",
@@ -329,6 +334,8 @@ export class RecommendationsController {
   @Public()
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @Get("trending")
+  @CacheKey("recommendations:trending")
+  @CacheTTL(180)
   @ApiOperation({
     summary: "获取热门趋势推荐",
     description:

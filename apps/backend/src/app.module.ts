@@ -67,7 +67,9 @@ import { WardrobeCollectionModule } from "./modules/wardrobe-collection/wardrobe
 import { WeatherModule } from "./modules/weather/weather.module";
 import { WSModule } from "./modules/ws/ws.module";
 import { SystemReadinessService } from "./modules/system/system-readiness.service";
-import { JsonApiInterceptor } from "./common/interceptors";
+import { JsonApiInterceptor, CacheInterceptor, PerformanceInterceptor } from "./common/interceptors";
+import { CacheService } from "./modules/cache/cache.service";
+import { MetricsService } from "./modules/metrics/metrics.service";
 
 @Module({
   imports: [
@@ -156,6 +158,14 @@ import { JsonApiInterceptor } from "./common/interceptors";
     {
       provide: APP_INTERCEPTOR,
       useClass: JsonApiInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: PerformanceInterceptor,
     },
   ],
 })

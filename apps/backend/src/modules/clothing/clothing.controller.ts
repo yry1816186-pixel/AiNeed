@@ -7,6 +7,7 @@ import {
   ApiParam,
 } from "@nestjs/swagger";
 
+import { CacheKey, CacheTTL } from "../../common/decorators/cache.decorators";
 import { ClothingService } from "./clothing.service";
 import {
   GetClothingQueryDto,
@@ -33,6 +34,8 @@ export class ClothingController {
   constructor(private clothingService: ClothingService) {}
 
   @Get()
+  @CacheKey("clothing:list")
+  @CacheTTL(120)
   @ApiOperation({
     summary: "获取服装列表",
     description:
@@ -87,6 +90,8 @@ export class ClothingController {
   }
 
   @Get("categories")
+  @CacheKey("clothing:categories")
+  @CacheTTL(600)
   @ApiOperation({
     summary: "获取服装分类列表",
     description: "获取所有可用的服装分类，包含分类名称、描述和图标。",
@@ -124,6 +129,8 @@ export class ClothingController {
   }
 
   @Get(":id")
+  @CacheKey("clothing:detail")
+  @CacheTTL(300)
   @ApiOperation({
     summary: "获取商品详情",
     description: "根据商品 ID 获取详细的商品信息，包括名称、价格、描述、颜色、尺码、库存等。",

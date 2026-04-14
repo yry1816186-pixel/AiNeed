@@ -16,3 +16,5 @@ export type {
 } from './json-api.interceptor';
 export { ErrorInterceptor } from './error.interceptor';
 export { ImageResponseInterceptor } from './image-response.interceptor';
+export { CacheInterceptor } from './cache.interceptor';
+export { PerformanceInterceptor } from './performance.interceptor';
