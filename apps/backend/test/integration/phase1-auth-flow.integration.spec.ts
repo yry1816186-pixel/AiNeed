@@ -5,7 +5,7 @@
  * Uses mocked Prisma/Redis/external services; no infrastructure required.
  *
  * NOTE: Does not import from test-app.module to avoid pulling in
- * CloudTryOnProvider which has a pre-existing missing module issue.
+ * DoubaoSeedreamProvider / GlmTryOnProvider which require opossum dependency.
  */
 
 import { INestApplication, ValidationPipe } from "@nestjs/common";

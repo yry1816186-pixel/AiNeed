@@ -19,7 +19,8 @@ import {
 import { StorageService } from "../../src/common/storage/storage.service";
 import { EmailService } from "../../src/common/email/email.service";
 import { LlmProviderService } from "../../src/modules/ai-stylist/llm-provider.service";
-import { CloudTryOnProvider } from "../../src/modules/try-on/services/cloud-tryon.provider";
+import { DoubaoSeedreamProvider } from "../../src/modules/try-on/services/doubao-seedream.provider";
+import { GlmTryOnProvider } from "../../src/modules/try-on/services/glm-tryon.provider";
 import { QUEUE_NAMES } from "../../src/modules/queue/queue.constants";
 
 import { createMockRedisClient, createMockRedisService as buildMockRedisService } from "./redis-test-utils";
@@ -251,11 +252,11 @@ export function createMockLlmProviderService() {
 }
 
 /**
- * 创建 CloudTryOnProvider 的完整模拟
+ * 创建 DoubaoSeedreamProvider 的完整模拟
  */
-export function createMockCloudTryOnProvider() {
+export function createMockDoubaoSeedreamProvider() {
   return {
-    name: "cloud-tryon",
+    name: "doubao-seedream",
     priority: 1,
     isAvailable: jest.fn().mockResolvedValue(true),
     virtualTryOn: jest.fn().mockResolvedValue({
@@ -263,10 +264,33 @@ export function createMockCloudTryOnProvider() {
         "https://mock-minio.local/xuno/tryon-results/mock-result.png",
       processingTime: 5000,
       confidence: 0.85,
-      provider: "cloud-tryon",
+      provider: "doubao-seedream",
       metadata: {
-        category: "upper",
-        apiEndpoint: "https://mock-api.local/v1/run",
+        category: "upper_body",
+        model: "doubao-seedream-3-0-t2i-250415",
+      },
+    }),
+  };
+}
+
+/**
+ * 创建 GlmTryOnProvider 的完整模拟
+ */
+export function createMockGlmTryOnProvider() {
+  return {
+    name: "glm-tryon",
+    priority: 2,
+    isAvailable: jest.fn().mockResolvedValue(false),
+    virtualTryOn: jest.fn().mockResolvedValue({
+      resultImageUrl:
+        "https://mock-minio.local/xuno/tryon-results/mock-glm-result.png",
+      processingTime: 3000,
+      confidence: 0.6,
+      provider: "glm-tryon",
+      metadata: {
+        category: "upper_body",
+        model: "glm-4v-plus",
+        fallback: true,
       },
     }),
   };
@@ -346,10 +370,16 @@ export function createMockConfigService(): Record<string, unknown> {
     AI_STYLIST_API_ENDPOINT: "",
     AI_STYLIST_MODEL: "",
 
-    // Cloud TryOn
-    CLOUD_TRYON_API_KEY: "",
-    CLOUD_TRYON_API_URL: "https://api.fashn.ai/v1/run",
-    CLOUD_TRYON_ENABLED: "false",
+    // Doubao Seedream
+    DOUBAO_SEEDREAM_API_KEY: "",
+    DOUBAO_SEEDREAM_API_URL: "https://visual.volcengineapi.com/v1/aigc/generate",
+    DOUBAO_SEEDREAM_RESULT_URL: "https://visual.volcengineapi.com/v1/aigc/result",
+    DOUBAO_SEEDREAM_ENABLED: "false",
+    DOUBAO_SEEDREAM_MODEL: "doubao-seedream-3-0-t2i-250415",
+
+    // GLM TryOn (GLM_API_KEY shared with LLM API section above)
+    GLM_TRYON_ENABLED: "false",
+    GLM_TRYON_MODEL: "glm-4v-plus",
 
     // Email / SMTP
     SMTP_HOST: "",
@@ -436,7 +466,8 @@ export async function createTestAppModule(
   const mockStorageService = createMockStorageService();
   const mockEmailService = createMockEmailService();
   const mockLlmProviderService = createMockLlmProviderService();
-  const mockCloudTryOnProvider = createMockCloudTryOnProvider();
+  const mockDoubaoSeedreamProvider = createMockDoubaoSeedreamProvider();
+  const mockGlmTryOnProvider = createMockGlmTryOnProvider();
 
   const mockAiTasksQueue = createMockQueue(QUEUE_NAMES.AI_TASKS);
   const mockStyleAnalysisQueue = createMockQueue(QUEUE_NAMES.STYLE_ANALYSIS);
@@ -450,7 +481,8 @@ export async function createTestAppModule(
     { provide: StorageService, useValue: mockStorageService },
     { provide: EmailService, useValue: mockEmailService },
     { provide: LlmProviderService, useValue: mockLlmProviderService },
-    { provide: CloudTryOnProvider, useValue: mockCloudTryOnProvider },
+    { provide: DoubaoSeedreamProvider, useValue: mockDoubaoSeedreamProvider },
+    { provide: GlmTryOnProvider, useValue: mockGlmTryOnProvider },
     {
       provide: `BullQueue_${QUEUE_NAMES.AI_TASKS}`,
       useValue: mockAiTasksQueue,
@@ -573,7 +605,8 @@ export function resetMockServices(module: TestingModule): void {
     StorageService,
     EmailService,
     LlmProviderService,
-    CloudTryOnProvider,
+    DoubaoSeedreamProvider,
+    GlmTryOnProvider,
   ];
 
   for (const ServiceToken of services) {
