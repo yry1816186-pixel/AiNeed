@@ -219,6 +219,38 @@ export class TryOnController {
     res.send(asset.body);
   }
 
+  @Get(":id/share-image")
+  @ApiOperation({
+    summary: "获取试衣分享图",
+    description: "获取带水印的试衣结果图片，用于分享。",
+  })
+  @ApiParam({
+    name: "id",
+    description: "试衣记录ID",
+    type: String,
+    format: "uuid",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "返回带水印的图片二进制数据",
+  })
+  @ApiResponse({
+    status: 404,
+    description: "试衣记录不存在或分享图未生成",
+  })
+  async getShareImage(
+    @CurrentUser("id") userId: string,
+    @Param("id") tryOnId: string,
+    @Res() res: Response,
+  ) {
+    this.logger.log(`Serving share image for ${tryOnId}`);
+    const asset = await this.tryOnService.getShareImageAsset(tryOnId, userId);
+
+    res.setHeader("Content-Type", asset.contentType);
+    res.setHeader("Cache-Control", asset.cacheControl);
+    res.send(asset.body);
+  }
+
   @Post(":id/retry")
   @UseGuards(AiQuotaGuard)
   @SetQuotaType("try-on")

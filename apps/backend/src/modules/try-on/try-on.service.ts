@@ -278,6 +278,104 @@ export class TryOnService {
     return this.storage.fetchRemoteAsset(tryOn.resultImageUrl);
   }
 
+  async getShareImageAsset(tryOnId: string, userId: string): Promise<{
+    body: Buffer;
+    contentType: string;
+    cacheControl: string;
+  }> {
+    const tryOn = await this.prisma.virtualTryOn.findFirst({
+      where: { id: tryOnId, userId },
+      select: { resultImageUrl: true, watermarkedImageUrl: true },
+    });
+
+    if (!tryOn) {
+      throw new NotFoundException("试衣记录不存在");
+    }
+
+    const imageUrl = tryOn.watermarkedImageUrl || tryOn.resultImageUrl;
+    if (!imageUrl) {
+      throw new NotFoundException("分享图不存在");
+    }
+
+    return this.storage.fetchRemoteAsset(imageUrl);
+  }
+
+  /**
+   * Archive a completed try-on result to the user's inspiration wardrobe.
+   * Called after try-on completion.
+   */
+  async archiveToInspirationWardrobe(
+    tryOnId: string,
+    userId: string,
+  ): Promise<void> {
+    try {
+      const tryOn = await this.prisma.virtualTryOn.findFirst({
+        where: { id: tryOnId, userId, status: "completed" },
+        select: {
+          resultImageUrl: true,
+          watermarkedImageUrl: true,
+          itemId: true,
+          photoId: true,
+        },
+      });
+
+      if (!tryOn || !tryOn.resultImageUrl) {
+        return;
+      }
+
+      const imageUrl = tryOn.watermarkedImageUrl || tryOn.resultImageUrl;
+
+      // Find or create an "AI试衣效果" collection in wardrobe
+      const existingCollection = await this.prisma.wardrobeCollection.findFirst({
+        where: { userId, name: "AI试衣效果" },
+      });
+
+      let collectionId: string;
+      if (existingCollection) {
+        collectionId = existingCollection.id;
+      } else {
+        const newCollection = await this.prisma.wardrobeCollection.create({
+          data: {
+            userId,
+            name: "AI试衣效果",
+            icon: "sparkles",
+            isDefault: false,
+          },
+        });
+        collectionId = newCollection.id;
+      }
+
+      // Check if this try-on is already archived
+      const existingItem = await this.prisma.wardrobeCollectionItem.findFirst({
+        where: {
+          collectionId,
+          itemType: "try_on",
+          itemId: tryOnId,
+        },
+      });
+
+      if (existingItem) {
+        return;
+      }
+
+      await this.prisma.wardrobeCollectionItem.create({
+        data: {
+          userId,
+          collectionId,
+          itemType: "try_on",
+          itemId: tryOnId,
+        },
+      });
+
+      this.logger.log("试衣结果已归档到灵感衣橱", { tryOnId, userId });
+    } catch (error) {
+      this.logger.warn("归档到灵感衣橱失败", {
+        tryOnId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
   async getUserTryOnHistory(
     userId: string,
     page: number = 1,

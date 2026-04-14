@@ -4,6 +4,7 @@ import { Job } from "bullmq";
 
 import { NotificationService } from "../../common/gateway/notification.service";
 import { PrismaService } from "../../common/prisma/prisma.service";
+import { StorageService } from "../../common/storage/storage.service";
 import { TryOnOrchestratorService } from "../try-on/services/tryon-orchestrator.service";
 import { ContentModerationService } from "../community/content-moderation.service";
 
@@ -100,6 +101,7 @@ export class VirtualTryOnProcessor extends WorkerHost {
     private notificationService: NotificationService,
     private tryOnOrchestratorService: TryOnOrchestratorService,
     private prisma: PrismaService,
+    private storageService: StorageService,
   ) {
     super();
   }
@@ -200,6 +202,21 @@ export class VirtualTryOnProcessor extends WorkerHost {
         processingTime: result.processingTime,
         confidence: result.confidence,
       },
+    });
+
+    // Generate watermarked version asynchronously (non-blocking)
+    this.storageService.generateWatermarkedImage(
+      result.resultImageUrl,
+      "寻裳 AI 试衣",
+    ).then(async (watermarkedUrl) => {
+      await this.prisma.virtualTryOn.update({
+        where: { id: tryOnRecord.id },
+        data: { watermarkedImageUrl: watermarkedUrl },
+      });
+      this.logger.debug(`Watermarked image saved for try-on ${tryOnRecord.id}`);
+    }).catch((err: unknown) => {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`Failed to generate watermark for ${tryOnRecord.id}: ${msg}`);
     });
 
     await this.notificationService.notifyTryOnProgress(
