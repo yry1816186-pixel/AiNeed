@@ -66,6 +66,9 @@ describe("AuthService", () => {
     userProfile: {
       create: jest.fn(),
     },
+    userConsent: {
+      createMany: jest.fn().mockResolvedValue({ count: 2 }),
+    },
     refreshToken: {
       create: jest.fn(),
       findMany: jest.fn(),

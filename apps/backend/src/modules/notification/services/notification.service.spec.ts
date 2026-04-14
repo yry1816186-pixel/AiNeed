@@ -7,6 +7,8 @@ import {
   NotificationService,
   CreateNotificationDto,
 } from "./notification.service";
+import { PushNotificationService } from "./push-notification.service";
+import { NotificationTemplateService } from "./notification-template.service";
 
 describe("NotificationService", () => {
   let service: NotificationService;
@@ -31,6 +33,14 @@ describe("NotificationService", () => {
     sendCustomNotification: jest.fn().mockResolvedValue(undefined),
   };
 
+  const mockPushNotificationService = {
+    sendToUser: jest.fn().mockResolvedValue(undefined),
+  };
+
+  const mockNotificationTemplateService = {
+    render: jest.fn().mockReturnValue(null),
+  };
+
   const mockNotification = {
     id: "notification-id",
     userId: "user-id",
@@ -53,6 +63,14 @@ describe("NotificationService", () => {
         {
           provide: WebSocketNotificationService,
           useValue: mockWebSocketNotificationService,
+        },
+        {
+          provide: PushNotificationService,
+          useValue: mockPushNotificationService,
+        },
+        {
+          provide: NotificationTemplateService,
+          useValue: mockNotificationTemplateService,
         },
       ],
     }).compile();
@@ -201,7 +219,7 @@ describe("NotificationService", () => {
         id: "settings-id",
         userId: "user-id",
         email: { marketing: true, transactional: true },
-        push: { recommendation: true, social: true },
+        push: { order: true, recommendation: true, community: true, system: true, quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00" },
         inApp: { all: true },
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -233,7 +251,7 @@ describe("NotificationService", () => {
         id: "settings-id",
         userId: "user-id",
         email: { marketing: false, transactional: true },
-        push: { recommendation: true, social: true },
+        push: { order: true, recommendation: true, community: true, system: true, quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00" },
         inApp: { all: true },
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -475,7 +493,7 @@ describe("NotificationService", () => {
         id: "new-settings-id",
         userId: "new-user",
         email: { marketing: true, transactional: true },
-        push: { recommendation: true, social: true },
+        push: { order: true, recommendation: true, community: true, system: true, quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00" },
         inApp: { all: true },
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -494,7 +512,7 @@ describe("NotificationService", () => {
         id: "settings-id",
         userId: "user-id",
         email: { marketing: false, transactional: true },
-        push: { recommendation: true, social: true },
+        push: { order: true, recommendation: true, community: true, system: true, quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00" },
         inApp: { all: true },
         createdAt: new Date(),
         updatedAt: new Date(),

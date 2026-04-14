@@ -5,6 +5,7 @@ import { CustomizationType, CustomizationStatus } from "@prisma/client";
 import { PrismaService } from "../../common/prisma/prisma.service";
 
 import { CustomizationService } from "./customization.service";
+import { PODService } from "./pod/pod-service";
 
 
 
@@ -23,6 +24,11 @@ describe("CustomizationService", () => {
     customizationQuote: {
       findUnique: jest.fn(),
     },
+  };
+
+  const mockPODService = {
+    submitToProduction: jest.fn(),
+    checkProductionStatus: jest.fn(),
   };
 
   const mockRequest = {
@@ -53,6 +59,10 @@ describe("CustomizationService", () => {
         {
           provide: PrismaService,
           useValue: mockPrismaService,
+        },
+        {
+          provide: PODService,
+          useValue: mockPODService,
         },
       ],
     }).compile();

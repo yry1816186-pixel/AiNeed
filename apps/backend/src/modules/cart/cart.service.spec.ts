@@ -4,6 +4,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { PrismaService } from "../../common/prisma/prisma.service";
 
 import { CartService } from "./cart.service";
+import { CouponService } from "../coupon/coupon.service";
 
 describe("CartService", () => {
   let service: CartService;
@@ -27,6 +28,10 @@ describe("CartService", () => {
     },
   };
 
+  const mockCouponService = {
+    validateCoupon: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -34,6 +39,10 @@ describe("CartService", () => {
         {
           provide: PrismaService,
           useValue: mockPrismaService,
+        },
+        {
+          provide: CouponService,
+          useValue: mockCouponService,
         },
       ],
     }).compile();

@@ -211,6 +211,9 @@ describe("Phase 1 Integration: Auth Flow", () => {
           userProfile: {
             create: jest.fn().mockResolvedValue({ userId: mockCreatedUser.id }),
           },
+          userConsent: {
+            createMany: jest.fn().mockResolvedValue({ count: 2 }),
+          },
         };
         return fn(txMock);
       });

@@ -32,6 +32,7 @@ describe("MerchantService", () => {
     brand: {
       create: jest.fn(),
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
     },
     clothingItem: {
       count: jest.fn(),
@@ -108,10 +109,11 @@ describe("MerchantService", () => {
       password: "Password123",
       name: "测试商家",
       phone: "13800138000",
-      businessLicenseUrl: "https://example.com/license.jpg",
+      businessLicenseUrl: "91350100M000100Y43",
     };
 
     it("应该成功申请商家入驻", async () => {
+      mockPrismaService.brand.findFirst.mockResolvedValue(null);
       mockPrismaService.brandMerchant.findUnique.mockResolvedValue(null);
       mockPrismaService.$transaction.mockImplementation(async (cb) => {
         return cb({
@@ -131,6 +133,7 @@ describe("MerchantService", () => {
     });
 
     it("应该拒绝已注册的邮箱", async () => {
+      mockPrismaService.brand.findFirst.mockResolvedValue(null);
       mockPrismaService.brandMerchant.findUnique.mockResolvedValue(
         mockMerchant,
       );
@@ -143,6 +146,7 @@ describe("MerchantService", () => {
 
   describe("login", () => {
     it("应该成功登录", async () => {
+      mockPrismaService.brand.findFirst.mockResolvedValue(null);
       mockPrismaService.brandMerchant.findUnique.mockResolvedValue(
         mockMerchant,
       );
@@ -156,6 +160,7 @@ describe("MerchantService", () => {
     });
 
     it("应该拒绝不存在的商家", async () => {
+      mockPrismaService.brand.findFirst.mockResolvedValue(null);
       mockPrismaService.brandMerchant.findUnique.mockResolvedValue(null);
 
       await expect(
@@ -164,6 +169,7 @@ describe("MerchantService", () => {
     });
 
     it("应该拒绝错误的密码", async () => {
+      mockPrismaService.brand.findFirst.mockResolvedValue(null);
       mockPrismaService.brandMerchant.findUnique.mockResolvedValue(
         mockMerchant,
       );
