@@ -22,6 +22,7 @@ import { RequestWithUser } from "../../common/types/common.types";
 
 import { PrivacyService } from "./privacy.service";
 import { RecordConsentDto, ExportDataDto, DeleteAccountDto } from "./dto";
+import { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION, POLICY_UPDATED_AT } from "./privacy-version";
 
 @ApiTags("privacy")
 @ApiBearerAuth()
@@ -29,6 +30,20 @@ import { RecordConsentDto, ExportDataDto, DeleteAccountDto } from "./dto";
 @UseGuards(AuthGuard)
 export class PrivacyController {
   constructor(private readonly privacyService: PrivacyService) {}
+
+  /**
+   * Get current policy versions
+   */
+  @Get("policy-version")
+  @ApiOperation({ summary: "Get policy versions", description: "Get the current versions of privacy policy and terms of service" })
+  @ApiResponse({ status: 200, description: "Current policy versions" })
+  getPolicyVersion() {
+    return {
+      termsOfService: CURRENT_TERMS_VERSION,
+      privacyPolicy: CURRENT_PRIVACY_VERSION,
+      updatedAt: POLICY_UPDATED_AT,
+    };
+  }
 
   /**
    * 获取用户同意记录

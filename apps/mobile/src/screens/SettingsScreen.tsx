@@ -20,6 +20,7 @@ import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthStore } from '../stores/index';
 import { authApi } from '../services/api/auth.api';
+import { unifiedApiClient } from '../services/api/apiClient';
 import { theme } from '../theme';
 import type { RootStackParamList } from '../types/navigation';
 
@@ -46,6 +47,7 @@ export const SettingsScreen: React.FC = () => {
 
   // Delete account confirmation
   const [deleting, setDeleting] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -153,6 +155,30 @@ export const SettingsScreen: React.FC = () => {
       },
     ]);
   }, [logout, navigation]);
+
+  const handleExportData = useCallback(async () => {
+    Alert.alert(
+      'Export Data',
+      'Request a copy of your personal data? You will receive a download link when ready.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Export',
+          onPress: async () => {
+            setExporting(true);
+            try {
+              await unifiedApiClient.post('/privacy/export', { format: 'json' });
+              Alert.alert('Success', 'Data export request submitted. You will receive a download link within 24 hours.');
+            } catch {
+              Alert.alert('Error', 'Failed to request data export. Please try again.');
+            } finally {
+              setExporting(false);
+            }
+          },
+        },
+      ],
+    );
+  }, []);
 
   const handleDeleteAccount = useCallback(() => {
     Alert.alert(
@@ -279,52 +305,38 @@ export const SettingsScreen: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Account */}
-        <Text style={styles.sectionTitle}>账户</Text>
+        {/* Data & Privacy */}
+        <Text style={styles.sectionTitle}>Data & Privacy</Text>
         <View style={styles.section}>
           <TouchableOpacity
             style={styles.settingItem}
-            onPress={() => setPasswordModalVisible(true)}
-            accessibilityLabel="修改密码"
+            onPress={handleExportData}
+            disabled={exporting}
+            accessibilityLabel="Export my data"
+            accessibilityState={{ disabled: exporting }}
           >
-            <Ionicons name="lock-closed-outline" size={22} color={theme.colors.textSecondary} />
-            <Text style={styles.settingText}>修改密码</Text>
+            {exporting ? (
+              <ActivityIndicator size="small" color={theme.colors.textSecondary} />
+            ) : (
+              <Ionicons name="download-outline" size={22} color={theme.colors.textSecondary} />
+            )}
+            <Text style={styles.settingText}>{exporting ? 'Exporting...' : 'Export My Data'}</Text>
             <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.settingItem}
             onPress={() => navigation.navigate('NotificationSettings')}
-            accessibilityLabel="通知设置"
+            accessibilityLabel="Notification settings"
           >
             <Ionicons name="notifications-outline" size={22} color={theme.colors.textSecondary} />
-            <Text style={styles.settingText}>通知设置</Text>
+            <Text style={styles.settingText}>Notification Settings</Text>
             <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.settingItem, styles.settingItemLast]} accessibilityLabel="关于">
-            <Ionicons name="help-circle-outline" size={22} color={theme.colors.textSecondary} />
-            <Text style={styles.settingText}>关于</Text>
-            <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Actions */}
-        <View style={styles.section}>
           <TouchableOpacity
-            style={[styles.settingItem, styles.dangerButton]}
-            onPress={handleLogout}
-            accessibilityLabel="退出登录"
-          >
-            <Ionicons name="log-out-outline" size={22} color={theme.colors.error} />
-            <Text style={[styles.settingText, { color: theme.colors.error }]}>退出登录</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.section}>
-          <TouchableOpacity
-            style={[styles.settingItem, styles.settingItemLast, styles.dangerButton]}
+            style={[styles.settingItem, styles.settingItemLast]}
             onPress={handleDeleteAccount}
             disabled={deleting}
-            accessibilityLabel="删除账户"
+            accessibilityLabel="Delete my account"
             accessibilityState={{ disabled: deleting }}
           >
             {deleting ? (
@@ -333,8 +345,39 @@ export const SettingsScreen: React.FC = () => {
               <Ionicons name="trash-outline" size={22} color={theme.colors.error} />
             )}
             <Text style={[styles.settingText, { color: theme.colors.error }]}>
-              {deleting ? '删除中...' : '删除账户'}
+              {deleting ? 'Deleting...' : 'Delete My Account'}
             </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Account */}
+        <Text style={styles.sectionTitle}>Account</Text>
+        <View style={styles.section}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => setPasswordModalVisible(true)}
+            accessibilityLabel="Change password"
+          >
+            <Ionicons name="lock-closed-outline" size={22} color={theme.colors.textSecondary} />
+            <Text style={styles.settingText}>Change Password</Text>
+            <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.settingItem, styles.settingItemLast]} accessibilityLabel="About">
+            <Ionicons name="help-circle-outline" size={22} color={theme.colors.textSecondary} />
+            <Text style={styles.settingText}>About</Text>
+            <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Actions */}
+        <View style={styles.section}>
+          <TouchableOpacity
+            style={[styles.settingItem, styles.settingItemLast, styles.dangerButton]}
+            onPress={handleLogout}
+            accessibilityLabel="Log out"
+          >
+            <Ionicons name="log-out-outline" size={22} color={theme.colors.error} />
+            <Text style={[styles.settingText, { color: theme.colors.error }]}>Log Out</Text>
           </TouchableOpacity>
         </View>
 

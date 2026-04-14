@@ -1,0 +1,55 @@
+{
+  "appName": "XunShang - AI Smart Outfit Assistant",
+  "subtitle": "AI Stylist | Virtual Try-On | Personal Recommendations",
+  "bundleId": "com.xuno.app",
+  "primaryCategory": "Lifestyle",
+  "secondaryCategory": "Shopping",
+  "ageRating": "4+",
+  "price": "Free",
+  "privacyPolicyUrl": "https://xuno.app/privacy",
+  "supportUrl": "https://xuno.app/support",
+  "marketingUrl": "https://xuno.app",
+  "description": {
+    "zh-CN": "XunShang is your AI-powered personal style consultant.\n\n[Core Features]\n- AI Stylist: Get personalized outfit recommendations based on your body type, skin tone, and style preferences. Our AI understands weather, occasions, and your unique profile.\n- Virtual Try-On: See yourself wearing recommended outfits before you buy. Upload a photo and let AI generate realistic try-on effects.\n- Smart Recommendations: Discover new styles daily with our personalized feed that learns from your preferences and browsing behavior.\n- Personal Style Profile: Complete a fun visual quiz to establish your style DNA - color season, body type analysis, and preferred aesthetics.\n- Shopping Made Easy: From recommendation to purchase in seconds. Smart size recommendations based on your body measurements.\n- Weather-Aware: Outfit suggestions automatically factor in your local weather conditions.\n\n[Why XunShang?]\n- AI-powered personalization that gets better over time\n- No more outfit decision fatigue\n- Virtual try-on saves time and reduces returns\n- Style education through color theory and body type analysis\n- Curated fashion from trusted brands and independent designers\n\nDownload XunShang and never wonder what to wear again."
+  },
+  "keywords": {
+    "zh-CN": "outfit,AI stylist,virtual try-on,fashion recommendation,style,wardrobe,outfit planner,image consulting,color matching,clothing"
+  },
+  "whatsNew": "v1.0 First Release\n- AI-powered outfit recommendations based on your personal style profile\n- Virtual try-on: see yourself wearing any outfit\n- Smart daily outfit suggestions considering weather and occasions\n- Visual style quiz to build your style DNA\n- Personalized shopping with smart size recommendations",
+  "screenshots": {
+    "6.7-inch": {
+      "resolution": "1290x2796",
+      "required": 6,
+      "strategy": [
+        "Screenshot 1: AI Stylist - outfit recommendation page with outfit plan view",
+        "Screenshot 2: Virtual Try-On - before/after comparison showing try-on effect",
+        "Screenshot 3: Daily Recommendations - waterfall feed of personalized outfits",
+        "Screenshot 4: Style Quiz - visual quiz with image selection cards",
+        "Screenshot 5: Shopping - product detail with size recommendation badge",
+        "Screenshot 6: Profile & Wardrobe - user's style profile with color season palette"
+      ]
+    },
+    "6.5-inch": {
+      "resolution": "1242x2688",
+      "required": 6,
+      "strategy": "Same content as 6.7-inch, resized to 1242x2688"
+    },
+    "5.5-inch": {
+      "resolution": "1242x2208",
+      "required": 6,
+      "strategy": "Same content as 6.7-inch, resized to 1242x2208"
+    }
+  },
+  "appIcon": {
+    "size": "1024x1024",
+    "format": "PNG",
+    "alpha": false,
+    "notes": "Clean app icon with XunShang brand mark. No text overlay. Recognizable at small sizes."
+  },
+  "launchScreen": {
+    "type": "storyboard",
+    "background": "#FFFFFF or brand gradient",
+    "content": "Centered logo with subtle animation",
+    "notes": "Match brand guidelines. No ads or marketing text on launch screen."
+  }
+}

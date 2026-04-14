@@ -17,6 +17,7 @@ import { StructuredLoggerService, ContextualLogger } from "../../common/logging/
 import * as bcrypt from "../../common/security/bcrypt";
 
 import { RegisterDto, LoginDto, AuthResponseDto, PhoneRegisterDto } from "./dto/auth.dto";
+import { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION } from "../privacy/privacy-version";
 import { AuthHelpersService } from "./auth.helpers";
 import { SmsService } from "./services/sms.service";
 import { ISmsService } from "./services/sms.service";
@@ -129,6 +130,26 @@ export class AuthService {
 
       await tx.userProfile.create({
         data: { userId: createdUser.id },
+      });
+
+      // Record consent for terms of service and privacy policy
+      await tx.userConsent.createMany({
+        data: [
+          {
+            userId: createdUser.id,
+            consentType: "terms_of_service",
+            granted: true,
+            grantedAt: new Date(),
+            version: CURRENT_TERMS_VERSION,
+          },
+          {
+            userId: createdUser.id,
+            consentType: "privacy_policy",
+            granted: true,
+            grantedAt: new Date(),
+            version: CURRENT_PRIVACY_VERSION,
+          },
+        ],
       });
 
       return [createdUser];
@@ -511,6 +532,26 @@ export class AuthService {
           userId: createdUser.id,
           ...(dto.gender ? { gender: dto.gender as any } : {}),
         },
+      });
+
+      // Record consent for terms of service and privacy policy
+      await tx.userConsent.createMany({
+        data: [
+          {
+            userId: createdUser.id,
+            consentType: "terms_of_service",
+            granted: true,
+            grantedAt: new Date(),
+            version: CURRENT_TERMS_VERSION,
+          },
+          {
+            userId: createdUser.id,
+            consentType: "privacy_policy",
+            granted: true,
+            grantedAt: new Date(),
+            version: CURRENT_PRIVACY_VERSION,
+          },
+        ],
       });
 
       return [createdUser];

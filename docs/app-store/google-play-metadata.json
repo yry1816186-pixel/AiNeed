@@ -1,0 +1,104 @@
+{
+  "appName": "XunShang - AI Smart Outfit Assistant",
+  "packageName": "com.xuno.app",
+  "category": "Lifestyle",
+  "tags": ["Fashion", "AI", "Shopping", "Style", "Outfit", "Virtual Try-On"],
+  "contentRating": "Everyone",
+  "privacyPolicyUrl": "https://xuno.app/privacy",
+  "description": {
+    "zh-CN": {
+      "short": "AI stylist + virtual try-on, never worry about what to wear",
+      "full": "XunShang is your AI-powered personal style consultant.\n\n[Core Features]\n- AI Stylist: Get personalized outfit recommendations based on your body type, skin tone, and style preferences\n- Virtual Try-On: See yourself wearing recommended outfits before you buy\n- Smart Recommendations: Discover new styles daily with personalized feed\n- Personal Style Profile: Visual quiz to establish your style DNA\n- Weather-Aware: Outfit suggestions factor in local weather conditions\n- Smart Shopping: Size recommendations based on your body measurements\n\n[Why XunShang?]\n- AI-powered personalization that improves over time\n- Virtual try-on saves time and reduces returns\n- Style education through color theory and body type analysis\n- Curated fashion from trusted brands\n\nDownload XunShang and never wonder what to wear again."
+    }
+  },
+  "dataSafety": {
+    "dataCollected": [
+      {
+        "type": "Personal info",
+        "details": ["Name", "Email address", "Phone number", "Gender", "Age range"],
+        "purpose": "App functionality, account management",
+        "encrypted": true,
+        "deletable": true
+      },
+      {
+        "type": "Photos and videos",
+        "details": ["Photos"],
+        "purpose": "App functionality (virtual try-on, body analysis)",
+        "encrypted": true,
+        "deletable": true
+      },
+      {
+        "type": "App activity",
+        "details": ["App interactions", "Browsing history", "Search history"],
+        "purpose": "Analytics, personalization",
+        "encrypted": false,
+        "deletable": true
+      },
+      {
+        "type": "Device or other IDs",
+        "details": ["Device ID", "Push notification token"],
+        "purpose": "Analytics, notifications",
+        "encrypted": false,
+        "deletable": false
+      },
+      {
+        "type": "Location",
+        "details": ["Approximate location"],
+        "purpose": "Weather-based recommendations",
+        "encrypted": false,
+        "deletable": true
+      }
+    ],
+    "dataShared": [
+      {
+        "type": "Photos and videos",
+        "sharedWith": "Zhipu AI (GLM API)",
+        "purpose": "Virtual try-on image generation",
+        "encrypted": true,
+        "ephemeral": true
+      },
+      {
+        "type": "Personal info",
+        "sharedWith": "Payment processors (Alipay/WeChat Pay)",
+        "purpose": "Payment processing",
+        "encrypted": true,
+        "ephemeral": true
+      }
+    ]
+  },
+  "screenshots": {
+    "phone": {
+      "count": "4-8",
+      "aspectRatio": "16:9 or 9:16",
+      "resolution": "320-3840px",
+      "strategy": [
+        "Screenshot 1: AI Stylist recommendation page",
+        "Screenshot 2: Virtual try-on before/after",
+        "Screenshot 3: Personalized feed",
+        "Screenshot 4: Style quiz",
+        "Screenshot 5: Product detail with AI size recommendation",
+        "Screenshot 6: Style profile with color palette"
+      ]
+    },
+    "tablet7inch": {
+      "optional": true,
+      "count": "up to 8"
+    },
+    "tablet10inch": {
+      "optional": true,
+      "count": "up to 8"
+    }
+  },
+  "featureGraphic": {
+    "size": "1024x500",
+    "format": "PNG or JPG",
+    "notes": "Feature graphic showing the app in action with AI styling. Include tagline."
+  },
+  "icon": {
+    "size": "512x512",
+    "format": "PNG",
+    "bitDepth": "32-bit",
+    "alpha": false,
+    "notes": "Same icon as iOS, resized to 512x512"
+  }
+}

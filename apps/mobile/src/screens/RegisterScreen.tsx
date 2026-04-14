@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { authApi } from '../services/api/auth.api';
 import { useAuthStore } from '../stores/index';
+import { unifiedApiClient } from '../services/api/apiClient';
 import { theme } from '../theme';
 import type { RootStackParamList } from '../types/navigation';
 
@@ -103,6 +104,25 @@ export const RegisterScreen: React.FC = () => {
         const { user, token } = response.data;
         setToken(token);
         setUser(user);
+
+        // Record privacy consent on client side (server already records in transaction)
+        try {
+          await Promise.all([
+            unifiedApiClient.post('/privacy/consent', {
+              consentType: 'terms_of_service',
+              granted: true,
+              version: '1.0.0',
+            }),
+            unifiedApiClient.post('/privacy/consent', {
+              consentType: 'privacy_policy',
+              granted: true,
+              version: '1.0.0',
+            }),
+          ]);
+        } catch {
+          // Consent already recorded server-side; client call is supplementary
+        }
+
         navigation.reset({
           index: 0,
           routes: [{ name: 'Onboarding' }],
