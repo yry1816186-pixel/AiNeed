@@ -9,240 +9,245 @@ import {
   Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNotificationStore } from '../stores/notificationStore';
 import { theme } from '../theme';
+import type { RootStackParamList } from '../types/navigation';
+import type { NotificationItem } from '../services/api/notification.api';
 
-const NOTIFICATIONS_KEY = '@xuno_notifications';
+type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
-type NotificationType = 'order' | 'recommendation' | 'system';
+type NotificationCategory = 'all' | 'order' | 'recommendation' | 'community' | 'system';
 
-interface AppNotification {
-  id: string;
-  type: NotificationType;
-  title: string;
-  body: string;
-  read: boolean;
-  createdAt: string;
-  metadata?: Record<string, string>;
-}
+const CATEGORY_TABS: { key: NotificationCategory; label: string }[] = [
+  { key: 'all', label: 'All' },
+  { key: 'order', label: 'Orders' },
+  { key: 'recommendation', label: 'Recommendations' },
+  { key: 'community', label: 'Community' },
+  { key: 'system', label: 'System' },
+];
 
-const NOTIFICATION_ICONS: Record<NotificationType, { icon: string; color: string }> = {
+const NOTIFICATION_ICONS: Record<string, { icon: string; color: string }> = {
   order: { icon: 'bag-outline', color: theme.colors.primary },
-  recommendation: { icon: 'sparkles-outline', color: theme.colors.warning },
+  recommendation: { icon: 'sparkles-outline', color: '#F59E0B' },
+  community: { icon: 'people-outline', color: '#10B981' },
   system: { icon: 'information-circle-outline', color: '#3B82F6' },
 };
 
-const generateId = (): string =>
-  Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+function getNotificationCategory(type: string): string {
+  const orderTypes = ['system_update'];
+  const recTypes = ['daily_recommendation', 'price_drop'];
+  const communityTypes = ['new_follower', 'comment', 'like', 'bookmark', 'reply_mention'];
 
-const generateSeedNotifications = (): AppNotification[] => {
+  if (orderTypes.includes(type)) return 'order';
+  if (recTypes.includes(type)) return 'recommendation';
+  if (communityTypes.includes(type)) return 'community';
+  return 'system';
+}
+
+function getIconConfig(type: string) {
+  const category = getNotificationCategory(type);
+  return NOTIFICATION_ICONS[category] || NOTIFICATION_ICONS.system;
+}
+
+const formatTime = (dateStr: string): string => {
+  const date = new Date(dateStr);
   const now = Date.now();
-  return [
-    {
-      id: generateId(),
-      type: 'system',
-      title: '欢迎使用寻裳',
-      body: '您的 AI 穿搭助手已就绪，开始探索智能推荐吧！',
-      read: false,
-      createdAt: new Date(now - 1000 * 60 * 5).toISOString(),
-    },
-    {
-      id: generateId(),
-      type: 'recommendation',
-      title: '今日穿搭推荐',
-      body: '根据您的衣橱和天气情况，我们为您准备了今日穿搭方案。',
-      read: false,
-      createdAt: new Date(now - 1000 * 60 * 30).toISOString(),
-    },
-    {
-      id: generateId(),
-      type: 'system',
-      title: '新功能上线',
-      body: 'AI 造型师功能已上线，快来体验个性化造型建议！',
-      read: false,
-      createdAt: new Date(now - 1000 * 60 * 60 * 2).toISOString(),
-    },
-    {
-      id: generateId(),
-      type: 'recommendation',
-      title: '风格分析完成',
-      body: '您本周的风格分析报告已生成，点击查看详情。',
-      read: true,
-      createdAt: new Date(now - 1000 * 60 * 60 * 24).toISOString(),
-    },
-    {
-      id: generateId(),
-      type: 'system',
-      title: '系统更新',
-      body: '我们优化了推荐算法，现在推荐更精准了。',
-      read: true,
-      createdAt: new Date(now - 1000 * 60 * 60 * 48).toISOString(),
-    },
-  ];
+  const diff = now - date.getTime();
+  const minutes = Math.floor(diff / (1000 * 60));
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  return `${date.getMonth() + 1}/${date.getDate()}`;
 };
 
 export const NotificationsScreen: React.FC = () => {
-  const navigation = useNavigation();
-  const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const loadNotifications = useCallback(async () => {
-    try {
-      const stored = await AsyncStorage.getItem(NOTIFICATIONS_KEY);
-      if (stored) {
-        const parsed: AppNotification[] = JSON.parse(stored);
-        setNotifications(parsed);
-      } else {
-        // First-time: seed with sample notifications
-        const seed = generateSeedNotifications();
-        setNotifications(seed);
-        await AsyncStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(seed));
-      }
-    } catch {
-      setNotifications([]);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
+  const navigation = useNavigation<Navigation>();
+  const {
+    notifications,
+    unreadCount,
+    loading,
+    hasMore,
+    currentCategory,
+    fetchNotifications,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    setCurrentCategory,
+  } = useNotificationStore();
 
   useEffect(() => {
-    loadNotifications();
-  }, [loadNotifications]);
-
-  const persistNotifications = useCallback(async (updated: AppNotification[]) => {
-    setNotifications(updated);
-    try {
-      await AsyncStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(updated));
-    } catch {
-      // Silent fail on persistence
-    }
-  }, []);
+    fetchNotifications(true);
+  }, [fetchNotifications]);
 
   const handleRefresh = useCallback(() => {
-    setRefreshing(true);
-    loadNotifications();
-  }, [loadNotifications]);
+    fetchNotifications(true);
+  }, [fetchNotifications]);
 
-  const markAsRead = useCallback(
-    (id: string) => {
-      const updated = notifications.map((n) =>
-        n.id === id ? { ...n, read: true } : n,
-      );
-      persistNotifications(updated);
+  const handleLoadMore = useCallback(() => {
+    if (hasMore && !loading) {
+      fetchNotifications(false);
+    }
+  }, [hasMore, loading, fetchNotifications]);
+
+  const handleNotificationTap = useCallback(
+    (notification: NotificationItem) => {
+      markAsRead(notification.id);
+
+      // Navigate based on target type/id
+      if (notification.targetId) {
+        if (notification.targetType === 'deeplink') {
+          // Parse deeplink URL for navigation
+          const url = notification.targetId;
+          if (url.includes('/orders/')) {
+            const orderId = url.split('/orders/')[1]?.split('/')[0];
+            if (orderId) {
+              navigation.navigate('OrderDetail', { orderId });
+            }
+          } else if (url.includes('/clothing/')) {
+            const clothingId = url.split('/clothing/')[1]?.split('/')[0];
+            if (clothingId) {
+              navigation.navigate('ClothingDetail', { clothingId });
+            }
+          }
+        } else if (notification.targetId.match(/^[a-f0-9-]+$/)) {
+          // Looks like a UUID - try to navigate by target type
+          const targetType = notification.targetType;
+          if (targetType === 'order') {
+            navigation.navigate('OrderDetail', { orderId: notification.targetId });
+          }
+        }
+      }
     },
-    [notifications, persistNotifications],
+    [markAsRead, navigation],
   );
 
-  const markAllAsRead = useCallback(() => {
-    const updated = notifications.map((n) => ({ ...n, read: true }));
-    persistNotifications(updated);
-  }, [notifications, persistNotifications]);
+  const handleDelete = useCallback(
+    (id: string) => {
+      deleteNotification(id);
+    },
+    [deleteNotification],
+  );
 
-  const clearAll = useCallback(() => {
-    Alert.alert('清空通知', '确定要清空所有通知吗？', [
-      { text: '取消', style: 'cancel' },
+  const handleClearAll = useCallback(() => {
+    Alert.alert('Clear Notifications', 'Are you sure you want to clear all notifications?', [
+      { text: 'Cancel', style: 'cancel' },
       {
-        text: '清空',
+        text: 'Clear',
         style: 'destructive',
-        onPress: () => persistNotifications([]),
+        onPress: () => {
+          // Clear all by deleting each
+          notifications.forEach((n) => deleteNotification(n.id));
+        },
       },
     ]);
-  }, [persistNotifications]);
+  }, [notifications, deleteNotification]);
 
-  const deleteNotification = useCallback(
-    (id: string) => {
-      const updated = notifications.filter((n) => n.id !== id);
-      persistNotifications(updated);
+  const isCloseToBottom = useCallback(
+    ({ layoutMeasurement, contentOffset, contentSize }: {
+      layoutMeasurement: { height: number };
+      contentOffset: { y: number };
+      contentSize: { height: number };
+    }) => {
+      const paddingToBottom = 100;
+      return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
     },
-    [notifications, persistNotifications],
+    [],
   );
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const formatTime = (dateStr: string): string => {
-    const date = new Date(dateStr);
-    const now = Date.now();
-    const diff = now - date.getTime();
-    const minutes = Math.floor(diff / (1000 * 60));
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-    if (minutes < 1) return '刚刚';
-    if (minutes < 60) return `${minutes}分钟前`;
-    if (hours < 24) return `${hours}小时前`;
-    if (days < 7) return `${days}天前`;
-    return `${date.getMonth() + 1}/${date.getDate()}`;
-  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()} accessibilityLabel="返回">
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()} accessibilityLabel="Go back">
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
-          通知{unreadCount > 0 ? ` (${unreadCount})` : ''}
+          Notifications{unreadCount > 0 ? ` (${unreadCount})` : ''}
         </Text>
         <View style={styles.placeholder} />
       </View>
 
+      {/* Category filter tabs */}
+      <ScrollView horizontal style={styles.tabsContainer} showsHorizontalScrollIndicator={false}>
+        {CATEGORY_TABS.map((tab) => (
+          <TouchableOpacity
+            key={tab.key}
+            style={[styles.tab, currentCategory === tab.key && styles.tabActive]}
+            onPress={() => setCurrentCategory(tab.key)}
+            accessibilityLabel={`Filter by ${tab.label}`}
+          >
+            <Text style={[styles.tabText, currentCategory === tab.key && styles.tabTextActive]}>
+              {tab.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
       {/* Action bar */}
       {notifications.length > 0 && (
         <View style={styles.actionBar}>
-          <TouchableOpacity onPress={markAllAsRead} style={styles.actionButton} accessibilityLabel="全部标为已读">
+          <TouchableOpacity onPress={() => markAllAsRead()} style={styles.actionButton} accessibilityLabel="Mark all as read">
             <Ionicons name="checkmark-done-outline" size={18} color={theme.colors.primary} />
-            <Text style={styles.actionText}>全部已读</Text>
+            <Text style={styles.actionText}>Read All</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={clearAll} style={styles.actionButton} accessibilityLabel="清空所有通知">
+          <TouchableOpacity onPress={handleClearAll} style={styles.actionButton} accessibilityLabel="Clear all notifications">
             <Ionicons name="trash-outline" size={18} color={theme.colors.error} />
-            <Text style={[styles.actionText, { color: theme.colors.error }]}>清空</Text>
+            <Text style={[styles.actionText, { color: theme.colors.error }]}>Clear</Text>
           </TouchableOpacity>
         </View>
       )}
 
-      {loading ? null : notifications.length === 0 ? (
+      {notifications.length === 0 && !loading ? (
         <ScrollView
           contentContainerStyle={styles.emptyContainer}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing}
+              refreshing={loading}
               onRefresh={handleRefresh}
               colors={[theme.colors.primary]}
             />
           }
         >
           <Ionicons name="notifications-outline" size={64} color={theme.colors.textTertiary} />
-          <Text style={styles.emptyText}>暂无通知</Text>
-          <Text style={styles.emptySubtext}>下拉刷新获取最新通知</Text>
+          <Text style={styles.emptyText}>No notifications</Text>
+          <Text style={styles.emptySubtext}>Pull to refresh</Text>
         </ScrollView>
       ) : (
         <ScrollView
           style={styles.content}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing}
+              refreshing={loading}
               onRefresh={handleRefresh}
               colors={[theme.colors.primary]}
             />
           }
+          onScroll={({ nativeEvent }) => {
+            if (isCloseToBottom(nativeEvent)) {
+              handleLoadMore();
+            }
+          }}
+          scrollEventThrottle={400}
         >
           {notifications.map((notification) => {
-            const iconConfig = NOTIFICATION_ICONS[notification.type];
+            const iconConfig = getIconConfig(notification.type);
             return (
               <TouchableOpacity
                 key={notification.id}
                 style={[
                   styles.notificationCard,
-                  !notification.read && styles.notificationCardUnread,
+                  !notification.isRead && styles.notificationCardUnread,
                 ]}
-                onPress={() => markAsRead(notification.id)}
-                onLongPress={() => deleteNotification(notification.id)}
+                onPress={() => handleNotificationTap(notification)}
+                onLongPress={() => handleDelete(notification.id)}
                 activeOpacity={0.7}
-                accessibilityLabel={`${notification.title}: ${notification.body}`}
+                accessibilityLabel={`${notification.title}: ${notification.content}`}
               >
                 <View
                   style={[
@@ -250,14 +255,14 @@ export const NotificationsScreen: React.FC = () => {
                     { backgroundColor: iconConfig.color + '15' },
                   ]}
                 >
-                  <Ionicons name={iconConfig.icon as 'bag-outline' | 'sparkles-outline' | 'information-circle-outline'} size={22} color={iconConfig.color} />
+                  <Ionicons name={iconConfig.icon as 'bag-outline'} size={22} color={iconConfig.color} />
                 </View>
                 <View style={styles.notificationContent}>
                   <View style={styles.notificationHeader}>
                     <Text
                       style={[
                         styles.notificationTitle,
-                        !notification.read && styles.notificationTitleUnread,
+                        !notification.isRead && styles.notificationTitleUnread,
                       ]}
                       numberOfLines={1}
                     >
@@ -268,13 +273,16 @@ export const NotificationsScreen: React.FC = () => {
                     </Text>
                   </View>
                   <Text style={styles.notificationBody} numberOfLines={2}>
-                    {notification.body}
+                    {notification.content}
                   </Text>
                 </View>
-                {!notification.read && <View style={styles.unreadDot} />}
+                {!notification.isRead && <View style={styles.unreadDot} />}
               </TouchableOpacity>
             );
           })}
+          {!hasMore && notifications.length > 0 && (
+            <Text style={styles.endText}>No more notifications</Text>
+          )}
           <View style={{ height: 20 }} />
         </ScrollView>
       )}
@@ -303,6 +311,33 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: 18, fontWeight: '600', color: theme.colors.text },
   placeholder: { width: 40 },
+
+  // Tabs
+  tabsContainer: {
+    backgroundColor: theme.colors.surface,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
+  },
+  tab: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: theme.colors.background,
+    marginRight: 8,
+  },
+  tabActive: {
+    backgroundColor: theme.colors.primary,
+  },
+  tabText: {
+    fontSize: 13,
+    color: theme.colors.textSecondary,
+    fontWeight: '500',
+  },
+  tabTextActive: {
+    color: theme.colors.surface,
+  },
 
   // Action bar
   actionBar: {
@@ -342,6 +377,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: theme.colors.textSecondary,
     marginTop: 8,
+  },
+  endText: {
+    textAlign: 'center',
+    fontSize: 13,
+    color: theme.colors.textTertiary,
+    paddingVertical: 16,
   },
 
   // Notification card

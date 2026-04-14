@@ -44,5 +44,13 @@ export {
   type QuizProgress,
 } from "./style-quiz.api";
 export { AppError, AppErrorCode, classifyAxiosError, toAppError, getErrorMessage } from "./error";
+export {
+  notificationApi,
+  type NotificationItem,
+  type NotificationListResponse,
+  type PushNotificationSettings,
+  type DeviceTokenInfo,
+  type NotificationSettingsResponse,
+} from "./notification.api";
 export type { TokenPair } from "../auth/token";
 export { tokenManager } from "../auth/token";

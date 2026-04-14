@@ -19,6 +19,7 @@ export * from "./homeStore";
 export * from "./user.store";
 export * from "./app.store";
 export * from "./aiStylistStore";
+export * from "./notificationStore";
 
 interface AuthState {
   user: User | null;
