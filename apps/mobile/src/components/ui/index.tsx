@@ -84,7 +84,7 @@ export type {
   GradientCardProps,
   GlassCardProps,
   ModernButtonProps,
-  ProductCardProps,
+  ProductCardProps as ModernProductCardProps,
   FeatureCardProps,
   SectionHeaderProps,
   SkeletonProps as AnimatedSkeletonProps,
