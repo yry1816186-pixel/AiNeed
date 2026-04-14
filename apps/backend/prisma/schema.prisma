@@ -363,6 +363,7 @@ model Brand {
   products    ClothingItem[]
   merchants   BrandMerchant[]
   settlements BrandSettlement[]
+  qrCodes     BrandQRCode[]
 
   @@index([slug])
   @@index([verified])
@@ -1230,6 +1231,43 @@ enum SettlementStatus {
   pending
   processing
   paid
+}
+
+model BrandQRCode {
+  id          String   @id @default(uuid())
+  brandId     String
+  brand       Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  productId   String
+  code        String   @unique
+  payload     Json     // { brandId, brandName, productId, productName, sku, color, size, material, price }
+  isActive    Boolean  @default(true)
+  scanCount   Int      @default(0)
+
+  scans       BrandScanRecord[]
+
+  createdAt   DateTime @default(now())
+
+  @@index([brandId])
+  @@index([code])
+  @@index([productId])
+  @@index([isActive])
+}
+
+model BrandScanRecord {
+  id          String   @id @default(uuid())
+  qrCodeId    String
+  qrCode      BrandQRCode @relation(fields: [qrCodeId], references: [id], onDelete: Cascade)
+
+  userId      String?
+  scannedAt   DateTime @default(now())
+  platform    String?  // ios, android, web
+
+  createdAt   DateTime @default(now())
+
+  @@index([qrCodeId])
+  @@index([userId])
+  @@index([scannedAt(sort: Desc)])
 }
 
 model ProductSalesStats {

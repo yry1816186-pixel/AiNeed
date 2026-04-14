@@ -417,4 +417,110 @@ export class BrandsService {
       verified: brand.verified,
     };
   }
+
+  // ==================== QR Code Methods ====================
+
+  async generateQRCode(
+    brandId: string,
+    productId: string,
+    productData: {
+      productName?: string;
+      sku?: string;
+      color?: string;
+      size?: string;
+      material?: string;
+      price?: number;
+    },
+  ) {
+    const brand = await this.prisma.brand.findUnique({ where: { id: brandId } });
+    if (!brand) {
+      throw new Error("品牌不存在");
+    }
+
+    const payload = {
+      brandId,
+      brandName: brand.name,
+      productId,
+      productName: productData.productName || "",
+      sku: productData.sku || "",
+      color: productData.color || "",
+      size: productData.size || "",
+      material: productData.material || "",
+      price: productData.price || 0,
+    };
+
+    const code = Buffer.from(JSON.stringify(payload)).toString("base64url");
+
+    return this.prisma.brandQRCode.create({
+      data: {
+        brandId,
+        productId,
+        code,
+        payload: payload as any,
+      },
+    });
+  }
+
+  async getQRCodeByCode(code: string) {
+    return this.prisma.brandQRCode.findUnique({
+      where: { code },
+      include: { brand: { select: { id: true, name: true, logo: true, slug: true } } },
+    });
+  }
+
+  async recordScan(qrCodeId: string, userId?: string, platform?: string) {
+    const qrCode = await this.prisma.brandQRCode.findUnique({
+      where: { id: qrCodeId },
+    });
+    if (!qrCode) {
+      throw new Error("二维码不存在");
+    }
+
+    await Promise.all([
+      this.prisma.brandScanRecord.create({
+        data: {
+          qrCodeId,
+          userId: userId || null,
+          platform: platform || null,
+        },
+      }),
+      this.prisma.brandQRCode.update({
+        where: { id: qrCodeId },
+        data: { scanCount: { increment: 1 } },
+      }),
+    ]);
+
+    return { success: true };
+  }
+
+  async getBrandQRCodes(brandId: string, page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+    const where = { brandId };
+
+    const [items, total] = await Promise.all([
+      this.prisma.brandQRCode.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      this.prisma.brandQRCode.count({ where }),
+    ]);
+
+    return { items, page, limit, total, totalPages: Math.ceil(total / limit) };
+  }
+
+  async deactivateQRCode(qrCodeId: string, brandId: string) {
+    const qrCode = await this.prisma.brandQRCode.findFirst({
+      where: { id: qrCodeId, brandId },
+    });
+    if (!qrCode) {
+      throw new Error("二维码不存在");
+    }
+
+    return this.prisma.brandQRCode.update({
+      where: { id: qrCodeId },
+      data: { isActive: false },
+    });
+  }
 }
