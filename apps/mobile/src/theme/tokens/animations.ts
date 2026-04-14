@@ -3,10 +3,10 @@ import { Animated } from "react-native";
 /**
  * Spring configuration semantic mapping:
  *
- * snappy  → Light operations: button clicks, toggle switches, quick feedback
- * gentle  → Medium operations: page transitions, card slides, content reveals
- * bouncy  → Heavy/celebration: success animations, favorites, rewards
- * stiff   → Error/warning: form validation, alert shakes, destructive actions
+ * snappy  → Confirm actions: button clicks, toggle switches, quick feedback
+ * gentle  → Soft transitions: page transitions, card slides, content reveals, embrace
+ * bouncy  → Celebrate/success: success animations, favorites, rewards, achievements
+ * stiff   → Alert/warning: form validation, alert shakes, destructive actions
  *
  * slow    → Ambient/background: subtle drifts, breathing effects
  * soft    → Gentle emphasis: hover states, subtle highlights
@@ -14,35 +14,35 @@ import { Animated } from "react-native";
  * default → General purpose fallback when no semantic mapping applies
  */
 export const SpringConfigs = {
-  /** snappy → Light operations: button clicks, toggle switches, quick feedback */
-  gentle: {
+  /** snappy → Confirm actions: button clicks, toggle switches, quick feedback */
+  snappy: {
     damping: 20,
-    stiffness: 100,
+    stiffness: 300,
     mass: 1,
   },
-  /** bouncy → Heavy/celebration: success animations, favorites, rewards */
+  /** gentle → Soft transitions: page transitions, card slides, content reveals, embrace */
+  gentle: {
+    damping: 25,
+    stiffness: 120,
+    mass: 1,
+  },
+  /** bouncy → Celebrate/success: success animations, favorites, rewards, achievements */
   bouncy: {
     damping: 12,
     stiffness: 180,
-    mass: 0.5,
+    mass: 1,
   },
-  /** snappy → Light operations: button clicks, toggle switches, quick feedback */
-  snappy: {
-    damping: 18,
-    stiffness: 300,
-    mass: 0.8,
+  /** stiff → Alert/warning: form validation, alert shakes, destructive actions */
+  stiff: {
+    damping: 30,
+    stiffness: 400,
+    mass: 1,
   },
   /** slow → Ambient/background: subtle drifts, breathing effects */
   slow: {
     damping: 25,
     stiffness: 80,
     mass: 1.2,
-  },
-  /** stiff → Error/warning: form validation, alert shakes, destructive actions */
-  stiff: {
-    damping: 25,
-    stiffness: 400,
-    mass: 1,
   },
   /** soft → Gentle emphasis: hover states, subtle highlights */
   soft: {
@@ -76,13 +76,13 @@ export const SpringConfigs = {
  *   withSpring(1, SemanticSpring.error)   // validation error, warning
  */
 export const SemanticSpring = {
-  /** Light operations: button clicks, toggle switches, quick feedback → snappy */
+  /** Confirm actions: button clicks, toggle switches, quick feedback → snappy */
   light: SpringConfigs.snappy,
-  /** Medium operations: page transitions, card slides, content reveals → gentle */
+  /** Soft transitions: page transitions, card slides, content reveals, embrace → gentle */
   medium: SpringConfigs.gentle,
-  /** Heavy/celebration: success animations, favorites, rewards → bouncy */
+  /** Celebrate/success: success animations, favorites, rewards, achievements → bouncy */
   heavy: SpringConfigs.bouncy,
-  /** Error/warning: form validation, alert shakes, destructive actions → stiff */
+  /** Alert/warning: form validation, alert shakes, destructive actions → stiff */
   error: SpringConfigs.stiff,
 } as const;
 
