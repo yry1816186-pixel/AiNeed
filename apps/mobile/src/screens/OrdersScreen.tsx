@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Image,
   RefreshControl,
@@ -13,18 +14,19 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { orderApi } from "../services/api/commerce.api";
+import { orderApi, orderEnhancementApi } from "../services/api/commerce.api";
 import type { Order, OrderStatus } from "../types";
 import type { RootStackParamList } from "../types/navigation";
 import { theme } from "../theme";
 
 type OrdersNavigation = NativeStackNavigationProp<RootStackParamList>;
-type TabKey = "all" | "pending" | "paid" | "shipped" | "delivered";
+type TabKey = "all" | "pending" | "paid" | "shipped" | "delivered" | "refund";
 
 interface TabConfig {
   key: TabKey;
   label: string;
   status?: OrderStatus;
+  isRefundTab?: boolean;
 }
 
 const TABS: TabConfig[] = [
@@ -33,6 +35,7 @@ const TABS: TabConfig[] = [
   { key: "paid", label: "待发货", status: "paid" },
   { key: "shipped", label: "待收货", status: "shipped" },
   { key: "delivered", label: "已完成", status: "delivered" },
+  { key: "refund", label: "退款", isRefundTab: true },
 ];
 
 const STATUS_META: Record<string, { label: string; color: string }> = {
@@ -81,11 +84,16 @@ export const OrdersScreen: React.FC = () => {
       }
 
       try {
-        const response = await orderApi.getAll({
-          status: activeStatus,
-          page: pageNumber,
-          limit: 10,
-        });
+        const activeTabConfig = TABS.find((tab) => tab.key === activeTab);
+        const isRefund = activeTabConfig?.isRefundTab ?? false;
+
+        const response = isRefund
+          ? await orderEnhancementApi.getOrdersByTab("refund", pageNumber, 10)
+          : await orderApi.getAll({
+              status: activeStatus,
+              page: pageNumber,
+              limit: 10,
+            });
         const payload = response.data;
 
         if (response.success && payload) {
@@ -195,6 +203,79 @@ export const OrdersScreen: React.FC = () => {
                 accessibilityLabel="取消订单"
               >
                 <Text style={styles.secondaryButtonText}>取消订单</Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {item.status === "pending" ? (
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={() => navigation.navigate("OrderDetail", { orderId: item.id })}
+              >
+                <Text style={styles.primaryButtonText}>去支付</Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {item.status === "paid" ? (
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={() => {
+                  Alert.alert("提醒发货", "已提醒商家尽快发货");
+                }}
+              >
+                <Text style={styles.secondaryButtonText}>提醒发货</Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {item.status === "shipped" ? (
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={() => {
+                  Alert.alert("查看物流", "物流信息可在订单详情中查看");
+                }}
+              >
+                <Text style={styles.secondaryButtonText}>查看物流</Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {item.status === "shipped" ? (
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={async () => {
+                  await orderEnhancementApi.confirmReceipt(item.id);
+                  await loadOrders(1, "refresh");
+                }}
+              >
+                <Text style={styles.primaryButtonText}>确认收货</Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {item.status === "delivered" ? (
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={() => navigation.navigate("MainTabs", { screen: "Home" } as never)}
+              >
+                <Text style={styles.secondaryButtonText}>再次购买</Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {(item.status === "delivered" || item.status === "cancelled") ? (
+              <TouchableOpacity
+                style={styles.dangerTextButton}
+                onPress={async () => {
+                  Alert.alert("删除订单", "确定删除此订单？", [
+                    { text: "取消", style: "cancel" },
+                    {
+                      text: "删除",
+                      style: "destructive",
+                      onPress: async () => {
+                        await orderEnhancementApi.softDeleteOrder(item.id);
+                        await loadOrders(1, "refresh");
+                      },
+                    },
+                  ]);
+                }}
+              >
+                <Text style={styles.dangerText}>删除</Text>
               </TouchableOpacity>
             ) : null}
 
@@ -522,6 +603,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 13,
     color: theme.colors.textTertiary,
+  },
+  dangerTextButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  dangerText: {
+    fontSize: 13,
+    color: "#FF4D4F",
   },
 });
 

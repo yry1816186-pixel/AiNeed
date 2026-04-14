@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   RefreshControl,
   ScrollView,
@@ -13,7 +14,7 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { orderApi } from "../services/api/commerce.api";
+import { orderApi, orderEnhancementApi, refundApi } from "../services/api/commerce.api";
 import type { Order } from "../types";
 import type { RootStackParamList } from "../types/navigation";
 import { theme } from "../theme";
@@ -284,17 +285,107 @@ export const OrderDetailScreen: React.FC = () => {
 
           {order.status === "pending" ? (
             <TouchableOpacity
-              style={styles.secondaryButton}
+              style={styles.dangerButton}
               onPress={() => void handleCancel()}
               disabled={cancelling}
               accessibilityLabel="取消订单"
             >
               {cancelling ? (
-                <ActivityIndicator size="small" color={theme.colors.textSecondary} />
+                <ActivityIndicator size="small" color="#FF4D4F" />
               ) : (
-                <Text style={styles.secondaryButtonText}>取消订单</Text>
+                <Text style={styles.dangerButtonText}>取消订单</Text>
               )}
             </TouchableOpacity>
+          ) : null}
+
+          {order.status === "paid" ? (
+            <View style={styles.actionRow}>
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={() => {
+                  Alert.alert("申请退款", "确认申请仅退款？", [
+                    { text: "取消", style: "cancel" },
+                    {
+                      text: "确认",
+                      onPress: async () => {
+                        await refundApi.createRefund({
+                          orderId: order.id,
+                          type: "REFUND_ONLY",
+                          reason: "不想要了",
+                        });
+                        await loadOrder("refresh");
+                      },
+                    },
+                  ]);
+                }}
+              >
+                <Text style={styles.secondaryButtonText}>申请退款</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={() => {
+                  Alert.alert("申请退货退款", "确认申请退货退款？", [
+                    { text: "取消", style: "cancel" },
+                    {
+                      text: "确认",
+                      onPress: async () => {
+                        await refundApi.createRefund({
+                          orderId: order.id,
+                          type: "RETURN_REFUND",
+                          reason: "不想要了",
+                        });
+                        await loadOrder("refresh");
+                      },
+                    },
+                  ]);
+                }}
+              >
+                <Text style={styles.secondaryButtonText}>申请退货退款</Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+
+          {order.status === "shipped" ? (
+            <View style={styles.actionRow}>
+              <TouchableOpacity
+                style={styles.primaryButtonFilled}
+                onPress={() => {
+                  Alert.alert("确认收货", "确认已收到商品？", [
+                    { text: "取消", style: "cancel" },
+                    {
+                      text: "确认",
+                      onPress: async () => {
+                        await orderEnhancementApi.confirmReceipt(order.id);
+                        await loadOrder("refresh");
+                      },
+                    },
+                  ]);
+                }}
+              >
+                <Text style={styles.primaryFilledText}>确认收货</Text>
+              </TouchableOpacity>
+              {trackingSteps.length > 0 && (
+                <TouchableOpacity
+                  style={styles.secondaryButton}
+                  onPress={() => navigation.navigate("OrderDetail", { orderId: order.id } as never)}
+                >
+                  <Text style={styles.secondaryButtonText}>查看物流</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          ) : null}
+
+          {order.status === "delivered" ? (
+            <View style={styles.actionRow}>
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={() => {
+                  navigation.navigate("MainTabs", { screen: "Home" } as never);
+                }}
+              >
+                <Text style={styles.secondaryButtonText}>再次购买</Text>
+              </TouchableOpacity>
+            </View>
           ) : null}
         </ScrollView>
       )}
@@ -529,6 +620,36 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
     color: theme.colors.textSecondary,
+  },
+  dangerButton: {
+    paddingVertical: 16,
+    borderRadius: 16,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#FF4D4F",
+    backgroundColor: theme.colors.surface,
+  },
+  dangerButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#FF4D4F",
+  },
+  actionRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: 8,
+  },
+  primaryButtonFilled: {
+    flex: 1,
+    paddingVertical: 16,
+    borderRadius: 16,
+    alignItems: "center",
+    backgroundColor: "#FF4D4F",
+  },
+  primaryFilledText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
 });
 
