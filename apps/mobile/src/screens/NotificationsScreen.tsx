@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   Alert,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -16,6 +17,7 @@ import { useNotificationStore } from '../stores/notificationStore';
 import { theme } from '../theme';
 import type { RootStackParamList } from '../types/navigation';
 import type { NotificationItem } from '../services/api/notification.api';
+import { wsService } from '../services/websocket';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -34,6 +36,15 @@ const NOTIFICATION_ICONS: Record<string, { icon: string; color: string }> = {
   recommendation: { icon: 'sparkles-outline', color: '#F59E0B' },
   community: { icon: 'people-outline', color: '#10B981' },
   system: { icon: 'information-circle-outline', color: '#3B82F6' },
+};
+
+// Social notification type config for rendering
+const SOCIAL_NOTIFICATION_CONFIG: Record<string, { icon: string; color: string; label: string }> = {
+  like: { icon: 'heart', color: '#FF4757', label: '赞了你的帖子' },
+  comment: { icon: 'chatbubble', color: '#10B981', label: '评论了你的帖子' },
+  bookmark: { icon: 'bookmark', color: '#F1C40F', label: '收藏了你的帖子' },
+  new_follower: { icon: 'person-add', color: '#6C5CE7', label: '关注了你' },
+  reply_mention: { icon: 'at', color: '#3498DB', label: '回复了你' },
 };
 
 function getNotificationCategory(type: string): string {
@@ -84,6 +95,21 @@ export const NotificationsScreen: React.FC = () => {
 
   useEffect(() => {
     fetchNotifications(true);
+  }, [fetchNotifications]);
+
+  // WebSocket listener for social notifications
+  useEffect(() => {
+    const handleSocialNotification = (payload: { type: string; data?: Record<string, unknown> }) => {
+      fetchNotifications(true);
+    };
+
+    if (wsService.isConnected()) {
+      wsService.on('social_notification', handleSocialNotification);
+    }
+
+    return () => {
+      wsService.off('social_notification', handleSocialNotification);
+    };
   }, [fetchNotifications]);
 
   const handleRefresh = useCallback(() => {
@@ -237,6 +263,9 @@ export const NotificationsScreen: React.FC = () => {
         >
           {notifications.map((notification) => {
             const iconConfig = getIconConfig(notification.type);
+            const socialConfig = SOCIAL_NOTIFICATION_CONFIG[notification.type];
+            const isSocial = !!socialConfig;
+
             return (
               <TouchableOpacity
                 key={notification.id}
@@ -252,10 +281,14 @@ export const NotificationsScreen: React.FC = () => {
                 <View
                   style={[
                     styles.notificationIcon,
-                    { backgroundColor: iconConfig.color + '15' },
+                    { backgroundColor: (isSocial ? socialConfig.color : iconConfig.color) + '15' },
                   ]}
                 >
-                  <Ionicons name={iconConfig.icon as 'bag-outline'} size={22} color={iconConfig.color} />
+                  <Ionicons
+                    name={(isSocial ? socialConfig.icon : iconConfig.icon) as 'bag-outline'}
+                    size={22}
+                    color={isSocial ? socialConfig.color : iconConfig.color}
+                  />
                 </View>
                 <View style={styles.notificationContent}>
                   <View style={styles.notificationHeader}>
@@ -273,7 +306,7 @@ export const NotificationsScreen: React.FC = () => {
                     </Text>
                   </View>
                   <Text style={styles.notificationBody} numberOfLines={2}>
-                    {notification.content}
+                    {isSocial ? socialConfig.label : notification.content}
                   </Text>
                 </View>
                 {!notification.isRead && <View style={styles.unreadDot} />}

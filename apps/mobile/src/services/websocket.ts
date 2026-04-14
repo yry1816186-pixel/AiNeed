@@ -141,6 +141,18 @@ class WebSocketService {
   isConnected(): boolean {
     return this.socket?.connected ?? false;
   }
+
+  on(event: string, listener: (...args: unknown[]) => void): void {
+    if (this.socket) {
+      this.socket.on(event, listener as (...args: unknown[]) => void);
+    }
+  }
+
+  off(event: string, listener: (...args: unknown[]) => void): void {
+    if (this.socket) {
+      this.socket.off(event, listener as (...args: unknown[]) => void);
+    }
+  }
 }
 
 export const wsService = new WebSocketService();

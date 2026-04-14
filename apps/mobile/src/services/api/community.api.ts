@@ -434,4 +434,82 @@ export const communityApi = {
       `/community/users/${userId}/follow`,
     );
   },
+
+  async getFollowingFeed(params?: {
+    page?: number;
+    limit?: number;
+  }): Promise<ApiResponse<PaginatedResponse<CommunityPost & { feedType?: string }>>> {
+    const response = await apiClient.get<BackendPaginatedResponse<BackendCommunityItem & { feedType?: string }>>(
+      "/community/following/feed",
+      {
+        page: params?.page,
+        pageSize: params?.limit,
+      },
+    );
+
+    return normalizePaginatedResponse(
+      response as ApiResponse<BackendPaginatedResponse<BackendCommunityItem & { feedType?: string }>>,
+      (item) => ({
+        ...normalizeCommunityPost(item),
+        feedType: (item as BackendCommunityItem & { feedType?: string }).feedType,
+      }),
+    ) as ApiResponse<PaginatedResponse<CommunityPost & { feedType?: string }>>;
+  },
+
+  async getTrending(params?: {
+    type?: string;
+    limit?: number;
+  }): Promise<ApiResponse<Array<{ name: string; direction: string; count?: number }>>> {
+    return apiClient.get<Array<{ name: string; direction: string; count?: number }>>(
+      "/community/trending",
+      {
+        type: params?.type,
+        limit: params?.limit,
+      },
+    );
+  },
+
+  async bookmarkPost(
+    postId: string,
+    data?: { collectionId?: string },
+  ): Promise<ApiResponse<{ bookmarked: boolean }>> {
+    return apiClient.post<{ bookmarked: boolean }>(
+      `/community/posts/${postId}/bookmark`,
+      data ?? {},
+    );
+  },
+
+  async sharePost(postId: string): Promise<ApiResponse<{ shared: boolean }>> {
+    return apiClient.post<{ shared: boolean }>(
+      `/community/posts/${postId}/share`,
+    );
+  },
+
+  async reportContent(data: {
+    targetType: string;
+    targetId: string;
+    reason: string;
+    description?: string;
+  }): Promise<ApiResponse<{ reported: boolean }>> {
+    return apiClient.post<{ reported: boolean }>(
+      "/community/reports",
+      data,
+    );
+  },
+
+  async getCollections(): Promise<ApiResponse<Array<{ id: string; name: string; icon: string; _count: { items: number } }>>> {
+    return apiClient.get<Array<{ id: string; name: string; icon: string; _count: { items: number } }>>(
+      "/wardrobe/collections",
+    );
+  },
+
+  async createCollection(data: {
+    name: string;
+    icon?: string;
+  }): Promise<ApiResponse<{ id: string; name: string }>> {
+    return apiClient.post<{ id: string; name: string }>(
+      "/wardrobe/collections",
+      data,
+    );
+  },
 };
