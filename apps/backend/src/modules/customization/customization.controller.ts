@@ -9,13 +9,18 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiParam, ApiQuery, ApiBody } from "@nestjs/swagger";
-import { CustomizationType, CustomizationStatus } from "@prisma/client";
+import { CustomizationType, CustomizationStatus, ProductTemplateType } from "@prisma/client";
 
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 import { CustomizationService } from "./customization.service";
-
+import {
+  CreateDesignDto,
+  UpdateDesignDto,
+  CalculateQuoteDto,
+  CreateFromDesignDto,
+} from "./dto";
 
 @ApiTags("customization")
 @ApiBearerAuth()
@@ -24,13 +29,136 @@ import { CustomizationService } from "./customization.service";
 export class CustomizationController {
   constructor(private customizationService: CustomizationService) {}
 
+  // ==================== Template Endpoints ====================
+
+  @Get("templates")
+  @ApiOperation({ summary: "获取定制模板列表", description: "获取可用的商品定制模板，支持按类型筛选" })
+  @ApiQuery({ name: "type", required: false, enum: ProductTemplateType, description: "按模板类型筛选" })
+  @ApiResponse({ status: 200, description: "模板列表" })
+  async getTemplates(
+    @Query("type") type?: ProductTemplateType,
+  ) {
+    return this.customizationService.getTemplates(type);
+  }
+
+  @Get("templates/:id")
+  @ApiOperation({ summary: "获取模板详情", description: "根据ID获取定制模板详细信息" })
+  @ApiParam({ name: "id", description: "模板ID", type: String, format: "uuid" })
+  @ApiResponse({ status: 200, description: "模板详情" })
+  @ApiResponse({ status: 404, description: "模板不存在" })
+  async getTemplateById(
+    @Param("id") templateId: string,
+  ) {
+    return this.customizationService.getTemplateById(templateId);
+  }
+
+  // ==================== Design Endpoints ====================
+
+  @Post("designs")
+  @ApiOperation({ summary: "创建定制设计", description: "基于模板创建新的定制设计" })
+  @ApiBody({ type: CreateDesignDto })
+  @ApiResponse({ status: 201, description: "设计创建成功" })
+  @ApiResponse({ status: 400, description: "请求参数错误" })
+  async createDesign(
+    @CurrentUser("id") userId: string,
+    @Body() body: CreateDesignDto,
+  ) {
+    return this.customizationService.createDesign(
+      userId,
+      body.templateId,
+      body.canvasData,
+    );
+  }
+
+  @Put("designs/:id")
+  @ApiOperation({ summary: "更新定制设计", description: "更新设计的画布数据和图层" })
+  @ApiParam({ name: "id", description: "设计ID", type: String, format: "uuid" })
+  @ApiBody({ type: UpdateDesignDto })
+  @ApiResponse({ status: 200, description: "更新成功" })
+  @ApiResponse({ status: 404, description: "设计不存在" })
+  async updateDesign(
+    @CurrentUser("id") userId: string,
+    @Param("id") designId: string,
+    @Body() body: UpdateDesignDto,
+  ) {
+    return this.customizationService.updateDesign(
+      designId,
+      userId,
+      body.canvasData,
+      body.layers as any,
+    );
+  }
+
+  @Get("designs/:id")
+  @ApiOperation({ summary: "获取设计详情", description: "获取定制设计的详细信息，包含模板和图层" })
+  @ApiParam({ name: "id", description: "设计ID", type: String, format: "uuid" })
+  @ApiResponse({ status: 200, description: "设计详情" })
+  @ApiResponse({ status: 404, description: "设计不存在" })
+  async getDesign(
+    @CurrentUser("id") userId: string,
+    @Param("id") designId: string,
+  ) {
+    return this.customizationService.getDesign(designId, userId);
+  }
+
+  @Post("designs/:id/calculate-quote")
+  @ApiOperation({ summary: "计算定制报价", description: "根据设计的复杂度自动计算报价" })
+  @ApiParam({ name: "id", description: "设计ID", type: String, format: "uuid" })
+  @ApiBody({ type: CalculateQuoteDto })
+  @ApiResponse({ status: 200, description: "报价计算成功" })
+  @ApiResponse({ status: 404, description: "设计不存在" })
+  async calculateQuote(
+    @CurrentUser("id") userId: string,
+    @Param("id") designId: string,
+    @Body() body: CalculateQuoteDto,
+  ) {
+    return this.customizationService.calculateQuote(
+      designId,
+      userId,
+      body.printSide ?? "front",
+    );
+  }
+
+  @Post("designs/:id/generate-preview")
+  @ApiOperation({ summary: "生成定制预览", description: "生成定制商品的预览效果图" })
+  @ApiParam({ name: "id", description: "设计ID", type: String, format: "uuid" })
+  @ApiResponse({ status: 200, description: "预览生成成功" })
+  @ApiResponse({ status: 404, description: "设计不存在" })
+  async generatePreview(
+    @CurrentUser("id") userId: string,
+    @Param("id") designId: string,
+  ) {
+    return this.customizationService.generatePreview(designId, userId);
+  }
+
+  // ==================== Create Request from Design ====================
+
+  @Post("from-design")
+  @ApiOperation({ summary: "从设计创建定制需求", description: "基于已确认报价的设计创建定制需求" })
+  @ApiBody({ type: CreateFromDesignDto })
+  @ApiResponse({ status: 201, description: "定制需求创建成功" })
+  @ApiResponse({ status: 400, description: "请求参数错误" })
+  @ApiResponse({ status: 404, description: "设计或报价不存在" })
+  async createFromDesign(
+    @CurrentUser("id") userId: string,
+    @Body() body: CreateFromDesignDto,
+  ) {
+    return this.customizationService.createCustomizationFromDesign(
+      userId,
+      body.designId,
+      body.quoteId,
+    );
+  }
+
+  // ==================== Original CRUD Endpoints ====================
+
   @Post()
   @ApiOperation({ summary: "创建定制需求", description: "创建新的服装定制需求，支持指定定制类型、描述和参考图片。" })
   @ApiBody({
     schema: {
       type: "object",
       properties: {
-        type: { type: "string", enum: ["ALTERATION", "CUSTOM_MADE", "BESPOKE"], description: "定制类型：ALTERATION(修改)、CUSTOM_MADE(定制)、BESPOKE(高级定制)" },
+        type: { type: "string", enum: ["ALTERATION", "CUSTOM_MADE", "BESPOKE"], description: "定制类型" },
         title: { type: "string", description: "定制需求标题" },
         description: { type: "string", description: "定制需求详细描述" },
         referenceImages: { type: "array", items: { type: "string" }, description: "参考图片URL列表" },
@@ -41,7 +169,6 @@ export class CustomizationController {
   })
   @ApiResponse({ status: 201, description: "定制需求创建成功" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
-  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
   async createRequest(
     @CurrentUser("id") userId: string,
     @Body()
@@ -60,9 +187,6 @@ export class CustomizationController {
   @ApiOperation({ summary: "提交定制需求", description: "将草稿状态的定制需求提交审核。" })
   @ApiParam({ name: "id", description: "定制需求ID", type: String, format: "uuid" })
   @ApiResponse({ status: 200, description: "提交成功" })
-  @ApiResponse({ status: 400, description: "需求状态不允许提交" })
-  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
-  @ApiResponse({ status: 404, description: "定制需求不存在" })
   async submitRequest(
     @CurrentUser("id") userId: string,
     @Param("id") requestId: string,
@@ -72,11 +196,9 @@ export class CustomizationController {
 
   @Get()
   @ApiOperation({ summary: "获取定制需求列表", description: "获取当前用户的定制需求列表，支持按状态筛选和分页。" })
-  @ApiQuery({ name: "status", required: false, enum: ["DRAFT", "SUBMITTED", "QUOTED", "IN_PRODUCTION", "COMPLETED", "CANCELLED"], description: "按状态筛选" })
-  @ApiQuery({ name: "page", required: false, type: Number, description: "页码，默认1", example: 1 })
-  @ApiQuery({ name: "limit", required: false, type: Number, description: "每页数量，默认10", example: 10 })
-  @ApiResponse({ status: 200, description: "定制需求列表" })
-  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
+  @ApiQuery({ name: "status", required: false, enum: CustomizationStatus, description: "按状态筛选" })
+  @ApiQuery({ name: "page", required: false, type: Number, description: "页码" })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "每页数量" })
   async getRequests(
     @CurrentUser("id") userId: string,
     @Query("status") status?: CustomizationStatus,
@@ -94,9 +216,6 @@ export class CustomizationController {
   @Get(":id")
   @ApiOperation({ summary: "获取定制需求详情", description: "根据ID获取定制需求的详细信息。" })
   @ApiParam({ name: "id", description: "定制需求ID", type: String, format: "uuid" })
-  @ApiResponse({ status: 200, description: "定制需求详情" })
-  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
-  @ApiResponse({ status: 404, description: "定制需求不存在" })
   async getRequestById(
     @CurrentUser("id") userId: string,
     @Param("id") requestId: string,
@@ -107,21 +226,6 @@ export class CustomizationController {
   @Put(":id")
   @ApiOperation({ summary: "更新定制需求", description: "更新草稿状态的定制需求信息。" })
   @ApiParam({ name: "id", description: "定制需求ID", type: String, format: "uuid" })
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        title: { type: "string", description: "定制需求标题" },
-        description: { type: "string", description: "定制需求详细描述" },
-        referenceImages: { type: "array", items: { type: "string" }, description: "参考图片URL列表" },
-        preferences: { type: "object", description: "定制偏好设置" },
-      },
-    },
-  })
-  @ApiResponse({ status: 200, description: "更新成功" })
-  @ApiResponse({ status: 400, description: "请求参数错误或需求状态不允许更新" })
-  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
-  @ApiResponse({ status: 404, description: "定制需求不存在" })
   async updateRequest(
     @CurrentUser("id") userId: string,
     @Param("id") requestId: string,
@@ -139,19 +243,6 @@ export class CustomizationController {
   @Post(":id/select-quote")
   @ApiOperation({ summary: "选择报价", description: "从定制需求的报价列表中选择一个报价。" })
   @ApiParam({ name: "id", description: "定制需求ID", type: String, format: "uuid" })
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        quoteId: { type: "string", description: "选择的报价ID", format: "uuid" },
-      },
-      required: ["quoteId"],
-    },
-  })
-  @ApiResponse({ status: 200, description: "报价选择成功" })
-  @ApiResponse({ status: 400, description: "报价ID无效或需求状态不允许选择" })
-  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
-  @ApiResponse({ status: 404, description: "定制需求或报价不存在" })
   async selectQuote(
     @CurrentUser("id") userId: string,
     @Param("id") requestId: string,
@@ -165,12 +256,8 @@ export class CustomizationController {
   }
 
   @Post(":id/cancel")
-  @ApiOperation({ summary: "取消定制需求", description: "取消指定的定制需求，仅草稿和已提交状态可取消。" })
+  @ApiOperation({ summary: "取消定制需求", description: "取消指定的定制需求。" })
   @ApiParam({ name: "id", description: "定制需求ID", type: String, format: "uuid" })
-  @ApiResponse({ status: 200, description: "取消成功" })
-  @ApiResponse({ status: 400, description: "需求状态不允许取消" })
-  @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
-  @ApiResponse({ status: 404, description: "定制需求不存在" })
   async cancelRequest(
     @CurrentUser("id") userId: string,
     @Param("id") requestId: string,

@@ -45,6 +45,7 @@ model User {
   tryOns      VirtualTryOn[]
   favorites   Favorite[]
   customizations CustomizationRequest[]
+  customizationDesigns CustomizationDesign[]
   cartItems   CartItem[]
   orders      Order[]
   addresses   UserAddress[]
@@ -533,6 +534,20 @@ model CustomizationRequest {
   selectedQuoteId String?
   quotes      CustomizationQuote[]
 
+  // Editor customization fields
+  designId        String?  @unique
+  design          CustomizationDesign?  @relation(fields: [designId], references: [id], onDelete: SetNull)
+  templateId      String?
+  template        CustomizationTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  previewImageUrl String?
+
+  // Production + fulfillment fields
+  paymentId       String?
+  podOrderId      String?
+  trackingNumber  String?
+  carrier         String?
+  estimatedDeliveryDate DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -541,6 +556,8 @@ model CustomizationRequest {
   @@index([userId, status])
   @@index([type])
   @@index([createdAt(sort: Desc)])
+  @@index([designId])
+  @@index([templateId])
 }
 
 enum CustomizationType {
@@ -548,6 +565,7 @@ enum CustomizationType {
   bespoke
   alteration
   design
+  pod
 }
 
 enum CustomizationStatus {
@@ -556,8 +574,24 @@ enum CustomizationStatus {
   quoting
   confirmed
   in_progress
+  shipped
   completed
   cancelled
+}
+
+enum ProductTemplateType {
+  tshirt
+  hat
+  shoes
+  bag
+  phone_case
+  mug
+}
+
+enum DesignLayerType {
+  image
+  text
+  shape
 }
 
 model CustomizationQuote {
@@ -580,6 +614,90 @@ model CustomizationQuote {
 
   @@index([requestId])
   @@index([requestId, createdAt(sort: Desc)])
+}
+
+model CustomizationTemplate {
+  id          String   @id @default(uuid())
+  type        ProductTemplateType
+  name        String
+  description String?
+  imageUrl    String
+  basePrice   Decimal  @db.Decimal(10, 2)
+
+  // Printable area bounds as percentages of canvas
+  printableArea Json    // { x, y, width, height, maxWidth, maxHeight }
+
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  designs    CustomizationDesign[]
+  requests   CustomizationRequest[]
+
+  @@index([type])
+  @@index([isActive])
+}
+
+model CustomizationDesign {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  templateId  String
+  template    CustomizationTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  canvasData  Json     // Full canvas state as JSON
+  previewUrl  String?  // Generated preview image URL
+
+  layers      CustomizationDesignLayer[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  request     CustomizationRequest?
+
+  @@index([userId])
+  @@index([templateId])
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+model CustomizationDesignLayer {
+  id        String   @id @default(uuid())
+  designId  String
+  design    CustomizationDesign @relation(fields: [designId], references: [id], onDelete: Cascade)
+
+  type      DesignLayerType
+  content   String   // Image URL or text content
+  x         Float    @default(0)
+  y         Float    @default(0)
+  width     Float    @default(100)
+  height    Float    @default(100)
+  scale     Float    @default(1)
+  rotation  Float    @default(0)
+  opacity   Float    @default(1)
+  zIndex    Int      @default(0)
+
+  // Text-specific
+  fontSize  Int?
+  color     String?  // Hex color
+  fontFamily String?
+
+  // Image-specific
+  imageUrl  String?
+
+  // Shape-specific
+  shapeType String?  // rect, circle, triangle
+  fillColor String?  // Hex color
+  strokeColor String?
+  strokeWidth  Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([designId])
+  @@index([designId, zIndex])
 }
 
 model StyleRecommendation {
