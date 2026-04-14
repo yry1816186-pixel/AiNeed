@@ -147,7 +147,7 @@ export class ItemReplacementService {
           name: candidate.name,
           category: candidate.category,
           imageUrl: (candidate.images as string[])?.[0] ?? null,
-          price: candidate.price,
+          price: candidate.price ? Number(candidate.price) : null,
           brand: candidate.brand?.name ?? null,
           tags: (candidate.tags as string[]) || [],
           matchScore: Math.min(matchScore, 100),
@@ -209,7 +209,7 @@ export class ItemReplacementService {
       name: newItem.name,
       reason: `替换自 ${originalItem.name}，与你的风格更匹配`,
       imageUrl: (newItem.images as string[])?.[0] ?? undefined,
-      price: newItem.price,
+      price: newItem.price ? Number(newItem.price) : undefined,
       brand: newItem.brand?.name ?? null,
       score: 80,
     };

@@ -110,12 +110,13 @@ export class SessionArchiveService {
       orderBy: { createdAt: "desc" },
     });
 
-    return sessions.map((s) => {
+    return sessions.map((s): ArchivedSession => {
       const payload = s.payload as Record<string, unknown> | null;
+      const goalValue = payload ? (payload as Record<string, unknown>).goal : undefined;
       return {
         id: s.id,
         status: s.status,
-        goal: (payload as Record<string, unknown>)?.goal ?? undefined,
+        goal: typeof goalValue === "string" ? goalValue : undefined,
         hasOutfitPlan: !!(payload && (payload as Record<string, unknown>).result),
         createdAt: s.createdAt.toISOString(),
         updatedAt: s.updatedAt.toISOString(),

@@ -6,6 +6,7 @@ import { RedisModule } from "../../common/redis/redis.module";
 import { AIModule } from "../ai/ai.module";
 import { PhotosModule } from "../photos/photos.module";
 import { RecommendationsModule } from "../recommendations/recommendations.module";
+import { WeatherModule } from "../weather/weather.module";
 
 import { AgentToolsService } from "./agent-tools.service";
 import { AiStylistController } from "./ai-stylist.controller";
@@ -19,9 +20,14 @@ import { DecisionEngineService } from "./decision-engine.service";
 import { LlmProviderService } from "./llm-provider.service";
 import { NlSlotExtractorService } from "./nl-slot-extractor.service";
 import { SystemContextService } from "./system-context.service";
+import { OutfitPlanService } from "./services/outfit-plan.service";
+import { ItemReplacementService } from "./services/item-replacement.service";
+import { SessionArchiveService } from "./services/session-archive.service";
+import { PresetQuestionsService } from "./services/preset-questions.service";
+import { WeatherIntegrationService } from "./services/weather-integration.service";
 
 @Module({
-  imports: [forwardRef(() => RecommendationsModule), PhotosModule, AIModule, RedisModule, CircuitBreakerModule, PrismaModule],
+  imports: [forwardRef(() => RecommendationsModule), PhotosModule, AIModule, RedisModule, CircuitBreakerModule, PrismaModule, WeatherModule],
   controllers: [AiStylistController],
   providers: [
     AiStylistService,
@@ -35,6 +41,11 @@ import { SystemContextService } from "./system-context.service";
     LlmProviderService,
     NlSlotExtractorService,
     SystemContextService,
+    OutfitPlanService,
+    ItemReplacementService,
+    SessionArchiveService,
+    PresetQuestionsService,
+    WeatherIntegrationService,
   ],
   exports: [
     AiStylistService,
@@ -46,6 +57,11 @@ import { SystemContextService } from "./system-context.service";
     DecisionEngineService,
     LlmProviderService,
     SystemContextService,
+    OutfitPlanService,
+    ItemReplacementService,
+    SessionArchiveService,
+    PresetQuestionsService,
+    WeatherIntegrationService,
   ],
 })
 export class AiStylistModule {}

@@ -72,8 +72,8 @@ export class OutfitPlanService {
       const tempMatch = weatherSlot.match(/(-?\d+)°C/);
       const conditionMatch = weatherSlot.match(/(?:\d+°C\s+)([\u4e00-\u9fa5]+)/);
       return {
-        temperature: tempMatch ? parseInt(tempMatch[1], 10) : 20,
-        condition: conditionMatch ? conditionMatch[1] : "晴",
+        temperature: tempMatch?.[1] ? parseInt(tempMatch[1], 10) : 20,
+        condition: conditionMatch?.[1] ?? "晴",
         suggestion: "",
       };
     } catch {

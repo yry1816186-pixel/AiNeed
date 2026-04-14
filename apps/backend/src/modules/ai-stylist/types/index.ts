@@ -356,6 +356,8 @@ export interface StylistSlots {
   weather?: string;
   budgetMin?: number;
   budgetMax?: number;
+  latitude?: number;
+  longitude?: number;
   preferredStyles: string[];
   styleAvoidances: string[];
   fitGoals: string[];
