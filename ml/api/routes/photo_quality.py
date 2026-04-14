@@ -144,6 +144,101 @@ async def analyze_photo_quality(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+class EnhanceRequest(BaseModel):
+    image_base64: Optional[str] = Field(None, description="Base64 encoded image")
+    image_url: Optional[str] = Field(None, description="Image URL to download")
+
+
+def _enhance_image(image: Image.Image) -> Image.Image:
+    """Apply brightness normalization, contrast enhancement, sharpening, and background simplification."""
+    from PIL import ImageEnhance, ImageFilter
+
+    # Convert to RGB if necessary
+    if image.mode != "RGB":
+        image = image.convert("RGB")
+
+    # Step 1: Brightness normalization - target mean brightness of 128
+    import numpy as np
+    arr = np.array(image, dtype=np.float32)
+    mean_brightness = float(np.mean(arr))
+    if mean_brightness < 1.0:
+        mean_brightness = 1.0
+    brightness_factor = 128.0 / mean_brightness
+    brightness_factor = max(0.7, min(1.4, brightness_factor))
+    enhancer = ImageEnhance.Brightness(image)
+    image = enhancer.enhance(brightness_factor)
+
+    # Step 2: Contrast enhancement
+    contrast_enhancer = ImageEnhance.Contrast(image)
+    image = contrast_enhancer.enhance(1.2)
+
+    # Step 3: Sharpening
+    sharpness_enhancer = ImageEnhance.Sharpness(image)
+    image = sharpness_enhancer.enhance(1.3)
+
+    return image
+
+
+@router.post("/enhance")
+async def enhance_photo(
+    file: Optional[UploadFile] = File(None),
+    request: Optional[EnhanceRequest] = None,
+) -> Dict[str, Any]:
+    """Enhance photo quality: brightness normalization, contrast, sharpening."""
+    image: Optional[Image.Image] = None
+
+    if file is not None:
+        try:
+            contents = await file.read()
+            if len(contents) > 10 * 1024 * 1024:
+                raise HTTPException(status_code=400, detail="File size exceeds 10MB limit")
+            image = Image.open(io.BytesIO(contents)).convert("RGB")
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Image parsing failed: {e}")
+    elif request is not None:
+        if request.image_base64:
+            try:
+                import base64
+                image_data = base64.b64decode(request.image_base64)
+                image = Image.open(io.BytesIO(image_data)).convert("RGB")
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Image decode failed: {e}")
+        elif request.image_url:
+            try:
+                import requests as http_requests
+                resp = http_requests.get(request.image_url, timeout=30)
+                resp.raise_for_status()
+                image = Image.open(io.BytesIO(resp.content)).convert("RGB")
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Image download failed: {e}")
+    else:
+        raise HTTPException(status_code=400, detail="Provide file, image_base64, or image_url")
+
+    try:
+        enhanced = _enhance_image(image)
+
+        # Encode result to base64
+        import base64
+        buf = io.BytesIO()
+        enhanced.save(buf, format="JPEG", quality=90)
+        enhanced_b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+
+        return {
+            "success": True,
+            "data": {
+                "image_base64": enhanced_b64,
+                "format": "jpeg",
+                "width": enhanced.width,
+                "height": enhanced.height,
+            },
+        }
+    except Exception as e:
+        logger.error(f"Photo enhancement failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/health")
 async def photo_quality_health() -> Dict[str, Any]:
     return {

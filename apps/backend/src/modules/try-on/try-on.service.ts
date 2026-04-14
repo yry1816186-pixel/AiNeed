@@ -6,6 +6,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TryOnStatus, Prisma } from "@prisma/client";
+import axios from "axios";
 import Redis from "ioredis";
 
 import { StructuredLoggerService, ContextualLogger } from "../../common/logging";
@@ -50,6 +51,8 @@ const DAILY_RETRY_KEY_PREFIX = "tryon:daily";
 @Injectable()
 export class TryOnService {
   private readonly logger: ContextualLogger;
+  private readonly autoEnhance: boolean;
+  private readonly mlServiceUrl: string;
 
   constructor(
     private prisma: PrismaService,
@@ -61,6 +64,8 @@ export class TryOnService {
     loggingService: StructuredLoggerService,
   ) {
     this.logger = loggingService.createChildLogger(TryOnService.name);
+    this.autoEnhance = this.configService.get<string>("TRYON_AUTO_ENHANCE", "true") !== "false";
+    this.mlServiceUrl = this.configService.get<string>("ML_SERVICE_URL", "http://localhost:8000");
   }
 
   async createTryOnRequest(
@@ -114,6 +119,21 @@ export class TryOnService {
 
     if (!item) {
       throw new NotFoundException("服装商品不存在");
+    }
+
+    // Auto-enhance photo if quality is below threshold
+    if (this.autoEnhance && photo.url) {
+      try {
+        const enhancedUrl = await this.checkAndEnhancePhoto(photo.url);
+        if (enhancedUrl) {
+          photo.url = enhancedUrl;
+        }
+      } catch (error) {
+        this.logger.warn("照片自动增强失败，使用原始照片", {
+          photoId,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
     }
 
     if (existingTryOn) {
@@ -481,6 +501,72 @@ export class TryOnService {
         ...tryOn,
         resultImageDataUri: null,
       };
+    }
+  }
+
+  /**
+   * Check photo quality via ML service and enhance if below threshold.
+   * Returns enhanced photo URL or null if no enhancement needed/failed.
+   */
+  private async checkAndEnhancePhoto(photoUrl: string): Promise<string | null> {
+    try {
+      // Step 1: Analyze quality
+      const analyzeResponse = await axios.post(
+        `${this.mlServiceUrl}/api/photo-quality/analyze`,
+        { image_url: photoUrl },
+        { timeout: 10000 },
+      );
+
+      const qualityScore = analyzeResponse.data?.data?.overall_score ?? 1.0;
+
+      if (qualityScore >= 0.6 * 100) {
+        // Quality is acceptable (score is 0-100 scale, threshold at 60)
+        return null;
+      }
+
+      this.logger.log("Photo quality below threshold, enhancing", {
+        qualityScore,
+        threshold: 60,
+      });
+
+      // Step 2: Enhance the photo
+      const enhanceResponse = await axios.post(
+        `${this.mlServiceUrl}/api/photo-quality/enhance`,
+        { image_url: photoUrl },
+        { timeout: 30000 },
+      );
+
+      const enhancedBase64 = enhanceResponse.data?.data?.image_base64;
+      if (!enhancedBase64) {
+        this.logger.warn("Enhancement returned no image data");
+        return null;
+      }
+
+      // Step 3: Upload enhanced image to storage
+      const imageBuffer = Buffer.from(enhancedBase64, "base64");
+      const upload = await this.storage.uploadImage(
+        {
+          fieldname: "file",
+          originalname: `enhanced-${Date.now()}.jpg`,
+          encoding: "7bit",
+          mimetype: "image/jpeg",
+          buffer: imageBuffer,
+          size: imageBuffer.length,
+        },
+        "enhanced-photos",
+      );
+
+      this.logger.log("Photo enhanced and uploaded", {
+        enhancedUrl: upload.url,
+        originalScore: qualityScore,
+      });
+
+      return upload.url;
+    } catch (error) {
+      this.logger.warn("Photo quality check/enhance failed", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return null;
     }
   }
 }
