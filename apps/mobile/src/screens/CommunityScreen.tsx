@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   RefreshControl,
   ActivityIndicator,
   Alert,
+  Dimensions,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { FlashList } from '../polyfills/flash-list';
@@ -20,17 +21,23 @@ import type { PostCardData } from '../components/community/PostMasonryCard';
 import { CreatePostModal } from '../components/community/CreatePostModal';
 
 /**
- * Estimate image card height from image URL using a deterministic hash.
- * Produces heights in the range [baseHeight, baseHeight * 2] for masonry variety.
+ * Calculate image card height from aspect ratio when available.
+ * Uses imageWidth/imageHeight if provided by API; otherwise defaults to 1:1 (square).
+ * Formula: CARD_WIDTH * (imageHeight / imageWidth) + TEXT_AREA_HEIGHT
  */
-function estimateImageHeight(imageUrl: string, baseHeight: number = 160): number {
-  if (!imageUrl) return baseHeight;
-  let hash = 0;
-  for (let i = 0; i < imageUrl.length; i++) {
-    hash = ((hash << 5) - hash + imageUrl.charCodeAt(i)) | 0;
+const CARD_WIDTH = (Dimensions.get('window').width - 24 - 8) / 2; // screen - padding - gap
+const TEXT_AREA_HEIGHT = 68; // title + footer padding
+
+function calculateCardHeight(
+  imageWidth?: number,
+  imageHeight?: number,
+  baseHeight: number = 160,
+): number {
+  if (imageWidth && imageHeight && imageWidth > 0) {
+    return Math.round(CARD_WIDTH * (imageHeight / imageWidth) + TEXT_AREA_HEIGHT);
   }
-  const ratio = 1.0 + (Math.abs(hash) % 100) / 100; // 1.0 to 2.0
-  return Math.round(baseHeight * ratio);
+  // Default to 1:1 aspect ratio when dimensions unknown
+  return Math.round(CARD_WIDTH + TEXT_AREA_HEIGHT);
 }
 
 const CATEGORIES = [
@@ -53,6 +60,8 @@ interface CommunityPostData {
   title?: string;
   content?: string;
   images?: string[];
+  imageWidth?: number;
+  imageHeight?: number;
   likesCount?: number;
   author?: {
     nickname?: string;
@@ -85,7 +94,7 @@ export const CommunityScreen: React.FC = () => {
       authorAvatar: p.author?.avatar || '',
       likesCount: p.likesCount || 0,
       isFeatured: (p.likesCount || 0) > 100,
-      imageHeight: estimateImageHeight(p.images?.[0] || ''),
+      imageHeight: calculateCardHeight(p.imageWidth, p.imageHeight),
     }));
   }, []);
 
