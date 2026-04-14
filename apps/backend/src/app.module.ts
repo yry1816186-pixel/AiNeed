@@ -38,6 +38,7 @@ import { CouponModule } from "./modules/coupon/coupon.module";
 import { StockNotificationModule } from "./modules/stock-notification/stock-notification.module";
 import { RefundRequestModule } from "./modules/refund-request/refund-request.module";
 import { SizeRecommendationModule } from "./modules/size-recommendation/size-recommendation.module";
+import { AdminModule } from "./modules/admin/admin.module";
 import { SecurityModule } from "./modules/security/security.module";
 import { CustomizationModule } from "./modules/customization/customization.module";
 import { DatabaseModule } from "./modules/database/database.module";
@@ -148,6 +149,7 @@ import { JsonApiInterceptor } from "./common/interceptors";
     StockNotificationModule,
     RefundRequestModule,
     SizeRecommendationModule,
+    AdminModule,
   ],
   providers: [
     SystemReadinessService,

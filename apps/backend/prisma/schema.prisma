@@ -21,6 +21,7 @@ model User {
   gender    Gender?
   birthDate DateTime?
   isActive  Boolean  @default(true)
+  role      UserRole @default(user)
 
   // P1-Data-2: 软删除字段（GDPR/PIPL合规）
   isDeleted     Boolean   @default(false)
@@ -96,6 +97,9 @@ model User {
   userCoupons          UserCoupon[]
   stockNotifications   StockNotification[]
   refundRequests       RefundRequest[]
+
+  // Phase 9: Admin audit log
+  adminAuditLogs       AdminAuditLog[]
 
   @@index([email])
   @@index([phone])
@@ -221,10 +225,15 @@ model RankingFeedback {
 }
 
 model SystemConfig {
-  key         String   @id
-  value       String
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       Json
+  description String?
+  updatedBy   String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([key])
 }
 
 model StyleProfile {
@@ -2420,4 +2429,35 @@ model RefundRequest {
   @@index([orderId])
   @@index([userId, status])
 }
+
+// Phase 9: Admin RBAC
+enum UserRole {
+  user
+  admin
+  superadmin
+  ops
+  customer_service
+  reviewer
+}
+
+// Phase 9: Admin Audit Log
+model AdminAuditLog {
+  id         String   @id @default(uuid())
+  userId     String
+  action     String
+  resource   String
+  resourceId String?
+  details    Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([action])
+  @@index([resource])
+  @@index([createdAt(sort: Desc)])
+}
+
 
