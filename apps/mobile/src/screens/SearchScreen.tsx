@@ -14,7 +14,7 @@ import type { RootStackParamList } from '../types/navigation';
 import { theme } from '../theme';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { clothingApi } from '../services/api/clothing.api';
-import { searchApi } from '../services/api/commerce.api';
+import { searchApi, searchEnhancementApi, clothingEnhancementApi, type FilterOptions as FilterOptionsType, type Subcategory } from '../services/api/commerce.api';
 import type {
   ClothingItem,
   ClothingFilter,
@@ -22,6 +22,10 @@ import type {
   Season,
   Occasion,
 } from '../types/clothing';
+import { CategoryNavigation } from '../components/CategoryNavigation';
+import { SubcategoryTabs } from '../components/SubcategoryTabs';
+import { FilterTags } from '../components/FilterTags';
+import { SortBar } from '../components/SortBar';
 import {
   launchImageLibraryAsync,
   launchCameraAsync,
@@ -62,6 +66,18 @@ export const SearchScreen: React.FC = () => {
   const [selectedPriceRange, setSelectedPriceRange] = useState<number | null>(null);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+
+  // Phase 5: Enhanced search state
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [filterOptions, setFilterOptions] = useState<FilterOptionsType | null>(null);
+  const [activeSort, setActiveSort] = useState("comprehensive");
+  const [activeFilterDimensions, setActiveFilterDimensions] = useState<{
+    brands?: string[];
+    colors?: string[];
+    sizes?: string[];
+    priceRange?: { min: number; max: number };
+  }>({});
 
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchInputRef = useRef<TextInput>(null);
@@ -448,13 +464,61 @@ export const SearchScreen: React.FC = () => {
         selectedPriceRange={selectedPriceRange}
         selectedSizes={selectedSizes}
         hasActiveFilters={hasActiveFilters}
-        setSelectedCategory={setSelectedCategory}
+        setSelectedCategory={(cat) => {
+          setSelectedCategory(cat);
+          if (cat) {
+            clothingEnhancementApi.getSubcategories(cat).then((res) => {
+              if (res.success && res.data) setSubcategories(res.data);
+            });
+          } else {
+            setSubcategories([]);
+          }
+        }}
         setSelectedSeason={setSelectedSeason}
         setSelectedOccasion={setSelectedOccasion}
         setSelectedPriceRange={setSelectedPriceRange}
         setSelectedSizes={setSelectedSizes}
         onClearFilters={handleClearFilters}
       />
+
+      <CategoryNavigation
+        selectedCategory={selectedCategory}
+        onSelectCategory={(cat) => {
+          setSelectedCategory(cat as ClothingCategory | null);
+          if (cat) {
+            clothingEnhancementApi.getSubcategories(cat).then((res) => {
+              if (res.success && res.data) setSubcategories(res.data);
+            });
+            searchEnhancementApi.getFilterOptions(cat).then((res) => {
+              if (res.success && res.data) setFilterOptions(res.data);
+            });
+          } else {
+            setSubcategories([]);
+            setFilterOptions(null);
+          }
+        }}
+      />
+
+      {subcategories.length > 0 && (
+        <SubcategoryTabs
+          subcategories={subcategories}
+          selectedSubcategory={selectedSubcategory}
+          onSelectSubcategory={setSelectedSubcategory}
+        />
+      )}
+
+      <FilterTags
+        filterOptions={filterOptions}
+        activeFilters={activeFilterDimensions}
+        onApplyFilter={(dimension, value) => {
+          setActiveFilterDimensions((prev) => ({
+            ...prev,
+            [dimension]: value,
+          }));
+        }}
+      />
+
+      <SortBar activeSort={activeSort} onSortChange={setActiveSort} />
 
       <View style={styles.separator} />
 
