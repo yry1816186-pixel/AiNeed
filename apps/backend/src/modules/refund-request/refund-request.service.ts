@@ -1,0 +1,240 @@
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { PrismaService } from "../../common/prisma/prisma.service";
+import { PaymentService } from "../payment/payment.service";
+import { RefundType, RefundRequestStatus, OrderStatus } from "@prisma/client";
+import { CreateRefundRequestDto } from "./dto";
+
+@Injectable()
+export class RefundRequestService {
+  private readonly logger = new Logger(RefundRequestService.name);
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly paymentService: PaymentService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
+
+  /**
+   * Create a refund request. Validates order ownership and status.
+   * Amount is auto-calculated from order items.
+   */
+  async create(userId: string, dto: CreateRefundRequestDto) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: dto.orderId },
+      include: { items: true },
+    });
+
+    if (!order) {
+      throw new NotFoundException("订单不存在");
+    }
+    if (order.userId !== userId) {
+      throw new BadRequestException("无权操作此订单");
+    }
+
+    const allowedStatuses: OrderStatus[] = [
+      OrderStatus.paid,
+      OrderStatus.shipped,
+      OrderStatus.delivered,
+    ];
+    if (!allowedStatuses.includes(order.status)) {
+      throw new BadRequestException("当前订单状态不支持退款申请");
+    }
+
+    // Check for existing PENDING refund requests
+    const existingPending = await this.prisma.refundRequest.findFirst({
+      where: { orderId: dto.orderId, status: RefundRequestStatus.PENDING },
+    });
+    if (existingPending) {
+      throw new BadRequestException("该订单已有待处理的退款申请");
+    }
+
+    // Auto-calculate refund amount from order items
+    const amount = Number(order.finalAmount);
+
+    const refundRequest = await this.prisma.refundRequest.create({
+      data: {
+        orderId: dto.orderId,
+        userId,
+        type: dto.type as RefundType,
+        reason: dto.reason,
+        description: dto.description,
+        images: dto.images ?? [],
+        amount,
+        status: RefundRequestStatus.PENDING,
+      },
+    });
+
+    this.logger.log(`Refund request created: ${refundRequest.id} for order ${dto.orderId}`);
+    return refundRequest;
+  }
+
+  /**
+   * Approve a refund request (admin/merchant).
+   */
+  async approve(refundRequestId: string, adminNote?: string) {
+    const request = await this.prisma.refundRequest.findUnique({
+      where: { id: refundRequestId },
+    });
+    if (!request) {
+      throw new NotFoundException("退款申请不存在");
+    }
+    if (request.status !== RefundRequestStatus.PENDING) {
+      throw new BadRequestException("当前状态不允许审批");
+    }
+
+    return this.prisma.refundRequest.update({
+      where: { id: refundRequestId },
+      data: {
+        status: RefundRequestStatus.APPROVED,
+        adminNote,
+      },
+    });
+  }
+
+  /**
+   * Reject a refund request (admin/merchant).
+   */
+  async reject(refundRequestId: string, adminNote: string) {
+    const request = await this.prisma.refundRequest.findUnique({
+      where: { id: refundRequestId },
+    });
+    if (!request) {
+      throw new NotFoundException("退款申请不存在");
+    }
+    if (request.status !== RefundRequestStatus.PENDING) {
+      throw new BadRequestException("当前状态不允许拒绝");
+    }
+
+    return this.prisma.refundRequest.update({
+      where: { id: refundRequestId },
+      data: {
+        status: RefundRequestStatus.REJECTED,
+        adminNote,
+      },
+    });
+  }
+
+  /**
+   * Add tracking number for return-refund (user action after approval).
+   */
+  async addTrackingNumber(
+    refundRequestId: string,
+    userId: string,
+    trackingNumber: string,
+  ) {
+    const request = await this.prisma.refundRequest.findUnique({
+      where: { id: refundRequestId },
+    });
+    if (!request) {
+      throw new NotFoundException("退款申请不存在");
+    }
+    if (request.userId !== userId) {
+      throw new BadRequestException("无权操作此退款申请");
+    }
+    if (request.type !== RefundType.RETURN_REFUND) {
+      throw new BadRequestException("仅退货退款类型需要填写物流单号");
+    }
+    if (request.status !== RefundRequestStatus.APPROVED) {
+      throw new BadRequestException("退款申请未通过审批，无法填写物流单号");
+    }
+
+    return this.prisma.refundRequest.update({
+      where: { id: refundRequestId },
+      data: {
+        trackingNumber,
+        status: RefundRequestStatus.PROCESSING,
+      },
+    });
+  }
+
+  /**
+   * Complete the refund process. Calls PaymentService.refund.
+   * Status machine:
+   * - REFUND_ONLY: APPROVED -> COMPLETED
+   * - RETURN_REFUND: PROCESSING -> COMPLETED
+   */
+  async completeRefund(refundRequestId: string) {
+    const request = await this.prisma.refundRequest.findUnique({
+      where: { id: refundRequestId },
+    });
+    if (!request) {
+      throw new NotFoundException("退款申请不存在");
+    }
+
+    const validStatuses: RefundRequestStatus[] = [];
+    if (request.type === RefundType.REFUND_ONLY) {
+      validStatuses.push(RefundRequestStatus.APPROVED);
+    } else {
+      validStatuses.push(RefundRequestStatus.PROCESSING);
+    }
+
+    if (!validStatuses.includes(request.status)) {
+      throw new BadRequestException("当前状态无法完成退款");
+    }
+
+    // Call PaymentService to process the actual refund
+    await this.paymentService.refund(request.userId, {
+      orderId: request.orderId,
+      amount: Number(request.amount),
+      reason: request.reason,
+    });
+
+    const updated = await this.prisma.refundRequest.update({
+      where: { id: refundRequestId },
+      data: {
+        status: RefundRequestStatus.COMPLETED,
+        processedAt: new Date(),
+      },
+    });
+
+    this.eventEmitter.emit("REFUND_COMPLETED", {
+      refundRequestId,
+      orderId: request.orderId,
+      userId: request.userId,
+      amount: Number(request.amount),
+    });
+
+    this.logger.log(`Refund completed: ${refundRequestId}`);
+    return updated;
+  }
+
+  /**
+   * Get user's refund requests with optional order filter.
+   */
+  async getUserRefundRequests(userId: string, orderId?: string) {
+    const where: Record<string, unknown> = { userId };
+    if (orderId) {
+      where.orderId = orderId;
+    }
+
+    return this.prisma.refundRequest.findMany({
+      where,
+      include: {
+        order: {
+          select: {
+            orderNo: true,
+            status: true,
+            items: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  /**
+   * Get all refund requests for an order (merchant/admin).
+   */
+  async getOrderRefundRequests(orderId: string) {
+    return this.prisma.refundRequest.findMany({
+      where: { orderId },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+}
