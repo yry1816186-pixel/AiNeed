@@ -14,10 +14,13 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { addressApi, cartApi, orderApi } from "../services/api/commerce.api";
+import { addressApi, cartApi, orderApi, paymentApi } from "../services/api/commerce.api";
 import { useCartStore } from "../stores/index";
+import { useCouponStore } from "../stores/couponStore";
 import type { Address } from "../types";
 import { theme } from "../theme";
+import { CouponSelector } from "../components/CouponSelector";
+import { PaymentWaitingScreen } from "../components/PaymentWaitingScreen";
 
 type CheckoutStep = "summary" | "address" | "payment" | "success";
 
@@ -64,6 +67,10 @@ export const CheckoutScreen: React.FC = () => {
   const [orderId, setOrderId] = useState("");
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [draftAddress, setDraftAddress] = useState<AddressDraft>(EMPTY_ADDRESS);
+  const [showCouponSelector, setShowCouponSelector] = useState(false);
+  const [showPaymentWaiting, setShowPaymentWaiting] = useState(false);
+  const [paymentOrderId, setPaymentOrderId] = useState("");
+  const couponStore = useCouponStore();
 
   const loadCheckoutData = useCallback(async () => {
     setLoading(true);
@@ -422,24 +429,27 @@ export const CheckoutScreen: React.FC = () => {
             {step === "payment" ? (
               <>
                 <View style={styles.card}>
-                  <Text style={styles.cardTitle}>支付偏好</Text>
-                  <Text style={styles.muted}>
-                    当前先验证真实下单链路，这里记录支付方式偏好，完整支付链路后续继续接入。
-                  </Text>
-                  {PAYMENT_METHODS.map((method) => (
-                    <TouchableOpacity
-                      key={method.id}
-                      style={[
-                        styles.paymentItem,
-                        selectedPayment === method.id && styles.addressCardActive,
-                      ]}
-                      onPress={() => setSelectedPayment(method.id)}
-                      accessibilityLabel={`支付方式 ${method.label}`}
-                    >
-                      <Ionicons name={method.icon} size={20} color={theme.colors.primary} />
-                      <Text style={styles.paymentLabel}>{method.label}</Text>
+                  <View style={styles.spaceRow}>
+                    <Text style={styles.cardTitle}>优惠券</Text>
+                    <TouchableOpacity onPress={() => {
+                      couponStore.fetchUserCoupons();
+                      setShowCouponSelector(true);
+                    }}>
+                      <Text style={styles.link}>
+                        {couponStore.selectedCoupon ? '更换' : '选择优惠券'}
+                      </Text>
                     </TouchableOpacity>
-                  ))}
+                  </View>
+                  {couponStore.selectedCoupon ? (
+                    <Text style={styles.muted}>
+                      {couponStore.selectedCoupon.coupon.description} -
+                      {couponStore.selectedCoupon.coupon.type === 'PERCENTAGE'
+                        ? ` ${couponStore.selectedCoupon.coupon.value}%`
+                        : ` -¥${couponStore.selectedCoupon.coupon.value}`}
+                    </Text>
+                  ) : (
+                    <Text style={styles.muted}>未使用优惠券</Text>
+                  )}
                 </View>
 
                 <View style={styles.card}>
@@ -452,21 +462,74 @@ export const CheckoutScreen: React.FC = () => {
                       {selectedAddress.detail}
                     </Text>
                   ) : null}
+                  <View style={styles.spaceRow}>
+                    <Text style={styles.muted}>商品合计</Text>
+                    <Text style={styles.value}>{"\u00A5"}{itemsTotal.toFixed(2)}</Text>
+                  </View>
+                  <View style={styles.spaceRow}>
+                    <Text style={styles.muted}>运费</Text>
+                    <Text style={styles.value}>
+                      {shippingFee === 0 ? "免运费" : `\u00A5${shippingFee.toFixed(2)}`}
+                    </Text>
+                  </View>
+                  {couponStore.selectedCoupon && (
+                    <View style={styles.spaceRow}>
+                      <Text style={styles.muted}>优惠</Text>
+                      <Text style={[styles.value, { color: "#52C41A" }]}>
+                        -{"\u00A5"}{couponStore.selectedCoupon.coupon.type === 'PERCENTAGE'
+                          ? ((itemsTotal * couponStore.selectedCoupon.coupon.value) / 100).toFixed(2)
+                          : couponStore.selectedCoupon.coupon.value.toFixed(2)}
+                      </Text>
+                    </View>
+                  )}
                   <View style={[styles.spaceRow, styles.totalRow]}>
-                    <Text style={styles.totalLabel}>应付金额</Text>
+                    <Text style={styles.totalLabel}>实付</Text>
                     <Text style={styles.totalValue}>
-                      {"\u00A5"}
-                      {orderTotal.toFixed(2)}
+                      {"\u00A5"}{orderTotal.toFixed(2)}
                     </Text>
                   </View>
                 </View>
 
-                <View style={styles.actionRow}>
-                  <TouchableOpacity style={styles.secondaryButton} onPress={() => setStep("address")} accessibilityLabel="返回地址选择">
-                    <Text style={styles.secondaryText}>上一步</Text>
+                <View style={styles.paymentButtonsRow}>
+                  <TouchableOpacity
+                    style={styles.alipayButton}
+                    onPress={async () => {
+                      await handlePlaceOrder();
+                      if (orderId) {
+                        const res = await paymentApi.createPayment(orderId, "alipay");
+                        if (res.success) {
+                          setPaymentOrderId(orderId);
+                          setShowPaymentWaiting(true);
+                        }
+                      }
+                    }}
+                    disabled={submitting}
+                  >
+                    {submitting ? (
+                      <ActivityIndicator size="small" color="#FFFFFF" />
+                    ) : (
+                      <Text style={styles.paymentButtonText}>支付宝支付</Text>
+                    )}
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.primaryButtonFlex} onPress={handlePlaceOrder} disabled={submitting} accessibilityLabel={`提交订单 ${orderTotal.toFixed(2)} 元`}>
-                    {submitting ? <ActivityIndicator size="small" color={theme.colors.surface} /> : <Text style={styles.primaryText}>提交订单 {"\u00A5"}{orderTotal.toFixed(2)}</Text>}
+                  <TouchableOpacity
+                    style={styles.wechatButton}
+                    onPress={async () => {
+                      await handlePlaceOrder();
+                      if (orderId) {
+                        const res = await paymentApi.createPayment(orderId, "wechat");
+                        if (res.success) {
+                          setPaymentOrderId(orderId);
+                          setShowPaymentWaiting(true);
+                        }
+                      }
+                    }}
+                    disabled={submitting}
+                  >
+                    {submitting ? (
+                      <ActivityIndicator size="small" color="#FFFFFF" />
+                    ) : (
+                      <Text style={styles.paymentButtonText}>微信支付</Text>
+                    )}
                   </TouchableOpacity>
                 </View>
               </>
@@ -488,6 +551,27 @@ export const CheckoutScreen: React.FC = () => {
           </ScrollView>
         )}
       </KeyboardAvoidingView>
+
+      <CouponSelector
+        visible={showCouponSelector}
+        coupons={couponStore.availableCoupons}
+        selectedCouponId={couponStore.selectedCoupon?.id ?? null}
+        onSelect={(coupon) => couponStore.selectCoupon(coupon)}
+        onClose={() => setShowCouponSelector(false)}
+      />
+
+      {showPaymentWaiting && paymentOrderId ? (
+        <PaymentWaitingScreen
+          orderId={paymentOrderId}
+          onSuccess={() => {
+            setShowPaymentWaiting(false);
+            setStep("success");
+          }}
+          onTimeout={() => {
+            setShowPaymentWaiting(false);
+          }}
+        />
+      ) : null}
     </SafeAreaView>
   );
 };
@@ -639,6 +723,31 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   successTitle: { fontSize: 24, fontWeight: "700", color: theme.colors.text },
+  paymentButtonsRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginHorizontal: 20,
+    marginTop: 16,
+  },
+  alipayButton: {
+    flex: 1,
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: "center",
+    backgroundColor: "#1677FF",
+  },
+  wechatButton: {
+    flex: 1,
+    paddingVertical: 16,
+    borderRadius: 14,
+    alignItems: "center",
+    backgroundColor: "#07C160",
+  },
+  paymentButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
 });
 
 export default CheckoutScreen;

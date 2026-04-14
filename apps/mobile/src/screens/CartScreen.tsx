@@ -17,11 +17,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { cartApi } from '../services/api/commerce.api';
+import { cartApi, cartEnhancementApi } from '../services/api/commerce.api';
 import { useCartStore } from '../stores/index';
+import { useCouponStore } from '../stores/couponStore';
 import type { CartItem } from '../types';
 import { theme } from '../theme';
 import { withErrorBoundary } from '../components/ErrorBoundary';
+import { EmptyCartView } from '../components/EmptyCartView';
+import { FreeShippingProgress } from '../components/FreeShippingProgress';
+import { CouponSelector } from '../components/CouponSelector';
 import type { RootStackParamList } from '../types/navigation';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
@@ -35,6 +39,9 @@ export const CartScreenComponent: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set());
+  const [editMode, setEditMode] = useState(false);
+  const [showCouponSelector, setShowCouponSelector] = useState(false);
+  const couponStore = useCouponStore();
 
   const { items, setItems, removeItem, updateItem, totalItems, totalPrice } =
     useCartStore();
@@ -233,10 +240,17 @@ export const CartScreenComponent: React.FC = () => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>购物车</Text>
         {totalItems > 0 && (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>
-              {totalItems > 99 ? '99+' : totalItems}
-            </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>
+                {totalItems > 99 ? '99+' : totalItems}
+              </Text>
+            </View>
+            <TouchableOpacity onPress={() => setEditMode((prev) => !prev)}>
+              <Text style={styles.editToggleText}>
+                {editMode ? '完成' : '编辑'}
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -281,18 +295,9 @@ export const CartScreenComponent: React.FC = () => {
           </View>
         }
         ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="cart-outline" size={64} color={theme.colors.textTertiary} />
-            <Text style={styles.emptyText}>购物车是空的</Text>
-            <Text style={styles.emptySubtext}>去发现你喜欢的服装吧</Text>
-            <TouchableOpacity
-              style={styles.emptyButton}
-              onPress={() => navigation.navigate('MainTabs', { screen: 'Explore' } as never)}
-              accessibilityLabel="去逛逛"
-            >
-              <Text style={styles.emptyButtonText}>去逛逛</Text>
-            </TouchableOpacity>
-          </View>
+          <EmptyCartView
+            onGoShopping={() => navigation.navigate('MainTabs', { screen: 'Explore' } as never)}
+          />
         }
         refreshControl={
           <RefreshControl
@@ -311,51 +316,115 @@ export const CartScreenComponent: React.FC = () => {
 
       <View style={styles.footer}>
         <TouchableOpacity
-          style={styles.selectAllFooter}
-          onPress={toggleSelectAll}
-          activeOpacity={0.7}
-          accessibilityLabel={allSelected ? '取消全选' : '全选'}
+          style={styles.couponEntry}
+          onPress={() => {
+            couponStore.fetchUserCoupons();
+            setShowCouponSelector(true);
+          }}
         >
-          <View
-            style={[
-              styles.checkbox,
-              allSelected && styles.checkboxChecked,
-              someSelected && styles.checkboxIndeterminate,
-            ]}
-          >
-            {allSelected && (
-              <Ionicons name="checkmark" size={14} color={theme.colors.surface} />
-            )}
-            {someSelected && !allSelected && (
-              <Ionicons name="remove" size={14} color={theme.colors.surface} />
-            )}
+          <Text style={styles.couponEntryText}>
+            {couponStore.availableCoupons.length > 0
+              ? `${couponStore.availableCoupons.length}张优惠券可用`
+              : '使用优惠券'}
+          </Text>
+          <Ionicons name="chevron-forward" size={16} color="#999999" />
+        </TouchableOpacity>
+
+        <FreeShippingProgress currentAmount={selectedTotal} />
+
+        {editMode ? (
+          <View style={styles.batchRow}>
+            <TouchableOpacity
+              style={styles.selectAllFooter}
+              onPress={toggleSelectAll}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.checkbox, allSelected && styles.checkboxChecked]}>
+                {allSelected && <Ionicons name="checkmark" size={14} color={theme.colors.surface} />}
+              </View>
+              <Text style={styles.selectAllText}>全选</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.batchButton}
+              onPress={async () => {
+                const ids = Array.from(selectedIds);
+                if (ids.length === 0) return;
+                await cartEnhancementApi.batchDeleteCartItems(ids);
+                ids.forEach((id) => removeItem(id));
+                setSelectedIds(new Set());
+              }}
+            >
+              <Text style={styles.batchButtonText}>删除</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.batchButton}
+              onPress={async () => {
+                const ids = Array.from(selectedIds);
+                if (ids.length === 0) return;
+                await cartEnhancementApi.moveCartToFavorites(ids);
+                ids.forEach((id) => removeItem(id));
+                setSelectedIds(new Set());
+              }}
+            >
+              <Text style={styles.batchButtonText}>移入收藏</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.selectAllText}>全选</Text>
-        </TouchableOpacity>
+        ) : (
+          <View style={styles.footerRow}>
+            <TouchableOpacity
+              style={styles.selectAllFooter}
+              onPress={toggleSelectAll}
+              activeOpacity={0.7}
+              accessibilityLabel={allSelected ? '取消全选' : '全选'}
+            >
+              <View
+                style={[
+                  styles.checkbox,
+                  allSelected && styles.checkboxChecked,
+                  someSelected && styles.checkboxIndeterminate,
+                ]}
+              >
+                {allSelected && (
+                  <Ionicons name="checkmark" size={14} color={theme.colors.surface} />
+                )}
+                {someSelected && !allSelected && (
+                  <Ionicons name="remove" size={14} color={theme.colors.surface} />
+                )}
+              </View>
+              <Text style={styles.selectAllText}>全选</Text>
+            </TouchableOpacity>
 
-        <View style={styles.totalSection}>
-          <Text style={styles.totalLabel}>合计：</Text>
-          <Text style={styles.totalPrice}>
-            ¥{selectedTotal.toFixed(2)}
-          </Text>
-        </View>
+            <View style={styles.totalSection}>
+              <Text style={styles.totalLabel}>合计：</Text>
+              <Text style={styles.totalPrice}>
+                ¥{selectedTotal.toFixed(2)}
+              </Text>
+            </View>
 
-        <TouchableOpacity
-          style={[
-            styles.checkoutButton,
-            selectedIds.size === 0 && styles.checkoutButtonDisabled,
-          ]}
-          onPress={handleCheckout}
-          disabled={selectedIds.size === 0}
-          activeOpacity={0.8}
-          accessibilityLabel={`结算${selectedCount > 0 ? ` ${selectedCount} 件商品` : ''}`}
-          accessibilityState={{ disabled: selectedIds.size === 0 }}
-        >
-          <Text style={styles.checkoutButtonText}>
-            结算{selectedCount > 0 ? `(${selectedCount})` : ''}
-          </Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.checkoutButton,
+                selectedIds.size === 0 && styles.checkoutButtonDisabled,
+              ]}
+              onPress={handleCheckout}
+              disabled={selectedIds.size === 0}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.checkoutButtonText}>
+                结算{selectedCount > 0 ? `(${selectedCount})` : ''}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
+
+      <CouponSelector
+        visible={showCouponSelector}
+        coupons={couponStore.availableCoupons}
+        selectedCouponId={couponStore.selectedCoupon?.id ?? null}
+        onSelect={(coupon) => couponStore.selectCoupon(coupon)}
+        onClose={() => setShowCouponSelector(false)}
+      />
     </SafeAreaView>
   );
 };
@@ -765,6 +834,47 @@ const styles = StyleSheet.create({
     color: theme.colors.surface,
     fontSize: 16,
     fontWeight: '600',
+  },
+  editToggleText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: theme.colors.primary,
+  },
+  couponEntry: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  couponEntryText: {
+    fontSize: 14,
+    color: '#FF4D4F',
+  },
+  batchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  batchButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: '#F5F5F5',
+  },
+  batchButtonText: {
+    fontSize: 14,
+    color: '#333333',
+  },
+  footerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
 });
 
