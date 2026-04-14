@@ -90,10 +90,47 @@ model User {
   consents             UserConsent[]
   notificationSetting  UserNotificationSetting?
 
+  // Phase 5: E-commerce relations
+  userCoupons          UserCoupon[]
+  stockNotifications   StockNotification[]
+  refundRequests       RefundRequest[]
+
   @@index([email])
   @@index([phone])
   @@index([isActive])
   @@index([createdAt(sort: Desc)])
+}
+
+// Phase 5: E-commerce enums
+enum CouponType {
+  PERCENTAGE
+  FIXED
+  SHIPPING
+}
+
+enum UserCouponStatus {
+  AVAILABLE
+  USED
+  EXPIRED
+}
+
+enum StockNotificationStatus {
+  PENDING
+  NOTIFIED
+  CANCELLED
+}
+
+enum RefundType {
+  REFUND_ONLY
+  RETURN_REFUND
+}
+
+enum RefundRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PROCESSING
+  COMPLETED
 }
 
 enum Gender {
@@ -386,6 +423,7 @@ model ClothingItem {
   orderItems  OrderItem[]
   postItems   CommunityPostItem[]
   rankingFeedback RankingFeedback[]
+  stockNotifications StockNotification[]
 
   // 核心业务索引（精简至15个，优化写入性能）
   // P1-Data-1: 移除冗余索引 [category], [viewCount], [likeCount], [isDeleted]
@@ -1211,6 +1249,7 @@ model Order {
   user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   items         OrderItem[]
   address       OrderAddress?
+  refundRequests RefundRequest[]
 
   @@index([userId])
   @@index([status])
@@ -2120,5 +2159,89 @@ model ContentModerationLog {
   post        CommunityPost? @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
   @@index([contentType, contentId])
+}
+
+// ==================== Phase 5: 电商闭环 ====================
+
+model Coupon {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  type        CouponType
+  value       Decimal  @db.Decimal(10, 2)
+  minOrderAmount Decimal @db.Decimal(10, 2) @default(0)
+  maxDiscount Decimal? @db.Decimal(10, 2)
+  validFrom   DateTime
+  validUntil  DateTime
+  usageLimit  Int?     // null = unlimited
+  usedCount   Int      @default(0)
+  perUserLimit Int     @default(1)
+  applicableCategories String[] @default([])
+  applicableBrandIds   String[] @default([])
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userCoupons UserCoupon[]
+
+  @@index([code])
+  @@index([isActive, validFrom, validUntil])
+}
+
+model UserCoupon {
+  id        String   @id @default(uuid())
+  userId    String
+  couponId  String
+  status    UserCouponStatus
+  usedAt    DateTime?
+  orderId   String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coupon    Coupon   @relation(fields: [couponId], references: [id])
+
+  @@unique([userId, couponId])
+  @@index([userId, status])
+}
+
+model StockNotification {
+  id        String   @id @default(uuid())
+  userId    String
+  itemId    String
+  color     String?
+  size      String?
+  status    StockNotificationStatus
+  notifiedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item      ClothingItem  @relation(fields: [itemId], references: [id])
+
+  @@unique([userId, itemId, color, size])
+  @@index([itemId, status])
+  @@index([userId, status])
+}
+
+model RefundRequest {
+  id              String   @id @default(uuid())
+  orderId         String
+  userId          String
+  type            RefundType
+  reason          String
+  description     String?
+  images          String[] @default([])
+  amount          Decimal  @db.Decimal(10, 2)
+  status          RefundRequestStatus
+  trackingNumber  String?
+  adminNote       String?
+  processedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  order           Order    @relation(fields: [orderId], references: [id])
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([userId, status])
 }
 

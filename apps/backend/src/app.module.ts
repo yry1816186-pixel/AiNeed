@@ -34,6 +34,8 @@ import { ChatModule } from "./modules/chat/chat.module";
 import { ClothingModule } from "./modules/clothing/clothing.module";
 import { CommunityModule } from "./modules/community/community.module";
 import { ConsultantModule } from "./modules/consultant/consultant.module";
+import { CouponModule } from "./modules/coupon/coupon.module";
+import { StockNotificationModule } from "./modules/stock-notification/stock-notification.module";
 import { SecurityModule } from "./modules/security/security.module";
 import { CustomizationModule } from "./modules/customization/customization.module";
 import { DatabaseModule } from "./modules/database/database.module";
@@ -140,6 +142,8 @@ import { JsonApiInterceptor } from "./common/interceptors";
     ConsultantModule,
     ChatModule,
     FeatureFlagModule,
+    CouponModule,
+    StockNotificationModule,
   ],
   providers: [
     SystemReadinessService,
