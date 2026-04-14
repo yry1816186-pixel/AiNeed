@@ -2,6 +2,8 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
+  Delete,
   Body,
   Param,
   Query,
@@ -123,5 +125,47 @@ export class OrderController {
     @Param("id") id: string,
   ) {
     return this.orderService.getTracking(req.user.id, id);
+  }
+
+  // Phase 5: Enhanced order endpoints
+
+  @Patch(":id/confirm")
+  @ApiOperation({ summary: "确认收货 (Phase 5 enhanced)" })
+  @ApiParam({ name: "id", description: "订单 ID" })
+  async confirmReceipt(
+    @Request() req: { user: { id: string } },
+    @Param("id") id: string,
+  ) {
+    await this.orderService.confirmReceipt(req.user.id, id);
+    return { success: true };
+  }
+
+  @Delete(":id")
+  @ApiOperation({ summary: "软删除订单" })
+  @ApiParam({ name: "id", description: "订单 ID" })
+  async softDelete(
+    @Request() req: { user: { id: string } },
+    @Param("id") id: string,
+  ) {
+    return this.orderService.softDeleteOrder(req.user.id, id);
+  }
+
+  @Get("tab/:tab")
+  @ApiOperation({ summary: "按标签页获取订单列表" })
+  @ApiParam({ name: "tab", description: "标签页: all/pending/paid/shipped/completed/refund" })
+  @ApiQuery({ name: "page", required: false, type: Number })
+  @ApiQuery({ name: "limit", required: false, type: Number })
+  async getOrdersByTab(
+    @Request() req: { user: { id: string } },
+    @Param("tab") tab: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
+  ) {
+    return this.orderService.getOrdersByTab(
+      req.user.id,
+      tab,
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 10,
+    );
   }
 }

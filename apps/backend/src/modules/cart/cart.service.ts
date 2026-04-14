@@ -3,10 +3,13 @@ import {
   NotFoundException,
   BadRequestException,
   Logger,
+  Inject,
+  forwardRef,
 } from "@nestjs/common";
 import { ClothingCategory, Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
+import { CouponService } from "../coupon/coupon.service";
 
 export interface CartItemWithItem {
   id: string;
@@ -75,7 +78,11 @@ interface CartItemWithRelations {
 export class CartService {
   private readonly logger = new Logger(CartService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(forwardRef(() => CouponService))
+    private couponService: CouponService,
+  ) {}
 
   async getCart(userId: string): Promise<CartItemWithItem[]> {
     const items = await this.prisma.cartItem.findMany({
@@ -152,6 +159,11 @@ export class CartService {
 
     if (!item.isActive) {
       throw new BadRequestException("商品已下架");
+    }
+
+    // Stock validation
+    if (item.stock < quantity) {
+      throw new BadRequestException(`库存不足，当前库存: ${item.stock}`);
     }
 
     if (!item.colors.includes(color)) {
@@ -353,5 +365,200 @@ export class CartService {
         brand: item.item.brand,
       },
     };
+  }
+
+  // ==================== Phase 5: Enhanced cart methods ====================
+
+  /**
+   * Enhanced getCartSummary with coupon support.
+   */
+  async getCartSummaryWithCoupon(
+    userId: string,
+    couponCode?: string,
+  ): Promise<{
+    totalItems: number;
+    selectedItems: number;
+    totalAmount: number;
+    selectedAmount: number;
+    discountAmount: number;
+    shippingFee: number;
+    finalAmount: number;
+  }> {
+    const items = await this.prisma.cartItem.findMany({
+      where: { userId },
+      select: {
+        quantity: true,
+        selected: true,
+        item: {
+          select: { price: true },
+        },
+      },
+    });
+
+    let totalItems = 0;
+    let selectedItems = 0;
+    let totalAmount = 0;
+    let selectedAmount = 0;
+
+    for (const item of items) {
+      totalItems += item.quantity;
+      totalAmount += Number(item.item.price) * item.quantity;
+
+      if (item.selected) {
+        selectedItems += item.quantity;
+        selectedAmount += Number(item.item.price) * item.quantity;
+      }
+    }
+
+    let discountAmount = 0;
+    if (couponCode) {
+      const validation = await this.couponService.validateCoupon(
+        couponCode,
+        userId,
+        selectedAmount,
+      );
+      if (validation.valid) {
+        discountAmount = validation.discount;
+      }
+    }
+
+    const shippingFee = selectedAmount >= 99 ? 0 : 10;
+    const finalAmount = Math.max(0, selectedAmount - discountAmount + shippingFee);
+
+    return {
+      totalItems,
+      selectedItems,
+      totalAmount,
+      selectedAmount,
+      discountAmount,
+      shippingFee,
+      finalAmount,
+    };
+  }
+
+  /**
+   * Get invalid cart items (items where product is inactive or deleted).
+   */
+  async getInvalidItems(userId: string) {
+    return this.prisma.cartItem.findMany({
+      where: {
+        userId,
+        OR: [
+          { item: { isActive: false } },
+          { item: { isDeleted: true } },
+        ],
+      },
+      include: {
+        item: {
+          select: {
+            id: true,
+            name: true,
+            mainImage: true,
+            isActive: true,
+            isDeleted: true,
+          },
+        },
+      },
+    });
+  }
+
+  /**
+   * Batch delete cart items.
+   */
+  async batchDelete(userId: string, cartItemIds: string[]) {
+    return this.prisma.cartItem.deleteMany({
+      where: {
+        id: { in: cartItemIds },
+        userId,
+      },
+    });
+  }
+
+  /**
+   * Move cart items to favorites.
+   */
+  async moveToFavorites(userId: string, cartItemIds: string[]) {
+    return this.prisma.$transaction(async (tx) => {
+      const cartItems = await tx.cartItem.findMany({
+        where: { id: { in: cartItemIds }, userId },
+        select: { itemId: true },
+      });
+
+      for (const ci of cartItems) {
+        await tx.favorite.upsert({
+          where: {
+            userId_itemId: { userId, itemId: ci.itemId },
+          },
+          create: { userId, itemId: ci.itemId },
+          update: {},
+        });
+      }
+
+      await tx.cartItem.deleteMany({
+        where: { id: { in: cartItemIds }, userId },
+      });
+
+      return { moved: cartItems.length };
+    });
+  }
+
+  /**
+   * Update item SKU (color/size). Validates new SKU stock.
+   */
+  async updateItemSku(
+    userId: string,
+    cartItemId: string,
+    color?: string,
+    size?: string,
+  ) {
+    const cartItem = await this.prisma.cartItem.findFirst({
+      where: { id: cartItemId, userId },
+    });
+
+    if (!cartItem) {
+      throw new NotFoundException("购物车商品不存在");
+    }
+
+    const newColor = color ?? cartItem.color;
+    const newSize = size ?? cartItem.size;
+
+    // Validate stock for new SKU
+    const item = await this.prisma.clothingItem.findUnique({
+      where: { id: cartItem.itemId },
+    });
+    if (!item) {
+      throw new NotFoundException("商品不存在");
+    }
+    if (item.stock < cartItem.quantity) {
+      throw new BadRequestException("新规格库存不足");
+    }
+
+    // Check if same SKU already exists in cart
+    const existing = await this.prisma.cartItem.findFirst({
+      where: {
+        userId,
+        itemId: cartItem.itemId,
+        color: newColor,
+        size: newSize,
+        id: { not: cartItemId },
+      },
+    });
+
+    if (existing) {
+      // Merge quantities
+      return this.prisma.$transaction(async (tx) => {
+        await tx.cartItem.update({
+          where: { id: existing.id },
+          data: { quantity: { increment: cartItem.quantity } },
+        });
+        await tx.cartItem.delete({ where: { id: cartItemId } });
+        return { merged: true };
+      });
+    }
+
+    return this.prisma.cartItem.update({
+      where: { id: cartItemId },
+      data: { color: newColor, size: newSize },
+    });
   }
 }

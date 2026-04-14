@@ -4,6 +4,7 @@ import {
   Post,
   Put,
   Delete,
+  Patch,
   Body,
   Param,
   Query,
@@ -111,5 +112,41 @@ export class CartController {
   ) {
     await this.cartService.selectAll(req.user.id, body.selected);
     return { success: true };
+  }
+
+  // Phase 5: Enhanced cart endpoints
+
+  @Get("invalid")
+  @ApiOperation({ summary: "获取失效商品" })
+  async getInvalidItems(@Request() req: { user: { id: string } }) {
+    return this.cartService.getInvalidItems(req.user.id);
+  }
+
+  @Delete("batch")
+  @ApiOperation({ summary: "批量删除购物车商品" })
+  async batchDelete(
+    @Request() req: { user: { id: string } },
+    @Body() body: { cartItemIds: string[] },
+  ) {
+    return this.cartService.batchDelete(req.user.id, body.cartItemIds);
+  }
+
+  @Post("move-to-favorites")
+  @ApiOperation({ summary: "移入收藏" })
+  async moveToFavorites(
+    @Request() req: { user: { id: string } },
+    @Body() body: { cartItemIds: string[] },
+  ) {
+    return this.cartService.moveToFavorites(req.user.id, body.cartItemIds);
+  }
+
+  @Patch(":id/sku")
+  @ApiOperation({ summary: "修改商品规格（颜色/尺码）" })
+  async updateItemSku(
+    @Request() req: { user: { id: string } },
+    @Param("id") id: string,
+    @Body() body: { color?: string; size?: string },
+  ) {
+    return this.cartService.updateItemSku(req.user.id, id, body.color, body.size);
   }
 }

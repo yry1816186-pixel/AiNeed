@@ -5,6 +5,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { OrderStatus, Prisma , Order, OrderItem, OrderAddress } from "@prisma/client";
+import { Cron } from "@nestjs/schedule";
 
 import { EncryptionService } from "../../common/encryption/encryption.service";
 import { PrismaService } from "../../common/prisma/prisma.service";
@@ -78,6 +79,9 @@ export interface ShippingAddressResponse {
 export interface OrderTrackingTimeline {
   time: Date;
   status: string;
+  description?: string;
+  trackingNumber?: string;
+  carrier?: string;
 }
 
 export interface OrderTrackingResponse {
@@ -530,5 +534,150 @@ export class OrderService {
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
     };
+  }
+
+  // ==================== Phase 5: Enhanced order methods ====================
+
+  /**
+   * Confirm receipt (user action). Validates SHIPPED status.
+   */
+  async confirmReceipt(userId: string, orderId: string): Promise<void> {
+    const order = await this.prisma.order.findFirst({
+      where: { id: orderId, userId, isDeleted: false },
+    });
+
+    if (!order) {
+      throw new NotFoundException("订单不存在");
+    }
+    if (order.status !== OrderStatus.shipped) {
+      throw new BadRequestException("只有已发货的订单才能确认收货");
+    }
+
+    await this.prisma.order.update({
+      where: { id: orderId },
+      data: {
+        status: OrderStatus.delivered,
+        receiveTime: new Date(),
+      },
+    });
+
+    this.logger.log(`Order receipt confirmed: ${orderId}`);
+  }
+
+  /**
+   * Enhanced getTracking with structured timeline per D-18.
+   */
+  async getStructuredTracking(userId: string, orderId: string) {
+    const order = await this.prisma.order.findFirst({
+      where: { id: orderId, userId, isDeleted: false },
+    });
+
+    if (!order) {
+      throw new NotFoundException("订单不存在");
+    }
+
+    const timeline: OrderTrackingTimeline[] = [
+      { status: "pending", time: order.createdAt, description: "订单已创建" },
+    ];
+
+    if (order.paidAt) {
+      timeline.push({ status: "paid", time: order.paidAt, description: "支付成功" });
+    }
+    if (order.shipTime) {
+      timeline.push({
+        status: "shipped",
+        time: order.shipTime,
+        description: "商家已发货",
+        trackingNumber: order.expressNo ?? undefined,
+        carrier: order.expressCompany ?? undefined,
+      });
+    }
+    if (order.receiveTime) {
+      timeline.push({ status: "delivered", time: order.receiveTime, description: "已签收" });
+    }
+
+    return {
+      expressCompany: order.expressCompany,
+      expressNo: order.expressNo,
+      status: order.status,
+      timeline,
+    };
+  }
+
+  /**
+   * Get orders by tab with pagination.
+   * Tabs: all, pending, paid, shipped, completed, refund
+   */
+  async getOrdersByTab(
+    userId: string,
+    tab: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
+    const where: Prisma.OrderWhereInput = { userId, isDeleted: false };
+
+    switch (tab) {
+      case "pending":
+        where.status = OrderStatus.pending;
+        break;
+      case "paid":
+        where.status = { in: [OrderStatus.paid, OrderStatus.processing] };
+        break;
+      case "shipped":
+        where.status = OrderStatus.shipped;
+        break;
+      case "completed":
+        where.status = OrderStatus.delivered;
+        break;
+      case "refund":
+        where.refundRequests = { some: {} };
+        break;
+      case "all":
+      default:
+        break;
+    }
+
+    const [orders, total] = await Promise.all([
+      this.prisma.order.findMany({
+        where,
+        include: { items: true, address: true },
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.order.count({ where }),
+    ]);
+
+    return {
+      items: orders.map((order) => this.mapToOrderResponse(order)),
+      total,
+      page,
+      limit,
+    };
+  }
+
+  /**
+   * Auto-confirm cron: daily at midnight.
+   * Confirms shipped orders older than 15 days.
+   */
+  @Cron("0 0 * * *")
+  async autoConfirmOrders() {
+    const fifteenDaysAgo = new Date();
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+
+    const result = await this.prisma.order.updateMany({
+      where: {
+        status: OrderStatus.shipped,
+        shipTime: { lt: fifteenDaysAgo },
+      },
+      data: {
+        status: OrderStatus.delivered,
+        receiveTime: new Date(),
+      },
+    });
+
+    if (result.count > 0) {
+      this.logger.log(`Auto-confirmed ${result.count} orders older than 15 days`);
+    }
   }
 }
