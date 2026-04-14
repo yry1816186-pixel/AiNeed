@@ -773,4 +773,726 @@ export const searchApi = {
   },
 };
 
-export default { cartApi, orderApi, addressApi, favoriteApi, searchApi };
+// ==================== Phase 5: New types ====================
+
+export interface Coupon {
+  id: string;
+  code: string;
+  type: "PERCENTAGE" | "FIXED" | "SHIPPING";
+  value: number;
+  minOrderAmount: number;
+  maxDiscount: number | null;
+  startDate: string;
+  endDate: string;
+  usageLimit: number;
+  usedCount: number;
+  isActive: boolean;
+  applicableCategories: string[];
+  applicableBrandId: string | null;
+  description: string;
+}
+
+export interface UserCoupon {
+  id: string;
+  couponId: string;
+  coupon: Coupon;
+  status: "AVAILABLE" | "USED" | "EXPIRED";
+  usedAt: string | null;
+  createdAt: string;
+}
+
+export interface RefundRequest {
+  id: string;
+  orderId: string;
+  type: "REFUND_ONLY" | "RETURN_REFUND";
+  status: "PENDING" | "APPROVED" | "REJECTED" | "PROCESSING" | "COMPLETED" | "CANCELLED";
+  reason: string;
+  description: string | null;
+  amount: number;
+  images: string[];
+  trackingNumber: string | null;
+  adminNote: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface StockNotification {
+  id: string;
+  itemId: string;
+  color: string | null;
+  size: string | null;
+  status: "PENDING" | "NOTIFIED" | "CANCELLED";
+  item?: {
+    id: string;
+    name: string;
+    mainImage: string | null;
+    images: string[];
+  };
+  createdAt: string;
+}
+
+export interface SizeRecommendation {
+  recommendedSize: string;
+  confidence: number;
+  reasons: string[];
+  sizeChart: { size: string; label: string; matchScore: number }[];
+}
+
+export interface FilterOptions {
+  brands: { id: string; name: string }[];
+  colors: string[];
+  sizes: string[];
+  priceRange: { min: number; max: number };
+}
+
+export interface Subcategory {
+  name: string;
+  count: number;
+}
+
+// Backend response types for Phase 5
+
+interface BackendCoupon {
+  id: string;
+  code?: string;
+  type?: string;
+  value?: number | string;
+  minOrderAmount?: number | string;
+  maxDiscount?: number | string | null;
+  startDate?: string;
+  endDate?: string;
+  usageLimit?: number;
+  usedCount?: number;
+  isActive?: boolean;
+  applicableCategories?: string[];
+  applicableBrandId?: string | null;
+  description?: string;
+}
+
+interface BackendUserCoupon {
+  id: string;
+  couponId?: string;
+  coupon?: BackendCoupon;
+  status?: string;
+  usedAt?: string | null;
+  createdAt?: string;
+}
+
+interface BackendRefundRequest {
+  id: string;
+  orderId?: string;
+  type?: string;
+  status?: string;
+  reason?: string;
+  description?: string | null;
+  amount?: number | string;
+  images?: string[];
+  trackingNumber?: string | null;
+  adminNote?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface BackendStockNotification {
+  id: string;
+  itemId?: string;
+  color?: string | null;
+  size?: string | null;
+  status?: string;
+  item?: {
+    id: string;
+    name: string;
+    mainImage: string | null;
+    images: string[];
+  };
+  createdAt?: string;
+}
+
+interface BackendSizeRecommendation {
+  recommendedSize?: string;
+  confidence?: number;
+  reasons?: string[];
+  sizeChart?: { size: string; label: string; matchScore: number }[];
+}
+
+interface BackendFilterOptions {
+  brands?: { id: string; name: string }[];
+  colors?: string[];
+  sizes?: string[];
+  priceRange?: { min: number | string; max: number | string };
+}
+
+// ==================== Phase 5: Normalize functions ====================
+
+function normalizeCoupon(raw: BackendCoupon): Coupon {
+  return {
+    id: raw.id,
+    code: raw.code ?? "",
+    type: (raw.type as Coupon["type"]) ?? "FIXED",
+    value: normalizePrice(raw.value),
+    minOrderAmount: normalizePrice(raw.minOrderAmount),
+    maxDiscount: raw.maxDiscount != null ? normalizePrice(raw.maxDiscount) : null,
+    startDate: raw.startDate ?? "",
+    endDate: raw.endDate ?? "",
+    usageLimit: raw.usageLimit ?? 0,
+    usedCount: raw.usedCount ?? 0,
+    isActive: raw.isActive ?? true,
+    applicableCategories: normalizeStringArray(raw.applicableCategories),
+    applicableBrandId: raw.applicableBrandId ?? null,
+    description: raw.description ?? "",
+  };
+}
+
+function normalizeUserCoupon(raw: BackendUserCoupon): UserCoupon {
+  return {
+    id: raw.id,
+    couponId: raw.couponId ?? "",
+    coupon: raw.coupon ? normalizeCoupon(raw.coupon) : {
+      id: raw.couponId ?? "",
+      code: "",
+      type: "FIXED",
+      value: 0,
+      minOrderAmount: 0,
+      maxDiscount: null,
+      startDate: "",
+      endDate: "",
+      usageLimit: 0,
+      usedCount: 0,
+      isActive: false,
+      applicableCategories: [],
+      applicableBrandId: null,
+      description: "",
+    },
+    status: (raw.status as UserCoupon["status"]) ?? "AVAILABLE",
+    usedAt: raw.usedAt ?? null,
+    createdAt: raw.createdAt ?? new Date(0).toISOString(),
+  };
+}
+
+function normalizeRefundRequest(raw: BackendRefundRequest): RefundRequest {
+  return {
+    id: raw.id,
+    orderId: raw.orderId ?? "",
+    type: (raw.type as RefundRequest["type"]) ?? "REFUND_ONLY",
+    status: (raw.status as RefundRequest["status"]) ?? "PENDING",
+    reason: raw.reason ?? "",
+    description: raw.description ?? null,
+    amount: normalizePrice(raw.amount),
+    images: normalizeStringArray(raw.images),
+    trackingNumber: raw.trackingNumber ?? null,
+    adminNote: raw.adminNote ?? null,
+    createdAt: raw.createdAt ?? new Date(0).toISOString(),
+    updatedAt: raw.updatedAt ?? new Date(0).toISOString(),
+  };
+}
+
+function normalizeStockNotification(raw: BackendStockNotification): StockNotification {
+  return {
+    id: raw.id,
+    itemId: raw.itemId ?? "",
+    color: raw.color ?? null,
+    size: raw.size ?? null,
+    status: (raw.status as StockNotification["status"]) ?? "PENDING",
+    item: raw.item,
+    createdAt: raw.createdAt ?? new Date(0).toISOString(),
+  };
+}
+
+function normalizeSizeRecommendation(raw: BackendSizeRecommendation): SizeRecommendation | null {
+  if (!raw.recommendedSize) {
+    return null;
+  }
+  return {
+    recommendedSize: raw.recommendedSize,
+    confidence: raw.confidence ?? 0,
+    reasons: normalizeStringArray(raw.reasons),
+    sizeChart: raw.sizeChart ?? [],
+  };
+}
+
+function normalizeFilterOptions(raw: BackendFilterOptions): FilterOptions {
+  const priceRange = raw.priceRange ?? { min: 0, max: 0 };
+  return {
+    brands: raw.brands ?? [],
+    colors: normalizeStringArray(raw.colors),
+    sizes: normalizeStringArray(raw.sizes),
+    priceRange: {
+      min: normalizePrice(priceRange.min),
+      max: normalizePrice(priceRange.max),
+    },
+  };
+}
+
+// ==================== Phase 5: Payment API ====================
+
+export const paymentApi = {
+  async createPayment(
+    orderId: string,
+    provider: "alipay" | "wechat",
+  ): Promise<
+    ApiResponse<{ paymentUrl?: string; qrCode?: string; orderId: string }>
+  > {
+    const response = await apiClient.post<{
+      paymentUrl?: string;
+      qrCode?: string;
+    }>(`/orders/${orderId}/pay`, {
+      paymentMethod: provider === "alipay" ? "ALIPAY" : "WECHAT",
+    });
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return {
+      success: true,
+      data: {
+        paymentUrl: response.data.paymentUrl,
+        qrCode: response.data.qrCode,
+        orderId,
+      },
+    };
+  },
+
+  async pollPaymentStatus(
+    orderId: string,
+  ): Promise<ApiResponse<{ status: string; paid: boolean }>> {
+    return apiClient.get(`/payment/status/${orderId}`);
+  },
+};
+
+// ==================== Phase 5: Coupon API ====================
+
+export const couponApi = {
+  async validateCoupon(
+    code: string,
+    orderAmount: number,
+    categoryIds?: string[],
+    brandId?: string,
+  ): Promise<
+    ApiResponse<{ valid: boolean; discount: number; coupon?: Coupon }>
+  > {
+    return apiClient.post("/coupons/validate", {
+      code,
+      orderAmount,
+      categoryIds,
+      brandId,
+    });
+  },
+
+  async applyCoupon(code: string): Promise<ApiResponse<UserCoupon>> {
+    const response = await apiClient.post<BackendUserCoupon>("/coupons/apply", {
+      code,
+    });
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return { success: true, data: normalizeUserCoupon(response.data) };
+  },
+
+  async getUserCoupons(status?: string): Promise<ApiResponse<UserCoupon[]>> {
+    const params: Record<string, unknown> = {};
+    if (status) {
+      params.status = status;
+    }
+    const response = await apiClient.get<BackendUserCoupon[]>("/coupons", params);
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return { success: true, data: response.data.map(normalizeUserCoupon) };
+  },
+
+  async getApplicableCoupons(): Promise<ApiResponse<UserCoupon[]>> {
+    const response = await apiClient.get<BackendUserCoupon[]>("/coupons/applicable");
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return { success: true, data: response.data.map(normalizeUserCoupon) };
+  },
+};
+
+// ==================== Phase 5: Refund API ====================
+
+export const refundApi = {
+  async createRefund(data: {
+    orderId: string;
+    type: "REFUND_ONLY" | "RETURN_REFUND";
+    reason: string;
+    description?: string;
+    images?: string[];
+  }): Promise<ApiResponse<RefundRequest>> {
+    const response = await apiClient.post<BackendRefundRequest>(
+      "/refund-requests",
+      data,
+    );
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return { success: true, data: normalizeRefundRequest(response.data) };
+  },
+
+  async getOrderRefunds(
+    orderId: string,
+  ): Promise<ApiResponse<RefundRequest[]>> {
+    const response = await apiClient.get<BackendRefundRequest[]>(
+      `/refund-requests/order/${orderId}`,
+    );
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return {
+      success: true,
+      data: response.data.map(normalizeRefundRequest),
+    };
+  },
+
+  async getUserRefunds(): Promise<ApiResponse<RefundRequest[]>> {
+    const response = await apiClient.get<BackendRefundRequest[]>("/refund-requests");
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return {
+      success: true,
+      data: response.data.map(normalizeRefundRequest),
+    };
+  },
+
+  async addRefundTracking(
+    id: string,
+    trackingNumber: string,
+  ): Promise<ApiResponse<RefundRequest>> {
+    const response = await apiClient.patch<BackendRefundRequest>(
+      `/refund-requests/${id}/tracking`,
+      { trackingNumber },
+    );
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return { success: true, data: normalizeRefundRequest(response.data) };
+  },
+};
+
+// ==================== Phase 5: Stock Notification API ====================
+
+export const stockNotificationApi = {
+  async subscribe(
+    itemId: string,
+    color?: string,
+    size?: string,
+  ): Promise<ApiResponse<StockNotification>> {
+    const response = await apiClient.post<BackendStockNotification>(
+      "/stock-notifications",
+      { itemId, color, size },
+    );
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return {
+      success: true,
+      data: normalizeStockNotification(response.data),
+    };
+  },
+
+  async unsubscribe(id: string): Promise<ApiResponse<void>> {
+    return apiClient.delete<void>(`/stock-notifications/${id}`);
+  },
+
+  async getAll(): Promise<ApiResponse<StockNotification[]>> {
+    const response = await apiClient.get<BackendStockNotification[]>(
+      "/stock-notifications",
+    );
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return {
+      success: true,
+      data: response.data.map(normalizeStockNotification),
+    };
+  },
+};
+
+// ==================== Phase 5: Enhanced Order API ====================
+
+export const orderEnhancementApi = {
+  async confirmReceipt(orderId: string): Promise<ApiResponse<{ success: boolean }>> {
+    return apiClient.patch<{ success: boolean }>(`/orders/${orderId}/confirm`);
+  },
+
+  async softDeleteOrder(orderId: string): Promise<ApiResponse<{ success: boolean }>> {
+    return apiClient.delete<{ success: boolean }>(`/orders/${orderId}`);
+  },
+
+  async getOrdersByTab(
+    tab: string,
+    page?: number,
+    limit?: number,
+  ): Promise<ApiResponse<PaginatedResponse<Order>>> {
+    const params: Record<string, unknown> = {};
+    if (page != null) {
+      params.page = page;
+    }
+    if (limit != null) {
+      params.limit = limit;
+    }
+    const response = await apiClient.get<BackendPaginatedResponse<BackendOrder>>(
+      `/orders/tab/${tab}`,
+      params,
+    );
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    const resPage = response.data.page ?? page ?? 1;
+    const pageSize = response.data.pageSize ?? response.data.limit ?? limit ?? 10;
+    const total = response.data.total ?? 0;
+    const items = (response.data.items ?? []).map(normalizeOrder);
+    const hasMore =
+      response.data.hasMore ??
+      (pageSize > 0 ? resPage * pageSize < total : false);
+
+    return {
+      success: true,
+      data: {
+        items,
+        total,
+        page: resPage,
+        pageSize,
+        limit: pageSize,
+        totalPages: pageSize > 0 ? Math.max(1, Math.ceil(total / pageSize)) : 1,
+        hasMore,
+      },
+    };
+  },
+};
+
+// ==================== Phase 5: Size Recommendation API ====================
+
+export const sizeRecommendationApi = {
+  async getSizeRecommendation(
+    itemId: string,
+  ): Promise<ApiResponse<SizeRecommendation | null>> {
+    const response = await apiClient.get<BackendSizeRecommendation>(
+      `/size-recommendation/${itemId}`,
+    );
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return {
+      success: true,
+      data: normalizeSizeRecommendation(response.data),
+    };
+  },
+
+  async getSizeChart(
+    itemId: string,
+  ): Promise<ApiResponse<{ size: string; label: string; matchScore: number }[]>> {
+    return apiClient.get(`/size-recommendation/${itemId}/chart`);
+  },
+};
+
+// ==================== Phase 5: Search Enhancement API ====================
+
+export const searchEnhancementApi = {
+  async getFilterOptions(
+    category?: string,
+  ): Promise<ApiResponse<FilterOptions>> {
+    const params: Record<string, unknown> = {};
+    if (category) {
+      params.category = category;
+    }
+    const response = await apiClient.get<BackendFilterOptions>(
+      "/search/filter-options",
+      params,
+    );
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return {
+      success: true,
+      data: normalizeFilterOptions(response.data),
+    };
+  },
+};
+
+// ==================== Phase 5: Clothing Enhancement API ====================
+
+export const clothingEnhancementApi = {
+  async getRelatedItems(itemId: string): Promise<ApiResponse<ClothingItem[]>> {
+    const response = await apiClient.get<BackendCommerceItem[]>(
+      `/clothing/${itemId}/related`,
+    );
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return {
+      success: true,
+      data: response.data.map(normalizeFavoriteItem),
+    };
+  },
+
+  async getSubcategories(
+    category?: string,
+  ): Promise<ApiResponse<Subcategory[]>> {
+    const params: Record<string, unknown> = {};
+    if (category) {
+      params.category = category;
+    }
+    return apiClient.get<Subcategory[]>("/clothing/subcategories", params);
+  },
+};
+
+// ==================== Phase 5: Merchant API ====================
+
+export const merchantApi = {
+  async applyForMerchant(data: {
+    brandName: string;
+    businessLicense: string;
+    contactName: string;
+    phone: string;
+    description?: string;
+  }): Promise<ApiResponse<{ id: string; status: string }>> {
+    return apiClient.post("/merchants/apply", data);
+  },
+
+  async getMerchantApplicationStatus(): Promise<
+    ApiResponse<{ id: string; status: string; reason?: string } | null>
+  > {
+    return apiClient.get("/merchants/application");
+  },
+
+  async getMerchantPendingApplications(): Promise<
+    ApiResponse<{ id: string; status: string; brandName: string }[]>
+  > {
+    return apiClient.get("/merchants/applications");
+  },
+};
+
+// ==================== Phase 5: Enhanced Cart API ====================
+
+export const cartEnhancementApi = {
+  async getCartSummary(couponCode?: string): Promise<
+    ApiResponse<{
+      totalItems: number;
+      selectedItems: number;
+      totalAmount: number;
+      selectedAmount: number;
+      discountAmount: number;
+      shippingFee: number;
+      finalAmount: number;
+    }>
+  > {
+    const params: Record<string, unknown> = {};
+    if (couponCode) {
+      params.couponCode = couponCode;
+    }
+    const response = await apiClient.get<{
+      totalItems?: number;
+      selectedItems?: number;
+      totalAmount?: number | string;
+      selectedAmount?: number | string;
+      discountAmount?: number | string;
+      shippingFee?: number | string;
+      finalAmount?: number | string;
+    }>("/cart/summary", params);
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    const d = response.data;
+    return {
+      success: true,
+      data: {
+        totalItems: d.totalItems ?? 0,
+        selectedItems: d.selectedItems ?? 0,
+        totalAmount: normalizePrice(d.totalAmount),
+        selectedAmount: normalizePrice(d.selectedAmount),
+        discountAmount: normalizePrice(d.discountAmount),
+        shippingFee: normalizePrice(d.shippingFee),
+        finalAmount: normalizePrice(d.finalAmount),
+      },
+    };
+  },
+
+  async getInvalidCartItems(): Promise<ApiResponse<CartItem[]>> {
+    const response = await apiClient.get<BackendCartItem[]>("/cart/invalid");
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return {
+      success: true,
+      data: response.data.map(normalizeCartItem),
+    };
+  },
+
+  async batchDeleteCartItems(ids: string[]): Promise<ApiResponse<{ count: number }>> {
+    return apiClient.delete<{ count: number }>("/cart/batch");
+  },
+
+  async moveCartToFavorites(ids: string[]): Promise<ApiResponse<{ moved: number }>> {
+    return apiClient.post<{ moved: number }>("/cart/move-to-favorites", {
+      cartItemIds: ids,
+    });
+  },
+
+  async updateCartItemSku(
+    id: string,
+    color?: string,
+    size?: string,
+  ): Promise<ApiResponse<CartItem>> {
+    const response = await apiClient.patch<BackendCartItem>(`/cart/${id}/sku`, {
+      color,
+      size,
+    });
+
+    if (!response.success || !response.data) {
+      return { success: false, error: response.error };
+    }
+
+    return { success: true, data: normalizeCartItem(response.data) };
+  },
+};
+
+export default {
+  cartApi,
+  orderApi,
+  addressApi,
+  favoriteApi,
+  searchApi,
+  paymentApi,
+  couponApi,
+  refundApi,
+  stockNotificationApi,
+  orderEnhancementApi,
+  sizeRecommendationApi,
+  searchEnhancementApi,
+  clothingEnhancementApi,
+  merchantApi,
+  cartEnhancementApi,
+};
