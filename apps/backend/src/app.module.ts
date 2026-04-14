@@ -1,6 +1,7 @@
 import { resolve } from "path";
 
 import { Module, MiddlewareConsumer, RequestMethod, NestModule } from "@nestjs/common";
+import { APP_INTERCEPTOR } from "@nestjs/core";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { EventEmitterModule } from "@nestjs/event-emitter";
 import { ScheduleModule } from "@nestjs/schedule";
@@ -61,6 +62,7 @@ import { WardrobeCollectionModule } from "./modules/wardrobe-collection/wardrobe
 import { WeatherModule } from "./modules/weather/weather.module";
 import { WSModule } from "./modules/ws/ws.module";
 import { SystemReadinessService } from "./modules/system/system-readiness.service";
+import { JsonApiInterceptor } from "./common/interceptors";
 
 @Module({
   imports: [
@@ -139,7 +141,13 @@ import { SystemReadinessService } from "./modules/system/system-readiness.servic
     ChatModule,
     FeatureFlagModule,
   ],
-  providers: [SystemReadinessService],
+  providers: [
+    SystemReadinessService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: JsonApiInterceptor,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
