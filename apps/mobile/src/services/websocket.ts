@@ -23,8 +23,12 @@ type TryOnProgressListener = (payload: TryOnProgressPayload) => void;
 
 class WebSocketService {
   private socket: Socket | null = null;
+  private chatSocket: Socket | null = null;
   private tryOnListeners: Map<string, Set<TryOnEventListener>> = new Map();
   private progressListeners: Map<string, Set<TryOnProgressListener>> = new Map();
+  private chatMessageListeners: Map<string, Set<(payload: any) => void>> = new Map();
+  private chatTypingListeners: Map<string, Set<(payload: any) => void>> = new Map();
+  private chatReadListeners: Map<string, Set<(payload: any) => void>> = new Map();
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
 
@@ -99,6 +103,124 @@ class WebSocketService {
     }
     this.tryOnListeners.clear();
     this.progressListeners.clear();
+  }
+
+  // ==================== Chat namespace (/ws/chat) ====================
+
+  async connectChat(): Promise<void> {
+    if (this.chatSocket?.connected) return;
+
+    let token: string | null = null;
+    try {
+      token = await EncryptedStorage.getItem("accessToken");
+    } catch {
+      return;
+    }
+    if (!token) return;
+
+    this.chatSocket = io(`${WS_URL}/ws/chat`, {
+      auth: { token },
+      transports: ["websocket"],
+      reconnection: true,
+      reconnectionAttempts: this.maxReconnectAttempts,
+      reconnectionDelay: 1000,
+    });
+
+    this.chatSocket.on("chat:message", (payload: any) => {
+      const roomId = payload.roomId;
+      const listeners = this.chatMessageListeners.get(roomId);
+      if (listeners) listeners.forEach((l) => l(payload));
+      const wildcard = this.chatMessageListeners.get("*");
+      if (wildcard) wildcard.forEach((l) => l(payload));
+    });
+
+    this.chatSocket.on("chat:typing", (payload: any) => {
+      const roomId = payload.roomId;
+      const listeners = this.chatTypingListeners.get(roomId);
+      if (listeners) listeners.forEach((l) => l(payload));
+    });
+
+    this.chatSocket.on("chat:read", (payload: any) => {
+      const roomId = payload.roomId;
+      const listeners = this.chatReadListeners.get(roomId);
+      if (listeners) listeners.forEach((l) => l(payload));
+    });
+  }
+
+  disconnectChat(): void {
+    if (this.chatSocket) {
+      this.chatSocket.disconnect();
+      this.chatSocket = null;
+    }
+    this.chatMessageListeners.clear();
+    this.chatTypingListeners.clear();
+    this.chatReadListeners.clear();
+  }
+
+  joinChatRoom(roomId: string): void {
+    this.chatSocket?.emit("chat:join", { roomId });
+  }
+
+  leaveChatRoom(roomId: string): void {
+    this.chatSocket?.emit("chat:leave", { roomId });
+  }
+
+  sendChatMessage(data: { roomId: string; content: string; messageType?: string }): void {
+    this.chatSocket?.emit("chat:message", data);
+  }
+
+  sendTyping(roomId: string, isTyping: boolean): void {
+    this.chatSocket?.emit("chat:typing", { roomId, isTyping });
+  }
+
+  sendReadReceipt(roomId: string, lastMessageId?: string): void {
+    this.chatSocket?.emit("chat:read", { roomId, lastMessageId });
+  }
+
+  onChatMessage(roomId: string, listener: (payload: any) => void): () => void {
+    if (!this.chatMessageListeners.has(roomId)) {
+      this.chatMessageListeners.set(roomId, new Set());
+    }
+    this.chatMessageListeners.get(roomId)!.add(listener);
+    return () => {
+      const listeners = this.chatMessageListeners.get(roomId);
+      if (listeners) {
+        listeners.delete(listener);
+        if (listeners.size === 0) this.chatMessageListeners.delete(roomId);
+      }
+    };
+  }
+
+  onChatTyping(roomId: string, listener: (payload: any) => void): () => void {
+    if (!this.chatTypingListeners.has(roomId)) {
+      this.chatTypingListeners.set(roomId, new Set());
+    }
+    this.chatTypingListeners.get(roomId)!.add(listener);
+    return () => {
+      const listeners = this.chatTypingListeners.get(roomId);
+      if (listeners) {
+        listeners.delete(listener);
+        if (listeners.size === 0) this.chatTypingListeners.delete(roomId);
+      }
+    };
+  }
+
+  onChatRead(roomId: string, listener: (payload: any) => void): () => void {
+    if (!this.chatReadListeners.has(roomId)) {
+      this.chatReadListeners.set(roomId, new Set());
+    }
+    this.chatReadListeners.get(roomId)!.add(listener);
+    return () => {
+      const listeners = this.chatReadListeners.get(roomId);
+      if (listeners) {
+        listeners.delete(listener);
+        if (listeners.size === 0) this.chatReadListeners.delete(roomId);
+      }
+    };
+  }
+
+  isChatConnected(): boolean {
+    return this.chatSocket?.connected ?? false;
   }
 
   onTryOnComplete(tryOnId: string, listener: TryOnEventListener): () => void {
