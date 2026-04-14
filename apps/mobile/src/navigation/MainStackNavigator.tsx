@@ -65,6 +65,12 @@ const AddClothingScreen = lazy(() => import('../screens/AddClothingScreen'));
 const CustomDesignScreen = lazy(() => import('../screens/CustomizationScreen'));
 const LegalScreen = lazy(() => import('../screens/LegalScreen'));
 
+// Phase 8: Private Consultant screens
+const AdvisorListScreen = lazy(() => import('../screens/consultant/AdvisorListScreen'));
+const AdvisorProfileScreen = lazy(() => import('../screens/consultant/AdvisorProfileScreen'));
+const BookingScreen = lazy(() => import('../screens/consultant/BookingScreen'));
+const ChatScreen = lazy(() => import('../screens/consultant/ChatScreen'));
+
 // ============================================================
 // Home Stack (Phase 4 - 推荐引擎)
 // ============================================================
@@ -239,16 +245,16 @@ export function ProfileStackNavigator() {
         {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 7, title: 'Brand' } }} />}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="AdvisorList">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 8, title: 'AdvisorList' } }} />}
+        {() => <Suspense fallback={screenLoader}><AdvisorListScreen /></Suspense>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="AdvisorProfile">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 8, title: 'AdvisorProfile' } }} />}
+        {() => <Suspense fallback={screenLoader}><AdvisorProfileScreen /></Suspense>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Booking">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 8, title: 'Booking' } }} />}
+        {() => <Suspense fallback={screenLoader}><BookingScreen /></Suspense>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Chat">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 8, title: 'Chat' } }} />}
+        {() => <Suspense fallback={screenLoader}><ChatScreen /></Suspense>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Legal">
         {(props) => (
