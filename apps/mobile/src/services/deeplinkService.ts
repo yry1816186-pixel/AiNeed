@@ -1,30 +1,10 @@
 import { Linking } from 'react-native';
 import { useAuthStore } from '../stores';
-import { navigate } from '../navigation/navigation';
-import { parseDeepLink } from '../navigation/deeplinks';
-import type { RootStackParamList } from '../types/navigation';
-
-interface PendingDeepLink {
-  screen: keyof RootStackParamList;
-  params: Record<string, unknown> | undefined;
-}
-
-let pendingDeepLink: PendingDeepLink | null = null;
-let linkingListener: { remove: () => void } | null = null;
-
-function navigateToScreen(
-  screen: keyof RootStackParamList,
-  params: Record<string, unknown> | undefined,
-): void {
-  navigate(
-    screen,
-    params as RootStackParamList[keyof RootStackParamList],
-  );
-}
+import { navigateDeepLink } from '../navigation/navigationService';
 
 export const DeepLinkService = {
   initialize: () => {
-    linkingListener = Linking.addEventListener('url', (event) => {
+    const linkingListener = Linking.addEventListener('url', (event) => {
       DeepLinkService.handleDeepLink(event.url);
     });
 
@@ -33,45 +13,18 @@ export const DeepLinkService = {
         DeepLinkService.handleDeepLink(url);
       }
     });
+
+    return linkingListener;
   },
 
   handleDeepLink: (url: string) => {
-    const result = parseDeepLink(url);
-    if (!result) {
-      return;
-    }
-
     const isAuthenticated = useAuthStore.getState().isAuthenticated;
-
-    if (!isAuthenticated) {
-      pendingDeepLink = { screen: result.screen, params: result.params };
-      navigate('Login');
-      return;
-    }
-
-    navigateToScreen(result.screen, result.params);
+    navigateDeepLink(url, isAuthenticated);
   },
 
-  cleanup: () => {
-    if (linkingListener) {
-      linkingListener.remove();
-      linkingListener = null;
+  cleanup: (listener?: { remove: () => void } | null) => {
+    if (listener) {
+      listener.remove();
     }
   },
 };
-
-export function getAndClearPendingDeepLink(): PendingDeepLink | null {
-  const link = pendingDeepLink;
-  pendingDeepLink = null;
-  return link;
-}
-
-export function executePendingDeepLink(): void {
-  if (!pendingDeepLink) {
-    return;
-  }
-
-  const link = pendingDeepLink;
-  pendingDeepLink = null;
-  navigateToScreen(link.screen, link.params);
-}

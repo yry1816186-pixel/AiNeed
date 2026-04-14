@@ -2,10 +2,14 @@ import {
   Controller,
   Get,
   Put,
+  Post,
   Body,
   UseGuards,
+  UseInterceptors,
   Request,
   Param,
+  UploadedFile,
+  BadRequestException,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -14,9 +18,13 @@ import {
   ApiResponse,
   ApiBody,
   ApiParam,
+  ApiConsumes,
 } from "@nestjs/swagger";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { Throttle } from "@nestjs/throttler";
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { StorageService } from "../../common/storage/storage.service";
 
 import {
   UsersService,
@@ -44,7 +52,10 @@ class SuccessResponseDto {
 @UseGuards(JwtAuthGuard)
 @Controller("users")
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private storageService: StorageService,
+  ) {}
 
   @Get("me")
   @ApiOperation({
@@ -95,6 +106,7 @@ export class UsersController {
   }
 
   @Put("me/password")
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({
     summary: "修改密码",
     description: "修改当前登录用户的密码。需要提供当前密码和新密码。",
@@ -144,6 +156,64 @@ export class UsersController {
     @Body() body: { avatarUrl: string },
   ) {
     return this.usersService.updateAvatar(req.user.id, body.avatarUrl);
+  }
+
+  @Post("me/avatar/upload")
+  @UseInterceptors(FileInterceptor("file"))
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({
+    summary: "上传头像",
+    description:
+      "通过 multipart/form-data 上传头像文件。支持 JPEG、PNG、WebP 格式，最大 5MB。",
+  })
+  @ApiBody({
+    schema: {
+      type: "object",
+      required: ["file"],
+      properties: {
+        file: {
+          type: "string",
+          format: "binary",
+          description: "头像文件（JPEG/PNG/WebP，最大 5MB）",
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: "头像上传成功",
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: "文件格式不支持或文件过大",
+  })
+  @ApiResponse({
+    status: 401,
+    description: "未授权，需要提供有效的 Access Token",
+  })
+  async uploadAvatar(
+    @Request() req: { user: { id: string } },
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException("请选择要上传的头像文件");
+    }
+
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      throw new BadRequestException(
+        "不支持的文件格式，仅支持 JPEG、PNG、WebP 格式",
+      );
+    }
+
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      throw new BadRequestException("文件大小不能超过 5MB");
+    }
+
+    const { url } = await this.storageService.uploadImage(file, "avatars");
+    return this.usersService.updateAvatar(req.user.id, url);
   }
 
   @Get("me/stats")

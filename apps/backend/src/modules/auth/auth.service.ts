@@ -22,6 +22,7 @@ import { AuthHelpersService } from "./auth.helpers";
 import { SmsService } from "./services/sms.service";
 import { ISmsService } from "./services/sms.service";
 import { WechatService } from "./services/wechat.service";
+import { TokenBlacklistService } from "./services/token-blacklist.service";
 
 /**
  * JWT payload interface for access and refresh tokens.
@@ -48,6 +49,7 @@ export class AuthService {
     @Inject("ISmsService") private smsService: ISmsService,
     private readonly smsVerificationService: SmsService,
     private wechatService: WechatService,
+    private tokenBlacklistService: TokenBlacklistService,
     loggingService: StructuredLoggerService,
   ) {
     this.logger = loggingService.createChildLogger(AuthService.name);
@@ -222,7 +224,21 @@ export class AuthService {
     return tokens;
   }
 
-  async logout(userId: string, refreshToken?: string): Promise<void> {
+  async logout(userId: string, refreshToken?: string, accessToken?: string): Promise<void> {
+    if (accessToken) {
+      try {
+        const decoded = this.jwtService.decode(accessToken) as JwtPayload | null;
+        if (decoded?.jti) {
+          const remainingSeconds = decoded.exp
+            ? Math.max(decoded.exp - Math.floor(Date.now() / 1000), 0)
+            : 15 * 60;
+          await this.tokenBlacklistService.blacklistToken(decoded.jti, remainingSeconds);
+        }
+      } catch {
+        this.logger.warn("Failed to decode access token for blacklisting");
+      }
+    }
+
     if (refreshToken) {
       const matchedTokens = await this.findMatchingRefreshTokens(
         userId,
@@ -241,10 +257,10 @@ export class AuthService {
         },
       });
     } else {
-      // 删除该用户的所有 refresh tokens（强制登出所有设备）
       await this.prisma.refreshToken.deleteMany({
         where: { userId },
       });
+      await this.tokenBlacklistService.blacklistAllUserTokens(userId);
     }
   }
 
@@ -263,7 +279,7 @@ export class AuthService {
   }
 
   private async generateTokens(userId: string, email: string): Promise<{ accessToken: string; refreshToken: string }> {
-    const accessPayload: JwtPayload = { sub: userId, email };
+    const accessPayload: JwtPayload = { sub: userId, email, jti: randomUUID() };
     const refreshPayload: JwtPayload = { sub: userId, email, jti: randomUUID() };
 
     const accessSecret = this.configService.get<string>("JWT_SECRET");
@@ -280,12 +296,15 @@ export class AuthService {
     const refreshExpiresIn = this.configService.get<string>("JWT_REFRESH_EXPIRES_IN", "7d");
     const refreshToken = this.jwtService.sign(refreshPayload, { secret: refreshSecret, expiresIn: refreshExpiresIn });
 
+    const accessTtlSeconds = this.parseExpiresInSeconds(accessExpiresIn);
+    await this.tokenBlacklistService.trackUserToken(userId, accessPayload.jti!, accessTtlSeconds);
+
     return { accessToken, refreshToken };
   }
 
   private async saveRefreshToken(userId: string, token: string): Promise<void> {
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
+    const refreshExpiresIn = this.configService.get<string>("JWT_REFRESH_EXPIRES_IN", "30d");
+    const expiresAt = this.parseExpiresIn(refreshExpiresIn);
 
     const hashedToken = await bcrypt.hash(token, 10);
 
@@ -296,6 +315,38 @@ export class AuthService {
         expiresAt,
       },
     });
+  }
+
+  /**
+   * Parse a duration string like "30d", "7d", "24h", "60m" into a Date
+   */
+  private parseExpiresIn(expiresIn: string): Date {
+    const match = expiresIn.match(/^(\d+)([dhm])$/);
+    if (!match) {
+      const date = new Date();
+      date.setDate(date.getDate() + 30);
+      return date;
+    }
+    const value = parseInt(match[1]!, 10);
+    const unit = match[2];
+    const date = new Date();
+    if (unit === "d") date.setDate(date.getDate() + value);
+    else if (unit === "h") date.setHours(date.getHours() + value);
+    else if (unit === "m") date.setMinutes(date.getMinutes() + value);
+    return date;
+  }
+
+  private parseExpiresInSeconds(expiresIn: string): number {
+    const match = expiresIn.match(/^(\d+)([dhms])$/);
+    if (!match) {
+      return 30 * 24 * 60 * 60;
+    }
+    const value = parseInt(match[1]!, 10);
+    const unit = match[2];
+    if (unit === "d") return value * 24 * 60 * 60;
+    if (unit === "h") return value * 60 * 60;
+    if (unit === "m") return value * 60;
+    return value;
   }
 
   // FIX-BL-003: 密码找回功能实现 (修复时间: 2026-03-19)

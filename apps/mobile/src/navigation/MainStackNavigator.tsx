@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import type {
   HomeStackParamList,
   StylistStackParamList,
@@ -8,8 +9,24 @@ import type {
   CommunityStackParamList,
   ProfileStackParamList,
 } from './types';
-import { PlaceholderScreen } from '../components/PlaceholderScreen';
 import { theme } from '../theme';
+import { GuardedScreen } from './RouteGuards';
+
+const OutfitPlanScreenLazy = lazy(() => import('../screens/OutfitPlanScreen'));
+const ChatHistoryScreenLazy = lazy(() => import('../screens/ChatHistoryScreen'));
+const AiStylistChatScreenLazy = lazy(() => import('../screens/AiStylistChatScreen'));
+
+const TryOnResultScreenLazy = lazy(() => import('../screens/TryOnResultScreen'));
+
+const PaymentScreenLazy = lazy(() => import('../screens/PaymentScreen'));
+
+const PostDetailScreenLazy = lazy(() => import('../screens/PostDetailScreen'));
+const PostCreateScreenLazy = lazy(() => import('../screens/CreatePostScreen'));
+const InfluencerProfileScreenLazy = lazy(() => import('../screens/InfluencerProfileScreen'));
+const InspirationWardrobeScreenLazy = lazy(() => import('../screens/InspirationWardrobeScreen'));
+
+const CustomEditorScreenLazy = lazy(() => import('../screens/CustomizationEditorScreen'));
+const BrandScreenLazy = lazy(() => import('../screens/BrandScreen'));
 
 const styles = StyleSheet.create({
   loader: {
@@ -28,9 +45,6 @@ const screenLoader = (
 
 const commonScreenOptions = { headerShown: false } as const;
 
-// ============================================================
-// Existing Screens - Lazy Loaded
-// ============================================================
 const HomeFeedScreen = lazy(() => import('../screens/home/HomeScreen'));
 const SearchScreen = lazy(() => import('../screens/SearchScreen').then((m) => ({ default: m.SearchScreen })));
 const NotificationsScreen = lazy(() => import('../screens/NotificationsScreen'));
@@ -45,6 +59,9 @@ const VirtualTryOnScreen = lazy(() => import('../screens/VirtualTryOnScreen'));
 const TryOnHistoryScreenLazy = lazy(() => import('../components/screens/TryOnHistoryScreen').then((m) => ({ default: m.TryOnHistoryScreen })));
 
 const CommunityFeedScreen = lazy(() => import('../screens/CommunityScreen'));
+const BloggerDashboardScreen = lazy(() => import('../screens/BloggerDashboardScreen'));
+const BloggerProfileScreen = lazy(() => import('../screens/BloggerProfileScreen'));
+const BloggerProductScreen = lazy(() => import('../screens/BloggerProductScreen'));
 
 const ProfileMainScreen = lazy(() => import('../screens/ProfileScreen'));
 const ProfileEditScreen = lazy(() => import('../screens/ProfileEditScreen').then((m) => ({ default: m.ProfileEditScreen })));
@@ -65,38 +82,44 @@ const AddClothingScreen = lazy(() => import('../screens/AddClothingScreen'));
 const CustomDesignScreen = lazy(() => import('../screens/CustomizationScreen'));
 const LegalScreen = lazy(() => import('../screens/LegalScreen'));
 
-// Phase 8: Private Consultant screens
 const AdvisorListScreen = lazy(() => import('../screens/consultant/AdvisorListScreen'));
 const AdvisorProfileScreen = lazy(() => import('../screens/consultant/AdvisorProfileScreen'));
 const BookingScreen = lazy(() => import('../screens/consultant/BookingScreen'));
 const ChatScreen = lazy(() => import('../screens/consultant/ChatScreen'));
 
+function SuspenseScreen({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={screenLoader}>{children}</Suspense>;
+}
+
+function G({ route, children }: { route: string; children: React.ReactNode }) {
+  return (
+    <GuardedScreen routeName={route}>
+      {children}
+    </GuardedScreen>
+  );
+}
+
 // ============================================================
-// Home Stack (Phase 4 - 推荐引擎)
+// Home Stack (Phase 4) — SharedElement for Product
 // ============================================================
-const HomeStack = createNativeStackNavigator<HomeStackParamList>();
+const HomeStack = createSharedElementStackNavigator<HomeStackParamList>();
 
 export function HomeStackNavigator() {
   return (
     <HomeStack.Navigator screenOptions={commonScreenOptions} initialRouteName="HomeFeed">
-      <HomeStack.Screen name="HomeFeed">
-        {() => <Suspense fallback={screenLoader}><HomeFeedScreen /></Suspense>}
-      </HomeStack.Screen>
-      <HomeStack.Screen name="Search">
-        {() => <Suspense fallback={screenLoader}><SearchScreen /></Suspense>}
-      </HomeStack.Screen>
-      <HomeStack.Screen name="Notifications">
-        {() => <Suspense fallback={screenLoader}><NotificationsScreen /></Suspense>}
-      </HomeStack.Screen>
-      <HomeStack.Screen name="RecommendationDetail">
-        {() => <Suspense fallback={screenLoader}><RecommendationDetailScreen /></Suspense>}
-      </HomeStack.Screen>
-      <HomeStack.Screen name="Product">
-        {() => <Suspense fallback={screenLoader}><ProductScreen /></Suspense>}
-      </HomeStack.Screen>
-      <HomeStack.Screen name="OutfitDetail">
-        {() => <Suspense fallback={screenLoader}><OutfitDetailScreen /></Suspense>}
-      </HomeStack.Screen>
+      <HomeStack.Screen name="HomeFeed" component={() => <SuspenseScreen><HomeFeedScreen /></SuspenseScreen>} />
+      <HomeStack.Screen name="Search" component={() => <SuspenseScreen><SearchScreen /></SuspenseScreen>} />
+      <HomeStack.Screen name="Notifications" component={() => <G route="Notifications"><SuspenseScreen><NotificationsScreen /></SuspenseScreen></G>} />
+      <HomeStack.Screen name="RecommendationDetail" component={() => <SuspenseScreen><RecommendationDetailScreen /></SuspenseScreen>} />
+      <HomeStack.Screen
+        name="Product"
+        component={() => <SuspenseScreen><ProductScreen /></SuspenseScreen>}
+        sharedElements={(route) => {
+          const { clothingId } = route.params;
+          return [{ id: `product.${clothingId}.image`, animation: 'move', resize: 'clip' }];
+        }}
+      />
+      <HomeStack.Screen name="OutfitDetail" component={() => <SuspenseScreen><OutfitDetailScreen /></SuspenseScreen>} />
     </HomeStack.Navigator>
   );
 }
@@ -110,19 +133,19 @@ export function StylistStackNavigator() {
   return (
     <StylistStack.Navigator screenOptions={commonScreenOptions} initialRouteName="AIStylist">
       <StylistStack.Screen name="AIStylist">
-        {() => <Suspense fallback={screenLoader}><AIStylistScreen /></Suspense>}
+        {() => <G route="AIStylist"><SuspenseScreen><AIStylistScreen /></SuspenseScreen></G>}
       </StylistStack.Screen>
       <StylistStack.Screen name="OutfitPlan">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 2, title: 'OutfitPlan' } }} />}
+        {() => <G route="OutfitPlan"><SuspenseScreen><OutfitPlanScreenLazy /></SuspenseScreen></G>}
       </StylistStack.Screen>
       <StylistStack.Screen name="ChatHistory">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 2, title: 'ChatHistory' } }} />}
+        {() => <G route="ChatHistory"><SuspenseScreen><ChatHistoryScreenLazy /></SuspenseScreen></G>}
       </StylistStack.Screen>
       <StylistStack.Screen name="AiStylistChat">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 2, title: 'AiStylistChat' } }} />}
+        {() => <G route="AIStylist"><SuspenseScreen><AiStylistChatScreenLazy /></SuspenseScreen></G>}
       </StylistStack.Screen>
       <StylistStack.Screen name="SessionCalendar">
-        {() => <Suspense fallback={screenLoader}><SessionCalendarScreen /></Suspense>}
+        {() => <SuspenseScreen><SessionCalendarScreen /></SuspenseScreen>}
       </StylistStack.Screen>
     </StylistStack.Navigator>
   );
@@ -137,41 +160,41 @@ export function TryOnStackNavigator() {
   return (
     <TryOnStack.Navigator screenOptions={commonScreenOptions} initialRouteName="VirtualTryOn">
       <TryOnStack.Screen name="VirtualTryOn">
-        {() => <Suspense fallback={screenLoader}><VirtualTryOnScreen /></Suspense>}
+        {() => <G route="VirtualTryOn"><SuspenseScreen><VirtualTryOnScreen /></SuspenseScreen></G>}
       </TryOnStack.Screen>
       <TryOnStack.Screen name="TryOnResult">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 3, title: 'TryOnResult' } }} />}
+        {() => <G route="TryOnResult"><SuspenseScreen><TryOnResultScreenLazy /></SuspenseScreen></G>}
       </TryOnStack.Screen>
       <TryOnStack.Screen name="TryOnHistory">
-        {() => <Suspense fallback={screenLoader}><TryOnHistoryScreenLazy /></Suspense>}
+        {() => <G route="TryOnHistory"><SuspenseScreen><TryOnHistoryScreenLazy /></SuspenseScreen></G>}
       </TryOnStack.Screen>
     </TryOnStack.Navigator>
   );
 }
 
 // ============================================================
-// Community Stack (Phase 6 - 社区 & 博主生态)
+// Community Stack (Phase 6 - 社区 & 博主生态) — SharedElement for PostDetail
 // ============================================================
-const CommunityStack = createNativeStackNavigator<CommunityStackParamList>();
+const CommunityStack = createSharedElementStackNavigator<CommunityStackParamList>();
 
 export function CommunityStackNavigator() {
   return (
     <CommunityStack.Navigator screenOptions={commonScreenOptions} initialRouteName="CommunityFeed">
-      <CommunityStack.Screen name="CommunityFeed">
-        {() => <Suspense fallback={screenLoader}><CommunityFeedScreen /></Suspense>}
-      </CommunityStack.Screen>
-      <CommunityStack.Screen name="PostDetail">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 6, title: 'PostDetail' } }} />}
-      </CommunityStack.Screen>
-      <CommunityStack.Screen name="PostCreate">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 6, title: 'PostCreate' } }} />}
-      </CommunityStack.Screen>
-      <CommunityStack.Screen name="InfluencerProfile">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 6, title: 'InfluencerProfile' } }} />}
-      </CommunityStack.Screen>
-      <CommunityStack.Screen name="InspirationWardrobe">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 6, title: 'InspirationWardrobe' } }} />}
-      </CommunityStack.Screen>
+      <CommunityStack.Screen name="CommunityFeed" component={() => <SuspenseScreen><CommunityFeedScreen /></SuspenseScreen>} />
+      <CommunityStack.Screen
+        name="PostDetail"
+        component={() => <SuspenseScreen><PostDetailScreenLazy /></SuspenseScreen>}
+        sharedElements={(route) => {
+          const { postId } = route.params;
+          return [{ id: `post.${postId}.image`, animation: 'move', resize: 'clip' }];
+        }}
+      />
+      <CommunityStack.Screen name="PostCreate" component={() => <G route="PostCreate"><SuspenseScreen><PostCreateScreenLazy /></SuspenseScreen></G>} />
+      <CommunityStack.Screen name="InfluencerProfile" component={() => <G route="InfluencerProfile"><SuspenseScreen><InfluencerProfileScreenLazy /></SuspenseScreen></G>} />
+      <CommunityStack.Screen name="InspirationWardrobe" component={() => <SuspenseScreen><InspirationWardrobeScreenLazy /></SuspenseScreen>} />
+      <CommunityStack.Screen name="BloggerDashboard" component={() => <SuspenseScreen><BloggerDashboardScreen /></SuspenseScreen>} />
+      <CommunityStack.Screen name="BloggerProfile" component={() => <SuspenseScreen><BloggerProfileScreen /></SuspenseScreen>} />
+      <CommunityStack.Screen name="BloggerProduct" component={() => <SuspenseScreen><BloggerProductScreen /></SuspenseScreen>} />
     </CommunityStack.Navigator>
   );
 }
@@ -185,82 +208,82 @@ export function ProfileStackNavigator() {
   return (
     <ProfileStack.Navigator screenOptions={commonScreenOptions} initialRouteName="ProfileMain">
       <ProfileStack.Screen name="ProfileMain">
-        {() => <Suspense fallback={screenLoader}><ProfileMainScreen /></Suspense>}
+        {() => <SuspenseScreen><ProfileMainScreen /></SuspenseScreen>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="ProfileEdit">
-        {() => <Suspense fallback={screenLoader}><ProfileEditScreen /></Suspense>}
+        {() => <G route="ProfileEdit"><SuspenseScreen><ProfileEditScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="StyleQuiz">
-        {() => <Suspense fallback={screenLoader}><StyleQuizScreen /></Suspense>}
+        {() => <SuspenseScreen><StyleQuizScreen /></SuspenseScreen>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="BodyAnalysis">
-        {() => <Suspense fallback={screenLoader}><BodyAnalysisScreen /></Suspense>}
+        {() => <SuspenseScreen><BodyAnalysisScreen /></SuspenseScreen>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="ColorAnalysis">
-        {() => <Suspense fallback={screenLoader}><ColorAnalysisScreen /></Suspense>}
+        {() => <SuspenseScreen><ColorAnalysisScreen /></SuspenseScreen>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="SharePoster">
-        {() => <Suspense fallback={screenLoader}><SharePosterScreen /></Suspense>}
+        {() => <G route="SharePoster"><SuspenseScreen><SharePosterScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Wardrobe">
-        {() => <Suspense fallback={screenLoader}><WardrobeScreen /></Suspense>}
+        {() => <G route="Wardrobe"><SuspenseScreen><WardrobeScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Favorites">
-        {() => <Suspense fallback={screenLoader}><FavoritesScreen /></Suspense>}
+        {() => <G route="Favorites"><SuspenseScreen><FavoritesScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Settings">
-        {() => <Suspense fallback={screenLoader}><SettingsScreen /></Suspense>}
+        {() => <SuspenseScreen><SettingsScreen /></SuspenseScreen>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="NotificationSettings">
-        {() => <Suspense fallback={screenLoader}><NotificationSettingsScreen /></Suspense>}
+        {() => <SuspenseScreen><NotificationSettingsScreen /></SuspenseScreen>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Subscription">
-        {() => <Suspense fallback={screenLoader}><SubscriptionScreen /></Suspense>}
+        {() => <G route="Subscription"><SuspenseScreen><SubscriptionScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Cart">
-        {() => <Suspense fallback={screenLoader}><CartScreen /></Suspense>}
+        {() => <G route="Cart"><SuspenseScreen><CartScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Checkout">
-        {() => <Suspense fallback={screenLoader}><CheckoutScreen /></Suspense>}
+        {() => <G route="Checkout"><SuspenseScreen><CheckoutScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Payment">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 5, title: 'Payment' } }} />}
+        {() => <G route="Payment"><SuspenseScreen><PaymentScreenLazy /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Orders">
-        {() => <Suspense fallback={screenLoader}><OrdersScreen /></Suspense>}
+        {() => <G route="Orders"><SuspenseScreen><OrdersScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="OrderDetail">
-        {() => <Suspense fallback={screenLoader}><OrderDetailScreen /></Suspense>}
+        {() => <G route="OrderDetail"><SuspenseScreen><OrderDetailScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="AddClothing">
-        {() => <Suspense fallback={screenLoader}><AddClothingScreen /></Suspense>}
+        {() => <G route="AddClothing"><SuspenseScreen><AddClothingScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="CustomDesign">
-        {() => <Suspense fallback={screenLoader}><CustomDesignScreen /></Suspense>}
+        {() => <G route="CustomDesign"><SuspenseScreen><CustomDesignScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="CustomEditor">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 7, title: 'CustomEditor' } }} />}
+        {() => <G route="CustomEditor"><SuspenseScreen><CustomEditorScreenLazy /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Brand">
-        {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 7, title: 'Brand' } }} />}
+        {() => <G route="Brand"><SuspenseScreen><BrandScreenLazy /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="AdvisorList">
-        {() => <Suspense fallback={screenLoader}><AdvisorListScreen /></Suspense>}
+        {() => <G route="AdvisorList"><SuspenseScreen><AdvisorListScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="AdvisorProfile">
-        {() => <Suspense fallback={screenLoader}><AdvisorProfileScreen /></Suspense>}
+        {() => <G route="AdvisorProfile"><SuspenseScreen><AdvisorProfileScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Booking">
-        {() => <Suspense fallback={screenLoader}><BookingScreen /></Suspense>}
+        {() => <G route="Booking"><SuspenseScreen><BookingScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Chat">
-        {() => <Suspense fallback={screenLoader}><ChatScreen /></Suspense>}
+        {() => <G route="Chat"><SuspenseScreen><ChatScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Legal">
         {(props) => (
-          <Suspense fallback={screenLoader}>
+          <SuspenseScreen>
             <LegalScreen type={props.route.params?.type ?? 'terms'} />
-          </Suspense>
+          </SuspenseScreen>
         )}
       </ProfileStack.Screen>
     </ProfileStack.Navigator>

@@ -41,7 +41,10 @@ export const recommendationFeedApi = {
       "/recommendations/feed",
       queryParams,
     );
-    return response;
+    if (response.success && response.data) {
+      return response.data;
+    }
+    return { items: [], total: 0, hasMore: false };
   },
 
   getDaily: async (page = 1, pageSize = 10) =>

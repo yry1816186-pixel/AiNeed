@@ -42,6 +42,8 @@ export const SharePosterScreen: React.FC = () => {
     load();
   }, [loadProfile, loadColorAnalysis]);
 
+  const palette = colorAnalysis?.bestColors?.slice(0, 5) ?? PLACEHOLDER_PALETTE;
+
   const handleShare = useCallback(async () => {
     setIsSharing(true);
     try {
@@ -75,7 +77,6 @@ export const SharePosterScreen: React.FC = () => {
 
   const displayName = profile?.nickname ?? user?.email?.split("@")[0] ?? "用户";
   const avatarInitial = displayName.charAt(0).toUpperCase();
-  const palette = colorAnalysis?.bestColors?.slice(0, 5) ?? PLACEHOLDER_PALETTE;
 
   if (isLoading) {
     return (

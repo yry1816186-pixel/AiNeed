@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   RefreshControl,
   type TextStyle,
 } from 'react-native';
+import Geolocation, { type GeolocationResponse } from '@react-native-community/geolocation';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
@@ -40,6 +41,9 @@ const BASE_SECTIONS: HomeSection[] = [
   { type: 'search' },
 ];
 
+const DEFAULT_LATITUDE = 39.9042;
+const DEFAULT_LONGITUDE = 116.4074;
+
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
@@ -64,14 +68,34 @@ const HomeScreen: React.FC = () => {
   } = useRecommendationFeedStore();
 
   const [refreshing, setRefreshing] = useState(false);
+  const [coords, setCoords] = useState<{ latitude: number; longitude: number }>({
+    latitude: DEFAULT_LATITUDE,
+    longitude: DEFAULT_LONGITUDE,
+  });
+  const locationFetched = useRef(false);
 
   const displayName = user?.nickname || user?.email?.split('@')[0] || '用户';
 
   useEffect(() => {
+    if (locationFetched.current) return;
+    locationFetched.current = true;
+    Geolocation.getCurrentPosition(
+      (position: GeolocationResponse) => {
+        setCoords({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      () => {},
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+    );
+  }, []);
+
+  useEffect(() => {
     void fetchProfileCompletion();
-    void fetchWeather(39.9042, 116.4074);
+    void fetchWeather(coords.latitude, coords.longitude);
     void fetchFeed(true);
-  }, [fetchProfileCompletion, fetchWeather, fetchFeed]);
+  }, [fetchProfileCompletion, fetchWeather, fetchFeed, coords]);
 
   const sections: HomeSection[] = [
     ...BASE_SECTIONS,
@@ -83,11 +107,11 @@ const HomeScreen: React.FC = () => {
     setRefreshing(true);
     await Promise.all([
       fetchProfileCompletion(),
-      fetchWeather(39.9042, 116.4074),
+      fetchWeather(coords.latitude, coords.longitude),
       fetchFeed(true),
     ]);
     setRefreshing(false);
-  }, [fetchProfileCompletion, fetchWeather, fetchFeed]);
+  }, [fetchProfileCompletion, fetchWeather, fetchFeed, coords]);
 
   const handleSearchPress = useCallback(() => {
     navigation.navigate('Explore');
@@ -191,7 +215,7 @@ const HomeScreen: React.FC = () => {
             <RecommendationCard
               item={(item as { type: 'recommendationItem'; item: FeedItem }).item}
               onPress={(feedItem) =>
-                navigation.navigate('ClothingDetail' as never, { id: feedItem.id } as never)
+                (navigation.navigate as any)('ClothingDetail', { id: feedItem.id })
               }
             />
           );

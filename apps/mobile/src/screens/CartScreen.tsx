@@ -41,6 +41,7 @@ export const CartScreenComponent: React.FC = () => {
   const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set());
   const [editMode, setEditMode] = useState(false);
   const [showCouponSelector, setShowCouponSelector] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const couponStore = useCouponStore();
 
   const { items, setItems, removeItem, updateItem, totalItems, totalPrice } =
@@ -48,6 +49,7 @@ export const CartScreenComponent: React.FC = () => {
 
   const fetchCart = useCallback(async () => {
     try {
+      setError(null);
       const response = await cartApi.get();
       if (response.success && response.data) {
         const selected = new Set(
@@ -69,7 +71,7 @@ export const CartScreenComponent: React.FC = () => {
         setSelectedIds(selected);
       }
     } catch {
-      // Local store is still available as fallback
+      setError('Failed to load cart');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -295,9 +297,19 @@ export const CartScreenComponent: React.FC = () => {
           </View>
         }
         ListEmptyComponent={
-          <EmptyCartView
-            onGoShopping={() => navigation.navigate('MainTabs', { screen: 'Explore' } as never)}
-          />
+          error ? (
+            <View style={styles.errorContainer}>
+              <Ionicons name="cloud-offline-outline" size={40} color={theme.colors.textTertiary} />
+              <Text style={styles.errorText}>{error}</Text>
+              <TouchableOpacity style={styles.retryButton} onPress={handleRefresh}>
+                <Text style={styles.retryButtonText}>Retry</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <EmptyCartView
+              onGoShopping={() => navigation.navigate('MainTabs', { screen: 'Explore' } as never)}
+            />
+          )
         }
         refreshControl={
           <RefreshControl
@@ -875,6 +887,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 8,
+  },
+  errorContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  errorText: {
+    fontSize: 15,
+    color: theme.colors.textTertiary,
+    marginTop: 12,
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  retryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 

@@ -14,6 +14,7 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from "@nestjs/swagger";
+import { Throttle } from "@nestjs/throttler";
 
 import { AuthGuard } from "../auth/guards/auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
@@ -53,6 +54,7 @@ export class SubscriptionController {
    * 订阅计划
    */
   @Post("subscribe")
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: "订阅计划", description: "用户订阅指定的会员计划" })
   @ApiResponse({ status: 201, description: "订阅成功" })
   @ApiResponse({ status: 400, description: "请求参数错误" })
@@ -72,6 +74,7 @@ export class SubscriptionController {
    * 取消订阅
    */
   @Post("cancel")
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: "取消订阅", description: "取消当前用户的订阅" })
   @ApiResponse({ status: 200, description: "取消成功" })
   @ApiResponse({ status: 401, description: "未授权" })

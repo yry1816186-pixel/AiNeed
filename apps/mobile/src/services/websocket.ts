@@ -44,7 +44,7 @@ class WebSocketService {
 
     if (!token) return;
 
-    this.socket = io(WS_URL, {
+    this.socket = io(`${WS_URL}/ws`, {
       auth: { token },
       transports: ["websocket"],
       reconnection: true,
@@ -64,25 +64,28 @@ class WebSocketService {
       }
     });
 
-    this.socket.on("try_on_complete", (payload: TryOnEventPayload) => {
-      const listeners = this.tryOnListeners.get(payload.tryOnId);
-      if (listeners) {
-        listeners.forEach((listener) => listener(payload));
-      }
-      const wildcardListeners = this.tryOnListeners.get("*");
-      if (wildcardListeners) {
-        wildcardListeners.forEach((listener) => listener(payload));
-      }
-    });
-
-    this.socket.on("try_on_progress", (payload: TryOnProgressPayload) => {
-      const listeners = this.progressListeners.get(payload.tryOnId);
-      if (listeners) {
-        listeners.forEach((listener) => listener(payload));
-      }
-      const wildcardListeners = this.progressListeners.get("*");
-      if (wildcardListeners) {
-        wildcardListeners.forEach((listener) => listener(payload));
+    // Backend NotificationGateway emits "notification" events with type field
+    this.socket.on("notification", (payload: { type: string; tryOnId?: string; tryOnResult?: TryOnEventPayload; progress?: TryOnProgressPayload }) => {
+      if (payload.type === "try_on_complete" && payload.tryOnResult) {
+        const data = payload.tryOnResult;
+        const listeners = this.tryOnListeners.get(data.tryOnId);
+        if (listeners) {
+          listeners.forEach((listener) => listener(data));
+        }
+        const wildcardListeners = this.tryOnListeners.get("*");
+        if (wildcardListeners) {
+          wildcardListeners.forEach((listener) => listener(data));
+        }
+      } else if (payload.type === "try_on_progress" && payload.progress) {
+        const data = payload.progress;
+        const listeners = this.progressListeners.get(data.tryOnId);
+        if (listeners) {
+          listeners.forEach((listener) => listener(data));
+        }
+        const wildcardListeners = this.progressListeners.get("*");
+        if (wildcardListeners) {
+          wildcardListeners.forEach((listener) => listener(data));
+        }
       }
     });
 

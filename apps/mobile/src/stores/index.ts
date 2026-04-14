@@ -19,6 +19,7 @@ export * from "./homeStore";
 export * from "./user.store";
 export * from "./app.store";
 export * from "./aiStylistStore";
+export * from "./aiStylistChatStore";
 export * from "./notificationStore";
 
 interface AuthState {
@@ -27,6 +28,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   onboardingCompleted: boolean;
+  isVip: boolean;
   setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
   logout: () => void;
@@ -51,6 +53,7 @@ const secureStorageAdapter: StateStorage = {
           user: userStr ? JSON.parse(userStr) : null,
           isAuthenticated: !!token,
           onboardingCompleted: onboardingStr === "true",
+          isVip: userStr ? (JSON.parse(userStr) as User)?.subscriptionTier === 'vip' : false,
         },
         version: 0,
       });
@@ -99,6 +102,7 @@ interface PersistedAuthState {
   token: string | null;
   isAuthenticated: boolean;
   onboardingCompleted: boolean;
+  isVip: boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -109,10 +113,12 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: true,
       onboardingCompleted: false,
+      isVip: false,
       setUser: (user) =>
         set((state) => ({
           user,
           isAuthenticated: !!(state.token && user),
+          isVip: user?.subscriptionTier === 'vip',
         })),
       setToken: (token) => {
         void apiClient.setToken(token);
@@ -124,7 +130,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         void apiClient.setToken(null);
         void apiClient.setRefreshToken(null);
-        set({ user: null, token: null, isAuthenticated: false, onboardingCompleted: false });
+        set({ user: null, token: null, isAuthenticated: false, onboardingCompleted: false, isVip: false });
       },
       setLoading: (isLoading) => set({ isLoading }),
       loginWithPhone: async (phone, code) => {
@@ -136,6 +142,7 @@ export const useAuthStore = create<AuthState>()(
             token: response.data.accessToken,
             user: response.data.user,
             isAuthenticated: true,
+            isVip: response.data.user?.subscriptionTier === 'vip',
           });
         } else {
           throw new Error(response.error?.message || "Phone login failed");
@@ -150,6 +157,7 @@ export const useAuthStore = create<AuthState>()(
             token: response.data.accessToken,
             user: response.data.user,
             isAuthenticated: true,
+            isVip: response.data.user?.subscriptionTier === 'vip',
           });
         } else {
           throw new Error(response.error?.message || "WeChat login failed");
@@ -164,6 +172,7 @@ export const useAuthStore = create<AuthState>()(
             token: response.data.accessToken,
             user: response.data.user as unknown as User,
             isAuthenticated: true,
+            isVip: (response.data.user as unknown as User)?.subscriptionTier === 'vip',
           });
         } else {
           throw new Error(response.error?.message || "Phone registration failed");
@@ -179,6 +188,7 @@ export const useAuthStore = create<AuthState>()(
         token: state.token,
         isAuthenticated: state.isAuthenticated,
         onboardingCompleted: state.onboardingCompleted,
+        isVip: state.isVip,
       }),
     } as const,
   ),

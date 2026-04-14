@@ -28,7 +28,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ isLoading: true });
     try {
       const res = await chatApi.getRooms();
-      set({ rooms: res.data.data, isLoading: false });
+      set({ rooms: (res.data as any).data, isLoading: false });
     } catch (e: any) {
       set({ error: e.message, isLoading: false });
     }
@@ -37,8 +37,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   createRoom: async (consultantId) => {
     try {
       const res = await chatApi.createRoom(consultantId);
-      set({ currentRoom: res.data });
-      return res.data;
+      set({ currentRoom: res.data as any });
+      return res.data as any;
     } catch (e: any) {
       set({ error: e.message });
       throw e;
@@ -51,8 +51,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const res = await chatApi.getMessages(roomId, { beforeId });
       set((state) => ({
         messages: beforeId
-          ? [...res.data.data, ...state.messages]
-          : res.data.data,
+          ? [...(res.data as any).data, ...state.messages]
+          : (res.data as any).data,
         isLoading: false,
       }));
     } catch (e: any) {
@@ -63,7 +63,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   sendMessage: async (data) => {
     try {
       const res = await chatApi.sendMessage(data);
-      get().addMessage(res.data);
+      get().addMessage(res.data as any);
     } catch (e: any) {
       set({ error: e.message });
     }

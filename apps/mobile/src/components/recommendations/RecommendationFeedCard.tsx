@@ -42,7 +42,7 @@ export const RecommendationCard = memo(function RecommendationCard({
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: item.mainImage }}
-          style={styles.image}
+          style={styles.image as any}
           resizeMode="cover"
           accessibilityIgnoresInvertColors
         />
@@ -104,7 +104,7 @@ const CARD_WIDTH =
 const styles = StyleSheet.create({
   card: {
     width: CARD_WIDTH,
-    backgroundColor: DesignTokens.colors.surface,
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: DesignTokens.borderRadius.md,
     overflow: "hidden",
     marginBottom: CARD_GAP,
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 6,
     left: 6,
-    backgroundColor: DesignTokens.colors.error,
+    backgroundColor: DesignTokens.colors.semantic.error,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   },
   brandName: {
     fontSize: 11,
-    color: DesignTokens.colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
     fontWeight: "500",
   },
   priceRow: {
@@ -166,11 +166,11 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 15,
     fontWeight: "700",
-    color: DesignTokens.colors.text,
+    color: DesignTokens.colors.text.primary,
   },
   originalPrice: {
     fontSize: 11,
-    color: DesignTokens.colors.textTertiary,
+    color: DesignTokens.colors.text.tertiary,
     textDecorationLine: "line-through",
   },
   tagsRow: {
@@ -179,18 +179,18 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   tag: {
-    backgroundColor: DesignTokens.colors.backgroundSecondary,
+    backgroundColor: DesignTokens.colors.backgrounds.secondary,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
   },
   tagText: {
     fontSize: 9,
-    color: DesignTokens.colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
   },
   matchReason: {
     fontSize: 10,
-    color: DesignTokens.colors.primary,
+    color: DesignTokens.colors.brand.terracotta,
     fontWeight: "500",
   },
 });

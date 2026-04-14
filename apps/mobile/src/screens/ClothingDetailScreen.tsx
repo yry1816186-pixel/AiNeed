@@ -166,8 +166,9 @@ export const ClothingDetailScreen: React.FC = () => {
     ...(item.thumbnailUri ? [item.thumbnailUri] : []),
   ].filter(Boolean) as string[];
 
+  const _item = item as ClothingItem & { originalPrice?: number };
   const hasDiscount =
-    item.originalPrice != null && item.originalPrice > item.price;
+    _item.originalPrice != null && item.price != null && _item.originalPrice > item.price;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -196,14 +197,14 @@ export const ClothingDetailScreen: React.FC = () => {
             <Text style={styles.currentPrice}>¥{item.price}</Text>
             {hasDiscount && (
               <Text style={styles.originalPrice}>
-                ¥{item.originalPrice}
+                ¥{_item.originalPrice}
               </Text>
             )}
             {hasDiscount && (
               <View style={styles.discountBadge}>
                 <Text style={styles.discountText}>
                   {Math.round(
-                    ((item.originalPrice! - item.price) / item.originalPrice!) *
+                    ((_item.originalPrice! - item.price!) / _item.originalPrice!) *
                       100,
                   )}
                   %OFF

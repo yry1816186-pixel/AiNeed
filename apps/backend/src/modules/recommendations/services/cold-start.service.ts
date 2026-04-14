@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { ciede2000, rgbToLab } from "./ciede2000";
 
 export interface ColdStartStrategy {
   type: "demographic" | "content" | "popularity" | "survey" | "hybrid";
@@ -343,26 +344,49 @@ export class ColdStartService {
   ): Promise<ColdStartStrategy> {
     const recommendations: ColdStartRecommendation[] = [];
 
+    // 1. Popularity base (30% weight)
     const popularStrategy = await this.getPopularityStrategy(userId);
     recommendations.push(
       ...popularStrategy.recommendations.map((r) => ({
         ...r,
         score: r.score * 0.3,
-        strategy: "hybrid",
+        strategy: "hybrid" as const,
       })),
     );
 
+    // 2. Survey preferences (25% weight)
     if (profile?.stylePreferences && profile.stylePreferences.length > 0) {
       const surveyStrategy = await this.getSurveyBasedStrategy(userId, profile);
       recommendations.push(
         ...surveyStrategy.recommendations.map((r) => ({
           ...r,
-          score: r.score * 0.5,
-          strategy: "hybrid",
+          score: r.score * 0.25,
+          strategy: "hybrid" as const,
         })),
       );
     }
 
+    // 3. Color season filtering via CIEDE2000 (25% weight)
+    const colorSeasonRecs = await this.getColorSeasonFilteredItems(userId, 8);
+    recommendations.push(
+      ...colorSeasonRecs.map((r) => ({
+        ...r,
+        score: r.score * 0.25,
+        strategy: "hybrid" as const,
+      })),
+    );
+
+    // 4. Body type preference mapping (15% weight)
+    const bodyTypeRecs = await this.getBodyTypeFilteredItems(userId, 6);
+    recommendations.push(
+      ...bodyTypeRecs.map((r) => ({
+        ...r,
+        score: r.score * 0.15,
+        strategy: "hybrid" as const,
+      })),
+    );
+
+    // 5. Demographic rules (5% weight - minimal)
     if (profile?.gender && profile?.age) {
       const demographicStrategy = await this.getDemographicStrategy(
         userId,
@@ -371,15 +395,15 @@ export class ColdStartService {
       recommendations.push(
         ...demographicStrategy.recommendations.map((r) => ({
           ...r,
-          score: r.score * 0.2,
-          strategy: "hybrid",
+          score: r.score * 0.05,
+          strategy: "hybrid" as const,
         })),
       );
     }
 
     return {
       type: "hybrid",
-      confidence: 0.7,
+      confidence: 0.75,
       recommendations: this.deduplicateAndSort(recommendations).slice(0, 20),
     };
   }
@@ -475,6 +499,180 @@ export class ColdStartService {
     }
 
     return unique.sort((a, b) => b.score - a.score);
+  }
+
+  /**
+   * Color season-based filtering using CIEDE2000 perceptual distance.
+   * Filters items whose colors are within the user's seasonal palette.
+   */
+  private async getColorSeasonFilteredItems(
+    userId: string,
+    limit: number,
+  ): Promise<ColdStartRecommendation[]> {
+    const profile = await this.prisma.userProfile.findUnique({
+      where: { userId },
+      select: { colorSeason: true },
+    });
+
+    if (!profile?.colorSeason) {
+      return [];
+    }
+
+    // Map color season to suitable color palette (CIELAB approximation)
+    const seasonPalettes: Record<string, Array<[number, number, number]>> = {
+      spring: [
+        [75, 20, 15], [70, 15, 20], [80, 10, 10], [65, 25, 20],
+      ],
+      summer: [
+        [70, 8, -10], [75, 5, -15], [65, 10, -5], [80, 3, -8],
+      ],
+      autumn: [
+        [55, 15, 25], [50, 20, 30], [60, 10, 20], [45, 18, 22],
+      ],
+      winter: [
+        [50, 25, -20], [45, 20, -25], [55, 15, -15], [40, 30, -30],
+      ],
+    };
+
+    const season = profile.colorSeason.split("_")[0] ?? "spring";
+    const palette = seasonPalettes[season];
+    if (!palette) {
+      return [];
+    }
+
+    // Fetch candidate items
+    const items = await this.prisma.clothingItem.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        colors: true,
+        viewCount: true,
+      },
+      take: limit * 5,
+      orderBy: { likeCount: "desc" },
+    });
+
+    const recommendations: ColdStartRecommendation[] = [];
+    const colorNameToRgb: Record<string, [number, number, number]> = {
+      black: [0, 0, 0], white: [255, 255, 255], gray: [128, 128, 128],
+      red: [255, 0, 0], blue: [0, 0, 255], green: [0, 128, 0],
+      yellow: [255, 255, 0], orange: [255, 165, 0], pink: [255, 192, 203],
+      purple: [128, 0, 128], brown: [139, 69, 19], beige: [245, 245, 220],
+      navy: [0, 0, 128], cream: [255, 253, 208], tan: [210, 180, 140],
+      burgundy: [128, 0, 32], coral: [255, 127, 80], olive: [128, 128, 0],
+      maroon: [128, 0, 0], teal: [0, 128, 128], ivory: [255, 255, 240],
+      khaki: [195, 176, 145], charcoal: [54, 69, 79], camel: [193, 154, 107],
+    };
+
+    for (const item of items) {
+      if (!item.colors || item.colors.length === 0) {continue;}
+
+      let bestDeltaE = Infinity;
+      for (const colorName of item.colors) {
+        const rgb = colorNameToRgb[colorName.toLowerCase()];
+        if (!rgb) {continue;}
+        const itemLab = rgbToLab({ r: rgb[0], g: rgb[1], b: rgb[2] });
+        for (const paletteLab of palette) {
+          const delta = ciede2000(
+            { L: itemLab.L, a: itemLab.a, b: itemLab.b },
+            { L: paletteLab[0], a: paletteLab[1], b: paletteLab[2] },
+          );
+          bestDeltaE = Math.min(bestDeltaE, delta);
+        }
+      }
+
+      // Score based on CIEDE2000 distance to seasonal palette
+      // deltaE < 20 = very harmonious, 20-40 = acceptable, > 40 = mismatch
+      if (bestDeltaE < 40) {
+        const colorScore = Math.max(0, 1 - bestDeltaE / 50);
+        const popularityBonus = Math.min(item.viewCount / 200, 0.2);
+        recommendations.push({
+          itemId: item.id,
+          score: 60 + colorScore * 30 + popularityBonus * 10,
+          reason: `适合你的${this.translateColorSeason(profile.colorSeason)}色彩`,
+          strategy: "color-season",
+        });
+      }
+    }
+
+    return recommendations
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit);
+  }
+
+  /**
+   * Body type-based preference mapping.
+   * Uses body type from user profile to suggest suitable categories and styles.
+   */
+  private async getBodyTypeFilteredItems(
+    userId: string,
+    limit: number,
+  ): Promise<ColdStartRecommendation[]> {
+    const profile = await this.prisma.userProfile.findUnique({
+      where: { userId },
+      select: { bodyType: true },
+    });
+
+    if (!profile?.bodyType) {
+      return [];
+    }
+
+    // Body type -> suitable style/category mapping
+    const bodyTypePreferences: Record<string, {
+      styles: string[];
+      categories: string[];
+      avoid: string[];
+    }> = {
+      rectangle: {
+        styles: ["casual", "streetwear", "minimalist"],
+        categories: ["tops", "outerwear", "bottoms"],
+        avoid: ["form-fitting"],
+      },
+      hourglass: {
+        styles: ["elegant", "classic", "feminine"],
+        categories: ["dresses", "tops", "bottoms"],
+        avoid: ["oversized"],
+      },
+      triangle: {
+        styles: ["casual", "elegant", "classic"],
+        categories: ["tops", "outerwear"],
+        avoid: ["tight-bottoms"],
+      },
+      inverted_triangle: {
+        styles: ["casual", "sporty", "streetwear"],
+        categories: ["bottoms", "tops"],
+        avoid: ["shoulder-pads"],
+      },
+      oval: {
+        styles: ["classic", "casual", "smart-casual"],
+        categories: ["outerwear", "tops"],
+        avoid: ["crop-tops"],
+      },
+    };
+
+    const prefs = bodyTypePreferences[profile.bodyType];
+    if (!prefs) {
+      return [];
+    }
+
+    const items = await this.prisma.clothingItem.findMany({
+      where: {
+        isActive: true,
+        OR: [
+          { tags: { hasSome: prefs.styles } },
+          { tags: { hasSome: prefs.categories } },
+        ],
+      },
+      orderBy: { likeCount: "desc" },
+      take: limit,
+    });
+
+    return items.map((item) => ({
+      itemId: item.id,
+      score: 55 + this.deterministicOffset(userId, item.id, 25),
+      reason: `适合${profile.bodyType}体型的穿搭`,
+      strategy: "body-type",
+    }));
   }
 
   async getOnboardingQuestions(): Promise<

@@ -8,6 +8,7 @@ import axios from "axios";
 
 import { allowUnverifiedAiFallbacks } from "../../common/config/runtime-flags";
 import { PrismaService } from "../../common/prisma/prisma.service";
+import { QdrantService } from "../recommendations/services/qdrant.service";
 import {
   type ClothingItemWhereInput,
   type ClothingItemOrderByWithRelationInput,
@@ -33,12 +34,172 @@ export class SearchService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
+    private qdrantService: QdrantService,
   ) {
     this.allowFallbacks = allowUnverifiedAiFallbacks(this.configService);
     this.mlServiceUrl = this.configService.get<string>(
       "ML_SERVICE_URL",
       "http://localhost:8001",
     );
+  }
+
+  /**
+   * Hybrid search using Reciprocal Rank Fusion (RRF).
+   * Combines text search (Prisma), vector search (Qdrant), and popularity signals.
+   * RRF formula: score = sum(1 / (k + rank_i)) for each ranking, k=60.
+   */
+  async hybridSearch(
+    query: string,
+    options: {
+      category?: string;
+      minPrice?: number;
+      maxPrice?: number;
+      page?: number;
+      limit?: number;
+    } = {},
+  ): Promise<PaginatedSearchResult<ScoredSearchResult>> {
+    const {
+      category,
+      minPrice,
+      maxPrice,
+      page = 1,
+      limit = 20,
+    } = options;
+
+    const candidateLimit = limit * 3; // Fetch more candidates for RRF fusion
+    const rrfK = 60; // Standard RRF constant
+
+    // Step 1: Text search via Prisma (ranking 1)
+    const textWhere: ClothingItemWhereInput = buildSearchWhereClause({
+      query,
+      category,
+      minPrice,
+      maxPrice,
+    });
+    const textItems = await this.prisma.clothingItem.findMany({
+      where: textWhere,
+      include: { brand: { select: { id: true, name: true, logo: true } } },
+      take: candidateLimit,
+    });
+    const textRanks = new Map<string, number>();
+    textItems.forEach((item, idx) => {
+      textRanks.set(item.id, idx + 1);
+    });
+
+    // Step 2: Vector search via Qdrant (ranking 2)
+    const vectorRanks = new Map<string, number>();
+    try {
+      // Get query embedding from ML service
+      const embedResponse = await axios.post<{ embedding: number[] }>(
+        `${this.mlServiceUrl}/embed/text`,
+        { text: query },
+        { timeout: 10000 },
+      );
+      const queryVector = embedResponse.data.embedding;
+      if (queryVector && queryVector.length > 0) {
+        const vectorResults = await this.qdrantService.searchSimilar(
+          queryVector,
+          { topK: candidateLimit, minScore: 0.3 },
+        );
+        vectorResults.forEach((result, idx) => {
+          vectorRanks.set(result.id, idx + 1);
+        });
+      }
+    } catch (error: unknown) {
+      this.logger.warn(
+        `Vector search unavailable for hybrid: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+
+    // Step 3: Collect all candidate IDs
+    const allIds = new Set([...textRanks.keys(), ...vectorRanks.keys()]);
+    if (allIds.size === 0) {
+      return {
+        items: [],
+        page,
+        limit,
+        total: 0,
+        totalPages: 0,
+        query,
+      };
+    }
+
+    // Step 4: Fetch popularity data for all candidates
+    const candidates = await this.prisma.clothingItem.findMany({
+      where: {
+        id: { in: Array.from(allIds) },
+        isActive: true,
+      },
+      include: { brand: { select: { id: true, name: true, logo: true } } },
+    });
+
+    // Step 5: Compute RRF scores
+    // Weight: text 40%, vector 40%, popularity 20%
+    const scored = candidates.map((item) => {
+      let rrfScore = 0;
+
+      // Text contribution (40% weight)
+      const textRank = textRanks.get(item.id);
+      if (textRank !== undefined) {
+        rrfScore += 0.4 / (rrfK + textRank);
+      }
+
+      // Vector contribution (40% weight)
+      const vectorRank = vectorRanks.get(item.id);
+      if (vectorRank !== undefined) {
+        rrfScore += 0.4 / (rrfK + vectorRank);
+      }
+
+      // Popularity contribution (20% weight, normalized)
+      const popularityScore = Math.min(
+        1,
+        (item.viewCount * 0.5 + item.likeCount) / 1000,
+      );
+      rrfScore += 0.2 * popularityScore;
+
+      return {
+        ...item,
+        similarityScore: rrfScore,
+        matchReasons: this.generateHybridReasons(
+          textRank !== undefined,
+          vectorRank !== undefined,
+          item.viewCount,
+        ),
+      };
+    });
+
+    // Sort by RRF score descending
+    scored.sort((a, b) => b.similarityScore - a.similarityScore);
+
+    const total = scored.length;
+    const paginated = scored.slice((page - 1) * limit, page * limit);
+
+    return {
+      items: paginated,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      query,
+    };
+  }
+
+  private generateHybridReasons(
+    hasTextMatch: boolean,
+    hasVectorMatch: boolean,
+    viewCount: number,
+  ): string[] {
+    const reasons: string[] = [];
+    if (hasTextMatch) {
+      reasons.push("关键词匹配");
+    }
+    if (hasVectorMatch) {
+      reasons.push("语义相似");
+    }
+    if (viewCount > 100) {
+      reasons.push("热门商品");
+    }
+    return reasons.length > 0 ? reasons : ["综合推荐"];
   }
 
   async searchItems(

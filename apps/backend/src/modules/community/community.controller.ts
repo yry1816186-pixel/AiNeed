@@ -23,6 +23,7 @@ import {
   ApiConsumes,
 } from "@nestjs/swagger";
 import { FilesInterceptor } from "@nestjs/platform-express";
+import { Throttle } from "@nestjs/throttler";
 
 import { AuthGuard } from "../auth/guards/auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
@@ -56,6 +57,7 @@ export class CommunityController {
   @Post("posts")
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(
     FilesInterceptor("images", 9, {
       limits: { fileSize: 10 * 1024 * 1024 },

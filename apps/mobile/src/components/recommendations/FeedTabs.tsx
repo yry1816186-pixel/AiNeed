@@ -131,9 +131,9 @@ export function FeedTabs({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: DesignTokens.colors.surface,
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: DesignTokens.colors.border,
+    borderBottomColor: DesignTokens.colors.borders.default,
   },
   tabsContainer: {
     paddingHorizontal: 12,
@@ -146,11 +146,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: DesignTokens.colors.backgroundSecondary,
+    backgroundColor: DesignTokens.colors.backgrounds.secondary,
     gap: 4,
   },
   tabActive: {
-    backgroundColor: DesignTokens.colors.primary,
+    backgroundColor: DesignTokens.colors.brand.terracotta,
   },
   tabIcon: {
     fontSize: 14,
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   tabLabel: {
     fontSize: 13,
     fontWeight: "600",
-    color: DesignTokens.colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
   },
   tabLabelActive: {
     color: "#fff",
@@ -172,17 +172,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: DesignTokens.colors.backgroundSecondary,
+    backgroundColor: DesignTokens.colors.backgrounds.secondary,
   },
   subTabActive: {
-    backgroundColor: DesignTokens.colors.primaryLight,
+    backgroundColor: DesignTokens.colors.brand.terracottaLight,
   },
   subTabLabel: {
     fontSize: 12,
-    color: DesignTokens.colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
   },
   subTabLabelActive: {
-    color: DesignTokens.colors.primary,
+    color: DesignTokens.colors.brand.terracotta,
     fontWeight: "600",
   },
 });

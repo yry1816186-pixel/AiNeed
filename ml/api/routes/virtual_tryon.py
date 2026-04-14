@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional
+from typing import Literal, Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
@@ -14,9 +14,15 @@ router = APIRouter(prefix="/api/v1/virtual-tryon", tags=["virtual-tryon"])
 
 
 class GenerateTryOnRequest(BaseModel):
-    person_image_url: str = Field(..., description="Person photo URL or base64")
-    garment_image_url: str = Field(..., description="Garment image URL or base64")
-    category: str = Field(default="upper_body", description="Clothing category")
+    person_image_url: str = Field(
+        ..., max_length=10_000_000, description="Person photo base64"
+    )
+    garment_image_url: str = Field(
+        ..., max_length=10_000_000, description="Garment image base64"
+    )
+    category: Literal["upper_body", "lower_body", "dress", "full_body"] = Field(
+        default="upper_body", description="Clothing category"
+    )
     prompt: Optional[str] = Field(default=None, description="Custom generation prompt")
 
 
@@ -45,8 +51,8 @@ async def generate_tryon(request: GenerateTryOnRequest) -> GenerateTryOnResponse
         )
         return GenerateTryOnResponse(**result)
     except Exception as e:
-        logger.error("Virtual try-on generation failed: %s", str(e))
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error("Virtual try-on generation failed: %s", str(e), exc_info=True)
+        raise HTTPException(status_code=500, detail="Image generation failed. Please try again.")
 
 
 @router.get("/health", response_model=HealthResponse)

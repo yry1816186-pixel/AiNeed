@@ -1254,13 +1254,27 @@ const clothingData = [
 // ============================================================================
 
 const brandPool = [
-  'xuno-studio', 'zara', 'uniqlo', 'cos', 'nike', 'hm', 'gap',
-  'pull-and-bear', 'bershka', 'mango', 'massimo-dutti', 'adidas',
-  'puma', 'under-armour', 'lululemon', 'fila', 'anta', 'li-ning',
-  'bosideng', 'peacebird', 'gxg', 'semir', 'ochirly', 'mo-co',
-  'jnby', 'champion', 'carhartt', 'levis', 'calvin-klein',
-  'tommy-hilfiger', 'dr-martens', 'converse', 'vans', 'new-balance',
-  'asics', 'furla', 'longchamp', 'coach', 'michael-kors',
+  // Self-operated
+  'xuno-studio',
+  // Fast Fashion
+  'zara', 'uniqlo', 'hm', 'gap', 'pull-and-bear', 'bershka', 'mango',
+  'urban-revico', 'mjstyle',
+  // Premium
+  'cos', 'massimo-dutti', 'sandro', 'maje', 'theory', 'apc',
+  // Sportswear
+  'nike', 'adidas', 'puma', 'under-armour', 'lululemon', 'fila', 'anta', 'li-ning',
+  // Chinese Fashion Brands
+  'bosideng', 'peacebird', 'gxg', 'semir', 'ochirly', 'mo-co', 'jnby', 'ein',
+  // Basics/Casual
+  'champion', 'carhartt', 'levis', 'calvin-klein', 'tommy-hilfiger',
+  // Shoes
+  'dr-martens', 'converse', 'vans', 'new-balance', 'asics',
+  // Accessories/Bags
+  'furla', 'longchamp', 'coach', 'michael-kors',
+  // Designer/Independent
+  'acne-studios', 'mm6', 'kenzo',
+  // Swimwear specialty
+  'speedo', 'roxy',
 ];
 
 const colorPalettes = {
@@ -1425,13 +1439,14 @@ const categoryTemplates = {
         return list[i % list.length];
       },
     ],
-    priceRange: [49, 599],
+    priceRange: [59, 899],
     descTemplates: [
-      (n, m) => `${n}，采用优质面料，穿着舒适透气。${m}工艺精湛，适合日常穿搭，百搭实用。`,
-      (n, m) => `${n}，${m}设计独特，展现个性风格。面料柔软亲肤，版型修饰身材，是衣橱必备单品。`,
-      (n, m) => `${n}，精选${m}面料，手感细腻。简约设计不失细节，轻松驾驭各种场合。`,
+      (n, m) => `${n}，采用优质${m}面料，穿着舒适透气。版型考究，适合日常穿搭与通勤场合，百搭实用不挑人。`,
+      (n, m) => `${n}，${m}面料质感上乘，设计独特展现个性风格。柔软亲肤，修饰身材，是衣橱必备的时尚单品。`,
+      (n, m) => `${n}，精选${m}面料，手感细腻垂坠感佳。简约设计蕴含精致细节，轻松驾驭各种场合与风格。`,
+      (n, m) => `${n}，甄选高品质${m}材质，经久耐穿不易变形。经典款式融入当季流行元素，搭配灵活随心切换。`,
     ],
-    materials: ['纯棉', '天丝棉', '莫代尔', '涤纶', '羊毛', '羊绒', '亚麻', '锦纶混纺', '丝绸', '竹纤维'],
+    materials: ['纯棉', '天丝棉', '莫代尔', '涤纶', '羊毛', '羊绒', '亚麻', '锦纶混纺', '丝绸', '竹纤维', '冰丝', '铜氨丝', '蕾丝', '灯芯绒', '牛仔'],
   },
   bottoms: {
     subcategories: ['jeans', 'pants', 'shorts', 'skirt', 'wide_leg', 'culottes', 'jogger'],
@@ -1450,12 +1465,13 @@ const categoryTemplates = {
         return list[i % list.length];
       },
     ],
-    priceRange: [69, 499],
+    priceRange: [69, 699],
     descTemplates: [
-      (n, m) => `${n}，${m}面料舒适有弹性，版型修饰腿型。百搭日常，适合通勤和休闲场合。`,
-      (n, m) => `${n}，精选${m}面料，做工精细。高腰设计拉长腿部比例，穿着舒适有型。`,
+      (n, m) => `${n}，${m}面料舒适有弹性，版型修饰腿型显高显瘦。百搭日常，通勤休闲场合皆宜。`,
+      (n, m) => `${n}，精选${m}面料做工精细。高腰设计拉长腿部比例，穿着舒适有型不紧绷。`,
+      (n, m) => `${n}，采用优质${m}面料，垂坠感出众。立体剪裁贴合身形，行走间尽显优雅气质。`,
     ],
-    materials: ['纯棉', '弹力牛仔', '西装面料', '亚麻', '涤纶', '针织', '灯芯绒', '棉麻'],
+    materials: ['纯棉', '弹力牛仔', '西装面料', '亚麻', '涤纶', '针织', '灯芯绒', '棉麻', '天丝', '丝绒'],
   },
   dresses: {
     subcategories: ['mini', 'midi', 'maxi', 'shirt_dress', 'wrap_dress', 'slip_dress'],
@@ -1473,12 +1489,13 @@ const categoryTemplates = {
         return list[i % list.length];
       },
     ],
-    priceRange: [99, 799],
+    priceRange: [89, 1299],
     descTemplates: [
-      (n, m) => `${n}，${m}面料飘逸灵动，剪裁精致优雅。上身展现女性柔美气质，适合约会和派对。`,
-      (n, m) => `${n}，采用${m}面料，垂感自然。简约设计凸显品味，轻松打造优雅造型。`,
+      (n, m) => `${n}，${m}面料飘逸灵动，剪裁精致优雅。上身展现女性柔美气质，约会派对皆可驾驭。`,
+      (n, m) => `${n}，采用${m}面料垂感自然。简约设计凸显品味，轻松打造优雅迷人造型。`,
+      (n, m) => `${n}，甄选优质${m}面料，穿着舒适亲肤。收腰设计勾勒优美曲线，行走间裙摆摇曳生姿。`,
     ],
-    materials: ['雪纺', '丝绸', '棉麻', '针织', '牛仔', '涤纶', '蕾丝', '缎面'],
+    materials: ['雪纺', '丝绸', '棉麻', '针织', '牛仔', '涤纶', '蕾丝', '缎面', '丝绒', '真丝', '天丝', '网纱'],
   },
   outerwear: {
     subcategories: ['jacket', 'blazer', 'coat', 'windbreaker', 'down_jacket', 'trench', 'bomber'],
@@ -1499,10 +1516,11 @@ const categoryTemplates = {
     ],
     priceRange: [129, 2999],
     descTemplates: [
-      (n, m) => `${n}，${m}面料挺括有型，剪裁利落。保暖性与时尚感兼具，秋冬衣橱必备。`,
-      (n, m) => `${n}，精选${m}面料，做工考究。版型经典不过时，百搭实用。`,
+      (n, m) => `${n}，${m}面料挺括有型，剪裁利落大气。保暖性与时尚感兼具，秋冬衣橱不可或缺的单品。`,
+      (n, m) => `${n}，精选${m}面料做工考究。版型经典不过时，百搭实用，轻松应对各种天气与场合。`,
+      (n, m) => `${n}，采用优质${m}面料，手感丰盈质感出众。细节处彰显匠心工艺，穿上即显高级品味。`,
     ],
-    materials: ['羊绒', '羊毛', '锦纶', '涤纶', '皮革', '牛仔', '棉', '灯芯绒', '防风面料'],
+    materials: ['羊绒', '羊毛', '锦纶', '涤纶', '皮革', '牛仔', '棉', '灯芯绒', '防风面料', '羽绒', '摇粒绒', 'PU皮', '磨毛'],
   },
   footwear: {
     subcategories: ['sneakers', 'heels', 'flats', 'boots', 'sandals', 'loafers', 'mules'],
@@ -1521,12 +1539,13 @@ const categoryTemplates = {
         return list[i % list.length];
       },
     ],
-    priceRange: [79, 1299],
+    priceRange: [99, 1899],
     descTemplates: [
-      (n, m) => `${n}，${m}材质舒适耐穿。设计时尚百搭，日常出行轻松驾驭。`,
-      (n, m) => `${n}，采用${m}材质，脚感柔软。经典款式永不过时，搭配各种风格。`,
+      (n, m) => `${n}，${m}材质舒适耐穿。设计时尚百搭，日常出行轻松驾驭各种穿搭风格。`,
+      (n, m) => `${n}，采用${m}材质脚感柔软。经典款式永不过时，长时间行走不累脚。`,
+      (n, m) => `${n}，精选优质${m}材质，做工精致。鞋型修饰脚型显瘦显高，兼顾舒适与时尚。`,
     ],
-    materials: ['真皮', '合成革', '帆布', '网面', '橡胶底', '绒面', '漆皮'],
+    materials: ['真皮', '合成革', '帆布', '网面', '橡胶底', '绒面', '漆皮', '牛皮', '羊皮', '飞织', '编织'],
   },
   accessories: {
     subcategories: ['bag', 'scarf', 'belt', 'hat', 'jewelry', 'sunglasses', 'watch'],
@@ -1545,12 +1564,13 @@ const categoryTemplates = {
         return list[i % list.length];
       },
     ],
-    priceRange: [29, 899],
+    priceRange: [19, 599],
     descTemplates: [
-      (n, m) => `${n}，${m}材质精致耐用。细节设计感十足，为整体造型加分。`,
-      (n, m) => `${n}，采用${m}材质，质感出众。百搭实用，是提升穿搭品质的点睛之笔。`,
+      (n, m) => `${n}，${m}材质精致耐用。细节设计感十足，为整体造型增添亮点与品味。`,
+      (n, m) => `${n}，采用${m}材质质感出众。百搭实用不挑人，是提升穿搭品质的点睛之笔。`,
+      (n, m) => `${n}，精选优质${m}材质，做工细腻考究。简约中蕴含巧思，日常佩戴彰显不凡品味。`,
     ],
-    materials: ['真皮', '帆布', '尼龙', '合金', '纯银', '丝绸', '羊绒', '醋酸纤维'],
+    materials: ['真皮', '帆布', '尼龙', '合金', '纯银', '丝绸', '羊绒', '醋酸纤维', '棉麻', 'PU皮', '植鞣皮', '棉纶', '钛钢'],
   },
   activewear: {
     subcategories: ['sports_bra', 'leggings', 'sports_top', 'tracksuit', 'running_shorts'],
@@ -1567,12 +1587,13 @@ const categoryTemplates = {
         return list[i % list.length];
       },
     ],
-    priceRange: [49, 599],
+    priceRange: [79, 899],
     descTemplates: [
-      (n, m) => `${n}，${m}面料吸湿排汗，运动时保持干爽。弹力贴合不束缚，适合各种运动场景。`,
-      (n, m) => `${n}，采用${m}科技面料，透气速干。专业运动剪裁，助力运动表现。`,
+      (n, m) => `${n}，${m}面料吸湿排汗，运动时保持干爽舒适。弹力贴合不束缚，适合各种运动场景。`,
+      (n, m) => `${n}，采用${m}科技面料透气速干。专业运动剪裁立体贴合，助力运动表现更出色。`,
+      (n, m) => `${n}，精选高弹${m}面料，四面弹力自由伸展。专业级工艺打造，健身房与户外运动皆可胜任。`,
     ],
-    materials: ['速干涤纶', '弹力锦纶', '棉涤混纺', '莫代尔', '竹纤维', '聚酯纤维'],
+    materials: ['速干涤纶', '弹力锦纶', '棉涤混纺', '莫代尔', '竹纤维', '聚酯纤维', '运动针织', '压缩面料', '莱卡'],
   },
   swimwear: {
     subcategories: ['bikini', 'one_piece', 'tankini', 'swim_trunks', 'rash_guard'],
@@ -1591,17 +1612,19 @@ const categoryTemplates = {
     ],
     priceRange: [49, 399],
     descTemplates: [
-      (n, m) => `${n}，${m}面料弹性好，亲肤舒适。度假海滩必备，展现自信魅力。`,
-      (n, m) => `${n}，采用${m}面料，耐氯耐晒。修身版型，运动休闲两相宜。`,
+      (n, m) => `${n}，${m}面料弹性出众，亲肤舒适不勒。度假海滩必备，展现自信魅力与好身材。`,
+      (n, m) => `${n}，采用${m}面料耐氯耐晒不变形。修身版型显瘦显高，运动休闲两相宜。`,
+      (n, m) => `${n}，精选优质${m}面料，轻薄速干穿着舒适。时尚设计搭配精致工艺，海边度假吸睛之选。`,
     ],
-    materials: ['氨纶混纺', '锦纶', '涤纶', '弹力面料', '速干面料'],
+    materials: ['氨纶混纺', '锦纶', '涤纶', '弹力面料', '速干面料', '亲肤锦纶', '防透视面料', '立体剪裁面料'],
   },
 };
 
-// Generate additional items to reach 500+
+// Generate additional items to reach 526 total (476 more from 50 existing)
+// Each category must have at least 60 items
 const categoryCounts = {
-  tops: 75, bottoms: 70, dresses: 65, outerwear: 70,
-  footwear: 65, accessories: 70, activewear: 65, swimwear: 45,
+  tops: 67, bottoms: 67, dresses: 66, outerwear: 66,
+  footwear: 65, accessories: 65, activewear: 65, swimwear: 65,
 };
 
 const skuCounters = {
@@ -1614,23 +1637,183 @@ const categoryAbbrevs = {
   footwear: 'FOO', accessories: 'ACC', activewear: 'ACT', swimwear: 'SWI',
 };
 
+// Pairing suggestion pools per category
+const pairingSuggestionPool = {
+  tops: [
+    ['搭配高腰牛仔裤清爽休闲', '外搭西装外套提升正式感', '配半裙营造优雅气质'],
+    ['搭配阔腿裤气场全开', '叠穿在吊带裙内层次丰富', '配西装裤通勤干练'],
+    ['搭配百褶裙甜美约会', '配工装裤街头潮流', '外搭针织开衫温柔知性'],
+    ['搭配A字裙优雅日常', '配运动裤休闲舒适', '塞进高腰裤提高腰线'],
+    ['搭配背带裤减龄俏皮', '配皮衣酷感十足', '叠穿衬衫文艺范'],
+    ['搭配纱裙浪漫飘逸', '配短靴帅气有型', '外搭风衣英伦气质'],
+  ],
+  bottoms: [
+    ['搭配白T恤经典休闲', '配衬衫通勤知性', '搭针织衫温柔优雅'],
+    ['搭配卫衣运动休闲', '配高跟鞋拉长比例', '搭短靴帅气有型'],
+    ['搭配吊带上衣性感优雅', '配宽松毛衣慵懒时髦', '搭运动鞋活力日常'],
+    ['搭配条纹衫法式风情', '配西装外套职场精英', '搭乐福鞋学院风'],
+    ['搭配蕾丝上衣柔美浪漫', '配机车皮衣甜酷混搭', '搭凉鞋夏日清爽'],
+  ],
+  dresses: [
+    ['搭配高跟鞋晚宴优雅', '配珍珠项链经典名媛', '外搭小西装干练职场'],
+    ['搭配小白鞋清新日常', '外搭牛仔外套休闲减龄', '配草编帽度假风情'],
+    ['搭配长靴秋冬气场', '配细腰带强调腰线', '外搭针织衫温柔约会'],
+    ['搭配乐福鞋文艺知性', '配手拿包精致派对', '搭牛仔外套随性自在'],
+    ['搭配凉拖慵懒度假', '配丝巾法式优雅', '外搭机车皮衣甜酷混搭'],
+  ],
+  outerwear: [
+    ['搭配衬衫西裤职场精英', '配T恤牛仔裤休闲英伦', '系带穿法强调腰线'],
+    ['搭配连衣裙秋冬气质', '配高领毛衣知性优雅', '内搭同色系高级感穿搭'],
+    ['搭配卫衣+运动裤休闲保暖', '配碎花裙甜酷混搭', '搭牛仔裤经典日常'],
+    ['搭配针织衫温柔知性', '配衬衫裙优雅干练', '内搭T恤轻松减龄'],
+    ['搭配高腰裤显高显瘦', '配连衣裙优雅保暖', '搭长靴气质出众'],
+  ],
+  footwear: [
+    ['搭配牛仔裤休闲日常', '配连衣裙优雅随性', '搭西装裤职场干练'],
+    ['搭配运动裤专业运动', '配牛仔裤运动休闲', '搭短裤活力夏日'],
+    ['搭配阔腿裤优雅通勤', '配半裙约会甜美', '搭连衣裙精致出街'],
+    ['搭配紧身裤显瘦显高', '配大衣秋冬气场', '搭短裙俏皮活力'],
+    ['搭配休闲裤轻松出行', '配工装裤街头潮流', '搭连衣裙混搭时尚'],
+  ],
+  accessories: [
+    ['搭配职场穿搭提升精致感', '配休闲装点缀亮点', '送礼自用两相宜'],
+    ['搭配连衣裙优雅气质', '配西装干练知性', '日常佩戴彰显品味'],
+    ['搭配夏日穿搭防晒时尚', '配度假装亮眼吸睛', '日常出行实用单品'],
+    ['搭配大衣秋冬优雅', '配T恤牛仔裤休闲精致', '点亮整体穿搭造型'],
+    ['搭配通勤装提升气场', '配晚宴包出席活动', '日常百搭实用之选'],
+  ],
+  activewear: [
+    ['搭配运动背心完整装备', '配运动短裤夏日健身', '外搭防晒衣户外运动'],
+    ['搭配瑜伽裤专业运动', '配运动内衣活力四射', '搭运动外套热身穿搭'],
+    ['搭配运动裤跑步训练', '配运动鞋专业装备', '搭运动帽户外防晒'],
+    ['搭配速干T恤健身训练', '配运动裤休闲运动', '搭运动背包装备齐全'],
+    ['搭配运动套装完整穿搭', '配运动帽时尚运动', '搭运动鞋活力满满'],
+  ],
+  swimwear: [
+    ['搭配防晒衫海边度假', '配宽檐帽墨镜泳池派对', '搭纱裙飘逸浪漫'],
+    ['搭配透明纱裙海边浪漫', '配草帽凉拖度假标配', '外搭防晒衣实用防晒'],
+    ['搭配冲浪板运动酷感', '配沙滩巾实用美观', '搭防晒服专业防护'],
+    ['搭配沙滩裤轻松度假', '配太阳镜明星范', '搭薄纱罩衫若隐若现'],
+    ['搭配防晒帽清凉一夏', '配沙滩包出行便利', '搭人字拖慵懒度假'],
+  ],
+};
+
+// Care instruction pools per category
+const careInstructionPool = {
+  tops: [
+    '机洗30°C，不可漂白，低温烘干，中温熨烫',
+    '手洗或机洗轻柔模式30°C，悬挂晾干，低温熨烫',
+    '建议干洗，手洗需用专用洗涤剂，平铺晾干',
+    '机洗30°C，翻面洗涤，不可漂白，不可高温熨烫',
+    '手洗30°C，不可拧干，平铺晾干，低温蒸汽熨烫',
+  ],
+  bottoms: [
+    '翻面机洗30°C，不可漂白，悬挂晾干，中温熨烫',
+    '建议干洗，保持版型，存放时使用衣架悬挂',
+    '机洗30°C，不可漂白，低温烘干，不可高温熨烫',
+    '手洗或机洗轻柔模式，低温熨烫，避免暴晒',
+    '机洗30°C，使用中性洗涤剂，悬挂晾干',
+  ],
+  dresses: [
+    '建议干洗，手洗需轻柔，不可拧干，悬挂晾干',
+    '手洗或机洗轻柔模式30°C，不可漂白，悬挂晾干，低温熨烫',
+    '机洗30°C，使用洗衣袋，不可漂白，平铺晾干',
+    '建议干洗保持面料质感，存放时使用衣架悬挂',
+    '手洗冷水，不可漂白，不可拧干，阴凉处晾干',
+  ],
+  outerwear: [
+    '建议干洗，保持版型，存放时使用宽肩衣架',
+    '必须干洗，换季收纳需防蛀，使用衣架悬挂存放',
+    '专业皮革护理，不可水洗，不可熨烫，定期上保养油',
+    '机洗轻柔模式30°C，使用中性洗涤剂，低温烘干或平铺晾干',
+    '建议干洗，机洗需翻面轻柔模式，悬挂晾干，中温熨烫',
+  ],
+  footwear: [
+    '用软布擦拭清洁，避免长时间浸泡，存放时放入鞋撑保持形状',
+    '用皮革专用清洁剂擦拭，定期上保养油，存放时放入鞋撑',
+    '用软布擦拭，避免长时间泡水，存放时避免重压变形',
+    '用软毛刷清洁鞋面，运动后取出鞋垫通风晾干',
+    '用干布擦拭表面，避免暴晒，不穿时放入干燥剂',
+  ],
+  accessories: [
+    '用软布擦拭清洁，避免长时间暴晒，存放时填充保持形状',
+    '建议干洗，手洗需用专用洗涤剂，不可拧干，阴凉处晾干',
+    '避免接触化妆品和香水，佩戴后用软布擦拭，单独存放',
+    '用皮革专用清洁剂擦拭，定期上保养油，避免弯折',
+    '用眼镜布擦拭，避免高温环境，不戴时放入眼镜盒',
+  ],
+  activewear: [
+    '机洗30°C，不可使用柔顺剂，不可漂白，悬挂晾干，不可熨烫',
+    '机洗30°C，拉好拉链后洗涤，不可使用柔顺剂，悬挂晾干',
+    '手洗或机洗轻柔模式30°C，不可漂白，平铺晾干',
+    '机洗30°C，取出胸垫单独清洗，不可使用柔顺剂，悬挂晾干',
+    '冷水手洗，不可漂白，不可拧干，阴凉处晾干',
+  ],
+  swimwear: [
+    '手洗冷水，使用中性洗涤剂，不可漂白，不可拧干，阴凉处晾干',
+    '手洗冷水，不可漂白，不可拧干，避免长时间日晒，阴凉处晾干',
+    '使用后清水冲洗去除盐分氯水，手洗冷水，阴凉处晾干',
+    '手洗冷水，避免接触粗糙表面，不可拧干，平铺晾干',
+    '冷水手洗，不可使用柔顺剂，不可熨烫，阴凉处晾干',
+  ],
+};
+
+// Size chart generators per category
+const sizeChartGenerators = {
+  tops: (sizeSet: string[]) => sizeSet.map(s => {
+    const base = { S: { bust: 92, shoulder: 42, length: 64 }, M: { bust: 96, shoulder: 44, length: 66 }, L: { bust: 100, shoulder: 46, length: 68 }, XL: { bust: 104, shoulder: 48, length: 70 }, XXL: { bust: 108, shoulder: 50, length: 72 }, XS: { bust: 88, shoulder: 40, length: 62 } }[s] || { bust: 96, shoulder: 44, length: 66 };
+    return { size: s, bust: String(base.bust + Math.floor(Math.random() * 8)), shoulder: String(base.shoulder + Math.floor(Math.random() * 4)), length: String(base.length + Math.floor(Math.random() * 4)) };
+  }),
+  bottoms: (sizeSet: string[]) => sizeSet.map(s => {
+    const base = { S: { waist: 66, hip: 90, inseam: 76 }, M: { waist: 70, hip: 94, inseam: 78 }, L: { waist: 74, hip: 98, inseam: 80 }, XL: { waist: 78, hip: 102, inseam: 82 }, XXL: { waist: 82, hip: 106, inseam: 84 }, XS: { waist: 62, hip: 86, inseam: 74 } }[s] || { waist: 70, hip: 94, inseam: 78 };
+    return { size: s, waist: String(base.waist + Math.floor(Math.random() * 4)), hip: String(base.hip + Math.floor(Math.random() * 4)), inseam: String(base.inseam + Math.floor(Math.random() * 3)) };
+  }),
+  dresses: (sizeSet: string[]) => sizeSet.map(s => {
+    const base = { S: { bust: 84, waist: 66, hip: 90, length: 100 }, M: { bust: 88, waist: 70, hip: 94, length: 102 }, L: { bust: 92, waist: 74, hip: 98, length: 104 }, XL: { bust: 96, waist: 78, hip: 102, length: 106 }, XS: { bust: 80, waist: 62, hip: 86, length: 98 } }[s] || { bust: 88, waist: 70, hip: 94, length: 102 };
+    return { size: s, bust: String(base.bust + Math.floor(Math.random() * 4)), waist: String(base.waist + Math.floor(Math.random() * 4)), hip: String(base.hip + Math.floor(Math.random() * 4)), length: String(base.length + Math.floor(Math.random() * 6)) };
+  }),
+  outerwear: (sizeSet: string[]) => sizeSet.map(s => {
+    const base = { S: { bust: 96, shoulder: 42, sleeve: 58, length: 100 }, M: { bust: 100, shoulder: 44, sleeve: 60, length: 102 }, L: { bust: 104, shoulder: 46, sleeve: 62, length: 104 }, XL: { bust: 108, shoulder: 48, sleeve: 64, length: 106 }, XXL: { bust: 112, shoulder: 50, sleeve: 66, length: 108 } }[s] || { bust: 100, shoulder: 44, sleeve: 60, length: 102 };
+    return { size: s, bust: String(base.bust + Math.floor(Math.random() * 8)), shoulder: String(base.shoulder + Math.floor(Math.random() * 4)), sleeve: String(base.sleeve + Math.floor(Math.random() * 3)), length: String(base.length + Math.floor(Math.random() * 6)) };
+  }),
+  footwear: (sizeSet: string[]) => sizeSet.map(s => ({ size: s, footLength: String(Number(s) * 5 + 115) })),
+  accessories: (_sizeSet: string[]) => [],
+  activewear: (sizeSet: string[]) => sizeSet.map(s => {
+    const base = { S: { bust: 84, waist: 64, hip: 88 }, M: { bust: 88, waist: 68, hip: 92 }, L: { bust: 92, waist: 72, hip: 96 }, XL: { bust: 96, waist: 76, hip: 100 }, XXL: { bust: 100, waist: 80, hip: 104 }, XS: { bust: 80, waist: 60, hip: 84 } }[s] || { bust: 88, waist: 68, hip: 92 };
+    return { size: s, bust: String(base.bust + Math.floor(Math.random() * 4)), waist: String(base.waist + Math.floor(Math.random() * 4)), hip: String(base.hip + Math.floor(Math.random() * 4)) };
+  }),
+  swimwear: (sizeSet: string[]) => sizeSet.map(s => {
+    const base = { S: { bust: 82, waist: 64, hip: 88 }, M: { bust: 86, waist: 68, hip: 92 }, L: { bust: 90, waist: 72, hip: 96 }, XL: { bust: 94, waist: 76, hip: 100 }, XS: { bust: 78, waist: 60, hip: 84 } }[s] || { bust: 86, waist: 68, hip: 92 };
+    return { size: s, bust: String(base.bust + Math.floor(Math.random() * 4)), waist: String(base.waist + Math.floor(Math.random() * 4)), hip: String(base.hip + Math.floor(Math.random() * 4)) };
+  }),
+};
+
+// Seeded pseudo-random for deterministic output
+let _seed = 42;
+function seededRandom() {
+  _seed = (_seed * 16807 + 0) % 2147483647;
+  return (_seed - 1) / 2147483646;
+}
+
 for (const [cat, target] of Object.entries(categoryCounts)) {
-  // Count existing items in this category
   const existingCount = clothingData.filter(item => item.category === ClothingCategory[cat]).length;
   const needed = Math.max(0, target - existingCount);
 
-  const template = categoryTemplates[cat];
+  const template = categoryTemplates[cat as keyof typeof categoryTemplates];
   const subcats = template.subcategories;
-  const colorPalette = colorPalettes[cat];
-  const sizes = sizeSets[cat];
-  const tags = tagSets[cat];
+  const colorPalette = colorPalettes[cat as keyof typeof colorPalettes];
+  const sizes = sizeSets[cat as keyof typeof sizeSets];
+  const tags = tagSets[cat as keyof typeof tagSets];
   const materials = template.materials;
+  const pairingPool = pairingSuggestionPool[cat as keyof typeof pairingSuggestionPool];
+  const carePool = careInstructionPool[cat as keyof typeof careInstructionPool];
+  const sizeChartGen = sizeChartGenerators[cat as keyof typeof sizeChartGenerators];
 
   for (let i = 0; i < needed; i++) {
     const sub = subcats[i % subcats.length];
     const nameFunc = template.names[0];
     const name = nameFunc(sub, i);
-    const fullName = name; // Direct use -- names already descriptive
+    const fullName = name;
     const material = materials[i % materials.length];
     const descFunc = template.descTemplates[i % template.descTemplates.length];
     const desc = descFunc(fullName, material);
@@ -1638,19 +1821,31 @@ for (const [cat, target] of Object.entries(categoryCounts)) {
     const size = sizes[i % sizes.length];
     const tag = tags[i % tags.length];
     const [minPrice, maxPrice] = template.priceRange;
-    const price = Math.round((minPrice + Math.random() * (maxPrice - minPrice)) / 10) * 10;
-    const hasDiscount = Math.random() > 0.6;
-    const originalPrice = hasDiscount ? Math.round(price * (1.2 + Math.random() * 0.5) / 10) * 10 : null;
-    const stock = Math.round(20 + Math.random() * 480);
+    const price = Math.round((minPrice + seededRandom() * (maxPrice - minPrice)) / 10) * 10;
+    const hasDiscount = seededRandom() > 0.6;
+    const originalPrice = hasDiscount ? Math.round(price * (1.2 + seededRandom() * 0.5) / 10) * 10 : null;
+    const stock = Math.round(20 + seededRandom() * 380);
     const brandSlug = brandPool[i % brandPool.length];
-    const skuNum = skuCounters[cat]++;
-    const isFeatured = Math.random() < 0.1;
+    const skuNum = skuCounters[cat as keyof typeof skuCounters]++;
+    const isFeatured = seededRandom() < 0.1;
+    const pairings = pairingPool[i % pairingPool.length];
+    const careInstr = carePool[i % carePool.length];
+    const sizeChart = sizeChartGen(size);
+
+    const attributes: any = {
+      material,
+      pairingSuggestions: pairings,
+      careInstructions: careInstr,
+    };
+    if (sizeChart.length > 0) {
+      attributes.sizeChart = sizeChart;
+    }
 
     clothingData.push({
-      sku: `AN-${categoryAbbrevs[cat]}-${String(skuNum).padStart(3, '0')}`,
+      sku: `AN-${categoryAbbrevs[cat as keyof typeof categoryAbbrevs]}-${String(skuNum).padStart(3, '0')}`,
       name: fullName,
       description: desc,
-      category: ClothingCategory[cat],
+      category: ClothingCategory[cat as keyof typeof ClothingCategory],
       subcategory: sub,
       colors,
       sizes: size,
@@ -1660,11 +1855,7 @@ for (const [cat, target] of Object.entries(categoryCounts)) {
       stock,
       brandSlug,
       isFeatured,
-      attributes: {
-        material,
-        pairingSuggestions: ['搭配同色系单品打造高级感', '混搭不同风格营造个性', '叠穿增加层次感'],
-        careInstructions: '建议按照洗标说明洗涤，避免高温烘干',
-      },
+      attributes,
     });
   }
 }

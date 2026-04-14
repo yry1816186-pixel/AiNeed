@@ -379,21 +379,19 @@ export class OrderService {
       include: { items: true },
     });
 
-    await this.prisma.$transaction(async (tx) => {
-      // 恢复库存
-      for (const item of orderWithItems?.items || []) {
-        await tx.clothingItem.update({
+    // Batch stock restoration in a single transaction (fixes N+1)
+    await this.prisma.$transaction([
+      ...(orderWithItems?.items || []).map(item =>
+        this.prisma.clothingItem.update({
           where: { id: item.itemId },
           data: { stock: { increment: item.quantity } },
-        });
-      }
-
-      // 更新订单状态
-      await tx.order.update({
+        })
+      ),
+      this.prisma.order.update({
         where: { id: orderId },
         data: { status: OrderStatus.cancelled },
-      });
-    });
+      }),
+    ]);
 
     this.logger.log(`Order cancelled: ${orderId}`);
   }

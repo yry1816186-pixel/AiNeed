@@ -27,8 +27,7 @@ export class CsrfService {
    */
   generateToken(sessionId: string): string {
     const timestamp = Date.now().toString();
-    const randomValue = randomBytes(32).toString('hex');
-    const tokenData = `${sessionId}:${timestamp}:${randomValue}`;
+    const tokenData = `${sessionId}:${timestamp}`;
 
     const token = createHash('sha256')
       .update(tokenData + this.secret)

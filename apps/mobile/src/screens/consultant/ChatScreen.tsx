@@ -18,8 +18,10 @@ import { ChatBubble } from "../../components/ui/ChatBubble";
 import { TypingIndicator } from "../../components/consultant/TypingIndicator";
 import { ProposalCard } from "../../components/consultant/ProposalCard";
 import wsService from "../../services/websocket";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const ChatScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
   const { roomId, consultantId, consultantName } = route.params || {};
@@ -152,7 +154,7 @@ export const ChatScreen: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backBtnText}>{"<"}</Text>
         </TouchableOpacity>
@@ -206,7 +208,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12,
-    paddingTop: 56,
     paddingBottom: 12,
     backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,

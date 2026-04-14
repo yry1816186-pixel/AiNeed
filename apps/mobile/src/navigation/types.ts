@@ -51,6 +51,9 @@ export type CommunityStackParamList = {
   PostCreate: undefined;
   InfluencerProfile: { influencerId: string };
   InspirationWardrobe: { userId?: string };
+  BloggerDashboard: undefined;
+  BloggerProfile: { bloggerId?: string };
+  BloggerProduct: { productId?: string };
 };
 
 // ============================================================
@@ -158,6 +161,9 @@ export const ROUTE_PHASE_MAP: Record<string, number> = {
   PostCreate: 6,
   InfluencerProfile: 6,
   InspirationWardrobe: 6,
+  BloggerDashboard: 6,
+  BloggerProfile: 6,
+  BloggerProduct: 6,
   CustomDesign: 7,
   CustomEditor: 7,
   Brand: 7,

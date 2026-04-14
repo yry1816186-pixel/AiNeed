@@ -49,6 +49,7 @@ import {
   Shadows,
   Typography,
 } from "../../theme";
+import { useReducedMotion } from "../../hooks/useReducedMotion";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -241,22 +242,33 @@ export const FadeTransition: React.FC<FadeTransitionProps> = ({
 }) => {
   const opacity = useSharedValue(visible ? 1 : 0);
   const scale = useSharedValue(visible ? 1 : 0.95);
+  const { reducedMotion } = useReducedMotion();
 
   useEffect(() => {
     if (visible) {
-      opacity.value = withTiming(1, {
-        duration,
-        easing: Easing.out(Easing.ease),
-      });
-      scale.value = withSpring(1, springConfig);
+      if (reducedMotion) {
+        opacity.value = withTiming(1, { duration: 0 });
+        scale.value = withTiming(1, { duration: 0 });
+      } else {
+        opacity.value = withTiming(1, {
+          duration,
+          easing: Easing.out(Easing.ease),
+        });
+        scale.value = withSpring(1, springConfig);
+      }
     } else {
-      opacity.value = withTiming(0, {
-        duration: duration * 0.7,
-        easing: Easing.in(Easing.ease),
-      });
-      scale.value = withTiming(0.95, { duration: duration * 0.7 });
+      if (reducedMotion) {
+        opacity.value = withTiming(0, { duration: 0 });
+        scale.value = withTiming(0.95, { duration: 0 });
+      } else {
+        opacity.value = withTiming(0, {
+          duration: duration * 0.7,
+          easing: Easing.in(Easing.ease),
+        });
+        scale.value = withTiming(0.95, { duration: duration * 0.7 });
+      }
     }
-  }, [visible, duration]);
+  }, [visible, duration, reducedMotion]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -283,6 +295,7 @@ export const SlideTransition: React.FC<SlideTransitionProps> = ({
 }) => {
   const translateValue = useSharedValue(visible ? 0 : SCREEN_WIDTH);
   const opacity = useSharedValue(visible ? 1 : 0);
+  const { reducedMotion } = useReducedMotion();
 
   const getInitialValue = () => {
     switch (direction) {
@@ -301,16 +314,26 @@ export const SlideTransition: React.FC<SlideTransitionProps> = ({
 
   useEffect(() => {
     if (visible) {
-      translateValue.value = withSpring(0, transitionSpringConfig);
-      opacity.value = withTiming(1, { duration: duration * 0.5 });
+      if (reducedMotion) {
+        opacity.value = withTiming(1, { duration: 0 });
+        translateValue.value = withTiming(0, { duration: 0 });
+      } else {
+        translateValue.value = withSpring(0, transitionSpringConfig);
+        opacity.value = withTiming(1, { duration: duration * 0.5 });
+      }
     } else {
-      translateValue.value = withTiming(getInitialValue(), {
-        duration,
-        easing: Easing.in(Easing.ease),
-      });
-      opacity.value = withTiming(0, { duration: duration * 0.3 });
+      if (reducedMotion) {
+        opacity.value = withTiming(0, { duration: 0 });
+        translateValue.value = withTiming(getInitialValue(), { duration: 0 });
+      } else {
+        translateValue.value = withTiming(getInitialValue(), {
+          duration,
+          easing: Easing.in(Easing.ease),
+        });
+        opacity.value = withTiming(0, { duration: duration * 0.3 });
+      }
     }
-  }, [visible, direction, duration]);
+  }, [visible, direction, duration, reducedMotion]);
 
   const animatedStyle = useAnimatedStyle(() => {
     "worklet";
@@ -352,19 +375,30 @@ export const ScaleTransition: React.FC<ScaleTransitionProps> = ({
 }) => {
   const scale = useSharedValue(visible ? toScale : fromScale);
   const opacity = useSharedValue(visible ? 1 : 0);
+  const { reducedMotion } = useReducedMotion();
 
   useEffect(() => {
     if (visible) {
-      scale.value = withSpring(toScale, springConfig);
-      opacity.value = withTiming(1, { duration: duration * 0.6 });
+      if (reducedMotion) {
+        opacity.value = withTiming(1, { duration: 0 });
+        scale.value = withTiming(toScale, { duration: 0 });
+      } else {
+        scale.value = withSpring(toScale, springConfig);
+        opacity.value = withTiming(1, { duration: duration * 0.6 });
+      }
     } else {
-      scale.value = withTiming(fromScale, {
-        duration,
-        easing: Easing.in(Easing.ease),
-      });
-      opacity.value = withTiming(0, { duration: duration * 0.4 });
+      if (reducedMotion) {
+        opacity.value = withTiming(0, { duration: 0 });
+        scale.value = withTiming(fromScale, { duration: 0 });
+      } else {
+        scale.value = withTiming(fromScale, {
+          duration,
+          easing: Easing.in(Easing.ease),
+        });
+        opacity.value = withTiming(0, { duration: duration * 0.4 });
+      }
     }
-  }, [visible, fromScale, toScale, duration]);
+  }, [visible, fromScale, toScale, duration, reducedMotion]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -391,19 +425,30 @@ export const FlipTransition: React.FC<FlipTransitionProps> = ({
 }) => {
   const rotateValue = useSharedValue(visible ? 0 : 180);
   const opacity = useSharedValue(visible ? 1 : 0);
+  const { reducedMotion } = useReducedMotion();
 
   useEffect(() => {
     if (visible) {
-      rotateValue.value = withSpring(0, { damping: 15, stiffness: 100 });
-      opacity.value = withTiming(1, { duration: duration * 0.3 });
+      if (reducedMotion) {
+        opacity.value = withTiming(1, { duration: 0 });
+        rotateValue.value = withTiming(0, { duration: 0 });
+      } else {
+        rotateValue.value = withSpring(0, { damping: 15, stiffness: 100 });
+        opacity.value = withTiming(1, { duration: duration * 0.3 });
+      }
     } else {
-      rotateValue.value = withTiming(180, {
-        duration,
-        easing: Easing.inOut(Easing.ease),
-      });
-      opacity.value = withTiming(0, { duration: duration * 0.2 });
+      if (reducedMotion) {
+        opacity.value = withTiming(0, { duration: 0 });
+        rotateValue.value = withTiming(180, { duration: 0 });
+      } else {
+        rotateValue.value = withTiming(180, {
+          duration,
+          easing: Easing.inOut(Easing.ease),
+        });
+        opacity.value = withTiming(0, { duration: duration * 0.2 });
+      }
     }
-  }, [visible, direction, duration]);
+  }, [visible, direction, duration, reducedMotion]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -440,21 +485,34 @@ export const ModalTransition: React.FC<ModalTransitionProps> = ({
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdrop = useSharedValue(0);
   const modalScale = useSharedValue(0.9);
+  const { reducedMotion, reducedMotionSV } = useReducedMotion();
 
   useEffect(() => {
     if (visible) {
-      translateY.value = withSpring(
-        SCREEN_HEIGHT * (1 - snapPoints[0]),
-        transitionSpringConfig,
-      );
-      backdrop.value = withTiming(backdropOpacity, { duration: 300 });
-      modalScale.value = withSpring(1, springConfig);
+      if (reducedMotion) {
+        translateY.value = withTiming(SCREEN_HEIGHT * (1 - snapPoints[0]), { duration: 0 });
+        backdrop.value = withTiming(backdropOpacity, { duration: 0 });
+        modalScale.value = withTiming(1, { duration: 0 });
+      } else {
+        translateY.value = withSpring(
+          SCREEN_HEIGHT * (1 - snapPoints[0]),
+          transitionSpringConfig,
+        );
+        backdrop.value = withTiming(backdropOpacity, { duration: 300 });
+        modalScale.value = withSpring(1, springConfig);
+      }
     } else {
-      translateY.value = withTiming(SCREEN_HEIGHT, { duration: 250 });
-      backdrop.value = withTiming(0, { duration: 200 });
-      modalScale.value = withTiming(0.9, { duration: 200 });
+      if (reducedMotion) {
+        translateY.value = withTiming(SCREEN_HEIGHT, { duration: 0 });
+        backdrop.value = withTiming(0, { duration: 0 });
+        modalScale.value = withTiming(0.9, { duration: 0 });
+      } else {
+        translateY.value = withTiming(SCREEN_HEIGHT, { duration: 250 });
+        backdrop.value = withTiming(0, { duration: 200 });
+        modalScale.value = withTiming(0.9, { duration: 200 });
+      }
     }
-  }, [visible, snapPoints, backdropOpacity]);
+  }, [visible, snapPoints, backdropOpacity, reducedMotion]);
 
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
@@ -465,14 +523,23 @@ export const ModalTransition: React.FC<ModalTransitionProps> = ({
     })
     .onEnd((event) => {
       if (event.translationY > 100 || event.velocityY > 500) {
-        translateY.value = withTiming(SCREEN_HEIGHT, { duration: 200 });
-        backdrop.value = withTiming(0, { duration: 150 });
+        if (reducedMotionSV.value) {
+          translateY.value = withTiming(SCREEN_HEIGHT, { duration: 0 });
+          backdrop.value = withTiming(0, { duration: 0 });
+        } else {
+          translateY.value = withTiming(SCREEN_HEIGHT, { duration: 200 });
+          backdrop.value = withTiming(0, { duration: 150 });
+        }
         runOnJS(onClose)();
       } else {
-        translateY.value = withSpring(
-          SCREEN_HEIGHT * (1 - snapPoints[0]),
-          transitionSpringConfig,
-        );
+        if (reducedMotionSV.value) {
+          translateY.value = withTiming(SCREEN_HEIGHT * (1 - snapPoints[0]), { duration: 0 });
+        } else {
+          translateY.value = withSpring(
+            SCREEN_HEIGHT * (1 - snapPoints[0]),
+            transitionSpringConfig,
+          );
+        }
       }
     });
 
@@ -546,21 +613,32 @@ export const BottomSheetTransition: React.FC<BottomSheetTransitionProps> = ({
   const animatedPosition = useSharedValue(1);
   const currentPosition = useSharedValue(snapPoints[initialSnap]);
   const backdropOpacity = useSharedValue(0);
+  const { reducedMotion, reducedMotionSV } = useReducedMotion();
 
   const snapPointPositions = snapPoints.map((p) => SCREEN_HEIGHT * (1 - p));
 
   useEffect(() => {
     if (visible) {
-      animatedPosition.value = withSpring(
-        snapPointPositions[initialSnap],
-        transitionSpringConfig,
-      );
-      backdropOpacity.value = withTiming(0.5, { duration: 300 });
+      if (reducedMotion) {
+        animatedPosition.value = withTiming(snapPointPositions[initialSnap], { duration: 0 });
+        backdropOpacity.value = withTiming(0.5, { duration: 0 });
+      } else {
+        animatedPosition.value = withSpring(
+          snapPointPositions[initialSnap],
+          transitionSpringConfig,
+        );
+        backdropOpacity.value = withTiming(0.5, { duration: 300 });
+      }
     } else {
-      animatedPosition.value = withTiming(SCREEN_HEIGHT, { duration: 250 });
-      backdropOpacity.value = withTiming(0, { duration: 200 });
+      if (reducedMotion) {
+        animatedPosition.value = withTiming(SCREEN_HEIGHT, { duration: 0 });
+        backdropOpacity.value = withTiming(0, { duration: 0 });
+      } else {
+        animatedPosition.value = withTiming(SCREEN_HEIGHT, { duration: 250 });
+        backdropOpacity.value = withTiming(0, { duration: 200 });
+      }
     }
-  }, [visible, initialSnap]);
+  }, [visible, initialSnap, reducedMotion]);
 
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
@@ -580,8 +658,13 @@ export const BottomSheetTransition: React.FC<BottomSheetTransitionProps> = ({
         enablePanDownToClose &&
         (position > snapPointPositions[0] + 100 || velocity > 500)
       ) {
-        animatedPosition.value = withTiming(SCREEN_HEIGHT, { duration: 200 });
-        backdropOpacity.value = withTiming(0, { duration: 150 });
+        if (reducedMotionSV.value) {
+          animatedPosition.value = withTiming(SCREEN_HEIGHT, { duration: 0 });
+          backdropOpacity.value = withTiming(0, { duration: 0 });
+        } else {
+          animatedPosition.value = withTiming(SCREEN_HEIGHT, { duration: 200 });
+          backdropOpacity.value = withTiming(0, { duration: 150 });
+        }
         runOnJS(onClose)();
         return;
       }
@@ -597,7 +680,11 @@ export const BottomSheetTransition: React.FC<BottomSheetTransitionProps> = ({
         }
       });
 
-      animatedPosition.value = withSpring(closestSnap, transitionSpringConfig);
+      if (reducedMotionSV.value) {
+        animatedPosition.value = withTiming(closestSnap, { duration: 0 });
+      } else {
+        animatedPosition.value = withSpring(closestSnap, transitionSpringConfig);
+      }
     });
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -661,15 +748,23 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
   const translateX = useSharedValue(from === "slide" ? SCREEN_WIDTH * 0.1 : 0);
   const scale = useSharedValue(from === "scale" ? 0.95 : 1);
   const rotateY = useSharedValue(from === "flip" ? 15 : 0);
+  const { reducedMotion } = useReducedMotion();
 
   useEffect(() => {
-    opacity.value = withTiming(1, {
-      duration,
-      easing: Easing.out(Easing.ease),
-    });
-    translateX.value = withSpring(0, springConfig);
-    scale.value = withSpring(1, springConfig);
-    rotateY.value = withSpring(0, springConfig);
+    if (reducedMotion) {
+      opacity.value = withTiming(1, { duration: 0 });
+      translateX.value = withTiming(0, { duration: 0 });
+      scale.value = withTiming(1, { duration: 0 });
+      rotateY.value = withTiming(0, { duration: 0 });
+    } else {
+      opacity.value = withTiming(1, {
+        duration,
+        easing: Easing.out(Easing.ease),
+      });
+      translateX.value = withSpring(0, springConfig);
+      scale.value = withSpring(1, springConfig);
+      rotateY.value = withSpring(0, springConfig);
+    }
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -710,29 +805,40 @@ const StaggerTransitionItem: React.FC<StaggerTransitionItemProps> = ({
 }) => {
   const translateValue = useSharedValue(visible ? 0 : 30);
   const opacity = useSharedValue(visible ? 1 : 0);
+  const { reducedMotion } = useReducedMotion();
 
   useEffect(() => {
     if (visible) {
-      translateValue.value = withDelay(
-        index * staggerDelay,
-        withSpring(0, springConfig),
-      );
-      opacity.value = withDelay(
-        index * staggerDelay,
-        withTiming(1, { duration: 200 }),
-      );
+      if (reducedMotion) {
+        translateValue.value = withDelay(index * staggerDelay, withTiming(0, { duration: 0 }));
+        opacity.value = withDelay(index * staggerDelay, withTiming(1, { duration: 0 }));
+      } else {
+        translateValue.value = withDelay(
+          index * staggerDelay,
+          withSpring(0, springConfig),
+        );
+        opacity.value = withDelay(
+          index * staggerDelay,
+          withTiming(1, { duration: 200 }),
+        );
+      }
       return;
     }
 
-    translateValue.value = withDelay(
-      index * staggerDelay * 0.5,
-      withTiming(30, { duration: 150 }),
-    );
-    opacity.value = withDelay(
-      index * staggerDelay * 0.5,
-      withTiming(0, { duration: 150 }),
-    );
-  }, [direction, index, opacity, staggerDelay, translateValue, visible]);
+    if (reducedMotion) {
+      translateValue.value = withDelay(index * staggerDelay * 0.5, withTiming(30, { duration: 0 }));
+      opacity.value = withDelay(index * staggerDelay * 0.5, withTiming(0, { duration: 0 }));
+    } else {
+      translateValue.value = withDelay(
+        index * staggerDelay * 0.5,
+        withTiming(30, { duration: 150 }),
+      );
+      opacity.value = withDelay(
+        index * staggerDelay * 0.5,
+        withTiming(0, { duration: 150 }),
+      );
+    }
+  }, [direction, index, opacity, staggerDelay, translateValue, visible, reducedMotion]);
 
   const animatedStyle = useAnimatedStyle(() => {
     "worklet";
@@ -850,21 +956,34 @@ export const HeroTransition: React.FC<HeroTransitionProps> = ({
   const scale = useSharedValue(visible ? 1 : 0.5);
   const opacity = useSharedValue(visible ? 1 : 0);
   const borderRadius = useSharedValue(visible ? 0 : 20);
+  const { reducedMotion } = useReducedMotion();
 
   useEffect(() => {
     if (visible) {
-      scale.value = withSpring(1, transitionSpringConfig);
-      opacity.value = withTiming(1, { duration: duration * 0.5 });
-      borderRadius.value = withTiming(0, { duration });
+      if (reducedMotion) {
+        scale.value = withTiming(1, { duration: 0 });
+        opacity.value = withTiming(1, { duration: 0 });
+        borderRadius.value = withTiming(0, { duration: 0 });
+      } else {
+        scale.value = withSpring(1, transitionSpringConfig);
+        opacity.value = withTiming(1, { duration: duration * 0.5 });
+        borderRadius.value = withTiming(0, { duration });
+      }
     } else {
-      scale.value = withTiming(0.5, {
-        duration,
-        easing: Easing.in(Easing.ease),
-      });
-      opacity.value = withTiming(0, { duration: duration * 0.3 });
-      borderRadius.value = withTiming(20, { duration });
+      if (reducedMotion) {
+        scale.value = withTiming(0.5, { duration: 0 });
+        opacity.value = withTiming(0, { duration: 0 });
+        borderRadius.value = withTiming(20, { duration: 0 });
+      } else {
+        scale.value = withTiming(0.5, {
+          duration,
+          easing: Easing.in(Easing.ease),
+        });
+        opacity.value = withTiming(0, { duration: duration * 0.3 });
+        borderRadius.value = withTiming(20, { duration });
+      }
     }
-  }, [visible, duration]);
+  }, [visible, duration, reducedMotion]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],

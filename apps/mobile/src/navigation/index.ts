@@ -1,5 +1,3 @@
-export { navigationRef, setNavigationRef, navigate, goBack, getCurrentRouteName } from './navigation';
-
 export { RootNavigator, MainTabNavigator } from './RootNavigator';
 export { AuthNavigator } from './AuthNavigator';
 export {
@@ -11,11 +9,12 @@ export {
 } from './MainStackNavigator';
 
 export {
-  navigationRef as navigationServiceRef,
+  navigationRef,
   setNavigationReady,
   isNavigationReady,
-  getCurrentRouteName as getCurrentRouteNameFromService,
+  getCurrentRouteName,
   getCurrentRouteParams,
+  navigate,
   navigateAuth,
   navigateTab,
   navigateHome,
@@ -23,17 +22,18 @@ export {
   navigateTryOn,
   navigateCommunity,
   navigateProfile,
+  goBack,
+  reset,
   resetToAuth,
   resetToMain,
   parseDeepLink,
   navigateDeepLink,
   navigateFromPush,
-  reset,
-  goBack as goBackFromService,
 } from './navigationService';
 export type { ParsedDeepLink, PushNotificationData } from './navigationService';
 
 export { AuthGuard, ProfileGuard, VipGuard } from './RouteGuards';
+export { useRouteGuard, GuardedScreen } from './RouteGuards';
 
 export type {
   AuthStackParamList,
@@ -44,6 +44,8 @@ export type {
   ProfileStackParamList,
   MainTabParamList,
   RootStackParamList,
+  GuardType,
+  RouteGuardConfig,
   TAB_LABELS,
   ROUTE_PHASE_MAP,
   GUARDED_ROUTES,

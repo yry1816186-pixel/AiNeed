@@ -684,7 +684,20 @@ export const favoriteApi = {
 
 export const searchApi = {
   async searchClothing(filters: SearchFilters): Promise<ApiResponse<ClothingItem[]>> {
-    return apiClient.post("/search/clothing", filters);
+    const params: Record<string, unknown> = {};
+    if (filters.query) {
+      params.q = filters.query;
+    }
+    if (filters.category) {
+      params.category = filters.category;
+    }
+    if (filters.minPrice != null) {
+      params.minPrice = filters.minPrice;
+    }
+    if (filters.maxPrice != null) {
+      params.maxPrice = filters.maxPrice;
+    }
+    return apiClient.get("/search", params);
   },
 
   async searchByImage(
@@ -1056,7 +1069,7 @@ export const paymentApi = {
   async pollPaymentStatus(
     orderId: string,
   ): Promise<ApiResponse<{ status: string; paid: boolean }>> {
-    return apiClient.get(`/payment/status/${orderId}`);
+    return apiClient.get(`/payment/query/${orderId}`);
   },
 };
 

@@ -11,6 +11,7 @@ export interface User {
   bodyType?: string;
   skinTone?: string;
   colorSeason?: string;
+  subscriptionTier?: "basic" | "premium" | "vip";
   preferences?: UserPreferences;
   createdAt: string;
   updatedAt: string;

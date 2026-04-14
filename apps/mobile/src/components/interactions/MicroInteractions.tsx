@@ -46,6 +46,7 @@ import {
   Shadows,
   Typography,
 } from "../../theme";
+import { useReducedMotion } from "../../hooks/useReducedMotion";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -135,6 +136,7 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   const counterRef = useRef(0);
   const containerRef = useAnimatedRef<View>();
   const scale = useSharedValue(1);
+  const { reducedMotionSV } = useReducedMotion();
 
   const triggerHaptic = useCallback(() => {
     if (!enableHaptic) return;
@@ -172,12 +174,20 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
 
   const gesture = Gesture.Tap()
     .onBegin((event) => {
-      scale.value = withSpring(0.97, springConfig);
+      if (reducedMotionSV.value) {
+        scale.value = withTiming(0.97, { duration: 0 });
+      } else {
+        scale.value = withSpring(0.97, springConfig);
+      }
       runOnJS(addRipple)(event.x, event.y);
       runOnJS(triggerHaptic)();
     })
     .onFinalize(() => {
-      scale.value = withSpring(1, springConfig);
+      if (reducedMotionSV.value) {
+        scale.value = withTiming(1, { duration: 0 });
+      } else {
+        scale.value = withSpring(1, springConfig);
+      }
     })
     .onEnd(() => {
       if (onPress) {
@@ -188,14 +198,22 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   const longPressGesture = Gesture.LongPress()
     .minDuration(500)
     .onStart(() => {
-      scale.value = withSpring(0.95, springConfig);
+      if (reducedMotionSV.value) {
+        scale.value = withTiming(0.95, { duration: 0 });
+      } else {
+        scale.value = withSpring(0.95, springConfig);
+      }
       runOnJS(triggerHaptic)();
       if (onLongPress) {
         runOnJS(onLongPress)();
       }
     })
     .onEnd(() => {
-      scale.value = withSpring(1, springConfig);
+      if (reducedMotionSV.value) {
+        scale.value = withTiming(1, { duration: 0 });
+      } else {
+        scale.value = withSpring(1, springConfig);
+      }
     });
 
   const composedGesture = Gesture.Race(gesture, longPressGesture);
@@ -249,10 +267,15 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   const scale = useSharedValue(1);
   const glowIntensity = useSharedValue(0);
   const rotation = useSharedValue(0);
+  const { reducedMotionSV } = useReducedMotion();
 
   const gesture = Gesture.Pan()
     .onBegin(() => {
-      scale.value = withSpring(1.05, bounceSpringConfig);
+      if (reducedMotionSV.value) {
+        scale.value = withTiming(1.05, { duration: 0 });
+      } else {
+        scale.value = withSpring(1.05, bounceSpringConfig);
+      }
       glowIntensity.value = withTiming(1, { duration: 200 });
       if (enableHaptic) {
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
@@ -269,11 +292,18 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
       );
     })
     .onEnd(() => {
-      translateX.value = withSpring(0, springConfig);
-      translateY.value = withSpring(0, springConfig);
-      scale.value = withSpring(1, springConfig);
+      if (reducedMotionSV.value) {
+        translateX.value = withTiming(0, { duration: 0 });
+        translateY.value = withTiming(0, { duration: 0 });
+        scale.value = withTiming(1, { duration: 0 });
+        rotation.value = withTiming(0, { duration: 0 });
+      } else {
+        translateX.value = withSpring(0, springConfig);
+        translateY.value = withSpring(0, springConfig);
+        scale.value = withSpring(1, springConfig);
+        rotation.value = withSpring(0, springConfig);
+      }
       glowIntensity.value = withTiming(0, { duration: 300 });
-      rotation.value = withSpring(0, springConfig);
       if (onPress) {
         runOnJS(onPress)();
       }
@@ -328,6 +358,7 @@ export const BounceCard: React.FC<BounceCardProps> = ({
   const rotateX = useSharedValue(0);
   const rotateY = useSharedValue(0);
   const translateZ = useSharedValue(0);
+  const { reducedMotionSV } = useReducedMotion();
 
   const intensityMap = {
     light: { scale: 0.98, rotation: 3 },
@@ -339,11 +370,19 @@ export const BounceCard: React.FC<BounceCardProps> = ({
 
   const gesture = Gesture.Tap()
     .onBegin(() => {
-      scale.value = withSpring(config.scale, bounceSpringConfig);
+      if (reducedMotionSV.value) {
+        scale.value = withTiming(config.scale, { duration: 0 });
+      } else {
+        scale.value = withSpring(config.scale, bounceSpringConfig);
+      }
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     })
     .onFinalize(() => {
-      scale.value = withSpring(1, bounceSpringConfig);
+      if (reducedMotionSV.value) {
+        scale.value = withTiming(1, { duration: 0 });
+      } else {
+        scale.value = withSpring(1, bounceSpringConfig);
+      }
     })
     .onEnd(() => {
       if (onPress) {
@@ -374,9 +413,15 @@ export const BounceCard: React.FC<BounceCardProps> = ({
       );
     })
     .onEnd(() => {
-      rotateX.value = withSpring(0, springConfig);
-      rotateY.value = withSpring(0, springConfig);
-      translateZ.value = withSpring(0, springConfig);
+      if (reducedMotionSV.value) {
+        rotateX.value = withTiming(0, { duration: 0 });
+        rotateY.value = withTiming(0, { duration: 0 });
+        translateZ.value = withTiming(0, { duration: 0 });
+      } else {
+        rotateX.value = withSpring(0, springConfig);
+        rotateY.value = withSpring(0, springConfig);
+        translateZ.value = withSpring(0, springConfig);
+      }
     });
 
   const composedGesture = Gesture.Simultaneous(gesture, panGesture);
@@ -432,6 +477,7 @@ export const SwipeAction: React.FC<SwipeActionProps> = ({
   const translateX = useSharedValue(0);
   const actionOpacity = useSharedValue(0);
   const activeAction = useSharedValue<string | null>(null);
+  const { reducedMotionSV } = useReducedMotion();
 
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
@@ -443,7 +489,7 @@ export const SwipeAction: React.FC<SwipeActionProps> = ({
     })
     .onEnd((event) => {
       if (event.translationX > swipeThreshold && rightActions.length > 0) {
-        translateX.value = withTiming(150, { duration: 200 });
+        translateX.value = withTiming(150, { duration: reducedMotionSV.value ? 0 : 200 });
         if (onSwipeRight) {
           runOnJS(onSwipeRight)();
         }
@@ -451,13 +497,17 @@ export const SwipeAction: React.FC<SwipeActionProps> = ({
         event.translationX < -swipeThreshold &&
         leftActions.length > 0
       ) {
-        translateX.value = withTiming(-150, { duration: 200 });
+        translateX.value = withTiming(-150, { duration: reducedMotionSV.value ? 0 : 200 });
         if (onSwipeLeft) {
           runOnJS(onSwipeLeft)();
         }
       } else {
-        translateX.value = withSpring(0, springConfig);
-        actionOpacity.value = withTiming(0, { duration: 200 });
+        if (reducedMotionSV.value) {
+          translateX.value = withTiming(0, { duration: 0 });
+        } else {
+          translateX.value = withSpring(0, springConfig);
+        }
+        actionOpacity.value = withTiming(0, { duration: reducedMotionSV.value ? 0 : 200 });
       }
     });
 
@@ -539,6 +589,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
   const progress = useSharedValue(0);
   const isRefreshing = useSharedValue(false);
   const rotation = useSharedValue(0);
+  const { reducedMotion, reducedMotionSV } = useReducedMotion();
 
   useEffect(() => {
     if (refreshing) {
@@ -551,9 +602,13 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
     } else {
       isRefreshing.value = false;
       rotation.value = withTiming(0, { duration: 200 });
-      translateY.value = withSpring(0, springConfig);
+      if (reducedMotion) {
+        translateY.value = withTiming(0, { duration: 0 });
+      } else {
+        translateY.value = withSpring(0, springConfig);
+      }
     }
-  }, [refreshing]);
+  }, [refreshing, reducedMotion]);
 
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
@@ -564,7 +619,11 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
     })
     .onEnd((event) => {
       if (event.translationY > headerHeight && !isRefreshing.value) {
-        translateY.value = withSpring(headerHeight, springConfig);
+        if (reducedMotionSV.value) {
+          translateY.value = withTiming(headerHeight, { duration: 0 });
+        } else {
+          translateY.value = withSpring(headerHeight, springConfig);
+        }
         progress.value = 1;
         isRefreshing.value = true;
         rotation.value = withRepeat(
@@ -574,7 +633,11 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
         );
         runOnJS(onRefresh)();
       } else {
-        translateY.value = withSpring(0, springConfig);
+        if (reducedMotionSV.value) {
+          translateY.value = withTiming(0, { duration: 0 });
+        } else {
+          translateY.value = withSpring(0, springConfig);
+        }
         progress.value = 0;
       }
     });
@@ -641,13 +704,18 @@ export const LongPressDrag: React.FC<LongPressDragProps> = ({
   const opacity = useSharedValue(1);
   const zIndex = useSharedValue(1);
   const isDragging = useSharedValue(false);
+  const { reducedMotionSV } = useReducedMotion();
 
   const gesture = Gesture.LongPress()
     .minDuration(300)
     .onStart(() => {
       if (dragDisabled) return;
       isDragging.value = true;
-      scale.value = withSpring(1.05, bounceSpringConfig);
+      if (reducedMotionSV.value) {
+        scale.value = withTiming(1.05, { duration: 0 });
+      } else {
+        scale.value = withSpring(1.05, bounceSpringConfig);
+      }
       opacity.value = withTiming(0.9, { duration: 150 });
       zIndex.value = 100;
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -671,14 +739,20 @@ export const LongPressDrag: React.FC<LongPressDragProps> = ({
     .onEnd((event) => {
       if (!isDragging.value) return;
       isDragging.value = false;
-      scale.value = withSpring(1, springConfig);
+      if (reducedMotionSV.value) {
+        scale.value = withTiming(1, { duration: 0 });
+        translateX.value = withTiming(0, { duration: 0 });
+        translateY.value = withTiming(0, { duration: 0 });
+      } else {
+        scale.value = withSpring(1, springConfig);
+        translateX.value = withSpring(0, springConfig);
+        translateY.value = withSpring(0, springConfig);
+      }
       opacity.value = withTiming(1, { duration: 150 });
       zIndex.value = 1;
       if (onDragEnd) {
         runOnJS(onDragEnd)({ x: event.translationX, y: event.translationY });
       }
-      translateX.value = withSpring(0, springConfig);
-      translateY.value = withSpring(0, springConfig);
     });
 
   const composedGesture = Gesture.Simultaneous(gesture, panGesture);
@@ -723,6 +797,7 @@ export const PinchZoom: React.FC<PinchZoomProps> = ({
   const translateY = useSharedValue(0);
   const focalX = useSharedValue(0);
   const focalY = useSharedValue(0);
+  const { reducedMotionSV } = useReducedMotion();
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((event) => {
@@ -733,9 +808,13 @@ export const PinchZoom: React.FC<PinchZoomProps> = ({
     })
     .onEnd(() => {
       if (scale.value < minScale) {
-        scale.value = withSpring(minScale, springConfig);
+        scale.value = reducedMotionSV.value
+          ? withTiming(minScale, { duration: 0 })
+          : withSpring(minScale, springConfig);
       } else if (scale.value > maxScale) {
-        scale.value = withSpring(maxScale, springConfig);
+        scale.value = reducedMotionSV.value
+          ? withTiming(maxScale, { duration: 0 })
+          : withSpring(maxScale, springConfig);
       }
       savedScale.value = scale.value;
     });
@@ -749,8 +828,13 @@ export const PinchZoom: React.FC<PinchZoomProps> = ({
     })
     .onEnd(() => {
       if (scale.value <= 1) {
-        translateX.value = withSpring(0, springConfig);
-        translateY.value = withSpring(0, springConfig);
+        if (reducedMotionSV.value) {
+          translateX.value = withTiming(0, { duration: 0 });
+          translateY.value = withTiming(0, { duration: 0 });
+        } else {
+          translateX.value = withSpring(0, springConfig);
+          translateY.value = withSpring(0, springConfig);
+        }
       }
     });
 
@@ -758,12 +842,20 @@ export const PinchZoom: React.FC<PinchZoomProps> = ({
     .numberOfTaps(2)
     .onEnd(() => {
       if (scale.value > 1) {
-        scale.value = withSpring(1, springConfig);
+        if (reducedMotionSV.value) {
+          scale.value = withTiming(1, { duration: 0 });
+          translateX.value = withTiming(0, { duration: 0 });
+          translateY.value = withTiming(0, { duration: 0 });
+        } else {
+          scale.value = withSpring(1, springConfig);
+          translateX.value = withSpring(0, springConfig);
+          translateY.value = withSpring(0, springConfig);
+        }
         savedScale.value = 1;
-        translateX.value = withSpring(0, springConfig);
-        translateY.value = withSpring(0, springConfig);
       } else {
-        scale.value = withSpring(2, springConfig);
+        scale.value = reducedMotionSV.value
+          ? withTiming(2, { duration: 0 })
+          : withSpring(2, springConfig);
         savedScale.value = 2;
       }
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

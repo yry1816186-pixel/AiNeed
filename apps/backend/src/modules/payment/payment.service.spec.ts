@@ -36,6 +36,13 @@ describe("PaymentService", () => {
     paymentOrder: {
       findUnique: jest.fn(),
     },
+    order: {
+      updateMany: jest.fn(),
+      findUnique: jest.fn(),
+    },
+    clothingItem: {
+      update: jest.fn(),
+    },
     $transaction: jest.fn((callback) =>
       callback({
         paymentRecord: {
@@ -850,6 +857,250 @@ describe("PaymentService", () => {
         expect.objectContaining({
           skip: 90,
           take: 10,
+        }),
+      );
+    });
+  });
+
+  describe("handleCloseExpiredPayments", () => {
+    it("应该关闭超时未支付的订单", async () => {
+      const expiredRecord = {
+        id: "record_expired",
+        orderId: "order_expired",
+        userId: "user_123",
+        provider: "alipay",
+        status: "pending",
+        amount: { toNumber: () => 99.0 },
+        expiredAt: new Date(Date.now() - 60 * 60 * 1000),
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      };
+      mockPrismaService.paymentRecord.findMany.mockResolvedValue([expiredRecord]);
+      mockAlipayProvider.closeOrder.mockResolvedValue(true);
+      mockPrismaService.paymentRecord.update.mockResolvedValue({});
+      mockPrismaService.paymentOrder.findUnique.mockResolvedValue(null);
+      mockPrismaService.order.updateMany.mockResolvedValue({ count: 1 });
+      mockPrismaService.order.findUnique.mockResolvedValue(null);
+
+      await service.handleCloseExpiredPayments();
+
+      expect(mockPrismaService.paymentRecord.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: "record_expired" },
+          data: expect.objectContaining({ status: "closed" }),
+        }),
+      );
+    });
+
+    it("没有超时订单时不应该执行任何操作", async () => {
+      mockPrismaService.paymentRecord.findMany.mockResolvedValue([]);
+
+      await service.handleCloseExpiredPayments();
+
+      expect(mockPrismaService.paymentRecord.update).not.toHaveBeenCalled();
+    });
+
+    it("关闭订单失败时应该继续处理其他订单", async () => {
+      const records = [
+        {
+          id: "record_1",
+          orderId: "order_1",
+          userId: "user_1",
+          provider: "alipay",
+          status: "pending",
+          amount: { toNumber: () => 50 },
+          expiredAt: new Date(Date.now() - 60 * 60 * 1000),
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+        },
+        {
+          id: "record_2",
+          orderId: "order_2",
+          userId: "user_2",
+          provider: "alipay",
+          status: "pending",
+          amount: { toNumber: () => 100 },
+          expiredAt: new Date(Date.now() - 60 * 60 * 1000),
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+        },
+      ];
+      mockPrismaService.paymentRecord.findMany.mockResolvedValue(records);
+      mockAlipayProvider.closeOrder
+        .mockRejectedValueOnce(new Error("关闭失败"))
+        .mockResolvedValueOnce(true);
+      mockPrismaService.paymentRecord.update.mockResolvedValue({});
+      mockPrismaService.paymentOrder.findUnique.mockResolvedValue(null);
+      mockPrismaService.order.updateMany.mockResolvedValue({ count: 0 });
+      mockPrismaService.order.findUnique.mockResolvedValue(null);
+
+      await service.handleCloseExpiredPayments();
+
+      expect(mockAlipayProvider.closeOrder).toHaveBeenCalledTimes(2);
+    });
+
+    it("关闭订单时应该恢复库存", async () => {
+      const expiredRecord = {
+        id: "record_expired",
+        orderId: "order_with_items",
+        userId: "user_123",
+        provider: "alipay",
+        status: "pending",
+        amount: { toNumber: () => 99.0 },
+        expiredAt: new Date(Date.now() - 60 * 60 * 1000),
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      };
+      mockPrismaService.paymentRecord.findMany.mockResolvedValue([expiredRecord]);
+      mockAlipayProvider.closeOrder.mockResolvedValue(true);
+      mockPrismaService.paymentRecord.update.mockResolvedValue({});
+      mockPrismaService.paymentOrder.findUnique.mockResolvedValue(null);
+      mockPrismaService.order.updateMany.mockResolvedValue({ count: 1 });
+      mockPrismaService.order.findUnique.mockResolvedValue({
+        id: "order_with_items",
+        items: [
+          { itemId: "item_1", quantity: 2 },
+          { itemId: "item_2", quantity: 1 },
+        ],
+      });
+      mockPrismaService.clothingItem.update.mockResolvedValue({});
+      mockPrismaService.$transaction.mockImplementation((ops) => Promise.resolve());
+
+      await service.handleCloseExpiredPayments();
+
+      expect(mockPrismaService.order.updateMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ status: "cancelled" }),
+        }),
+      );
+    });
+  });
+
+  describe("订阅激活", () => {
+    it("支付成功时应该触发订阅激活事件", async () => {
+      const callbackData = {
+        out_trade_no: "sub_order_123",
+        trade_no: "trade_sub_123",
+        total_amount: "29.90",
+        trade_status: "TRADE_SUCCESS",
+        gmt_payment: new Date().toISOString(),
+      };
+
+      mockAlipayProvider.verifyCallbackSign.mockReturnValue(true);
+      mockAlipayProvider.handleCallback.mockResolvedValue({
+        orderId: "sub_order_123",
+        tradeNo: "trade_sub_123",
+        amount: 29.9,
+        status: "paid",
+        paidAt: new Date(),
+        rawData: callbackData,
+      });
+      mockPrismaService.paymentRecord.findUnique.mockResolvedValue({
+        id: "record_sub",
+        orderId: "sub_order_123",
+        userId: "user_sub",
+        status: "pending",
+        amount: { toNumber: () => 29.9 },
+      });
+      mockPrismaService.paymentOrder.findUnique.mockResolvedValue({
+        id: "sub_order_123",
+        metadata: { planId: "plan_monthly", planName: "月度会员" },
+      });
+
+      const result = await service.handleCallback("alipay", callbackData);
+
+      expect(result.success).toBe(true);
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
+        "payment.succeeded",
+        expect.objectContaining({
+          userId: "user_sub",
+          metadata: expect.objectContaining({
+            planId: "plan_monthly",
+          }),
+        }),
+      );
+    });
+  });
+
+  describe("订单状态转换", () => {
+    it("pending -> paid 转换应该成功", async () => {
+      const callbackData = {
+        out_trade_no: "order_status_test",
+        trade_no: "trade_status_test",
+        total_amount: "199.00",
+        trade_status: "TRADE_SUCCESS",
+        gmt_payment: new Date().toISOString(),
+      };
+
+      mockAlipayProvider.verifyCallbackSign.mockReturnValue(true);
+      mockAlipayProvider.handleCallback.mockResolvedValue({
+        orderId: "order_status_test",
+        tradeNo: "trade_status_test",
+        amount: 199.0,
+        status: "paid",
+        paidAt: new Date(),
+        rawData: callbackData,
+      });
+      mockPrismaService.paymentRecord.findUnique.mockResolvedValue({
+        id: "record_status",
+        orderId: "order_status_test",
+        userId: "user_status",
+        status: "pending",
+        amount: { toNumber: () => 199.0 },
+      });
+      mockPrismaService.paymentOrder.findUnique.mockResolvedValue(null);
+
+      const result = await service.handleCallback("alipay", callbackData);
+
+      expect(result.success).toBe(true);
+    });
+
+    it("pending -> closed 转换应该成功", async () => {
+      mockPrismaService.paymentRecord.findFirst.mockResolvedValue({
+        id: "record_close",
+        orderId: "order_close",
+        userId: "user_close",
+        status: "pending",
+        provider: "alipay",
+      });
+      mockAlipayProvider.closeOrder.mockResolvedValue(true);
+      mockPrismaService.paymentRecord.update.mockResolvedValue({});
+
+      const result = await service.closeOrder("user_close", "order_close");
+
+      expect(result).toBe(true);
+    });
+
+    it("paid -> refunded 转换应该成功（全额退款）", async () => {
+      mockPrismaService.paymentRecord.findFirst.mockResolvedValue({
+        id: "record_refund",
+        orderId: "order_refund",
+        userId: "user_refund",
+        status: "paid",
+        amount: { toNumber: () => 199.0 },
+        provider: "alipay",
+      });
+      mockPrismaService.refundRecord.create.mockResolvedValue({
+        id: "refund_full",
+        paymentRecordId: "record_refund",
+        amount: { toNumber: () => 199.0 },
+        status: "processing",
+      });
+      mockAlipayProvider.refund.mockResolvedValue({
+        success: true,
+        refundId: "refund_full",
+        refundNo: "refund_no_full",
+        status: "success",
+      });
+      mockPrismaService.refundRecord.update.mockResolvedValue({});
+      mockPrismaService.paymentRecord.update.mockResolvedValue({});
+
+      const result = await service.refund("user_refund", {
+        orderId: "order_refund",
+        amount: 199.0,
+        reason: "全额退款",
+      });
+
+      expect(result.success).toBe(true);
+      expect(mockPrismaService.paymentRecord.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ status: "refunded" }),
         }),
       );
     });

@@ -14,6 +14,7 @@ import { LocalStrategy } from "./strategies/local.strategy";
 import { WechatAuthStrategy } from "./strategies/wechat.strategy";
 import { WechatService } from "./services/wechat.service";
 import { AliyunSmsService, MockSmsService, SmsService } from "./services/sms.service";
+import { TokenBlacklistService } from "./services/token-blacklist.service";
 
 
 const logger = new Logger("AuthModule");
@@ -36,8 +37,8 @@ const logger = new Logger("AuthModule");
         }
 
         const expiresIn = configService.get<JwtSignOptions["expiresIn"]>(
-          "JWT_EXPIRES_IN",
-          "7d",
+          "JWT_ACCESS_EXPIRES_IN",
+          "15m",
         );
 
         return {
@@ -59,6 +60,7 @@ const logger = new Logger("AuthModule");
     WechatService,
     WechatAuthStrategy,
     SmsService,
+    TokenBlacklistService,
     {
       provide: "ISmsService",
       useFactory: (configService: ConfigService) => {

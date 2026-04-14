@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, ViewStyle, Animated, DimensionValue } from 'react-native';
-import { colors } from '../../theme/colors';
-import { spacing } from '../../theme/spacing';
+import { Colors, Spacing, BorderRadius } from '../../theme';
 
 function useShimmerAnimation(speed = 1200) {
   const animatedValue = useRef(new Animated.Value(0)).current;
@@ -30,11 +29,11 @@ export interface SkeletonProps {
 export const Skeleton: React.FC<SkeletonProps> = ({
   width = '100%',
   height = 20,
-  borderRadius = spacing.borderRadius.md,
+  borderRadius = BorderRadius.md,
   style,
 }) => {
   const opacity = useShimmerAnimation();
-  return <Animated.View style={[{ width, height, borderRadius, backgroundColor: colors.neutral[200], opacity }, style]} />;
+  return <Animated.View style={[{ width, height, borderRadius, backgroundColor: Colors.neutral[200], opacity }, style]} />;
 };
 
 export interface CircleSkeletonProps {
@@ -44,7 +43,7 @@ export interface CircleSkeletonProps {
 
 export const CircleSkeleton: React.FC<CircleSkeletonProps> = ({ size = 48, style }) => {
   const opacity = useShimmerAnimation();
-  return <Animated.View style={[{ width: size, height: size, borderRadius: size / 2, backgroundColor: colors.neutral[200], opacity }, style]} />;
+  return <Animated.View style={[{ width: size, height: size, borderRadius: size / 2, backgroundColor: Colors.neutral[200], opacity }, style]} />;
 };
 
 export interface TextSkeletonProps {
@@ -69,9 +68,9 @@ export const TextSkeleton: React.FC<TextSkeletonProps> = ({
           style={{
             width: index === lines - 1 ? `${lastLineWidth}%` : '100%',
             height: lineHeight,
-            borderRadius: spacing.borderRadius.sm,
-            backgroundColor: colors.neutral[200],
-            marginBottom: index < lines - 1 ? spacing.scale[2] : 0,
+            borderRadius: BorderRadius.sm,
+            backgroundColor: Colors.neutral[200],
+            marginBottom: index < lines - 1 ? Spacing[2] : 0,
             opacity,
           }}
         />
@@ -88,21 +87,21 @@ export const CardSkeleton: React.FC<CardSkeletonProps> = ({ style }) => {
   const opacity = useShimmerAnimation();
   return (
     <Animated.View style={[styles.card, { opacity }, style]}>
-      <View style={[styles.cardImage, { backgroundColor: colors.neutral[100] }]} />
+      <View style={[styles.cardImage, { backgroundColor: Colors.neutral[100] }]} />
       <View style={styles.cardContent}>
-        <View style={[styles.line, { width: '70%', backgroundColor: colors.neutral[200] }]} />
-        <View style={[styles.line, { width: '50%', backgroundColor: colors.neutral[200] }]} />
-        <View style={[styles.line, { width: '40%', height: 18, backgroundColor: colors.neutral[200] }]} />
+        <View style={[styles.line, { width: '70%', backgroundColor: Colors.neutral[200] }]} />
+        <View style={[styles.line, { width: '50%', backgroundColor: Colors.neutral[200] }]} />
+        <View style={[styles.line, { width: '40%', height: 18, backgroundColor: Colors.neutral[200] }]} />
       </View>
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: colors.neutral.white, borderRadius: spacing.borderRadius.xl, overflow: 'hidden' },
+  card: { backgroundColor: Colors.neutral.white, borderRadius: BorderRadius.xl, overflow: 'hidden' },
   cardImage: { width: '100%', height: 180 },
-  cardContent: { padding: spacing.aliases.md, gap: spacing.scale[2] },
-  line: { height: 14, borderRadius: spacing.borderRadius.sm },
+  cardContent: { padding: Spacing.md, gap: Spacing[2] },
+  line: { height: 14, borderRadius: BorderRadius.sm },
 });
 
 export default Skeleton;

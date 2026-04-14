@@ -6,6 +6,52 @@ interface AISizeBadgeProps {
   recommendation: SizeRecommendation;
 }
 
+const styles = StyleSheet.create({
+  badge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#E8F3EE",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  badgeText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: "#5B8A72",
+  },
+  badgeSize: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#3D5E4D",
+  },
+  detail: {
+    marginTop: 4,
+    padding: 8,
+    backgroundColor: "#F5F5F3",
+    borderRadius: 8,
+    gap: 4,
+  },
+  detailRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  detailLabel: {
+    fontSize: 12,
+    color: "#73736D",
+  },
+  detailValue: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#1A1A18",
+  },
+  reasonText: {
+    fontSize: 11,
+    color: "#52524D",
+  },
+});
+
 export const AISizeBadge: React.FC<AISizeBadgeProps> = ({ recommendation }) => {
   const [expanded, setExpanded] = useState(false);
 

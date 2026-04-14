@@ -1,4 +1,4 @@
-import { unifiedApiClient } from "./apiClient";
+import { unifiedApiClient } from "../apiClient";
 
 /**
  * Push notification settings - per-category toggles with quiet hours

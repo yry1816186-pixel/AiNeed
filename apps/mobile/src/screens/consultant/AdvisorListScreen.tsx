@@ -14,6 +14,7 @@ import { useConsultantStore } from "../../stores/consultantStore";
 import { ConsultantCard } from "../../components/consultant/ConsultantCard";
 import { ServiceTypeChip } from "../../components/consultant/ServiceTypeChip";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SERVICE_TYPES = [
   { label: "全部", value: "" },
@@ -24,6 +25,7 @@ const SERVICE_TYPES = [
 ];
 
 export const AdvisorListScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
   const {
     consultants,
@@ -95,7 +97,7 @@ export const AdvisorListScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
         <Text style={styles.headerTitle}>私人顾问</Text>
         <TouchableOpacity
           style={styles.matchButton}
@@ -198,7 +200,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 56,
     paddingBottom: 12,
     backgroundColor: "#FFFFFF",
   },

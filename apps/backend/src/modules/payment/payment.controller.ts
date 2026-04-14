@@ -51,6 +51,7 @@ export class PaymentController {
   @Post("create")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({ summary: "创建支付订单" })
   @ApiResponse({
     status: 201,
@@ -171,6 +172,7 @@ export class PaymentController {
   @Post("refund")
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @ApiOperation({ summary: "申请退款" })
   @ApiResponse({
     status: 200,

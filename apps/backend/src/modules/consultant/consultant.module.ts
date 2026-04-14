@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 
+import { PaymentModule } from "../payment/payment.module";
 import { PrismaModule } from "../../common/prisma/prisma.module";
 
 import { ConsultantController } from "./consultant.controller";
@@ -9,7 +10,7 @@ import { ConsultantAvailabilityService } from "./consultant-availability.service
 import { ConsultantReviewService } from "./consultant-review.service";
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, PaymentModule],
   controllers: [ConsultantController],
   providers: [
     ConsultantService,

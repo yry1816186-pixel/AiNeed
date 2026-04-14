@@ -87,7 +87,7 @@ export function SwipeRecommendationCard({
     >
       <Image
         source={{ uri: item.mainImage }}
-        style={styles.image}
+        style={styles.image as any}
         resizeMode="cover"
       />
 
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
     borderRadius: DesignTokens.borderRadius.lg,
-    backgroundColor: DesignTokens.colors.surface,
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     overflow: "hidden",
     elevation: 4,
     shadowColor: "#000",
@@ -145,23 +145,23 @@ const styles = StyleSheet.create({
   },
   likeOverlay: {
     right: 20,
-    borderColor: DesignTokens.colors.success,
+    borderColor: DesignTokens.colors.semantic.success,
     backgroundColor: "rgba(74, 222, 128, 0.15)",
   },
   dislikeOverlay: {
     left: 20,
-    borderColor: DesignTokens.colors.error,
+    borderColor: DesignTokens.colors.semantic.error,
     backgroundColor: "rgba(239, 68, 68, 0.15)",
   },
   likeText: {
     fontSize: 20,
     fontWeight: "800",
-    color: DesignTokens.colors.success,
+    color: DesignTokens.colors.semantic.success,
   },
   dislikeText: {
     fontSize: 20,
     fontWeight: "800",
-    color: DesignTokens.colors.error,
+    color: DesignTokens.colors.semantic.error,
   },
   infoBar: {
     paddingHorizontal: 12,
@@ -170,16 +170,16 @@ const styles = StyleSheet.create({
   },
   brandName: {
     fontSize: 12,
-    color: DesignTokens.colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
   },
   price: {
     fontSize: 16,
     fontWeight: "700",
-    color: DesignTokens.colors.text,
+    color: DesignTokens.colors.text.primary,
   },
   matchReason: {
     fontSize: 11,
-    color: DesignTokens.colors.primary,
+    color: DesignTokens.colors.brand.terracotta,
     fontWeight: "500",
   },
   actionHints: {
@@ -193,6 +193,6 @@ const styles = StyleSheet.create({
   },
   hintText: {
     fontSize: 10,
-    color: DesignTokens.colors.textTertiary,
+    color: DesignTokens.colors.text.tertiary,
   },
 });

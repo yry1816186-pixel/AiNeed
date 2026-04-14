@@ -15,7 +15,7 @@ import { StockNotificationService } from "./stock-notification.service";
 import { SubscribeDto } from "./dto";
 
 @ApiTags("stock-notifications")
-@Controller("api/v1/stock-notifications")
+@Controller("stock-notifications")
 export class StockNotificationController {
   constructor(
     private readonly stockNotificationService: StockNotificationService,

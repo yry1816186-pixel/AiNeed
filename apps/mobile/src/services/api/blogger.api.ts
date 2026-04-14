@@ -194,6 +194,7 @@ export const bloggerApi = {
         total,
         page,
         pageSize,
+        limit: pageSize,
         totalPages: meta.totalPages ?? (pageSize > 0 ? Math.ceil(total / pageSize) : 0),
         hasMore: page * pageSize < total,
       },

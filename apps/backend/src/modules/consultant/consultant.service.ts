@@ -8,6 +8,7 @@ import {
 import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
+import { PaymentService } from "../payment/payment.service";
 
 import {
   CreateConsultantProfileDto,
@@ -27,7 +28,10 @@ const asJson = (value: unknown): Prisma.InputJsonValue => value as Prisma.InputJ
 export class ConsultantService {
   private readonly logger = new Logger(ConsultantService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly paymentService: PaymentService,
+  ) {}
 
   // ==================== 顾问档案 ====================
 
@@ -420,7 +424,16 @@ export class ConsultantService {
             this.logger.log(
               `预约 ${bookingId} 提前24h取消，全额退定金 ${booking.depositAmount}`,
             );
-            // TODO: 触发全额退款流程（集成 PaymentModule.refund）
+            try {
+              await this.paymentService.refund(userId, {
+                orderId: bookingId,
+                amount: Number(booking.depositAmount),
+                reason: `顾问预约提前24h取消，全额退定金`,
+              });
+            } catch (refundErr) {
+              const msg = refundErr instanceof Error ? refundErr.message : String(refundErr);
+              this.logger.warn(`全额定金退款失败 (booking=${bookingId}): ${msg}`);
+            }
           } else {
             // 24h 内取消，扣定金 20% 给用户补偿，80% 退回
             const penaltyAmount = Number(booking.depositAmount) * ConsultantService.LATE_CANCEL_PENALTY_RATE;
@@ -428,7 +441,16 @@ export class ConsultantService {
             this.logger.log(
               `预约 ${bookingId} 24h内取消，退定金80%: ${refundAmount}，扣20%: ${penaltyAmount}`,
             );
-            // TODO: 触发部分退款流程（集成 PaymentModule.refund）
+            try {
+              await this.paymentService.refund(userId, {
+                orderId: bookingId,
+                amount: refundAmount,
+                reason: `顾问预约24h内取消，退定金80%（扣违约金20%: ${penaltyAmount}）`,
+              });
+            } catch (refundErr) {
+              const msg = refundErr instanceof Error ? refundErr.message : String(refundErr);
+              this.logger.warn(`部分定金退款失败 (booking=${bookingId}): ${msg}`);
+            }
           }
         }
       }
@@ -758,7 +780,10 @@ export class ConsultantService {
     if (profile.status !== "pending")
       throw new BadRequestException("仅待审核档案可审核");
 
-    // TODO: Verify adminUserId is an admin (Phase 5 merchant review pattern)
+    const adminUser = await this.prisma.user.findUnique({ where: { id: adminUserId } });
+    if (!adminUser || adminUser.role !== "admin") {
+      throw new ForbiddenException("仅管理员可审核顾问档案");
+    }
 
     return this.prisma.consultantProfile.update({
       where: { id: profileId },

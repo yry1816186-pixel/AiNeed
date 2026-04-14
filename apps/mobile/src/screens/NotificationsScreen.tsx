@@ -99,7 +99,7 @@ export const NotificationsScreen: React.FC = () => {
 
   // WebSocket listener for social notifications
   useEffect(() => {
-    const handleSocialNotification = (payload: { type: string; data?: Record<string, unknown> }) => {
+    const handleSocialNotification = (..._args: unknown[]) => {
       fetchNotifications(true);
     };
 

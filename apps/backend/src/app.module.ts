@@ -1,11 +1,11 @@
 import { resolve } from "path";
 
 import { Module, MiddlewareConsumer, RequestMethod, NestModule } from "@nestjs/common";
-import { APP_INTERCEPTOR } from "@nestjs/core";
+import { APP_INTERCEPTOR, APP_GUARD } from "@nestjs/core";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { EventEmitterModule } from "@nestjs/event-emitter";
 import { ScheduleModule } from "@nestjs/schedule";
-import { ThrottlerModule } from "@nestjs/throttler";
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
 import { MulterModule } from "@nestjs/platform-express";
 
 import { envValidationFactory } from "./common/config/env.validation";
@@ -166,6 +166,10 @@ import { MetricsService } from "./modules/metrics/metrics.service";
     {
       provide: APP_INTERCEPTOR,
       useClass: PerformanceInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })

@@ -35,6 +35,7 @@ import {
   Shadows,
   Typography,
 } from "../../theme";
+import { useReducedMotion } from "../../hooks/useReducedMotion";
 
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 
@@ -66,16 +67,18 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   baseColor = Colors.neutral[200],
 }) => {
   const shimmerProgress = useSharedValue(0);
+  const { reducedMotion } = useReducedMotion();
+  const shouldAnimate = animated && !reducedMotion;
 
   useEffect(() => {
-    if (animated) {
+    if (shouldAnimate) {
       shimmerProgress.value = withRepeat(
         withTiming(1, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
         -1,
         false,
       );
     }
-  }, [animated]);
+  }, [shouldAnimate]);
 
   const shimmerAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -96,7 +99,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
         style,
       ]}
     >
-      {animated && (
+      {animated && !reducedMotion && (
         <View style={styles.shimmerContainer}>
           <AnimatedView style={[styles.shimmer, shimmerAnimatedStyle]}>
             <LinearGradient
@@ -304,6 +307,8 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
 }) => {
   const animatedProgress = useSharedValue(0);
   const scale = useSharedValue(1);
+  const { reducedMotion } = useReducedMotion();
+  const shouldAnimate = animated && !reducedMotion;
 
   const sizeMap = {
     small: { width: 80, height: 4, fontSize: 10 },
@@ -314,7 +319,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   const config = sizeMap[size];
 
   useEffect(() => {
-    if (animated) {
+    if (shouldAnimate) {
       animatedProgress.value = withSpring(progress, {
         damping: 15,
         stiffness: 100,
@@ -322,7 +327,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
     } else {
       animatedProgress.value = progress;
     }
-  }, [progress, animated]);
+  }, [progress, shouldAnimate]);
 
   const progressAnimatedStyle = useAnimatedStyle(() => ({
     width: `${animatedProgress.value * 100}%`,
@@ -402,12 +407,14 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
 }) => {
   const animatedProgress = useSharedValue(0);
   const rotation = useSharedValue(0);
+  const { reducedMotion } = useReducedMotion();
+  const shouldAnimate = animated && !reducedMotion;
 
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
 
   useEffect(() => {
-    if (animated) {
+    if (shouldAnimate) {
       animatedProgress.value = withSpring(progress, {
         damping: 15,
         stiffness: 80,
@@ -415,17 +422,17 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
     } else {
       animatedProgress.value = progress;
     }
-  }, [progress, animated]);
+  }, [progress, shouldAnimate]);
 
   useEffect(() => {
-    if (progress < 1) {
+    if (shouldAnimate && progress < 1) {
       rotation.value = withRepeat(
         withTiming(360, { duration: 3000, easing: Easing.linear }),
         -1,
         false,
       );
     }
-  }, [progress]);
+  }, [progress, shouldAnimate]);
 
   const strokeDashoffset = useDerivedValue(() => {
     return circumference * (1 - animatedProgress.value);
@@ -498,8 +505,10 @@ const LoadingDot: React.FC<LoadingDotProps> = ({
   color,
 }) => {
   const progress = useSharedValue(0);
+  const { reducedMotion } = useReducedMotion();
 
   useEffect(() => {
+    if (reducedMotion) return;
     progress.value = withDelay(
       index * 150,
       withRepeat(
@@ -511,7 +520,7 @@ const LoadingDot: React.FC<LoadingDotProps> = ({
         false,
       ),
     );
-  }, [index, progress]);
+  }, [index, progress, reducedMotion]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -582,6 +591,7 @@ export const BrandLoader: React.FC<BrandLoaderProps> = ({
   const opacity = useSharedValue(0.5);
   const rotation = useSharedValue(0);
   const textOpacity = useSharedValue(0);
+  const { reducedMotion } = useReducedMotion();
 
   const sizeMap = {
     small: { logoSize: 40, fontSize: 12 },
@@ -592,6 +602,13 @@ export const BrandLoader: React.FC<BrandLoaderProps> = ({
   const config = sizeMap[size];
 
   useEffect(() => {
+    if (reducedMotion) {
+      scale.value = 1;
+      opacity.value = 1;
+      textOpacity.value = 1;
+      return;
+    }
+
     scale.value = withRepeat(
       withSequence(
         withSpring(1.1, { damping: 8, stiffness: 100 }),
@@ -617,7 +634,7 @@ export const BrandLoader: React.FC<BrandLoaderProps> = ({
     );
 
     textOpacity.value = withDelay(300, withTiming(1, { duration: 500 }));
-  }, []);
+  }, [reducedMotion]);
 
   const logoAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -732,8 +749,13 @@ interface WaveBarProps {
 
 const WaveBar: React.FC<WaveBarProps> = ({ index, size, color }) => {
   const scaleY = useSharedValue(0.3);
+  const { reducedMotion } = useReducedMotion();
 
   useEffect(() => {
+    if (reducedMotion) {
+      scaleY.value = 0.6;
+      return;
+    }
     scaleY.value = withDelay(
       index * 100,
       withRepeat(
@@ -745,7 +767,7 @@ const WaveBar: React.FC<WaveBarProps> = ({ index, size, color }) => {
         false,
       ),
     );
-  }, [index, scaleY]);
+  }, [index, scaleY, reducedMotion]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scaleY: scaleY.value }],
@@ -798,8 +820,11 @@ export const PulseLoader: React.FC<PulseLoaderProps> = ({
 }) => {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
+  const { reducedMotion } = useReducedMotion();
 
   useEffect(() => {
+    if (reducedMotion) return;
+
     scale.value = withRepeat(
       withSequence(
         withTiming(1.5, { duration: 600, easing: Easing.out(Easing.ease) }),
@@ -817,7 +842,7 @@ export const PulseLoader: React.FC<PulseLoaderProps> = ({
       -1,
       false,
     );
-  }, []);
+  }, [reducedMotion]);
 
   const outerAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -868,8 +893,11 @@ export const OrbitLoader: React.FC<OrbitLoaderProps> = ({
 }) => {
   const rotation = useSharedValue(0);
   const dotRotation = useSharedValue(0);
+  const { reducedMotion } = useReducedMotion();
 
   useEffect(() => {
+    if (reducedMotion) return;
+
     rotation.value = withRepeat(
       withTiming(360, { duration: 1500, easing: Easing.linear }),
       -1,
@@ -881,7 +909,7 @@ export const OrbitLoader: React.FC<OrbitLoaderProps> = ({
       -1,
       false,
     );
-  }, []);
+  }, [reducedMotion]);
 
   const orbitAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ rotateZ: `${rotation.value}deg` }],

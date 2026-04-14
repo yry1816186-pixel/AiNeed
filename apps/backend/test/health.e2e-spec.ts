@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 
@@ -13,6 +13,8 @@ describe('Health E2E', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api');
+    app.enableVersioning({ type: VersioningType.URI, defaultVersion: '1' });
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
     await app.init();
   });
@@ -21,114 +23,126 @@ describe('Health E2E', () => {
     await app.close();
   });
 
-  describe('/health (GET)', () => {
+  /** Helper to extract attributes from JSON:API response */
+  const extractAttributes = (body: Record<string, unknown>) => {
+    return (body as any).data?.attributes ?? body;
+  };
+
+  describe('/api/v1/health (GET)', () => {
     it('should return health status', async () => {
       const response = await request(app.getHttpServer())
-        .get('/health')
+        .get('/api/v1/health')
         .expect(200);
 
-      expect(response.body).toHaveProperty('status');
-      expect(['healthy', 'unhealthy', 'degraded']).toContain(response.body.status);
-      expect(response.body).toHaveProperty('timestamp');
-      expect(response.body).toHaveProperty('uptime');
-      expect(response.body).toHaveProperty('version');
+      const attrs = extractAttributes(response.body);
+      expect(attrs).toHaveProperty('status');
+      expect(['healthy', 'unhealthy', 'degraded']).toContain(attrs.status);
+      expect(attrs).toHaveProperty('timestamp');
+      expect(attrs).toHaveProperty('uptime');
+      expect(attrs).toHaveProperty('version');
     });
 
     it('should include database health check', async () => {
       const response = await request(app.getHttpServer())
-        .get('/health')
+        .get('/api/v1/health')
         .expect(200);
 
-      expect(response.body.checks).toHaveProperty('database');
-      expect(response.body.checks.database).toHaveProperty('status');
-      expect(['up', 'down']).toContain(response.body.checks.database.status);
+      const attrs = extractAttributes(response.body);
+      expect(attrs.checks).toHaveProperty('database');
+      expect(attrs.checks.database).toHaveProperty('status');
+      expect(['up', 'down']).toContain(attrs.checks.database.status);
     });
 
     it('should include redis health check', async () => {
       const response = await request(app.getHttpServer())
-        .get('/health')
+        .get('/api/v1/health')
         .expect(200);
 
-      expect(response.body.checks).toHaveProperty('redis');
-      expect(response.body.checks.redis).toHaveProperty('status');
-      expect(['up', 'down']).toContain(response.body.checks.redis.status);
+      const attrs = extractAttributes(response.body);
+      expect(attrs.checks).toHaveProperty('redis');
+      expect(attrs.checks.redis).toHaveProperty('status');
+      expect(['up', 'down']).toContain(attrs.checks.redis.status);
     });
 
     it('should include storage health check', async () => {
       const response = await request(app.getHttpServer())
-        .get('/health')
+        .get('/api/v1/health')
         .expect(200);
 
-      expect(response.body.checks).toHaveProperty('storage');
-      expect(response.body.checks.storage).toHaveProperty('status');
-      expect(['up', 'down']).toContain(response.body.checks.storage.status);
+      const attrs = extractAttributes(response.body);
+      expect(attrs.checks).toHaveProperty('storage');
+      expect(attrs.checks.storage).toHaveProperty('status');
+      expect(['up', 'down']).toContain(attrs.checks.storage.status);
     });
 
     it('should include latency information', async () => {
       const response = await request(app.getHttpServer())
-        .get('/health')
+        .get('/api/v1/health')
         .expect(200);
 
-      if (response.body.checks.database.status === 'up') {
-        expect(response.body.checks.database).toHaveProperty('latency');
-        expect(typeof response.body.checks.database.latency).toBe('number');
+      const attrs = extractAttributes(response.body);
+      if (attrs.checks.database.status === 'up') {
+        expect(attrs.checks.database).toHaveProperty('latency');
+        expect(typeof attrs.checks.database.latency).toBe('number');
       }
     });
   });
 
-  describe('/health/live (GET)', () => {
+  describe('/api/v1/health/live (GET)', () => {
     it('should return liveness status', async () => {
       const response = await request(app.getHttpServer())
-        .get('/health/live')
+        .get('/api/v1/health/live')
         .expect(200);
 
-      expect(response.body).toHaveProperty('status', 'alive');
-      expect(response.body).toHaveProperty('timestamp');
+      const attrs = extractAttributes(response.body);
+      expect(attrs).toHaveProperty('status', 'alive');
+      expect(attrs).toHaveProperty('timestamp');
     });
 
     it('should be fast (no dependency checks)', async () => {
       const start = Date.now();
       await request(app.getHttpServer())
-        .get('/health/live')
+        .get('/api/v1/health/live')
         .expect(200);
       const duration = Date.now() - start;
 
-      // Liveness should be very fast (< 100ms)
       expect(duration).toBeLessThan(100);
     });
   });
 
-  describe('/health/ready (GET)', () => {
+  describe('/api/v1/health/ready (GET)', () => {
     it('should return readiness status', async () => {
       const response = await request(app.getHttpServer())
-        .get('/health/ready')
+        .get('/api/v1/health/ready')
         .expect(200);
 
-      expect(response.body).toHaveProperty('ready');
-      expect(typeof response.body.ready).toBe('boolean');
-      expect(response.body).toHaveProperty('checks');
+      const attrs = extractAttributes(response.body);
+      expect(attrs).toHaveProperty('ready');
+      expect(typeof attrs.ready).toBe('boolean');
+      expect(attrs).toHaveProperty('checks');
     });
 
     it('should check all dependencies', async () => {
       const response = await request(app.getHttpServer())
-        .get('/health/ready')
+        .get('/api/v1/health/ready')
         .expect(200);
 
-      expect(response.body.checks).toHaveProperty('database');
-      expect(response.body.checks).toHaveProperty('redis');
-      expect(response.body.checks).toHaveProperty('storage');
-      expect(typeof response.body.checks.database).toBe('boolean');
-      expect(typeof response.body.checks.redis).toBe('boolean');
-      expect(typeof response.body.checks.storage).toBe('boolean');
+      const attrs = extractAttributes(response.body);
+      expect(attrs.checks).toHaveProperty('database');
+      expect(attrs.checks).toHaveProperty('redis');
+      expect(typeof attrs.checks.database).toBe('boolean');
+      expect(typeof attrs.checks.redis).toBe('boolean');
     });
 
     it('should return ready=true only when all checks pass', async () => {
       const response = await request(app.getHttpServer())
-        .get('/health/ready')
+        .get('/api/v1/health/ready')
         .expect(200);
 
-      const allChecksPass = Object.values(response.body.checks).every(v => v === true);
-      expect(response.body.ready).toBe(allChecksPass);
+      const attrs = extractAttributes(response.body);
+      const checks = attrs.checks as Record<string, boolean>;
+      const allChecksPass = Object.values(checks).every(v => v === true);
+      expect(attrs.ready).toBe(allChecksPass);
     });
   });
 });

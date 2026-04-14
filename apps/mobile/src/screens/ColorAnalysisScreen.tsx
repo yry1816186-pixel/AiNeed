@@ -13,6 +13,7 @@ import { Ionicons } from "../polyfills/expo-vector-icons";
 import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
 import { useProfileStore } from "../stores/profileStore";
 import { ScreenLayout, Header } from "../components/layout/ScreenLayout";
+import { SeasonPalette } from "../components/visualization/SeasonPalette";
 import type { RootStackParamList } from "../types/navigation";
 
 type ColorAnalysisNavProp = NavigationProp<RootStackParamList>;
@@ -33,29 +34,29 @@ const COLOR_SEASON_NAMES: Record<string, { name: string; nameEn: string }> = {
 };
 
 const SEASON_GRADIENTS: Record<string, [string, string]> = {
-  spring_warm: ["#FFB6C1", "#FFDAB9"],
-  spring_light: ["#FFDAB9", "#FFFDD0"],
-  spring: ["#FFB6C1", "#FFDAB9"],
-  summer_cool: ["#C9B8A6", "#D4C5B9"],
-  summer_light: ["#D4C5B9", "#E6E6FA"],
-  summer: ["#C9B8A6", "#D4C5B9"],
-  autumn_warm: ["#D9A441", "#B5A08C"],
-  autumn_deep: ["#A86548", "#8B9A7D"],
-  autumn: ["#D9A441", "#B5A08C"],
-  winter_cool: ["#1E3A5F", "#5F6F7F"],
-  winter_deep: ["#36454F", "#1E3A5F"],
-  winter: ["#1E3A5F", "#5F6F7F"],
+  spring_warm: [Colors.colorSeasons.spring.colors[0], Colors.colorSeasons.spring.colors[1]],
+  spring_light: [Colors.colorSeasons.spring.colors[1], Colors.colorSeasons.spring.bg],
+  spring: [Colors.colorSeasons.spring.colors[0], Colors.colorSeasons.spring.colors[1]],
+  summer_cool: [Colors.colorSeasons.summer.colors[0], Colors.colorSeasons.summer.colors[1]],
+  summer_light: [Colors.colorSeasons.summer.colors[1], Colors.colorSeasons.summer.bg],
+  summer: [Colors.colorSeasons.summer.colors[0], Colors.colorSeasons.summer.colors[1]],
+  autumn_warm: [Colors.colorSeasons.autumn.colors[0], Colors.colorSeasons.autumn.colors[1]],
+  autumn_deep: [Colors.colorSeasons.autumn.colors[2], Colors.colorSeasons.autumn.colors[3]],
+  autumn: [Colors.colorSeasons.autumn.colors[0], Colors.colorSeasons.autumn.colors[1]],
+  winter_cool: [Colors.colorSeasons.winter.colors[0], Colors.colorSeasons.winter.colors[1]],
+  winter_deep: [Colors.colorSeasons.winter.colors[2], Colors.colorSeasons.winter.colors[3]],
+  winter: [Colors.colorSeasons.winter.colors[0], Colors.colorSeasons.winter.colors[1]],
 };
 
 const DEFAULT_PALETTE = [
-  { hex: "#C67B5C", name: "赤陶" },
-  { hex: "#D9A441", name: "琥珀" },
-  { hex: "#B5A08C", name: "驼色" },
-  { hex: "#8B9A7D", name: "橄榄" },
-  { hex: "#E8B451", name: "蜂蜜" },
-  { hex: "#5B8A72", name: "苔绿" },
-  { hex: "#C9B8A6", name: "米灰" },
-  { hex: "#A86548", name: "赭石" },
+  { hex: Colors.colorSeasons.autumn.colors[0], name: '赤陶' },
+  { hex: '#D9A441', name: '琥珀' },
+  { hex: Colors.colorSeasons.autumn.colors[3], name: '驼色' },
+  { hex: '#8B9A7D', name: '橄榄' },
+  { hex: '#E8B451', name: '蜂蜜' },
+  { hex: '#5B8A72', name: '苔绿' },
+  { hex: Colors.colorSeasons.summer.colors[1], name: '米灰' },
+  { hex: Colors.colorSeasons.autumn.colors[2], name: '赭石' },
 ];
 
 export const ColorAnalysisScreen: React.FC = () => {
@@ -189,6 +190,11 @@ export const ColorAnalysisScreen: React.FC = () => {
               </View>
             ))}
           </View>
+        </View>
+
+        {/* Season palette visualization */}
+        <View style={styles.paletteCard}>
+          <SeasonPalette season={seasonType} bestColors={bestColors} avoidColors={avoidColors} />
         </View>
 
         {/* Neutral colors */}

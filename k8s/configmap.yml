@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: xuneed
+data:
+  NODE_ENV: "production"
+  BACKEND_URL: "https://api.xuneed.com"
+  PORT: "3001"
+  JWT_ACCESS_EXPIRES_IN: "15m"
+  JWT_REFRESH_EXPIRES_IN: "7d"
+  REDIS_URL: "redis://redis:6379"

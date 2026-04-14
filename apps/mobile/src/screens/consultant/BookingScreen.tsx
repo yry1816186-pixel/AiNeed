@@ -14,6 +14,7 @@ import { useConsultantStore } from "../../stores/consultantStore";
 import { CalendarGrid } from "../../components/consultant/CalendarGrid";
 import { TimeSlotItem } from "../../components/consultant/TimeSlotItem";
 import { ServiceTypeChip } from "../../components/consultant/ServiceTypeChip";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SERVICE_TYPES = [
   { label: "整体形象改造", value: "styling_consultation" },
@@ -23,6 +24,7 @@ const SERVICE_TYPES = [
 ];
 
 export const BookingScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
   const { availableSlots, fetchAvailableSlots, createBooking, isLoading } =
@@ -82,7 +84,7 @@ export const BookingScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backBtnText}>{"<"}</Text>
         </TouchableOpacity>
@@ -185,7 +187,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 56,
     paddingBottom: 8,
   },
   backBtn: { padding: 8 },

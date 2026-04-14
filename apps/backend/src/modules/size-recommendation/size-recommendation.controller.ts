@@ -11,7 +11,7 @@ import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { SizeRecommendationService } from "./size-recommendation.service";
 
 @ApiTags("size-recommendation")
-@Controller("api/v1/size-recommendation")
+@Controller("size-recommendation")
 export class SizeRecommendationController {
   constructor(
     private readonly sizeRecommendationService: SizeRecommendationService,

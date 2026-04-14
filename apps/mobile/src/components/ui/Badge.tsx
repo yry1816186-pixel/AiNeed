@@ -1,8 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
-import { colors } from '../../theme/colors';
-import { typography } from '../../theme/typography';
-import { spacing } from '../../theme/spacing';
+import { Colors, Spacing, BorderRadius, Typography } from '../../theme';
 
 export type BadgeVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'neutral' | 'gold' | 'season';
 export type BadgeSize = 'sm' | 'md' | 'lg';
@@ -26,20 +24,20 @@ export interface SeasonBadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, { bg: string; text: string }> = {
-  primary: { bg: colors.primary[100], text: colors.primary[700] },
-  secondary: { bg: colors.secondary[100], text: colors.secondary[700] },
-  success: { bg: colors.semantic.successLight, text: '#1B7A3D' },
-  warning: { bg: colors.semantic.warningLight, text: '#8B6914' },
-  error: { bg: colors.semantic.errorLight, text: '#A12525' },
-  neutral: { bg: colors.neutral[100], text: colors.neutral[700] },
-  gold: { bg: colors.gold[100], text: colors.gold[700] },
-  season: { bg: colors.neutral[50], text: colors.primary[500] },
+  primary: { bg: Colors.primary[100], text: Colors.primary[700] },
+  secondary: { bg: Colors.sage[100], text: Colors.sage[700] },
+  success: { bg: Colors.semantic.successLight, text: '#1B7A3D' },
+  warning: { bg: Colors.semantic.warningLight, text: '#8B6914' },
+  error: { bg: Colors.semantic.errorLight, text: '#A12525' },
+  neutral: { bg: Colors.neutral[100], text: Colors.neutral[700] },
+  gold: { bg: Colors.amber[100], text: Colors.amber[700] },
+  season: { bg: Colors.neutral[50], text: Colors.primary[500] },
 };
 
 const sizeStyles: Record<BadgeSize, { paddingHorizontal: number; paddingVertical: number; fontSize: number; borderRadius: number }> = {
-  sm: { paddingHorizontal: spacing.scale[2], paddingVertical: spacing.scale[1], fontSize: typography.fontSize['2xs'], borderRadius: spacing.borderRadius.sm },
-  md: { paddingHorizontal: spacing.aliases.sm, paddingVertical: spacing.scale[2], fontSize: typography.fontSize.xs, borderRadius: spacing.borderRadius.md },
-  lg: { paddingHorizontal: spacing.aliases.md, paddingVertical: spacing.aliases.sm, fontSize: typography.fontSize.sm, borderRadius: spacing.borderRadius.lg },
+  sm: { paddingHorizontal: Spacing[2], paddingVertical: Spacing[1], fontSize: Typography.sizes.xs, borderRadius: BorderRadius.sm },
+  md: { paddingHorizontal: Spacing.sm, paddingVertical: Spacing[2], fontSize: Typography.sizes.xs, borderRadius: BorderRadius.md },
+  lg: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, fontSize: Typography.sizes.sm, borderRadius: BorderRadius.lg },
 };
 
 export const Badge: React.FC<BadgeProps> = ({
@@ -71,7 +69,7 @@ export const Badge: React.FC<BadgeProps> = ({
 };
 
 export const SeasonBadge: React.FC<SeasonBadgeProps> = ({ season, size = 'md', style }) => {
-  const seasonData = colors.colorSeasons[season];
+  const seasonData = Colors.colorSeasons[season];
   const sStyle = sizeStyles[size];
 
   return (
@@ -81,7 +79,7 @@ export const SeasonBadge: React.FC<SeasonBadgeProps> = ({ season, size = 'md', s
           <View key={i} style={[styles.seasonDot, { backgroundColor: color }]} />
         ))}
       </View>
-      <Text style={{ fontSize: sStyle.fontSize, color: colors.primary[700], fontWeight: '600' }}>
+      <Text style={{ fontSize: sStyle.fontSize, color: Colors.primary[700], fontWeight: '600' }}>
         {seasonData.label}
       </Text>
     </View>
@@ -90,9 +88,9 @@ export const SeasonBadge: React.FC<SeasonBadgeProps> = ({ season, size = 'md', s
 
 const styles = StyleSheet.create({
   badge: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start' },
-  iconContainer: { marginRight: spacing.scale[1] },
+  iconContainer: { marginRight: Spacing[1] },
   seasonBadge: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start' },
-  seasonDots: { flexDirection: 'row', marginRight: spacing.scale[2] },
+  seasonDots: { flexDirection: 'row', marginRight: Spacing[2] },
   seasonDot: { width: 8, height: 8, borderRadius: 4, marginRight: 2 },
 });
 

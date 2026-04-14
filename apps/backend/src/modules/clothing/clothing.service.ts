@@ -10,7 +10,7 @@ import {
 import { CacheKeyBuilder, CACHE_TTL } from "../cache/cache.constants";
 import { CacheService } from "../cache/cache.service";
 
-interface BrandSummary {
+export interface BrandSummary {
   id: string;
   name: string;
   logo: string | null;
@@ -531,18 +531,25 @@ export class ClothingService {
       distinct: ["category", "subcategory"],
     });
 
+    // Single groupBy query instead of N+1 count() per subcategory
+    const whereForCount: Prisma.ClothingItemWhereInput = {
+      isActive: true,
+      isDeleted: false,
+      subcategory: { not: null },
+      ...(category ? { category } : {}),
+    };
+
+    const counts = await this.prisma.clothingItem.groupBy({
+      by: ['category', 'subcategory'],
+      where: whereForCount,
+      _count: { subcategory: true },
+    });
+
     const grouped: Record<string, Array<{ name: string; count: number }>> = {};
-    for (const item of items) {
-      if (!item.subcategory) continue;
-      const cat = item.category;
+    for (const row of counts) {
+      const cat = row.category;
       if (!grouped[cat]) grouped[cat] = [];
-
-      // Count items in this subcategory
-      const count = await this.prisma.clothingItem.count({
-        where: { category: cat, subcategory: item.subcategory, isActive: true, isDeleted: false },
-      });
-
-      grouped[cat].push({ name: item.subcategory, count });
+      grouped[cat].push({ name: row.subcategory!, count: row._count.subcategory });
     }
 
     if (category) {
@@ -611,5 +618,308 @@ export class ClothingService {
     }
 
     return outfits;
+  }
+
+  async create(userId: string, data: {
+    name: string;
+    category: ClothingCategory;
+    subcategory?: string;
+    brandId?: string;
+    price: number;
+    originalPrice?: number;
+    description?: string;
+    mainImage?: string;
+    images?: string[];
+    colors?: string[];
+    sizes?: string[];
+    tags?: string[];
+    externalUrl?: string;
+  }) {
+    const createData: Prisma.ClothingItemCreateInput = {
+      name: data.name,
+      category: data.category,
+      price: data.price,
+      isActive: true,
+      isDeleted: false,
+      isFeatured: false,
+      currency: "CNY",
+      ...(data.subcategory !== undefined && { subcategory: data.subcategory }),
+      ...(data.brandId !== undefined && {
+        brand: { connect: { id: data.brandId } },
+      }),
+      ...(data.originalPrice !== undefined && { originalPrice: data.originalPrice }),
+      ...(data.description !== undefined && { description: data.description }),
+      ...(data.mainImage !== undefined && { mainImage: data.mainImage }),
+      ...(data.images !== undefined && { images: data.images }),
+      ...(data.colors !== undefined && { colors: data.colors }),
+      ...(data.sizes !== undefined && { sizes: data.sizes }),
+      ...(data.tags !== undefined && { tags: data.tags }),
+      ...(data.externalUrl !== undefined && { externalUrl: data.externalUrl }),
+    };
+
+    const item = await this.prisma.clothingItem.create({
+      data: createData,
+      include: {
+        brand: { select: { id: true, name: true, logo: true } },
+      },
+    });
+
+    this.logger.log(`用户 ${userId} 创建了服装商品: ${item.id}`);
+    return normalizeClothingItem(item as unknown as ClothingItemWithBrandDetail);
+  }
+
+  async update(id: string, data: {
+    name?: string;
+    category?: ClothingCategory;
+    subcategory?: string;
+    brandId?: string;
+    price?: number;
+    originalPrice?: number;
+    description?: string;
+    mainImage?: string;
+    images?: string[];
+    colors?: string[];
+    sizes?: string[];
+    tags?: string[];
+    externalUrl?: string;
+  }) {
+    const existing = await this.prisma.clothingItem.findFirst({
+      where: { id, isDeleted: false },
+    });
+
+    if (!existing) {
+      throw new NotFoundException("商品不存在");
+    }
+
+    const updateData: Record<string, unknown> = {};
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.category !== undefined) updateData.category = data.category;
+    if (data.subcategory !== undefined) updateData.subcategory = data.subcategory;
+    if (data.price !== undefined) updateData.price = data.price;
+    if (data.originalPrice !== undefined) updateData.originalPrice = data.originalPrice;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.mainImage !== undefined) updateData.mainImage = data.mainImage;
+    if (data.images !== undefined) updateData.images = data.images;
+    if (data.colors !== undefined) updateData.colors = data.colors;
+    if (data.sizes !== undefined) updateData.sizes = data.sizes;
+    if (data.tags !== undefined) updateData.tags = data.tags;
+    if (data.externalUrl !== undefined) updateData.externalUrl = data.externalUrl;
+
+    if (data.brandId !== undefined) {
+      updateData.brand = { connect: { id: data.brandId } };
+    }
+
+    const item = await this.prisma.clothingItem.update({
+      where: { id },
+      data: updateData,
+      include: {
+        brand: { select: { id: true, name: true, logo: true } },
+      },
+    });
+
+    // Invalidate cache after update
+    await Promise.all([
+      this.cacheService.del(CacheKeyBuilder.clothingDetail(id)),
+      this.cacheService.delPattern("clothing:list"),
+    ]);
+
+    this.logger.log(`更新了服装商品: ${id}`);
+    return normalizeClothingItem(item as unknown as ClothingItemWithBrandDetail);
+  }
+
+  async remove(id: string) {
+    const existing = await this.prisma.clothingItem.findFirst({
+      where: { id, isDeleted: false },
+    });
+
+    if (!existing) {
+      throw new NotFoundException("商品不存在");
+    }
+
+    await this.prisma.clothingItem.update({
+      where: { id },
+      data: {
+        isDeleted: true,
+        deletedAt: new Date(),
+      },
+    });
+
+    // Invalidate cache after delete
+    await Promise.all([
+      this.cacheService.del(CacheKeyBuilder.clothingDetail(id)),
+      this.cacheService.delPattern("clothing:list"),
+    ]);
+
+    this.logger.log(`软删除了服装商品: ${id}`);
+  }
+
+  async search(query: string, filters?: {
+    category?: ClothingCategory;
+    minPrice?: number;
+    maxPrice?: number;
+    sizes?: string[];
+  }): Promise<ClothingItemResponse[]> {
+    const where: Prisma.ClothingItemWhereInput = {
+      isActive: true,
+      isDeleted: false,
+      OR: [
+        { name: { contains: query, mode: "insensitive" } },
+        { description: { contains: query, mode: "insensitive" } },
+        { tags: { has: query } },
+      ],
+    };
+
+    if (filters?.category) {
+      where.category = filters.category;
+    }
+
+    if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
+      where.price = {};
+      if (filters?.minPrice !== undefined) {
+        (where.price as Prisma.DecimalFilter).gte = filters.minPrice;
+      }
+      if (filters?.maxPrice !== undefined) {
+        (where.price as Prisma.DecimalFilter).lte = filters.maxPrice;
+      }
+    }
+
+    if (filters?.sizes && filters.sizes.length > 0) {
+      where.sizes = { hasSome: filters.sizes };
+    }
+
+    const items = await this.prisma.clothingItem.findMany({
+      where,
+      include: {
+        brand: { select: { id: true, name: true, logo: true } },
+      },
+      orderBy: { viewCount: "desc" },
+      take: 50,
+    });
+
+    return normalizeClothingItems(items as unknown as ClothingItemWithBrandDetail[]);
+  }
+
+  async getStats(userId: string) {
+    const baseWhere = { isActive: true, isDeleted: false };
+
+    const [total, byCategory, allItems] = await Promise.all([
+      this.prisma.clothingItem.count({ where: baseWhere }),
+      this.prisma.clothingItem.groupBy({
+        by: ["category"],
+        where: baseWhere,
+        _count: { category: true },
+      }),
+      this.prisma.clothingItem.findMany({
+        where: baseWhere,
+        select: {
+          id: true,
+          name: true,
+          viewCount: true,
+          tags: true,
+          category: true,
+        },
+        orderBy: { viewCount: "desc" },
+      }),
+    ]);
+
+    const byCategoryMap: Record<string, number> = {};
+    for (const group of byCategory) {
+      byCategoryMap[group.category] = group._count.category;
+    }
+
+    // Extract season stats from tags
+    const seasonKeywords = ["spring", "summer", "autumn", "winter", "春", "夏", "秋", "冬"];
+    const bySeason: Record<string, number> = {};
+    for (const item of allItems) {
+      for (const tag of item.tags) {
+        const lowerTag = tag.toLowerCase();
+        for (const season of seasonKeywords) {
+          if (lowerTag.includes(season)) {
+            bySeason[season] = (bySeason[season] || 0) + 1;
+          }
+        }
+      }
+    }
+
+    const mostWorn = allItems.slice(0, 5).map((item) => ({
+      id: item.id,
+      name: item.name,
+      viewCount: item.viewCount,
+    }));
+
+    const leastWorn = allItems.slice(-5).reverse().map((item) => ({
+      id: item.id,
+      name: item.name,
+      viewCount: item.viewCount,
+    }));
+
+    this.logger.log(`用户 ${userId} 获取服装统计`);
+    return {
+      total,
+      byCategory: byCategoryMap,
+      bySeason,
+      mostWorn,
+      leastWorn,
+    };
+  }
+
+  async toggleFavorite(userId: string, itemId: string) {
+    const item = await this.prisma.clothingItem.findFirst({
+      where: { id: itemId, isDeleted: false },
+    });
+
+    if (!item) {
+      throw new NotFoundException("商品不存在");
+    }
+
+    const existing = await this.prisma.favorite.findUnique({
+      where: { userId_itemId: { userId, itemId } },
+    });
+
+    if (existing) {
+      await this.prisma.favorite.delete({
+        where: { id: existing.id },
+      });
+
+      // Decrement likeCount
+      await this.prisma.clothingItem.update({
+        where: { id: itemId },
+        data: { likeCount: { decrement: 1 } },
+      });
+
+      return { ...normalizeClothingItem(item as unknown as ClothingItemWithBrandDetail), isFavorite: false };
+    }
+
+    await this.prisma.favorite.create({
+      data: { userId, itemId },
+    });
+
+    // Increment likeCount
+    await this.prisma.clothingItem.update({
+      where: { id: itemId },
+      data: { likeCount: { increment: 1 } },
+    });
+
+    return { ...normalizeClothingItem(item as unknown as ClothingItemWithBrandDetail), isFavorite: true };
+  }
+
+  async incrementWearCount(id: string) {
+    const existing = await this.prisma.clothingItem.findFirst({
+      where: { id, isDeleted: false },
+    });
+
+    if (!existing) {
+      throw new NotFoundException("商品不存在");
+    }
+
+    const item = await this.prisma.clothingItem.update({
+      where: { id },
+      data: { viewCount: { increment: 1 } },
+      include: {
+        brand: { select: { id: true, name: true, logo: true } },
+      },
+    });
+
+    return normalizeClothingItem(item as unknown as ClothingItemWithBrandDetail);
   }
 }

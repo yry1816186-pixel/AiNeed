@@ -13,8 +13,10 @@ import { useRoute, useNavigation, useFocusEffect } from "@react-navigation/nativ
 import { useConsultantStore } from "../../stores/consultantStore";
 import { CaseCard } from "../../components/consultant/CaseCard";
 import { consultantApi } from "../../services/api/consultant.api";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const AdvisorProfileScreen: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
   const { currentConsultant, fetchConsultantById, isLoading } = useConsultantStore();
@@ -33,7 +35,7 @@ export const AdvisorProfileScreen: React.FC = () => {
   useEffect(() => {
     if (consultantId) {
       consultantApi.getCases(consultantId).then((res) => {
-        setCases(res.data || []);
+        setCases((res.data || []) as any[]);
       }).catch(() => {});
     }
   }, [consultantId]);
@@ -54,7 +56,7 @@ export const AdvisorProfileScreen: React.FC = () => {
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: insets.top }]}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
             <Text style={styles.backBtnText}>{"<"}</Text>
           </TouchableOpacity>
@@ -157,7 +159,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 56,
     paddingBottom: 8,
   },
   backBtn: { padding: 8 },

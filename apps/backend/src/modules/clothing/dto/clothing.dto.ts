@@ -2,8 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { ClothingCategory } from "@prisma/client";
 import { Type } from "class-transformer";
 import {
+  IsArray,
   IsEnum,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -304,4 +306,262 @@ export class ClothingListResponseDto {
     type: Number,
   })
   totalPages!: number;
+}
+
+export class CreateClothingItemDto {
+  @ApiProperty({
+    description: "商品名称",
+  })
+  @IsString()
+  name!: string;
+
+  @ApiProperty({
+    description: "商品分类",
+    enum: ClothingCategory,
+  })
+  @IsEnum(ClothingCategory)
+  category!: ClothingCategory;
+
+  @ApiPropertyOptional({
+    description: "商品子分类",
+  })
+  @IsOptional()
+  @IsString()
+  subcategory?: string;
+
+  @ApiPropertyOptional({
+    description: "品牌 ID",
+    format: "uuid",
+  })
+  @IsOptional()
+  @IsUUID()
+  brandId?: string;
+
+  @ApiProperty({
+    description: "商品价格（元）",
+    type: Number,
+  })
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  price!: number;
+
+  @ApiPropertyOptional({
+    description: "原价（元）",
+    type: Number,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  originalPrice?: number;
+
+  @ApiPropertyOptional({
+    description: "商品描述",
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiPropertyOptional({
+    description: "主图 URL",
+  })
+  @IsOptional()
+  @IsString()
+  mainImage?: string;
+
+  @ApiPropertyOptional({
+    description: "商品图片 URL 列表",
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
+
+  @ApiPropertyOptional({
+    description: "可用颜色列表",
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  colors?: string[];
+
+  @ApiPropertyOptional({
+    description: "可用尺码列表",
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  sizes?: string[];
+
+  @ApiPropertyOptional({
+    description: "商品标签",
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
+  @ApiPropertyOptional({
+    description: "外部链接",
+  })
+  @IsOptional()
+  @IsString()
+  externalUrl?: string;
+}
+
+export class UpdateClothingItemDto {
+  @ApiPropertyOptional({
+    description: "商品名称",
+  })
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @ApiPropertyOptional({
+    description: "商品分类",
+    enum: ClothingCategory,
+  })
+  @IsOptional()
+  @IsEnum(ClothingCategory)
+  category?: ClothingCategory;
+
+  @ApiPropertyOptional({
+    description: "商品子分类",
+  })
+  @IsOptional()
+  @IsString()
+  subcategory?: string;
+
+  @ApiPropertyOptional({
+    description: "品牌 ID",
+    format: "uuid",
+  })
+  @IsOptional()
+  @IsUUID()
+  brandId?: string;
+
+  @ApiPropertyOptional({
+    description: "商品价格（元）",
+    type: Number,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  price?: number;
+
+  @ApiPropertyOptional({
+    description: "原价（元）",
+    type: Number,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  originalPrice?: number;
+
+  @ApiPropertyOptional({
+    description: "商品描述",
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiPropertyOptional({
+    description: "主图 URL",
+  })
+  @IsOptional()
+  @IsString()
+  mainImage?: string;
+
+  @ApiPropertyOptional({
+    description: "商品图片 URL 列表",
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
+
+  @ApiPropertyOptional({
+    description: "可用颜色列表",
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  colors?: string[];
+
+  @ApiPropertyOptional({
+    description: "可用尺码列表",
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  sizes?: string[];
+
+  @ApiPropertyOptional({
+    description: "商品标签",
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
+  @ApiPropertyOptional({
+    description: "外部链接",
+  })
+  @IsOptional()
+  @IsString()
+  externalUrl?: string;
+}
+
+export class SearchClothingQueryDto {
+  @ApiProperty({
+    description: "搜索关键词",
+  })
+  @IsString()
+  query!: string;
+
+  @ApiPropertyOptional({
+    description: "按分类筛选",
+    enum: ClothingCategory,
+  })
+  @IsOptional()
+  @IsEnum(ClothingCategory)
+  category?: ClothingCategory;
+
+  @ApiPropertyOptional({
+    description: "最低价格筛选（元）",
+    type: Number,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @Min(0)
+  minPrice?: number;
+
+  @ApiPropertyOptional({
+    description: "最高价格筛选（元）",
+    type: Number,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @Min(0)
+  maxPrice?: number;
+
+  @ApiPropertyOptional({
+    description: "按尺码筛选",
+    type: [String],
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  sizes?: string[];
 }

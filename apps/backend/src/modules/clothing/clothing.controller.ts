@@ -1,11 +1,27 @@
-import { Controller, Get, Param, Query, UsePipes, ValidationPipe } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  Request,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiQuery,
   ApiParam,
+  ApiBearerAuth,
 } from "@nestjs/swagger";
+
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 import { CacheKey, CacheTTL } from "../../common/decorators/cache.decorators";
 import { ClothingService } from "./clothing.service";
@@ -18,6 +34,9 @@ import {
   ClothingItemDto,
   ClothingCategoryDto,
   PopularTagDto,
+  CreateClothingItemDto,
+  UpdateClothingItemDto,
+  SearchClothingQueryDto,
 } from "./dto";
 
 @ApiTags("clothing")
@@ -128,6 +147,19 @@ export class ClothingController {
     );
   }
 
+  @Get("stats")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "获取服装统计",
+    description: "获取用户的服装统计数据，包括总数、分类分布、季节分布、最常穿/最少穿排行。",
+  })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async getStats(@Request() req: { user: { id: string } }) {
+    return this.clothingService.getStats(req.user.id);
+  }
+
   @Get(":id")
   @CacheKey("clothing:detail")
   @CacheTTL(300)
@@ -178,5 +210,90 @@ export class ClothingController {
   @ApiQuery({ name: "category", required: false, type: String, description: "主分类筛选" })
   async getSubcategories(@Query("category") category?: string) {
     return this.clothingService.getSubcategories(category);
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "创建服装商品", description: "创建一个新的服装商品" })
+  @ApiResponse({ status: 201, description: "创建成功", type: ClothingItemDto })
+  @ApiResponse({ status: 400, description: "请求参数错误" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async createItem(
+    @Request() req: { user: { id: string } },
+    @Body() body: CreateClothingItemDto,
+  ) {
+    return this.clothingService.create(req.user.id, body);
+  }
+
+  @Put(":id")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "更新服装商品", description: "根据商品 ID 更新服装商品信息" })
+  @ApiParam({ name: "id", description: "商品 ID", type: String, format: "uuid" })
+  @ApiResponse({ status: 200, description: "更新成功", type: ClothingItemDto })
+  @ApiResponse({ status: 400, description: "请求参数错误" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "商品不存在" })
+  async updateItem(
+    @Param("id") id: string,
+    @Body() body: UpdateClothingItemDto,
+  ) {
+    return this.clothingService.update(id, body);
+  }
+
+  @Delete(":id")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "删除服装商品", description: "软删除指定的服装商品" })
+  @ApiParam({ name: "id", description: "商品 ID", type: String, format: "uuid" })
+  @ApiResponse({ status: 200, description: "删除成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "商品不存在" })
+  async deleteItem(@Param("id") id: string) {
+    await this.clothingService.remove(id);
+    return { success: true };
+  }
+
+  @Post("search")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "搜索服装商品", description: "全文搜索服装商品，支持按分类、价格、尺码筛选" })
+  @ApiResponse({ status: 200, description: "搜索成功", type: [ClothingItemDto] })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async searchItems(@Body() body: SearchClothingQueryDto) {
+    return this.clothingService.search(body.query, {
+      category: body.category,
+      minPrice: body.minPrice,
+      maxPrice: body.maxPrice,
+      sizes: body.sizes,
+    });
+  }
+
+  @Post(":id/favorite")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "切换收藏状态", description: "切换指定商品的收藏状态（收藏/取消收藏）" })
+  @ApiParam({ name: "id", description: "商品 ID", type: String, format: "uuid" })
+  @ApiResponse({ status: 200, description: "操作成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "商品不存在" })
+  async toggleFavorite(
+    @Request() req: { user: { id: string } },
+    @Param("id") id: string,
+  ) {
+    return this.clothingService.toggleFavorite(req.user.id, id);
+  }
+
+  @Post(":id/wear")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "记录穿着次数", description: "将指定商品的穿着/浏览次数加 1" })
+  @ApiParam({ name: "id", description: "商品 ID", type: String, format: "uuid" })
+  @ApiResponse({ status: 200, description: "操作成功", type: ClothingItemDto })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "商品不存在" })
+  async incrementWear(@Param("id") id: string) {
+    return this.clothingService.incrementWearCount(id);
   }
 }

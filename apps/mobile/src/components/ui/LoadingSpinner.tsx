@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, ViewStyle } from 'react-native';
-import { colors } from '../../theme/colors';
-import { spacing } from '../../theme/spacing';
+import { Colors, Spacing, BorderRadius, Shadows } from '../../theme';
 
 export type SpinnerSize = 'sm' | 'md' | 'lg';
 
@@ -17,7 +16,7 @@ const sizeMap: Record<SpinnerSize, number> = { sm: 20, md: 36, lg: 52 };
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 'md',
-  color = colors.secondary[500],
+  color = Colors.sage[500],
   style,
   overlay = false,
   text,
@@ -76,7 +75,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 export const InlineSpinner: React.FC<{ size?: SpinnerSize; color?: string; style?: ViewStyle }> = ({ size = 'sm', color, style }) => {
   const spinAnim = useRef(new Animated.Value(0)).current;
   const spinnerSize = sizeMap[size];
-  const c = color || colors.secondary[500];
+  const c = color || Colors.sage[500];
 
   useEffect(() => {
     const spin = Animated.loop(Animated.timing(spinAnim, { toValue: 1, duration: 800, useNativeDriver: true }));
@@ -97,19 +96,9 @@ const styles = StyleSheet.create({
   spinner: { position: 'relative', justifyContent: 'center', alignItems: 'center' },
   arc: { borderWidth: 2.5, borderTopColor: 'transparent', borderRightColor: 'transparent' },
   dot: { position: 'absolute' },
-  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: colors.overlay.dark, justifyContent: 'center', alignItems: 'center' },
-  overlayContent: { backgroundColor: colors.neutral.white, borderRadius: spacing.borderRadius['2xl'], padding: spacing.aliases.xl, alignItems: 'center', ...shadows_presets_lg() },
-  overlayText: { marginTop: spacing.aliases.md, color: colors.neutral[600], fontSize: 14, fontWeight: '500' },
+  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: Colors.overlay.dark, justifyContent: 'center', alignItems: 'center' },
+  overlayContent: { backgroundColor: Colors.neutral.white, borderRadius: BorderRadius['2xl'], padding: Spacing.xl, alignItems: 'center', ...Shadows.lg },
+  overlayText: { marginTop: Spacing.md, color: Colors.neutral[600], fontSize: 14, fontWeight: '500' },
 });
-
-function shadows_presets_lg() {
-  return {
-    shadowColor: '#1A1A2E',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 8,
-  };
-}
 
 export default LoadingSpinner;

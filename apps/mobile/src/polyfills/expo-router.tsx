@@ -1,6 +1,6 @@
 import { useNavigation, StackActions, CommonActions, NavigationProp } from '@react-navigation/native';
 import { useCallback } from 'react';
-import { navigationRef } from '../navigation/navigation';
+import { navigationRef } from '../navigation/navigationService';
 import type { RootStackParamList } from '../types/navigation';
 
 type NavigationParams = Record<string, unknown>;
@@ -112,17 +112,19 @@ export function Redirect({ href }: { href: string }) {
 import React from 'react';
 import type { NavigationContainerRef } from '@react-navigation/native';
 
-// Lazy navigation reference - will be set by NavigationContainer ref
-let _navigationRef: NavigationContainerRef<RootStackParamList> | null = null;
+let _navigationRef: any = null;
 
-export function setNavigationRef(ref: NavigationContainerRef<RootStackParamList> | null) {
+export function setNavigationRef(ref: any) {
   _navigationRef = ref;
 }
 
 function getNav() {
-  // Try the lazy ref first, then fall back to the navigation module ref
   const ref = _navigationRef || navigationRef;
-  if (!ref || !ref.isReady || !ref.isReady()) {
+  if (!ref) {
+    console.warn('expo-router.router: Navigation not ready yet.');
+    return null;
+  }
+  if ('isReady' in ref && typeof ref.isReady === 'function' && !ref.isReady()) {
     console.warn('expo-router.router: Navigation not ready yet.');
     return null;
   }

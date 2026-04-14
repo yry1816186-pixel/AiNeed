@@ -149,7 +149,7 @@ export const HomeScreen: React.FC = () => {
             <ProfileCompletenessBar
               percentage={completeness.percentage}
               missingFields={completeness.missingFields}
-              onPress={() => navigation.navigate('ProfileEdit')}
+              onPress={() => navigation.navigate('ProfileEdit' as any)}
             />
           )}
 
@@ -254,6 +254,16 @@ export const HomeScreen: React.FC = () => {
               ))}
             </ScrollView>
           </View>
+
+          {loadingState === 'error' && (
+            <View style={styles.errorContainer}>
+              <Ionicons name="cloud-offline-outline" size={40} color={theme.colors.textTertiary} />
+              <Text style={styles.errorText}>Unable to load recommendations</Text>
+              <TouchableOpacity style={styles.retryButton} onPress={handleRefresh}>
+                <Text style={styles.retryButtonText}>Retry</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -477,6 +487,27 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: theme.colors.text,
     marginTop: 10,
+  },
+  errorContainer: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  errorText: {
+    fontSize: 15,
+    color: theme.colors.textTertiary,
+    marginTop: 12,
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  retryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 

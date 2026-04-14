@@ -32,7 +32,7 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await consultantApi.getProfiles(params);
-      set({ consultants: res.data.data, isLoading: false });
+      set({ consultants: (res.data as any).data, isLoading: false });
     } catch (e: any) {
       set({ error: e.message, isLoading: false });
     }
@@ -42,7 +42,7 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await consultantApi.getProfileById(id);
-      set({ currentConsultant: res.data, isLoading: false });
+      set({ currentConsultant: res.data as any, isLoading: false });
     } catch (e: any) {
       set({ error: e.message, isLoading: false });
     }
@@ -52,7 +52,7 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await consultantApi.matchConsultants(data);
-      set({ matchResults: res.data, isLoading: false });
+      set({ matchResults: res.data as any[], isLoading: false });
     } catch (e: any) {
       set({ error: e.message, isLoading: false });
     }
@@ -62,7 +62,7 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await consultantApi.getAvailableSlots(consultantId, date);
-      set({ availableSlots: res.data, isLoading: false });
+      set({ availableSlots: res.data as any[], isLoading: false });
     } catch (e: any) {
       set({ error: e.message, isLoading: false });
     }
@@ -73,7 +73,7 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     try {
       const res = await consultantApi.createBooking(data);
       set({ isLoading: false });
-      return res.data;
+      return res.data as any;
     } catch (e: any) {
       set({ error: e.message, isLoading: false });
       throw e;
@@ -84,7 +84,7 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await consultantApi.getBookings(params);
-      set({ bookings: res.data.data, isLoading: false });
+      set({ bookings: (res.data as any).data, isLoading: false });
     } catch (e: any) {
       set({ error: e.message, isLoading: false });
     }

@@ -17,7 +17,11 @@ export const CACHE_KEYS = {
   // 穿搭相关
   OUTFIT_LIST: "outfit:list",
   OUTFIT_RECOMMENDATIONS: "outfit:recommendations",
+  OUTFIT_COMBINATIONS: "outfit:combinations",
   OUTFIT_DETAIL: "outfit:detail",
+
+  // 风格指南
+  STYLE_GUIDE: "recommendations:style-guide",
 
   // 服装相关
   CLOTHING_LIST: "clothing:list",
@@ -46,6 +50,12 @@ export const CACHE_TTL = {
 
   // 穿搭推荐: 10分钟
   OUTFIT_RECOMMENDATIONS: 10 * 60,
+
+  // 搭配组合推荐: 1小时
+  OUTFIT_COMBINATIONS: 60 * 60,
+
+  // 风格指南: 30分钟
+  STYLE_GUIDE: 30 * 60,
 
   // 穿搭列表: 5分钟
   OUTFIT_LIST: 5 * 60,
@@ -125,8 +135,17 @@ export class CacheKeyBuilder {
     return `${CACHE_KEYS.OUTFIT_RECOMMENDATIONS}:${userId}${optionsHash}`;
   }
 
+  static outfitCombinations(userId: string, options?: Record<string, unknown>): string {
+    const optionsHash = options ? `:${JSON.stringify(options)}` : "";
+    return `${CACHE_KEYS.OUTFIT_COMBINATIONS}:${userId}${optionsHash}`;
+  }
+
   static outfitDetail(outfitId: string): string {
     return `${CACHE_KEYS.OUTFIT_DETAIL}:${outfitId}`;
+  }
+
+  static styleGuide(userId: string): string {
+    return `${CACHE_KEYS.STYLE_GUIDE}:${userId}`;
   }
 
   static clothingList(filters: Record<string, unknown>): string {

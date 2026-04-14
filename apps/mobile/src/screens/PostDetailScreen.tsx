@@ -17,13 +17,14 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import { SharedElement } from 'react-navigation-shared-element';
 import { theme } from '../theme';
 import { communityApi, PostComment } from '../services/api/community.api';
 import { BookmarkSheet } from '../components/community/BookmarkSheet';
 import type { RootStackParamList } from '../types/navigation';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
-type PostDetailRoute = RouteProp<RootStackParamList, 'PostDetail'>;
+type PostDetailRoute = RouteProp<RootStackParamList, 'Community'>;
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -31,8 +32,8 @@ const DEFAULT_COMMENTS: PostComment[] = [];
 
 export const PostDetailScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
-  const route = useRoute<PostDetailRoute>();
-  const postId = route.params?.postId ?? '';
+  const route = useRoute<any>();
+  const postId = (route.params as any)?.postId ?? '';
 
   const [post, setPost] = useState<{
     id: string;
@@ -325,12 +326,22 @@ export const PostDetailScreen: React.FC = () => {
               scrollEventThrottle={16}
             >
               {post.images.map((uri, index) => (
-                <Image
-                  key={index}
-                  source={{ uri }}
-                  style={styles.carouselImage}
-                  resizeMode="cover"
-                />
+                index === 0 ? (
+                  <SharedElement key={index} id={`post.${postId}.image`}>
+                    <Image
+                      source={{ uri }}
+                      style={styles.carouselImage}
+                      resizeMode="cover"
+                    />
+                  </SharedElement>
+                ) : (
+                  <Image
+                    key={index}
+                    source={{ uri }}
+                    style={styles.carouselImage}
+                    resizeMode="cover"
+                  />
+                )
               ))}
             </ScrollView>
             {post.images.length > 1 && (

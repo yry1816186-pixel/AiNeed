@@ -16,6 +16,7 @@ import { ISmsService, SmsService } from "./services/sms.service";
 import { WechatService } from "./services/wechat.service";
 import { AuthHelpersService } from "./auth.helpers";
 import { StructuredLoggerService } from "../../common/logging/structured-logger.service";
+import { TokenBlacklistService } from "./services/token-blacklist.service";
 
 // Mock bcrypt
 jest.mock("../../common/security/bcrypt", () => ({
@@ -38,6 +39,13 @@ const mockWechatService = {
 
 const mockAuthHelpersService = {
   validateCredentials: jest.fn(),
+};
+
+const mockTokenBlacklistService = {
+  blacklistToken: jest.fn().mockResolvedValue(undefined),
+  isBlacklisted: jest.fn().mockResolvedValue(false),
+  blacklistAllUserTokens: jest.fn().mockResolvedValue(undefined),
+  trackUserToken: jest.fn().mockResolvedValue(undefined),
 };
 
 const mockLoggingService = {
@@ -81,6 +89,7 @@ describe("AuthService", () => {
   const mockJwtService = {
     sign: jest.fn(),
     verify: jest.fn(),
+    decode: jest.fn(),
   };
 
   const mockConfigService = {
@@ -154,6 +163,10 @@ describe("AuthService", () => {
         {
           provide: WechatService,
           useValue: mockWechatService,
+        },
+        {
+          provide: TokenBlacklistService,
+          useValue: mockTokenBlacklistService,
         },
         {
           provide: StructuredLoggerService,
@@ -377,6 +390,52 @@ describe("AuthService", () => {
       expect(mockPrismaService.refreshToken.deleteMany).toHaveBeenCalledWith({
         where: { userId: "test-user-id" },
       });
+      expect(mockTokenBlacklistService.blacklistAllUserTokens).toHaveBeenCalledWith("test-user-id");
+    });
+
+    it("应该将access token加入黑名单", async () => {
+      const mockDecoded = {
+        sub: "test-user-id",
+        email: "test@example.com",
+        jti: "access-jti-123",
+        exp: Math.floor(Date.now() / 1000) + 900,
+      };
+      mockJwtService.decode = jest.fn().mockReturnValue(mockDecoded);
+      mockPrismaService.refreshToken.deleteMany.mockResolvedValue({ count: 1 });
+
+      await service.logout("test-user-id", "specific-refresh-token", "access-token-value");
+
+      expect(mockJwtService.decode).toHaveBeenCalledWith("access-token-value");
+      expect(mockTokenBlacklistService.blacklistToken).toHaveBeenCalledWith(
+        "access-jti-123",
+        expect.any(Number),
+      );
+    });
+
+    it("应该在access token解码失败时安全处理", async () => {
+      mockJwtService.decode = jest.fn().mockReturnValue(null);
+      mockPrismaService.refreshToken.findMany.mockResolvedValue([mockRefreshToken]);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockPrismaService.refreshToken.deleteMany.mockResolvedValue({ count: 1 });
+
+      await service.logout("test-user-id", "specific-refresh-token", "invalid-token");
+
+      expect(mockTokenBlacklistService.blacklistToken).not.toHaveBeenCalled();
+    });
+
+    it("应该在access token没有jti时跳过黑名单", async () => {
+      const mockDecoded = {
+        sub: "test-user-id",
+        email: "test@example.com",
+      };
+      mockJwtService.decode = jest.fn().mockReturnValue(mockDecoded);
+      mockPrismaService.refreshToken.findMany.mockResolvedValue([mockRefreshToken]);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockPrismaService.refreshToken.deleteMany.mockResolvedValue({ count: 1 });
+
+      await service.logout("test-user-id", "specific-refresh-token", "access-token-no-jti");
+
+      expect(mockTokenBlacklistService.blacklistToken).not.toHaveBeenCalled();
     });
   });
 
@@ -429,7 +488,7 @@ describe("AuthService", () => {
 
       expect(mockJwtService.sign).toHaveBeenNthCalledWith(
         1,
-        { sub: mockUser.id, email: mockUser.email },
+        { sub: mockUser.id, email: mockUser.email, jti: expect.any(String) },
         expect.objectContaining({
           secret: "test-jwt-secret-key",
           expiresIn: "15m",

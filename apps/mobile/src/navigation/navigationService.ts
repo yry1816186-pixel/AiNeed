@@ -9,8 +9,10 @@ import type {
   CommunityStackParamList,
   ProfileStackParamList,
   DeepLinkRouteConfig,
+  GuardType,
 } from './types';
-import { DEEP_LINK_ROUTES } from './types';
+import { DEEP_LINK_ROUTES, GUARDED_ROUTES } from './types';
+import { useAuthStore } from '../stores/index';
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
@@ -30,6 +32,49 @@ export function isNavigationReady(): boolean {
 }
 
 // ============================================================
+// Guard Checking
+// ============================================================
+function checkRouteGuard(routeName: string): GuardType | null {
+  const guardConfig = GUARDED_ROUTES.find((g) => g.route === routeName);
+  if (!guardConfig) return null;
+
+  const isAuthenticated = useAuthStore.getState().isAuthenticated;
+  const onboardingCompleted = useAuthStore.getState().onboardingCompleted;
+  const isVip = useAuthStore.getState().isVip;
+
+  for (const guard of guardConfig.guards) {
+    if (guard === 'auth' && !isAuthenticated) return 'auth';
+    if (guard === 'profile' && (!isAuthenticated || !onboardingCompleted)) return 'profile';
+    if (guard === 'vip' && (!isAuthenticated || !isVip)) return 'vip';
+  }
+
+  return null;
+}
+
+function handleGuardRedirect(failedGuard: GuardType): void {
+  switch (failedGuard) {
+    case 'auth':
+      navigateAuth('Login');
+      break;
+    case 'profile':
+      navigateAuth('Onboarding');
+      break;
+    case 'vip':
+      navigateProfile('Subscription');
+      break;
+  }
+}
+
+function checkAndRedirect(routeName: string): boolean {
+  const failedGuard = checkRouteGuard(routeName);
+  if (failedGuard) {
+    handleGuardRedirect(failedGuard);
+    return true;
+  }
+  return false;
+}
+
+// ============================================================
 // Current Route
 // ============================================================
 export function getCurrentRouteName(): string | undefined {
@@ -43,13 +88,14 @@ export function getCurrentRouteParams(): Record<string, unknown> | undefined {
 }
 
 // ============================================================
-// Type-Safe Navigate Functions
+// Type-Safe Navigate Functions (with guard checking)
 // ============================================================
 export function navigate<RouteName extends keyof RootStackParamList>(
   name: RouteName,
   params?: RootStackParamList[RouteName],
 ): void {
   if (!isNavigationReady()) return;
+  if (checkAndRedirect(name as string)) return;
   (navigationRef as unknown as { navigate: (n: string, p?: unknown) => void }).navigate(
     name as string,
     params,
@@ -75,6 +121,7 @@ export function navigateTab<RouteName extends keyof MainTabParamList>(
   params?: Record<string, unknown>,
 ): void {
   if (!isNavigationReady()) return;
+  if (screen && checkAndRedirect(screen)) return;
   const tabParams: Record<string, unknown> = {};
   if (screen) {
     tabParams.screen = screen;
@@ -222,6 +269,14 @@ export function navigateDeepLink(url: string, isAuthenticated: boolean): boolean
   if (parsed.requiresAuth && !isAuthenticated) {
     navigateAuth('Login');
     return true;
+  }
+
+  if (parsed.screen) {
+    const failedGuard = checkRouteGuard(parsed.screen);
+    if (failedGuard) {
+      handleGuardRedirect(failedGuard);
+      return true;
+    }
   }
 
   if (parsed.target === 'auth') {

@@ -15,6 +15,7 @@ import {
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiResponse, ApiQuery, ApiParam } from "@nestjs/swagger";
+import { Throttle } from "@nestjs/throttler";
 import axios from "axios";
 
 import { OptionalAuthGuard } from "../auth/guards/optional-auth.guard";
@@ -66,6 +67,7 @@ export class SearchController {
 
   @Post("image")
   @UseGuards(OptionalAuthGuard)
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "以图搜图 - 上传图片搜索", description: "上传图片进行视觉相似搜索，支持 JPEG、PNG、WebP 格式，最大 10MB。" })
   @ApiBody({
@@ -116,6 +118,7 @@ export class SearchController {
   }
 
   @Post("image/url")
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({ summary: "以图搜图 - 通过图片URL搜索", description: "通过图片URL进行视觉相似搜索，仅支持公网可访问的图片地址。" })
   @ApiBody({
     schema: {

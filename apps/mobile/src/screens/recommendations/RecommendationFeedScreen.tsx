@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   Pressable,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList } from "../../polyfills/flash-list";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { useRecommendationFeedStore } from "../../stores/recommendationFeedStore";
 import { FeedTabs } from "../../components/recommendations/FeedTabs";
@@ -22,8 +22,6 @@ const ESTIMATED_ITEM_SIZE = 280;
 export function RecommendationFeedScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const listRef = useRef<FlashList<FeedItem>>(null);
-
   const {
     items,
     hasMore,
@@ -45,14 +43,13 @@ export function RecommendationFeedScreen() {
 
   const handleItemPress = useCallback(
     (item: FeedItem) => {
-      navigation.navigate("ClothingDetail" as never, { id: item.id } as never);
+      (navigation.navigate as any)("ClothingDetail", { id: item.id });
     },
     [navigation],
   );
 
   const handleCategoryChange = useCallback(
     (category: FeedCategory) => {
-      listRef.current?.scrollToOffset({ offset: 0, animated: false });
       setCategory(category);
     },
     [setCategory],
@@ -60,7 +57,6 @@ export function RecommendationFeedScreen() {
 
   const handleSubCategoryChange = useCallback(
     (subCategory: string | null) => {
-      listRef.current?.scrollToOffset({ offset: 0, animated: false });
       setSubCategory(subCategory);
     },
     [setSubCategory],
@@ -79,7 +75,7 @@ export function RecommendationFeedScreen() {
     if (isLoading && !isRefreshing && items.length > 0) {
       return (
         <View style={styles.footerLoader}>
-          <ActivityIndicator size="small" color={DesignTokens.colors.primary} />
+          <ActivityIndicator size="small" color={DesignTokens.colors.brand.terracotta} />
         </View>
       );
     }
@@ -122,12 +118,10 @@ export function RecommendationFeedScreen() {
       />
 
       <FlashList
-        ref={listRef}
         data={items}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         estimatedItemSize={ESTIMATED_ITEM_SIZE}
-        numColumns={2}
         contentContainerStyle={styles.listContent}
         onEndReached={() => {
           if (hasMore && !isLoading) loadMore();
@@ -138,7 +132,7 @@ export function RecommendationFeedScreen() {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={refresh}
-            tintColor={DesignTokens.colors.primary}
+            tintColor={DesignTokens.colors.brand.terracotta}
           />
         }
       />
@@ -149,7 +143,7 @@ export function RecommendationFeedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: DesignTokens.colors.background,
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
   },
   listContent: {
     paddingHorizontal: 12,
@@ -166,7 +160,7 @@ const styles = StyleSheet.create({
   },
   footerEndText: {
     fontSize: 12,
-    color: DesignTokens.colors.textTertiary,
+    color: DesignTokens.colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -177,13 +171,13 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 14,
-    color: DesignTokens.colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
     textAlign: "center",
   },
   retryButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: DesignTokens.colors.primary,
+    backgroundColor: DesignTokens.colors.brand.terracotta,
     borderRadius: 8,
   },
   retryText: {

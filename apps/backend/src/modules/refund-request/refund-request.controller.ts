@@ -21,7 +21,7 @@ import {
 } from "./dto";
 
 @ApiTags("refund-requests")
-@Controller("api/v1/refund-requests")
+@Controller("refund-requests")
 export class RefundRequestController {
   constructor(private readonly refundRequestService: RefundRequestService) {}
 

@@ -16,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { authApi } from '../services/api/auth.api';
 import { useAuthStore } from '../stores/index';
-import { unifiedApiClient } from '../services/api/apiClient';
+import { unifiedApiClient } from '../services/apiClient';
 import { theme } from '../theme';
 import type { RootStackParamList } from '../types/navigation';
 

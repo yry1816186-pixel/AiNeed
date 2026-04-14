@@ -17,6 +17,7 @@
 
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
+// @ts-expect-error - no type declarations for react-test-renderer
 import TestRenderer from "react-test-renderer";
 
 // ============================================================================
@@ -203,7 +204,7 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
       const basicInfoStep = renderer.root.findByProps({ testID: "basic-info-step" });
       // Verify no skip button exists within basic info step
       const skipButtons = basicInfoStep.findAllByType(TouchableOpacity).filter(
-        (btn) => {
+        (btn: any) => {
           try {
             const text = btn.findByType(Text);
             return text.props.children === "跳过";

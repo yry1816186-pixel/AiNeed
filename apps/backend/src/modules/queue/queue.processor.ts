@@ -249,6 +249,40 @@ export class VirtualTryOnProcessor extends WorkerHost {
       result.tryOnId,
       result.resultImageUrl,
     );
+
+    // Auto-archive completed try-on to inspiration wardrobe
+    try {
+      const tryOn = await this.prisma.virtualTryOn.findUnique({
+        where: { id: result.tryOnId },
+        select: { resultImageUrl: true, watermarkedImageUrl: true },
+      });
+
+      if (tryOn?.resultImageUrl) {
+        const existingCollection = await this.prisma.wardrobeCollection.findFirst({
+          where: { userId, name: "AI试衣效果" },
+        });
+
+        const collection = existingCollection
+          ? existingCollection
+          : await this.prisma.wardrobeCollection.create({
+              data: { userId, name: "AI试衣效果", icon: "sparkles", isDefault: false },
+            });
+
+        const alreadyArchived = await this.prisma.wardrobeCollectionItem.findFirst({
+          where: { collectionId: collection.id, itemType: "try_on", itemId: result.tryOnId },
+        });
+
+        if (!alreadyArchived) {
+          await this.prisma.wardrobeCollectionItem.create({
+            data: { userId, collectionId: collection.id, itemType: "try_on", itemId: result.tryOnId },
+          });
+          this.logger.log(`Auto-archived try-on ${result.tryOnId} to wardrobe for user ${userId}`);
+        }
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`Failed to auto-archive try-on ${result.tryOnId}: ${msg}`);
+    }
   }
 
   @OnWorkerEvent("failed")

@@ -68,6 +68,12 @@ export const DesignTokens = {
       strong: "rgba(0, 0, 0, 0.2)",
       brand: "#C67B5C",
     },
+    colorSeasons: {
+      spring: { label: "春季型", colors: ["#FF6B6B", "#FFA07A", "#FFD700", "#98FB98"], bg: "#FFF5F0" },
+      summer: { label: "夏季型", colors: ["#87CEEB", "#DDA0DD", "#B0C4DE", "#F0E68C"], bg: "#F0F5FF" },
+      autumn: { label: "秋季型", colors: ["#D2691E", "#B8860B", "#8B4513", "#CD853F"], bg: "#FFF8F0" },
+      winter: { label: "冬季型", colors: ["#1A1A2E", "#E94560", "#FFFFFF", "#C0C0C0"], bg: "#F5F5FA" },
+    },
   },
 
   gradients: {
@@ -273,8 +279,8 @@ export const darkTokens = {
       100: "#282825",
       200: "#3D3D39",
       300: "#52524D",
-      400: "#73736D",
-      500: "#8A8A85",
+      400: "#8A8A85",
+      500: "#9B9B96",
       600: "#D4D4D0",
       700: "#EBEBE8",
       800: "#F5F5F3",
@@ -301,7 +307,7 @@ export const darkTokens = {
     text: {
       primary: "#F5F2ED",
       secondary: "#A8A098",
-      tertiary: "#6B6560",
+      tertiary: "#9B958E",
       inverse: "#191613",
       brand: "#D68B6C",
     },

@@ -9,7 +9,7 @@ import React, {
 import { AppState, AppStateStatus } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
-import { navigate } from "../../navigation/navigation";
+import { navigateTab } from "../../navigation/navigationService";
 import { AICompanionBall, CompanionState } from "./AICompanionBall";
 import { AICompanionMenu, QuickAction } from "./AICompanionMenu";
 import { AICompanionChat, ChatMessage } from "./AICompanionChat";
@@ -775,7 +775,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       description: "分析身材和肤色",
       onPress: () => {
         setMenuVisible(false);
-        navigate("MainTabs" as any, { screen: "Wardrobe" } as any);
+        navigateTab('Profile', 'Wardrobe');
       },
     },
     {
@@ -785,7 +785,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       description: "个性化推荐",
       onPress: () => {
         setMenuVisible(false);
-        navigate("MainTabs" as any, { screen: "Heart" } as any);
+        navigateTab('Home', 'RecommendationDetail');
       },
     },
     {
@@ -795,7 +795,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       description: "管理你的衣物",
       onPress: () => {
         setMenuVisible(false);
-        navigate("MainTabs" as any, { screen: "Wardrobe" } as any);
+        navigateTab('Profile', 'Wardrobe');
       },
     },
   ];

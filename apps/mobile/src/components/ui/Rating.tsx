@@ -1,8 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import { colors } from '../../theme/colors';
-import { typography } from '../../theme/typography';
-import { spacing } from '../../theme/spacing';
+import { Colors, Spacing, Typography } from '../../theme';
 
 export interface RatingProps {
   value?: number;
@@ -41,7 +39,7 @@ export const Rating: React.FC<RatingProps> = ({
         const halfFilled = !filled && index < value;
         return (
           <TouchableOpacity key={index} onPress={() => handlePress(index)} disabled={readonly} activeOpacity={0.7}>
-            <Text style={{ fontSize: starSize, color: filled || halfFilled ? colors.gold[500] : colors.neutral[300] }}>
+            <Text style={{ fontSize: starSize, color: filled || halfFilled ? Colors.amber[500] : Colors.neutral[300] }}>
               {filled ? '★' : halfFilled ? '★' : '☆'}
             </Text>
           </TouchableOpacity>
@@ -76,15 +74,15 @@ export const RatingBadge: React.FC<RatingBadgeProps> = ({ value, reviewCount, st
 );
 
 const styles = StyleSheet.create({
-  container: { flexDirection: 'row', alignItems: 'center', gap: spacing.scale[1] },
-  ratingValue: { ...typography.styles.bodySm, color: colors.neutral[700], fontWeight: '600', marginLeft: spacing.scale[2] },
+  container: { flexDirection: 'row', alignItems: 'center', gap: Spacing[1] },
+  ratingValue: { ...Typography.styles.bodySmall, color: Colors.neutral[700], fontWeight: '600', marginLeft: Spacing[2] },
   ratingValueCompact: { fontSize: 12 },
-  reviewCount: { ...typography.styles.caption, color: colors.neutral[500] },
+  reviewCount: { ...Typography.styles.caption, color: Colors.neutral[500] },
   reviewCountCompact: { fontSize: 10 },
-  badgeContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.semantic.successLight, paddingHorizontal: spacing.scale[2], paddingVertical: spacing.scale[1], borderRadius: spacing.borderRadius.sm },
-  badgeStar: { ...typography.styles.caption, color: colors.gold[500] },
-  badgeValue: { ...typography.styles.caption, color: '#1B7A3D', fontWeight: '700' },
-  badgeCount: { ...typography.styles.caption, color: colors.neutral[500] },
+  badgeContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.semantic.successLight, paddingHorizontal: Spacing[2], paddingVertical: Spacing[1], borderRadius: Spacing[2] },
+  badgeStar: { ...Typography.styles.caption, color: Colors.amber[500] },
+  badgeValue: { ...Typography.styles.caption, color: '#1B7A3D', fontWeight: '700' },
+  badgeCount: { ...Typography.styles.caption, color: Colors.neutral[500] },
 });
 
 export default Rating;

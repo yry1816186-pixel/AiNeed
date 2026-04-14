@@ -40,28 +40,40 @@ export class WechatService {
 
     const url = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${this.appId}&secret=${this.appSecret}&code=${code}&grant_type=authorization_code`;
 
-    const response = await fetch(url);
-    const data = await response.json() as Record<string, unknown>;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      const data = await response.json() as Record<string, unknown>;
 
-    if (data.errcode) {
-      this.logger.warn("微信获取access_token失败", { errcode: data.errcode, errmsg: data.errmsg });
-      throw new UnauthorizedException("微信授权失败");
+      if (data.errcode) {
+        this.logger.warn("微信获取access_token失败", { errcode: data.errcode, errmsg: data.errmsg });
+        throw new UnauthorizedException("微信授权失败");
+      }
+
+      return data as unknown as WechatAccessTokenResponse;
+    } finally {
+      clearTimeout(timeout);
     }
-
-    return data as unknown as WechatAccessTokenResponse;
   }
 
   async getUserInfo(accessToken: string, openid: string): Promise<WechatUserInfo> {
     const url = `https://api.weixin.qq.com/sns/userinfo?access_token=${accessToken}&openid=${openid}`;
 
-    const response = await fetch(url);
-    const data = await response.json() as Record<string, unknown>;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      const data = await response.json() as Record<string, unknown>;
 
-    if (data.errcode) {
-      this.logger.warn("微信获取用户信息失败", { errcode: data.errcode, errmsg: data.errmsg });
-      throw new UnauthorizedException("获取微信用户信息失败");
+      if (data.errcode) {
+        this.logger.warn("微信获取用户信息失败", { errcode: data.errcode, errmsg: data.errmsg });
+        throw new UnauthorizedException("获取微信用户信息失败");
+      }
+
+      return data as unknown as WechatUserInfo;
+    } finally {
+      clearTimeout(timeout);
     }
-
-    return data as unknown as WechatUserInfo;
   }
 }

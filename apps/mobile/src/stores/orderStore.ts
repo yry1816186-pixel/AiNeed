@@ -1,10 +1,7 @@
 import { create } from "zustand";
 
-import {
-  orderEnhancementApi,
-  type Order,
-} from "../services/api/commerce.api";
-import type { PaginatedResponse } from "../types";
+import { orderEnhancementApi } from "../services/api/commerce.api";
+import type { Order, PaginatedResponse } from "../types";
 
 interface OrderStore {
   ordersByTab: Record<string, Order[]>;

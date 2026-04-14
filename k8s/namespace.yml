@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: xuneed
+  labels:
+    app: xuneed
+    environment: production

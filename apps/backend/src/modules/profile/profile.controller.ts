@@ -1,11 +1,13 @@
-import { Controller, Get, Put, Post, Body, UseGuards, UseInterceptors, Request } from "@nestjs/common";
+import { Controller, Get, Put, Post, Body, UseGuards, UseInterceptors, Request, UploadedFile, BadRequestException } from "@nestjs/common";
 import {
   ApiTags,
   ApiOperation,
   ApiBearerAuth,
   ApiResponse,
   ApiBody,
+  ApiConsumes,
 } from "@nestjs/swagger";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-data.interceptor";
@@ -139,6 +141,149 @@ export class ProfileController {
   })
   async getColorAnalysis(@Request() req: AuthenticatedRequest) {
     return this.profileService.getColorAnalysis(req.user.id);
+  }
+
+  @Post("body-analysis/upload")
+  @UseInterceptors(FileInterceptor("file"))
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({
+    summary: "上传体型分析照片",
+    description:
+      "通过 multipart/form-data 上传用户照片进行体型分析。支持 JPEG、PNG 格式，最大 10MB。MVP 阶段返回占位分析结果。",
+  })
+  @ApiBody({
+    schema: {
+      type: "object",
+      required: ["file"],
+      properties: {
+        file: {
+          type: "string",
+          format: "binary",
+          description: "体型分析照片（JPEG/PNG，最大 10MB）",
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: "体型分析完成",
+    type: BodyAnalysisResultDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: "文件格式不支持或文件过大",
+  })
+  @ApiResponse({
+    status: 401,
+    description: "未授权，需要提供有效的 Access Token",
+  })
+  async uploadBodyAnalysis(
+    @Request() req: AuthenticatedRequest,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException("请选择要上传的照片");
+    }
+
+    const allowedMimeTypes = ["image/jpeg", "image/png"];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      throw new BadRequestException(
+        "不支持的文件格式，仅支持 JPEG、PNG 格式",
+      );
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      throw new BadRequestException("文件大小不能超过 10MB");
+    }
+
+    // MVP placeholder: return a basic body analysis structure
+    // TODO: integrate with external ML analysis API for real results
+    return {
+      bodyType: "rectangle",
+      bodyTypeName: "矩形体型",
+      description: "基于上传照片的体型分析结果（MVP 占位）",
+      recommendations: [
+        {
+          category: "上衣",
+          advice: "建议选择有层次感的搭配",
+          examples: ["V领衬衫", "修身西装外套"],
+        },
+        {
+          category: "下装",
+          advice: "建议选择直筒或微喇裤型",
+          examples: ["直筒牛仔裤", "微喇西裤"],
+        },
+      ],
+      idealStyles: ["casual", "business", "minimalist"],
+      avoidStyles: ["oversized"],
+    };
+  }
+
+  @Post("color-analysis/upload")
+  @UseInterceptors(FileInterceptor("file"))
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({
+    summary: "上传色彩分析照片",
+    description:
+      "通过 multipart/form-data 上传用户照片进行色彩季节分析。支持 JPEG、PNG 格式，最大 10MB。MVP 阶段返回占位分析结果。",
+  })
+  @ApiBody({
+    schema: {
+      type: "object",
+      required: ["file"],
+      properties: {
+        file: {
+          type: "string",
+          format: "binary",
+          description: "色彩分析照片（JPEG/PNG，最大 10MB）",
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: "色彩分析完成",
+    type: ColorAnalysisResultDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: "文件格式不支持或文件过大",
+  })
+  @ApiResponse({
+    status: 401,
+    description: "未授权，需要提供有效的 Access Token",
+  })
+  async uploadColorAnalysis(
+    @Request() req: AuthenticatedRequest,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException("请选择要上传的照片");
+    }
+
+    const allowedMimeTypes = ["image/jpeg", "image/png"];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      throw new BadRequestException(
+        "不支持的文件格式，仅支持 JPEG、PNG 格式",
+      );
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      throw new BadRequestException("文件大小不能超过 10MB");
+    }
+
+    // MVP placeholder: return a basic color analysis structure
+    // TODO: integrate with external ML analysis API for real results
+    return {
+      colorSeason: "autumn_warm",
+      colorSeasonName: "暖秋型",
+      bestColors: ["深棕色", "橄榄绿", "酒红色", "焦糖色", "芥末黄"],
+      neutralColors: ["米白", "驼色", "深灰", "藏青"],
+      avoidColors: ["荧光粉", "冰蓝", "亮紫色"],
+      metalPreference: "金色",
+    };
   }
 
   @Get("style-recommendations")

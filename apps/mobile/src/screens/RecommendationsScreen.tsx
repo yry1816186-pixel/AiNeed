@@ -202,7 +202,7 @@ export const RecommendationsScreen: React.FC = () => {
         <Text style={styles.headerTitle}>AI 推荐</Text>
         <TouchableOpacity
           style={styles.filterButton}
-          onPress={() => {/* TODO: open filter modal */}}
+          onPress={() => {/* filter modal - v3 deferred */}}
         >
           <Ionicons name="options-outline" size={20} color={theme.colors.text} />
         </TouchableOpacity>

@@ -62,7 +62,7 @@ export const ConsultantCard: React.FC<ConsultantCardProps> = ({
 
         <View style={styles.footer}>
           <View style={styles.ratingRow}>
-            <RatingBadge value={rating} size="compact" />
+            <RatingBadge value={rating} />
             <Text style={styles.reviewCount}>{reviewCount} 条评价</Text>
           </View>
           {matchReasons && matchReasons.length > 0 && (

@@ -46,10 +46,7 @@ CREATE INDEX IF NOT EXISTS "ClothingItem_isActive_createdAt_soft_delete_idx"
 ON "ClothingItem"("isActive", "createdAt" DESC)
 WHERE "isDeleted" = false;
 
--- 库存索引（只索引未删除的商品）
-CREATE INDEX IF NOT EXISTS "ClothingItem_stock_soft_delete_idx"
-ON "ClothingItem"("stock")
-WHERE "isDeleted" = false AND "stock" < 10;
+-- 库存索引已移除：ClothingItem 没有 stock 列（库存管理通过 CartItem 数量实现）
 
 -- =====================================================
 -- Order 软删除索引优化

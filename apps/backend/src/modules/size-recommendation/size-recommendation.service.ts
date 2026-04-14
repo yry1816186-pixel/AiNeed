@@ -11,6 +11,7 @@ interface BodyProfile {
   bust?: number;
   waist?: number;
   hip?: number;
+  fitPreference?: "tight" | "regular" | "loose";
 }
 
 interface SizeRange {
@@ -29,6 +30,8 @@ export interface RecommendationResult {
   recommendedSize: string;
   confidence: "high" | "medium" | "low";
   reasons: string[];
+  betweenSizes?: string;
+  scores?: Array<{ size: string; score: number }>;
 }
 
 @Injectable()
@@ -77,14 +80,32 @@ export class SizeRecommendationService {
     }
 
     const sizeChart = this.buildSizeRanges(item.sizes);
-    const matchResult = this.matchBodyToSizes(bodyProfile, sizeChart);
+    const matchResult = this.matchBodyToSizes(
+      bodyProfile,
+      sizeChart,
+      bodyProfile.fitPreference,
+    );
     const historyBonus = await this.getOrderHistoryBonus(userId, item.brandId);
     const returnPenalty = await this.getReturnPenalty(userId, item.brandId);
+
+    // Apply brand-specific offset from return data
+    const brandOffset = this.computeBrandOffset(historyBonus, returnPenalty);
 
     const reasons: string[] = [];
 
     if (matchResult.matchScore > 0) {
       reasons.push(`体型匹配度 ${Math.round(matchResult.matchScore * 100)}%`);
+    }
+
+    if (matchResult.betweenSizes) {
+      reasons.push(
+        `处于 ${matchResult.betweenSizes} 之间，建议 ${matchResult.recommendedSize}`,
+      );
+    }
+
+    if (bodyProfile.fitPreference && bodyProfile.fitPreference !== "regular") {
+      const label = bodyProfile.fitPreference === "tight" ? "修身" : "宽松";
+      reasons.push(`已按${label}偏好调整推荐`);
     }
 
     if (historyBonus.size) {
@@ -99,10 +120,17 @@ export class SizeRecommendationService {
       matchResult.confidence = this.lowerConfidence(matchResult.confidence);
     }
 
+    if (brandOffset !== 0) {
+      const direction = brandOffset > 0 ? "偏大" : "偏小";
+      reasons.push(`该品牌尺码${direction}，已调整`);
+    }
+
     return {
       recommendedSize: matchResult.recommendedSize,
       confidence: matchResult.confidence,
       reasons,
+      betweenSizes: matchResult.betweenSizes,
+      scores: matchResult.allScores,
     };
   }
 
@@ -150,56 +178,154 @@ export class SizeRecommendationService {
     return { sizes: filtered };
   }
 
+  /**
+   * Gaussian distance scoring: gradual falloff outside range instead of binary 0/3.
+   * score = 1.0 inside range, exponential decay outside.
+   */
+  private gaussianScore(
+    measurement: number,
+    min: number,
+    max: number,
+    sigma: number,
+  ): number {
+    if (measurement >= min && measurement <= max) {
+      return 1.0;
+    }
+    const distance = measurement < min ? min - measurement : measurement - max;
+    return Math.exp(-(distance * distance) / (2 * sigma * sigma));
+  }
+
+  /**
+   * Apply fit preference offset to body measurements.
+   * tight: -2cm, regular: 0cm, loose: +2cm.
+   */
+  private applyFitPreference(
+    body: BodyProfile,
+    preference?: "tight" | "regular" | "loose",
+  ): BodyProfile {
+    if (!preference || preference === "regular") {
+      return body;
+    }
+    const offset = preference === "tight" ? -2 : 2;
+    return {
+      ...body,
+      bust: body.bust !== undefined ? body.bust + offset : undefined,
+      waist: body.waist !== undefined ? body.waist + offset : undefined,
+      hip: body.hip !== undefined ? body.hip + offset : undefined,
+    };
+  }
+
+  /**
+   * Match body measurements to size chart using weighted Gaussian distance.
+   * Returns best size, all scores, and confidence level.
+   */
   private matchBodyToSizes(
     body: BodyProfile,
     sizeChart: SizeRange[],
-  ): { recommendedSize: string; matchScore: number; confidence: "high" | "medium" | "low" } {
+    fitPreference?: "tight" | "regular" | "loose",
+  ): {
+    recommendedSize: string;
+    matchScore: number;
+    confidence: "high" | "medium" | "low";
+    allScores: Array<{ size: string; score: number }>;
+    betweenSizes?: string;
+  } {
     if (sizeChart.length === 0) {
-      return { recommendedSize: "M", matchScore: 0, confidence: "low" };
+      return {
+        recommendedSize: "M",
+        matchScore: 0,
+        confidence: "low",
+        allScores: [],
+      };
     }
+
+    // Apply fit preference offset
+    const adjustedBody = this.applyFitPreference(body, fitPreference);
+
+    // Dimension weights and sigma values
+    const dimensions = [
+      {
+        value: adjustedBody.bust,
+        min: "chestMin" as const,
+        max: "chestMax" as const,
+        weight: 3.0,
+        sigma: 4,
+      },
+      {
+        value: adjustedBody.waist,
+        min: "waistMin" as const,
+        max: "waistMax" as const,
+        weight: 2.5,
+        sigma: 3,
+      },
+      {
+        value: adjustedBody.hip,
+        min: "hipsMin" as const,
+        max: "hipsMax" as const,
+        weight: 2.5,
+        sigma: 4,
+      },
+      {
+        value: adjustedBody.height,
+        min: "heightMin" as const,
+        max: "heightMax" as const,
+        weight: 1.0,
+        sigma: 6,
+      },
+    ];
 
     let bestSize = sizeChart[0]?.size ?? "M";
     let bestScore = 0;
+    const allScores: Array<{ size: string; score: number }> = [];
 
     for (const sizeRange of sizeChart) {
-      let score = 0;
-      let totalWeights = 0;
+      let weightedSum = 0;
+      let totalWeight = 0;
 
-      if (body.bust && sizeRange.chestMin !== undefined && sizeRange.chestMax !== undefined) {
-        const inRange = body.bust >= sizeRange.chestMin && body.bust <= sizeRange.chestMax;
-        score += inRange ? 3 : 0;
-        totalWeights += 3;
+      for (const dim of dimensions) {
+        if (dim.value !== undefined) {
+          const rangeMin = sizeRange[dim.min];
+          const rangeMax = sizeRange[dim.max];
+          if (rangeMin !== undefined && rangeMax !== undefined) {
+            const score = this.gaussianScore(dim.value, rangeMin, rangeMax, dim.sigma);
+            weightedSum += score * dim.weight;
+            totalWeight += dim.weight;
+          }
+        }
       }
 
-      if (body.waist && sizeRange.waistMin !== undefined && sizeRange.waistMax !== undefined) {
-        const inRange = body.waist >= sizeRange.waistMin && body.waist <= sizeRange.waistMax;
-        score += inRange ? 3 : 0;
-        totalWeights += 3;
-      }
+      const normalizedScore = totalWeight > 0 ? weightedSum / totalWeight : 0;
+      allScores.push({ size: sizeRange.size, score: normalizedScore });
 
-      if (body.hip && sizeRange.hipsMin !== undefined && sizeRange.hipsMax !== undefined) {
-        const inRange = body.hip >= sizeRange.hipsMin && body.hip <= sizeRange.hipsMax;
-        score += inRange ? 2 : 0;
-        totalWeights += 2;
-      }
-
-      if (body.height && sizeRange.heightMin !== undefined && sizeRange.heightMax !== undefined) {
-        const inRange = body.height >= sizeRange.heightMin && body.height <= sizeRange.heightMax;
-        score += inRange ? 1 : 0;
-        totalWeights += 1;
-      }
-
-      const normalizedScore = totalWeights > 0 ? score / totalWeights : 0;
       if (normalizedScore > bestScore) {
         bestScore = normalizedScore;
         bestSize = sizeRange.size;
       }
     }
 
-    const confidence: "high" | "medium" | "low" =
-      bestScore >= 0.8 ? "high" : bestScore >= 0.5 ? "medium" : "low";
+    // Sort scores descending for between-sizes detection
+    const sorted = [...allScores].sort((a, b) => b.score - a.score);
 
-    return { recommendedSize: bestSize, matchScore: bestScore, confidence };
+    // Detect "between sizes" when top two scores are close
+    let betweenSizes: string | undefined;
+    if (sorted.length >= 2 && sorted[0] && sorted[1]) {
+      const scoreDiff = sorted[0].score - sorted[1].score;
+      if (scoreDiff < 0.1 && scoreDiff >= 0) {
+        betweenSizes = `${sorted[1].size}-${sorted[0].size}`;
+      }
+    }
+
+    // Confidence based on distance from range boundaries
+    const confidence: "high" | "medium" | "low" =
+      bestScore >= 0.85 ? "high" : bestScore >= 0.6 ? "medium" : "low";
+
+    return {
+      recommendedSize: bestSize,
+      matchScore: bestScore,
+      confidence,
+      allScores,
+      betweenSizes,
+    };
   }
 
   private async getOrderHistoryBonus(
@@ -269,6 +395,27 @@ export class SizeRecommendationService {
     if (sizes.length === 0) return { size: null };
 
     return { size: sizes[0] ?? null };
+  }
+
+  /**
+   * Compute brand-specific size offset from order/return history.
+   * Positive = brand runs small (recommend larger), negative = runs large.
+   */
+  private computeBrandOffset(
+    historyBonus: { size: string | null },
+    returnPenalty: { size: string | null },
+  ): number {
+    if (!historyBonus.size || !returnPenalty.size) {
+      return 0;
+    }
+    const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL"];
+    const keptIdx = sizeOrder.indexOf(historyBonus.size.toUpperCase());
+    const returnedIdx = sizeOrder.indexOf(returnPenalty.size.toUpperCase());
+    if (keptIdx === -1 || returnedIdx === -1) {
+      return 0;
+    }
+    // If user kept a larger size than they returned, brand runs small
+    return keptIdx - returnedIdx;
   }
 
   private boostConfidence(

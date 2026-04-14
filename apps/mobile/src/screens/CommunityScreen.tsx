@@ -1,34 +1,37 @@
-﻿﻿﻿import React, { useState, useEffect, useCallback, useMemo } from 'react';
+﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  Image,
   TouchableOpacity,
-  Dimensions,
-  TextInput,
   RefreshControl,
-  Modal,
   ActivityIndicator,
   Alert,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-  withDelay,
-} from 'react-native-reanimated';
+import { MasonryFlashList } from '@shopify/flash-list';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { theme } from '../theme';
 import { communityApi } from '../services/api/community.api';
 import { TrendingCard } from '../components/community/TrendingCard';
+import { PostMasonryCard } from '../components/community/PostMasonryCard';
+import type { PostCardData } from '../components/community/PostMasonryCard';
+import { CreatePostModal } from '../components/community/CreatePostModal';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-const SPRING_CFG = { damping: 15, stiffness: 150, mass: 0.5 };
+/**
+ * Estimate image card height from image URL using a deterministic hash.
+ * Produces heights in the range [baseHeight, baseHeight * 2] for masonry variety.
+ */
+function estimateImageHeight(imageUrl: string, baseHeight: number = 160): number {
+  if (!imageUrl) return baseHeight;
+  let hash = 0;
+  for (let i = 0; i < imageUrl.length; i++) {
+    hash = ((hash << 5) - hash + imageUrl.charCodeAt(i)) | 0;
+  }
+  const ratio = 1.0 + (Math.abs(hash) % 100) / 100; // 1.0 to 2.0
+  return Math.round(baseHeight * ratio);
+}
 
 const CATEGORIES = [
   { key: 'all', label: '全部' },
@@ -42,20 +45,6 @@ const MAIN_TABS = [
   { key: 'discover', label: '发现' },
   { key: 'following', label: '关注' },
 ] as const;
-
-interface PostCardData {
-  id: string;
-  title: string;
-  image: string;
-  authorName: string;
-  authorAvatar: string;
-  likesCount: number;
-  isFeatured: boolean;
-  imageHeight: number;
-  bloggerLevel?: 'blogger' | 'big_v' | null;
-  feedType?: 'post' | 'like' | 'tryon';
-  feedMeta?: string;
-}
 
 type PostCardDataInternal = PostCardData;
 
@@ -71,181 +60,6 @@ interface CommunityPostData {
   };
 }
 
-function BloggerBadge({ level }: { level: 'blogger' | 'big_v' }) {
-  if (level === 'big_v') {
-    return (
-      <View style={s.bigVBadge}>
-        <Ionicons name="shield-checkmark" size={10} color="#FFFFFF" />
-      </View>
-    );
-  }
-  return (
-    <View style={s.bloggerBadge}>
-      <Ionicons name="checkmark" size={8} color="#FFFFFF" />
-    </View>
-  );
-}
-
-function PostMasonryCard({
-  item,
-  index,
-  onPress,
-}: {
-  item: PostCardData;
-  index: number;
-  onPress: () => void;
-}) {
-  const opacity = useSharedValue(0);
-  const scale = useSharedValue(0.92);
-
-  useEffect(() => {
-    const d = (index % 6) * 80;
-    opacity.value = withDelay(d, withTiming(1, { duration: 350 }));
-    scale.value = withDelay(d, withSpring(1, SPRING_CFG));
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ scale: scale.value }],
-  }));
-
-  return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.85}>
-      <Animated.View style={[s.masonryCard, animatedStyle]}>
-        <View style={[s.masonryImageContainer, { height: item.imageHeight }]}>
-          {item.image ? (
-            <Image source={{ uri: item.image }} style={s.masonryImage} resizeMode="cover" />
-          ):(
-            <View style={s.masonryImagePlaceholder}>
-              <Ionicons name="image-outline" size={28} color={theme.colors.placeholderBg} />
-            </View>
-          )}
-          {item.isFeatured && (
-            <View style={s.featuredBadge}>
-              <Ionicons name="star" size={10} color={theme.colors.gold} />
-              <Text style={s.featuredText}>精华</Text>
-            </View>
-          )}
-        </View>
-        <View style={s.masonryInfo}>
-          <Text style={s.masonryTitle} numberOfLines={2}>{item.title}</Text>
-          <View style={s.masonryFooter}>
-            <View style={s.masonryAuthor}>
-              {item.authorAvatar?(
-                <View style={s.avatarWrapper}>
-                  <Image source={{ uri: item.authorAvatar }} style={s.masonryAvatar} />
-                  {item.bloggerLevel && <BloggerBadge level={item.bloggerLevel} />}
-                </View>
-              ):(
-                <View style={s.avatarWrapper}>
-                  <View style={s.masonryAvatarPlaceholder}>
-                    <Ionicons name="person" size={10} color={theme.colors.surface} />
-                  </View>
-                  {item.bloggerLevel && <BloggerBadge level={item.bloggerLevel} />}
-                </View>
-              )}
-              <Text style={s.masonryAuthorName} numberOfLines={1}>{item.authorName}</Text>
-            </View>
-            <View style={s.masonryLikes}>
-              <Ionicons name="heart-outline" size={12} color={theme.colors.textTertiary} />
-              <Text style={s.masonryLikesCount}>
-                {item.likesCount >= 1000
-                  ? `${(item.likesCount / 1000).toFixed(1)}k`
-                  : String(item.likesCount)}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </Animated.View>
-    </TouchableOpacity>
-  );
-}
-
-function CreatePostModal({
-  visible,
-  onClose,
-  onSubmit,
-}: {
-  visible: boolean;
-  onClose: () => void;
-  onSubmit: (title: string, content: string, category: string) => void;
-}) {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('outfit');
-
-  const handleSubmit = useCallback(() => {
-    if (!title.trim()) {
-      Alert.alert('提示', '请输入标题');
-      return;
-    }
-    onSubmit(title, content, selectedCategory);
-    setTitle('');
-    setContent('');
-    setSelectedCategory('outfit');
-    onClose();
-  }, [title, content, selectedCategory, onSubmit, onClose]);
-
-  return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-      <View style={s.modalContainer}>
-        <View style={s.modalHeader}>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={s.modalCancelText}>取消</Text>
-          </TouchableOpacity>
-          <Text style={s.modalTitle}>发布动态</Text>
-          <TouchableOpacity onPress={handleSubmit}>
-            <Text style={s.modalSubmitText}>发布</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={s.modalCategoryRow}>
-          {CATEGORIES.filter((c) => c.key !== 'all').map((cat) => (
-            <TouchableOpacity
-              key={cat.key}
-              style={[s.modalCategoryChip, selectedCategory === cat.key && s.modalCategoryChipActive]}
-              onPress={() => setSelectedCategory(cat.key)}
-            >
-              <Text
-                style={[s.modalCategoryChipText, selectedCategory === cat.key && s.modalCategoryChipTextActive]}
-              >
-                {cat.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <TextInput
-          style={s.modalTitleInput}
-          placeholder="标题"
-          placeholderTextColor={theme.colors.textTertiary}
-          value={title}
-          onChangeText={setTitle}
-          maxLength={50}
-        />
-        <TextInput
-          style={s.modalContentInput}
-          placeholder="分享你的穿搭心得..."
-          placeholderTextColor={theme.colors.textTertiary}
-          value={content}
-          onChangeText={setContent}
-          multiline
-          textAlignVertical="top"
-          maxLength={500}
-        />
-        <View style={s.modalToolbar}>
-          <TouchableOpacity style={s.modalToolBtn}>
-            <Ionicons name="image-outline" size={20} color={theme.colors.primary} />
-            <Text style={s.modalToolText}>添加图片</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={s.modalToolBtn}>
-            <Ionicons name="pricetag-outline" size={20} color={theme.colors.primary} />
-            <Text style={s.modalToolText}>添加标签</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  );
-}
-
 export const CommunityScreen: React.FC = () => {
   const [activeMainTab, setActiveMainTab] = useState<string>('discover');
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -258,6 +72,10 @@ export const CommunityScreen: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
+  // Track which card IDs are currently visible for intersection-based animation
+  const visibleIdsRef = useRef<Set<string>>(new Set());
+  const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set());
+
   const transformPosts = useCallback((raw: CommunityPostData[]): PostCardDataInternal[] => {
     return raw.map((p: CommunityPostData, idx: number) => ({
       id: p.id || String(idx),
@@ -267,7 +85,7 @@ export const CommunityScreen: React.FC = () => {
       authorAvatar: p.author?.avatar || '',
       likesCount: p.likesCount || 0,
       isFeatured: (p.likesCount || 0) > 100,
-      imageHeight: 160 + (idx % 4) * 30,
+      imageHeight: estimateImageHeight(p.images?.[0] || ''),
     }));
   }, []);
 
@@ -286,8 +104,8 @@ export const CommunityScreen: React.FC = () => {
 
         if (response.success && response.data) {
           const items = response.data.items || [];
-          const transformed =transformPosts(items);
-          setPosts((prev) => (append ? [...prev, ...transformed]: transformed));
+          const transformed = transformPosts(items);
+          setPosts((prev) => (append ? [...prev, ...transformed] : transformed));
           setPage(pageNum);
           setHasMore(response.data.hasMore ?? items.length >= 12);
         } else {
@@ -311,7 +129,7 @@ export const CommunityScreen: React.FC = () => {
       if (response.success && response.data) {
         const items = response.data.items || [];
         const feedItems: PostCardDataInternal[] = items.map((item, idx) => {
-          const feedType = (item as PostCardDataInternal & { feedType?: string }).feedType;
+          const feedType = (item as unknown as PostCardDataInternal & { feedType?: string }).feedType;
           if (feedType === 'like') {
             return {
               id: item.id || String(idx),
@@ -368,16 +186,16 @@ export const CommunityScreen: React.FC = () => {
     }
   }, [activeMainTab, fetchPosts, fetchFollowingFeed]);
 
-  const onLoadMore= useCallback(() => {
+  const onLoadMore = useCallback(() => {
     if (activeMainTab === 'discover' && hasMore && !loading) {
       fetchPosts(page + 1, true);
     }
   }, [activeMainTab, hasMore, loading, page, fetchPosts]);
 
-  const handleCreatePost= useCallback(
+  const handleCreatePost = useCallback(
     async (title: string, content: string, category: string) => {
       try {
-        const response= await communityApi.createPost({ title, content, category });
+        const response = await communityApi.createPost({ title, content, category });
         if (response.success) {
           Alert.alert('成功', '发布成功');
           fetchPosts(1, false);
@@ -391,52 +209,57 @@ export const CommunityScreen: React.FC = () => {
     [fetchPosts],
   );
 
-  const { leftColumn, rightColumn } = useMemo(() => {
-    const left: { item: PostCardData; index: number }[] = [];
-    const right: { item: PostCardData; index: number }[] = [];
-    posts.forEach((item, index) => {
-      if (index % 2 === 0) {
-        left.push({ item, index });
-      } else {
-        right.push({ item, index });
+  // Intersection-based visibility handler for masonry cards
+  const handleViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: Array<{ item: PostCardData; index: number }> }) => {
+      const newVisibleIds = new Set<string>();
+      viewableItems.forEach((vi) => {
+        newVisibleIds.add(vi.item.id);
+      });
+      // Only update if the set actually changed
+      if (
+        newVisibleIds.size !== visibleIdsRef.current.size ||
+        [...newVisibleIds].some((id) => !visibleIdsRef.current.has(id))
+      ) {
+        visibleIdsRef.current = newVisibleIds;
+        setVisibleIds(newVisibleIds);
       }
-    });
-    return { leftColumn: left, rightColumn: right };
-  }, [posts]);
-
-  const renderCard= (data: { item: PostCardData; index: number }) => (
-    <PostMasonryCard
-      key={data.item.id}
-      item={data.item}
-      index={data.index}
-      onPress={() => {}}
-    />
+    },
+    [],
   );
 
-  const renderFollowingFeedItem = useCallback((item: PostCardDataInternal, index: number) => {
-    if (item.feedType === 'like' || item.feedType === 'tryon') {
-      return (
-        <View key={item.id} style={s.feedActivityCard}>
-          <View style={s.feedActivityContent}>
-            <Ionicons
-              name={item.feedType === 'like' ? 'heart' : 'shirt-outline'}
-              size={16}
-              color={item.feedType === 'like' ? '#FF4757' : '#6C5CE7'}
-            />
-            <Text style={s.feedActivityText}>{item.title}</Text>
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 30,
+  }).current;
+
+  const renderFollowingFeedItem = useCallback(
+    (item: PostCardDataInternal, index: number) => {
+      if (item.feedType === 'like' || item.feedType === 'tryon') {
+        return (
+          <View key={item.id} style={s.feedActivityCard}>
+            <View style={s.feedActivityContent}>
+              <Ionicons
+                name={item.feedType === 'like' ? 'heart' : 'shirt-outline'}
+                size={16}
+                color={item.feedType === 'like' ? '#FF4757' : '#6C5CE7'}
+              />
+              <Text style={s.feedActivityText}>{item.title}</Text>
+            </View>
           </View>
-        </View>
+        );
+      }
+      return (
+        <PostMasonryCard
+          key={item.id}
+          item={item}
+          index={index}
+          onPress={() => {}}
+          visible={visibleIds.has(item.id)}
+        />
       );
-    }
-    return (
-      <PostMasonryCard
-        key={item.id}
-        item={item}
-        index={index}
-        onPress={() => {}}
-      />
-    );
-  }, []);
+    },
+    [visibleIds],
+  );
 
   const currentPosts = activeMainTab === 'discover' ? posts : followingFeed;
 
@@ -511,7 +334,7 @@ export const CommunityScreen: React.FC = () => {
             <Text style={s.retryBtnText}>重试</Text>
           </TouchableOpacity>
         </View>
-      ) : currentPosts.length === 0? (
+      ) : currentPosts.length === 0 ? (
         <View style={s.centerContainer}>
           <Ionicons name="chatbubbles-outline" size={56} color={theme.colors.textTertiary} />
           <Text style={s.emptyTitle}>{activeMainTab === 'following' ? '还没有关注动态' : '还没有内容'}</Text>
@@ -527,30 +350,42 @@ export const CommunityScreen: React.FC = () => {
           <View style={{ height: 80 }} />
         </ScrollView>
       ) : (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />}
-          onScroll={(e) => {
-            const { layoutMeasurement, contentOffset, contentSize } = e.nativeEvent;
-            if (layoutMeasurement.height + contentOffset.y >= contentSize.height - 200) {
-              onLoadMore();
-            }
-          }}
-          scrollEventThrottle={16}
-          contentContainerStyle={s.scrollContent}
-        >
-          <View style={s.masonryRow}>
-            <View style={s.masonryColumn}>{leftColumn.map(renderCard)}</View>
-            <View style={s.masonryColumn}>{rightColumn.map(renderCard)}</View>
-          </View>
-          {loading && posts.length > 0 && (
-            <View style={s.loadingMore}>
-              <ActivityIndicator size="small" color={theme.colors.primary} />
-              <Text style={s.loadingMoreText}>加载更多...</Text>
-            </View>
+        <MasonryFlashList
+          data={posts}
+          numColumns={2}
+          renderItem={({ item, index }) => (
+            <PostMasonryCard
+              item={item}
+              index={index}
+              onPress={() => {}}
+              visible={visibleIds.has(item.id)}
+              onHeightMeasured={(height) => {
+                setPosts((prev) =>
+                  prev.map((p) =>
+                    p.id === item.id && Math.abs(p.imageHeight - height) > 5
+                      ? { ...p, imageHeight: height }
+                      : p,
+                  ),
+                );
+              }}
+            />
           )}
-          <View style={{ height: 80 }} />
-        </ScrollView>
+          estimatedItemSize={250}
+          onEndReached={onLoadMore}
+          onEndReachedThreshold={0.5}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />}
+          contentContainerStyle={s.masonryListContent}
+          onViewableItemsChanged={handleViewableItemsChanged}
+          viewabilityConfig={viewabilityConfig}
+          ListFooterComponent={
+            loading && posts.length > 0 ? (
+              <View style={s.loadingMore}>
+                <ActivityIndicator size="small" color={theme.colors.primary} />
+                <Text style={s.loadingMoreText}>加载更多...</Text>
+              </View>
+            ) : null
+          }
+        />
       )}
       <TouchableOpacity
         style={s.fab}
@@ -569,7 +404,7 @@ export const CommunityScreen: React.FC = () => {
   );
 };
 
-const s= StyleSheet.create({
+const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: theme.colors.background },
   header: {
     flexDirection: 'row',
@@ -617,41 +452,7 @@ const s= StyleSheet.create({
   retryBtn: { marginTop: 24, backgroundColor: theme.colors.primary, paddingHorizontal: 32, paddingVertical: 14, borderRadius: 28 },
   retryBtnText: { color: theme.colors.surface, fontSize: 15, fontWeight: '600' },
   scrollContent: { paddingTop: 12, paddingBottom: 40 },
-  masonryRow: { flexDirection: 'row', paddingHorizontal: 12, gap: 12 },
-  masonryColumn: { flex: 1, gap: 12 },
-  masonryCard: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: 14,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  masonryImageContainer: { width: '100%', backgroundColor: theme.colors.subtleBg, overflow: 'hidden' },
-  masonryImage: { width: '100%', height: '100%' },
-  masonryImagePlaceholder: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.colors.subtleBg },
-  featuredBadge: {
-    position: 'absolute', top: 8, left: 8,
-    flexDirection: 'row', alignItems: 'center', gap: 3,
-    backgroundColor: 'rgba(255,184,0,0.9)',
-    paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8,
-  },
-  featuredText: { fontSize: 10, fontWeight: '700', color: theme.colors.surface },
-  masonryInfo: { padding: 10 },
-  masonryTitle: { fontSize: 13, fontWeight: '600', color: theme.colors.text, lineHeight: 18 },
-  masonryFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 },
-  masonryAuthor: { flexDirection: 'row', alignItems: 'center', gap: 5, flex: 1 },
-  masonryAvatar: { width: 20, height: 20, borderRadius: 10, backgroundColor: theme.colors.subtleBg },
-  masonryAvatarPlaceholder: {
-    width: 20, height: 20, borderRadius: 10,
-    backgroundColor: theme.colors.primary,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  masonryAuthorName: { fontSize: 11, color: theme.colors.textTertiary, flex: 1 },
-  masonryLikes: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  masonryLikesCount: { fontSize: 11, color: theme.colors.textTertiary, fontWeight: '500' },
+  masonryListContent: { paddingHorizontal: 12, paddingTop: 12, paddingBottom: 40 },
   loadingMore: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16 },
   loadingMoreText: { fontSize: 13, color: theme.colors.textTertiary },
   fab: {
@@ -662,53 +463,6 @@ const s= StyleSheet.create({
     shadowColor: theme.colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3, shadowRadius: 12, elevation: 8,
-  },
-  modalContainer: { flex: 1, backgroundColor: theme.colors.background },
-  modalHeader: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 20, paddingVertical: 16,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.border,
-  },
-  modalTitle: { fontSize: 16, fontWeight: '600', color: theme.colors.text },
-  modalCancelText: { fontSize: 15, color: theme.colors.textSecondary },
-  modalSubmitText: { fontSize: 15, fontWeight: '600', color: theme.colors.primary },
-  modalCategoryRow: {
-    flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 12,
-    gap: 8, borderBottomWidth: 1, borderBottomColor: theme.colors.border,
-  },
-  modalCategoryChip: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 16, backgroundColor: theme.colors.surface },
-  modalCategoryChipActive: { backgroundColor: theme.colors.primary },
-  modalCategoryChipText: { fontSize: 13, color: theme.colors.textSecondary },
-  modalCategoryChipTextActive: { color: theme.colors.surface, fontWeight: '600' },
-  modalTitleInput: {
-    paddingHorizontal: 20, paddingVertical: 14,
-    fontSize: 18, fontWeight: '600', color: theme.colors.text,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.border,
-  },
-  modalContentInput: {
-    flex: 1, paddingHorizontal: 20, paddingVertical: 14,
-    fontSize: 15, color: theme.colors.text, lineHeight: 22, minHeight: 150,
-  },
-  modalToolbar: {
-    flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 12,
-    borderTopWidth: 1, borderTopColor: theme.colors.border, gap: 24,
-  },
-  modalToolBtn: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  modalToolText: { fontSize: 13, color: theme.colors.textSecondary },
-  avatarWrapper: { position: 'relative' },
-  bloggerBadge: {
-    position: 'absolute', bottom: -2, right: -2,
-    width: 12, height: 12, borderRadius: 6,
-    backgroundColor: '#6C5CE7',
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: '#FFFFFF',
-  },
-  bigVBadge: {
-    position: 'absolute', bottom: -3, right: -3,
-    width: 14, height: 14, borderRadius: 7,
-    backgroundColor: '#F1C40F',
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: '#FFFFFF',
   },
   feedActivityCard: {
     backgroundColor: theme.colors.surface,
@@ -733,4 +487,3 @@ const s= StyleSheet.create({
 });
 
 export default CommunityScreen;
-

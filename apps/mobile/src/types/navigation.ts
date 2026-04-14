@@ -1,6 +1,5 @@
-import { NavigationState, PartialState, Route } from '@react-navigation/native';
-
-export type {
+import type { NavigatorScreenParams } from '@react-navigation/native';
+import type {
   AuthStackParamList,
   HomeStackParamList,
   StylistStackParamList,
@@ -11,64 +10,95 @@ export type {
   RootStackParamList as NewRootStackParamList,
 } from '../navigation/types';
 
+export type {
+  AuthStackParamList,
+  HomeStackParamList,
+  StylistStackParamList,
+  TryOnStackParamList,
+  CommunityStackParamList,
+  ProfileStackParamList,
+  NewMainTabParamList,
+  NewRootStackParamList,
+};
+
+export type MainTabParamList = NewMainTabParamList;
+
 export type RootStackParamList = {
-  Home: undefined;
-  Explore: undefined;
-  Heart: undefined;
-  Cart: undefined;
-  Wardrobe: undefined;
-  Profile: undefined;
+  Auth: NavigatorScreenParams<AuthStackParamList>;
+  MainTabs: NavigatorScreenParams<NewMainTabParamList>;
   Login: undefined;
   PhoneLogin: undefined;
   Register: undefined;
+  Onboarding: undefined;
+  HomeFeed: undefined;
+  Search: undefined;
+  Notifications: undefined;
+  RecommendationDetail: { recommendationId: string };
+  Product: { clothingId: string };
+  ClothingDetail: { clothingId: string };
+  OutfitDetail: { outfitId: string };
+  AIStylist: undefined;
   AiStylist: undefined;
+  OutfitPlan: { planId?: string };
+  ChatHistory: undefined;
   AiStylistChat: { sessionId?: string };
   SessionCalendar: undefined;
-  Recommendations: undefined;
-  RecommendationDetail: { recommendationId: string };
-  ClothingDetail: { clothingId: string };
-  AddClothing: { editId?: string };
   VirtualTryOn: { clothingId?: string };
-  OutfitDetail: { outfitId: string };
-  Search: undefined;
+  TryOnResult: { resultId: string };
+  TryOnHistory: undefined;
+  CommunityFeed: undefined;
+  Community: undefined;
+  PostDetail: { postId: string };
+  PostCreate: undefined;
+  InfluencerProfile: { influencerId: string };
+  InspirationWardrobe: { userId?: string };
+  BloggerDashboard: undefined;
+  BloggerProfile: { bloggerId?: string };
+  BloggerProduct: { productId?: string };
+  ProfileMain: undefined;
+  Profile: undefined;
+  ProfileEdit: undefined;
+  StyleQuiz: undefined;
+  BodyAnalysis: undefined;
+  ColorAnalysis: undefined;
+  SharePoster: { type?: string; id?: string };
+  Wardrobe: undefined;
+  Favorites: undefined;
   Settings: undefined;
-  Notifications: undefined;
   NotificationSettings: undefined;
+  Subscription: undefined;
+  Cart: undefined;
+  Checkout: undefined;
+  Payment: { orderId: string };
   Orders: undefined;
   OrderDetail: { orderId: string };
-  Checkout: undefined;
-  Favorites: undefined;
-  Subscription: undefined;
+  AddClothing: { editId?: string };
+  CustomDesign: undefined;
   Customization: undefined;
+  CustomEditor: { designId?: string };
   CustomizationEditor: { templateId?: string };
   CustomizationPreview: { designId: string };
   CustomizationOrderDetail: { requestId: string };
+  Brand: { brandId: string };
   BrandQRScan: undefined;
-  Community: undefined;
+  AdvisorList: undefined;
+  AdvisorProfile: { advisorId: string };
+  Booking: { advisorId: string };
+  Chat: { advisorId: string; sessionId?: string };
   Legal: { type: 'terms' | 'privacy' };
-  Onboarding: undefined;
-  StyleQuiz: undefined;
-  QuizResult: undefined;
-  MainTabs: {
-    screen: keyof MainTabParamList;
-    params?: MainTabParamList[keyof MainTabParamList];
-  };
+  Explore: undefined;
+  Heart: undefined;
   TermsOfService: undefined;
   PrivacyPolicy: undefined;
 };
 
-export type BottomTabParamList = {
-  Home: undefined;
-  Explore: undefined;
-  Heart: undefined;
-  Cart: undefined;
-  Wardrobe: undefined;
-  Profile: undefined;
+export type BottomTabParamList = NewMainTabParamList;
+
+export type NavigationRoute<RouteName extends keyof RootStackParamList> = {
+  key: string;
+  name: RouteName;
+  params?: RootStackParamList[RouteName];
 };
-
-export type MainTabParamList = BottomTabParamList;
-
-export type NavigationRoute<RouteName extends keyof RootStackParamList> = Route<RouteName, RootStackParamList[RouteName]>;
 
 export type NavigationRoutes = Array<NavigationRoute<keyof RootStackParamList>>;
 

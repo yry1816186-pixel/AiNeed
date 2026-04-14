@@ -8,9 +8,8 @@ interface VipGuardProps {
 
 export function VipGuard({ children, onNotVip }: VipGuardProps) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isVip = useAuthStore((state) => state.isVip);
   const hasTriggered = useRef(false);
-
-  const isVip = false;
 
   useEffect(() => {
     if (isAuthenticated && !isVip && !hasTriggered.current) {

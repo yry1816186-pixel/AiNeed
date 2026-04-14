@@ -232,21 +232,25 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { roomId: string; isTyping: boolean },
   ) {
-    const connection = this.connections.get(client.id);
-    if (!connection) return;
+    try {
+      const connection = this.connections.get(client.id);
+      if (!connection) return;
 
-    const room = await this.prisma.chatRoom.findUnique({ where: { id: data.roomId } });
-    if (!room) return;
+      const room = await this.prisma.chatRoom.findUnique({ where: { id: data.roomId } });
+      if (!room) return;
 
-    const senderType = room.consultantId && (await this.chatService.isConsultant(connection.userId, room.consultantId)) ? 'consultant' : 'user';
+      const senderType = room.consultantId && (await this.chatService.isConsultant(connection.userId, room.consultantId)) ? 'consultant' : 'user';
 
-    // 直接向聊天室广播打字状态
-    this.server.to(`chat:room:${data.roomId}`).emit('chat:typing', {
-      roomId: data.roomId,
-      senderId: connection.userId,
-      senderType,
-      isTyping: data.isTyping,
-    });
+      this.server.to(`chat:room:${data.roomId}`).emit('chat:typing', {
+        roomId: data.roomId,
+        senderId: connection.userId,
+        senderType,
+        isTyping: data.isTyping,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error handling typing event: ${message}`);
+    }
   }
 
   @SubscribeMessage('chat:read')

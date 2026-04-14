@@ -4,6 +4,7 @@
  */
 
 import { AxiosError } from "axios";
+import type { ApiError } from "../../types/api";
 import {
   AppError,
   AppErrorCode,
@@ -67,7 +68,7 @@ describe("classifyAxiosError", () => {
     const axiosError = new AxiosError("Network Error");
     axiosError.code = "ERR_NETWORK";
 
-    const result = classifyAxiosError(axiosError);
+    const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.NETWORK_ERROR);
     expect(result.originalError).toBe(axiosError);
   });
@@ -76,7 +77,7 @@ describe("classifyAxiosError", () => {
     const axiosError = new AxiosError("Timeout");
     axiosError.code = "ECONNABORTED";
 
-    const result = classifyAxiosError(axiosError);
+    const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.TIMEOUT_ERROR);
   });
 
@@ -86,7 +87,7 @@ describe("classifyAxiosError", () => {
       data: { message: "Token expired" },
     } as any);
 
-    const result = classifyAxiosError(axiosError);
+    const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.UNAUTHORIZED);
     expect(result.statusCode).toBe(401);
   });
@@ -97,7 +98,7 @@ describe("classifyAxiosError", () => {
       data: {},
     } as any);
 
-    const result = classifyAxiosError(axiosError);
+    const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.FORBIDDEN);
   });
 
@@ -107,7 +108,7 @@ describe("classifyAxiosError", () => {
       data: {},
     } as any);
 
-    const result = classifyAxiosError(axiosError);
+    const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.NOT_FOUND);
   });
 
@@ -117,7 +118,7 @@ describe("classifyAxiosError", () => {
       data: { message: "Invalid input" },
     } as any);
 
-    const result = classifyAxiosError(axiosError);
+    const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.VALIDATION_ERROR);
     expect(result.message).toBe("Invalid input");
   });
@@ -128,7 +129,7 @@ describe("classifyAxiosError", () => {
       data: {},
     } as any);
 
-    const result = classifyAxiosError(axiosError);
+    const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.RATE_LIMITED);
   });
 
@@ -138,7 +139,7 @@ describe("classifyAxiosError", () => {
       data: {},
     } as any);
 
-    const result = classifyAxiosError(axiosError);
+    const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.SERVER_ERROR);
   });
 
@@ -148,7 +149,7 @@ describe("classifyAxiosError", () => {
       data: { message: "Resource conflict" },
     } as any);
 
-    const result = classifyAxiosError(axiosError);
+    const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.BUSINESS_ERROR);
   });
 });

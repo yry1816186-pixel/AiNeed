@@ -6,17 +6,18 @@ AiNeed MVP 路线图：11 Phase 从基础设施到商业闭环。核心用户旅
 
 ## Phases
 
-- [ ] **Phase 0: 基础设施 & 测试基线** — CI/CD Pipeline + 测试框架配置 + 错误追踪 + 日志策略 + 数据库迁移策略
-- [ ] **Phase 1: 用户画像 & 风格测试** — 双通道注册 + 强制画像建立 + 图片风格测试 → 建立个人风格档案
+- [x] **Phase 0: 基础设施 & 测试基线** — CI/CD Pipeline + 测试框架配置 + 错误追踪 + 日志策略 + 数据库迁移策略
+- [x] **Phase 1: 用户画像 & 风格测试** — 双通道注册 + 强制画像建立 + 图片风格测试 → 建立个人风格档案
 - [x] **Phase 2: AI 造型师** — 方案页交互 + 文字/场景输入 + GLM API 穿搭推荐 + 天气集成
-- [ ] **Phase 3: 虚拟试衣** — Doubao-Seedream API 图生图 → 用户看到自己穿推荐衣服的效果
+- [x] **Phase 3: 虚拟试衣** — Doubao-Seedream API 图生图 → 用户看到自己穿推荐衣服的效果
 - [x] **Phase 4: 推荐引擎** — 瀑布流信息流 + 渐进式推荐算法 + 色彩搭配评分
-- [ ] **Phase 5: 电商闭环** — 商品浏览 + 图片搜索 + 购物车 + 双通道支付 + 自营+合作商家
+- [x] **Phase 5: 电商闭环** — 商品浏览 + 图片搜索 + 购物车 + 双通道支付 + 自营+合作商家
 - [x] **Phase 5.5: App 上架准备 & 推送通知** — 应用商店合规 + 隐私政策 + 推送通知 + ASO 优化
-- [ ] **Phase 6: 社区 & 博主生态** — 穿搭社区 + 博主入驻 + 灵感衣橱 + 商品认证上架
-- [ ] **Phase 7: 定制服务 & 品牌合作** — 2D定制编辑器 + 品牌扫码导入 + 定制生产配送
-- [ ] **Phase 8: 私人形象顾问对接** — 平台撮合 + 即时通讯 + 预约支付 + 评价体系
+- [x] **Phase 6: 社区 & 博主生态** — 穿搭社区 + 博主入驻 + 灵感衣橱 + 商品认证上架
+- [x] **Phase 7: 定制服务 & 品牌合作** — 2D定制编辑器 + 品牌扫码导入 + 定制生产配送
+- [x] **Phase 8: 私人形象顾问对接** — 平台撮合 + 即时通讯 + 预约支付 + 评价体系
 - [x] **Phase 9: 运营后台 & 性能优化 & 数据种子** — 管理后台 + 性能基线 + 初始数据填充
+- [ ] **Phase 10: 品质审计修复** — 六重视角设计审计修复：双主题统一、导航架构整合、无障碍合规、视觉一致性、交互品质提升
 
 ## Phase Details
 
@@ -91,12 +92,12 @@ AiNeed MVP 路线图：11 Phase 从基础设施到商业闭环。核心用户旅
 **Goal**: 用户从推荐/试衣直接进入购买流程，支持自营和合作商家
 **Depends on**: Phase 3（试衣引导购买）, Phase 4（推荐引导发现）
 **Requirements**: COMM-01 ~ COMM-13 (13 条)
-**Plans:** 6/9 plans executed
+**Plans:** 9/9 plans executed
 
 Plans:
-- [ ] 05-01-PLAN.md — Schema + Coupon + StockNotification backend modules
-- [ ] 05-02-PLAN.md — RefundRequest + SizeRecommendation backend modules
-- [ ] 05-03-PLAN.md — Merchant review + Search filters + Clothing enhancements
+- [x] 05-01-PLAN.md — Schema + Coupon + StockNotification backend modules
+- [x] 05-02-PLAN.md — RefundRequest + SizeRecommendation backend modules
+- [x] 05-03-PLAN.md — Merchant review + Search filters + Clothing enhancements
 - [x] 05-04-PLAN.md — Cart + Order backend enhancements
 - [x] 05-05-PLAN.md — Mobile API layer + Zustand stores
 - [x] 05-06-PLAN.md — Product detail + Search frontend screens
@@ -203,23 +204,50 @@ Plans:
   7. API 响应缓存策略（Redis 热点数据缓存）
   8. 移动端性能优化（列表虚拟化、图片压缩、Bundle 优化）
 
+### Phase 10: 品质审计修复
+**Goal**: 基于设计师、艺术家、前端工程师、人体工程学家、算法大师、真实用户六重视角审计，系统性修复移动端前端的设计缺陷、架构冲突、无障碍缺失和交互品质问题，使寻裳达到最高审美和性能标准
+**Depends on**: Phase 0-9（全部已完成，本轮为品质提升）
+**Requirements**: QA-01 ~ QA-20 (20 条)
+**Success Criteria**:
+  1. 双主题系统统一为 Terracotta 品牌色 token 体系，消除 NightBlue/Terracotta/Purple 三色打架
+  2. 双导航架构合并为单一 5-tab 嵌套栈版本，删除 App.tsx 旧版导航
+  3. VipGuard 接入真实用户状态，VIP 功能可正常访问
+  4. PaymentScreen 全量中文化，消除全英文界面
+  5. 所有 paddingTop: 56 硬编码改为 useSafeAreaInsets()
+  6. 天气坐标接入设备定位，消除北京坐标硬编码
+  7. AI 造型师聊天消息持久化到 Zustand store
+  8. ClothingDetailScreen 29 个硬编码色值迁移到主题 token
+  9. 创建 useReducedMotion hook，所有动画组件接入 reduced-motion 检测
+  10. 深色模式文字色提升到 WCAG AA 4.5:1 对比度标准
+  11. 路由守卫接入 MainStackNavigator，26 条规则生效
+  12. SharedElement 转场接入 react-navigation-shared-element
+  13. 动画弹簧参数分层映射到交互语义（轻/中/重操作）
+  14. 社区瀑布流高度基于图片宽高比而非伪随机
+  15. AI 思考态从 ActivityIndicator 升级为渐进式视觉叙事
+  16. CommunityScreen 735 行巨石拆分为独立组件
+  17. 推荐卡片增加评分/理由/色彩和谐度可视化
+  18. 四季色彩可视化使用 colorSeasons token 而非硬编码
+  19. Accent 系统降为辅助强调色，品牌色始终为 Terracotta
+  20. ui/index.tsx 内联重复组件统一从 primitives/ 导出
+
 ## Progress
 
-**Execution Order:** 0 → 1 → 2 → 3 → 4 → 5 → 5.5 → 6 → 7 → 8 → 9
+**Execution Order:** 0 → 1 → 2 → 3 → 4 → 5 → 5.5 → 6 → 7 → 8 → 9 → 10
 
 | Phase | Status | Requirements |
 |-------|--------|-------------|
-| 0. 基础设施 & 测试基线 | Not started | 9 |
-| 1. 用户画像 & 风格测试 | Not started | 14 |
-| 2. AI 造型师 | Not started | 14 |
-| 3. 虚拟试衣 | Not started | 13 |
-| 4. 推荐引擎 | Not started | 13 |
-| 5. 电商闭环 | Not started | 13 |
+| 0. 基础设施 & 测试基线 | Completed | 9 |
+| 1. 用户画像 & 风格测试 | Completed | 14 |
+| 2. AI 造型师 | Completed | 14 |
+| 3. 虚拟试衣 | Completed | 13 |
+| 4. 推荐引擎 | Completed | 13 |
+| 5. 电商闭环 | Completed | 13 |
 | 5.5. App 上架准备 & 推送通知 | Completed | 7 |
-| 6. 社区 & 博主生态 | Not started | 14 |
+| 6. 社区 & 博主生态 | Completed | 14 |
 | 7. 定制服务 & 品牌合作 | Completed | 12 |
 | 8. 私人形象顾问对接 | Completed | 13 |
 | 9. 运营后台 & 性能优化 & 数据种子 | Completed | 8 |
+| 10. 品质审计修复 | In Progress | 20 |
 
 ---
-*Last updated: 2026-04-14 — 8 Phase→11 Phase, 补充基础设施/上架/运营横向 Phase, 修复现有 Phase 遗漏*
+*Last updated: 2026-04-15 — Phase 10 品质审计修复 added*

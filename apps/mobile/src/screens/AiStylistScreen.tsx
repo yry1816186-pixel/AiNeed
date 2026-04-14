@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from "../theme";
+import { DesignTokens } from "../theme/tokens/design-tokens";
 import { useAuthStore } from "../stores/index";
 import { useAiStylistStore } from "../stores/aiStylistStore";
 import type { PresetQuestion } from "../stores/aiStylistStore";
@@ -328,7 +329,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     padding: 10,
     borderRadius: 10,
-    backgroundColor: theme.colors.errorLight,
+    backgroundColor: DesignTokens.colors.semantic.errorLight,
   },
   errorText: { fontSize: 13, color: theme.colors.error, flex: 1 },
   errorDismiss: { fontSize: 13, color: theme.colors.error, fontWeight: "600", marginLeft: 12 },

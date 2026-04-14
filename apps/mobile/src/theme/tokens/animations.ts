@@ -1,46 +1,89 @@
 import { Animated } from "react-native";
 
+/**
+ * Spring configuration semantic mapping:
+ *
+ * snappy  → Light operations: button clicks, toggle switches, quick feedback
+ * gentle  → Medium operations: page transitions, card slides, content reveals
+ * bouncy  → Heavy/celebration: success animations, favorites, rewards
+ * stiff   → Error/warning: form validation, alert shakes, destructive actions
+ *
+ * slow    → Ambient/background: subtle drifts, breathing effects
+ * soft    → Gentle emphasis: hover states, subtle highlights
+ * rubber  → Playful/overshoot: pop-in effects, playful interactions
+ * default → General purpose fallback when no semantic mapping applies
+ */
 export const SpringConfigs = {
+  /** snappy → Light operations: button clicks, toggle switches, quick feedback */
   gentle: {
     damping: 20,
     stiffness: 100,
     mass: 1,
   },
+  /** bouncy → Heavy/celebration: success animations, favorites, rewards */
   bouncy: {
     damping: 12,
     stiffness: 180,
     mass: 0.5,
   },
+  /** snappy → Light operations: button clicks, toggle switches, quick feedback */
   snappy: {
     damping: 18,
     stiffness: 300,
     mass: 0.8,
   },
+  /** slow → Ambient/background: subtle drifts, breathing effects */
   slow: {
     damping: 25,
     stiffness: 80,
     mass: 1.2,
   },
+  /** stiff → Error/warning: form validation, alert shakes, destructive actions */
   stiff: {
     damping: 25,
     stiffness: 400,
     mass: 1,
   },
+  /** soft → Gentle emphasis: hover states, subtle highlights */
   soft: {
     damping: 15,
     stiffness: 120,
     mass: 1,
   },
+  /** rubber → Playful/overshoot: pop-in effects, playful interactions */
   rubber: {
     damping: 8,
     stiffness: 200,
     mass: 0.5,
   },
+  /** default → General purpose fallback when no semantic mapping applies */
   default: {
     damping: 15,
     stiffness: 150,
     mass: 1,
   },
+} as const;
+
+/**
+ * Semantic spring accessor — use this instead of SpringConfigs directly
+ * to ensure animations are bound to interaction semantics.
+ *
+ * Usage:
+ *   import { SemanticSpring } from '../theme/tokens/animations';
+ *   withSpring(1, SemanticSpring.light)   // button click, toggle
+ *   withSpring(1, SemanticSpring.medium)  // page transition, card slide
+ *   withSpring(1, SemanticSpring.heavy)   // success, favorite, celebration
+ *   withSpring(1, SemanticSpring.error)   // validation error, warning
+ */
+export const SemanticSpring = {
+  /** Light operations: button clicks, toggle switches, quick feedback → snappy */
+  light: SpringConfigs.snappy,
+  /** Medium operations: page transitions, card slides, content reveals → gentle */
+  medium: SpringConfigs.gentle,
+  /** Heavy/celebration: success animations, favorites, rewards → bouncy */
+  heavy: SpringConfigs.bouncy,
+  /** Error/warning: form validation, alert shakes, destructive actions → stiff */
+  error: SpringConfigs.stiff,
 } as const;
 
 export const Duration = {

@@ -40,6 +40,7 @@ interface RequestWithUser {
     nickname?: string;
     avatar?: string;
   };
+  headers: Record<string, string>;
 }
 
 /**
@@ -216,7 +217,9 @@ export class AuthController {
     @Request() req: RequestWithUser,
     @Body() dto?: RefreshTokenDto,
   ): Promise<{ success: boolean }> {
-    await this.authService.logout(req.user.id, dto?.refreshToken);
+    const authHeader = req.headers["authorization"];
+    const accessToken = authHeader?.startsWith("Bearer ") ? authHeader.substring(7) : undefined;
+    await this.authService.logout(req.user.id, dto?.refreshToken, accessToken);
     return { success: true };
   }
 

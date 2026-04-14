@@ -16,9 +16,11 @@ import Animated, {
   interpolate,
   Extrapolate,
 } from "react-native-reanimated";
+import { Svg, Circle, Path, G, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { theme, Colors, BorderRadius, Shadows } from "../../theme";
+import { useReducedMotion } from "../../hooks/useReducedMotion";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const CARD_WIDTH = SCREEN_WIDTH - 40;
@@ -78,53 +80,72 @@ export const SwipeCard = memo(function SwipeCard({
   const stackScale = useSharedValue(0.9);
   const stackTranslateY = useSharedValue(20);
   const stackOpacity = useSharedValue(0.7);
+  const { reducedMotion, reducedMotionSV } = useReducedMotion();
 
   useEffect(() => {
     if (!isActive) {
-      stackScale.value = withSpring(0.9, { damping: 15, stiffness: 150 });
-      stackTranslateY.value = withSpring(20, { damping: 15, stiffness: 150 });
-      stackOpacity.value = withTiming(0.7, { duration: 200 });
+      if (reducedMotion) {
+        stackScale.value = withTiming(0.9, { duration: 0 });
+        stackTranslateY.value = withTiming(20, { duration: 0 });
+        stackOpacity.value = withTiming(0.7, { duration: 0 });
+      } else {
+        stackScale.value = withSpring(0.9, { damping: 15, stiffness: 150 });
+        stackTranslateY.value = withSpring(20, { damping: 15, stiffness: 150 });
+        stackOpacity.value = withTiming(0.7, { duration: 200 });
+      }
     } else {
-      stackScale.value = withSpring(1, { damping: 15, stiffness: 150 });
-      stackTranslateY.value = withSpring(0, { damping: 15, stiffness: 150 });
-      stackOpacity.value = withTiming(1, { duration: 200 });
+      if (reducedMotion) {
+        stackScale.value = withTiming(1, { duration: 0 });
+        stackTranslateY.value = withTiming(0, { duration: 0 });
+        stackOpacity.value = withTiming(1, { duration: 0 });
+      } else {
+        stackScale.value = withSpring(1, { damping: 15, stiffness: 150 });
+        stackTranslateY.value = withSpring(0, { damping: 15, stiffness: 150 });
+        stackOpacity.value = withTiming(1, { duration: 200 });
+      }
     }
-  }, [isActive]);
+  }, [isActive, reducedMotion]);
 
   const handleSwipeEnd = useCallback(() => {
     const xVal = translateX.value;
     const yVal = translateY.value;
 
     if (yVal < -VERTICAL_SWIPE_THRESHOLD) {
-      translateY.value = withTiming(-SCREEN_HEIGHT, { duration: 300 });
-      setTimeout(() => onSwipeUp(), 200);
+      translateY.value = withTiming(-SCREEN_HEIGHT, { duration: reducedMotionSV.value ? 0 : 300 });
+      setTimeout(() => onSwipeUp(), reducedMotionSV.value ? 0 : 200);
       return;
     }
 
     if (yVal > VERTICAL_SWIPE_THRESHOLD) {
-      translateY.value = withTiming(SCREEN_HEIGHT, { duration: 300 });
-      setTimeout(() => onSwipeDown(), 200);
+      translateY.value = withTiming(SCREEN_HEIGHT, { duration: reducedMotionSV.value ? 0 : 300 });
+      setTimeout(() => onSwipeDown(), reducedMotionSV.value ? 0 : 200);
       return;
     }
 
     if (xVal > SWIPE_THRESHOLD) {
-      translateX.value = withTiming(SCREEN_WIDTH * 1.5, { duration: 300 });
-      rotateZ.value = withTiming(0.3, { duration: 300 });
-      setTimeout(() => onSwipeRight(), 200);
+      translateX.value = withTiming(SCREEN_WIDTH * 1.5, { duration: reducedMotionSV.value ? 0 : 300 });
+      rotateZ.value = withTiming(0.3, { duration: reducedMotionSV.value ? 0 : 300 });
+      setTimeout(() => onSwipeRight(), reducedMotionSV.value ? 0 : 200);
       return;
     }
 
     if (xVal < -SWIPE_THRESHOLD) {
-      translateX.value = withTiming(-SCREEN_WIDTH * 1.5, { duration: 300 });
-      rotateZ.value = withTiming(-0.3, { duration: 300 });
-      setTimeout(() => onSwipeLeft(), 200);
+      translateX.value = withTiming(-SCREEN_WIDTH * 1.5, { duration: reducedMotionSV.value ? 0 : 300 });
+      rotateZ.value = withTiming(-0.3, { duration: reducedMotionSV.value ? 0 : 300 });
+      setTimeout(() => onSwipeLeft(), reducedMotionSV.value ? 0 : 200);
       return;
     }
 
-    translateX.value = withSpring(0, { damping: 15, stiffness: 200 });
-    translateY.value = withSpring(0, { damping: 15, stiffness: 200 });
-    rotateZ.value = withSpring(0, { damping: 15, stiffness: 200 });
-  }, [onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]);
+    if (reducedMotionSV.value) {
+      translateX.value = withTiming(0, { duration: 0 });
+      translateY.value = withTiming(0, { duration: 0 });
+      rotateZ.value = withTiming(0, { duration: 0 });
+    } else {
+      translateX.value = withSpring(0, { damping: 15, stiffness: 200 });
+      translateY.value = withSpring(0, { damping: 15, stiffness: 200 });
+      rotateZ.value = withSpring(0, { damping: 15, stiffness: 200 });
+    }
+  }, [onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown, reducedMotionSV]);
 
   const panGesture = Gesture.Pan()
     .enabled(isActive)
@@ -287,6 +308,26 @@ export const SwipeCard = memo(function SwipeCard({
               )}
             </View>
 
+            {/* 7-point rating bar */}
+            {item.score != null && (
+              <View style={styles.ratingBar}>
+                {Array.from({ length: 7 }, (_, i) => (
+                  <View
+                    key={i}
+                    style={[
+                      styles.ratingDot,
+                      {
+                        backgroundColor: i < Math.round(item.score! * 7)
+                          ? Colors.success[500]
+                          : 'rgba(255,255,255,0.2)',
+                      },
+                    ]}
+                  />
+                ))}
+                <Text style={styles.ratingLabel}>{Math.round((item.score ?? 0) * 100)}%</Text>
+              </View>
+            )}
+
             {item.matchReasons && item.matchReasons.length > 0 && (
               <View style={styles.matchReasons}>
                 {item.matchReasons.slice(0, 2).map((reason, idx) => (
@@ -294,6 +335,15 @@ export const SwipeCard = memo(function SwipeCard({
                     <Text style={styles.reasonText}>{reason}</Text>
                   </View>
                 ))}
+              </View>
+            )}
+
+            {/* Primary recommendation reason */}
+            {item.matchReasons && item.matchReasons.length > 0 && (
+              <View style={styles.reasonPill}>
+                <Text style={styles.reasonPillText} numberOfLines={1}>
+                  {item.matchReasons[0]}
+                </Text>
               </View>
             )}
 
@@ -313,6 +363,20 @@ export const SwipeCard = memo(function SwipeCard({
                     +{item.colors.length - 5}
                   </Text>
                 )}
+
+                {/* Color harmony arc */}
+                {item.score != null && (
+                  <View style={styles.harmonyArcContainer}>
+                    <ColorHarmonyArc score={item.score} />
+                  </View>
+                )}
+
+                {/* CIEDE2000 distance arc */}
+                {item.score != null && item.colors.length > 0 && (
+                  <View style={styles.ciedeArcContainer}>
+                    <CIEDE2000Arc score={item.score} colors={item.colors} />
+                  </View>
+                )}
               </View>
             )}
           </View>
@@ -321,6 +385,109 @@ export const SwipeCard = memo(function SwipeCard({
     </GestureDetector>
   );
 });
+
+/** Color harmony arc - shows how harmonious item colors are with user palette */
+function ColorHarmonyArc({ score }: { score: number }) {
+  const size = 40;
+  const strokeWidth = 4;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = Math.PI * radius; // semicircle
+  const fillLength = circumference * score;
+  const center = size / 2;
+
+  return (
+    <Svg width={size} height={size / 2 + 2} viewBox={`0 0 ${size} ${size / 2 + 2}`}>
+      {/* Background arc (semicircle) */}
+      <Path
+        d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${size - strokeWidth / 2} ${size / 2}`}
+        stroke="rgba(255,255,255,0.15)"
+        strokeWidth={strokeWidth}
+        fill="none"
+        strokeLinecap="round"
+      />
+      {/* Filled arc based on score */}
+      <Path
+        d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${size - strokeWidth / 2} ${size / 2}`}
+        stroke="#C67B5C"
+        strokeWidth={strokeWidth}
+        fill="none"
+        strokeLinecap="round"
+        strokeDasharray={`${fillLength} ${circumference}`}
+      />
+      {/* Percentage label */}
+      <Text
+        x={center}
+        y={size / 2 - 2}
+        textAnchor="middle"
+        fontSize={9}
+        fontWeight="600"
+        fill="#FFFFFF"
+      >
+        {Math.round(score * 100)}%
+      </Text>
+    </Svg>
+  );
+}
+
+/** CIEDE2000 color distance arc indicator */
+function CIEDE2000Arc({ score, colors: itemColors }: { score: number; colors: string[] }) {
+  const size = 50;
+  const strokeWidth = 3;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const fillLength = circumference * score;
+  const center = size / 2;
+
+  // Position up to 5 color dots along the arc
+  const dotCount = Math.min(itemColors.length, 5);
+  const dots = Array.from({ length: dotCount }, (_, i) => {
+    const angle = (Math.PI * 2 * i) / dotCount - Math.PI / 2;
+    const dotRadius = radius + strokeWidth / 2 + 4;
+    const x = center + dotRadius * Math.cos(angle);
+    const y = center + dotRadius * Math.sin(angle);
+    return { x, y, color: itemColors[i] };
+  });
+
+  return (
+    <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {/* Background circle */}
+      <Circle
+        cx={center}
+        cy={center}
+        r={radius}
+        stroke="rgba(255,255,255,0.12)"
+        strokeWidth={strokeWidth}
+        fill="none"
+      />
+      {/* Score arc */}
+      <Circle
+        cx={center}
+        cy={center}
+        r={radius}
+        stroke="#C67B5C"
+        strokeWidth={strokeWidth}
+        fill="none"
+        strokeDasharray={`${fillLength} ${circumference}`}
+        strokeLinecap="round"
+        rotation="-90"
+        originX={center}
+        originY={center}
+      />
+      {/* Color dots along the arc */}
+      {dots.map((dot, i) => (
+        <Circle
+          key={i}
+          cx={dot.x}
+          cy={dot.y}
+          r={3}
+          fill={dot.color.toLowerCase()}
+          stroke="rgba(255,255,255,0.6)"
+          strokeWidth={1}
+        />
+      ))}
+    </Svg>
+  );
+}
 
 export const SWIPE_CARD_CONSTANTS = {
   SCREEN_WIDTH,
@@ -484,5 +651,45 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "rgba(255,255,255,0.8)",
     fontWeight: "500",
+  },
+  ratingBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginBottom: 10,
+  },
+  ratingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  ratingLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: Colors.success[500],
+    marginLeft: 6,
+  },
+  reasonPill: {
+    backgroundColor: "rgba(198,123,92,0.25)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+    marginBottom: 10,
+    alignSelf: "flex-start",
+  },
+  reasonPillText: {
+    fontSize: 11,
+    fontWeight: "500",
+    color: "#F5D5C5",
+  },
+  harmonyArcContainer: {
+    marginLeft: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  ciedeArcContainer: {
+    marginLeft: 4,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

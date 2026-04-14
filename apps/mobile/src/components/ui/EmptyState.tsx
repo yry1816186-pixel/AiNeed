@@ -3,9 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from 'react-nativ
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
 import Animated, { FadeInUp } from 'react-native-reanimated';
-import { colors } from '../../theme/colors';
-import { typography } from '../../theme/typography';
-import { spacing } from '../../theme/spacing';
+import { Colors, Spacing, BorderRadius, Typography, gradients } from '../../theme';
 
 export interface EmptyStateProps {
   icon?: string;
@@ -27,12 +25,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   return (
     <Animated.View entering={FadeInUp.duration(600).springify()} style={[styles.container, style]}>
       <LinearGradient
-        colors={[colors.primary[50], colors.secondary[50]]}
+        colors={[Colors.primary[50], Colors.sage[50]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.iconContainer}
       >
-        <Ionicons name={icon as any} size={56} color={colors.secondary[400]} />
+        <Ionicons name={icon as any} size={56} color={Colors.sage[400]} />
       </LinearGradient>
 
       <Text style={styles.title}>{title}</Text>
@@ -41,7 +39,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       {actionLabel && onAction && (
         <TouchableOpacity style={styles.actionButton} onPress={onAction} activeOpacity={0.8}>
           <LinearGradient
-            colors={colors.gradients.rose}
+            colors={gradients.brand}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.actionGradient}
@@ -59,7 +57,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: spacing.layout.modalPadding * 2,
+    padding: Spacing['3xl'] * 2,
   },
   iconContainer: {
     width: 120,
@@ -67,24 +65,24 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: spacing.layout.sectionGap,
+    marginBottom: Spacing.lg,
   },
   title: {
-    ...typography.styles.h4,
-    color: colors.neutral[900],
+    ...Typography.styles.h4,
+    color: Colors.neutral[900],
     textAlign: 'center',
-    marginBottom: spacing.aliases.sm,
+    marginBottom: Spacing.sm,
   },
   subtitle: {
-    ...typography.styles.body,
-    color: colors.neutral[500],
+    ...Typography.styles.body,
+    color: Colors.neutral[500],
     textAlign: 'center',
     lineHeight: 22,
     maxWidth: 280,
-    marginBottom: spacing.layout.sectionGap,
+    marginBottom: Spacing.lg,
   },
   actionButton: {
-    borderRadius: spacing.borderRadius.xl,
+    borderRadius: BorderRadius.xl,
     overflow: 'hidden',
   },
   actionGradient: {
@@ -92,8 +90,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   actionLabel: {
-    ...typography.styles.button,
-    color: colors.neutral.white,
+    ...Typography.styles.button,
+    color: Colors.neutral.white,
   },
 });
 

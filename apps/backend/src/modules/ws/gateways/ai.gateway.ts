@@ -289,7 +289,12 @@ export class AIGateway
   private async getTaskStatus(jobId: string): Promise<Record<string, unknown> | null> {
     const key = `job:${jobId}`;
     const data = await this.redis.get(key);
-    return data ? JSON.parse(data) : null;
+    if (!data) return null;
+    try {
+      return JSON.parse(data) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
   }
 
   private async sendPendingTaskUpdates(client: Socket, userId: string): Promise<void> {

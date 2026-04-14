@@ -16,7 +16,7 @@ import { CouponService } from "./coupon.service";
 import { CreateCouponDto, ValidateCouponDto, ApplyCouponDto } from "./dto";
 
 @ApiTags("coupons")
-@Controller("api/v1/coupons")
+@Controller("coupons")
 export class CouponController {
   constructor(private readonly couponService: CouponService) {}
 

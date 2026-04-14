@@ -25,6 +25,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { Throttle } from "@nestjs/throttler";
 import { PhotoType } from "@prisma/client";
 import type { Response } from "express";
 
@@ -54,6 +55,7 @@ export class PhotosController {
   ) {}
 
   @Post("upload")
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({ summary: "上传用户照片", description: "上传用户照片，支持正面照、侧面照、全身照、半身照、面部照。上传后自动触发 AI 体型和面部分析。" })
   @ApiConsumes("multipart/form-data")
   @ApiBody({

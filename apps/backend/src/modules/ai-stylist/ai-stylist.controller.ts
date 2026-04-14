@@ -23,7 +23,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { ThrottlerGuard } from "@nestjs/throttler";
+import { ThrottlerGuard, Throttle } from "@nestjs/throttler";
 import { PhotoType } from "@prisma/client";
 
 import { AuthGuard } from "../auth/guards/auth.guard";
@@ -317,6 +317,7 @@ export class AiStylistController {
   }
 
   @Post("sessions/:sessionId/photo")
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({
     summary: "上传 AI 造型师照片",
     description: "向指定会话上传用户照片，用于个性化穿搭推荐。支持正面、侧面、全身、半身、面部等类型。",

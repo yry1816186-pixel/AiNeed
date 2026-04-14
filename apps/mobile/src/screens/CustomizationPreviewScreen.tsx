@@ -68,7 +68,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
           {
             text: "查看订单",
             onPress: () => {
-              navigation.replace("CustomizationOrderDetail", { requestId });
+              (navigation as any).replace("CustomizationOrderDetail", { requestId });
             },
           },
         ]);

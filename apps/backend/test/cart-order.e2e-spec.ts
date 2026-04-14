@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 
@@ -28,6 +28,8 @@ describe('Cart & Order E2E', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix("api");
+    app.enableVersioning({ type: VersioningType.URI, defaultVersion: "1" });
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
     await app.init();
 
@@ -80,7 +82,7 @@ describe('Cart & Order E2E', () => {
     addressId = address.id;
 
     const loginResponse = await request(app.getHttpServer())
-      .post('/auth/login')
+      .post('/api/v1/auth/login')
       .send({ email: testUser.email, password: testUser.password });
     accessToken = loginResponse.body.access_token;
   });
@@ -96,7 +98,7 @@ describe('Cart & Order E2E', () => {
   describe('Cart Flow', () => {
     it('should add item to cart', async () => {
       const response = await request(app.getHttpServer())
-        .post('/cart')
+        .post('/api/v1/cart')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
           itemId,
@@ -114,7 +116,7 @@ describe('Cart & Order E2E', () => {
 
     it('should get cart items', async () => {
       const response = await request(app.getHttpServer())
-        .get('/cart')
+        .get('/api/v1/cart')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
 
@@ -124,7 +126,7 @@ describe('Cart & Order E2E', () => {
 
     it('should get cart summary', async () => {
       const response = await request(app.getHttpServer())
-        .get('/cart/summary')
+        .get('/api/v1/cart/summary')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
 
@@ -161,7 +163,7 @@ describe('Cart & Order E2E', () => {
 
     it('should create order from cart', async () => {
       const response = await request(app.getHttpServer())
-        .post('/orders')
+        .post('/api/v1/orders')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
           items: [{ itemId, color: 'black', size: 'M', quantity: 1 }],
@@ -176,7 +178,7 @@ describe('Cart & Order E2E', () => {
 
     it('should get orders list', async () => {
       const response = await request(app.getHttpServer())
-        .get('/orders')
+        .get('/api/v1/orders')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
 
@@ -187,7 +189,7 @@ describe('Cart & Order E2E', () => {
 
     it('should filter orders by status', async () => {
       const response = await request(app.getHttpServer())
-        .get('/orders?status=pending')
+        .get('/api/v1/orders?status=pending')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
 
@@ -198,7 +200,7 @@ describe('Cart & Order E2E', () => {
   describe('Address Management', () => {
     it('should get addresses', async () => {
       const response = await request(app.getHttpServer())
-        .get('/addresses')
+        .get('/api/v1/addresses')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200);
 
@@ -208,7 +210,7 @@ describe('Cart & Order E2E', () => {
 
     it('should create new address', async () => {
       const response = await request(app.getHttpServer())
-        .post('/addresses')
+        .post('/api/v1/addresses')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
           name: 'Another User',
@@ -225,7 +227,7 @@ describe('Cart & Order E2E', () => {
 
     it('should validate phone format', async () => {
       await request(app.getHttpServer())
-        .post('/addresses')
+        .post('/api/v1/addresses')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({
           name: 'Invalid Phone',

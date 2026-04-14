@@ -48,8 +48,8 @@ const config = {
         ascii_only: true, // 仅 ASCII 字符（减小体积）
       },
       compress: {
-        drop_console: __DEV__ ? false : true, // 生产环境移除 console
-        drop_debugger: __DEV__ ? false : true, // 生产环境移除 debugger
+        drop_console: process.env.NODE_ENV === 'production', // 生产环境移除 console
+        drop_debugger: process.env.NODE_ENV === 'production', // 生产环境移除 debugger
         passes: 2, // 压缩轮次
       },
     },

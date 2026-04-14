@@ -67,6 +67,7 @@ const STATUS_CONFIG: Record<
   quoting: { label: "报价中", color: theme.colors.warning },
   confirmed: { label: "已确认", color: theme.colors.success },
   in_progress: { label: "进行中", color: theme.colors.primary },
+  shipped: { label: "已发货", color: theme.colors.info },
   completed: { label: "已完成", color: Colors.emerald[600] },
   cancelled: { label: "已取消", color: Colors.neutral[400] },
 };
@@ -230,7 +231,7 @@ export const CustomizationScreen: React.FC = () => {
       <View style={styles.quickActions}>
         <TouchableOpacity
           style={styles.quickActionCard}
-          onPress={() => navigation.navigate("CustomizationEditor")}
+          onPress={() => navigation.navigate("CustomizationEditor" as any)}
           activeOpacity={0.7}
         >
           <View style={styles.quickActionIcon}>

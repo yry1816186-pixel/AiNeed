@@ -1,32 +1,184 @@
 import '@testing-library/jest-native/extend-expect';
 
+jest.mock('react-native-reanimated', () => {
+  const Reanimated = require('react-native-reanimated/mock');
+  Reanimated.default.call = () => {};
+  return Reanimated;
+});
+
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+);
+
+jest.mock('react-native-safe-area-context', () => {
+  const inset = { top: 0, right: 0, bottom: 0, left: 0 };
+  return {
+    SafeAreaProvider: ({ children }) => children,
+    SafeAreaConsumer: ({ children }) => children(inset),
+    useSafeAreaInsets: () => inset,
+    useSafeAreaFrame: () => ({ x: 0, y: 0, width: 390, height: 844 }),
+    initialWindowMetrics: { frame: { x: 0, y: 0, width: 390, height: 844 }, insets: inset },
+  };
+});
+
+jest.mock('@react-navigation/native', () => {
+  const actualNav = jest.requireActual('@react-navigation/native');
+  return {
+    ...actualNav,
+    useNavigation: () => ({
+      navigate: jest.fn(),
+      goBack: jest.fn(),
+      reset: jest.fn(),
+      setParams: jest.fn(),
+      dispatch: jest.fn(),
+      isFocused: () => true,
+      canGoBack: () => true,
+    }),
+    useRoute: () => ({
+      params: {},
+      name: 'TestScreen',
+      key: 'test-key',
+    }),
+    useFocusEffect: jest.fn(),
+    useIsFocused: () => true,
+    useNavigationState: jest.fn(),
+    NavigationContainer: ({ children }) => children,
+    createNavigationContainerRef: () => ({
+      navigate: jest.fn(),
+      goBack: jest.fn(),
+      reset: jest.fn(),
+      isReady: () => true,
+    }),
+  };
+});
+
+jest.mock('react-native-gesture-handler', () => {
+  const View = require('react-native').View;
+  const gestureHandler = {
+    GestureHandlerRootView: View,
+    PanGestureHandler: View,
+    TapGestureHandler: View,
+    LongPressGestureHandler: View,
+    PinchGestureHandler: View,
+    RotationGestureHandler: View,
+    FlingGestureHandler: View,
+    ForceTouchGestureHandler: View,
+    RawButton: View,
+    BaseButton: View,
+    RectButton: View,
+    BorderlessButton: View,
+    FlatList: require('react-native').FlatList,
+    ScrollView: require('react-native').ScrollView,
+    Switch: require('react-native').Switch,
+    TextInput: require('react-native').TextInput,
+    DrawerLayout: View,
+    State: {
+      UNDETERMINED: 0,
+      FAILED: 1,
+      BEGAN: 2,
+      CANCELLED: 3,
+      ACTIVE: 4,
+      END: 5,
+      RUNNING: 6,
+      BLOCKED: 8,
+    },
+    Directions: {},
+    Gesture: {
+      Pan: () => ({
+        enabled: jest.fn().mockReturnThis(),
+        onUpdate: jest.fn().mockReturnThis(),
+        onEnd: jest.fn().mockReturnThis(),
+        onStart: jest.fn().mockReturnThis(),
+        onFinalize: jest.fn().mockReturnThis(),
+        minDistance: jest.fn().mockReturnThis(),
+        maxDistance: jest.fn().mockReturnThis(),
+        activeOffsetX: jest.fn().mockReturnThis(),
+        activeOffsetY: jest.fn().mockReturnThis(),
+        failOffsetX: jest.fn().mockReturnThis(),
+        failOffsetY: jest.fn().mockReturnThis(),
+      }),
+      Tap: () => ({
+        enabled: jest.fn().mockReturnThis(),
+        numberOfTaps: jest.fn().mockReturnThis(),
+        onEnd: jest.fn().mockReturnThis(),
+      }),
+      LongPress: () => ({
+        enabled: jest.fn().mockReturnThis(),
+        onEnd: jest.fn().mockReturnThis(),
+      }),
+      Pinch: () => ({
+        enabled: jest.fn().mockReturnThis(),
+        onUpdate: jest.fn().mockReturnThis(),
+        onEnd: jest.fn().mockReturnThis(),
+      }),
+      Race: () => jest.fn().mockReturnThis(),
+      Simultaneous: () => jest.fn().mockReturnThis(),
+      Exclusive: () => jest.fn().mockReturnThis(),
+    },
+    GestureDetector: ({ children }) => children,
+  };
+  return gestureHandler;
+});
+
+jest.mock('react-native-svg', () => {
+  const View = require('react-native').View;
+  const Text = require('react-native').Text;
+  return {
+    default: View,
+    Svg: View,
+    Circle: View,
+    Ellipse: View,
+    G: View,
+    Text: Text,
+    TSpan: Text,
+    TextPath: Text,
+    Path: View,
+    Polygon: View,
+    Polyline: View,
+    Line: View,
+    Rect: View,
+    Use: View,
+    Image: View,
+    Symbol: View,
+    Defs: View,
+    LinearGradient: View,
+    RadialGradient: View,
+    Stop: View,
+    ClipPath: View,
+    Pattern: View,
+    Mask: View,
+    Marker: View,
+    ForeignObject: View,
+    SvgXml: View,
+    SvgUri: View,
+    Css: View,
+  };
+});
+
 jest.mock('expo-router', () => ({
   useRouter: () => ({
     push: jest.fn(),
     replace: jest.fn(),
     back: jest.fn(),
-    navigate: jest.fn()
+    navigate: jest.fn(),
   }),
   useLocalSearchParams: () => ({}),
   usePathname: () => '/',
+  useGlobalSearchParams: () => ({}),
   Link: 'Link',
   Stack: { Screen: 'Screen' },
-  Tabs: { Screen: 'Screen' }
+  Tabs: { Screen: 'Screen' },
 }));
 
 jest.mock('expo-secure-store', () => ({
   setItemAsync: jest.fn(),
   getItemAsync: jest.fn(() => Promise.resolve(null)),
-  deleteItemAsync: jest.fn()
+  deleteItemAsync: jest.fn(),
 }));
-
-jest.mock('@react-native-async-storage/async-storage', () => 
-  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
-);
 
 jest.mock('expo-font', () => ({
   loadAsync: jest.fn(),
-  isLoaded: jest.fn(() => true)
+  isLoaded: jest.fn(() => true),
 }));
 
 jest.mock('expo-constants', () => ({
@@ -34,15 +186,61 @@ jest.mock('expo-constants', () => ({
     expoConfig: {
       extra: {
         API_URL: 'http://localhost:3001/api/v1',
-        AI_SERVICE_URL: 'http://localhost:8001'
-      }
-    }
-  }
+        AI_SERVICE_URL: 'http://localhost:8001',
+      },
+    },
+  },
 }));
+
+jest.mock('expo-blur', () => {
+  const View = require('react-native').View;
+  return {
+    BlurView: View,
+    BlurViewPropTypes: {},
+  };
+});
+
+jest.mock('react-native-linear-gradient', () => {
+  const View = require('react-native').View;
+  const LinearGradientMock = (props) => props.children;
+  LinearGradientMock.displayName = 'LinearGradient';
+  return LinearGradientMock;
+});
+
+jest.mock('react-native-haptic-feedback', () => ({
+  trigger: jest.fn(),
+  default: { trigger: jest.fn() },
+}));
+
+const originalWarn = console.warn;
+const originalError = console.error;
 
 global.console = {
   ...console,
+  warn: (...args) => {
+    if (
+      typeof args[0] === 'string' &&
+      (args[0].includes('componentWillMount') ||
+        args[0].includes('componentWillReceiveProps') ||
+        args[0].includes('componentWillUpdate') ||
+        args[0].includes('Accessing the internal'))
+    ) {
+      return;
+    }
+    originalWarn.call(console, ...args);
+  },
+  error: (...args) => {
+    if (
+      typeof args[0] === 'string' &&
+      (args[0].includes('The above error occurred') ||
+        args[0].includes('Not implemented: HTMLFormElement.prototype.submit') ||
+        args[0].includes('act('))
+    ) {
+      return;
+    }
+    originalError.call(console, ...args);
+  },
   log: jest.fn(),
   debug: jest.fn(),
-  info: jest.fn()
+  info: jest.fn(),
 };

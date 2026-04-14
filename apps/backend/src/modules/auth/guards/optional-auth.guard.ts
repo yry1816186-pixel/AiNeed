@@ -1,8 +1,10 @@
-import { Injectable, ExecutionContext } from "@nestjs/common";
+import { Injectable, ExecutionContext, Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import type { Request } from "express";
 
 import { JwtUserPayload } from "../../../common/types";
+
+const logger = new Logger("OptionalAuthGuard");
 
 @Injectable()
 export class OptionalAuthGuard extends AuthGuard("jwt") {
@@ -16,6 +18,14 @@ export class OptionalAuthGuard extends AuthGuard("jwt") {
       await super.canActivate(context);
       return true;
     } catch (error) {
+      // Log unexpected errors (not missing/expired token) for debugging
+      const request = context.switchToHttp().getRequest<Request>();
+      const authHeader = request.headers.authorization;
+      if (authHeader) {
+        // Token was provided but failed validation - log for security monitoring
+        const message = error instanceof Error ? error.message : "Unknown error";
+        logger.warn(`Optional auth failed for request with Authorization header: ${message}`);
+      }
       // 即使验证失败也允许访问
       return true;
     }

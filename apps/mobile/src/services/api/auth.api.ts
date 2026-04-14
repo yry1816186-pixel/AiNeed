@@ -60,20 +60,20 @@ export const authApi = {
   },
 
   async updateProfile(data: Partial<User>): Promise<ApiResponse<User>> {
-    return apiClient.put<User>("/auth/profile", data);
+    return apiClient.put<User>("/profile", data);
   },
 
   async updatePreferences(
     preferences: Partial<UserPreferences>,
   ): Promise<ApiResponse<UserPreferences>> {
-    return apiClient.put<UserPreferences>("/auth/preferences", preferences);
+    return apiClient.put<UserPreferences>("/profile/preferences", preferences);
   },
 
   async changePassword(
     oldPassword: string,
     newPassword: string,
   ): Promise<ApiResponse<void>> {
-    return apiClient.post<void>("/auth/change-password", {
+    return apiClient.put<void>("/users/me/password", {
       oldPassword,
       newPassword,
     });
@@ -95,7 +95,7 @@ export const authApi = {
   },
 
   async deleteAccount(): Promise<ApiResponse<void>> {
-    const response = await apiClient.delete<void>("/auth/account");
+    const response = await apiClient.put<void>("/users/me/deactivate");
     await apiClient.clearAuth();
     return response;
   },
@@ -103,7 +103,7 @@ export const authApi = {
 
 export const userApi = {
   async getStats(): Promise<ApiResponse<UserStats>> {
-    return apiClient.get<UserStats>("/user/stats");
+    return apiClient.get<UserStats>("/users/me/stats");
   },
 
   async analyzeBody(imageUri: string): Promise<ApiResponse<BodyAnalysis>> {
@@ -118,7 +118,7 @@ export const userApi = {
       type,
     } as unknown as Blob);
 
-    return apiClient.upload<BodyAnalysis>("/user/analyze-body", formData);
+    return apiClient.upload<BodyAnalysis>("/profile/body-analysis/upload", formData);
   },
 
   async analyzeColor(imageUri: string): Promise<ApiResponse<ColorAnalysis>> {
@@ -133,7 +133,7 @@ export const userApi = {
       type,
     } as unknown as Blob);
 
-    return apiClient.upload<ColorAnalysis>("/user/analyze-color", formData);
+    return apiClient.upload<ColorAnalysis>("/profile/color-analysis/upload", formData);
   },
 
   async uploadAvatar(
@@ -150,7 +150,7 @@ export const userApi = {
       type,
     } as unknown as Blob);
 
-    return apiClient.upload<{ avatar: string }>("/user/avatar", formData);
+    return apiClient.upload<{ avatar: string }>("/users/me/avatar/upload", formData);
   },
 };
 

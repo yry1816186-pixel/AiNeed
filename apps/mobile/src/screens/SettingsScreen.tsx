@@ -20,7 +20,7 @@ import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthStore } from '../stores/index';
 import { authApi } from '../services/api/auth.api';
-import { unifiedApiClient } from '../services/api/apiClient';
+import { unifiedApiClient } from '../services/apiClient';
 import { theme } from '../theme';
 import type { RootStackParamList } from '../types/navigation';
 

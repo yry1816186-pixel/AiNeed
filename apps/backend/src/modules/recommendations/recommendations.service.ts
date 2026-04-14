@@ -199,32 +199,46 @@ export class RecommendationsService {
   ): Promise<OutfitRecommendation[]> {
     const { occasion, season, limit = 5 } = options;
 
-    const profileData = await this.prisma.userProfile.findUnique({
-      where: { userId },
+    const cacheKey = CacheKeyBuilder.outfitCombinations(userId, {
+      occasion,
+      season,
+      limit,
     });
-    const profile = profileData ? this.buildUserProfile(profileData) : null;
-    const interactions = await this.buildUserInteractionSummary(userId);
 
-    // 根据场合筛选搭配模板
-    let templates: Array<{ name: string; slots: ClothingCategory[]; occasion?: string }> = [...OUTFIT_TEMPLATES];
-    if (occasion) {
-      const matched = templates.filter((t) => t.occasion === occasion);
-      templates = matched.length > 0 ? matched : [OUTFIT_TEMPLATES[0] as { name: string; slots: ClothingCategory[]; occasion?: string }];
-    }
+    const cached = await this.cacheService.getOrSet<OutfitRecommendation[]>(
+      cacheKey,
+      async () => {
+        const profileData = await this.prisma.userProfile.findUnique({
+          where: { userId },
+        });
+        const profile = profileData ? this.buildUserProfile(profileData) : null;
+        const interactions = await this.buildUserInteractionSummary(userId);
 
-    const outfits: OutfitRecommendation[] = [];
+        // 根据场合筛选搭配模板
+        let templates: Array<{ name: string; slots: ClothingCategory[]; occasion?: string }> = [...OUTFIT_TEMPLATES];
+        if (occasion) {
+          const matched = templates.filter((t) => t.occasion === occasion);
+          templates = matched.length > 0 ? matched : [OUTFIT_TEMPLATES[0] as { name: string; slots: ClothingCategory[]; occasion?: string }];
+        }
 
-    for (const template of templates.slice(0, limit)) {
-      const outfit = await this.assembleOutfit(template, profile, interactions, {
-        occasion: template.occasion || occasion,
-        season,
-      });
-      if (outfit) {
-        outfits.push(outfit);
-      }
-    }
+        const outfits: OutfitRecommendation[] = [];
 
-    return outfits.sort((a, b) => b.totalScore - a.totalScore);
+        for (const template of templates.slice(0, limit)) {
+          const outfit = await this.assembleOutfit(template, profile, interactions, {
+            occasion: template.occasion || occasion,
+            season,
+          });
+          if (outfit) {
+            outfits.push(outfit);
+          }
+        }
+
+        return outfits.sort((a, b) => b.totalScore - a.totalScore);
+      },
+      CACHE_TTL.OUTFIT_COMBINATIONS,
+    );
+
+    return cached ?? [];
   }
 
   // ==================== 风格指南 ====================
@@ -235,46 +249,68 @@ export class RecommendationsService {
     colorSeason: string | null;
     recommendations: string[];
   }> {
-    const profile = await this.prisma.userProfile.findUnique({
-      where: { userId },
-    });
+    const cacheKey = CacheKeyBuilder.styleGuide(userId);
 
-    if (!profile) {
-      return {
+    const cached = await this.cacheService.getOrSet<{
+      bodyType: string | null;
+      skinTone: string | null;
+      colorSeason: string | null;
+      recommendations: string[];
+    }>(
+      cacheKey,
+      async () => {
+        const profile = await this.prisma.userProfile.findUnique({
+          where: { userId },
+        });
+
+        if (!profile) {
+          return {
+            bodyType: null,
+            skinTone: null,
+            colorSeason: null,
+            recommendations: ["请先完善您的形象档案"],
+          };
+        }
+
+        const recommendations: string[] = [];
+
+        if (profile.bodyType) {
+          recommendations.push(...this.getBodyTypeGuide(profile.bodyType));
+        }
+
+        if (profile.colorSeason) {
+          recommendations.push(...this.getColorSeasonGuide(profile.colorSeason));
+        }
+
+        // 基于用户行为数据补充建议
+        const interactions = await this.buildUserInteractionSummary(userId);
+        if (interactions.viewedCategories && Object.keys(interactions.viewedCategories).length > 0) {
+          const topCategory = Object.entries(interactions.viewedCategories)
+            .sort((a, b) => b[1] - a[1])[0];
+          if (topCategory) {
+            const categoryName = this.getClothingCategoryName(topCategory[0] as ClothingCategory);
+            recommendations.push(`您经常浏览${categoryName}类单品，可尝试更多该品类搭配`);
+          }
+        }
+
+        return {
+          bodyType: profile.bodyType ? this.getBodyTypeName(profile.bodyType) : null,
+          skinTone: profile.skinTone || null,
+          colorSeason: profile.colorSeason ? this.getColorSeasonName(profile.colorSeason) : null,
+          recommendations,
+        };
+      },
+      CACHE_TTL.STYLE_GUIDE,
+    );
+
+    return (
+      cached ?? {
         bodyType: null,
         skinTone: null,
         colorSeason: null,
-        recommendations: ["请先完善您的形象档案"],
-      };
-    }
-
-    const recommendations: string[] = [];
-
-    if (profile.bodyType) {
-      recommendations.push(...this.getBodyTypeGuide(profile.bodyType));
-    }
-
-    if (profile.colorSeason) {
-      recommendations.push(...this.getColorSeasonGuide(profile.colorSeason));
-    }
-
-    // 基于用户行为数据补充建议
-    const interactions = await this.buildUserInteractionSummary(userId);
-    if (interactions.viewedCategories && Object.keys(interactions.viewedCategories).length > 0) {
-      const topCategory = Object.entries(interactions.viewedCategories)
-        .sort((a, b) => b[1] - a[1])[0];
-      if (topCategory) {
-        const categoryName = this.getClothingCategoryName(topCategory[0] as ClothingCategory);
-        recommendations.push(`您经常浏览${categoryName}类单品，可尝试更多该品类搭配`);
+        recommendations: [],
       }
-    }
-
-    return {
-      bodyType: profile.bodyType ? this.getBodyTypeName(profile.bodyType) : null,
-      skinTone: profile.skinTone || null,
-      colorSeason: profile.colorSeason ? this.getColorSeasonName(profile.colorSeason) : null,
-      recommendations,
-    };
+    );
   }
 
   // ==================== 私有方法：用户画像构建 ====================

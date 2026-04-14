@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { ColdStartService } from "./cold-start.service";
+import { ColorMatchingService } from "./color-matching.service";
 import { RecommendationCacheService } from "./recommendation-cache.service";
 import { RecommendationExplainerService } from "./recommendation-explainer.service";
 import { UnifiedRecommendationEngine } from "./unified-recommendation.engine";
@@ -34,6 +35,7 @@ export class RecommendationFeedService {
     private explainer: RecommendationExplainerService,
     private coldStart: ColdStartService,
     private cacheService: RecommendationCacheService,
+    private colorMatching: ColorMatchingService,
   ) {}
 
   async getFeed(
@@ -138,7 +140,7 @@ export class RecommendationFeedService {
         (attrs?.colors as string[]) || [attrs?.primaryColor as string].filter(Boolean)
       ) as string[];
 
-      const colorHarmonyScore = Math.round(60 + Math.random() * 35);
+      const colorHarmonyScore = this.calculateColorHarmony(itemColors, userProfile);
 
       const matchReason =
         rec.reasons?.[0] ||
@@ -164,5 +166,92 @@ export class RecommendationFeedService {
     }
 
     return feedItems;
+  }
+
+  /**
+   * Calculate color harmony score using CIEDE2000 color difference.
+   * Compares item colors against user's color season / preferred colors.
+   * Returns 0-100 score.
+   */
+  private calculateColorHarmony(
+    itemColors: string[],
+    userProfile: Record<string, unknown> | null,
+  ): number {
+    if (!itemColors || itemColors.length === 0) {
+      return 65;
+    }
+
+    const userColors = (
+      (userProfile?.colorPreferences as string[]) || []
+    ).filter(Boolean);
+    const colorSeason = userProfile?.colorSeason as string | undefined;
+
+    if (userColors.length === 0 && !colorSeason) {
+      return 65;
+    }
+
+    let totalScore = 0;
+    let comparisons = 0;
+
+    for (const itemColor of itemColors.slice(0, 3)) {
+      try {
+        const itemRgb = this.colorMatching.hexToRgb(itemColor);
+
+        if (userColors.length > 0) {
+          for (const prefColor of userColors.slice(0, 3)) {
+            try {
+              const prefRgb = this.colorMatching.hexToRgb(prefColor);
+              const itemLab = this.colorMatching.rgbToLab(itemRgb);
+              const prefLab = this.colorMatching.rgbToLab(prefRgb);
+              const delta = this.colorMatching.deltaE2000(itemLab, prefLab);
+              const score = Math.max(0, Math.min(100, 100 - delta * 2));
+              totalScore += score;
+              comparisons++;
+            } catch {
+              // skip invalid hex
+            }
+          }
+        }
+
+        if (colorSeason) {
+          const seasonColors = this.getSeasonColors(colorSeason);
+          for (const seasonColor of seasonColors) {
+            try {
+              const seasonRgb = this.colorMatching.hexToRgb(seasonColor);
+              const itemLab = this.colorMatching.rgbToLab(itemRgb);
+              const seasonLab = this.colorMatching.rgbToLab(seasonRgb);
+              const delta = this.colorMatching.deltaE2000(itemLab, seasonLab);
+              const score = Math.max(0, Math.min(100, 100 - delta * 2));
+              totalScore += score;
+              comparisons++;
+            } catch {
+              // skip invalid hex
+            }
+          }
+        }
+      } catch {
+        // skip invalid item color hex
+      }
+    }
+
+    if (comparisons === 0) {
+      return 65;
+    }
+
+    return Math.round(Math.max(30, Math.min(98, totalScore / comparisons)));
+  }
+
+  private getSeasonColors(season: string): string[] {
+    const seasonMap: Record<string, string[]> = {
+      spring_warm: ["#E8A87C", "#D4A574", "#85CDCA", "#E27D60", "#C38D9E"],
+      spring_light: ["#F8B500", "#FFDDD2", "#B5EAD7", "#E2F0CB", "#FFDAC1"],
+      summer_cool: ["#7EC8E3", "#A7BEAE", "#B8B8D1", "#D5C4A1", "#92A9BD"],
+      summer_light: ["#C9CCD5", "#E8D5B7", "#B8D4E3", "#CAE1CE", "#D4C5E2"],
+      autumn_warm: ["#BC6C25", "#DDA15E", "#606C38", "#9B2226", "#BB3E03"],
+      autumn_deep: ["#6B2737", "#3D405B", "#5F0F40", "#9A031E", "#4F6D7A"],
+      winter_cool: ["#003049", "#D62828", "#1B4965", "#5FA8D3", "#000000"],
+      winter_deep: ["#1A1A2E", "#16213E", "#0F3460", "#E94560", "#533483"],
+    };
+    return seasonMap[season] || seasonMap.spring_warm || [];
   }
 }

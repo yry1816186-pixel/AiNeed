@@ -242,8 +242,8 @@ export const CollectionDragList: React.FC<CollectionDragListProps> = ({
   );
 
   return (
-    <DragSortList<CollectionItem>
-      data={collections}
+    <DragSortList<CollectionItem & { [key: string]: unknown }>
+      data={collections as (CollectionItem & { [key: string]: unknown })[]}
       renderItem={renderCollectionItem}
       onReorder={onReorder}
       keyExtractor={(item) => item.id}

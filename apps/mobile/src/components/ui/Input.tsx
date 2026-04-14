@@ -13,9 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import * as Haptics from '@/src/polyfills/expo-haptics';
-import { colors } from '../../theme/colors';
-import { typography } from '../../theme/typography';
-import { spacing } from '../../theme/spacing';
+import { Colors, Spacing, BorderRadius, Typography } from '../../theme';
 
 export type InputVariant = 'outlined' | 'filled' | 'underline';
 export type InputSize = 'sm' | 'md' | 'lg';
@@ -39,9 +37,9 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
 }
 
 const sizeConfig: Record<InputSize, { height: number; fontSize: number; paddingHorizontal: number }> = {
-  sm: { height: 40, fontSize: typography.fontSize.sm, paddingHorizontal: spacing.aliases.md },
-  md: { height: 48, fontSize: typography.fontSize.base, paddingHorizontal: spacing.aliases.lg },
-  lg: { height: 56, fontSize: typography.fontSize.base, paddingHorizontal: spacing.aliases.xl },
+  sm: { height: 40, fontSize: Typography.sizes.sm, paddingHorizontal: Spacing.md },
+  md: { height: 48, fontSize: Typography.sizes.base, paddingHorizontal: Spacing.lg },
+  lg: { height: 56, fontSize: Typography.sizes.base, paddingHorizontal: Spacing.xl },
 };
 
 export const Input: React.FC<InputProps> = ({
@@ -110,14 +108,14 @@ export const Input: React.FC<InputProps> = ({
   };
 
   const config = sizeConfig[size];
-  const borderColor = error ? colors.semantic.error : isFocused ? colors.primary[500] : colors.neutral[200];
+  const borderColor = error ? Colors.semantic.error : isFocused ? Colors.primary[500] : Colors.neutral[200];
 
   const getVariantStyle = (): ViewStyle => {
     switch (variant) {
       case 'outlined':
-        return { borderWidth: 1.5, borderColor, backgroundColor: colors.neutral.white, borderRadius: spacing.borderRadius.xl };
+        return { borderWidth: 1.5, borderColor, backgroundColor: Colors.neutral.white, borderRadius: BorderRadius.xl };
       case 'filled':
-        return { borderWidth: 0, backgroundColor: isFocused ? colors.neutral[100] : colors.neutral[50], borderRadius: spacing.borderRadius.xl };
+        return { borderWidth: 0, backgroundColor: isFocused ? Colors.neutral[100] : Colors.neutral[50], borderRadius: BorderRadius.xl };
       case 'underline':
         return { borderWidth: 0, borderBottomWidth: 1.5, borderColor, backgroundColor: 'transparent', borderRadius: 0 };
       default:
@@ -130,8 +128,8 @@ export const Input: React.FC<InputProps> = ({
     left: config.paddingHorizontal + (leftIcon || leftIconName ? 32 : 0),
     top: labelAnim.interpolate({ inputRange: [0, 1], outputRange: [config.height / 2 - 8, 6] }),
     fontSize: labelAnim.interpolate({ inputRange: [0, 1], outputRange: [config.fontSize, 12] }),
-    color: labelAnim.interpolate({ inputRange: [0, 1], outputRange: [colors.neutral[400], error ? colors.semantic.error : colors.primary[500]] }),
-    backgroundColor: variant === 'outlined' ? colors.neutral.white : 'transparent',
+    color: labelAnim.interpolate({ inputRange: [0, 1], outputRange: [Colors.neutral[400], error ? Colors.semantic.error : Colors.primary[500]] }),
+    backgroundColor: variant === 'outlined' ? Colors.neutral.white : 'transparent',
     paddingHorizontal: labelAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 4] }),
     fontWeight: '500',
     zIndex: 1,
@@ -147,20 +145,20 @@ export const Input: React.FC<InputProps> = ({
       <View style={[styles.inputContainer, { height: config.height }, getVariantStyle()]}>
         {(leftIcon || leftIconName) && (
           <View style={styles.leftIconContainer}>
-            {leftIcon || <Ionicons name={leftIconName!} size={20} color={isFocused ? colors.primary[500] : colors.neutral[400]} />}
+            {leftIcon || <Ionicons name={leftIconName!} size={20} color={isFocused ? Colors.primary[500] : Colors.neutral[400]} />}
           </View>
         )}
         <TextInput
           {...textInputProps}
           style={StyleSheet.flatten([
             styles.input,
-            { fontSize: config.fontSize, paddingHorizontal: config.paddingHorizontal, paddingTop: label ? spacing.aliases.md : 0 },
+            { fontSize: config.fontSize, paddingHorizontal: config.paddingHorizontal, paddingTop: label ? Spacing.md : 0 },
             leftIcon || leftIconName ? { paddingLeft: 0 } : null,
             rightIcon || rightIconName ? { paddingRight: 0 } : null,
             disabled && styles.disabled,
             inputStyle,
           ])}
-          placeholderTextColor={colors.neutral[400]}
+          placeholderTextColor={Colors.neutral[400]}
           editable={!disabled}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -168,7 +166,7 @@ export const Input: React.FC<InputProps> = ({
         />
         {(rightIcon || rightIconName) && (
           <Pressable onPress={onRightIconPress} style={styles.rightIconContainer} disabled={!onRightIconPress}>
-            {rightIcon || <Ionicons name={rightIconName!} size={20} color={onRightIconPress ? colors.neutral[600] : colors.neutral[400]} />}
+            {rightIcon || <Ionicons name={rightIconName!} size={20} color={onRightIconPress ? Colors.neutral[600] : Colors.neutral[400]} />}
           </Pressable>
         )}
       </View>
@@ -195,22 +193,22 @@ export const SearchInput: React.FC<SearchInputProps> = ({ onClear, showClearButt
     value={value}
     rightIconName={value && showClearButton ? 'close-circle' : undefined}
     onRightIconPress={onClear}
-    containerStyle={StyleSheet.flatten([{ backgroundColor: colors.neutral[100], borderRadius: spacing.borderRadius.xl }, props.containerStyle])}
+    containerStyle={StyleSheet.flatten([{ backgroundColor: Colors.neutral[100], borderRadius: BorderRadius.xl }, props.containerStyle])}
     inputStyle={{ backgroundColor: 'transparent' }}
   />
 );
 
 const styles = StyleSheet.create({
-  container: { marginBottom: spacing.aliases.lg },
-  required: { color: colors.semantic.error },
+  container: { marginBottom: Spacing.lg },
+  required: { color: Colors.semantic.error },
   inputContainer: { flexDirection: 'row', alignItems: 'center', overflow: 'visible' },
-  input: { flex: 1, color: colors.neutral[900], fontWeight: '400' },
-  leftIconContainer: { paddingLeft: spacing.aliases.lg, justifyContent: 'center' },
-  rightIconContainer: { paddingRight: spacing.aliases.lg, justifyContent: 'center' },
+  input: { flex: 1, color: Colors.neutral[900], fontWeight: '400' },
+  leftIconContainer: { paddingLeft: Spacing.lg, justifyContent: 'center' },
+  rightIconContainer: { paddingRight: Spacing.lg, justifyContent: 'center' },
   disabled: { opacity: 0.5 },
-  hintContainer: { marginTop: spacing.scale[1], paddingHorizontal: spacing.scale[1] },
-  hintText: { fontSize: 12, color: colors.neutral[500] },
-  errorText: { color: colors.semantic.error },
+  hintContainer: { marginTop: Spacing[1], paddingHorizontal: Spacing[1] },
+  hintText: { fontSize: 12, color: Colors.neutral[500] },
+  errorText: { color: Colors.semantic.error },
 });
 
 export default Input;

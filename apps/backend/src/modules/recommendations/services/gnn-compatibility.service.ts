@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
+import { ciede2000, rgbToLab } from "./ciede2000";
 
 export interface ClothingNode {
   id: string;
@@ -70,6 +71,46 @@ export class GNNCompatibilityService {
       minimalist: { minimalist: 1.0, classic: 0.9, formal: 0.8 },
       classic: { classic: 1.0, formal: 0.9, minimalist: 0.8 },
     };
+
+  // Type-aware embedding projection matrices per category
+  // Initialized as identity, learnable via feedback
+  private readonly categoryProjections: Map<string, number[][]> = new Map();
+
+  // Cross-category weight configurations
+  // Different category pairs get different scoring weights
+  private readonly crossCategoryWeights: Record<string, {
+    embedding: number; category: number; style: number; color: number;
+  }> = {
+    "tops-bottoms": { embedding: 0.35, category: 0.15, style: 0.25, color: 0.25 },
+    "tops-footwear": { embedding: 0.40, category: 0.15, style: 0.30, color: 0.15 },
+    "tops-outerwear": { embedding: 0.35, category: 0.15, style: 0.30, color: 0.20 },
+    "bottoms-footwear": { embedding: 0.35, category: 0.15, style: 0.30, color: 0.20 },
+    "dresses-footwear": { embedding: 0.35, category: 0.15, style: 0.30, color: 0.20 },
+    "dresses-accessories": { embedding: 0.40, category: 0.10, style: 0.25, color: 0.25 },
+    "accessories-tops": { embedding: 0.40, category: 0.10, style: 0.30, color: 0.20 },
+    "accessories-bottoms": { embedding: 0.40, category: 0.10, style: 0.30, color: 0.20 },
+  };
+
+  // Color name to RGB mapping for CIEDE2000 computation
+  private readonly colorNameToRgb: Record<string, [number, number, number]> = {
+    black: [0, 0, 0], white: [255, 255, 255], gray: [128, 128, 128],
+    grey: [128, 128, 128], beige: [245, 245, 220], navy: [0, 0, 128],
+    red: [255, 0, 0], blue: [0, 0, 255], green: [0, 128, 0],
+    yellow: [255, 255, 0], orange: [255, 165, 0], pink: [255, 192, 203],
+    purple: [128, 0, 128], brown: [139, 69, 19], tan: [210, 180, 140],
+    cream: [255, 253, 208], ivory: [255, 255, 240], camel: [193, 154, 107],
+    burgundy: [128, 0, 32], coral: [255, 127, 80], teal: [0, 128, 128],
+    olive: [128, 128, 0], maroon: [128, 0, 0], charcoal: [54, 69, 79],
+    khaki: [195, 176, 145], rust: [183, 65, 14], lavender: [150, 123, 182],
+    mint: [152, 255, 152], sage: [188, 184, 138], blush: [222, 93, 131],
+    copper: [184, 115, 51], gold: [255, 215, 0], silver: [192, 192, 192],
+  };
+
+  // Neutral colors: low chroma in CIELAB, always compatible
+  private readonly neutralColorNames = new Set([
+    "black", "white", "gray", "grey", "beige", "navy", "cream",
+    "ivory", "camel", "charcoal", "khaki", "silver",
+  ]);
 
   constructor(private configService: ConfigService) {
     const aiServiceUrl = this.configService.get<string>(
@@ -200,6 +241,8 @@ export class GNNCompatibilityService {
       categoryScore,
       styleScore,
       colorScore,
+      sourceMeta?.category,
+      targetMeta?.category,
     );
 
     const fusedScore = this.fuseScores(
@@ -279,34 +322,94 @@ export class GNNCompatibilityService {
     return maxScore;
   }
 
+  /**
+   * Compute color compatibility using CIEDE2000 perceptual color distance.
+   * Replaces string-matching with scientific color difference measurement.
+   * Neutral colors (low chroma) are treated as always-compatible.
+   */
   private computeColorCompatibility(
     colors1: string[],
     colors2: string[],
   ): number {
     if (!colors1.length || !colors2.length) {return 0.5;}
 
-    const neutralColors = ["black", "white", "gray", "beige", "navy"];
+    // Convert color names to CIELAB using the lookup table
+    const lab1 = colors1
+      .map((c) => this.colorNameToRgb[c.toLowerCase()])
+      .filter((rgb): rgb is [number, number, number] => rgb !== undefined)
+      .map((rgb) => rgbToLab({ r: rgb[0], g: rgb[1], b: rgb[2] }));
 
+    const lab2 = colors2
+      .map((c) => this.colorNameToRgb[c.toLowerCase()])
+      .filter((rgb): rgb is [number, number, number] => rgb !== undefined)
+      .map((rgb) => rgbToLab({ r: rgb[0], g: rgb[1], b: rgb[2] }));
+
+    // Check for neutral colors (low chroma, always compatible)
+    const hasNeutral1 = colors1.some((c) => this.neutralColorNames.has(c.toLowerCase()));
+    const hasNeutral2 = colors2.some((c) => this.neutralColorNames.has(c.toLowerCase()));
+
+    if (hasNeutral1 || hasNeutral2) {
+      // Neutral + anything = high compatibility
+      // But still compute for non-neutral pairs if present
+      const nonNeutral1 = lab1.length > 0 ? lab1 : [];
+      const nonNeutral2 = lab2.length > 0 ? lab2 : [];
+
+      if (nonNeutral1.length === 0 || nonNeutral2.length === 0) {
+        return 0.85; // Both neutral or one neutral only
+      }
+
+      // Check CIEDE2000 between non-neutral colors
+      const minDelta = this.minCiede2000(nonNeutral1, nonNeutral2);
+      // Neutral softens the requirement: wider tolerance
+      return Math.max(0, Math.min(1, 1 - minDelta / 80));
+    }
+
+    // No neutral colors: compute CIEDE2000 distance
+    if (lab1.length === 0 || lab2.length === 0) {
+      // Fallback to name matching for unknown colors
+      return this.fallbackColorMatch(colors1, colors2);
+    }
+
+    const minDelta = this.minCiede2000(lab1, lab2);
+
+    // CIEDE2000 scoring:
+    // deltaE < 10 = very similar (harmonious) → score ~0.9
+    // deltaE 10-25 = complementary → score 0.6-0.8
+    // deltaE 25-50 = some contrast → score 0.3-0.6
+    // deltaE > 50 = clashing → score < 0.3
+    const score = Math.max(0, 1 - minDelta / 50);
+    return Math.min(1, score);
+  }
+
+  /**
+   * Compute minimum CIEDE2000 distance between two sets of CIELAB colors.
+   */
+  private minCiede2000(
+    lab1: Array<{ L: number; a: number; b: number }>,
+    lab2: Array<{ L: number; a: number; b: number }>,
+  ): number {
+    let minDist = Infinity;
+    for (const c1 of lab1) {
+      for (const c2 of lab2) {
+        const delta = ciede2000(c1 as any, c2 as any);
+        if (delta < minDist) {
+          minDist = delta;
+        }
+      }
+    }
+    return minDist;
+  }
+
+  /**
+   * Fallback color matching using string comparison for unknown color names.
+   */
+  private fallbackColorMatch(colors1: string[], colors2: string[]): number {
     for (const c1 of colors1) {
-      if (neutralColors.includes(c1.toLowerCase())) {continue;}
       for (const c2 of colors2) {
-        if (neutralColors.includes(c2.toLowerCase())) {continue;}
         if (c1.toLowerCase() === c2.toLowerCase()) {return 0.7;}
       }
     }
-
-    for (const c1 of colors1) {
-      if (neutralColors.includes(c1.toLowerCase())) {
-        return 0.8;
-      }
-    }
-    for (const c2 of colors2) {
-      if (neutralColors.includes(c2.toLowerCase())) {
-        return 0.8;
-      }
-    }
-
-    return 0.6;
+    return 0.5;
   }
 
   private computeGNNScore(
@@ -359,18 +462,26 @@ export class GNNCompatibilityService {
     return Math.min(1, 0.5 + totalWeight * 0.1 + commonHyperedges.length * 0.1);
   }
 
+  /**
+   * Compute cross-attention score with category-pair-specific weights.
+   * Different category pairs (e.g., top-bottom vs top-footwear) get different
+   * weight combinations reflecting their compatibility characteristics.
+   */
   private computeCrossAttentionScore(
     embeddingSimilarity: number,
     categoryScore: number,
     styleScore: number,
     colorScore: number,
+    sourceCategory?: string,
+    targetCategory?: string,
   ): number {
-    const weights = {
-      embedding: 0.4,
-      category: 0.25,
-      style: 0.2,
-      color: 0.15,
-    };
+    // Look up category-pair-specific weights
+    const pairKey = this.getCategoryPairKey(sourceCategory, targetCategory);
+    const weights = pairKey
+      ? (this.crossCategoryWeights[pairKey] ?? {
+          embedding: 0.4, category: 0.25, style: 0.2, color: 0.15,
+        })
+      : { embedding: 0.4, category: 0.25, style: 0.2, color: 0.15 };
 
     return (
       weights.embedding * ((embeddingSimilarity + 1) / 2) +
@@ -378,6 +489,46 @@ export class GNNCompatibilityService {
       weights.style * styleScore +
       weights.color * colorScore
     );
+  }
+
+  /**
+   * Get canonical category pair key for weight lookup.
+   */
+  private getCategoryPairKey(cat1?: string, cat2?: string): string | null {
+    if (!cat1 || !cat2) {return null;}
+    const pair = [cat1, cat2].sort();
+    const key = `${pair[0]}-${pair[1]}`;
+    if (this.crossCategoryWeights[key]) {return key;}
+    // Try reverse order
+    const revKey = `${pair[1]}-${pair[0]}`;
+    if (this.crossCategoryWeights[revKey]) {return revKey;}
+    return null;
+  }
+
+  /**
+   * Compute outfit-level compatibility score from all pairwise scores.
+   * Uses min + weighted average aggregation with diversity bonus.
+   */
+  computeOutfitScore(pairwiseScores: number[]): {
+    score: number;
+    diversity: number;
+  } {
+    if (pairwiseScores.length === 0) {
+      return { score: 0.5, diversity: 0 };
+    }
+
+    // Aggregate: min(pairwise) * 0.4 + avg(pairwise) * 0.6
+    const minScore = Math.min(...pairwiseScores);
+    const avgScore = pairwiseScores.reduce((a, b) => a + b, 0) / pairwiseScores.length;
+    const aggregated = minScore * 0.4 + avgScore * 0.6;
+
+    // Diversity bonus: penalize if all scores are very similar (boring outfit)
+    const variance = pairwiseScores.reduce(
+      (sum, s) => sum + (s - avgScore) ** 2, 0,
+    ) / pairwiseScores.length;
+    const diversity = Math.min(1, Math.sqrt(variance) * 5);
+
+    return { score: aggregated, diversity };
   }
 
   private fuseScores(

@@ -11,10 +11,8 @@ import {
 } from 'react-native';
 import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
 import * as Haptics from '@/src/polyfills/expo-haptics';
-import { colors } from '../../theme/colors';
-import { typography } from '../../theme/typography';
-import { spacing } from '../../theme/spacing';
-import { shadows } from '../../theme/shadows';
+import { Colors, Spacing, BorderRadius, Typography, Shadows, gradients } from '../../theme';
+import { SpringConfigs, Duration } from '../../theme/tokens/animations';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'text' | 'gradient' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -40,20 +38,20 @@ export interface ButtonProps {
 }
 
 const sizeConfig: Record<ButtonSize, { height: number; paddingHorizontal: number; fontSize: number; borderRadius: number }> = {
-  sm: { height: 36, paddingHorizontal: spacing.aliases.md, fontSize: typography.fontSize.sm, borderRadius: spacing.borderRadius.lg },
-  md: { height: 44, paddingHorizontal: spacing.aliases.lg, fontSize: typography.fontSize.base, borderRadius: spacing.borderRadius.xl },
-  lg: { height: 52, paddingHorizontal: spacing.aliases.xl, fontSize: typography.fontSize.base, borderRadius: spacing.borderRadius.xl },
-  xl: { height: 60, paddingHorizontal: spacing.aliases['2xl'], fontSize: typography.fontSize.lg, borderRadius: spacing.borderRadius['2xl'] },
+  sm: { height: 36, paddingHorizontal: Spacing.md, fontSize: Typography.sizes.sm, borderRadius: BorderRadius.lg },
+  md: { height: 44, paddingHorizontal: Spacing.lg, fontSize: Typography.sizes.base, borderRadius: BorderRadius.xl },
+  lg: { height: 52, paddingHorizontal: Spacing.xl, fontSize: Typography.sizes.base, borderRadius: BorderRadius.xl },
+  xl: { height: 60, paddingHorizontal: Spacing['2xl'], fontSize: Typography.sizes.lg, borderRadius: BorderRadius['2xl'] },
 };
 
 const variantConfig: Record<ButtonVariant, { bg: string; text: string; border?: string }> = {
-  primary: { bg: colors.primary[500], text: colors.neutral.white },
-  secondary: { bg: colors.neutral[100], text: colors.primary[500] },
-  outline: { bg: 'transparent', text: colors.primary[500], border: colors.primary[500] },
-  ghost: { bg: 'transparent', text: colors.primary[500] },
-  text: { bg: 'transparent', text: colors.secondary[500] },
-  gradient: { bg: 'transparent', text: colors.neutral.white },
-  danger: { bg: colors.semantic.error, text: colors.neutral.white },
+  primary: { bg: Colors.primary[500], text: Colors.neutral.white },
+  secondary: { bg: Colors.neutral[100], text: Colors.primary[500] },
+  outline: { bg: 'transparent', text: Colors.primary[500], border: Colors.primary[500] },
+  ghost: { bg: 'transparent', text: Colors.primary[500] },
+  text: { bg: 'transparent', text: Colors.sage[500] },
+  gradient: { bg: 'transparent', text: Colors.neutral.white },
+  danger: { bg: Colors.semantic.error, text: Colors.neutral.white },
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -92,8 +90,7 @@ export const Button: React.FC<ButtonProps> = ({
     Animated.spring(scaleAnim, {
       toValue: 0.96,
       useNativeDriver: true,
-      damping: 18,
-      stiffness: 300,
+      ...SpringConfigs.snappy,
     }).start();
   }, [triggerHaptic, onPressIn, scaleAnim]);
 
@@ -102,8 +99,7 @@ export const Button: React.FC<ButtonProps> = ({
     Animated.spring(scaleAnim, {
       toValue: 1,
       useNativeDriver: true,
-      damping: 12,
-      stiffness: 180,
+      ...SpringConfigs.bouncy,
     }).start();
   }, [onPressOut, scaleAnim]);
 
@@ -123,11 +119,11 @@ export const Button: React.FC<ButtonProps> = ({
     backgroundColor: vConfig.bg,
     ...(vConfig.border ? { borderWidth: 1.5, borderColor: vConfig.border } : {}),
     ...(fullWidth ? { width: '100%' } : {}),
-    ...(variant === 'primary' ? shadows.presets.md as ViewStyle : {}),
+    ...(variant === 'primary' ? Shadows.md : {}),
   };
 
   const mergedTextStyle: TextStyle = {
-    ...typography.styles.button,
+    ...Typography.styles.button,
     fontSize: config.fontSize,
     color: vConfig.text,
     ...textStyle,
@@ -138,12 +134,12 @@ export const Button: React.FC<ButtonProps> = ({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={['outline', 'ghost', 'text'].includes(variant) ? colors.primary[500] : colors.neutral.white}
+          color={['outline', 'ghost', 'text'].includes(variant) ? Colors.primary[500] : Colors.neutral.white}
         />
       ) : (
         <>
           {icon && iconPosition === 'left' && <>{icon}</>}
-          <Text style={[mergedTextStyle, icon ? { marginHorizontal: spacing.aliases.sm } : {}]}>
+          <Text style={[mergedTextStyle, icon ? { marginHorizontal: Spacing.sm } : {}]}>
             {children}
           </Text>
           {icon && iconPosition === 'right' && <>{icon}</>}
@@ -153,7 +149,7 @@ export const Button: React.FC<ButtonProps> = ({
   );
 
   if (variant === 'gradient') {
-    const gColors = gradientColors || colors.gradients.hero;
+    const gColors = gradientColors || gradients.brand;
     return (
       <Pressable
         onPress={handlePress}

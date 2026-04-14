@@ -10,9 +10,7 @@ import {
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
 import * as Haptics from '@/src/polyfills/expo-haptics';
-import { colors } from '../../theme/colors';
-import { spacing } from '../../theme/spacing';
-import { shadows } from '../../theme/shadows';
+import { Colors, Spacing, BorderRadius, Shadows, gradients } from '../../theme';
 
 export type CardVariant = 'elevated' | 'outlined' | 'filled' | 'glass' | 'gradient';
 export type CardPadding = 'none' | 'sm' | 'md' | 'lg';
@@ -32,9 +30,9 @@ export interface CardProps {
 
 const paddingConfig: Record<CardPadding, number> = {
   none: 0,
-  sm: spacing.aliases.sm,
-  md: spacing.aliases.lg,
-  lg: spacing.aliases.xl,
+  sm: Spacing.sm,
+  md: Spacing.lg,
+  lg: Spacing.xl,
 };
 
 export const Card: React.FC<CardProps> = ({
@@ -77,11 +75,11 @@ export const Card: React.FC<CardProps> = ({
   const getVariantStyle = (): ViewStyle => {
     switch (variant) {
       case 'elevated':
-        return { backgroundColor: colors.neutral.white, ...shadows.presets.md as ViewStyle };
+        return { backgroundColor: Colors.neutral.white, ...Shadows.md };
       case 'outlined':
-        return { backgroundColor: colors.neutral.white, borderWidth: 1, borderColor: colors.neutral[200] };
+        return { backgroundColor: Colors.neutral.white, borderWidth: 1, borderColor: Colors.neutral[200] };
       case 'filled':
-        return { backgroundColor: colors.neutral[50] };
+        return { backgroundColor: Colors.neutral[50] };
       case 'glass':
         return { backgroundColor: `rgba(255, 255, 255, ${glassIntensity / 100})` };
       case 'gradient':
@@ -92,7 +90,7 @@ export const Card: React.FC<CardProps> = ({
   };
 
   const containerStyle: ViewStyle = {
-    borderRadius: spacing.borderRadius.xl,
+    borderRadius: BorderRadius.xl,
     padding: paddingConfig[padding],
     overflow: 'hidden',
     ...getVariantStyle(),
@@ -100,7 +98,7 @@ export const Card: React.FC<CardProps> = ({
 
   const renderContent = () => {
     if (variant === 'gradient') {
-      const gColors = gradientColors || colors.gradients.primary;
+      const gColors = gradientColors || gradients.brand;
       return (
         <LinearGradient colors={gColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={containerStyle}>
           {children}

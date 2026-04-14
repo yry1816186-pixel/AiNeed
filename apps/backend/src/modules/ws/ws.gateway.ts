@@ -452,7 +452,12 @@ export class AIWebSocketGateway
   private async getTaskStatus(jobId: string): Promise<TaskStatus | null> {
     const key = `job:${jobId}`;
     const data = await this.redis.get(key);
-    return data ? JSON.parse(data) as TaskStatus : null;
+    if (!data) return null;
+    try {
+      return JSON.parse(data) as TaskStatus;
+    } catch {
+      return null;
+    }
   }
 
   private async sendPendingTaskUpdates(client: Socket, userId: string): Promise<void> {

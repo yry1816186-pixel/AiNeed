@@ -108,6 +108,11 @@ export const OrdersScreen: React.FC = () => {
           setOrders([]);
           setHasMore(false);
         }
+      } catch {
+        if (mode !== "append") {
+          setOrders([]);
+          setHasMore(false);
+        }
       } finally {
         setLoading(false);
         setRefreshing(false);
