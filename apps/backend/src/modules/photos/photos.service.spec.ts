@@ -82,7 +82,7 @@ describe("PhotosService", () => {
     destination: "",
     filename: "",
     path: "",
-    stream: null as any,
+    stream: null as unknown as Express.Multer.File['stream'],
   });
 
   const mockPhoto = {
