@@ -739,4 +739,88 @@ export class ConsultantService {
 
     return withdrawal;
   }
+
+  // ==================== 入驻审核 ====================
+
+  /**
+   * 审核顾问档案 - 管理员操作
+   */
+  async reviewProfile(
+    adminUserId: string,
+    profileId: string,
+    dto: { status: "active" | "rejected"; rejectReason?: string },
+  ) {
+    const profile = await this.prisma.consultantProfile.findUnique({
+      where: { id: profileId },
+    });
+
+    if (!profile) throw new NotFoundException("顾问档案不存在");
+    if (profile.status !== "pending")
+      throw new BadRequestException("仅待审核档案可审核");
+
+    // TODO: Verify adminUserId is an admin (Phase 5 merchant review pattern)
+
+    return this.prisma.consultantProfile.update({
+      where: { id: profileId },
+      data: {
+        status: dto.status === "active" ? "active" : "suspended",
+      },
+    });
+  }
+
+  // ==================== 案例展示 ====================
+
+  /**
+   * 获取顾问服务案例 - 含 before/after 对比图和评价摘要
+   */
+  async getConsultantCases(consultantId: string) {
+    const consultant = await this.prisma.consultantProfile.findUnique({
+      where: { id: consultantId },
+    });
+
+    if (!consultant) throw new NotFoundException("顾问不存在");
+
+    const completedBookings = await this.prisma.serviceBooking.findMany({
+      where: {
+        consultantId,
+        status: "completed",
+      },
+      include: {
+        review: {
+          select: {
+            rating: true,
+            content: true,
+            tags: true,
+            beforeImages: true,
+            afterImages: true,
+            isAnonymous: true,
+            user: {
+              select: { nickname: true, avatar: true },
+            },
+          },
+        },
+      },
+      orderBy: { completedAt: "desc" },
+      take: 20,
+    });
+
+    return completedBookings
+      .filter((booking) => booking.review)
+      .map((booking) => ({
+        bookingId: booking.id,
+        serviceType: booking.serviceType,
+        beforeImages: booking.review!.beforeImages,
+        afterImages: booking.review!.afterImages,
+        rating: booking.review!.rating,
+        reviewExcerpt: booking.review!.content
+          ? booking.review!.content.substring(0, 100)
+          : null,
+        reviewTags: booking.review!.tags,
+        clientName: booking.review!.isAnonymous
+          ? "匿名用户"
+          : booking.review!.user.nickname,
+        price: Number(booking.price),
+        completedAt: booking.completedAt,
+      }));
+  }
 }

@@ -23,6 +23,7 @@ import { RequestWithUser } from "../../common/types/common.types";
 import { ConsultantService } from "./consultant.service";
 import { ConsultantMatchingService } from "./consultant-matching.service";
 import { ConsultantAvailabilityService } from "./consultant-availability.service";
+import { ConsultantReviewService } from "./consultant-review.service";
 import {
   CreateConsultantProfileDto,
   UpdateConsultantProfileDto,
@@ -34,6 +35,8 @@ import {
   BatchCreateAvailabilityDto,
   AvailableSlotsQueryDto,
   RequestWithdrawalDto,
+  CreateReviewDto,
+  ReviewQueryDto,
 } from "./dto";
 
 @ApiTags("consultant")
@@ -43,6 +46,7 @@ export class ConsultantController {
     private readonly consultantService: ConsultantService,
     private readonly consultantMatchingService: ConsultantMatchingService,
     private readonly availabilityService: ConsultantAvailabilityService,
+    private readonly reviewService: ConsultantReviewService,
   ) {}
 
   // ==================== 顾问档案 ====================
@@ -301,5 +305,63 @@ export class ConsultantController {
         accountHolder: dto.accountHolder,
       },
     );
+  }
+
+  // ==================== 评价体系 ====================
+
+  @Post("reviews")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "创建评价", description: "对已完成的顾问服务进行评价" })
+  @ApiResponse({ status: 201, description: "评价创建成功" })
+  @ApiResponse({ status: 400, description: "预约未完成或已评价" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async createReview(
+    @Request() req: RequestWithUser,
+    @Body() dto: CreateReviewDto,
+  ) {
+    return this.reviewService.createReview(req.user.id, dto);
+  }
+
+  @Get("reviews")
+  @ApiOperation({ summary: "获取评价列表", description: "分页获取顾问评价列表，支持排序" })
+  @ApiResponse({ status: 200, description: "成功返回评价列表" })
+  async getReviews(@Query() query: ReviewQueryDto) {
+    return this.reviewService.getReviews(query);
+  }
+
+  @Get("rankings/:consultantId")
+  @ApiOperation({ summary: "获取顾问综合排名分数", description: "根据评分40%+订单数20%+回复速度20%+匹配度20%计算综合排名" })
+  @ApiResponse({ status: 200, description: "返回排名分数" })
+  @ApiParam({ name: "consultantId", description: "顾问ID" })
+  async getRanking(@Param("consultantId") consultantId: string) {
+    const score = await this.reviewService.getConsultantRanking(consultantId);
+    return { consultantId, rankingScore: score };
+  }
+
+  // ==================== 入驻审核 & 案例展示 ====================
+
+  @Put("profiles/:id/review")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "审核顾问档案", description: "管理员审核顾问入驻申请" })
+  @ApiResponse({ status: 200, description: "审核成功" })
+  @ApiResponse({ status: 400, description: "档案状态不允许审核" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiParam({ name: "id", description: "顾问档案ID" })
+  async reviewProfile(
+    @Request() req: RequestWithUser,
+    @Param("id") id: string,
+    @Body() dto: { status: "active" | "rejected"; rejectReason?: string },
+  ) {
+    return this.consultantService.reviewProfile(req.user.id, id, dto);
+  }
+
+  @Get("profiles/:id/cases")
+  @ApiOperation({ summary: "获取顾问服务案例", description: "获取顾问的服务案例展示，含before/after对比图" })
+  @ApiResponse({ status: 200, description: "成功返回案例列表" })
+  @ApiParam({ name: "id", description: "顾问档案ID" })
+  async getConsultantCases(@Param("id") id: string) {
+    return this.consultantService.getConsultantCases(id);
   }
 }

@@ -6,6 +6,7 @@ import { ConsultantController } from "./consultant.controller";
 import { ConsultantService } from "./consultant.service";
 import { ConsultantMatchingService } from "./consultant-matching.service";
 import { ConsultantAvailabilityService } from "./consultant-availability.service";
+import { ConsultantReviewService } from "./consultant-review.service";
 
 @Module({
   imports: [PrismaModule],
@@ -14,6 +15,7 @@ import { ConsultantAvailabilityService } from "./consultant-availability.service
     ConsultantService,
     ConsultantMatchingService,
     ConsultantAvailabilityService,
+    ConsultantReviewService,
   ],
   exports: [ConsultantService],
 })
