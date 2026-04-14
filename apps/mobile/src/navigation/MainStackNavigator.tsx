@@ -38,7 +38,8 @@ const RecommendationDetailScreen = lazy(() => import('../screens/RecommendationD
 const ProductScreen = lazy(() => import('../screens/ClothingDetailScreen'));
 const OutfitDetailScreen = lazy(() => import('../screens/OutfitDetailScreen'));
 
-const AIStylistScreen = lazy(() => import('../screens/AiStylistScreenV2'));
+const AIStylistScreen = lazy(() => import('../screens/AiStylistScreen'));
+const SessionCalendarScreen = lazy(() => import('../screens/SessionCalendarScreen'));
 
 const VirtualTryOnScreen = lazy(() => import('../screens/VirtualTryOnScreen'));
 
@@ -112,6 +113,9 @@ export function StylistStackNavigator() {
       </StylistStack.Screen>
       <StylistStack.Screen name="AiStylistChat">
         {(props) => <PlaceholderScreen route={{ name: props.route.name, params: { phase: 2, title: 'AiStylistChat' } }} />}
+      </StylistStack.Screen>
+      <StylistStack.Screen name="SessionCalendar">
+        {() => <Suspense fallback={screenLoader}><SessionCalendarScreen /></Suspense>}
       </StylistStack.Screen>
     </StylistStack.Navigator>
   );

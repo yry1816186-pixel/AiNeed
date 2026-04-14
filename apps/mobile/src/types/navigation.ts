@@ -23,6 +23,7 @@ export type RootStackParamList = {
   Register: undefined;
   AiStylist: undefined;
   AiStylistChat: { sessionId?: string };
+  SessionCalendar: undefined;
   Recommendations: undefined;
   RecommendationDetail: { recommendationId: string };
   ClothingDetail: { clothingId: string };

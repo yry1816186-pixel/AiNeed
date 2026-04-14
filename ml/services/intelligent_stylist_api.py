@@ -19,7 +19,7 @@ from services.intelligent_stylist_service import (
     get_stylist_service
 )
 
-router = APIRouter(prefix="/api/stylist", tags=["Intelligent Stylist"])
+router = APIRouter(prefix="/api/stylist/v2", tags=["Intelligent Stylist"])
 
 
 class UserProfileInput(BaseModel):

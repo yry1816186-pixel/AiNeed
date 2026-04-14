@@ -82,7 +82,7 @@ try:
     from services.intelligent_stylist_api import router as stylist_router
 
     app.include_router(stylist_router)
-    logging.getLogger(__name__).info("Intelligent stylist API routes loaded")
+    logging.getLogger(__name__).info("Intelligent stylist v2 API routes loaded at /api/stylist/v2")
 except Exception as e:
     logging.getLogger(__name__).warning("Failed to load intelligent stylist API: %s", e)
 

@@ -30,6 +30,7 @@ export type StylistStackParamList = {
   OutfitPlan: { planId?: string };
   ChatHistory: undefined;
   AiStylistChat: { sessionId?: string };
+  SessionCalendar: undefined;
 };
 
 // ============================================================
@@ -137,6 +138,7 @@ export const ROUTE_PHASE_MAP: Record<string, number> = {
   OutfitPlan: 2,
   ChatHistory: 2,
   AiStylistChat: 2,
+  SessionCalendar: 2,
   VirtualTryOn: 3,
   TryOnResult: 3,
   TryOnHistory: 3,
