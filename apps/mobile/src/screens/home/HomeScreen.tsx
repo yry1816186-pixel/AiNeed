@@ -41,8 +41,8 @@ const BASE_SECTIONS: HomeSection[] = [
   { type: 'search' },
 ];
 
-const DEFAULT_LATITUDE = 39.9042;
-const DEFAULT_LONGITUDE = 116.4074;
+const FALLBACK_LATITUDE = 35.8617;
+const FALLBACK_LONGITUDE = 104.1954;
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -68,10 +68,7 @@ const HomeScreen: React.FC = () => {
   } = useRecommendationFeedStore();
 
   const [refreshing, setRefreshing] = useState(false);
-  const [coords, setCoords] = useState<{ latitude: number; longitude: number }>({
-    latitude: DEFAULT_LATITUDE,
-    longitude: DEFAULT_LONGITUDE,
-  });
+  const [coords, setCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const locationFetched = useRef(false);
 
   const displayName = user?.nickname || user?.email?.split('@')[0] || '用户';
@@ -86,14 +83,18 @@ const HomeScreen: React.FC = () => {
           longitude: position.coords.longitude,
         });
       },
-      () => {},
+      () => {
+        setCoords({ latitude: FALLBACK_LATITUDE, longitude: FALLBACK_LONGITUDE });
+      },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
     );
   }, []);
 
   useEffect(() => {
     void fetchProfileCompletion();
-    void fetchWeather(coords.latitude, coords.longitude);
+    if (coords) {
+      void fetchWeather(coords.latitude, coords.longitude);
+    }
     void fetchFeed(true);
   }, [fetchProfileCompletion, fetchWeather, fetchFeed, coords]);
 
@@ -107,7 +108,7 @@ const HomeScreen: React.FC = () => {
     setRefreshing(true);
     await Promise.all([
       fetchProfileCompletion(),
-      fetchWeather(coords.latitude, coords.longitude),
+      coords ? fetchWeather(coords.latitude, coords.longitude) : Promise.resolve(),
       fetchFeed(true),
     ]);
     setRefreshing(false);

@@ -64,15 +64,13 @@ class ModelPaths:
         return None
 
     @staticmethod
-    def get_idm_vton_model_path() -> Optional[Path]:
-        """获取IDM-VTON模型路径"""
-        idm_path = MODELS_ROOT / "idm-vton"
-        if idm_path.exists():
-            required_dirs = ["vae", "unet", "image_encoder"]
-            if all((idm_path / d).exists() for d in required_dirs):
-                return idm_path
-
-        return None
+    def get_glm_api_config() -> dict:
+        """获取GLM API配置"""
+        return {
+            "api_key": os.getenv("GLM_API_KEY", ""),
+            "api_endpoint": os.getenv("GLM_API_ENDPOINT", "https://open.bigmodel.cn/api/paas/v4"),
+            "model": os.getenv("GLM_MODEL", "glm-5"),
+        }
 
     @staticmethod
     def get_fashion_clip_path() -> Optional[Path]:
@@ -122,8 +120,8 @@ def check_model_availability() -> dict:
         "yolo_path": str(ModelPaths.get_yolo_model_path() or "未找到"),
         "sam": ModelPaths.get_sam_model_path() is not None,
         "sam_path": str(ModelPaths.get_sam_model_path() or "未找到"),
-        "idm_vton": ModelPaths.get_idm_vton_model_path() is not None,
-        "idm_vton_path": str(ModelPaths.get_idm_vton_model_path() or "未找到"),
+        "glm_api": bool(os.getenv("GLM_API_KEY")),
+        "glm_api_endpoint": os.getenv("GLM_API_ENDPOINT", "https://open.bigmodel.cn/api/paas/v4"),
         "fashion_clip": ModelPaths.get_fashion_clip_path() is not None,
         "fashion_clip_path": str(ModelPaths.get_fashion_clip_path() or "未找到"),
     }

@@ -10,7 +10,7 @@ import {
   Request,
   NotFoundException,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 import { Prisma } from "@prisma/client";
 
 import { AuthGuard } from "../auth/guards/auth.guard";
@@ -38,6 +38,8 @@ export class AdminCommunityController {
 
   @Get("posts")
   @ApiOperation({ summary: "List all posts including pending moderation" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
   async listPosts(@Query() query: AdminPostQueryDto) {
     const { page = 1, pageSize = 20, status, moderationStatus } = query;
 
@@ -79,6 +81,9 @@ export class AdminCommunityController {
 
   @Get("posts/:id")
   @ApiOperation({ summary: "Get post detail" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "未找到" })
   async getPost(@Param("id") id: string) {
     const post = await this.prisma.communityPost.findUnique({
       where: { id },
@@ -108,6 +113,9 @@ export class AdminCommunityController {
 
   @Put("posts/:id/moderate")
   @ApiOperation({ summary: "Moderate a post" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "未找到" })
   async moderatePost(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
@@ -134,6 +142,9 @@ export class AdminCommunityController {
 
   @Delete("posts/:id")
   @ApiOperation({ summary: "Soft delete a post" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "未找到" })
   async deletePost(@Param("id") id: string) {
     const post = await this.prisma.communityPost.findUnique({
       where: { id },
@@ -153,6 +164,8 @@ export class AdminCommunityController {
 
   @Get("reports")
   @ApiOperation({ summary: "List reports" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
   async listReports(@Query() query: AdminReportQueryDto) {
     const { page = 1, pageSize = 20, status, contentType } = query;
 
@@ -189,6 +202,9 @@ export class AdminCommunityController {
 
   @Put("reports/:id")
   @ApiOperation({ summary: "Handle a report" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "未找到" })
   async handleReport(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
@@ -228,6 +244,8 @@ export class AdminCommunityController {
 
   @Get("moderation-queue")
   @ApiOperation({ summary: "Get moderation queue" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
   async getModerationQueue(@Query() query: AdminPostQueryDto) {
     return this.contentModerationService.getModerationQueue({
       page: query.page,
@@ -237,6 +255,8 @@ export class AdminCommunityController {
 
   @Get("trending-tags")
   @ApiOperation({ summary: "Get trending tags" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
   async getTrendingTags() {
     const posts = await this.prisma.communityPost.findMany({
       where: { isDeleted: false },

@@ -69,7 +69,7 @@ function mapTryOnCategory(
   }
 }
 
-@Processor(QUEUE_NAMES.AI_TASKS)
+@Processor(QUEUE_NAMES.AI_TASKS, { concurrency: 1 })
 export class QueueProcessor extends WorkerHost {
   private readonly logger = new Logger(QueueProcessor.name);
 
@@ -79,7 +79,7 @@ export class QueueProcessor extends WorkerHost {
   }
 }
 
-@Processor(QUEUE_NAMES.STYLE_ANALYSIS)
+@Processor(QUEUE_NAMES.STYLE_ANALYSIS, { concurrency: 2 })
 export class StyleAnalysisProcessor extends WorkerHost {
   private readonly logger = new Logger(StyleAnalysisProcessor.name);
 

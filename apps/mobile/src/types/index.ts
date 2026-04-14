@@ -1,4 +1,4 @@
-﻿// Re-export shared types from @xuno/types
+// Re-export shared types from @xuno/types
 export type {
   User,
   UserProfile,
@@ -61,6 +61,9 @@ export * from "./components";
 export * from "./animations";
 export * from "./social";
 export * from "./ai";
+export * from "./consultant";
+export * from "./chat";
+export * from "./customization";
 export * from "./form-data";
 
 export type Nullable<T> = T | null;

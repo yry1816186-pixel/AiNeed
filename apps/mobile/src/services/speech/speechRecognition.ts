@@ -1,4 +1,4 @@
-declare const process: any;
+declare const process: { env: Record<string, string | undefined> };
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Platform, PermissionsAndroid, PermissionStatus } from "react-native";

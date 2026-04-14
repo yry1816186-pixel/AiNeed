@@ -9,7 +9,7 @@ function isLegacyBcryptHash(value: string): boolean {
   return value.startsWith("$2a$") || value.startsWith("$2b$") || value.startsWith("$2y$");
 }
 
-export async function hash(value: string, _rounds = 10): Promise<string> {
+export async function hash(value: string): Promise<string> {
   const salt = randomBytes(16).toString("base64");
   const derived = (await scrypt(value, salt, KEY_LENGTH)) as Buffer;
   return `${HASH_PREFIX}$${salt}$${derived.toString("base64")}`;

@@ -165,7 +165,7 @@ export class UsersService {
       throw new BadRequestException("密码必须为8-32位，包含大小写字母和数字");
     }
 
-    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+    const hashedPassword = await bcrypt.hash(dto.newPassword);
 
     await this.prisma.user.update({
       where: { id },

@@ -536,6 +536,8 @@ class VisualOutfitService:
         outfit_plan: VisualOutfitPlan
     ) -> Optional[str]:
         try:
+            from services.virtual_tryon_service import virtual_tryon_service
+
             top_item = None
             for item in outfit_plan.items:
                 if item.category in ["上装", "上衣", "衬衫", "针织衫"]:
@@ -545,22 +547,14 @@ class VisualOutfitService:
             if not top_item:
                 return None
 
-            async with aiohttp.ClientSession() as session:
-                payload = {
-                    "person_image_url": user_image.url,
-                    "garment_image_url": top_item.image_url,
-                    "category": "upper_body",
-                }
+            result = await virtual_tryon_service.generate_tryon(
+                person_image=user_image.url,
+                garment_image=top_item.image_url,
+                category="upper_body",
+            )
 
-                async with session.post(
-                    f"{self.virtual_tryon_url}/api/v1/virtual-tryon/generate",
-                    json=payload,
-                    timeout=aiohttp.ClientTimeout(total=30),
-                ) as response:
-                    if response.status == 200:
-                        result = await response.json()
-                        if result.get("success"):
-                            return result.get("result_url")
+            if result.get("success"):
+                return result.get("result_url")
 
         except Exception as e:
             print(f"虚拟试衣生成失败: {e}")

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { ProductTemplateType } from "@prisma/client";
-import { IsString, IsOptional, IsEnum, IsObject, IsArray, ValidateNested, IsNumber, Min, Max } from "class-validator";
+import { IsString, IsOptional, IsEnum, IsObject, IsArray, ValidateNested, IsNumber, Min, Max, IsIn } from "class-validator";
 import { Type } from "class-transformer";
 
 export class CreateDesignDto {
@@ -15,7 +15,7 @@ export class CreateDesignDto {
 
 export class DesignLayerDto {
   @ApiProperty({ description: "图层类型", enum: ["image", "text", "shape"] })
-  @IsString()
+  @IsIn(["image", "text", "shape"])
   type!: string;
 
   @ApiProperty({ description: "内容 (图片URL或文本)" })

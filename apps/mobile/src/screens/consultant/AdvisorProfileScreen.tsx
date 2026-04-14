@@ -48,7 +48,7 @@ export const AdvisorProfileScreen: React.FC = () => {
     );
   }
 
-  const profile = currentConsultant.data || currentConsultant;
+  const profile = 'data' in currentConsultant ? (currentConsultant as any).data : currentConsultant;
   const specialties = Array.isArray(profile.specialties) ? profile.specialties : [];
   const bookingCount = profile._count?.bookings || 0;
 

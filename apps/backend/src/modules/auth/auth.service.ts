@@ -12,6 +12,7 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
+import { Gender, Prisma } from "@prisma/client";
 import { RedisService } from "../../common/redis/redis.service";
 import { StructuredLoggerService, ContextualLogger } from "../../common/logging/structured-logger.service";
 import * as bcrypt from "../../common/security/bcrypt";
@@ -117,7 +118,7 @@ export class AuthService {
       throw new ConflictException("该邮箱已被注册");
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const hashedPassword = await bcrypt.hash(dto.password);
 
     const [user] = await this.prisma.$transaction(async (tx) => {
       const createdUser = await tx.user.create({
@@ -306,7 +307,7 @@ export class AuthService {
     const refreshExpiresIn = this.configService.get<string>("JWT_REFRESH_EXPIRES_IN", "30d");
     const expiresAt = this.parseExpiresIn(refreshExpiresIn);
 
-    const hashedToken = await bcrypt.hash(token, 10);
+    const hashedToken = await bcrypt.hash(token);
 
     await this.prisma.refreshToken.create({
       data: {
@@ -384,7 +385,7 @@ export class AuthService {
       throw new BadRequestException("无效或已过期的重置令牌");
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(newPassword);
 
     await this.prisma.user.update({
       where: { id: userId },
@@ -465,7 +466,7 @@ export class AuthService {
           data: {
             email: `${phone}@sms.placeholder`,
             emailHash: createHash("sha256").update(`${phone}@sms.placeholder`.toLowerCase().trim()).digest("hex"),
-            password: await bcrypt.hash(randomUUID(), 10),
+            password: await bcrypt.hash(randomUUID()),
             phone,
             nickname: `用户${phone.slice(-4)}`,
           },
@@ -498,9 +499,9 @@ export class AuthService {
     let user = await this.prisma.user.findFirst({
       where: {
         OR: [
-          { wechatOpenId: openid } as any,
-          ...(unionid ? [{ wechatUnionId: unionid } as any] : []),
-        ],
+          { wechatOpenId: openid },
+          ...(unionid ? [{ wechatUnionId: unionid }] : []),
+        ] as Prisma.UserWhereInput[],
       },
     });
 
@@ -515,12 +516,12 @@ export class AuthService {
           data: {
             email: `wechat_${openid}@placeholder`,
             emailHash: createHash("sha256").update(`wechat_${openid}@placeholder`.toLowerCase().trim()).digest("hex"),
-            password: await bcrypt.hash(randomUUID(), 10),
+            password: await bcrypt.hash(randomUUID()),
             wechatOpenId: openid,
             ...(unionid ? { wechatUnionId: unionid } : {}),
             nickname: wechatUserInfo.nickname ?? `微信用户${openid.slice(-4)}`,
             avatar: wechatUserInfo.headimgurl ?? null,
-          } as any,
+          },
         });
 
         await tx.userProfile.create({
@@ -570,10 +571,10 @@ export class AuthService {
         data: {
           email: placeholderEmail,
           emailHash: createHash("sha256").update(placeholderEmail.toLowerCase().trim()).digest("hex"),
-          password: await bcrypt.hash(randomUUID(), 10),
+          password: await bcrypt.hash(randomUUID()),
           phone: dto.phone,
           nickname: dto.nickname ?? `用户${dto.phone.slice(-4)}`,
-          gender: dto.gender as any,
+          gender: dto.gender as Gender,
           ...(dto.birthDate ? { birthDate: new Date(dto.birthDate) } : {}),
         },
       });
@@ -581,7 +582,7 @@ export class AuthService {
       await tx.userProfile.create({
         data: {
           userId: createdUser.id,
-          ...(dto.gender ? { gender: dto.gender as any } : {}),
+          ...(dto.gender ? { gender: dto.gender as Gender } : {}),
         },
       });
 

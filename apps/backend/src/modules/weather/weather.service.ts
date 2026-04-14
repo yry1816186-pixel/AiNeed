@@ -37,7 +37,9 @@ export class WeatherService {
     this.qweatherApiKey = this.configService.get<string>("QWEATHER_API_KEY", "");
     this.qweatherBaseUrl = this.configService.get<string>(
       "QWEATHER_BASE_URL",
-      "https://devapi.qweather.com/v7",
+      this.configService.get<string>("NODE_ENV") === "production"
+        ? "https://api.qweather.com/v7"
+        : "https://devapi.qweather.com/v7",
     );
   }
 

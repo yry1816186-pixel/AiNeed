@@ -19,13 +19,13 @@ jest.mock('@react-navigation/native', () => ({
     name: 'Home',
     key: 'home-key',
   }),
-  useFocusEffect: jest.fn((cb) => cb()),
+  useFocusEffect: jest.fn((cb: () => void) => cb()),
   useIsFocused: () => true,
 }));
 
 jest.mock('@/src/polyfills/expo-vector-icons', () => {
   const { Text } = require('react-native');
-  const createIcon = () => (props) => <Text {...props}>Icon</Text>;
+  const createIcon = () => (props: Record<string, unknown>) => <Text {...props}>Icon</Text>;
   return {
     Ionicons: createIcon(),
     MaterialCommunityIcons: createIcon(),
@@ -41,7 +41,7 @@ jest.mock('@/src/polyfills/flash-list', () => {
 
 jest.mock('@/src/polyfills/expo-linear-gradient', () => {
   const { View } = require('react-native');
-  const MockLinearGradient = (props) => <View {...props} />;
+  const MockLinearGradient = (props: Record<string, unknown>) => <View {...props} />;
   MockLinearGradient.displayName = 'LinearGradient';
   return { LinearGradient: MockLinearGradient, default: MockLinearGradient };
 });
@@ -51,7 +51,7 @@ const mockFetchWeather = jest.fn().mockResolvedValue(undefined);
 const mockDismissBanner = jest.fn();
 
 jest.mock('../../stores/homeStore', () => ({
-  useHomeStore: jest.fn((selector) => {
+  useHomeStore: jest.fn((selector: Function) => {
     const state = {
       profileCompletionPercent: 40,
       isProfileComplete: false,
@@ -70,7 +70,7 @@ const mockFetchFeed = jest.fn().mockResolvedValue(undefined);
 const mockLoadMore = jest.fn().mockResolvedValue(undefined);
 
 jest.mock('../../stores/recommendationFeedStore', () => ({
-  useRecommendationFeedStore: jest.fn((selector) => {
+  useRecommendationFeedStore: jest.fn((selector: Function) => {
     const state = {
       items: [],
       isLoading: false,
@@ -83,7 +83,7 @@ jest.mock('../../stores/recommendationFeedStore', () => ({
 }));
 
 jest.mock('../../stores/index', () => ({
-  useAuthStore: jest.fn((selector) => {
+  useAuthStore: jest.fn((selector: Function) => {
     const state = {
       user: { nickname: 'TestUser', email: 'test@example.com' },
       token: 'mock-token',
@@ -94,11 +94,11 @@ jest.mock('../../stores/index', () => ({
 }));
 
 jest.mock('../../components/ErrorBoundary', () => ({
-  withErrorBoundary: (Component) => Component,
+  withErrorBoundary: (Component: React.ComponentType) => Component,
 }));
 
 jest.mock('../../components/recommendations/RecommendationFeedCard', () => ({
-  RecommendationCard: ({ item, onPress }) => null,
+  RecommendationCard: ({ item, onPress }: { item: unknown; onPress: () => void }) => null,
 }));
 
 describe('HomeScreen', () => {
@@ -169,7 +169,7 @@ describe('HomeScreen', () => {
 
   it('falls back to email prefix when no nickname', () => {
     const { useAuthStore } = require('../../stores/index');
-    useAuthStore.mockImplementation((selector) => {
+    useAuthStore.mockImplementation((selector: Function) => {
       const state = {
         user: { email: 'fallback@example.com' },
         token: 'mock-token',
@@ -184,7 +184,7 @@ describe('HomeScreen', () => {
 
   it('falls back to default user name when no user data', () => {
     const { useAuthStore } = require('../../stores/index');
-    useAuthStore.mockImplementation((selector) => {
+    useAuthStore.mockImplementation((selector: Function) => {
       const state = {
         user: null,
         token: null,
@@ -199,7 +199,7 @@ describe('HomeScreen', () => {
 
   it('shows weather loading state', () => {
     const { useHomeStore } = require('../../stores/homeStore');
-    useHomeStore.mockImplementation((selector) => {
+    useHomeStore.mockImplementation((selector: Function) => {
       const state = {
         profileCompletionPercent: 40,
         isProfileComplete: false,
@@ -219,7 +219,7 @@ describe('HomeScreen', () => {
 
   it('shows weather data when loaded', () => {
     const { useHomeStore } = require('../../stores/homeStore');
-    useHomeStore.mockImplementation((selector) => {
+    useHomeStore.mockImplementation((selector: Function) => {
       const state = {
         profileCompletionPercent: 100,
         isProfileComplete: true,
@@ -246,7 +246,7 @@ describe('HomeScreen', () => {
 
   it('hides banner when profile is complete', () => {
     const { useHomeStore } = require('../../stores/homeStore');
-    useHomeStore.mockImplementation((selector) => {
+    useHomeStore.mockImplementation((selector: Function) => {
       const state = {
         profileCompletionPercent: 100,
         isProfileComplete: true,
@@ -266,7 +266,7 @@ describe('HomeScreen', () => {
 
   it('hides banner when dismissed', () => {
     const { useHomeStore } = require('../../stores/homeStore');
-    useHomeStore.mockImplementation((selector) => {
+    useHomeStore.mockImplementation((selector: Function) => {
       const state = {
         profileCompletionPercent: 40,
         isProfileComplete: false,

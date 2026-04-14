@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Svg, Circle, Path, G, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
-import { Colors } from '../../theme';
+import { Svg, Circle, Path, G, Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
+import { Colors, Spacing, BorderRadius, Typography } from '../../theme';
 
 interface SeasonPaletteProps {
   season: string;
@@ -9,7 +9,6 @@ interface SeasonPaletteProps {
   avoidColors?: string[];
 }
 
-/** Convert hex color to HSL */
 function hexToHsl(hex: string): { h: number; s: number; l: number } {
   const r = parseInt(hex.slice(1, 3), 16) / 255;
   const g = parseInt(hex.slice(3, 5), 16) / 255;
@@ -27,9 +26,8 @@ function hexToHsl(hex: string): { h: number; s: number; l: number } {
   return { h: h * 360, s: s * 100, l: l * 100 };
 }
 
-/** Get the dominant hue range for a season */
 function getSeasonHueRange(season: string): [number, number] {
-  const base = season.split('_')[0]; // handle "spring_warm" etc.
+  const base = season.split('_')[0];
   switch (base) {
     case 'spring': return [0, 90];
     case 'summer': return [180, 270];
@@ -39,7 +37,6 @@ function getSeasonHueRange(season: string): [number, number] {
   }
 }
 
-/** Convert hue angle to SVG arc point */
 function hueToPoint(hue: number, radius: number, cx: number, cy: number): { x: number; y: number } {
   const rad = ((hue - 90) * Math.PI) / 180;
   return {
@@ -48,7 +45,6 @@ function hueToPoint(hue: number, radius: number, cx: number, cy: number): { x: n
   };
 }
 
-/** Describe an arc path for the season highlight */
 function describeArc(cx: number, cy: number, r: number, startAngle: number, endAngle: number): string {
   const start = hueToPoint(startAngle, r, cx, cy);
   const end = hueToPoint(endAngle, r, cx, cy);
@@ -56,15 +52,19 @@ function describeArc(cx: number, cy: number, r: number, startAngle: number, endA
   return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 1 ${end.x} ${end.y}`;
 }
 
+const BRAND_TERRACOTTA = Colors.primary[500];
+const BRAND_TERRACOTTA_ALPHA_35 = `rgba(198,123,92,0.35)`;
+const AVOID_STROKE = `rgba(255,59,48,0.6)`;
+const TEXT_DARK = Colors.neutral[900];
+const TEXT_MUTED = Colors.neutral[500];
+
 export const SeasonPalette: React.FC<SeasonPaletteProps> = ({ season, bestColors, avoidColors }) => {
   const size = 200;
   const cx = size / 2;
   const cy = size / 2;
   const outerRadius = 90;
   const innerRadius = 70;
-  const wheelWidth = 20;
 
-  // Build color wheel segments (one per 10 degrees for performance)
   const wheelSegments = useMemo(() => {
     const segments: { hue: number; color: string }[] = [];
     for (let hue = 0; hue < 360; hue += 10) {
@@ -76,7 +76,6 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({ season, bestColors
     return segments;
   }, []);
 
-  // Calculate positions for best colors on the wheel
   const colorMarkers = useMemo(() => {
     return bestColors.slice(0, 8).map((hex, i) => {
       const hsl = hexToHsl(hex);
@@ -85,7 +84,6 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({ season, bestColors
     });
   }, [bestColors, cx, cy]);
 
-  // Calculate avoid color positions
   const avoidMarkers = useMemo(() => {
     if (!avoidColors) return [];
     return avoidColors.slice(0, 4).map((hex, i) => {
@@ -95,7 +93,6 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({ season, bestColors
     });
   }, [avoidColors, cx, cy]);
 
-  // Draw harmony arcs between nearby colors (hue distance < 60)
   const harmonyArcs = useMemo(() => {
     const arcs: { start: { x: number; y: number }; end: { x: number; y: number }; key: string }[] = [];
     for (let i = 0; i < colorMarkers.length; i++) {
@@ -113,11 +110,9 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({ season, bestColors
     return arcs;
   }, [colorMarkers]);
 
-  // Season highlight range
   const seasonRange = getSeasonHueRange(season);
   const seasonArcPath = describeArc(cx, cy, innerRadius - 4, seasonRange[0], seasonRange[1]);
 
-  // Season label
   const baseSeason = season.split('_')[0];
   const seasonLabel = Colors.colorSeasons[baseSeason as keyof typeof Colors.colorSeasons]?.label ?? season;
 
@@ -127,12 +122,11 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({ season, bestColors
       <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <Defs>
           <SvgLinearGradient id="seasonHighlight" x1="0" y1="0" x2="1" y2="1">
-            <Stop offset="0" stopColor="#C67B5C" stopOpacity="0.3" />
-            <Stop offset="1" stopColor="#C67B5C" stopOpacity="0.08" />
+            <Stop offset="0" stopColor={BRAND_TERRACOTTA} stopOpacity="0.3" />
+            <Stop offset="1" stopColor={BRAND_TERRACOTTA} stopOpacity="0.08" />
           </SvgLinearGradient>
         </Defs>
 
-        {/* Color wheel segments */}
         {wheelSegments.map((seg) => {
           const startRad = ((seg.hue - 90 - 5) * Math.PI) / 180;
           const endRad = ((seg.hue - 90 + 5) * Math.PI) / 180;
@@ -152,28 +146,25 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({ season, bestColors
           );
         })}
 
-        {/* Season quadrant highlight arc */}
         <Path
           d={seasonArcPath}
-          stroke="#C67B5C"
+          stroke={BRAND_TERRACOTTA}
           strokeWidth={4}
           fill="none"
           strokeLinecap="round"
           opacity={0.8}
         />
 
-        {/* Harmony arcs between nearby colors */}
         {harmonyArcs.map((arc) => (
           <Path
             key={arc.key}
             d={`M ${arc.start.x} ${arc.start.y} L ${arc.end.x} ${arc.end.y}`}
-            stroke="rgba(198,123,92,0.35)"
+            stroke={BRAND_TERRACOTTA_ALPHA_35}
             strokeWidth={1.5}
             strokeDasharray="3 2"
           />
         ))}
 
-        {/* Best color markers on the wheel */}
         {colorMarkers.map((marker, i) => (
           <G key={`best-${i}`}>
             <Circle
@@ -181,13 +172,12 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({ season, bestColors
               cy={marker.y}
               r={7}
               fill={marker.hex}
-              stroke="#FFFFFF"
+              stroke={Colors.neutral.white}
               strokeWidth={2}
             />
           </G>
         ))}
 
-        {/* Avoid color markers (smaller, with X indicator) */}
         {avoidMarkers.map((marker, i) => (
           <G key={`avoid-${i}`}>
             <Circle
@@ -195,48 +185,46 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({ season, bestColors
               cy={marker.y}
               r={5}
               fill={marker.hex}
-              stroke="rgba(255,59,48,0.6)"
+              stroke={AVOID_STROKE}
               strokeWidth={1.5}
             />
           </G>
         ))}
 
-        {/* Center label */}
-        <Circle cx={cx} cy={cy} r={innerRadius - 12} fill="white" opacity={0.9} />
-        <Text
+        <Circle cx={cx} cy={cy} r={innerRadius - 12} fill={Colors.neutral.white} opacity={0.9} />
+        <SvgText
           x={cx}
           y={cy - 4}
           textAnchor="middle"
           fontSize={13}
           fontWeight="600"
-          fill="#1A1A2E"
+          fill={TEXT_DARK}
         >
           {seasonLabel}
-        </Text>
-        <Text
+        </SvgText>
+        <SvgText
           x={cx}
           y={cy + 14}
           textAnchor="middle"
           fontSize={10}
-          fill="#78788A"
+          fill={TEXT_MUTED}
         >
           {colorMarkers.length} 色
-        </Text>
+        </SvgText>
       </Svg>
 
-      {/* Legend */}
       <View style={styles.legend}>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: '#C67B5C' }]} />
+          <View style={[styles.legendDot, { backgroundColor: BRAND_TERRACOTTA }]} />
           <Text style={styles.legendText}>季型色域</Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: '#34C759', borderWidth: 2, borderColor: '#FFFFFF' }]} />
+          <View style={[styles.legendDot, { backgroundColor: Colors.semantic.success, borderWidth: 2, borderColor: Colors.neutral.white }]} />
           <Text style={styles.legendText}>推荐色</Text>
         </View>
         {avoidColors && avoidColors.length > 0 && (
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: '#FF3B30', borderWidth: 1.5, borderColor: 'rgba(255,59,48,0.6)' }]} />
+            <View style={[styles.legendDot, { backgroundColor: Colors.semantic.error, borderWidth: 1.5, borderColor: AVOID_STROKE }]} />
             <Text style={styles.legendText}>避免色</Text>
           </View>
         )}
@@ -247,27 +235,26 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({ season, bestColors
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
+    backgroundColor: Colors.neutral.white,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.md,
     alignItems: 'center',
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1A1A2E',
-    marginBottom: 12,
+    ...Typography.styles.h4,
+    color: Colors.neutral[900],
+    marginBottom: Spacing.sm,
   },
   legend: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 16,
-    marginTop: 12,
+    gap: Spacing.md,
+    marginTop: Spacing.sm,
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: Spacing[1],
   },
   legendDot: {
     width: 10,
@@ -275,8 +262,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   legendText: {
-    fontSize: 11,
-    color: '#78788A',
+    ...Typography.caption.xs,
+    color: Colors.neutral[500],
   },
 });
 

@@ -159,7 +159,9 @@ describe("Phase 1 Integration: Auth Flow", () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   afterEach(() => {

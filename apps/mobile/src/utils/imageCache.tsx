@@ -18,6 +18,7 @@ import {
   StyleProp,
   NativeSyntheticEvent,
   ImageErrorEventData,
+  ImageLoadEventData,
 } from "react-native";
 import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
 import * as FileSystem from '@/src/polyfills/expo-file-system';
@@ -320,7 +321,7 @@ export const CachedImage = ({
   }, [source?.uri, cachePolicy]);
 
   const handleLoad = useCallback(
-    (event: any) => {
+    (event: NativeSyntheticEvent<ImageLoadEventData>) => {
       if (!isMounted.current) return;
 
       setIsLoading(false);
@@ -334,7 +335,7 @@ export const CachedImage = ({
   );
 
   const handleError = useCallback(
-    (event: any) => {
+    (event: NativeSyntheticEvent<ImageErrorEventData>) => {
       if (!isMounted.current) return;
 
       setHasError(true);

@@ -15,6 +15,9 @@ from typing import List, Optional
 import numpy as np
 import logging
 import os
+import json
+from pathlib import Path
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +29,7 @@ NUM_HEADS = int(os.getenv("SASREC_HEADS", "4"))
 FFN_DIM = int(os.getenv("SASREC_FFN_DIM", "256"))
 DROPOUT_RATE = float(os.getenv("SASREC_DROPOUT", "0.1"))
 NUM_BLOCKS = int(os.getenv("SASREC_BLOCKS", "2"))
+MODEL_DIR = Path(os.getenv("SASREC_MODEL_DIR", "./models/sasrec"))
 
 
 class SequenceItem(BaseModel):
@@ -122,6 +126,91 @@ class SASRecModel:
             })
 
         self.trained = False
+        self.trained_at: Optional[str] = None
+        self.training_history: List[dict] = []
+
+    def save(self, path: Optional[Path] = None) -> Path:
+        """Persist model weights and config to disk."""
+        save_dir = path or MODEL_DIR
+        save_dir.mkdir(parents=True, exist_ok=True)
+
+        state = {
+            "config": {
+                "dim": self.dim,
+                "max_seq": self.max_seq,
+                "num_heads": self.num_heads,
+                "ffn_dim": self.ffn_dim,
+                "dropout_rate": self.dropout_rate,
+                "num_blocks": self.num_blocks,
+            },
+            "trained": self.trained,
+            "trained_at": self.trained_at,
+            "training_history": self.training_history,
+            "item_embeddings": {k: v.tolist() for k, v in self.item_embeddings.items()},
+            "position_embeddings": self.position_embeddings.tolist(),
+            "attention_weights": [],
+            "ffn_weights": [],
+        }
+
+        for block in self.attention_weights:
+            state["attention_weights"].append(
+                {k: v.tolist() for k, v in block.items()}
+            )
+        for block in self.ffn_weights:
+            state["ffn_weights"].append(
+                {k: v.tolist() for k, v in block.items()}
+            )
+
+        model_file = save_dir / "model.json"
+        with open(model_file, "w", encoding="utf-8") as f:
+            json.dump(state, f)
+
+        logger.info(f"Model saved to {model_file} ({len(self.item_embeddings)} items)")
+        return model_file
+
+    @classmethod
+    def load(cls, path: Optional[Path] = None) -> "SASRecModel":
+        """Load model weights and config from disk."""
+        load_dir = path or MODEL_DIR
+        model_file = load_dir / "model.json"
+
+        if not model_file.exists():
+            raise FileNotFoundError(f"No model found at {model_file}")
+
+        with open(model_file, "r", encoding="utf-8") as f:
+            state = json.load(f)
+
+        cfg = state["config"]
+        instance = cls(
+            dim=cfg["dim"],
+            max_seq=cfg["max_seq"],
+            num_heads=cfg["num_heads"],
+            ffn_dim=cfg["ffn_dim"],
+            dropout_rate=cfg["dropout_rate"],
+            num_blocks=cfg["num_blocks"],
+        )
+
+        instance.trained = state.get("trained", False)
+        instance.trained_at = state.get("trained_at")
+        instance.training_history = state.get("training_history", [])
+        instance.item_embeddings = {
+            k: np.array(v) for k, v in state["item_embeddings"].items()
+        }
+        instance.position_embeddings = np.array(state["position_embeddings"])
+
+        for i, block in enumerate(state["attention_weights"]):
+            for k, v in block.items():
+                instance.attention_weights[i][k] = np.array(v)
+
+        for i, block in enumerate(state["ffn_weights"]):
+            for k, v in block.items():
+                instance.ffn_weights[i][k] = np.array(v)
+
+        logger.info(
+            f"Model loaded from {model_file} "
+            f"({len(instance.item_embeddings)} items, trained={instance.trained})"
+        )
+        return instance
 
     def _get_or_create_embedding(self, item_id: str) -> np.ndarray:
         if item_id not in self.item_embeddings:
@@ -380,3 +469,124 @@ async def warmup(item_ids: List[str]):
     for iid in item_ids:
         model._get_or_create_embedding(iid)
     return {"warmed_up": len(item_ids)}
+
+
+@app.post("/save")
+async def save_model():
+    try:
+        path = model.save()
+        return {"saved": True, "path": str(path), "items": len(model.item_embeddings)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/load")
+async def load_model():
+    global model
+    try:
+        model = SASRecModel.load()
+        return {
+            "loaded": True,
+            "items": len(model.item_embeddings),
+            "trained": model.trained,
+            "trained_at": model.trained_at,
+        }
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="No saved model found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/status")
+async def training_status():
+    return {
+        "trained": model.trained,
+        "trained_at": model.trained_at,
+        "items_trained": len(model.item_embeddings),
+        "training_history": model.training_history[-10:],
+        "model_dir": str(MODEL_DIR),
+        "has_saved_model": (MODEL_DIR / "model.json").exists(),
+    }
+
+
+class PipelineRequest(BaseModel):
+    data_source: str = Field(default="api", description="api | mock")
+    epochs: int = Field(default=5, ge=1, le=50)
+    learning_rate: float = Field(default=0.001, gt=0, lt=1.0)
+    save_after_train: bool = Field(default=True)
+
+
+@app.post("/pipeline/train")
+async def training_pipeline(req: PipelineRequest):
+    """Full training pipeline: load data -> train -> save model."""
+    import aiohttp
+
+    sequences: List[List[str]] = []
+
+    if req.data_source == "api":
+        backend_url = os.getenv("BACKEND_URL", "http://localhost:3001")
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(
+                    f"{backend_url}/api/v1/recommendations/behavior-sequences",
+                    params={"limit": 1000},
+                    timeout=aiohttp.ClientTimeout(total=30),
+                ) as resp:
+                    if resp.status == 200:
+                        data = await resp.json()
+                        sequences = data.get("sequences", [])
+                    else:
+                        logger.warning(f"API returned {resp.status}, using mock data")
+                        sequences = _generate_mock_sequences()
+        except Exception as e:
+            logger.warning(f"Failed to fetch from API: {e}, using mock data")
+            sequences = _generate_mock_sequences()
+    else:
+        sequences = _generate_mock_sequences()
+
+    if not sequences:
+        raise HTTPException(status_code=400, detail="No training data available")
+
+    total_loss = 0.0
+    for epoch in range(req.epochs):
+        loss = model.train_step(sequences, lr=req.learning_rate)
+        total_loss += loss
+        model.training_history.append({
+            "epoch": epoch + 1,
+            "loss": float(loss),
+            "timestamp": datetime.now().isoformat(),
+        })
+        logger.info(f"Pipeline epoch {epoch + 1}/{req.epochs}, loss: {loss:.4f}")
+
+    model.trained = True
+    model.trained_at = datetime.now().isoformat()
+
+    result = {
+        "trained": True,
+        "epochs": req.epochs,
+        "avg_loss": float(total_loss / max(req.epochs, 1)),
+        "items_trained": len(model.item_embeddings),
+        "sequences_used": len(sequences),
+        "trained_at": model.trained_at,
+    }
+
+    if req.save_after_train:
+        try:
+            path = model.save()
+            result["saved_to"] = str(path)
+        except Exception as e:
+            result["save_error"] = str(e)
+
+    return result
+
+
+def _generate_mock_sequences() -> List[List[str]]:
+    """Generate mock training sequences for development/testing."""
+    items = [f"item_{i}" for i in range(1, 51)]
+    rng = np.random.default_rng(42)
+    sequences = []
+    for _ in range(100):
+        seq_len = rng.integers(3, 10)
+        seq = rng.choice(items, size=seq_len, replace=False).tolist()
+        sequences.append(seq)
+    return sequences

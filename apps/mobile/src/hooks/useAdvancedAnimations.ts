@@ -63,7 +63,7 @@ export const useParallax = (
   const translateY = useSharedValue(0);
 
   const onScroll = useCallback(
-    (event: any) => {
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const { y } = event.nativeEvent.contentOffset;
       scrollY.value = y;
       translateY.value = y * config.speed;

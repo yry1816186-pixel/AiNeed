@@ -10,7 +10,7 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { LinearGradient } from "../polyfills/expo-linear-gradient";
 import { Ionicons } from "../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
+import { theme, Colors, Spacing, BorderRadius, Shadows, Typography } from "../theme";
 import { useProfileStore } from "../stores/profileStore";
 import { ScreenLayout, Header } from "../components/layout/ScreenLayout";
 import { SeasonPalette } from "../components/visualization/SeasonPalette";
@@ -50,14 +50,17 @@ const SEASON_GRADIENTS: Record<string, [string, string]> = {
 
 const DEFAULT_PALETTE = [
   { hex: Colors.colorSeasons.autumn.colors[0], name: '赤陶' },
-  { hex: '#D9A441', name: '琥珀' },
+  { hex: Colors.amber[600], name: '琥珀' },
   { hex: Colors.colorSeasons.autumn.colors[3], name: '驼色' },
-  { hex: '#8B9A7D', name: '橄榄' },
-  { hex: '#E8B451', name: '蜂蜜' },
-  { hex: '#5B8A72', name: '苔绿' },
+  { hex: Colors.sage[400], name: '橄榄' },
+  { hex: Colors.amber[400], name: '蜂蜜' },
+  { hex: Colors.sage[600], name: '苔绿' },
   { hex: Colors.colorSeasons.summer.colors[1], name: '米灰' },
   { hex: Colors.colorSeasons.autumn.colors[2], name: '赭石' },
 ];
+
+const FALLBACK_NEUTRALS = [Colors.neutral[950], Colors.neutral[500], Colors.neutral[400], Colors.neutral[50]];
+const FALLBACK_AVOID = [Colors.semantic.error, Colors.sky[500]];
 
 export const ColorAnalysisScreen: React.FC = () => {
   const navigation = useNavigation<ColorAnalysisNavProp>();
@@ -85,8 +88,8 @@ export const ColorAnalysisScreen: React.FC = () => {
   const gradient = SEASON_GRADIENTS[seasonType] ?? SEASON_GRADIENTS.spring;
 
   const bestColors = colorAnalysis?.bestColors ?? DEFAULT_PALETTE.map((p) => p.hex);
-  const neutralColors = colorAnalysis?.neutralColors ?? ["#1A1A18", "#52524D", "#D4D4D0", "#FAFAF8"];
-  const avoidColors = colorAnalysis?.avoidColors ?? ["#FF3B30", "#0EA5E9"];
+  const neutralColors = colorAnalysis?.neutralColors ?? FALLBACK_NEUTRALS;
+  const avoidColors = colorAnalysis?.avoidColors ?? FALLBACK_AVOID;
 
   const paletteItems = bestColors.length > 0
     ? bestColors.slice(0, 8).map((hex, i) => ({
@@ -95,7 +98,6 @@ export const ColorAnalysisScreen: React.FC = () => {
       }))
     : DEFAULT_PALETTE;
 
-  // Loading state
   if (isLoading && !colorAnalysis) {
     return (
       <ScreenLayout
@@ -119,7 +121,6 @@ export const ColorAnalysisScreen: React.FC = () => {
     );
   }
 
-  // Error state
   if (error && !colorAnalysis) {
     return (
       <ScreenLayout
@@ -162,7 +163,6 @@ export const ColorAnalysisScreen: React.FC = () => {
       backgroundColor={Colors.neutral[50]}
     >
       <View style={styles.content}>
-        {/* Color season card */}
         <View style={styles.seasonCard}>
           <LinearGradient
             colors={gradient}
@@ -176,14 +176,13 @@ export const ColorAnalysisScreen: React.FC = () => {
           </LinearGradient>
         </View>
 
-        {/* Color palette */}
         <View style={styles.paletteCard}>
           <Text style={styles.paletteTitle}>适合你的颜色</Text>
           <View style={styles.paletteGrid}>
             {paletteItems.map((item, index) => (
               <View key={index} style={styles.paletteItem}>
                 <View style={[styles.colorCircle, { backgroundColor: item.hex }]}>
-                  <Ionicons name="checkmark" size={16} color="#FFFFFF" style={styles.checkIcon} />
+                  <Ionicons name="checkmark" size={16} color={Colors.neutral.white} style={styles.checkIcon} />
                 </View>
                 <Text style={styles.colorHex}>{item.hex}</Text>
                 <Text style={styles.colorName}>{item.name}</Text>
@@ -192,12 +191,10 @@ export const ColorAnalysisScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Season palette visualization */}
         <View style={styles.paletteCard}>
           <SeasonPalette season={seasonType} bestColors={bestColors} avoidColors={avoidColors} />
         </View>
 
-        {/* Neutral colors */}
         {neutralColors.length > 0 && (
           <View style={styles.paletteCard}>
             <Text style={styles.paletteTitle}>中性色</Text>
@@ -212,7 +209,6 @@ export const ColorAnalysisScreen: React.FC = () => {
           </View>
         )}
 
-        {/* Unsuitable colors */}
         {avoidColors.length > 0 && (
           <View style={styles.paletteCard}>
             <Text style={styles.paletteTitle}>建议避免的颜色</Text>
@@ -220,7 +216,7 @@ export const ColorAnalysisScreen: React.FC = () => {
               {avoidColors.map((hex, index) => (
                 <View key={index} style={styles.avoidItem}>
                   <View style={[styles.avoidCircle, { backgroundColor: hex }]}>
-                    <Ionicons name="close" size={14} color="#FFFFFF" />
+                    <Ionicons name="close" size={14} color={Colors.neutral.white} />
                   </View>
                   <Text style={styles.colorHex}>{hex}</Text>
                 </View>
@@ -229,7 +225,6 @@ export const ColorAnalysisScreen: React.FC = () => {
           </View>
         )}
 
-        {/* Recommendation reason */}
         <View style={styles.reasonCard}>
           <Ionicons name="color-palette-outline" size={20} color={theme.colors.primary} />
           <Text style={styles.reasonText}>
@@ -254,12 +249,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[8],
   },
   loadingText: {
-    fontSize: 16,
+    ...Typography.body.md,
     color: theme.colors.textTertiary,
     marginTop: Spacing[3],
   },
   errorText: {
-    fontSize: 16,
+    ...Typography.body.md,
     color: theme.colors.textSecondary,
     marginTop: Spacing[3],
     textAlign: "center",
@@ -272,9 +267,9 @@ const styles = StyleSheet.create({
     marginTop: Spacing[4],
   },
   retryButtonText: {
-    fontSize: 16,
+    ...Typography.body.md,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: Colors.neutral.white,
   },
   seasonCard: {
     borderRadius: BorderRadius["2xl"],
@@ -286,32 +281,30 @@ const styles = StyleSheet.create({
     padding: Spacing[6],
   },
   seasonLabel: {
-    fontSize: 16,
+    ...Typography.body.md,
     fontWeight: "400",
-    color: "rgba(255, 255, 255, 0.8)",
+    color: Colors.overlay.light,
     marginBottom: Spacing[1],
   },
   seasonName: {
-    fontSize: 28,
-    fontWeight: "600",
-    color: "#FFFFFF",
+    ...Typography.styles.h2,
+    color: Colors.neutral.white,
     marginBottom: Spacing[1],
   },
   seasonNameEn: {
-    fontSize: 16,
+    ...Typography.body.md,
     fontWeight: "400",
     color: "rgba(255, 255, 255, 0.7)",
   },
   paletteCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.neutral.white,
     borderRadius: BorderRadius.xl,
     padding: Spacing[5],
     marginBottom: Spacing[4],
     ...Shadows.sm,
   },
   paletteTitle: {
-    fontSize: 20,
-    fontWeight: "600",
+    ...Typography.styles.h4,
     color: theme.colors.text,
     marginBottom: Spacing[4],
   },
@@ -334,15 +327,15 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[1],
   },
   checkIcon: {
-    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowColor: Colors.overlay.dark,
     textShadowRadius: 2,
   },
   colorHex: {
-    fontSize: 10,
+    ...Typography.caption.xs,
     color: theme.colors.textTertiary,
   },
   colorName: {
-    fontSize: 12,
+    ...Typography.caption.sm,
     color: theme.colors.textSecondary,
   },
   neutralRow: {
@@ -378,7 +371,7 @@ const styles = StyleSheet.create({
   reasonCard: {
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: Colors.neutral.white,
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     gap: Spacing[3],
@@ -387,7 +380,7 @@ const styles = StyleSheet.create({
   },
   reasonText: {
     flex: 1,
-    fontSize: 16,
+    ...Typography.body.md,
     fontWeight: "400",
     color: theme.colors.textSecondary,
     lineHeight: 24,

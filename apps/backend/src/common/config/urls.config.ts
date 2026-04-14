@@ -17,8 +17,8 @@ export class UrlsConfig {
     return this.configService.get<string>('AI_SERVICE_URL', 'http://localhost:8001');
   }
 
-  get idmVtonUrl(): string {
-    return this.configService.get<string>('IDM_VTON_URL', 'http://localhost:8002');
+  get virtualTryonUrl(): string {
+    return this.configService.get<string>('VIRTUAL_TRYON_URL', 'http://localhost:8002');
   }
 
   get redisUrl(): string {

@@ -286,4 +286,13 @@ export class CommunityController {
   async followUser(@Request() req: RequestWithUser, @Param("id") targetUserId: string) {
     return this.communityService.followUser(req.user.id, targetUserId);
   }
+
+  @Get("users/:id/profile")
+  @ApiOperation({ summary: "获取社区用户画像", description: "获取指定用户在社区的公开画像信息" })
+  @ApiResponse({ status: 200, description: "获取成功" })
+  @ApiResponse({ status: 404, description: "用户不存在" })
+  @ApiParam({ name: "id", description: "用户 ID" })
+  async getUserProfile(@Param("id") userId: string, @Request() req: RequestWithUser) {
+    return this.communityService.getUserPublicProfile(userId, req.user?.id);
+  }
 }

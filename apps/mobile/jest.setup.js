@@ -1,4 +1,10 @@
-import '@testing-library/jest-native/extend-expect';
+// extend-expect moved to afterFramework in jest-native 5+; 
+// for jest-native 4 with Jest 29, conditionally import
+try {
+  require('@testing-library/jest-native/extend-expect');
+} catch (e) {
+  // Silently skip if not available in this environment
+}
 
 jest.mock('react-native-reanimated', () => {
   const Reanimated = require('react-native-reanimated/mock');

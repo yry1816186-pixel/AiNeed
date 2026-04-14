@@ -658,6 +658,47 @@ export class CommunityService {
     }
   }
 
+  async getUserPublicProfile(userId: string, currentUserId?: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        nickname: true,
+        avatar: true,
+        bio: true,
+        followerCount: true,
+        followingCount: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException("用户不存在");
+    }
+
+    const postsCount = await this.prisma.communityPost.count({
+      where: { authorId: userId, deletedAt: null },
+    });
+
+    let isFollowing = false;
+    if (currentUserId) {
+      const follow = await this.prisma.userFollow.findUnique({
+        where: {
+          followerId_followingId: {
+            followerId: currentUserId,
+            followingId: userId,
+          },
+        },
+      });
+      isFollowing = !!follow;
+    }
+
+    return {
+      ...user,
+      postsCount,
+      isFollowing,
+    };
+  }
+
   async getFollowingPosts(userId: string, page = 1, pageSize = 20) {
     const [posts, total] = await Promise.all([
       this.prisma.communityPost.findMany({

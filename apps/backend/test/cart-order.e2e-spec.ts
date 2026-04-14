@@ -35,7 +35,7 @@ describe('Cart & Order E2E', () => {
 
     prisma = app.get(PrismaService);
 
-    const hashedPassword = await bcrypt.hash(testUser.password, 10);
+    const hashedPassword = await bcrypt.hash(testUser.password);
     const user = await prisma.user.create({
       data: {
         email: testUser.email,

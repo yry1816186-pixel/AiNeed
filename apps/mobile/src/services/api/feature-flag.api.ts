@@ -4,19 +4,19 @@ import { ApiResponse } from "../../types";
 interface FeatureFlagClientDto {
   key: string;
   type: string;
-  value: Record<string, any>;
+  value: Record<string, unknown>;
   enabled: boolean;
 }
 
 interface EvaluateFlagRequest {
   key: string;
-  attributes?: Record<string, any>;
+  attributes?: Record<string, unknown>;
 }
 
 interface EvaluateFlagResponse {
   enabled: boolean;
   variant?: string;
-  value?: Record<string, any>;
+  value?: Record<string, unknown>;
 }
 
 export const featureFlagApi = {

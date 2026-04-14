@@ -142,54 +142,6 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # CatVTON Virtual Try-On Service (replaces IDM-VTON which requires 14GB+ VRAM)
-  # CatVTON runs on RTX 4060 8GB VRAM (~4GB usage)
-  catvton:
-    build:
-      context: ./ml
-      dockerfile: Dockerfile.catvton
-    container_name: stylemind-catvton
-    restart: unless-stopped
-    environment:
-      CATVTON_HOST: 0.0.0.0
-      CATVTON_PORT: 8001
-      CATVTON_MODEL_PATH: /app/models/catvton
-      HF_ENDPOINT: ${HF_ENDPOINT:-https://hf-mirror.com}
-      CUDA_VISIBLE_DEVICES: "0"
-      # GPU memory limit to prevent OOM (RTX 4060 has 8GB, CatVTON uses ~4GB)
-      PYTORCH_CUDA_ALLOC_CONF: max_split_size_mb:4096
-    ports:
-      - "8001:8001"
-    volumes:
-      - ./ml/models:/app/models:ro
-      - ./ml/data:/app/data:ro
-    # Requires NVIDIA runtime for GPU access
-    deploy:
-      resources:
-        limits:
-          cpus: '4'
-          memory: 8G
-          # Reserve GPU for CatVTON inference
-        reservations:
-          cpus: '1'
-          memory: 2G
-          devices:
-            - capabilities: [gpu]
-              device_ids: ['0']
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 120s
-    networks:
-      - ainetwork
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"
-        max-file: "5"
-
   ai-service:
     build:
       context: ./ml
@@ -252,11 +204,10 @@ services:
       GLM_API_KEY: ${GLM_API_KEY}
       ZHIPU_API_KEY: ${ZHIPU_API_KEY}
       QDRANT_URL: http://qdrant:6333
-      CATVTON_ENDPOINT: http://catvton:8001
     depends_on:
       redis:
         condition: service_healthy
-      catvton:
+      qdrant:
         condition: service_healthy
     command: ["python", "-m", "services.task_worker", "--all"]
     networks:
@@ -299,7 +250,6 @@ services:
       MINIO_USE_SSL: "false"
       QDRANT_URL: http://qdrant:6333
       AI_SERVICE_URL: http://ai-service:8002
-      CATVTON_ENDPOINT: http://catvton:8001
       GLM_API_KEY: ${GLM_API_KEY}
       GLM_API_ENDPOINT: ${GLM_API_ENDPOINT:-https://open.bigmodel.cn/api/paas/v4}
       GLM_MODEL: ${GLM_MODEL:-glm-5}
@@ -314,8 +264,6 @@ services:
       minio:
         condition: service_healthy
       qdrant:
-        condition: service_healthy
-      catvton:
         condition: service_healthy
       ai-service:
         condition: service_healthy

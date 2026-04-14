@@ -103,12 +103,13 @@ groups:
         labels:
           severity: warning
           team: product
-          service: stylemind-catvton
+          service: stylemind-ai
           category: business
         annotations:
           summary: "虚拟试衣完成率过�?
           description: >-
-            虚拟试衣完成率已降至 {{ $value | humanizePercentage }}�?            低于 70% 阈值，持续 30 分钟�?            根据 CC-04，每用户每日限制 3 次试衣，低完成率严重影响用户体验�?            可能原因: CatVTON 推理失败、GPU 资源不足、图片处理异常�?            请检查试衣错误类型分布和 GPU 状态�?          runbook_url: "https://wiki.xuno.app/runbooks/tryon-completion-rate-low"
+            虚拟试衣完成率已降至 {{ $value | humanizePercentage }}�?            低于 70% 阈值，持续 30 分钟�?            根据 CC-04，每用户每日限制 3 次试衣，低完成率严重影响用户体验�?            可能原因: GLM API 调用失败、图片处理异常、API 限流。
+            请检查试衣错误类型分布和 AI 服务状态。          runbook_url: "https://wiki.xuno.app/runbooks/tryon-completion-rate-low"
 
   # ----------------------------------------------------------
   # 交易与订单告�?  # 覆盖: 支付成功率、订单失败率

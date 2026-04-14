@@ -16,10 +16,12 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
 import {
   customizationApi,
-  type CustomizationType,
-  type CustomizationStatus,
-  type CustomizationRequest,
 } from "../services/api/customization.api";
+import type {
+  CustomizationType,
+  CustomizationStatus,
+  CustomizationRequest,
+} from "../types/customization";
 import type { RootStackParamList } from "../types/navigation";
 
 type Navigation = NavigationProp<RootStackParamList>;

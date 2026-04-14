@@ -12,6 +12,7 @@ import {
   IsEnum,
   IsNumber,
   IsDate,
+  IsArray,
   Min,
   Max,
   IsObject,
@@ -24,42 +25,89 @@ import { Type } from "class-transformer";
  */
 export class ProfileDetailDto {
   @ApiPropertyOptional({ description: "体型", enum: BodyType })
+  @IsOptional()
+  @IsEnum(BodyType)
   bodyType?: BodyType;
 
   @ApiPropertyOptional({ description: "肤色", enum: SkinTone })
+  @IsOptional()
+  @IsEnum(SkinTone)
   skinTone?: SkinTone;
 
   @ApiPropertyOptional({ description: "脸型", enum: FaceShape })
+  @IsOptional()
+  @IsEnum(FaceShape)
   faceShape?: FaceShape;
 
   @ApiPropertyOptional({ description: "色彩季节", enum: ColorSeason })
+  @IsOptional()
+  @IsEnum(ColorSeason)
   colorSeason?: ColorSeason;
 
   @ApiPropertyOptional({ description: "身高（厘米）" })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(50)
+  @Max(250)
   height?: number;
 
   @ApiPropertyOptional({ description: "体重（公斤）" })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(20)
+  @Max(300)
   weight?: number;
 
   @ApiPropertyOptional({ description: "肩宽（厘米）" })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(20)
+  @Max(80)
   shoulder?: number;
 
   @ApiPropertyOptional({ description: "胸围（厘米）" })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(40)
+  @Max(200)
   bust?: number;
 
   @ApiPropertyOptional({ description: "腰围（厘米）" })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(30)
+  @Max(200)
   waist?: number;
 
   @ApiPropertyOptional({ description: "臀围（厘米）" })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(40)
+  @Max(200)
   hip?: number;
 
   @ApiPropertyOptional({ description: "内缝长（厘米）" })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(30)
+  @Max(120)
   inseam?: number;
 
   @ApiPropertyOptional({ description: "风格偏好" })
+  @IsOptional()
+  @IsObject()
   stylePreferences?: Record<string, unknown>;
 
   @ApiPropertyOptional({ description: "颜色偏好" })
+  @IsOptional()
+  @IsObject()
   colorPreferences?: Record<string, unknown>;
 }
 
@@ -332,6 +380,8 @@ export class UpdateStylePreferencesDto {
     type: [String],
     example: ["casual", "business", "minimalist"],
   })
+  @IsArray()
+  @IsString({ each: true })
   styles!: string[];
 }
 
@@ -344,6 +394,8 @@ export class UpdateColorPreferencesDto {
     type: [String],
     example: ["black", "white", "blue"],
   })
+  @IsArray()
+  @IsString({ each: true })
   colors!: string[];
 }
 
@@ -356,6 +408,9 @@ export class UpdatePriceRangeDto {
     example: 100,
     nullable: true,
   })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
   min?: number | null;
 
   @ApiPropertyOptional({
@@ -363,6 +418,9 @@ export class UpdatePriceRangeDto {
     example: 1000,
     nullable: true,
   })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
   max?: number | null;
 }
 

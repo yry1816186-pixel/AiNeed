@@ -18,7 +18,7 @@ interface FalResponse {
   }[];
 }
 
-declare const process: any;
+declare const process: { env: Record<string, string | undefined> };
 
 class BackgroundRemovalService {
   private apiKey: string;

@@ -33,9 +33,12 @@ export function useInfiniteQuery<T>(options: UseInfiniteQueryOptions_<T>) {
       }
 
       const lastItem = response.data.items[response.data.items.length - 1];
+      const nextCursor = lastItem
+        ? String((lastItem as Record<string, unknown>)["id"] ?? null)
+        : null;
       return {
         items: response.data.items,
-        nextCursor: lastItem ? (lastItem as any).id ?? null : null,
+        nextCursor: nextCursor === "null" ? null : nextCursor,
         hasMore: response.data.hasMore ?? response.data.items.length >= pageSize,
       };
     },

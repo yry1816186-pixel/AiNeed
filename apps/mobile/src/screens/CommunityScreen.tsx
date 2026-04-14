@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
+﻿﻿﻿﻿﻿﻿﻿﻿﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { MasonryFlashList } from '@shopify/flash-list';
+import { FlashList } from '../polyfills/flash-list';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { theme } from '../theme';
 import { communityApi } from '../services/api/community.api';
@@ -211,7 +211,7 @@ export const CommunityScreen: React.FC = () => {
 
   // Intersection-based visibility handler for masonry cards
   const handleViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: Array<{ item: PostCardData; index: number }> }) => {
+    ({ viewableItems }: { viewableItems: Array<{ item: PostCardData; index: number | null }> }) => {
       const newVisibleIds = new Set<string>();
       viewableItems.forEach((vi) => {
         newVisibleIds.add(vi.item.id);
@@ -350,10 +350,11 @@ export const CommunityScreen: React.FC = () => {
           <View style={{ height: 80 }} />
         </ScrollView>
       ) : (
-        <MasonryFlashList
+        <FlashList
+          masonry
           data={posts}
           numColumns={2}
-          renderItem={({ item, index }) => (
+          renderItem={({ item, index }: { item: PostCardData; index: number }) => (
             <PostMasonryCard
               item={item}
               index={index}
@@ -370,7 +371,6 @@ export const CommunityScreen: React.FC = () => {
               }}
             />
           )}
-          estimatedItemSize={250}
           onEndReached={onLoadMore}
           onEndReachedThreshold={0.5}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />}

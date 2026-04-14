@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsNumber, Min, IsBoolean } from "class-validator";
+import { IsString, IsOptional, IsEnum, IsNumber, Min, IsBoolean, IsArray } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 import { ServiceTypeDto } from "./consultant.dto";
@@ -32,13 +32,30 @@ export class ConsultantMatchRequestDto {
 }
 
 export class MatchResultDto {
+  @ApiProperty({ description: "顾问ID" })
   consultantId!: string;
+
+  @ApiProperty({ description: "工作室名称" })
   studioName!: string;
+
+  @ApiPropertyOptional({ description: "头像URL", nullable: true })
   avatar!: string | null;
+
+  @ApiProperty({ description: "专长领域", type: [String] })
   specialties!: string[];
+
+  @ApiProperty({ description: "评分" })
   rating!: number;
+
+  @ApiProperty({ description: "评价数量" })
   reviewCount!: number;
+
+  @ApiProperty({ description: "匹配百分比" })
   matchPercentage!: number;
+
+  @ApiProperty({ description: "匹配理由", type: [String] })
   matchReasons!: string[];
+
+  @ApiPropertyOptional({ description: "价格" })
   price?: number;
 }

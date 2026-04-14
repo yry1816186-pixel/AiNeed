@@ -8,6 +8,7 @@ import {
   ApiConsumes,
 } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { Throttle } from "@nestjs/throttler";
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-data.interceptor";
@@ -144,6 +145,7 @@ export class ProfileController {
   }
 
   @Post("body-analysis/upload")
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(FileInterceptor("file"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({
@@ -221,6 +223,7 @@ export class ProfileController {
   }
 
   @Post("color-analysis/upload")
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(FileInterceptor("file"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({

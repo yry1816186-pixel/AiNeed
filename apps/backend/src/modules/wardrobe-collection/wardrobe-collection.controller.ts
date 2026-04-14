@@ -33,9 +33,9 @@ import {
   ReorderCollectionItemsDto,
 } from "./dto/wardrobe-collection.dto";
 
-@ApiTags("wardrobe-collection")
+@ApiTags("wardrobe/collections")
 @ApiBearerAuth()
-@Controller("wardrobe-collections")
+@Controller("wardrobe/collections")
 export class WardrobeCollectionController {
   constructor(
     private readonly wardrobeCollectionService: WardrobeCollectionService,

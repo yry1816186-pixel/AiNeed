@@ -66,7 +66,7 @@ export class MerchantService {
           data: {
             brandId: brand.id,
             email: data.email,
-            password: await bcrypt.hash(data.password, 10),
+            password: await bcrypt.hash(data.password),
             name: data.name,
             role: "admin",
           },

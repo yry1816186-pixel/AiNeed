@@ -34,10 +34,10 @@ import {
   QuizProgressDto,
 } from "./dto/style-quiz.dto";
 
-@ApiTags("style-quiz")
+@ApiTags("quiz")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("style-quiz")
+@Controller("quiz")
 export class StyleQuizController {
   constructor(
     private readonly styleQuizService: StyleQuizService,
@@ -189,6 +189,26 @@ export class StyleQuizController {
   @ApiResponse({ status: 200, description: "成功返回最新测试结果" })
   @ApiResponse({ status: 401, description: "未授权" })
   async getLatestResult(@Request() req: RequestWithUser) {
+    return this.styleQuizService.getLatestResult(req.user.id);
+  }
+
+  @Post("submit")
+  @ApiOperation({ summary: "提交测试答案（兼容路由，等同 answers/batch）" })
+  @ApiResponse({ status: 200, description: "提交成功" })
+  @ApiResponse({ status: 400, description: "请求参数错误" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async submitQuiz(
+    @Request() req: RequestWithUser,
+    @Body() dto: BatchSubmitAnswersDto,
+  ) {
+    return this.styleQuizService.batchSubmitAnswers(req.user.id, dto);
+  }
+
+  @Get("result")
+  @ApiOperation({ summary: "获取最新测试结果（兼容路由，等同 results/latest）" })
+  @ApiResponse({ status: 200, description: "成功返回最新测试结果" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async getResult(@Request() req: RequestWithUser) {
     return this.styleQuizService.getLatestResult(req.user.id);
   }
 

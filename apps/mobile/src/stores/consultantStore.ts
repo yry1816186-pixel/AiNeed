@@ -1,21 +1,32 @@
 import { create } from "zustand";
 import { consultantApi } from "../services/api/consultant.api";
+import type {
+  ConsultantProfile,
+  MatchResult,
+  ServiceBooking,
+  AvailableTimeSlot,
+  ConsultantListParams,
+  BookingListParams,
+  ConsultantMatchRequest,
+  CreateBookingRequest,
+} from "../types/consultant";
+import type { PaginatedResponse } from "../types/api";
 
 interface ConsultantState {
-  consultants: any[];
-  currentConsultant: any | null;
-  matchResults: any[];
-  bookings: any[];
-  availableSlots: any[];
+  consultants: ConsultantProfile[];
+  currentConsultant: ConsultantProfile | null;
+  matchResults: MatchResult[];
+  bookings: ServiceBooking[];
+  availableSlots: AvailableTimeSlot[];
   isLoading: boolean;
   error: string | null;
 
-  fetchConsultants: (params?: any) => Promise<void>;
+  fetchConsultants: (params?: ConsultantListParams) => Promise<void>;
   fetchConsultantById: (id: string) => Promise<void>;
-  matchConsultants: (data: any) => Promise<void>;
+  matchConsultants: (data: ConsultantMatchRequest) => Promise<void>;
   fetchAvailableSlots: (consultantId: string, date: string) => Promise<void>;
-  createBooking: (data: any) => Promise<any>;
-  fetchBookings: (params?: any) => Promise<void>;
+  createBooking: (data: CreateBookingRequest) => Promise<ServiceBooking | null>;
+  fetchBookings: (params?: BookingListParams) => Promise<void>;
   clearError: () => void;
 }
 
@@ -32,9 +43,15 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await consultantApi.getProfiles(params);
-      set({ consultants: (res.data as any).data, isLoading: false });
-    } catch (e: any) {
-      set({ error: e.message, isLoading: false });
+      if (res.success && res.data) {
+        const paginated = res.data as PaginatedResponse<ConsultantProfile>;
+        set({ consultants: paginated.items ?? (res.data as unknown as ConsultantProfile[]), isLoading: false });
+      } else {
+        set({ isLoading: false });
+      }
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Unknown error";
+      set({ error: message, isLoading: false });
     }
   },
 
@@ -42,9 +59,14 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await consultantApi.getProfileById(id);
-      set({ currentConsultant: res.data as any, isLoading: false });
-    } catch (e: any) {
-      set({ error: e.message, isLoading: false });
+      if (res.success && res.data) {
+        set({ currentConsultant: res.data as ConsultantProfile, isLoading: false });
+      } else {
+        set({ isLoading: false });
+      }
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Unknown error";
+      set({ error: message, isLoading: false });
     }
   },
 
@@ -52,9 +74,14 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await consultantApi.matchConsultants(data);
-      set({ matchResults: res.data as any[], isLoading: false });
-    } catch (e: any) {
-      set({ error: e.message, isLoading: false });
+      if (res.success && res.data) {
+        set({ matchResults: res.data as MatchResult[], isLoading: false });
+      } else {
+        set({ matchResults: [], isLoading: false });
+      }
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Unknown error";
+      set({ error: message, isLoading: false });
     }
   },
 
@@ -62,9 +89,14 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await consultantApi.getAvailableSlots(consultantId, date);
-      set({ availableSlots: res.data as any[], isLoading: false });
-    } catch (e: any) {
-      set({ error: e.message, isLoading: false });
+      if (res.success && res.data) {
+        set({ availableSlots: res.data as AvailableTimeSlot[], isLoading: false });
+      } else {
+        set({ availableSlots: [], isLoading: false });
+      }
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Unknown error";
+      set({ error: message, isLoading: false });
     }
   },
 
@@ -73,9 +105,13 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     try {
       const res = await consultantApi.createBooking(data);
       set({ isLoading: false });
-      return res.data as any;
-    } catch (e: any) {
-      set({ error: e.message, isLoading: false });
+      if (res.success && res.data) {
+        return res.data as ServiceBooking;
+      }
+      return null;
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Unknown error";
+      set({ error: message, isLoading: false });
       throw e;
     }
   },
@@ -84,9 +120,15 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const res = await consultantApi.getBookings(params);
-      set({ bookings: (res.data as any).data, isLoading: false });
-    } catch (e: any) {
-      set({ error: e.message, isLoading: false });
+      if (res.success && res.data) {
+        const paginated = res.data as PaginatedResponse<ServiceBooking>;
+        set({ bookings: paginated.items ?? (res.data as unknown as ServiceBooking[]), isLoading: false });
+      } else {
+        set({ bookings: [], isLoading: false });
+      }
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Unknown error";
+      set({ error: message, isLoading: false });
     }
   },
 

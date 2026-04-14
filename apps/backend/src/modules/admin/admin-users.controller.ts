@@ -10,7 +10,7 @@ import {
   NotFoundException,
   ForbiddenException,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 import { Prisma, UserRole } from "@prisma/client";
 
 import { AuthGuard } from "../auth/guards/auth.guard";
@@ -38,6 +38,8 @@ export class AdminUsersController {
 
   @Get()
   @ApiOperation({ summary: "List users with search and filters" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
   async listUsers(@Query() query: AdminUserQueryDto) {
     const {
       page = 1,
@@ -108,6 +110,8 @@ export class AdminUsersController {
 
   @Get("export")
   @ApiOperation({ summary: "Export user data" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
   async exportUsers(@Query() query: AdminUserExportDto) {
     const where: Prisma.UserWhereInput = { isDeleted: false };
 

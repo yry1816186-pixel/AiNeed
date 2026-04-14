@@ -10,7 +10,7 @@ import {
   Request,
   NotFoundException,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
 import { AuthGuard } from "../auth/guards/auth.guard";
 import { AdminGuard } from "../../common/guards/admin.guard";
@@ -32,6 +32,8 @@ export class AdminContentReviewController {
 
   @Get("queue")
   @ApiOperation({ summary: "Get content review queue" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
   async getReviewQueue(@Query() query: ReviewQueueQueryDto) {
     return this.reviewService.getReviewQueue({
       page: query.page,
@@ -45,12 +47,17 @@ export class AdminContentReviewController {
 
   @Get("stats")
   @ApiOperation({ summary: "Get review statistics" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
   async getReviewStats() {
     return this.reviewService.getReviewStats();
   }
 
   @Put(":id/review")
   @ApiOperation({ summary: "Review a single content item" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiResponse({ status: 404, description: "未找到" })
   async reviewContent(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
@@ -72,6 +79,8 @@ export class AdminContentReviewController {
 
   @Post("batch-review")
   @ApiOperation({ summary: "Batch review multiple content items" })
+  @ApiResponse({ status: 200, description: "成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
   async batchReview(
     @Request() req: RequestWithUser,
     @Body() dto: BatchReviewDto,

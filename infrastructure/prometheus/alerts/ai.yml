@@ -1,4 +1,4 @@
-﻿# ============================================================
+# ============================================================
 # xuno AI 服务告警规则
 # 基于 Python AI 服务 (FastAPI) Prometheus 指标
 #
@@ -146,7 +146,7 @@ groups:
         labels:
           severity: critical
           team: ai
-          service: stylemind-catvton
+          service: stylemind-ai
           category: availability
         annotations:
           summary: "虚拟试衣失败率过高"
@@ -154,8 +154,8 @@ groups:
             虚拟试衣错误率已达 {{ $value | humanizePercentage }}，
             超过 15% 阈值，持续 10 分钟。
             错误类型分布: 请查看 try_on_errors_total 按 error_type 分组。
-            常见错误: GPU OOM、模型加载失败、图片处理超时。
-            请检查 CatVTON 服务日志和 GPU 状态。
+            常见错误: GLM API 调用失败、图片处理超时、API 限流。
+            请检查 AI 服务日志和 GLM API 状态。
           runbook_url: "https://wiki.xuno.internal/runbooks/tryon-failure-rate-high"
 
       # 虚拟试衣 P95 处理时长超过 120 秒，持续 10 分钟
@@ -170,22 +170,21 @@ groups:
         labels:
           severity: warning
           team: ai
-          service: stylemind-catvton
+          service: stylemind-ai
           category: performance
         annotations:
           summary: "虚拟试衣处理速度过慢"
           description: >-
             虚拟试衣 P95 处理时长已达 {{ $value | humanizeDuration }}，
             超过 120 秒阈值，持续 10 分钟。
-            可能原因: GPU 资源竞争、模型推理慢、图片分辨率过高。
-            CatVTON 在 RTX 4060 8GB 上正常推理约 30-60 秒。
-            请检查 GPU 利用率和是否有多个推理任务并发。
+            可能原因: GLM API 响应慢、图片分辨率过高、API 限流。
+            GLM API 正常响应约 10-30 秒。
+            请检查 API 调用延迟和是否有并发请求过多。
           runbook_url: "https://wiki.xuno.internal/runbooks/tryon-processing-slow"
 
   # ----------------------------------------------------------
-  # GPU 资源告警
-  # 覆盖: GPU 显存使用率、模型加载状态
-  # 硬件: RTX 4060 8GB VRAM (CatVTON 使用约 4GB)
+  # AI Service 资源告警
+  # 覆盖: API 可用性、模型加载状态
   # ----------------------------------------------------------
   - name: ai.gpu.alerts
     rules:
@@ -203,16 +202,15 @@ groups:
         labels:
           severity: critical
           team: ai
-          service: stylemind-catvton
-          category: gpu
+          service: stylemind-ai
+          category: api
         annotations:
-          summary: "GPU 显存使用率过高"
+          summary: "AI 服务资源使用率过高"
           description: >-
-            GPU 设备 {{ $labels.device }} 显存使用率已达 {{ $value | humanizePercentage }}，
+            AI 服务资源使用率已达 {{ $value | humanizePercentage }}，
             超过 90% 阈值，持续 5 分钟。
-            RTX 4060 总显存 8GB，CatVTON 正常使用约 4GB。
-            可能原因: 推理任务堆积、显存泄漏、模型重复加载。
-            存在 CUDA OOM 风险，请检查推理任务并发数。
+            可能原因: 推理任务堆积、内存泄漏、请求过多。
+            存在服务不可用风险，请检查任务并发数。
           runbook_url: "https://wiki.xuno.internal/runbooks/gpu-memory-high"
 
       # GPU 模型未加载超过 5 分钟
@@ -224,15 +222,15 @@ groups:
         labels:
           severity: critical
           team: ai
-          service: stylemind-catvton
-          category: gpu
+          service: stylemind-ai
+          category: api
         annotations:
-          summary: "GPU 模型未加载"
+          summary: "AI 服务模型未就绪"
           description: >-
-            GPU 模型 {{ $labels.model }} 已超过 5 分钟未处于加载状态。
-            CatVTON 模型未加载意味着虚拟试衣功能完全不可用。
-            可能原因: 模型加载失败、服务重启、GPU 驱动异常。
-            请检查 CatVTON 服务日志和 GPU 驱动状态。
+            AI 服务模型 {{ $labels.model }} 已超过 5 分钟未处于就绪状态。
+            GLM API 不可用意味着虚拟试衣功能将降级。
+            可能原因: GLM API 密钥无效、API 服务故障、网络异常。
+            请检查 AI 服务日志和 GLM API 连通性。
           runbook_url: "https://wiki.xuno.internal/runbooks/gpu-model-not-loaded"
 
   # ----------------------------------------------------------

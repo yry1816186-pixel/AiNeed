@@ -1,4 +1,4 @@
-﻿# ============================================================
+# ============================================================
 # xuno 项目 Promtail 日志采集配置
 # 版本: Promtail 2.9.x
 # 说明: 从 Docker 容器采集日志并推送到 Loki
@@ -196,28 +196,24 @@ scrape_configs:
                 source: message
 
       # ==========================================================
-      # CatVTON 服务日志管道 (stylemind-catvton)
+      # AI Service 日志管道 (stylemind-ai) - includes GLM virtual try-on
       # Python JSON 格式日志: { timestamp, level, message }
       # ==========================================================
       - match:
-          selector: '{container=~"stylemind-catvton"}'
+          selector: '{container=~"stylemind-ai"}'
           stages:
-            # JSON 解析
             - json:
                 expressions:
                   timestamp: timestamp
                   level: level
                   message: message
-                  gpu_usage: gpu_usage
 
-            # 设置标签
             - labels:
                 level:
                 service:
 
-            # 固定服务标签
             - static_labels:
-                service: catvton
+                service: ai-service
 
             # 使用日志中的时间戳
             - timestamp:

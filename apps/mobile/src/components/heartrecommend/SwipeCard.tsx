@@ -16,7 +16,7 @@ import Animated, {
   interpolate,
   Extrapolate,
 } from "react-native-reanimated";
-import { Svg, Circle, Path, G, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
+import { Svg, Circle, Path, G, Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
 import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { theme, Colors, BorderRadius, Shadows } from "../../theme";
@@ -415,7 +415,7 @@ function ColorHarmonyArc({ score }: { score: number }) {
         strokeDasharray={`${fillLength} ${circumference}`}
       />
       {/* Percentage label */}
-      <Text
+      <SvgText
         x={center}
         y={size / 2 - 2}
         textAnchor="middle"
@@ -424,7 +424,7 @@ function ColorHarmonyArc({ score }: { score: number }) {
         fill="#FFFFFF"
       >
         {Math.round(score * 100)}%
-      </Text>
+      </SvgText>
     </Svg>
   );
 }

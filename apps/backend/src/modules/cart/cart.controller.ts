@@ -11,11 +11,12 @@ import {
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody, ApiQuery } from "@nestjs/swagger";
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 import { CartService } from "./cart.service";
+import { AddToCartDto, UpdateCartItemDto, SelectAllCartDto, BatchDeleteCartDto, MoveToFavoritesDto, UpdateCartSkuDto } from "./dto/cart.dto";
 
 @ApiTags("cart")
 @ApiBearerAuth()
@@ -36,8 +37,12 @@ export class CartController {
   @ApiOperation({ summary: "获取购物车统计" })
   @ApiResponse({ status: 200, description: "获取成功" })
   @ApiResponse({ status: 401, description: "未授权" })
-  async getCartSummary(@Request() req: { user: { id: string } }) {
-    return this.cartService.getCartSummary(req.user.id);
+  @ApiQuery({ name: "couponCode", required: false, description: "优惠券代码", type: String })
+  async getCartSummary(
+    @Request() req: { user: { id: string } },
+    @Query("couponCode") couponCode?: string,
+  ) {
+    return this.cartService.getCartSummaryWithCoupon(req.user.id, couponCode);
   }
 
   @Post()
@@ -47,19 +52,13 @@ export class CartController {
   @ApiResponse({ status: 401, description: "未授权" })
   async addItem(
     @Request() req: { user: { id: string } },
-    @Body()
-    body: {
-      itemId: string;
-      color: string;
-      size: string;
-      quantity?: number;
-    },
+    @Body() body: AddToCartDto,
   ) {
     return this.cartService.addItem(
       req.user.id,
       body.itemId,
-      body.color,
-      body.size,
+      body.color!,
+      body.size!,
       body.quantity || 1,
     );
   }
@@ -74,7 +73,7 @@ export class CartController {
   async updateItem(
     @Request() req: { user: { id: string } },
     @Param("id") id: string,
-    @Body() body: { quantity?: number; selected?: boolean },
+    @Body() body: UpdateCartItemDto,
   ) {
     return this.cartService.updateItem(req.user.id, id, body);
   }
@@ -108,7 +107,7 @@ export class CartController {
   @ApiResponse({ status: 401, description: "未授权" })
   async selectAll(
     @Request() req: { user: { id: string } },
-    @Body() body: { selected: boolean },
+    @Body() body: SelectAllCartDto,
   ) {
     await this.cartService.selectAll(req.user.id, body.selected);
     return { success: true };
@@ -126,7 +125,7 @@ export class CartController {
   @ApiOperation({ summary: "批量删除购物车商品" })
   async batchDelete(
     @Request() req: { user: { id: string } },
-    @Body() body: { cartItemIds: string[] },
+    @Body() body: BatchDeleteCartDto,
   ) {
     return this.cartService.batchDelete(req.user.id, body.cartItemIds);
   }
@@ -135,7 +134,7 @@ export class CartController {
   @ApiOperation({ summary: "移入收藏" })
   async moveToFavorites(
     @Request() req: { user: { id: string } },
-    @Body() body: { cartItemIds: string[] },
+    @Body() body: MoveToFavoritesDto,
   ) {
     return this.cartService.moveToFavorites(req.user.id, body.cartItemIds);
   }
@@ -145,7 +144,7 @@ export class CartController {
   async updateItemSku(
     @Request() req: { user: { id: string } },
     @Param("id") id: string,
-    @Body() body: { color?: string; size?: string },
+    @Body() body: UpdateCartSkuDto,
   ) {
     return this.cartService.updateItemSku(req.user.id, id, body.color, body.size);
   }

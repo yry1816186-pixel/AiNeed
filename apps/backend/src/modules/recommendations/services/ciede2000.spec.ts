@@ -131,7 +131,11 @@ describe('ciede2000', () => {
       ];
       const result = findHarmoniousColors(base, candidates, 30);
       if (result.length >= 2) {
-        expect(result[0].delta).toBeLessThanOrEqual(result[1].delta);
+        const first = result[0];
+        const second = result[1];
+        if (first && second) {
+          expect(first.delta).toBeLessThanOrEqual(second.delta);
+        }
       }
     });
   });

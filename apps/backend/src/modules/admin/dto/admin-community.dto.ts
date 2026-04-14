@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsEnum, IsNumber, Min, Max } from "class-validator";
-import { ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class AdminPaginationDto {
   @ApiPropertyOptional({ description: "页码", default: 1 })
@@ -41,7 +41,7 @@ export class AdminReportQueryDto extends AdminPaginationDto {
 }
 
 export class ModeratePostDto {
-  @ApiPropertyOptional({ description: "审核动作", enum: ["approve", "reject"] })
+  @ApiProperty({ description: "审核动作", enum: ["approve", "reject"] })
   @IsEnum(["approve", "reject"])
   action!: "approve" | "reject";
 
@@ -52,7 +52,7 @@ export class ModeratePostDto {
 }
 
 export class HandleReportDto {
-  @ApiPropertyOptional({ description: "处理动作", enum: ["resolve", "reject"] })
+  @ApiProperty({ description: "处理动作", enum: ["resolve", "reject"] })
   @IsEnum(["resolve", "reject"])
   action!: "resolve" | "reject";
 

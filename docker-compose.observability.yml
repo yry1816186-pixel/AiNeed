@@ -6,7 +6,7 @@
 #   docker-compose -f docker-compose.yml -f docker-compose.observability.yml up -d
 # 说明：
 #   本文件扩展主 docker-compose.yml，后者已定义 postgres、redis、minio、
-#   qdrant、catvton、ai-service、ai-task-worker、backend 等核心服务。
+#   qdrant、ai-service、ai-task-worker、backend 等核心服务。
 #   ainetwork 网络由主文件创建，此处声明为 external。
 # ============================================================
 

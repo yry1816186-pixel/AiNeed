@@ -25,11 +25,11 @@ import type { StylistStackParamList } from '../navigation/types';
 type AiStylistChatRoute = RouteProp<StylistStackParamList, 'AiStylistChat'>;
 
 const SCENE_BUTTONS = [
-  { key: 'date', label: 'Date Night', icon: 'heart-outline' as const, message: 'I need an outfit for a date night' },
-  { key: 'work', label: 'Work', icon: 'briefcase-outline' as const, message: 'I need a work outfit' },
-  { key: 'casual', label: 'Casual', icon: 'sunny-outline' as const, message: 'I need a casual weekend outfit' },
-  { key: 'formal', label: 'Formal', icon: 'ribbon-outline' as const, message: 'I need a formal event outfit' },
-  { key: 'travel', label: 'Travel', icon: 'airplane-outline' as const, message: 'I need travel-friendly outfits' },
+  { key: 'date', label: '约会之夜', icon: 'heart-outline' as const, message: '我需要一套约会穿搭' },
+  { key: 'work', label: '职场通勤', icon: 'briefcase-outline' as const, message: '我需要一套职场穿搭' },
+  { key: 'casual', label: '休闲周末', icon: 'sunny-outline' as const, message: '我需要一套休闲周末穿搭' },
+  { key: 'formal', label: '正式场合', icon: 'ribbon-outline' as const, message: '我需要一套正式场合穿搭' },
+  { key: 'travel', label: '旅行出行', icon: 'airplane-outline' as const, message: '我需要旅行穿搭建议' },
 ];
 
 export const AiStylistChatScreen: React.FC = () => {
@@ -154,7 +154,7 @@ export const AiStylistChatScreen: React.FC = () => {
         </TouchableOpacity>
         <View style={s.headerCenter}>
           <View style={s.onlineDot} />
-          <Text style={s.headerTitle}>AI Stylist</Text>
+          <Text style={s.headerTitle}>AI 造型师</Text>
         </View>
         <TouchableOpacity
           style={s.backBtn}
@@ -175,7 +175,7 @@ export const AiStylistChatScreen: React.FC = () => {
             <View style={s.errorBanner}>
               <Text style={s.errorText}>{error}</Text>
               <TouchableOpacity onPress={clearError}>
-                <Text style={s.errorDismiss}>Dismiss</Text>
+                <Text style={s.errorDismiss}>关闭</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -185,9 +185,9 @@ export const AiStylistChatScreen: React.FC = () => {
               <View style={s.welcomeIcon}>
                 <Ionicons name="sparkles" size={32} color={theme.colors.primary} />
               </View>
-              <Text style={s.welcomeTitle}>What would you like to wear?</Text>
+              <Text style={s.welcomeTitle}>今天想穿什么？</Text>
               <Text style={s.welcomeSubtitle}>
-                Tell me the occasion, your mood, or let me surprise you
+                告诉我场合、心情，或者让我给你惊喜
               </Text>
             </View>
           )}
@@ -226,7 +226,7 @@ export const AiStylistChatScreen: React.FC = () => {
           <View style={s.inputWrapper}>
             <TextInput
               style={s.input}
-              placeholder="Describe your outfit needs..."
+              placeholder="描述你的穿搭需求..."
               placeholderTextColor={theme.colors.textTertiary}
               value={inputText}
               onChangeText={setInputText}

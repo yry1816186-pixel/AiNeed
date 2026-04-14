@@ -9,6 +9,16 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { ClothingItem } from '../types/clothing';
+import type { User } from '../types/user';
+import type { PostCardData } from '../types/social';
+
+interface Brand {
+  id: string;
+  name: string;
+  logo?: string;
+  [key: string]: unknown;
+}
 
 // ==================== 常量定义 ====================
 
@@ -42,19 +52,24 @@ export interface OfflineStatus {
 }
 
 export interface DemoDataPackage {
-  users: any[];
-  clothing: any[];
-  recommendations: any[];
-  conversations: any[];
-  brands: any[];
-  stats: any;
+  users: User[];
+  clothing: ClothingItem[];
+  recommendations: PostCardData[];
+  conversations: Record<string, unknown>[];
+  brands: Brand[];
+  stats: {
+    totalUsers: number;
+    totalClothing: number;
+    totalRecommendations: number;
+    totalBrands: number;
+  };
 }
 
 // ==================== 主服务类 ====================
 
 class OfflineCacheService {
   private static instance: OfflineCacheService | null = null;
-  private memoryCache: Map<string, CacheEntry<any>> = new Map();
+  private memoryCache: Map<string, CacheEntry<DemoDataPackage>> = new Map();
   private currentVersion = '1.0.0';
 
   static getInstance(): OfflineCacheService {
@@ -225,12 +240,12 @@ class OfflineCacheService {
   /**
    * 预加载指定 key 到内存
    */
-  private async loadKeyToMemory(key: string): Promise<CacheEntry<any> | null> {
+  private async loadKeyToMemory(key: string): Promise<CacheEntry<DemoDataPackage> | null> {
     try {
       const raw = await AsyncStorage.getItem(key);
       if (!raw) return null;
 
-      const entry = JSON.parse(raw) as CacheEntry<any>;
+      const entry = JSON.parse(raw) as CacheEntry<DemoDataPackage>;
       this.memoryCache.set(key, entry);
       return entry;
     } catch (error) {

@@ -4,14 +4,14 @@ import { SwipeCard, type ProductItem } from '../SwipeCard';
 
 jest.mock('@/src/polyfills/expo-linear-gradient', () => {
   const { View } = require('react-native');
-  const MockLinearGradient = (props) => <View {...props} />;
+  const MockLinearGradient = (props: Record<string, unknown>) => <View {...props} />;
   MockLinearGradient.displayName = 'LinearGradient';
   return { LinearGradient: MockLinearGradient, default: MockLinearGradient };
 });
 
 jest.mock('@/src/polyfills/expo-vector-icons', () => {
   const { Text } = require('react-native');
-  const createIcon = (name) => (props) => <Text {...props}>{name}</Text>;
+  const createIcon = (name: string) => (props: Record<string, unknown>) => <Text {...props}>{name}</Text>;
   return {
     Ionicons: createIcon('Ionicons'),
     MaterialCommunityIcons: createIcon('MaterialCommunityIcons'),

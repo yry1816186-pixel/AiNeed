@@ -16,15 +16,23 @@ RUN pnpm install --prod --frozen-lockfile
 
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY packages/types/package.json ./packages/types/
+COPY packages/types/src ./packages/types/src/
+COPY packages/types/tsconfig.json ./packages/types/
+COPY apps/backend/package.json ./apps/backend/
+COPY apps/backend/src ./apps/backend/src/
+COPY apps/backend/prisma ./apps/backend/prisma/
+COPY apps/backend/tsconfig.json ./apps/backend/
+COPY apps/backend/tsconfig.build.json ./apps/backend/
+COPY apps/backend/nest-cli.json ./apps/backend/
 RUN pnpm --filter @xuno/types build
 RUN pnpm --filter @xuno/backend build
 RUN pnpm --filter @xuno/backend db:generate
 
 FROM node:20-alpine AS runner
 LABEL version="1.0.0"
-LABEL description="寻裳 Backend - AI-driven personal styling platform"
-LABEL maintainer="寻裳 Team"
+LABEL description="XunO Backend - AI-driven personal styling platform"
+LABEL maintainer="XunO Team"
 
 RUN apk add --no-cache tini curl
 
@@ -38,6 +46,8 @@ COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/apps/backend/prisma ./prisma
 COPY --from=builder /app/packages/types/dist ./node_modules/@xuno/types/dist
 COPY --from=builder /app/packages/types/package.json ./node_modules/@xuno/types/package.json
+COPY scripts/docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh && chown nestjs:nodejs /app/docker-entrypoint.sh
 
 RUN chown -R nestjs:nodejs /app
 
@@ -47,5 +57,5 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3001/api/v1/health || exit 1
 
-ENTRYPOINT ["/sbin/tini", "--"]
+ENTRYPOINT ["/sbin/tini", "--", "/app/docker-entrypoint.sh"]
 CMD ["node", "dist/main.js"]

@@ -60,7 +60,7 @@ export const DesignTokens = {
       secondary: "#52524D",
       tertiary: "#73736D",
       inverse: "#FFFFFF",
-      brand: "#C67B5C",
+      brand: "#9A5B3E",
     },
     borders: {
       light: "rgba(0, 0, 0, 0.06)",
@@ -89,9 +89,9 @@ export const DesignTokens = {
   typography: {
     fontFamily: {
       heading: {
-        ios: "System",
-        android: "serif",
-        web: "'Cormorant Garamond', 'Noto Serif SC', serif",
+        ios: "PlayfairDisplay-Bold",
+        android: "PlayfairDisplay-Bold",
+        web: "'Playfair Display', 'Noto Serif SC', serif",
       },
       body: {
         ios: "System",
@@ -317,6 +317,7 @@ export const darkTokens = {
       strong: "rgba(255, 255, 255, 0.18)",
       brand: "#D68B6C",
     },
+    colorSeasons: DesignTokens.colors.colorSeasons,
   },
   gradients: {
     brand: ["#D68B6C", "#C9B8A6"],

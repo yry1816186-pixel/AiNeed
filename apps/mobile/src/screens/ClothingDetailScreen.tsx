@@ -15,6 +15,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { RootStackParamList } from "../types/navigation";
 import type { ClothingItem } from "../types/clothing";
 import { clothingApi } from "../services/api/clothing.api";
+import { theme } from "../theme";
 import {
   cartApi,
   favoriteApi,
@@ -140,7 +141,7 @@ export const ClothingDetailScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FF4D4F" />
+          <ActivityIndicator size="large" color={theme.colors.primary} />
           <Text style={styles.loadingText}>加载中...</Text>
         </View>
       </SafeAreaView>
@@ -151,7 +152,7 @@ export const ClothingDetailScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color="#FF4D4F" />
+          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
           <Text style={styles.errorText}>{error ?? "未找到商品"}</Text>
           <TouchableOpacity style={styles.retryButton} onPress={loadItem}>
             <Text style={styles.retryButtonText}>重试</Text>
@@ -177,14 +178,14 @@ export const ClothingDetailScreen: React.FC = () => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#333333" />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>商品详情</Text>
         <TouchableOpacity onPress={handleToggleFavorite}>
           <Ionicons
             name={isFavorite ? "heart" : "heart-outline"}
             size={24}
-            color={isFavorite ? "#FF4D4F" : "#333333"}
+            color={isFavorite ? theme.colors.like : theme.colors.text}
           />
         </TouchableOpacity>
       </View>
@@ -223,7 +224,7 @@ export const ClothingDetailScreen: React.FC = () => {
               ? `${selectedColor} / ${selectedSize} / x${quantity}`
               : "请选择规格"}
           </Text>
-          <Ionicons name="chevron-forward" size={18} color="#999999" />
+          <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
         </TouchableOpacity>
 
         <View style={styles.infoSection}>
@@ -251,7 +252,7 @@ export const ClothingDetailScreen: React.FC = () => {
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
               size={22}
-              color={isFavorite ? "#FF4D4F" : "#666666"}
+              color={isFavorite ? theme.colors.like : theme.colors.textSecondary}
             />
             <Text style={styles.bottomIconLabel}>收藏</Text>
           </TouchableOpacity>
@@ -261,7 +262,7 @@ export const ClothingDetailScreen: React.FC = () => {
               navigation.navigate("VirtualTryOn", { clothingId })
             }
           >
-            <Ionicons name="sparkles-outline" size={22} color="#666666" />
+            <Ionicons name="sparkles-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.bottomIconLabel}>试衣</Text>
           </TouchableOpacity>
         </View>
@@ -299,7 +300,7 @@ export const ClothingDetailScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFFFF" },
+  container: { flex: 1, backgroundColor: theme.colors.surface },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -307,7 +308,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: theme.colors.border,
   },
   backButton: {
     width: 36,
@@ -315,44 +316,44 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: 17, fontWeight: "600", color: "#333333" },
+  headerTitle: { fontSize: 17, fontWeight: "600", color: theme.colors.text },
   loadingContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  loadingText: { fontSize: 14, color: "#999999", marginTop: 8 },
+  loadingText: { fontSize: 14, color: theme.colors.textTertiary, marginTop: 8 },
   errorContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
   },
-  errorText: { fontSize: 14, color: "#999999", marginTop: 12, textAlign: "center" },
+  errorText: { fontSize: 14, color: theme.colors.textTertiary, marginTop: 12, textAlign: "center" },
   retryButton: {
-    backgroundColor: "#FF4D4F",
+    backgroundColor: theme.colors.error,
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 8,
     marginTop: 16,
   },
-  retryButtonText: { fontSize: 14, fontWeight: "500", color: "#FFFFFF" },
+  retryButtonText: { fontSize: 14, fontWeight: "500", color: theme.colors.surface },
   content: { flex: 1 },
   priceSection: { paddingHorizontal: 16, paddingTop: 16 },
   priceRow: { flexDirection: "row", alignItems: "baseline", gap: 8 },
-  currentPrice: { fontSize: 20, fontWeight: "700", color: "#FF4D4F" },
+  currentPrice: { fontSize: 20, fontWeight: "700", color: theme.colors.primary },
   originalPrice: {
     fontSize: 14,
-    color: "#CCCCCC",
+    color: theme.colors.textTertiary,
     textDecorationLine: "line-through",
   },
   discountBadge: {
-    backgroundColor: "#FF4D4F",
+    backgroundColor: theme.colors.primary,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
   },
-  discountText: { fontSize: 11, fontWeight: "600", color: "#FFFFFF" },
+  discountText: { fontSize: 11, fontWeight: "600", color: theme.colors.surface },
   skuTrigger: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -360,12 +361,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: theme.colors.border,
   },
-  skuTriggerLabel: { fontSize: 14, color: "#666666" },
+  skuTriggerLabel: { fontSize: 14, color: theme.colors.textSecondary },
   infoSection: { paddingHorizontal: 16, paddingTop: 16 },
-  itemName: { fontSize: 18, fontWeight: "600", color: "#333333", marginBottom: 4 },
-  itemBrand: { fontSize: 14, color: "#999999", marginBottom: 8 },
+  itemName: { fontSize: 18, fontWeight: "600", color: theme.colors.text, marginBottom: 4 },
+  itemBrand: { fontSize: 14, color: theme.colors.textTertiary, marginBottom: 8 },
   relatedSection: { paddingHorizontal: 16, paddingTop: 8 },
   bottomBar: {
     flexDirection: "row",
@@ -373,28 +374,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
-    backgroundColor: "#FFFFFF",
+    borderTopColor: theme.colors.border,
+    backgroundColor: theme.colors.surface,
   },
   bottomLeft: { flexDirection: "row", gap: 16 },
   bottomIconButton: { alignItems: "center", gap: 2 },
-  bottomIconLabel: { fontSize: 10, color: "#666666" },
+  bottomIconLabel: { fontSize: 10, color: theme.colors.textSecondary },
   bottomRight: { flex: 1, flexDirection: "row", justifyContent: "flex-end", gap: 8 },
   addToCartButton: {
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#FF4D4F",
+    borderColor: theme.colors.primary,
   },
-  addToCartText: { fontSize: 14, fontWeight: "500", color: "#FF4D4F" },
+  addToCartText: { fontSize: 14, fontWeight: "500", color: theme.colors.primary },
   buyNowButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: "#FF4D4F",
+    backgroundColor: theme.colors.primary,
   },
-  buyNowText: { fontSize: 14, fontWeight: "600", color: "#FFFFFF" },
+  buyNowText: { fontSize: 14, fontWeight: "600", color: theme.colors.surface },
 });
 
 export default ClothingDetailScreen;

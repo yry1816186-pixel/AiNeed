@@ -1,4 +1,4 @@
-﻿@echo off
+@echo off
 chcp 65001 >nul
 echo ========================================
 echo    xuno 服务启动脚本
@@ -58,7 +58,7 @@ echo ========================================
 echo.
 echo    后端 API:     http://localhost:3001
 echo    MinIO 控制台:  http://localhost:9001
-echo    IDM-VTON:     http://localhost:8001
+echo    GLM Try-On:   http://localhost:8002
 echo    SASRec:       http://localhost:8002
 echo    Body Analysis: http://localhost:8003
 echo.

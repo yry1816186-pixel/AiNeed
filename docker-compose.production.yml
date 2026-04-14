@@ -15,8 +15,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
       POSTGRES_DB: ${POSTGRES_DB:-stylemind}
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - prod_postgres_data:/var/lib/postgresql/data
       - ./infra/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
@@ -58,8 +58,8 @@ services:
       --save 60 10000
       --maxmemory 1536mb
       --maxmemory-policy allkeys-lru
-    ports:
-      - "6379:6379"
+    expose:
+      - "6379"
     volumes:
       - prod_redis_data:/data
     healthcheck:
@@ -197,6 +197,8 @@ services:
     image: ghcr.io/${GHCR_OWNER:-xuno}/xuno-ai-service:latest
     container_name: prod-ai-service
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     env_file:
       - .env.production
     environment:
@@ -245,6 +247,8 @@ services:
     image: ghcr.io/${GHCR_OWNER:-xuno}/xuno-backend:latest
     container_name: prod-backend
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     env_file:
       - .env.production
     environment:

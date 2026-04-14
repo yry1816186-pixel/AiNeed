@@ -116,35 +116,25 @@ async def generate_virtual_tryon(
     - category: 服装类别 (upper_body/lower_body/full_body)
     """
     try:
-        import aiohttp
-        
-        # TODO: Replace IDM-VTON with GLM multimodal API for virtual try-on
-        idm_vton_url = os.getenv("IDM_VTON_URL", "http://localhost:8002")
-        
-        async with aiohttp.ClientSession() as session:
-            payload = {
-                "person_image": user_image_url,
-                "cloth_image": cloth_image_url,
-                "category": category
+        from services.virtual_tryon_service import virtual_tryon_service
+
+        result = await virtual_tryon_service.generate_tryon(
+            person_image_url=user_image_url,
+            garment_image_url=cloth_image_url,
+            category=category,
+        )
+
+        if result.get("success"):
+            return {
+                "success": True,
+                "result_url": result.get("result_url"),
+                "generated_at": datetime.now().isoformat()
             }
-            
-            async with session.post(
-                f"{idm_vton_url}/api/tryon",
-                json=payload,
-                timeout=aiohttp.ClientTimeout(total=120)
-            ) as response:
-                if response.status == 200:
-                    result = await response.json()
-                    return {
-                        "success": True,
-                        "result_url": result.get("result_url"),
-                        "generated_at": datetime.now().isoformat()
-                    }
-                else:
-                    raise HTTPException(
-                        status_code=response.status,
-                        detail="虚拟试衣服务暂时不可用"
-                    )
+        else:
+            raise HTTPException(
+                status_code=503,
+                detail=result.get("error", "虚拟试衣服务暂时不可用")
+            )
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"虚拟试衣失败: {str(e)}")
@@ -158,7 +148,7 @@ async def health_check():
         "service": "visual-outfit",
         "features": {
             "outfit_generation": True,
-            "virtual_tryon": bool(os.getenv("IDM_VTON_URL")),
+            "virtual_tryon": bool(os.getenv("GLM_API_KEY")),
             "ecommerce_api": bool(os.getenv("TAOBAO_APP_KEY") or os.getenv("JD_APP_KEY"))
         },
         "timestamp": datetime.now().isoformat()

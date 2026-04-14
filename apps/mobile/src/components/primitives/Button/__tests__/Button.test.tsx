@@ -4,7 +4,7 @@ import { Button } from '../Button';
 
 jest.mock('@/src/polyfills/expo-linear-gradient', () => {
   const { View } = require('react-native');
-  const MockLinearGradient = (props) => <View {...props} />;
+  const MockLinearGradient = (props: Record<string, unknown>) => <View {...props} />;
   MockLinearGradient.displayName = 'LinearGradient';
   return { LinearGradient: MockLinearGradient, default: MockLinearGradient };
 });

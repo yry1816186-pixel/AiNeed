@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DesignTokens, darkTokens, DesignTokensType } from '../theme/tokens/design-tokens';
@@ -48,7 +48,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   };
 
   const isDark = mode === 'dark' || (mode === 'system' && systemColorScheme === 'dark');
-  const tokens = isDark ? darkTokens : DesignTokens;
+  const tokens = (isDark ? darkTokens : DesignTokens) as DesignTokensType;
 
   if (!isReady) {
     return null;

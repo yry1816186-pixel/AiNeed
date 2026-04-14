@@ -179,7 +179,7 @@ class AIService {
       uri: imageUri,
       name: filename,
       type,
-    } as any);
+    } satisfies FormDataValue);
 
     const response = await fetch(`${this.baseUrl}/api/embed`, {
       method: "POST",

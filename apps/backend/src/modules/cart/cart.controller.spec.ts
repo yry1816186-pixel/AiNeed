@@ -12,6 +12,7 @@ describe("CartController", () => {
   const mockCartService = {
     getCart: jest.fn(),
     getCartSummary: jest.fn(),
+    getCartSummaryWithCoupon: jest.fn(),
     addItem: jest.fn(),
     updateItem: jest.fn(),
     removeItem: jest.fn(),
@@ -60,10 +61,13 @@ describe("CartController", () => {
       const mockSummary = {
         totalItems: 3,
         selectedItems: 2,
-        totalPrice: 300,
-        selectedPrice: 200,
+        totalAmount: 300,
+        selectedAmount: 200,
+        discountAmount: 0,
+        shippingFee: 0,
+        finalAmount: 300,
       };
-      mockCartService.getCartSummary.mockResolvedValue(mockSummary);
+      mockCartService.getCartSummaryWithCoupon.mockResolvedValue(mockSummary);
 
       const result = await controller.getCartSummary({ user: mockUser });
 
@@ -102,7 +106,7 @@ describe("CartController", () => {
 
       await controller.addItem(
         { user: mockUser },
-        { itemId: "item-1", color: "black", size: "M" },
+        { itemId: "item-1", color: "black", size: "M", quantity: 1 },
       );
 
       expect(service.addItem).toHaveBeenCalledWith(

@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 import { Public } from "../auth/decorators/public.decorator";
@@ -71,7 +71,14 @@ export class HealthController {
     type: HealthResponseDto,
   })
   async getHealth() {
-    return this.healthService.checkHealth();
+    const result = await this.healthService.checkHealth();
+    if (result.status === "unhealthy") {
+      throw new (await import("@nestjs/common")).ServiceUnavailableException(result);
+    }
+    if (result.status === "degraded") {
+      return result;
+    }
+    return result;
   }
 
   /**
@@ -113,6 +120,10 @@ export class HealthController {
     description: "应用未就绪（依赖项不可用）",
   })
   async getReadiness() {
-    return this.healthService.getReadiness();
+    const result = await this.healthService.getReadiness();
+    if (!result.ready) {
+      throw new (await import("@nestjs/common")).ServiceUnavailableException(result);
+    }
+    return result;
   }
 }

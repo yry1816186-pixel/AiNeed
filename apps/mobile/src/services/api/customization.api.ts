@@ -1,78 +1,31 @@
 import apiClient from "./client";
 import type { ApiResponse, PaginatedResponse } from "../../types/api";
 import type { FormDataValue } from "../../types";
-
-export type CustomizationType =
-  | "tailored"
-  | "bespoke"
-  | "alteration"
-  | "design"
-  | "pod";
-
-export type CustomizationStatus =
-  | "draft"
-  | "submitted"
-  | "quoting"
-  | "confirmed"
-  | "in_progress"
-  | "shipped"
-  | "completed"
-  | "cancelled";
-
-export interface CustomizationQuote {
-  id: string;
-  providerId: string;
-  providerName: string;
-  price: number;
-  currency: string;
-  estimatedDays: number;
-  description: string;
-  createdAt: string;
-}
-
-export interface CustomizationRequest {
-  id: string;
-  userId: string;
-  type: CustomizationType;
-  description: string;
-  referenceImages: string[];
-  preferences: Record<string, unknown>;
-  status: CustomizationStatus;
-  quotes?: CustomizationQuote[];
-  selectedQuoteId?: string;
-  designId?: string;
-  templateId?: string;
-  previewImageUrl?: string;
-  trackingNumber?: string;
-  carrier?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CreateCustomizationDto {
-  type: CustomizationType;
-  description: string;
-  referenceImages?: string[];
-  preferences?: Record<string, unknown>;
-}
-
-export interface UpdateCustomizationDto {
-  type?: CustomizationType;
-  description?: string;
-  referenceImages?: string[];
-  preferences?: Record<string, unknown>;
-  status?: CustomizationStatus;
-}
+import type {
+  CustomizationTemplate,
+  CustomizationDesign,
+  CustomizationDesignLayer,
+  QuoteCalculationResponse,
+  PreviewResponse,
+  CreateFromDesignResponse,
+  PaymentResponse,
+  ProductionStatusResponse,
+  CustomizationRequest,
+  CustomizationQuote,
+  CreateCustomizationDto,
+  UpdateCustomizationDto,
+  CustomizationStatus,
+} from "../../types/customization";
 
 export const customizationApi = {
   // ==================== Templates ====================
 
   getTemplates: async (
     type?: string,
-  ): Promise<ApiResponse<any[]>> => {
+  ): Promise<ApiResponse<CustomizationTemplate[]>> => {
     const params: Record<string, string> = {};
-    if (type) {params.type = type;}
-    return apiClient.get<any[]>("/customization/templates", params);
+    if (type) { params.type = type; }
+    return apiClient.get<CustomizationTemplate[]>("/customization/templates", params);
   },
 
   // ==================== Designs ====================
@@ -80,8 +33,8 @@ export const customizationApi = {
   createDesign: async (
     templateId: string,
     canvasData: Record<string, unknown>,
-  ): Promise<ApiResponse<any>> => {
-    return apiClient.post<any>("/customization/designs", {
+  ): Promise<ApiResponse<CustomizationDesign>> => {
+    return apiClient.post<CustomizationDesign>("/customization/designs", {
       templateId,
       canvasData,
     });
@@ -91,23 +44,23 @@ export const customizationApi = {
     id: string,
     data: {
       canvasData: Record<string, unknown>;
-      layers?: any[];
+      layers?: CustomizationDesignLayer[];
     },
-  ): Promise<ApiResponse<any>> => {
-    return apiClient.put<any>(`/customization/designs/${id}`, data);
+  ): Promise<ApiResponse<CustomizationDesign>> => {
+    return apiClient.put<CustomizationDesign>(`/customization/designs/${id}`, data);
   },
 
   getDesign: async (
     id: string,
-  ): Promise<ApiResponse<any>> => {
-    return apiClient.get<any>(`/customization/designs/${id}`);
+  ): Promise<ApiResponse<CustomizationDesign>> => {
+    return apiClient.get<CustomizationDesign>(`/customization/designs/${id}`);
   },
 
   calculateQuote: async (
     designId: string,
     printSide: "front" | "back" | "both" = "front",
-  ): Promise<ApiResponse<any>> => {
-    return apiClient.post<any>(
+  ): Promise<ApiResponse<QuoteCalculationResponse>> => {
+    return apiClient.post<QuoteCalculationResponse>(
       `/customization/designs/${designId}/calculate-quote`,
       { printSide },
     );
@@ -124,8 +77,8 @@ export const customizationApi = {
   createFromDesign: async (
     designId: string,
     quoteId: string,
-  ): Promise<ApiResponse<any>> => {
-    return apiClient.post<any>("/customization/from-design", {
+  ): Promise<ApiResponse<CreateFromDesignResponse>> => {
+    return apiClient.post<CreateFromDesignResponse>("/customization/from-design", {
       designId,
       quoteId,
     });
@@ -209,8 +162,8 @@ export const customizationApi = {
   payForCustomization: async (
     requestId: string,
     paymentMethod: string,
-  ): Promise<ApiResponse<any>> => {
-    return apiClient.post<any>(
+  ): Promise<ApiResponse<PaymentResponse>> => {
+    return apiClient.post<PaymentResponse>(
       `/customization/${requestId}/pay`,
       { paymentMethod },
     );
@@ -218,16 +171,16 @@ export const customizationApi = {
 
   getProductionStatus: async (
     requestId: string,
-  ): Promise<ApiResponse<any>> => {
-    return apiClient.get<any>(
+  ): Promise<ApiResponse<ProductionStatusResponse>> => {
+    return apiClient.get<ProductionStatusResponse>(
       `/customization/${requestId}/production-status`,
     );
   },
 
   confirmDelivery: async (
     requestId: string,
-  ): Promise<ApiResponse<any>> => {
-    return apiClient.post<any>(
+  ): Promise<ApiResponse<CustomizationRequest>> => {
+    return apiClient.post<CustomizationRequest>(
       `/customization/${requestId}/confirm-delivery`,
     );
   },

@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
-import { IsString, IsOptional, IsDateString } from "class-validator";
+import { IsString, IsOptional, IsDateString, IsObject } from "class-validator";
 
 export class ScanStatisticsQueryDto {
   @ApiPropertyOptional({ description: "开始日期" })
@@ -16,6 +16,7 @@ export class ScanStatisticsQueryDto {
 export class ProductDataUpdateDto {
   @ApiPropertyOptional({ description: "尺码表 (JSON)" })
   @IsOptional()
+  @IsObject()
   sizeChart?: Record<string, unknown>;
 
   @ApiPropertyOptional({ description: "材质说明" })

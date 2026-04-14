@@ -21,13 +21,13 @@ jest.mock('@react-navigation/native', () => ({
     name: 'AiStylistChat',
     key: 'chat-key',
   }),
-  useFocusEffect: jest.fn((cb) => cb()),
+  useFocusEffect: jest.fn((cb: () => void) => cb()),
   useIsFocused: () => true,
 }));
 
 jest.mock('@/src/polyfills/expo-vector-icons', () => {
   const { Text } = require('react-native');
-  const createIcon = () => (props) => <Text {...props}>Icon</Text>;
+  const createIcon = () => (props: Record<string, unknown>) => <Text {...props}>Icon</Text>;
   return {
     Ionicons: createIcon(),
     MaterialCommunityIcons: createIcon(),
@@ -45,7 +45,7 @@ const mockFetchOutfitPlan = jest.fn().mockResolvedValue(undefined);
 const mockClearError = jest.fn();
 
 jest.mock('../../stores/aiStylistStore', () => ({
-  useAiStylistStore: jest.fn((selector) => {
+  useAiStylistStore: jest.fn((selector: Function) => {
     const state = {
       currentSessionId: null,
       isGenerating: false,
@@ -63,7 +63,7 @@ jest.mock('../../stores/aiStylistStore', () => ({
 const mockAddMessage = jest.fn();
 
 jest.mock('../../stores/aiStylistChatStore', () => ({
-  useAiStylistChatStore: jest.fn((selector) => {
+  useAiStylistChatStore: jest.fn((selector: Function) => {
     const state = {
       messages: [],
       addMessage: mockAddMessage,
@@ -166,7 +166,7 @@ describe('AiStylistChatScreen', () => {
 
   it('shows typing indicator when generating', () => {
     const { useAiStylistStore } = require('../../stores/aiStylistStore');
-    useAiStylistStore.mockImplementation((selector) => {
+    useAiStylistStore.mockImplementation((selector: Function) => {
       const state = {
         currentSessionId: 'session-123',
         isGenerating: true,
@@ -186,7 +186,7 @@ describe('AiStylistChatScreen', () => {
 
   it('shows error banner when error occurs', () => {
     const { useAiStylistStore } = require('../../stores/aiStylistStore');
-    useAiStylistStore.mockImplementation((selector) => {
+    useAiStylistStore.mockImplementation((selector: Function) => {
       const state = {
         currentSessionId: null,
         isGenerating: false,
@@ -206,7 +206,7 @@ describe('AiStylistChatScreen', () => {
 
   it('clears error when dismiss is pressed', () => {
     const { useAiStylistStore } = require('../../stores/aiStylistStore');
-    useAiStylistStore.mockImplementation((selector) => {
+    useAiStylistStore.mockImplementation((selector: Function) => {
       const state = {
         currentSessionId: null,
         isGenerating: false,
@@ -250,7 +250,7 @@ describe('AiStylistChatScreen', () => {
 
   it('disables send when generating', () => {
     const { useAiStylistStore } = require('../../stores/aiStylistStore');
-    useAiStylistStore.mockImplementation((selector) => {
+    useAiStylistStore.mockImplementation((selector: Function) => {
       const state = {
         currentSessionId: 'session-123',
         isGenerating: true,
@@ -283,7 +283,7 @@ describe('AiStylistChatScreen', () => {
   it('uses existing session when sessionId is provided', async () => {
     const { useAiStylistStore } = require('../../stores/aiStylistStore');
     const mockSetCurrentSessionId = jest.fn();
-    useAiStylistStore.mockImplementation((selector) => {
+    useAiStylistStore.mockImplementation((selector: Function) => {
       const state = {
         currentSessionId: 'existing-session',
         isGenerating: false,

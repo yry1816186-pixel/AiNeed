@@ -56,7 +56,7 @@ describe("Payment Flow E2E - 支付流程", () => {
     prisma = app.get(PrismaService);
 
     // 创建测试用户
-    const hashedPassword = await bcrypt.hash(testUser.password, 10);
+    const hashedPassword = await bcrypt.hash(testUser.password);
     const user = await prisma.user.create({
       data: {
         email: testUser.email,

@@ -1,6 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { mobileRuntimeConfig } from "../config/runtime";
 import EncryptedStorage from "react-native-encrypted-storage";
+import type { ChatMessage, ChatTypingPayload, ChatReadPayload } from "../types/chat";
 
 const WS_URL = mobileRuntimeConfig.apiUrl.replace(/\/api\/v1$/, "");
 
@@ -26,9 +27,9 @@ class WebSocketService {
   private chatSocket: Socket | null = null;
   private tryOnListeners: Map<string, Set<TryOnEventListener>> = new Map();
   private progressListeners: Map<string, Set<TryOnProgressListener>> = new Map();
-  private chatMessageListeners: Map<string, Set<(payload: any) => void>> = new Map();
-  private chatTypingListeners: Map<string, Set<(payload: any) => void>> = new Map();
-  private chatReadListeners: Map<string, Set<(payload: any) => void>> = new Map();
+  private chatMessageListeners: Map<string, Set<(payload: ChatMessage) => void>> = new Map();
+  private chatTypingListeners: Map<string, Set<(payload: ChatTypingPayload) => void>> = new Map();
+  private chatReadListeners: Map<string, Set<(payload: ChatReadPayload) => void>> = new Map();
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
 
@@ -129,7 +130,7 @@ class WebSocketService {
       reconnectionDelay: 1000,
     });
 
-    this.chatSocket.on("chat:message", (payload: any) => {
+    this.chatSocket.on("chat:message", (payload: ChatMessage) => {
       const roomId = payload.roomId;
       const listeners = this.chatMessageListeners.get(roomId);
       if (listeners) listeners.forEach((l) => l(payload));
@@ -137,13 +138,13 @@ class WebSocketService {
       if (wildcard) wildcard.forEach((l) => l(payload));
     });
 
-    this.chatSocket.on("chat:typing", (payload: any) => {
+    this.chatSocket.on("chat:typing", (payload: ChatTypingPayload) => {
       const roomId = payload.roomId;
       const listeners = this.chatTypingListeners.get(roomId);
       if (listeners) listeners.forEach((l) => l(payload));
     });
 
-    this.chatSocket.on("chat:read", (payload: any) => {
+    this.chatSocket.on("chat:read", (payload: ChatReadPayload) => {
       const roomId = payload.roomId;
       const listeners = this.chatReadListeners.get(roomId);
       if (listeners) listeners.forEach((l) => l(payload));
@@ -180,7 +181,7 @@ class WebSocketService {
     this.chatSocket?.emit("chat:read", { roomId, lastMessageId });
   }
 
-  onChatMessage(roomId: string, listener: (payload: any) => void): () => void {
+  onChatMessage(roomId: string, listener: (payload: ChatMessage) => void): () => void {
     if (!this.chatMessageListeners.has(roomId)) {
       this.chatMessageListeners.set(roomId, new Set());
     }
@@ -194,7 +195,7 @@ class WebSocketService {
     };
   }
 
-  onChatTyping(roomId: string, listener: (payload: any) => void): () => void {
+  onChatTyping(roomId: string, listener: (payload: ChatTypingPayload) => void): () => void {
     if (!this.chatTypingListeners.has(roomId)) {
       this.chatTypingListeners.set(roomId, new Set());
     }
@@ -208,7 +209,7 @@ class WebSocketService {
     };
   }
 
-  onChatRead(roomId: string, listener: (payload: any) => void): () => void {
+  onChatRead(roomId: string, listener: (payload: ChatReadPayload) => void): () => void {
     if (!this.chatReadListeners.has(roomId)) {
       this.chatReadListeners.set(roomId, new Set());
     }

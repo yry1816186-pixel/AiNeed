@@ -51,12 +51,12 @@ export class EnvironmentConfig {
   REDIS_PASSWORD?: string;
 
   @IsString()
-  @MinLength(32)
+  @MinLength(64)
   JWT_SECRET: string = '';
 
   @IsOptional()
   @IsString()
-  @MinLength(32)
+  @MinLength(64)
   JWT_REFRESH_SECRET?: string;
 
   @IsOptional()
@@ -120,7 +120,7 @@ export class EnvironmentConfig {
 
   @IsOptional()
   @IsString()
-  CATVTON_ENDPOINT?: string;
+  VIRTUAL_TRYON_URL?: string;
 
   @IsOptional()
   @IsString()

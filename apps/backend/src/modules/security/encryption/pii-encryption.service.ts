@@ -5,7 +5,7 @@ import { EncryptionService } from "../../../common/encryption/encryption.service
 import { UserKeyService } from "../../../common/security/user-key.service";
 
 export const PII_FIELDS: Record<string, readonly string[]> = {
-  User: ["phone", "realName", "idNumber"] as const,
+  User: ["phone", "realName", "idNumber", "email", "wechatOpenId", "wechatUnionId", "birthDate"] as const,
   UserAddress: ["phone", "address", "name"] as const,
   OrderAddress: ["phone", "address", "name"] as const,
   Brand: ["contactEmail", "contactPhone"] as const,

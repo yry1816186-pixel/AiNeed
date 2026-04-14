@@ -202,8 +202,14 @@ class PushNotificationService {
    * Try to get Firebase messaging module.
    * Returns null if not available (e.g., not configured in dev).
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private getFirebaseMessaging(): any {
+  private getFirebaseMessaging(): {
+    getToken: () => Promise<string>;
+    requestPermission: () => Promise<number>;
+    AuthorizationStatus: { AUTHORIZED: number; PROVISIONAL: number };
+    onMessage: (cb: (msg: Record<string, unknown>) => void) => () => void;
+    onNotificationOpenedApp: (cb: (msg: Record<string, unknown>) => void) => () => void;
+    getInitialNotification: () => Promise<Record<string, unknown> | null>;
+  } | null {
     try {
       // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
       const messaging = require("@react-native-firebase/messaging").default;

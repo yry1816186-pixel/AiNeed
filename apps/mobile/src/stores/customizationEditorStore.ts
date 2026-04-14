@@ -1,52 +1,21 @@
 import { create } from "zustand";
 
 import customizationApi from "../services/api/customization.api";
+import type {
+  CustomizationTemplate as ApiTemplate,
+  CustomizationDesign,
+  CustomizationDesignLayer,
+  ProductTemplateType,
+  QuoteCalculationResponse,
+  PreviewResponse,
+  CreateFromDesignResponse,
+} from "../types/customization";
+
+export type { PrintableAreaBounds } from "../types/customization";
+export type DesignLayer = Omit<CustomizationDesignLayer, "designId">;
+export type Template = ApiTemplate;
 
 // ==================== Types ====================
-
-export interface PrintableAreaBounds {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  maxWidth: number;
-  maxHeight: number;
-}
-
-export interface Template {
-  id: string;
-  type: string;
-  name: string;
-  description?: string;
-  imageUrl: string;
-  basePrice: number;
-  printableArea: PrintableAreaBounds;
-}
-
-export interface DesignLayer {
-  id: string;
-  type: "image" | "text" | "shape";
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  scale: number;
-  rotation: number;
-  opacity: number;
-  zIndex: number;
-  content: string;
-  // Text-specific
-  fontSize?: number;
-  color?: string;
-  fontFamily?: string;
-  // Image-specific
-  imageUrl?: string;
-  // Shape-specific
-  shapeType?: string;
-  fillColor?: string;
-  strokeColor?: string;
-  strokeWidth?: number;
-}
 
 interface EditorState {
   selectedTemplate: Template | null;
@@ -72,7 +41,7 @@ interface EditorState {
 }
 
 interface EditorActions {
-  loadTemplates: (type?: string) => Promise<void>;
+  loadTemplates: (type?: ProductTemplateType) => Promise<void>;
   selectTemplate: (template: Template) => void;
   addImageLayer: (imageUri: string, width: number, height: number) => void;
   addTextLayer: (text: string, fontSize?: number, color?: string) => void;
@@ -115,12 +84,12 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>(
   (set, get) => ({
     ...initialState,
 
-    loadTemplates: async (type?: string) => {
+    loadTemplates: async (type?: ProductTemplateType) => {
       set({ isLoadingTemplates: true });
       try {
         const response = await customizationApi.getTemplates(type);
         if (response.success && response.data) {
-          set({ templates: response.data as unknown as Template[] });
+          set({ templates: response.data as Template[] });
         }
       } catch {
         // silently handle
@@ -256,7 +225,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>(
         if (state.designId) {
           await customizationApi.updateDesign(state.designId, {
             canvasData,
-            layers: state.designLayers,
+            layers: state.designLayers.map(layer => ({ ...layer, designId: state.designId ?? "" })) as CustomizationDesignLayer[],
           });
         } else {
           const response = await customizationApi.createDesign(
@@ -264,7 +233,8 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>(
             canvasData,
           );
           if (response.success && response.data) {
-            set({ designId: (response.data as any).id });
+            const design = response.data as CustomizationDesign;
+            set({ designId: design.id });
           }
         }
       } catch {
@@ -287,7 +257,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>(
           printSide,
         );
         if (response.success && response.data) {
-          const data = response.data as any;
+          const data = response.data as QuoteCalculationResponse;
           set({
             quote: {
               basePrice: data.pricing?.basePrice ?? 0,
@@ -316,7 +286,8 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>(
       try {
         const response = await customizationApi.generatePreview(state.designId);
         if (response.success && response.data) {
-          set({ previewUrl: (response.data as any).previewUrl });
+          const previewData = response.data as PreviewResponse;
+          set({ previewUrl: previewData.previewUrl });
         }
       } catch {
         // handle error
@@ -336,7 +307,8 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>(
           quoteId,
         );
         if (response.success && response.data) {
-          return (response.data as any).id;
+          const result = response.data as CreateFromDesignResponse;
+          return result.id;
         }
         return null;
       } catch {

@@ -8,7 +8,7 @@ import {
   UseGuards,
   Req,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { StockNotificationService } from "./stock-notification.service";

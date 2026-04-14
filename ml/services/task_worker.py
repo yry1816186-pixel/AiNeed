@@ -272,29 +272,21 @@ class TaskWorker:
         }
 
     async def _handle_virtual_tryon(self, task: Dict) -> Dict:
-        """Handle virtual try-on task."""
-        import aiohttp
+        """Handle virtual try-on task using GLM multimodal API."""
         import base64
         from pathlib import Path
 
         user_photo_url = task.get("userPhotoUrl")
         clothing_image_url = task.get("clothingImageUrl")
         category = task.get("category", "upper_body")
-        user_photo_base64 = task.get("userPhotoBase64")  # Support base64 directly
+        user_photo_base64 = task.get("userPhotoBase64")
         clothing_image_base64 = task.get("clothingImageBase64")
-
-        # IDM-VTON service configuration
-        # TODO: Replace IDM-VTON with GLM multimodal API for virtual try-on
-        idm_vton_url = os.getenv("IDM_VTON_URL", "http://localhost:8001")
-        idm_vton_timeout = int(os.getenv("IDM_VTON_TIMEOUT", "120"))
 
         await self._report_progress(
             task["jobId"], task["userId"], 10, "downloading_images", "Downloading images"
         )
 
-        # Download or prepare images
         try:
-            # Get user photo
             if user_photo_base64:
                 person_image = user_photo_base64
                 if not person_image.startswith("data:image"):
@@ -304,7 +296,6 @@ class TaskWorker:
             else:
                 raise ValueError("No user photo provided (userPhotoUrl or userPhotoBase64 required)")
 
-            # Get clothing image
             if clothing_image_base64:
                 garment_image = clothing_image_base64
                 if not garment_image.startswith("data:image"):
@@ -319,47 +310,31 @@ class TaskWorker:
             raise ValueError(f"Image download failed: {str(e)}")
 
         await self._report_progress(
-            task["jobId"], task["userId"], 30, "loading_model", "Loading try-on model"
+            task["jobId"], task["userId"], 30, "processing", "Running virtual try-on via GLM API"
         )
 
-        # Check IDM-VTON service availability
         try:
-            async with aiohttp.ClientSession() as session:
-                status_url = f"{idm_vton_url}/status"
-                async with session.get(status_url, timeout=aiohttp.ClientTimeout(total=5)) as resp:
-                    if resp.status == 200:
-                        status_data = await resp.json()
-                        if not status_data.get("model_loaded", False):
-                            logger.warning(f"IDM-VTON model not loaded: {status_data.get('missing_components', [])}")
-                    else:
-                        logger.warning(f"IDM-VTON status check failed: {resp.status}")
-        except Exception as e:
-            logger.warning(f"Could not check IDM-VTON status: {e}")
+            from services.virtual_tryon_service import virtual_tryon_service
 
-        await self._report_progress(
-            task["jobId"], task["userId"], 50, "processing", "Running virtual try-on"
-        )
-
-        # Call IDM-VTON inference service
-        try:
-            result_image, processing_time = await self._call_idm_vton_inference(
-                idm_vton_url=idm_vton_url,
+            result = await virtual_tryon_service.generate_tryon(
                 person_image=person_image,
                 garment_image=garment_image,
                 category=category,
-                timeout=idm_vton_timeout,
-                job_id=task["jobId"],
-                user_id=task["userId"]
             )
-            provider = "idm-vton"
-            logger.info(f"IDM-VTON inference completed in {processing_time:.2f}s")
+
+            if result.get("success"):
+                result_url = result.get("result_url", "")
+                processing_time = result.get("processing_time", 0)
+                provider = result.get("provider", "glm-tryon")
+                logger.info(f"GLM virtual try-on completed in {processing_time:.2f}s")
+            else:
+                raise Exception(result.get("error", "GLM try-on failed"))
 
         except Exception as e:
-            logger.error(f"IDM-VTON inference failed: {e}")
-            # Fall back to mock result if IDM-VTON is unavailable
+            logger.error(f"GLM virtual try-on failed: {e}")
             logger.warning("Falling back to mock try-on result")
-            await asyncio.sleep(2)  # Simulate processing time
-            result_image = None
+            await asyncio.sleep(2)
+            result_url = ""
             processing_time = 2.0
             provider = "mock"
 
@@ -367,12 +342,12 @@ class TaskWorker:
             task["jobId"], task["userId"], 90, "uploading_result", "Uploading result"
         )
 
-        # Upload result to storage
-        result_url = await self._upload_tryon_result(
-            result_image=result_image,
-            job_id=task["jobId"],
-            user_id=task["userId"]
-        )
+        if not result_url:
+            result_url = await self._upload_tryon_result(
+                result_image=None,
+                job_id=task["jobId"],
+                user_id=task["userId"]
+            )
 
         await self._report_progress(
             task["jobId"], task["userId"], 100, "completed", "Try-on complete"
@@ -400,56 +375,6 @@ class TaskWorker:
                 # Detect content type
                 content_type = resp.headers.get("Content-Type", "image/png")
                 return f"data:{content_type};base64,{image_base64}"
-
-    async def _call_idm_vton_inference(
-        self,
-        idm_vton_url: str,
-        person_image: str,
-        garment_image: str,
-        category: str,
-        timeout: int,
-        job_id: str,
-        user_id: str
-    ) -> tuple:
-        """Call IDM-VTON inference service."""
-        import aiohttp
-
-        inference_url = f"{idm_vton_url}/inference"
-
-        payload = {
-            "person_image": person_image,
-            "garment_image": garment_image,
-            "category": category,
-            "denoise_steps": 30,
-            "seed": -1,
-            "guidance_scale": 2.5,
-            "cloth_type": "upper" if category == "upper_body" else "lower"
-        }
-
-        await self._report_progress(
-            job_id, user_id, 60, "inference", "Processing virtual try-on with IDM-VTON"
-        )
-
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                inference_url,
-                json=payload,
-                timeout=aiohttp.ClientTimeout(total=timeout)
-            ) as resp:
-                if resp.status != 200:
-                    error_text = await resp.text()
-                    raise Exception(f"IDM-VTON inference failed: HTTP {resp.status} - {error_text}")
-
-                result = await resp.json()
-
-        result_image = result.get("result_image")
-        processing_time = result.get("processing_time", 0)
-
-        await self._report_progress(
-            job_id, user_id, 80, "postprocessing", "Processing result image"
-        )
-
-        return result_image, processing_time
 
     async def _upload_tryon_result(
         self,

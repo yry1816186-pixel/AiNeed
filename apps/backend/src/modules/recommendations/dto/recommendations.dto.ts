@@ -243,19 +243,41 @@ export class GetFeedDto {
 }
 
 export class FeedItemDto {
+  @ApiProperty({ description: "商品ID" })
   id!: string;
+
+  @ApiProperty({ description: "主图URL" })
   mainImage!: string;
+
+  @ApiPropertyOptional({ description: "品牌信息", type: Object })
   brand!: { id: string; name: string } | null;
+
+  @ApiProperty({ description: "价格" })
   price!: number;
+
+  @ApiPropertyOptional({ description: "原价" })
   originalPrice?: number;
+
+  @ApiProperty({ description: "风格标签", type: [String] })
   styleTags!: string[];
+
+  @ApiProperty({ description: "色彩和谐度", type: Object })
   colorHarmony!: { score: number; colors: string[] };
+
+  @ApiProperty({ description: "推荐理由" })
   matchReason!: string;
+
+  @ApiProperty({ description: "分类" })
   category!: string;
 }
 
 export class FeedResponseDto {
+  @ApiProperty({ description: "Feed项目列表", type: [FeedItemDto] })
   items!: FeedItemDto[];
+
+  @ApiProperty({ description: "总数" })
   total!: number;
+
+  @ApiProperty({ description: "是否有更多" })
   hasMore!: boolean;
 }

@@ -126,7 +126,7 @@ cd apps/mobile && npx react-native run-android
 ## 已知问题
 
 - TypeScript errors: `imagePicker.ts` (includeExif), `user-key.service.ts` (encryptionKeySalt)
-- TryOn 服务仍引用 CatVTON，需改为 GLM API
+- TryOn 服务已迁移至 GLM API（CatVTON/IDM-VTON 已移除）
 - 后端 `any` 类型约 226 处，移动端约 105 处
 - 测试覆盖率低 (后端 ~15%，移动端 ~5%)
 - `react-native-screens 4.4.0`, `reanimated 3.16.7`, `svg 15.8.0` 不能升级

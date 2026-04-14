@@ -38,6 +38,10 @@ ENV
 *.swp
 *.swo
 
+# GSD / Planning
+.planning
+.trae
+
 # Logs
 logs
 *.log

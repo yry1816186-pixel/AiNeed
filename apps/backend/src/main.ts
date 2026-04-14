@@ -37,7 +37,26 @@ async function bootstrap() {
   });
 
   // 安全中间件
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", "data:", "blob:"],
+          connectSrc: ["'self'", "ws://localhost:8081"],
+          fontSrc: ["'self'"],
+          objectSrc: ["'none'"],
+          upgradeInsecureRequests: [],
+        },
+      },
+      crossOriginResourcePolicy: { policy: "same-site" },
+      crossOriginOpenerPolicy: { policy: "same-origin" },
+      crossOriginEmbedderPolicy: { policy: "require-corp" },
+      referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    }),
+  );
 
   // 响应压缩
   app.use(

@@ -9,6 +9,7 @@ import {
   Min,
   Max,
   ValidateNested,
+  IsObject,
 } from 'class-validator';
 
 export class UserProfileDto {
@@ -96,6 +97,7 @@ export class CreateRecommendationDto {
 
   @ApiPropertyOptional({ description: 'User profile for personalization' })
   @IsOptional()
+  @IsObject()
   userProfile?: Record<string, any>;
 
   @ApiPropertyOptional({ description: 'Occasion filter' })

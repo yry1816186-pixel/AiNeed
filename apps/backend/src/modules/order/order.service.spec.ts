@@ -8,39 +8,95 @@ import { PaymentService } from "../payment/payment.service";
 
 import { OrderService } from "./order.service";
 
+interface MockMethod {
+  mockResolvedValue: jest.Mock;
+  mockReturnValue: jest.Mock;
+  toHaveBeenCalledWith: (...args: unknown[]) => boolean;
+  toHaveBeenCalled: () => boolean;
+}
+
+interface MockModel {
+  findFirst: jest.Mock;
+  findUnique: jest.Mock;
+  findMany: jest.Mock;
+  create: jest.Mock;
+  update: jest.Mock;
+  updateMany: jest.Mock;
+  count: jest.Mock;
+  deleteMany: jest.Mock;
+}
+
+interface MockPrisma {
+  userAddress: MockModel;
+  clothingItem: MockModel;
+  order: MockModel;
+  orderItem: MockModel;
+  cartItem: MockModel;
+  $transaction: jest.Mock;
+}
+
 describe("OrderService", () => {
   let service: OrderService;
   let prisma: PrismaService;
 
-  const mockPrismaService: any = {};
-
-  Object.assign(mockPrismaService, {
+  const mockPrismaService: MockPrisma = {
     userAddress: {
       findFirst: jest.fn(),
-    },
-    clothingItem: {
       findUnique: jest.fn(),
       findMany: jest.fn(),
-      updateMany: jest.fn().mockResolvedValue({ count: 1 }),
-    },
-    order: {
       create: jest.fn(),
-      findMany: jest.fn(),
-      findFirst: jest.fn(),
-      findUnique: jest.fn(),
-      count: jest.fn(),
       update: jest.fn(),
-    },
-    orderItem: {
-      create: jest.fn(),
-    },
-    cartItem: {
+      updateMany: jest.fn(),
+      count: jest.fn(),
       deleteMany: jest.fn(),
     },
-    $transaction: jest.fn((fn: (tx: typeof mockPrismaService) => unknown) =>
-      fn(mockPrismaService),
-    ),
-  });
+    clothingItem: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+      count: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    order: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      updateMany: jest.fn(),
+      count: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    orderItem: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      updateMany: jest.fn(),
+      count: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    cartItem: {
+      findFirst: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      updateMany: jest.fn(),
+      count: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    $transaction: jest.fn((arg: unknown): unknown => {
+      if (typeof arg === "function") {
+        return arg(mockPrismaService);
+      }
+      return Promise.all(arg as Promise<unknown>[]);
+    }),
+  };
 
   const mockPaymentService = {
     createPayment: jest.fn(),

@@ -13,6 +13,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useConsultantStore } from "../../stores/consultantStore";
 import { ConsultantCard } from "../../components/consultant/ConsultantCard";
 import { ServiceTypeChip } from "../../components/consultant/ServiceTypeChip";
+import type { ServiceType } from "../../types/consultant";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -37,7 +38,7 @@ export const AdvisorListScreen: React.FC = () => {
 
   const [selectedFilter, setSelectedFilter] = useState("");
   const [showMatchSheet, setShowMatchSheet] = useState(false);
-  const [matchServiceType, setMatchServiceType] = useState("styling_consultation");
+  const [matchServiceType, setMatchServiceType] = useState<ServiceType>("styling_consultation");
   const [matchNotes, setMatchNotes] = useState("");
   const [matchResultsView, setMatchResultsView] = useState(false);
 
@@ -163,7 +164,7 @@ export const AdvisorListScreen: React.FC = () => {
                   key={type.value}
                   label={type.label}
                   selected={matchServiceType === type.value}
-                  onPress={() => setMatchServiceType(type.value)}
+                  onPress={() => setMatchServiceType(type.value as ServiceType)}
                 />
               ))}
             </ScrollView>

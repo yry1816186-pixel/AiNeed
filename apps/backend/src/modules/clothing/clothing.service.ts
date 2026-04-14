@@ -536,8 +536,10 @@ export class ClothingService {
       isActive: true,
       isDeleted: false,
       subcategory: { not: null },
-      ...(category ? { category } : {}),
     };
+    if (category) {
+      whereForCount.category = category as ClothingCategory;
+    }
 
     const counts = await this.prisma.clothingItem.groupBy({
       by: ['category', 'subcategory'],

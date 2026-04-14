@@ -159,6 +159,7 @@ export class UsersController {
   }
 
   @Post("me/avatar/upload")
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(FileInterceptor("file"))
   @ApiConsumes("multipart/form-data")
   @ApiOperation({

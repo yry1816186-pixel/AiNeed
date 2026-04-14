@@ -5,7 +5,7 @@ interface UseFeatureFlagOptions {
   key: string;
   defaultValue?: boolean;
   userId?: string;
-  attributes?: Record<string, any>;
+  attributes?: Record<string, unknown>;
 }
 
 interface UseFeatureFlagReturn {

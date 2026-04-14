@@ -31,8 +31,8 @@ import {
 import { MerchantAuthGuard } from "./guards/merchant-auth.guard";
 import { MerchantService } from "./merchant.service";
 
-@ApiTags("merchant")
-@Controller("merchant")
+@ApiTags("merchants")
+@Controller("merchants")
 export class MerchantController {
   constructor(private readonly merchantService: MerchantService) {}
 

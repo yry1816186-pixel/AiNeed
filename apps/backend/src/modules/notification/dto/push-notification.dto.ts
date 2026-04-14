@@ -1,4 +1,4 @@
-import { IsString, IsEnum, IsOptional, IsArray, MaxLength } from "class-validator";
+import { IsString, IsEnum, IsOptional, IsArray, MaxLength, IsObject } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export enum PushPlatform {
@@ -45,6 +45,7 @@ export class SendPushDto {
 
   @ApiPropertyOptional({ description: "Additional data payload" })
   @IsOptional()
+  @IsObject()
   data?: Record<string, unknown>;
 
   @ApiPropertyOptional({ description: "Notification category" })

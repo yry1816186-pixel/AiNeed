@@ -225,22 +225,29 @@ const createTheme = (mode: "light" | "dark", accent: AccentColor): Theme => {
   const accentConfig = accentColors[accent];
   const baseColors = mode === "light" ? lightColors : darkColors;
 
+  // Brand primary is always Terracotta (#C67B5C). Accent is a secondary emphasis color.
+  const brandPrimary = "#C67B5C";
+  const brandPrimaryLight = "#E2A782";
+  const brandPrimaryDark = "#A65E3F";
+
   const colors: ThemeColors = {
-    primary: accentConfig.primary,
-    primaryLight: accentConfig.light,
-    primaryDark: accentConfig.dark,
+    primary: brandPrimary,
+    primaryLight: brandPrimaryLight,
+    primaryDark: brandPrimaryDark,
     ...baseColors,
+    // Override secondary with the user-chosen accent color
+    secondary: accentConfig.primary,
   };
 
   return {
     mode,
     colors,
     gradients: {
-      primary: [accentConfig.primary, accentConfig.dark],
+      primary: [brandPrimary, brandPrimaryDark],
       secondary: [accentConfig.light, accentConfig.primary],
       warm: ["#F59E0B", "#EF4444", "#EC4899"],
       cool: ["#3B82F6", "#8B5CF6", "#EC4899"],
-      hero: [accentConfig.primary, accentConfig.dark],
+      hero: [brandPrimary, brandPrimaryDark],
       card: mode === "light" ? ["#FFFFFF", "#FAFAFA"] : ["#1A1A1A", "#0F0F0F"],
     },
     spacing: Spacing,
@@ -416,7 +423,7 @@ export const ThemedText: React.FC<ThemedTextProps> = ({
     primary: theme.colors.text,
     secondary: theme.colors.textSecondary,
     tertiary: theme.colors.textTertiary,
-    accent: theme.colors.primary,
+    accent: theme.colors.secondary,
     error: theme.colors.error,
     success: theme.colors.success,
   }[variant];
@@ -543,7 +550,7 @@ export const AccentColorPicker: React.FC<AccentColorPickerProps> = ({
   return (
     <View style={[styles.accentPicker, style]}>
       <Text style={[styles.pickerTitle, { color: theme.colors.text }]}>
-        主题色
+        辅助强调色
       </Text>
       <View style={styles.colorOptions}>
         {colorOptions.map((color) => (

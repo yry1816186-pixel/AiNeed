@@ -440,7 +440,7 @@ async def get_models_status():
 
     # 检查模型目录
     models_dir = Path(__file__).parent.parent / "models"
-    expected_models = ["clip", "yolo", "idm-vton"]
+    expected_models = ["clip", "yolo"]
 
     for model_name in expected_models:
         model_path = models_dir / model_name

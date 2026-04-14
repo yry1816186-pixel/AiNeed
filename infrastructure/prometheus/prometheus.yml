@@ -1,4 +1,4 @@
-﻿# ============================================================
+# ============================================================
 # xuno 平台 Prometheus 主配置文件
 # AI 驱动的私人形象定制平台 - 指标采集与告警配置
 # ============================================================
@@ -100,18 +100,18 @@ scrape_configs:
           tier: 'application'
 
   # ----------------------------------------------------------
-  # CatVTON 虚拟试衣服务
-  # 容器名: stylemind-catvton
+  # GLM Virtual Try-On Service (via ai-service)
+  # 容器名: stylemind-ai
   # 指标端点: /metrics
-  # 关键指标: 试衣请求量、完成率、处理时长、GPU 显存
+  # 关键指标: 试衣请求量、完成率、处理时长
   # ----------------------------------------------------------
-  - job_name: 'catvton'
+  - job_name: 'glm-tryon'
     scrape_interval: 15s
     metrics_path: '/metrics'
     static_configs:
-      - targets: ['catvton:8001']
+      - targets: ['ai-service:8002']
         labels:
-          service: 'stylemind-catvton'
+          service: 'stylemind-ai'
           team: 'ai'
           env: 'production'
           tier: 'application'

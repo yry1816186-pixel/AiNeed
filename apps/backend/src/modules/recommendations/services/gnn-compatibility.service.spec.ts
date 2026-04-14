@@ -303,8 +303,8 @@ describe("GNNCompatibilityService", () => {
       ]);
 
       expect(results).toHaveLength(2);
-      expect(results[0].score).toBeGreaterThan(0);
-      expect(results[1].score).toBe(0.5); // default for missing node
+      expect(results[0]?.score).toBeGreaterThan(0);
+      expect(results[1]?.score).toBe(0.5);
     });
   });
 
@@ -429,7 +429,11 @@ describe("GNNCompatibilityService", () => {
       expect(recs.length).toBeGreaterThan(0);
       // Sorted by score descending
       for (let i = 1; i < recs.length; i++) {
-        expect(recs[i - 1].score).toBeGreaterThanOrEqual(recs[i].score);
+        const prev = recs[i - 1];
+        const curr = recs[i];
+        if (prev && curr) {
+          expect(prev.score).toBeGreaterThanOrEqual(curr.score);
+        }
       }
     });
   });

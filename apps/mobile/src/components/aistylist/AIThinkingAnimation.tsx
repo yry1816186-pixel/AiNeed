@@ -14,6 +14,7 @@ import Animated, {
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { DesignTokens } from '../../theme/tokens/design-tokens';
+import { theme } from '../../theme';
 
 const TERRACOTTA = DesignTokens.colors.brand.terracotta; // #C67B5C
 const CAMEL = DesignTokens.colors.brand.camel;           // #B5A08C
@@ -65,7 +66,7 @@ const r = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -260,7 +261,7 @@ const s = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 12,

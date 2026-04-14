@@ -14,6 +14,7 @@ import { useConsultantStore } from "../../stores/consultantStore";
 import { CalendarGrid } from "../../components/consultant/CalendarGrid";
 import { TimeSlotItem } from "../../components/consultant/TimeSlotItem";
 import { ServiceTypeChip } from "../../components/consultant/ServiceTypeChip";
+import type { ServiceType } from "../../types/consultant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SERVICE_TYPES = [
@@ -32,7 +33,7 @@ export const BookingScreen: React.FC = () => {
 
   const { consultantId, consultant } = route.params || {};
 
-  const [selectedServiceType, setSelectedServiceType] = useState("styling_consultation");
+  const [selectedServiceType, setSelectedServiceType] = useState<ServiceType>("styling_consultation");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<any>(null);
   const [notes, setNotes] = useState("");
@@ -101,7 +102,7 @@ export const BookingScreen: React.FC = () => {
               key={type.value}
               label={type.label}
               selected={selectedServiceType === type.value}
-              onPress={() => setSelectedServiceType(type.value)}
+              onPress={() => setSelectedServiceType(type.value as ServiceType)}
             />
           ))}
         </View>
