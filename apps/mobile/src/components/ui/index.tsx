@@ -1,18 +1,21 @@
 // UI Component Index - Single source of truth
 // All components are re-exported from their dedicated files.
 // No inline implementations allowed in this file.
+// Overlapping components with primitives/ are re-exported from primitives/ to avoid duplication.
 
-// ─── Core UI Components ───────────────────────────────────────────────
+// ─── Core UI Components (from primitives/) ────────────────────────────
 export { ThemeProvider, lightTheme, darkTheme } from "./PaperThemeProvider";
 
-export { Button } from "./Button";
-export type { ButtonProps, ButtonVariant, ButtonSize } from "./Button";
+export { Button, IconButton } from "../primitives/Button";
+export type { ButtonProps, ButtonVariant, ButtonSize } from "../primitives/Button";
 
-export { Input, SearchInput } from "./Input";
-export type { InputProps, SearchInputProps, InputVariant, InputSize } from "./Input";
+export { Input, SearchInput } from "../primitives/Input";
+export type { InputProps, SearchInputProps, InputVariant, InputSize } from "../primitives/Input";
 
-export { Card } from "./Card";
-export type { CardProps, CardVariant, CardPadding } from "./Card";
+export { Card, ProductCard } from "../primitives/Card";
+export type { CardProps, CardVariant, CardPadding, ProductCardProps } from "../primitives/Card";
+
+export { EmptyState, EmptyCart, EmptyFavorites, EmptyOrders, EmptySearch, EmptyNotifications, EmptyWardrobe } from "../primitives/EmptyState";
 
 export { Badge, SeasonBadge } from "./Badge";
 export type { BadgeProps, SeasonBadgeProps, BadgeVariant, BadgeSize, ColorSeasonKey } from "./Badge";
@@ -29,7 +32,8 @@ export { LoadingSpinner as Loading } from "./LoadingSpinner";
 export { Rating, RatingBadge } from "./Rating";
 export type { RatingProps, RatingBadgeProps } from "./Rating";
 
-export { ProductGrid, HorizontalProductList, ProductCard } from "./ProductGrid";
+export { ProductGrid, HorizontalProductList } from "./ProductGrid";
+export { ProductCard as ProductGridCard } from "./ProductGrid";
 export type { Product } from "./ProductGrid";
 
 export {
@@ -48,9 +52,6 @@ export {
   CardSkeleton,
 } from "./Skeleton";
 export type { SkeletonProps, CircleSkeletonProps, TextSkeletonProps, CardSkeletonProps } from "./Skeleton";
-
-export { EmptyState } from "./EmptyState";
-export type { EmptyStateProps } from "./EmptyState";
 
 export { Tag } from "./Tag";
 export type { TagProps } from "./Tag";
