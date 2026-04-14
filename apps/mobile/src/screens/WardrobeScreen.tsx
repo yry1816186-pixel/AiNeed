@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Image,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -24,6 +25,7 @@ import {
   CATEGORY_LABELS,
 } from '../types/clothing';
 import type { RootStackParamList } from '../types/navigation';
+import { ImportSheet } from '../components/wardrobe/ImportSheet';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -107,6 +109,7 @@ export const WardrobeScreen: React.FC = () => {
   >(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [showImportSheet, setShowImportSheet] = useState(false);
 
   const fetchStats = useCallback(async () => {
     try {
@@ -359,14 +362,24 @@ export const WardrobeScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>我的衣橱</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => navigation.navigate('AddClothing', {})}
-          accessibilityLabel="Add clothing"
-          accessibilityRole="button"
-        >
-          <Ionicons name="add" size={24} color={theme.colors.surface} />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            style={styles.importButton}
+            onPress={() => setShowImportSheet(true)}
+            accessibilityLabel="Import to wardrobe"
+            accessibilityRole="button"
+          >
+            <Ionicons name="download-outline" size={22} color={theme.colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => navigation.navigate('AddClothing', {})}
+            accessibilityLabel="Add clothing"
+            accessibilityRole="button"
+          >
+            <Ionicons name="add" size={24} color={theme.colors.surface} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.statsRow}>
@@ -452,6 +465,12 @@ export const WardrobeScreen: React.FC = () => {
       </ScrollView>
 
       {content}
+
+      <ImportSheet
+        visible={showImportSheet}
+        onClose={() => setShowImportSheet(false)}
+        onImported={() => initialLoad()}
+      />
     </SafeAreaView>
   );
 };
@@ -477,6 +496,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: theme.colors.text,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
+  importButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: theme.colors.background,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   addButton: {
     width: 40,

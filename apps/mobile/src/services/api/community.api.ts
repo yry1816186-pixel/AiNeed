@@ -512,4 +512,18 @@ export const communityApi = {
       data,
     );
   },
+
+  async getUserProfile(userId: string): Promise<ApiResponse<{
+    id: string;
+    nickname: string;
+    avatar: string | null;
+    bio: string;
+    bloggerLevel?: string | null;
+    followersCount: number;
+    followingCount: number;
+    postsCount: number;
+    isFollowing: boolean;
+  }>> {
+    return apiClient.get(`/community/users/${userId}/profile`);
+  },
 };
