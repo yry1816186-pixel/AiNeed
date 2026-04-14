@@ -133,7 +133,7 @@ export class BloggerProductService {
       meta: {
         total,
         hasMore: items.length === (query.limit ?? 20),
-        nextCursor: items.length > 0 ? items[items.length - 1].id : undefined,
+        nextCursor: items.length > 0 ? items[items.length - 1]!.id : undefined,
       },
     };
   }

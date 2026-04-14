@@ -2,7 +2,7 @@ import {
   Injectable,
   Logger,
 } from "@nestjs/common";
-import { BehaviorEventType, InteractionWeight } from "@prisma/client";
+import { BehaviorEventType } from "@prisma/client";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
 import { RecommendationCacheService } from "./recommendation-cache.service";
@@ -74,12 +74,13 @@ export class BehaviorTrackingService {
       await this.prisma.userBehaviorEvent.create({
         data: {
           userId,
-          itemId: clothingId,
-          action: action as InteractionWeight,
-          value: rawValue,
-          rawValue,
-          context: context || undefined,
-          itemType: "clothing",
+          sessionId: "default",
+          eventType: "view" as BehaviorEventType,
+          category: "clothing",
+          action: action,
+          targetType: "clothing",
+          targetId: clothingId,
+          metadata: { value: rawValue, context: context || undefined },
         },
       });
     } catch (error) {
@@ -262,9 +263,9 @@ export class BehaviorTrackingService {
     });
 
     return events.map((event) => ({
-      itemId: event.itemId || "",
+      itemId: event.targetId || "",
       action: event.action || "view",
-      value: (event.rawValue || 1) * this.calculateTimeDecay(event.createdAt),
+      value: ((event.metadata as Record<string, number> | null)?.value ?? 1) * this.calculateTimeDecay(event.createdAt),
     }));
   }
 

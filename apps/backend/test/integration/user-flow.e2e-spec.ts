@@ -170,7 +170,7 @@ describe("User Flow E2E - 完整用户流程", () => {
 
       expect(response.body.bodyType).toBe(BodyType.hourglass);
       expect(response.body.skinTone).toBe(SkinTone.medium);
-      expect(response.body.colorSeason).toBe(ColorSeason.autumn);
+      expect(response.body.colorSeason).toBe(ColorSeason.autumn_warm);
       expect(response.body.height).toBe(165);
       expect(response.body.weight).toBe(55);
     });

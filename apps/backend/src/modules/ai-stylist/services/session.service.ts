@@ -390,7 +390,7 @@ export class AiStylistSessionService {
     }
 
     try {
-      const session = JSON.parse(record.value) as StylistSession;
+      const session = JSON.parse(record.value as string) as StylistSession;
       if (
         session.userId !== userId ||
         session.id !== sessionId ||

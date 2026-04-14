@@ -25,6 +25,7 @@ import { REDIS_CLIENT } from '../../common/redis/redis.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { EventBusService } from '../ws/services/event-bus.service';
 import { ChatService } from './chat.service';
+import { SenderTypeDto, MessageTypeDto } from './dto/chat.dto';
 import {
   CHAT_EVENTS,
   ChatMessageCreatedPayload,
@@ -200,13 +201,13 @@ export class ChatGateway
       const room = await this.prisma.chatRoom.findUnique({ where: { id: data.roomId } });
       if (!room) throw new Error('Room not found');
 
-      const senderType = room.consultantId && (await this.chatService.isConsultant(connection.userId, room.consultantId)) ? 'consultant' : 'user';
+      const senderType = room.consultantId && (await this.chatService.isConsultant(connection.userId, room.consultantId)) ? SenderTypeDto.CONSULTANT : SenderTypeDto.USER;
 
       const message = await this.chatService.sendMessage(connection.userId, {
         roomId: data.roomId,
         senderType,
         content: data.content,
-        messageType: data.messageType || 'text',
+        messageType: (data.messageType as MessageTypeDto) || MessageTypeDto.TEXT,
         imageUrl: data.imageUrl,
         fileUrl: data.fileUrl,
       });

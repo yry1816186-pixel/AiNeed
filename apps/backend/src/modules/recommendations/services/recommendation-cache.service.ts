@@ -71,7 +71,7 @@ export class RecommendationCacheService {
         },
       },
       update: {
-        results,
+        results: results as any,
         expiresAt,
         updatedAt: new Date(),
       },
@@ -79,7 +79,7 @@ export class RecommendationCacheService {
         userId,
         category,
         subCategory,
-        results,
+        results: results as any,
         version,
         expiresAt,
       },

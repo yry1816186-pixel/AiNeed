@@ -10,7 +10,7 @@ import { CouponType, UserCouponStatus, Prisma } from "@prisma/client";
 type Decimal = Prisma.Decimal;
 import { CreateCouponDto } from "./dto";
 
-interface CouponValidationResult {
+export interface CouponValidationResult {
   valid: boolean;
   discount: number;
   reason?: string;

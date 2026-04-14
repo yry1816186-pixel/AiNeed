@@ -153,8 +153,8 @@ export class BloggerDashboardService {
 
     const trendMap = new Map<string, number>();
     for (const item of dailyData) {
-      const dateKey = new Date(item.createdAt).toISOString().split("T")[0];
-      trendMap.set(dateKey, (trendMap.get(dateKey) ?? 0) + (item._sum[dbField] ?? 0));
+      const dateKey = new Date(item.createdAt).toISOString().split("T")[0]!;
+      trendMap.set(dateKey, (trendMap.get(dateKey) ?? 0) + ((item._sum as Record<string, number | null>)[dbField] ?? 0));
     }
 
     return this.fillTrendGaps(trendMap, days);
@@ -171,7 +171,7 @@ export class BloggerDashboardService {
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      const dateKey = date.toISOString().split("T")[0];
+      const dateKey = date.toISOString().split("T")[0]!;
       trendMap.set(dateKey, i === 0 ? currentCount : Math.max(0, currentCount - Math.floor(Math.random() * 5 * (days - i))));
     }
 
@@ -192,7 +192,7 @@ export class BloggerDashboardService {
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      const dateKey = date.toISOString().split("T")[0];
+      const dateKey = date.toISOString().split("T")[0]!;
       trendMap.set(dateKey, Math.round(dailyAvg * 100) / 100);
     }
 
@@ -206,7 +206,7 @@ export class BloggerDashboardService {
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      const dateKey = date.toISOString().split("T")[0];
+      const dateKey = date.toISOString().split("T")[0]!;
       result.push({ date: dateKey, value: trendMap.get(dateKey) ?? 0 });
     }
 

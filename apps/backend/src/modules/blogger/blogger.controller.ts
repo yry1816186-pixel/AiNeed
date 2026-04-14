@@ -144,7 +144,7 @@ export class BloggerController {
     @Param("metric") metric: string,
     @Query() query: DashboardQueryDto,
   ) {
-    return this.bloggerDashboardService.getTrendData(req.user.id, metric, query.period);
+    return this.bloggerDashboardService.getTrendData(req.user.id, metric as "views" | "likes" | "bookmarks" | "followers" | "revenue", query.period);
   }
 
   @Get("users/:id/products")

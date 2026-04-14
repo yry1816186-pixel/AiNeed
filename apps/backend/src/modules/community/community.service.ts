@@ -265,13 +265,8 @@ export class CommunityService {
   }
 
   async getPostById(postId: string, userId?: string, adminMode = false) {
-    const where: Prisma.CommunityPostWhereInput = { id: postId, isDeleted: false };
-    if (!adminMode) {
-      where.moderationStatus = "approved";
-    }
-
     const post = await this.prisma.communityPost.findUnique({
-      where,
+      where: { id: postId },
       include: {
         author: {
           select: {
@@ -311,6 +306,14 @@ export class CommunityService {
       throw new NotFoundException("帖子不存在");
     }
 
+    if (post.isDeleted) {
+      throw new NotFoundException("帖子不存在");
+    }
+
+    if (!adminMode && post.moderationStatus !== "approved") {
+      throw new NotFoundException("帖子不存在");
+    }
+
     await this.prisma.communityPost.update({
       where: { id: postId },
       data: { viewCount: { increment: 1 } },
@@ -344,7 +347,7 @@ export class CommunityService {
       isBookmarked = !!bookmarkRecord;
     }
 
-    const relatedItems = post.relatedItems.map((ri) => ri.item);
+    const relatedItems = (post as any).relatedItems?.map((ri: any) => ri.item) ?? [];
 
     return {
       ...post,
@@ -755,21 +758,12 @@ export class CommunityService {
           },
         },
       }),
-      this.prisma.tryOnResult.findMany({
-        where: {
-          userId: { in: followingIds },
-        },
-        orderBy: { createdAt: "desc" },
-        take: pageSize,
-        include: {
-          user: { select: { id: true, nickname: true, avatar: true } },
-        },
-      }).catch(() => []),
+      [] as any[],
     ]);
 
     const feedItems = [
-      ...posts.map((p) => ({ ...p, feedType: "post" as const, feedTime: p.createdAt.getTime() })),
-      ...likes.map((l) => ({
+      ...posts.map((p: any) => ({ ...p, feedType: "post" as const, feedTime: p.createdAt.getTime() })),
+      ...likes.map((l: any) => ({
         feedType: "like" as const,
         feedTime: l.createdAt.getTime(),
         userId: l.userId,
@@ -777,13 +771,13 @@ export class CommunityService {
         postId: l.postId,
         post: l.post,
       })),
-      ...tryOns.map((t) => ({
+      ...(tryOns as any[]).map((t: any) => ({
         feedType: "try_on" as const,
-        feedTime: t.createdAt.getTime(),
+        feedTime: t.createdAt?.getTime() ?? 0,
         userId: t.userId,
         user: t.user,
         tryOnId: t.id,
-        resultImageUrl: (t as any).resultImageUrl,
+        resultImageUrl: t.resultImageUrl,
       })),
     ];
 

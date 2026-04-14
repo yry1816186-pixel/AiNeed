@@ -70,7 +70,7 @@ describe("Recommendations E2E", () => {
         .send({
           bodyType: BodyType.hourglass,
           skinTone: SkinTone.medium,
-          colorSeason: ColorSeason.autumn,
+          colorSeason: ColorSeason.autumn_warm,
           height: 165,
           weight: 55,
           stylePreferences: [
@@ -82,7 +82,7 @@ describe("Recommendations E2E", () => {
         .expect(200);
 
       expect(response.body.bodyType).toBe(BodyType.hourglass);
-      expect(response.body.colorSeason).toBe(ColorSeason.autumn);
+      expect(response.body.colorSeason).toBe(ColorSeason.autumn_warm);
     });
   });
 

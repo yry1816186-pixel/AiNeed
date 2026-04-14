@@ -77,11 +77,16 @@ export class RecommendationFeedService {
         reasons: [r.reason],
       }));
     } else {
-      recommendations = await this.engine.recommend(userId, {
-        category,
-        subCategory,
-        topK: pageSize * 2,
+      const engineResults = await this.engine.getRecommendations({
+        userId,
+        context: { occasion: subCategory },
+        options: { limit: pageSize * 2 },
       });
+      recommendations = engineResults.map((r) => ({
+        itemId: r.item.id,
+        score: r.score,
+        reasons: r.reasons,
+      }));
     }
 
     const allItems = await this.enrichItems(userId, recommendations);
@@ -147,7 +152,7 @@ export class RecommendationFeedService {
 
       feedItems.push({
         id: item.id,
-        mainImage: item.mainImage,
+        mainImage: item.mainImage ?? "",
         brand: item.brand ? { id: item.brand.id, name: item.brand.name } : null,
         price: Number(item.price),
         originalPrice: item.originalPrice ? Number(item.originalPrice) : undefined,

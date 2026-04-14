@@ -25,7 +25,7 @@ interface SizeRange {
   heightMax?: number;
 }
 
-interface RecommendationResult {
+export interface RecommendationResult {
   recommendedSize: string;
   confidence: "high" | "medium" | "low";
   reasons: string[];

@@ -327,7 +327,7 @@ export class LearningToRankService {
       });
 
       if (savedWeights) {
-        this.weights = JSON.parse(savedWeights.value);
+        this.weights = JSON.parse(savedWeights.value as string);
       }
     } catch (error) {
       this.logger.warn("Could not load weights, using defaults");

@@ -383,7 +383,7 @@ export class ProfileController {
       colorSeason: profile.profile?.colorSeason ?? null,
       styleProfiles: profile.profile?.stylePreferences as unknown[] ?? [],
       stylePreferences: profile.profile?.stylePreferences as unknown[] ?? [],
-      colorPreferences: profile.profile?.colorPreferences ?? [],
+      colorPreferences: (profile.profile?.colorPreferences ?? []) as unknown[],
       photos: [],
     });
     return { data: { percentage: result.percentage, missingFields: result.missingFields } };
@@ -406,7 +406,7 @@ export class ProfileController {
     const profile = await this.profileService.getProfile(req.user.id);
     const imageUrl = await this.sharePosterService.generatePoster(req.user.id, {
       nickname: profile.nickname ?? "用户",
-      avatar: profile.avatar,
+      avatar: profile.avatar ?? undefined,
       styleTypeName: profile.profile?.bodyType ?? undefined,
       colorPalette: (profile.profile?.colorPreferences as string[]) ?? [],
     });

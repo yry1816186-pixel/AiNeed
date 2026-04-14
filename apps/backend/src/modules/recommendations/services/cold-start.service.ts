@@ -85,7 +85,7 @@ export class ColdStartService {
     const reasons: string[] = [];
 
     if (user.gender) {
-      reasons.push(`适合${user.gender === "MALE" ? "男性" : "女性"}`);
+      reasons.push(`适合${user.gender === "male" ? "男性" : "女性"}`);
     }
 
     if (profile?.colorSeason) {

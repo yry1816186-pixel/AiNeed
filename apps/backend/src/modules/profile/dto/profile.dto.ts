@@ -215,7 +215,7 @@ export class UpdateProfileDto {
   @ApiPropertyOptional({
     description: "色彩季节",
     enum: ColorSeason,
-    example: ColorSeason.autumn,
+    example: ColorSeason.autumn_warm,
   })
   @IsOptional()
   @IsEnum(ColorSeason, { message: "色彩季节必须是有效的 ColorSeason 枚举值" })

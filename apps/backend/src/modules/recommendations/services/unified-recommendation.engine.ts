@@ -1207,10 +1207,14 @@ export class UnifiedRecommendationEngine {
 
   private getColorSeasonName(season: ColorSeason): string {
     const names: Record<ColorSeason, string> = {
-      [ColorSeason.spring]: "春季",
-      [ColorSeason.summer]: "夏季",
-      [ColorSeason.autumn]: "秋季",
-      [ColorSeason.winter]: "冬季",
+      [ColorSeason.spring_warm]: "春季暖型",
+      [ColorSeason.spring_light]: "春季轻型",
+      [ColorSeason.summer_cool]: "夏季冷型",
+      [ColorSeason.summer_light]: "夏季轻型",
+      [ColorSeason.autumn_warm]: "秋季暖型",
+      [ColorSeason.autumn_deep]: "秋季深型",
+      [ColorSeason.winter_cool]: "冬季冷型",
+      [ColorSeason.winter_deep]: "冬季深型",
     };
     return names[season] || season;
   }

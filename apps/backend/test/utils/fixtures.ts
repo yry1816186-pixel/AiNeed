@@ -48,7 +48,7 @@ export const profileFixtures = {
   validProfile: {
     bodyType: BodyType.hourglass,
     skinTone: SkinTone.medium,
-    colorSeason: ColorSeason.autumn,
+    colorSeason: ColorSeason.autumn_warm,
     height: 165,
     weight: 55,
     stylePreferences: [
@@ -61,7 +61,7 @@ export const profileFixtures = {
   minimalProfile: {
     bodyType: BodyType.rectangle,
     skinTone: SkinTone.light,
-    colorSeason: ColorSeason.summer,
+    colorSeason: ColorSeason.summer_cool,
   },
 };
 
