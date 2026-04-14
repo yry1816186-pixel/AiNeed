@@ -31,11 +31,11 @@ export const FontFamilies = {
     default: "monospace",
   }),
 
-  // 展示字体（大标题/品牌）
+  // 展示字体（大标题/品牌）- Playfair Display 衬线体
   display: Platform.select({
-    ios: "SF Pro Display",
-    android: "Roboto",
-    default: "System",
+    ios: "PlayfairDisplay-Bold",
+    android: "PlayfairDisplay-Bold",
+    default: "serif",
   }),
 
   // 混合字体（中英文混排场景）
