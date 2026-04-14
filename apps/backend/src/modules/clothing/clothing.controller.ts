@@ -126,7 +126,7 @@ export class ClothingController {
   @Get(":id")
   @ApiOperation({
     summary: "获取商品详情",
-    description: "根据商品 ID 获取详细的商品信息，包括名称、价格、描述、颜色、尺码等。",
+    description: "根据商品 ID 获取详细的商品信息，包括名称、价格、描述、颜色、尺码、库存等。",
   })
   @ApiParam({
     name: "id",
@@ -150,5 +150,26 @@ export class ClothingController {
   })
   async getItemById(@Param("id") id: string) {
     return this.clothingService.getItemById(id);
+  }
+
+  @Get(":id/related")
+  @ApiOperation({ summary: "获取搭配推荐", description: "获取与指定商品搭配的推荐组合" })
+  @ApiParam({ name: "id", description: "商品 ID", type: String })
+  @ApiQuery({ name: "limit", required: false, type: Number, description: "推荐数量，默认5" })
+  async getOutfitRecommendations(
+    @Param("id") id: string,
+    @Query("limit") limit?: string,
+  ) {
+    return this.clothingService.getOutfitRecommendations(
+      id,
+      limit ? parseInt(limit, 10) : 5,
+    );
+  }
+
+  @Get("subcategories")
+  @ApiOperation({ summary: "获取子分类列表", description: "获取服装子分类列表，按主分类分组" })
+  @ApiQuery({ name: "category", required: false, type: String, description: "主分类筛选" })
+  async getSubcategories(@Query("category") category?: string) {
+    return this.clothingService.getSubcategories(category);
   }
 }

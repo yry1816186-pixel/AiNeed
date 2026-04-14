@@ -358,4 +358,11 @@ export class SearchController {
 
     return false;
   }
+
+  @Get("filter-options")
+  @ApiOperation({ summary: "获取搜索筛选选项", description: "获取可用的品牌、颜色、尺码、价格范围筛选选项" })
+  @ApiQuery({ name: "category", required: false, type: String, description: "按分类筛选" })
+  async getFilterOptions(@Query("category") category?: string) {
+    return this.searchService.getFilterOptions(category);
+  }
 }

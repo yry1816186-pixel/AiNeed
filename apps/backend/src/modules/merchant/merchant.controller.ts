@@ -4,6 +4,7 @@ import {
   Post,
   Put,
   Delete,
+  Patch,
   Body,
   Param,
   Query,
@@ -236,5 +237,96 @@ export class MerchantController {
   @ApiResponse({ status: 401, description: "未授权" })
   async getAudience(@Request() req: { merchant: { brandId: string } }) {
     return this.merchantService.getAudienceInsights(req.merchant.brandId);
+  }
+
+  // ==================== Phase 5: Review + Orders + Stock ====================
+
+  @Get("applications")
+  @UseGuards(MerchantAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "获取待审核商家列表 (admin)" })
+  async getPendingApplications() {
+    return this.merchantService.getPendingApplications();
+  }
+
+  @Get("applications/:id")
+  @UseGuards(MerchantAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "获取商家申请详情 (admin)" })
+  async getMerchantApplication(@Param("id") id: string) {
+    return this.merchantService.getMerchantApplication(id);
+  }
+
+  @Patch("applications/:id/approve")
+  @UseGuards(MerchantAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "通过商家申请 (admin)" })
+  async approveMerchant(@Param("id") id: string) {
+    return this.merchantService.approveMerchant(id);
+  }
+
+  @Patch("applications/:id/reject")
+  @UseGuards(MerchantAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "拒绝商家申请 (admin)" })
+  async rejectMerchant(
+    @Param("id") id: string,
+    @Body() body: { reason: string },
+  ) {
+    return this.merchantService.rejectMerchant(id, body.reason);
+  }
+
+  @Get(":id/orders")
+  @UseGuards(MerchantAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "获取商家订单" })
+  async getMerchantOrders(
+    @Param("id") id: string,
+    @Query("status") status?: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
+  ) {
+    return this.merchantService.getMerchantOrders(id, {
+      status,
+      page: page ? parseInt(page, 10) : 1,
+      limit: limit ? parseInt(limit, 10) : 20,
+    });
+  }
+
+  @Post(":id/orders/:orderId/ship")
+  @UseGuards(MerchantAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "发货" })
+  async shipOrder(
+    @Param("id") id: string,
+    @Param("orderId") orderId: string,
+    @Body() body: { trackingNumber: string; carrier: string },
+  ) {
+    return this.merchantService.shipOrder(
+      id,
+      orderId,
+      body.trackingNumber,
+      body.carrier,
+    );
+  }
+
+  @Patch(":id/items/:itemId/stock")
+  @UseGuards(MerchantAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "更新库存" })
+  async updateStock(
+    @Param("id") id: string,
+    @Param("itemId") itemId: string,
+    @Body() body: { stock: number },
+  ) {
+    return this.merchantService.updateStock(id, itemId, body.stock);
+  }
+
+  @Get(":id/items/low-stock")
+  @UseGuards(MerchantAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "获取低库存商品" })
+  async getLowStockItems(@Param("id") id: string) {
+    return this.merchantService.getLowStockItems(id);
   }
 }

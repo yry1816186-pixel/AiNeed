@@ -27,6 +27,15 @@ export class MerchantService {
    * 商家入驻申请（使用事务保证数据一致性）
    */
   async applyForMerchant(data: MerchantApplyDto) {
+    // D-09: Auto-validation
+    this.validateMerchantApplication(data);
+
+    // Check brand name uniqueness
+    const brandExists = await this.checkBrandNameUnique(data.brandName);
+    if (!brandExists) {
+      throw new BadRequestException("品牌名已存在");
+    }
+
     // 检查邮箱是否已存在
     const existing = await this.prisma.brandMerchant.findUnique({
       where: { email: data.email },
@@ -531,5 +540,215 @@ export class MerchantService {
       colorSeasonDistribution,
       stylePreferences,
     };
+  }
+
+  // ==================== Phase 5: Merchant Review + Order Management + Stock ====================
+
+  /**
+   * Auto-validation in applyForMerchant per D-09.
+   * Validates business license format, phone number, brand name uniqueness.
+   */
+  private validateMerchantApplication(data: MerchantApplyDto): void {
+    const businessLicenseRegex = /^[0-9A-HJ-NP-RTUW-Y]{2}\d{6}[0-9A-HJ-NP-RTUW-Y]{10}$/;
+    const phoneRegex = /^1[3-9]\d{9}$/;
+
+    if (!data.businessLicenseUrl || !businessLicenseRegex.test(data.businessLicenseUrl)) {
+      throw new BadRequestException("营业执照号格式不正确（应为18位统一社会信用代码）");
+    }
+
+    if (!data.phone || !phoneRegex.test(data.phone)) {
+      throw new BadRequestException("手机号格式不正确（应为11位手机号码）");
+    }
+  }
+
+  /**
+   * Check brand name uniqueness.
+   */
+  async checkBrandNameUnique(name: string): Promise<boolean> {
+    const existing = await this.prisma.brand.findFirst({
+      where: { name },
+    });
+    return !existing;
+  }
+
+  /**
+   * Get pending merchant applications (admin).
+   */
+  async getPendingApplications() {
+    return this.prisma.brand.findMany({
+      where: { verified: false, isActive: true },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  /**
+   * Get single application details (admin).
+   */
+  async getMerchantApplication(brandId: string) {
+    const brand = await this.prisma.brand.findUnique({
+      where: { id: brandId },
+      include: { merchants: true },
+    });
+    if (!brand) {
+      throw new NotFoundException("品牌不存在");
+    }
+    return brand;
+  }
+
+  /**
+   * Approve merchant application (admin).
+   */
+  async approveMerchant(brandId: string) {
+    const brand = await this.prisma.brand.findUnique({
+      where: { id: brandId },
+    });
+    if (!brand) {
+      throw new NotFoundException("品牌不存在");
+    }
+    if (brand.verified) {
+      throw new BadRequestException("该品牌已通过审核");
+    }
+
+    return this.prisma.brand.update({
+      where: { id: brandId },
+      data: { verified: true, verifiedAt: new Date() },
+    });
+  }
+
+  /**
+   * Reject merchant application (admin).
+   */
+  async rejectMerchant(brandId: string, reason: string) {
+    const brand = await this.prisma.brand.findUnique({
+      where: { id: brandId },
+    });
+    if (!brand) {
+      throw new NotFoundException("品牌不存在");
+    }
+
+    return this.prisma.brand.update({
+      where: { id: brandId },
+      data: {
+        isActive: false,
+        description: `${brand.description || ""}\n[拒绝原因]: ${reason}`,
+      },
+    });
+  }
+
+  /**
+   * Get merchant orders with status filter and pagination.
+   */
+  async getMerchantOrders(
+    brandId: string,
+    options: { status?: string; page?: number; limit?: number } = {},
+  ) {
+    const { status, page = 1, limit = 20 } = options;
+
+    const where: Record<string, unknown> = {
+      items: {
+        some: {
+          item: { brandId },
+        },
+      },
+      isDeleted: false,
+    };
+
+    if (status) {
+      where.status = status;
+    }
+
+    const [orders, total] = await Promise.all([
+      this.prisma.order.findMany({
+        where,
+        include: {
+          items: {
+            where: { item: { brandId } },
+          },
+          address: true,
+        },
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        skip: (page - 1) * limit,
+      }),
+      this.prisma.order.count({ where }),
+    ]);
+
+    return { orders, total, page, limit };
+  }
+
+  /**
+   * Ship an order (merchant).
+   */
+  async shipOrder(
+    brandId: string,
+    orderId: string,
+    trackingNumber: string,
+    carrier: string,
+  ) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      include: { items: { include: { item: true } } },
+    });
+
+    if (!order) {
+      throw new NotFoundException("订单不存在");
+    }
+
+    // Verify order contains this brand's items
+    const hasBrandItems = order.items.some(
+      (item) => item.item?.brandId === brandId,
+    );
+    if (!hasBrandItems) {
+      throw new ForbiddenException("该订单不包含您的商品");
+    }
+
+    if (order.status !== "paid" && order.status !== "processing") {
+      throw new BadRequestException("当前订单状态不允许发货");
+    }
+
+    return this.prisma.order.update({
+      where: { id: orderId },
+      data: {
+        status: "shipped",
+        expressCompany: carrier,
+        expressNo: trackingNumber,
+        shipTime: new Date(),
+      },
+    });
+  }
+
+  /**
+   * Update stock for a merchant's item.
+   */
+  async updateStock(brandId: string, itemId: string, stock: number) {
+    const item = await this.prisma.clothingItem.findUnique({
+      where: { id: itemId },
+    });
+
+    if (!item) {
+      throw new NotFoundException("商品不存在");
+    }
+    if (item.brandId !== brandId) {
+      throw new ForbiddenException("无权操作此商品");
+    }
+
+    return this.prisma.clothingItem.update({
+      where: { id: itemId },
+      data: { stock },
+    });
+  }
+
+  /**
+   * Get low stock items for a merchant.
+   */
+  async getLowStockItems(brandId: string) {
+    return this.prisma.clothingItem.findMany({
+      where: {
+        brandId,
+        isActive: true,
+        stock: { lte: this.prisma.clothingItem.fields.lowStockThreshold?.name ? 10 : 10 },
+      },
+      orderBy: { stock: "asc" },
+    });
   }
 }

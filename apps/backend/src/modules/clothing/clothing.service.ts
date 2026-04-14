@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { ClothingCategory, Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
@@ -425,6 +425,8 @@ export class ClothingService {
             createdAt: true,
             updatedAt: true,
             brand: true,
+            stock: true,
+            lowStockThreshold: true,
           },
         });
       },
@@ -512,5 +514,102 @@ export class ClothingService {
     );
 
     return popularTags ?? [];
+  }
+
+  /**
+   * Get subcategories grouped by category.
+   */
+  async getSubcategories(category?: string) {
+    const where: Record<string, unknown> = { isActive: true, isDeleted: false };
+    if (category) {
+      where.category = category;
+    }
+
+    const items = await this.prisma.clothingItem.findMany({
+      where: where as never,
+      select: { category: true, subcategory: true },
+      distinct: ["category", "subcategory"],
+    });
+
+    const grouped: Record<string, Array<{ name: string; count: number }>> = {};
+    for (const item of items) {
+      if (!item.subcategory) continue;
+      const cat = item.category;
+      if (!grouped[cat]) grouped[cat] = [];
+
+      // Count items in this subcategory
+      const count = await this.prisma.clothingItem.count({
+        where: { category: cat, subcategory: item.subcategory, isActive: true, isDeleted: false },
+      });
+
+      grouped[cat].push({ name: item.subcategory, count });
+    }
+
+    if (category) {
+      return grouped[category] ?? [];
+    }
+
+    return grouped;
+  }
+
+  /**
+   * Get outfit recommendations per D-03.
+   * Returns 3-5 outfit sets with complementary items.
+   */
+  async getOutfitRecommendations(itemId: string, limit: number = 5) {
+    const item = await this.prisma.clothingItem.findUnique({
+      where: { id: itemId },
+    });
+
+    if (!item) {
+      throw new NotFoundException("商品不存在");
+    }
+
+    // Determine complementary categories
+    const complementMap: Record<string, string[]> = {
+      tops: ["bottoms", "footwear"],
+      bottoms: ["tops", "footwear"],
+      dresses: ["footwear"],
+      outerwear: ["tops", "bottoms"],
+      footwear: ["tops", "bottoms"],
+    };
+
+    const categories = complementMap[item.category] ?? ["tops", "bottoms"];
+    const priceRange = {
+      min: Number(item.price) * 0.5,
+      max: Number(item.price) * 1.5,
+    };
+
+    const outfits = [];
+    for (let i = 0; i < limit; i++) {
+      const outfitItems: Record<string, unknown> = {};
+
+      for (const cat of categories) {
+        const candidates = await this.prisma.clothingItem.findMany({
+          where: {
+            category: cat as ClothingCategory,
+            isActive: true,
+            isDeleted: false,
+            price: { gte: priceRange.min, lte: priceRange.max },
+          },
+          include: {
+            brand: { select: { id: true, name: true, logo: true } },
+          },
+          take: 3,
+          orderBy: { createdAt: "desc" },
+          skip: i * 3,
+        });
+
+        if (candidates.length > 0) {
+          outfitItems[cat] = candidates[i % candidates.length];
+        }
+      }
+
+      if (Object.keys(outfitItems).length > 0) {
+        outfits.push(outfitItems);
+      }
+    }
+
+    return outfits;
   }
 }

@@ -311,4 +311,171 @@ export class SearchService {
       tags: tags.map((t) => t.tag),
     };
   }
+
+  /**
+   * Enhanced search with multi-dimension filters + sales sort.
+   */
+  async searchWithFilters(
+    query: string,
+    options: {
+      category?: string;
+      minPrice?: number;
+      maxPrice?: number;
+      sortBy?: "relevance" | "price_asc" | "price_desc" | "popular" | "sales";
+      page?: number;
+      limit?: number;
+      brandIds?: string[];
+      colors?: string[];
+      sizes?: string[];
+      styleTags?: string[];
+    } = {},
+  ): Promise<PaginatedSearchResult<ClothingItemWithBrand>> {
+    const {
+      category,
+      minPrice,
+      maxPrice,
+      sortBy = "relevance",
+      page = 1,
+      limit = 20,
+      brandIds,
+      colors,
+      sizes,
+      styleTags,
+    } = options;
+
+    const where: ClothingItemWhereInput = buildSearchWhereClause({
+      query,
+      category,
+      minPrice,
+      maxPrice,
+    });
+
+    // Add multi-dimension filters
+    if (brandIds && brandIds.length > 0) {
+      (where as Record<string, unknown>).brandId = { in: brandIds };
+    }
+    if (colors && colors.length > 0) {
+      (where as Record<string, unknown>).colors = { hasSome: colors };
+    }
+    if (sizes && sizes.length > 0) {
+      (where as Record<string, unknown>).sizes = { hasSome: sizes };
+    }
+    if (styleTags && styleTags.length > 0) {
+      (where as Record<string, unknown>).tags = { hasSome: styleTags };
+    }
+
+    let orderBy: ClothingItemOrderByWithRelationInput;
+
+    if (sortBy === "sales") {
+      // For sales sort, fetch items and join with ProductSalesStats
+      const skip = (page - 1) * limit;
+      const [items, total] = await Promise.all([
+        this.prisma.clothingItem.findMany({
+          where,
+          include: {
+            brand: { select: { id: true, name: true, logo: true } },
+            salesStats: {
+              where: { date: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } },
+              select: { purchases: true },
+            },
+          },
+          skip,
+          take: limit,
+        }),
+        this.prisma.clothingItem.count({ where }),
+      ]);
+
+      // Sort by total purchases descending
+      const sorted = items
+        .map((item) => ({
+          ...item,
+          totalPurchases: (item as Record<string, unknown>).salesStats
+            ? ((item as Record<string, unknown>).salesStats as Array<{ purchases: number }>)
+                .reduce((sum: number, s: { purchases: number }) => sum + s.purchases, 0)
+            : 0,
+        }))
+        .sort((a, b) => b.totalPurchases - a.totalPurchases);
+
+      return { items: sorted, page, limit, total, totalPages: Math.ceil(total / limit), query };
+    }
+
+    orderBy = buildOrderByClause("popular");
+    const skip = (page - 1) * limit;
+
+    const [items, total] = await Promise.all([
+      this.prisma.clothingItem.findMany({
+        where,
+        include: {
+          brand: { select: { id: true, name: true, logo: true } },
+        },
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      this.prisma.clothingItem.count({ where }),
+    ]);
+
+    return { items, page, limit, total, totalPages: Math.ceil(total / limit), query };
+  }
+
+  /**
+   * Get available filter options for search context.
+   */
+  async getFilterOptions(category?: string) {
+    const where: Record<string, unknown> = { isActive: true, isDeleted: false };
+    if (category) {
+      where.category = category;
+    }
+
+    const [brands, priceAgg] = await Promise.all([
+      this.prisma.brand.findMany({
+        where: { products: { some: where as never } },
+        select: { id: true, name: true, _count: { select: { products: { where: where as never } } } },
+        orderBy: { name: "asc" },
+      }),
+      this.prisma.clothingItem.aggregate({
+        where: where as never,
+        _min: { price: true },
+        _max: { price: true },
+      }),
+    ]);
+
+    // Get distinct colors and sizes
+    const colorItems = await this.prisma.clothingItem.findMany({
+      where: where as never,
+      select: { colors: true },
+    });
+    const sizeItems = await this.prisma.clothingItem.findMany({
+      where: where as never,
+      select: { sizes: true },
+    });
+
+    const colorCounts: Record<string, number> = {};
+    for (const item of colorItems) {
+      for (const c of item.colors) {
+        colorCounts[c] = (colorCounts[c] || 0) + 1;
+      }
+    }
+
+    const sizeCounts: Record<string, number> = {};
+    for (const item of sizeItems) {
+      for (const s of item.sizes) {
+        sizeCounts[s] = (sizeCounts[s] || 0) + 1;
+      }
+    }
+
+    return {
+      brands: brands.map((b) => ({ id: b.id, name: b.name, count: b._count.products })),
+      colors: Object.entries(colorCounts)
+        .map(([value, count]) => ({ value, count }))
+        .sort((a, b) => b.count - a.count),
+      sizes: Object.entries(sizeCounts)
+        .map(([value, count]) => ({ value, count }))
+        .sort((a, b) => b.count - a.count),
+      priceRange: {
+        min: priceAgg._min.price ? Number(priceAgg._min.price) : 0,
+        max: priceAgg._max.price ? Number(priceAgg._max.price) : 0,
+      },
+    };
+  }
 }
