@@ -142,10 +142,10 @@ export function StylistStackNavigator() {
         {() => <G route="ChatHistory"><SuspenseScreen><ChatHistoryScreenLazy /></SuspenseScreen></G>}
       </StylistStack.Screen>
       <StylistStack.Screen name="AiStylistChat">
-        {() => <G route="AIStylist"><SuspenseScreen><AiStylistChatScreenLazy /></SuspenseScreen></G>}
+        {() => <G route="AiStylistChat"><SuspenseScreen><AiStylistChatScreenLazy /></SuspenseScreen></G>}
       </StylistStack.Screen>
       <StylistStack.Screen name="SessionCalendar">
-        {() => <SuspenseScreen><SessionCalendarScreen /></SuspenseScreen>}
+        {() => <G route="SessionCalendar"><SuspenseScreen><SessionCalendarScreen /></SuspenseScreen></G>}
       </StylistStack.Screen>
     </StylistStack.Navigator>
   );
@@ -191,8 +191,8 @@ export function CommunityStackNavigator() {
       />
       <CommunityStack.Screen name="PostCreate" component={() => <G route="PostCreate"><SuspenseScreen><PostCreateScreenLazy /></SuspenseScreen></G>} />
       <CommunityStack.Screen name="InfluencerProfile" component={() => <G route="InfluencerProfile"><SuspenseScreen><InfluencerProfileScreenLazy /></SuspenseScreen></G>} />
-      <CommunityStack.Screen name="InspirationWardrobe" component={() => <SuspenseScreen><InspirationWardrobeScreenLazy /></SuspenseScreen>} />
-      <CommunityStack.Screen name="BloggerDashboard" component={() => <SuspenseScreen><BloggerDashboardScreen /></SuspenseScreen>} />
+      <CommunityStack.Screen name="InspirationWardrobe" component={() => <G route="InspirationWardrobe"><SuspenseScreen><InspirationWardrobeScreenLazy /></SuspenseScreen></G>} />
+      <CommunityStack.Screen name="BloggerDashboard" component={() => <G route="BloggerDashboard"><SuspenseScreen><BloggerDashboardScreen /></SuspenseScreen></G>} />
       <CommunityStack.Screen name="BloggerProfile" component={() => <SuspenseScreen><BloggerProfileScreen /></SuspenseScreen>} />
       <CommunityStack.Screen name="BloggerProduct" component={() => <SuspenseScreen><BloggerProductScreen /></SuspenseScreen>} />
     </CommunityStack.Navigator>
@@ -214,13 +214,13 @@ export function ProfileStackNavigator() {
         {() => <G route="ProfileEdit"><SuspenseScreen><ProfileEditScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="StyleQuiz">
-        {() => <SuspenseScreen><StyleQuizScreen /></SuspenseScreen>}
+        {() => <G route="StyleQuiz"><SuspenseScreen><StyleQuizScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="BodyAnalysis">
-        {() => <SuspenseScreen><BodyAnalysisScreen /></SuspenseScreen>}
+        {() => <G route="BodyAnalysis"><SuspenseScreen><BodyAnalysisScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="ColorAnalysis">
-        {() => <SuspenseScreen><ColorAnalysisScreen /></SuspenseScreen>}
+        {() => <G route="ColorAnalysis"><SuspenseScreen><ColorAnalysisScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="SharePoster">
         {() => <G route="SharePoster"><SuspenseScreen><SharePosterScreen /></SuspenseScreen></G>}
@@ -232,10 +232,10 @@ export function ProfileStackNavigator() {
         {() => <G route="Favorites"><SuspenseScreen><FavoritesScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Settings">
-        {() => <SuspenseScreen><SettingsScreen /></SuspenseScreen>}
+        {() => <G route="Settings"><SuspenseScreen><SettingsScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="NotificationSettings">
-        {() => <SuspenseScreen><NotificationSettingsScreen /></SuspenseScreen>}
+        {() => <G route="NotificationSettings"><SuspenseScreen><NotificationSettingsScreen /></SuspenseScreen></G>}
       </ProfileStack.Screen>
       <ProfileStack.Screen name="Subscription">
         {() => <G route="Subscription"><SuspenseScreen><SubscriptionScreen /></SuspenseScreen></G>}

@@ -185,11 +185,14 @@ export interface RouteGuardConfig {
 
 export const GUARDED_ROUTES: RouteGuardConfig[] = [
   { route: 'AIStylist', guards: ['auth', 'profile'] },
+  { route: 'AiStylistChat', guards: ['auth', 'profile'] },
   { route: 'OutfitPlan', guards: ['auth', 'profile'] },
   { route: 'ChatHistory', guards: ['auth'] },
+  { route: 'SessionCalendar', guards: ['auth'] },
   { route: 'VirtualTryOn', guards: ['auth', 'profile'] },
   { route: 'TryOnResult', guards: ['auth'] },
   { route: 'TryOnHistory', guards: ['auth'] },
+  { route: 'Notifications', guards: ['auth'] },
   { route: 'Cart', guards: ['auth'] },
   { route: 'Checkout', guards: ['auth'] },
   { route: 'Payment', guards: ['auth'] },
@@ -197,8 +200,12 @@ export const GUARDED_ROUTES: RouteGuardConfig[] = [
   { route: 'OrderDetail', guards: ['auth'] },
   { route: 'PostCreate', guards: ['auth'] },
   { route: 'InfluencerProfile', guards: ['auth'] },
+  { route: 'InspirationWardrobe', guards: ['auth'] },
+  { route: 'BloggerDashboard', guards: ['auth'] },
   { route: 'CustomDesign', guards: ['auth', 'vip'] },
   { route: 'CustomEditor', guards: ['auth', 'vip'] },
+  { route: 'BodyAnalysis', guards: ['auth', 'vip'] },
+  { route: 'ColorAnalysis', guards: ['auth', 'vip'] },
   { route: 'Brand', guards: ['auth'] },
   { route: 'AdvisorList', guards: ['auth'] },
   { route: 'AdvisorProfile', guards: ['auth'] },
@@ -210,6 +217,9 @@ export const GUARDED_ROUTES: RouteGuardConfig[] = [
   { route: 'SharePoster', guards: ['auth'] },
   { route: 'Subscription', guards: ['auth'] },
   { route: 'AddClothing', guards: ['auth'] },
+  { route: 'StyleQuiz', guards: ['auth'] },
+  { route: 'Settings', guards: ['auth'] },
+  { route: 'NotificationSettings', guards: ['auth'] },
 ];
 
 // ============================================================

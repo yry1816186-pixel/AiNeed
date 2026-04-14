@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '../polyfills/expo-vector-icons';
-import type { MainTabParamList, RootStackParamList } from './types';
-import { TAB_LABELS } from './types';
+import type { MainTabParamList, RootStackParamList, GuardType } from './types';
+import { TAB_LABELS, GUARDED_ROUTES } from './types';
 import { AuthNavigator } from './AuthNavigator';
 import {
   HomeStackNavigator,
@@ -15,6 +15,7 @@ import {
 } from './MainStackNavigator';
 import { useAuthStore, useCartStore } from '../stores/index';
 import { theme } from '../theme';
+import { navigateAuth, navigateProfile, navigationRef } from './navigationService';
 
 // ============================================================
 // Main Tab Navigator (5 Tabs)
@@ -101,6 +102,85 @@ export function MainTabNavigator() {
 }
 
 // ============================================================
+// Route Guard Helpers (navigation-level enforcement)
+// ============================================================
+
+// Protected routes that require authentication
+const AUTH_PROTECTED_ROUTES = new Set([
+  'AiStylistChat', 'VirtualTryOn', 'Wardrobe', 'Payment',
+  'OrderDetail', 'Cart', 'Booking', 'AdvisorProfile', 'Chat',
+  'Checkout', 'Orders', 'AddClothing', 'Favorites', 'ProfileEdit',
+  'SharePoster', 'Subscription', 'OutfitPlan', 'ChatHistory',
+  'TryOnResult', 'TryOnHistory', 'PostCreate', 'CustomDesign',
+  'CustomEditor', 'Brand', 'AdvisorList', 'Notifications',
+  'SessionCalendar', 'InspirationWardrobe', 'BloggerDashboard',
+  'StyleQuiz', 'Settings', 'NotificationSettings',
+]);
+
+// Routes that require profile completion (onboarding)
+const PROFILE_REQUIRED_ROUTES = new Set([
+  'AiStylistChat', 'VirtualTryOn', 'AIStylist',
+]);
+
+// Public routes that never require auth
+const PUBLIC_ROUTES = new Set([
+  'HomeFeed', 'Search', 'Product', 'Login', 'Register',
+  'CommunityFeed', 'PostDetail', 'Onboarding', 'PhoneLogin',
+]);
+
+/**
+ * Check if a route name requires auth guard and return the failed guard type.
+ * Returns null if access is allowed.
+ */
+function checkNavigationGuard(
+  routeName: string,
+  isAuthenticated: boolean,
+  onboardingCompleted: boolean,
+): GuardType | null {
+  // Public routes are always accessible
+  if (PUBLIC_ROUTES.has(routeName)) return null;
+
+  // Check auth guard
+  if (AUTH_PROTECTED_ROUTES.has(routeName) && !isAuthenticated) {
+    return 'auth';
+  }
+
+  // Check profile guard
+  if (PROFILE_REQUIRED_ROUTES.has(routeName) && isAuthenticated && !onboardingCompleted) {
+    return 'profile';
+  }
+
+  // Also check GUARDED_ROUTES config for consistency
+  const guardConfig = GUARDED_ROUTES.find((g) => g.route === routeName);
+  if (guardConfig) {
+    for (const guard of guardConfig.guards) {
+      if (guard === 'auth' && !isAuthenticated) return 'auth';
+      if (guard === 'profile' && (!isAuthenticated || !onboardingCompleted)) return 'profile';
+      // VipGuard is handled at component level
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Redirect based on the failed guard type.
+ */
+function handleNavigationGuardRedirect(failedGuard: GuardType): void {
+  switch (failedGuard) {
+    case 'auth':
+      navigateAuth('Login');
+      break;
+    case 'profile':
+      navigateAuth('Onboarding');
+      break;
+    case 'vip':
+      navigateProfile('Subscription');
+      break;
+  }
+}
+
+// ============================================================
 // Root Stack Navigator
 // ============================================================
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -110,10 +190,54 @@ interface RootNavigatorProps {
 }
 
 export function RootNavigator({ isAuthenticated }: RootNavigatorProps) {
+  const onboardingCompleted = useAuthStore((state) => state.onboardingCompleted);
+  const lastGuardedRouteRef = useRef<string | null>(null);
+
+  // Navigation state listener for route guard enforcement at the navigation level
+  const handleStateChange = useCallback(() => {
+    // Get the current route from the navigation tree
+    const rootState = navigationRef?.getRootState?.();
+    if (!rootState) return;
+
+    // Extract the deepest route name from nested navigators
+    let currentRouteName: string | undefined;
+    let state = rootState as { routes?: Array<{ name: string; state?: unknown }>; index?: number };
+
+    while (state?.routes) {
+      const idx = state.index ?? 0;
+      const route = state.routes[idx];
+      if (!route) break;
+      currentRouteName = route.name;
+      state = (route.state ?? undefined) as typeof state;
+    }
+
+    if (!currentRouteName) return;
+
+    // Avoid re-checking the same route
+    if (currentRouteName === lastGuardedRouteRef.current) return;
+
+    const failedGuard = checkNavigationGuard(
+      currentRouteName,
+      isAuthenticated,
+      onboardingCompleted,
+    );
+
+    if (failedGuard) {
+      lastGuardedRouteRef.current = currentRouteName;
+      // Use setTimeout to avoid dispatching during render
+      setTimeout(() => handleNavigationGuardRedirect(failedGuard), 0);
+    } else {
+      lastGuardedRouteRef.current = null;
+    }
+  }, [isAuthenticated, onboardingCompleted]);
+
   return (
     <RootStack.Navigator
       screenOptions={{ headerShown: false }}
       initialRouteName={isAuthenticated ? 'MainTabs' : 'Auth'}
+      screenListeners={{
+        state: handleStateChange,
+      }}
     >
       <RootStack.Screen name="Auth" component={AuthNavigator} />
       <RootStack.Screen name="MainTabs" component={MainTabNavigator} />
