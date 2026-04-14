@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Completed 07-01 through 07-04 plans
-last_updated: "2026-04-14T05:44:16.514Z"
-last_activity: 2026-04-14
+status: executing
+stopped_at: Completed 08-01 through 08-05 plans
+last_updated: "2026-04-14T06:12:15Z"
+last_activity: 2026-04-14 -- Phase 08 execution completed
 progress:
   total_phases: 10
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 43
-  completed_plans: 30
-  percent: 70
+  completed_plans: 35
+  percent: 81
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-13)
 
 **Core value:** AI-driven personalized outfit recommendation based on user profile, with multimodal API for virtual try-on
-**Current focus:** Phase 07 -- customization-brand-collaboration
+**Current focus:** Phase 08 -- private-consultant COMPLETE
 
 ## Current Position
 
-Phase: 08
-Plan: Not started
-Status: Phase complete -- ready for verification
-Last activity: 2026-04-14
+Phase: 08 (private-consultant) -- COMPLETE
+Plan: 5 of 5
+Status: Phase 08 fully executed
+Last activity: 2026-04-14 -- All 5 plans committed
 
-Progress: [████████░░] 77%
+Progress: [█████████░] 81%
 
 ## Roadmap (11 Phase MVP)
 
@@ -45,8 +45,56 @@ Progress: [████████░░] 77%
 
 6. Community & Blogger Ecosystem
 7. Customization & Brand Collaboration <-- **COMPLETED**
-8. Private Consultant
+8. Private Consultant <-- **COMPLETED**
 9. Operations & Performance & Data Seed
+
+## Session Summary (2026-04-14 Phase 08 Execution)
+
+### Phase 08: Private Consultant -- 5 Plans Executed
+
+| Plan | Commit | Description |
+|------|--------|-------------|
+| 08-01 | `7d68fff` + 3 more | Schema extension + four-dimension matching algorithm + POST /consultant/match |
+| 08-02 | `8927ece` + 1 more | ChatGateway /ws/chat namespace + CHAT_EVENTS + proposal message type |
+| 08-03 | `f468d88` + 2 more | Availability scheduling + staged payment (30/70) + earnings/withdrawal |
+| 08-04 | `e812b05` | Review system + weighted ranking + admin audit + case display |
+| 08-05 | `4958e1f` + `8e66ccf` | Mobile: 4 screens + 8 components + 2 stores + 2 API services + WebSocket |
+
+### Key Deliverables
+
+**Backend (NestJS)**:
+
+- ConsultantReview, ConsultantAvailability, ConsultantEarning, ConsultantWithdrawal Prisma models
+- Four-dimension matching: profile 30% + keywords 25% + specialty 25% + location 20%
+- ChatGateway on /ws/chat namespace with JWT auth, room access verification
+- ConsultantAvailabilityService: weekly template CRUD, slot generation, conflict detection
+- Staged payment: 30% deposit + 70% final, 15% platform commission
+- 24h cancellation rule: full refund if >24h, 20% penalty if <24h
+- Earnings management with pending/settled aggregation
+- Withdrawal request with available balance validation
+- ConsultantReviewService: multi-dimensional review (1-5 stars + tags + before/after + anonymous)
+- Weighted ranking: rating 40% + orderCount 20% + responseSpeed 20% + matchScore 20%
+- New consultant protection in ranking algorithm
+- Admin audit endpoint: PUT /consultant/profiles/:id/review (pending -> active/suspended)
+- Case display: GET /consultant/profiles/:id/cases with before/after images
+- Proposal message type (MessageTypeDto.PROPOSAL + ProposalMessageDto)
+
+**Mobile (React Native)**:
+
+- AdvisorListScreen: match bottom sheet, filter bar, consultant card FlatList
+- AdvisorProfileScreen: profile hero, info row, bio, case gallery, booking CTA
+- BookingScreen: service type chips, CalendarGrid, TimeSlotItem list, price summary
+- ChatScreen: real-time WebSocket messages, typing indicator, proposal cards, read receipts
+- 8 consultant components: ConsultantCard, CaseCard, MatchBadge, ProposalCard, TimeSlotItem, CalendarGrid, ServiceTypeChip, TypingIndicator
+- consultantStore + chatStore Zustand stores
+- consultant.api.ts (12 methods) + chat.api.ts (5 methods)
+- wsService extended with /ws/chat namespace (connectChat, joinChatRoom, sendChatMessage, typing, read)
+- 4 PlaceholderScreens replaced in MainStackNavigator
+
+**Documentation**:
+
+- 5 PLAN.md files (08-01 through 08-05)
+- 5 SUMMARY.md files with self-check verification
 
 ## Session Summary (2026-04-14 Phase 07 Execution)
 
@@ -58,50 +106,6 @@ Progress: [████████░░] 77%
 | 07-02 | `f871d77` | Brand QR code system + brand portal backend with 6 endpoints |
 | 07-03 | `c031bbc` | Mobile customization editor + brand QR scan frontend (15 files) |
 | 07-04 | `81c50a8` | POD integration + payment flow + brand portal extensions |
-
-### Key Deliverables
-
-**Backend (NestJS)**:
-
-- CustomizationTemplate, CustomizationDesign, CustomizationDesignLayer Prisma models
-- 6 product templates (tshirt, hat, shoes, bag, phone_case, mug) with base pricing
-- PricingEngine: automatic quote with complexity/text/side surcharges
-- 8 new customization API endpoints (templates, designs, quote, preview, from-design)
-- 3 new payment/production endpoints (pay, production-status, confirm-delivery)
-- BrandQRCode, BrandScanRecord Prisma models
-- QR code generation with base64url-encoded product data payload
-- Public scan endpoint (no auth) + scan import to wardrobe
-- BrandPortalController: dashboard, products, scan stats, user prefs, QR management
-- PODProvider abstraction with MockPODProvider for development
-- PODService: submitToProduction, checkProductionStatus
-
-**Mobile (React Native)**:
-
-- customizationEditorStore: Zustand store with layer CRUD, design save, quote calc
-- DesignCanvas: SVG-based canvas with pan/pinch/rotate gestures
-- TemplateSelector, DesignToolbar, LayerPanel, ColorPicker components
-- CustomizationEditorScreen: full-screen editor with image upload and text input
-- CustomizationPreviewScreen: quote details, print side selection, packaging info
-- CustomizationOrderDetailScreen: status timeline, tracking, delivery confirmation
-- BrandQRScanScreen: manual QR code entry with scan result and wardrobe import
-- brand-qr.api.ts: scan and import API methods
-- 4 new navigation routes registered
-- CustomizationScreen revamped with design editor and QR scan entry cards
-
-**Documentation**:
-
-- 4 PLAN.md files (07-01 through 07-04)
-- 4 SUMMARY.md files with self-check verification
-
-## Session Summary (2026-04-14 Phase 05.5 Execution)
-
-### Phase 05.5: App Store & Push Notifications -- 3 Plans Executed
-
-| Plan | Commit | Description |
-|------|--------|-------------|
-| 05.5-01 | `8d61608` | Backend push notification infrastructure (FCM + APNs, templates, preferences) |
-| 05.5-02 | `4373247` | Mobile push notification integration and notification store |
-| 05.5-03 | `20d72eb` | App store compliance, privacy enhancement, and ASO metadata |
 
 ## Technical Debt
 
@@ -134,6 +138,15 @@ Progress: [████████░░] 77%
 
 ## Decisions Made
 
+- Phase 08: Four-dimension matching weights: profile 30%, keywords 25%, specialty 25%, location 20%
+- Phase 08: Match percentage capped at 99 to avoid implying perfect match
+- Phase 08: Staged payment 30% deposit + 70% final, 15% platform commission
+- Phase 08: 24h cancellation rule with 20% penalty
+- Phase 08: Rejected consultant status mapped to "suspended" (no "rejected" enum value)
+- Phase 08: Ranking weights: rating 40%, orderCount 20%, responseSpeed 20%, matchScore 20%
+- Phase 08: New consultant protection in ranking (minimum 0.5 base for <5 orders)
+- Phase 08: Chat uses dual-path: REST for persistence + WebSocket for real-time
+- Phase 08: Accent color #C67B5C used consistently across all consultant UI
 - Phase 07: Fabric.js deferred; backend JSON canvas data storage used for MVP
 - Phase 07: QR codes use base64url-encoded JSON payload for offline readability
 - Phase 07: BrandPortalModule uses forwardRef to avoid circular dependency
@@ -142,6 +155,6 @@ Progress: [████████░░] 77%
 
 ## Session Continuity
 
-Last session: 2026-04-14T05:15:00.000Z
-Stopped at: Completed 07-01 through 07-04 plans
-Next: `/gsd-execute-phase 8` for Private Consultant or `/gsd-execute-phase 9` for Operations & Performance
+Last session: 2026-04-14T06:12:15Z
+Stopped at: Completed 08-01 through 08-05 plans
+Next: `/gsd-execute-phase 9` for Operations & Performance & Data Seed

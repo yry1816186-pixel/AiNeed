@@ -163,6 +163,15 @@ Plans:
 **Goal**: 高价值用户可对接专业造型工作室/顾问，获得深度私人形象定制服务
 **Depends on**: Phase 5（支付系统）, Phase 6（评价体系参考）
 **Requirements**: ADV-01 ~ ADV-13 (13 条)
+**Plans:** 5/5 plans executed
+
+Plans:
+- [x] 08-01-PLAN.md -- Schema extension + four-dimension matching algorithm + match endpoint
+- [x] 08-02-PLAN.md -- ChatGateway /ws/chat namespace + proposal message type
+- [x] 08-03-PLAN.md -- Availability scheduling + staged payment + earnings/withdrawal
+- [x] 08-04-PLAN.md -- Review system + weighted ranking + admin audit + case display
+- [x] 08-05-PLAN.md -- Mobile: 4 screens + 8 components + stores + API + WebSocket
+
 **Success Criteria**:
   1. 平台撮合模式：用户提交需求 → 智能匹配顾问 → App 内沟通
   2. 在线预约 + App 内即时通讯 + 方案文件分享
@@ -201,7 +210,7 @@ Plans:
 | 5.5. App 上架准备 & 推送通知 | Completed | 7 |
 | 6. 社区 & 博主生态 | Not started | 14 |
 | 7. 定制服务 & 品牌合作 | Completed | 12 |
-| 8. 私人形象顾问对接 | Not started | 13 |
+| 8. 私人形象顾问对接 | Completed | 13 |
 | 9. 运营后台 & 性能优化 & 数据种子 | Not started | 8 |
 
 ---
