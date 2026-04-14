@@ -32,7 +32,7 @@ const STAGE_3_START = 4000;
 const STAGE_3_DURATION = 2000;
 const TOTAL_CYCLE = 6000;
 
-// ============ Reduced Motion: Simple Pulsing Gradient Bar ============
+// ============ Reduced Motion: Static text with pulsing gradient bar ============
 
 function ReducedMotionAnimation() {
   const opacity = useSharedValue(0.4);
@@ -55,8 +55,11 @@ function ReducedMotionAnimation() {
 
   return (
     <View style={r.container}>
-      <View style={r.gradientBar}>
-        <Animated.View style={[r.gradientFill, barStyle]} />
+      <View style={r.contentRow}>
+        <Text style={r.staticText}>AI 正在思考...</Text>
+        <View style={r.gradientBar}>
+          <Animated.View style={[r.gradientFill, barStyle]} />
+        </View>
       </View>
     </View>
   );
@@ -73,8 +76,19 @@ const r = StyleSheet.create({
     borderBottomLeftRadius: 4,
     maxWidth: BUBBLE_WIDTH,
   },
+  contentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flex: 1,
+  },
+  staticText: {
+    fontSize: 13,
+    color: TERRACOTTA,
+    fontWeight: '500',
+  },
   gradientBar: {
-    width: '100%',
+    flex: 1,
     height: 6,
     borderRadius: 3,
     backgroundColor: 'rgba(198, 123, 92, 0.15)',
