@@ -54,6 +54,10 @@ const VirtualTryOnScreen = lazy(() => import('./src/screens/VirtualTryOnScreen')
 const AICompanionProvider = lazy(() => import('./src/components/aicompanion/AICompanionProvider').then(m => ({ default: m.AICompanionProvider })));
 const OnboardingScreen = lazy(() => import('./src/screens/onboarding/OnboardingWizard'));
 const CustomizationScreen = lazy(() => import('./src/screens/CustomizationScreen'));
+const CustomizationEditorScreen = lazy(() => import('./src/screens/CustomizationEditorScreen'));
+const CustomizationPreviewScreen = lazy(() => import('./src/screens/CustomizationPreviewScreen'));
+const CustomizationOrderDetailScreen = lazy(() => import('./src/screens/CustomizationOrderDetailScreen'));
+const BrandQRScanScreen = lazy(() => import('./src/screens/BrandQRScanScreen'));
 const SubscriptionScreen = lazy(() => import('./src/screens/SubscriptionScreen'));
 const LegalScreen = lazy(() => import('./src/screens/LegalScreen'));
 
@@ -644,6 +648,34 @@ export default function App() {
                     {() => (
                       <Suspense fallback={<ScreenLoader />}>
                         <CustomizationScreen />
+                      </Suspense>
+                    )}
+                  </Stack.Screen>
+                  <Stack.Screen name="CustomizationEditor">
+                    {() => (
+                      <Suspense fallback={<ScreenLoader />}>
+                        <CustomizationEditorScreen />
+                      </Suspense>
+                    )}
+                  </Stack.Screen>
+                  <Stack.Screen name="CustomizationPreview">
+                    {(props: any) => (
+                      <Suspense fallback={<ScreenLoader />}>
+                        <CustomizationPreviewScreen {...props} />
+                      </Suspense>
+                    )}
+                  </Stack.Screen>
+                  <Stack.Screen name="CustomizationOrderDetail">
+                    {(props: any) => (
+                      <Suspense fallback={<ScreenLoader />}>
+                        <CustomizationOrderDetailScreen {...props} />
+                      </Suspense>
+                    )}
+                  </Stack.Screen>
+                  <Stack.Screen name="BrandQRScan">
+                    {() => (
+                      <Suspense fallback={<ScreenLoader />}>
+                        <BrandQRScanScreen />
                       </Suspense>
                     )}
                   </Stack.Screen>

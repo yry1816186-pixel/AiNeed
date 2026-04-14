@@ -226,6 +226,32 @@ export const CustomizationScreen: React.FC = () => {
       contentContainerStyle={styles.formContainer}
       keyboardShouldPersistTaps="handled"
     >
+      {/* Quick Action Cards */}
+      <View style={styles.quickActions}>
+        <TouchableOpacity
+          style={styles.quickActionCard}
+          onPress={() => navigation.navigate("CustomizationEditor")}
+          activeOpacity={0.7}
+        >
+          <View style={styles.quickActionIcon}>
+            <Ionicons name="color-palette-outline" size={28} color={theme.colors.primary} />
+          </View>
+          <Text style={styles.quickActionTitle}>设计定制</Text>
+          <Text style={styles.quickActionDesc}>选择模板，上传图案，创建专属定制</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.quickActionCard}
+          onPress={() => navigation.navigate("BrandQRScan")}
+          activeOpacity={0.7}
+        >
+          <View style={styles.quickActionIcon}>
+            <Ionicons name="qr-code-outline" size={28} color={theme.colors.primary} />
+          </View>
+          <Text style={styles.quickActionTitle}>品牌扫码</Text>
+          <Text style={styles.quickActionDesc}>扫描品牌二维码，一键导入衣橱</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.sectionTitle}>选择服务类型</Text>
       <View style={styles.serviceGrid}>
         {SERVICE_TYPES.map((service) => {
@@ -748,6 +774,39 @@ const styles = StyleSheet.create({
   quoteText: {
     fontSize: 12,
     color: theme.colors.textTertiary,
+  },
+  quickActions: {
+    flexDirection: "row",
+    gap: Spacing[3],
+    marginBottom: Spacing[4],
+  },
+  quickActionCard: {
+    flex: 1,
+    backgroundColor: Colors.neutral[50],
+    borderRadius: BorderRadius.xl,
+    padding: Spacing[4],
+    borderWidth: 1.5,
+    borderColor: Colors.neutral[200],
+  },
+  quickActionIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(198, 123, 92, 0.1)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: Spacing[2],
+  },
+  quickActionTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: theme.colors.text,
+    marginBottom: Spacing[1],
+  },
+  quickActionDesc: {
+    fontSize: 12,
+    color: theme.colors.textSecondary,
+    lineHeight: 18,
   },
 });
 

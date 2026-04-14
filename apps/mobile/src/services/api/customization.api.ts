@@ -6,7 +6,8 @@ export type CustomizationType =
   | "tailored"
   | "bespoke"
   | "alteration"
-  | "design";
+  | "design"
+  | "pod";
 
 export type CustomizationStatus =
   | "draft"
@@ -14,6 +15,7 @@ export type CustomizationStatus =
   | "quoting"
   | "confirmed"
   | "in_progress"
+  | "shipped"
   | "completed"
   | "cancelled";
 
@@ -38,6 +40,11 @@ export interface CustomizationRequest {
   status: CustomizationStatus;
   quotes?: CustomizationQuote[];
   selectedQuoteId?: string;
+  designId?: string;
+  templateId?: string;
+  previewImageUrl?: string;
+  trackingNumber?: string;
+  carrier?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -58,6 +65,74 @@ export interface UpdateCustomizationDto {
 }
 
 export const customizationApi = {
+  // ==================== Templates ====================
+
+  getTemplates: async (
+    type?: string,
+  ): Promise<ApiResponse<any[]>> => {
+    const params: Record<string, string> = {};
+    if (type) {params.type = type;}
+    return apiClient.get<any[]>("/customization/templates", params);
+  },
+
+  // ==================== Designs ====================
+
+  createDesign: async (
+    templateId: string,
+    canvasData: Record<string, unknown>,
+  ): Promise<ApiResponse<any>> => {
+    return apiClient.post<any>("/customization/designs", {
+      templateId,
+      canvasData,
+    });
+  },
+
+  updateDesign: async (
+    id: string,
+    data: {
+      canvasData: Record<string, unknown>;
+      layers?: any[];
+    },
+  ): Promise<ApiResponse<any>> => {
+    return apiClient.put<any>(`/customization/designs/${id}`, data);
+  },
+
+  getDesign: async (
+    id: string,
+  ): Promise<ApiResponse<any>> => {
+    return apiClient.get<any>(`/customization/designs/${id}`);
+  },
+
+  calculateQuote: async (
+    designId: string,
+    printSide: "front" | "back" | "both" = "front",
+  ): Promise<ApiResponse<any>> => {
+    return apiClient.post<any>(
+      `/customization/designs/${designId}/calculate-quote`,
+      { printSide },
+    );
+  },
+
+  generatePreview: async (
+    designId: string,
+  ): Promise<ApiResponse<{ previewUrl: string; designId: string }>> => {
+    return apiClient.post<{ previewUrl: string; designId: string }>(
+      `/customization/designs/${designId}/generate-preview`,
+    );
+  },
+
+  createFromDesign: async (
+    designId: string,
+    quoteId: string,
+  ): Promise<ApiResponse<any>> => {
+    return apiClient.post<any>("/customization/from-design", {
+      designId,
+      quoteId,
+    });
+  },
+
+  // ==================== Original CRUD ====================
+
   getAll: async (
     params?: {
       status?: CustomizationStatus;

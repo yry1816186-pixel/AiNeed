@@ -40,6 +40,10 @@ export type RootStackParamList = {
   Favorites: undefined;
   Subscription: undefined;
   Customization: undefined;
+  CustomizationEditor: { templateId?: string };
+  CustomizationPreview: { designId: string };
+  CustomizationOrderDetail: { requestId: string };
+  BrandQRScan: undefined;
   Community: undefined;
   Legal: { type: 'terms' | 'privacy' };
   Onboarding: undefined;
