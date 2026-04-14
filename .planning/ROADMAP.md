@@ -91,7 +91,7 @@ AiNeed MVP 路线图：11 Phase 从基础设施到商业闭环。核心用户旅
 **Goal**: 用户从推荐/试衣直接进入购买流程，支持自营和合作商家
 **Depends on**: Phase 3（试衣引导购买）, Phase 4（推荐引导发现）
 **Requirements**: COMM-01 ~ COMM-13 (13 条)
-**Plans:** 5/9 plans executed
+**Plans:** 6/9 plans executed
 
 Plans:
 - [ ] 05-01-PLAN.md — Schema + Coupon + StockNotification backend modules
@@ -102,7 +102,7 @@ Plans:
 - [x] 05-06-PLAN.md — Product detail + Search frontend screens
 - [x] 05-07-PLAN.md — Cart + Checkout + Payment frontend screens
 - [x] 05-08-PLAN.md — Order detail + Refund frontend screens
-- [ ] 05-09-PLAN.md — Merchant apply + Stock notification frontend screens
+- [x] 05-09-PLAN.md — Merchant apply + Stock notification frontend screens
 
 **Success Criteria**:
   1. GLM 视觉理解图片搜索 + 文字搜索 + 多维筛选
