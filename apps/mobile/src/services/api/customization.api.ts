@@ -203,6 +203,34 @@ export const customizationApi = {
       formData,
     );
   },
+
+  // ==================== Payment + Production ====================
+
+  payForCustomization: async (
+    requestId: string,
+    paymentMethod: string,
+  ): Promise<ApiResponse<any>> => {
+    return apiClient.post<any>(
+      `/customization/${requestId}/pay`,
+      { paymentMethod },
+    );
+  },
+
+  getProductionStatus: async (
+    requestId: string,
+  ): Promise<ApiResponse<any>> => {
+    return apiClient.get<any>(
+      `/customization/${requestId}/production-status`,
+    );
+  },
+
+  confirmDelivery: async (
+    requestId: string,
+  ): Promise<ApiResponse<any>> => {
+    return apiClient.post<any>(
+      `/customization/${requestId}/confirm-delivery`,
+    );
+  },
 };
 
 export default customizationApi;

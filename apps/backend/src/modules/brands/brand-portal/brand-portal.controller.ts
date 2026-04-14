@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Put,
   Param,
   Query,
@@ -18,6 +19,7 @@ import {
 
 import { MerchantAuthGuard } from "../../merchant/guards/merchant-auth.guard";
 import { BrandsService } from "../brands.service";
+import { GenerateQRCodeDto, BatchGenerateQRCodeDto } from "../dto/qr-code.dto";
 
 import { BrandPortalService } from "./brand-portal.service";
 import { ScanStatisticsQueryDto, ProductDataUpdateDto } from "./dto";
@@ -112,6 +114,71 @@ export class BrandPortalController {
       req.merchant.brandId,
       page ? parseInt(page, 10) : 1,
       limit ? parseInt(limit, 10) : 20,
+    );
+  }
+
+  @Post("qr-codes")
+  @ApiOperation({ summary: "创建二维码", description: "为品牌商品生成专属二维码" })
+  @ApiResponse({ status: 201, description: "创建成功" })
+  async createQRCode(
+    @Request() req: { merchant: { brandId: string } },
+    @Body() dto: GenerateQRCodeDto,
+  ) {
+    return this.brandsService.generateQRCode(req.merchant.brandId, dto.productId, {
+      productName: dto.productName,
+      sku: dto.sku,
+      color: dto.color,
+      size: dto.size,
+      material: dto.material,
+      price: dto.price,
+    });
+  }
+
+  @Post("qr-codes/batch")
+  @ApiOperation({ summary: "批量创建二维码", description: "为多个商品批量生成二维码" })
+  @ApiResponse({ status: 201, description: "批量创建成功" })
+  async batchCreateQRCodes(
+    @Request() req: { merchant: { brandId: string } },
+    @Body() dto: BatchGenerateQRCodeDto,
+  ) {
+    const results = [];
+    for (const product of dto.products) {
+      const result = await this.brandsService.generateQRCode(
+        req.merchant.brandId,
+        product.productId,
+        {
+          productName: product.productName,
+          sku: product.sku,
+          color: product.color,
+          size: product.size,
+          material: product.material,
+          price: product.price,
+        },
+      );
+      results.push(result);
+    }
+    return { created: results.length, items: results };
+  }
+
+  @Get("qr-codes/stats")
+  @ApiOperation({ summary: "二维码统计", description: "获取二维码使用统计数据" })
+  @ApiResponse({ status: 200, description: "统计数据" })
+  async getQRCodeStats(
+    @Request() req: { merchant: { brandId: string } },
+  ) {
+    return this.brandPortalService.getQRCodeStats(req.merchant.brandId);
+  }
+
+  @Get("scan-trends")
+  @ApiOperation({ summary: "扫码趋势", description: "获取最近N天的扫码趋势数据" })
+  @ApiParam({ name: "days", description: "天数", required: false })
+  async getScanTrends(
+    @Request() req: { merchant: { brandId: string } },
+    @Query("days") days?: string,
+  ) {
+    return this.brandPortalService.getScanTrends(
+      req.merchant.brandId,
+      days ? parseInt(days, 10) : 30,
     );
   }
 }

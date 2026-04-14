@@ -177,4 +177,59 @@ export class BrandPortalService {
       categoryInterests: {},
     };
   }
+
+  async getQRCodeStats(brandId: string) {
+    const [totalCodes, activeCodes, scansAgg] = await Promise.all([
+      this.prisma.brandQRCode.count({ where: { brandId } }),
+      this.prisma.brandQRCode.count({ where: { brandId, isActive: true } }),
+      this.prisma.brandQRCode.aggregate({
+        where: { brandId },
+        _sum: { scanCount: true },
+        _avg: { scanCount: true },
+      }),
+    ]);
+
+    return {
+      totalCodes,
+      activeCodes,
+      totalScans: scansAgg._sum.scanCount || 0,
+      averageScansPerCode: Math.round(scansAgg._avg.scanCount || 0),
+    };
+  }
+
+  async getScanTrends(brandId: string, days: number = 30) {
+    const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+    const scans = await this.prisma.brandScanRecord.findMany({
+      where: {
+        qrCode: { brandId },
+        scannedAt: { gte: startDate },
+      },
+      select: { scannedAt: true },
+      orderBy: { scannedAt: "asc" },
+    });
+
+    // Group by date
+    const dailyMap = new Map<string, number>();
+    for (let i = 0; i < days; i++) {
+      const date = new Date(Date.now() - (days - 1 - i) * 24 * 60 * 60 * 1000);
+      const key = date.toISOString().split("T")[0] ?? "";
+      dailyMap.set(key, 0);
+    }
+
+    for (const scan of scans) {
+      const key = scan.scannedAt.toISOString().split("T")[0] ?? "";
+      if (dailyMap.has(key)) {
+        dailyMap.set(key, (dailyMap.get(key) ?? 0) + 1);
+      }
+    }
+
+    return {
+      days,
+      trend: Array.from(dailyMap.entries()).map(([date, count]) => ({
+        date,
+        count,
+      })),
+    };
+  }
 }

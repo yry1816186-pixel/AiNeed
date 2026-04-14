@@ -264,4 +264,58 @@ export class CustomizationController {
   ) {
     return this.customizationService.cancelRequest(requestId, userId);
   }
+
+  // ==================== Payment + Production ====================
+
+  @Post(":id/pay")
+  @ApiOperation({ summary: "定制需求付款", description: "为已确认的定制需求发起支付" })
+  @ApiParam({ name: "id", description: "定制需求ID", type: String, format: "uuid" })
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        paymentMethod: { type: "string", description: "支付方式 (alipay/wechat)" },
+      },
+      required: ["paymentMethod"],
+    },
+  })
+  async payForCustomization(
+    @CurrentUser("id") userId: string,
+    @Param("id") requestId: string,
+    @Body() body: { paymentMethod: string },
+  ) {
+    const payResult = await this.customizationService.confirmAndPay(
+      requestId,
+      userId,
+      body.paymentMethod,
+    );
+
+    // Simulate payment callback success
+    await this.customizationService.handlePaymentCallback(requestId, {
+      success: true,
+      paymentId: payResult.paymentId,
+    });
+
+    return payResult;
+  }
+
+  @Get(":id/production-status")
+  @ApiOperation({ summary: "获取生产状态", description: "查询定制商品的生产和物流状态" })
+  @ApiParam({ name: "id", description: "定制需求ID", type: String, format: "uuid" })
+  async getProductionStatus(
+    @CurrentUser("id") userId: string,
+    @Param("id") requestId: string,
+  ) {
+    return this.customizationService.getProductionStatus(requestId, userId);
+  }
+
+  @Post(":id/confirm-delivery")
+  @ApiOperation({ summary: "确认收货", description: "用户确认收到定制商品" })
+  @ApiParam({ name: "id", description: "定制需求ID", type: String, format: "uuid" })
+  async confirmDelivery(
+    @CurrentUser("id") userId: string,
+    @Param("id") requestId: string,
+  ) {
+    return this.customizationService.confirmDelivery(requestId, userId);
+  }
 }

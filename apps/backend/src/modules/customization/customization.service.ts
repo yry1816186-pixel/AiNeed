@@ -9,6 +9,7 @@ import {
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { pricingEngine } from "./pricing/pricing-engine";
 import type { PricingResult } from "./pricing/pricing-engine";
+import { PODService } from "./pod/pod-service";
 import {
   getTemplateSeedData,
   getTemplatesByType,
@@ -16,7 +17,10 @@ import {
 
 @Injectable()
 export class CustomizationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private podService: PODService,
+  ) {}
 
   // ==================== Template Methods ====================
 
@@ -435,6 +439,108 @@ export class CustomizationService {
     return this.prisma.customizationRequest.update({
       where: { id: requestId },
       data: { status: CustomizationStatus.cancelled },
+    });
+  }
+
+  // ==================== Payment + Production Methods ====================
+
+  async confirmAndPay(
+    requestId: string,
+    userId: string,
+    paymentMethod: string,
+  ) {
+    const request = await this.prisma.customizationRequest.findFirst({
+      where: { id: requestId, userId },
+      include: { quotes: true },
+    });
+
+    if (!request) {
+      throw new NotFoundException("定制需求不存在");
+    }
+
+    if (request.status !== CustomizationStatus.confirmed) {
+      throw new BadRequestException("需求状态不允许付款");
+    }
+
+    if (!request.selectedQuoteId) {
+      throw new BadRequestException("请先选择报价");
+    }
+
+    // Create a payment record (placeholder -- integrates with PaymentService)
+    const paymentId = `pay-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+    await this.prisma.customizationRequest.update({
+      where: { id: requestId },
+      data: {
+        paymentId,
+        status: CustomizationStatus.confirmed,
+      },
+    });
+
+    return { paymentId, amount: request.quotes[0]?.price, paymentMethod };
+  }
+
+  async handlePaymentCallback(
+    requestId: string,
+    paymentResult: { success: boolean; paymentId: string },
+  ) {
+    if (!paymentResult.success) {
+      return { status: "payment_failed" };
+    }
+
+    // On payment success, submit to POD
+    try {
+      const podResult = await this.podService.submitToProduction(requestId);
+      return { status: "production_started", podResult };
+    } catch {
+      return { status: "payment_confirmed_production_pending" };
+    }
+  }
+
+  async getProductionStatus(requestId: string, userId: string) {
+    const request = await this.prisma.customizationRequest.findFirst({
+      where: { id: requestId, userId },
+    });
+
+    if (!request) {
+      throw new NotFoundException("定制需求不存在");
+    }
+
+    if (request.podOrderId) {
+      try {
+        const podStatus = await this.podService.checkProductionStatus(requestId);
+        return {
+          status: request.status,
+          podStatus,
+          trackingNumber: request.trackingNumber,
+          carrier: request.carrier,
+          estimatedDeliveryDate: request.estimatedDeliveryDate,
+        };
+      } catch {
+        // POD check failed, return current status
+      }
+    }
+
+    return {
+      status: request.status,
+      trackingNumber: request.trackingNumber,
+      carrier: request.carrier,
+      estimatedDeliveryDate: request.estimatedDeliveryDate,
+    };
+  }
+
+  async confirmDelivery(requestId: string, userId: string) {
+    const request = await this.prisma.customizationRequest.findFirst({
+      where: { id: requestId, userId, status: CustomizationStatus.shipped },
+    });
+
+    if (!request) {
+      throw new NotFoundException("定制需求不存在或状态不允许确认收货");
+    }
+
+    return this.prisma.customizationRequest.update({
+      where: { id: requestId },
+      data: { status: CustomizationStatus.completed },
     });
   }
 }
