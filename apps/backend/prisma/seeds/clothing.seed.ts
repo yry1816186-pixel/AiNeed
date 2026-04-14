@@ -2,7 +2,7 @@
 import { PrismaClient, ClothingCategory } from '@prisma/client';
 
 // ============================================================================
-// 服装商品 Seed 数据 - 50 件商品，覆盖 8 大分类
+// 服装商品 Seed 数据 - 500+ 件商品，覆盖 8 大分类
 // ============================================================================
 
 const clothingData = [
@@ -1248,6 +1248,426 @@ const clothingData = [
     },
   },
 ];
+
+// ============================================================================
+// Generative expansion to reach 500+ items
+// ============================================================================
+
+const brandPool = [
+  'xuno-studio', 'zara', 'uniqlo', 'cos', 'nike', 'hm', 'gap',
+  'pull-and-bear', 'bershka', 'mango', 'massimo-dutti', 'adidas',
+  'puma', 'under-armour', 'lululemon', 'fila', 'anta', 'li-ning',
+  'bosideng', 'peacebird', 'gxg', 'semir', 'ochirly', 'mo-co',
+  'jnby', 'champion', 'carhartt', 'levis', 'calvin-klein',
+  'tommy-hilfiger', 'dr-martens', 'converse', 'vans', 'new-balance',
+  'asics', 'furla', 'longchamp', 'coach', 'michael-kors',
+];
+
+const colorPalettes = {
+  tops: [
+    ['白色', '黑色', '灰色'],
+    ['奶白色', '浅蓝色', '米色'],
+    ['驼色', '焦糖色', '卡其色'],
+    ['樱花粉', '薰衣草紫', '薄荷绿'],
+    ['酒红色', '墨绿色', '藏青色'],
+    ['橘红色', '姜黄色', '孔雀蓝'],
+    ['珊瑚色', '雾霾蓝', '燕麦色'],
+    ['米白色', '灰蓝色', '深灰色'],
+  ],
+  bottoms: [
+    ['深蓝色', '黑色', '浅蓝色'],
+    ['黑色', '灰色', '卡其色'],
+    ['白色', '米色', '杏色'],
+    ['军绿色', '卡其色', '黑色'],
+    ['驼色', '深灰色', '藏青色'],
+    ['复古蓝', '烟灰色', '原色'],
+  ],
+  dresses: [
+    ['黑色', '酒红色', '墨绿色'],
+    ['白色', '浅粉色', '淡蓝色'],
+    ['碎花', '条纹', '波点'],
+    ['米白色', '香槟色', '裸色'],
+    ['藏青色', '深灰色', '黑色'],
+    ['珊瑚色', '鹅黄色', '薄荷绿'],
+  ],
+  outerwear: [
+    ['黑色', '藏青色', '深灰色'],
+    ['驼色', '卡其色', '米色'],
+    ['军绿色', '黑色', '灰色'],
+    ['白色', '米白色', '浅灰色'],
+    ['酒红色', '焦糖色', '棕色'],
+    ['藏青色', '墨绿色', '炭灰色'],
+  ],
+  footwear: [
+    ['白色', '黑色', '灰色'],
+    ['黑色', '棕色', '酒红色'],
+    ['米白色', '裸色', '浅灰色'],
+    ['白色', '蓝色', '红色'],
+    ['黑色', '白色', '绿色'],
+    ['棕色', '驼色', '黑色'],
+  ],
+  accessories: [
+    ['黑色', '棕色', '酒红色'],
+    ['金色', '银色', '玫瑰金'],
+    ['白色', '米色', '灰色'],
+    ['红色', '蓝色', '绿色'],
+    ['黑色', '白色', '金色'],
+  ],
+  activewear: [
+    ['黑色', '深灰色', '藏青色'],
+    ['白色', '灰色', '黑色'],
+    ['荧光绿', '亮蓝色', '橙色'],
+    ['粉色', '紫色', '蓝色'],
+    ['黑色', '白色', '红色'],
+  ],
+  swimwear: [
+    ['黑色', '白色', '红色'],
+    ['热带印花', '条纹', '纯色'],
+    ['蓝色', '绿色', '橙色'],
+    ['碎花', '波点', '几何'],
+    ['黑色', '深蓝色', '酒红色'],
+  ],
+};
+
+const sizeSets = {
+  tops: [['XS', 'S', 'M', 'L', 'XL'], ['S', 'M', 'L', 'XL'], ['M', 'L', 'XL']],
+  bottoms: [['XS', 'S', 'M', 'L', 'XL'], ['S', 'M', 'L', 'XL'], ['26', '27', '28', '29', '30', '31']],
+  dresses: [['XS', 'S', 'M', 'L'], ['S', 'M', 'L', 'XL'], ['S', 'M', 'L']],
+  outerwear: [['S', 'M', 'L', 'XL'], ['M', 'L', 'XL', 'XXL'], ['S', 'M', 'L']],
+  footwear: [['36', '37', '38', '39', '40'], ['38', '39', '40', '41', '42', '43'], ['35', '36', '37', '38', '39']],
+  accessories: [['均码'], ['S', 'M', 'L']],
+  activewear: [['XS', 'S', 'M', 'L', 'XL'], ['S', 'M', 'L', 'XL']],
+  swimwear: [['XS', 'S', 'M', 'L'], ['S', 'M', 'L']],
+};
+
+const tagSets = {
+  tops: [
+    ['基础款', '纯棉', '百搭', '简约'],
+    ['法式', '优雅', '浪漫', '约会'],
+    ['职场', '通勤', '干练', '知性'],
+    ['休闲', '舒适', '日常', '宽松'],
+    ['设计感', '小众', '个性', '时尚'],
+    ['高领', '保暖', '秋冬', '质感'],
+    ['印花', '潮流', '街头', '青春'],
+    ['羊绒', '奢华', '经典', '高级'],
+  ],
+  bottoms: [
+    ['修身', '百搭', '经典', '直筒'],
+    ['高腰', '显瘦', '阔腿', '优雅'],
+    ['休闲', '舒适', '运动', '弹力'],
+    ['复古', '宽松', '街头', '潮流'],
+    ['职场', '通勤', '西装裤', '知性'],
+    ['牛仔', '百搭', '耐穿', '日常'],
+  ],
+  dresses: [
+    ['优雅', '约会', '气质', '显瘦'],
+    ['休闲', '日常', '舒适', '简约'],
+    ['度假', '波西米亚', '飘逸', '浪漫'],
+    ['职场', '知性', '通勤', '大方'],
+    ['派对', '性感', '亮片', '夜店'],
+    ['清新', '少女', '甜美', '减龄'],
+  ],
+  outerwear: [
+    ['保暖', '厚实', '秋冬', '防风'],
+    ['轻薄', '便携', '春秋', '百搭'],
+    ['设计感', '时尚', '个性', '潮流'],
+    ['经典', '百搭', '职场', '简约'],
+    ['运动', '户外', '防水', '透气'],
+    ['奢华', '质感', '羊绒', '高级'],
+  ],
+  footwear: [
+    ['百搭', '舒适', '经典', '日常'],
+    ['运动', '轻便', '透气', '跑步'],
+    ['优雅', '职场', '气质', '高跟'],
+    ['休闲', '平底', '舒适', '行走'],
+    ['潮流', '街头', '个性', '设计感'],
+    ['保暖', '秋冬', '加绒', '厚底'],
+  ],
+  accessories: [
+    ['百搭', '经典', '日常', '简约'],
+    ['设计感', '小众', '个性', '时尚'],
+    ['优雅', '气质', '职场', '知性'],
+    ['运动', '功能', '实用', '户外'],
+    ['奢华', '质感', '高级', '品牌'],
+  ],
+  activewear: [
+    ['运动', '透气', '弹力', '速干'],
+    ['瑜伽', '舒适', '修身', '柔软'],
+    ['跑步', '轻便', '反光', '功能'],
+    ['健身', '支撑', '透气', '速干'],
+    ['休闲', '运动', '百搭', '日常'],
+  ],
+  swimwear: [
+    ['性感', '比基尼', '度假', '海滩'],
+    ['保守', '连体', '遮肚', '显瘦'],
+    ['运动', '功能', '竞速', '专业'],
+    ['可爱', '少女', '甜美', '清新'],
+    ['潮流', '设计感', '个性', '时尚'],
+  ],
+};
+
+const categoryTemplates = {
+  tops: {
+    subcategories: ['tshirt', 'blouse', 'sweater', 'hoodie', 'knitwear', 'polo', 'tank_top', 'crop_top'],
+    names: [
+      (sub, i) => {
+        const nameMap = {
+          tshirt: ['纯棉圆领T恤', 'V领修身T恤', '宽松印花T恤', '落肩纯色T恤'],
+          blouse: ['雪纺飘带衬衫', '丝绸质感衬衫', '荷叶边装饰衬衫', '泡泡袖衬衫'],
+          sweater: ['高领针织毛衣', '圆领提花毛衣', 'V领绞花毛衣', '半高领纯色毛衣'],
+          hoodie: ['连帽卫衣', '拉链连帽衫', '圆领卫衣', 'oversize卫衣'],
+          knitwear: ['开衫针织衫', '套头针织衫', '马海毛针织衫', '粗棒针织衫'],
+          polo: ['经典Polo衫', '修身Polo衫', '棉质Polo衫', '条纹Polo衫'],
+          tank_top: ['吊带背心', '工字背心', '蕾丝边吊带', '宽肩带背心'],
+          crop_top: ['短款T恤', '短款针织衫', '短款衬衫', '短款卫衣'],
+        };
+        const list = nameMap[sub] || nameMap.tshirt;
+        return list[i % list.length];
+      },
+    ],
+    priceRange: [49, 599],
+    descTemplates: [
+      (n, m) => `${n}，采用优质面料，穿着舒适透气。${m}工艺精湛，适合日常穿搭，百搭实用。`,
+      (n, m) => `${n}，${m}设计独特，展现个性风格。面料柔软亲肤，版型修饰身材，是衣橱必备单品。`,
+      (n, m) => `${n}，精选${m}面料，手感细腻。简约设计不失细节，轻松驾驭各种场合。`,
+    ],
+    materials: ['纯棉', '天丝棉', '莫代尔', '涤纶', '羊毛', '羊绒', '亚麻', '锦纶混纺', '丝绸', '竹纤维'],
+  },
+  bottoms: {
+    subcategories: ['jeans', 'pants', 'shorts', 'skirt', 'wide_leg', 'culottes', 'jogger'],
+    names: [
+      (sub, i) => {
+        const nameMap = {
+          jeans: ['直筒牛仔裤', '小脚牛仔裤', '高腰阔腿牛仔裤', '弹力修身牛仔裤'],
+          pants: ['西装阔腿裤', '休闲直筒裤', '高腰烟管裤', '针织运动裤'],
+          shorts: ['高腰牛仔短裤', '休闲五分裤', '西装短裤', '运动短裤'],
+          skirt: ['高腰A字裙', '百褶半身裙', '包臀铅笔裙', '网纱半身裙'],
+          wide_leg: ['高腰阔腿裤', '垂感西装阔腿裤', '亚麻阔腿裤', '灯芯绒阔腿裤'],
+          culottes: ['七分阔腿裤', '休闲七分裤', '通勤七分裤', '棉麻七分裤'],
+          jogger: ['束脚运动裤', '休闲卫裤', '针织慢跑裤', '灯芯绒束脚裤'],
+        };
+        const list = nameMap[sub] || nameMap.pants;
+        return list[i % list.length];
+      },
+    ],
+    priceRange: [69, 499],
+    descTemplates: [
+      (n, m) => `${n}，${m}面料舒适有弹性，版型修饰腿型。百搭日常，适合通勤和休闲场合。`,
+      (n, m) => `${n}，精选${m}面料，做工精细。高腰设计拉长腿部比例，穿着舒适有型。`,
+    ],
+    materials: ['纯棉', '弹力牛仔', '西装面料', '亚麻', '涤纶', '针织', '灯芯绒', '棉麻'],
+  },
+  dresses: {
+    subcategories: ['mini', 'midi', 'maxi', 'shirt_dress', 'wrap_dress', 'slip_dress'],
+    names: [
+      (sub, i) => {
+        const nameMap = {
+          mini: ['A字迷你连衣裙', '荷叶边短裙', '格纹短款连衣裙', '泡泡袖迷你裙'],
+          midi: ['法式中长连衣裙', 'V领收腰连衣裙', '碎花中长裙', '针织中长裙'],
+          maxi: ['波西米亚长裙', '飘逸雪纺长裙', '高开叉长裙', '蕾丝拼接长裙'],
+          shirt_dress: ['经典衬衫裙', '系带衬衫裙', '条纹衬衫裙', 'oversize衬衫裙'],
+          wrap_dress: ['法式裹身裙', 'V领裹身连衣裙', '碎花裹身裙', '丝质裹身裙'],
+          slip_dress: ['吊带连衣裙', '缎面吊带裙', '蕾丝吊带裙', '针织吊带裙'],
+        };
+        const list = nameMap[sub] || nameMap.midi;
+        return list[i % list.length];
+      },
+    ],
+    priceRange: [99, 799],
+    descTemplates: [
+      (n, m) => `${n}，${m}面料飘逸灵动，剪裁精致优雅。上身展现女性柔美气质，适合约会和派对。`,
+      (n, m) => `${n}，采用${m}面料，垂感自然。简约设计凸显品味，轻松打造优雅造型。`,
+    ],
+    materials: ['雪纺', '丝绸', '棉麻', '针织', '牛仔', '涤纶', '蕾丝', '缎面'],
+  },
+  outerwear: {
+    subcategories: ['jacket', 'blazer', 'coat', 'windbreaker', 'down_jacket', 'trench', 'bomber'],
+    names: [
+      (sub, i) => {
+        const nameMap = {
+          jacket: ['机车皮衣', '牛仔外套', '飞行夹克', '灯芯绒夹克'],
+          blazer: ['修身西装外套', 'oversize西装', '格纹西装外套', '丝绒西装外套'],
+          coat: ['双面羊绒大衣', '毛呢中长款大衣', '茧型大衣', '浴袍式大衣'],
+          windbreaker: ['防风冲锋衣', '轻薄风衣', '透气运动外套', '可收纳外套'],
+          down_jacket: ['短款羽绒服', '中长款羽绒服', '轻薄羽绒服', '连帽羽绒服'],
+          trench: ['经典风衣', '束腰风衣', '短款风衣', '双排扣风衣'],
+          bomber: ['经典飞行员夹克', '刺绣棒球夹克', '缎面 bomber', '羊羔毛飞行员夹克'],
+        };
+        const list = nameMap[sub] || nameMap.jacket;
+        return list[i % list.length];
+      },
+    ],
+    priceRange: [129, 2999],
+    descTemplates: [
+      (n, m) => `${n}，${m}面料挺括有型，剪裁利落。保暖性与时尚感兼具，秋冬衣橱必备。`,
+      (n, m) => `${n}，精选${m}面料，做工考究。版型经典不过时，百搭实用。`,
+    ],
+    materials: ['羊绒', '羊毛', '锦纶', '涤纶', '皮革', '牛仔', '棉', '灯芯绒', '防风面料'],
+  },
+  footwear: {
+    subcategories: ['sneakers', 'heels', 'flats', 'boots', 'sandals', 'loafers', 'mules'],
+    names: [
+      (sub, i) => {
+        const nameMap = {
+          sneakers: ['经典小白鞋', '复古老爹鞋', '透气跑步鞋', '低帮板鞋'],
+          heels: ['尖头细跟高跟鞋', '方头粗跟单鞋', '猫跟优雅单鞋', '绑带高跟凉鞋'],
+          flats: ['芭蕾舞平底鞋', '乐福平底鞋', '尖头平底鞋', '穆勒平底鞋'],
+          boots: ['切尔西短靴', '过膝长靴', '马丁靴', '方头短靴'],
+          sandals: ['一字带凉鞋', '坡跟凉鞋', '运动凉鞋', '绑带罗马凉鞋'],
+          loafers: ['经典乐福鞋', '厚底乐福鞋', '马衔扣乐福鞋', '毛绒乐福鞋'],
+          mules: ['半拖鞋穆勒鞋', '方头穆勒鞋', '粗跟穆勒鞋', '皮质穆勒鞋'],
+        };
+        const list = nameMap[sub] || nameMap.sneakers;
+        return list[i % list.length];
+      },
+    ],
+    priceRange: [79, 1299],
+    descTemplates: [
+      (n, m) => `${n}，${m}材质舒适耐穿。设计时尚百搭，日常出行轻松驾驭。`,
+      (n, m) => `${n}，采用${m}材质，脚感柔软。经典款式永不过时，搭配各种风格。`,
+    ],
+    materials: ['真皮', '合成革', '帆布', '网面', '橡胶底', '绒面', '漆皮'],
+  },
+  accessories: {
+    subcategories: ['bag', 'scarf', 'belt', 'hat', 'jewelry', 'sunglasses', 'watch'],
+    names: [
+      (sub, i) => {
+        const nameMap = {
+          bag: ['链条斜挎包', '托特大包', '迷你手提包', '双肩背包'],
+          scarf: ['真丝方巾', '羊绒围巾', '印花长巾', '格纹围巾'],
+          belt: ['经典皮带', '编织腰带', '细款装饰腰带', '宽版腰带'],
+          hat: ['贝雷帽', '渔夫帽', '棒球帽', '报童帽'],
+          jewelry: ['珍珠耳环', '简约锁骨链', '手链', '戒指'],
+          sunglasses: ['猫眼墨镜', '飞行员墨镜', '圆框墨镜', '方框墨镜'],
+          watch: ['简约石英表', '金属链带手表', '皮质表带手表', '运动手表'],
+        };
+        const list = nameMap[sub] || nameMap.bag;
+        return list[i % list.length];
+      },
+    ],
+    priceRange: [29, 899],
+    descTemplates: [
+      (n, m) => `${n}，${m}材质精致耐用。细节设计感十足，为整体造型加分。`,
+      (n, m) => `${n}，采用${m}材质，质感出众。百搭实用，是提升穿搭品质的点睛之笔。`,
+    ],
+    materials: ['真皮', '帆布', '尼龙', '合金', '纯银', '丝绸', '羊绒', '醋酸纤维'],
+  },
+  activewear: {
+    subcategories: ['sports_bra', 'leggings', 'sports_top', 'tracksuit', 'running_shorts'],
+    names: [
+      (sub, i) => {
+        const nameMap = {
+          sports_bra: ['中强度运动内衣', '高强度支撑内衣', '瑜伽内衣', '交叉带运动内衣'],
+          leggings: ['高腰紧身运动裤', '提臀瑜伽裤', '口袋运动裤', '九分瑜伽裤'],
+          sports_top: ['速干运动T恤', '透气运动背心', '拉链运动外套', '宽松运动衫'],
+          tracksuit: ['运动套装', '休闲运动两件套', '针织运动套装', '卫衣运动套装'],
+          running_shorts: ['轻量跑步短裤', '内衬运动短裤', '压缩运动短裤', '速干运动短裤'],
+        };
+        const list = nameMap[sub] || nameMap.leggings;
+        return list[i % list.length];
+      },
+    ],
+    priceRange: [49, 599],
+    descTemplates: [
+      (n, m) => `${n}，${m}面料吸湿排汗，运动时保持干爽。弹力贴合不束缚，适合各种运动场景。`,
+      (n, m) => `${n}，采用${m}科技面料，透气速干。专业运动剪裁，助力运动表现。`,
+    ],
+    materials: ['速干涤纶', '弹力锦纶', '棉涤混纺', '莫代尔', '竹纤维', '聚酯纤维'],
+  },
+  swimwear: {
+    subcategories: ['bikini', 'one_piece', 'tankini', 'swim_trunks', 'rash_guard'],
+    names: [
+      (sub, i) => {
+        const nameMap = {
+          bikini: ['三角比基尼套装', '绑带比基尼', '高腰比基尼套装', '荷叶边比基尼'],
+          one_piece: ['连体泳衣', '露背连体泳衣', '深V连体泳衣', '撞色连体泳衣'],
+          tankini: ['分体式防晒泳衣', '运动分体泳装', '裙式分体泳衣', '宽肩带分体泳衣'],
+          swim_trunks: ['男士沙滩裤', '男士平角泳裤', '男士紧身泳裤', '男士花色沙滩裤'],
+          rash_guard: ['防晒冲浪服', '长袖防晒泳衣', '短袖防晒衣', '冲浪防护服'],
+        };
+        const list = nameMap[sub] || nameMap.bikini;
+        return list[i % list.length];
+      },
+    ],
+    priceRange: [49, 399],
+    descTemplates: [
+      (n, m) => `${n}，${m}面料弹性好，亲肤舒适。度假海滩必备，展现自信魅力。`,
+      (n, m) => `${n}，采用${m}面料，耐氯耐晒。修身版型，运动休闲两相宜。`,
+    ],
+    materials: ['氨纶混纺', '锦纶', '涤纶', '弹力面料', '速干面料'],
+  },
+};
+
+// Generate additional items to reach 500+
+const categoryCounts = {
+  tops: 75, bottoms: 70, dresses: 65, outerwear: 70,
+  footwear: 65, accessories: 70, activewear: 65, swimwear: 45,
+};
+
+const skuCounters = {
+  tops: 101, bottoms: 101, dresses: 101, outerwear: 101,
+  footwear: 101, accessories: 101, activewear: 101, swimwear: 101,
+};
+
+const categoryAbbrevs = {
+  tops: 'TOP', bottoms: 'BOT', dresses: 'DRE', outerwear: 'OUT',
+  footwear: 'FOO', accessories: 'ACC', activewear: 'ACT', swimwear: 'SWI',
+};
+
+for (const [cat, target] of Object.entries(categoryCounts)) {
+  // Count existing items in this category
+  const existingCount = clothingData.filter(item => item.category === ClothingCategory[cat]).length;
+  const needed = Math.max(0, target - existingCount);
+
+  const template = categoryTemplates[cat];
+  const subcats = template.subcategories;
+  const colorPalette = colorPalettes[cat];
+  const sizes = sizeSets[cat];
+  const tags = tagSets[cat];
+  const materials = template.materials;
+
+  for (let i = 0; i < needed; i++) {
+    const sub = subcats[i % subcats.length];
+    const nameFunc = template.names[0];
+    const name = nameFunc(sub, i);
+    const fullName = name; // Direct use -- names already descriptive
+    const material = materials[i % materials.length];
+    const descFunc = template.descTemplates[i % template.descTemplates.length];
+    const desc = descFunc(fullName, material);
+    const colors = colorPalette[i % colorPalette.length];
+    const size = sizes[i % sizes.length];
+    const tag = tags[i % tags.length];
+    const [minPrice, maxPrice] = template.priceRange;
+    const price = Math.round((minPrice + Math.random() * (maxPrice - minPrice)) / 10) * 10;
+    const hasDiscount = Math.random() > 0.6;
+    const originalPrice = hasDiscount ? Math.round(price * (1.2 + Math.random() * 0.5) / 10) * 10 : null;
+    const stock = Math.round(20 + Math.random() * 480);
+    const brandSlug = brandPool[i % brandPool.length];
+    const skuNum = skuCounters[cat]++;
+    const isFeatured = Math.random() < 0.1;
+
+    clothingData.push({
+      sku: `AN-${categoryAbbrevs[cat]}-${String(skuNum).padStart(3, '0')}`,
+      name: fullName,
+      description: desc,
+      category: ClothingCategory[cat],
+      subcategory: sub,
+      colors,
+      sizes: size,
+      tags: tag,
+      price,
+      originalPrice,
+      stock,
+      brandSlug,
+      isFeatured,
+      attributes: {
+        material,
+        pairingSuggestions: ['搭配同色系单品打造高级感', '混搭不同风格营造个性', '叠穿增加层次感'],
+        careInstructions: '建议按照洗标说明洗涤，避免高温烘干',
+      },
+    });
+  }
+}
 
 // ============================================================================
 // Seed 函数
