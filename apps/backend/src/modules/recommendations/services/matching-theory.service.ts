@@ -126,8 +126,8 @@ export class MatchingTheoryService {
     ColorSeason,
     ColorSeasonProfile
   > = {
-    [ColorSeason.spring]: {
-      season: ColorSeason.spring,
+    [ColorSeason.spring_warm]: {
+      season: ColorSeason.spring_warm,
       bestColors: [
         "coral",
         "peach",
@@ -142,10 +142,28 @@ export class MatchingTheoryService {
       ],
       avoidColors: ["black", "pure white", "cool gray", "burgundy", "navy"],
       metalTone: "gold",
-      description: "春季型人适合温暖明亮的色彩，如珊瑚色、桃色、金黄色",
+      description: "春季暖型人适合温暖明亮的色彩，如珊瑚色、桃色、金黄色",
     },
-    [ColorSeason.summer]: {
-      season: ColorSeason.summer,
+    [ColorSeason.spring_light]: {
+      season: ColorSeason.spring_light,
+      bestColors: [
+        "coral",
+        "peach",
+        "salmon",
+        "warm pink",
+        "golden yellow",
+        "cream",
+        "ivory",
+        "warm green",
+        "turquoise",
+        "light blue",
+      ],
+      avoidColors: ["black", "pure white", "cool gray", "burgundy", "navy"],
+      metalTone: "gold",
+      description: "春季亮型人适合明亮清新的色彩，如浅桃色、鹅黄色",
+    },
+    [ColorSeason.summer_cool]: {
+      season: ColorSeason.summer_cool,
       bestColors: [
         "lavender",
         "soft pink",
@@ -160,10 +178,28 @@ export class MatchingTheoryService {
       ],
       avoidColors: ["bright orange", "mustard", "rust", "bright red", "gold"],
       metalTone: "silver",
-      description: "夏季型人适合柔和的冷色调，如薰衣草色、粉色、浅蓝色",
+      description: "夏季冷型人适合柔和的冷色调，如薰衣草色、粉色、浅蓝色",
     },
-    [ColorSeason.autumn]: {
-      season: ColorSeason.autumn,
+    [ColorSeason.summer_light]: {
+      season: ColorSeason.summer_light,
+      bestColors: [
+        "lavender",
+        "soft pink",
+        "rose",
+        "mauve",
+        "powder blue",
+        "soft gray",
+        "cool white",
+        "berry",
+        "cool green",
+        "periwinkle",
+      ],
+      avoidColors: ["bright orange", "mustard", "rust", "bright red", "gold"],
+      metalTone: "silver",
+      description: "夏季亮型人适合柔和淡雅的色彩，如浅粉、淡紫、雾霾蓝",
+    },
+    [ColorSeason.autumn_warm]: {
+      season: ColorSeason.autumn_warm,
       bestColors: [
         "rust",
         "terracotta",
@@ -184,10 +220,34 @@ export class MatchingTheoryService {
         "silver",
       ],
       metalTone: "gold",
-      description: "秋季型人适合温暖的大地色系，如驼色、棕色、橄榄绿",
+      description: "秋季暖型人适合温暖的大地色系，如驼色、棕色、橄榄绿",
     },
-    [ColorSeason.winter]: {
-      season: ColorSeason.winter,
+    [ColorSeason.autumn_deep]: {
+      season: ColorSeason.autumn_deep,
+      bestColors: [
+        "rust",
+        "terracotta",
+        "mustard",
+        "olive",
+        "camel",
+        "chocolate",
+        "warm brown",
+        "burnt orange",
+        "forest green",
+        "cream",
+      ],
+      avoidColors: [
+        "bright pink",
+        "pure white",
+        "cool blue",
+        "fuchsia",
+        "silver",
+      ],
+      metalTone: "gold",
+      description: "秋季深型人适合浓郁深沉的色彩，如砖红色、深棕色、墨绿色",
+    },
+    [ColorSeason.winter_cool]: {
+      season: ColorSeason.winter_cool,
       bestColors: [
         "pure white",
         "black",
@@ -202,7 +262,25 @@ export class MatchingTheoryService {
       ],
       avoidColors: ["orange", "beige", "rust", "mustard", "warm brown"],
       metalTone: "silver",
-      description: "冬季型人适合高饱和度的冷色调，如正红色、纯白色、宝蓝色",
+      description: "冬季冷型人适合高饱和度的冷色调，如正红色、纯白色、宝蓝色",
+    },
+    [ColorSeason.winter_deep]: {
+      season: ColorSeason.winter_deep,
+      bestColors: [
+        "pure white",
+        "black",
+        "true red",
+        "royal blue",
+        "emerald",
+        "fuchsia",
+        "burgundy",
+        "hot pink",
+        "cobalt",
+        "silver gray",
+      ],
+      avoidColors: ["orange", "beige", "rust", "mustard", "warm brown"],
+      metalTone: "silver",
+      description: "冬季深型人适合深邃对比强烈的色彩，如深红、纯黑、宝蓝",
     },
   };
 
@@ -525,10 +603,14 @@ export class MatchingTheoryService {
 
   private getColorSeasonName(season: ColorSeason): string {
     const names: Record<ColorSeason, string> = {
-      [ColorSeason.spring]: "春季",
-      [ColorSeason.summer]: "夏季",
-      [ColorSeason.autumn]: "秋季",
-      [ColorSeason.winter]: "冬季",
+      [ColorSeason.spring_warm]: "春季暖型",
+      [ColorSeason.spring_light]: "春季亮型",
+      [ColorSeason.summer_cool]: "夏季冷型",
+      [ColorSeason.summer_light]: "夏季亮型",
+      [ColorSeason.autumn_warm]: "秋季暖型",
+      [ColorSeason.autumn_deep]: "秋季深型",
+      [ColorSeason.winter_cool]: "冬季冷型",
+      [ColorSeason.winter_deep]: "冬季深型",
     };
     return names[season];
   }

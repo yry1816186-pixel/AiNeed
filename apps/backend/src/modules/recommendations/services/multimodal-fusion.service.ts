@@ -294,22 +294,22 @@ export class MultimodalFusionService {
     const vector: number[] = [];
 
     if (attributes.style) {
-      const styleEncoding = this.encodeCategory(attributes.style);
+      const styleEncoding = this.encodeCategory(attributes.style as string[]);
       vector.push(...styleEncoding);
     }
 
     if (attributes.occasions) {
-      const occasionEncoding = this.encodeCategory(attributes.occasions);
+      const occasionEncoding = this.encodeCategory(attributes.occasions as string[]);
       vector.push(...occasionEncoding);
     }
 
     if (attributes.season) {
-      const seasonEncoding = this.encodeCategory(attributes.season);
+      const seasonEncoding = this.encodeCategory(attributes.season as string[]);
       vector.push(...seasonEncoding);
     }
 
     if (attributes.patterns) {
-      const patternEncoding = this.encodeCategory(attributes.patterns);
+      const patternEncoding = this.encodeCategory(attributes.patterns as string[]);
       vector.push(...patternEncoding);
     }
 
@@ -351,22 +351,28 @@ export class MultimodalFusionService {
     let score = 0.5;
 
     if (attrs1.style && attrs2.style) {
-      const commonStyles = attrs1.style.filter((s: string) =>
-        attrs2.style.includes(s),
+      const style1 = attrs1.style as string[];
+      const style2 = attrs2.style as string[];
+      const commonStyles = style1.filter((s: string) =>
+        style2.includes(s),
       );
       score += commonStyles.length * 0.1;
     }
 
     if (attrs1.occasions && attrs2.occasions) {
-      const commonOccasions = attrs1.occasions.filter((o: string) =>
-        attrs2.occasions.includes(o),
+      const occ1 = attrs1.occasions as string[];
+      const occ2 = attrs2.occasions as string[];
+      const commonOccasions = occ1.filter((o: string) =>
+        occ2.includes(o),
       );
       score += commonOccasions.length * 0.05;
     }
 
     if (attrs1.season && attrs2.season) {
-      const commonSeasons = attrs1.season.filter((s: string) =>
-        attrs2.season.includes(s),
+      const season1 = attrs1.season as string[];
+      const season2 = attrs2.season as string[];
+      const commonSeasons = season1.filter((s: string) =>
+        season2.includes(s),
       );
       score += commonSeasons.length * 0.05;
     }
@@ -390,8 +396,10 @@ export class MultimodalFusionService {
     }
 
     if (attrs1.style && attrs2.style) {
-      const commonStyles = attrs1.style.filter((s: string) =>
-        attrs2.style.includes(s),
+      const style1 = attrs1.style as string[];
+      const style2 = attrs2.style as string[];
+      const commonStyles = style1.filter((s: string) =>
+        style2.includes(s),
       );
       if (commonStyles.length > 0) {
         reasons.push(`共同风格: ${commonStyles.join(", ")}`);
@@ -399,8 +407,10 @@ export class MultimodalFusionService {
     }
 
     if (attrs1.occasions && attrs2.occasions) {
-      const commonOccasions = attrs1.occasions.filter((o: string) =>
-        attrs2.occasions.includes(o),
+      const occ1 = attrs1.occasions as string[];
+      const occ2 = attrs2.occasions as string[];
+      const commonOccasions = occ1.filter((o: string) =>
+        occ2.includes(o),
       );
       if (commonOccasions.length > 0) {
         reasons.push(`适合场合: ${commonOccasions.join(", ")}`);

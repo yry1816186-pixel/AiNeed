@@ -306,10 +306,11 @@ export class QdrantService implements OnModuleInit, OnModuleDestroy {
 
   async deleteByFilter(filter: VectorFilter): Promise<void> {
     if (this.isConnected && this.client) {
+      const qdFilter = this.convertFilter(filter);
       await this.client.delete(this.collectionName, {
         wait: true,
-        filter: this.convertFilter(filter),
-      });
+        filter: qdFilter as Record<string, unknown>,
+      } as Parameters<typeof this.client.delete>[1]);
     }
   }
 

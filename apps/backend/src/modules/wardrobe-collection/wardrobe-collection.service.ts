@@ -147,6 +147,7 @@ export class WardrobeCollectionService {
     const item = await this.prisma.wardrobeCollectionItem.create({
       data: {
         collectionId,
+        userId,
         itemType: dto.itemType,
         itemId: dto.itemId,
         sortOrder: dto.sortOrder ?? 0,
@@ -173,6 +174,7 @@ export class WardrobeCollectionService {
     const result = await this.prisma.wardrobeCollectionItem.createMany({
       data: dto.items.map((item) => ({
         collectionId,
+        userId,
         itemType: item.itemType,
         itemId: item.itemId,
         sortOrder: item.sortOrder ?? 0,
