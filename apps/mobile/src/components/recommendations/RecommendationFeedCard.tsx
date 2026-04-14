@@ -67,6 +67,19 @@ export const RecommendationCard = memo(function RecommendationCard({
           </Text>
         )}
 
+        {/* Match score with progress bar */}
+        <View style={styles.scoreRow}>
+          <Text style={styles.scoreLabel}>{item.colorHarmony.score}% 匹配</Text>
+          <View style={styles.scoreTrack}>
+            <View style={[styles.scoreFill, { width: `${item.colorHarmony.score}%` }]} />
+          </View>
+        </View>
+
+        {/* Recommendation reason */}
+        <Text style={styles.matchReason} numberOfLines={1}>
+          推荐理由：{item.matchReason}
+        </Text>
+
         <View style={styles.priceRow}>
           <Text style={styles.price}>¥{item.price}</Text>
           {item.originalPrice && item.originalPrice > item.price && (
@@ -85,10 +98,6 @@ export const RecommendationCard = memo(function RecommendationCard({
             ))}
           </View>
         )}
-
-        <Text style={styles.matchReason} numberOfLines={1}>
-          {item.matchReason}
-        </Text>
       </View>
     </Pressable>
   );
@@ -158,6 +167,33 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.text.secondary,
     fontWeight: "500",
   },
+  scoreRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  scoreLabel: {
+    fontSize: 10,
+    color: DesignTokens.colors.brand.terracotta,
+    fontWeight: "600",
+  },
+  scoreTrack: {
+    flex: 1,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: DesignTokens.colors.backgrounds.secondary,
+    overflow: "hidden",
+  },
+  scoreFill: {
+    height: "100%",
+    borderRadius: 2,
+    backgroundColor: DesignTokens.colors.brand.terracotta,
+  },
+  matchReason: {
+    fontSize: 10,
+    color: DesignTokens.colors.text.tertiary,
+    fontWeight: "400",
+  },
   priceRow: {
     flexDirection: "row",
     alignItems: "baseline",
@@ -187,10 +223,5 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: 9,
     color: DesignTokens.colors.text.secondary,
-  },
-  matchReason: {
-    fontSize: 10,
-    color: DesignTokens.colors.brand.terracotta,
-    fontWeight: "500",
   },
 });
