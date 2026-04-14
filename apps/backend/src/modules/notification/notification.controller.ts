@@ -22,13 +22,18 @@ import { AuthGuard } from "../auth/guards/auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
 
 import { NotificationService, UpdateNotificationSettingsDto } from "./services/notification.service";
+import { PushNotificationService } from "./services/push-notification.service";
+import { RegisterDeviceTokenDto, DeregisterDeviceTokenDto } from "./dto/push-notification.dto";
 
 @ApiTags("notification")
 @ApiBearerAuth()
 @Controller("notifications")
 @UseGuards(AuthGuard)
 export class NotificationController {
-  constructor(private readonly notificationService: NotificationService) {}
+  constructor(
+    private readonly notificationService: NotificationService,
+    private readonly pushNotificationService: PushNotificationService,
+  ) {}
 
   /**
    * 获取通知列表
@@ -114,5 +119,52 @@ export class NotificationController {
     @Body() settings: UpdateNotificationSettingsDto,
   ) {
     return this.notificationService.updateUserSettings(req.user.id, settings);
+  }
+
+  // ==================== Device Token Management ====================
+
+  /**
+   * Register a device push token
+   */
+  @Post("device-token")
+  @ApiOperation({ summary: "注册设备推送令牌", description: "注册或更新设备的FCM/APNs推送令牌" })
+  @ApiResponse({ status: 201, description: "注册成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async registerDeviceToken(
+    @Request() req: RequestWithUser,
+    @Body() dto: RegisterDeviceTokenDto,
+  ) {
+    return this.pushNotificationService.registerDeviceToken(
+      req.user.id,
+      dto.token,
+      dto.platform,
+      dto.appId,
+    );
+  }
+
+  /**
+   * Deregister a device push token
+   */
+  @Delete("device-token/:token")
+  @ApiOperation({ summary: "注销设备推送令牌", description: "注销指定的设备推送令牌" })
+  @ApiResponse({ status: 200, description: "注销成功" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  @ApiParam({ name: "token", description: "设备推送令牌" })
+  async deregisterDeviceToken(
+    @Request() req: RequestWithUser,
+    @Param("token") token: string,
+  ) {
+    return this.pushNotificationService.deregisterDeviceToken(req.user.id, token);
+  }
+
+  /**
+   * List user's registered devices
+   */
+  @Get("device-tokens")
+  @ApiOperation({ summary: "获取已注册设备列表", description: "获取当前用户所有已注册推送的设备列表" })
+  @ApiResponse({ status: 200, description: "成功返回设备列表" })
+  @ApiResponse({ status: 401, description: "未授权" })
+  async getDeviceTokens(@Request() req: RequestWithUser) {
+    return this.pushNotificationService.getUserDevices(req.user.id);
   }
 }

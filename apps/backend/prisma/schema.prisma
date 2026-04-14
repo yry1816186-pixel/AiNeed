@@ -89,6 +89,7 @@ model User {
 
   consents             UserConsent[]
   notificationSetting  UserNotificationSetting?
+  pushDeviceTokens     PushDeviceToken[]
 
   // Phase 5: E-commerce relations
   userCoupons          UserCoupon[]
@@ -962,6 +963,25 @@ model UserNotificationSetting {
   updatedAt DateTime @updatedAt
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ==================== 推送设备令牌 ====================
+
+model PushDeviceToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String
+  platform  String   // 'ios' | 'android'
+  appId     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, token])
+  @@index([userId])
+  @@index([token])
 }
 
 // ==================== 数据合规 ====================

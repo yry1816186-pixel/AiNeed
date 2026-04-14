@@ -4,16 +4,23 @@ import { NotificationType, Prisma } from "@prisma/client";
 import { NotificationService as WebSocketNotificationService } from "../../../common/gateway/notification.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
+import type { PushPayload } from "./push-notification.service";
+import { PushNotificationService } from "./push-notification.service";
+import { NotificationTemplateService } from "./notification-template.service";
+
 export interface CreateNotificationDto {
   type: NotificationType;
   title: string;
   content: string;
   targetType?: string;
   targetId?: string;
+  /** Optional template key and variables for push notification rendering */
+  templateKey?: string;
+  templateVariables?: Record<string, string>;
 }
 
 /**
- * 邮件通知设置
+ * Email notification settings
  */
 interface EmailNotificationSettings {
   marketing: boolean;
@@ -21,22 +28,27 @@ interface EmailNotificationSettings {
 }
 
 /**
- * 推送通知设置
+ * Push notification settings - per-category toggles with quiet hours
  */
-interface PushNotificationSettings {
+export interface PushNotificationSettings {
+  order: boolean;
   recommendation: boolean;
-  social: boolean;
+  community: boolean;
+  system: boolean;
+  quietHoursEnabled: boolean;
+  quietHoursStart: string; // "22:00"
+  quietHoursEnd: string; // "08:00"
 }
 
 /**
- * 应用内通知设置
+ * Application内 notification settings
  */
 interface InAppNotificationSettings {
   all: boolean;
 }
 
 /**
- * 用户通知设置
+ * User notification settings
  */
 export interface UserNotificationSettings {
   id: string;
@@ -49,13 +61,24 @@ export interface UserNotificationSettings {
 }
 
 /**
- * 更新通知设置的参数
+ * Parameters for updating notification settings
  */
 export interface UpdateNotificationSettingsDto {
   email?: EmailNotificationSettings;
   push?: PushNotificationSettings;
   inApp?: InAppNotificationSettings;
 }
+
+/** Default push settings */
+const DEFAULT_PUSH_SETTINGS: PushNotificationSettings = {
+  order: true,
+  recommendation: true,
+  community: true,
+  system: true,
+  quietHoursEnabled: false,
+  quietHoursStart: "22:00",
+  quietHoursEnd: "08:00",
+};
 
 @Injectable()
 export class NotificationService {
@@ -65,22 +88,28 @@ export class NotificationService {
     private readonly prisma: PrismaService,
     @Inject(forwardRef(() => WebSocketNotificationService))
     private readonly wsNotificationService: WebSocketNotificationService,
+    private readonly pushNotificationService: PushNotificationService,
+    private readonly templateService: NotificationTemplateService,
   ) {}
 
   /**
-   * 发送通知给用户
+   * Send notification to a user: DB + WebSocket + Push (if enabled)
    */
   async send(userId: string, dto: CreateNotificationDto) {
     const notification = await this.prisma.notification.create({
       data: {
         userId,
-        ...dto,
+        type: dto.type as unknown as NotificationType,
+        title: dto.title,
+        content: dto.content,
+        targetType: dto.targetType,
+        targetId: dto.targetId,
       },
     });
 
     this.logger.debug(`Created notification for user ${userId}: ${dto.title}`);
 
-    // 通过 WebSocket 实时推送
+    // Push via WebSocket (real-time in-app)
     try {
       const wsNotificationType = this.mapNotificationType(dto.type);
       await this.wsNotificationService.sendCustomNotification(userId, {
@@ -100,17 +129,166 @@ export class NotificationService {
           error instanceof Error ? error.message : "Unknown error"
         }`,
       );
-      // 不影响主流程，仅记录警告
+    }
+
+    // Push via FCM/APNs (if enabled for this category)
+    try {
+      await this.sendPushIfEnabled(userId, dto, notification.id);
+    } catch (error) {
+      this.logger.warn(
+        `Failed to send push notification: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      );
     }
 
     return notification;
   }
 
   /**
-   * 映射数据库通知类型到 WebSocket 通知类型
+   * Send push notification if user has the category enabled and not in quiet hours.
+   */
+  private async sendPushIfEnabled(userId: string, dto: CreateNotificationDto, notificationId: string) {
+    const settings = await this.getUserSettings(userId);
+    const category = this.mapNotificationTypeToCategory(dto.type);
+
+    if (!category) {
+      return; // Unknown category, skip push
+    }
+
+    // Check if push is enabled for this category
+    const pushSettings = settings.push;
+    if (!(category in pushSettings) || !pushSettings[category as keyof PushNotificationSettings]) {
+      this.logger.debug(`Push disabled for category ${category}, user ${userId}`);
+      return;
+    }
+
+    // Check quiet hours
+    if (pushSettings.quietHoursEnabled && this.isInQuietHours(pushSettings)) {
+      this.logger.debug(`User ${userId} in quiet hours, skipping push`);
+      return;
+    }
+
+    // Build push payload
+    let pushPayload: PushPayload;
+
+    if (dto.templateKey) {
+      // Use template for richer push content
+      const rendered = this.templateService.render(
+        dto.templateKey,
+        dto.templateVariables || {},
+      );
+      if (rendered) {
+        pushPayload = {
+          title: rendered.title,
+          body: rendered.body,
+          data: {
+            notificationId,
+            category,
+            actionUrl: rendered.actionUrl,
+          },
+          category,
+        };
+      } else {
+        pushPayload = this.buildDefaultPushPayload(dto, notificationId, category);
+      }
+    } else {
+      pushPayload = this.buildDefaultPushPayload(dto, notificationId, category);
+    }
+
+    await this.pushNotificationService.sendToUser(userId, pushPayload);
+
+    // Mark as pushed
+    await this.prisma.notification.update({
+      where: { id: notificationId },
+      data: { isPushed: true, pushedAt: new Date() },
+    });
+  }
+
+  private buildDefaultPushPayload(
+    dto: CreateNotificationDto,
+    notificationId: string,
+    category: string,
+  ): PushPayload {
+    return {
+      title: dto.title,
+      body: dto.content,
+      data: {
+        notificationId,
+        category,
+        targetType: dto.targetType,
+        targetId: dto.targetId,
+      },
+      category,
+    };
+  }
+
+  /**
+   * Check if current time is within quiet hours.
+   */
+  private isInQuietHours(settings: PushNotificationSettings): boolean {
+    if (!settings.quietHoursStart || !settings.quietHoursEnd) {
+      return false;
+    }
+
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    const startParts = settings.quietHoursStart.split(":").map(Number);
+    const endParts = settings.quietHoursEnd.split(":").map(Number);
+    const startH = startParts[0] ?? 0;
+    const startM = startParts[1] ?? 0;
+    const endH = endParts[0] ?? 0;
+    const endM = endParts[1] ?? 0;
+
+    const startMinutes = startH * 60 + startM;
+    const endMinutes = endH * 60 + endM;
+
+    // Handle overnight quiet hours (e.g., 22:00 to 08:00)
+    if (startMinutes > endMinutes) {
+      return currentMinutes >= startMinutes || currentMinutes < endMinutes;
+    }
+    return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+  }
+
+  /**
+   * Map NotificationType to category for push preference checking.
+   */
+  private mapNotificationTypeToCategory(
+    type: NotificationType | string,
+  ): keyof Pick<PushNotificationSettings, "order" | "recommendation" | "community" | "system"> | null {
+    const categoryMap: Record<string, "order" | "recommendation" | "community" | "system"> = {
+      // Order
+      system_update: "order",
+      // Recommendation
+      daily_recommendation: "recommendation",
+      price_drop: "recommendation",
+      // Community / Social
+      new_follower: "community",
+      comment: "community",
+      like: "community",
+      bookmark: "community",
+      reply_mention: "community",
+      blogger_product_sold: "community",
+      content_approved: "community",
+      content_rejected: "community",
+      report_resolved: "community",
+      // System
+      subscription_activated: "system",
+      subscription_expiring: "system",
+      renewal_failed: "system",
+      try_on_completed: "system",
+      try_on_failed: "system",
+      privacy_reminder: "system",
+    };
+    return categoryMap[type as string] || null;
+  }
+
+  /**
+   * Map database notification type to WebSocket notification type
    */
   private mapNotificationType(
-    type: NotificationType,
+    type: NotificationType | string,
   ):
     | "try_on_complete"
     | "recommendation"
@@ -121,7 +299,7 @@ export class NotificationService {
     | "social"
     | "order" {
     const typeMap: Record<
-      NotificationType,
+      string,
       | "try_on_complete"
       | "recommendation"
       | "price_drop"
@@ -141,27 +319,37 @@ export class NotificationService {
       new_follower: "social",
       comment: "social",
       like: "social",
+      bookmark: "social",
+      reply_mention: "social",
+      blogger_product_sold: "social",
+      content_approved: "social",
+      content_rejected: "social",
+      report_resolved: "social",
       system_update: "system",
       privacy_reminder: "system",
     };
-    return typeMap[type] || "system";
+    return typeMap[type as string] || "system";
   }
 
   /**
-   * 发送通知给用户的别名方法（兼容性）
+   * Send notification to user (alias for compatibility)
    */
   async sendToUser(userId: string, dto: CreateNotificationDto) {
     return this.send(userId, dto);
   }
 
   /**
-   * 批量发送通知
+   * Batch send notifications
    */
   async sendBatch(userIds: string[], dto: CreateNotificationDto) {
     const notifications = await this.prisma.notification.createMany({
       data: userIds.map((userId) => ({
         userId,
-        ...dto,
+        type: dto.type as unknown as NotificationType,
+        title: dto.title,
+        content: dto.content,
+        targetType: dto.targetType,
+        targetId: dto.targetId,
       })),
     });
 
@@ -171,7 +359,7 @@ export class NotificationService {
   }
 
   /**
-   * 获取用户通知列表
+   * Get user notification list
    */
   async getUserNotifications(
     userId: string,
@@ -204,7 +392,7 @@ export class NotificationService {
   }
 
   /**
-   * 标记为已读
+   * Mark as read
    */
   async markAsRead(userId: string, notificationId: string) {
     return this.prisma.notification.updateMany({
@@ -214,7 +402,7 @@ export class NotificationService {
   }
 
   /**
-   * 标记全部已读
+   * Mark all as read
    */
   async markAllAsRead(userId: string) {
     return this.prisma.notification.updateMany({
@@ -224,7 +412,7 @@ export class NotificationService {
   }
 
   /**
-   * 删除通知
+   * Delete notification
    */
   async delete(userId: string, notificationId: string) {
     return this.prisma.notification.deleteMany({
@@ -233,32 +421,50 @@ export class NotificationService {
   }
 
   /**
-   * 获取用户通知设置
+   * Get user notification settings
    */
   async getUserSettings(userId: string): Promise<UserNotificationSettings> {
-    let settings = await this.prisma.userNotificationSetting.findUnique({
+    const settings = await this.prisma.userNotificationSetting.findUnique({
       where: { userId },
     });
 
-    // 默认设置
     if (!settings) {
-      const defaultSettings: UserNotificationSettings = {
+      return {
         id: "",
         userId,
         email: { marketing: true, transactional: true },
-        push: { recommendation: true, social: true },
+        push: { ...DEFAULT_PUSH_SETTINGS },
         inApp: { all: true },
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-      return defaultSettings;
     }
 
-    return settings as unknown as UserNotificationSettings;
+    // Merge stored push settings with defaults (handles migration from old format)
+    const storedPush = (settings.push as Record<string, unknown>) || {};
+    const push: PushNotificationSettings = {
+      order: typeof storedPush.order === "boolean" ? storedPush.order : true,
+      recommendation: typeof storedPush.recommendation === "boolean" ? storedPush.recommendation : true,
+      community: typeof storedPush.community === "boolean" ? storedPush.community : true,
+      system: typeof storedPush.system === "boolean" ? storedPush.system : true,
+      quietHoursEnabled: typeof storedPush.quietHoursEnabled === "boolean" ? storedPush.quietHoursEnabled : false,
+      quietHoursStart: typeof storedPush.quietHoursStart === "string" ? storedPush.quietHoursStart : "22:00",
+      quietHoursEnd: typeof storedPush.quietHoursEnd === "string" ? storedPush.quietHoursEnd : "08:00",
+    };
+
+    return {
+      id: settings.id,
+      userId: settings.userId,
+      email: (settings.email as unknown as EmailNotificationSettings) || { marketing: true, transactional: true },
+      push,
+      inApp: (settings.inApp as unknown as InAppNotificationSettings) || { all: true },
+      createdAt: settings.createdAt,
+      updatedAt: settings.updatedAt,
+    };
   }
 
   /**
-   * 更新用户通知设置
+   * Update user notification settings
    */
   async updateUserSettings(
     userId: string,
@@ -274,14 +480,14 @@ export class NotificationService {
       create: {
         userId,
         email: (settings.email || { marketing: true, transactional: true }) as unknown as Prisma.InputJsonValue,
-        push: (settings.push || { recommendation: true, social: true }) as unknown as Prisma.InputJsonValue,
+        push: (settings.push || { ...DEFAULT_PUSH_SETTINGS }) as unknown as Prisma.InputJsonValue,
         inApp: (settings.inApp || { all: true }) as unknown as Prisma.InputJsonValue,
       },
     });
   }
 
   /**
-   * 清理过期通知（定时任务）
+   * Clean up old notifications (scheduled task)
    */
   async cleanupOldNotifications(daysToKeep: number = 90) {
     const cutoff = new Date();
