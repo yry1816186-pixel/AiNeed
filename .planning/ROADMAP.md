@@ -91,6 +91,19 @@ AiNeed MVP 路线图：11 Phase 从基础设施到商业闭环。核心用户旅
 **Goal**: 用户从推荐/试衣直接进入购买流程，支持自营和合作商家
 **Depends on**: Phase 3（试衣引导购买）, Phase 4（推荐引导发现）
 **Requirements**: COMM-01 ~ COMM-13 (13 条)
+**Plans:** 9 plans in 5 waves
+
+Plans:
+- [ ] 05-01-PLAN.md — Schema + Coupon + StockNotification backend modules
+- [ ] 05-02-PLAN.md — RefundRequest + SizeRecommendation backend modules
+- [ ] 05-03-PLAN.md — Merchant review + Search filters + Clothing enhancements
+- [ ] 05-04-PLAN.md — Cart + Order backend enhancements
+- [ ] 05-05-PLAN.md — Mobile API layer + Zustand stores
+- [ ] 05-06-PLAN.md — Product detail + Search frontend screens
+- [ ] 05-07-PLAN.md — Cart + Checkout + Payment frontend screens
+- [ ] 05-08-PLAN.md — Order detail + Refund frontend screens
+- [ ] 05-09-PLAN.md — Merchant apply + Stock notification frontend screens
+
 **Success Criteria**:
   1. GLM 视觉理解图片搜索 + 文字搜索 + 多维筛选
   2. AI 智能尺码推荐（基于体型数据 + 品牌尺码表）
@@ -100,7 +113,7 @@ AiNeed MVP 路线图：11 Phase 从基础设施到商业闭环。核心用户旅
   6. 基础退款流程：用户可申请退款 → 商家审核 → 退款/驳回，退款到原支付方式
   7. 物流追踪集成：对接快递 100/快递鸟 API，用户可查看物流详情
 
-### Phase 5.5: App 上架准备 & 推送通知
+### Phase 5.5
 **Goal**: 完成 App 上架所需的合规、隐私、推送等必备功能，确保应用可正常上架和留存用户
 **Depends on**: Phase 1（用户系统）, Phase 5（支付系统用于推送订单通知）
 **Requirements**: LAUNCH-01 ~ LAUNCH-07 (7 条)
