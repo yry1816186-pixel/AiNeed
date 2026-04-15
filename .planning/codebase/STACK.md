@@ -1,117 +1,127 @@
-# Technology Stack
+# Stack
 
-**Analysis Date:** 2026-04-14
+**Project:** 寻裳 (XunO) — AI 驱动的私人形象定制平台
+**Last mapped:** 2026-04-16
 
-## Languages
+## Languages & Runtimes
 
-**Primary:**
-- TypeScript 5.7.x - Backend (NestJS), Admin panel (Vite/React), Shared packages
-- Python 3.11+ - ML services, algorithm modules, AI inference pipeline
+| Language | Version | Where Used |
+|----------|---------|------------|
+| TypeScript | 5.7.x | Backend, Mobile, Admin, Shared packages |
+| Python | 3.11+ | AI/ML service (FastAPI) |
+| Kotlin/Java | — | Android native (mobile) |
+| Swift/Obj-C | — | iOS native (mobile) |
+| ArkTS | — | HarmonyOS (apps/harmony) |
 
-**Secondary:**
-- TypeScript 5.0.4 - Mobile app (React Native, pinned version)
-- SQL - PostgreSQL schema via Prisma migrations
-- YAML - Docker Compose, Prometheus, Grafana configs
+## Backend Stack
 
-## Runtime
+| Component | Technology | Version |
+|-----------|-----------|---------|
+| Framework | NestJS | 11.x |
+| ORM | Prisma | 5.22.x |
+| Database | PostgreSQL | 16 |
+| Cache | Redis | 7 (ioredis 5.3) |
+| Object Storage | MinIO | RELEASE.2024-11-07 |
+| Auth | JWT + Passport | @nestjs/jwt 11, passport 0.7 |
+| Queue | BullMQ | 5.71.x |
+| WebSocket | Socket.IO | @nestjs/platform-socket.io 11 |
+| Validation | class-validator + Zod | 0.14 / 3.22 |
+| API Docs | Swagger | @nestjs/swagger 11.2 |
+| Rate Limiting | @nestjs/throttler | 6.5 |
+| Logging | Pino | 10.3 |
+| Monitoring | Sentry + Prometheus | @sentry/node 10.48, prom-client 15.1 |
+| Email | Nodemailer | 7.0 |
+| Image Processing | Sharp | 0.33 |
+| Graph DB | Neo4j | neo4j-driver 6.0 |
+| Vector DB | Qdrant | @qdrant/js-client-rest 1.17 |
+| Encryption | AES-256-GCM (PII) | — |
+| Security | Helmet, bcryptjs | 7.1 / 2.4 |
 
-**Environment:**
-- Node.js 20.11.0 (specified in `.nvmrc`)
-- Python 3.11+ (for ML services)
-- CUDA (optional, for GPU-accelerated ML inference)
+## Mobile Stack
 
-**Package Manager:**
-- pnpm 8.15.0 (workspace monorepo)
-- Lockfile: `pnpm-lock.yaml` present
-- Python: pip with `ml/requirements.txt`
+| Component | Technology | Version |
+|-----------|-----------|---------|
+| Framework | React Native | 0.76.8 |
+| Expo SDK | Expo | 52 (partial) |
+| Navigation | React Navigation 6 | @react-navigation 6.x |
+| State | Zustand | 5.0.5 |
+| Server State | TanStack Query | 5.81 |
+| UI Library | React Native Paper | 5.12 |
+| Animations | Reanimated | 3.16.7 (locked) |
+| Gestures | Gesture Handler | 2.20 |
+| SVG | react-native-svg | 15.8.0 (locked) |
+| Screens | react-native-screens | 4.4.0 (locked) |
+| Lists | @shopify/flash-list | 2.3 |
+| Secure Storage | expo-secure-store | 14.2.4 |
+| Auth Storage | react-native-encrypted-storage | 4.0 |
+| Image Picker | react-native-image-picker | 7.1 |
+| Haptics | react-native-haptic-feedback | 2.3 |
+| Monitoring | Sentry | @sentry/react-native 6.9 |
+| WebSocket | socket.io-client | 4.7 |
+| i18n | Custom (src/i18n) | — |
+| Styling | Tailwind (NativeWind) + Theme tokens | — |
 
-## Frameworks
+## Admin Stack
 
-**Core:**
-- NestJS 11.x - Backend API framework with modular architecture
-- React Native 0.76.8 (Expo 52) - Mobile app
-- React 18.3.1 - Admin panel (Vite + React Router)
-- FastAPI 0.100+ - Python ML API service
+| Component | Technology | Version |
+|-----------|-----------|---------|
+| Framework | React + Vite | — |
+| Language | TypeScript | 5.x |
+| Routing | React Router (src/router) | — |
 
-**Testing:**
-- Jest 29.x - Backend unit/integration tests
-- Jest 29.x - Mobile tests (run with `--runInBand`)
-- pytest-compatible - ML API tests (in `ml/api/tests/`)
+## AI/ML Service Stack
 
-**Build/Dev:**
-- NestJS CLI - Backend build pipeline
-- Vite 6.x - Admin panel bundler
-- Metro bundler - React Native
-- tsup 8.x - Shared types package bundler
-- Prisma 5.x - Database schema and client generation
+| Component | Technology | Version |
+|-----------|-----------|---------|
+| Framework | FastAPI | 0.100-0.116 |
+| AI Provider | GLM API (智谱 AI) | Cloud-based |
+| ML Runtime | ONNX Runtime | 1.16+ |
+| NLP | Transformers, Sentence-Transformers | 4.30+ / 2.2+ |
+| Vector Search | Qdrant Client | 1.7+ |
+| Chinese NLP | jieba | 0.42+ |
+| Reranker | FlagEmbedding (BGE) | 1.2+ |
+| Clustering | scikit-learn | 1.3+ |
+| Task Queue | Redis (async) | 5.0+ |
+| Monitoring | Prometheus Client | 0.18+ |
 
-## Key Dependencies
+## Shared Packages
 
-**Critical (Backend):**
-- `@prisma/client` 5.x - ORM for PostgreSQL
-- `ioredis` 5.x - Redis client (caching, queues)
-- `bullmq` 5.x - Async task queue (backed by Redis)
-- `@nestjs/websockets` + `socket.io` 4.x - Real-time communication
-- `minio` 7.x - S3-compatible object storage client
-- `@qdrant/js-client-rest` 1.x - Vector database client
-- `neo4j-driver` 6.x - Graph database client
-- `sharp` 0.33.x - Image processing
-- `canvas` 3.x - Server-side image rendering
-- `zod` 3.x - Runtime schema validation
-- `pino` 10.x - Structured logging
-- `opossum` 8.x - Circuit breaker pattern
+| Package | Purpose |
+|---------|---------|
+| `@xuno/types` | Shared TypeScript type definitions |
+| `@xuno/shared` | Shared utilities and API types |
 
-**Critical (Mobile):**
-- `zustand` 5.x - State management
-- `@tanstack/react-query` 5.x - Server state management
-- `react-native-paper` 5.x - Material Design component library
-- `socket.io-client` 4.x - WebSocket client
-- `@sentry/react-native` 6.x - Error tracking
-- `react-native-encrypted-storage` 4.x - Secure storage
+## Infrastructure
 
-**Critical (ML/Python):**
-- `torch` 2.0+ / `torchvision` 0.15+ - Deep learning framework
-- `transformers` 4.30+ - Hugging Face model loading
-- `diffusers` 0.24+ - Diffusion model inference (IDM-VTON)
-- `sentence-transformers` 2.2+ - Text embeddings
-- `qdrant-client` 1.7+ - Vector DB client (RAG)
-- `mediapipe` 0.10+ - Body/face landmark detection
-- `opencv-python` 4.8+ - Image processing
-- `scikit-learn` 1.3+ - Clustering, ML utilities
-- `ultralytics` 8.0+ - YOLO object detection
-- `httpx` 0.25+ / `aiohttp` 3.9+ - Async HTTP clients
-- `prometheus-client` 0.18+ - Metrics export
-- `pydantic` 2.0+ / `pydantic-settings` 2.0+ - Data validation
-- `FlagEmbedding` 1.2+ - BGE reranker (RAG)
+| Service | Technology | Port |
+|---------|-----------|------|
+| Backend API | NestJS | 3001 |
+| Metro Bundler | React Native CLI | 8081 |
+| PostgreSQL | postgres:16-alpine | 5432 |
+| Redis | redis:7-alpine | 6379 |
+| MinIO | minio/minio | 9000/9001 |
+| Neo4j | — | 7687 |
+| Nginx | nginx (reverse proxy) | 80/443 |
+| Loki | Grafana Loki | 3100 |
+| K8s | Kubernetes manifests | k8s/ |
 
-## Configuration
+## Build & Dev Tools
 
-**Environment:**
-- Config validated at startup via `apps/backend/src/common/config/env.validation.ts`
-- Pydantic Settings in `ml/api/config.py` for ML service
-- Environment files: `.env`, `.env.example`, `.env.local` supported
-- Sensitive configs: JWT_SECRET, ENCRYPTION_KEY, GLM_API_KEY, DOUBAO_SEEDREAM_API_KEY
+| Tool | Version | Purpose |
+|------|---------|---------|
+| Node.js | 20+ (v24 current) | Runtime |
+| pnpm | 8.15.0 | Package manager (monorepo) |
+| Docker | 20.10+ | Containerization |
+| Prisma CLI | 5.22 | DB schema & migrations |
+| ESLint | 8.x | Linting (all packages) |
+| Prettier | 3.8 | Formatting |
+| Jest | 29.7 | Testing |
+| Detox | — | E2E mobile testing |
 
-**Build:**
-- `apps/backend/tsconfig.json` - NestJS TypeScript config
-- `apps/mobile/tsconfig.json` - React Native TypeScript config
-- `apps/admin/tsconfig.json` - Vite React TypeScript config
-- `.prettierrc` - Shared formatting (semicolons, double quotes, 2-space indent, 100 char width)
+## Locked Dependencies (Cannot Upgrade)
 
-## Platform Requirements
+- `react-native-screens` 4.4.0
+- `react-native-reanimated` 3.16.7
+- `react-native-svg` 15.8.0
 
-**Development:**
-- Node.js 20+ (`.nvmrc`: 20.11.0)
-- pnpm 8+
-- Python 3.11+
-- Docker 20.10+ (for PostgreSQL, Redis, MinIO, Neo4j, Qdrant)
-- CUDA-capable GPU (optional, for local ML inference)
-
-**Production:**
-- Docker Compose orchestrates all services
-- Prometheus + Grafana for monitoring (configs in `infrastructure/`)
-- Loki + Promtail for log aggregation
-
----
-
-*Stack analysis: 2026-04-14*
+These are pinned due to compatibility issues with React Native 0.76.8.
