@@ -32,7 +32,7 @@ from ml.api.schemas.analysis import (
 logger = logging.getLogger(__name__)
 
 try:
-    from ml.services.body_analyzer import get_body_analyzer_service
+    from ml.services.analysis.body_analyzer import get_body_analyzer_service
     _body_service = get_body_analyzer_service()
     _body_available = True
 except Exception as e:
