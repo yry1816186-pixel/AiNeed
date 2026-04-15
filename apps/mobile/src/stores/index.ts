@@ -1,25 +1,23 @@
 import { create } from "zustand";
 
-// Re-export from dedicated store files
-export * from "./uiStore";
-export * from "./clothingStore";
-export * from "./wardrobeStore";
-export * from "./profileStore";
-export * from "./quizStore";
-export * from "./styleQuizStore";
-export * from "./onboardingStore";
-export * from "./photoStore";
-export * from "./homeStore";
-export * from "./user.store";
-export * from "./app.store";
-export * from "./aiStylistStore";
-export * from "./aiStylistChatStore";
-export * from "./notificationStore";
-export { useAuthStore } from "./auth.store";
+export * from "../shared/stores/uiStore";
+export * from "../features/wardrobe/stores/clothingStore";
+export * from "../features/wardrobe/stores/wardrobeStore";
+export * from "../features/profile/stores/profileStore";
+export * from "../features/style-quiz/stores/quizStore";
+export * from "../features/style-quiz/stores/styleQuizStore";
+export * from "../features/onboarding/stores/onboardingStore";
+export * from "../features/tryon/stores/photoStore";
+export * from "../features/home/stores/homeStore";
+export * from "../features/auth/stores/user.store";
+export * from "../shared/stores/app.store";
+export * from "../features/stylist/stores/aiStylistStore";
+export * from "../features/stylist/stores/aiStylistChatStore";
+export * from "../features/notifications/stores/notificationStore";
+export { useAuthStore } from "../features/auth/stores/auth.store";
 
-// Re-export from split store files
-export { useAnalysisStore } from "./analysis.store";
-export { useRecommendationStore } from "./recommendation.store";
-export { useCartStore } from "./cart.store";
-export { useHeartRecommendStore } from "./heart-recommend.store";
-export type { LikedItemData } from "./heart-recommend.store";
+export { useAnalysisStore } from "../features/profile/stores/analysis.store";
+export { useRecommendationStore } from "../features/home/stores/recommendation.store";
+export { useCartStore } from "../features/commerce/stores/cart.store";
+export { useHeartRecommendStore } from "../features/home/stores/heart-recommend.store";
+export type { LikedItemData } from "../features/home/stores/heart-recommend.store";

@@ -1,4 +1,4 @@
-import { createWithEqualityFn } from "zustand/traditional";
+﻿import { createWithEqualityFn } from "zustand/traditional";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { shallow } from "zustand/shallow";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -7,7 +7,7 @@ import {
   type QuizData,
   type QuizResult,
   type QuizProgress,
-} from "../services/api/style-quiz.api";
+} from "../../../services/api/style-quiz.api";
 import type { ApiResponse } from "../types";
 
 interface StyleQuizState {

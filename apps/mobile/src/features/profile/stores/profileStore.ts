@@ -1,4 +1,4 @@
-import { createWithEqualityFn } from "zustand/traditional";
+﻿import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
 import {
   profileApi,
@@ -6,8 +6,8 @@ import {
   type UpdateProfileDto,
   type BodyAnalysisReport,
   type ColorAnalysisReport,
-} from "../services/api/profile.api";
-import apiClient from "../services/api/client";
+} from "../../../services/api/profile.api";
+import apiClient from "../../../services/api/client";
 import type { ApiResponse } from "../types";
 
 interface Completeness {

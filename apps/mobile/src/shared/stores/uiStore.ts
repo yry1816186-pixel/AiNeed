@@ -1,9 +1,9 @@
-import { create } from "zustand";
+﻿import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /**
- * @deprecated 使用 `import { ThemeMode } from '../contexts/ThemeContext'` 代替。
+ * @deprecated 使用 `import { ThemeMode } from '../../../../contexts/ThemeContext'` 代替。
  * 保留此类型以向后兼容。
  */
 export type ThemeMode = "light" | "dark" | "system";
@@ -127,7 +127,7 @@ export const useUIStore = create<UIState>()(
   )
 );
 
-/** @deprecated 使用 `useTheme` from `../contexts/ThemeContext` 代替 */
+/** @deprecated 使用 `useTheme` from `../../../../contexts/ThemeContext` 代替 */
 export const useTheme = () => useUIStore((state) => state.theme);
 export const useModal = () =>
   useUIStore((state) => ({

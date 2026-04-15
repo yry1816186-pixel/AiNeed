@@ -1,8 +1,8 @@
-import { create } from "zustand";
+﻿import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { profileApi, type UserProfile } from "../services/api/profile.api";
-import { weatherService } from "../services/weatherService";
+import { profileApi, type UserProfile } from "../../../services/api/profile.api";
+import { weatherService } from "../../../services/weatherService";
 
 export interface WeatherData {
   temperature: number;

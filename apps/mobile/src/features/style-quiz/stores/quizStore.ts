@@ -1,6 +1,6 @@
-import { createWithEqualityFn } from "zustand/traditional";
+﻿import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
-import apiClient from "../services/api/client";
+import apiClient from "../../../services/api/client";
 import type { ApiResponse } from "../types";
 
 interface QuizOption {

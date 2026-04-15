@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { consultantApi } from "../services/api/consultant.api";
+﻿import { create } from "zustand";
+import { consultantApi } from "../../../services/api/consultant.api";
 import type {
   ConsultantProfile,
   MatchResult,
@@ -9,8 +9,8 @@ import type {
   BookingListParams,
   ConsultantMatchRequest,
   CreateBookingRequest,
-} from "../types/consultant";
-import type { PaginatedResponse } from "../types/api";
+} from "../../../types/consultant";
+import type { PaginatedResponse } from "../../../types/api";
 
 interface ConsultantState {
   consultants: ConsultantProfile[];

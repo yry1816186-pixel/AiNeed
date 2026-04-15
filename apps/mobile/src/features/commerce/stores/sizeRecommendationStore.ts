@@ -1,6 +1,6 @@
-import { create } from "zustand";
+﻿import { create } from "zustand";
 
-import { sizeRecommendationApi, type SizeRecommendation } from "../services/api/commerce.api";
+import { sizeRecommendationApi, type SizeRecommendation } from "../../../services/api/commerce.api";
 
 interface SizeRecommendationStore {
   recommendations: Record<string, SizeRecommendation | null>;

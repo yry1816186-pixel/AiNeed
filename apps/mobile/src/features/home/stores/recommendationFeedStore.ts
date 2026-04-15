@@ -1,10 +1,10 @@
-import { create } from "zustand";
+﻿import { create } from "zustand";
 import {
   recommendationFeedApi,
   type FeedItem,
   type FeedCategory,
-} from "../services/api/recommendation-feed.api";
-import { recommendationsApi } from "../services/api/tryon.api";
+} from "../../../services/api/recommendation-feed.api";
+import { recommendationsApi } from "../../../services/api/tryon.api";
 
 interface FeedState {
   items: FeedItem[];

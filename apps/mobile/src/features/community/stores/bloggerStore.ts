@@ -1,11 +1,11 @@
-import { create } from "zustand";
+﻿import { create } from "zustand";
 import {
   bloggerApi,
   type BloggerDashboardData,
   type TrendDataPoint,
   type TrendMetric,
   type BloggerProduct,
-} from "../services/api/blogger.api";
+} from "../../../services/api/blogger.api";
 
 interface BloggerState {
   dashboardData: BloggerDashboardData | null;

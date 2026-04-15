@@ -1,6 +1,6 @@
-import { create } from "zustand";
+﻿import { create } from "zustand";
 
-import customizationApi from "../services/api/customization.api";
+import customizationApi from "../../../services/api/customization.api";
 import type {
   CustomizationTemplate as ApiTemplate,
   CustomizationDesign,
@@ -9,9 +9,9 @@ import type {
   QuoteCalculationResponse,
   PreviewResponse,
   CreateFromDesignResponse,
-} from "../types/customization";
+} from "../../../types/customization";
 
-export type { PrintableAreaBounds } from "../types/customization";
+export type { PrintableAreaBounds } from "../../../types/customization";
 export type DesignLayer = Omit<CustomizationDesignLayer, "designId">;
 export type Template = ApiTemplate;
 

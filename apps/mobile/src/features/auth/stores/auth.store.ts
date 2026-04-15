@@ -1,11 +1,11 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { secureStorage, SECURE_STORAGE_KEYS } from "../utils/secureStorage";
-import apiClient from "../services/api/client";
+import { secureStorage, SECURE_STORAGE_KEYS } from "../../../utils/secureStorage";
+import apiClient from "../../../services/api/client";
 
-import { AppError, AppErrorCode, toAppError } from "../services/api/error";
-import type { User, AuthTokens, LoginCredentials, RegisterData } from "../types/user";
+import { AppError, AppErrorCode, toAppError } from "../../../services/api/error";
+import type { User, AuthTokens, LoginCredentials, RegisterData } from "../../../types/user";
 
 interface AuthState {
   user: User | null;
@@ -257,7 +257,7 @@ export const useAuthStore = create<AuthState>()(
         // Dynamic import to avoid circular dependency at module load time
         // (auth.store -> index -> auth.store). clearAllStores is only called
         // at runtime during logout, so the circular reference is safe.
-        const { clearAllStores } = await import("./index");
+        const { clearAllStores } = await import("../../../stores/index");
         clearAllStores();
         set({
           user: null,

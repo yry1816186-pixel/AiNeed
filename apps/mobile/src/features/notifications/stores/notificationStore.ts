@@ -1,10 +1,10 @@
-import { create } from "zustand";
+﻿import { create } from "zustand";
 
 import {
   notificationApi,
   type NotificationItem,
   type PushNotificationSettings,
-} from "../services/api/notification.api";
+} from "../../../services/api/notification.api";
 
 type NotificationCategory = "all" | "order" | "recommendation" | "community" | "system";
 

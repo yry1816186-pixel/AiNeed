@@ -1,9 +1,9 @@
-import { create } from "zustand";
+﻿import { create } from "zustand";
 import {
   aiStylistApi,
   type AiStylistSessionResponse,
   type AiStylistOutfitItem,
-} from "../services/api/ai-stylist.api";
+} from "../../../services/api/ai-stylist.api";
 
 /**
  * AI Stylist Store - manages current outfit plan, history, preferences

@@ -1,13 +1,13 @@
-import { create } from "zustand";
-import { chatApi } from "../services/api/chat.api";
+﻿import { create } from "zustand";
+import { chatApi } from "../../../services/api/chat.api";
 import type {
   ChatRoom,
   ChatMessage,
   SendMessageRequest,
   ChatRoomListParams,
   MessageListParams,
-} from "../types/chat";
-import type { PaginatedResponse } from "../types/api";
+} from "../../../types/chat";
+import type { PaginatedResponse } from "../../../types/api";
 
 interface ChatState {
   rooms: ChatRoom[];
