@@ -173,13 +173,8 @@ app.mount("/metrics", metrics_app)
 app.include_router(health_router)
 app.include_router(tasks_router)
 
-try:
-    from ml.services.intelligent_stylist_api import router as stylist_router
-
-    app.include_router(stylist_router)
-    logging.getLogger(__name__).info("Intelligent stylist v2 API routes loaded at /api/stylist/v2")
-except Exception as e:
-    logging.getLogger(__name__).warning("Failed to load intelligent stylist API: %s", e)
+from ml.api.routes.stylist import router as stylist_router
+app.include_router(stylist_router)
 
 try:
     from ml.services.visual_outfit_api import router as visual_router
@@ -196,14 +191,6 @@ try:
     logging.getLogger(__name__).info("Fashion recommendation routes loaded")
 except Exception as e:
     logging.getLogger(__name__).warning("Failed to load fashion recommendation routes: %s", e)
-
-try:
-    from ml.api.routes.stylist_chat import router as stylist_chat_router
-
-    app.include_router(stylist_chat_router)
-    logging.getLogger(__name__).info("Stylist chat routes loaded")
-except Exception as e:
-    logging.getLogger(__name__).warning("Failed to load stylist chat routes: %s", e)
 
 try:
     from ml.api.routes.photo_quality import router as photo_quality_router

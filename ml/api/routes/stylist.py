@@ -13,7 +13,6 @@ from ml.api.schemas.stylist import (
     StylistBodyAnalysisRequest,
     StylistBodyAnalysisResponse,
     StylistChatRequest,
-    StylistChatResponse,
     StylistOutfitRequest,
     StylistUserProfile,
     StylistSceneContext,
@@ -142,7 +141,7 @@ async def stylist_chat(request: StylistChatRequest) -> Dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"对话失败: {e}")
+        logger.error("stylist chat failed", extra={"service": "stylist", "endpoint": "chat", "error": str(e)})
         raise HTTPException(status_code=500, detail=f"对话失败: {str(e)}")
 
 
@@ -170,7 +169,7 @@ async def stylist_outfit(request: StylistOutfitRequest) -> Dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"穿搭推荐失败: {e}")
+        logger.error("stylist outfit failed", extra={"service": "stylist", "endpoint": "outfit", "error": str(e)})
         raise HTTPException(status_code=500, detail=f"穿搭推荐失败: {str(e)}")
 
 
@@ -203,7 +202,7 @@ async def analyze_body(request: StylistBodyAnalysisRequest) -> StylistBodyAnalys
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"体型分析失败: {e}")
+        logger.error("stylist analyze-body failed", extra={"service": "stylist", "endpoint": "analyze-body", "error": str(e)})
         raise HTTPException(status_code=500, detail=f"体型分析失败: {str(e)}")
 
 
@@ -222,7 +221,7 @@ async def get_conversation(session_id: str) -> Dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"获取对话历史失败: {e}")
+        logger.error("stylist get conversation failed", extra={"service": "stylist", "endpoint": "conversation", "error": str(e)})
         raise HTTPException(status_code=500, detail=f"获取对话历史失败: {str(e)}")
 
 
@@ -241,5 +240,83 @@ async def clear_conversation(session_id: str) -> Dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"清除对话历史失败: {e}")
+        logger.error("stylist clear conversation failed", extra={"service": "stylist", "endpoint": "conversation", "error": str(e)})
         raise HTTPException(status_code=500, detail=f"清除对话历史失败: {str(e)}")
+
+
+@router.get("/fashion-trends/{season}")
+async def get_fashion_trends(season: str) -> Dict[str, Any]:
+    valid_seasons = ["spring", "summer", "fall", "winter"]
+    if season.lower() not in valid_seasons:
+        raise HTTPException(status_code=400, detail=f"无效的季节，请选择: {valid_seasons}")
+
+    service = await _get_stylist_service()
+    trends = service.FASHION_TRENDS_2025.get(season.lower(), {})
+
+    return {
+        "success": True,
+        "season": season,
+        "trends": trends,
+        "timestamp": datetime.now().isoformat(),
+    }
+
+
+@router.get("/color-guide/{color_season}")
+async def get_color_guide(color_season: str) -> Dict[str, Any]:
+    valid_seasons = ["spring", "summer", "autumn", "winter"]
+    if color_season.lower() not in valid_seasons:
+        raise HTTPException(status_code=400, detail=f"无效的色彩季型，请选择: {valid_seasons}")
+
+    service = await _get_stylist_service()
+    guide = service.COLOR_SEASON_GUIDE.get(color_season.lower(), {})
+
+    return {
+        "success": True,
+        "color_season": color_season,
+        "guide": guide,
+        "timestamp": datetime.now().isoformat(),
+    }
+
+
+@router.get("/body-type-guide/{body_type}")
+async def get_body_type_guide(body_type: str) -> Dict[str, Any]:
+    valid_types = ["rectangle", "triangle", "inverted_triangle", "hourglass", "oval"]
+    if body_type.lower() not in valid_types:
+        raise HTTPException(status_code=400, detail=f"无效的体型，请选择: {valid_types}")
+
+    service = await _get_stylist_service()
+    guide = service.BODY_TYPE_GUIDE.get(body_type.lower(), {})
+
+    return {
+        "success": True,
+        "body_type": body_type,
+        "guide": guide,
+        "timestamp": datetime.now().isoformat(),
+    }
+
+
+@router.get("/occasion-guide/{occasion}")
+async def get_occasion_guide(occasion: str) -> Dict[str, Any]:
+    valid_occasions = ["interview", "work", "date", "travel", "party", "daily", "campus"]
+    if occasion.lower() not in valid_occasions:
+        raise HTTPException(status_code=400, detail=f"无效的场合，请选择: {valid_occasions}")
+
+    service = await _get_stylist_service()
+    guide = service.OCCASION_GUIDE.get(occasion.lower(), {})
+
+    return {
+        "success": True,
+        "occasion": occasion,
+        "guide": guide,
+        "timestamp": datetime.now().isoformat(),
+    }
+
+
+@router.get("/health")
+async def stylist_health():
+    return {
+        "status": "healthy",
+        "service": "intelligent-stylist",
+        "model": "GLM-5",
+        "timestamp": datetime.now().isoformat(),
+    }
