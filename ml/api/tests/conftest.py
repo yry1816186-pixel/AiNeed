@@ -189,17 +189,17 @@ async def client(
     mock_recommender_service,
     mock_stylist_service,
 ):
-    with patch("ml.api.routes.body_analysis._body_service", mock_body_service), \
-         patch("ml.api.routes.body_analysis._service_available", True), \
-         patch("ml.api.routes.style_analysis._style_api", mock_style_api), \
-         patch("ml.api.routes.style_analysis._service_available", True), \
+    with patch("ml.api.routes.analysis._body_service", mock_body_service), \
+         patch("ml.api.routes.analysis._body_available", True), \
+         patch("ml.api.routes.analysis._style_api", mock_style_api), \
+         patch("ml.api.routes.analysis._style_available", True), \
          patch("ml.api.routes.fashion_recommend._recommender_service", mock_recommender_service), \
          patch("ml.api.routes.fashion_recommend._service_available", True), \
-         patch("ml.api.routes.stylist_chat._service_available", True):
+         patch("ml.api.routes.stylist._service_available", True):
         from ml.api.main import app
 
         with patch(
-            "ml.api.routes.stylist_chat._get_stylist_service",
+            "ml.api.routes.stylist._get_stylist_service",
             return_value=mock_stylist_service,
         ):
             transport = ASGITransport(app=app)

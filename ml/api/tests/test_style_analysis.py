@@ -4,7 +4,7 @@ import pytest
 @pytest.mark.asyncio
 async def test_analyze_style(client, api_key_headers):
     response = await client.post(
-        "/api/style/analyze",
+        "/api/analysis/style/analyze",
         json={"user_input": "casual minimalist"},
         headers=api_key_headers,
     )
@@ -17,7 +17,7 @@ async def test_analyze_style(client, api_key_headers):
 @pytest.mark.asyncio
 async def test_style_suggestions(client, api_key_headers):
     response = await client.post(
-        "/api/style/suggestions",
+        "/api/analysis/style/suggestions",
         json={"user_input": "office wear", "body_type": "rectangle"},
         headers=api_key_headers,
     )
@@ -30,7 +30,7 @@ async def test_style_suggestions(client, api_key_headers):
 @pytest.mark.asyncio
 async def test_quick_match(client, api_key_headers):
     response = await client.get(
-        "/api/style/quick-match",
+        "/api/analysis/style/quick-match",
         params={"user_input": "casual"},
         headers=api_key_headers,
     )

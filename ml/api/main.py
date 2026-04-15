@@ -176,6 +176,9 @@ app.include_router(tasks_router)
 from ml.api.routes.stylist import router as stylist_router
 app.include_router(stylist_router)
 
+from ml.api.routes.analysis import router as analysis_router
+app.include_router(analysis_router)
+
 try:
     from ml.services.visual_outfit_api import router as visual_router
 
@@ -191,30 +194,6 @@ try:
     logging.getLogger(__name__).info("Fashion recommendation routes loaded")
 except Exception as e:
     logging.getLogger(__name__).warning("Failed to load fashion recommendation routes: %s", e)
-
-try:
-    from ml.api.routes.photo_quality import router as photo_quality_router
-
-    app.include_router(photo_quality_router)
-    logging.getLogger(__name__).info("Photo quality routes loaded")
-except Exception as e:
-    logging.getLogger(__name__).warning("Failed to load photo quality routes: %s", e)
-
-try:
-    from ml.api.routes.body_analysis import router as body_analysis_router
-
-    app.include_router(body_analysis_router)
-    logging.getLogger(__name__).info("Body analysis API routes loaded")
-except Exception as e:
-    logging.getLogger(__name__).warning("Failed to load body analysis API: %s", e)
-
-try:
-    from ml.api.routes.style_analysis import router as style_analysis_router
-
-    app.include_router(style_analysis_router)
-    logging.getLogger(__name__).info("Style analysis API routes loaded")
-except Exception as e:
-    logging.getLogger(__name__).warning("Failed to load style analysis API: %s", e)
 
 try:
     from ml.api.routes.virtual_tryon import router as virtual_tryon_router

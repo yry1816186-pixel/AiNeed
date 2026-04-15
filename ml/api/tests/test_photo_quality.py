@@ -12,7 +12,7 @@ async def test_analyze_photo_quality(client, api_key_headers):
     buf.seek(0)
 
     response = await client.post(
-        "/api/photo-quality/analyze",
+        "/api/analysis/photo/analyze",
         files={"file": ("test.png", buf, "image/png")},
         headers=api_key_headers,
     )
@@ -26,7 +26,7 @@ async def test_analyze_photo_quality(client, api_key_headers):
 @pytest.mark.asyncio
 async def test_analyze_no_image(client, api_key_headers):
     response = await client.post(
-        "/api/photo-quality/analyze",
+        "/api/analysis/photo/analyze",
         headers=api_key_headers,
     )
     assert response.status_code == 422
