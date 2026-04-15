@@ -3,17 +3,14 @@
 """
 
 import os
-import sys
 import asyncio
 import json
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from dotenv import load_dotenv
 load_dotenv(Path(__file__).parent.parent / ".env")
 
-from services.visual_outfit_service import (
+from ml.services.visual_outfit_service import (
     VisualOutfitService,
     UserImageInfo
 )

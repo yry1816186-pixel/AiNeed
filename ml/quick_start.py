@@ -133,8 +133,7 @@ def build_vector_index():
     print_header("构建向量索引")
     
     try:
-        sys.path.insert(0, str(Path(__file__).parent))
-        from services.style_vector_index import StyleIndexService, StyleIndexConfig
+        from ml.services.style_vector_index import StyleIndexService, StyleIndexConfig
         import numpy as np
         
         config = StyleIndexConfig(
@@ -170,8 +169,7 @@ async def test_style_service():
     print_header("测试风格理解服务")
     
     try:
-        sys.path.insert(0, str(Path(__file__).parent))
-        from services.style_understanding_service import StyleUnderstandingService
+        from ml.services.style_understanding_service import StyleUnderstandingService
         
         service = StyleUnderstandingService(use_mock=True)
         

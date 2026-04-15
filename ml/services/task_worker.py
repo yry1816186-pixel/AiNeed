@@ -11,7 +11,6 @@ Usage:
 """
 
 import os
-import sys
 import json
 import asyncio
 import signal
@@ -23,9 +22,6 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
 from enum import Enum
-
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import redis.asyncio as redis
 from redis.asyncio import Redis
@@ -44,6 +40,22 @@ class TaskStatus(str, Enum):
     COMPLETED = "completed"
     FAILED = "failed"
     TIMEOUT = "timeout"
+
+
+class TaskPriority(int, Enum):
+    """
+    A-P2-7: 任务优先级枚举
+
+    数值越小优先级越高。优先级影响任务出队顺序：
+    - CRITICAL: 紧急任务（如付费用户试衣），立即处理
+    - HIGH: 高优先级（如 VIP 用户请求）
+    - NORMAL: 普通优先级（默认）
+    - LOW: 低优先级（如批量分析、后台任务）
+    """
+    CRITICAL = 0
+    HIGH = 1
+    NORMAL = 5
+    LOW = 10
 
 
 @dataclass
@@ -100,6 +112,46 @@ class TaskWorker:
             "recommendation": self._handle_recommendation,
         }
 
+    @staticmethod
+    async def enqueue_task(
+        redis_client,
+        queue_name: str,
+        task: Dict[str, Any],
+        priority: int = TaskPriority.NORMAL,
+    ) -> None:
+        """
+        A-P2-7: 将任务推入优先级队列
+
+        使用 Redis sorted set 存储，score 为优先级数值（越小越优先）。
+        同优先级内按入队时间排序（使用时间戳作为二级排序）。
+
+        Args:
+            redis_client: Redis 异步客户端
+            queue_name: 队列名称
+            task: 任务数据字典，必须包含 jobId
+            priority: 优先级（TaskPriority 枚举值），默认 NORMAL
+        """
+        task["priority"] = priority
+        priority_key = f"{queue_name}:priority_pending"
+
+        # 使用优先级作为主 score，时间戳作为二级排序（确保同优先级 FIFO）
+        # score 格式: priority * 1e13 + timestamp_ms
+        # 这样 priority=0 的任务总是排在 priority=1 前面
+        # 同 priority 内按时间先后排序
+        timestamp_ms = time.time() * 1000
+        score = priority * 1e13 + timestamp_ms
+
+        await redis_client.zadd(
+            priority_key,
+            {json.dumps(task, default=str): score}
+        )
+
+        # 发布通知
+        await redis_client.publish(
+            f"worker:{queue_name}",
+            json.dumps({"jobId": task.get("jobId"), "priority": priority})
+        )
+
     async def start(self):
         """Start the worker and connect to Redis."""
         logger.info(f"Starting TaskWorker for queues: {self.queue_names}")
@@ -146,19 +198,44 @@ class TaskWorker:
             logger.info("Worker tasks cancelled")
 
     async def _poll_queues(self):
-        """Periodically poll queues for pending tasks."""
+        """
+        Periodically poll queues for pending tasks.
+
+        A-P2-7: 使用 Redis sorted set 实现优先级队列。
+        优先级数值越小越先处理。使用 zpopmin 原子性地取出
+        优先级最高（score 最小）的任务。
+
+        兼容旧格式：如果 pending 队列是普通 list（非 sorted set），
+        则降级为 FIFO 模式。
+        """
         while self.running:
             try:
                 for queue_name in self.queue_names:
-                    # Try to get a task from the queue
-                    task_data = await self.redis.rpoplpush(
-                        f"{queue_name}:pending",
-                        f"{queue_name}:processing"
-                    )
+                    task_data = None
+
+                    # A-P2-7: 优先尝试从 sorted set 优先级队列取任务
+                    priority_key = f"{queue_name}:priority_pending"
+                    try:
+                        # zpopmin 返回 [(member, score)] 或空列表
+                        result = await self.redis.zpopmin(priority_key)
+                        if result:
+                            task_data = result[0][0] if isinstance(result[0], tuple) else result[0]
+                    except Exception as e:
+                        logger.debug(f"Priority queue not available for {queue_name}: {e}")
+
+                    # 降级：从普通 list 队列取任务（兼容旧格式）
+                    if not task_data:
+                        task_data = await self.redis.rpoplpush(
+                            f"{queue_name}:pending",
+                            f"{queue_name}:processing"
+                        )
 
                     if task_data:
                         try:
                             task = json.loads(task_data)
+                            # A-P2-7: 如果任务没有 priority 字段，设置默认优先级
+                            if "priority" not in task:
+                                task["priority"] = TaskPriority.NORMAL
                             await self._process_task(task)
                         except json.JSONDecodeError as e:
                             logger.error(f"Invalid task data: {e}")
@@ -241,7 +318,7 @@ class TaskWorker:
 
         # Get or initialize style service
         if self._style_service is None:
-            from services.style_understanding_service import StyleUnderstandingService
+            from ml.services.style_understanding_service import StyleUnderstandingService
             self._style_service = StyleUnderstandingService(use_mock=False)
             logger.info("Style understanding service initialized")
 
@@ -314,7 +391,7 @@ class TaskWorker:
         )
 
         try:
-            from services.virtual_tryon_service import virtual_tryon_service
+            from ml.services.virtual_tryon_service import virtual_tryon_service
 
             result = await virtual_tryon_service.generate_tryon(
                 person_image=person_image,
@@ -540,7 +617,7 @@ class TaskWorker:
         # Get or initialize recommender service
         if self._recommender_service is None:
             try:
-                from services.intelligent_style_recommender import StyleRecommendationAPI
+                from ml.services.intelligent_style_recommender import StyleRecommendationAPI
                 self._recommender_service = StyleRecommendationAPI()
                 logger.info("Recommender service initialized")
             except Exception as e:

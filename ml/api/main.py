@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import sys
 import logging
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from prometheus_client import make_asgi_app
 
 from ml.api.config import settings
@@ -26,7 +25,100 @@ from ml.api.middleware.error_handler import (
 from ml.api.routes.health import router as health_router
 from ml.api.routes.tasks import router as tasks_router
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+
+# A-P2-15: 请求体大小限制中间件
+class RequestBodySizeLimitMiddleware:
+    """
+    请求体大小限制中间件
+
+    防止过大的请求体导致 OOM 或 DoS 攻击。
+    默认限制 10MB，可通过环境变量 REQUEST_BODY_MAX_BYTES 配置。
+    对于文件上传接口（如 /api/stylist/v2/tryon），限制放宽到 50MB。
+    """
+
+    # 默认请求体大小限制（10MB）
+    DEFAULT_MAX_BODY_BYTES = 10 * 1024 * 1024
+
+    # 文件上传相关路径的放宽限制（50MB）
+    UPLOAD_MAX_BODY_BYTES = 50 * 1024 * 1024
+
+    # 文件上传路径前缀
+    UPLOAD_PATH_PREFIXES = (
+        "/api/stylist/v2/tryon",
+        "/api/virtual-tryon",
+        "/api/body-analysis",
+        "/api/style-analysis",
+    )
+
+    def __init__(self, app):
+        self.app = app
+        import os
+        self._max_body_bytes = int(
+            os.getenv("REQUEST_BODY_MAX_BYTES", self.DEFAULT_MAX_BODY_BYTES)
+        )
+        self._upload_max_body_bytes = int(
+            os.getenv("UPLOAD_BODY_MAX_BYTES", self.UPLOAD_MAX_BODY_BYTES)
+        )
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
+        # 确定当前路径的大小限制
+        path = scope.get("path", "")
+        max_bytes = self._upload_max_body_bytes
+        for prefix in self.UPLOAD_PATH_PREFIXES:
+            if path.startswith(prefix):
+                break
+        else:
+            max_bytes = self._max_body_bytes
+
+        body_size = 0
+        received_body_parts = []
+
+        async def limited_receive():
+            nonlocal body_size
+            message = await receive()
+
+            if message["type"] == "http.request":
+                body = message.get("body", b"")
+                body_size += len(body)
+                received_body_parts.append(body)
+
+                if body_size > max_bytes:
+                    # 请求体过大，返回 413
+                    raise RequestBodyTooLargeError(
+                        max_bytes=max_bytes,
+                        actual_bytes=body_size,
+                    )
+
+            return message
+
+        try:
+            await self.app(scope, limited_receive, send)
+        except RequestBodyTooLargeError as e:
+            # 构造 413 响应
+            response = JSONResponse(
+                status_code=413,
+                content={
+                    "error": "Request Entity Too Large",
+                    "detail": f"Request body size ({e.actual_bytes} bytes) exceeds limit ({e.max_bytes} bytes)",
+                    "max_size_bytes": e.max_bytes,
+                },
+            )
+            await response(scope, receive, send)
+
+
+class RequestBodyTooLargeError(Exception):
+    """请求体过大异常"""
+
+    def __init__(self, max_bytes: int, actual_bytes: int):
+        self.max_bytes = max_bytes
+        self.actual_bytes = actual_bytes
+        super().__init__(
+            f"Request body size ({actual_bytes} bytes) exceeds limit ({max_bytes} bytes)"
+        )
 
 
 @asynccontextmanager
@@ -65,6 +157,9 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization", "X-Requested-With", "X-ML-API-Key"],
 )
 
+# A-P2-15: 请求体大小限制中间件（必须在其他中间件之前注册，确保最先执行）
+app.add_middleware(RequestBodySizeLimitMiddleware)
+
 app.add_middleware(APIKeyMiddleware)
 app.add_middleware(RequestLoggingMiddleware)
 
@@ -79,7 +174,7 @@ app.include_router(health_router)
 app.include_router(tasks_router)
 
 try:
-    from services.intelligent_stylist_api import router as stylist_router
+    from ml.services.intelligent_stylist_api import router as stylist_router
 
     app.include_router(stylist_router)
     logging.getLogger(__name__).info("Intelligent stylist v2 API routes loaded at /api/stylist/v2")
@@ -87,7 +182,7 @@ except Exception as e:
     logging.getLogger(__name__).warning("Failed to load intelligent stylist API: %s", e)
 
 try:
-    from services.visual_outfit_api import router as visual_router
+    from ml.services.visual_outfit_api import router as visual_router
 
     app.include_router(visual_router)
     logging.getLogger(__name__).info("Visual outfit API routes loaded")

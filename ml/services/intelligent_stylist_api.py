@@ -7,12 +7,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
-import sys
-import os
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from services.intelligent_stylist_service import (
+from ml.services.intelligent_stylist_service import (
     IntelligentStylistService,
     UserProfile,
     SceneContext,

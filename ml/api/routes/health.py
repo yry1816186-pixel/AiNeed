@@ -27,15 +27,46 @@ async def detailed_health_check() -> Dict[str, Any]:
 
     services: Dict[str, Any] = {}
 
+    # P1-13: GLM API reachability check
+    glm_api_key = os.getenv("GLM_API_KEY") or os.getenv("ZHIPU_API_KEY")
+    glm_endpoint = os.getenv("GLM_API_ENDPOINT", "https://open.bigmodel.cn/api/paas/v4")
+    glm_reachable = False
+    if glm_api_key:
+        try:
+            import httpx
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                resp = await client.get(
+                    f"{glm_endpoint}/models",
+                    headers={"Authorization": f"Bearer {glm_api_key}"},
+                )
+                glm_reachable = resp.status_code == 200
+        except Exception as e:
+            logger.warning("GLM API reachability check failed: %s", str(e))
+            glm_reachable = False
+
     services["glm_api"] = {
-        "available": bool(os.getenv("GLM_API_KEY") or os.getenv("ZHIPU_API_KEY")),
-        "endpoint": os.getenv("GLM_API_ENDPOINT", "https://open.bigmodel.cn/api/paas/v4"),
+        "available": bool(glm_api_key),
+        "reachable": glm_reachable,
+        "endpoint": glm_endpoint,
         "model": os.getenv("GLM_MODEL", "glm-5"),
     }
 
+    # P1-13: Redis connection status check
     redis_url = os.getenv("REDIS_URL", "")
+    redis_connected = False
+    if redis_url:
+        try:
+            import redis.asyncio as aioredis
+            r = aioredis.from_url(redis_url)
+            redis_connected = await r.ping()
+            await r.close()
+        except Exception as e:
+            logger.warning("Redis connection check failed: %s", str(e))
+            redis_connected = False
+
     services["redis"] = {
         "available": bool(redis_url),
+        "connected": redis_connected,
         "url": redis_url.replace(":redis://", "://***@") if redis_url else None,
     }
 
@@ -44,6 +75,37 @@ async def detailed_health_check() -> Dict[str, Any]:
         "available": bool(qdrant_url),
         "url": qdrant_url or None,
     }
+
+    # P1-13: Model loading status checks
+    model_status: Dict[str, Any] = {}
+
+    try:
+        from ml.services.body_analyzer import get_body_analyzer_service
+        body_service = get_body_analyzer_service()
+        model_status["body_analyzer"] = {
+            "loaded": body_service is not None,
+        }
+    except Exception:
+        model_status["body_analyzer"] = {"loaded": False, "error": "Import failed"}
+
+    try:
+        from ml.services.photo_quality_analyzer import get_photo_quality_analyzer
+        analyzer = get_photo_quality_analyzer()
+        model_status["photo_quality"] = {
+            "loaded": analyzer is not None,
+        }
+    except Exception:
+        model_status["photo_quality"] = {"loaded": False, "error": "Import failed"}
+
+    try:
+        from ml.services.sasrec_service import model as sasrec_model
+        model_status["sasrec"] = {
+            "loaded": True,
+            "trained": sasrec_model.trained if sasrec_model else False,
+            "items_count": len(sasrec_model.item_embeddings) if sasrec_model else 0,
+        }
+    except Exception:
+        model_status["sasrec"] = {"loaded": False, "error": "Import failed"}
 
     try:
         stylist_available = True
@@ -78,5 +140,6 @@ async def detailed_health_check() -> Dict[str, Any]:
         "status": status,
         "timestamp": datetime.now().isoformat(),
         "services": services,
+        "models": model_status,
         "resources": resources,
     }

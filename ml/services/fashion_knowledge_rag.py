@@ -19,16 +19,16 @@ from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field, asdict
 
 # Import RAG components
-from services.rag.embeddings import EmbeddingService, EmbeddingConfig
-from services.rag.bm25_retriever import BM25Retriever, BM25Config, BM25Document
-from services.rag.qdrant_client import QdrantVectorStore, QdrantConfig, VectorDocument
-from services.rag.hybrid_retriever import (
+from ml.services.rag.embeddings import EmbeddingService, EmbeddingConfig
+from ml.services.rag.bm25_retriever import BM25Retriever, BM25Config, BM25Document
+from ml.services.rag.qdrant_client import QdrantVectorStore, QdrantConfig, VectorDocument
+from ml.services.rag.hybrid_retriever import (
     HybridRetriever,
     HybridRetrievalConfig,
     RetrievalResult
 )
-from services.rag.reranker import BGEReranker, FashionReranker, RerankerConfig
-from services.rag.rag_evaluator import RAGEvaluator, RAGMetrics, EvaluationSample
+from ml.services.rag.reranker import BGEReranker, FashionReranker, RerankerConfig
+from ml.services.rag.rag_evaluator import RAGEvaluator, RAGMetrics, EvaluationSample
 
 logger = logging.getLogger(__name__)
 

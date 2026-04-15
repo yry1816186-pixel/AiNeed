@@ -5,12 +5,150 @@
 
 import os
 import json
+import re
 import asyncio
 import aiohttp
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
 from datetime import datetime
 import uuid
+import logging
+
+# P1-9: Import externalized prompts
+from .stylist_prompts import VISUAL_OUTFIT_SYSTEM_PROMPT
+
+logger = logging.getLogger(__name__)
+
+
+def _robust_json_parse(text: str, default: Any = None) -> Any:
+    """A-P1-8: Multi-strategy JSON parsing with graceful fallback.
+
+    Parsing strategies (in order):
+    1. Direct json.loads() on the full text
+    2. Extract JSON from markdown code blocks (```json ... ```)
+    3. Find the outermost JSON object {...} or array [...]
+    4. Fix common JSON errors (trailing commas, single quotes, unquoted keys)
+    5. Return default value instead of raising an exception
+
+    Args:
+        text: Raw text that may contain JSON.
+        default: Value to return if all parsing strategies fail.
+
+    Returns:
+        Parsed JSON object, or default if parsing fails.
+    """
+    if not text or not text.strip():
+        return default
+
+    text = text.strip()
+
+    # Strategy 1: Direct parse
+    try:
+        return json.loads(text)
+    except (json.JSONDecodeError, ValueError):
+        pass
+
+    # Strategy 2: Extract from markdown code block
+    # Match ```json ... ``` or ``` ... ```
+    code_block_patterns = [
+        r'```json\s*\n?(.*?)\n?\s*```',
+        r'```\s*\n?(.*?)\n?\s*```',
+    ]
+    for pattern in code_block_patterns:
+        match = re.search(pattern, text, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group(1).strip())
+            except (json.JSONDecodeError, ValueError):
+                # Try fixing the extracted content
+                fixed = _fix_common_json_errors(match.group(1).strip())
+                if fixed is not None:
+                    return fixed
+
+    # Strategy 3: Find outermost JSON structure
+    # Try to find {...} first, then [...]
+    for open_char, close_char in [('{', '}'), ('[', ']')]:
+        start = text.find(open_char)
+        if start == -1:
+            continue
+        # Find the matching closing bracket
+        depth = 0
+        end = -1
+        for i in range(start, len(text)):
+            if text[i] == open_char:
+                depth += 1
+            elif text[i] == close_char:
+                depth -= 1
+                if depth == 0:
+                    end = i + 1
+                    break
+        if end > start:
+            candidate = text[start:end]
+            try:
+                return json.loads(candidate)
+            except (json.JSONDecodeError, ValueError):
+                # Try fixing common errors
+                fixed = _fix_common_json_errors(candidate)
+                if fixed is not None:
+                    return fixed
+
+    # Strategy 4: Fix common JSON errors on the entire text
+    fixed = _fix_common_json_errors(text)
+    if fixed is not None:
+        return fixed
+
+    # Strategy 5: Return default
+    logger.warning("All JSON parsing strategies failed for text (first 200 chars): %s", text[:200])
+    return default
+
+
+def _fix_common_json_errors(text: str) -> Optional[Any]:
+    """A-P1-8: Attempt to fix common JSON formatting errors.
+
+    Fixes:
+    - Trailing commas before closing brackets: ,} or ,]
+    - Single quotes instead of double quotes
+    - Unquoted keys
+    - Comments (// and /* */)
+    - Missing quotes around string values
+
+    Args:
+        text: JSON-like text with potential errors.
+
+    Returns:
+        Parsed JSON object if fix succeeds, None otherwise.
+    """
+    if not text:
+        return None
+
+    fixed = text
+
+    try:
+        # Remove JavaScript-style comments
+        fixed = re.sub(r'//.*?$', '', fixed, flags=re.MULTILINE)
+        fixed = re.sub(r'/\*.*?\*/', '', fixed, flags=re.DOTALL)
+
+        # Fix trailing commas before closing brackets
+        fixed = re.sub(r',\s*([}\]])', r'\1', fixed)
+
+        # Fix single quotes to double quotes (careful not to break escaped quotes)
+        # This is a simple heuristic; complex cases may still fail
+        fixed = fixed.replace("'", '"')
+
+        # Try to parse after basic fixes
+        return json.loads(fixed)
+    except (json.JSONDecodeError, ValueError):
+        pass
+
+    try:
+        # More aggressive fix: try to quote unquoted keys
+        # Match word characters followed by colon that aren't already quoted
+        fixed = re.sub(r'(?<=[{,])\s*(\w+)\s*:', r' "\1":', fixed)
+        return json.loads(fixed)
+    except (json.JSONDecodeError, ValueError):
+        pass
+
+    return None
 
 
 @dataclass
@@ -179,7 +317,7 @@ class VisualOutfitService:
         payload = {
             "model": self.glm_model,
             "messages": [
-                {"role": "system", "content": "你是专业的时尚买手和搭配师。"},
+                {"role": "system", "content": VISUAL_OUTFIT_SYSTEM_PROMPT},
                 {"role": "user", "content": prompt}
             ],
             "max_tokens": 1500,
@@ -197,16 +335,15 @@ class VisualOutfitService:
                     if response.status == 200:
                         result = await response.json()
                         content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
-                        
-                        if "```json" in content:
-                            content = content.split("```json")[-1].split("```")[0]
-                        
-                        json_start = content.find("{")
-                        json_end = content.rfind("}") + 1
-                        if json_start != -1:
-                            return json.loads(content[json_start:json_end]).get("plans", [])
+
+                        # A-P1-8: Use robust multi-strategy JSON parsing
+                        parsed = _robust_json_parse(content, default=None)
+                        if parsed and isinstance(parsed, dict):
+                            return parsed.get("plans", [])
+                        if parsed and isinstance(parsed, list):
+                            return parsed
         except Exception as e:
-            print(f"GLM 关键词生成失败: {e}")
+            logger.warning("GLM keyword generation failed: %s", e)
         
         return self._get_fallback_keywords(scene_context.get("occasion", "daily"))
     
@@ -536,7 +673,7 @@ class VisualOutfitService:
         outfit_plan: VisualOutfitPlan
     ) -> Optional[str]:
         try:
-            from services.virtual_tryon_service import virtual_tryon_service
+            from ml.services.virtual_tryon_service import virtual_tryon_service
 
             top_item = None
             for item in outfit_plan.items:

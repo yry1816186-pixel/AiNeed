@@ -2,16 +2,13 @@ from __future__ import annotations
 
 import json
 import math
-import sys
 from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import numpy as np
 import pytest
 from PIL import Image
 
-from services.color_season_analyzer import (
+from ml.services.color_season_analyzer import (
     ChromaType,
     ColorSeason,
     ColorSeasonResult,

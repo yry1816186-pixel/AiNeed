@@ -15,7 +15,7 @@ _analyzer = None
 _analyzer_available = False
 
 try:
-    from services.photo_quality_analyzer import (
+    from ml.services.photo_quality_analyzer import (
         PhotoQualityAnalyzer,
         get_photo_quality_analyzer,
     )

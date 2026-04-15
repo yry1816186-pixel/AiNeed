@@ -17,7 +17,7 @@ from ml.api.schemas.recommendation import (
 logger = logging.getLogger(__name__)
 
 try:
-    from services.intelligent_style_recommender import StyleRecommendationAPI
+    from ml.services.intelligent_style_recommender import StyleRecommendationAPI
     _recommender_service = StyleRecommendationAPI()
     _service_available = True
 except Exception as e:

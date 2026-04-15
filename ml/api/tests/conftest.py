@@ -1,13 +1,10 @@
 import os
-import sys
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 TEST_API_KEY = "test-api-key-12345678901234567890"
 

@@ -15,8 +15,6 @@ import io
 import base64
 from datetime import datetime
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from fastapi import FastAPI, HTTPException, UploadFile, File, Query, Body, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
@@ -46,7 +44,7 @@ from inference.inference_service import (
     BodyAnalysisResult,
     create_api_response
 )
-from services.style_understanding_service import StyleUnderstandingUnavailableError
+from ml.services.style_understanding_service import StyleUnderstandingUnavailableError
 
 
 class StyleAnalysisRequest(BaseModel):
@@ -113,7 +111,7 @@ async def lifespan(app: FastAPI):
     print("AI推理服务初始化完成")
     
     try:
-        from services.style_understanding_service import (
+        from ml.services.style_understanding_service import (
             StyleUnderstandingAPI,
             StyleUnderstandingService,
         )
@@ -125,7 +123,7 @@ async def lifespan(app: FastAPI):
         print(f"风格理解服务初始化失败: {e}")
     
     try:
-        from services.intelligent_style_recommender import StyleRecommendationAPI
+        from ml.services.intelligent_style_recommender import StyleRecommendationAPI
         recommender_service = StyleRecommendationAPI()
         print("智能推荐服务初始化完成")
     except Exception as e:
@@ -904,21 +902,21 @@ async def download_model_weights(model_id: Optional[str] = None, force: bool = F
 
 
 try:
-    from services.intelligent_stylist_api import router as stylist_router
+    from ml.services.intelligent_stylist_api import router as stylist_router
     app.include_router(stylist_router)
     print("智能造型师 API 路由已加载")
 except Exception as e:
     print(f"智能造型师 API 加载失败: {e}")
 
 try:
-    from services.visual_outfit_api import router as visual_router
+    from ml.services.visual_outfit_api import router as visual_router
     app.include_router(visual_router)
     print("可视化穿搭 API 路由已加载")
 except Exception as e:
     print(f"可视化穿搭 API 加载失败: {e}")
 
 try:
-    from services.hallucination.api import router as hallucination_router
+    from ml.services.hallucination.api import router as hallucination_router
     app.include_router(hallucination_router)
     print("幻觉检测 API 路由已加载")
 except Exception as e:

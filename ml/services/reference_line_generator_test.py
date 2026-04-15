@@ -2,14 +2,11 @@ from __future__ import annotations
 
 import json
 import math
-import sys
 import unittest
 from pathlib import Path
 from typing import Any, Dict, List
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from services.reference_line_generator import (
+from ml.services.reference_line_generator import (
     AlignmentResult,
     AlignmentStatus,
     CenteringStatus,
@@ -308,6 +305,17 @@ class TestGenerateGuidePartialLandmarks(unittest.TestCase):
         self.assertIsInstance(guide, GuideData)
         self.assertEqual(len(guide.lines), 0)
         self.assertEqual(len(guide.contours), 0)
+
+
+# TODO: Add boundary condition tests:
+# - Landmarks at image edges (x=0, x=1, y=0, y=1)
+# - Very small or very large landmark coordinates (near 0 or 1)
+# - Single keypoint with visibility=1 (minimal valid input)
+# - All keypoints with visibility=0 (fully invisible)
+# - Extremely tilted shoulders (near-vertical)
+# - Body centering at exact threshold boundary values
+# - Facing direction with z-values at classification boundaries
+# - Duplicate landmark positions (all same point)
 
 
 if __name__ == "__main__":

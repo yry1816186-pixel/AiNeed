@@ -1,75 +1,84 @@
+# DEPRECATED: Use pyproject.toml instead. This file is kept for Docker compatibility during migration.
 # Core dependencies
-torch>=2.0.0
-torchvision>=0.15.0
-numpy>=1.24.0
-Pillow>=9.5.0
-opencv-python>=4.8.0
+numpy>=1.24.0,<3.0.0
+Pillow>=9.5.0,<12.0.0
+opencv-python>=4.8.0,<5.0.0
 
 # ML Models
-transformers>=4.30.0
-ultralytics>=8.0.0
-mediapipe>=0.10.0
+transformers>=4.30.0,<5.0.0
+
+# Optional: only for local inference (SASRec training with backpropagation)
+# Uncomment if you need PyTorch-based training
+# torch>=2.0.0,<3.0.0
+# torchvision>=0.15.0,<1.0.0
+
+# Optional: only for local object detection (not needed for GLM API mode)
+# ultralytics>=8.0.0,<9.0.0
+
+# Optional: only for local pose estimation (not needed for GLM API mode)
+# mediapipe>=0.10.0,<1.0.0
 
 # GLM API Client (cloud-based image generation for virtual try-on)
 # No local diffusion model dependencies needed - GLM API handles image generation
 
 # Clustering
-scikit-learn>=1.3.0
+scikit-learn>=1.3.0,<2.0.0
 
 # Web Framework
-fastapi>=0.100.0
-uvicorn>=0.23.0
-python-multipart>=0.0.6
-pydantic>=2.0.0
+fastapi>=0.100.0,<0.116.0
+uvicorn>=0.23.0,<1.0.0
+python-multipart>=0.0.6,<1.0.0
+pydantic>=2.0.0,<3.0.0
 
 # Utilities
-aiofiles>=23.0.0
-python-dotenv>=1.0.0
+aiofiles>=23.0.0,<25.0.0
+python-dotenv>=1.0.0,<2.0.0
 
-# Model Download
-huggingface-hub>=0.17.0
+# Model Download (optional: only for downloading models from Hugging Face Hub;
+# can be removed in production if models are pre-downloaded or served remotely)
+huggingface-hub>=0.17.0,<1.0.0
 
-# Performance
-onnxruntime>=1.16.0
-onnxruntime-gpu>=1.16.0
+# Performance (CPU only - use onnxruntime-gpu only if CUDA is available)
+onnxruntime>=1.16.0,<2.0.0
+# onnxruntime-gpu>=1.16.0,<2.0.0  # Uncomment ONLY if CUDA GPU is available
 
 # Monitoring
-prometheus-client>=0.18.0
+prometheus-client>=0.18.0,<1.0.0
 
 # ============ RAG System Dependencies (2026 Standard) ============
 
 # Vector Database
-qdrant-client>=1.7.0
+qdrant-client>=1.7.0,<2.0.0
 
 # Chinese NLP for BM25
-jieba>=0.42.0
+jieba>=0.42.0,<1.0.0
 
 # Sentence Transformers for embeddings and reranking
-sentence-transformers>=2.2.0
+sentence-transformers>=2.2.0,<3.0.0
 
 # BGE Reranker support
-FlagEmbedding>=1.2.0
+FlagEmbedding>=1.2.0,<2.0.0
 
 # RAGAS Evaluation (optional - for production evaluation)
-# ragas>=0.1.0  # Uncomment if using RAGAS library
+# ragas>=0.1.0,<1.0.0  # Uncomment if using RAGAS library
 
 # Async HTTP for external APIs
-httpx>=0.25.0
-aiohttp>=3.9.0
+httpx>=0.25.0,<1.0.0
+aiohttp>=3.9.0,<4.0.0
 
 # Progress bars
-tqdm>=4.66.0
+tqdm>=4.66.0,<5.0.0
 
 # Data validation
-pydantic-settings>=2.0.0
+pydantic-settings>=2.0.0,<3.0.0
 
 # System monitoring for health checks
-psutil>=5.9.0
+psutil>=5.9.0,<7.0.0
 
 # ============ Async Task Queue Dependencies ============
 
 # Redis async client for task queue
-redis[hiredis]>=5.0.0
+redis[hiredis]>=5.0.0,<6.0.0
 
 # Async task queue (alternative to BullMQ for Python)
-# arq>=0.25.0  # Uncomment if using arq for more complex workflows
+# arq>=0.25.0,<1.0.0  # Uncomment if using arq for more complex workflows

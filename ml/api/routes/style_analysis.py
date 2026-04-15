@@ -16,7 +16,7 @@ from ml.api.schemas.style_analysis import (
 logger = logging.getLogger(__name__)
 
 try:
-    from services.style_understanding_service import (
+    from ml.services.style_understanding_service import (
         StyleUnderstandingAPI,
         StyleUnderstandingService,
         StyleUnderstandingUnavailableError,

@@ -6,12 +6,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
-import sys
-import os
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from services.visual_outfit_service import (
+from ml.services.visual_outfit_service import (
     VisualOutfitService,
     UserImageInfo,
     get_visual_outfit_service
@@ -116,7 +112,7 @@ async def generate_virtual_tryon(
     - category: 服装类别 (upper_body/lower_body/full_body)
     """
     try:
-        from services.virtual_tryon_service import virtual_tryon_service
+        from ml.services.virtual_tryon_service import virtual_tryon_service
 
         result = await virtual_tryon_service.generate_tryon(
             person_image_url=user_image_url,
