@@ -1,253 +1,288 @@
-# Roadmap: AiNeed
+# Roadmap: 寻裳代码规整
 
-## Overview
+**Created:** 2026-04-16
+**Granularity:** fine (8 phases)
+**Priority Order:** 样式统一 > 工程规范 > 代码质量
 
-AiNeed MVP 路线图：11 Phase 从基础设施到商业闭环。核心用户旅程：建立画像 → AI 造型师推荐 → 虚拟试衣看效果 → 智能推荐发现 → 购买 → 社区分享 → 定制服务 → 私人顾问。现有 34 个后端模块和 28 个移动端页面提供完整骨架，本路线图填充真实业务逻辑和 API 集成。
+## Milestone 1: 代码规整 v1
 
-## Phases
+### Phase 0: 工程基础设施准备
 
-- [x] **Phase 0: 基础设施 & 测试基线** — CI/CD Pipeline + 测试框架配置 + 错误追踪 + 日志策略 + 数据库迁移策略
-- [x] **Phase 1: 用户画像 & 风格测试** — 双通道注册 + 强制画像建立 + 图片风格测试 → 建立个人风格档案
-- [x] **Phase 2: AI 造型师** — 方案页交互 + 文字/场景输入 + GLM API 穿搭推荐 + 天气集成
-- [x] **Phase 3: 虚拟试衣** — Doubao-Seedream API 图生图 → 用户看到自己穿推荐衣服的效果
-- [x] **Phase 4: 推荐引擎** — 瀑布流信息流 + 渐进式推荐算法 + 色彩搭配评分
-- [x] **Phase 5: 电商闭环** — 商品浏览 + 图片搜索 + 购物车 + 双通道支付 + 自营+合作商家
-- [x] **Phase 5.5: App 上架准备 & 推送通知** — 应用商店合规 + 隐私政策 + 推送通知 + ASO 优化
-- [x] **Phase 6: 社区 & 博主生态** — 穿搭社区 + 博主入驻 + 灵感衣橱 + 商品认证上架
-- [x] **Phase 7: 定制服务 & 品牌合作** — 2D定制编辑器 + 品牌扫码导入 + 定制生产配送
-- [x] **Phase 8: 私人形象顾问对接** — 平台撮合 + 即时通讯 + 预约支付 + 评价体系
-- [x] **Phase 9: 运营后台 & 性能优化 & 数据种子** — 管理后台 + 性能基线 + 初始数据填充
-- [x] **Phase 10: 品质审计修复** — 六重视角设计审计修复：双主题统一、导航架构整合、无障碍合规、视觉一致性、交互品质提升 (completed 2026-04-14)
+**Goal:** 建立 CI 门禁和工程规范，为后续规整提供安全网
 
-## Phase Details
+**Depends on:** None
 
-### Phase 0: 基础设施 & 测试基线
-**Goal**: 建立工程基础设施，确保后续开发有质量保障和自动化支撑
-**Depends on**: 无（项目初始化阶段）
-**Requirements**: INFRA-01 ~ INFRA-09 (9 条)
-**Success Criteria**:
-  1. GitHub Actions CI/CD Pipeline 配置完成（lint → test → build → deploy）
-  2. 后端测试覆盖率提升到 50%+，移动端测试框架配置完成
-  3. Sentry 错误追踪集成（后端 + 移动端）
-  4. 结构化日志策略（Winston/Pino，JSON 格式，请求追踪 ID）
-  5. Prisma 迁移脚本管理策略（migration 而非 db push）
-  6. 开发/测试/生产环境配置分离
-  7. API 响应格式统一为 JSON:API 规范
-  8. Git 分支策略和 PR 模板
-  9. Docker Compose 生产配置（含健康检查和资源限制）
+**Plans:**
+1. 配置 husky + lint-staged + commitlint
+2. 统一 monorepo ESLint 配置（根级 .eslintrc）
+3. 统一 monorepo Prettier 配置（根级 .prettierrc）
+4. 配置 Turborepo 增量构建
+5. 配置 Changesets 版本管理
+6. 建立 CI 流水线（lint + typecheck + test 门禁）
 
-### Phase 1: 用户画像 & 风格测试
-**Goal**: 新用户注册后完成个人画像建立，AI 系统获得精准的用户理解基础
-**Depends on**: 无（已有认证系统和用户画像骨架）
-**Requirements**: PROF-01 ~ PROF-14 (14 条)
-**Success Criteria**:
-  1. 用户可通过手机号+验证码或微信一键登录注册
-  2. 注册后强制填写基本信息（性别/年龄段），照片和风格测试可跳过
-  3. 照片上传有实时参考线引导和隐私承诺展示
-  4. 风格测试为图片选择式问卷（5-8题），色彩偏好隐性推导
-  5. 画像结果以可视化报告展示，支持分享海报
-  6. 照片加密永久存储，用户可删除
-  7. 用户可主动修改画像数据（基本信息/体型/肤色），修改后自动触发画像同步事件
+**Requirements:** ENGR-01, ENGR-03, ENGR-04, ENGR-05, ENGR-06, ENGR-07
 
-### Phase 2: AI 造型师
-**Goal**: 用户与 AI 造型师交互，获取基于个人画像的精准穿搭方案
-**Depends on**: Phase 1（需要用户画像和风格档案数据）
-**Requirements**: AIS-01 ~ AIS-14 (14 条)
-**Success Criteria**:
-  1. AI 造型师以方案页形式展示（整体效果图 + 单品列表）
-  2. MVP 支持文字输入 + 场景快捷按钮
-  3. 方案附带可折叠推荐理由（体型适配 + 色彩 + 场合）
-  4. 支持弹出同类商品列表替换单品
-  5. 集成天气数据自动考虑天气因素
-  6. 对话历史按日归档，可恢复查看
-  7. AI 降级时展示友好提示（"AI 造型师暂时繁忙，请稍后再试"），而非空白或错误页
-  8. 图片输入作为 Phase 2.1 后续补充（上传衣服图片问"怎么搭"），在路线图中标注为 Phase 2 延伸
+**UAT Criteria:**
+- [ ] `git commit` 自动触发 lint-staged
+- [ ] CI 流水线在 PR 上运行 lint + typecheck + test
+- [ ] Turborepo 缓存生效，二次构建速度提升
+- [ ] Changesets 可正确管理包版本
 
-### Phase 3: 虚拟试衣
-**Goal**: 用户上传照片后，通过 Doubao-Seedream API 看到自己穿推荐服装的效果图
-**Depends on**: Phase 2（需要造型师推荐的服装）+ 用户上传照片
-**Requirements**: VTO-01 ~ VTO-13 (13 条)
-**Success Criteria**:
-  1. 用户可上传个人照片（推荐全身照，允许其他类型）
-  2. Doubao-Seedream 为主生成 API，GLM 图生图为降级备选；移除所有 CatVTON 引用
-  3. 换装效果图在 30 秒内返回，有进度条 + 趣味内容
-  4. 用户不满意可免费重试（每日限 3 次）
-  5. 结果保存到历史记录和灵感衣橱，支持多平台分享
-  6. 试衣结果缓存 TTL 为 24 小时，同一用户照片+服装组合不重复调用 API
-
-### Phase 4: 推荐引擎
-**Goal**: 用户获得个性化的穿搭推荐信息流，推荐质量随交互不断提升
-**Depends on**: Phase 1（画像数据）, Phase 2（造型师对话数据）, Phase 3（试衣偏好数据）
-**Requirements**: REC-01 ~ REC-13 (13 条)
-**Success Criteria**:
-  1. 首页展示小红书式双列瀑布流推荐信息流
-  2. 支持 4 类推荐：每日/场合/趋势/探索
-  3. 渐进式算法演进（规则 → AI → 协同过滤）
-  4. 新用户基于画像的通用推荐冷启动
-  5. 推荐结果包含色彩搭配评分和推荐理由
-  6. 推荐去重：已浏览/已购买商品在 7 天内不再出现在推荐流中
-  7. 推荐多样性：探索/惊喜类推荐占比 15-20%，避免信息茧房
-
-### Phase 5: 电商闭环
-**Goal**: 用户从推荐/试衣直接进入购买流程，支持自营和合作商家
-**Depends on**: Phase 3（试衣引导购买）, Phase 4（推荐引导发现）
-**Requirements**: COMM-01 ~ COMM-13 (13 条)
-**Plans:** 9/9 plans executed
-
-Plans:
-- [x] 05-01-PLAN.md — Schema + Coupon + StockNotification backend modules
-- [x] 05-02-PLAN.md — RefundRequest + SizeRecommendation backend modules
-- [x] 05-03-PLAN.md — Merchant review + Search filters + Clothing enhancements
-- [x] 05-04-PLAN.md — Cart + Order backend enhancements
-- [x] 05-05-PLAN.md — Mobile API layer + Zustand stores
-- [x] 05-06-PLAN.md — Product detail + Search frontend screens
-- [x] 05-07-PLAN.md — Cart + Checkout + Payment frontend screens
-- [x] 05-08-PLAN.md — Order detail + Refund frontend screens
-- [x] 05-09-PLAN.md — Merchant apply + Stock notification frontend screens
-
-**Success Criteria**:
-  1. GLM 视觉理解图片搜索 + 文字搜索 + 多维筛选
-  2. AI 智能尺码推荐（基于体型数据 + 品牌尺码表）
-  3. 支付宝 + 微信支付双通道
-  4. 平台自营 + 合作商家入驻（审核制）
-  5. 完整订单生命周期管理
-  6. 基础退款流程：用户可申请退款 → 商家审核 → 退款/驳回，退款到原支付方式
-  7. 物流追踪集成：对接快递 100/快递鸟 API，用户可查看物流详情
-
-### Phase 5.5
-**Goal**: 完成 App 上架所需的合规、隐私、推送等必备功能，确保应用可正常上架和留存用户
-**Depends on**: Phase 1（用户系统）, Phase 5（支付系统用于推送订单通知）
-**Requirements**: LAUNCH-01 ~ LAUNCH-07 (7 条)
-**Success Criteria**:
-  1. App Store & Google Play 合规检查通过（隐私政策、数据收集声明、权限说明）
-  2. 隐私政策和用户协议页面完整，用户注册时强制同意
-  3. FCM (Android) + APNs (iOS) 推送通知集成
-  4. 通知模板系统（订单/推荐/社区/系统 4 类通知模板）
-  5. 用户通知偏好管理（按类型开关推送）
-  6. App 签名、图标、启动页、应用截图等上架素材
-  7. ASO 基础优化（关键词、描述、分类）
-
-### Phase 6: 社区 & 博主生态
-**Goal**: 建立穿搭内容社区，支持博主入驻和商品销售，形成内容-电商闭环
-**Depends on**: Phase 1（用户画像）, Phase 2（AI 方案内容）, Phase 3（试衣效果图）
-**Requirements**: SOC-01 ~ SOC-14 (14 条)
-**Success Criteria**:
-  1. 用户可发穿搭内容（9图+标签+单品标注）
-  2. 社区信息流支持热门/最新/关注三种排序
-  3. 博主可上架穿搭设计为可购买商品，平台抽成
-  4. 灵感衣橱支持自定义分类 + 拖拽排序
-  5. 内容双重审核（AI + 人工）
-  6. 社区冷启动策略：官方种子内容（每日穿搭推荐 10 条）+ 邀请制内测用户 + AI 生成穿搭内容填充
-  7. 博主上架商品需通过平台认证（实名认证 + 至少 3 篇优质内容），确保商品质量
-
-### Phase 7: 定制服务 & 品牌合作
-**Goal**: 提供个性化服装定制服务和品牌扫码导入，拓展商业模式
-**Depends on**: Phase 5（电商基础）, Phase 6（社区内容素材）
-**Requirements**: CUS-01 ~ CUS-12 (12 条)
-**Plans:** 4/4 plans executed
-
-Plans:
-- [x] 07-01-PLAN.md -- Customization editor backend (schema, templates, pricing, API)
-- [x] 07-02-PLAN.md -- Brand QR code system + brand portal backend
-- [x] 07-03-PLAN.md -- Mobile customization editor + brand QR scan frontend
-- [x] 07-04-PLAN.md -- Brand portal extension + POD integration + payment flow
-
-**Success Criteria**:
-  1. 2D 模板定制编辑器（选择衣服→上传图案→拖拽定位→预览）
-  2. 完整定制流程（设计→报价→确认→制作→精美包装快递）
-  3. 品牌合作专属二维码，扫码自动导入服装数据
-  4. 品牌管理后台（商品数据/扫码统计/用户偏好分析）
-  5. 2D 编辑器基于 React Native Canvas/SVG 实现，支持缩放/旋转/拖拽，参考 react-native-skia 方案
-  6. 定制商品供应链对接：MVP 与 1-2 家 POD（Print-on-Demand）服务商合作
-
-### Phase 8: 私人形象顾问对接
-**Goal**: 高价值用户可对接专业造型工作室/顾问，获得深度私人形象定制服务
-**Depends on**: Phase 5（支付系统）, Phase 6（评价体系参考）
-**Requirements**: ADV-01 ~ ADV-13 (13 条)
-**Plans:** 5/5 plans executed
-
-Plans:
-- [x] 08-01-PLAN.md -- Schema extension + four-dimension matching algorithm + match endpoint
-- [x] 08-02-PLAN.md -- ChatGateway /ws/chat namespace + proposal message type
-- [x] 08-03-PLAN.md -- Availability scheduling + staged payment + earnings/withdrawal
-- [x] 08-04-PLAN.md -- Review system + weighted ranking + admin audit + case display
-- [x] 08-05-PLAN.md -- Mobile: 4 screens + 8 components + stores + API + WebSocket
-
-**Success Criteria**:
-  1. 平台撮合模式：用户提交需求 → 智能匹配顾问 → App 内沟通
-  2. 在线预约 + App 内即时通讯 + 方案文件分享
-  3. 分阶段付款 + 平台抽成结算
-  4. 评价评分体系影响顾问排名
-  5. 工作室/顾问入驻审核和服务案例展示
-  6. 即时通讯消息送达保证：消息已发送/已送达/已读状态，离线消息推送
-  7. 资金托管机制：用户付款进入平台托管账户，服务完成后自动结算给顾问，保障双方权益
-
-### Phase 9: 运营后台 & 性能优化 & 数据种子
-**Goal**: 建立运营所需的管理后台，优化性能达到上线标准，填充初始数据确保 App 不空白
-**Depends on**: Phase 5（电商数据）, Phase 6（社区内容审核）
-**Requirements**: OPS-01 ~ OPS-08 (8 条)
-**Plans:** 4/4 plans executed
-
-Plans:
-- [x] 09-01-PLAN.md -- Admin module foundation with RBAC, audit, dashboard, config
-- [x] 09-02-PLAN.md -- Content review system with AI + human dual-track moderation
-- [x] 09-03-PLAN.md -- Initial data seed (526 products, 53 brands, 20 quiz questions)
-- [x] 09-04-PLAN.md -- Performance optimization (cache interceptors, mobile perf components)
-
-**Success Criteria**:
-  1. 管理后台基础框架（用户管理/内容审核/数据看板/配置管理）
-  2. 内容审核后台（AI 审核 + 人工审核队列）
-  3. 数据看板（DAU/订单量/转化率/热门商品）
-  4. 初始服装数据种子（至少 500 件商品，覆盖 8 大分类）
-  5. 首屏加载 < 2 秒，API P95 响应 < 500ms
-  6. 图片 CDN 加速和懒加载
-  7. API 响应缓存策略（Redis 热点数据缓存）
-  8. 移动端性能优化（列表虚拟化、图片压缩、Bundle 优化）
-
-### Phase 10: 品质审计修复
-**Goal**: 基于设计师、艺术家、前端工程师、人体工程学家、算法大师、真实用户六重视角审计，系统性修复移动端前端的设计缺陷、架构冲突、无障碍缺失和交互品质问题，使寻裳达到最高审美和性能标准
-**Depends on**: Phase 0-9（全部已完成，本轮为品质提升）
-**Requirements**: QA-01 ~ QA-20 (20 条)
-**Success Criteria**:
-  1. 双主题系统统一为 Terracotta 品牌色 token 体系，消除 NightBlue/Terracotta/Purple 三色打架
-  2. 双导航架构合并为单一 5-tab 嵌套栈版本，删除 App.tsx 旧版导航
-  3. VipGuard 接入真实用户状态，VIP 功能可正常访问
-  4. PaymentScreen 全量中文化，消除全英文界面
-  5. 所有 paddingTop: 56 硬编码改为 useSafeAreaInsets()
-  6. 天气坐标接入设备定位，消除北京坐标硬编码
-  7. AI 造型师聊天消息持久化到 Zustand store
-  8. ClothingDetailScreen 29 个硬编码色值迁移到主题 token
-  9. 创建 useReducedMotion hook，所有动画组件接入 reduced-motion 检测
-  10. 深色模式文字色提升到 WCAG AA 4.5:1 对比度标准
-  11. 路由守卫接入 MainStackNavigator，26 条规则生效
-  12. SharedElement 转场接入 react-navigation-shared-element
-  13. 动画弹簧参数分层映射到交互语义（轻/中/重操作）
-  14. 社区瀑布流高度基于图片宽高比而非伪随机
-  15. AI 思考态从 ActivityIndicator 升级为渐进式视觉叙事
-  16. CommunityScreen 735 行巨石拆分为独立组件
-  17. 推荐卡片增加评分/理由/色彩和谐度可视化
-  18. 四季色彩可视化使用 colorSeasons token 而非硬编码
-  19. Accent 系统降为辅助强调色，品牌色始终为 Terracotta
-  20. ui/index.tsx 内联重复组件统一从 primitives/ 导出
-
-## Progress
-
-**Execution Order:** 0 → 1 → 2 → 3 → 4 → 5 → 5.5 → 6 → 7 → 8 → 9 → 10
-
-| Phase | Status | Requirements |
-|-------|--------|-------------|
-| 0. 基础设施 & 测试基线 | Completed | 9 |
-| 1. 用户画像 & 风格测试 | Completed | 14 |
-| 2. AI 造型师 | Completed | 14 |
-| 3. 虚拟试衣 | Completed | 13 |
-| 4. 推荐引擎 | Completed | 13 |
-| 5. 电商闭环 | Completed | 13 |
-| 5.5. App 上架准备 & 推送通知 | Completed | 7 |
-| 6. 社区 & 博主生态 | Completed | 14 |
-| 7. 定制服务 & 品牌合作 | Completed | 12 |
-| 8. 私人形象顾问对接 | Completed | 13 |
-| 9. 运营后台 & 性能优化 & 数据种子 | Completed | 8 |
-| 10. 品质审计修复 | In Progress | 20 |
+**Risk:** 低 — 纯增量，不修改业务代码
 
 ---
-*Last updated: 2026-04-15 — Phase 10 品质审计修复 added*
+
+### Phase 1: 清理与基础修复
+
+**Goal:** 清理杂乱文件、修复已知错误、配置基础质量规则
+
+**Depends on:** Phase 0
+
+**Plans:**
+1. 清理根目录杂乱文件（ESLint 输出、截图、临时文件、非项目文件）
+2. 废弃 demo 模块（标记 @deprecated + 移除 AppModule 注册）
+3. 废弃 code-rag 模块（标记 @deprecated + 移除 AppModule 注册）
+4. 修复已知 TypeScript 错误（imagePicker.ts, user-key.service.ts）
+5. 配置 ESLint no-explicit-any: error
+6. 配置移动端 ESLint recommended-requiring-type-checking
+7. 统一命名规范（文件名、模块名、API 端点）
+
+**Requirements:** ENGR-02, ENGR-08, ARCH-06, ARCH-07, QUAL-01, QUAL-06, QUAL-07
+
+**UAT Criteria:**
+- [ ] 根目录无杂乱文件（ESLint 输出、截图、临时文件）
+- [ ] demo/code-rag 模块已从 AppModule 移除
+- [ ] `tsc --noEmit` 无已知错误
+- [ ] 新增 `any` 类型被 ESLint 阻止
+- [ ] 移动端 ESLint 包含 recommended-requiring-type-checking
+
+**Risk:** 低 — 清理和配置为主，不涉及业务逻辑变更
+
+---
+
+### Phase 2: 设计系统统一
+
+**Goal:** 将所有硬编码样式值迁移至 Theme Token，统一设计系统
+
+**Depends on:** Phase 1
+
+**Plans:**
+1. 审计所有硬编码颜色值，按语义分类（text, bg, border, etc.）
+2. 创建语义化颜色 Token（text.primary, bg.secondary, border.subtle, etc.）
+3. 编写 codemod 批量替换硬编码颜色 → theme.colors.xxx
+4. 审计所有硬编码 fontSize，按语义分类
+5. 创建语义化字体 Token（heading.large, body.medium, caption, etc.）
+6. 编写 codemod 批量替换硬编码字体 → theme.typography.xxx
+7. 审计所有硬编码间距，按语义分类
+8. 创建语义化间距 Token（gap.md, padding.lg, margin.sm, etc.）
+9. 编写 codemod 批量替换硬编码间距 → theme.spacing.xxx
+10. 移除 NativeWind/Tailwind 死配置
+11. 保留 Paper 仅用于 Dialog/BottomSheet 等复杂组件
+
+**Requirements:** DSGN-01, DSGN-02, DSGN-03, DSGN-04, DSGN-05, DSGN-06
+
+**UAT Criteria:**
+- [ ] 0 处硬编码颜色值（用户可见组件）
+- [ ] 0 处硬编码 fontSize（用户可见组件）
+- [ ] 0 处硬编码间距（用户可见组件）
+- [ ] NativeWind/Tailwind 配置已移除
+- [ ] 暗色模式正常工作
+- [ ] 视觉回归测试通过（核心页面截图对比）
+
+**Risk:** 🟠 中 — 2600+ 处替换，需按语义分类避免错误合并
+
+**Pitfall Mitigation:** 按 PITFALLS-03，先审计语义再替换，保留原始值注释
+
+---
+
+### Phase 3: 后端域划分 — identity + platform
+
+**Goal:** 建立域架构基础，先处理 identity 域和 platform 层
+
+**Depends on:** Phase 2
+
+**Plans:**
+1. 创建域目录结构（src/domains/identity/, src/domains/platform/）
+2. 迁移 auth, users, profile, onboarding, privacy → identity 域
+3. 迁移 recommendations, admin, merchant, analytics, notification, feature-flags, health, queue, metrics → platform 域
+4. 将 Recommendations 降级为 platform 层共享服务
+5. 消除 identity ↔ platform 间的循环依赖
+6. 配置 eslint-plugin-boundaries 域间依赖规则
+7. 配置 dependency-cruiser 可视化
+
+**Requirements:** ARCH-01 (partial), ARCH-04, ARCH-05, ARCH-11
+
+**UAT Criteria:**
+- [ ] identity 域模块正确迁移，无循环依赖
+- [ ] platform 域模块正确迁移，无循环依赖
+- [ ] eslint-plugin-boundaries 规则生效
+- [ ] dependency-cruiser 可视化可用
+- [ ] 所有现有 API 端点正常工作
+- [ ] PII 加密功能不受影响
+
+**Risk:** 🟠 中 — PII 加密在 identity 域，需特别小心
+
+**Pitfall Mitigation:** 按 PITFALLS-08，PII 加密代码标记为不可移动
+
+---
+
+### Phase 4: 后端域划分 — fashion + ai-core + commerce + social + customization
+
+**Goal:** 完成所有业务域的划分，消除所有循环依赖
+
+**Depends on:** Phase 3
+
+**Plans:**
+1. 迁移 clothing, brands, search, favorites, wardrobe-collection, style-quiz, style-profiles, weather → fashion 域
+2. 合并 style-profiles + style-quiz 为统一风格评估模块
+3. 合并 wardrobe-collection + favorites 为统一衣橱管理模块
+4. 迁移 ai-stylist, try-on, ai, ai-safety, photos → ai-core 域
+5. 消除 AiStylistModule ↔ RecommendationsModule 循环依赖
+6. 迁移 cart, order, payment, coupon, address, refund-request, subscription, stock-notification, size-recommendation → commerce 域
+7. 合并 notification + stock-notification 为统一消息推送模块
+8. 迁移 community, blogger, consultant, chat → social 域
+9. 迁移 customization, share-template → customization 域
+10. 消除所有剩余 forwardRef 循环依赖
+11. 将跨域共享类型提取到 @xuno/types
+
+**Requirements:** ARCH-01, ARCH-02, ARCH-03, ARCH-08, ARCH-09, ARCH-10, MOBL-06 (partial)
+
+**UAT Criteria:**
+- [ ] 所有 6 域 + 1 平台层模块正确迁移
+- [ ] 0 处 forwardRef 循环依赖
+- [ ] eslint-plugin-boundaries 域间规则全部通过
+- [ ] 所有现有 API 端点正常工作
+- [ ] 事件驱动架构正确（payment→subscription 等事件监听器正常）
+
+**Risk:** 🔴 高 — 16 处循环依赖需逐一消除，事件监听器跨域需重新设计
+
+**Pitfall Mitigation:** 按 PITFALLS-02 和 PITFALLS-06，逐步解耦+事件驱动
+
+---
+
+### Phase 5: 移动端页面重组
+
+**Goal:** 将移动端从扁平结构迁移到 feature-based 架构
+
+**Depends on:** Phase 2 (设计系统统一完成)
+
+**Plans:**
+1. 创建 feature-based 目录结构（src/features/*, src/shared/*, src/design-system/*）
+2. 迁移设计系统相关文件 → src/design-system/
+3. 迁移共享组件/工具 → src/shared/
+4. 按功能域迁移页面和组件 → src/features/auth/, src/features/stylist/, etc.
+5. 合并 auth.store + user.store → 统一 authStore
+6. 合并 quizStore + styleQuizStore → 统一 quizStore
+7. 合并 clothingStore + homeStore → 统一 clothingStore
+8. 提取 stores/index.ts 内联 store 为独立文件
+9. 更新导航配置适配新目录结构
+10. 激活 @xuno/types 和 @xuno/shared 的实际使用
+
+**Requirements:** MOBL-01, MOBL-02, MOBL-03, MOBL-04, MOBL-05, MOBL-06
+
+**UAT Criteria:**
+- [ ] 所有页面迁移到 features/*/screens/ 结构
+- [ ] Store 合并完成，无重复 store
+- [ ] 导航正常工作（含深层链接）
+- [ ] @xuno/types 在移动端和后端均有引用
+- [ ] Metro bundler 正常启动
+- [ ] 所有核心页面可正常渲染
+
+**Risk:** 🟠 中 — 50+ 页面迁移，导航系统复杂
+
+**Pitfall Mitigation:** 按 PITFALLS-07，保持路由名称不变
+
+---
+
+### Phase 6: AI 服务规整
+
+**Goal:** 清理 Python AI 服务代码，规范化项目结构
+
+**Depends on:** Phase 4 (后端域划分完成，AI 相关模块已归入 ai-core 域)
+
+**Plans:**
+1. 创建 pyproject.toml 替代 requirements.txt
+2. 移除 sys.path hack
+3. 合并重复路由（stylist_chat + intelligent_stylist_api → stylist）
+4. 合并 body_analysis + style_analysis + photo_quality → analysis
+5. 按能力域重组服务文件（stylist/, tryon/, analysis/, common/）
+6. 统一错误处理和日志格式
+
+**Requirements:** AISV-01, AISV-02, AISV-03, AISV-04
+
+**UAT Criteria:**
+- [ ] pyproject.toml 替代 requirements.txt
+- [ ] 无 sys.path hack
+- [ ] 路由结构清晰（stylist, tryon, analysis, health）
+- [ ] 服务文件按能力域组织
+- [ ] AI 服务 API 端点正常工作
+
+**Risk:** 低 — AI 服务相对独立，不影响主应用
+
+---
+
+### Phase 7: 代码质量提升
+
+**Goal:** 消灭 any 类型，提升测试覆盖率
+
+**Depends on:** Phase 4, Phase 5
+
+**Plans:**
+1. 使用 ts-morph codemod 批量修复后端 any 类型（优先 common 层和域接口）
+2. 使用 ts-morph codemod 批量修复移动端 any 类型（优先 API 服务层和 Store）
+3. 为后端关键路径补充集成测试（auth, try-on, payment, order）
+4. 为移动端关键页面补充组件测试（Home, StylistChat, Cart, Profile）
+5. 后端测试覆盖率 → 50%+
+6. 移动端测试覆盖率 → 30%+
+
+**Requirements:** QUAL-02, QUAL-03, QUAL-04, QUAL-05
+
+**UAT Criteria:**
+- [ ] 后端 any 类型 < 50 处（从 668 降低）
+- [ ] 移动端 any 类型 < 20 处（从 121 降低）
+- [ ] 后端测试覆盖率 ≥ 50%
+- [ ] 移动端测试覆盖率 ≥ 30%
+- [ ] CI 测试门禁通过
+
+**Risk:** 🟡 中 — any 修复可能需要理解业务逻辑，测试编写耗时
+
+**Pitfall Mitigation:** 按 PITFALLS-05，any 修复不改业务逻辑，只补类型
+
+---
+
+## Phase Dependency Graph
+
+```
+Phase 0 (工程基础)
+    ↓
+Phase 1 (清理修复)
+    ↓
+Phase 2 (设计系统) ← 最高优先级（用户可见）
+    ↓
+Phase 3 (后端: identity + platform)
+    ↓
+Phase 4 (后端: 其余域 + 循环依赖)
+    ↓                ↓
+Phase 5 (移动端)    Phase 6 (AI 服务)
+    ↓                ↓
+    └───────┬────────┘
+            ↓
+      Phase 7 (质量提升)
+```
+
+## Estimated Scope
+
+| Phase | Plans | Requirements | Risk |
+|-------|-------|-------------|------|
+| 0 | 6 | 6 | 低 |
+| 1 | 7 | 7 | 低 |
+| 2 | 11 | 6 | 🟠 中 |
+| 3 | 7 | 4 | 🟠 中 |
+| 4 | 11 | 7 | 🔴 高 |
+| 5 | 10 | 6 | 🟠 中 |
+| 6 | 6 | 4 | 低 |
+| 7 | 6 | 4 | 🟡 中 |
+| **Total** | **64** | **36** | — |
+
+---
+*Roadmap created: 2026-04-16*

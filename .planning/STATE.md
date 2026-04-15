@@ -1,198 +1,47 @@
----
-gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: executing
-stopped_at: Completed 09-01 through 09-04 plans
-last_updated: "2026-04-14T23:13:20.750Z"
-last_activity: 2026-04-14
-progress:
-  total_phases: 11
-  completed_phases: 6
-  total_plans: 51
-  completed_plans: 35
-  percent: 69
----
+# State: 寻裳代码规整
 
-# Project State
+**Updated:** 2026-04-16
 
-## Project Reference
+## Current Phase
 
-See: .planning/PROJECT.md (updated 2026-04-13)
+**Phase:** 0 — 工程基础设施准备
+**Status:** Not started
+**Next action:** Run `/gsd-plan-phase 0` to create Phase 0 plan
 
-**Core value:** AI-driven personalized outfit recommendation based on user profile, with multimodal API for virtual try-on
-**Current focus:** Phase 10 — quality-audit-fix
+## Completed Phases
 
-## Current Position
+None yet.
 
-Phase: 10
-Plan: Not started
-Status: Executing Phase 10
-Last activity: 2026-04-14
+## Key Decisions Log
 
-Progress: [██████████] 100%
+| Date | Decision | Rationale |
+|------|----------|-----------|
+| 2026-04-16 | 保留 Theme Tokens，去掉 Tailwind/Paper 混用 | 已有完整 Token 体系，NativeWind/Paper 几乎未使用 |
+| 2026-04-16 | 后端 6 域 + 1 平台层 | 按业务域划分，解耦循环依赖 |
+| 2026-04-16 | Recommendations 降级为 platform 层 | 消除与 AiStylistModule 的循环依赖 |
+| 2026-04-16 | 废弃 demo + code-rag | 无外部消费者 |
+| 2026-04-16 | Turborepo 而非 Nx | 轻量，与 pnpm 兼容 |
+| 2026-04-16 | eslint-plugin-boundaries + dependency-cruiser | 强制域间依赖规则 |
 
-## Roadmap (11 Phase MVP)
+## Active Blockers
 
-0. Infrastructure & Test Baseline
-1. User Profile & Style Test
-2. AI Stylist <-- **COMPLETED**
-3. Virtual Try-On <-- **COMPLETED**
-4. Recommendation Engine
-5. E-Commerce Closure
+None.
 
-5.5. App Store & Push Notifications <-- **COMPLETED**
+## Metrics Baseline
 
-6. Community & Blogger Ecosystem
-7. Customization & Brand Collaboration <-- **COMPLETED**
-8. Private Consultant <-- **COMPLETED**
-9. Operations & Performance & Data Seed <-- **COMPLETED**
+| Metric | Backend | Mobile | AI Service |
+|--------|---------|--------|------------|
+| `any` types | 668 | 121 | — |
+| Test coverage | ~15% | ~5% | Limited |
+| Hardcoded colors | — | 778 | — |
+| Hardcoded fontSize | — | 921 | — |
+| Hardcoded spacing | — | 971 | — |
+| Circular deps (forwardRef) | 16 files | — | — |
+| Module count | 35+ | 50+ screens | 30+ services |
 
-## Session Summary (2026-04-14 Runtime Verification)
+## Research References
 
-### Wave 1: Backend Runtime - PASS
-
-- PostgreSQL + Redis started via Docker (aineed containers)
-- DATABASE_URL fixed: stylemind -> aineed_dev
-- 10 Prisma migrations applied (fixed stock column reference)
-- 526 products, 51 brands, 20 quiz questions, 20 posts seeded
-- Dev server running on port 3001 with zero startup errors
-
-### Wave 2: Backend API Health - PASS
-
-- /api/v1/health returns database=up, redis=up
-- Swagger docs accessible at /api/docs
-- Auth login returns JWT tokens
-- Clothing API returns 526 items, Brands returns 51
-- All 55 modules registered, all 5 WebSocket gateways verified
-
-### Wave 3: Mobile Runtime - PASS
-
-- Metro bundler starts successfully on port 8081
-- Bundle compiles with zero errors
-- Fixed __DEV__ reference in metro.config.js
-
-### Wave 4: Integration Smoke Test - PASS
-
-- 90%+ endpoint matching between mobile and backend
-- Fixed CRITICAL: 4 controllers with double /api/v1/ prefix
-- Fixed: ChatModule missing JwtModule, SearchModule missing QdrantService
-- 4 services READY (MinIO, Qdrant, Open-Meteo, Google)
-- 14 services NEEDS_CONFIG (GLM, Doubao, Alipay, WeChat Pay, etc.)
-
-### Wave 5: Deployment Prep - PASS
-
-- docker-compose.yml complete (15 services with health checks)
-- Dockerfile multi-stage build verified
-- .dockerignore present
-- Prisma schema synced with database
-- DEPLOY-CHECKLIST.md generated at .planning/DEPLOY-CHECKLIST.md
-
-### Bugs Fixed (13 total)
-
-See .planning/DEPLOY-CHECKLIST.md for complete list
-
-## Session Summary (2026-04-14 Phase 09 Execution)
-
-### Phase 09: Operations & Performance & Data Seed -- 4 Plans Executed
-
-| Plan | Commit | Description |
-|------|--------|-------------|
-| 09-01 | `797f0c1` | Admin module foundation: RBAC, audit log, dashboard stats, config management |
-| 09-02 | `4bf92f8` | Content review system: AI + human dual-track moderation queue |
-| 09-03 | `5f8b30f` | Initial data seed: 526 products, 53 brands, 20 quiz questions |
-| 09-04 | `74bdec7` | Performance optimization: cache interceptors, mobile perf components |
-
-### Key Deliverables
-
-**Backend (NestJS)**:
-
-- AdminModule with 5 controllers: Users, Dashboard, Config, Audit, ContentReview
-- RBAC roles: admin, superadmin, ops, customer_service, reviewer
-- AdminAuditLog and SystemConfig Prisma models
-- AdminAuditService with log/query methods
-- AdminDashboardService with overview/top-products/conversion/retention stats
-- AdminConfigService with CRUD + audit trail
-- ContentReviewService: dual-track AI + human moderation queue
-- 526 clothing items across 8 categories, 53 brands, 20 quiz questions
-- CacheInterceptor and PerformanceInterceptor registered globally
-- @CacheKey/@CacheTTL decorators on clothing and recommendations hot endpoints
-- X-Cache (HIT/MISS) and X-Response-Time headers
-
-**Mobile (React Native)**:
-
-- OptimizedImage component with progressive loading and placeholder
-- imageOptimizer utility: getOptimizedImageUrl, getPlaceholder, getSrcSet
-- VirtualizedList component with optimized FlatList config
-- useLazyLoad hook with viewport detection and preload threshold
-
-## Session Summary (2026-04-14 Phase 08 Execution)
-
-### Phase 08: Private Consultant -- 5 Plans Executed
-
-| Plan | Commit | Description |
-|------|--------|-------------|
-| 08-01 | `7d68fff` + 3 more | Schema extension + four-dimension matching algorithm + POST /consultant/match |
-| 08-02 | `8927ece` + 1 more | ChatGateway /ws/chat namespace + CHAT_EVENTS + proposal message type |
-| 08-03 | `f468d88` + 2 more | Availability scheduling + staged payment (30/70) + earnings/withdrawal |
-| 08-04 | `e812b05` | Review system + weighted ranking + admin audit + case display |
-| 08-05 | `4958e1f` + `8e66ccf` | Mobile: 4 screens + 8 components + 2 stores + 2 API services + WebSocket |
-
-## Technical Debt
-
-### Remaining
-
-- Remaining `any` types in non-critical modules
-- SASRec microservice needs training pipeline integration
-- Neo4j sync needs BullMQ cron job for periodic item sync
-- CF materialized views need BullMQ cron for periodic refresh
-- Recommendations module has Prisma schema drift (itemId, rawValue fields)
-- Pre-existing mobile tests (config/__tests__/runtime.test.ts) fail with module resolution
-- Pre-existing TS errors: 46 backend (recommendations module), 117 mobile
-- Prisma schema push deferred (needs DATABASE_URL and running PostgreSQL)
-- Camera QR scanning deferred to post-MVP (manual code entry used)
-- AI preview generation uses placeholder URL (GLM integration pending)
-
-### Resolved (Phase 00)
-
-- 8 failing test suites -> all passing (65 suites, 1021+ tests)
-- API response format -> JSON:API interceptor registered globally
-- CATVTON_ENDPOINT removed from .env.example
-- Mobile test framework configured (babel-jest + __DEV__ globals)
-
-### Known Blockers
-
-- Backend requires Redis + PostgreSQL configured in .env to start
-- GLM API key needs configuration in ml/.env
-- Neo4j + Qdrant Docker containers need to be running for full functionality
-- Prisma db push requires running PostgreSQL
-
-## Decisions Made
-
-- Phase 09: RBAC roles: admin, superadmin, ops, customer_service, reviewer
-- Phase 09: Audit log captures before/after snapshots as JSON
-- Phase 09: Dashboard uses Prisma aggregation for efficient queries
-- Phase 09: AI pre-screen + human review queue dual-track system
-- Phase 09: Generative seed approach for 526 items across 8 categories
-- Phase 09: FlashList deferred for MVP; optimized FlatList config used instead
-- Phase 09: CacheInterceptor and PerformanceInterceptor registered globally
-- Phase 08: Four-dimension matching weights: profile 30%, keywords 25%, specialty 25%, location 20%
-- Phase 08: Match percentage capped at 99 to avoid implying perfect match
-- Phase 08: Staged payment 30% deposit + 70% final, 15% platform commission
-- Phase 08: 24h cancellation rule with 20% penalty
-- Phase 08: Rejected consultant status mapped to "suspended" (no "rejected" enum value)
-- Phase 08: Ranking weights: rating 40%, orderCount 20%, responseSpeed 20%, matchScore 20%
-- Phase 08: New consultant protection in ranking (minimum 0.5 base for <5 orders)
-- Phase 08: Chat uses dual-path: REST for persistence + WebSocket for real-time
-- Phase 08: Accent color #C67B5C used consistently across all consultant UI
-- Phase 07: Fabric.js deferred; backend JSON canvas data storage used for MVP
-- Phase 07: QR codes use base64url-encoded JSON payload for offline readability
-- Phase 07: BrandPortalModule uses forwardRef to avoid circular dependency
-- Phase 07: MockPODProvider simulates production timeline for development
-- Phase 07: Payment uses placeholder integration (paymentId generated server-side)
-
-## Session Continuity
-
-Last session: 2026-04-14T07:30:00Z
-Stopped at: Completed 09-01 through 09-04 plans
-Next: Phase 0, 1, 3, 4, 5, 6 remain for future execution
+- `.planning/research/STACK.md` — 工具链推荐
+- `.planning/research/FEATURES.md` — 能力矩阵
+- `.planning/research/ARCHITECTURE.md` — 目标架构
+- `.planning/research/PITFALLS.md` — 10 个陷阱
