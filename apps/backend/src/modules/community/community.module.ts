@@ -2,14 +2,15 @@ import { BullModule } from '@nestjs/bullmq';
 import { Module, forwardRef } from '@nestjs/common';
 
 import { PrismaModule } from '../../common/prisma/prisma.module';
-import { StorageModule } from '../../common/storage/storage.module';
 import { RedisModule } from '../../common/redis/redis.module';
+import { StorageModule } from '../../common/storage/storage.module';
+import { AdminCommunityController } from '../admin/admin-community.controller';
 import { QueueModule } from '../queue/queue.module';
 
 import { CommunityController } from './community.controller';
 import { CommunityService } from './community.service';
 import { ContentModerationService, CONTENT_MODERATION_QUEUE } from './content-moderation.service';
-import { AdminCommunityController } from '../admin/admin-community.controller';
+
 
 @Module({
   imports: [

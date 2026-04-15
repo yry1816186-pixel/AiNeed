@@ -18,10 +18,9 @@ import {
   ApiParam,
 } from "@nestjs/swagger";
 
-import { AuthGuard } from "../auth/guards/auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
+import { AuthGuard } from "../auth/guards/auth.guard";
 
-import { WardrobeCollectionService } from "./wardrobe-collection.service";
 import {
   CreateWardrobeCollectionDto,
   UpdateWardrobeCollectionDto,
@@ -32,6 +31,7 @@ import {
   CollectionItemQueryDto,
   ReorderCollectionItemsDto,
 } from "./dto/wardrobe-collection.dto";
+import { WardrobeCollectionService } from "./wardrobe-collection.service";
 
 @ApiTags("wardrobe/collections")
 @ApiBearerAuth()

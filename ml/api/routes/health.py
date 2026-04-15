@@ -80,7 +80,7 @@ async def detailed_health_check() -> Dict[str, Any]:
     model_status: Dict[str, Any] = {}
 
     try:
-        from ml.services.body_analyzer import get_body_analyzer_service
+        from ml.services.analysis.body_analyzer import get_body_analyzer_service
         body_service = get_body_analyzer_service()
         model_status["body_analyzer"] = {
             "loaded": body_service is not None,
@@ -89,7 +89,7 @@ async def detailed_health_check() -> Dict[str, Any]:
         model_status["body_analyzer"] = {"loaded": False, "error": "Import failed"}
 
     try:
-        from ml.services.photo_quality_analyzer import get_photo_quality_analyzer
+        from ml.services.analysis.photo_quality_analyzer import get_photo_quality_analyzer
         analyzer = get_photo_quality_analyzer()
         model_status["photo_quality"] = {
             "loaded": analyzer is not None,
@@ -98,7 +98,7 @@ async def detailed_health_check() -> Dict[str, Any]:
         model_status["photo_quality"] = {"loaded": False, "error": "Import failed"}
 
     try:
-        from ml.services.sasrec_service import model as sasrec_model
+        from ml.services.recommender.sasrec_service import model as sasrec_model
         model_status["sasrec"] = {
             "loaded": True,
             "trained": sasrec_model.trained if sasrec_model else False,

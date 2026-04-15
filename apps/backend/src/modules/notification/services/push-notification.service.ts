@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
 /**
@@ -35,13 +36,31 @@ export interface PushProvider {
  * FCM push provider using firebase-admin SDK.
  * Initialized only when FIREBASE_SERVICE_ACCOUNT env is set.
  */
+/**
+ * Minimal type declarations for firebase-admin types used by FcmPushProvider.
+ * The actual firebase-admin package is dynamically required at runtime;
+ * these interfaces exist solely to provide type safety without a hard dependency.
+ */
+interface FirebaseApp {
+  options: Record<string, unknown>;
+}
+
+interface FirebaseMessaging {
+  send(message: Record<string, unknown>): Promise<string>;
+  sendMulticast(message: Record<string, unknown>): Promise<{
+    responses: Array<{ success: boolean; error?: { message: string } }>;
+  }>;
+}
+
+/**
+ * FCM push provider using firebase-admin SDK.
+ * Initialized only when FIREBASE_SERVICE_ACCOUNT env is set.
+ */
 class FcmPushProvider implements PushProvider {
   readonly name = "FCM";
   private readonly logger = new Logger(FcmPushProvider.name);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private firebaseApp: any = null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private messaging: any = null;
+  private firebaseApp: FirebaseApp | null = null;
+  private messaging: FirebaseMessaging | null = null;
 
   constructor() {
     this.initialize();
@@ -58,6 +77,7 @@ class FcmPushProvider implements PushProvider {
       }
 
       // Dynamic import to avoid hard dependency
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const admin = require("firebase-admin");
 
       let credential: unknown;
@@ -174,7 +194,7 @@ class FcmPushProvider implements PushProvider {
   private stringifyData(
     data?: Record<string, unknown>,
   ): Record<string, string> | undefined {
-    if (!data) return undefined;
+    if (!data) {return undefined;}
     const result: Record<string, string> = {};
     for (const [key, value] of Object.entries(data)) {
       result[key] = typeof value === "string" ? value : JSON.stringify(value);
@@ -209,6 +229,7 @@ class ApnsPushProvider implements PushProvider {
       }
 
       // Dynamic import for optional dependency
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const apn = require("apn");
 
       this.apnProvider = new apn.Provider({
@@ -239,6 +260,7 @@ class ApnsPushProvider implements PushProvider {
     }
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const apn = require("apn");
       const notification = new apn.Notification({
         alert: {

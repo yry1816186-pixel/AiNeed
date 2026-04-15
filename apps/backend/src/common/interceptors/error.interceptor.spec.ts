@@ -1,4 +1,3 @@
-import { of, throwError } from 'rxjs';
 import {
   ExecutionContext,
   CallHandler,
@@ -6,11 +5,15 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { ErrorInterceptor } from './error.interceptor';
-import { ValidationException } from '../exceptions/validation.exception';
-import { NotFoundException } from '../exceptions/not-found.exception';
-import { ForbiddenException } from '../exceptions/forbidden.exception';
+import { of, throwError } from 'rxjs';
+
+
 import { BusinessException } from '../exceptions/business.exception';
+import { ForbiddenException } from '../exceptions/forbidden.exception';
+import { NotFoundException } from '../exceptions/not-found.exception';
+import { ValidationException } from '../exceptions/validation.exception';
+
+import { ErrorInterceptor } from './error.interceptor';
 
 function createMockContext(requestId?: string) {
   return {
@@ -52,7 +55,7 @@ describe('ErrorInterceptor', () => {
           error: (err) => {
             expect(err).toBeInstanceOf(HttpException);
             expect(err.getStatus()).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors).toHaveLength(2);
             expect(body.errors[0].source.pointer).toBe('/email');
             expect(body.errors[0].detail).toBe('Invalid email format');
@@ -74,7 +77,7 @@ describe('ErrorInterceptor', () => {
         .intercept(createMockContext(), createMockCallHandler(exception))
         .subscribe({
           error: (err) => {
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].meta.constraint).toBe('isEmail');
             done();
           },
@@ -91,7 +94,7 @@ describe('ErrorInterceptor', () => {
         .subscribe({
           error: (err) => {
             expect(err.getStatus()).toBe(HttpStatus.NOT_FOUND);
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].status).toBe('404');
             expect(body.errors[0].source.pointer).toBe('/user');
             expect(body.errors[0].detail).toBe('User 不存在');
@@ -110,7 +113,7 @@ describe('ErrorInterceptor', () => {
         .subscribe({
           error: (err) => {
             expect(err.getStatus()).toBe(HttpStatus.FORBIDDEN);
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].status).toBe('403');
             expect(body.errors[0].source.parameter).toBe('user:delete');
             done();
@@ -125,7 +128,7 @@ describe('ErrorInterceptor', () => {
         .intercept(createMockContext(), createMockCallHandler(exception))
         .subscribe({
           error: (err) => {
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].source.parameter).toBe('some_operation');
             done();
           },
@@ -148,7 +151,7 @@ describe('ErrorInterceptor', () => {
         .subscribe({
           error: (err) => {
             expect(err.getStatus()).toBe(HttpStatus.BAD_REQUEST);
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].code).toBe('40103');
             expect(body.errors[0].source.parameter).toBe('INSUFFICIENT_BALANCE');
             expect(body.errors[0].detail).toBe('Balance too low');
@@ -174,7 +177,7 @@ describe('ErrorInterceptor', () => {
         .subscribe({
           error: (err) => {
             expect(err.getStatus()).toBe(HttpStatus.CONFLICT);
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].status).toBe('409');
             expect(body.errors[0].title).toBe('Conflict');
             done();
@@ -193,7 +196,7 @@ describe('ErrorInterceptor', () => {
         .subscribe({
           error: (err) => {
             expect(err.getStatus()).toBe(HttpStatus.NOT_FOUND);
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].status).toBe('404');
             done();
           },
@@ -258,7 +261,7 @@ describe('ErrorInterceptor', () => {
         .intercept(createMockContext(), createMockCallHandler(exception))
         .subscribe({
           error: (err) => {
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].meta.prismaCode).toBe('P2002');
             expect(body.errors[0].meta.meta).toEqual({ target: ['email'] });
             done();
@@ -276,7 +279,7 @@ describe('ErrorInterceptor', () => {
         .subscribe({
           error: (err) => {
             expect(err.getStatus()).toBe(HttpStatus.NOT_FOUND);
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].status).toBe('404');
             expect(body.errors[0].code).toBe('40400');
             expect(body.errors[0].title).toBe('Not Found');
@@ -296,7 +299,7 @@ describe('ErrorInterceptor', () => {
         .intercept(createMockContext(), createMockCallHandler(exception))
         .subscribe({
           error: (err) => {
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].detail).toBe('email is not valid; password is too short');
             expect(body.errors[0].source.pointer).toBe('/request-body');
             done();
@@ -314,7 +317,7 @@ describe('ErrorInterceptor', () => {
         .subscribe({
           error: (err) => {
             expect(err.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].status).toBe('500');
             expect(body.errors[0].code).toBe('50000');
             expect(body.errors[0].detail).toBe('Something went wrong');
@@ -337,7 +340,7 @@ describe('ErrorInterceptor', () => {
         .intercept(createMockContext(), createMockCallHandler(exception))
         .subscribe({
           error: (err) => {
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].detail).toBe('An unexpected error occurred');
             expect(body.errors[0].meta.stack).toBeUndefined();
             done();
@@ -355,7 +358,7 @@ describe('ErrorInterceptor', () => {
         .intercept(createMockContext(), createMockCallHandler(exception))
         .subscribe({
           error: (err) => {
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].detail).toBe('Resource already exists');
             expect(body.errors[0].meta.prismaCode).toBeUndefined();
             done();
@@ -376,7 +379,7 @@ describe('ErrorInterceptor', () => {
         .intercept(createMockContext(), createMockCallHandler(exception))
         .subscribe({
           error: (err) => {
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].meta.stack).toBeUndefined();
             expect(body.errors[0].meta.details).toBeUndefined();
             done();
@@ -393,7 +396,7 @@ describe('ErrorInterceptor', () => {
         .intercept(createMockContext(), createMockCallHandler(exception))
         .subscribe({
           error: (err) => {
-            const body = err.getResponse() as any;
+            const body = err.getResponse();
             expect(body.errors[0].meta.stack).toBeDefined();
             done();
           },

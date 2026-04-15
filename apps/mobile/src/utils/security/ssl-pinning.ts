@@ -1,5 +1,5 @@
-import { Platform } from 'react-native';
-import { Sentry } from '../../services/sentry';
+import { Platform } from "react-native";
+import { Sentry } from "../../services/sentry";
 
 export interface SSLConfig {
   domains: string[];
@@ -14,12 +14,12 @@ export interface SSLError {
   timestamp: Date;
 }
 
-type StorageBackend = 'expo-secure-store' | 'encrypted-storage' | 'async-storage';
+type _StorageBackend = "expo-secure-store" | "encrypted-storage" | "async-storage";
 
-const PRODUCTION_DOMAINS = ['api.xuno.app', 'cdn.xuno.app'] as const;
+const PRODUCTION_DOMAINS = ["api.xuno.app", "cdn.xuno.app"] as const;
 const PRODUCTION_PUBLIC_KEYS = [
-  'sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
-  'sha256/BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=',
+  "sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+  "sha256/BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=",
 ] as const;
 
 const DEFAULT_SSL_CONFIG: SSLConfig = {
@@ -38,8 +38,8 @@ function logSSLError(domain: string, error: string): void {
   sslErrors.push(sslError);
 
   Sentry.captureMessage(`[SSL-Pinning] Validation failed for ${domain}: ${error}`, {
-    level: 'error',
-    tags: { security: 'ssl-pinning', domain, platform: Platform.OS },
+    level: "error",
+    tags: { security: "ssl-pinning", domain, platform: Platform.OS },
     extra: { sslError },
   });
 }
@@ -54,11 +54,11 @@ export function configureSSLPinning(config?: Partial<SSLConfig>): void {
     };
   }
 
-  if (Platform.OS === 'ios') {
+  if (Platform.OS === "ios") {
     // iOS: SSL pinning is configured via Info.plist NSAppTransportSecurity
     // and native module (e.g., react-native-ssl-pinning or TrustKit)
     // This config is used by the native layer at runtime
-  } else if (Platform.OS === 'android') {
+  } else if (Platform.OS === "android") {
     // Android: SSL pinning is configured via network_security_config.xml
     // and OkHttp CertificatePinner in the native module
   }
@@ -74,17 +74,17 @@ export function validateCertificate(serverCert: string, domain: string): boolean
   }
 
   if (currentConfig.publicKeys.length > 0) {
-    const certMatchesPin = currentConfig.publicKeys.some(
-      (pin) => serverCert.includes(pin.replace('sha256/', '')),
+    const certMatchesPin = currentConfig.publicKeys.some((pin) =>
+      serverCert.includes(pin.replace("sha256/", ""))
     );
     if (!certMatchesPin) {
-      logSSLError(domain, 'Certificate public key does not match any pinned key');
+      logSSLError(domain, "Certificate public key does not match any pinned key");
       if (currentConfig.enforcePinning) {
         return false;
       }
       if (__DEV__) {
         console.warn(
-          `[SSL-Pinning] Certificate validation failed for ${domain} but allowed in development`,
+          `[SSL-Pinning] Certificate validation failed for ${domain} but allowed in development`
         );
         return true;
       }
@@ -95,13 +95,13 @@ export function validateCertificate(serverCert: string, domain: string): boolean
   if (currentConfig.certificates.length > 0) {
     const certMatches = currentConfig.certificates.some((cert) => serverCert === cert);
     if (!certMatches) {
-      logSSLError(domain, 'Certificate does not match any pinned certificate');
+      logSSLError(domain, "Certificate does not match any pinned certificate");
       if (currentConfig.enforcePinning) {
         return false;
       }
       if (__DEV__) {
         console.warn(
-          `[SSL-Pinning] Certificate validation failed for ${domain} but allowed in development`,
+          `[SSL-Pinning] Certificate validation failed for ${domain} but allowed in development`
         );
         return true;
       }

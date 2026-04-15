@@ -2,15 +2,17 @@ import { BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { PhotoType } from "@prisma/client";
 
-import { AiStylistService } from "./ai-stylist.service";
-import { AiStylistController } from "./ai-stylist.controller";
-import { SystemContextService } from "./system-context.service";
-import { OutfitPlanService } from "./services/outfit-plan.service";
-import { ItemReplacementService } from "./services/item-replacement.service";
-import { SessionArchiveService } from "./services/session-archive.service";
-import { PresetQuestionsService } from "./services/preset-questions.service";
-import { WeatherIntegrationService } from "./services/weather-integration.service";
 import { AiQuotaService } from "../security/rate-limit/ai-quota.service";
+
+import { AiStylistController } from "./ai-stylist.controller";
+import { AiStylistService } from "./ai-stylist.service";
+import { ItemReplacementService } from "./services/item-replacement.service";
+import { OutfitPlanService } from "./services/outfit-plan.service";
+import { PresetQuestionsService } from "./services/preset-questions.service";
+import { SessionArchiveService } from "./services/session-archive.service";
+import { WeatherIntegrationService } from "./services/weather-integration.service";
+import { SystemContextService } from "./system-context.service";
+
 
 describe("AiStylistController", () => {
   let controller: AiStylistController;

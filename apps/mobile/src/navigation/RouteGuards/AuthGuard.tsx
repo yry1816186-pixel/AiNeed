@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { useAuthStore } from '../../stores/index';
+import React, { useEffect, useRef } from "react";
+import { useAuthStore } from "../../stores/index";
 
 interface AuthGuardProps {
   children: React.ReactNode;

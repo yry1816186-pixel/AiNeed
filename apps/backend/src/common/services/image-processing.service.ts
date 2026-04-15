@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import sharp from 'sharp';
+
 import { IMAGE_SIZES, ImageSizeConfig, ImageSizeName, DEFAULT_SIZES } from '../utils/image-sizes';
 
 export interface GeneratedImage {

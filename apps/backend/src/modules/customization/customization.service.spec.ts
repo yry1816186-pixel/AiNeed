@@ -843,7 +843,7 @@ describe("CustomizationService", () => {
     it("非 shipped 状态不允许确认收货", async () => {
       mockPrismaService.customizationRequest.findFirst.mockImplementation(
         ({ where }) => {
-          if (where.status === CustomizationStatus.shipped) return null;
+          if (where.status === CustomizationStatus.shipped) {return null;}
           return mockRequest;
         },
       );

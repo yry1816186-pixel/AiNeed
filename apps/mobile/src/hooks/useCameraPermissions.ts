@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import { PermissionsAndroid, Linking, Platform } from 'react-native';
+import { useState, useEffect, useCallback } from "react";
+import { PermissionsAndroid, Linking, Platform } from "react-native";
 
-type PermissionStatus = 'undetermined' | 'granted' | 'denied';
+type PermissionStatus = "undetermined" | "granted" | "denied";
 
 interface UseCameraPermissionsResult {
   permissionStatus: PermissionStatus;
@@ -10,43 +10,42 @@ interface UseCameraPermissionsResult {
   openSettings: () => Promise<void>;
 }
 
-const CAMERA_PERMISSION = 'android.permission.CAMERA' as const;
+const CAMERA_PERMISSION = "android.permission.CAMERA" as const;
 
 async function checkCameraPermission(): Promise<{
   status: PermissionStatus;
   canAskAgain: boolean;
 }> {
-  if (Platform.OS !== 'android') {
-    return { status: 'granted', canAskAgain: true };
+  if (Platform.OS !== "android") {
+    return { status: "granted", canAskAgain: true };
   }
 
   try {
     const granted = await PermissionsAndroid.check(CAMERA_PERMISSION);
     if (granted) {
-      return { status: 'granted', canAskAgain: true };
+      return { status: "granted", canAskAgain: true };
     }
-    return { status: 'undetermined', canAskAgain: true };
+    return { status: "undetermined", canAskAgain: true };
   } catch {
-    return { status: 'undetermined', canAskAgain: true };
+    return { status: "undetermined", canAskAgain: true };
   }
 }
 
 export function useCameraPermissions(): UseCameraPermissionsResult {
-  const [permissionStatus, setPermissionStatus] =
-    useState<PermissionStatus>('undetermined');
+  const [permissionStatus, setPermissionStatus] = useState<PermissionStatus>("undetermined");
   const [canAskAgain, setCanAskAgain] = useState(true);
 
   useEffect(() => {
-    checkCameraPermission().then(({ status, canAskAgain: askable }) => {
+    void checkCameraPermission().then(({ status, canAskAgain: askable }) => {
       setPermissionStatus(status);
       setCanAskAgain(askable);
     });
   }, []);
 
   const requestPermission = useCallback(async (): Promise<PermissionStatus> => {
-    if (Platform.OS !== 'android') {
-      setPermissionStatus('granted');
-      return 'granted';
+    if (Platform.OS !== "android") {
+      setPermissionStatus("granted");
+      return "granted";
     }
 
     try {
@@ -54,10 +53,10 @@ export function useCameraPermissions(): UseCameraPermissionsResult {
 
       const status: PermissionStatus =
         result === PermissionsAndroid.RESULTS.GRANTED
-          ? 'granted'
+          ? "granted"
           : result === PermissionsAndroid.RESULTS.DENIED
-            ? 'denied'
-            : 'denied';
+          ? "denied"
+          : "denied";
 
       const askable = result !== PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN;
 
@@ -65,9 +64,9 @@ export function useCameraPermissions(): UseCameraPermissionsResult {
       setCanAskAgain(askable);
       return status;
     } catch {
-      setPermissionStatus('denied');
+      setPermissionStatus("denied");
       setCanAskAgain(false);
-      return 'denied';
+      return "denied";
     }
   }, []);
 
@@ -76,9 +75,8 @@ export function useCameraPermissions(): UseCameraPermissionsResult {
       await Linking.openSettings();
     } catch {
       try {
-        await Linking.openURL('app-settings:');
-      } catch {
-      }
+        await Linking.openURL("app-settings:");
+      } catch {}
     }
   }, []);
 

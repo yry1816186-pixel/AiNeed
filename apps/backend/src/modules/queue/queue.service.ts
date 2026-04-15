@@ -12,9 +12,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../../common/prisma/prisma.service';
 
 import {
-  QUEUE_NAMES,
   JOB_STATUS,
 } from './queue.constants';
+import { QueueName } from './queue-config';
 import {
   JobResult,
   TaskCreatedResponse,
@@ -31,22 +31,34 @@ export class QueueService implements OnModuleInit {
   private readonly logger = new Logger(QueueService.name);
 
   constructor(
-    @InjectQueue(QUEUE_NAMES.AI_TASKS) private aiTasksQueue: Queue,
-    @InjectQueue(QUEUE_NAMES.STYLE_ANALYSIS) private styleAnalysisQueue: Queue,
-    @InjectQueue(QUEUE_NAMES.VIRTUAL_TRYON) private virtualTryOnQueue: Queue,
-    @InjectQueue(QUEUE_NAMES.WARDROBE_MATCH) private wardrobeMatchQueue: Queue,
+    @InjectQueue(QueueName.AI_TASKS) private aiTasksQueue: Queue,
+    @InjectQueue(QueueName.STYLE_ANALYSIS) private styleAnalysisQueue: Queue,
+    @InjectQueue(QueueName.VIRTUAL_TRYON) private virtualTryOnQueue: Queue,
+    @InjectQueue(QueueName.WARDROBE_MATCH) private wardrobeMatchQueue: Queue,
+    @InjectQueue(QueueName.BODY_ANALYSIS) private bodyAnalysisQueue: Queue,
+    @InjectQueue(QueueName.PHOTO_PROCESSING) private photoProcessingQueue: Queue,
+    @InjectQueue(QueueName.AI_GENERATION) private aiGenerationQueue: Queue,
+    @InjectQueue(QueueName.NOTIFICATION) private notificationQueue: Queue,
+    @InjectQueue(QueueName.DATA_EXPORT) private dataExportQueue: Queue,
+    @InjectQueue(QueueName.CONTENT_MODERATION) private contentModerationQueue: Queue,
     private prisma: PrismaService,
   ) {}
 
   async onModuleInit() {
     this.logger.log('Queue service initialized with BullMQ');
 
-    // Log queue status on startup
+    // Log queue status on startup - includes all queues from QueueName enum
     const queues = [
-      { name: QUEUE_NAMES.AI_TASKS, queue: this.aiTasksQueue },
-      { name: QUEUE_NAMES.STYLE_ANALYSIS, queue: this.styleAnalysisQueue },
-      { name: QUEUE_NAMES.VIRTUAL_TRYON, queue: this.virtualTryOnQueue },
-      { name: QUEUE_NAMES.WARDROBE_MATCH, queue: this.wardrobeMatchQueue },
+      { name: QueueName.AI_TASKS, queue: this.aiTasksQueue },
+      { name: QueueName.STYLE_ANALYSIS, queue: this.styleAnalysisQueue },
+      { name: QueueName.VIRTUAL_TRYON, queue: this.virtualTryOnQueue },
+      { name: QueueName.WARDROBE_MATCH, queue: this.wardrobeMatchQueue },
+      { name: QueueName.BODY_ANALYSIS, queue: this.bodyAnalysisQueue },
+      { name: QueueName.PHOTO_PROCESSING, queue: this.photoProcessingQueue },
+      { name: QueueName.AI_GENERATION, queue: this.aiGenerationQueue },
+      { name: QueueName.NOTIFICATION, queue: this.notificationQueue },
+      { name: QueueName.DATA_EXPORT, queue: this.dataExportQueue },
+      { name: QueueName.CONTENT_MODERATION, queue: this.contentModerationQueue },
     ];
 
     for (const { name, queue } of queues) {
@@ -305,6 +317,12 @@ export class QueueService implements OnModuleInit {
       this.styleAnalysisQueue,
       this.virtualTryOnQueue,
       this.wardrobeMatchQueue,
+      this.bodyAnalysisQueue,
+      this.photoProcessingQueue,
+      this.aiGenerationQueue,
+      this.notificationQueue,
+      this.dataExportQueue,
+      this.contentModerationQueue,
     ];
 
     for (const queue of queues) {
@@ -368,6 +386,12 @@ export class QueueService implements OnModuleInit {
       this.styleAnalysisQueue,
       this.virtualTryOnQueue,
       this.wardrobeMatchQueue,
+      this.bodyAnalysisQueue,
+      this.photoProcessingQueue,
+      this.aiGenerationQueue,
+      this.notificationQueue,
+      this.dataExportQueue,
+      this.contentModerationQueue,
     ];
 
     for (const queue of queues) {
@@ -397,6 +421,12 @@ export class QueueService implements OnModuleInit {
       this.styleAnalysisQueue,
       this.virtualTryOnQueue,
       this.wardrobeMatchQueue,
+      this.bodyAnalysisQueue,
+      this.photoProcessingQueue,
+      this.aiGenerationQueue,
+      this.notificationQueue,
+      this.dataExportQueue,
+      this.contentModerationQueue,
     ];
 
     for (const queue of queues) {
@@ -423,6 +453,12 @@ export class QueueService implements OnModuleInit {
       this.styleAnalysisQueue,
       this.virtualTryOnQueue,
       this.wardrobeMatchQueue,
+      this.bodyAnalysisQueue,
+      this.photoProcessingQueue,
+      this.aiGenerationQueue,
+      this.notificationQueue,
+      this.dataExportQueue,
+      this.contentModerationQueue,
     ];
 
     for (const queue of queues) {
@@ -447,10 +483,16 @@ export class QueueService implements OnModuleInit {
     const stats: Record<string, any> = {};
 
     const queues = [
-      { name: QUEUE_NAMES.AI_TASKS, queue: this.aiTasksQueue },
-      { name: QUEUE_NAMES.STYLE_ANALYSIS, queue: this.styleAnalysisQueue },
-      { name: QUEUE_NAMES.VIRTUAL_TRYON, queue: this.virtualTryOnQueue },
-      { name: QUEUE_NAMES.WARDROBE_MATCH, queue: this.wardrobeMatchQueue },
+      { name: QueueName.AI_TASKS, queue: this.aiTasksQueue },
+      { name: QueueName.STYLE_ANALYSIS, queue: this.styleAnalysisQueue },
+      { name: QueueName.VIRTUAL_TRYON, queue: this.virtualTryOnQueue },
+      { name: QueueName.WARDROBE_MATCH, queue: this.wardrobeMatchQueue },
+      { name: QueueName.BODY_ANALYSIS, queue: this.bodyAnalysisQueue },
+      { name: QueueName.PHOTO_PROCESSING, queue: this.photoProcessingQueue },
+      { name: QueueName.AI_GENERATION, queue: this.aiGenerationQueue },
+      { name: QueueName.NOTIFICATION, queue: this.notificationQueue },
+      { name: QueueName.DATA_EXPORT, queue: this.dataExportQueue },
+      { name: QueueName.CONTENT_MODERATION, queue: this.contentModerationQueue },
     ];
 
     for (const { name, queue } of queues) {

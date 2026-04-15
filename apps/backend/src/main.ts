@@ -7,12 +7,12 @@ import { Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 
 import { AppModule } from "./app.module";
-import { createSwaggerConfig } from "./config/swagger.config";
 import { AllExceptionsFilter } from "./common/filters";
-import { MetricsMiddleware } from "./common/middleware/metrics.middleware";
 import { ErrorHandlerMiddleware } from "./common/middleware/error-handler.middleware";
-import { MetricsService } from "./modules/metrics/metrics.service";
+import { MetricsMiddleware } from "./common/middleware/metrics.middleware";
 import { XssSanitizationPipe } from "./common/pipes/xss-sanitization.pipe";
+import { createSwaggerConfig } from "./config/swagger.config";
+import { MetricsService } from "./modules/metrics/metrics.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -124,9 +124,12 @@ async function bootstrap() {
   await app.listen(port);
 
   if (process.env.NODE_ENV !== "production") {
+    // eslint-disable-next-line no-console
     console.log(`🚀 寻裳 API running on: http://localhost:${port}/api`);
+    // eslint-disable-next-line no-console
     console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
   } else {
+    // eslint-disable-next-line no-console
     console.log(`🚀 寻裳 API running in production mode on port ${port}`);
   }
 }

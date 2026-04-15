@@ -1,5 +1,5 @@
-import { IsString, IsBoolean, IsOptional, IsIn } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsString, IsBoolean, IsOptional, IsIn } from "class-validator";
 
 export class RecordConsentDto {
   @ApiProperty({ description: "同意类型，如 terms_of_service, privacy_policy, marketing 等", example: "privacy_policy" })

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+﻿import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,18 +10,19 @@ import {
   RefreshControl,
   FlatList,
   Dimensions,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import type { RouteProp } from '@react-navigation/native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme } from '../theme';
-import { communityApi, type CommunityPost } from '../services/api/community.api';
-import type { CommunityStackParamList } from '../navigation/types';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import type { RouteProp } from "@react-navigation/native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme } from '../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import { communityApi, type CommunityPost } from "../services/api/community.api";
+import type { CommunityStackParamList } from "../navigation/types";
 
-type InfluencerProfileRoute = RouteProp<CommunityStackParamList, 'InfluencerProfile'>;
+type InfluencerProfileRoute = RouteProp<CommunityStackParamList, "InfluencerProfile">;
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_WIDTH = Dimensions.get("window").width;
 const NUM_COLUMNS = 2;
 const CARD_GAP = 10;
 const CARD_WIDTH = (SCREEN_WIDTH - 32 - CARD_GAP) / NUM_COLUMNS;
@@ -47,10 +48,12 @@ export const InfluencerProfileScreen: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'posts' | 'outfits'>('posts');
+  const [activeTab, setActiveTab] = useState<"posts" | "outfits">("posts");
 
   const fetchData = useCallback(async () => {
-    if (!influencerId) return;
+    if (!influencerId) {
+      return;
+    }
     try {
       setLoading(true);
       setError(null);
@@ -65,14 +68,14 @@ export const InfluencerProfileScreen: React.FC = () => {
         setPosts(postsRes.data.items);
       }
     } catch {
-      setError('Failed to load profile');
+      setError("Failed to load profile");
     } finally {
       setLoading(false);
     }
   }, [influencerId]);
 
   useEffect(() => {
-    fetchData();
+    void fetchData();
   }, [fetchData]);
 
   const handleRefresh = useCallback(async () => {
@@ -82,16 +85,22 @@ export const InfluencerProfileScreen: React.FC = () => {
   }, [fetchData]);
 
   const handleFollowToggle = useCallback(async () => {
-    if (!profile || followLoading) return;
+    if (!profile || followLoading) {
+      return;
+    }
     setFollowLoading(true);
     try {
       const response = await communityApi.toggleFollow(profile.id);
       if (response.success && response.data) {
-        setProfile((prev) => prev ? {
-          ...prev,
-          isFollowing: response.data!.following,
-          followersCount: prev.followersCount + (response.data!.following ? 1 : -1),
-        } : prev);
+        setProfile((prev) =>
+          prev
+            ? {
+                ...prev,
+                isFollowing: response.data!.following,
+                followersCount: prev.followersCount + (response.data!.following ? 1 : -1),
+              }
+            : prev
+        );
       }
     } catch {
       // Silent follow failure
@@ -101,8 +110,12 @@ export const InfluencerProfileScreen: React.FC = () => {
   }, [profile, followLoading]);
 
   const formatCount = (count: number) => {
-    if (count >= 10000) return `${(count / 10000).toFixed(1)}w`;
-    if (count >= 1000) return `${(count / 1000).toFixed(1)}k`;
+    if (count >= 10000) {
+      return `${(count / 10000).toFixed(1)}w`;
+    }
+    if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}k`;
+    }
     return String(count);
   };
 
@@ -110,7 +123,7 @@ export const InfluencerProfileScreen: React.FC = () => {
     ({ item }: { item: CommunityPost }) => (
       <TouchableOpacity
         style={s.postCard}
-        onPress={() => (navigation as any).navigate('PostDetail', { postId: item.id })}
+        onPress={() => (navigation as any).navigate("PostDetail", { postId: item.id })}
         activeOpacity={0.85}
       >
         {item.images[0] ? (
@@ -121,7 +134,9 @@ export const InfluencerProfileScreen: React.FC = () => {
           </View>
         )}
         <View style={s.postInfo}>
-          <Text style={s.postTitle} numberOfLines={2}>{item.title}</Text>
+          <Text style={s.postTitle} numberOfLines={2}>
+            {item.title}
+          </Text>
           <View style={s.postStats}>
             <Ionicons name="heart-outline" size={12} color={theme.colors.textTertiary} />
             <Text style={s.postStatText}>{formatCount(item.likesCount)}</Text>
@@ -129,7 +144,7 @@ export const InfluencerProfileScreen: React.FC = () => {
         </View>
       </TouchableOpacity>
     ),
-    [navigation],
+    [navigation]
   );
 
   if (loading && !profile) {
@@ -176,7 +191,7 @@ export const InfluencerProfileScreen: React.FC = () => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
           <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>{profile?.nickname ?? 'Profile'}</Text>
+        <Text style={s.headerTitle}>{profile?.nickname ?? "Profile"}</Text>
         <TouchableOpacity style={s.iconBtn}>
           <Ionicons name="ellipsis-horizontal" size={22} color={theme.colors.text} />
         </TouchableOpacity>
@@ -184,7 +199,13 @@ export const InfluencerProfileScreen: React.FC = () => {
 
       <ScrollView
         style={s.scrollView}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={theme.colors.primary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={theme.colors.primary}
+          />
+        }
       >
         {/* Profile section */}
         <View style={s.profileSection}>
@@ -215,8 +236,10 @@ export const InfluencerProfileScreen: React.FC = () => {
           <Text style={s.nickname}>{profile?.nickname}</Text>
           {profile?.bloggerLevel && (
             <View style={s.badge}>
-              <Ionicons name="checkmark-circle" size={12} color="#fff" />
-              <Text style={s.badgeText}>{profile.bloggerLevel === 'big_v' ? 'Big V' : 'Blogger'}</Text>
+              <Ionicons name="checkmark-circle" size={12} color={DesignTokens.colors.neutral.white} />
+              <Text style={s.badgeText}>
+                {profile.bloggerLevel === "big_v" ? "Big V" : "Blogger"}
+              </Text>
             </View>
           )}
           {profile?.bio ? <Text style={s.bio}>{profile.bio}</Text> : null}
@@ -227,10 +250,13 @@ export const InfluencerProfileScreen: React.FC = () => {
             disabled={followLoading}
           >
             {followLoading ? (
-              <ActivityIndicator size="small" color={profile?.isFollowing ? theme.colors.text : '#fff'} />
+              <ActivityIndicator
+                size="small"
+                color={profile?.isFollowing ? theme.colors.text : DesignTokens.colors.neutral.white}
+              />
             ) : (
               <Text style={[s.followBtnText, profile?.isFollowing && s.followingBtnText]}>
-                {profile?.isFollowing ? 'Following' : 'Follow'}
+                {profile?.isFollowing ? "Following" : "Follow"}
               </Text>
             )}
           </TouchableOpacity>
@@ -239,16 +265,24 @@ export const InfluencerProfileScreen: React.FC = () => {
         {/* Tab bar */}
         <View style={s.tabBar}>
           <TouchableOpacity
-            style={[s.tab, activeTab === 'posts' && s.tabActive]}
-            onPress={() => setActiveTab('posts')}
+            style={[s.tab, activeTab === "posts" && s.tabActive]}
+            onPress={() => setActiveTab("posts")}
           >
-            <Ionicons name="grid-outline" size={20} color={activeTab === 'posts' ? theme.colors.primary : theme.colors.textTertiary} />
+            <Ionicons
+              name="grid-outline"
+              size={20}
+              color={activeTab === "posts" ? theme.colors.primary : theme.colors.textTertiary}
+            />
           </TouchableOpacity>
           <TouchableOpacity
-            style={[s.tab, activeTab === 'outfits' && s.tabActive]}
-            onPress={() => setActiveTab('outfits')}
+            style={[s.tab, activeTab === "outfits" && s.tabActive]}
+            onPress={() => setActiveTab("outfits")}
           >
-            <Ionicons name="shirt-outline" size={20} color={activeTab === 'outfits' ? theme.colors.primary : theme.colors.textTertiary} />
+            <Ionicons
+              name="shirt-outline"
+              size={20}
+              color={activeTab === "outfits" ? theme.colors.primary : theme.colors.textTertiary}
+            />
           </TouchableOpacity>
         </View>
 
@@ -276,76 +310,105 @@ export const InfluencerProfileScreen: React.FC = () => {
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
   header: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: theme.colors.surface,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.border,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: theme.colors.text },
-  iconBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
-  centerContent: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
+  iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
+  centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
   errorText: { fontSize: 14, color: theme.colors.error, marginTop: 12 },
   retryBtn: {
-    marginTop: 16, backgroundColor: theme.colors.primary,
-    paddingHorizontal: 24, paddingVertical: 10, borderRadius: 20,
+    marginTop: 16,
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
   },
-  retryBtnText: { color: theme.colors.surface, fontSize: 14, fontWeight: '600' },
+  retryBtnText: { color: theme.colors.surface, fontSize: 14, fontWeight: "600" },
   scrollView: { flex: 1 },
   profileSection: {
-    backgroundColor: theme.colors.surface, padding: 20,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.divider,
+    backgroundColor: theme.colors.surface,
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.divider,
   },
-  avatarRow: { flexDirection: 'row', alignItems: 'center' },
+  avatarRow: { flexDirection: "row", alignItems: "center" },
   avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: theme.colors.placeholderBg },
   avatarPlaceholder: {
-    width: 72, height: 72, borderRadius: 36,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     backgroundColor: theme.colors.primary,
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  statsRow: { flex: 1, flexDirection: 'row', justifyContent: 'space-around', marginLeft: 20 },
-  statItem: { alignItems: 'center' },
-  statNumber: { fontSize: 18, fontWeight: '700', color: theme.colors.text },
+  statsRow: { flex: 1, flexDirection: "row", justifyContent: "space-around", marginLeft: 20 },
+  statItem: { alignItems: "center" },
+  statNumber: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
   statLabel: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 },
-  nickname: { fontSize: 18, fontWeight: '700', color: theme.colors.text, marginTop: 14 },
+  nickname: { fontSize: 18, fontWeight: "700", color: theme.colors.text, marginTop: 14 },
   badge: {
-    flexDirection: 'row', alignItems: 'center', gap: 4,
-    backgroundColor: '#6C5CE7', paddingHorizontal: 8, paddingVertical: 3,
-    borderRadius: 8, alignSelf: 'flex-start', marginTop: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: DesignTokens.colors.brand.slate,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+    marginTop: 6,
   },
-  badgeText: { fontSize: 11, fontWeight: '600', color: '#fff' },
+  badgeText: { fontSize: 11, fontWeight: "600", color: DesignTokens.colors.neutral.white },
   bio: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 8, lineHeight: 20 },
   followBtn: {
-    marginTop: 14, backgroundColor: theme.colors.primary,
-    paddingVertical: 10, borderRadius: 20, alignItems: 'center',
+    marginTop: 14,
+    backgroundColor: theme.colors.primary,
+    paddingVertical: 10,
+    borderRadius: 20,
+    alignItems: "center",
   },
   followingBtn: { backgroundColor: theme.colors.subtleBg },
-  followBtnText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  followBtnText: { color: DesignTokens.colors.neutral.white, fontSize: 14, fontWeight: "600" },
   followingBtnText: { color: theme.colors.text },
   tabBar: {
-    flexDirection: 'row', backgroundColor: theme.colors.surface,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.divider,
+    flexDirection: "row",
+    backgroundColor: theme.colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.divider,
   },
   tab: {
-    flex: 1, alignItems: 'center', paddingVertical: 12,
-    borderBottomWidth: 2, borderBottomColor: 'transparent',
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
   },
   tabActive: { borderBottomColor: theme.colors.primary },
   postCard: {
     width: CARD_WIDTH,
     backgroundColor: theme.colors.surface,
-    borderRadius: 10, overflow: 'hidden',
+    borderRadius: 10,
+    overflow: "hidden",
   },
-  postImage: { width: '100%', height: CARD_WIDTH, backgroundColor: theme.colors.placeholderBg },
+  postImage: { width: "100%", height: CARD_WIDTH, backgroundColor: theme.colors.placeholderBg },
   postImagePlaceholder: {
-    width: '100%', height: CARD_WIDTH,
+    width: "100%",
+    height: CARD_WIDTH,
     backgroundColor: theme.colors.subtleBg,
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   postInfo: { padding: 8 },
-  postTitle: { fontSize: 12, fontWeight: '500', color: theme.colors.text, lineHeight: 16 },
-  postStats: { flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 4 },
+  postTitle: { fontSize: 12, fontWeight: "500", color: theme.colors.text, lineHeight: 16 },
+  postStats: { flexDirection: "row", alignItems: "center", gap: 3, marginTop: 4 },
   postStatText: { fontSize: 11, color: theme.colors.textTertiary },
-  emptyPosts: { alignItems: 'center', justifyContent: 'center', paddingVertical: 60 },
+  emptyPosts: { alignItems: "center", justifyContent: "center", paddingVertical: 60 },
   emptyText: { fontSize: 14, color: theme.colors.textTertiary, marginTop: 8 },
 });
 

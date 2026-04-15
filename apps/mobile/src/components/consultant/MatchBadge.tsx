@@ -6,10 +6,7 @@ interface MatchBadgeProps {
   size?: "small" | "default";
 }
 
-export const MatchBadge: React.FC<MatchBadgeProps> = ({
-  percentage,
-  size = "default",
-}) => {
+export const MatchBadge: React.FC<MatchBadgeProps> = ({ percentage, size = "default" }) => {
   const clampedPercentage = Math.min(Math.max(percentage, 0), 99);
 
   return (

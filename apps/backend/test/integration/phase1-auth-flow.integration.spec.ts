@@ -9,23 +9,23 @@
  */
 
 import { INestApplication, ValidationPipe } from "@nestjs/common";
-import { Test, TestingModule } from "@nestjs/testing";
-import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { JwtService } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
+import { Test, TestingModule } from "@nestjs/testing";
 import request from "supertest";
 
-import { AuthController } from "../../src/modules/auth/auth.controller";
-import { AuthService } from "../../src/modules/auth/auth.service";
-import { AuthHelpersService } from "../../src/modules/auth/auth.helpers";
-import { SmsService, ISmsService } from "../../src/modules/auth/services/sms.service";
-import { WechatService } from "../../src/modules/auth/services/wechat.service";
-import { JwtStrategy } from "../../src/modules/auth/strategies/jwt.strategy";
+import { StructuredLoggerService } from "../../src/common/logging/structured-logger.service";
 import { PrismaService } from "../../src/common/prisma/prisma.service";
 import { RedisService, REDIS_CLIENT } from "../../src/common/redis/redis.service";
-import { StructuredLoggerService } from "../../src/common/logging/structured-logger.service";
-import { PassportModule } from "@nestjs/passport";
-
+import { AuthController } from "../../src/modules/auth/auth.controller";
+import { AuthHelpersService } from "../../src/modules/auth/auth.helpers";
+import { AuthService } from "../../src/modules/auth/auth.service";
+import { SmsService, ISmsService } from "../../src/modules/auth/services/sms.service";
+import { TokenBlacklistService } from "../../src/modules/auth/services/token-blacklist.service";
+import { WechatService } from "../../src/modules/auth/services/wechat.service";
+import { JwtStrategy } from "../../src/modules/auth/strategies/jwt.strategy";
 import {
   RedisKeyTracker,
   createRedisKeyTracker,
@@ -117,6 +117,16 @@ describe("Phase 1 Integration: Auth Flow", () => {
             }),
           },
         },
+        // TokenBlacklistService: required by both AuthService and JwtStrategy
+        {
+          provide: TokenBlacklistService,
+          useValue: {
+            blacklistToken: jest.fn().mockResolvedValue(undefined),
+            isBlacklisted: jest.fn().mockResolvedValue(false),
+            blacklistAllUserTokens: jest.fn().mockResolvedValue(undefined),
+            trackUserToken: jest.fn().mockResolvedValue(undefined),
+          },
+        },
         { provide: PrismaService, useValue: prisma },
         { provide: REDIS_CLIENT, useValue: createMockRedisClient(redisTracker) },
         { provide: RedisService, useValue: mockRedisService },
@@ -205,7 +215,7 @@ describe("Phase 1 Integration: Auth Flow", () => {
       };
 
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
-      (prisma.$transaction as jest.Mock).mockImplementation(async (fn: Function) => {
+      (prisma.$transaction as jest.Mock).mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
         const txMock = {
           user: {
             create: jest.fn().mockResolvedValue(mockCreatedUser),
@@ -319,7 +329,7 @@ describe("Phase 1 Integration: Auth Flow", () => {
       };
 
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
-      (prisma.$transaction as jest.Mock).mockImplementation(async (fn: Function) => {
+      (prisma.$transaction as jest.Mock).mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
         const txMock = {
           user: {
             create: jest.fn().mockResolvedValue(mockCreatedUser),
@@ -372,7 +382,7 @@ describe("Phase 1 Integration: Auth Flow", () => {
       };
 
       (prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
-      (prisma.$transaction as jest.Mock).mockImplementation(async (fn: Function) => {
+      (prisma.$transaction as jest.Mock).mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
         const txMock = {
           user: {
             create: jest.fn().mockResolvedValue(mockWechatUser),
@@ -432,8 +442,9 @@ describe("Phase 1 Integration: Auth Flow", () => {
   // -------------------------------------------------------------------
   describe("Protected endpoint access", () => {
     it("should access /auth/me with valid token", async () => {
+      // JwtStrategy.validate() requires jti claim; without it, the token is rejected with 401
       const token = jwtService.sign(
-        { sub: "user-protected-001", email: "test@protected.com" },
+        { sub: "user-protected-001", email: "test@protected.com", jti: "test-jti-001" },
         { secret: "test-jwt-secret-key-for-testing-only-at-least-64-chars-long-aaaaaa", expiresIn: "15m" },
       );
 

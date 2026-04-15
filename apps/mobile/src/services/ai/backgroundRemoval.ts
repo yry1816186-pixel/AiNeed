@@ -1,6 +1,4 @@
-import Constants from '@/src/polyfills/expo-constants';
-
-const FAL_API_URL = "https://fal.run/fal-ai/birefnet/v2";
+import { apiClient } from "../api/client";
 
 interface BackgroundRemovalResult {
   imageUri: string;
@@ -9,66 +7,39 @@ interface BackgroundRemovalResult {
   error?: string;
 }
 
-interface FalResponse {
-  images: {
-    url: string;
-    width: number;
-    height: number;
-    content_type: string;
-  }[];
-}
-
-declare const process: { env: Record<string, string | undefined> };
-
 class BackgroundRemovalService {
-  private apiKey: string;
-
-  constructor() {
-    this.apiKey =
-      Constants.expoConfig?.extra?.FAL_KEY ||
-      (typeof process !== 'undefined' ? process.env?.EXPO_PUBLIC_FAL_KEY : undefined) ||
-      "";
-  }
-
   async removeBackground(imageUri: string): Promise<BackgroundRemovalResult> {
-    if (!this.apiKey) {
-      console.warn("FAL API key not configured, returning original image");
-      return {
-        imageUri,
-        originalUri: imageUri,
-        success: false,
-        error: "API key not configured",
-      };
-    }
-
     try {
-      const response = await fetch(FAL_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Key ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          image_url: imageUri,
-        }),
-      });
+      const formData = new FormData();
+      const filename = imageUri.split("/").pop() || "image.jpg";
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `image/${match[1]}` : "image/jpeg";
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`FAL API error: ${response.status} - ${errorText}`);
-      }
+      formData.append("file", {
+        uri: imageUri,
+        name: filename,
+        type,
+      } satisfies FormDataValue);
 
-      const data: FalResponse = await response.json();
+      const response = await apiClient.upload<{ imageUri: string }>(
+        "/ai/remove-background",
+        formData
+      );
 
-      if (data.images && data.images.length > 0) {
+      if (!response.success || !response.data) {
         return {
-          imageUri: data.images[0].url,
+          imageUri,
           originalUri: imageUri,
-          success: true,
+          success: false,
+          error: response.error?.message || "Background removal failed",
         };
       }
 
-      throw new Error("No image returned from API");
+      return {
+        imageUri: response.data.imageUri,
+        originalUri: imageUri,
+        success: true,
+      };
     } catch (error) {
       console.error("Background removal failed:", error);
       return {
@@ -80,17 +51,9 @@ class BackgroundRemovalService {
     }
   }
 
-  async removeBackgroundBatch(
-    imageUris: string[],
-  ): Promise<BackgroundRemovalResult[]> {
-    const results = await Promise.all(
-      imageUris.map((uri) => this.removeBackground(uri)),
-    );
+  async removeBackgroundBatch(imageUris: string[]): Promise<BackgroundRemovalResult[]> {
+    const results = await Promise.all(imageUris.map((uri) => this.removeBackground(uri)));
     return results;
-  }
-
-  setApiKey(key: string) {
-    this.apiKey = key;
   }
 }
 

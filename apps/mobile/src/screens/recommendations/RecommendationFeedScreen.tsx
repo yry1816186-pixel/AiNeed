@@ -1,12 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  RefreshControl,
-  ActivityIndicator,
-  Pressable,
-} from "react-native";
+import { View, Text, StyleSheet, RefreshControl, ActivityIndicator, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FlashList } from "../../polyfills/flash-list";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -38,35 +31,33 @@ export function RecommendationFeedScreen() {
   } = useRecommendationFeedStore();
 
   useEffect(() => {
-    fetchFeed(true);
+    void fetchFeed(true);
   }, []);
 
   const handleItemPress = useCallback(
     (item: FeedItem) => {
       (navigation.navigate as any)("ClothingDetail", { id: item.id });
     },
-    [navigation],
+    [navigation]
   );
 
   const handleCategoryChange = useCallback(
     (category: FeedCategory) => {
       setCategory(category);
     },
-    [setCategory],
+    [setCategory]
   );
 
   const handleSubCategoryChange = useCallback(
     (subCategory: string | null) => {
       setSubCategory(subCategory);
     },
-    [setSubCategory],
+    [setSubCategory]
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: FeedItem }) => (
-      <RecommendationCard item={item} onPress={handleItemPress} />
-    ),
-    [handleItemPress],
+    ({ item }: { item: FeedItem }) => <RecommendationCard item={item} onPress={handleItemPress} />,
+    [handleItemPress]
   );
 
   const keyExtractor = useCallback((item: FeedItem) => item.id, []);
@@ -124,7 +115,9 @@ export function RecommendationFeedScreen() {
         estimatedItemSize={ESTIMATED_ITEM_SIZE}
         contentContainerStyle={styles.listContent}
         onEndReached={() => {
-          if (hasMore && !isLoading) loadMore();
+          if (hasMore && !isLoading) {
+            void loadMore();
+          }
         }}
         onEndReachedThreshold={0.3}
         ListFooterComponent={renderFooter}
@@ -181,7 +174,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   retryText: {
-    color: "#fff",
+    color: DesignTokens.colors.neutral.white,
     fontSize: 14,
     fontWeight: "600",
   },

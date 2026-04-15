@@ -1,6 +1,7 @@
 import { Global, Module, DynamicModule } from "@nestjs/common";
-import { SentryService } from "./sentry.service";
+
 import { SentryInterceptor } from "./sentry.interceptor";
+import { SentryService } from "./sentry.service";
 
 @Global()
 @Module({})

@@ -1,15 +1,15 @@
-import React, { Suspense, lazy } from 'react';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from './types';
-import { theme } from '../theme';
+﻿import React, { Suspense, lazy } from "react";
+import { ActivityIndicator, View, StyleSheet } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import type { AuthStackParamList } from "./types";
+import { theme } from '../design-system/theme';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-const LoginScreen = lazy(() => import('../screens/LoginScreen'));
-const PhoneLoginScreen = lazy(() => import('../screens/PhoneLoginScreen'));
-const RegisterScreen = lazy(() => import('../screens/RegisterScreen'));
-const OnboardingScreen = lazy(() => import('../screens/onboarding/OnboardingWizard'));
+const LoginScreen = lazy(() => import("../screens/LoginScreen"));
+const PhoneLoginScreen = lazy(() => import("../screens/PhoneLoginScreen"));
+const RegisterScreen = lazy(() => import("../screens/RegisterScreen"));
+const OnboardingScreen = lazy(() => import("../screens/onboarding/OnboardingWizard"));
 
 function AuthLoader() {
   return (
@@ -21,10 +21,7 @@ function AuthLoader() {
 
 export function AuthNavigator() {
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false }}
-      initialRouteName="Login"
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Login">
       <Stack.Screen name="Login">
         {() => (
           <Suspense fallback={<AuthLoader />}>
@@ -61,7 +58,7 @@ const styles = StyleSheet.create({
   loader: {
     flex: 1,
     backgroundColor: theme.colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

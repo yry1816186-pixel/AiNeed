@@ -10,9 +10,7 @@ describe("useStorage", () => {
   it("should return initial value when storage is empty", async () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
 
-    const { result } = renderHook(() =>
-      useStorage("test-key", "default"),
-    );
+    const { result } = renderHook(() => useStorage("test-key", "default"));
 
     // Wait for the useEffect to complete
     await act(async () => {
@@ -24,13 +22,9 @@ describe("useStorage", () => {
   });
 
   it("should load value from AsyncStorage", async () => {
-    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-      JSON.stringify("stored-value"),
-    );
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify("stored-value"));
 
-    const { result } = renderHook(() =>
-      useStorage("test-key", "default"),
-    );
+    const { result } = renderHook(() => useStorage("test-key", "default"));
 
     // Initially loading
     expect(result.current[2]).toBe(true);
@@ -49,9 +43,7 @@ describe("useStorage", () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
     (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
 
-    const { result } = renderHook(() =>
-      useStorage("test-key", "default"),
-    );
+    const { result } = renderHook(() => useStorage("test-key", "default"));
 
     // Wait for initial load
     await act(async () => {
@@ -63,21 +55,14 @@ describe("useStorage", () => {
     });
 
     expect(result.current[0]).toBe("new-value");
-    expect(AsyncStorage.setItem).toHaveBeenCalledWith(
-      "test-key",
-      JSON.stringify("new-value"),
-    );
+    expect(AsyncStorage.setItem).toHaveBeenCalledWith("test-key", JSON.stringify("new-value"));
   });
 
   it("should support function updater with setValue", async () => {
-    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-      JSON.stringify(10),
-    );
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(10));
     (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
 
-    const { result } = renderHook(() =>
-      useStorage("counter", 0),
-    );
+    const { result } = renderHook(() => useStorage("counter", 0));
 
     // Wait for initial load
     await act(async () => {
@@ -91,20 +76,13 @@ describe("useStorage", () => {
     });
 
     expect(result.current[0]).toBe(15);
-    expect(AsyncStorage.setItem).toHaveBeenCalledWith(
-      "counter",
-      JSON.stringify(15),
-    );
+    expect(AsyncStorage.setItem).toHaveBeenCalledWith("counter", JSON.stringify(15));
   });
 
   it("should handle AsyncStorage read errors gracefully", async () => {
-    (AsyncStorage.getItem as jest.Mock).mockRejectedValue(
-      new Error("read error"),
-    );
+    (AsyncStorage.getItem as jest.Mock).mockRejectedValue(new Error("read error"));
 
-    const { result } = renderHook(() =>
-      useStorage("test-key", "fallback"),
-    );
+    const { result } = renderHook(() => useStorage("test-key", "fallback"));
 
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -117,13 +95,9 @@ describe("useStorage", () => {
 
   it("should handle AsyncStorage write errors gracefully", async () => {
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
-    (AsyncStorage.setItem as jest.Mock).mockRejectedValue(
-      new Error("write error"),
-    );
+    (AsyncStorage.setItem as jest.Mock).mockRejectedValue(new Error("write error"));
 
-    const { result } = renderHook(() =>
-      useStorage("test-key", "default"),
-    );
+    const { result } = renderHook(() => useStorage("test-key", "default"));
 
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -139,12 +113,10 @@ describe("useStorage", () => {
 
   it("should be in loading state initially", () => {
     (AsyncStorage.getItem as jest.Mock).mockReturnValue(
-      new Promise(() => {}), // Never resolves
+      new Promise(() => {}) // Never resolves
     );
 
-    const { result } = renderHook(() =>
-      useStorage("test-key", "default"),
-    );
+    const { result } = renderHook(() => useStorage("test-key", "default"));
 
     expect(result.current[2]).toBe(true);
   });

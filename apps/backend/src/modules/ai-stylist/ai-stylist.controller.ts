@@ -23,21 +23,14 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { ThrottlerGuard, Throttle } from "@nestjs/throttler";
+import { Throttle } from "@nestjs/throttler";
 import { PhotoType } from "@prisma/client";
 
-import { AuthGuard } from "../auth/guards/auth.guard";
 import { AuthenticatedRequest } from "../../common/types/auth.types";
 import { AiQuotaGuard, SetQuotaType } from "../security/rate-limit/ai-quota.guard";
 import { AiQuotaService } from "../security/rate-limit/ai-quota.service";
 
 import { AiStylistService } from "./ai-stylist.service";
-import { SystemContextService } from "./system-context.service";
-import { OutfitPlanService } from "./services/outfit-plan.service";
-import { ItemReplacementService } from "./services/item-replacement.service";
-import { SessionArchiveService } from "./services/session-archive.service";
-import { PresetQuestionsService } from "./services/preset-questions.service";
-import { WeatherIntegrationService } from "./services/weather-integration.service";
 import {
   CreateStylistSessionDto,
   SendStylistMessageDto,
@@ -47,6 +40,12 @@ import {
   GetAlternativesQueryDto,
   ReplaceItemDto,
 } from "./dto/ai-stylist.dto";
+import { ItemReplacementService } from "./services/item-replacement.service";
+import { OutfitPlanService } from "./services/outfit-plan.service";
+import { PresetQuestionsService } from "./services/preset-questions.service";
+import { SessionArchiveService } from "./services/session-archive.service";
+import { WeatherIntegrationService } from "./services/weather-integration.service";
+import { SystemContextService } from "./system-context.service";
 
 /**
  * 会话列表响应
@@ -156,7 +155,6 @@ class FeedbackResponseDto {
 @ApiTags("ai-stylist")
 @ApiBearerAuth()
 @Controller("ai-stylist")
-@UseGuards(AuthGuard, ThrottlerGuard)
 export class AiStylistController {
   constructor(
     private readonly stylistService: AiStylistService,
@@ -583,10 +581,8 @@ export class AiStylistController {
   })
   @ApiResponse({ status: 200, description: "获取成功" })
   async getPresetQuestions(@Request() req: AuthenticatedRequest) {
-    const [questions, isNewUser] = await Promise.all([
-      this.presetQuestionsService.getPresetQuestions(),
-      this.presetQuestionsService.isNewUser(req.user.id),
-    ]);
+    const questions = this.presetQuestionsService.getPresetQuestions();
+    const isNewUser = await this.presetQuestionsService.isNewUser(req.user.id);
     return { questions, isNewUser };
   }
 

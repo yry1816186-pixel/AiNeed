@@ -18,12 +18,12 @@ export interface OutfitPlanDetail {
     condition: string;
     suggestion: string;
   };
-  outfits: Array<{
+  outfits: {
     title: string;
     items: AiStylistOutfitItem[];
     styleExplanation: string[];
     estimatedTotalPrice?: number;
-  }>;
+  }[];
   createdAt: string;
 }
 
@@ -78,11 +78,27 @@ interface AiStylistState {
   isAlternativesLoading: boolean;
 
   createSession: (entry?: string, goal?: string) => Promise<string | null>;
-  sendMessage: (message: string, latitude?: number, longitude?: number) => Promise<AiStylistSessionResponse | null>;
+  sendMessage: (
+    message: string,
+    latitude?: number,
+    longitude?: number
+  ) => Promise<AiStylistSessionResponse | null>;
   fetchOutfitPlan: (sessionId: string) => Promise<void>;
   fetchAlternatives: (sessionId: string, outfitIndex: number, itemIndex: number) => Promise<void>;
-  replaceItem: (sessionId: string, outfitIndex: number, itemIndex: number, newItemId: string) => Promise<boolean>;
-  submitFeedback: (sessionId: string, outfitIndex: number, action: "like" | "dislike", itemId?: string, rating?: number, dislikeReason?: string) => Promise<boolean>;
+  replaceItem: (
+    sessionId: string,
+    outfitIndex: number,
+    itemIndex: number,
+    newItemId: string
+  ) => Promise<boolean>;
+  submitFeedback: (
+    sessionId: string,
+    outfitIndex: number,
+    action: "like" | "dislike",
+    itemId?: string,
+    rating?: number,
+    dislikeReason?: string
+  ) => Promise<boolean>;
   fetchPresetQuestions: () => Promise<void>;
   fetchCalendarDays: (year: number, month: number) => Promise<void>;
   fetchArchivedSessions: (date: string) => Promise<void>;
@@ -128,10 +144,17 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
 
   sendMessage: async (message: string, latitude?: number, longitude?: number) => {
     const { currentSessionId } = get();
-    if (!currentSessionId) return null;
+    if (!currentSessionId) {
+      return null;
+    }
     set({ isGenerating: true, error: null });
     try {
-      const response = await aiStylistApi.sendMessage(currentSessionId, message, latitude, longitude);
+      const response = await aiStylistApi.sendMessage(
+        currentSessionId,
+        message,
+        latitude,
+        longitude
+      );
       if (response.success && response.data) {
         set({ isGenerating: false });
         return response.data;
@@ -167,7 +190,9 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
       if (response.success && response.data) {
         const data = response.data;
         set({
-          alternatives: Array.isArray(data) ? data as AlternativeItem[] : (data as Record<string, unknown>).items as AlternativeItem[] ?? [],
+          alternatives: Array.isArray(data)
+            ? (data as AlternativeItem[])
+            : ((data as Record<string, unknown>).items as AlternativeItem[]) ?? [],
           isAlternativesLoading: false,
         });
       } else {
@@ -178,7 +203,12 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
     }
   },
 
-  replaceItem: async (sessionId: string, outfitIndex: number, itemIndex: number, newItemId: string) => {
+  replaceItem: async (
+    sessionId: string,
+    outfitIndex: number,
+    itemIndex: number,
+    newItemId: string
+  ) => {
     try {
       const response = await aiStylistApi.replaceItem(sessionId, outfitIndex, itemIndex, newItemId);
       if (response.success) {
@@ -191,9 +221,22 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
     }
   },
 
-  submitFeedback: async (sessionId: string, outfitIndex: number, action: "like" | "dislike", itemId?: string, rating?: number, dislikeReason?: string) => {
+  submitFeedback: async (
+    sessionId: string,
+    outfitIndex: number,
+    action: "like" | "dislike",
+    itemId?: string,
+    rating?: number,
+    dislikeReason?: string
+  ) => {
     try {
-      const response = await aiStylistApi.submitFeedback(sessionId, { outfitIndex, action, itemId, rating, dislikeReason });
+      const response = await aiStylistApi.submitFeedback(sessionId, {
+        outfitIndex,
+        action,
+        itemId,
+        rating,
+        dislikeReason,
+      });
       return response.success;
     } catch {
       return false;

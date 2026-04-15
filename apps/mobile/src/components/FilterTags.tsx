@@ -20,7 +20,7 @@ interface FilterTagsProps {
   };
   onApplyFilter: (
     dimension: "brands" | "colors" | "sizes" | "price",
-    value: string | string[] | { min: number; max: number },
+    value: string | string[] | { min: number; max: number }
   ) => void;
 }
 
@@ -69,7 +69,9 @@ export const FilterTags: React.FC<FilterTagsProps> = ({
   };
 
   const getFilterOptions = (): string[] => {
-    if (!filterOptions) return [];
+    if (!filterOptions) {
+      return [];
+    }
     switch (activeDimension) {
       case "brands":
         return filterOptions.brands.map((b) => b.name);
@@ -115,11 +117,7 @@ export const FilterTags: React.FC<FilterTagsProps> = ({
               style={[styles.tag, count > 0 && styles.tagActive]}
               onPress={() => openFilter(dim.key)}
             >
-              <Text
-                style={[styles.tagText, count > 0 && styles.tagTextActive]}
-              >
-                {dim.label}
-              </Text>
+              <Text style={[styles.tagText, count > 0 && styles.tagTextActive]}>{dim.label}</Text>
               {count > 0 && (
                 <View style={styles.badge}>
                   <Text style={styles.badgeText}>{count}</Text>
@@ -135,8 +133,7 @@ export const FilterTags: React.FC<FilterTagsProps> = ({
           <View style={styles.modalSheet}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>
-                {FILTER_DIMENSIONS.find((d) => d.key === activeDimension)
-                  ?.label ?? "筛选"}
+                {FILTER_DIMENSIONS.find((d) => d.key === activeDimension)?.label ?? "筛选"}
               </Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Text style={styles.modalClose}>关闭</Text>
@@ -146,10 +143,7 @@ export const FilterTags: React.FC<FilterTagsProps> = ({
               data={getFilterOptions()}
               keyExtractor={(item) => item}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.optionRow}
-                  onPress={() => handleSelect(item)}
-                >
+                <TouchableOpacity style={styles.optionRow} onPress={() => handleSelect(item)}>
                   <Text style={styles.optionText}>{item}</Text>
                 </TouchableOpacity>
               )}

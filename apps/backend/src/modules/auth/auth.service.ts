@@ -10,20 +10,21 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-
-import { PrismaService } from "../../common/prisma/prisma.service";
 import { Gender, Prisma } from "@prisma/client";
-import { RedisService } from "../../common/redis/redis.service";
-import { StructuredLoggerService, ContextualLogger } from "../../common/logging/structured-logger.service";
-import * as bcrypt from "../../common/security/bcrypt";
+import type { StringValue } from "ms";
 
-import { RegisterDto, LoginDto, AuthResponseDto, PhoneRegisterDto } from "./dto/auth.dto";
+import { StructuredLoggerService, ContextualLogger } from "../../common/logging/structured-logger.service";
+import { PrismaService } from "../../common/prisma/prisma.service";
+import { RedisService } from "../../common/redis/redis.service";
+import * as bcrypt from "../../common/security/bcrypt";
+import { EmailService } from "../../common/email/email.service";
 import { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION } from "../privacy/privacy-version";
+
 import { AuthHelpersService } from "./auth.helpers";
-import { SmsService } from "./services/sms.service";
-import { ISmsService } from "./services/sms.service";
-import { WechatService } from "./services/wechat.service";
+import { RegisterDto, LoginDto, AuthResponseDto, PhoneRegisterDto } from "./dto/auth.dto";
+import { SmsService , ISmsService } from "./services/sms.service";
 import { TokenBlacklistService } from "./services/token-blacklist.service";
+import { WechatService } from "./services/wechat.service";
 
 /**
  * JWT payload interface for access and refresh tokens.
@@ -51,6 +52,7 @@ export class AuthService {
     private readonly smsVerificationService: SmsService,
     private wechatService: WechatService,
     private tokenBlacklistService: TokenBlacklistService,
+    private emailService: EmailService,
     loggingService: StructuredLoggerService,
   ) {
     this.logger = loggingService.createChildLogger(AuthService.name);
@@ -228,7 +230,7 @@ export class AuthService {
   async logout(userId: string, refreshToken?: string, accessToken?: string): Promise<void> {
     if (accessToken) {
       try {
-        const decoded = this.jwtService.decode(accessToken) as JwtPayload | null;
+        const decoded = this.jwtService.decode(accessToken);
         if (decoded?.jti) {
           const remainingSeconds = decoded.exp
             ? Math.max(decoded.exp - Math.floor(Date.now() / 1000), 0)
@@ -288,14 +290,14 @@ export class AuthService {
       throw new Error("JWT_SECRET environment variable is required. Generate one with: node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\"");
     }
     const accessExpiresIn = this.configService.get<string>("JWT_ACCESS_EXPIRES_IN", "15m");
-    const accessToken = this.jwtService.sign(accessPayload, { secret: accessSecret, expiresIn: accessExpiresIn });
+    const accessToken = this.jwtService.sign(accessPayload, { secret: accessSecret, expiresIn: accessExpiresIn as StringValue });
 
     const refreshSecret = this.configService.get<string>("JWT_REFRESH_SECRET");
     if (!refreshSecret) {
       throw new Error("JWT_REFRESH_SECRET environment variable is required. Generate one with: node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\"");
     }
     const refreshExpiresIn = this.configService.get<string>("JWT_REFRESH_EXPIRES_IN", "7d");
-    const refreshToken = this.jwtService.sign(refreshPayload, { secret: refreshSecret, expiresIn: refreshExpiresIn });
+    const refreshToken = this.jwtService.sign(refreshPayload, { secret: refreshSecret, expiresIn: refreshExpiresIn as StringValue });
 
     const accessTtlSeconds = this.parseExpiresInSeconds(accessExpiresIn);
     await this.tokenBlacklistService.trackUserToken(userId, accessPayload.jti!, accessTtlSeconds);
@@ -331,9 +333,9 @@ export class AuthService {
     const value = parseInt(match[1]!, 10);
     const unit = match[2];
     const date = new Date();
-    if (unit === "d") date.setDate(date.getDate() + value);
-    else if (unit === "h") date.setHours(date.getHours() + value);
-    else if (unit === "m") date.setMinutes(date.getMinutes() + value);
+    if (unit === "d") {date.setDate(date.getDate() + value);}
+    else if (unit === "h") {date.setHours(date.getHours() + value);}
+    else if (unit === "m") {date.setMinutes(date.getMinutes() + value);}
     return date;
   }
 
@@ -344,9 +346,9 @@ export class AuthService {
     }
     const value = parseInt(match[1]!, 10);
     const unit = match[2];
-    if (unit === "d") return value * 24 * 60 * 60;
-    if (unit === "h") return value * 60 * 60;
-    if (unit === "m") return value * 60;
+    if (unit === "d") {return value * 24 * 60 * 60;}
+    if (unit === "h") {return value * 60 * 60;}
+    if (unit === "m") {return value * 60;}
     return value;
   }
 
@@ -369,9 +371,18 @@ export class AuthService {
 
     await this.redisService.setWithTtl(resetKey, user.id, RESET_TOKEN_TTL);
 
-    const resetUrl = `${this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000')}/reset-password?token=${resetToken}`;
-
-    this.logger.log("密码重置邮件已发送", { email });
+    // 实际发送密码重置邮件
+    try {
+      const result = await this.emailService.sendPasswordResetEmail(email, resetToken);
+      if (result.success) {
+        this.logger.log("密码重置邮件已发送", { email, messageId: result.messageId });
+      } else {
+        this.logger.error("密码重置邮件发送失败", undefined, { email, error: result.error });
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      this.logger.error("密码重置邮件发送异常", undefined, { email, error: message });
+    }
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
@@ -464,8 +475,8 @@ export class AuthService {
       const [createdUser] = await this.prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {
-            email: `${phone}@sms.placeholder`,
-            emailHash: createHash("sha256").update(`${phone}@sms.placeholder`.toLowerCase().trim()).digest("hex"),
+            email: `phone_${phone}@internal.placeholder`,
+            emailHash: createHash("sha256").update(`phone_${phone}@internal.placeholder`.toLowerCase().trim()).digest("hex"),
             password: await bcrypt.hash(randomUUID()),
             phone,
             nickname: `用户${phone.slice(-4)}`,
@@ -514,8 +525,8 @@ export class AuthService {
       const [createdUser] = await this.prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {
-            email: `wechat_${openid}@placeholder`,
-            emailHash: createHash("sha256").update(`wechat_${openid}@placeholder`.toLowerCase().trim()).digest("hex"),
+            email: `wechat_${openid}@internal.placeholder`,
+            emailHash: createHash("sha256").update(`wechat_${openid}@internal.placeholder`.toLowerCase().trim()).digest("hex"),
             password: await bcrypt.hash(randomUUID()),
             wechatOpenId: openid,
             ...(unionid ? { wechatUnionId: unionid } : {}),
@@ -566,7 +577,7 @@ export class AuthService {
     }
 
     const [user] = await this.prisma.$transaction(async (tx) => {
-      const placeholderEmail = `${dto.phone}@sms.placeholder`;
+      const placeholderEmail = `phone_${dto.phone}@internal.placeholder`;
       const createdUser = await tx.user.create({
         data: {
           email: placeholderEmail,

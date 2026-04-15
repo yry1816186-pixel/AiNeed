@@ -1,11 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { paymentApi } from "../services/api/commerce.api";
 
@@ -56,9 +50,7 @@ export const PaymentWaitingScreen: React.FC<PaymentWaitingScreenProps> = ({
         <View style={styles.content}>
           <Text style={styles.timeoutIcon}>!</Text>
           <Text style={styles.timeoutTitle}>支付超时</Text>
-          <Text style={styles.timeoutMessage}>
-            支付超时，请手动查看订单状态
-          </Text>
+          <Text style={styles.timeoutMessage}>支付超时，请手动查看订单状态</Text>
           <TouchableOpacity style={styles.actionButton} onPress={onTimeout}>
             <Text style={styles.actionButtonText}>查看订单</Text>
           </TouchableOpacity>

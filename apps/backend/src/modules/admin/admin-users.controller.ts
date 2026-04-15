@@ -13,11 +13,10 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 import { Prisma, UserRole } from "@prisma/client";
 
-import { AuthGuard } from "../auth/guards/auth.guard";
 import { AdminGuard } from "../../common/guards/admin.guard";
-import { RequestWithUser } from "../../common/types/common.types";
 import { PrismaService } from "../../common/prisma/prisma.service";
-import { AdminAuditService } from "./services/admin-audit.service";
+import { RequestWithUser } from "../../common/types/common.types";
+import { AuthGuard } from "../auth/guards/auth.guard";
 
 import {
   AdminUserQueryDto,
@@ -25,6 +24,7 @@ import {
   AdminUserUpdateDto,
   AdminUserExportDto,
 } from "./dto/admin-users.dto";
+import { AdminAuditService } from "./services/admin-audit.service";
 
 @ApiTags("admin/users")
 @Controller("admin/users")
@@ -120,8 +120,8 @@ export class AdminUsersController {
     }
     if (query.startDate || query.endDate) {
       const createdAt: Prisma.DateTimeFilter = {};
-      if (query.startDate) createdAt.gte = new Date(query.startDate);
-      if (query.endDate) createdAt.lte = new Date(query.endDate);
+      if (query.startDate) {createdAt.gte = new Date(query.startDate);}
+      if (query.endDate) {createdAt.lte = new Date(query.endDate);}
       where.createdAt = createdAt;
     }
 

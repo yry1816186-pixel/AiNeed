@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { ProLayout } from '@ant-design/pro-components';
 import type { MenuDataItem } from '@ant-design/pro-components';
@@ -11,7 +11,7 @@ import {
   LogoutOutlined,
   KeyOutlined,
 } from '@ant-design/icons';
-import { Dropdown, message } from 'antd';
+import { Dropdown, message, Modal, Input, Form } from 'antd';
 import { useAuthStore } from '@/stores/auth';
 
 const menuData: MenuDataItem[] = [
@@ -46,11 +46,34 @@ const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthStore();
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [passwordForm] = Form.useForm();
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   const handleLogout = () => {
     logout();
     message.success('已退出登录');
     navigate('/login', { replace: true });
+  };
+
+  const handleChangePassword = async () => {
+    try {
+      const values = await passwordForm.validateFields();
+      if (values.newPassword !== values.confirmPassword) {
+        message.error('两次输入的新密码不一致');
+        return;
+      }
+      setPasswordLoading(true);
+      // TODO: 调用后端修改密码 API
+      // await post('/auth/change-password', { oldPassword: values.oldPassword, newPassword: values.newPassword });
+      message.info('修改密码功能后端接口开发中，请稍后再试');
+      setPasswordModalOpen(false);
+      passwordForm.resetFields();
+    } catch {
+      // form validation failed, ignore
+    } finally {
+      setPasswordLoading(false);
+    }
   };
 
   return (
@@ -94,7 +117,7 @@ const AdminLayout: React.FC = () => {
                   key: 'password',
                   icon: <KeyOutlined />,
                   label: '修改密码',
-                  onClick: () => message.info('修改密码功能开发中'),
+                  onClick: () => setPasswordModalOpen(true),
                 },
                 { type: 'divider' },
                 {
@@ -127,6 +150,45 @@ const AdminLayout: React.FC = () => {
       }}
     >
       <Outlet />
+      <Modal
+        title="修改密码"
+        open={passwordModalOpen}
+        onOk={handleChangePassword}
+        onCancel={() => {
+          setPasswordModalOpen(false);
+          passwordForm.resetFields();
+        }}
+        confirmLoading={passwordLoading}
+        okText="确认修改"
+        cancelText="取消"
+      >
+        <Form form={passwordForm} layout="vertical" autoComplete="off">
+          <Form.Item
+            name="oldPassword"
+            label="旧密码"
+            rules={[{ required: true, message: '请输入旧密码' }]}
+          >
+            <Input.Password placeholder="请输入旧密码" />
+          </Form.Item>
+          <Form.Item
+            name="newPassword"
+            label="新密码"
+            rules={[
+              { required: true, message: '请输入新密码' },
+              { min: 6, message: '密码至少6位' },
+            ]}
+          >
+            <Input.Password placeholder="请输入新密码" />
+          </Form.Item>
+          <Form.Item
+            name="confirmPassword"
+            label="确认新密码"
+            rules={[{ required: true, message: '请确认新密码' }]}
+          >
+            <Input.Password placeholder="请再次输入新密码" />
+          </Form.Item>
+        </Form>
+      </Modal>
     </ProLayout>
   );
 };

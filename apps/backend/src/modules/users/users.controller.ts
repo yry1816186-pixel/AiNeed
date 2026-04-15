@@ -11,6 +11,7 @@ import {
   UploadedFile,
   BadRequestException,
 } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import {
   ApiTags,
   ApiOperation,
@@ -20,17 +21,11 @@ import {
   ApiParam,
   ApiConsumes,
 } from "@nestjs/swagger";
-import { FileInterceptor } from "@nestjs/platform-express";
 import { Throttle } from "@nestjs/throttler";
 
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { StorageService } from "../../common/storage/storage.service";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
-import {
-  UsersService,
-  UpdateUserDto as ServiceUpdateUserDto,
-  ChangePasswordDto as ServiceChangePasswordDto,
-} from "./users.service";
 import {
   UpdateUserDto,
   ChangePasswordDto,
@@ -39,6 +34,11 @@ import {
   UserPublicResponseDto,
   UserStatsResponseDto,
 } from "./dto";
+import {
+  UsersService,
+  UpdateUserDto as ServiceUpdateUserDto,
+  ChangePasswordDto as ServiceChangePasswordDto,
+} from "./users.service";
 
 /**
  * 成功响应 DTO

@@ -1,7 +1,9 @@
-import { useInfiniteQuery as useTanStackInfiniteQuery, type UseInfiniteQueryOptions } from "@tanstack/react-query";
+import {
+  useInfiniteQuery as useTanStackInfiniteQuery,
+} from "@tanstack/react-query";
 import { useCallback } from "react";
 import apiClient from "../services/api/client";
-import type { ApiResponse, PaginatedResponse } from "../types";
+import type { PaginatedResponse } from "../types";
 
 interface CursorPage<T> {
   items: T[];
@@ -9,7 +11,7 @@ interface CursorPage<T> {
   hasMore: boolean;
 }
 
-interface UseInfiniteQueryOptions_<T> {
+interface UseInfiniteQueryOptions_<_T> {
   queryKey: (string | number)[];
   url: string;
   pageSize?: number;
@@ -25,7 +27,9 @@ export function useInfiniteQuery<T>(options: UseInfiniteQueryOptions_<T>) {
     queryFn: async ({ pageParam }) => {
       const cursor = pageParam as string | undefined;
       const params: Record<string, unknown> = { pageSize };
-      if (cursor) params.cursor = cursor;
+      if (cursor) {
+        params.cursor = cursor;
+      }
 
       const response = await apiClient.get<PaginatedResponse<T>>(url, params);
       if (!response.success || !response.data) {
@@ -43,7 +47,7 @@ export function useInfiniteQuery<T>(options: UseInfiniteQueryOptions_<T>) {
       };
     },
     initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage) => lastPage.hasMore ? lastPage.nextCursor : undefined,
+    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.nextCursor : undefined),
     enabled,
     staleTime,
   });
@@ -52,7 +56,7 @@ export function useInfiniteQuery<T>(options: UseInfiniteQueryOptions_<T>) {
   const hasMore = query.hasNextPage;
   const loadMore = useCallback(() => {
     if (query.hasNextPage && !query.isFetchingNextPage) {
-      query.fetchNextPage();
+      void query.fetchNextPage();
     }
   }, [query.hasNextPage, query.isFetchingNextPage, query.fetchNextPage]);
 

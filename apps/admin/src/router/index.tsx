@@ -8,6 +8,7 @@ import UserManage from '@/pages/UserManage/UserList';
 import StyleQuizManage from '@/pages/StyleQuiz/QuestionList';
 import MerchantManage from '@/pages/MerchantManage';
 import CommunityManage from '@/pages/CommunityManage';
+import { FlagListPage, FlagFormPage } from '@/pages/FeatureFlags';
 import { useAuthStore } from '@/stores/auth';
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -66,6 +67,18 @@ const routes: RouteObject[] = [
       {
         path: 'community',
         element: <CommunityManage />,
+      },
+      {
+        path: 'feature-flags',
+        element: <FlagListPage />,
+      },
+      {
+        path: 'feature-flags/new',
+        element: <FlagFormPage />,
+      },
+      {
+        path: 'feature-flags/:id',
+        element: <FlagFormPage />,
       },
     ],
   },

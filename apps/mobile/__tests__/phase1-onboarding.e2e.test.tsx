@@ -401,7 +401,12 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
       const renderer = TestRenderer.create(<OnboardingTestHarness />);
 
       // Start: progress 1/3
-      expect(renderer.root.findByProps({ testID: "progress" }).props.children).toBe("1/3");
+      // React renders {number}/{number} as [number, "/", number]
+      const getProgressText = () => {
+        const children = renderer.root.findByProps({ testID: "progress" }).props.children;
+        return Array.isArray(children) ? children.join("") : children;
+      };
+      expect(getProgressText()).toBe("1/3");
 
       // After proceeding from BASIC_INFO: progress 2/3
       TestRenderer.act(() => {
@@ -413,13 +418,13 @@ describe("Phase 1 E2E: Mobile Onboarding Flow", () => {
       TestRenderer.act(() => {
         renderer.root.findByProps({ testID: "next-button" }).props.onPress();
       });
-      expect(renderer.root.findByProps({ testID: "progress" }).props.children).toBe("2/3");
+      expect(getProgressText()).toBe("2/3");
 
       // After skipping PHOTO: progress 3/3
       TestRenderer.act(() => {
         renderer.root.findByProps({ testID: "skip-photo" }).props.onPress();
       });
-      expect(renderer.root.findByProps({ testID: "progress" }).props.children).toBe("3/3");
+      expect(getProgressText()).toBe("3/3");
     });
   });
 });

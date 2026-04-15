@@ -6,7 +6,6 @@ import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
-
 import type {
   ChatMessage,
   StylistSessionState,

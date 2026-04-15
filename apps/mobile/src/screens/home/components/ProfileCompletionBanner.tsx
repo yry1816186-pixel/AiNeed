@@ -1,14 +1,8 @@
-import { useState, useCallback, memo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  LayoutAnimation,
-} from 'react-native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import { DesignTokens } from '../../../theme/tokens/design-tokens';
+import { useState, useCallback, memo } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from "react-native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
 
 interface ProfileCompletionBannerProps {
   completionPercent: number;
@@ -35,14 +29,21 @@ const ProfileCompletionBanner = memo(
       return (
         <View style={styles.container}>
           <LinearGradient
-            colors={[DesignTokens.colors.semantic.successLight, DesignTokens.colors.backgrounds.elevated]}
+            colors={[
+              DesignTokens.colors.semantic.successLight,
+              DesignTokens.colors.backgrounds.elevated,
+            ]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.completeGradient}
           >
             <View style={styles.completeContent}>
               <View style={styles.completeIconCircle}>
-                <Ionicons name="checkmark-circle" size={24} color={DesignTokens.colors.semantic.success} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={24}
+                  color={DesignTokens.colors.semantic.success}
+                />
               </View>
               <View style={styles.textArea}>
                 <Text style={styles.completeTitle}>你的风格画像已就绪 ✓</Text>
@@ -101,10 +102,10 @@ const ProfileCompletionBanner = memo(
         </View>
       </View>
     );
-  },
+  }
 );
 
-ProfileCompletionBanner.displayName = 'ProfileCompletionBanner';
+ProfileCompletionBanner.displayName = "ProfileCompletionBanner";
 
 const styles = StyleSheet.create({
   container: {
@@ -117,9 +118,9 @@ const styles = StyleSheet.create({
     ...DesignTokens.shadows.sm,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 12,
   },
   textArea: {
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     color: DesignTokens.colors.text.primary,
     marginBottom: 4,
   },
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: DesignTokens.colors.neutral[200],
     marginBottom: 14,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressFill: {
     height: 6,
@@ -152,24 +153,24 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   ctaText: {
     color: DesignTokens.colors.text.inverse,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   completeGradient: {
     borderRadius: 16,
     padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     ...DesignTokens.shadows.sm,
   },
   completeContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
   },
   completeIconCircle: {
@@ -177,13 +178,13 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.semantic.successLight,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: 12,
   },
   completeTitle: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     color: DesignTokens.colors.semantic.success,
     marginBottom: 2,
   },

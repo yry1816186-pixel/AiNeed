@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+﻿import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
 import brandQRApi, { type QRScanResult } from "../services/api/brand-qr.api";
 import type { RootStackParamList } from "../types/navigation";
 
@@ -48,14 +48,16 @@ export const BrandQRScanScreen: React.FC = () => {
   }, [manualCode]);
 
   const handleImport = useCallback(async () => {
-    if (!scanResult) return;
+    if (!scanResult) {
+      return;
+    }
 
     setIsImporting(true);
     try {
       const response = await brandQRApi.importScannedProduct(
         manualCode.trim(),
         undefined,
-        Platform.OS === "ios" ? "ios" : "android",
+        Platform.OS === "ios" ? "ios" : "android"
       );
       if (response.success) {
         Alert.alert("导入成功", "商品已添加到您的衣橱", [
@@ -82,9 +84,7 @@ export const BrandQRScanScreen: React.FC = () => {
   const renderScanInput = () => (
     <View style={styles.inputSection}>
       <Text style={styles.inputLabel}>输入二维码编码</Text>
-      <Text style={styles.inputHint}>
-        扫描商品标签上的 AiNeed 二维码，或手动输入编码
-      </Text>
+      <Text style={styles.inputHint}>扫描商品标签上的 AiNeed 二维码，或手动输入编码</Text>
       <View style={styles.inputRow}>
         <TextInput
           style={styles.codeInput}
@@ -112,7 +112,9 @@ export const BrandQRScanScreen: React.FC = () => {
   );
 
   const renderScanResult = () => {
-    if (!scanResult) return null;
+    if (!scanResult) {
+      return null;
+    }
 
     const { brand, product } = scanResult;
 
@@ -222,9 +224,7 @@ export const BrandQRScanScreen: React.FC = () => {
         {/* Camera Placeholder */}
         <View style={styles.cameraPlaceholder}>
           <Ionicons name="qr-code-outline" size={64} color={Colors.neutral[300]} />
-          <Text style={styles.cameraHint}>
-            相机扫码功能即将上线{"\n"}请使用下方手动输入
-          </Text>
+          <Text style={styles.cameraHint}>相机扫码功能即将上线{"\n"}请使用下方手动输入</Text>
         </View>
 
         {renderScanInput()}

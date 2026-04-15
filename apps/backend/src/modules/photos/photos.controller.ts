@@ -29,17 +29,17 @@ import { Throttle } from "@nestjs/throttler";
 import { PhotoType } from "@prisma/client";
 import type { Response } from "express";
 
+import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-data.interceptor";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
-import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-data.interceptor";
 
-import { PhotosService } from "./photos.service";
-import { PhotoQualityValidator } from "./services/photo-quality-validator.service";
 import {
   PhotoUploadResultDto,
   PhotoResponseDto,
   SuccessResponseDto,
 } from "./dto";
+import { PhotosService } from "./photos.service";
+import { PhotoQualityValidator } from "./services/photo-quality-validator.service";
 
 @ApiTags("photos")
 @ApiBearerAuth()

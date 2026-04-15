@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+
 import { ColdStartService } from "./cold-start.service";
 import { ColorMatchingService } from "./color-matching.service";
 import { RecommendationCacheService } from "./recommendation-cache.service";
@@ -117,7 +118,7 @@ export class RecommendationFeedService {
       reasons?: string[];
     }>,
   ): Promise<FeedItem[]> {
-    if (recommendations.length === 0) return [];
+    if (recommendations.length === 0) {return [];}
 
     const itemIds = recommendations.map((r) => r.itemId);
     const clothingItems = await this.prisma.clothingItem.findMany({
@@ -133,12 +134,12 @@ export class RecommendationFeedService {
     const feedItems: FeedItem[] = [];
     for (const rec of recommendations) {
       const item = itemMap.get(rec.itemId);
-      if (!item) continue;
+      if (!item) {continue;}
 
       const attrs = item.attributes as Record<string, unknown> | null;
       const itemColors = (
         (attrs?.colors as string[]) || [attrs?.primaryColor as string].filter(Boolean)
-      ) as string[];
+      );
 
       const colorHarmonyScore = this.calculateColorHarmony(itemColors, userProfile);
 

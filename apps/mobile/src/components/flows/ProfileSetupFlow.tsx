@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,9 +11,9 @@ import {
   ScrollView,
   KeyboardAvoidingView,
 } from "react-native";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import { BlurView } from "expo-blur";
-import { router } from "expo-router";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -27,23 +27,12 @@ import {
   runOnJS,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import {
-  MagneticButton,
-  GlowText,
-  FloatingElement,
-  ParticleEffect,
-} from "../ui/FluidAnimations";
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-  Shadows,
-  Typography,
-} from "../../theme";
+import { MagneticButton, GlowText, FloatingElement, ParticleEffect } from "../../design-system/ui/FluidAnimations";
+import { Colors, Spacing, BorderRadius } from '../design-system/theme';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
-const AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
+const _AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
 
 export interface ProfileSetupScreenProps {
   onComplete: (data: ProfileData) => void;
@@ -59,12 +48,12 @@ interface ProfileData {
 }
 
 const STYLE_OPTIONS = [
-  { id: "casual", name: "休闲", icon: "☕", color: Colors.amber[500] },
-  { id: "formal", name: "商务", icon: "💼", color: Colors.neutral[700] },
-  { id: "streetwear", name: "街头", icon: "🔥", color: Colors.rose[500] },
-  { id: "minimalist", name: "极简", icon: "✨", color: Colors.sky[500] },
-  { id: "vintage", name: "复古", icon: "🎭", color: Colors.emerald[500] },
-  { id: "bohemian", name: "波西米亚", icon: "🌸", color: Colors.primary[500] },
+  { id: "casual", name: "休闲", icon: "cafe-outline" as keyof typeof Ionicons.glyphMap, color: Colors.amber[500] },
+  { id: "formal", name: "商务", icon: "briefcase-outline" as keyof typeof Ionicons.glyphMap, color: Colors.neutral[700] },
+  { id: "streetwear", name: "街头", icon: "flame-outline" as keyof typeof Ionicons.glyphMap, color: Colors.rose[500] },
+  { id: "minimalist", name: "极简", icon: "sparkles-outline" as keyof typeof Ionicons.glyphMap, color: Colors.sky[500] },
+  { id: "vintage", name: "复古", icon: "time-outline" as keyof typeof Ionicons.glyphMap, color: Colors.emerald[500] },
+  { id: "bohemian", name: "波西米亚", icon: "flower-outline" as keyof typeof Ionicons.glyphMap, color: Colors.primary[500] },
 ];
 
 const STEP_CONFIG = [
@@ -76,15 +65,11 @@ const STEP_CONFIG = [
   { id: "complete", title: "完成", subtitle: "一切准备就绪" },
 ];
 
-export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
-  onComplete,
-}) => {
+export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComplete }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [profileData, setProfileData] = useState<Partial<ProfileData>>({});
   const [nickname, setNickname] = useState("");
-  const [selectedGender, setSelectedGender] = useState<
-    "male" | "female" | "other" | null
-  >(null);
+  const [selectedGender, setSelectedGender] = useState<"male" | "female" | "other" | null>(null);
   const [height, setHeight] = useState("165");
   const [weight, setWeight] = useState("55");
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
@@ -153,10 +138,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
         <ParticleEffect count={30} color="rgba(168, 85, 247, 0.3)" size={3} />
 
         <AnimatedView style={[styles.welcomeLogo, logoAnimatedStyle]}>
-          <LinearGradient
-            colors={["#a855f7", "#ec4899"]}
-            style={styles.welcomeLogoGradient}
-          >
+          <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.welcomeLogoGradient}>
             <Text style={styles.welcomeLogoText}>AI</Text>
           </LinearGradient>
         </AnimatedView>
@@ -167,9 +149,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
             style={styles.welcomeTitle}
             glowColor={Colors.primary[400]}
           />
-          <Text style={styles.welcomeSubtitle}>
-            让我们花1分钟了解你{"\n"}为你打造专属穿搭体验
-          </Text>
+          <Text style={styles.welcomeSubtitle}>让我们花1分钟了解你{"\n"}为你打造专属穿搭体验</Text>
         </AnimatedView>
 
         <AnimatedView style={[styles.welcomeButton, buttonAnimatedStyle]}>
@@ -206,8 +186,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
       "worklet";
       const focusValue = inputFocus.value;
       return {
-        borderColor:
-          focusValue > 0.5 ? Colors.primary[500] : "rgba(255, 255, 255, 0.2)",
+        borderColor: focusValue > 0.5 ? Colors.primary[500] : "rgba(255, 255, 255, 0.2)",
         shadowOpacity: interpolate(inputFocus.value, [0, 1], [0, 0.3]),
       };
     });
@@ -261,10 +240,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
     const scale = useSharedValue(0);
 
     useEffect(() => {
-      scale.value = withDelay(
-        index * 100,
-        withSpring(1, { damping: 12, stiffness: 100 }),
-      );
+      scale.value = withDelay(index * 100, withSpring(1, { damping: 12, stiffness: 100 }));
     }, [index, scale]);
 
     useEffect(() => {
@@ -298,11 +274,9 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
             style={styles.genderOptionGradient}
           >
             <FloatingElement amplitude={selected ? 5 : 0} duration={3000}>
-              <Text style={styles.genderIcon}>{option.icon}</Text>
+              <Ionicons name={option.icon as keyof typeof Ionicons.glyphMap} size={32} color={selected ? Colors.white : option.color} />
             </FloatingElement>
-            <Text
-              style={[styles.genderLabel, selected && { color: Colors.white }]}
-            >
+            <Text style={[styles.genderLabel, selected && { color: Colors.white }]}>
               {option.label}
             </Text>
           </LinearGradient>
@@ -313,9 +287,9 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
 
   const GenderStep: React.FC = () => {
     const options = [
-      { id: "male", label: "男生", icon: "👨", color: Colors.sky[500] },
-      { id: "female", label: "女生", icon: "👩", color: Colors.rose[500] },
-      { id: "other", label: "其他", icon: "🧑", color: Colors.primary[500] },
+      { id: "male", label: "男生", icon: "man-outline" as keyof typeof Ionicons.glyphMap, color: Colors.sky[500] },
+      { id: "female", label: "女生", icon: "woman-outline" as keyof typeof Ionicons.glyphMap, color: Colors.rose[500] },
+      { id: "other", label: "其他", icon: "person-outline" as keyof typeof Ionicons.glyphMap, color: Colors.primary[500] },
     ];
 
     return (
@@ -337,9 +311,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
               }
               index={index}
               selected={selectedGender === option.id}
-              onPress={() =>
-                setSelectedGender(option.id as "male" | "female" | "other")
-              }
+              onPress={() => setSelectedGender(option.id as "male" | "female" | "other")}
             />
           ))}
         </View>
@@ -368,10 +340,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
 
     useEffect(() => {
       heightValue.value = withSpring(1, { damping: 15, stiffness: 100 });
-      weightValue.value = withDelay(
-        200,
-        withSpring(1, { damping: 15, stiffness: 100 }),
-      );
+      weightValue.value = withDelay(200, withSpring(1, { damping: 15, stiffness: 100 }));
     }, []);
 
     const heightAnimatedStyle = useAnimatedStyle(() => ({
@@ -446,10 +415,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
     const scale = useSharedValue(0);
 
     useEffect(() => {
-      scale.value = withDelay(
-        index * 80,
-        withSpring(1, { damping: 12, stiffness: 100 }),
-      );
+      scale.value = withDelay(index * 80, withSpring(1, { damping: 12, stiffness: 100 }));
     }, [index, scale]);
 
     useEffect(() => {
@@ -482,13 +448,11 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
             }
             style={styles.styleOptionGradient}
           >
-            <Text style={styles.styleIcon}>{option.icon}</Text>
+            <Ionicons name={option.icon as keyof typeof Ionicons.glyphMap} size={24} color={selected ? option.color : Colors.neutral[400]} />
             <Text style={styles.styleName}>{option.name}</Text>
             {selected && (
-              <View
-                style={[styles.styleCheck, { backgroundColor: option.color }]}
-              >
-                <Text style={styles.styleCheckIcon}>{"\u2713"}</Text>
+              <View style={[styles.styleCheck, { backgroundColor: option.color }]}>
+                <Ionicons name="checkmark" size={12} color={Colors.white} />
               </View>
             )}
           </LinearGradient>
@@ -500,9 +464,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
   const StyleStep: React.FC = () => {
     const toggleStyle = (styleId: string) => {
       setSelectedStyles((prev) =>
-        prev.includes(styleId)
-          ? prev.filter((id) => id !== styleId)
-          : [...prev, styleId],
+        prev.includes(styleId) ? prev.filter((id) => id !== styleId) : [...prev, styleId]
       );
     };
 
@@ -513,75 +475,6 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
 
         <View style={styles.styleOptions}>
           {STYLE_OPTIONS.map((style, index) => {
-            const StyleItem: React.FC = () => {
-              const scale = useSharedValue(0);
-              const isSelected = selectedStyles.includes(style.id);
-
-              useEffect(() => {
-                scale.value = withDelay(
-                  index * 80,
-                  withSpring(1, { damping: 12, stiffness: 100 }),
-                );
-              }, []);
-
-              useEffect(() => {
-                if (isSelected) {
-                  scale.value = withSpring(1.05, {
-                    damping: 12,
-                    stiffness: 200,
-                  });
-                } else {
-                  scale.value = withSpring(1, { damping: 12, stiffness: 200 });
-                }
-              }, [isSelected]);
-
-              const animatedStyle = useAnimatedStyle(() => ({
-                transform: [{ scale: scale.value }],
-              }));
-
-              return (
-                <Pressable
-                  key={style.id}
-                  onPress={() => toggleStyle(style.id)}
-                  style={styles.styleOptionPressable}
-                >
-                  <AnimatedView
-                    style={[
-                      styles.styleOption,
-                      {
-                        borderColor: isSelected
-                          ? style.color
-                          : "rgba(255, 255, 255, 0.1)",
-                      },
-                      animatedStyle,
-                    ]}
-                  >
-                    <LinearGradient
-                      colors={
-                        isSelected
-                          ? [`${style.color}30`, `${style.color}10`]
-                          : ["rgba(255,255,255,0.03)", "rgba(255,255,255,0.01)"]
-                      }
-                      style={styles.styleOptionGradient}
-                    >
-                      <Text style={styles.styleIcon}>{style.icon}</Text>
-                      <Text style={styles.styleName}>{style.name}</Text>
-                      {isSelected && (
-                        <View
-                          style={[
-                            styles.styleCheck,
-                            { backgroundColor: style.color },
-                          ]}
-                        >
-                          <Text style={styles.styleCheckIcon}>✓</Text>
-                        </View>
-                      )}
-                    </LinearGradient>
-                  </AnimatedView>
-                </Pressable>
-              );
-            };
-
             return (
               <StyleOptionCard
                 key={style.id}
@@ -637,10 +530,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
         <ParticleEffect count={50} color="rgba(168, 85, 247, 0.4)" size={4} />
 
         <AnimatedView style={[styles.completeContainer, animatedStyle]}>
-          <LinearGradient
-            colors={["#a855f7", "#ec4899"]}
-            style={styles.completeIconGradient}
-          >
+          <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.completeIconGradient}>
             <Text style={styles.completeIcon}>🎉</Text>
           </LinearGradient>
 
@@ -688,10 +578,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      <LinearGradient
-        colors={["#0f0a1a", "#1e1b4b", "#312e81"]}
-        style={styles.gradient}
-      >
+      <LinearGradient colors={["#0f0a1a", "#1e1b4b", "#312e81"]} style={styles.gradient}>
         {currentStep > 0 && currentStep < 5 && (
           <View style={styles.header}>
             <Pressable onPress={goToPrev} style={styles.backButton}>
@@ -699,9 +586,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({
             </Pressable>
             <View style={styles.progressContainer}>
               <View style={styles.progressBackground}>
-                <AnimatedView
-                  style={[styles.progressFill, progressAnimatedStyle]}
-                />
+                <AnimatedView style={[styles.progressFill, progressAnimatedStyle]} />
               </View>
             </View>
             <Text style={styles.stepIndicator}>
@@ -738,8 +623,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: Spacing[5],
-    paddingTop:
-      Platform.OS === "ios" ? 60 : (StatusBar.currentHeight || 24) + 20,
+    paddingTop: Platform.OS === "ios" ? 60 : (StatusBar.currentHeight || 24) + 20,
     paddingBottom: Spacing[4],
   },
   backButton: {

@@ -3,6 +3,7 @@ import {
   ArgumentMetadata,
   Injectable,
 } from "@nestjs/common";
+
 import { SanitizableValue } from "../types/common.types";
 
 @Injectable()
@@ -23,7 +24,7 @@ export class XssSanitizationPipe implements PipeTransform {
     if (typeof value === "object") {
       const result: Record<string, SanitizableValue> = {};
       for (const [key, val] of Object.entries(value)) {
-        result[key] = this.transform(val as SanitizableValue, metadata);
+        result[key] = this.transform(val, metadata);
       }
       return result;
     }

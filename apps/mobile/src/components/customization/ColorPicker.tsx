@@ -1,18 +1,28 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
-import { theme, Spacing, BorderRadius } from "../../theme";
+﻿import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { theme, Spacing } from '../design-system/theme';
 
 const PRESET_COLORS = [
-  "#000000", "#FFFFFF", "#FF0000", "#FF6B00", "#FFD700",
-  "#00C853", "#2196F3", "#7B1FA2", "#E91E63", "#795548",
-  "#F5F5DC", "#FFC0CB", "#87CEEB", "#98FB98", "#DDA0DD",
-  "#C0C0C0", "#808080", "#4A4A4A", "#C6775C", "#2D5016",
+  "#000000",
+  "#FFFFFF",
+  "#FF0000",
+  "#FF6B00",
+  "#FFD700",
+  "#00C853",
+  "#2196F3",
+  "#7B1FA2",
+  "#E91E63",
+  "#795548",
+  "#F5F5DC",
+  "#FFC0CB",
+  "#87CEEB",
+  "#98FB98",
+  "#DDA0DD",
+  "#C0C0C0",
+  "#808080",
+  "#4A4A4A",
+  "#C6775C",
+  "#2D5016",
 ];
 
 interface ColorPickerProps {
@@ -26,7 +36,9 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   onColorChange,
   visible = true,
 }) => {
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>

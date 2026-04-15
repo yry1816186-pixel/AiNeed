@@ -51,8 +51,7 @@ export const useAppStore = create<AppState>()(
 
       markFirstLaunchComplete: () => set({ isFirstLaunch: false }),
 
-      setOnboardingCompleted: (hasCompletedOnboarding) =>
-        set({ hasCompletedOnboarding }),
+      setOnboardingCompleted: (hasCompletedOnboarding) => set({ hasCompletedOnboarding }),
 
       setPushPermission: (pushPermissionGranted) =>
         set({ pushPermissionGranted, hasRequestedPushPermission: true }),
@@ -84,14 +83,16 @@ export const useAppStore = create<AppState>()(
         hasRequestedPushPermission: state.hasRequestedPushPermission,
         appVersion: state.appVersion,
       }),
-    },
-  ),
+    }
+  )
 );
 
 let unsubscribeNetInfo: (() => void) | null = null;
 
 export function initNetworkListener(): void {
-  if (unsubscribeNetInfo) return;
+  if (unsubscribeNetInfo) {
+    return;
+  }
 
   unsubscribeNetInfo = NetInfo.addEventListener((state: NetInfoState) => {
     const isOnline = state.isConnected === true && state.isInternetReachable !== false;
@@ -102,11 +103,7 @@ export function initNetworkListener(): void {
       networkType = "wifi";
     } else if (state.type === "cellular") {
       networkType = "cellular";
-    } else if (
-      state.type === "unknown" ||
-      state.type === "none" ||
-      state.type === "other"
-    ) {
+    } else if (state.type === "unknown" || state.type === "none" || state.type === "other") {
       networkType = state.type as NetworkType;
     }
 

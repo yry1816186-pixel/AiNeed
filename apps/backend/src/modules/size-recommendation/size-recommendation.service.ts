@@ -3,6 +3,7 @@ import {
   Logger,
   NotFoundException,
 } from "@nestjs/common";
+
 import { PrismaService } from "../../common/prisma/prisma.service";
 
 interface BodyProfile {
@@ -332,7 +333,7 @@ export class SizeRecommendationService {
     userId: string,
     brandId: string | null,
   ): Promise<{ size: string | null }> {
-    if (!brandId) return { size: null };
+    if (!brandId) {return { size: null };}
 
     const orderItems = await this.prisma.orderItem.findMany({
       where: {
@@ -347,7 +348,7 @@ export class SizeRecommendationService {
       orderBy: { createdAt: "desc" },
     });
 
-    if (orderItems.length === 0) return { size: null };
+    if (orderItems.length === 0) {return { size: null };}
 
     const sizeCounts: Record<string, number> = {};
     for (const oi of orderItems) {
@@ -362,7 +363,7 @@ export class SizeRecommendationService {
     userId: string,
     brandId: string | null,
   ): Promise<{ size: string | null }> {
-    if (!brandId) return { size: null };
+    if (!brandId) {return { size: null };}
 
     const refundRequests = await this.prisma.refundRequest.findMany({
       where: {
@@ -389,10 +390,10 @@ export class SizeRecommendationService {
       orderBy: { createdAt: "desc" },
     });
 
-    if (refundRequests.length === 0) return { size: null };
+    if (refundRequests.length === 0) {return { size: null };}
 
     const sizes = refundRequests.flatMap((r) => r.order.items.map((i) => i.size));
-    if (sizes.length === 0) return { size: null };
+    if (sizes.length === 0) {return { size: null };}
 
     return { size: sizes[0] ?? null };
   }
@@ -421,16 +422,16 @@ export class SizeRecommendationService {
   private boostConfidence(
     confidence: "high" | "medium" | "low",
   ): "high" | "medium" | "low" {
-    if (confidence === "low") return "medium";
-    if (confidence === "medium") return "high";
+    if (confidence === "low") {return "medium";}
+    if (confidence === "medium") {return "high";}
     return "high";
   }
 
   private lowerConfidence(
     confidence: "high" | "medium" | "low",
   ): "high" | "medium" | "low" {
-    if (confidence === "high") return "medium";
-    if (confidence === "medium") return "low";
+    if (confidence === "high") {return "medium";}
+    if (confidence === "medium") {return "low";}
     return "low";
   }
 }

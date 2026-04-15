@@ -6,9 +6,7 @@ interface EmptyCartViewProps {
   onGoShopping: () => void;
 }
 
-export const EmptyCartView: React.FC<EmptyCartViewProps> = ({
-  onGoShopping,
-}) => {
+export const EmptyCartView: React.FC<EmptyCartViewProps> = ({ onGoShopping }) => {
   return (
     <View style={styles.container}>
       <Ionicons name="cart-off" size={64} color="#CCCCCC" />

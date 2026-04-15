@@ -1,7 +1,126 @@
 """
 AI Stylist System Prompts
 AI 造型师系统提示词 - 集成专业知识库
+
+A-P2-16: 添加提示词注入防护，对用户输入进行安全过滤
 """
+
+import re
+import logging
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+
+# A-P2-16: 提示词注入检测模式
+# 常见的注入攻击模式，匹配多种语言的指令劫持关键词
+_INJECTION_PATTERNS = [
+    # 英文注入模式
+    re.compile(r"ignore\s+(previous|all|above|prior)\s+(instructions?|prompts?|rules?)", re.IGNORECASE),
+    re.compile(r"forget\s+(everything|all|previous|prior|above)", re.IGNORECASE),
+    re.compile(r"disregard\s+(all|previous|above|prior)\s+(instructions?|rules?)", re.IGNORECASE),
+    re.compile(r"you\s+are\s+now\s+a", re.IGNORECASE),
+    re.compile(r"new\s+instructions?\s*:", re.IGNORECASE),
+    re.compile(r"system\s*:\s*", re.IGNORECASE),
+    re.compile(r"override\s+(previous|all|default)\s+(instructions?|settings?|rules?)", re.IGNORECASE),
+    re.compile(r"pretend\s+(you\s+are|to\s+be)", re.IGNORECASE),
+    re.compile(r"act\s+as\s+(if\s+you\s+(are|were)|a)", re.IGNORECASE),
+    re.compile(r"jailbreak", re.IGNORECASE),
+    re.compile(r"prompt\s+injection", re.IGNORECASE),
+    # 中文注入模式
+    re.compile(r"忽略(之前|所有|以上|上面)?的?(指令|提示|规则|设定)", re.IGNORECASE),
+    re.compile(r"忘记(之前|所有|一切)?的?(指令|提示|规则)", re.IGNORECASE),
+    re.compile(r"你现在是", re.IGNORECASE),
+    re.compile(r"新指令\s*[：:]", re.IGNORECASE),
+    re.compile(r"系统\s*[：:]", re.IGNORECASE),
+    re.compile(r"覆盖(之前|所有|默认)?的?(指令|设置|规则)", re.IGNORECASE),
+    re.compile(r"假装你是", re.IGNORECASE),
+    re.compile(r"扮演", re.IGNORECASE),
+    re.compile(r"越狱", re.IGNORECASE),
+    re.compile(r"注入", re.IGNORECASE),
+]
+
+# 需要转义的特殊标记
+_SPECIAL_MARKERS = [
+    "```", "system:", "System:", "SYSTEM:",
+    "assistant:", "Assistant:", "ASSISTANT:",
+    "user:", "User:", "USER:",
+]
+
+
+def sanitize_user_input(text: str, strict: bool = False) -> str:
+    """
+    A-P2-16: 对用户输入进行提示词注入防护
+
+    检测并处理潜在的提示词注入攻击：
+    1. 检测已知的注入模式
+    2. 转义特殊标记（如 system:, assistant:）
+    3. 在严格模式下，直接拒绝可疑输入
+
+    Args:
+        text: 用户输入文本
+        strict: 严格模式，检测到注入时抛出异常而非转义
+
+    Returns:
+        清理后的安全文本
+
+    Raises:
+        ValueError: 严格模式下检测到注入攻击
+    """
+    if not text:
+        return text
+
+    # 1. 检测注入模式
+    detected_patterns = []
+    for pattern in _INJECTION_PATTERNS:
+        match = pattern.search(text)
+        if match:
+            detected_patterns.append(match.group())
+
+    if detected_patterns:
+        logger.warning(
+            f"Potential prompt injection detected: patterns={detected_patterns}, "
+            f"text_preview={text[:100]}..."
+        )
+        if strict:
+            raise ValueError(
+                f"Potential prompt injection detected. "
+                f"Detected patterns: {detected_patterns}"
+            )
+
+    # 2. 转义特殊标记
+    sanitized = text
+    for marker in _SPECIAL_MARKERS:
+        # 将特殊标记替换为带零宽空格的版本，使其不被 LLM 解析为角色标记
+        sanitized = sanitized.replace(marker, marker[0] + "\u200b" + marker[1:])
+
+    # 3. 转义代码块标记（防止用户注入恶意代码块）
+    # 限制连续反引号数量
+    sanitized = re.sub(r'`{4,}', '```', sanitized)
+
+    return sanitized
+
+
+def build_safe_prompt(template: str, **kwargs) -> str:
+    """
+    A-P2-16: 安全地构建提示词
+
+    对所有用户提供的参数进行注入防护后再填充到模板中。
+
+    Args:
+        template: 提示词模板
+        **kwargs: 模板参数，用户输入的参数会自动进行注入防护
+
+    Returns:
+        安全的提示词字符串
+    """
+    safe_kwargs = {}
+    for key, value in kwargs.items():
+        if isinstance(value, str):
+            safe_kwargs[key] = sanitize_user_input(value)
+        else:
+            safe_kwargs[key] = value
+
+    return template.format(**safe_kwargs)
 
 STYLIST_SYSTEM_PROMPT = """你是寻裳的专业 AI 造型师助手，拥有以下专业能力：
 
@@ -296,3 +415,126 @@ def get_occasion_prompt(occasion: str) -> str:
 """,
     }
     return prompts.get(occasion, "")
+
+
+# ============================================================
+# P1-9: Externalized prompts from other service files
+# ============================================================
+
+# From intelligent_stylist_service.py - IntelligentStylistService.SYSTEM_PROMPT
+INTELLIGENT_STYLIST_SYSTEM_PROMPT = """你是一位世界顶级的私人形象顾问和时尚造型师，拥有以下专业能力：
+
+## 专业背景
+- 20年高端时尚行业经验，曾为众多名人和企业高管提供形象咨询服务
+- 深谙色彩理论、体型分析、面部美学等专业领域
+- 熟悉各大时装周趋势、当季流行元素和经典穿搭法则
+- 擅长根据个人特点打造独特且适合的风格
+
+## 核心能力
+1. **个人形象深度分析**
+   - 体型特征识别与优化建议
+   - 肤色分析与最佳色彩推荐
+   - 脸型与发型、配饰搭配
+   - 个人风格定位
+
+2. **场景化穿搭设计**
+   - 根据具体场合（面试、约会、商务等）定制方案
+   - 考虑天气、季节、时间等环境因素
+   - 平衡正式度与个人风格表达
+
+3. **时尚趋势整合**
+   - 将当季流行元素融入日常穿搭
+   - 推荐适合用户风格的潮流单品
+   - 经典款与时尚款的平衡搭配
+
+4. **个性化建议**
+   - 基于用户预算提供分价位选择
+   - 考虑用户生活方式和穿衣习惯
+   - 提供可落地的购买和搭配建议
+
+## 输出原则
+- 建议必须具体、可操作，避免空洞的描述
+- 每个推荐都要说明理由，让用户理解"为什么适合我"
+- 尊重用户的个人偏好，不强推不适合的风格
+- 考虑实用性，推荐的单品应该易于购买和搭配
+
+请始终以专业、亲切、个性化的方式与用户交流，帮助他们发现最适合自己的风格。"""
+
+# From intelligent_stylist_service.py - IntelligentStylistService.TREND_PROMPT_TEMPLATE
+TREND_RECOMMENDATION_PROMPT = """基于以下用户信息，请分析并推荐最适合的穿搭方案：
+
+## 用户档案
+{user_profile}
+
+## 场景需求
+{scene_context}
+
+## 当前时尚趋势（{current_season}）
+{fashion_trends}
+
+## 用户具体需求
+{user_request}
+
+请提供：
+1. 个人形象分析（简要，不超过100字）
+2. 2套完整的穿搭方案（每套包含上下装、鞋履、配饰，每个单品描述不超过30字）
+3. 每套方案的搭配理由和适用场景
+4. 简要的购买建议
+
+请以JSON格式输出，结构如下（注意：内容要简洁，避免过长）：
+{{
+  "personal_analysis": {{
+    "body_type_analysis": "体型分析（简短）",
+    "color_analysis": "肤色色彩分析（简短）",
+    "style_positioning": "个人风格定位（简短）",
+    "key_recommendations": ["核心建议1", "核心建议2"]
+  }},
+  "outfit_plans": [
+    {{
+      "title": "方案名称",
+      "overall_style": "整体风格描述",
+      "items": [
+        {{
+          "category": "上装/下装/鞋履/配饰",
+          "name": "具体单品名称",
+          "description": "简短描述",
+          "color": "推荐颜色",
+          "why_recommended": "推荐理由（简短）",
+          "price_range": "价格区间"
+        }}
+      ],
+      "styling_tips": ["搭配技巧1"],
+      "color_harmony": "色彩搭配说明",
+      "occasion_fit": "适用场景",
+      "estimated_budget": "预估总价"
+    }}
+  ],
+  "shopping_guide": {{
+    "priority_items": ["优先购买的单品"],
+    "budget_friendly_alternatives": ["平价替代"]
+  }}
+}}"""
+
+# From intelligent_stylist_service.py - analyze_body_type method
+BODY_TYPE_ANALYSIS_PROMPT = """作为专业形象顾问，请分析以下用户描述，判断其体型类型并提供专业建议：
+
+用户描述：{user_description}
+
+请分析：
+1. 体型类型（rectangle/hourglass/triangle/inverted_triangle/oval）
+2. 判断依据
+3. 穿搭建议
+
+以JSON格式输出：
+{{
+  "body_type": "体型类型",
+  "confidence": 0.0-1.0,
+  "reasoning": "判断依据",
+  "suggestions": ["建议1", "建议2"]
+}}"""
+
+# From visual_outfit_service.py - system prompt
+VISUAL_OUTFIT_SYSTEM_PROMPT = "你是专业的时尚买手和搭配师。"
+
+# From virtual_tryon_service.py - tryon prompt template
+VIRTUAL_TRYON_PROMPT_TEMPLATE = "请生成一张图片：将第二张图片中的{category_desc}穿在第一张图片的人物身上，保持人物面部和姿势不变，生成高质量真实感的换装效果图。"

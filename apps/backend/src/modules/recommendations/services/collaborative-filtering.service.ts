@@ -62,7 +62,7 @@ export class CollaborativeFilteringService {
     topK: number = 10,
   ): Promise<Array<{ itemId: string; score: number }>> {
     const similarUsers = await this.getSimilarUsers(userId, 50);
-    if (similarUsers.length === 0) return [];
+    if (similarUsers.length === 0) {return [];}
 
     const userItems = await this.prisma.$queryRaw<
       Array<{ itemId: string }>

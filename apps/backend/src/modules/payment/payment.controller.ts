@@ -23,6 +23,7 @@ import { Request } from "express";
 
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { Public } from "../auth/decorators/public.decorator";
 
 import {
   CreatePaymentDto,
@@ -116,12 +117,13 @@ export class PaymentController {
    * 支付宝回调
    */
   @Post("callback/alipay")
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "支付宝支付回调" })
   @ApiResponse({ status: 200, description: "回调处理成功" })
   async alipayCallback(
     @Body() body: PaymentRawCallbackData,
-    @Req() req: Request,
+    @Req() _req: Request,
   ): Promise<string> {
     this.logger.log("Received Alipay callback");
 
@@ -145,6 +147,7 @@ export class PaymentController {
    * 微信支付回调
    */
   @Post("callback/wechat")
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "微信支付回调" })
   @ApiResponse({ status: 200, description: "回调处理成功" })

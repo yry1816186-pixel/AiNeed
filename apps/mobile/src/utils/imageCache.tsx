@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useMemo,
-} from "react";
+﻿import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   Image,
   ImageProps,
@@ -20,12 +14,12 @@ import {
   ImageErrorEventData,
   ImageLoadEventData,
 } from "react-native";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import * as FileSystem from '@/src/polyfills/expo-file-system';
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import * as FileSystem from "@/src/polyfills/expo-file-system";
 import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { ImageLoadEvent, ImageErrorEvent } from "../types/events";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
+const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
 interface CacheEntry {
   uri: string;
@@ -43,7 +37,7 @@ class ImageCacheManager {
   private readonly CACHE_EXPIRY = 7 * 24 * 60 * 60 * 1000; // 7 days
 
   private constructor() {
-    this.initCache();
+    void this.initCache();
   }
 
   static getInstance(): ImageCacheManager {
@@ -102,7 +96,7 @@ class ImageCacheManager {
   }
 
   private async cleanOldCache() {
-    const now = Date.now();
+    const _now = Date.now();
     const entries = Array.from(this.cache.entries());
     let totalSize = 0;
 
@@ -111,12 +105,12 @@ class ImageCacheManager {
     });
 
     if (totalSize > this.MAX_CACHE_SIZE) {
-      const sortedEntries = entries.sort(
-        (a, b) => a[1].timestamp - b[1].timestamp,
-      );
+      const sortedEntries = entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
 
       for (const [key, entry] of sortedEntries) {
-        if (totalSize <= this.MAX_CACHE_SIZE * 0.8) break;
+        if (totalSize <= this.MAX_CACHE_SIZE * 0.8) {
+          break;
+        }
 
         try {
           await FileSystem.deleteAsync(entry.localPath, { idempotent: true });
@@ -169,13 +163,15 @@ class ImageCacheManager {
     const downloadPromise = (async () => {
       try {
         const cached = await this.getCachedImage(uri);
-        if (cached) return cached;
+        if (cached) {
+          return cached;
+        }
 
         const localPath = `${this.CACHE_DIR}${key}.jpg`;
 
-        const downloadResult = await FileSystem.downloadAsync(uri, localPath);
+        const _downloadResult = await FileSystem.downloadAsync(uri, localPath);
 
-        const info = (await FileSystem.getInfoAsync(localPath) as unknown) as {
+        const info = (await FileSystem.getInfoAsync(localPath)) as unknown as {
           size: number;
         };
 
@@ -253,7 +249,7 @@ export const CachedImage = ({
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [_progress, setProgress] = useState(0);
   const [opacity, setOpacity] = useState(0);
   const isMounted = useRef(true);
 
@@ -311,18 +307,22 @@ export const CachedImage = ({
         if (isMounted.current) {
           setHasError(true);
           if (onError) {
-            onError({ nativeEvent: { error: String(error) } } as NativeSyntheticEvent<ImageErrorEventData>);
+            onError({
+              nativeEvent: { error: String(error) },
+            } as NativeSyntheticEvent<ImageErrorEventData>);
           }
         }
       }
     };
 
-    loadImage();
+    void loadImage();
   }, [source?.uri, cachePolicy]);
 
   const handleLoad = useCallback(
     (event: NativeSyntheticEvent<ImageLoadEventData>) => {
-      if (!isMounted.current) return;
+      if (!isMounted.current) {
+        return;
+      }
 
       setIsLoading(false);
       setOpacity(1);
@@ -331,12 +331,14 @@ export const CachedImage = ({
         onLoad(event);
       }
     },
-    [onLoad],
+    [onLoad]
   );
 
   const handleError = useCallback(
     (event: NativeSyntheticEvent<ImageErrorEventData>) => {
-      if (!isMounted.current) return;
+      if (!isMounted.current) {
+        return;
+      }
 
       setHasError(true);
       setIsLoading(false);
@@ -345,24 +347,18 @@ export const CachedImage = ({
         onError(event);
       }
     },
-    [onError],
+    [onError]
   );
 
   const defaultPlaceholder = (
     <View style={[styles.placeholder, viewStyle]}>
       <LinearGradient
-        colors={[
-          DesignTokens.colors.neutral[200],
-          DesignTokens.colors.neutral[100],
-        ]}
+        colors={[DesignTokens.colors.neutral[200], DesignTokens.colors.neutral[100]]}
         style={styles.placeholderGradient}
       />
       {showProgress && isLoading && (
         <View style={styles.progressContainer}>
-          <ActivityIndicator
-            size="small"
-            color={DesignTokens.colors.brand.terracotta}
-          />
+          <ActivityIndicator size="small" color={DesignTokens.colors.brand.terracotta} />
         </View>
       )}
     </View>
@@ -371,10 +367,7 @@ export const CachedImage = ({
   const defaultErrorComponent = (
     <View style={[styles.errorContainer, viewStyle]}>
       <LinearGradient
-        colors={[
-          DesignTokens.colors.neutral[300],
-          DesignTokens.colors.neutral[200],
-        ]}
+        colors={[DesignTokens.colors.neutral[300], DesignTokens.colors.neutral[200]]}
         style={styles.placeholderGradient}
       />
     </View>
@@ -411,8 +404,8 @@ export interface LazyImageListProps<T = { id: string; uri: string }> {
 
 export function useLazyLoading<T>(
   items: T[],
-  threshold = 5,
-  batchSize = 10,
+  _threshold = 5,
+  batchSize = 10
 ): {
   visibleItems: T[];
   loadMore: () => void;
@@ -424,10 +417,7 @@ export function useLazyLoading<T>(
     setVisibleCount((prev) => Math.min(prev + batchSize, items.length));
   }, [items.length, batchSize]);
 
-  const visibleItems = useMemo(
-    () => items.slice(0, visibleCount),
-    [items, visibleCount],
-  );
+  const visibleItems = useMemo(() => items.slice(0, visibleCount), [items, visibleCount]);
   const hasMore = visibleCount < items.length;
 
   return { visibleItems, loadMore, hasMore };

@@ -43,12 +43,12 @@ echo       基础服务启动完成
 
 echo.
 echo [4/4] 启动后端服务...
-start "xuno Backend" cmd /k "cd /d c:\xuno\apps\backend && pnpm dev"
+start "xuno Backend" cmd /k "cd /d %~dp0..\apps\backend && pnpm dev"
 echo       后端服务启动中... (http://localhost:3001)
 
 echo.
 echo [5/5] 启动 AI 服务...
-start "xuno AI" cmd /k "cd /d c:\xuno\ml && python start_all_services.py"
+start "xuno AI" cmd /k "cd /d %~dp0..\ml && python start_all_services.py"
 echo       AI 服务启动中... (http://localhost:8001-8003)
 
 echo.

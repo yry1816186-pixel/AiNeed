@@ -147,19 +147,19 @@ export function FlagFormPage() {
 
   const handleTypeChange = (newType: FlagType) => {
     setType(newType);
-    const defaults = DEFAULT_VALUES[newType];
+    const defaults = DEFAULT_VALUES[newType] as Record<string, any>;
     switch (newType) {
       case 'boolean':
-        setBoolValue(defaults.enabled);
+        setBoolValue(defaults.enabled as boolean);
         break;
       case 'percentage':
-        setPercentageValue(defaults.percentage);
+        setPercentageValue(defaults.percentage as number);
         break;
       case 'variant':
-        setVariants(defaults.variants);
+        setVariants(defaults.variants as VariantItem[]);
         break;
       case 'segment':
-        setSelectedSegments(defaults.segments);
+        setSelectedSegments(defaults.segments as string[]);
         break;
     }
   };

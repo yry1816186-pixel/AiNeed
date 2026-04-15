@@ -2,7 +2,7 @@
  * 动画相关类型定义
  */
 
-import { EasingFunction } from 'react-native';
+import { EasingFunction } from "react-native";
 
 // 动画配置
 export interface AnimationConfig {
@@ -32,14 +32,14 @@ export interface InterpolationConfigType {
   inputRange: number[];
   outputRange: number[] | string[];
   easing?: EasingFunction;
-  extrapolate?: 'extend' | 'clamp' | 'identity';
-  extrapolateLeft?: 'extend' | 'clamp' | 'identity';
-  extrapolateRight?: 'extend' | 'clamp' | 'identity';
+  extrapolate?: "extend" | "clamp" | "identity";
+  extrapolateLeft?: "extend" | "clamp" | "identity";
+  extrapolateRight?: "extend" | "clamp" | "identity";
 }
 
 // 动画样式
 export interface AnimatedStyle {
-  transform?: Array<{
+  transform?: {
     translateX?: AnimatedValue | number;
     translateY?: AnimatedValue | number;
     scale?: AnimatedValue | number;
@@ -50,7 +50,7 @@ export interface AnimatedStyle {
     rotateY?: AnimatedValue | string;
     rotateZ?: AnimatedValue | string;
     perspective?: AnimatedValue | number;
-  }>;
+  }[];
   opacity?: AnimatedValue | number;
   backgroundColor?: string;
 }
@@ -64,21 +64,21 @@ export interface CompositeAnimation {
 
 // 动画类型
 export type AnimationType =
-  | 'spring'
-  | 'timing'
-  | 'decay'
-  | 'add'
-  | 'subtract'
-  | 'multiply'
-  | 'divide'
-  | 'modulo'
-  | 'diffClamp'
-  | 'delay'
-  | 'sequence'
-  | 'parallel'
-  | 'stagger'
-  | 'loop'
-  | 'event';
+  | "spring"
+  | "timing"
+  | "decay"
+  | "add"
+  | "subtract"
+  | "multiply"
+  | "divide"
+  | "modulo"
+  | "diffClamp"
+  | "delay"
+  | "sequence"
+  | "parallel"
+  | "stagger"
+  | "loop"
+  | "event";
 
 // Spring 动画配置
 export interface SpringConfig extends AnimationConfig {
@@ -111,7 +111,7 @@ export interface DecayConfig extends AnimationConfig {
 export interface ScrollAnimationConfig {
   inputRange: number[];
   outputRange: number[] | string[];
-  extrapolate?: 'clamp' | 'extend' | 'identity';
+  extrapolate?: "clamp" | "extend" | "identity";
 }
 
 // 进度条动画

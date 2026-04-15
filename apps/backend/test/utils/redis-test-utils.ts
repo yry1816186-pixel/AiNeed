@@ -680,16 +680,16 @@ export function createMockRedisClient(
       return Promise.resolve(stringStore.getKeysByPattern(pattern));
     }),
 
-    scan: jest.fn((cursor: number, ..._args: unknown[]) => {
+    scan: jest.fn((_cursor: number, ..._args: unknown[]) => {
       return Promise.resolve(["0", stringStore.getAllKeys()]);
     }),
 
     type: jest.fn((key: string) => {
-      if (hashStore.has(key)) return Promise.resolve("hash");
-      if (setStore.has(key)) return Promise.resolve("set");
-      if (sortedSetStore.has(key)) return Promise.resolve("zset");
-      if (listStore.has(key)) return Promise.resolve("list");
-      if (stringStore.hasKey(key)) return Promise.resolve("string");
+      if (hashStore.has(key)) {return Promise.resolve("hash");}
+      if (setStore.has(key)) {return Promise.resolve("set");}
+      if (sortedSetStore.has(key)) {return Promise.resolve("zset");}
+      if (listStore.has(key)) {return Promise.resolve("list");}
+      if (stringStore.hasKey(key)) {return Promise.resolve("string");}
       return Promise.resolve("none");
     }),
 

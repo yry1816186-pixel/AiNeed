@@ -16,7 +16,7 @@ export class FeatureFlagGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (!flagKey) return true;
+    if (!flagKey) {return true;}
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;

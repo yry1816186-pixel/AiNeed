@@ -1,8 +1,8 @@
-import React from 'react';
-import { FlatList, FlatListProps } from 'react-native';
-import { FlashList as ShopifyFlashList } from '@shopify/flash-list';
+import React from "react";
+import { FlatListProps } from "react-native";
+import { FlashList as ShopifyFlashList } from "@shopify/flash-list";
 
-export interface FlashListProps<T> extends Omit<FlatListProps<T>, 'renderItem'> {
+export interface FlashListProps<T> extends Omit<FlatListProps<T>, "renderItem"> {
   data: T[];
   renderItem: (info: { item: T; index: number }) => React.ReactElement | null;
   estimatedItemSize?: number;
@@ -30,7 +30,7 @@ export function FlashList<T>({
       ListHeaderComponent={ListHeaderComponent}
       ListFooterComponent={ListFooterComponent}
       ListEmptyComponent={ListEmptyComponent}
-      {...(masonry ? { masonry: true } as Record<string, unknown> : {})}
+      {...(masonry ? ({ masonry: true } as Record<string, unknown>) : {})}
       {...props}
     />
   );

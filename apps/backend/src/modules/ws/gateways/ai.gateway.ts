@@ -22,8 +22,8 @@ import Redis from 'ioredis';
 import { Server, Socket } from 'socket.io';
 
 import { REDIS_CLIENT } from '../../../common/redis/redis.service';
-import { EventBusService } from '../services/event-bus.service';
 import { AI_EVENTS } from '../events';
+import { EventBusService } from '../services/event-bus.service';
 
 interface UserConnection {
   socketId: string;
@@ -289,7 +289,7 @@ export class AIGateway
   private async getTaskStatus(jobId: string): Promise<Record<string, unknown> | null> {
     const key = `job:${jobId}`;
     const data = await this.redis.get(key);
-    if (!data) return null;
+    if (!data) {return null;}
     try {
       return JSON.parse(data) as Record<string, unknown>;
     } catch {

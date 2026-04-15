@@ -22,7 +22,9 @@ export function useRefresh(options: UseRefreshOptions): UseRefreshReturn {
   const refreshingRef = useRef(false);
 
   const doRefresh = useCallback(async () => {
-    if (refreshingRef.current) return;
+    if (refreshingRef.current) {
+      return;
+    }
     refreshingRef.current = true;
     setRefreshing(true);
     setError(null);
@@ -53,7 +55,7 @@ export function useRefresh(options: UseRefreshOptions): UseRefreshReturn {
 
   const retry = useCallback(() => {
     setError(null);
-    doRefresh();
+    void doRefresh();
   }, [doRefresh]);
 
   return { refreshing, onRefresh: doRefresh, lastRefreshed, error, retry };

@@ -1,8 +1,10 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { AiStylistSessionService } from "./session.service";
-import { AiStylistContextService } from "./context.service";
 import type { StylistOutfitItem, StylistOutfitPlan } from "../types";
+
+import { AiStylistContextService } from "./context.service";
+import { AiStylistSessionService } from "./session.service";
 
 /**
  * 单品替换服务 — AIS-05
@@ -128,14 +130,14 @@ export class ItemReplacementService {
           const prefs = profile.stylePreferences.map((p) =>
             typeof p === "string" ? p : p.name ?? "",
           );
-          const tags = (candidate.tags as string[]) || [];
+          const tags = (candidate.tags) || [];
           const overlap = tags.filter((t) => prefs.some((p) => t.includes(p) || p.includes(t)));
           matchScore += overlap.length * 10;
         }
 
         // 色彩偏好加分
         if (colorPrefs.length > 0) {
-          const tags = (candidate.tags as string[]) || [];
+          const tags = (candidate.tags) || [];
           const colorMatch = tags.filter((t) =>
             colorPrefs.some((c) => t.includes(c) || c.includes(t)),
           );
@@ -146,10 +148,10 @@ export class ItemReplacementService {
           id: candidate.id,
           name: candidate.name,
           category: candidate.category,
-          imageUrl: (candidate.images as string[])?.[0] ?? null,
+          imageUrl: (candidate.images)?.[0] ?? null,
           price: candidate.price ? Number(candidate.price) : null,
           brand: candidate.brand?.name ?? null,
-          tags: (candidate.tags as string[]) || [],
+          tags: (candidate.tags) || [],
           matchScore: Math.min(matchScore, 100),
         };
       })
@@ -208,7 +210,7 @@ export class ItemReplacementService {
       category: newItem.category,
       name: newItem.name,
       reason: `替换自 ${originalItem.name}，与你的风格更匹配`,
-      imageUrl: (newItem.images as string[])?.[0] ?? undefined,
+      imageUrl: (newItem.images)?.[0] ?? undefined,
       price: newItem.price ? Number(newItem.price) : undefined,
       brand: newItem.brand?.name ?? null,
       score: 80,

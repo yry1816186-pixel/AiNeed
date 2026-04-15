@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
+import { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 
@@ -33,7 +29,9 @@ export const ReasoningCard: React.FC<ReasoningCardProps> = ({
     overflow: "hidden",
   }));
 
-  if (!reasons || reasons.length === 0) return null;
+  if (!reasons || reasons.length === 0) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>

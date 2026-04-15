@@ -8,8 +8,8 @@ import {
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
-import { OnboardingService } from "./onboarding.service";
 import { CompleteBasicInfoDto, SkipStepDto } from "./dto/onboarding.dto";
+import { OnboardingService } from "./onboarding.service";
 
 interface AuthenticatedRequest {
   user: {

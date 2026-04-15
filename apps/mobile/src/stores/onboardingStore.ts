@@ -1,12 +1,12 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export type OnboardingStep = 'basicInfo' | 'photo' | 'styleTest' | 'complete';
+export type OnboardingStep = "basicInfo" | "photo" | "styleTest" | "complete";
 
 export interface OnboardingFormData {
-  gender: 'male' | 'female' | 'other' | null;
-  ageRange: '18-24' | '25-30' | '31-40' | '41-50' | '50+' | null;
+  gender: "male" | "female" | "other" | null;
+  ageRange: "18-24" | "25-30" | "31-40" | "41-50" | "50+" | null;
   height: string;
   weight: string;
   photoUri: string | null;
@@ -26,13 +26,13 @@ interface OnboardingState {
   goToPrevStep: () => void;
 }
 
-const STEP_ORDER: OnboardingStep[] = ['basicInfo', 'photo', 'styleTest', 'complete'];
+const STEP_ORDER: OnboardingStep[] = ["basicInfo", "photo", "styleTest", "complete"];
 
 const DEFAULT_FORM_DATA: OnboardingFormData = {
   gender: null,
   ageRange: null,
-  height: '',
-  weight: '',
+  height: "",
+  weight: "",
   photoUri: null,
 };
 
@@ -45,7 +45,7 @@ interface PersistedOnboardingState {
 export const useOnboardingStore = create<OnboardingState>()(
   persist(
     (set, get) => ({
-      currentStep: 'basicInfo',
+      currentStep: "basicInfo",
       completedSteps: [],
       formData: { ...DEFAULT_FORM_DATA },
       isLoading: false,
@@ -63,7 +63,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       setLoading: (loading) => set({ isLoading: loading }),
       resetOnboarding: () =>
         set({
-          currentStep: 'basicInfo',
+          currentStep: "basicInfo",
           completedSteps: [],
           formData: { ...DEFAULT_FORM_DATA },
           isLoading: false,
@@ -84,13 +84,13 @@ export const useOnboardingStore = create<OnboardingState>()(
       },
     }),
     {
-      name: 'onboarding-storage',
+      name: "onboarding-storage",
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state): PersistedOnboardingState => ({
         currentStep: state.currentStep,
         completedSteps: state.completedSteps,
         formData: state.formData,
       }),
-    },
-  ),
+    }
+  )
 );

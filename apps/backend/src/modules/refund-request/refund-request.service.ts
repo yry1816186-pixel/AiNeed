@@ -5,9 +5,11 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { RefundType, RefundRequestStatus, OrderStatus } from "@prisma/client";
+
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { PaymentService } from "../payment/payment.service";
-import { RefundType, RefundRequestStatus, OrderStatus } from "@prisma/client";
+
 import { CreateRefundRequestDto } from "./dto";
 
 @Injectable()
@@ -56,6 +58,26 @@ export class RefundRequestService {
 
     // Auto-calculate refund amount from order items
     const amount = Number(order.finalAmount);
+
+    // 校验退款金额不超过订单实际支付金额
+    if (amount <= 0) {
+      throw new BadRequestException("订单金额无效，无法申请退款");
+    }
+
+    // 检查该订单已有退款的总金额
+    const existingRefunds = await this.prisma.refundRequest.findMany({
+      where: {
+        orderId: dto.orderId,
+        status: { in: [RefundRequestStatus.PENDING, RefundRequestStatus.APPROVED, RefundRequestStatus.PROCESSING, RefundRequestStatus.COMPLETED] },
+      },
+      select: { amount: true },
+    });
+    const totalRefunded = existingRefunds.reduce((sum, r) => sum + Number(r.amount), 0);
+    if (totalRefunded + amount > Number(order.finalAmount)) {
+      throw new BadRequestException(
+        `退款金额超出订单支付金额，订单金额: ¥${order.finalAmount}，已退款: ¥${totalRefunded.toFixed(2)}，本次申请: ¥${amount.toFixed(2)}`,
+      );
+    }
 
     const refundRequest = await this.prisma.refundRequest.create({
       data: {
@@ -184,6 +206,24 @@ export class RefundRequestService {
       amount: Number(request.amount),
       reason: request.reason,
     });
+
+    // 退款成功后恢复库存
+    const orderWithItems = await this.prisma.order.findUnique({
+      where: { id: request.orderId },
+      include: { items: true },
+    });
+
+    if (orderWithItems && orderWithItems.items.length > 0) {
+      await this.prisma.$transaction(
+        orderWithItems.items.map((item) =>
+          this.prisma.clothingItem.update({
+            where: { id: item.itemId },
+            data: { stock: { increment: item.quantity } },
+          }),
+        ),
+      );
+      this.logger.log(`Stock restored for order ${request.orderId} after refund ${refundRequestId}`);
+    }
 
     const updated = await this.prisma.refundRequest.update({
       where: { id: refundRequestId },

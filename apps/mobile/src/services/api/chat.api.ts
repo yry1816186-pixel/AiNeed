@@ -1,8 +1,7 @@
 import { apiClient } from "./client";
 
 export const chatApi = {
-  createRoom: (consultantId: string) =>
-    apiClient.post("/chat/rooms", { consultantId }),
+  createRoom: (consultantId: string) => apiClient.post("/chat/rooms", { consultantId }),
 
   getRooms: (params?: { page?: number; isActive?: boolean }) =>
     apiClient.get("/chat/rooms", { params }),

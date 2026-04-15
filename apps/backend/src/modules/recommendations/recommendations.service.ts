@@ -367,7 +367,7 @@ export class RecommendationsService {
 
       // 浏览过的商品ID -> 用于协同过滤
       const viewedItemIds = behaviors
-        .filter((b) => b.itemId && b.type === "view")
+        .filter((b) => b.itemId && b.type === "page_view")
         .map((b) => b.itemId!);
 
       // 购物车中的商品ID
@@ -414,7 +414,7 @@ export class RecommendationsService {
   }
 
   private async extractPreferredColors(itemIds: string[]): Promise<string[]> {
-    if (itemIds.length === 0) return [];
+    if (itemIds.length === 0) {return [];}
 
     const items = await this.prisma.clothingItem.findMany({
       where: { id: { in: itemIds.slice(0, 100) } },
@@ -588,8 +588,9 @@ export class RecommendationsService {
 
     // 8. 价格范围匹配 (+10)
     const itemPrice = Number(item.price);
+    // eslint-disable-next-line eqeqeq
     if (profile.priceRangeMin != null && profile.priceRangeMax != null) {
-      if (itemPrice >= profile.priceRangeMin && itemPrice <= profile.priceRangeMax) {
+      if (itemPrice >= profile.priceRangeMin! && itemPrice <= profile.priceRangeMax!) {
         score += WEIGHTS.priceRangeMatch;
         reasons.push("价格在你的预算范围内");
       } else if (profile.stylePreferences?.includes("budget-friendly") && itemPrice < 500) {
@@ -628,7 +629,7 @@ export class RecommendationsService {
     const byCategory = new Map<string, ScoredItem[]>();
     for (const item of scoredItems) {
       const cat = item.item.category;
-      if (!byCategory.has(cat)) byCategory.set(cat, []);
+      if (!byCategory.has(cat)) {byCategory.set(cat, []);}
       byCategory.get(cat)!.push(item);
     }
 
@@ -639,7 +640,7 @@ export class RecommendationsService {
         if (top) {
           result.push(top);
           usedCategories.add(top.item.category);
-          if (top.item.brand) usedBrands.add(top.item.brand.id);
+          if (top.item.brand) {usedBrands.add(top.item.brand.id);}
         }
       }
     }
@@ -650,13 +651,13 @@ export class RecommendationsService {
     );
 
     for (const item of remaining) {
-      if (result.length >= scoredItems.length) break;
+      if (result.length >= scoredItems.length) {break;}
 
       let penalty = 0;
       const last3 = result.slice(-3);
       for (const prev of last3) {
-        if (prev.item.category === item.item.category) penalty += WEIGHTS.diversityPenalty;
-        if (prev.item.brand?.id === item.item.brand?.id) penalty += WEIGHTS.diversityPenalty;
+        if (prev.item.category === item.item.category) {penalty += WEIGHTS.diversityPenalty;}
+        if (prev.item.brand?.id === item.item.brand?.id) {penalty += WEIGHTS.diversityPenalty;}
       }
 
       result.push({ ...item, score: item.score + penalty });
@@ -685,7 +686,7 @@ export class RecommendationsService {
         10,
       );
 
-      if (slotCandidates.length === 0) continue;
+      if (slotCandidates.length === 0) {continue;}
 
       const scored = slotCandidates.map((item) => {
         const { score, reasons } = this.computeRuleBasedScore(
@@ -707,7 +708,7 @@ export class RecommendationsService {
       }
     }
 
-    if (outfitItems.length < 2) return null; // 至少需要2件单品才算有效搭配
+    if (outfitItems.length < 2) {return null;} // 至少需要2件单品才算有效搭配
 
     // 生成搭配理由
     const uniqueReasons = [...new Set(allReasons)];

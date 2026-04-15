@@ -20,8 +20,8 @@ import {
   ApiOperation,
   ApiResponse,
   ApiQuery,
-} from '@nestjs/swagger';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+ ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
 
 import { JwtAuthGuard } from '../../modules/auth/guards/jwt-auth.guard';
 

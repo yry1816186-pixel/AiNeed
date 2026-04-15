@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+﻿import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,21 +9,24 @@ import {
   Image,
   RefreshControl,
   Alert,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import type { RouteProp } from '@react-navigation/native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme } from '../theme';
-import { clothingApi } from '../services/api/clothing.api';
-import type { ClothingItem } from '../types/clothing';
-import { brandQRApi } from '../services/api/brand-qr.api';
-import type { ProfileStackParamList } from '../navigation/types';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import type { RouteProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme } from '../design-system/theme';
+import { clothingApi } from "../services/api/clothing.api";
+import type { ClothingItem } from "../types/clothing";
 
-type BrandRoute = RouteProp<ProfileStackParamList, 'Brand'>;
+import type { ProfileStackParamList } from "../navigation/types";
+import type { RootStackParamList } from "../types/navigation";
+
+type BrandRoute = RouteProp<ProfileStackParamList, "Brand">;
+type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
 export const BrandScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<Navigation>();
   const route = useRoute<BrandRoute>();
   const brandId = route.params?.brandId;
 
@@ -37,7 +40,9 @@ export const BrandScreen: React.FC = () => {
   const fetchItems = useCallback(
     async (pageNum: number = 1, append: boolean = false) => {
       try {
-        if (pageNum === 1) setLoading(true);
+        if (pageNum === 1) {
+          setLoading(true);
+        }
         setError(null);
 
         const response = await clothingApi.getAll({
@@ -52,49 +57,53 @@ export const BrandScreen: React.FC = () => {
           setPage(pageNum);
           setHasMore(response.data.hasMore ?? newItems.length >= 20);
         } else {
-          setError('Failed to load brand products');
+          setError("Failed to load brand products");
         }
       } catch {
-        setError('Network error, please retry');
+        setError("Network error, please retry");
       } finally {
         setLoading(false);
         setRefreshing(false);
       }
     },
-    [brandId],
+    [brandId]
   );
 
   useEffect(() => {
     if (brandId) {
-      fetchItems(1, false);
+      void fetchItems(1, false);
     }
   }, [brandId, fetchItems]);
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchItems(1, false);
+    void fetchItems(1, false);
   }, [fetchItems]);
 
   const handleLoadMore = useCallback(() => {
     if (hasMore && !loading) {
-      fetchItems(page + 1, true);
+      void fetchItems(page + 1, true);
     }
   }, [hasMore, loading, page, fetchItems]);
 
   const handleQRScan = useCallback(async () => {
-    Alert.alert('QR Scanner', 'Camera would open to scan brand QR codes');
+    Alert.alert("QR Scanner", "Camera would open to scan brand QR codes");
   }, []);
 
   const handleItemPress = useCallback(
     (item: ClothingItem) => {
-      (navigation as any).navigate('Product', { clothingId: item.id });
+      navigation.navigate("Product", { clothingId: item.id });
     },
-    [navigation],
+    [navigation]
   );
 
   const renderItem = useCallback(
     ({ item }: { item: ClothingItem }) => (
-      <TouchableOpacity style={s.productCard} onPress={() => handleItemPress(item)} activeOpacity={0.85}>
+      <TouchableOpacity
+        style={s.productCard}
+        onPress={() => handleItemPress(item)}
+        activeOpacity={0.85}
+      >
         {item.imageUri ? (
           <Image source={{ uri: item.imageUri }} style={s.productImage} resizeMode="cover" />
         ) : (
@@ -103,11 +112,13 @@ export const BrandScreen: React.FC = () => {
           </View>
         )}
         <View style={s.productInfo}>
-          <Text style={s.productName} numberOfLines={2}>{item.name ?? 'Product'}</Text>
+          <Text style={s.productName} numberOfLines={2}>
+            {item.name ?? "Product"}
+          </Text>
           {item.brand && <Text style={s.productBrand}>{item.brand}</Text>}
-          {item.price != null && (
+          {item.price !== null && (
             <View style={s.priceRow}>
-              <Text style={s.productPrice}>¥{item.price.toFixed(2)}</Text>
+              <Text style={s.productPrice}>¥{item.price!.toFixed(2)}</Text>
               {item.colors && item.colors.length > 0 && (
                 <Text style={s.productColors}>{item.colors.length} colors</Text>
               )}
@@ -116,7 +127,7 @@ export const BrandScreen: React.FC = () => {
         </View>
       </TouchableOpacity>
     ),
-    [handleItemPress],
+    [handleItemPress]
   );
 
   return (
@@ -162,7 +173,11 @@ export const BrandScreen: React.FC = () => {
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={theme.colors.primary} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={theme.colors.primary}
+            />
           }
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
@@ -191,62 +206,95 @@ export const BrandScreen: React.FC = () => {
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
   header: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: theme.colors.surface,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.border,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: theme.colors.text },
-  iconBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
+  iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   qrBanner: {
-    flexDirection: 'row', alignItems: 'center',
-    marginHorizontal: 16, marginVertical: 12,
-    backgroundColor: theme.colors.surface, borderRadius: 14, padding: 14,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06, shadowRadius: 8, elevation: 3,
+    flexDirection: "row",
+    alignItems: "center",
+    marginHorizontal: 16,
+    marginVertical: 12,
+    backgroundColor: theme.colors.surface,
+    borderRadius: 14,
+    padding: 14,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
   qrBannerIcon: {
-    width: 40, height: 40, borderRadius: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 10,
     backgroundColor: theme.colors.subtleBg,
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   qrBannerText: { flex: 1, marginLeft: 12 },
-  qrBannerTitle: { fontSize: 14, fontWeight: '600', color: theme.colors.text },
+  qrBannerTitle: { fontSize: 14, fontWeight: "600", color: theme.colors.text },
   qrBannerDesc: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 },
-  centerContent: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 },
+  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
   loadingText: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 12 },
   errorText: { fontSize: 14, color: theme.colors.error, marginTop: 12 },
   retryBtn: {
-    marginTop: 16, backgroundColor: theme.colors.primary,
-    paddingHorizontal: 24, paddingVertical: 10, borderRadius: 20,
+    marginTop: 16,
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
   },
-  retryBtnText: { color: theme.colors.surface, fontSize: 14, fontWeight: '600' },
-  emptyTitle: { fontSize: 18, fontWeight: '600', color: theme.colors.text, marginTop: 16 },
-  emptySubtitle: { fontSize: 14, color: theme.colors.textTertiary, marginTop: 8, textAlign: 'center' },
+  retryBtnText: { color: theme.colors.surface, fontSize: 14, fontWeight: "600" },
+  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text, marginTop: 16 },
+  emptySubtitle: {
+    fontSize: 14,
+    color: theme.colors.textTertiary,
+    marginTop: 8,
+    textAlign: "center",
+  },
   productCard: {
-    flexDirection: 'row', alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.colors.surface,
-    paddingHorizontal: 16, paddingVertical: 14,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.divider,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.divider,
   },
   productImage: {
-    width: 72, height: 72, borderRadius: 10,
+    width: 72,
+    height: 72,
+    borderRadius: 10,
     backgroundColor: theme.colors.placeholderBg,
   },
   productImagePlaceholder: {
-    width: 72, height: 72, borderRadius: 10,
+    width: 72,
+    height: 72,
+    borderRadius: 10,
     backgroundColor: theme.colors.subtleBg,
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   productInfo: { flex: 1, marginLeft: 14 },
-  productName: { fontSize: 15, fontWeight: '500', color: theme.colors.text, lineHeight: 20 },
+  productName: { fontSize: 15, fontWeight: "500", color: theme.colors.text, lineHeight: 20 },
   productBrand: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 3 },
-  priceRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
-  productPrice: { fontSize: 16, fontWeight: '700', color: theme.colors.primary },
+  priceRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 6 },
+  productPrice: { fontSize: 16, fontWeight: "700", color: theme.colors.primary },
   productColors: { fontSize: 12, color: theme.colors.textTertiary },
   loadingMore: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 8, paddingVertical: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 16,
   },
   loadingMoreText: { fontSize: 13, color: theme.colors.textTertiary },
 });

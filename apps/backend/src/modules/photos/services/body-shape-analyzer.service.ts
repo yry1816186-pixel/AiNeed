@@ -135,7 +135,7 @@ export class BodyShapeAnalyzer {
    */
   getClothingRecommendations(
     bodyType: string,
-    preferences?: string[],
+    _preferences?: string[],
   ): {
     tops: string[];
     bottoms: string[];

@@ -26,7 +26,7 @@ interface UseApiReturn<T, Args extends unknown[]> extends UseApiState<T> {
 
 export function useApi<T, Args extends unknown[] = unknown[]>(
   apiFn: (...args: Args) => Promise<ApiResponse<T>>,
-  options: UseApiOptions = {},
+  options: UseApiOptions = {}
 ): UseApiReturn<T, Args> {
   const { immediate = false, onSuccess, onError } = options;
 
@@ -59,7 +59,9 @@ export function useApi<T, Args extends unknown[] = unknown[]>(
       try {
         const response = await apiFn(...args);
 
-        if (abortRef.current) return null;
+        if (abortRef.current) {
+          return null;
+        }
 
         if (response.success && response.data !== undefined) {
           if (isMountedRef.current) {
@@ -72,7 +74,7 @@ export function useApi<T, Args extends unknown[] = unknown[]>(
         const appError = new AppError(
           (response.error?.code as AppError["code"]) || "BUSINESS_ERROR",
           response.error?.message,
-          { details: response.error?.details },
+          { details: response.error?.details }
         );
 
         if (isMountedRef.current) {
@@ -81,7 +83,9 @@ export function useApi<T, Args extends unknown[] = unknown[]>(
         onError?.(appError);
         return null;
       } catch (err) {
-        if (abortRef.current) return null;
+        if (abortRef.current) {
+          return null;
+        }
 
         const appError = toAppError(err);
         if (isMountedRef.current) {
@@ -91,7 +95,7 @@ export function useApi<T, Args extends unknown[] = unknown[]>(
         return null;
       }
     },
-    [apiFn, onSuccess, onError],
+    [apiFn, onSuccess, onError]
   );
 
   const reset = useCallback(() => {
@@ -113,14 +117,13 @@ interface UseApiGetOptions extends UseApiOptions {
   params?: Record<string, unknown>;
 }
 
-export function useApiGet<T>(
-  url: string | null,
-  options: UseApiGetOptions = {},
-) {
+export function useApiGet<T>(url: string | null, options: UseApiGetOptions = {}) {
   const { params, cache, deduplicate, retry, ...apiOptions } = options;
 
   const fetcher = useCallback(async (): Promise<ApiResponse<T>> => {
-    if (!url) return { success: false, error: { code: "NO_URL", message: "No URL provided" } };
+    if (!url) {
+      return { success: false, error: { code: "NO_URL", message: "No URL provided" } };
+    }
     return apiClient.get<T>(url, params, {
       useCache: cache,
       deduplicate,

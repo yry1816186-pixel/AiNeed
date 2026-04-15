@@ -108,7 +108,7 @@ jobs:
     if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'integration' || github.event_name != 'workflow_dispatch'
     services:
       postgres:
-        image: postgres:15-alpine
+        image: postgres:16-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -177,7 +177,7 @@ jobs:
     if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'e2e' || github.event_name != 'workflow_dispatch'
     services:
       postgres:
-        image: postgres:15-alpine
+        image: postgres:16-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -244,10 +244,12 @@ jobs:
           REDIS_URL: redis://localhost:6379
           NODE_ENV: test
 
+      # NOTE: Playwright is a placeholder step. Configure Playwright config and test files before enabling.
       - name: Install Playwright
         run: npx playwright install --with-deps
         continue-on-error: true
 
+      # NOTE: Playwright E2E tests are placeholder. Uncomment the npx playwright test line after configuring Playwright.
       - name: Run Frontend E2E Tests (Playwright)
         run: |
           echo "Frontend E2E tests - configure Playwright as needed"

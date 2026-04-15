@@ -1,4 +1,4 @@
-﻿"""
+"""
 增强版体型分析与服装适配模块
 基于MediaPipe Pose提取33个身体关键点，计算身体比例，推断体型分类
 提供服装适配建议算法，与推荐系统集成
@@ -595,17 +595,59 @@ class BodyAnalyzer:
     基于MediaPipe Pose提取33个身体关键点
     计算身体比例，推断体型分类
     提供服装适配建议
+
+    A-P2-2: 体型分类阈值支持通过构造参数或环境变量配置
     """
 
-    def __init__(self, mediapipe_processor: Optional[MediaPipeProcessor] = None):
+    # 默认阈值配置（类属性，方便整体替换）
+    DEFAULT_THRESHOLDS = BODY_TYPE_THRESHOLDS
+
+    def __init__(
+        self,
+        mediapipe_processor: Optional[MediaPipeProcessor] = None,
+        thresholds: Optional[Dict[str, Any]] = None,
+    ):
         """
         初始化体型分析器
 
         Args:
             mediapipe_processor: 可选的MediaPipe处理器实例
+            thresholds: 可选的体型分类阈值配置，覆盖默认值。
+                支持部分覆盖（只传需要修改的键）。
+                也可通过环境变量 BODY_TYPE_THRESHOLDS_JSON 配置（JSON格式）。
         """
         self.mediapipe = mediapipe_processor or MediaPipeProcessor()
-        self.thresholds = BODY_TYPE_THRESHOLDS
+
+        # A-P2-2: 阈值配置优先级：构造参数 > 环境变量 > 默认值
+        merged_thresholds = dict(self.DEFAULT_THRESHOLDS)
+
+        # 尝试从环境变量加载阈值配置
+        env_thresholds_json = os.getenv("BODY_TYPE_THRESHOLDS_JSON")
+        if env_thresholds_json:
+            try:
+                import json
+                env_thresholds = json.loads(env_thresholds_json)
+                merged_thresholds = self._deep_merge(merged_thresholds, env_thresholds)
+                logger.info("Loaded body type thresholds from environment variable")
+            except (json.JSONDecodeError, TypeError) as e:
+                logger.warning(f"Failed to parse BODY_TYPE_THRESHOLDS_JSON: {e}")
+
+        # 构造参数优先级最高
+        if thresholds:
+            merged_thresholds = self._deep_merge(merged_thresholds, thresholds)
+
+        self.thresholds = merged_thresholds
+
+    @staticmethod
+    def _deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+        """深度合并字典，override 中的值覆盖 base 中的对应值"""
+        result = dict(base)
+        for key, value in override.items():
+            if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+                result[key] = BodyAnalyzer._deep_merge(result[key], value)
+            else:
+                result[key] = value
+        return result
 
     def analyze_body_type(self, image: Union[Image.Image, np.ndarray]) -> BodyProfile:
         """

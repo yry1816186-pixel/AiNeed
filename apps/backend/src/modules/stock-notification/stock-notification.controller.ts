@@ -11,8 +11,9 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
-import { StockNotificationService } from "./stock-notification.service";
+
 import { SubscribeDto } from "./dto";
+import { StockNotificationService } from "./stock-notification.service";
 
 @ApiTags("stock-notifications")
 @Controller("stock-notifications")

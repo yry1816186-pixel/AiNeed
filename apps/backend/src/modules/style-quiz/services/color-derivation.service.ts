@@ -176,14 +176,14 @@ export class ColorDerivationEngine {
     const b = parseInt(hex.slice(5, 7), 16);
 
     const brightness = (r + g + b) / 3;
-    if (brightness < 50) return "深色";
-    if (brightness > 200) return "浅色";
+    if (brightness < 50) {return "深色";}
+    if (brightness > 200) {return "浅色";}
 
     // Determine dominant channel
     const max = Math.max(r, g, b);
-    if (max === r && r > g + 30) return "暖色调";
-    if (max === b && b > r + 30) return "冷色调";
-    if (max === g && g > r + 30) return "绿色调";
+    if (max === r && r > g + 30) {return "暖色调";}
+    if (max === b && b > r + 30) {return "冷色调";}
+    if (max === g && g > r + 30) {return "绿色调";}
     return "中性色";
   }
 }

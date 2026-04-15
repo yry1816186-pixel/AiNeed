@@ -1,6 +1,6 @@
 /**
  * 性能优化工具集
- * 
+ *
  * 包含：
  * - 导航预加载
  * - 图片预加载
@@ -8,13 +8,13 @@
  * - 性能监控
  */
 
-import { InteractionManager } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import { InteractionManager } from "react-native";
+import FastImage from "react-native-fast-image";
 
 /**
  * 预加载图片列表
  * 使用 FastImage 的预缓存功能
- * 
+ *
  * @param urls 图片 URL 列表
  */
 export function preloadImages(urls: string[]): void {
@@ -26,16 +26,13 @@ export function preloadImages(urls: string[]): void {
 /**
  * 在交互完成后执行任务
  * 用于延迟非关键操作，避免阻塞用户交互
- * 
+ *
  * @param task 要执行的任务
  * @param delay 延迟时间（毫秒）
  */
-export function runAfterInteractions<T>(
-  task: () => T,
-  delay: number = 0
-): Promise<T | null> {
+export function runAfterInteractions<T>(task: () => T, delay: number = 0): Promise<T | null> {
   return new Promise((resolve) => {
-    InteractionManager.runAfterInteractions(() => {
+    void InteractionManager.runAfterInteractions(() => {
       if (delay > 0) {
         setTimeout(() => {
           resolve(task());
@@ -50,7 +47,7 @@ export function runAfterInteractions<T>(
 /**
  * 延迟加载组件
  * 返回一个 Promise，在指定延迟后 resolve
- * 
+ *
  * @param delay 延迟时间（毫秒）
  */
 export function delayLoad(delay: number): Promise<void> {
@@ -62,7 +59,7 @@ export function delayLoad(delay: number): Promise<void> {
 /**
  * 批量执行任务
  * 将任务分批执行，避免一次性执行过多任务导致卡顿
- * 
+ *
  * @param tasks 任务列表
  * @param batchSize 每批执行的任务数量
  * @param batchDelay 批次之间的延迟（毫秒）
@@ -73,17 +70,17 @@ export async function batchExecute<T>(
   batchDelay: number = 100
 ): Promise<T[]> {
   const results: T[] = [];
-  
+
   for (let i = 0; i < tasks.length; i += batchSize) {
     const batch = tasks.slice(i, i + batchSize);
     const batchResults = await Promise.all(batch.map((task) => task()));
     results.push(...batchResults);
-    
+
     if (i + batchSize < tasks.length) {
       await delayLoad(batchDelay);
     }
   }
-  
+
   return results;
 }
 
@@ -163,13 +160,15 @@ export class MemoryCache<T> {
 
   get(key: string): T | undefined {
     const item = this.cache.get(key);
-    if (!item) return undefined;
-    
+    if (!item) {
+      return undefined;
+    }
+
     if (Date.now() - item.timestamp > this.ttl) {
       this.cache.delete(key);
       return undefined;
     }
-    
+
     return item.value;
   }
 

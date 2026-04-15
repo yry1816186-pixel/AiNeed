@@ -1,26 +1,28 @@
-import React, { useState, useCallback } from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { communityApi } from '../../services/api/community.api';
-import { theme } from '../../theme';
+﻿import React, { useState, useCallback } from "react";
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { communityApi } from "../../services/api/community.api";
+import { theme } from '../design-system/theme';
 
 interface FollowButtonProps {
   userId: string;
   initialFollowing?: boolean;
-  size?: 'small' | 'medium';
+  size?: "small" | "medium";
   onFollowChange?: (following: boolean) => void;
 }
 
 export const FollowButton: React.FC<FollowButtonProps> = ({
   userId,
   initialFollowing = false,
-  size = 'medium',
+  size = "medium",
   onFollowChange,
 }) => {
   const [following, setFollowing] = useState(initialFollowing);
   const [loading, setLoading] = useState(false);
 
   const handlePress = useCallback(async () => {
-    if (loading) return;
+    if (loading) {
+      return;
+    }
     try {
       setLoading(true);
       const response = await communityApi.toggleFollow(userId);
@@ -36,7 +38,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
     }
   }, [userId, loading, onFollowChange]);
 
-  const isSmall = size === 'small';
+  const isSmall = size === "small";
 
   if (following) {
     return (
@@ -77,12 +79,12 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
 
 const styles = StyleSheet.create({
   followBtn: {
-    backgroundColor: '#6C5CE7',
+    backgroundColor: "#6C5CE7",
     borderRadius: 18,
     paddingHorizontal: 24,
     paddingVertical: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   followBtnSmall: {
     paddingHorizontal: 16,
@@ -90,9 +92,9 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   followText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   followTextSmall: {
     fontSize: 12,
@@ -102,8 +104,8 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     paddingHorizontal: 24,
     paddingVertical: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
     borderColor: theme.colors.border,
   },
@@ -115,7 +117,7 @@ const styles = StyleSheet.create({
   followingText: {
     color: theme.colors.textSecondary,
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   followingTextSmall: {
     fontSize: 12,

@@ -17,22 +17,21 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthStore } from '../stores/index';
 import { authApi } from '../services/api/auth.api';
-import { unifiedApiClient } from '../services/apiClient';
-import { theme } from '../theme';
+import { apiClient } from '../services/api/client';
+import { theme } from '../design-system/theme';
+import { useTranslation } from '../i18n';
+import { useTheme } from '../contexts/ThemeContext';
 import type { RootStackParamList } from '../types/navigation';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
-const DARK_MODE_KEY = '@aineed_settings_dark_mode';
-
 export const SettingsScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
   const { user, logout } = useAuthStore();
+  const { isDark, setMode } = useTheme();
 
-  const [darkMode, setDarkMode] = useState(false);
   const [outfitReminders, setOutfitReminders] = useState(true);
   const [newArrivals, setNewArrivals] = useState(true);
   const [sales, setSales] = useState(false);
@@ -52,10 +51,6 @@ export const SettingsScreen: React.FC = () => {
   useEffect(() => {
     const loadSettings = async () => {
       try {
-        const savedDarkMode = await AsyncStorage.getItem(DARK_MODE_KEY);
-        if (savedDarkMode !== null) {
-          setDarkMode(savedDarkMode === 'true');
-        }
         if (user?.preferences?.notifications) {
           const n = user.preferences.notifications;
           setOutfitReminders(n.outfitReminders);
@@ -66,23 +61,18 @@ export const SettingsScreen: React.FC = () => {
         // Silent fail for settings load
       }
     };
-    loadSettings();
+    void loadSettings();
   }, [user]);
 
   const handleDarkModeToggle = useCallback(async (value: boolean) => {
-    setDarkMode(value);
-    try {
-      await AsyncStorage.setItem(DARK_MODE_KEY, String(value));
-    } catch {
-      // Silent fail
-    }
-  }, []);
+    setMode(value ? 'dark' : 'light');
+  }, [setMode]);
 
   const handleNotificationToggle = useCallback(
     async (key: 'outfitReminders' | 'newArrivals' | 'sales', value: boolean) => {
-      if (key === 'outfitReminders') setOutfitReminders(value);
-      if (key === 'newArrivals') setNewArrivals(value);
-      if (key === 'sales') setSales(value);
+      if (key === 'outfitReminders') { setOutfitReminders(value); }
+      if (key === 'newArrivals') { setNewArrivals(value); }
+      if (key === 'sales') { setSales(value); }
 
       setUpdatingPrefs(true);
       try {
@@ -95,9 +85,9 @@ export const SettingsScreen: React.FC = () => {
         });
       } catch {
         // Revert on failure
-        if (key === 'outfitReminders') setOutfitReminders(!value);
-        if (key === 'newArrivals') setNewArrivals(!value);
-        if (key === 'sales') setSales(!value);
+        if (key === 'outfitReminders') { setOutfitReminders(!value); }
+        if (key === 'newArrivals') { setNewArrivals(!value); }
+        if (key === 'sales') { setSales(!value); }
       } finally {
         setUpdatingPrefs(false);
       }
@@ -149,7 +139,7 @@ export const SettingsScreen: React.FC = () => {
           } catch {
             // Continue regardless
           }
-          logout();
+          void logout();
           navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
         },
       },
@@ -167,7 +157,7 @@ export const SettingsScreen: React.FC = () => {
           onPress: async () => {
             setExporting(true);
             try {
-              await unifiedApiClient.post('/privacy/export', { format: 'json' });
+              await apiClient.post('/privacy/export', { format: 'json' });
               Alert.alert('Success', 'Data export request submitted. You will receive a download link within 24 hours.');
             } catch {
               Alert.alert('Error', 'Failed to request data export. Please try again.');
@@ -199,7 +189,7 @@ export const SettingsScreen: React.FC = () => {
                   setDeleting(true);
                   try {
                     await authApi.deleteAccount();
-                    logout();
+                    void logout();
                     navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
                   } catch {
                     Alert.alert('错误', '删除账户失败，请重试');
@@ -232,7 +222,7 @@ export const SettingsScreen: React.FC = () => {
             <Ionicons name="moon-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.settingText}>深色模式</Text>
             <Switch
-              value={darkMode}
+              value={isDark}
               onValueChange={handleDarkModeToggle}
               trackColor={{ false: theme.colors.placeholderBg, true: theme.colors.primary }}
               thumbColor={theme.colors.surface}
@@ -287,7 +277,7 @@ export const SettingsScreen: React.FC = () => {
         <View style={styles.section}>
           <TouchableOpacity
             style={styles.settingItem}
-            onPress={() => navigation.navigate('TermsOfService')}
+            onPress={() => navigation.navigate('Legal', { type: 'terms' })}
             accessibilityLabel="用户服务协议"
           >
             <Ionicons name="document-text-outline" size={22} color={theme.colors.textSecondary} />
@@ -296,7 +286,7 @@ export const SettingsScreen: React.FC = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.settingItem, styles.settingItemLast]}
-            onPress={() => navigation.navigate('PrivacyPolicy')}
+            onPress={() => navigation.navigate('Legal', { type: 'privacy' })}
             accessibilityLabel="隐私政策"
           >
             <Ionicons name="shield-checkmark-outline" size={22} color={theme.colors.textSecondary} />

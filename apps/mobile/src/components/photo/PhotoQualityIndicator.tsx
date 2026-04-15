@@ -1,6 +1,6 @@
-import React from "react";
+﻿import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Spacing, BorderRadius } from "../../theme";
+import { Spacing, BorderRadius } from '../design-system/theme';
 
 interface PhotoQuality {
   clarity: number;
@@ -16,14 +16,22 @@ interface PhotoQualityIndicatorProps {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 60) return "#5B8A72";
-  if (score >= 40) return "#D9A441";
+  if (score >= 60) {
+    return "#5B8A72";
+  }
+  if (score >= 40) {
+    return "#D9A441";
+  }
   return "#C44536";
 }
 
 function getScoreLabel(score: number): string {
-  if (score >= 60) return "良好";
-  if (score >= 40) return "一般";
+  if (score >= 60) {
+    return "良好";
+  }
+  if (score >= 40) {
+    return "一般";
+  }
   return "较差";
 }
 
@@ -38,9 +46,7 @@ export const PhotoQualityIndicator: React.FC<PhotoQualityIndicatorProps> = ({
     <View style={styles.container}>
       <View style={styles.badgeContainer}>
         <View style={[styles.badge, { borderColor: overallColor }]}>
-          <Text style={[styles.badgeScore, { color: overallColor }]}>
-            {overallInt}
-          </Text>
+          <Text style={[styles.badgeScore, { color: overallColor }]}>{overallInt}</Text>
         </View>
         <Text style={[styles.badgeLabel, { color: overallColor }]}>
           {getScoreLabel(quality.overall)}
@@ -84,12 +90,7 @@ const MetricBar: React.FC<MetricBarProps> = ({ label, value }) => {
         <Text style={[metricStyles.value, { color }]}>{displayValue}</Text>
       </View>
       <View style={metricStyles.track}>
-        <View
-          style={[
-            metricStyles.fill,
-            { width: `${clampedValue}%`, backgroundColor: color },
-          ]}
-        />
+        <View style={[metricStyles.fill, { width: `${clampedValue}%`, backgroundColor: color }]} />
       </View>
     </View>
   );

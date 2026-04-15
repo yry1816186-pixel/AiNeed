@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -17,7 +17,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { orderApi, orderEnhancementApi, refundApi } from "../services/api/commerce.api";
 import type { Order } from "../types";
 import type { RootStackParamList } from "../types/navigation";
-import { theme } from "../theme";
+import { theme } from '../design-system/theme';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, "OrderDetail">;
@@ -42,9 +42,9 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-    date.getDate(),
+    date.getDate()
   ).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(
-    date.getMinutes(),
+    date.getMinutes()
   ).padStart(2, "0")}`;
 }
 
@@ -58,45 +58,46 @@ export const OrderDetailScreen: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [cancelling, setCancelling] = useState(false);
 
-  const loadOrder = useCallback(async (mode: "initial" | "refresh" = "initial") => {
-    if (mode === "refresh") {
-      setRefreshing(true);
-    } else {
-      setLoading(true);
-    }
-
-    try {
-      const [detailResponse, trackingResponse] = await Promise.all([
-        orderApi.getById(route.params.orderId),
-        orderApi.track(route.params.orderId),
-      ]);
-
-      if (detailResponse.success && detailResponse.data) {
-        setOrder(detailResponse.data);
+  const loadOrder = useCallback(
+    async (mode: "initial" | "refresh" = "initial") => {
+      if (mode === "refresh") {
+        setRefreshing(true);
       } else {
-        setOrder(null);
+        setLoading(true);
       }
 
-      if (trackingResponse.success && trackingResponse.data) {
-        setTrackingSteps(
-          trackingResponse.data.timeline.map((step) => ({
-            status: step.status,
-            time: step.time,
-            description: step.description,
-          })),
-        );
-        setTrackingError("");
-      } else {
-        setTrackingSteps([]);
-        setTrackingError(
-          trackingResponse.error?.message ?? "当前订单还没有物流轨迹。",
-        );
+      try {
+        const [detailResponse, trackingResponse] = await Promise.all([
+          orderApi.getById(route.params.orderId),
+          orderApi.track(route.params.orderId),
+        ]);
+
+        if (detailResponse.success && detailResponse.data) {
+          setOrder(detailResponse.data);
+        } else {
+          setOrder(null);
+        }
+
+        if (trackingResponse.success && trackingResponse.data) {
+          setTrackingSteps(
+            trackingResponse.data.timeline.map((step) => ({
+              status: step.status,
+              time: step.time,
+              description: step.description,
+            }))
+          );
+          setTrackingError("");
+        } else {
+          setTrackingSteps([]);
+          setTrackingError(trackingResponse.error?.message ?? "当前订单还没有物流轨迹。");
+        }
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [route.params.orderId]);
+    },
+    [route.params.orderId]
+  );
 
   useEffect(() => {
     void loadOrder("initial");
@@ -157,16 +158,9 @@ export const OrderDetailScreen: React.FC = () => {
         </View>
       ) : !order ? (
         <View style={styles.center}>
-          <Ionicons
-            name="receipt-outline"
-            size={56}
-            color={theme.colors.textTertiary}
-          />
+          <Ionicons name="receipt-outline" size={56} color={theme.colors.textTertiary} />
           <Text style={styles.emptyTitle}>订单不存在或已失效</Text>
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={() => navigation.goBack()}
-          >
+          <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.goBack()}>
             <Text style={styles.primaryButtonText}>返回订单列表</Text>
           </TouchableOpacity>
         </View>
@@ -187,12 +181,7 @@ export const OrderDetailScreen: React.FC = () => {
               <Text style={styles.heroValue}>{order.id}</Text>
             </View>
             {statusMeta ? (
-              <View
-                style={[
-                  styles.statusBadge,
-                  { backgroundColor: `${statusMeta.color}16` },
-                ]}
-              >
+              <View style={[styles.statusBadge, { backgroundColor: `${statusMeta.color}16` }]}>
                 <Text style={[styles.statusText, { color: statusMeta.color }]}>
                   {statusMeta.label}
                 </Text>
@@ -208,11 +197,7 @@ export const OrderDetailScreen: React.FC = () => {
                   <Image source={{ uri: item.imageUri }} style={styles.itemImage} />
                 ) : (
                   <View style={styles.itemImageFallback}>
-                    <Ionicons
-                      name="shirt-outline"
-                      size={18}
-                      color={theme.colors.textTertiary}
-                    />
+                    <Ionicons name="shirt-outline" size={18} color={theme.colors.textTertiary} />
                   </View>
                 )}
                 <View style={styles.itemContent}>
@@ -259,12 +244,7 @@ export const OrderDetailScreen: React.FC = () => {
               trackingSteps.map((step, index) => (
                 <View key={`${step.status}-${step.time}-${index}`} style={styles.timelineRow}>
                   <View style={styles.timelineLeft}>
-                    <View
-                      style={[
-                        styles.timelineDot,
-                        index === 0 && styles.timelineDotActive,
-                      ]}
-                    />
+                    <View style={[styles.timelineDot, index === 0 && styles.timelineDotActive]} />
                     {index !== trackingSteps.length - 1 ? (
                       <View style={styles.timelineLine} />
                     ) : null}

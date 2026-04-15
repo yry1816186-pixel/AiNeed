@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useRef } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from "../../theme/tokens/design-tokens";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_GAP = 8;
@@ -65,7 +65,7 @@ const PostCard: React.FC<{
     return heights[index % heights.length];
   }, [index]);
 
-  const formatTime = useCallback((dateString: string) => {
+  const _formatTime = useCallback((dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -73,10 +73,18 @@ const PostCard: React.FC<{
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return "刚刚";
-    if (minutes < 60) return `${minutes}分钟前`;
-    if (hours < 24) return `${hours}小时前`;
-    if (days < 7) return `${days}天前`;
+    if (minutes < 1) {
+      return "刚刚";
+    }
+    if (minutes < 60) {
+      return `${minutes}分钟前`;
+    }
+    if (hours < 24) {
+      return `${hours}小时前`;
+    }
+    if (days < 7) {
+      return `${days}天前`;
+    }
     return date.toLocaleDateString("zh-CN", { month: "short", day: "numeric" });
   }, []);
 
@@ -94,14 +102,12 @@ const PostCard: React.FC<{
     <Pressable
       style={[styles.card, { marginBottom: index % 2 === 0 ? CARD_GAP : 0 }]}
       onPress={() => onPostPress(post)}
+      accessibilityLabel={`帖子：${post.title}`}
+      accessibilityRole="button"
     >
       <View style={[styles.imageContainer, { height: imageHeight }]}>
         {post.images[0] ? (
-          <Image
-            source={{ uri: post.images[0] }}
-            style={styles.image}
-            resizeMode="cover"
-          />
+          <Image source={{ uri: post.images[0] }} style={styles.image} resizeMode="cover" />
         ) : (
           <View style={[styles.placeholderImage, { height: imageHeight }]}>
             <Text style={styles.placeholderText}>暂无图片</Text>
@@ -114,10 +120,7 @@ const PostCard: React.FC<{
           </View>
         )}
 
-        <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.6)"]}
-          style={styles.imageGradient}
-        />
+        <LinearGradient colors={["transparent", "rgba(0,0,0,0.6)"]} style={styles.imageGradient} />
       </View>
 
       <View style={styles.cardContent}>
@@ -140,15 +143,9 @@ const PostCard: React.FC<{
         </View>
 
         <View style={styles.cardFooter}>
-          <Pressable
-            style={styles.authorRow}
-            onPress={() => onAuthorPress(post.author.id)}
-          >
+          <Pressable style={styles.authorRow} onPress={() => onAuthorPress(post.author.id)} accessibilityLabel={`查看作者${post.author.nickname}`} accessibilityRole="link">
             {post.author.avatar ? (
-              <Image
-                source={{ uri: post.author.avatar }}
-                style={styles.authorAvatar}
-              />
+              <Image source={{ uri: post.author.avatar }} style={styles.authorAvatar} />
             ) : (
               <View style={styles.authorAvatarPlaceholder}>
                 <Text style={styles.authorAvatarText}>
@@ -161,10 +158,7 @@ const PostCard: React.FC<{
             </Text>
           </Pressable>
 
-          <Pressable
-            style={styles.likeButton}
-            onPress={() => onLikePress(post.id)}
-          >
+          <Pressable style={styles.likeButton} onPress={() => onLikePress(post.id)} accessibilityLabel="点赞" accessibilityRole="button">
             <Text style={styles.likeIcon}>♡</Text>
             <Text style={styles.likeCount}>
               {formatCount(post.likeCount || post._count?.likes || 0)}
@@ -189,14 +183,8 @@ export const WaterfallFeed: React.FC<WaterfallFeedProps> = ({
 }) => {
   const insets = useSafeAreaInsets();
 
-  const leftColumn = useMemo(
-    () => posts.filter((_, i) => i % 2 === 0),
-    [posts],
-  );
-  const rightColumn = useMemo(
-    () => posts.filter((_, i) => i % 2 === 1),
-    [posts],
-  );
+  const leftColumn = useMemo(() => posts.filter((_, i) => i % 2 === 0), [posts]);
+  const rightColumn = useMemo(() => posts.filter((_, i) => i % 2 === 1), [posts]);
 
   const renderColumn = useCallback(
     (columnPosts: CommunityPost[], startIndex: number) => (
@@ -213,7 +201,7 @@ export const WaterfallFeed: React.FC<WaterfallFeedProps> = ({
         ))}
       </View>
     ),
-    [onPostPress, onAuthorPress, onLikePress],
+    [onPostPress, onAuthorPress, onLikePress]
   );
 
   const handleEndReached = useCallback(() => {
@@ -223,7 +211,9 @@ export const WaterfallFeed: React.FC<WaterfallFeedProps> = ({
   }, [isLoading, hasMore, onLoadMore]);
 
   const renderFooter = useCallback(() => {
-    if (!isLoading) return null;
+    if (!isLoading) {
+      return null;
+    }
     return (
       <View style={styles.loadingFooter}>
         <ActivityIndicator color={DesignTokens.colors.brand.terracotta} />
@@ -307,7 +297,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   multiImageText: {
-    color: "#fff",
+    color: DesignTokens.colors.text.inverse,
     fontSize: 11,
     fontWeight: "500",
   },
@@ -377,7 +367,7 @@ const styles = StyleSheet.create({
   authorAvatarText: {
     fontSize: 10,
     fontWeight: "600",
-    color: "#fff",
+    color: DesignTokens.colors.text.inverse,
   },
   authorName: {
     fontSize: 12,

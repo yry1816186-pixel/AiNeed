@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 import { orderEnhancementApi } from "../services/api/commerce.api";
-import type { Order, PaginatedResponse } from "../types";
+import type { Order } from "../types";
 
 interface OrderStore {
   ordersByTab: Record<string, Order[]>;
@@ -18,7 +18,7 @@ interface OrderStore {
 
 const PAGE_SIZE = 10;
 
-export const useOrderStore = create<OrderStore>((set, get) => ({
+export const useOrderStore = create<OrderStore>((set) => ({
   ordersByTab: {},
   currentTab: "all",
   isLoading: false,
@@ -28,19 +28,13 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
   fetchOrdersByTab: async (tab: string, page?: number) => {
     set({ isLoading: true });
     try {
-      const response = await orderEnhancementApi.getOrdersByTab(
-        tab,
-        page ?? 1,
-        PAGE_SIZE,
-      );
+      const response = await orderEnhancementApi.getOrdersByTab(tab, page ?? 1, PAGE_SIZE);
       if (response.success && response.data) {
         const { items, total, hasMore } = response.data;
         set((state) => ({
           ordersByTab: {
             ...state.ordersByTab,
-            [tab]: page && page > 1
-              ? [...(state.ordersByTab[tab] ?? []), ...items]
-              : items,
+            [tab]: page && page > 1 ? [...(state.ordersByTab[tab] ?? []), ...items] : items,
           },
           totalByTab: { ...state.totalByTab, [tab]: total },
           hasMoreByTab: { ...state.hasMoreByTab, [tab]: hasMore ?? false },
@@ -65,9 +59,7 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
           const updated = { ...state.ordersByTab };
           for (const tabKey of Object.keys(updated)) {
             updated[tabKey] = updated[tabKey].map((order) =>
-              order.id === orderId
-                ? { ...order, status: "delivered" as const }
-                : order,
+              order.id === orderId ? { ...order, status: "delivered" as const } : order
             );
           }
           return { ordersByTab: updated };
@@ -85,9 +77,7 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
         set((state) => {
           const updated = { ...state.ordersByTab };
           for (const tabKey of Object.keys(updated)) {
-            updated[tabKey] = updated[tabKey].filter(
-              (order) => order.id !== orderId,
-            );
+            updated[tabKey] = updated[tabKey].filter((order) => order.id !== orderId);
           }
           return { ordersByTab: updated };
         });

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
+import { CustomizationStatus } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { CustomizationStatus } from "@prisma/client";
 
 import { MockPODProvider } from "./mock-pod-provider";
 import type { PODProvider } from "./pod-provider.interface";
@@ -60,7 +60,7 @@ export class PODService {
       where: { id: customizationRequestId },
     });
 
-    if (!request || !request.podOrderId) {
+    if (!request?.podOrderId) {
       throw new Error("定制需求不存在或未提交生产");
     }
 

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+﻿import React, { useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -15,9 +15,11 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { authApi } from '../services/api/auth.api';
+import { useTranslation } from '../i18n';
 import { useAuthStore } from '../stores/index';
-import { unifiedApiClient } from '../services/apiClient';
-import { theme } from '../theme';
+import { apiClient } from '../services/api/client';
+import { theme } from '../design-system/theme';
+import { DesignTokens } from '../theme/tokens/design-tokens';
 import type { RootStackParamList } from '../types/navigation';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
@@ -29,10 +31,10 @@ function getErrorMessage(error: unknown): string {
       const resp = obj.response as Record<string, unknown>;
       if (resp.data && typeof resp.data === 'object') {
         const data = resp.data as Record<string, unknown>;
-        if (typeof data.error === 'string') return data.error;
+        if (typeof data.error === 'string') { return data.error; }
       }
     }
-    if (typeof obj.message === 'string') return obj.message;
+    if (typeof obj.message === 'string') { return obj.message; }
   }
   return '网络连接失败，请检查网络后重试';
 }
@@ -40,6 +42,7 @@ function getErrorMessage(error: unknown): string {
 export const RegisterScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
   const { setUser, setToken } = useAuthStore();
+  const t = useTranslation();
 
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
@@ -57,14 +60,14 @@ export const RegisterScreen: React.FC = () => {
   const validateInputs = useCallback((): string | null => {
     const trimmedEmail = email.trim();
     if (!trimmedEmail) {
-      return '请输入邮箱地址';
+      return t.auth.email;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmedEmail)) {
-      return '请输入有效的邮箱地址';
+      return t.errors.validationError;
     }
     if (!password) {
-      return '请输入密码';
+      return t.auth.password;
     }
     if (password.length < 6) {
       return '密码至少需要6个字符';
@@ -86,7 +89,7 @@ export const RegisterScreen: React.FC = () => {
 
     const validationError = validateInputs();
     if (validationError) {
-      Alert.alert('输入错误', validationError);
+      Alert.alert(t.errors.validationError, validationError);
       return;
     }
 
@@ -108,12 +111,12 @@ export const RegisterScreen: React.FC = () => {
         // Record privacy consent on client side (server already records in transaction)
         try {
           await Promise.all([
-            unifiedApiClient.post('/privacy/consent', {
+            apiClient.post('/privacy/consent', {
               consentType: 'terms_of_service',
               granted: true,
               version: '1.0.0',
             }),
-            unifiedApiClient.post('/privacy/consent', {
+            apiClient.post('/privacy/consent', {
               consentType: 'privacy_policy',
               granted: true,
               version: '1.0.0',
@@ -129,13 +132,13 @@ export const RegisterScreen: React.FC = () => {
         });
       } else {
         Alert.alert(
-          '注册失败',
-          (typeof response.error === 'string' ? response.error : response.error?.message) || '注册失败，请稍后重试',
+          t.auth.register,
+          (typeof response.error === 'string' ? response.error : response.error?.message) || t.common.retry,
         );
       }
     } catch (error: unknown) {
       const message = getErrorMessage(error);
-      Alert.alert('注册失败', message);
+      Alert.alert(t.auth.register, message);
     } finally {
       setIsLoading(false);
     }
@@ -149,20 +152,20 @@ export const RegisterScreen: React.FC = () => {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
             disabled={isLoading}
-            accessibilityLabel="返回"
+            accessibilityLabel={t.common.back}
           >
             <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
           </TouchableOpacity>
         </View>
         <View style={styles.content}>
-          <Text style={styles.title}>创建账户</Text>
+          <Text style={styles.title}>{t.auth.register}</Text>
           <Text style={styles.subtitle}>开始您的智能穿搭之旅</Text>
           <View style={styles.form}>
             <View style={styles.inputGroup}>
               <Ionicons name="mail-outline" size={20} color={theme.colors.textTertiary} />
               <TextInput
                 style={styles.input}
-                placeholder="邮箱地址"
+                placeholder={t.auth.email}
                 placeholderTextColor={theme.colors.textTertiary}
                 value={email}
                 onChangeText={setEmail}
@@ -197,7 +200,7 @@ export const RegisterScreen: React.FC = () => {
               <TextInput
                 ref={passwordInputRef}
                 style={styles.input}
-                placeholder="密码"
+                placeholder={t.auth.password}
                 placeholderTextColor={theme.colors.textTertiary}
                 value={password}
                 onChangeText={setPassword}
@@ -260,6 +263,7 @@ export const RegisterScreen: React.FC = () => {
                 onPress={() => setAgreedToTerms((prev) => !prev)}
                 activeOpacity={0.7}
                 disabled={isLoading}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                 accessibilityLabel={agreedToTerms ? '取消同意' : '同意协议'}
               >
                 {agreedToTerms && (
@@ -268,7 +272,7 @@ export const RegisterScreen: React.FC = () => {
               </TouchableOpacity>
               <Text style={styles.termsText}>我已阅读并同意</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('TermsOfService')}
+                onPress={() => navigation.navigate('Legal', { type: 'terms' })}
                 disabled={isLoading}
                 hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
               >
@@ -276,7 +280,7 @@ export const RegisterScreen: React.FC = () => {
               </TouchableOpacity>
               <Text style={styles.termsText}>和</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('PrivacyPolicy')}
+                onPress={() => navigation.navigate('Legal', { type: 'privacy' })}
                 disabled={isLoading}
                 hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
               >
@@ -292,13 +296,13 @@ export const RegisterScreen: React.FC = () => {
               onPress={handleRegister}
               disabled={isLoading || !agreedToTerms}
               activeOpacity={0.7}
-              accessibilityLabel="注册"
+              accessibilityLabel={t.auth.register}
               accessibilityState={{ disabled: isLoading || !agreedToTerms }}
             >
               {isLoading ? (
                 <ActivityIndicator size="small" color={theme.colors.surface} />
               ) : (
-                <Text style={styles.registerButtonText}>注册</Text>
+                <Text style={styles.registerButtonText}>{t.auth.register}</Text>
               )}
             </TouchableOpacity>
 
@@ -306,9 +310,9 @@ export const RegisterScreen: React.FC = () => {
               style={styles.loginLink}
               onPress={() => navigation.navigate('Login')}
               disabled={isLoading}
-              accessibilityLabel="已有账户，立即登录"
+              accessibilityLabel={t.auth.login}
             >
-              <Text style={styles.loginText}>已有账户？立即登录</Text>
+              <Text style={styles.loginText}>{t.auth.login}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -324,7 +328,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F1F3F4',
+    backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -79,13 +79,16 @@ describe("clothingApi", () => {
         sort: { field: "createdAt" as const, direction: "asc" },
       });
 
-      expect(mockGet).toHaveBeenCalledWith("/clothing", expect.objectContaining({
-        page: 1,
-        limit: 20,
-        category: "tops",
-        sortBy: "price",
-        sortOrder: "asc",
-      }));
+      expect(mockGet).toHaveBeenCalledWith(
+        "/clothing",
+        expect.objectContaining({
+          page: 1,
+          limit: 20,
+          category: "tops",
+          sortBy: "createdAt",
+          sortOrder: "asc",
+        })
+      );
       expect(result.success).toBe(true);
     });
 
@@ -217,10 +220,7 @@ describe("clothingApi", () => {
 
       const result = await clothingApi.uploadImage("file:///photo/shirt.jpg", true);
 
-      expect(mockUpload).toHaveBeenCalledWith(
-        "/clothing/upload",
-        expect.any(FormData),
-      );
+      expect(mockUpload).toHaveBeenCalledWith("/clothing/upload", expect.any(FormData));
       expect(result.success).toBe(true);
     });
 
@@ -328,12 +328,16 @@ describe("clothingApi", () => {
 
   describe("search", () => {
     it("should POST to /clothing/search with query and filter", async () => {
-      mockPost.mockResolvedValue({ success: true, data: [backendItem] });
+      mockPost.mockResolvedValue({ success: true, data: { items: [backendItem], total: 1, page: 1, pageSize: 20, hasMore: false } });
 
-      const result = await clothingApi.search("white shirt", { category: "tops" as const }, {
-        minPrice: 50,
-        maxPrice: 200,
-      });
+      const result = await clothingApi.search(
+        "white shirt",
+        { category: "tops" as const },
+        {
+          minPrice: 50,
+          maxPrice: 200,
+        }
+      );
 
       expect(mockPost).toHaveBeenCalledWith("/clothing/search", {
         query: "white shirt",
@@ -341,17 +345,23 @@ describe("clothingApi", () => {
         minPrice: 50,
         maxPrice: 200,
         sizes: undefined,
+        sort: undefined,
+        brands: undefined,
+        colors: undefined,
+        subcategory: undefined,
+        page: 1,
+        limit: 20,
       });
       expect(result.success).toBe(true);
     });
 
-    it("should return empty array when no results", async () => {
-      mockPost.mockResolvedValue({ success: true, data: [] });
+    it("should return paginated response with empty items when no results", async () => {
+      mockPost.mockResolvedValue({ success: true, data: { items: [], total: 0, page: 1, pageSize: 20, hasMore: false } });
 
       const result = await clothingApi.search("nonexistent");
 
       if (result.success && result.data) {
-        expect(result.data).toEqual([]);
+        expect(result.data.items).toEqual([]);
       }
     });
   });

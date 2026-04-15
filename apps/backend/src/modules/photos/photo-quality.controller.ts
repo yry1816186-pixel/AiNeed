@@ -17,12 +17,12 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 
+import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-data.interceptor";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
-import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-data.interceptor";
 
-import { PhotoQualityService } from "./services/photo-quality.service";
 import { EnhanceRequestDto } from "./dto/quality-report.dto";
+import { PhotoQualityService } from "./services/photo-quality.service";
 
 @ApiTags("photo-quality")
 @ApiBearerAuth()

@@ -8,10 +8,10 @@
  * 4. 提供缓存状态查询
  */
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { ClothingItem } from '../types/clothing';
-import type { User } from '../types/user';
-import type { PostCardData } from '../types/social';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { ClothingItem } from "../types/clothing";
+import type { User } from "../types/user";
+import type { PostCardData } from "../types/social";
 
 interface Brand {
   id: string;
@@ -22,7 +22,7 @@ interface Brand {
 
 // ==================== 常量定义 ====================
 
-const OFFLINE_CACHE_PREFIX = 'demo_offline_';
+const OFFLINE_CACHE_PREFIX = "demo_offline_";
 const CACHE_KEYS = {
   FULL_DEMO_DATA: `${OFFLINE_CACHE_PREFIX}full_demo`,
   CLOTHING: `${OFFLINE_CACHE_PREFIX}clothing`,
@@ -70,7 +70,7 @@ export interface DemoDataPackage {
 class OfflineCacheService {
   private static instance: OfflineCacheService | null = null;
   private memoryCache: Map<string, CacheEntry<DemoDataPackage>> = new Map();
-  private currentVersion = '1.0.0';
+  private currentVersion = "1.0.0";
 
   static getInstance(): OfflineCacheService {
     if (!OfflineCacheService.instance) {
@@ -84,7 +84,7 @@ class OfflineCacheService {
    */
   async initialize(): Promise<void> {
     try {
-      console.log('[OfflineCache] 正在初始化离线缓存...');
+      console.log("[OfflineCache] 正在初始化离线缓存...");
       const keys = await AsyncStorage.getAllKeys();
       const demoKeys = keys.filter((key) => key.startsWith(OFFLINE_CACHE_PREFIX));
 
@@ -93,9 +93,9 @@ class OfflineCacheService {
         // 预加载关键数据到内存
         await this.loadKeyToMemory(CACHE_KEYS.FULL_DEMO_DATA);
       }
-      console.log('[OfflineCache] 初始化完成');
+      console.log("[OfflineCache] 初始化完成");
     } catch (error) {
-      console.error('[OfflineCache] 初始化失败:', error);
+      console.error("[OfflineCache] 初始化失败:", error);
     }
   }
 
@@ -115,10 +115,22 @@ class OfflineCacheService {
 
     // 分别保存各子集（便于快速访问）
     await Promise.all([
-      AsyncStorage.setItem(CACHE_KEYS.CLOTHING, JSON.stringify({ data: data.clothing, timestamp: Date.now() })),
-      AsyncStorage.setItem(CACHE_KEYS.USERS, JSON.stringify({ data: data.users, timestamp: Date.now() })),
-      AsyncStorage.setItem(CACHE_KEYS.RECOMMENDATIONS, JSON.stringify({ data: data.recommendations, timestamp: Date.now() })),
-      AsyncStorage.setItem(CACHE_KEYS.CONVERSATIONS, JSON.stringify({ data: data.conversations, timestamp: Date.now() })),
+      AsyncStorage.setItem(
+        CACHE_KEYS.CLOTHING,
+        JSON.stringify({ data: data.clothing, timestamp: Date.now() })
+      ),
+      AsyncStorage.setItem(
+        CACHE_KEYS.USERS,
+        JSON.stringify({ data: data.users, timestamp: Date.now() })
+      ),
+      AsyncStorage.setItem(
+        CACHE_KEYS.RECOMMENDATIONS,
+        JSON.stringify({ data: data.recommendations, timestamp: Date.now() })
+      ),
+      AsyncStorage.setItem(
+        CACHE_KEYS.CONVERSATIONS,
+        JSON.stringify({ data: data.conversations, timestamp: Date.now() })
+      ),
       AsyncStorage.setItem(CACHE_KEYS.LAST_SYNC_TIME, new Date().toISOString()),
     ]);
 
@@ -137,11 +149,13 @@ class OfflineCacheService {
       entry = (await this.loadKeyToMemory(CACHE_KEYS.FULL_DEMO_DATA)) ?? undefined;
     }
 
-    if (!entry) return null;
+    if (!entry) {
+      return null;
+    }
 
     // 检查是否过期
     if (Date.now() - entry.timestamp > CACHE_EXPIRY_MS) {
-      console.warn('[OfflineCache] Demo 数据已过期');
+      console.warn("[OfflineCache] Demo 数据已过期");
       return null; // 返回 null 让调用方决定是否使用
     }
 
@@ -151,7 +165,9 @@ class OfflineCacheService {
   /**
    * 获取特定类型的数据
    */
-  async getCachedData<T>(type: 'clothing' | 'users' | 'recommendations' | 'conversations'): Promise<T[] | null> {
+  async getCachedData<T>(
+    type: "clothing" | "users" | "recommendations" | "conversations"
+  ): Promise<T[] | null> {
     const keyMap = {
       clothing: CACHE_KEYS.CLOTHING,
       users: CACHE_KEYS.USERS,
@@ -160,7 +176,9 @@ class OfflineCacheService {
     };
 
     const raw = await AsyncStorage.getItem(keyMap[type]);
-    if (!raw) return null;
+    if (!raw) {
+      return null;
+    }
 
     const parsed = JSON.parse(raw);
 
@@ -177,7 +195,7 @@ class OfflineCacheService {
    */
   async setDemoMode(enabled: boolean): Promise<void> {
     await AsyncStorage.setItem(CACHE_KEYS.DEMO_MODE_ENABLED, JSON.stringify(enabled));
-    console.log(`[OfflineCache] Demo 模式已${enabled ? '启用' : '禁用'}`);
+    console.log(`[OfflineCache] Demo 模式已${enabled ? "启用" : "禁用"}`);
   }
 
   /**
@@ -185,7 +203,7 @@ class OfflineCacheService {
    */
   async isDemoModeEnabled(): Promise<boolean> {
     const raw = await AsyncStorage.getItem(CACHE_KEYS.DEMO_MODE_ENABLED);
-    return raw === 'true';
+    return raw === "true";
   }
 
   /**
@@ -198,7 +216,9 @@ class OfflineCacheService {
       AsyncStorage.getAllKeys(),
     ]);
 
-    const demoKeys = keys.filter((k) => k.startsWith(OFFLINE_CACHE_PREFIX) && k !== CACHE_KEYS.DEMO_MODE_ENABLED);
+    const demoKeys = keys.filter(
+      (k) => k.startsWith(OFFLINE_CACHE_PREFIX) && k !== CACHE_KEYS.DEMO_MODE_ENABLED
+    );
 
     // 计算总缓存大小
     let totalSize = 0;
@@ -208,7 +228,7 @@ class OfflineCacheService {
       const raw = await AsyncStorage.getItem(key);
       if (raw) {
         totalSize += raw.length; // 字符数近似
-        cachedTypes.push(key.replace(OFFLINE_CACHE_PREFIX, ''));
+        cachedTypes.push(key.replace(OFFLINE_CACHE_PREFIX, ""));
       }
     }
 
@@ -243,7 +263,9 @@ class OfflineCacheService {
   private async loadKeyToMemory(key: string): Promise<CacheEntry<DemoDataPackage> | null> {
     try {
       const raw = await AsyncStorage.getItem(key);
-      if (!raw) return null;
+      if (!raw) {
+        return null;
+      }
 
       const entry = JSON.parse(raw) as CacheEntry<DemoDataPackage>;
       this.memoryCache.set(key, entry);
@@ -268,13 +290,15 @@ export const offlineCache = OfflineCacheService.getInstance();
  * const { data, loading, error } = useOfflineData('clothing');
  * ```
  */
-export async function useOfflineData(type: 'clothing' | 'users' | 'recommendations' | 'conversations') {
+export async function useOfflineData(
+  type: "clothing" | "users" | "recommendations" | "conversations"
+) {
   const isEnabled = await offlineCache.isDemoModeEnabled();
 
   if (!isEnabled) {
-    return { data: null, source: 'online', enabled: false };
+    return { data: null, source: "online", enabled: false };
   }
 
   const data = await offlineCache.getCachedData(type);
-  return { data, source: 'offline', enabled: true };
+  return { data, source: "offline", enabled: true };
 }

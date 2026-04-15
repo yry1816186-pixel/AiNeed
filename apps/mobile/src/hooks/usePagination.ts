@@ -20,9 +20,7 @@ interface UsePaginationReturn {
   reset: () => void;
 }
 
-export function usePagination(
-  options: UsePaginationOptions = {},
-): UsePaginationReturn {
+export function usePagination(options: UsePaginationOptions = {}): UsePaginationReturn {
   const { initialPage = 1, pageSize = 10, totalItems = 0 } = options;
   const [page, setPage] = useState(initialPage);
   const [size, setSize] = useState(pageSize);
@@ -50,7 +48,7 @@ export function usePagination(
       const validPage = Math.max(1, Math.min(newPage, totalPages || 1));
       setPage(validPage);
     },
-    [totalPages],
+    [totalPages]
   );
 
   const setPageSize = useCallback((newSize: number) => {

@@ -4,7 +4,9 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ClothingCategory } from "@prisma/client";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
+
 import { QdrantService } from "./qdrant.service";
 
 type ClothingItemWithBrand = {
@@ -200,19 +202,19 @@ export class OutfitCompletionService {
       const priceDiff = Math.abs(
         (anchor.price?.toNumber() || 100) - (item.price?.toNumber() || 100),
       );
-      if (priceDiff < 50) score += 5;
-      else if (priceDiff < 150) score += 2;
+      if (priceDiff < 50) {score += 5;}
+      else if (priceDiff < 150) {score += 2;}
 
       let reason = "";
-      if (colorMatch > 0.5) reason = "色彩搭配和谐";
-      else if (styleOverlap > 0.5) reason = "风格一致";
-      else if (occasionOverlap > 0.5) reason = "场合适配";
-      else reason = "推荐搭配";
+      if (colorMatch > 0.5) {reason = "色彩搭配和谐";}
+      else if (styleOverlap > 0.5) {reason = "风格一致";}
+      else if (occasionOverlap > 0.5) {reason = "场合适配";}
+      else {reason = "推荐搭配";}
 
       return {
         id: item.id,
         name: item.name,
-        imageUrl: (item.images as string[])?.[0] || "",
+        imageUrl: (item.images)?.[0] || "",
         price: item.price?.toNumber(),
         brand: item.brand?.name,
         matchScore: Math.round(score),
@@ -229,7 +231,7 @@ export class OutfitCompletionService {
   ): Promise<{ id: string; score: number }[]> {
     try {
       const anchorVector = await this.qdrantService.getVector(anchorId);
-      if (!anchorVector) return [];
+      if (!anchorVector) {return [];}
 
       const results = await this.qdrantService.searchSimilar(anchorVector.vector, {
         topK: 10,
@@ -324,7 +326,7 @@ export class OutfitCompletionService {
   }
 
   private calculateColorMatch(colors1: string[], colors2: string[]): number {
-    if (colors1.length === 0 || colors2.length === 0) return 0.3;
+    if (colors1.length === 0 || colors2.length === 0) {return 0.3;}
 
     let matchCount = 0;
     for (const c1 of colors1) {
@@ -340,7 +342,7 @@ export class OutfitCompletionService {
   }
 
   private calculateSetOverlap(set1: string[], set2: string[]): number {
-    if (set1.length === 0 || set2.length === 0) return 0;
+    if (set1.length === 0 || set2.length === 0) {return 0;}
     const s2Lower = set2.map((s) => s.toLowerCase());
     const overlap = set1.filter((s) => s2Lower.includes(s.toLowerCase())).length;
     return overlap / Math.max(set1.length, set2.length);

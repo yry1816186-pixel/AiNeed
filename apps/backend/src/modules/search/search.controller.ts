@@ -18,8 +18,8 @@ import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiResponse
 import { Throttle } from "@nestjs/throttler";
 import axios from "axios";
 
-import { OptionalAuthGuard } from "../auth/guards/optional-auth.guard";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { OptionalAuthGuard } from "../auth/guards/optional-auth.guard";
 
 import { SearchService } from "./search.service";
 import { VisualSearchService } from "./services/visual-search.service";

@@ -12,6 +12,7 @@ export interface User {
   skinTone?: string;
   colorSeason?: string;
   subscriptionTier?: "basic" | "premium" | "vip";
+  onboardingCompleted?: boolean;
   preferences?: UserPreferences;
   createdAt: string;
   updatedAt: string;
@@ -23,12 +24,7 @@ export interface UserPreferences {
   avoidedColors: string[];
   styleAvoidances: string[];
   fitGoals: string[];
-  bodyType?:
-    | "rectangle"
-    | "triangle"
-    | "inverted_triangle"
-    | "hourglass"
-    | "oval";
+  bodyType?: "rectangle" | "triangle" | "inverted_triangle" | "hourglass" | "oval";
   skinTone?: "fair" | "light" | "medium" | "olive" | "tan" | "dark";
   colorSeason?: "spring" | "summer" | "autumn" | "winter";
   height?: number;

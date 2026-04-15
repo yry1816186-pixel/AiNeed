@@ -40,7 +40,9 @@ interface UserState {
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 function isCacheValid(lastFetchedAt: number | null): boolean {
-  if (!lastFetchedAt) return false;
+  if (!lastFetchedAt) {
+    return false;
+  }
   return Date.now() - lastFetchedAt < CACHE_TTL_MS;
 }
 
@@ -57,13 +59,13 @@ export const useUserStore = create<UserState>()(
 
       fetchProfile: async () => {
         const { lastFetchedAt, profile } = get();
-        if (profile && isCacheValid(lastFetchedAt)) return;
+        if (profile && isCacheValid(lastFetchedAt)) {
+          return;
+        }
 
         set({ isLoading: true, error: null });
         try {
-          const response: ApiResponse<User> = await apiClient.get<User>(
-            "/auth/me",
-          );
+          const response: ApiResponse<User> = await apiClient.get<User>("/auth/me");
           if (response.success && response.data) {
             set({ profile: response.data, lastFetchedAt: Date.now() });
           } else {
@@ -78,8 +80,9 @@ export const useUserStore = create<UserState>()(
 
       fetchPreferences: async () => {
         try {
-          const response: ApiResponse<UserPreferences> =
-            await apiClient.get<UserPreferences>("/auth/preferences");
+          const response: ApiResponse<UserPreferences> = await apiClient.get<UserPreferences>(
+            "/auth/preferences"
+          );
           if (response.success && response.data) {
             set({ preferences: response.data });
           }
@@ -90,8 +93,7 @@ export const useUserStore = create<UserState>()(
 
       fetchStats: async () => {
         try {
-          const response: ApiResponse<UserStats> =
-            await apiClient.get<UserStats>("/user/stats");
+          const response: ApiResponse<UserStats> = await apiClient.get<UserStats>("/user/stats");
           if (response.success && response.data) {
             set({ stats: response.data });
           }
@@ -103,10 +105,7 @@ export const useUserStore = create<UserState>()(
       updateProfile: async (data: Partial<User>) => {
         set({ isLoading: true, error: null });
         try {
-          const response: ApiResponse<User> = await apiClient.put<User>(
-            "/auth/profile",
-            data,
-          );
+          const response: ApiResponse<User> = await apiClient.put<User>("/auth/profile", data);
           if (response.success && response.data) {
             set({ profile: response.data, lastFetchedAt: Date.now() });
           } else {
@@ -122,8 +121,10 @@ export const useUserStore = create<UserState>()(
       updatePreferences: async (data: Partial<UserPreferences>) => {
         set({ isLoading: true, error: null });
         try {
-          const response: ApiResponse<UserPreferences> =
-            await apiClient.put<UserPreferences>("/auth/preferences", data);
+          const response: ApiResponse<UserPreferences> = await apiClient.put<UserPreferences>(
+            "/auth/preferences",
+            data
+          );
           if (response.success && response.data) {
             set({ preferences: response.data });
           } else {
@@ -139,8 +140,10 @@ export const useUserStore = create<UserState>()(
       updateStyleProfile: async (data: Partial<StyleProfile>) => {
         set({ isLoading: true, error: null });
         try {
-          const response: ApiResponse<StyleProfile> =
-            await apiClient.put<StyleProfile>("/profile/style", data);
+          const response: ApiResponse<StyleProfile> = await apiClient.put<StyleProfile>(
+            "/profile/style",
+            data
+          );
           if (response.success && response.data) {
             set({ styleProfile: response.data });
           } else {
@@ -203,6 +206,6 @@ export const useUserStore = create<UserState>()(
       partialize: (state) => ({
         styleProfile: state.styleProfile,
       }),
-    },
-  ),
+    }
+  )
 );

@@ -2,18 +2,26 @@ const isDev = __DEV__;
 
 export const logger = {
   log: (...args: unknown[]) => {
-    if (isDev) console.log(...args);
+    if (isDev) {
+      console.log(...args);
+    }
   },
   warn: (...args: unknown[]) => {
-    if (isDev) console.warn(...args);
+    if (isDev) {
+      console.warn(...args);
+    }
   },
   error: (...args: unknown[]) => {
     console.error(...args);
   },
   debug: (...args: unknown[]) => {
-    if (isDev) console.debug(...args);
+    if (isDev) {
+      console.debug(...args);
+    }
   },
   info: (...args: unknown[]) => {
-    if (isDev) console.info(...args);
+    if (isDev) {
+      console.info(...args);
+    }
   },
 };

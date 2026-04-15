@@ -180,7 +180,7 @@ from ml.api.routes.analysis import router as analysis_router
 app.include_router(analysis_router)
 
 try:
-    from ml.services.visual_outfit_api import router as visual_router
+    from ml.services.tryon.visual_outfit_api import router as visual_router
 
     app.include_router(visual_router)
     logging.getLogger(__name__).info("Visual outfit API routes loaded")

@@ -78,7 +78,7 @@ export enum Gender {
  *   weight: 55,
  *   measurements: { bust: 86, waist: 68, hip: 90 },
  *   stylePreferences: [{ id: 'style_1', name: 'Minimalist', category: StyleCategory.Minimalist }],
- *   colorPreferences: [ColorSeason.Autumn],
+ *   colorPreferences: [ColorSeason.AutumnWarm],
  *   createdAt: new Date('2024-01-01'),
  *   updatedAt: new Date('2024-06-15')
  * };
@@ -186,23 +186,32 @@ export enum FaceShape {
 
 /**
  * Enumeration of seasonal color analysis categories.
- * @description Based on the 12-season color analysis system.
+ * @description Based on the 8-season color analysis system.
+ * Each season is subdivided by temperature (warm/cool) and depth (light/deep).
  * Helps determine which color palettes best complement the user's natural coloring.
  * @example
  * ```typescript
- * const colorSeason: ColorSeason = ColorSeason.Autumn;
+ * const colorSeason: ColorSeason = ColorSeason.AutumnWarm;
  * // Best colors: Warm earth tones, rust, olive, camel
  * ```
  */
 export enum ColorSeason {
   /** Warm and fresh - warm undertones with light to medium depth */
-  Spring = 'spring',
+  SpringWarm = 'spring_warm',
+  /** Warm and light - warm undertones with light depth */
+  SpringLight = 'spring_light',
   /** Cool and soft - cool undertones with light to medium depth */
-  Summer = 'summer',
+  SummerCool = 'summer_cool',
+  /** Cool and light - cool undertones with light depth */
+  SummerLight = 'summer_light',
   /** Warm and deep - warm undertones with medium to deep depth */
-  Autumn = 'autumn',
+  AutumnWarm = 'autumn_warm',
+  /** Warm and deep - warm undertones with deep depth */
+  AutumnDeep = 'autumn_deep',
   /** Cool and deep - cool undertones with medium to deep depth */
-  Winter = 'winter',
+  WinterCool = 'winter_cool',
+  /** Cool and deep - cool undertones with deep depth */
+  WinterDeep = 'winter_deep',
 }
 
 /**
@@ -295,7 +304,7 @@ export enum StyleCategory {
  *   type: PhotoType.FullBody,
  *   url: 'https://cdn.xuno.app/photos/photo_123.jpg',
  *   thumbnailUrl: 'https://cdn.xuno.app/photos/photo_123_thumb.jpg',
- *   status: PhotoStatus.Analyzed,
+ *   status: PhotoStatus.Completed,
  *   createdAt: new Date('2024-06-15')
  * };
  * ```
@@ -351,7 +360,7 @@ export enum PhotoStatus {
   /** Currently being analyzed by ML models */
   Processing = 'processing',
   /** Analysis completed successfully */
-  Analyzed = 'analyzed',
+  Completed = 'completed',
   /** Analysis failed due to error */
   Failed = 'failed',
 }
@@ -702,6 +711,8 @@ export enum CustomizationStatus {
   Confirmed = 'confirmed',
   /** Work in progress */
   InProgress = 'in_progress',
+  /** Item has been shipped */
+  Shipped = 'shipped',
   /** Work completed */
   Completed = 'completed',
   /** Request cancelled */

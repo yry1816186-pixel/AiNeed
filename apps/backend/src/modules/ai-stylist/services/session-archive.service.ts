@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
 /**
@@ -62,7 +63,7 @@ export class SessionArchiveService {
     for (const session of sessions) {
       const dateKey = session.createdAt.toISOString().slice(0, 10); // YYYY-MM-DD
       const payload = session.payload as Record<string, unknown> | null;
-      const hasPlan = !!(payload && (payload as Record<string, unknown>).result);
+      const hasPlan = !!(payload?.result);
 
       const existing = dayMap.get(dateKey);
       if (existing) {
@@ -112,12 +113,12 @@ export class SessionArchiveService {
 
     return sessions.map((s): ArchivedSession => {
       const payload = s.payload as Record<string, unknown> | null;
-      const goalValue = payload ? (payload as Record<string, unknown>).goal : undefined;
+      const goalValue = payload ? (payload).goal : undefined;
       return {
         id: s.id,
         status: s.status,
         goal: typeof goalValue === "string" ? goalValue : undefined,
-        hasOutfitPlan: !!(payload && (payload as Record<string, unknown>).result),
+        hasOutfitPlan: !!(payload?.result),
         createdAt: s.createdAt.toISOString(),
         updatedAt: s.updatedAt.toISOString(),
       };

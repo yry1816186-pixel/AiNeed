@@ -7,10 +7,6 @@ import {
   STYLIST_SYSTEM_PROMPT,
   buildConversationContextPrompt,
 } from "../prompts/system-prompt";
-
-import { AiStylistSessionService } from "./session.service";
-import { AiStylistContextService } from "./context.service";
-
 import type {
   ChatMessage,
   StylistAction,
@@ -19,6 +15,9 @@ import type {
   ChatResult,
   StylistOutfitItem,
 } from "../types";
+
+import { AiStylistContextService } from "./context.service";
+import { AiStylistSessionService } from "./session.service";
 import type { StylistSession } from "./session.service";
 
 const OCCASION_OPTIONS = ["通勤", "约会", "面试", "出游"];

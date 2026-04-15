@@ -1,14 +1,6 @@
-import React, { useEffect, useCallback, useState, useMemo } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Pressable,
-  Platform,
-  StatusBar,
-} from "react-native";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
+﻿import React, { useEffect, useCallback, useState } from "react";
+import { View, Text, StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -30,15 +22,9 @@ import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
-const AnimatedLinearGradient =
-  AnimatedReanimated.createAnimatedComponent(LinearGradient);
+const _AnimatedLinearGradient = AnimatedReanimated.createAnimatedComponent(LinearGradient);
 
-export type CompanionState =
-  | "idle"
-  | "listening"
-  | "thinking"
-  | "responding"
-  | "collapsed";
+export type CompanionState = "idle" | "listening" | "thinking" | "responding" | "collapsed";
 
 export interface EnhancedAICompanionBallProps {
   state?: CompanionState;
@@ -59,87 +45,54 @@ export interface EnhancedAICompanionBallProps {
 
 const STATE_CONFIG = {
   idle: {
-    gradient: [
-      DesignTokens.colors.brand.sage,
-      DesignTokens.colors.brand.camel,
-    ] as [string, string],
+    gradient: [DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel] as [string, string],
     gradientFlow: [
       DesignTokens.colors.brand.sage,
       DesignTokens.colors.brand.camel,
       DesignTokens.colors.brand.terracottaLight,
       DesignTokens.colors.brand.sage,
     ] as [string, string, string, string],
-    innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.05)"] as [
-      string,
-      string,
-    ],
+    innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.05)"] as [string, string],
     glowColor: DesignTokens.colors.brand.sage,
     particleColor: DesignTokens.colors.brand.sage,
     animation: "breathe",
   },
   listening: {
-    gradient: ["#7B8FA2", "#96A6B5"] as [string, string],
-    gradientFlow: ["#7B8FA2", "#96A6B5", "#B8C5D1", "#7B8FA2"] as [
-      string,
-      string,
-      string,
-      string,
-    ],
-    innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.08)"] as [
-      string,
-      string,
-    ],
-    glowColor: "#7B8FA2",
-    particleColor: "#96A6B5",
+    gradient: [DesignTokens.colors.brand.slate, "#96A6B5"] as [string, string],
+    gradientFlow: [DesignTokens.colors.brand.slate, "#96A6B5", "#B8C5D1", DesignTokens.colors.brand.slate] as [string, string, string, string], // custom color
+    innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.08)"] as [string, string],
+    glowColor: DesignTokens.colors.brand.slate,
+    particleColor: "#96A6B5", // custom color
     animation: "pulse",
   },
   thinking: {
-    gradient: ["#D9A441", "#E8B86D"] as [string, string],
-    gradientFlow: ["#D9A441", "#E8B86D", "#F5D89A", "#D9A441"] as [
-      string,
-      string,
-      string,
-      string,
-    ],
-    innerGradient: ["rgba(255,255,255,0.4)", "rgba(255,255,255,0.1)"] as [
-      string,
-      string,
-    ],
-    glowColor: "#D9A441",
-    particleColor: "#E8B86D",
+    gradient: [DesignTokens.colors.semantic.warning, "#E8B86D"] as [string, string],
+    gradientFlow: [DesignTokens.colors.semantic.warning, "#E8B86D", "#F5D89A", DesignTokens.colors.semantic.warning] as [string, string, string, string], // custom color
+    innerGradient: ["rgba(255,255,255,0.4)", "rgba(255,255,255,0.1)"] as [string, string],
+    glowColor: DesignTokens.colors.semantic.warning,
+    particleColor: "#E8B86D", // custom color
     animation: "pulse",
   },
   responding: {
-    gradient: ["#5B8A72", "#7BA896"] as [string, string],
-    gradientFlow: ["#5B8A72", "#7BA896", "#9DC4B5", "#5B8A72"] as [
-      string,
-      string,
-      string,
-      string,
-    ],
-    innerGradient: ["rgba(255,255,255,0.32)", "rgba(255,255,255,0.06)"] as [
-      string,
-      string,
-    ],
-    glowColor: "#5B8A72",
-    particleColor: "#7BA896",
+    gradient: [DesignTokens.colors.semantic.success, "#7BA896"] as [string, string],
+    gradientFlow: [DesignTokens.colors.semantic.success, "#7BA896", "#9DC4B5", DesignTokens.colors.semantic.success] as [string, string, string, string], // custom color
+    innerGradient: ["rgba(255,255,255,0.32)", "rgba(255,255,255,0.06)"] as [string, string],
+    glowColor: DesignTokens.colors.semantic.success,
+    particleColor: "#7BA896", // custom color
     animation: "glow",
   },
   collapsed: {
-    gradient: [
-      DesignTokens.colors.brand.terracotta,
-      DesignTokens.colors.brand.camel,
-    ] as [string, string],
+    gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel] as [
+      string,
+      string
+    ],
     gradientFlow: [
       DesignTokens.colors.brand.terracotta,
       DesignTokens.colors.brand.camel,
       DesignTokens.colors.brand.terracottaLight,
       DesignTokens.colors.brand.terracotta,
     ] as [string, string, string, string],
-    innerGradient: ["rgba(255,255,255,0.25)", "rgba(255,255,255,0.03)"] as [
-      string,
-      string,
-    ],
+    innerGradient: ["rgba(255,255,255,0.25)", "rgba(255,255,255,0.03)"] as [string, string],
     glowColor: DesignTokens.colors.brand.terracotta,
     particleColor: DesignTokens.colors.brand.camel,
     animation: "none",
@@ -153,12 +106,7 @@ interface ParticleProps {
   isActive: boolean;
 }
 
-const Particle: React.FC<ParticleProps> = ({
-  index,
-  color,
-  ballSize,
-  isActive,
-}) => {
+const Particle: React.FC<ParticleProps> = ({ index, color, ballSize, isActive }) => {
   const angle = useSharedValue(index * 72 * (Math.PI / 180));
   const radius = useSharedValue(ballSize * 0.6);
   const opacity = useSharedValue(0);
@@ -173,7 +121,7 @@ const Particle: React.FC<ParticleProps> = ({
           easing: Easing.linear,
         }),
         -1,
-        false,
+        false
       );
 
       radius.value = withRepeat(
@@ -185,10 +133,10 @@ const Particle: React.FC<ParticleProps> = ({
           withTiming(ballSize * 0.5, {
             duration: 2000 + index * 500,
             easing: Easing.inOut(Easing.ease),
-          }),
+          })
         ),
         -1,
-        true,
+        true
       );
 
       opacity.value = withRepeat(
@@ -200,10 +148,10 @@ const Particle: React.FC<ParticleProps> = ({
           withTiming(0.3, {
             duration: 1500 + index * 300,
             easing: Easing.ease,
-          }),
+          })
         ),
         -1,
-        true,
+        true
       );
 
       scale.value = withRepeat(
@@ -212,10 +160,10 @@ const Particle: React.FC<ParticleProps> = ({
           withTiming(0.6, {
             duration: 1800 + index * 400,
             easing: Easing.ease,
-          }),
+          })
         ),
         -1,
-        true,
+        true
       );
 
       floatOffset.value = withRepeat(
@@ -227,10 +175,10 @@ const Particle: React.FC<ParticleProps> = ({
           withTiming(-5, {
             duration: 1000 + index * 200,
             easing: Easing.inOut(Easing.ease),
-          }),
+          })
         ),
         -1,
-        true,
+        true
       );
     } else {
       cancelAnimation(angle);
@@ -247,11 +195,7 @@ const Particle: React.FC<ParticleProps> = ({
     const y = Math.sin(angle.value) * radius.value;
 
     return {
-      transform: [
-        { translateX: x },
-        { translateY: y + floatOffset.value },
-        { scale: scale.value },
-      ],
+      transform: [{ translateX: x }, { translateY: y + floatOffset.value }, { scale: scale.value }],
       opacity: opacity.value,
     };
   });
@@ -272,9 +216,7 @@ const Particle: React.FC<ParticleProps> = ({
   );
 };
 
-export const EnhancedAICompanionBall: React.FC<
-  EnhancedAICompanionBallProps
-> = ({
+export const EnhancedAICompanionBall: React.FC<EnhancedAICompanionBallProps> = ({
   state = "idle",
   onPress,
   onLongPress,
@@ -283,7 +225,7 @@ export const EnhancedAICompanionBall: React.FC<
   size = 64,
   showHint = false,
   hintMessage = "有什么可以帮你的？",
-  enableVoiceInput = true,
+  _enableVoiceInput = true,
   onVoiceStart,
   onVoiceEnd,
   onVoiceResult,
@@ -292,7 +234,7 @@ export const EnhancedAICompanionBall: React.FC<
 }) => {
   const insets = useSafeAreaInsets();
   const [isDragging, setIsDragging] = useState(false);
-  const [isVoiceMode, setIsVoiceMode] = useState(false);
+  const [_isVoiceMode, _setIsVoiceMode] = useState(false);
 
   const defaultX = SCREEN_WIDTH - size - 20;
   const defaultY = SCREEN_HEIGHT - size - insets.bottom - 100;
@@ -319,37 +261,37 @@ export const EnhancedAICompanionBall: React.FC<
       breatheValue.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
-        true,
+        true
       );
       pulseValue.value = 0;
       glowValue.value = 0;
       innerGlowValue.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
-        true,
+        true
       );
 
       if (enableColorFlow) {
         colorFlowAngle.value = withRepeat(
           withTiming(360, { duration: 12000, easing: Easing.linear }),
           -1,
-          false,
+          false
         );
       }
 
       shimmerValue.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 2500, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0, { duration: 2500, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0, { duration: 2500, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
-        true,
+        true
       );
     } else if (state === "listening" || state === "thinking") {
       cancelAnimation(breatheValue);
@@ -357,47 +299,44 @@ export const EnhancedAICompanionBall: React.FC<
       pulseValue.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 600, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0.7, { duration: 600, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0.7, { duration: 600, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
-        true,
+        true
       );
       innerGlowValue.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 400, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0.5, { duration: 400, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0.5, { duration: 400, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
-        true,
+        true
       );
 
       if (enableColorFlow) {
         colorFlowAngle.value = withRepeat(
           withTiming(360, { duration: 6000, easing: Easing.linear }),
           -1,
-          false,
+          false
         );
       }
 
       shimmerValue.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 800, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0, { duration: 800, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0, { duration: 800, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
-        true,
+        true
       );
     } else if (state === "responding") {
       cancelAnimation(breatheValue);
       cancelAnimation(pulseValue);
       cancelAnimation(innerGlowValue);
       glowValue.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 800 }),
-          withTiming(0.5, { duration: 800 }),
-        ),
+        withSequence(withTiming(1, { duration: 800 }), withTiming(0.5, { duration: 800 })),
         -1,
-        true,
+        true
       );
       innerGlowValue.value = 0.8;
 
@@ -405,7 +344,7 @@ export const EnhancedAICompanionBall: React.FC<
         colorFlowAngle.value = withRepeat(
           withTiming(360, { duration: 8000, easing: Easing.linear }),
           -1,
-          false,
+          false
         );
       }
 
@@ -415,10 +354,10 @@ export const EnhancedAICompanionBall: React.FC<
           withTiming(0.3, {
             duration: 1000,
             easing: Easing.inOut(Easing.ease),
-          }),
+          })
         ),
         -1,
-        true,
+        true
       );
     } else {
       cancelAnimation(breatheValue);
@@ -433,10 +372,7 @@ export const EnhancedAICompanionBall: React.FC<
   useEffect(() => {
     if (showHint && state === "idle") {
       hintOpacity.value = withDelay(500, withTiming(1, { duration: 300 }));
-      hintTranslateX.value = withDelay(
-        500,
-        withSpring(0, { damping: 15, stiffness: 150 }),
-      );
+      hintTranslateX.value = withDelay(500, withSpring(0, { damping: 15, stiffness: 150 }));
     } else {
       hintOpacity.value = withTiming(0, { duration: 200 });
       hintTranslateX.value = withTiming(20, { duration: 200 });
@@ -448,7 +384,7 @@ export const EnhancedAICompanionBall: React.FC<
     setRippleKey((prev) => prev + 1);
     rippleValue.value = withSequence(
       withTiming(1, { duration: 600, easing: Easing.out(Easing.ease) }),
-      withTiming(0, { duration: 0 }),
+      withTiming(0, { duration: 0 })
     );
   }, []);
 
@@ -471,9 +407,7 @@ export const EnhancedAICompanionBall: React.FC<
       const margin = 16;
       const minX = margin;
       const maxX = SCREEN_WIDTH - size - margin;
-      const minY =
-        (Platform.OS === "ios" ? insets.top : StatusBar.currentHeight || 24) +
-        margin;
+      const minY = (Platform.OS === "ios" ? insets.top : StatusBar.currentHeight || 24) + margin;
       const maxY = SCREEN_HEIGHT - insets.bottom - size - 80;
 
       finalX = Math.max(minX, Math.min(maxX, finalX));
@@ -500,7 +434,7 @@ export const EnhancedAICompanionBall: React.FC<
     if (!isDragging && onPress) {
       scale.value = withSequence(
         withSpring(0.9, { damping: 15, stiffness: 300 }),
-        withSpring(1, { damping: 15, stiffness: 150 }),
+        withSpring(1, { damping: 15, stiffness: 150 })
       );
       runOnJS(triggerRipple)();
       runOnJS(onPress)();
@@ -519,11 +453,7 @@ export const EnhancedAICompanionBall: React.FC<
       scale.value = withSpring(1, { damping: 15, stiffness: 150 });
     });
 
-  const composedGesture = Gesture.Race(
-    panGesture,
-    longPressGesture,
-    tapGesture,
-  );
+  const composedGesture = Gesture.Race(panGesture, longPressGesture, tapGesture);
 
   const ballAnimatedStyle = useAnimatedStyle(() => {
     let animatedScale = scale.value;
@@ -560,16 +490,12 @@ export const EnhancedAICompanionBall: React.FC<
 
   const innerGlowAnimatedStyle = useAnimatedStyle(() => ({
     opacity: interpolate(innerGlowValue.value, [0, 1], [0.4, 0.9]),
-    transform: [
-      { scale: interpolate(innerGlowValue.value, [0, 1], [0.82, 0.96]) },
-    ],
+    transform: [{ scale: interpolate(innerGlowValue.value, [0, 1], [0.82, 0.96]) }],
   }));
 
   const shimmerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: shimmerValue.value * 0.5,
-    transform: [
-      { translateX: interpolate(shimmerValue.value, [0, 1], [-size, size]) },
-    ],
+    transform: [{ translateX: interpolate(shimmerValue.value, [0, 1], [-size, size]) }],
   }));
 
   const rippleAnimatedStyle = useAnimatedStyle(() => ({
@@ -577,7 +503,7 @@ export const EnhancedAICompanionBall: React.FC<
     transform: [{ scale: interpolate(rippleValue.value, [0, 1], [0.8, 1.5]) }],
   }));
 
-  const gradientAngle = useDerivedValue(() => {
+  const _gradientAngle = useDerivedValue(() => {
     return colorFlowAngle.value;
   });
 
@@ -585,13 +511,7 @@ export const EnhancedAICompanionBall: React.FC<
     <GestureDetector gesture={composedGesture}>
       <AnimatedView style={[styles.container, ballAnimatedStyle]}>
         {showHint && state === "idle" && (
-          <AnimatedView
-            style={[
-              styles.hintContainer,
-              { right: size + 12 },
-              hintAnimatedStyle,
-            ]}
-          >
+          <AnimatedView style={[styles.hintContainer, { right: size + 12 }, hintAnimatedStyle]}>
             <View style={styles.hintBubble}>
               <Text style={styles.hintText}>{hintMessage}</Text>
             </View>
@@ -601,9 +521,7 @@ export const EnhancedAICompanionBall: React.FC<
 
         <View style={[styles.ballContainer, { width: size, height: size }]}>
           {enableParticleEffect && state !== "collapsed" && (
-            <View
-              style={[styles.particleContainer, { width: size, height: size }]}
-            >
+            <View style={[styles.particleContainer, { width: size, height: size }]}>
               {Array.from({ length: particleCount }).map((_, index) => (
                 <Particle
                   key={index}
@@ -620,20 +538,14 @@ export const EnhancedAICompanionBall: React.FC<
             colors={enableColorFlow ? config.gradientFlow : config.gradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={[
-              styles.ball,
-              { width: size, height: size, borderRadius: size / 2 },
-            ]}
+            style={[styles.ball, { width: size, height: size, borderRadius: size / 2 }]}
           >
             <AnimatedView style={[styles.innerGlow, innerGlowAnimatedStyle]}>
               <LinearGradient
                 colors={config.innerGradient}
                 start={{ x: 0.2, y: 0.2 }}
                 end={{ x: 0.9, y: 0.9 }}
-                style={[
-                  styles.innerGlowGradient,
-                  { borderRadius: size / 2 - 6 },
-                ]}
+                style={[styles.innerGlowGradient, { borderRadius: size / 2 - 6 }]}
               />
             </AnimatedView>
 
@@ -681,7 +593,7 @@ const styles = StyleSheet.create({
   },
   particle: {
     position: "absolute",
-    shadowColor: "#fff",
+    shadowColor: DesignTokens.colors.neutral.white,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 4,
@@ -749,7 +661,7 @@ const styles = StyleSheet.create({
   },
   hintText: {
     fontSize: 14,
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
     fontWeight: "500",
     letterSpacing: 0.3,
   },

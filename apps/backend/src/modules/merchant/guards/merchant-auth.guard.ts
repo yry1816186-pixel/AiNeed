@@ -3,13 +3,11 @@ import {
   CanActivate,
   ExecutionContext,
   UnauthorizedException,
-  Inject,
 } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import * as jwt from "jsonwebtoken";
+import { JwtService } from "@nestjs/jwt";
 
-import { JwtUserPayload } from "../../../common/types/common.types";
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { JwtUserPayload } from "../../../common/types/common.types";
 
 interface MerchantJwtPayload extends JwtUserPayload {
   merchantId?: string;
@@ -19,7 +17,7 @@ interface MerchantJwtPayload extends JwtUserPayload {
 export class MerchantAuthGuard implements CanActivate {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(ConfigService) private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -30,13 +28,8 @@ export class MerchantAuthGuard implements CanActivate {
       throw new UnauthorizedException("No token provided");
     }
 
-    const jwtSecret = this.configService.get<string>("JWT_SECRET");
-    if (!jwtSecret) {
-      throw new Error("JWT_SECRET environment variable is required");
-    }
-
     try {
-      const decoded = jwt.verify(token, jwtSecret) as MerchantJwtPayload;
+      const decoded = this.jwtService.verify<MerchantJwtPayload>(token);
 
       const merchant = await this.prisma.brandMerchant.findUnique({
         where: { id: decoded.merchantId },

@@ -1,6 +1,5 @@
 import { renderHook, act } from "@testing-library/react-native";
 import { useApi } from "../useApi";
-import { AppError, AppErrorCode } from "../../services/api/error";
 import type { ApiResponse } from "../../types";
 
 // Mock the API client
@@ -11,48 +10,6 @@ jest.mock("../../services/api/client", () => ({
     post: jest.fn(),
   },
 }));
-
-// Mock the error module
-jest.mock("../../services/api/error", () => {
-  class MockAppError extends Error {
-    code: string;
-    details?: Record<string, unknown>;
-    constructor(code: string, message?: string, options?: { details?: Record<string, unknown> }) {
-      super(message || code);
-      this.name = "AppError";
-      this.code = code;
-      this.details = options?.details;
-    }
-  }
-
-  return {
-    AppError: MockAppError,
-    AppErrorCode: {
-      NETWORK_ERROR: "NETWORK_ERROR",
-      TIMEOUT_ERROR: "TIMEOUT_ERROR",
-      UNAUTHORIZED: "UNAUTHORIZED",
-      FORBIDDEN: "FORBIDDEN",
-      NOT_FOUND: "NOT_FOUND",
-      VALIDATION_ERROR: "VALIDATION_ERROR",
-      RATE_LIMITED: "RATE_LIMITED",
-      SERVER_ERROR: "SERVER_ERROR",
-      BUSINESS_ERROR: "BUSINESS_ERROR",
-      TOKEN_EXPIRED: "TOKEN_EXPIRED",
-      TOKEN_REFRESH_FAILED: "TOKEN_REFRESH_FAILED",
-      UNKNOWN_ERROR: "UNKNOWN_ERROR",
-    },
-    toAppError: jest.fn((err: unknown) => {
-      const MockAppErrorClass = require("../../services/api/error").AppError;
-      if (err instanceof Error) {
-        const error = new MockAppErrorClass("UNKNOWN_ERROR", err.message);
-        return error;
-      }
-      return new MockAppErrorClass("UNKNOWN_ERROR", String(err));
-    }),
-    classifyAxiosError: jest.fn(),
-    getErrorMessage: jest.fn(),
-  };
-});
 
 describe("useApi", () => {
   let mockApiFn: jest.Mock;
@@ -71,9 +28,7 @@ describe("useApi", () => {
 
   it("should have loading=true when immediate is true", () => {
     mockApiFn.mockResolvedValue({ success: true, data: "test" });
-    const { result } = renderHook(() =>
-      useApi(mockApiFn, { immediate: true }),
-    );
+    const { result } = renderHook(() => useApi(mockApiFn, { immediate: true }));
 
     expect(result.current.loading).toBe(true);
   });
@@ -130,6 +85,7 @@ describe("useApi", () => {
     expect(result.current.data).toBeNull();
     expect(result.current.loading).toBe(false);
     expect(result.current.error).not.toBeNull();
+    // toAppError converts Error to AppError with UNKNOWN_ERROR code
     expect(result.current.error?.code).toBe("UNKNOWN_ERROR");
   });
 
@@ -192,9 +148,7 @@ describe("useApi", () => {
     const onSuccess = jest.fn();
     mockApiFn.mockResolvedValue({ success: true, data: "data" });
 
-    const { result } = renderHook(() =>
-      useApi(mockApiFn, { onSuccess }),
-    );
+    const { result } = renderHook(() => useApi(mockApiFn, { onSuccess }));
 
     await act(async () => {
       await result.current.execute();
@@ -207,9 +161,7 @@ describe("useApi", () => {
     const onError = jest.fn();
     mockApiFn.mockRejectedValue(new Error("fail"));
 
-    const { result } = renderHook(() =>
-      useApi(mockApiFn, { onError }),
-    );
+    const { result } = renderHook(() => useApi(mockApiFn, { onError }));
 
     await act(async () => {
       await result.current.execute();

@@ -18,19 +18,22 @@ import {
   ConnectedSocket,
   MessageBody,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
 import Redis from 'ioredis';
+import { Server, Socket } from 'socket.io';
 
-import { REDIS_CLIENT } from '../../common/redis/redis.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { EventBusService } from '../ws/services/event-bus.service';
-import { ChatService } from './chat.service';
-import { SenderTypeDto, MessageTypeDto } from './dto/chat.dto';
+import { REDIS_CLIENT } from '../../common/redis/redis.service';
+import { TokenBlacklistService } from '../auth/services/token-blacklist.service';
 import {
   CHAT_EVENTS,
   ChatMessageCreatedPayload,
   ChatMessageReadPayload,
 } from '../ws/events';
+import { EventBusService } from '../ws/services/event-bus.service';
+
+import { ChatService } from './chat.service';
+import { SenderTypeDto, MessageTypeDto } from './dto/chat.dto';
+
 
 interface ChatUserConnection {
   socketId: string;
@@ -67,6 +70,7 @@ export class ChatGateway
     private eventBus: EventBusService,
     private chatService: ChatService,
     private prisma: PrismaService,
+    private tokenBlacklistService: TokenBlacklistService,
   ) {}
 
   onModuleInit() {
@@ -99,7 +103,7 @@ export class ChatGateway
 
   async handleConnection(client: Socket) {
     try {
-      const userId = this.extractUserId(client);
+      const userId = await this.extractUserId(client);
       if (!userId) {
         this.logger.warn(`Chat client ${client.id} rejected: no valid token`);
         client.emit('error', { message: 'Authentication required' });
@@ -158,7 +162,7 @@ export class ChatGateway
     @MessageBody() data: { roomId: string },
   ) {
     const connection = this.connections.get(client.id);
-    if (!connection) return;
+    if (!connection) {return;}
 
     // 验证用户有权访问此聊天室
     try {
@@ -194,12 +198,12 @@ export class ChatGateway
     @MessageBody() data: { roomId: string; content: string; messageType: string; imageUrl?: string; fileUrl?: string },
   ) {
     const connection = this.connections.get(client.id);
-    if (!connection) return;
+    if (!connection) {return;}
 
     try {
       // 确定发送者类型
       const room = await this.prisma.chatRoom.findUnique({ where: { id: data.roomId } });
-      if (!room) throw new Error('Room not found');
+      if (!room) {throw new Error('Room not found');}
 
       const senderType = room.consultantId && (await this.chatService.isConsultant(connection.userId, room.consultantId)) ? SenderTypeDto.CONSULTANT : SenderTypeDto.USER;
 
@@ -234,10 +238,10 @@ export class ChatGateway
   ) {
     try {
       const connection = this.connections.get(client.id);
-      if (!connection) return;
+      if (!connection) {return;}
 
       const room = await this.prisma.chatRoom.findUnique({ where: { id: data.roomId } });
-      if (!room) return;
+      if (!room) {return;}
 
       const senderType = room.consultantId && (await this.chatService.isConsultant(connection.userId, room.consultantId)) ? 'consultant' : 'user';
 
@@ -259,7 +263,7 @@ export class ChatGateway
     @MessageBody() data: { roomId: string; lastMessageId?: string },
   ) {
     const connection = this.connections.get(client.id);
-    if (!connection) return;
+    if (!connection) {return;}
 
     try {
       await this.chatService.markAsRead(connection.userId, data.roomId, { lastMessageId: data.lastMessageId });
@@ -284,18 +288,28 @@ export class ChatGateway
     this.server.to(`chat:room:${roomId}`).emit('chat:read', envelope.payload);
   }
 
-  private extractUserId(client: Socket): string | null {
+  private async extractUserId(client: Socket): Promise<string | null> {
     const auth = client.handshake.auth;
     const token = auth?.token;
-    if (!token) return null;
+    if (!token) {return null;}
     return this.validateToken(token as string);
   }
 
-  private validateToken(token: string): string | null {
+  private async validateToken(token: string): Promise<string | null> {
     try {
       const jwtSecret = this.configService.get<string>('JWT_SECRET');
-      if (!jwtSecret) return null;
+      if (!jwtSecret) {return null;}
       const payload = this.jwtService.verify(token, { secret: jwtSecret });
+
+      // 检查 token 是否在黑名单中
+      if (payload.jti) {
+        const blacklisted = await this.tokenBlacklistService.isBlacklisted(payload.jti);
+        if (blacklisted) {
+          this.logger.warn(`Token is blacklisted: ${payload.jti.substring(0, 8)}...`);
+          return null;
+        }
+      }
+
       return payload.sub || payload.userId || null;
     } catch {
       return null;

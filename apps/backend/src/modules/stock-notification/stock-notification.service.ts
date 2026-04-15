@@ -5,8 +5,9 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { PrismaService } from "../../common/prisma/prisma.service";
 import { StockNotificationStatus } from "@prisma/client";
+
+import { PrismaService } from "../../common/prisma/prisma.service";
 
 @Injectable()
 export class StockNotificationService {
@@ -129,7 +130,7 @@ export class StockNotificationService {
       },
     });
 
-    if (subscriptions.length === 0) return;
+    if (subscriptions.length === 0) {return;}
 
     const now = new Date();
     await this.prisma.stockNotification.updateMany({
@@ -162,7 +163,7 @@ export class StockNotificationService {
       select: { id: true, name: true, stock: true, lowStockThreshold: true },
     });
 
-    if (!item) return;
+    if (!item) {return;}
 
     if (item.stock <= item.lowStockThreshold) {
       this.eventEmitter.emit("LOW_STOCK", {

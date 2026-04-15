@@ -1,14 +1,7 @@
-import React, { useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Dimensions,
-} from 'react-native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from "react-native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -18,11 +11,11 @@ import Animated, {
   interpolate,
   Easing,
   cancelAnimation,
-} from 'react-native-reanimated';
-import { type RecommendedItem } from '../../services/api/tryon.api';
-import { DesignTokens } from '../../theme/tokens/design-tokens';
+} from "react-native-reanimated";
+import { type RecommendedItem } from "../../services/api/tryon.api";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // --- Layout constants used by sub-components ---
 const CAROUSEL_CARD_WIDTH = SCREEN_WIDTH * 0.62;
@@ -36,20 +29,40 @@ const HORIZONTAL_PADDING = 20;
 const AnimatedView = Animated.createAnimatedComponent(View);
 
 // --- Scene/occasion tags for carousel cards ---
-const OCCASION_TAGS = ['约会', '通勤', '运动', '休闲'] as const;
+const OCCASION_TAGS = ["约会", "通勤", "运动", "休闲"] as const;
 const OCCASION_GRADIENTS: Record<string, [string, string]> = {
-  '约会': ['#C67B5C', '#D4917A'],
-  '通勤': ['#7B8FA2', '#96A6B5'],
-  '运动': ['#5B8A72', '#7BA896'],
-  '休闲': ['#B5A08C', '#C9B8A6'],
+  约会: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.terracottaLight],
+  通勤: [DesignTokens.colors.brand.slate, "#96A6B5"], // custom color
+  运动: [DesignTokens.colors.semantic.success, "#7BA896"], // custom color
+  休闲: [DesignTokens.colors.brand.camel, "#C9B8A6"], // custom color
 };
 
 // --- Category config ---
 const CATEGORIES = [
-  { key: 'tops', label: '上装', icon: 'shirt-outline' as const, gradient: ['#C67B5C', '#D4917A'] as [string, string] },
-  { key: 'bottoms', label: '下装', icon: 'remove-outline' as const, gradient: ['#7B8FA2', '#96A6B5'] as [string, string] },
-  { key: 'shoes', label: '鞋靴', icon: 'footsteps-outline' as const, gradient: ['#B5A08C', '#C9B8A6'] as [string, string] },
-  { key: 'accessories', label: '配饰', icon: 'watch-outline' as const, gradient: ['#8B9A7D', '#A3B096'] as [string, string] },
+  {
+    key: "tops",
+    label: "上装",
+    icon: "shirt-outline" as const,
+    gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.terracottaLight] as [string, string],
+  },
+  {
+    key: "bottoms",
+    label: "下装",
+    icon: "remove-outline" as const,
+    gradient: [DesignTokens.colors.brand.slate, "#96A6B5"] as [string, string], // custom color
+  },
+  {
+    key: "shoes",
+    label: "鞋靴",
+    icon: "footsteps-outline" as const,
+    gradient: [DesignTokens.colors.brand.camel, "#C9B8A6"] as [string, string], // custom color
+  },
+  {
+    key: "accessories",
+    label: "配饰",
+    icon: "watch-outline" as const,
+    gradient: [DesignTokens.colors.brand.sage, "#A3B096"] as [string, string], // custom color
+  },
 ] as const;
 
 // =====================================================
@@ -68,18 +81,18 @@ export const AIBallPreview: React.FC<{ size: number }> = React.memo(({ size }) =
     scale.value = withRepeat(
       withSequence(
         withTiming(1.04, { duration: 2400, easing: Easing.inOut(Easing.ease) }),
-        withTiming(1, { duration: 2400, easing: Easing.inOut(Easing.ease) }),
+        withTiming(1, { duration: 2400, easing: Easing.inOut(Easing.ease) })
       ),
       -1,
-      true,
+      true
     );
     glow.value = withRepeat(
       withSequence(
         withTiming(1, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.ease) })
       ),
       -1,
-      true,
+      true
     );
     return () => {
       cancelAnimation(scale);
@@ -127,16 +140,10 @@ export const CarouselDots: React.FC<{ count: number; activeIndex: number }> = Re
   ({ count, activeIndex }) => (
     <View style={partStyles.dotsRow}>
       {Array.from({ length: count }).map((_, i) => (
-        <View
-          key={i}
-          style={[
-            partStyles.dot,
-            i === activeIndex && partStyles.dotActive,
-          ]}
-        />
+        <View key={i} style={[partStyles.dot, i === activeIndex && partStyles.dotActive]} />
       ))}
     </View>
-  ),
+  )
 );
 
 /**
@@ -146,7 +153,7 @@ export const RecommendationCarouselCard: React.FC<{
   item: RecommendedItem & { occasion: string };
   onPress: () => void;
 }> = React.memo(({ item, onPress }) => {
-  const gradient = OCCASION_GRADIENTS[item.occasion] ?? OCCASION_GRADIENTS['休闲'];
+  const gradient = OCCASION_GRADIENTS[item.occasion] ?? OCCASION_GRADIENTS["休闲"];
 
   return (
     <TouchableOpacity
@@ -172,29 +179,31 @@ export const RecommendationCarouselCard: React.FC<{
         {/* Scene tag overlay */}
         <View style={partStyles.carouselTagContainer}>
           <LinearGradient
-            colors={['rgba(0,0,0,0.45)', 'rgba(0,0,0,0.0)']}
+            colors={["rgba(0,0,0,0.45)", "rgba(0,0,0,0.0)"]}
             style={partStyles.carouselTagGradient}
           >
             <Text style={partStyles.carouselTagText}>{item.occasion}</Text>
           </LinearGradient>
         </View>
-        {/* Match score */}
+        {/* eslint-disable-next-line eqeqeq */}
         {item.score != null && item.score > 0 && (
           <View style={partStyles.carouselScoreBadge}>
-            <Ionicons name="star" size={10} color="#D9A441" />
+            <Ionicons name="star" size={10} color={DesignTokens.colors.semantic.warning} />
             <Text style={partStyles.carouselScoreText}>{Math.round(item.score * 100)}%</Text>
           </View>
         )}
         {/* Card info */}
         <View style={partStyles.carouselInfo}>
-          <Text style={partStyles.carouselItemName} numberOfLines={1}>{item.name}</Text>
+          <Text style={partStyles.carouselItemName} numberOfLines={1}>
+            {item.name}
+          </Text>
           <View style={partStyles.carouselPriceRow}>
             {item.brand ? (
-              <Text style={partStyles.carouselBrand} numberOfLines={1}>{item.brand}</Text>
+              <Text style={partStyles.carouselBrand} numberOfLines={1}>
+                {item.brand}
+              </Text>
             ) : null}
-            {item.price > 0 && (
-              <Text style={partStyles.carouselPrice}>&yen;{item.price}</Text>
-            )}
+            {item.price > 0 && <Text style={partStyles.carouselPrice}>&yen;{item.price}</Text>}
           </View>
         </View>
       </View>
@@ -206,7 +215,7 @@ export const RecommendationCarouselCard: React.FC<{
  * Category grid cell.
  */
 export const CategoryCell: React.FC<{
-  category: typeof CATEGORIES[number];
+  category: (typeof CATEGORIES)[number];
   onPress: () => void;
 }> = React.memo(({ category, onPress }) => (
   <TouchableOpacity
@@ -223,9 +232,9 @@ export const CategoryCell: React.FC<{
       style={partStyles.categoryIconCircle}
     >
       <Ionicons
-        name={category.icon as React.ComponentProps<typeof Ionicons>['name']}
+        name={category.icon as React.ComponentProps<typeof Ionicons>["name"]}
         size={20}
-        color="#FFFFFF"
+        color={DesignTokens.colors.text.inverse}
       />
     </LinearGradient>
     <Text style={partStyles.categoryLabel}>{category.label}</Text>
@@ -252,7 +261,7 @@ export const CommunityEmptyState: React.FC<{ onPressExplore: () => void }> = Rea
         <Text style={partStyles.communityEmptyButtonText}>去逛逛</Text>
       </TouchableOpacity>
     </View>
-  ),
+  )
 );
 
 // =====================================================
@@ -281,30 +290,30 @@ const partStyles = StyleSheet.create({
   // --- AI Ball preview ---
   aiBallGradient: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
   aiBallHighlight: {
-    position: 'absolute',
+    position: "absolute",
     width: 14,
     height: 7,
     borderRadius: 7,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
-    transform: [{ rotate: '-30deg' }],
+    backgroundColor: "rgba(255, 255, 255, 0.4)",
+    transform: [{ rotate: "-30deg" }],
   },
   aiBallText: {
-    color: 'rgba(255, 255, 255, 0.9)',
-    fontWeight: '700',
+    color: "rgba(255, 255, 255, 0.9)",
+    fontWeight: "700",
     letterSpacing: 1,
   },
 
   // --- Dots ---
   dotsRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     gap: DOT_SPACING,
     paddingTop: 12,
     paddingBottom: 4,
@@ -328,18 +337,18 @@ const partStyles = StyleSheet.create({
   carouselCard: {
     borderRadius: 16,
     backgroundColor: DesignTokens.colors.backgrounds.elevated,
-    overflow: 'hidden',
+    overflow: "hidden",
     ...DesignTokens.shadows.sm,
   },
   carouselImage: {
-    width: '100%',
+    width: "100%",
     height: CAROUSEL_CARD_HEIGHT * 0.68,
     backgroundColor: DesignTokens.colors.backgrounds.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   carouselTagContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 12,
     left: 12,
   },
@@ -350,25 +359,25 @@ const partStyles = StyleSheet.create({
   },
   carouselTagText: {
     fontSize: 11,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: DesignTokens.colors.text.inverse,
     letterSpacing: 0.5,
   },
   carouselScoreBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 12,
     right: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 3,
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: "rgba(255,255,255,0.9)",
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 10,
   },
   carouselScoreText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: "600",
     color: DesignTokens.colors.semantic.warning,
   },
   carouselInfo: {
@@ -377,13 +386,13 @@ const partStyles = StyleSheet.create({
   },
   carouselItemName: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: DesignTokens.colors.text.primary,
   },
   carouselPriceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginTop: 5,
   },
   carouselBrand: {
@@ -393,32 +402,32 @@ const partStyles = StyleSheet.create({
   },
   carouselPrice: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: "700",
     color: DesignTokens.colors.brand.terracotta,
   },
 
   // --- Category cell ---
   categoryCell: {
     width: (SCREEN_WIDTH - HORIZONTAL_PADDING * 2 - 14 * 3) / 4,
-    alignItems: 'center',
+    alignItems: "center",
     gap: 10,
   },
   categoryIconCircle: {
     width: CATEGORY_ICON_SIZE,
     height: CATEGORY_ICON_SIZE,
     borderRadius: CATEGORY_ICON_SIZE / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   categoryLabel: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: "500",
     color: DesignTokens.colors.text.secondary,
   },
 
   // --- Community empty state ---
   communityEmptyContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 32,
     paddingHorizontal: 24,
   },
@@ -427,20 +436,20 @@ const partStyles = StyleSheet.create({
     height: 64,
     borderRadius: 32,
     backgroundColor: DesignTokens.colors.backgrounds.tertiary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 14,
   },
   communityEmptyTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: DesignTokens.colors.text.primary,
     marginBottom: 6,
   },
   communityEmptySubtitle: {
     fontSize: 13,
     color: DesignTokens.colors.text.tertiary,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 18,
     marginBottom: 18,
   },
@@ -451,8 +460,8 @@ const partStyles = StyleSheet.create({
     borderRadius: 12,
   },
   communityEmptyButtonText: {
-    color: '#FFFFFF',
+    color: DesignTokens.colors.text.inverse,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

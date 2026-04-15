@@ -1,4 +1,4 @@
-import type { NavigatorScreenParams } from '@react-navigation/native';
+import type { NavigatorScreenParams } from "@react-navigation/native";
 import type {
   AuthStackParamList,
   HomeStackParamList,
@@ -8,7 +8,7 @@ import type {
   ProfileStackParamList,
   MainTabParamList as NewMainTabParamList,
   RootStackParamList as NewRootStackParamList,
-} from '../navigation/types';
+} from "../navigation/types";
 
 export type {
   AuthStackParamList,
@@ -85,7 +85,7 @@ export type RootStackParamList = {
   AdvisorProfile: { advisorId: string };
   Booking: { advisorId: string };
   Chat: { advisorId: string; sessionId?: string };
-  Legal: { type: 'terms' | 'privacy' };
+  Legal: { type: "terms" | "privacy" };
   Explore: undefined;
   Heart: undefined;
   TermsOfService: undefined;
@@ -100,7 +100,7 @@ export type NavigationRoute<RouteName extends keyof RootStackParamList> = {
   params?: RootStackParamList[RouteName];
 };
 
-export type NavigationRoutes = Array<NavigationRoute<keyof RootStackParamList>>;
+export type NavigationRoutes = NavigationRoute<keyof RootStackParamList>[];
 
 export interface ResetState {
   index: number;
@@ -115,8 +115,8 @@ export interface NavigationOptions {
   headerStyle?: object;
   headerTitleStyle?: object;
   cardStyle?: object;
-  presentation?: 'card' | 'modal' | 'transparentModal' | 'fullScreenModal';
-  animation?: 'default' | 'fade' | 'slide' | 'none';
+  presentation?: "card" | "modal" | "transparentModal" | "fullScreenModal";
+  animation?: "default" | "fade" | "slide" | "none";
 }
 
 export interface TabNavigationOptions extends NavigationOptions {
@@ -128,9 +128,9 @@ export interface TabNavigationOptions extends NavigationOptions {
 }
 
 export type NavigationAction =
-  | { type: 'NAVIGATE'; payload: { name: string; params?: object } }
-  | { type: 'GO_BACK' }
-  | { type: 'RESET'; payload: ResetState }
-  | { type: 'REPLACE'; payload: { name: string; params?: object } }
-  | { type: 'PUSH'; payload: { name: string; params?: object } }
-  | { type: 'POP'; payload: { count: number } };
+  | { type: "NAVIGATE"; payload: { name: string; params?: object } }
+  | { type: "GO_BACK" }
+  | { type: "RESET"; payload: ResetState }
+  | { type: "REPLACE"; payload: { name: string; params?: object } }
+  | { type: "PUSH"; payload: { name: string; params?: object } }
+  | { type: "POP"; payload: { count: number } };

@@ -60,7 +60,7 @@ export class ColorDeriverService {
 
     for (const segment of HUE_SEGMENTS) {
       const data = segmentData[segment.name];
-      if (!data) continue;
+      if (!data) {continue;}
       hueDistribution[segment.name] = data.totalWeight;
 
       if (data.colors.length > 0) {
@@ -190,7 +190,7 @@ export class ColorDeriverService {
 
     for (const seg of warmSegments) {
       const segData = segmentData[seg];
-      if (!segData) continue;
+      if (!segData) {continue;}
       warmWeight += segData.totalWeight;
       warmSaturation += segData.colors.reduce(
         (s, c) => s + c.s,
@@ -201,7 +201,7 @@ export class ColorDeriverService {
 
     for (const seg of coolSegments) {
       const segData = segmentData[seg];
-      if (!segData) continue;
+      if (!segData) {continue;}
       coolWeight += segData.totalWeight;
       coolSaturation += segData.colors.reduce(
         (s, c) => s + c.s,
@@ -216,9 +216,9 @@ export class ColorDeriverService {
     const avgSaturation = isWarm ? avgWarmSat : avgCoolSat;
     const isHighSaturation = avgSaturation >= 50;
 
-    if (isWarm && isHighSaturation) return "spring";
-    if (!isWarm && !isHighSaturation) return "summer";
-    if (isWarm && !isHighSaturation) return "autumn";
+    if (isWarm && isHighSaturation) {return "spring";}
+    if (!isWarm && !isHighSaturation) {return "summer";}
+    if (isWarm && !isHighSaturation) {return "autumn";}
     return "winter";
   }
 }

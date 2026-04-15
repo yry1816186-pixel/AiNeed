@@ -1,4 +1,5 @@
 import { Controller, Get, Put, Post, Body, UseGuards, UseInterceptors, Request, UploadedFile, BadRequestException } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
 import {
   ApiTags,
   ApiOperation,
@@ -7,16 +8,11 @@ import {
   ApiBody,
   ApiConsumes,
 } from "@nestjs/swagger";
-import { FileInterceptor } from "@nestjs/platform-express";
 import { Throttle } from "@nestjs/throttler";
 
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-data.interceptor";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
-import { ProfileService, UpdateProfileDto as ServiceUpdateProfileDto } from "./profile.service";
-import { UserProfileService, UpdateProfileDto as UserUpdateProfileDto } from "./services/user-profile.service";
-import { ProfileCompletenessService } from "./services/profile-completeness.service";
-import { SharePosterService } from "./services/share-poster.service";
 import {
   UpdateProfileDto,
   UserProfileResponseDto,
@@ -27,6 +23,10 @@ import {
   UpdatePriceRangeDto,
   UserPreferencesResponseDto,
 } from "./dto";
+import { ProfileService, UpdateProfileDto as ServiceUpdateProfileDto } from "./profile.service";
+import { ProfileCompletenessService } from "./services/profile-completeness.service";
+import { SharePosterService } from "./services/share-poster.service";
+import { UserProfileService, UpdateProfileDto as UserUpdateProfileDto } from "./services/user-profile.service";
 
 /**
  * 认证请求接口

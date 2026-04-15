@@ -80,7 +80,9 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
 
   fetchNotifications: async (reset = false) => {
     const state = get();
-    if (state.loading) return;
+    if (state.loading) {
+      return;
+    }
 
     set({ loading: true });
     try {
@@ -90,11 +92,12 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         offset,
       });
 
-      const filtered = state.currentCategory === "all"
-        ? response.notifications
-        : response.notifications.filter(
-            (n) => getNotificationCategory(n.type) === state.currentCategory,
-          );
+      const filtered =
+        state.currentCategory === "all"
+          ? response.notifications
+          : response.notifications.filter(
+              (n) => getNotificationCategory(n.type) === state.currentCategory
+            );
 
       set({
         notifications: reset ? filtered : [...state.notifications, ...filtered],
@@ -112,7 +115,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     // Optimistic update
     set((state) => ({
       notifications: state.notifications.map((n) =>
-        n.id === id ? { ...n, isRead: true, readAt: new Date().toISOString() } : n,
+        n.id === id ? { ...n, isRead: true, readAt: new Date().toISOString() } : n
       ),
       unreadCount: Math.max(0, state.unreadCount - 1),
     }));
@@ -147,9 +150,10 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       const notification = state.notifications.find((n) => n.id === id);
       return {
         notifications: state.notifications.filter((n) => n.id !== id),
-        unreadCount: notification && !notification.isRead
-          ? Math.max(0, state.unreadCount - 1)
-          : state.unreadCount,
+        unreadCount:
+          notification && !notification.isRead
+            ? Math.max(0, state.unreadCount - 1)
+            : state.unreadCount,
       };
     });
 
@@ -194,7 +198,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   setCurrentCategory: (category: NotificationCategory) => {
     set({ currentCategory: category });
     // Re-fetch with new category filter
-    get().fetchNotifications(true);
+    void get().fetchNotifications(true);
   },
 
   decrementUnread: () => {

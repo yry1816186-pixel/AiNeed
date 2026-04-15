@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 
 interface Subcategory {
   name: string;
@@ -29,39 +29,21 @@ export const SubcategoryTabs: React.FC<SubcategoryTabsProps> = ({
       contentContainerStyle={styles.content}
     >
       <TouchableOpacity
-        style={[
-          styles.chip,
-          selectedSubcategory === null && styles.chipSelected,
-        ]}
+        style={[styles.chip, selectedSubcategory === null && styles.chipSelected]}
         onPress={() => onSelectSubcategory(null)}
       >
-        <Text
-          style={[
-            styles.chipText,
-            selectedSubcategory === null && styles.chipTextSelected,
-          ]}
-        >
+        <Text style={[styles.chipText, selectedSubcategory === null && styles.chipTextSelected]}>
           全部
         </Text>
       </TouchableOpacity>
       {subcategories.map((sub) => (
         <TouchableOpacity
           key={sub.name}
-          style={[
-            styles.chip,
-            selectedSubcategory === sub.name && styles.chipSelected,
-          ]}
-          onPress={() =>
-            onSelectSubcategory(
-              selectedSubcategory === sub.name ? null : sub.name,
-            )
-          }
+          style={[styles.chip, selectedSubcategory === sub.name && styles.chipSelected]}
+          onPress={() => onSelectSubcategory(selectedSubcategory === sub.name ? null : sub.name)}
         >
           <Text
-            style={[
-              styles.chipText,
-              selectedSubcategory === sub.name && styles.chipTextSelected,
-            ]}
+            style={[styles.chipText, selectedSubcategory === sub.name && styles.chipTextSelected]}
           >
             {sub.name} ({sub.count})
           </Text>

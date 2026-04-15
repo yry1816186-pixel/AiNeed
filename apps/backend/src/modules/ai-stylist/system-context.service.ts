@@ -1,6 +1,8 @@
-﻿import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+﻿import { cpus } from "os";
+
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { cpus } from "os";
+
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { RedisService } from "../../common/redis/redis.service";
 
@@ -309,10 +311,10 @@ export class SystemContextService implements OnModuleInit {
       await client.ping();
       redisLatency = Date.now() - start;
       try {
-        const info = (await client.info("clients")) as string;
+        const info = (await client.info("clients"));
         if (typeof info === "string") {
           const match = info.match(/connected_clients:(\d+)/);
-          if (match && match[1]) redisConnectedClients = parseInt(match[1], 10);
+          if (match?.[1]) {redisConnectedClients = parseInt(match[1], 10);}
         }
       } catch {
         // optional field, ignore
@@ -499,7 +501,7 @@ export class SystemContextService implements OnModuleInit {
       const fs = await import("fs/promises");
       const path = await import("path");
 
-      async function walk(dir: string): Promise<string[]> {
+      const walk = async (dir: string): Promise<string[]> => {
         const entries = await fs.readdir(dir, { withFileTypes: true });
         const results: string[] = [];
         for (const entry of entries) {

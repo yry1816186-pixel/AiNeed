@@ -16,11 +16,11 @@ import {
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 
-import { AuthGuard } from "../auth/guards/auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
+import { AuthGuard } from "../auth/guards/auth.guard";
 
-import { SubscriptionService } from "./subscription.service";
 import { SubscribeDto } from "./dto/subscribe.dto";
+import { SubscriptionService } from "./subscription.service";
 
 @ApiTags("subscription")
 @ApiBearerAuth()

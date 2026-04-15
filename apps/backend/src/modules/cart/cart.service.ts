@@ -175,39 +175,19 @@ export class CartService {
     }
 
     // FIX-BL-009: 使用upsert解决并发问题 (修复时间: 2026-03-19)
-    const existingItem = await this.prisma.cartItem.findFirst({
+    const cartItem = await this.prisma.cartItem.upsert({
       where: {
-        userId,
-        itemId,
-        color,
-        size,
-      },
-    });
-
-    if (existingItem) {
-      const updated = await this.prisma.cartItem.update({
-        where: { id: existingItem.id },
-        data: { quantity: { increment: quantity } },
-        include: {
-          item: {
-            include: {
-              brand: {
-                select: {
-                  id: true,
-                  name: true,
-                  logo: true,
-                },
-              },
-            },
-          },
+        userId_itemId_color_size: {
+          userId,
+          itemId,
+          color,
+          size,
         },
-      });
-
-      return this.mapToCartItem(updated);
-    }
-
-    const cartItem = await this.prisma.cartItem.create({
-      data: {
+      },
+      update: {
+        quantity: { increment: quantity },
+      },
+      create: {
         userId,
         itemId,
         color,
@@ -383,6 +363,8 @@ export class CartService {
     discountAmount: number;
     shippingFee: number;
     finalAmount: number;
+    couponStatus?: 'valid' | 'invalid';
+    couponMessage?: string;
   }> {
     const items = await this.prisma.cartItem.findMany({
       where: { userId },
@@ -411,6 +393,8 @@ export class CartService {
     }
 
     let discountAmount = 0;
+    let couponStatus: 'valid' | 'invalid' | undefined;
+    let couponMessage: string | undefined;
     if (couponCode) {
       const validation = await this.couponService.validateCoupon(
         couponCode,
@@ -419,6 +403,10 @@ export class CartService {
       );
       if (validation.valid) {
         discountAmount = validation.discount;
+        couponStatus = 'valid';
+      } else {
+        couponStatus = 'invalid';
+        couponMessage = validation.reason || '优惠券不可用';
       }
     }
 
@@ -433,6 +421,7 @@ export class CartService {
       discountAmount,
       shippingFee,
       finalAmount,
+      ...(couponCode && { couponStatus, couponMessage }),
     };
   }
 

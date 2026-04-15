@@ -18,13 +18,13 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../auth/decorators/public.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-import { FeatureFlagService } from './feature-flag.service';
 import { CreateFeatureFlagDto } from './dto/create-flag.dto';
-import { UpdateFeatureFlagDto } from './dto/update-flag.dto';
 import { EvaluateFlagDto } from './dto/evaluate-flag.dto';
+import { UpdateFeatureFlagDto } from './dto/update-flag.dto';
+import { FeatureFlagService } from './feature-flag.service';
 
 @ApiTags('feature-flags')
 @ApiBearerAuth()

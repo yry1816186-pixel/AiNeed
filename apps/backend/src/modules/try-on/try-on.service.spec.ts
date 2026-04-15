@@ -6,11 +6,11 @@ import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TryOnStatus } from "@prisma/client";
 
+import { NotificationService } from "../../common/gateway/notification.service";
+import { StructuredLoggerService } from "../../common/logging/structured-logger.service";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { REDIS_CLIENT } from "../../common/redis/redis.service";
 import { StorageService } from "../../common/storage/storage.service";
-import { StructuredLoggerService } from "../../common/logging/structured-logger.service";
-import { NotificationService } from "../../common/gateway/notification.service";
 import { QueueService } from "../queue/queue.service";
 
 import { TryOnOrchestratorService } from "./services/tryon-orchestrator.service";

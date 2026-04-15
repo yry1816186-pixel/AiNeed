@@ -4,17 +4,18 @@ import { JwtModule } from "@nestjs/jwt";
 import type { JwtModuleOptions, JwtSignOptions } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 
+import { EmailModule } from "../../common/email/email.module";
 import { RedisModule } from "../../common/redis/redis.module";
 
 import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
 import { AuthHelpersService } from "./auth.helpers";
+import { AuthService } from "./auth.service";
+import { AliyunSmsService, MockSmsService, SmsService } from "./services/sms.service";
+import { TokenBlacklistService } from "./services/token-blacklist.service";
+import { WechatService } from "./services/wechat.service";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 import { LocalStrategy } from "./strategies/local.strategy";
 import { WechatAuthStrategy } from "./strategies/wechat.strategy";
-import { WechatService } from "./services/wechat.service";
-import { AliyunSmsService, MockSmsService, SmsService } from "./services/sms.service";
-import { TokenBlacklistService } from "./services/token-blacklist.service";
 
 
 const logger = new Logger("AuthModule");
@@ -23,6 +24,7 @@ const logger = new Logger("AuthModule");
   imports: [
     PassportModule.register({ defaultStrategy: "jwt" }),
     forwardRef(() => RedisModule),
+    EmailModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService): JwtModuleOptions => {
         const jwtSecret = configService.get<string>("JWT_SECRET");

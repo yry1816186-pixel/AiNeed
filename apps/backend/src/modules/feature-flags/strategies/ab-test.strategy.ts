@@ -8,7 +8,7 @@ export interface ABTestResult {
 export class ABTestStrategy {
   evaluate(flag: FeatureFlag, userId: string): ABTestResult {
     const variants = (flag.value as Record<string, any>).variants ?? [];
-    if (!variants.length) return { enabled: false, variant: 'control' };
+    if (!variants.length) {return { enabled: false, variant: 'control' };}
 
     const hash = this.hashUserId(userId, flag.key);
     const bucket = hash % 100;

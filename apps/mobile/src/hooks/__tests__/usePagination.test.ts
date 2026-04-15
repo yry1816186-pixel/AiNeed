@@ -14,7 +14,7 @@ describe("usePagination", () => {
 
   it("should accept initial options", () => {
     const { result } = renderHook(() =>
-      usePagination({ initialPage: 2, pageSize: 20, totalItems: 100 }),
+      usePagination({ initialPage: 2, pageSize: 20, totalItems: 100 })
     );
 
     expect(result.current.page).toBe(2);
@@ -23,9 +23,7 @@ describe("usePagination", () => {
   });
 
   it("should go to next page with nextPage()", () => {
-    const { result } = renderHook(() =>
-      usePagination({ pageSize: 10, totalItems: 30 }),
-    );
+    const { result } = renderHook(() => usePagination({ pageSize: 10, totalItems: 30 }));
 
     expect(result.current.page).toBe(1);
     expect(result.current.hasNext).toBe(true);
@@ -46,9 +44,7 @@ describe("usePagination", () => {
   });
 
   it("should not go beyond last page with nextPage()", () => {
-    const { result } = renderHook(() =>
-      usePagination({ pageSize: 10, totalItems: 20 }),
-    );
+    const { result } = renderHook(() => usePagination({ pageSize: 10, totalItems: 20 }));
 
     act(() => {
       result.current.nextPage();
@@ -64,7 +60,7 @@ describe("usePagination", () => {
 
   it("should go to previous page with prevPage()", () => {
     const { result } = renderHook(() =>
-      usePagination({ initialPage: 3, pageSize: 10, totalItems: 50 }),
+      usePagination({ initialPage: 3, pageSize: 10, totalItems: 50 })
     );
 
     expect(result.current.page).toBe(3);
@@ -77,9 +73,7 @@ describe("usePagination", () => {
   });
 
   it("should not go below page 1 with prevPage()", () => {
-    const { result } = renderHook(() =>
-      usePagination({ pageSize: 10, totalItems: 50 }),
-    );
+    const { result } = renderHook(() => usePagination({ pageSize: 10, totalItems: 50 }));
 
     expect(result.current.page).toBe(1);
     expect(result.current.hasPrev).toBe(false);
@@ -91,9 +85,7 @@ describe("usePagination", () => {
   });
 
   it("should go to specific page with goToPage()", () => {
-    const { result } = renderHook(() =>
-      usePagination({ pageSize: 10, totalItems: 50 }),
-    );
+    const { result } = renderHook(() => usePagination({ pageSize: 10, totalItems: 50 }));
 
     act(() => {
       result.current.goToPage(3);
@@ -102,9 +94,7 @@ describe("usePagination", () => {
   });
 
   it("should clamp goToPage to valid range", () => {
-    const { result } = renderHook(() =>
-      usePagination({ pageSize: 10, totalItems: 50 }),
-    );
+    const { result } = renderHook(() => usePagination({ pageSize: 10, totalItems: 50 }));
 
     // Below minimum
     act(() => {
@@ -126,9 +116,7 @@ describe("usePagination", () => {
   });
 
   it("should reset to page 1 when setPageSize is called", () => {
-    const { result } = renderHook(() =>
-      usePagination({ pageSize: 10, totalItems: 100 }),
-    );
+    const { result } = renderHook(() => usePagination({ pageSize: 10, totalItems: 100 }));
 
     // Go to page 3
     act(() => {
@@ -145,9 +133,7 @@ describe("usePagination", () => {
   });
 
   it("should update total items with setTotalItems", () => {
-    const { result } = renderHook(() =>
-      usePagination({ pageSize: 10, totalItems: 30 }),
-    );
+    const { result } = renderHook(() => usePagination({ pageSize: 10, totalItems: 30 }));
 
     expect(result.current.totalPages).toBe(3);
 
@@ -160,7 +146,7 @@ describe("usePagination", () => {
 
   it("should reset to initial page with reset()", () => {
     const { result } = renderHook(() =>
-      usePagination({ initialPage: 1, pageSize: 10, totalItems: 100 }),
+      usePagination({ initialPage: 1, pageSize: 10, totalItems: 100 })
     );
 
     act(() => {
@@ -175,9 +161,7 @@ describe("usePagination", () => {
   });
 
   it("should calculate totalPages correctly with rounding up", () => {
-    const { result } = renderHook(() =>
-      usePagination({ pageSize: 10, totalItems: 25 }),
-    );
+    const { result } = renderHook(() => usePagination({ pageSize: 10, totalItems: 25 }));
 
     expect(result.current.totalPages).toBe(3);
   });

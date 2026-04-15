@@ -41,7 +41,7 @@ except Exception as e:
     _body_available = False
 
 try:
-    from ml.services.style_understanding_service import (
+    from ml.services.stylist.style_understanding_service import (
         StyleUnderstandingAPI,
         StyleUnderstandingService,
         StyleUnderstandingUnavailableError,
@@ -54,7 +54,7 @@ except Exception as e:
     _style_available = False
 
 try:
-    from ml.services.photo_quality_analyzer import (
+    from ml.services.analysis.photo_quality_analyzer import (
         PhotoQualityAnalyzer,
         get_photo_quality_analyzer,
     )

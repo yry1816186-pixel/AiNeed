@@ -1,10 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "expo-router";
 
-export function useVerify(
-  isAuthenticated: boolean,
-  redirectPath: string = "/login",
-) {
+export function useVerify(isAuthenticated: boolean, redirectPath: string = "/login") {
   const router = useRouter();
   const hasVerified = useRef(false);
 

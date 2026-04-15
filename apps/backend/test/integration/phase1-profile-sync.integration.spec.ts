@@ -9,13 +9,12 @@
  * or services that depend on modules with pre-existing type errors.
  */
 
-import { Test, TestingModule } from "@nestjs/testing";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { Test, TestingModule } from "@nestjs/testing";
 
+import { RedisService, REDIS_CLIENT } from "../../src/common/redis/redis.service";
 import { ProfileCompletenessService } from "../../src/modules/profile/services/profile-completeness.service";
 import { ProfileEventEmitter } from "../../src/modules/profile/services/profile-event-emitter.service";
-import { RedisService, REDIS_CLIENT } from "../../src/common/redis/redis.service";
-
 import {
   createRedisKeyTracker,
   RedisKeyTracker,
@@ -34,7 +33,7 @@ describe("Phase 1 Integration: Profile Sync", () => {
 
   beforeAll(async () => {
     redisTracker = createRedisKeyTracker();
-    mockRedisService = createMockRedisService(redisTracker) as ReturnType<typeof createMockRedisService>;
+    mockRedisService = createMockRedisService(redisTracker);
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       providers: [
@@ -71,7 +70,7 @@ describe("Phase 1 Integration: Profile Sync", () => {
       );
 
       const callArgs = publishSpy.mock.calls[0]!;
-      const message = JSON.parse(callArgs[1] as string);
+      const message = JSON.parse(callArgs[1]);
       expect(message).toEqual({
         userId: TEST_USER_ID,
         changedFields: ["nickname"],
@@ -90,7 +89,7 @@ describe("Phase 1 Integration: Profile Sync", () => {
       ]);
 
       const callArgs = publishSpy.mock.calls[0]!;
-      const message = JSON.parse(callArgs[1] as string);
+      const message = JSON.parse(callArgs[1]);
       expect(message.changedFields).toEqual([
         "gender",
         "birthDate",
@@ -116,7 +115,7 @@ describe("Phase 1 Integration: Profile Sync", () => {
       );
 
       const callArgs = publishSpy.mock.calls[0]!;
-      const message = JSON.parse(callArgs[1] as string);
+      const message = JSON.parse(callArgs[1]);
       expect(message).toEqual({
         userId: TEST_USER_ID,
         quizId,

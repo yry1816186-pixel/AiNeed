@@ -1,11 +1,5 @@
-import React, { useEffect, useCallback, memo, useMemo } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Dimensions,
-} from "react-native";
+﻿import React, { useEffect, useCallback, memo, useMemo } from "react";
+import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
@@ -16,11 +10,20 @@ import Animated, {
   interpolate,
   Extrapolate,
 } from "react-native-reanimated";
-import { Svg, Circle, Path, G, Defs, LinearGradient as SvgLinearGradient, Stop, Text as SvgText } from 'react-native-svg';
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme, Colors, BorderRadius, Shadows } from "../../theme";
+import {
+  Svg,
+  Circle,
+  Path,
+  Text as SvgText,
+} from "react-native-svg";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme, Colors, BorderRadius, Shadows } from '../design-system/theme';
+import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { SpringConfigs } from "../../theme/tokens/animations";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
+import { AnimatedHeartButton } from "../../design-system/ui/AnimatedHeartButton";
+import { ActionButtons } from "./ActionButtons";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const CARD_WIDTH = SCREEN_WIDTH - 40;
@@ -57,6 +60,8 @@ interface SwipeCardProps {
   onSwipeDown: () => void;
   isActive: boolean;
   index: number;
+  isFavorite?: boolean;
+  onFavorite?: (item: ProductItem) => void;
 }
 
 /**
@@ -71,10 +76,12 @@ export const SwipeCard = memo(function SwipeCard({
   onSwipeDown,
   isActive,
   index,
+  isFavorite = false,
+  onFavorite,
 }: SwipeCardProps) {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
-  const scale = useSharedValue(1);
+  const _scale = useSharedValue(1);
   const rotateZ = useSharedValue(0);
 
   const stackScale = useSharedValue(0.9);
@@ -123,14 +130,18 @@ export const SwipeCard = memo(function SwipeCard({
     }
 
     if (xVal > SWIPE_THRESHOLD) {
-      translateX.value = withTiming(SCREEN_WIDTH * 1.5, { duration: reducedMotionSV.value ? 0 : 300 });
+      translateX.value = withTiming(SCREEN_WIDTH * 1.5, {
+        duration: reducedMotionSV.value ? 0 : 300,
+      });
       rotateZ.value = withTiming(0.3, { duration: reducedMotionSV.value ? 0 : 300 });
       setTimeout(() => onSwipeRight(), reducedMotionSV.value ? 0 : 200);
       return;
     }
 
     if (xVal < -SWIPE_THRESHOLD) {
-      translateX.value = withTiming(-SCREEN_WIDTH * 1.5, { duration: reducedMotionSV.value ? 0 : 300 });
+      translateX.value = withTiming(-SCREEN_WIDTH * 1.5, {
+        duration: reducedMotionSV.value ? 0 : 300,
+      });
       rotateZ.value = withTiming(-0.3, { duration: reducedMotionSV.value ? 0 : 300 });
       setTimeout(() => onSwipeLeft(), reducedMotionSV.value ? 0 : 200);
       return;
@@ -147,6 +158,28 @@ export const SwipeCard = memo(function SwipeCard({
     }
   }, [onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown, reducedMotionSV]);
 
+  const triggerDislike = useCallback(() => {
+    translateY.value = withTiming(SCREEN_HEIGHT, { duration: reducedMotionSV.value ? 0 : 300 });
+    setTimeout(() => onSwipeDown(), reducedMotionSV.value ? 0 : 200);
+  }, [onSwipeDown, reducedMotionSV]);
+
+  const triggerSkip = useCallback(() => {
+    translateX.value = withTiming(-SCREEN_WIDTH * 1.5, { duration: reducedMotionSV.value ? 0 : 300 });
+    rotateZ.value = withTiming(-0.3, { duration: reducedMotionSV.value ? 0 : 300 });
+    setTimeout(() => onSwipeLeft(), reducedMotionSV.value ? 0 : 200);
+  }, [onSwipeLeft, reducedMotionSV]);
+
+  const triggerCart = useCallback(() => {
+    translateY.value = withTiming(-SCREEN_HEIGHT, { duration: reducedMotionSV.value ? 0 : 300 });
+    setTimeout(() => onSwipeUp(), reducedMotionSV.value ? 0 : 200);
+  }, [onSwipeUp, reducedMotionSV]);
+
+  const triggerLike = useCallback(() => {
+    translateX.value = withTiming(SCREEN_WIDTH * 1.5, { duration: reducedMotionSV.value ? 0 : 300 });
+    rotateZ.value = withTiming(0.3, { duration: reducedMotionSV.value ? 0 : 300 });
+    setTimeout(() => onSwipeRight(), reducedMotionSV.value ? 0 : 200);
+  }, [onSwipeRight, reducedMotionSV]);
+
   const panGesture = Gesture.Pan()
     .enabled(isActive)
     .onUpdate((event) => {
@@ -156,7 +189,7 @@ export const SwipeCard = memo(function SwipeCard({
         event.translationX,
         [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
         [-0.15, 0, 0.15],
-        Extrapolate.CLAMP,
+        Extrapolate.CLAMP
       );
     })
     .onEnd(() => {
@@ -164,29 +197,29 @@ export const SwipeCard = memo(function SwipeCard({
     });
 
   const cardStyle = useAnimatedStyle(() => {
-    const likeOpacity = interpolate(
+    const _likeOpacity = interpolate(
       translateX.value,
       [0, SWIPE_THRESHOLD],
       [0, 1],
-      Extrapolate.CLAMP,
+      Extrapolate.CLAMP
     );
-    const nopeOpacity = interpolate(
+    const _nopeOpacity = interpolate(
       translateX.value,
       [-SWIPE_THRESHOLD, 0],
       [1, 0],
-      Extrapolate.CLAMP,
+      Extrapolate.CLAMP
     );
-    const cartOpacity = interpolate(
+    const _cartOpacity = interpolate(
       translateY.value,
       [-VERTICAL_SWIPE_THRESHOLD, 0],
       [1, 0],
-      Extrapolate.CLAMP,
+      Extrapolate.CLAMP
     );
-    const skipOpacity = interpolate(
+    const _skipOpacity = interpolate(
       translateY.value,
       [0, VERTICAL_SWIPE_THRESHOLD],
       [0, 1],
-      Extrapolate.CLAMP,
+      Extrapolate.CLAMP
     );
 
     return {
@@ -201,22 +234,12 @@ export const SwipeCard = memo(function SwipeCard({
   });
 
   const likeIndicatorStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      translateX.value,
-      [0, SWIPE_THRESHOLD],
-      [0, 1],
-      Extrapolate.CLAMP,
-    ),
+    opacity: interpolate(translateX.value, [0, SWIPE_THRESHOLD], [0, 1], Extrapolate.CLAMP),
     transform: [{ rotateZ: "-20deg" }],
   }));
 
   const nopeIndicatorStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      translateX.value,
-      [-SWIPE_THRESHOLD, 0],
-      [1, 0],
-      Extrapolate.CLAMP,
-    ),
+    opacity: interpolate(translateX.value, [-SWIPE_THRESHOLD, 0], [1, 0], Extrapolate.CLAMP),
     transform: [{ rotateZ: "20deg" }],
   }));
 
@@ -225,7 +248,7 @@ export const SwipeCard = memo(function SwipeCard({
       translateY.value,
       [-VERTICAL_SWIPE_THRESHOLD, 0],
       [1, 0],
-      Extrapolate.CLAMP,
+      Extrapolate.CLAMP
     ),
   }));
 
@@ -234,7 +257,7 @@ export const SwipeCard = memo(function SwipeCard({
       translateY.value,
       [0, VERTICAL_SWIPE_THRESHOLD],
       [0, 1],
-      Extrapolate.CLAMP,
+      Extrapolate.CLAMP
     ),
   }));
 
@@ -245,71 +268,58 @@ export const SwipeCard = memo(function SwipeCard({
   );
 
   return (
-    <GestureDetector gesture={panGesture}>
-      <Animated.View style={[styles.cardContainer, cardStyle]}>
+    <View style={styles.outerWrapper} pointerEvents={isActive ? "box-none" : "none"}>
+      <GestureDetector gesture={panGesture}>
+        <Animated.View style={[styles.cardContainer, cardStyle]} accessibilityLabel={`${item.name}，左滑跳过，右滑喜欢`} accessibilityRole="button">
         <View style={styles.card}>
-          <Image
-            source={{ uri: mainImage }}
-            style={styles.cardImage}
-            resizeMode="cover"
-          />
+          <Image source={{ uri: mainImage }} style={styles.cardImage} resizeMode="cover" accessibilityLabel={`${item.name}图片`} accessibilityRole="image" />
 
           <LinearGradient
             colors={["transparent", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.8)"]}
             style={styles.cardGradient}
           />
 
-          <Animated.View
-            style={[styles.indicator, styles.likeIndicator, likeIndicatorStyle]}
-          >
+          <Animated.View style={[styles.indicator, styles.likeIndicator, likeIndicatorStyle]}>
             <Text style={styles.likeText}>喜欢</Text>
           </Animated.View>
 
-          <Animated.View
-            style={[styles.indicator, styles.nopeIndicator, nopeIndicatorStyle]}
-          >
+          <Animated.View style={[styles.indicator, styles.nopeIndicator, nopeIndicatorStyle]}>
             <Text style={styles.nopeText}>跳过</Text>
           </Animated.View>
 
-          <Animated.View
-            style={[styles.indicator, styles.cartIndicator, cartIndicatorStyle]}
-          >
+          <Animated.View style={[styles.indicator, styles.cartIndicator, cartIndicatorStyle]}>
             <Ionicons name="cart" size={32} color={Colors.success[500]} />
             <Text style={styles.cartText}>加入购物车</Text>
           </Animated.View>
 
-          <Animated.View
-            style={[styles.indicator, styles.skipIndicator, skipIndicatorStyle]}
-          >
-            <Ionicons
-              name="close-circle"
-              size={32}
-              color={Colors.neutral[500]}
-            />
+          <Animated.View style={[styles.indicator, styles.skipIndicator, skipIndicatorStyle]}>
+            <Ionicons name="close-circle" size={32} color={Colors.neutral[500]} />
             <Text style={styles.skipText}>不喜欢</Text>
           </Animated.View>
 
           <View style={styles.cardInfo}>
-            {item.brand && (
-              <Text style={styles.brandText}>{item.brand.name}</Text>
-            )}
+            {item.brand && <Text style={styles.brandText}>{item.brand.name}</Text>}
             <Text style={styles.productName} numberOfLines={2}>
               {item.name}
             </Text>
 
             <View style={styles.priceRow}>
-              <Text style={styles.priceText}>
-                ¥{item.price.toLocaleString()}
-              </Text>
+              <Text style={styles.priceText}>¥{item.price.toLocaleString()}</Text>
               {item.originalPrice && item.originalPrice > item.price && (
-                <Text style={styles.originalPriceText}>
-                  ¥{item.originalPrice.toLocaleString()}
-                </Text>
+                <Text style={styles.originalPriceText}>¥{item.originalPrice.toLocaleString()}</Text>
+              )}
+              {onFavorite && (
+                <AnimatedHeartButton
+                  isFavorite={isFavorite}
+                  onPress={() => onFavorite(item)}
+                  size={22}
+                  style={styles.heartButton}
+                />
               )}
             </View>
 
             {/* 7-point rating bar */}
-            {item.score != null && (
+            {item.score !== null && (
               <View style={styles.ratingBar}>
                 {Array.from({ length: 7 }, (_, i) => (
                   <View
@@ -317,9 +327,10 @@ export const SwipeCard = memo(function SwipeCard({
                     style={[
                       styles.ratingDot,
                       {
-                        backgroundColor: i < Math.round(item.score! * 7)
-                          ? Colors.success[500]
-                          : 'rgba(255,255,255,0.2)',
+                        backgroundColor:
+                          i < Math.round(item.score! * 7)
+                            ? Colors.success[500]
+                            : "rgba(255,255,255,0.2)",
                       },
                     ]}
                   />
@@ -330,8 +341,8 @@ export const SwipeCard = memo(function SwipeCard({
 
             {item.matchReasons && item.matchReasons.length > 0 && (
               <View style={styles.matchReasons}>
-                {item.matchReasons.slice(0, 2).map((reason, idx) => (
-                  <View key={idx} style={styles.reasonTag}>
+                {item.matchReasons.slice(0, 2).map((reason, _idx) => (
+                  <View key={reason} style={styles.reasonTag}>
                     <Text style={styles.reasonText}>{reason}</Text>
                   </View>
                 ))}
@@ -349,32 +360,27 @@ export const SwipeCard = memo(function SwipeCard({
 
             {item.colors && item.colors.length > 0 && (
               <View style={styles.colorOptions}>
-                {item.colors.slice(0, 5).map((color, idx) => (
+                {item.colors.slice(0, 5).map((color, _idx) => (
                   <View
-                    key={idx}
-                    style={[
-                      styles.colorDot,
-                      { backgroundColor: color.toLowerCase() },
-                    ]}
+                    key={color}
+                    style={[styles.colorDot, { backgroundColor: color.toLowerCase() }]}
                   />
                 ))}
                 {item.colors.length > 5 && (
-                  <Text style={styles.moreColors}>
-                    +{item.colors.length - 5}
-                  </Text>
+                  <Text style={styles.moreColors}>+{item.colors.length - 5}</Text>
                 )}
 
                 {/* Color harmony arc */}
-                {item.score != null && (
+                {item.score !== null && item.score !== undefined && (
                   <View style={styles.harmonyArcContainer}>
-                    <ColorHarmonyArc score={item.score} />
+                    <ColorHarmonyArc score={item.score!} />
                   </View>
                 )}
 
                 {/* CIEDE2000 distance arc */}
-                {item.score != null && item.colors.length > 0 && (
+                {item.score !== null && item.score !== undefined && item.colors.length > 0 && (
                   <View style={styles.ciedeArcContainer}>
-                    <CIEDE2000Arc score={item.score} colors={item.colors} />
+                    <CIEDE2000Arc score={item.score!} colors={item.colors} />
                   </View>
                 )}
               </View>
@@ -382,7 +388,18 @@ export const SwipeCard = memo(function SwipeCard({
           </View>
         </View>
       </Animated.View>
-    </GestureDetector>
+      </GestureDetector>
+      {isActive && (
+        <View style={styles.actionButtonsPosition} pointerEvents="box-none">
+          <ActionButtons
+            onDislike={triggerDislike}
+            onSkip={triggerSkip}
+            onAddToCart={triggerCart}
+            onLike={triggerLike}
+          />
+        </View>
+      )}
+    </View>
   );
 });
 
@@ -399,7 +416,9 @@ function ColorHarmonyArc({ score }: { score: number }) {
     <Svg width={size} height={size / 2 + 2} viewBox={`0 0 ${size} ${size / 2 + 2}`}>
       {/* Background arc (semicircle) */}
       <Path
-        d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${size - strokeWidth / 2} ${size / 2}`}
+        d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${
+          size - strokeWidth / 2
+        } ${size / 2}`}
         stroke="rgba(255,255,255,0.15)"
         strokeWidth={strokeWidth}
         fill="none"
@@ -407,8 +426,10 @@ function ColorHarmonyArc({ score }: { score: number }) {
       />
       {/* Filled arc based on score */}
       <Path
-        d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${size - strokeWidth / 2} ${size / 2}`}
-        stroke="#C67B5C"
+        d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${
+          size - strokeWidth / 2
+        } ${size / 2}`}
+        stroke={DesignTokens.colors.brand.terracotta}
         strokeWidth={strokeWidth}
         fill="none"
         strokeLinecap="round"
@@ -421,7 +442,7 @@ function ColorHarmonyArc({ score }: { score: number }) {
         textAnchor="middle"
         fontSize={9}
         fontWeight="600"
-        fill="#FFFFFF"
+        fill={DesignTokens.colors.text.inverse}
       >
         {Math.round(score * 100)}%
       </SvgText>
@@ -464,7 +485,7 @@ function CIEDE2000Arc({ score, colors: itemColors }: { score: number; colors: st
         cx={center}
         cy={center}
         r={radius}
-        stroke="#C67B5C"
+        stroke={DesignTokens.colors.brand.terracotta}
         strokeWidth={strokeWidth}
         fill="none"
         strokeDasharray={`${fillLength} ${circumference}`}
@@ -476,7 +497,7 @@ function CIEDE2000Arc({ score, colors: itemColors }: { score: number; colors: st
       {/* Color dots along the arc */}
       {dots.map((dot, i) => (
         <Circle
-          key={i}
+          key={`dot-${i}`}
           cx={dot.x}
           cy={dot.y}
           r={3}
@@ -498,7 +519,15 @@ export const SWIPE_CARD_CONSTANTS = {
   VERTICAL_SWIPE_THRESHOLD,
 };
 
+const BUTTONS_AREA_HEIGHT = 80;
+
 const styles = StyleSheet.create({
+  outerWrapper: {
+    position: "absolute",
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT + BUTTONS_AREA_HEIGHT,
+    alignItems: "center",
+  },
   cardContainer: {
     position: "absolute",
     width: CARD_WIDTH,
@@ -599,7 +628,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#fff",
+    color: DesignTokens.colors.text.inverse,
     marginBottom: 8,
   },
   priceRow: {
@@ -608,10 +637,13 @@ const styles = StyleSheet.create({
     gap: 10,
     marginBottom: 12,
   },
+  heartButton: {
+    marginLeft: "auto",
+  },
   priceText: {
     fontSize: 24,
     fontWeight: "800",
-    color: "#fff",
+    color: DesignTokens.colors.text.inverse,
   },
   originalPriceText: {
     fontSize: 16,
@@ -632,7 +664,7 @@ const styles = StyleSheet.create({
   },
   reasonText: {
     fontSize: 12,
-    color: "#fff",
+    color: DesignTokens.colors.text.inverse,
     fontWeight: "500",
   },
   colorOptions: {
@@ -680,7 +712,7 @@ const styles = StyleSheet.create({
   reasonPillText: {
     fontSize: 11,
     fontWeight: "500",
-    color: "#F5D5C5",
+    color: "#F5D5C5", // custom color
   },
   harmonyArcContainer: {
     marginLeft: 8,
@@ -690,6 +722,13 @@ const styles = StyleSheet.create({
   ciedeArcContainer: {
     marginLeft: 4,
     justifyContent: "center",
+    alignItems: "center",
+  },
+  actionButtonsPosition: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     alignItems: "center",
   },
 });

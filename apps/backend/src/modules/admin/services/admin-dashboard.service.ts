@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { OrderStatus } from "@prisma/client";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
 const REVENUE_STATUSES: OrderStatus[] = ["delivered" as OrderStatus];
@@ -193,7 +194,7 @@ export class AdminDashboardService {
     const returnBehaviors = await this.prisma.userBehavior.findMany({
       where: {
         userId: { in: userIds },
-        type: "login",
+        type: "click",
       },
       select: { userId: true, createdAt: true },
     });
@@ -213,7 +214,7 @@ export class AdminDashboardService {
 
     for (const userId of userIds) {
       const created = userCreatedAtMap.get(userId);
-      if (!created) continue;
+      if (!created) {continue;}
 
       const returnDates = userReturnDates.get(userId) ?? [];
       const createdTime = created.getTime();
@@ -228,9 +229,9 @@ export class AdminDashboardService {
         (d: Date) => d.getTime() > createdTime && d.getTime() <= createdTime + 30 * oneDayMs,
       );
 
-      if (hasD1) d1++;
-      if (hasD7) d7++;
-      if (hasD30) d30++;
+      if (hasD1) {d1++;}
+      if (hasD7) {d7++;}
+      if (hasD30) {d30++;}
     }
 
     const total = userIds.length;

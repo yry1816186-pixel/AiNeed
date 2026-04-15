@@ -31,7 +31,7 @@ export class ExampleController {
    * Frontend must include the token from previous GET request
    */
   @Post()
-  create(@Body() createDto: any) {
+  create(@Body() _createDto: any) {
     return { message: 'This POST request requires valid CSRF token' };
   }
 
@@ -39,7 +39,7 @@ export class ExampleController {
    * PUT request - requires CSRF token
    */
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateDto: any) {
+  update(@Param('id') id: string, @Body() _updateDto: any) {
     return { message: `This PUT request for ID ${id} requires valid CSRF token` };
   }
 
@@ -64,7 +64,7 @@ export class WebhookController {
    */
   @Post('stripe')
   @ExcludeCsrf()
-  handleStripeWebhook(@Body() webhook: any) {
+  handleStripeWebhook(@Body() _webhook: any) {
     return { message: 'This webhook does not require CSRF token' };
   }
 
@@ -73,7 +73,7 @@ export class WebhookController {
    */
   @Post('payment-callback')
   @ExcludeCsrf()
-  handlePaymentCallback(@Body() callback: any) {
+  handlePaymentCallback(@Body() _callback: any) {
     return { message: 'This callback does not require CSRF token' };
   }
 }
@@ -90,7 +90,7 @@ export class PublicController {
    */
   @Get('search')
   @ExcludeCsrf()
-  search(@Body() searchDto: any) {
+  search(@Body() _searchDto: any) {
     return { message: 'This search endpoint does not require CSRF token' };
   }
 
@@ -100,7 +100,7 @@ export class PublicController {
    */
   @Post('contact')
   @UseGuards(CsrfGuard)
-  submitContactForm(@Body() contactDto: any) {
+  submitContactForm(@Body() _contactDto: any) {
     return { message: 'This contact form requires valid CSRF token' };
   }
 }
@@ -125,7 +125,7 @@ export class MixedController {
    */
   @Post('subscribe')
   @UseGuards(CsrfGuard)
-  subscribe(@Body() subscribeDto: any) {
+  subscribe(@Body() _subscribeDto: any) {
     return { message: 'This subscription requires valid CSRF token' };
   }
 
@@ -134,7 +134,7 @@ export class MixedController {
    */
   @Put('admin/settings')
   @UseGuards(CsrfGuard)
-  updateSettings(@Body() settings: any) {
+  updateSettings(@Body() _settings: any) {
     return { message: 'This admin endpoint requires valid CSRF token' };
   }
 }

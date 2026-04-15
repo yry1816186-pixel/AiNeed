@@ -18,7 +18,7 @@ describe("SecurityPIIEncryptionService", () => {
   const mockEncryptionService = {
     encrypt: jest.fn((plaintext: string) => `enc:${Buffer.from(plaintext).toString("base64")}`),
     decrypt: jest.fn((ciphertext: string) => {
-      if (!ciphertext.startsWith("enc:")) return ciphertext;
+      if (!ciphertext.startsWith("enc:")) {return ciphertext;}
       return Buffer.from(ciphertext.slice(4), "base64").toString("utf8");
     }),
   };
@@ -28,7 +28,7 @@ describe("SecurityPIIEncryptionService", () => {
       `enc:${userId}:${Buffer.from(plaintext).toString("base64")}`,
     ),
     decryptForUser: jest.fn((userId: string, ciphertext: string) => {
-      if (!ciphertext.startsWith("enc:")) return ciphertext;
+      if (!ciphertext.startsWith("enc:")) {return ciphertext;}
       const withoutPrefix = ciphertext.slice(4);
       const colonIndex = withoutPrefix.indexOf(":");
       if (colonIndex === -1) {

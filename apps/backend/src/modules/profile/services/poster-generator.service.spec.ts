@@ -1,11 +1,12 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { NotFoundException } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
+
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RedisService } from "../../../common/redis/redis.service";
+import { StorageService } from "../../../common/storage/storage.service";
+import { ProfileService } from "../profile.service";
 
 import { PosterGeneratorService } from "./poster-generator.service";
-import { PrismaService } from "../../../common/prisma/prisma.service";
-import { StorageService } from "../../../common/storage/storage.service";
-import { RedisService } from "../../../common/redis/redis.service";
-import { ProfileService } from "../profile.service";
 
 jest.mock("canvas", () => ({
   createCanvas: jest.fn().mockReturnValue({

@@ -18,16 +18,16 @@ import {
   ApiParam,
 } from "@nestjs/swagger";
 
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
-import { StyleProfilesService } from "./style-profiles.service";
 import {
   CreateStyleProfileDto,
   UpdateStyleProfileDto,
   StyleProfileResponseDto,
   SuccessResponseDto,
 } from "./dto";
+import { StyleProfilesService } from "./style-profiles.service";
 
 @ApiTags("style-profiles")
 @ApiBearerAuth()

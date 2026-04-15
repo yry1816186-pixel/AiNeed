@@ -58,7 +58,7 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
     loadCompleteness: async () => {
       try {
         const response: ApiResponse<Completeness> = await apiClient.get<Completeness>(
-          "/profile/completeness",
+          "/profile/completeness"
         );
         if (response.success && response.data) {
           set({ completeness: response.data });
@@ -70,8 +70,7 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
 
     loadBodyAnalysis: async () => {
       try {
-        const response: ApiResponse<BodyAnalysisReport> =
-          await profileApi.getBodyAnalysis();
+        const response: ApiResponse<BodyAnalysisReport> = await profileApi.getBodyAnalysis();
         if (response.success && response.data) {
           set({ bodyAnalysis: response.data });
         }
@@ -82,8 +81,7 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
 
     loadColorAnalysis: async () => {
       try {
-        const response: ApiResponse<ColorAnalysisReport> =
-          await profileApi.getColorAnalysis();
+        const response: ApiResponse<ColorAnalysisReport> = await profileApi.getColorAnalysis();
         if (response.success && response.data) {
           set({ colorAnalysis: response.data });
         }
@@ -137,7 +135,7 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
         error: null,
       }),
   }),
-  shallow,
+  shallow
 );
 
 export const useProfile = () => useProfileStore((s) => s.profile);

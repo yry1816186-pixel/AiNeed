@@ -157,9 +157,7 @@ describe("usePhotoStore", () => {
         data: qualityResult,
       });
 
-      const result = await usePhotoStore
-        .getState()
-        .checkQuality({ uri: "file:///photo.jpg" });
+      const result = await usePhotoStore.getState().checkQuality({ uri: "file:///photo.jpg" });
 
       expect(mockedApiClient.post).toHaveBeenCalledWith("/photos/check-quality", {
         uri: "file:///photo.jpg",
@@ -174,9 +172,7 @@ describe("usePhotoStore", () => {
         error: { code: "ERR", message: "Quality check failed" },
       });
 
-      const result = await usePhotoStore
-        .getState()
-        .checkQuality({ uri: "file:///photo.jpg" });
+      const result = await usePhotoStore.getState().checkQuality({ uri: "file:///photo.jpg" });
 
       expect(result).toBeNull();
       expect(usePhotoStore.getState().error).toBe("Quality check failed");
@@ -185,9 +181,7 @@ describe("usePhotoStore", () => {
     it("should return null on exception", async () => {
       mockedApiClient.post.mockRejectedValueOnce(new Error("Server error"));
 
-      const result = await usePhotoStore
-        .getState()
-        .checkQuality({ uri: "file:///photo.jpg" });
+      const result = await usePhotoStore.getState().checkQuality({ uri: "file:///photo.jpg" });
 
       expect(result).toBeNull();
       expect(usePhotoStore.getState().error).toBe("Server error");

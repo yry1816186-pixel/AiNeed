@@ -1,9 +1,10 @@
 import { Module } from "@nestjs/common";
 
+import { AnalyticsModule } from "../analytics/analytics.module";
+
 import { StyleProfilesController } from "./style-profiles.controller";
 import { StyleProfilesService } from "./style-profiles.service";
 
-import { AnalyticsModule } from "../analytics/analytics.module";
 
 @Module({
   imports: [AnalyticsModule],

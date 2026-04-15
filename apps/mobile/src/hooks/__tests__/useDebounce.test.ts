@@ -16,10 +16,9 @@ describe("useDebounce", () => {
   });
 
   it("should return new value after delay", () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }: any) => useDebounce(value, delay),
-      { initialProps: { value: "initial", delay: 500 } },
-    );
+    const { result, rerender } = renderHook(({ value, delay }: any) => useDebounce(value, delay), {
+      initialProps: { value: "initial", delay: 500 },
+    });
 
     rerender({ value: "updated", delay: 500 });
 
@@ -34,10 +33,9 @@ describe("useDebounce", () => {
   });
 
   it("should only take the last value on rapid changes", () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }: any) => useDebounce(value, delay),
-      { initialProps: { value: "a", delay: 300 } },
-    );
+    const { result, rerender } = renderHook(({ value, delay }: any) => useDebounce(value, delay), {
+      initialProps: { value: "a", delay: 300 },
+    });
 
     // Rapidly change values
     rerender({ value: "b", delay: 300 });
@@ -65,7 +63,7 @@ describe("useDebounce", () => {
   it("should cancel timer on cleanup", () => {
     const { result, rerender, unmount } = renderHook(
       ({ value, delay }: any) => useDebounce(value, delay),
-      { initialProps: { value: "start", delay: 500 } },
+      { initialProps: { value: "start", delay: 500 } }
     );
 
     rerender({ value: "changed", delay: 500 });

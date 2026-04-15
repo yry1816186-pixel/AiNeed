@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { AxiosRequestConfig, AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { message as antdMessage } from 'antd';
 
 interface RetryableRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -19,9 +20,14 @@ function onTokenRefreshed(token: string) {
 }
 
 request.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const encodedToken = localStorage.getItem('accessToken');
+  if (encodedToken) {
+    try {
+      const token = decodeURIComponent(atob(encodedToken));
+      config.headers.Authorization = `Bearer ${token}`;
+    } catch {
+      config.headers.Authorization = `Bearer ${encodedToken}`;
+    }
   }
   return config;
 });
@@ -36,7 +42,8 @@ request.interceptors.response.use(
     }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      const refreshToken = localStorage.getItem('refreshToken');
+      const encodedRefresh = localStorage.getItem('refreshToken');
+      const refreshToken = encodedRefresh ? (() => { try { return decodeURIComponent(atob(encodedRefresh)); } catch { return encodedRefresh; } })() : null;
       if (!refreshToken) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
@@ -76,8 +83,14 @@ request.interceptors.response.use(
       }
     }
 
-    const message = (error.response?.data as Record<string, unknown>)?.message || error.message;
-    console.error(message);
+    const errorMessage = (error.response?.data as Record<string, unknown>)?.message || error.message;
+    console.error(errorMessage);
+
+    // Show user-facing error notification for non-401 errors
+    if (error.response?.status !== 401) {
+      antdMessage.error(typeof errorMessage === 'string' ? errorMessage : '请求失败，请稍后重试');
+    }
+
     return Promise.reject(error);
   },
 );

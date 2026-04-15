@@ -3,12 +3,7 @@ import type { ApiResponse } from "../../types/api";
 
 export type PlanTier = "basic" | "premium" | "vip";
 
-export type SubscriptionStatus =
-  | "active"
-  | "expired"
-  | "cancelled"
-  | "trial"
-  | "pending";
+export type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial" | "pending";
 
 export interface MembershipPlan {
   id: string;
@@ -60,15 +55,11 @@ export const subscriptionApi = {
     return apiClient.get<MembershipPlan>(`/subscriptions/plans/${id}`);
   },
 
-  getCurrentSubscription: async (): Promise<
-    ApiResponse<UserSubscription | null>
-  > => {
+  getCurrentSubscription: async (): Promise<ApiResponse<UserSubscription | null>> => {
     return apiClient.get<UserSubscription | null>("/subscriptions/current");
   },
 
-  subscribe: async (
-    data: SubscribeDto,
-  ): Promise<ApiResponse<UserSubscription>> => {
+  subscribe: async (data: SubscribeDto): Promise<ApiResponse<UserSubscription>> => {
     return apiClient.post<UserSubscription>("/subscriptions/subscribe", data);
   },
 

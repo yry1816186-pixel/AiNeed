@@ -4,8 +4,8 @@ import {
   ForbiddenException,
   Logger,
 } from "@nestjs/common";
-import { Cron } from "@nestjs/schedule";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { Cron } from "@nestjs/schedule";
 import { Prisma, MembershipPlan, UserSubscription, BehaviorEventType } from "@prisma/client";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
@@ -349,21 +349,11 @@ export class SubscriptionService {
       const paymentResult = await this.createRenewalPayment(userId, plan);
 
       if (paymentResult.success) {
-        // 默认续费 30 天
-        const renewalDays = 30;
-        await this.prisma.userSubscription.update({
-          where: { id: subscription.id },
-          data: {
-            startedAt: new Date(),
-            expiresAt: new Date(
-              Date.now() + renewalDays * 24 * 60 * 60 * 1000,
-            ),
-          },
-        });
-
-        await this.sendRenewalSuccessNotification(userId, plan);
+        // 不直接激活订阅，等待支付回调确认后再激活
+        // 支付成功后 PaymentService 会发出 SUBSCRIPTION_ACTIVATION_REQUIRED 事件
+        // 由 PaymentEventListener 处理激活
         this.logger.log(
-          `Auto-renewal successful for subscription ${subscription.id}`,
+          `Renewal payment order created for subscription ${subscription.id}, waiting for payment confirmation`,
         );
       } else {
         const failureReason = paymentResult.error ?? "Renewal payment failed";
@@ -485,7 +475,7 @@ export class SubscriptionService {
   private async sendRenewalFailedNotification(
     userId: string,
     plan: MembershipPlan,
-    error: string,
+    _error: string,
   ): Promise<void> {
     await this.prisma.notification.create({
       data: {
@@ -562,7 +552,7 @@ export class SubscriptionService {
 
     if (existingPlans > 0) {return;}
 
-    for (const [key, plan] of Object.entries(MEMBERSHIP_PLANS)) {
+    for (const [_key, plan] of Object.entries(MEMBERSHIP_PLANS)) {
       await this.prisma.membershipPlan.create({
         data: {
           name: plan.name,

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+﻿import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,10 +13,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
-import {
-  customizationApi,
-} from "../services/api/customization.api";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { customizationApi } from "../services/api/customization.api";
 import type {
   CustomizationType,
   CustomizationStatus,
@@ -60,10 +58,7 @@ const SERVICE_TYPES: ServiceType[] = [
   },
 ];
 
-const STATUS_CONFIG: Record<
-  CustomizationStatus,
-  { label: string; color: string }
-> = {
+const STATUS_CONFIG: Record<CustomizationStatus, { label: string; color: string }> = {
   draft: { label: "草稿", color: Colors.neutral[500] },
   submitted: { label: "已提交", color: theme.colors.info },
   quoting: { label: "报价中", color: theme.colors.warning },
@@ -82,9 +77,7 @@ export const CustomizationScreen: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const [selectedType, setSelectedType] = useState<CustomizationType | null>(
-    null,
-  );
+  const [selectedType, setSelectedType] = useState<CustomizationType | null>(null);
   const [description, setDescription] = useState("");
   const [fabricPreference, setFabricPreference] = useState("");
   const [budgetRange, setBudgetRange] = useState("");
@@ -109,7 +102,7 @@ export const CustomizationScreen: React.FC = () => {
 
   useEffect(() => {
     if (activeTab === "list") {
-      loadRequests();
+      void loadRequests();
     }
   }, [activeTab, loadRequests]);
 
@@ -167,10 +160,7 @@ export const CustomizationScreen: React.FC = () => {
           },
         ]);
       } else {
-        Alert.alert(
-          "提交失败",
-          response.error?.message || "请稍后重试",
-        );
+        Alert.alert("提交失败", response.error?.message || "请稍后重试");
       }
     } catch {
       Alert.alert("提交失败", "网络错误，请检查网络后重试");
@@ -200,25 +190,14 @@ export const CustomizationScreen: React.FC = () => {
         onPress={() => setActiveTab("new")}
         activeOpacity={0.7}
       >
-        <Text
-          style={[styles.tabText, activeTab === "new" && styles.tabTextActive]}
-        >
-          发起定制
-        </Text>
+        <Text style={[styles.tabText, activeTab === "new" && styles.tabTextActive]}>发起定制</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.tab, activeTab === "list" && styles.tabActive]}
         onPress={() => setActiveTab("list")}
         activeOpacity={0.7}
       >
-        <Text
-          style={[
-            styles.tabText,
-            activeTab === "list" && styles.tabTextActive,
-          ]}
-        >
-          我的定制
-        </Text>
+        <Text style={[styles.tabText, activeTab === "list" && styles.tabTextActive]}>我的定制</Text>
       </TouchableOpacity>
     </View>
   );
@@ -262,13 +241,8 @@ export const CustomizationScreen: React.FC = () => {
           return (
             <TouchableOpacity
               key={service.id}
-              style={[
-                styles.serviceCard,
-                isSelected && styles.serviceCardSelected,
-              ]}
-              onPress={() =>
-                setSelectedType(isSelected ? null : service.id)
-              }
+              style={[styles.serviceCard, isSelected && styles.serviceCardSelected]}
+              onPress={() => setSelectedType(isSelected ? null : service.id)}
               activeOpacity={0.7}
             >
               <View
@@ -278,17 +252,12 @@ export const CustomizationScreen: React.FC = () => {
                 ]}
               >
                 <Ionicons
-                  name={service.icon as any}
+                  name={service.icon}
                   size={24}
                   color={isSelected ? theme.colors.surface : theme.colors.primary}
                 />
               </View>
-              <Text
-                style={[
-                  styles.serviceLabel,
-                  isSelected && styles.serviceLabelSelected,
-                ]}
-              >
+              <Text style={[styles.serviceLabel, isSelected && styles.serviceLabelSelected]}>
                 {service.label}
               </Text>
               <Text style={styles.serviceDescription} numberOfLines={2}>
@@ -318,11 +287,7 @@ export const CustomizationScreen: React.FC = () => {
       <Text style={styles.sectionTitle}>偏好与预算 (选填)</Text>
       <View style={styles.optionalFields}>
         <View style={styles.inputField}>
-          <Ionicons
-            name="shirt-outline"
-            size={18}
-            color={theme.colors.textTertiary}
-          />
+          <Ionicons name="shirt-outline" size={18} color={theme.colors.textTertiary} />
           <TextInput
             style={styles.textInput}
             placeholder="面料偏好 (如：真丝、羊毛、亚麻)"
@@ -333,11 +298,7 @@ export const CustomizationScreen: React.FC = () => {
           />
         </View>
         <View style={styles.inputField}>
-          <Ionicons
-            name="wallet-outline"
-            size={18}
-            color={theme.colors.textTertiary}
-          />
+          <Ionicons name="wallet-outline" size={18} color={theme.colors.textTertiary} />
           <TextInput
             style={styles.textInput}
             placeholder="预算范围 (如：2000-5000)"
@@ -348,11 +309,7 @@ export const CustomizationScreen: React.FC = () => {
           />
         </View>
         <View style={styles.inputField}>
-          <Ionicons
-            name="document-text-outline"
-            size={18}
-            color={theme.colors.textTertiary}
-          />
+          <Ionicons name="document-text-outline" size={18} color={theme.colors.textTertiary} />
           <TextInput
             style={styles.textInput}
             placeholder="其他补充说明"
@@ -394,15 +351,9 @@ export const CustomizationScreen: React.FC = () => {
     if (requests.length === 0) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons
-            name="document-text-outline"
-            size={48}
-            color={Colors.neutral[300]}
-          />
+          <Ionicons name="document-text-outline" size={48} color={Colors.neutral[300]} />
           <Text style={styles.emptyTitle}>暂无定制需求</Text>
-          <Text style={styles.emptySubtitle}>
-            点击"发起定制"开始您的第一个定制服务
-          </Text>
+          <Text style={styles.emptySubtitle}>点击"发起定制"开始您的第一个定制服务</Text>
           <TouchableOpacity
             style={styles.emptyButton}
             onPress={() => setActiveTab("new")}
@@ -436,27 +387,16 @@ export const CustomizationScreen: React.FC = () => {
               <View style={styles.requestCardHeader}>
                 <View style={styles.requestTypeTag}>
                   <Ionicons
-                    name={
-                      SERVICE_TYPES.find((s) => s.id === request.type)
-                        ?.icon as any
-                    }
+                    name={SERVICE_TYPES.find((s) => s.id === request.type)?.icon ?? "help-outline"}
                     size={14}
                     color={theme.colors.primary}
                   />
                   <Text style={styles.requestTypeText}>
-                    {SERVICE_TYPES.find((s) => s.id === request.type)?.label ||
-                      request.type}
+                    {SERVICE_TYPES.find((s) => s.id === request.type)?.label || request.type}
                   </Text>
                 </View>
-                <View
-                  style={[
-                    styles.statusBadge,
-                    { backgroundColor: `${statusConfig.color}18` },
-                  ]}
-                >
-                  <Text
-                    style={[styles.statusText, { color: statusConfig.color }]}
-                  >
+                <View style={[styles.statusBadge, { backgroundColor: `${statusConfig.color}18` }]}>
+                  <Text style={[styles.statusText, { color: statusConfig.color }]}>
                     {statusConfig.label}
                   </Text>
                 </View>
@@ -470,14 +410,8 @@ export const CustomizationScreen: React.FC = () => {
                 </Text>
                 {request.quotes && request.quotes.length > 0 && (
                   <View style={styles.quoteInfo}>
-                    <Ionicons
-                      name="pricetag-outline"
-                      size={14}
-                      color={theme.colors.textTertiary}
-                    />
-                    <Text style={styles.quoteText}>
-                      {request.quotes.length} 个报价
-                    </Text>
+                    <Ionicons name="pricetag-outline" size={14} color={theme.colors.textTertiary} />
+                    <Text style={styles.quoteText}>{request.quotes.length} 个报价</Text>
                   </View>
                 )}
               </View>

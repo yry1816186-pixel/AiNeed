@@ -11,10 +11,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const DEFAULT_HEIGHT = Math.round(SCREEN_WIDTH * 0.7);
 
-export const PhotoGuideOverlay: React.FC<PhotoGuideOverlayProps> = ({
-  visible,
-  dimensions,
-}) => {
+export const PhotoGuideOverlay: React.FC<PhotoGuideOverlayProps> = ({ visible, dimensions }) => {
   if (!visible) {
     return null;
   }
@@ -48,15 +45,8 @@ export const PhotoGuideOverlay: React.FC<PhotoGuideOverlayProps> = ({
   ].join(" ");
 
   return (
-    <View
-      style={[styles.overlay, { width, height }]}
-      pointerEvents="none"
-    >
-      <Svg
-        width={width}
-        height={height}
-        style={styles.svg}
-      >
+    <View style={[styles.overlay, { width, height }]} pointerEvents="none">
+      <Svg width={width} height={height} style={styles.svg}>
         <Ellipse
           cx={centerX}
           cy={headCy}

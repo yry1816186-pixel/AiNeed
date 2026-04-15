@@ -8,6 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { SKIP_RESPONSE_TRANSFORM } from './transform.interceptor';
 
 export const JSON_API_TYPE = 'json_api_type';
@@ -69,7 +70,7 @@ export const SkipJsonApi = () => SetMetadata(SKIP_JSON_API, true);
 export class JsonApiInterceptor implements NestInterceptor {
   constructor(private readonly reflector: Reflector) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const skipJsonApi = this.reflector.getAllAndOverride<boolean>(SKIP_JSON_API, [
       context.getHandler(),
       context.getClass(),

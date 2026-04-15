@@ -1,9 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { NotificationType } from "@prisma/client";
 import { OnEvent } from "@nestjs/event-emitter";
+import { NotificationType } from "@prisma/client";
 
-import { NotificationService } from "../services/notification.service";
 import { NotificationTemplateService } from "../services/notification-template.service";
+import { NotificationService } from "../services/notification.service";
 import { PushNotificationService } from "../services/push-notification.service";
 
 /**

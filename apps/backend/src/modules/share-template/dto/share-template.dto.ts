@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsString,
   IsOptional,
@@ -7,7 +8,6 @@ import {
   Min,
   Max,
 } from "class-validator";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class CreateShareTemplateDto {
   @ApiProperty({ description: "模板名称", example: "简约风格海报" })

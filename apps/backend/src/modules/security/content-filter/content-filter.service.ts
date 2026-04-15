@@ -1,8 +1,9 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import * as fs from 'fs';
-import * as path from 'path';
 
 type SensitivityLevel = 'strict' | 'moderate' | 'loose';
 

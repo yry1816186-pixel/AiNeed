@@ -1,4 +1,8 @@
 /**
+ * @deprecated 使用 common/redis/RedisKeyBuilder 替代，此文件将在下个版本移除
+ */
+
+/**
  * Cache Key Constants
  * 缓存键前缀和 TTL 常量定义
  */
@@ -102,6 +106,10 @@ export const CACHE_TTL = {
 
 /**
  * 生成缓存键的辅助函数
+ */
+/**
+ * @deprecated 请使用 common/redis/RedisKeyBuilder 作为唯一权威缓存键构建器。
+ * CacheKeyBuilder 将在下个版本移除，所有缓存键构建逻辑应迁移至 RedisKeyBuilder。
  */
 export class CacheKeyBuilder {
   static user(userId: string): string {

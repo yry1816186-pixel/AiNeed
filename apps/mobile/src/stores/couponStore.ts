@@ -1,10 +1,6 @@
 import { create } from "zustand";
 
-import {
-  couponApi,
-  type Coupon,
-  type UserCoupon,
-} from "../services/api/commerce.api";
+import { couponApi, type UserCoupon } from "../services/api/commerce.api";
 
 interface CouponStore {
   availableCoupons: UserCoupon[];
@@ -72,7 +68,7 @@ export const useCouponStore = create<CouponStore>((set) => ({
       if (response.success && response.data) {
         set((state) => ({
           availableCoupons: state.availableCoupons.map((uc) =>
-            uc.id === response.data!.id ? response.data! : uc,
+            uc.id === response.data!.id ? response.data! : uc
           ),
         }));
       }

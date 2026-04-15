@@ -1,25 +1,19 @@
-import React, { useRef, useCallback, useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+﻿import React, { useRef, useCallback, useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { LinearGradient } from "../polyfills/expo-linear-gradient";
 import Share from "react-native-share";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
 import { useProfileStore } from "../stores/profileStore";
 import { useAuthStore } from "../stores/index";
-import { ScreenLayout, Header } from "../components/layout/ScreenLayout";
+import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";
 import type { RootStackParamList } from "../types/navigation";
 
 type SharePosterNavProp = NavigationProp<RootStackParamList>;
 
-const PLACEHOLDER_PALETTE = ["#C67B5C", "#D9A441", "#B5A08C", "#8B9A7D", "#E8B451"];
+const PLACEHOLDER_PALETTE = [DesignTokens.colors.brand.terracotta, DesignTokens.colors.semantic.warning, DesignTokens.colors.brand.camel, DesignTokens.colors.brand.sage, "#E8B451"]; // custom color
 
 export const SharePosterScreen: React.FC = () => {
   const navigation = useNavigation<SharePosterNavProp>();
@@ -39,7 +33,7 @@ export const SharePosterScreen: React.FC = () => {
         setIsLoading(false);
       }
     };
-    load();
+    void load();
   }, [loadProfile, loadColorAnalysis]);
 
   const palette = colorAnalysis?.bestColors?.slice(0, 5) ?? PLACEHOLDER_PALETTE;
@@ -85,7 +79,11 @@ export const SharePosterScreen: React.FC = () => {
           <Header
             title="分享海报"
             leftAction={
-              <TouchableOpacity onPress={() => navigation.goBack()} accessibilityLabel="返回" accessibilityRole="button">
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                accessibilityLabel="返回"
+                accessibilityRole="button"
+              >
                 <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
               </TouchableOpacity>
             }
@@ -107,7 +105,11 @@ export const SharePosterScreen: React.FC = () => {
         <Header
           title="分享海报"
           leftAction={
-            <TouchableOpacity onPress={() => navigation.goBack()} accessibilityLabel="返回" accessibilityRole="button">
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              accessibilityLabel="返回"
+              accessibilityRole="button"
+            >
               <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
             </TouchableOpacity>
           }
@@ -125,16 +127,16 @@ export const SharePosterScreen: React.FC = () => {
             accessibilityRole="button"
           >
             <LinearGradient
-              colors={["#C67B5C", "#B5A08C"]}
+              colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.shareGradient}
             >
               {isSharing ? (
-                <ActivityIndicator size="small" color="#FFFFFF" />
+                <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
               ) : (
                 <>
-                  <Ionicons name="share-outline" size={20} color="#FFFFFF" />
+                  <Ionicons name="share-outline" size={20} color={DesignTokens.colors.neutral.white} />
                   <Text style={styles.shareButtonText}>分享我的风格</Text>
                 </>
               )}
@@ -147,7 +149,7 @@ export const SharePosterScreen: React.FC = () => {
         {/* Poster preview card */}
         <View ref={viewShotRef} style={styles.posterCard} collapsable={false}>
           <LinearGradient
-            colors={["#C67B5C", "#B5A08C"]}
+            colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0.5, y: 1 }}
             style={styles.posterGradient}
@@ -173,10 +175,7 @@ export const SharePosterScreen: React.FC = () => {
               <Text style={styles.posterSectionTitle}>我的色彩</Text>
               <View style={styles.posterPalette}>
                 {palette.map((color, index) => (
-                  <View
-                    key={index}
-                    style={[styles.posterColorDot, { backgroundColor: color }]}
-                  />
+                  <View key={index} style={[styles.posterColorDot, { backgroundColor: color }]} />
                 ))}
               </View>
             </View>
@@ -240,12 +239,12 @@ const styles = StyleSheet.create({
   posterAvatarText: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
   },
   posterName: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
   },
   posterSection: {
     marginBottom: Spacing[6],
@@ -261,7 +260,7 @@ const styles = StyleSheet.create({
   posterStyleType: {
     fontSize: 28,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
   },
   posterPalette: {
     flexDirection: "row",
@@ -306,7 +305,7 @@ const styles = StyleSheet.create({
   shareButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
   },
 });
 

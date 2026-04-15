@@ -1,18 +1,19 @@
-import IoniconsBase from 'react-native-vector-icons/Ionicons';
-import MaterialIconsBase from 'react-native-vector-icons/MaterialIcons';
-import FontAwesomeBase from 'react-native-vector-icons/FontAwesome';
-import FontAwesome5Base from 'react-native-vector-icons/FontAwesome5';
-import FontAwesome6Base from 'react-native-vector-icons/FontAwesome6';
-import MaterialCommunityIconsBase from 'react-native-vector-icons/MaterialCommunityIcons';
-import EntypoBase from 'react-native-vector-icons/Entypo';
-import EvilIconsBase from 'react-native-vector-icons/EvilIcons';
-import FeatherBase from 'react-native-vector-icons/Feather';
-import FoundationBase from 'react-native-vector-icons/Foundation';
-import OcticonsBase from 'react-native-vector-icons/Octicons';
-import SimpleLineIconsBase from 'react-native-vector-icons/SimpleLineIcons';
-import ZocialBase from 'react-native-vector-icons/Zocial';
-import AntDesignBase from 'react-native-vector-icons/AntDesign';
-import FontistoBase from 'react-native-vector-icons/Fontisto';
+import type React from "react";
+import IoniconsBase from "react-native-vector-icons/Ionicons";
+import MaterialIconsBase from "react-native-vector-icons/MaterialIcons";
+import FontAwesomeBase from "react-native-vector-icons/FontAwesome";
+import FontAwesome5Base from "react-native-vector-icons/FontAwesome5";
+import FontAwesome6Base from "react-native-vector-icons/FontAwesome6";
+import MaterialCommunityIconsBase from "react-native-vector-icons/MaterialCommunityIcons";
+import EntypoBase from "react-native-vector-icons/Entypo";
+import EvilIconsBase from "react-native-vector-icons/EvilIcons";
+import FeatherBase from "react-native-vector-icons/Feather";
+import FoundationBase from "react-native-vector-icons/Foundation";
+import OcticonsBase from "react-native-vector-icons/Octicons";
+import SimpleLineIconsBase from "react-native-vector-icons/SimpleLineIcons";
+import ZocialBase from "react-native-vector-icons/Zocial";
+import AntDesignBase from "react-native-vector-icons/AntDesign";
+import FontistoBase from "react-native-vector-icons/Fontisto";
 
 type IconWithGlyphMap<T> = T & {
   glyphMap: Record<string, number>;
@@ -46,3 +47,6 @@ export const AntDesign = withGlyphMap(AntDesignBase);
 export const Fontisto = withGlyphMap(FontistoBase);
 
 export type Icon = typeof Ionicons;
+
+/** Type for Ionicons name prop - valid icon name strings */
+export type IoniconName = React.ComponentProps<typeof IoniconsBase>["name"];

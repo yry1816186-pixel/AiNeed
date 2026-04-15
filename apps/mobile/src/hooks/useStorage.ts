@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function useStorage<T>(
   key: string,
-  initialValue: T,
+  initialValue: T
 ): [T, (value: T | ((prev: T) => T)) => Promise<void>, boolean] {
   const [storedValue, setStoredValue] = useState<T>(initialValue);
   const [loading, setLoading] = useState(true);
@@ -21,21 +21,20 @@ export function useStorage<T>(
         setLoading(false);
       }
     };
-    loadValue();
+    void loadValue();
   }, [key]);
 
   const setValue = useCallback(
     async (value: T | ((prev: T) => T)) => {
       try {
-        const valueToStore =
-          value instanceof Function ? value(storedValue) : value;
+        const valueToStore = value instanceof Function ? value(storedValue) : value;
         setStoredValue(valueToStore);
         await AsyncStorage.setItem(key, JSON.stringify(valueToStore));
       } catch (error) {
         console.error(`Error saving ${key} to storage:`, error);
       }
     },
-    [key, storedValue],
+    [key, storedValue]
   );
 
   return [storedValue, setValue, loading];

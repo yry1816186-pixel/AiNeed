@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
 export interface AuditLogParams {
@@ -74,8 +75,8 @@ export class AdminAuditService {
 
     if (startDate || endDate) {
       const createdAt: Record<string, Date> = {};
-      if (startDate) createdAt.gte = startDate;
-      if (endDate) createdAt.lte = endDate;
+      if (startDate) {createdAt.gte = startDate;}
+      if (endDate) {createdAt.lte = endDate;}
       where.createdAt = createdAt;
     }
 

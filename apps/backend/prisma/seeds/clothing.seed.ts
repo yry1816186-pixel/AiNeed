@@ -120,7 +120,7 @@ const clothingData = [
     price: 459,
     originalPrice: 599,
     stock: 40,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: true,
     attributes: {
       material: '100%桑蚕丝，16姆米',
@@ -171,7 +171,7 @@ const clothingData = [
     price: 269,
     originalPrice: null,
     stock: 60,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: false,
     attributes: {
       material: '55%棉 45%亚麻，天然透气',
@@ -274,7 +274,7 @@ const clothingData = [
     price: 279,
     originalPrice: null,
     stock: 75,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: false,
     attributes: {
       material: '100%聚酯纤维，高密度褶皱定型',
@@ -401,7 +401,7 @@ const clothingData = [
     price: 399,
     originalPrice: 549,
     stock: 60,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: true,
     attributes: {
       material: '95%聚酯纤维 5%氨纶，重工面料',
@@ -476,7 +476,7 @@ const clothingData = [
     price: 529,
     originalPrice: 699,
     stock: 35,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: true,
     attributes: {
       material: '92%粘胶纤维 8%氨纶，丝绒面料',
@@ -526,7 +526,7 @@ const clothingData = [
     price: 369,
     originalPrice: 459,
     stock: 50,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: false,
     attributes: {
       material: '65%棉 35%聚酯纤维，定型面料',
@@ -603,7 +603,7 @@ const clothingData = [
     price: 799,
     originalPrice: null,
     stock: 40,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: false,
     attributes: {
       material: '100%绵羊皮，里料100%聚酯纤维',
@@ -758,7 +758,7 @@ const clothingData = [
     price: 459,
     originalPrice: null,
     stock: 60,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: true,
     attributes: {
       material: '鞋面：漆皮，内里：羊皮，鞋底：橡胶',
@@ -812,7 +812,7 @@ const clothingData = [
     price: 499,
     originalPrice: null,
     stock: 55,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: false,
     attributes: {
       material: '鞋面：牛皮，内里：人造短毛绒，鞋底：橡胶',
@@ -893,7 +893,7 @@ const clothingData = [
     price: 599,
     originalPrice: null,
     stock: 40,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: true,
     attributes: {
       material: '表壳：316L不锈钢，表带：不锈钢，表盘直径32mm',
@@ -913,7 +913,7 @@ const clothingData = [
     price: 199,
     originalPrice: 279,
     stock: 80,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: false,
     attributes: {
       material: '100%桑蚕丝，90cm×90cm',
@@ -933,7 +933,7 @@ const clothingData = [
     price: 159,
     originalPrice: null,
     stock: 100,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: false,
     attributes: {
       material: '天然淡水珍珠8-9mm，925银针',
@@ -973,7 +973,7 @@ const clothingData = [
     price: 229,
     originalPrice: null,
     stock: 45,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: false,
     attributes: {
       material: '100%羊毛呢，帽檐宽度8cm',
@@ -1184,7 +1184,7 @@ const clothingData = [
     price: 259,
     originalPrice: null,
     stock: 70,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: false,
     attributes: {
       material: '82%锦纶 18%氨纶，内衬：100%聚酯纤维',
@@ -1234,7 +1234,7 @@ const clothingData = [
     price: 279,
     originalPrice: null,
     stock: 50,
-    brandSlug: 'aineed-studio',
+    brandSlug: 'xuno-studio',
     isFeatured: true,
     attributes: {
       material: '82%锦纶 18%氨纶，内衬：100%聚酯纤维',
@@ -1258,7 +1258,7 @@ const brandPool = [
   'xuno-studio',
   // Fast Fashion
   'zara', 'uniqlo', 'hm', 'gap', 'pull-and-bear', 'bershka', 'mango',
-  'urban-revico', 'mjstyle',
+  'urban-revivo', 'mjstyle',
   // Premium
   'cos', 'massimo-dutti', 'sandro', 'maje', 'theory', 'apc',
   // Sportswear

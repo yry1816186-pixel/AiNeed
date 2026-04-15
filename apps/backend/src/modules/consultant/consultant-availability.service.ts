@@ -4,7 +4,9 @@ import {
   NotFoundException,
   BadRequestException,
 } from "@nestjs/common";
+
 import { PrismaService } from "../../common/prisma/prisma.service";
+
 import {
   BatchCreateAvailabilityDto,
   AvailableSlotsQueryDto,
@@ -34,9 +36,9 @@ export class ConsultantAvailabilityService {
     const consultant = await this.prisma.consultantProfile.findUnique({
       where: { id: consultantId },
     });
-    if (!consultant) throw new NotFoundException("顾问不存在");
+    if (!consultant) {throw new NotFoundException("顾问不存在");}
     if (consultant.userId !== userId)
-      throw new BadRequestException("无权修改此顾问排期");
+      {throw new BadRequestException("无权修改此顾问排期");}
 
     // 删除旧时段模板
     await this.prisma.consultantAvailability.deleteMany({
@@ -87,7 +89,7 @@ export class ConsultantAvailabilityService {
       where: { consultantId, dayOfWeek, isAvailable: true },
     });
 
-    if (templates.length === 0) return [];
+    if (templates.length === 0) {return [];}
 
     // 生成所有时段
     const allSlots: TimeSlot[] = [];
@@ -156,7 +158,7 @@ export class ConsultantAvailabilityService {
       },
     });
 
-    if (!conflict) return false;
+    if (!conflict) {return false;}
 
     // 精确检查：已有预约的结束时间是否与目标时段重叠
     const conflictEnd = new Date(

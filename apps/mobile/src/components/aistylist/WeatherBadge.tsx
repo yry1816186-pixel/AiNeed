@@ -10,9 +10,19 @@ interface WeatherBadgeProps {
 }
 
 const getWeatherIcon = (condition: string): string => {
-  if (condition.includes("rain") || condition.includes("Rain")) return "R";
-  if (condition.includes("snow") || condition.includes("Snow")) return "W";
-  if (condition.includes("cloud") || condition.includes("Cloud") || condition.includes("overcast")) return "C";
+  if (condition.includes("rain") || condition.includes("Rain")) {
+    return "R";
+  }
+  if (condition.includes("snow") || condition.includes("Snow")) {
+    return "W";
+  }
+  if (
+    condition.includes("cloud") ||
+    condition.includes("Cloud") ||
+    condition.includes("overcast")
+  ) {
+    return "C";
+  }
   return "S";
 };
 
@@ -27,19 +37,14 @@ export const WeatherBadge: React.FC<WeatherBadgeProps> = ({
   const icon = getWeatherIcon(condition);
 
   return (
-    <Pressable
-      style={styles.container}
-      onPress={() => setShowSuggestion(!showSuggestion)}
-    >
+    <Pressable style={styles.container} onPress={() => setShowSuggestion(!showSuggestion)}>
       <View style={styles.badgeContent}>
         <Text style={styles.icon}>{icon}</Text>
         <Text style={styles.temperature}>{`${temperature}C`}</Text>
         <Text style={styles.condition}>{condition}</Text>
         {location && <Text style={styles.location}>{location}</Text>}
       </View>
-      {showSuggestion && suggestion && (
-        <Text style={styles.suggestion}>{suggestion}</Text>
-      )}
+      {showSuggestion && suggestion && <Text style={styles.suggestion}>{suggestion}</Text>}
     </Pressable>
   );
 };

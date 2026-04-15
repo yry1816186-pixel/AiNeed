@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+﻿import React, { useRef } from "react";
 import {
   View,
   Text,
@@ -29,7 +29,7 @@ export function SwipeRecommendationCard({
   onSkip,
 }: SwipeRecommendationCardProps) {
   const pan = useRef(new Animated.ValueXY()).current;
-  const rotate = useRef(new Animated.Value(0)).current;
+  const _rotate = useRef(new Animated.Value(0)).current;
 
   const panResponder = useRef(
     PanResponder.create({
@@ -39,7 +39,7 @@ export function SwipeRecommendationCard({
       }),
       onPanResponderRelease: (
         _e: GestureResponderEvent,
-        gestureState: PanResponderGestureState,
+        gestureState: PanResponderGestureState
       ) => {
         if (gestureState.dx > SWIPE_THRESHOLD) {
           onLike(item);
@@ -50,7 +50,7 @@ export function SwipeRecommendationCard({
         }
         Animated.spring(pan, { toValue: { x: 0, y: 0 }, useNativeDriver: false }).start();
       },
-    }),
+    })
   ).current;
 
   const likeOpacity = pan.x.interpolate({
@@ -76,20 +76,12 @@ export function SwipeRecommendationCard({
       style={[
         styles.card,
         {
-          transform: [
-            { translateX: pan.x },
-            { translateY: pan.y },
-            { rotate: cardRotate },
-          ],
+          transform: [{ translateX: pan.x }, { translateY: pan.y }, { rotate: cardRotate }],
         },
       ]}
       {...panResponder.panHandlers}
     >
-      <Image
-        source={{ uri: item.mainImage }}
-        style={styles.image as any}
-        resizeMode="cover"
-      />
+      <Image source={{ uri: item.mainImage }} style={styles.image as any} resizeMode="cover" />
 
       <Animated.View style={[styles.overlay, styles.likeOverlay, { opacity: likeOpacity }]}>
         <Text style={styles.likeText}>♥ 喜欢</Text>
@@ -100,9 +92,7 @@ export function SwipeRecommendationCard({
       </Animated.View>
 
       <View style={styles.infoBar}>
-        {item.brand && (
-          <Text style={styles.brandName}>{item.brand.name}</Text>
-        )}
+        {item.brand && <Text style={styles.brandName}>{item.brand.name}</Text>}
         <Text style={styles.price}>¥{item.price}</Text>
         <Text style={styles.matchReason}>{item.matchReason}</Text>
       </View>

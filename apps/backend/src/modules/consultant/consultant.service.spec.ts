@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { PaymentService } from "../payment/payment.service";
 
+import { ConsultantService } from "./consultant.service";
 import {
   CreateConsultantProfileDto,
   UpdateConsultantProfileDto,
@@ -14,7 +16,6 @@ import {
   BookingStatusDto,
   ServiceTypeDto,
 } from "./dto";
-import { ConsultantService } from "./consultant.service";
 
 describe("ConsultantService", () => {
   let service: ConsultantService;

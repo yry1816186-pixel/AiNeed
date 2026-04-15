@@ -35,7 +35,7 @@ export class RecommendationCacheService {
       },
     });
 
-    if (!cache) return null;
+    if (!cache) {return null;}
 
     return {
       id: cache.id,

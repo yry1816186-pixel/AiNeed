@@ -79,9 +79,7 @@ describe("useAsync", () => {
 
   it("should clear previous error on new execute", async () => {
     const error = new Error("fail");
-    const asyncFn = jest.fn()
-      .mockRejectedValueOnce(error)
-      .mockResolvedValueOnce("success");
+    const asyncFn = jest.fn().mockRejectedValueOnce(error).mockResolvedValueOnce("success");
     const { result } = renderHook(() => useAsync(asyncFn));
 
     // First call fails

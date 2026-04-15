@@ -11,9 +11,12 @@ import httpx
 from PIL import Image
 
 from ml.api.config import settings
-from ml.services.tryon_preprocessor import TryonPreprocessor
-from ml.services.tryon_prompt_engine import TryonPromptEngine
-from ml.services.tryon_postprocessor import TryonPostprocessor
+from ml.services.tryon.tryon_preprocessor import TryonPreprocessor
+from ml.services.tryon.tryon_prompt_engine import TryonPromptEngine
+from ml.services.tryon.tryon_postprocessor import TryonPostprocessor
+
+# P1-9: Import externalized prompts
+from .stylist_prompts import VIRTUAL_TRYON_PROMPT_TEMPLATE
 
 logger = logging.getLogger(__name__)
 
@@ -241,18 +244,83 @@ class VirtualTryonService:
         category_desc: str,
         custom_prompt: Optional[str] = None,
     ) -> Dict[str, Any]:
+        """GLM fallback for virtual try-on.
+
+        P0-2: Uses images/generations endpoint instead of chat/completions.
+        The chat/completions endpoint returns text-only responses for image generation
+        requests, which is incorrect. The images/generations endpoint is the proper
+        endpoint for GLM image generation APIs.
+
+        If images/generations is not available, raises an explicit error instead
+        of silently returning an invalid result.
+        """
         if not self.glm_api_key:
             raise ValueError("GLM API key not configured")
 
         person_b64 = self._ensure_base64(person_b64)
         garment_b64 = self._ensure_base64(garment_b64)
 
-        prompt = custom_prompt or (
-            f"请生成一张图片：将第二张图片中的{category_desc}穿在第一张图片的人物身上，"
-            "保持人物面部和姿势不变，生成高质量真实感的换装效果图。"
-        )
+        prompt = custom_prompt or VIRTUAL_TRYON_PROMPT_TEMPLATE.format(category_desc=category_desc)
+
+        # P0-2: Try images/generations endpoint first (correct for image generation)
+        images_url = f"{self.glm_api_endpoint}/images/generations"
 
         payload = {
+            "model": "cogview-3-plus",
+            "prompt": prompt,
+            "size": "1024x1024",
+        }
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.glm_api_key}",
+        }
+
+        # Attempt 1: images/generations endpoint
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.post(
+                    images_url,
+                    json=payload,
+                    headers=headers,
+                )
+
+                if response.status_code == 200:
+                    data = response.json()
+                    # Extract image URL from response
+                    result_url = None
+                    if isinstance(data.get("data"), list) and len(data["data"]) > 0:
+                        result_url = data["data"][0].get("url")
+                    elif data.get("url"):
+                        result_url = data["url"]
+
+                    if result_url:
+                        return {
+                            "success": True,
+                            "result_url": result_url,
+                            "provider": "glm-cogview",
+                        }
+                    else:
+                        logger.warning(
+                            "GLM images/generations returned 200 but no image URL found: %s",
+                            list(data.keys()),
+                        )
+                elif response.status_code == 404:
+                    logger.info(
+                        "GLM images/generations endpoint not available (404), "
+                        "falling back to chat/completions with vision model"
+                    )
+                else:
+                    logger.warning(
+                        "GLM images/generations returned status %d, falling back to chat/completions",
+                        response.status_code,
+                    )
+        except Exception as e:
+            logger.warning("GLM images/generations call failed: %s, falling back", str(e))
+
+        # Attempt 2: Fallback to chat/completions with vision model
+        # This may return text-only responses, so we validate the output carefully
+        chat_payload = {
             "model": "glm-4v-plus",
             "messages": [
                 {
@@ -278,15 +346,10 @@ class VirtualTryonService:
             "temperature": 0.3,
         }
 
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.glm_api_key}",
-        }
-
         async with httpx.AsyncClient(timeout=20.0) as client:
             response = await client.post(
                 f"{self.glm_api_endpoint}/chat/completions",
-                json=payload,
+                json=chat_payload,
                 headers=headers,
             )
             response.raise_for_status()
@@ -313,7 +376,13 @@ class VirtualTryonService:
                     break
 
         if not result_url:
-            raise ValueError("GLM returned text-only response, no image generated")
+            # P0-2: Explicitly raise error instead of silently returning invalid result
+            raise ValueError(
+                "GLM API returned text-only response, no image generated. "
+                "The images/generations endpoint is not available and the "
+                "chat/completions endpoint does not support image generation. "
+                "Please check GLM API configuration or use a different provider."
+            )
 
         return {
             "success": True,

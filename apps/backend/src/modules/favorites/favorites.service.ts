@@ -93,7 +93,7 @@ export class FavoritesService {
         brand: { id: string; name: string; logo: string | null } | null 
       } | null 
     }) => {
-      if (!f.item) return null;
+      if (!f.item) {return null;}
       return {
         ...f.item,
         price: parseFloat(f.item.price.toString()),

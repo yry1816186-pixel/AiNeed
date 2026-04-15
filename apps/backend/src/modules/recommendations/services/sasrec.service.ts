@@ -430,7 +430,7 @@ export class SASRecService {
     try {
       const behaviors = await this.prisma.userBehavior.findMany({
         where: {
-          type: { in: ["view", "like", "cart", "purchase"] },
+          type: { in: ["page_view", "post_like", "add_to_cart", "purchase"] },
         },
         orderBy: { createdAt: "asc" },
         take: 100000,

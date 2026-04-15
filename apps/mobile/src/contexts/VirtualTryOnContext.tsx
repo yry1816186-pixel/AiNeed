@@ -37,7 +37,7 @@ const initialState: VirtualTryOnState = {
 
 function virtualTryOnReducer(
   state: VirtualTryOnState,
-  action: VirtualTryOnAction,
+  action: VirtualTryOnAction
 ): VirtualTryOnState {
   switch (action.type) {
     case "SET_HISTORY":
@@ -62,28 +62,20 @@ function virtualTryOnReducer(
 
 interface VirtualTryOnContextValue extends VirtualTryOnState {
   loadHistory: () => Promise<void>;
-  tryOnWithIds: (
-    photoId: string,
-    itemId: string,
-  ) => Promise<TryOnResult | null>;
-  tryOnWithImages: (
-    personImageUri: string,
-    clothingItemId: string,
-  ) => Promise<TryOnResult | null>;
+  tryOnWithIds: (photoId: string, itemId: string) => Promise<TryOnResult | null>;
+  tryOnWithImages: (personImageUri: string, clothingItemId: string) => Promise<TryOnResult | null>;
   deleteResult: (id: string) => Promise<void>;
   setCurrentResult: (result: TryOnResult | null) => void;
   clearError: () => void;
 }
 
-const VirtualTryOnContext = createContext<VirtualTryOnContextValue | null>(
-  null,
-);
+const VirtualTryOnContext = createContext<VirtualTryOnContextValue | null>(null);
 
 export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(virtualTryOnReducer, initialState);
 
   useEffect(() => {
-    loadFromStorage();
+    void loadFromStorage();
   }, []);
 
   const loadFromStorage = async () => {
@@ -115,10 +107,7 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const tryOnWithIds = useCallback(
-    async (
-      photoId: string,
-      itemId: string,
-    ): Promise<TryOnResult | null> => {
+    async (photoId: string, itemId: string): Promise<TryOnResult | null> => {
       dispatch({ type: "SET_PROCESSING", payload: true });
       dispatch({ type: "SET_ERROR", payload: null });
 
@@ -145,22 +134,16 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
         return null;
       }
     },
-    [state.history],
+    [state.history]
   );
 
   const tryOnWithImages = useCallback(
-    async (
-      personImageUri: string,
-      clothingItemId: string,
-    ): Promise<TryOnResult | null> => {
+    async (personImageUri: string, clothingItemId: string): Promise<TryOnResult | null> => {
       dispatch({ type: "SET_PROCESSING", payload: true });
       dispatch({ type: "SET_ERROR", payload: null });
 
       try {
-        const uploadResponse = await photosApi.upload(
-          personImageUri,
-          "full_body" as PhotoType,
-        );
+        const uploadResponse = await photosApi.upload(personImageUri, "full_body" as PhotoType);
         if (!uploadResponse.success || !uploadResponse.data) {
           throw new Error(uploadResponse.error?.message || "照片上传失败");
         }
@@ -188,7 +171,7 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
         return null;
       }
     },
-    [state.history],
+    [state.history]
   );
 
   const deleteResult = useCallback(
@@ -197,7 +180,7 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
       const updatedHistory = state.history.filter((item) => item.id !== id);
       await saveToStorage(updatedHistory);
     },
-    [state.history],
+    [state.history]
   );
 
   const setCurrentResult = useCallback((result: TryOnResult | null) => {
@@ -218,19 +201,13 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
     clearError,
   };
 
-  return (
-    <VirtualTryOnContext.Provider value={value}>
-      {children}
-    </VirtualTryOnContext.Provider>
-  );
+  return <VirtualTryOnContext.Provider value={value}>{children}</VirtualTryOnContext.Provider>;
 }
 
 export function useVirtualTryOn() {
   const context = useContext(VirtualTryOnContext);
   if (!context) {
-    throw new Error(
-      "useVirtualTryOn must be used within a VirtualTryOnProvider",
-    );
+    throw new Error("useVirtualTryOn must be used within a VirtualTryOnProvider");
   }
   return context;
 }

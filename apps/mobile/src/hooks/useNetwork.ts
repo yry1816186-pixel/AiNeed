@@ -2,7 +2,16 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { offlineStorage, OfflineRequest } from "../utils/secureStorage";
 import apiClient from "../services/api/client";
 
-export type NetInfoStateType = "unknown" | "none" | "cellular" | "wifi" | "bluetooth" | "ethernet" | "wimax" | "vpn" | "other";
+export type NetInfoStateType =
+  | "unknown"
+  | "none"
+  | "cellular"
+  | "wifi"
+  | "bluetooth"
+  | "ethernet"
+  | "wimax"
+  | "vpn"
+  | "other";
 
 export interface NetworkState {
   isConnected: boolean | null;
@@ -16,25 +25,26 @@ export interface UseNetworkResult {
   isOffline: boolean;
   pendingRequests: number;
   syncOfflineRequests: () => Promise<void>;
-  queueOfflineRequest: (request: Omit<OfflineRequest, "id" | "timestamp" | "retries">) => Promise<string>;
+  queueOfflineRequest: (
+    request: Omit<OfflineRequest, "id" | "timestamp" | "retries">
+  ) => Promise<string>;
 }
 
 const MAX_RETRIES = 3;
-const RETRY_DELAY_MS = 1000;
 
 async function checkNetworkConnection(): Promise<NetworkState> {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
-    
-    const response = await fetch("https://connectivitycheck.gstatic.com/generate_204", {
+
+    await fetch("https://www.baidu.com", {
       method: "HEAD",
       mode: "no-cors",
       signal: controller.signal,
     });
-    
+
     clearTimeout(timeoutId);
-    
+
     return {
       isConnected: true,
       isInternetReachable: true,
@@ -65,14 +75,14 @@ export function useNetwork(): UseNetworkResult {
     const checkConnection = async () => {
       const state = await checkNetworkConnection();
       setNetworkState(state);
-      
+
       if (state.isConnected && state.isInternetReachable) {
-        syncOfflineRequests();
+        void syncOfflineRequests();
       }
     };
 
-    checkConnection();
-    loadPendingCount();
+    void checkConnection();
+    void loadPendingCount();
 
     const interval = setInterval(checkConnection, 30000);
 
@@ -85,12 +95,14 @@ export function useNetwork(): UseNetworkResult {
   };
 
   const syncOfflineRequests = useCallback(async () => {
-    if (isSyncingRef.current) return;
+    if (isSyncingRef.current) {
+      return;
+    }
     isSyncingRef.current = true;
 
     try {
       const queue = await offlineStorage.getQueue();
-      
+
       for (const request of queue) {
         if (request.retries >= MAX_RETRIES) {
           await offlineStorage.removeRequest(request.id);
@@ -131,13 +143,14 @@ export function useNetwork(): UseNetworkResult {
     }
   }, []);
 
-  const queueOfflineRequest = useCallback(async (
-    request: Omit<OfflineRequest, "id" | "timestamp" | "retries">
-  ): Promise<string> => {
-    const id = await offlineStorage.queueRequest(request);
-    await loadPendingCount();
-    return id;
-  }, []);
+  const queueOfflineRequest = useCallback(
+    async (request: Omit<OfflineRequest, "id" | "timestamp" | "retries">): Promise<string> => {
+      const id = await offlineStorage.queueRequest(request);
+      await loadPendingCount();
+      return id;
+    },
+    []
+  );
 
   return {
     networkState,
@@ -151,23 +164,26 @@ export function useNetwork(): UseNetworkResult {
 export function useOfflineQueue() {
   const { isOffline, pendingRequests, syncOfflineRequests, queueOfflineRequest } = useNetwork();
 
-  const executeWithOfflineSupport = useCallback(async <T>(
-    operation: () => Promise<T>,
-    offlineAction: Omit<OfflineRequest, "id" | "timestamp" | "retries">
-  ): Promise<T | null> => {
-    if (!isOffline) {
-      try {
-        return await operation();
-      } catch (error) {
-        console.error("Operation failed, queuing for offline:", error);
+  const executeWithOfflineSupport = useCallback(
+    async <T>(
+      operation: () => Promise<T>,
+      offlineAction: Omit<OfflineRequest, "id" | "timestamp" | "retries">
+    ): Promise<T | null> => {
+      if (!isOffline) {
+        try {
+          return await operation();
+        } catch (error) {
+          console.error("Operation failed, queuing for offline:", error);
+          await queueOfflineRequest(offlineAction);
+          return null;
+        }
+      } else {
         await queueOfflineRequest(offlineAction);
         return null;
       }
-    } else {
-      await queueOfflineRequest(offlineAction);
-      return null;
-    }
-  }, [isOffline, queueOfflineRequest]);
+    },
+    [isOffline, queueOfflineRequest]
+  );
 
   return {
     isOffline,
@@ -175,4 +191,51 @@ export function useOfflineQueue() {
     syncOfflineRequests,
     executeWithOfflineSupport,
   };
+}
+
+/**
+ * useNetworkStatus - Lightweight network status hook
+ *
+ * Uses NetInfo for real-time network status updates.
+ * For offline queue support, use useNetwork() instead.
+ */
+export function useNetworkStatus(): {
+  isConnected: boolean | null;
+  isInternetReachable: boolean | null;
+  type: string | null;
+} {
+  const [state, setState] = useState<{
+    isConnected: boolean | null;
+    isInternetReachable: boolean | null;
+    type: string | null;
+  }>({
+    isConnected: null,
+    isInternetReachable: null,
+    type: null,
+  });
+
+  useEffect(() => {
+    let mounted = true;
+
+    const checkStatus = async () => {
+      const netState = await checkNetworkConnection();
+      if (mounted) {
+        setState({
+          isConnected: netState.isConnected,
+          isInternetReachable: netState.isInternetReachable,
+          type: netState.type,
+        });
+      }
+    };
+
+    void checkStatus();
+    const interval = setInterval(checkStatus, 30000);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
+  return state;
 }

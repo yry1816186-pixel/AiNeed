@@ -1,6 +1,6 @@
-import { io, Socket } from "socket.io-client";
+﻿import { io, Socket } from "socket.io-client";
 import { mobileRuntimeConfig } from "../config/runtime";
-import EncryptedStorage from "react-native-encrypted-storage";
+import { secureStorage, SECURE_STORAGE_KEYS } from "../utils/secureStorage";
 import type { ChatMessage, ChatTypingPayload, ChatReadPayload } from "../types/chat";
 
 const WS_URL = mobileRuntimeConfig.apiUrl.replace(/\/api\/v1$/, "");
@@ -34,16 +34,20 @@ class WebSocketService {
   private maxReconnectAttempts = 5;
 
   async connect(): Promise<void> {
-    if (this.socket?.connected) return;
+    if (this.socket?.connected) {
+      return;
+    }
 
     let token: string | null = null;
     try {
-      token = await EncryptedStorage.getItem("accessToken");
+      token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
     } catch {
       return;
     }
 
-    if (!token) return;
+    if (!token) {
+      return;
+    }
 
     this.socket = io(`${WS_URL}/ws`, {
       auth: { token },
@@ -61,34 +65,42 @@ class WebSocketService {
 
     this.socket.on("disconnect", (reason: Socket.DisconnectReason) => {
       if (reason === "io server disconnect") {
-        this.reconnect();
+        void this.reconnect();
       }
     });
 
     // Backend NotificationGateway emits "notification" events with type field
-    this.socket.on("notification", (payload: { type: string; tryOnId?: string; tryOnResult?: TryOnEventPayload; progress?: TryOnProgressPayload }) => {
-      if (payload.type === "try_on_complete" && payload.tryOnResult) {
-        const data = payload.tryOnResult;
-        const listeners = this.tryOnListeners.get(data.tryOnId);
-        if (listeners) {
-          listeners.forEach((listener) => listener(data));
-        }
-        const wildcardListeners = this.tryOnListeners.get("*");
-        if (wildcardListeners) {
-          wildcardListeners.forEach((listener) => listener(data));
-        }
-      } else if (payload.type === "try_on_progress" && payload.progress) {
-        const data = payload.progress;
-        const listeners = this.progressListeners.get(data.tryOnId);
-        if (listeners) {
-          listeners.forEach((listener) => listener(data));
-        }
-        const wildcardListeners = this.progressListeners.get("*");
-        if (wildcardListeners) {
-          wildcardListeners.forEach((listener) => listener(data));
+    this.socket.on(
+      "notification",
+      (payload: {
+        type: string;
+        tryOnId?: string;
+        tryOnResult?: TryOnEventPayload;
+        progress?: TryOnProgressPayload;
+      }) => {
+        if (payload.type === "try_on_complete" && payload.tryOnResult) {
+          const data = payload.tryOnResult;
+          const listeners = this.tryOnListeners.get(data.tryOnId);
+          if (listeners) {
+            listeners.forEach((listener) => listener(data));
+          }
+          const wildcardListeners = this.tryOnListeners.get("*");
+          if (wildcardListeners) {
+            wildcardListeners.forEach((listener) => listener(data));
+          }
+        } else if (payload.type === "try_on_progress" && payload.progress) {
+          const data = payload.progress;
+          const listeners = this.progressListeners.get(data.tryOnId);
+          if (listeners) {
+            listeners.forEach((listener) => listener(data));
+          }
+          const wildcardListeners = this.progressListeners.get("*");
+          if (wildcardListeners) {
+            wildcardListeners.forEach((listener) => listener(data));
+          }
         }
       }
-    });
+    );
 
     this.socket.on("connect_error", () => {
       this.reconnectAttempts++;
@@ -112,15 +124,19 @@ class WebSocketService {
   // ==================== Chat namespace (/ws/chat) ====================
 
   async connectChat(): Promise<void> {
-    if (this.chatSocket?.connected) return;
+    if (this.chatSocket?.connected) {
+      return;
+    }
 
     let token: string | null = null;
     try {
-      token = await EncryptedStorage.getItem("accessToken");
+      token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
     } catch {
       return;
     }
-    if (!token) return;
+    if (!token) {
+      return;
+    }
 
     this.chatSocket = io(`${WS_URL}/ws/chat`, {
       auth: { token },
@@ -133,21 +149,29 @@ class WebSocketService {
     this.chatSocket.on("chat:message", (payload: ChatMessage) => {
       const roomId = payload.roomId;
       const listeners = this.chatMessageListeners.get(roomId);
-      if (listeners) listeners.forEach((l) => l(payload));
+      if (listeners) {
+        listeners.forEach((l) => l(payload));
+      }
       const wildcard = this.chatMessageListeners.get("*");
-      if (wildcard) wildcard.forEach((l) => l(payload));
+      if (wildcard) {
+        wildcard.forEach((l) => l(payload));
+      }
     });
 
     this.chatSocket.on("chat:typing", (payload: ChatTypingPayload) => {
       const roomId = payload.roomId;
       const listeners = this.chatTypingListeners.get(roomId);
-      if (listeners) listeners.forEach((l) => l(payload));
+      if (listeners) {
+        listeners.forEach((l) => l(payload));
+      }
     });
 
     this.chatSocket.on("chat:read", (payload: ChatReadPayload) => {
       const roomId = payload.roomId;
       const listeners = this.chatReadListeners.get(roomId);
-      if (listeners) listeners.forEach((l) => l(payload));
+      if (listeners) {
+        listeners.forEach((l) => l(payload));
+      }
     });
   }
 
@@ -190,7 +214,9 @@ class WebSocketService {
       const listeners = this.chatMessageListeners.get(roomId);
       if (listeners) {
         listeners.delete(listener);
-        if (listeners.size === 0) this.chatMessageListeners.delete(roomId);
+        if (listeners.size === 0) {
+          this.chatMessageListeners.delete(roomId);
+        }
       }
     };
   }
@@ -204,7 +230,9 @@ class WebSocketService {
       const listeners = this.chatTypingListeners.get(roomId);
       if (listeners) {
         listeners.delete(listener);
-        if (listeners.size === 0) this.chatTypingListeners.delete(roomId);
+        if (listeners.size === 0) {
+          this.chatTypingListeners.delete(roomId);
+        }
       }
     };
   }
@@ -218,7 +246,9 @@ class WebSocketService {
       const listeners = this.chatReadListeners.get(roomId);
       if (listeners) {
         listeners.delete(listener);
-        if (listeners.size === 0) this.chatReadListeners.delete(roomId);
+        if (listeners.size === 0) {
+          this.chatReadListeners.delete(roomId);
+        }
       }
     };
   }
@@ -244,10 +274,7 @@ class WebSocketService {
     };
   }
 
-  onTryOnProgress(
-    tryOnId: string,
-    listener: TryOnProgressListener,
-  ): () => void {
+  onTryOnProgress(tryOnId: string, listener: TryOnProgressListener): () => void {
     if (!this.progressListeners.has(tryOnId)) {
       this.progressListeners.set(tryOnId, new Set());
     }

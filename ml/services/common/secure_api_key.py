@@ -6,6 +6,7 @@ Provides secure storage, validation, and rotation for API keys.
 import os
 import logging
 import hashlib
+import hmac
 import secrets
 from typing import Optional, Dict, Any
 from dataclasses import dataclass, field
@@ -155,6 +156,36 @@ class SecureAPIKeyManager:
     def get_all_status(self) -> Dict[str, APIKeyStatus]:
         return {name: self.validate_key(name) for name in self._key_configs}
     
+    def verify_key(self, key_name: str, provided_key: str) -> bool:
+        """Verify a provided API key against the stored key using constant-time comparison.
+
+        Uses hmac.compare_digest() to prevent timing attacks that could
+        leak information about the stored key through response time differences.
+
+        Args:
+            key_name: The registered key name (e.g. "GLM_API_KEY").
+            provided_key: The key value to verify.
+
+        Returns:
+            True if the provided key matches the stored key, False otherwise.
+        """
+        if key_name not in self._keys:
+            # Compare against a dummy value to maintain constant time even
+            # when the key name doesn't exist (prevents key-name enumeration)
+            dummy = secrets.token_bytes(64)
+            stored_bytes = dummy
+            provided_bytes = provided_key.encode("utf-8") if provided_key else b""
+            hmac.compare_digest(stored_bytes, provided_bytes)
+            return False
+
+        stored_key = self._keys[key_name]
+
+        # Encode both keys to bytes for constant-time comparison
+        stored_bytes = stored_key.encode("utf-8")
+        provided_bytes = provided_key.encode("utf-8") if provided_key else b""
+
+        return hmac.compare_digest(stored_bytes, provided_bytes)
+
     def should_rotate(self, key_name: str) -> bool:
         status = self.validate_key(key_name)
         return status.rotation_due

@@ -1,5 +1,5 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
+import { Test, TestingModule } from "@nestjs/testing";
 
 import { PhotoQualityService } from "./photo-quality.service";
 
@@ -8,7 +8,7 @@ describe("PhotoQualityService", () => {
 
   const mockConfigService = {
     get: jest.fn().mockImplementation((key: string, defaultValue?: string) => {
-      if (key === "AI_SERVICE_URL") return "http://localhost:8001";
+      if (key === "AI_SERVICE_URL") {return "http://localhost:8001";}
       return defaultValue || "";
     }),
   };

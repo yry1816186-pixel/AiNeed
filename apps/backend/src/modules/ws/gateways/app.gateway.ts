@@ -18,17 +18,18 @@ import {
   ConnectedSocket,
   MessageBody,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
 import Redis from 'ioredis';
+import { Server, Socket } from 'socket.io';
 
 import { REDIS_CLIENT } from '../../../common/redis/redis.service';
-import { EventBusService } from '../services/event-bus.service';
+import { TokenBlacklistService } from '../../auth/services/token-blacklist.service';
 import {
   PROFILE_EVENTS,
   QUIZ_EVENTS,
   NOTIFICATION_EVENTS,
   COMMUNITY_EVENTS,
 } from '../events';
+import { EventBusService } from '../services/event-bus.service';
 
 interface UserConnection {
   socketId: string;
@@ -63,6 +64,7 @@ export class AppGateway
     private jwtService: JwtService,
     @Inject(REDIS_CLIENT) private redis: Redis,
     private eventBus: EventBusService,
+    private tokenBlacklistService: TokenBlacklistService,
   ) {}
 
   onModuleInit() {
@@ -107,7 +109,7 @@ export class AppGateway
 
   async handleConnection(client: Socket) {
     try {
-      const userId = this.extractUserId(client);
+      const userId = await this.extractUserId(client);
       if (!userId) {
         this.logger.warn(`Client ${client.id} rejected: no valid token`);
         client.emit('error', { message: 'Authentication required' });
@@ -205,7 +207,7 @@ export class AppGateway
     });
   }
 
-  private extractUserId(client: Socket): string | null {
+  private async extractUserId(client: Socket): Promise<string | null> {
     const auth = client.handshake.auth;
 
     const token = auth?.token;
@@ -217,7 +219,7 @@ export class AppGateway
     return this.validateToken(token as string);
   }
 
-  private validateToken(token: string): string | null {
+  private async validateToken(token: string): Promise<string | null> {
     try {
       const jwtSecret = this.configService.get<string>('JWT_SECRET');
       if (!jwtSecret) {
@@ -230,6 +232,16 @@ export class AppGateway
       });
 
       const userId = payload.sub || payload.userId;
+
+      // 检查 token 是否在黑名单中
+      if (payload.jti) {
+        const blacklisted = await this.tokenBlacklistService.isBlacklisted(payload.jti);
+        if (blacklisted) {
+          this.logger.warn(`Token is blacklisted: ${payload.jti.substring(0, 8)}...`);
+          return null;
+        }
+      }
+
       return userId || null;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';

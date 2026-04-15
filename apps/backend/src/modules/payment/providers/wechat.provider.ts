@@ -1,9 +1,24 @@
 import * as crypto from "crypto";
 import * as fs from "fs";
+import * as https from "https";
 import * as path from "path";
 
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+
+import {
+  PaymentRawCallbackData,
+} from "../types/common.types";
+import {
+  WechatV3CreatePaymentResponse,
+  WechatV3QueryResponse,
+  WechatV3RefundResponse,
+  WechatCallbackData,
+  WechatCallbackPayload,
+  WechatDecryptedResource,
+  WechatV3RequestData,
+  WechatApiResponse,
+} from "../types/wechat.types";
 
 import {
   PaymentProviderInterface,
@@ -15,21 +30,7 @@ import {
   RefundResult,
   PaymentQueryResult,
 } from "./payment-provider.interface";
-import {
-  WechatV3CreatePaymentResponse,
-  WechatV3QueryResponse,
-  WechatV3RefundResponse,
-  WechatCallbackData,
-  WechatCallbackPayload,
-  WechatDecryptedResource,
-  WechatV3RequestData,
-  WechatApiResponse,
-} from "../types/wechat.types";
-import * as https from "https";
 
-import {
-  PaymentRawCallbackData,
-} from "../types/common.types";
 
 @Injectable()
 export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
@@ -221,7 +222,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
       PAYERROR: "failed",
     };
 
-    return {
+    const result: PaymentCallbackData = {
       orderId: decryptedData.out_trade_no,
       tradeNo: decryptedData.transaction_id,
       amount: decryptedData.amount?.total
@@ -233,11 +234,9 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
         : new Date(),
       rawData: callbackData,
     };
+    return result;
   }
 
-  /**
-   * 验证回调签名
-   */
   verifyCallbackSign(callbackData: PaymentRawCallbackData): boolean {
     try {
       // 检查 callbackData 是否包含 WechatCallbackPayload 所需的结构
@@ -494,7 +493,7 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
             res.on("end", () => {
               try {
                 resolve(JSON.parse(responseData) as WechatApiResponse);
-              } catch (parseError) {
+              } catch (_parseError) {
                 // WeChat API may return non-JSON responses in some cases
                 // Log this for debugging but continue with raw response
                 this.logger.debug(
@@ -613,8 +612,14 @@ export class WechatProvider implements PaymentProviderInterface, OnModuleInit {
    */
   private getPrivateKey(): string {
     if (this.keyPath) {
-      // 实际应该从文件读取
-      return this.formatPrivateKey(this.keyPath);
+      try {
+        const keyContent = fs.readFileSync(this.keyPath, "utf8");
+        return this.formatPrivateKey(keyContent);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "未知错误";
+        this.logger.error(`Failed to read private key from file: ${this.keyPath}: ${errorMessage}`);
+        throw error;
+      }
     }
     return this.formatPrivateKey(
       this.configService.get<string>("WECHAT_PRIVATE_KEY") || "",

@@ -1,72 +1,248 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useColorScheme } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DesignTokens, darkTokens, DesignTokensType } from '../theme/tokens/design-tokens';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
+import { useColorScheme, Appearance, type ColorValue } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DesignTokens, darkTokens } from "../design-system/theme/tokens/design-tokens";
+import type { DesignTokensType, DarkTokensType } from "../design-system/theme/tokens/design-tokens";
+import {
+  seasonAccentColors,
+  normalizeColorSeason,
+  type ColorSeason,
+  type SeasonAccentColors,
+} from "../design-system/theme/tokens/season-colors";
 
-type ThemeMode = 'light' | 'dark' | 'system';
+export type ThemeMode = "light" | "dark" | "system";
+export type ResolvedTheme = "light" | "dark";
 
-interface ThemeContextValue {
-  mode: ThemeMode;
-  isDark: boolean;
-  tokens: DesignTokensType;
-  setMode: (mode: ThemeMode) => void;
+type TokenSet = typeof DesignTokens;
+
+export interface FlatColors {
+  brand: TokenSet["colors"]["brand"];
+  neutral: TokenSet["colors"]["neutral"];
+  semantic: TokenSet["colors"]["semantic"];
+  backgrounds: TokenSet["colors"]["backgrounds"];
+  text: TokenSet["colors"]["text"];
+  borders: TokenSet["colors"]["borders"];
+  colorSeasons: TokenSet["colors"]["colorSeasons"];
+  surface: string;
+  surfaceSecondary: string;
+  surfaceTertiary: string;
+  surfaceElevated: string;
+  textPrimary: string;
+  textSecondary: string;
+  textTertiary: string;
+  textInverse: string;
+  textBrand: string;
+  border: string;
+  borderLight: string;
+  borderStrong: string;
+  borderBrand: string;
+  primary: string;
+  primaryLight: string;
+  primaryDark: string;
+  subtleBg: string;
+  gold: string;
+  placeholderBg: string;
+  overlay: string;
+  background: string;
+  backgroundSecondary: string;
+  backgroundTertiary: string;
+  error: string;
+  errorLight: string;
+  success: string;
+  successLight: string;
+  warning: string;
+  warningLight: string;
+  info: string;
+  infoLight: string;
+  divider: string;
+  cartLight: string;
+  purple: string;
+  amber: string;
+  secondary: string;
 }
 
-const ThemeContext = createContext<ThemeContextValue | null>(null);
+function buildFlatColors(base: TokenSet["colors"]): FlatColors {
+  return {
+    brand: base.brand,
+    neutral: base.neutral,
+    semantic: base.semantic,
+    backgrounds: base.backgrounds,
+    text: base.text,
+    borders: base.borders,
+    colorSeasons: base.colorSeasons,
+    surface: base.backgrounds.primary,
+    surfaceSecondary: base.backgrounds.secondary,
+    surfaceTertiary: base.backgrounds.tertiary,
+    surfaceElevated: base.backgrounds.elevated,
+    textPrimary: base.text.primary,
+    textSecondary: base.text.secondary,
+    textTertiary: base.text.tertiary,
+    textInverse: base.text.inverse,
+    textBrand: base.text.brand,
+    border: base.borders.default,
+    borderLight: base.borders.light,
+    borderStrong: base.borders.strong,
+    borderBrand: base.borders.brand,
+    primary: base.brand.terracotta,
+    primaryLight: base.brand.terracottaLight,
+    primaryDark: base.brand.terracottaDark,
+    subtleBg: base.backgrounds.tertiary,
+    gold: "#D4A853",
+    placeholderBg: base.neutral[200],
+    overlay: base.backgrounds.overlay,
+    background: base.backgrounds.primary,
+    backgroundSecondary: base.backgrounds.secondary,
+    backgroundTertiary: base.backgrounds.tertiary,
+    error: base.semantic.error,
+    errorLight: base.semantic.errorLight,
+    success: base.semantic.success,
+    successLight: base.semantic.successLight,
+    warning: base.semantic.warning,
+    warningLight: base.semantic.warningLight,
+    info: base.semantic.info,
+    infoLight: base.semantic.infoLight,
+    divider: base.borders.light,
+    cartLight: "#FFF5F0",
+    purple: "#8B5CF6",
+    amber: "#F59E0B",
+    secondary: base.brand.sage,
+  };
+}
 
-const THEME_STORAGE_KEY = '@xuno_theme_mode';
+const lightFlatColors = buildFlatColors(DesignTokens.colors);
+const darkFlatColors = buildFlatColors(darkTokens.colors);
+
+export interface ThemeContextType {
+  theme: ResolvedTheme;
+  mode: ThemeMode;
+  isDark: boolean;
+  tokens: TokenSet;
+  colors: FlatColors;
+  typography: TokenSet["typography"];
+  spacing: TokenSet["spacing"];
+  borderRadius: TokenSet["borderRadius"];
+  shadows: TokenSet["shadows"];
+  gradients: TokenSet["gradients"];
+  animation: TokenSet["animation"];
+  setMode: (mode: ThemeMode) => void;
+  toggleTheme: () => void;
+  colorSeason: ColorSeason | null;
+  seasonAccent: SeasonAccentColors | null;
+  setSeasonAccent: (season: ColorSeason | null) => void;
+}
+
+const THEME_STORAGE_KEY = "@xuno_theme_mode";
+const SEASON_STORAGE_KEY = "@xuno_color_season";
+
+const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const systemColorScheme = useColorScheme();
-  const [mode, setMode] = useState<ThemeMode>('system');
+  const [mode, setModeState] = useState<ThemeMode>("system");
+  const [colorSeason, setColorSeasonState] = useState<ColorSeason | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    loadTheme();
+    const loadPersisted = async () => {
+      try {
+        const [savedMode, savedSeason] = await Promise.all([
+          AsyncStorage.getItem(THEME_STORAGE_KEY),
+          AsyncStorage.getItem(SEASON_STORAGE_KEY),
+        ]);
+        if (savedMode === "light" || savedMode === "dark" || savedMode === "system") {
+          setModeState(savedMode);
+        }
+        if (savedSeason && (savedSeason === "spring" || savedSeason === "summer" || savedSeason === "autumn" || savedSeason === "winter")) {
+          setColorSeasonState(savedSeason as ColorSeason);
+        }
+      } catch {
+      } finally {
+        setIsReady(true);
+      }
+    };
+    void loadPersisted();
   }, []);
 
-  const loadTheme = async () => {
-    try {
-      const saved = await AsyncStorage.getItem(THEME_STORAGE_KEY);
-      if (saved && ['light', 'dark', 'system'].includes(saved)) {
-        setMode(saved as ThemeMode);
-      }
-    } catch (error) {
-      // ignore
-    } finally {
-      setIsReady(true);
-    }
-  };
+  useEffect(() => {
+    const subscription = Appearance.addChangeListener(() => {
+      setModeState((prev) => prev);
+    });
+    return () => subscription.remove();
+  }, []);
 
-  const handleSetMode = async (newMode: ThemeMode) => {
-    setMode(newMode);
+  const isDark = mode === "dark" || (mode === "system" && systemColorScheme === "dark");
+  const resolvedTheme: ResolvedTheme = isDark ? "dark" : "light";
+
+  const tokens: TokenSet = (isDark ? darkTokens : DesignTokens) as TokenSet;
+  const flatColors: FlatColors = isDark ? darkFlatColors : lightFlatColors;
+
+  const setMode = useCallback(async (newMode: ThemeMode) => {
+    setModeState(newMode);
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, newMode);
-    } catch (error) {
-      // ignore
+    } catch {
     }
-  };
+  }, []);
 
-  const isDark = mode === 'dark' || (mode === 'system' && systemColorScheme === 'dark');
-  const tokens = (isDark ? darkTokens : DesignTokens) as DesignTokensType;
+  const toggleTheme = useCallback(() => {
+    const nextMode: ThemeMode = isDark ? "light" : "dark";
+    void setMode(nextMode);
+  }, [isDark, setMode]);
+
+  const setSeasonAccent = useCallback(async (season: ColorSeason | null) => {
+    setColorSeasonState(season);
+    try {
+      if (season) {
+        await AsyncStorage.setItem(SEASON_STORAGE_KEY, season);
+      } else {
+        await AsyncStorage.removeItem(SEASON_STORAGE_KEY);
+      }
+    } catch {
+    }
+  }, []);
+
+  const seasonAccent: SeasonAccentColors | null = colorSeason
+    ? seasonAccentColors[colorSeason]
+    : null;
+
+  const value = useMemo<ThemeContextType>(
+    () => ({
+      theme: resolvedTheme,
+      mode,
+      isDark,
+      tokens,
+      colors: flatColors,
+      typography: tokens.typography,
+      spacing: tokens.spacing,
+      borderRadius: tokens.borderRadius,
+      shadows: tokens.shadows,
+      gradients: tokens.gradients,
+      animation: tokens.animation,
+      setMode,
+      toggleTheme,
+      colorSeason,
+      seasonAccent,
+      setSeasonAccent,
+    }),
+    [resolvedTheme, mode, isDark, tokens, flatColors, setMode, toggleTheme, colorSeason, seasonAccent, setSeasonAccent],
+  );
 
   if (!isReady) {
     return null;
   }
 
-  return (
-    <ThemeContext.Provider value={{ mode, isDark, tokens, setMode: handleSetMode }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
-export function useTheme() {
+export function useTheme(): ThemeContextType {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within ThemeProvider');
+    throw new Error("useTheme must be used within ThemeProvider (from contexts/ThemeContext)");
   }
   return context;
 }
 
 export { ThemeContext };
+export type { DesignTokensType, DarkTokensType };
+export { normalizeColorSeason, seasonAccentColors, seasonLabels, seasonDescriptions } from "../design-system/theme/tokens/season-colors";
+export type { ColorSeason, SeasonAccentColors };

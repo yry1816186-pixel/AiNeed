@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
   withDelay,
 } from "react-native-reanimated";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 export const TypingIndicator: React.FC = () => {
   const dot1Y = useSharedValue(0);
@@ -15,14 +16,7 @@ export const TypingIndicator: React.FC = () => {
 
   useEffect(() => {
     const bounce = (value: Animated.SharedValue<number>, delayMs: number) => {
-      value.value = withDelay(
-        delayMs,
-        withRepeat(
-          withTiming(-6, { duration: 300 }),
-          -1,
-          true,
-        ),
-      );
+      value.value = withDelay(delayMs, withRepeat(withTiming(-6, { duration: 300 }), -1, true));
     };
     bounce(dot1Y, 0);
     bounce(dot2Y, 150);
@@ -54,7 +48,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#C67B5C",
+    backgroundColor: DesignTokens.colors.brand.terracotta,
   },
 });
 

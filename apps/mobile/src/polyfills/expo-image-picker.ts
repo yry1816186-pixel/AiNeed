@@ -1,9 +1,4 @@
-import {
-  PermissionsAndroid,
-  Platform,
-  type Permission,
-  type PermissionStatus,
-} from "react-native";
+import { PermissionsAndroid, Platform, type Permission, type PermissionStatus } from "react-native";
 import {
   launchCamera as nativeLaunchCamera,
   launchImageLibrary as nativeLaunchImageLibrary,
@@ -81,9 +76,7 @@ function toImageAsset(asset: NativeAsset): ImagePickerAsset | null {
   };
 }
 
-function toPickerResult(
-  response?: NativeImagePickerResponse,
-): ImagePickerResult {
+function toPickerResult(response?: NativeImagePickerResponse): ImagePickerResult {
   if (!response || response.didCancel) {
     return { canceled: true };
   }
@@ -106,9 +99,7 @@ function toPickerResult(
   };
 }
 
-function normalizeQuality(
-  quality?: number,
-): NativeCameraOptions["quality"] | undefined {
+function normalizeQuality(quality?: number): NativeCameraOptions["quality"] | undefined {
   if (typeof quality !== "number") {
     return undefined;
   }
@@ -117,30 +108,24 @@ function normalizeQuality(
   return normalized as NativeCameraOptions["quality"];
 }
 
-async function requestAndroidPermissions(
-  permissions: Permission[],
-): Promise<PermissionResult> {
-  const statuses = (await PermissionsAndroid.requestMultiple(
-    permissions,
-  )) as Partial<Record<Permission, PermissionStatus>>;
+async function requestAndroidPermissions(permissions: Permission[]): Promise<PermissionResult> {
+  const statuses = (await PermissionsAndroid.requestMultiple(permissions)) as Partial<
+    Record<Permission, PermissionStatus>
+  >;
   const granted = permissions.every(
-    (permission) =>
-      statuses[permission] === PermissionsAndroid.RESULTS.GRANTED,
+    (permission) => statuses[permission] === PermissionsAndroid.RESULTS.GRANTED
   );
 
   return {
     status: granted ? "granted" : "denied",
     granted,
     canAskAgain: permissions.every(
-      (permission) =>
-        statuses[permission] !== PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN,
+      (permission) => statuses[permission] !== PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN
     ),
   };
 }
 
-function buildLibraryOptions(
-  options?: ImagePickerOptions,
-): NativeImageLibraryOptions {
+function buildLibraryOptions(options?: ImagePickerOptions): NativeImageLibraryOptions {
   return {
     mediaType: toNativeMediaType(options?.mediaTypes),
     quality: normalizeQuality(options?.quality),
@@ -159,15 +144,13 @@ function buildCameraOptions(options?: ImagePickerOptions): NativeCameraOptions {
 }
 
 export async function launchImageLibraryAsync(
-  options?: ImagePickerOptions,
+  options?: ImagePickerOptions
 ): Promise<ImagePickerResult> {
   const response = await nativeLaunchImageLibrary(buildLibraryOptions(options));
   return toPickerResult(response);
 }
 
-export async function launchCameraAsync(
-  options?: ImagePickerOptions,
-): Promise<ImagePickerResult> {
+export async function launchCameraAsync(options?: ImagePickerOptions): Promise<ImagePickerResult> {
   const response = await nativeLaunchCamera(buildCameraOptions(options));
   return toPickerResult(response);
 }
@@ -183,12 +166,9 @@ export async function requestMediaLibraryPermissionsAsync(): Promise<PermissionR
     return { status: "granted", granted: true, canAskAgain: true };
   }
 
-  const readMediaImages = PermissionsAndroid.PERMISSIONS
-    .READ_MEDIA_IMAGES as Permission;
-  const readExternalStorage = PermissionsAndroid.PERMISSIONS
-    .READ_EXTERNAL_STORAGE as Permission;
-  const permissions =
-    androidApiLevel >= 33 ? [readMediaImages] : [readExternalStorage];
+  const readMediaImages = PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES as Permission;
+  const readExternalStorage = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE as Permission;
+  const permissions = androidApiLevel >= 33 ? [readMediaImages] : [readExternalStorage];
 
   return requestAndroidPermissions(permissions);
 }
@@ -198,9 +178,7 @@ export async function requestCameraPermissionsAsync(): Promise<PermissionResult>
     return { status: "granted", granted: true, canAskAgain: true };
   }
 
-  return requestAndroidPermissions([
-    PermissionsAndroid.PERMISSIONS.CAMERA as Permission,
-  ]);
+  return requestAndroidPermissions([PermissionsAndroid.PERMISSIONS.CAMERA as Permission]);
 }
 
 export const MediaTypeOptions = {

@@ -424,7 +424,7 @@ export class BodyMetricsService {
     hip?: number | null,
     height?: number | null,
     inseam?: number | null,
-    bust?: number | null,
+    _bust?: number | null,
   ): AdvancedBodyMetrics["bodyProportions"] {
     let shoulderToHipRatio: number | null = null;
     if (shoulder && hip) {
@@ -488,7 +488,7 @@ export class BodyMetricsService {
     bust?: number | null,
     waist?: number | null,
     hip?: number | null,
-    inseam?: number | null,
+    _inseam?: number | null,
   ): AdvancedBodyMetrics["sizeRecommendations"] {
     const sizeChart = {
       XS: { bust: [76, 80], waist: [60, 64], hip: [84, 88] },

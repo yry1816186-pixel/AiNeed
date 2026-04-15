@@ -163,14 +163,14 @@ export class QuestionSelectorService {
 
     for (const dim of REQUIRED_DIMENSIONS) {
       const pool = dimensionGroups.get(dim) ?? [];
-      if (pool.length === 0) continue;
+      if (pool.length === 0) {continue;}
 
       const genderFiltered = gender
         ? pool.filter((q) => {
             const meta = q.imageMeta;
-            if (!meta || meta.length === 0) return true;
+            if (!meta || meta.length === 0) {return true;}
             const hasGenderRestriction = meta.some((m) => m.applicableGenders.length > 0);
-            if (!hasGenderRestriction) return true;
+            if (!hasGenderRestriction) {return true;}
             return meta.some((m) => m.applicableGenders.includes(gender));
           })
         : pool;
@@ -197,9 +197,9 @@ export class QuestionSelectorService {
     const genderFilteredRemaining = gender
       ? remaining.filter((q) => {
           const meta = q.imageMeta;
-          if (!meta || meta.length === 0) return true;
+          if (!meta || meta.length === 0) {return true;}
           const hasGenderRestriction = meta.some((m) => m.applicableGenders.length > 0);
-          if (!hasGenderRestriction) return true;
+          if (!hasGenderRestriction) {return true;}
           return meta.some((m) => m.applicableGenders.includes(gender));
         })
       : remaining;

@@ -147,36 +147,29 @@ describe("useWardrobeStore", () => {
 
   describe("updateItem", () => {
     test("应更新指定 item 的字段", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", name: "旧名称" }),
-      ]);
+      useWardrobeStore.getState().setItems([mockClothing({ id: "1", name: "旧名称" })]);
       useWardrobeStore.getState().updateItem("1", { name: "新名称" });
       expect(useWardrobeStore.getState().items[0].name).toBe("新名称");
     });
 
     test("应更新 updatedAt 字段", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", updatedAt: "2025-01-01T00:00:00Z" }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setItems([mockClothing({ id: "1", updatedAt: "2025-01-01T00:00:00Z" })]);
       useWardrobeStore.getState().updateItem("1", { name: "更新" });
-      expect(useWardrobeStore.getState().items[0].updatedAt).not.toBe(
-        "2025-01-01T00:00:00Z",
-      );
+      expect(useWardrobeStore.getState().items[0].updatedAt).not.toBe("2025-01-01T00:00:00Z");
     });
 
     test("不应影响其他 item", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", name: "A" }),
-        mockClothing({ id: "2", name: "B" }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setItems([mockClothing({ id: "1", name: "A" }), mockClothing({ id: "2", name: "B" })]);
       useWardrobeStore.getState().updateItem("1", { name: "A-updated" });
       expect(useWardrobeStore.getState().items[1].name).toBe("B");
     });
 
     test("应触发 recalculateStats", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", category: "tops" }),
-      ]);
+      useWardrobeStore.getState().setItems([mockClothing({ id: "1", category: "tops" })]);
       useWardrobeStore.getState().updateItem("1", { category: "bottoms" });
       expect(useWardrobeStore.getState().stats.categories).toEqual({
         bottoms: 1,
@@ -188,20 +181,14 @@ describe("useWardrobeStore", () => {
 
   describe("removeItem", () => {
     test("应移除指定 item", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1" }),
-        mockClothing({ id: "2" }),
-      ]);
+      useWardrobeStore.getState().setItems([mockClothing({ id: "1" }), mockClothing({ id: "2" })]);
       useWardrobeStore.getState().removeItem("1");
       expect(useWardrobeStore.getState().items).toHaveLength(1);
       expect(useWardrobeStore.getState().items[0].id).toBe("2");
     });
 
     test("应从 selectedItems 中移除该 item", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1" }),
-        mockClothing({ id: "2" }),
-      ]);
+      useWardrobeStore.getState().setItems([mockClothing({ id: "1" }), mockClothing({ id: "2" })]);
       useWardrobeStore.getState().selectItem("1");
       useWardrobeStore.getState().selectItem("2");
       useWardrobeStore.getState().removeItem("1");
@@ -226,10 +213,7 @@ describe("useWardrobeStore", () => {
     });
 
     test("应触发 recalculateStats 更新 totalOutfits", () => {
-      useWardrobeStore.getState().setOutfits([
-        mockOutfit({ id: "o1" }),
-        mockOutfit({ id: "o2" }),
-      ]);
+      useWardrobeStore.getState().setOutfits([mockOutfit({ id: "o1" }), mockOutfit({ id: "o2" })]);
       expect(useWardrobeStore.getState().stats.totalOutfits).toBe(2);
     });
   });
@@ -254,21 +238,17 @@ describe("useWardrobeStore", () => {
 
   describe("updateOutfit", () => {
     test("应更新指定 outfit 的字段", () => {
-      useWardrobeStore.getState().setOutfits([
-        mockOutfit({ id: "o1", name: "旧搭配" }),
-      ]);
+      useWardrobeStore.getState().setOutfits([mockOutfit({ id: "o1", name: "旧搭配" })]);
       useWardrobeStore.getState().updateOutfit("o1", { name: "新搭配" });
       expect(useWardrobeStore.getState().outfits[0].name).toBe("新搭配");
     });
 
     test("应更新 updatedAt 字段", () => {
-      useWardrobeStore.getState().setOutfits([
-        mockOutfit({ id: "o1", updatedAt: "2025-01-01T00:00:00Z" }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setOutfits([mockOutfit({ id: "o1", updatedAt: "2025-01-01T00:00:00Z" })]);
       useWardrobeStore.getState().updateOutfit("o1", { name: "更新" });
-      expect(useWardrobeStore.getState().outfits[0].updatedAt).not.toBe(
-        "2025-01-01T00:00:00Z",
-      );
+      expect(useWardrobeStore.getState().outfits[0].updatedAt).not.toBe("2025-01-01T00:00:00Z");
     });
   });
 
@@ -276,10 +256,7 @@ describe("useWardrobeStore", () => {
 
   describe("removeOutfit", () => {
     test("应移除指定 outfit", () => {
-      useWardrobeStore.getState().setOutfits([
-        mockOutfit({ id: "o1" }),
-        mockOutfit({ id: "o2" }),
-      ]);
+      useWardrobeStore.getState().setOutfits([mockOutfit({ id: "o1" }), mockOutfit({ id: "o2" })]);
       useWardrobeStore.getState().removeOutfit("o1");
       expect(useWardrobeStore.getState().outfits).toHaveLength(1);
       expect(useWardrobeStore.getState().outfits[0].id).toBe("o2");
@@ -378,42 +355,40 @@ describe("useWardrobeStore", () => {
 
   describe("incrementWearCount", () => {
     test("type='item' 时应增加 item 的 wearCount", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", wearCount: 3 }),
-      ]);
+      useWardrobeStore.getState().setItems([mockClothing({ id: "1", wearCount: 3 })]);
       useWardrobeStore.getState().incrementWearCount("1", "item");
       expect(useWardrobeStore.getState().items[0].wearCount).toBe(4);
     });
 
     test("type='item' 时应更新 lastWorn", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", wearCount: 0, lastWorn: undefined }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setItems([mockClothing({ id: "1", wearCount: 0, lastWorn: undefined })]);
       useWardrobeStore.getState().incrementWearCount("1", "item");
       expect(useWardrobeStore.getState().items[0].lastWorn).toBeDefined();
     });
 
     test("type='outfit' 时应增加 outfit 的 wearCount", () => {
-      useWardrobeStore.getState().setOutfits([
-        mockOutfit({ id: "o1", wearCount: 5 }),
-      ]);
+      useWardrobeStore.getState().setOutfits([mockOutfit({ id: "o1", wearCount: 5 })]);
       useWardrobeStore.getState().incrementWearCount("o1", "outfit");
       expect(useWardrobeStore.getState().outfits[0].wearCount).toBe(6);
     });
 
     test("type='outfit' 时应更新 lastWorn", () => {
-      useWardrobeStore.getState().setOutfits([
-        mockOutfit({ id: "o1", wearCount: 0, lastWorn: undefined }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setOutfits([mockOutfit({ id: "o1", wearCount: 0, lastWorn: undefined })]);
       useWardrobeStore.getState().incrementWearCount("o1", "outfit");
       expect(useWardrobeStore.getState().outfits[0].lastWorn).toBeDefined();
     });
 
     test("应触发 recalculateStats", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", wearCount: 0 }),
-        mockClothing({ id: "2", wearCount: 0 }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setItems([
+          mockClothing({ id: "1", wearCount: 0 }),
+          mockClothing({ id: "2", wearCount: 0 }),
+        ]);
       useWardrobeStore.getState().incrementWearCount("1", "item");
       // mostWorn 应该是 id "1" (wearCount=1 > 0)
       expect(useWardrobeStore.getState().stats.mostWorn).toBe("1");
@@ -424,28 +399,29 @@ describe("useWardrobeStore", () => {
 
   describe("recalculateStats", () => {
     test("应正确计算 totalItems", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1" }),
-        mockClothing({ id: "2" }),
-        mockClothing({ id: "3" }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setItems([
+          mockClothing({ id: "1" }),
+          mockClothing({ id: "2" }),
+          mockClothing({ id: "3" }),
+        ]);
       expect(useWardrobeStore.getState().stats.totalItems).toBe(3);
     });
 
     test("应正确计算 totalOutfits", () => {
-      useWardrobeStore.getState().setOutfits([
-        mockOutfit({ id: "o1" }),
-        mockOutfit({ id: "o2" }),
-      ]);
+      useWardrobeStore.getState().setOutfits([mockOutfit({ id: "o1" }), mockOutfit({ id: "o2" })]);
       expect(useWardrobeStore.getState().stats.totalOutfits).toBe(2);
     });
 
     test("应正确计算 categories 统计", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", category: "tops" }),
-        mockClothing({ id: "2", category: "tops" }),
-        mockClothing({ id: "3", category: "bottoms" }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setItems([
+          mockClothing({ id: "1", category: "tops" }),
+          mockClothing({ id: "2", category: "tops" }),
+          mockClothing({ id: "3", category: "bottoms" }),
+        ]);
       expect(useWardrobeStore.getState().stats.categories).toEqual({
         tops: 2,
         bottoms: 1,
@@ -453,10 +429,12 @@ describe("useWardrobeStore", () => {
     });
 
     test("应正确计算 styles 统计", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", style: ["casual", "street"] }),
-        mockClothing({ id: "2", style: ["casual"] }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setItems([
+          mockClothing({ id: "1", style: ["casual", "street"] }),
+          mockClothing({ id: "2", style: ["casual"] }),
+        ]);
       expect(useWardrobeStore.getState().stats.styles).toEqual({
         casual: 2,
         street: 1,
@@ -464,11 +442,13 @@ describe("useWardrobeStore", () => {
     });
 
     test("应正确计算 colors 统计", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", color: "black" }),
-        mockClothing({ id: "2", color: "black" }),
-        mockClothing({ id: "3", color: "white" }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setItems([
+          mockClothing({ id: "1", color: "black" }),
+          mockClothing({ id: "2", color: "black" }),
+          mockClothing({ id: "3", color: "white" }),
+        ]);
       expect(useWardrobeStore.getState().stats.colors).toEqual({
         black: 2,
         white: 1,
@@ -485,20 +465,24 @@ describe("useWardrobeStore", () => {
     });
 
     test("应正确计算 mostWorn", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", wearCount: 5 }),
-        mockClothing({ id: "2", wearCount: 10 }),
-        mockClothing({ id: "3", wearCount: 3 }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setItems([
+          mockClothing({ id: "1", wearCount: 5 }),
+          mockClothing({ id: "2", wearCount: 10 }),
+          mockClothing({ id: "3", wearCount: 3 }),
+        ]);
       expect(useWardrobeStore.getState().stats.mostWorn).toBe("2");
     });
 
     test("应正确计算 leastWorn", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", wearCount: 5 }),
-        mockClothing({ id: "2", wearCount: 10 }),
-        mockClothing({ id: "3", wearCount: 3 }),
-      ]);
+      useWardrobeStore
+        .getState()
+        .setItems([
+          mockClothing({ id: "1", wearCount: 5 }),
+          mockClothing({ id: "2", wearCount: 10 }),
+          mockClothing({ id: "3", wearCount: 3 }),
+        ]);
       expect(useWardrobeStore.getState().stats.leastWorn).toBe("3");
     });
 
@@ -516,9 +500,7 @@ describe("useWardrobeStore", () => {
     });
 
     test("无 color 的 item 不应影响 colors 统计", () => {
-      useWardrobeStore.getState().setItems([
-        mockClothing({ id: "1", color: undefined }),
-      ]);
+      useWardrobeStore.getState().setItems([mockClothing({ id: "1", color: undefined })]);
       expect(useWardrobeStore.getState().stats.colors).toEqual({});
     });
   });

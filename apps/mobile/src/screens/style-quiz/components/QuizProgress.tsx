@@ -1,16 +1,13 @@
-import React, { useEffect } from "react";
+﻿import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
-import { Colors, Spacing, BorderRadius } from "../../../theme";
+import { Colors, Spacing, BorderRadius } from '../design-system/theme';
 
 interface QuizProgressProps {
   currentStep: number;
   totalSteps: number;
 }
 
-export const QuizProgress: React.FC<QuizProgressProps> = ({
-  currentStep,
-  totalSteps,
-}) => {
+export const QuizProgress: React.FC<QuizProgressProps> = ({ currentStep, totalSteps }) => {
   const progressAnim = React.useRef(new Animated.Value(0)).current;
   const progress = totalSteps > 0 ? currentStep / totalSteps : 0;
 

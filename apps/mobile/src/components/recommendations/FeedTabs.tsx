@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+﻿import React, { useCallback } from "react";
 import {
   View,
   Text,
@@ -7,20 +7,21 @@ import {
   ScrollView,
   type LayoutChangeEvent,
 } from "react-native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import type { FeedCategory } from "../../services/api/recommendation-feed.api";
 
 interface FeedTab {
   key: FeedCategory;
   label: string;
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
 }
 
 const FEED_TABS: FeedTab[] = [
-  { key: "daily", label: "每日推荐", icon: "☀️" },
-  { key: "occasion", label: "场景穿搭", icon: "🎯" },
-  { key: "trending", label: "热门趋势", icon: "🔥" },
-  { key: "explore", label: "发现探索", icon: "✨" },
+  { key: "daily", label: "每日推荐", icon: "sunny-outline" },
+  { key: "occasion", label: "场景穿搭", icon: "pricetag-outline" },
+  { key: "trending", label: "热门趋势", icon: "trending-up-outline" },
+  { key: "explore", label: "发现探索", icon: "compass-outline" },
 ];
 
 const OCCASION_SUBS = [
@@ -51,16 +52,14 @@ export function FeedTabs({
         onCategoryChange(category);
       }
     },
-    [activeCategory, onCategoryChange],
+    [activeCategory, onCategoryChange]
   );
 
   const handleSubPress = useCallback(
     (subKey: string) => {
-      onSubCategoryChange(
-        activeSubCategory === subKey ? null : subKey,
-      );
+      onSubCategoryChange(activeSubCategory === subKey ? null : subKey);
     },
-    [activeSubCategory, onSubCategoryChange],
+    [activeSubCategory, onSubCategoryChange]
   );
 
   return (
@@ -73,22 +72,18 @@ export function FeedTabs({
         {FEED_TABS.map((tab) => (
           <Pressable
             key={tab.key}
-            style={[
-              styles.tab,
-              activeCategory === tab.key && styles.tabActive,
-            ]}
+            style={[styles.tab, activeCategory === tab.key && styles.tabActive]}
             onPress={() => handleCategoryPress(tab.key)}
             accessibilityLabel={tab.label}
             accessibilityRole="tab"
             accessibilityState={{ selected: activeCategory === tab.key }}
           >
-            <Text style={styles.tabIcon}>{tab.icon}</Text>
-            <Text
-              style={[
-                styles.tabLabel,
-                activeCategory === tab.key && styles.tabLabelActive,
-              ]}
-            >
+            <Ionicons
+              name={tab.icon}
+              size={14}
+              color={activeCategory === tab.key ? DesignTokens.colors.text.inverse : DesignTokens.colors.text.secondary}
+            />
+            <Text style={[styles.tabLabel, activeCategory === tab.key && styles.tabLabelActive]}>
               {tab.label}
             </Text>
           </Pressable>
@@ -104,10 +99,7 @@ export function FeedTabs({
           {OCCASION_SUBS.map((sub) => (
             <Pressable
               key={sub.key}
-              style={[
-                styles.subTab,
-                activeSubCategory === sub.key && styles.subTabActive,
-              ]}
+              style={[styles.subTab, activeSubCategory === sub.key && styles.subTabActive]}
               onPress={() => handleSubPress(sub.key)}
               accessibilityLabel={sub.label}
               accessibilityRole="tab"
@@ -152,16 +144,13 @@ const styles = StyleSheet.create({
   tabActive: {
     backgroundColor: DesignTokens.colors.brand.terracotta,
   },
-  tabIcon: {
-    fontSize: 14,
-  },
   tabLabel: {
     fontSize: 13,
     fontWeight: "600",
     color: DesignTokens.colors.text.secondary,
   },
   tabLabelActive: {
-    color: "#fff",
+    color: DesignTokens.colors.text.inverse,
   },
   subTabsContainer: {
     paddingHorizontal: 12,

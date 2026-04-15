@@ -16,12 +16,16 @@ from typing import Dict, Optional, Tuple
 import numpy as np
 from PIL import Image
 
-from ml.services.tryon_preprocessor import (
+# P0-5: Import unified color utilities instead of transitive duplicates
+from ml.services.analysis.color_utils import (
+    rgb_to_lab as _rgb_to_lab,
+    delta_e_ciede2000 as _ciede2000,
+    is_skin_pixel_cielab as _is_skin_pixel_cielab,
+    rgb_to_lab_batch,
+)
+from ml.services.tryon.tryon_preprocessor import (
     TryonPreprocessor,
     PreprocessResult,
-    _rgb_to_lab,
-    _ciede2000,
-    _is_skin_pixel_cielab,
 )
 
 logger = logging.getLogger(__name__)
@@ -201,25 +205,8 @@ def _extract_garment_colors_lab(
         indices = np.random.choice(len(pixels), 3000, replace=False)
         pixels = pixels[indices]
 
-    # Convert to CIELAB using vectorized operation
-    r_flat = pixels[:, 0].astype(np.float64) / 255.0
-    g_flat = pixels[:, 1].astype(np.float64) / 255.0
-    b_flat = pixels[:, 2].astype(np.float64) / 255.0
-
-    rl = np.where(r_flat > 0.04045, ((r_flat + 0.055) / 1.055) ** 2.4, r_flat / 12.92)
-    gl = np.where(g_flat > 0.04045, ((g_flat + 0.055) / 1.055) ** 2.4, g_flat / 12.92)
-    bl = np.where(b_flat > 0.04045, ((b_flat + 0.055) / 1.055) ** 2.4, b_flat / 12.92)
-
-    x = (rl * 0.4124564 + gl * 0.3575761 + bl * 0.1804375) / _D65_XN
-    y = (rl * 0.2126729 + gl * 0.7151522 + bl * 0.0721750) / _D65_YN
-    z = (rl * 0.0193339 + gl * 0.1191920 + bl * 0.9503041) / _D65_ZN
-
-    delta = 6.0 / 29.0
-    fx = np.where(x > delta ** 3, x ** (1.0 / 3.0), x / (3.0 * delta * delta) + 4.0 / 29.0)
-    fy = np.where(y > delta ** 3, y ** (1.0 / 3.0), y / (3.0 * delta * delta) + 4.0 / 29.0)
-    fz = np.where(z > delta ** 3, z ** (1.0 / 3.0), z / (3.0 * delta * delta) + 4.0 / 29.0)
-
-    lab_pixels = np.column_stack([116.0 * fy - 16.0, 500.0 * (fx - fy), 200.0 * (fy - fz)])
+    # Convert to CIELAB using unified batch function
+    lab_pixels = rgb_to_lab_batch(pixels.astype(np.float64))
 
     # k-means using Euclidean distance in CIELAB (fast approximation)
     k = min(n_colors, len(lab_pixels))

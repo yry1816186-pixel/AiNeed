@@ -9,8 +9,7 @@ export const quizApi = {
   submitQuiz: (answers: QuizAnswer[]): Promise<ApiResponse<QuizResult>> =>
     apiClient.post<QuizResult>("/quiz/submit", { answers }),
 
-  getResult: (): Promise<ApiResponse<QuizResult>> =>
-    apiClient.get<QuizResult>("/quiz/result"),
+  getResult: (): Promise<ApiResponse<QuizResult>> => apiClient.get<QuizResult>("/quiz/result"),
 };
 
 export default quizApi;

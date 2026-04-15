@@ -4,27 +4,37 @@
  */
 
 // Mock React Native dependencies before imports
-jest.mock("@react-native-async-storage/async-storage", () => ({
-  getItem: jest.fn().mockResolvedValue(null),
-  setItem: jest.fn().mockResolvedValue(undefined),
-  removeItem: jest.fn().mockResolvedValue(undefined),
-  multiGet: jest.fn().mockResolvedValue([]),
-  multiSet: jest.fn().mockResolvedValue(undefined),
-  multiRemove: jest.fn().mockResolvedValue(undefined),
-  clear: jest.fn().mockResolvedValue(undefined),
-  getAllKeys: jest.fn().mockResolvedValue([]),
-}), { virtual: true });
+import { tokenManager } from "../../services/auth/token";
 
-jest.mock("react-native-encrypted-storage", () => ({
-  setItem: jest.fn().mockResolvedValue(undefined),
-  getItem: jest.fn().mockResolvedValue(null),
-  removeItem: jest.fn().mockResolvedValue(undefined),
-  clear: jest.fn().mockResolvedValue(undefined),
-}), { virtual: true });
+jest.mock(
+  "@react-native-async-storage/async-storage",
+  () => ({
+    getItem: jest.fn().mockResolvedValue(null),
+    setItem: jest.fn().mockResolvedValue(undefined),
+    removeItem: jest.fn().mockResolvedValue(undefined),
+    multiGet: jest.fn().mockResolvedValue([]),
+    multiSet: jest.fn().mockResolvedValue(undefined),
+    multiRemove: jest.fn().mockResolvedValue(undefined),
+    clear: jest.fn().mockResolvedValue(undefined),
+    getAllKeys: jest.fn().mockResolvedValue([]),
+  }),
+  { virtual: true }
+);
+
+jest.mock(
+  "react-native-encrypted-storage",
+  () => ({
+    setItem: jest.fn().mockResolvedValue(undefined),
+    getItem: jest.fn().mockResolvedValue(null),
+    removeItem: jest.fn().mockResolvedValue(undefined),
+    clear: jest.fn().mockResolvedValue(undefined),
+  }),
+  { virtual: true }
+);
 
 jest.mock("react-native", () => ({
   Platform: { OS: "ios" },
-}), { virtual: true });
+}));
 
 jest.mock("../../config/runtime", () => ({
   mobileRuntimeConfig: {
@@ -34,8 +44,6 @@ jest.mock("../../config/runtime", () => ({
   },
   requireMobileUrl: (url: string) => url,
 }));
-
-import { tokenManager } from "../../services/auth/token";
 
 describe("tokenManager", () => {
   describe("decodePayload", () => {

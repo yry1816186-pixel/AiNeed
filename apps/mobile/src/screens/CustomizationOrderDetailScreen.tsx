@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
 import customizationApi from "../services/api/customization.api";
 import type { RootStackParamList } from "../types/navigation";
 
@@ -30,18 +30,18 @@ interface OrderDetail {
   trackingNumber?: string;
   carrier?: string;
   estimatedDeliveryDate?: string;
-  quotes?: Array<{
+  quotes?: {
     id: string;
     providerName: string;
     price: number;
     currency: string;
     estimatedDays: number;
     description: string;
-  }>;
+  }[];
   design?: {
     previewUrl?: string;
     template?: { name: string };
-    layers?: Array<{ type: string; content: string }>;
+    layers?: { type: string; content: string }[];
   };
 }
 
@@ -65,7 +65,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    loadOrder();
+    void loadOrder();
   }, [requestId]);
 
   const loadOrder = useCallback(async () => {
@@ -97,7 +97,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
           const response = await customizationApi.cancel(requestId);
           if (response.success) {
             Alert.alert("已取消", "定制需求已取消");
-            loadOrder();
+            void loadOrder();
           }
         },
       },
@@ -111,15 +111,13 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
         text: "确认",
         onPress: async () => {
           Alert.alert("已确认", "感谢您的定制，期待您的下次光临");
-          loadOrder();
+          void loadOrder();
         },
       },
     ]);
   }, [loadOrder]);
 
-  const currentStepIndex = order
-    ? STATUS_STEPS.findIndex((s) => s.key === order.status)
-    : -1;
+  const currentStepIndex = order ? STATUS_STEPS.findIndex((s) => s.key === order.status) : -1;
 
   const renderStatusTimeline = () => (
     <View style={styles.section}>
@@ -138,7 +136,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
                 ]}
               >
                 <Ionicons
-                  name={step.icon as any}
+                  name={step.icon}
                   size={14}
                   color={isCompleted ? theme.colors.surface : Colors.neutral[400]}
                 />
@@ -226,9 +224,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
             {new Date(order.createdAt).toLocaleDateString("zh-CN")}
           </Text>
           {order.design?.template && (
-            <Text style={styles.templateName}>
-              模板：{order.design.template.name}
-            </Text>
+            <Text style={styles.templateName}>模板：{order.design.template.name}</Text>
           )}
         </View>
 

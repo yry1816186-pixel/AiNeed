@@ -19,9 +19,7 @@ export const FreeShippingProgress: React.FC<FreeShippingProgressProps> = ({
       {isFree ? (
         <Text style={styles.freeText}>已免运费</Text>
       ) : (
-        <Text style={styles.progressText}>
-          再买¥{remaining.toFixed(0)}免运费
-        </Text>
+        <Text style={styles.progressText}>再买¥{remaining.toFixed(0)}免运费</Text>
       )}
       <View style={styles.barBackground}>
         <View

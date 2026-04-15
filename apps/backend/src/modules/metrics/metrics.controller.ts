@@ -1,7 +1,7 @@
 import { Controller, Get, Req, ForbiddenException } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { register } from "prom-client";
 import { Request } from "express";
+import { register } from "prom-client";
 
 const ALLOWED_IPS = [
   "127.0.0.1",
@@ -19,7 +19,7 @@ const ALLOWED_PREFIXES = [
 ];
 
 function isInternalIp(ip: string): boolean {
-  if (ALLOWED_IPS.includes(ip)) return true;
+  if (ALLOWED_IPS.includes(ip)) {return true;}
   return ALLOWED_PREFIXES.some((prefix) => ip.startsWith(prefix));
 }
 

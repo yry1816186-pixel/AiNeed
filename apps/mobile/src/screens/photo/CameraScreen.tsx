@@ -1,28 +1,23 @@
-import React, { useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import * as Haptics from '@/src/polyfills/expo-haptics';
+﻿import React, { useState, useCallback } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import * as Haptics from "@/src/polyfills/expo-haptics";
 import {
   launchCameraAsync,
   requestCameraPermissionsAsync,
   requestMediaLibraryPermissionsAsync,
-} from '@/src/polyfills/expo-image-picker';
-import { pickImageSecurely } from '../../utils/imagePicker';
-import { useCameraPermissions } from '../../hooks/useCameraPermissions';
-import { useReferenceLines } from '../../hooks/useReferenceLines';
-import { usePhotoStore } from '../../stores/photoStore';
-import { theme } from '../../theme';
-import { ReferenceLineOverlay } from './components/ReferenceLineOverlay';
-import AlignmentGuide from './components/AlignmentGuide';
-import PhotoQualityFeedback from './components/PhotoQualityFeedback';
+} from "@/src/polyfills/expo-image-picker";
+import { pickImageSecurely } from "../../utils/imagePicker";
+import { useCameraPermissions } from "../../hooks/useCameraPermissions";
+import { useReferenceLines } from "../../hooks/useReferenceLines";
+import { usePhotoStore } from "../../stores/photoStore";
+import { theme } from '../design-system/theme';
+import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { ReferenceLineOverlay } from "./components/ReferenceLineOverlay";
+import AlignmentGuide from "./components/AlignmentGuide";
+import PhotoQualityFeedback from "./components/PhotoQualityFeedback";
 
 const CAPTURE_BUTTON_SIZE = 72;
 const CAPTURE_BUTTON_INNER = 60;
@@ -35,10 +30,7 @@ interface CameraScreenProps {
 }
 
 const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
-  const {
-    permissionStatus,
-    openSettings,
-  } = useCameraPermissions();
+  const { permissionStatus, openSettings } = useCameraPermissions();
   const {
     referenceLines,
     alignmentStatus,
@@ -62,13 +54,15 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
   const [previewLayout, setPreviewLayout] = useState({ width: 0, height: 0 });
 
   const handleTakePhoto = useCallback(async () => {
-    if (isCapturing) return;
+    if (isCapturing) {
+      return;
+    }
 
-    Haptics.impactAsync('medium');
+    Haptics.impactAsync("medium");
     setCapturing(true);
 
     try {
-      if (permissionStatus !== 'granted') {
+      if (permissionStatus !== "granted") {
         const result = await requestCameraPermissionsAsync();
         if (!result.granted) {
           setCapturing(false);
@@ -77,7 +71,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       }
 
       const response = await launchCameraAsync({
-        mediaTypes: 'Images',
+        mediaTypes: "Images",
         quality: 0.85,
       });
 
@@ -95,9 +89,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       const uri = asset.uri;
       setCapturedImage(uri);
 
-      const qualityScore = Math.min(100, Math.round(
-        (needsResize ? 70 : 90) + Math.random() * 15,
-      ));
+      const qualityScore = Math.min(100, Math.round((needsResize ? 70 : 90) + Math.random() * 15));
 
       setQualityResult({
         score: qualityScore,
@@ -106,9 +98,9 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
           qualityScore < 60
             ? [
                 {
-                  type: 'blur',
-                  severity: 'medium',
-                  message: '照片可能模糊，建议重新拍摄',
+                  type: "blur",
+                  severity: "medium",
+                  message: "照片可能模糊，建议重新拍摄",
                 },
               ]
             : [],
@@ -120,9 +112,9 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
         isAcceptable: false,
         issues: [
           {
-            type: 'blur',
-            severity: 'high',
-            message: '拍照失败，请重试',
+            type: "blur",
+            severity: "high",
+            message: "拍照失败，请重试",
           },
         ],
       });
@@ -142,10 +134,14 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
   const handlePickImage = useCallback(async () => {
     try {
       const permResult = await requestMediaLibraryPermissionsAsync();
-      if (!permResult.granted) return;
+      if (!permResult.granted) {
+        return;
+      }
 
       const result = await pickImageSecurely();
-      if (!result) return;
+      if (!result) {
+        return;
+      }
 
       setCapturedImage(result.uri);
 
@@ -156,8 +152,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
         issues: [],
       });
       setShowQualityFeedback(true);
-    } catch {
-    }
+    } catch {}
   }, [setCapturedImage, setQualityResult, setShowQualityFeedback]);
 
   const handleRetake = useCallback(() => {
@@ -166,7 +161,9 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
 
   const handleContinue = useCallback(() => {
     if (capturedImageUri) {
-      navigation.navigate('PhotoPreview', { imageUri: capturedImageUri });
+      // PhotoPreview route and screen are not yet implemented. Navigate to the
+      // photo preview once the route is added to the navigator.
+      // navigation.navigate('PhotoPreview', { imageUri: capturedImageUri });
     }
   }, [capturedImageUri, navigation]);
 
@@ -175,15 +172,15 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       const { width, height } = event.nativeEvent.layout;
       setPreviewLayout({ width, height });
       if (!referenceLines) {
-        fetchReferenceLines();
+        void fetchReferenceLines();
       }
     },
-    [referenceLines, fetchReferenceLines],
+    [referenceLines, fetchReferenceLines]
   );
 
-  if (permissionStatus === 'denied') {
+  if (permissionStatus === "denied") {
     return (
-      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
         <View style={styles.header}>
           <TouchableOpacity onPress={navigation.goBack} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
@@ -192,15 +189,9 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
           <View style={styles.headerSpacer} />
         </View>
         <View style={styles.permissionContainer}>
-          <Ionicons
-            name="camera-outline"
-            size={64}
-            color={theme.colors.textSecondary}
-          />
+          <Ionicons name="camera-outline" size={64} color={theme.colors.textSecondary} />
           <Text style={styles.permissionTitle}>需要相机权限</Text>
-          <Text style={styles.permissionMessage}>
-            请在系统设置中开启相机权限，以便使用拍照功能
-          </Text>
+          <Text style={styles.permissionMessage}>请在系统设置中开启相机权限，以便使用拍照功能</Text>
           <TouchableOpacity style={styles.settingsButton} onPress={openSettings}>
             <LinearGradient
               colors={[theme.colors.primary, theme.colors.primaryDark]}
@@ -209,10 +200,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
               <Text style={styles.settingsButtonText}>打开系统设置</Text>
             </LinearGradient>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.laterButton}
-            onPress={navigation.goBack}
-          >
+          <TouchableOpacity style={styles.laterButton} onPress={navigation.goBack}>
             <Text style={styles.laterButtonText}>稍后再说</Text>
           </TouchableOpacity>
         </View>
@@ -221,20 +209,18 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={navigation.goBack} style={styles.backButton}>
-          <Ionicons name="close" size={28} color="#FFFFFF" />
+          <Ionicons name="close" size={28} color={DesignTokens.colors.neutral.white} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: '#FFFFFF' }]}>拍照</Text>
+        <Text style={[styles.title, { color: DesignTokens.colors.neutral.white }]}>拍照</Text>
         <View style={styles.headerSpacer} />
       </View>
 
       <View style={styles.previewContainer} onLayout={handleLayout}>
         <View style={styles.previewPlaceholder}>
-          {linesLoading && (
-            <ActivityIndicator color="#FFFFFF" size="small" />
-          )}
+          {linesLoading && <ActivityIndicator color={DesignTokens.colors.neutral.white} size="small" />}
         </View>
         <ReferenceLineOverlay
           referenceLines={referenceLines}
@@ -247,11 +233,8 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
 
       <View style={styles.controls}>
         <View style={styles.controlsRow}>
-          <TouchableOpacity
-            style={styles.galleryButton}
-            onPress={handlePickImage}
-          >
-            <Ionicons name="images-outline" size={28} color="#FFFFFF" />
+          <TouchableOpacity style={styles.galleryButton} onPress={handlePickImage}>
+            <Ionicons name="images-outline" size={28} color={DesignTokens.colors.neutral.white} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -276,11 +259,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
               toggleCameraType();
             }}
           >
-            <Ionicons
-              name="camera-reverse-outline"
-              size={28}
-              color="#FFFFFF"
-            />
+            <Ionicons name="camera-reverse-outline" size={28} color={DesignTokens.colors.neutral.white} />
           </TouchableOpacity>
         </View>
       </View>
@@ -299,25 +278,25 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: DesignTokens.colors.neutral.black,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
   backButton: {
     width: 40,
     height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     fontSize: 17,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: DesignTokens.colors.neutral.white,
   },
   headerSpacer: {
     width: 40,
@@ -325,71 +304,71 @@ const styles = StyleSheet.create({
   previewContainer: {
     flex: 1,
     marginHorizontal: 0,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   previewPlaceholder: {
     flex: 1,
-    backgroundColor: '#1A1A1A',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: DesignTokens.colors.neutral[900],
+    justifyContent: "center",
+    alignItems: "center",
   },
   controls: {
     paddingBottom: 20,
     paddingTop: 16,
   },
   controlsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
     paddingHorizontal: 40,
   },
   galleryButton: {
     width: 48,
     height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: "rgba(255,255,255,0.15)",
   },
   captureButton: {
     width: CAPTURE_BUTTON_SIZE,
     height: CAPTURE_BUTTON_SIZE,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   captureButtonOuter: {
     width: CAPTURE_BUTTON_SIZE,
     height: CAPTURE_BUTTON_SIZE,
     borderRadius: CAPTURE_BUTTON_SIZE / 2,
     borderWidth: 4,
-    borderColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderColor: DesignTokens.colors.neutral.white,
+    justifyContent: "center",
+    alignItems: "center",
   },
   captureButtonInner: {
     width: CAPTURE_BUTTON_INNER,
     height: CAPTURE_BUTTON_INNER,
     borderRadius: CAPTURE_BUTTON_INNER / 2,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: DesignTokens.colors.neutral.white,
   },
   flipButton: {
     width: 48,
     height: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: "rgba(255,255,255,0.15)",
   },
   permissionContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 40,
     backgroundColor: theme.colors.background,
   },
   permissionTitle: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.text,
     marginTop: 24,
     marginBottom: 12,
@@ -397,24 +376,24 @@ const styles = StyleSheet.create({
   permissionMessage: {
     fontSize: 15,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 22,
     marginBottom: 32,
   },
   settingsButton: {
-    width: '100%',
+    width: "100%",
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   settingsGradient: {
     height: 52,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   settingsButtonText: {
-    color: '#FFFFFF',
+    color: DesignTokens.colors.neutral.white,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   laterButton: {
     marginTop: 16,

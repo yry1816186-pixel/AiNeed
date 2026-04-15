@@ -32,7 +32,10 @@ const mockQuestions = [
     id: "q1",
     text: "First question",
     type: "single" as const,
-    options: [{ id: "o1", text: "Option 1" }, { id: "o2", text: "Option 2" }],
+    options: [
+      { id: "o1", text: "Option 1" },
+      { id: "o2", text: "Option 2" },
+    ],
     category: "style",
     order: 1,
   },

@@ -46,7 +46,7 @@ export function createPrismaEncryptionMiddleware(
 
     const result = await next(params);
 
-    if (READ_ACTIONS.has(action) && result != null) {
+    if (READ_ACTIONS.has(action) && result !== null) {
       return decryptReadResult(result, model, piiEncryptionService, logger);
     }
 

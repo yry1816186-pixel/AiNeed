@@ -4,6 +4,7 @@ import { ConfigModule } from "@nestjs/config";
 import { MalwareScannerService } from "../../common/security/malware-scanner.service";
 import { OnboardingModule } from "../onboarding/onboarding.module";
 import { QueueModule } from "../queue/queue.module";
+
 import { PhotoQualityController } from "./photo-quality.controller";
 import { PhotosController } from "./photos.controller";
 import { PhotosService } from "./photos.service";
@@ -15,8 +16,8 @@ import { ColorSeasonAnalyzer } from "./services/color-season-analyzer.service";
 import { FaceShapeAnalyzer } from "./services/face-shape-analyzer.service";
 import { HairAnalysisService } from "./services/hair-analysis.service";
 import { MakeupAnalysisService } from "./services/makeup-analysis.service";
-import { PhotoQualityService } from "./services/photo-quality.service";
 import { PhotoQualityValidator } from "./services/photo-quality-validator.service";
+import { PhotoQualityService } from "./services/photo-quality.service";
 
 @Module({
   imports: [ConfigModule, OnboardingModule, QueueModule],

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Tests for error handling utilities
  * These test pure functions with no React Native dependencies
  */
@@ -94,83 +94,62 @@ describe("ErrorClassifier", () => {
   describe("assessSeverity", () => {
     it("should assess render errors as HIGH", () => {
       const error = new Error("Render failed");
-      expect(
-        ErrorClassifier.assessSeverity(error, ErrorCategory.RENDER),
-      ).toBe(ErrorSeverity.HIGH);
+      expect(ErrorClassifier.assessSeverity(error, ErrorCategory.RENDER)).toBe(ErrorSeverity.HIGH);
     });
 
     it("should assess permission errors as MEDIUM", () => {
       const error = new Error("Unauthorized");
-      expect(
-        ErrorClassifier.assessSeverity(error, ErrorCategory.PERMISSION),
-      ).toBe(ErrorSeverity.MEDIUM);
+      expect(ErrorClassifier.assessSeverity(error, ErrorCategory.PERMISSION)).toBe(
+        ErrorSeverity.MEDIUM
+      );
     });
 
     it("should assess timeout network errors as MEDIUM", () => {
       const error = new Error("Request timeout");
-      expect(
-        ErrorClassifier.assessSeverity(error, ErrorCategory.NETWORK),
-      ).toBe(ErrorSeverity.MEDIUM);
+      expect(ErrorClassifier.assessSeverity(error, ErrorCategory.NETWORK)).toBe(
+        ErrorSeverity.MEDIUM
+      );
     });
 
     it("should assess offline network errors as HIGH", () => {
       const error = new Error("Network offline");
-      expect(
-        ErrorClassifier.assessSeverity(error, ErrorCategory.NETWORK),
-      ).toBe(ErrorSeverity.HIGH);
+      expect(ErrorClassifier.assessSeverity(error, ErrorCategory.NETWORK)).toBe(ErrorSeverity.HIGH);
     });
 
     it("should assess resource errors as LOW", () => {
       const error = new Error("Not found");
-      expect(
-        ErrorClassifier.assessSeverity(error, ErrorCategory.RESOURCE),
-      ).toBe(ErrorSeverity.LOW);
+      expect(ErrorClassifier.assessSeverity(error, ErrorCategory.RESOURCE)).toBe(ErrorSeverity.LOW);
     });
   });
 
   describe("determineRecoveryStrategy", () => {
     it("should recommend RETRY for network errors", () => {
       expect(
-        ErrorClassifier.determineRecoveryStrategy(
-          ErrorCategory.NETWORK,
-          ErrorSeverity.MEDIUM,
-        ),
+        ErrorClassifier.determineRecoveryStrategy(ErrorCategory.NETWORK, ErrorSeverity.MEDIUM)
       ).toBe(RecoveryStrategy.RETRY);
     });
 
     it("should recommend RE_LOGIN for permission errors", () => {
       expect(
-        ErrorClassifier.determineRecoveryStrategy(
-          ErrorCategory.PERMISSION,
-          ErrorSeverity.MEDIUM,
-        ),
+        ErrorClassifier.determineRecoveryStrategy(ErrorCategory.PERMISSION, ErrorSeverity.MEDIUM)
       ).toBe(RecoveryStrategy.RE_LOGIN);
     });
 
     it("should recommend GO_BACK for resource errors", () => {
       expect(
-        ErrorClassifier.determineRecoveryStrategy(
-          ErrorCategory.RESOURCE,
-          ErrorSeverity.LOW,
-        ),
+        ErrorClassifier.determineRecoveryStrategy(ErrorCategory.RESOURCE, ErrorSeverity.LOW)
       ).toBe(RecoveryStrategy.GO_BACK);
     });
 
     it("should recommend GO_HOME for critical render errors", () => {
       expect(
-        ErrorClassifier.determineRecoveryStrategy(
-          ErrorCategory.RENDER,
-          ErrorSeverity.CRITICAL,
-        ),
+        ErrorClassifier.determineRecoveryStrategy(ErrorCategory.RENDER, ErrorSeverity.CRITICAL)
       ).toBe(RecoveryStrategy.GO_HOME);
     });
 
     it("should recommend REFRESH for non-critical render errors", () => {
       expect(
-        ErrorClassifier.determineRecoveryStrategy(
-          ErrorCategory.RENDER,
-          ErrorSeverity.HIGH,
-        ),
+        ErrorClassifier.determineRecoveryStrategy(ErrorCategory.RENDER, ErrorSeverity.HIGH)
       ).toBe(RecoveryStrategy.REFRESH);
     });
   });

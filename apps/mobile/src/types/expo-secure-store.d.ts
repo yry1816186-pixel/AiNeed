@@ -1,4 +1,4 @@
-declare module 'expo-secure-store' {
+declare module "expo-secure-store" {
   export interface SecureStoreOptions {
     keychainAccessible?: string;
     keychainAccessGroup?: string;
@@ -9,18 +9,12 @@ declare module 'expo-secure-store' {
   export function setItemAsync(
     key: string,
     value: string,
-    options?: SecureStoreOptions,
+    options?: SecureStoreOptions
   ): Promise<void>;
 
-  export function getItemAsync(
-    key: string,
-    options?: SecureStoreOptions,
-  ): Promise<string | null>;
+  export function getItemAsync(key: string, options?: SecureStoreOptions): Promise<string | null>;
 
-  export function deleteItemAsync(
-    key: string,
-    options?: SecureStoreOptions,
-  ): Promise<void>;
+  export function deleteItemAsync(key: string, options?: SecureStoreOptions): Promise<void>;
 
   export function canUseSecureStoreOnDevice(): boolean;
 }

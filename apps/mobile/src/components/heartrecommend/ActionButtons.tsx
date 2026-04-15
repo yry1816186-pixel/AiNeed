@@ -1,13 +1,10 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme, Colors } from "../../theme";
+﻿import React, { useCallback } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Pressable } from "react-native";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme, Colors, DesignTokens } from '../design-system/theme';
+import { haptics } from "../../utils/haptics";
 
 interface ActionButtonsProps {
   onRefresh: () => void;
@@ -15,17 +12,11 @@ interface ActionButtonsProps {
 
 export const EmptyState: React.FC<ActionButtonsProps> = ({ onRefresh }) => (
   <View style={styles.emptyContainer}>
-    <Text style={styles.emptyEmoji}>👗</Text>
+    <Ionicons name="shirt-outline" size={64} color={theme.colors.textTertiary} />
     <Text style={styles.emptyTitle}>暂无更多推荐</Text>
     <Text style={styles.emptySubtitle}>我们正在为您寻找更多心仪好物</Text>
-    <TouchableOpacity
-      style={styles.refreshButton}
-      onPress={onRefresh}
-    >
-      <LinearGradient
-        colors={["#667eea", "#764ba2"]}
-        style={styles.refreshGradient}
-      >
+    <TouchableOpacity style={styles.refreshButton} onPress={onRefresh} accessibilityLabel="刷新推荐" accessibilityRole="button">
+      <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.refreshGradient}>
         <Ionicons name="refresh" size={20} color="#fff" />
         <Text style={styles.refreshText}>刷新推荐</Text>
       </LinearGradient>
@@ -33,43 +24,117 @@ export const EmptyState: React.FC<ActionButtonsProps> = ({ onRefresh }) => (
   </View>
 );
 
-export const SwipeHints: React.FC = () => (
-  <View style={styles.hintRow}>
-    <View style={styles.hintItem}>
-      <View
-        style={[styles.hintIcon, { backgroundColor: Colors.success[50] }]}
-      >
-        <Ionicons name="arrow-up" size={20} color={Colors.success[500]} />
-      </View>
-      <Text style={styles.hintText}>上滑加入购物车</Text>
-    </View>
-    <View style={styles.hintItem}>
-      <View
+interface ActionButtonProps {
+  icon: string;
+  size: number;
+  color: string;
+  borderColor: string;
+  onPress: () => void;
+  accessibilityLabel: string;
+}
+
+const ActionButton: React.FC<ActionButtonProps> = ({
+  icon,
+  size,
+  color,
+  borderColor,
+  onPress,
+  accessibilityLabel,
+}) => {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePressIn = useCallback(() => {
+    scale.value = withSpring(0.85, { damping: 15 });
+  }, []);
+
+  const handlePressOut = useCallback(() => {
+    scale.value = withSpring(1, { damping: 15 });
+  }, []);
+
+  const handlePress = useCallback(() => {
+    haptics.light();
+    onPress();
+  }, [onPress]);
+
+  return (
+    <Pressable
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      onPress={handlePress}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
+    >
+      <Animated.View
         style={[
-          styles.hintIcon,
-          { backgroundColor: Colors.neutral[100] },
+          {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            borderWidth: 2,
+            borderColor,
+            backgroundColor: "#FFFFFF",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+          animatedStyle,
         ]}
       >
-        <Ionicons
-          name="arrow-down"
-          size={20}
-          color={Colors.neutral[500]}
-        />
-      </View>
-      <Text style={styles.hintText}>下滑不喜欢</Text>
-    </View>
-    <View style={styles.hintItem}>
-      <View
-        style={[styles.hintIcon, { backgroundColor: Colors.primary[50] }]}
-      >
-        <Ionicons
-          name="arrow-forward"
-          size={20}
-          color={Colors.primary[500]}
-        />
-      </View>
-      <Text style={styles.hintText}>左右滑浏览</Text>
-    </View>
+        <Ionicons name={icon as any} size={Math.round(size * 0.4)} color={color} />
+      </Animated.View>
+    </Pressable>
+  );
+};
+
+interface ActionButtonsCallbacks {
+  onDislike: () => void;
+  onSkip: () => void;
+  onAddToCart: () => void;
+  onLike: () => void;
+}
+
+export const ActionButtons: React.FC<ActionButtonsCallbacks> = ({
+  onDislike,
+  onSkip,
+  onAddToCart,
+  onLike,
+}) => (
+  <View style={styles.buttonsRow}>
+    <ActionButton
+      icon="close"
+      size={56}
+      color={DesignTokens.colors.neutral[400]}
+      borderColor={DesignTokens.colors.neutral[300]}
+      onPress={onDislike}
+      accessibilityLabel="不喜欢"
+    />
+    <ActionButton
+      icon="arrow-forward"
+      size={48}
+      color={DesignTokens.colors.neutral[300]}
+      borderColor={DesignTokens.colors.neutral[200]}
+      onPress={onSkip}
+      accessibilityLabel="跳过"
+    />
+    <ActionButton
+      icon="cart"
+      size={48}
+      color={DesignTokens.colors.semantic.success}
+      borderColor={DesignTokens.colors.semantic.successLight}
+      onPress={onAddToCart}
+      accessibilityLabel="加入购物车"
+    />
+    <ActionButton
+      icon="heart"
+      size={56}
+      color={DesignTokens.colors.brand.terracotta}
+      borderColor={DesignTokens.colors.brand.terracottaLight}
+      onPress={onLike}
+      accessibilityLabel="喜欢"
+    />
   </View>
 );
 
@@ -78,10 +143,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 40,
-  },
-  emptyEmoji: {
-    fontSize: 64,
-    marginBottom: 20,
   },
   emptyTitle: {
     fontSize: 22,
@@ -111,24 +172,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#fff",
   },
-  hintRow: {
+  buttonsRow: {
     flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  hintItem: {
-    alignItems: "center",
-    gap: 6,
-  },
-  hintIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-  },
-  hintText: {
-    fontSize: 11,
-    color: theme.colors.textSecondary,
-    fontWeight: "500",
+    gap: 20,
   },
 });

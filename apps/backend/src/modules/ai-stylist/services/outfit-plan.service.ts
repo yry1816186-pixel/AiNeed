@@ -1,6 +1,8 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { AiStylistSessionService } from "./session.service";
+
 import type { StylistResolution, StylistOutfitPlan, StylistOutfitItem } from "../types";
+
+import { AiStylistSessionService } from "./session.service";
 
 /**
  * 方案页数据聚合 — AIS-01

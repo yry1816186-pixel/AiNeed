@@ -1,9 +1,4 @@
 // @ts-nocheck
-import { hash } from 'bcryptjs';
-
-export async function hashPassword(password: string): Promise<string> {
-  return hash(password, 10);
-}
 
 export function randomDate(start: Date, end: Date): Date {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));

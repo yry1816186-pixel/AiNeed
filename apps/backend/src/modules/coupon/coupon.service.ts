@@ -4,8 +4,9 @@ import {
   NotFoundException,
   BadRequestException,
 } from "@nestjs/common";
-import { PrismaService } from "../../common/prisma/prisma.service";
 import { CouponType, UserCouponStatus, Prisma } from "@prisma/client";
+
+import { PrismaService } from "../../common/prisma/prisma.service";
 
 type Decimal = Prisma.Decimal;
 import { CreateCouponDto } from "./dto";
@@ -207,6 +208,7 @@ export class CouponService {
 
   /**
    * Mark a UserCoupon as USED in a transaction.
+   * Uses atomic operation for usedCount increment to prevent overselling.
    */
   async useCoupon(userCouponId: string, orderId: string): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
@@ -229,10 +231,31 @@ export class CouponService {
         },
       });
 
-      await tx.coupon.update({
+      // 原子操作：仅在 usageLimit 未用完时递增 usedCount
+      const coupon = await tx.coupon.findUnique({
         where: { id: userCoupon.couponId },
-        data: { usedCount: { increment: 1 } },
       });
+      if (!coupon) {
+        throw new NotFoundException("优惠券不存在");
+      }
+
+      if (coupon.usageLimit !== null) {
+        const result = await tx.coupon.updateMany({
+          where: {
+            id: userCoupon.couponId,
+            usedCount: { lt: coupon.usageLimit },
+          },
+          data: { usedCount: { increment: 1 } },
+        });
+        if (result.count === 0) {
+          throw new BadRequestException("优惠券已用完");
+        }
+      } else {
+        await tx.coupon.update({
+          where: { id: userCoupon.couponId },
+          data: { usedCount: { increment: 1 } },
+        });
+      }
     });
 
     this.logger.log(`Coupon used: ${userCouponId} for order ${orderId}`);
@@ -282,10 +305,10 @@ export class CouponService {
       const userUsage = await this.prisma.userCoupon.count({
         where: { userId, couponId: coupon.id },
       });
-      if (userUsage >= coupon.perUserLimit) continue;
+      if (userUsage >= coupon.perUserLimit) {continue;}
       if (coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit)
-        continue;
-      if (totalAmount < Number(coupon.minOrderAmount)) continue;
+        {continue;}
+      if (totalAmount < Number(coupon.minOrderAmount)) {continue;}
 
       if (
         coupon.applicableCategories.length > 0 &&

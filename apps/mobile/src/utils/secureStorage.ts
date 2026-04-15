@@ -16,7 +16,7 @@ const initSecureStore = (): void => {
       console.error(
         "[SECURITY] react-native-encrypted-storage not available. " +
           "Falling back to AsyncStorage (plaintext). Sensitive data will NOT be encrypted. " +
-          "Ensure react-native-encrypted-storage is properly linked before shipping this build.",
+          "Ensure react-native-encrypted-storage is properly linked before shipping this build."
       );
     }
   }
@@ -37,9 +37,15 @@ export const secureStorage = {
       await SecureStore.setItem(key, value);
       return;
     }
+    if (!__DEV__) {
+      throw new Error(
+        `[SECURITY] Cannot store sensitive data "${key}" in plaintext in production. ` +
+          "Ensure react-native-encrypted-storage is properly linked before building for release."
+      );
+    }
     console.error(
       `[SECURITY] Storing sensitive data "${key}" in plaintext via AsyncStorage. ` +
-        "Install react-native-encrypted-storage for encrypted storage.",
+        "Install react-native-encrypted-storage for encrypted storage."
     );
     return AsyncStorage.setItem(key, value);
   },
@@ -72,7 +78,9 @@ export interface OfflineRequest {
 }
 
 export const offlineStorage = {
-  async queueRequest(request: Omit<OfflineRequest, "id" | "timestamp" | "retries">): Promise<string> {
+  async queueRequest(
+    request: Omit<OfflineRequest, "id" | "timestamp" | "retries">
+  ): Promise<string> {
     const queue = await this.getQueue();
     const newRequest: OfflineRequest = {
       ...request,
@@ -127,8 +135,10 @@ export const offlineStorage = {
   async getCachedData<T>(key: string): Promise<T | null> {
     try {
       const data = await AsyncStorage.getItem(`${OFFLINE_DATA_PREFIX}${key}`);
-      if (!data) return null;
-      
+      if (!data) {
+        return null;
+      }
+
       const entry = JSON.parse(data);
       if (Date.now() - entry.timestamp > entry.ttl) {
         await AsyncStorage.removeItem(`${OFFLINE_DATA_PREFIX}${key}`);

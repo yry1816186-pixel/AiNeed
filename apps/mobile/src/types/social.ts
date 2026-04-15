@@ -36,9 +36,9 @@ export interface Comment {
 
 // 用户互动
 export interface UserInteraction {
-  type: 'like' | 'comment' | 'share' | 'bookmark' | 'follow';
+  type: "like" | "comment" | "share" | "bookmark" | "follow";
   targetId: string;
-  targetType: 'post' | 'comment' | 'user' | 'outfit';
+  targetType: "post" | "comment" | "user" | "outfit";
   createdAt: string;
 }
 
@@ -53,7 +53,7 @@ export interface SocialPlatform {
 
 // 分享选项
 export interface ShareOption {
-  social: 'weixin' | 'sinaweibo' | 'qq' | 'twitter' | 'facebook' | 'instagram';
+  social: "weixin" | "sinaweibo" | "qq" | "twitter" | "facebook" | "instagram";
   title: string;
   message: string;
   url?: string;
@@ -70,7 +70,7 @@ export interface ShareResult {
 // 通知类型
 export interface Notification {
   id: string;
-  type: 'like' | 'comment' | 'follow' | 'recommendation' | 'system';
+  type: "like" | "comment" | "follow" | "recommendation" | "system";
   title: string;
   message: string;
   data?: Record<string, unknown>;
@@ -84,7 +84,7 @@ export interface Message {
   senderId: string;
   receiverId: string;
   content: string;
-  type: 'text' | 'image' | 'outfit' | 'recommendation';
+  type: "text" | "image" | "outfit" | "recommendation";
   read: boolean;
   createdAt: string;
 }

@@ -1,6 +1,7 @@
 import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
+// eslint-disable-next-line import/no-unresolved
 import { ExtractJwt, Strategy } from "passport-jwt";
 
 import { TokenBlacklistService } from "../services/token-blacklist.service";

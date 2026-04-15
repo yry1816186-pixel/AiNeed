@@ -1,44 +1,38 @@
-import React, { useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import type { NavigationProp } from '@react-navigation/native';
+﻿import React, { useCallback, useMemo } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import type { NavigationProp } from "@react-navigation/native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   SlideInRight,
   SlideOutLeft,
-} from 'react-native-reanimated';
-import { Ionicons } from '../../polyfills/expo-vector-icons';
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../theme';
-import { useOnboardingStore } from '../../stores/onboardingStore';
-import type { OnboardingStep, OnboardingFormData } from '../../stores/onboardingStore';
-import { onboardingService } from '../../services/onboardingService';
-import { BasicInfoStep } from './steps/BasicInfoStep';
-import { PhotoStep } from './steps/PhotoStep';
-import { StyleTestStep } from './steps/StyleTestStep';
-import { CompleteStep } from './steps/CompleteStep';
-import type { RootStackParamList } from '../../types/navigation';
+} from "react-native-reanimated";
+import { Ionicons } from "../../polyfills/expo-vector-icons";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { useOnboardingStore } from "../../stores/onboardingStore";
+import type { OnboardingStep } from "../../stores/onboardingStore";
+import { onboardingService } from "../../services/onboardingService";
+import { BasicInfoStep } from "./steps/BasicInfoStep";
+import { PhotoStep } from "./steps/PhotoStep";
+import { StyleTestStep } from "./steps/StyleTestStep";
+import { CompleteStep } from "./steps/CompleteStep";
+import type { RootStackParamList } from "../../types/navigation";
 
 type NavigationPropType = NavigationProp<RootStackParamList>;
 
-const STEP_ORDER: OnboardingStep[] = ['basicInfo', 'photo', 'styleTest', 'complete'];
+const STEP_ORDER: OnboardingStep[] = ["basicInfo", "photo", "styleTest", "complete"];
 
 const STEP_TITLES: Record<OnboardingStep, string> = {
-  basicInfo: '基本信息',
-  photo: '上传照片',
-  styleTest: '风格测试',
-  complete: '完成设置',
+  basicInfo: "基本信息",
+  photo: "上传照片",
+  styleTest: "风格测试",
+  complete: "完成设置",
 };
 
-const SKIPPABLE_STEPS: OnboardingStep[] = ['photo', 'styleTest'];
+const SKIPPABLE_STEPS: OnboardingStep[] = ["photo", "styleTest"];
 
 export const OnboardingWizard: React.FC = () => {
   const navigation = useNavigation<NavigationPropType>();
@@ -65,7 +59,7 @@ export const OnboardingWizard: React.FC = () => {
         stiffness: 120,
       });
     },
-    [progressValue, totalSteps],
+    [progressValue, totalSteps]
   );
 
   const progressStyle = useAnimatedStyle(() => ({
@@ -73,19 +67,21 @@ export const OnboardingWizard: React.FC = () => {
   }));
 
   const canProceed = useCallback((): boolean => {
-    if (currentStep === 'basicInfo') {
+    if (currentStep === "basicInfo") {
       return formData.gender !== null && formData.ageRange !== null;
     }
     return true;
   }, [currentStep, formData.gender, formData.ageRange]);
 
   const handleNext = useCallback(() => {
-    if (!canProceed()) return;
+    if (!canProceed()) {
+      return;
+    }
 
     completeStep(currentStep);
 
-    if (currentStep === 'complete') {
-      handleComplete();
+    if (currentStep === "complete") {
+      void handleComplete();
       return;
     }
 
@@ -113,26 +109,26 @@ export const OnboardingWizard: React.FC = () => {
       await onboardingService.markOnboardingComplete();
       navigation.reset({
         index: 0,
-        routes: [{ name: 'MainTabs' }],
+        routes: [{ name: "MainTabs" }],
       });
     } catch {
       await onboardingService.markOnboardingComplete();
       navigation.reset({
         index: 0,
-        routes: [{ name: 'MainTabs' }],
+        routes: [{ name: "MainTabs" }],
       });
     } finally {
       setLoading(false);
     }
   }, [formData, navigation, setLoading]);
 
-  const isLastStep = currentStep === 'complete';
-  const isFirstStep = currentStep === 'basicInfo';
+  const isLastStep = currentStep === "complete";
+  const isFirstStep = currentStep === "basicInfo";
   const isSkippable = SKIPPABLE_STEPS.includes(currentStep);
 
   const renderStep = useMemo(() => {
     switch (currentStep) {
-      case 'basicInfo':
+      case "basicInfo":
         return (
           <Animated.View
             key={currentStep}
@@ -147,7 +143,7 @@ export const OnboardingWizard: React.FC = () => {
             />
           </Animated.View>
         );
-      case 'photo':
+      case "photo":
         return (
           <Animated.View
             key={currentStep}
@@ -155,13 +151,10 @@ export const OnboardingWizard: React.FC = () => {
             exiting={SlideOutLeft}
             style={styles.stepContainer}
           >
-            <PhotoStep
-              onNext={handleNext}
-              onSkip={handleSkip}
-            />
+            <PhotoStep onNext={handleNext} onSkip={handleSkip} />
           </Animated.View>
         );
-      case 'styleTest':
+      case "styleTest":
         return (
           <Animated.View
             key={currentStep}
@@ -169,13 +162,10 @@ export const OnboardingWizard: React.FC = () => {
             exiting={SlideOutLeft}
             style={styles.stepContainer}
           >
-            <StyleTestStep
-              onNext={handleNext}
-              onSkip={handleSkip}
-            />
+            <StyleTestStep onNext={handleNext} onSkip={handleSkip} />
           </Animated.View>
         );
-      case 'complete':
+      case "complete":
         return (
           <Animated.View
             key={currentStep}
@@ -210,16 +200,8 @@ export const OnboardingWizard: React.FC = () => {
 
       <View style={styles.footer}>
         {!isFirstStep && (
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={handleBack}
-            activeOpacity={0.7}
-          >
-            <Ionicons
-              name="arrow-back"
-              size={20}
-              color={theme.colors.textSecondary}
-            />
+          <TouchableOpacity style={styles.backButton} onPress={handleBack} activeOpacity={0.7}>
+            <Ionicons name="arrow-back" size={20} color={theme.colors.textSecondary} />
             <Text style={styles.backButtonText}>上一步</Text>
           </TouchableOpacity>
         )}
@@ -227,21 +209,14 @@ export const OnboardingWizard: React.FC = () => {
         <View style={styles.footerSpacer} />
 
         {isSkippable && (
-          <TouchableOpacity
-            style={styles.skipButton}
-            onPress={handleSkip}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity style={styles.skipButton} onPress={handleSkip} activeOpacity={0.7}>
             <Text style={styles.skipButtonText}>跳过</Text>
           </TouchableOpacity>
         )}
 
         {!isLastStep && (
           <TouchableOpacity
-            style={[
-              styles.nextButton,
-              !canProceed() && styles.nextButtonDisabled,
-            ]}
+            style={[styles.nextButton, !canProceed() && styles.nextButtonDisabled]}
             onPress={handleNext}
             disabled={!canProceed() || isLoading}
             activeOpacity={0.7}
@@ -251,11 +226,7 @@ export const OnboardingWizard: React.FC = () => {
             ) : (
               <>
                 <Text style={styles.nextButtonText}>下一步</Text>
-                <Ionicons
-                  name="arrow-forward"
-                  size={18}
-                  color={theme.colors.surface}
-                />
+                <Ionicons name="arrow-forward" size={18} color={theme.colors.surface} />
               </>
             )}
           </TouchableOpacity>
@@ -271,8 +242,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
   },
   progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: Spacing[5],
     paddingTop: Spacing[3],
     paddingBottom: Spacing[2],
@@ -282,10 +253,10 @@ const styles = StyleSheet.create({
     height: 3,
     backgroundColor: Colors.neutral[200],
     borderRadius: BorderRadius.full,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressFill: {
-    height: '100%',
+    height: "100%",
     backgroundColor: theme.colors.primary,
     borderRadius: BorderRadius.full,
   },
@@ -293,7 +264,7 @@ const styles = StyleSheet.create({
     marginLeft: Spacing[3],
     fontSize: 12,
     color: theme.colors.textTertiary,
-    fontWeight: '500',
+    fontWeight: "500",
     minWidth: 36,
   },
   stepHeader: {
@@ -303,26 +274,26 @@ const styles = StyleSheet.create({
   },
   stepTitleText: {
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.text,
   },
   content: {
     flex: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   stepContainer: {
     flex: 1,
   },
   footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: Spacing[5],
     paddingVertical: Spacing[4],
     paddingBottom: Spacing[6],
   },
   backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing[1],
     paddingVertical: Spacing[3],
     paddingHorizontal: Spacing[2],
@@ -330,7 +301,7 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   footerSpacer: {
     flex: 1,
@@ -343,11 +314,11 @@ const styles = StyleSheet.create({
   skipButtonText: {
     fontSize: 14,
     color: theme.colors.textTertiary,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   nextButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.colors.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
@@ -361,7 +332,7 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.surface,
   },
 });

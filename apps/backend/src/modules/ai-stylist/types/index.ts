@@ -74,7 +74,7 @@ export interface GLM5Response {
 
 // ==================== Clothing Item Types ====================
 
-import { ClothingCategory } from "@prisma/client";
+import { ClothingCategory , TryOnStatus , BodyType, SkinTone, ColorSeason } from "@prisma/client";
 
 export interface ClothingItemBasic {
   id: string;
@@ -106,7 +106,7 @@ export interface StyleAnalysisResult {
 
 // ==================== Try-On Response Types ====================
 
-import { TryOnStatus } from "@prisma/client";
+
 
 export interface TryOnServiceResponse {
   success: boolean;
@@ -131,7 +131,7 @@ export interface AgentLoopResult {
 
 // ==================== Tool Input/Output Types ====================
 
-import { BodyType, SkinTone, ColorSeason } from "@prisma/client";
+
 
 export interface GetUserProfileInput {
   userId: string;
@@ -209,7 +209,7 @@ export interface VirtualTryOnResult {
 export interface RecordUserDecisionInput {
   sessionId: string;
   decision: {
-    type: "like" | "dislike" | "try_on" | "purchase" | "skip" | "save";
+    type: "post_like" | "click" | "try_on_complete" | "purchase" | "favorite";
     itemId?: string;
     reason?: string;
   };

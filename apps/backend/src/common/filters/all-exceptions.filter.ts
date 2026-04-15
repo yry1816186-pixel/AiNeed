@@ -17,6 +17,8 @@
  * ```
  */
 
+import { AsyncLocalStorage } from "async_hooks";
+
 import {
   ExceptionFilter,
   Catch,
@@ -27,10 +29,9 @@ import {
   Inject,
   Optional,
 } from "@nestjs/common";
-import { Request, Response } from "express";
 import { Prisma } from "@prisma/client";
-import { StructuredLoggerService, RequestContext } from "../logging/structured-logger.service";
-import { AsyncLocalStorage } from "async_hooks";
+import { Request, Response } from "express";
+
 import {
   BusinessException,
   ValidationException,
@@ -38,6 +39,7 @@ import {
   ForbiddenException,
   ValidationErrorItem,
 } from "../exceptions";
+import { StructuredLoggerService, RequestContext } from "../logging/structured-logger.service";
 import { SentryService } from "../sentry/sentry.service";
 
 /**
@@ -125,6 +127,7 @@ const SENSITIVE_FIELDS = [
 @Injectable()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly isProduction: boolean;
+  // eslint-disable-next-line no-console
   private readonly internalLogger = new console.Console({
     stdout: process.stdout,
     stderr: process.stderr,
@@ -634,7 +637,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
    * 遮罩IP地址
    */
   private maskIp(ip: string | undefined): string {
-    if (!ip) return "unknown";
+    if (!ip) {return "unknown";}
 
     if (ip.includes(".")) {
       const parts = ip.split(".");
@@ -658,7 +661,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     request: Request,
     errorResponse: ErrorResponse,
   ): void {
-    if (!this.sentryService?.isEnabled()) return;
+    if (!this.sentryService?.isEnabled()) {return;}
 
     const statusCode = this.getStatusCode(exception);
 

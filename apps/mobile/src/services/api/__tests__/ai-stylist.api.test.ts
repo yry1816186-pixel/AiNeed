@@ -117,10 +117,9 @@ describe("aiStylistApi", () => {
 
       const result = await aiStylistApi.sendMessage("session-1", "I want casual style");
 
-      expect(mockPost).toHaveBeenCalledWith(
-        "/ai-stylist/sessions/session-1/messages",
-        { message: "I want casual style" },
-      );
+      expect(mockPost).toHaveBeenCalledWith("/ai-stylist/sessions/session-1/messages", {
+        message: "I want casual style",
+      });
       expect(result.success).toBe(true);
     });
 
@@ -132,10 +131,11 @@ describe("aiStylistApi", () => {
 
       await aiStylistApi.sendMessage("session-1", "What to wear today", 39.9, 116.4);
 
-      expect(mockPost).toHaveBeenCalledWith(
-        "/ai-stylist/sessions/session-1/messages",
-        { message: "What to wear today", latitude: 39.9, longitude: 116.4 },
-      );
+      expect(mockPost).toHaveBeenCalledWith("/ai-stylist/sessions/session-1/messages", {
+        message: "What to wear today",
+        latitude: 39.9,
+        longitude: 116.4,
+      });
     });
 
     it("should not include latitude/longitude when not provided", async () => {
@@ -170,7 +170,7 @@ describe("aiStylistApi", () => {
 
       expect(mockUpload).toHaveBeenCalledWith(
         "/ai-stylist/sessions/session-1/photo",
-        expect.any(FormData),
+        expect.any(FormData)
       );
       expect(result.success).toBe(true);
       if (result.success && result.data) {
@@ -214,10 +214,9 @@ describe("aiStylistApi", () => {
 
       const result = await aiStylistApi.attachExistingPhoto("session-1", "photo-1");
 
-      expect(mockPost).toHaveBeenCalledWith(
-        "/ai-stylist/sessions/session-1/photo/reference",
-        { photoId: "photo-1" },
-      );
+      expect(mockPost).toHaveBeenCalledWith("/ai-stylist/sessions/session-1/photo/reference", {
+        photoId: "photo-1",
+      });
       expect(result.success).toBe(true);
     });
   });
@@ -237,9 +236,7 @@ describe("aiStylistApi", () => {
           outfits: [
             {
               title: "Casual Summer",
-              items: [
-                { category: "tops", name: "White T-Shirt", reason: "Classic" },
-              ],
+              items: [{ category: "tops", name: "White T-Shirt", reason: "Classic" }],
               styleExplanation: ["Simple and clean"],
             },
           ],
@@ -249,9 +246,7 @@ describe("aiStylistApi", () => {
 
       const result = await aiStylistApi.resolveSession("session-1");
 
-      expect(mockPost).toHaveBeenCalledWith(
-        "/ai-stylist/sessions/session-1/resolve",
-      );
+      expect(mockPost).toHaveBeenCalledWith("/ai-stylist/sessions/session-1/resolve");
       expect(result.success).toBe(true);
     });
   });
@@ -289,9 +284,7 @@ describe("aiStylistApi", () => {
 
       const result = await aiStylistApi.getOutfitPlan("session-1");
 
-      expect(mockGet).toHaveBeenCalledWith(
-        "/ai-stylist/sessions/session-1/outfit-plan",
-      );
+      expect(mockGet).toHaveBeenCalledWith("/ai-stylist/sessions/session-1/outfit-plan");
       expect(result.success).toBe(true);
     });
   });
@@ -308,7 +301,7 @@ describe("aiStylistApi", () => {
       const result = await aiStylistApi.getAlternatives("session-1", 0, 1, 5);
 
       expect(mockGet).toHaveBeenCalledWith(
-        "/ai-stylist/sessions/session-1/items/alternatives?outfitIndex=0&itemIndex=1&limit=5",
+        "/ai-stylist/sessions/session-1/items/alternatives?outfitIndex=0&itemIndex=1&limit=5"
       );
       expect(result.success).toBe(true);
     });
@@ -322,7 +315,7 @@ describe("aiStylistApi", () => {
       await aiStylistApi.getAlternatives("session-1", 0, 0);
 
       expect(mockGet).toHaveBeenCalledWith(
-        "/ai-stylist/sessions/session-1/items/alternatives?outfitIndex=0&itemIndex=0&limit=10",
+        "/ai-stylist/sessions/session-1/items/alternatives?outfitIndex=0&itemIndex=0&limit=10"
       );
     });
   });
@@ -338,10 +331,11 @@ describe("aiStylistApi", () => {
 
       const result = await aiStylistApi.replaceItem("session-1", 0, 1, "new-item-1");
 
-      expect(mockPost).toHaveBeenCalledWith(
-        "/ai-stylist/sessions/session-1/items/replace",
-        { outfitIndex: 0, itemIndex: 1, newItemId: "new-item-1" },
-      );
+      expect(mockPost).toHaveBeenCalledWith("/ai-stylist/sessions/session-1/items/replace", {
+        outfitIndex: 0,
+        itemIndex: 1,
+        newItemId: "new-item-1",
+      });
       expect(result.success).toBe(true);
     });
   });
@@ -362,10 +356,12 @@ describe("aiStylistApi", () => {
         rating: 5,
       });
 
-      expect(mockPost).toHaveBeenCalledWith(
-        "/ai-stylist/sessions/session-1/feedback",
-        { outfitIndex: 0, action: "like", itemId: "item-1", rating: 5 },
-      );
+      expect(mockPost).toHaveBeenCalledWith("/ai-stylist/sessions/session-1/feedback", {
+        outfitIndex: 0,
+        action: "like",
+        itemId: "item-1",
+        rating: 5,
+      });
       expect(result.success).toBe(true);
     });
 
@@ -383,7 +379,7 @@ describe("aiStylistApi", () => {
 
       expect(mockPost).toHaveBeenCalledWith(
         "/ai-stylist/sessions/session-1/feedback",
-        expect.objectContaining({ action: "dislike", dislikeReason: "Too colorful" }),
+        expect.objectContaining({ action: "dislike", dislikeReason: "Too colorful" })
       );
       expect(result.success).toBe(true);
     });
@@ -416,9 +412,7 @@ describe("aiStylistApi", () => {
 
       const result = await aiStylistApi.getCalendarDays(2025, 6);
 
-      expect(mockGet).toHaveBeenCalledWith(
-        "/ai-stylist/sessions/calendar?year=2025&month=6",
-      );
+      expect(mockGet).toHaveBeenCalledWith("/ai-stylist/sessions/calendar?year=2025&month=6");
       expect(result.success).toBe(true);
     });
   });
@@ -434,9 +428,7 @@ describe("aiStylistApi", () => {
 
       const result = await aiStylistApi.getSessionsByDate("2025-06-15");
 
-      expect(mockGet).toHaveBeenCalledWith(
-        "/ai-stylist/sessions/date/2025-06-15",
-      );
+      expect(mockGet).toHaveBeenCalledWith("/ai-stylist/sessions/date/2025-06-15");
       expect(result.success).toBe(true);
     });
   });

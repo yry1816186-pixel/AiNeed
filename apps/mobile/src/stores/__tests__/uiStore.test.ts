@@ -209,9 +209,7 @@ describe("useUIStore", () => {
         title: "失败",
         message: "网络连接超时",
       });
-      expect(useUIStore.getState().notifications[0].message).toBe(
-        "网络连接超时",
-      );
+      expect(useUIStore.getState().notifications[0].message).toBe("网络连接超时");
     });
 
     test("通知列表最多保留 10 条", () => {

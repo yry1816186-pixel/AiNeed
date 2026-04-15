@@ -17,6 +17,16 @@ import cv2
 import numpy as np
 from PIL import Image
 
+# P0-5: Import unified color utilities instead of local duplicates
+from ml.services.analysis.color_utils import (
+    rgb_to_lab,
+    lab_to_rgb,
+    delta_e_ciede2000,
+    is_skin_pixel_cielab,
+    rgb_to_lab_batch,
+    lab_to_rgb_batch,
+)
+
 logger = logging.getLogger(__name__)
 
 # MediaPipe Pose landmark indices
@@ -34,10 +44,11 @@ RIGHT_EAR = 8
 LEFT_WRIST = 15
 RIGHT_WRIST = 16
 
-# CIELAB conversion constants (D65 illuminant)
-_D65_XN = 0.95047
-_D65_YN = 1.00000
-_D65_ZN = 1.08883
+# Backward-compatible aliases (internal code and external consumers use _ prefix versions)
+_rgb_to_lab = rgb_to_lab
+_lab_to_rgb = lab_to_rgb
+_ciede2000 = delta_e_ciede2000
+_is_skin_pixel_cielab = is_skin_pixel_cielab
 
 
 @dataclass
@@ -76,159 +87,6 @@ class PreprocessResult:
     mask_region: Optional[np.ndarray] = None
 
 
-def _rgb_to_lab(r: int, g: int, b: int) -> Tuple[float, float, float]:
-    """Convert RGB (0-255) to CIELAB using D65 illuminant."""
-    # Normalize to [0, 1]
-    rn = r / 255.0
-    gn = g / 255.0
-    bn = b / 255.0
-
-    # sRGB -> linear RGB
-    def linearize(c: float) -> float:
-        return ((c + 0.055) / 1.055) ** 2.4 if c > 0.04045 else c / 12.92
-
-    rl = linearize(rn)
-    gl = linearize(gn)
-    bl = linearize(bn)
-
-    # Linear RGB -> XYZ (D65)
-    x = (rl * 0.4124564 + gl * 0.3575761 + bl * 0.1804375) / _D65_XN
-    y = (rl * 0.2126729 + gl * 0.7151522 + bl * 0.0721750) / _D65_YN
-    z = (rl * 0.0193339 + gl * 0.1191920 + bl * 0.9503041) / _D65_ZN
-
-    # XYZ -> CIELAB
-    def f(t: float) -> float:
-        delta = 6.0 / 29.0
-        if t > delta ** 3:
-            return t ** (1.0 / 3.0)
-        return t / (3.0 * delta * delta) + 4.0 / 29.0
-
-    fx, fy, fz = f(x), f(y), f(z)
-    l_star = 116.0 * fy - 16.0
-    a_star = 500.0 * (fx - fy)
-    b_star = 200.0 * (fy - fz)
-
-    return (l_star, a_star, b_star)
-
-
-def _lab_to_rgb(l: float, a: float, b: float) -> Tuple[int, int, int]:
-    """Convert CIELAB to RGB (0-255)."""
-    delta = 6.0 / 29.0
-    fy = (l + 16.0) / 116.0
-    fx = a / 500.0 + fy
-    fz = fy - b / 200.0
-
-    def inv_f(t: float) -> float:
-        if t > delta:
-            return t ** 3
-        return 3.0 * delta * delta * (t - 4.0 / 29.0)
-
-    xn = inv_f(fx) * _D65_XN
-    yn = inv_f(fy) * _D65_YN
-    zn = inv_f(fz) * _D65_ZN
-
-    # XYZ -> linear RGB
-    rl = 3.2404542 * xn - 1.5371385 * yn - 0.4985314 * zn
-    gl = -0.9692660 * xn + 1.8760108 * yn + 0.0415560 * zn
-    bl = 0.0556434 * xn - 0.2040259 * yn + 1.0572252 * zn
-
-    # Gamma correction
-    def gamma(c: float) -> float:
-        c = max(0.0, c)
-        return 1.055 * c ** (1.0 / 2.4) - 0.055 if c > 0.0031308 else 12.92 * c
-
-    return (
-        min(255, max(0, round(gamma(rl) * 255))),
-        min(255, max(0, round(gamma(gl) * 255))),
-        min(255, max(0, round(gamma(bl) * 255))),
-    )
-
-
-def _ciede2000(lab1: Tuple[float, float, float], lab2: Tuple[float, float, float]) -> float:
-    """Compute CIEDE2000 color difference between two CIELAB colors."""
-    l1, a1, b1 = lab1
-    l2, a2, b2 = lab2
-
-    c1 = np.sqrt(a1 ** 2 + b1 ** 2)
-    c2 = np.sqrt(a2 ** 2 + b2 ** 2)
-    c_avg = (c1 + c2) / 2.0
-
-    c_avg_7 = c_avg ** 7
-    g = 0.5 * (1.0 - np.sqrt(c_avg_7 / (c_avg_7 + 25.0 ** 7)))
-
-    a1p = a1 * (1.0 + g)
-    a2p = a2 * (1.0 + g)
-
-    c1p = np.sqrt(a1p ** 2 + b1 ** 2)
-    c2p = np.sqrt(a2p ** 2 + b2 ** 2)
-
-    h1p = np.degrees(np.arctan2(b1, a1p)) % 360.0
-    h2p = np.degrees(np.arctan2(b2, a2p)) % 360.0
-
-    dl = l2 - l1
-    dcp = c2p - c1p
-
-    if c1p * c2p == 0:
-        dhp = 0.0
-    elif abs(h2p - h1p) <= 180.0:
-        dhp = h2p - h1p
-    elif h2p - h1p > 180.0:
-        dhp = h2p - h1p - 360.0
-    else:
-        dhp = h2p - h1p + 360.0
-
-    dhp_val = 2.0 * np.sqrt(c1p * c2p) * np.sin(np.radians(dhp / 2.0))
-
-    lp_avg = (l1 + l2) / 2.0
-    cp_avg = (c1p + c2p) / 2.0
-
-    if c1p * c2p == 0:
-        hp_avg = h1p + h2p
-    elif abs(h1p - h2p) <= 180.0:
-        hp_avg = (h1p + h2p) / 2.0
-    elif h1p + h2p < 360.0:
-        hp_avg = (h1p + h2p + 360.0) / 2.0
-    else:
-        hp_avg = (h1p + h2p - 360.0) / 2.0
-
-    t = (1.0
-         - 0.17 * np.cos(np.radians(hp_avg - 30.0))
-         + 0.24 * np.cos(np.radians(2.0 * hp_avg))
-         + 0.32 * np.cos(np.radians(3.0 * hp_avg + 6.0))
-         - 0.20 * np.cos(np.radians(4.0 * hp_avg - 63.0)))
-
-    sl = 1.0 + 0.015 * (lp_avg - 50.0) ** 2 / np.sqrt(20.0 + (lp_avg - 50.0) ** 2)
-    sc = 1.0 + 0.045 * cp_avg
-    sh = 1.0 + 0.015 * cp_avg * t
-
-    cp_avg_7 = cp_avg ** 7
-    rt = (-np.sin(np.radians(2.0 * (30.0 * np.exp(-((hp_avg - 275.0) / 25.0) ** 2))))
-          * 2.0 * np.sqrt(cp_avg_7 / (cp_avg_7 + 25.0 ** 7)))
-
-    kl, kc, kh = 1.0, 1.0, 1.0
-
-    result = np.sqrt(
-        (dl / (kl * sl)) ** 2
-        + (dcp / (kc * sc)) ** 2
-        + (dhp_val / (kh * sh)) ** 2
-        + rt * (dcp / (kc * sc)) * (dhp_val / (kh * sh))
-    )
-
-    return float(result)
-
-
-def _is_skin_pixel_cielab(r: int, g: int, b: int) -> bool:
-    """Skin pixel detection using CIELAB color space (more accurate than RGB heuristic)."""
-    l, a, b_val = _rgb_to_lab(r, g, b)
-    # Human skin tone in CIELAB: L* in [20, 90], a* in [2, 20], b* in [5, 35]
-    # This covers the full range of human skin tones across ethnicities
-    if l < 15 or l > 95:
-        return False
-    if a < -5 or a > 25:
-        return False
-    if b_val < 2 or b_val > 40:
-        return False
-    return True
 
 
 def _kmeans_colors(img_array: np.ndarray, k: int = 3) -> List[Tuple[int, int, int]]:
@@ -244,29 +102,8 @@ def _kmeans_colors(img_array: np.ndarray, k: int = 3) -> List[Tuple[int, int, in
         indices = np.random.choice(len(pixels), 5000, replace=False)
         pixels = pixels[indices]
 
-    # Convert all pixels to CIELAB using vectorized operation
-    r_flat = pixels[:, 0].astype(np.float64) / 255.0
-    g_flat = pixels[:, 1].astype(np.float64) / 255.0
-    b_flat = pixels[:, 2].astype(np.float64) / 255.0
-
-    # Vectorized sRGB linearization
-    def _vec_linearize(c):
-        return np.where(c > 0.04045, ((c + 0.055) / 1.055) ** 2.4, c / 12.92)
-
-    rl = _vec_linearize(r_flat)
-    gl = _vec_linearize(g_flat)
-    bl = _vec_linearize(b_flat)
-
-    x = (rl * 0.4124564 + gl * 0.3575761 + bl * 0.1804375) / _D65_XN
-    y = (rl * 0.2126729 + gl * 0.7151522 + bl * 0.0721750) / _D65_YN
-    z = (rl * 0.0193339 + gl * 0.1191920 + bl * 0.9503041) / _D65_ZN
-
-    delta = 6.0 / 29.0
-    fx = np.where(x > delta ** 3, x ** (1.0 / 3.0), x / (3.0 * delta * delta) + 4.0 / 29.0)
-    fy = np.where(y > delta ** 3, y ** (1.0 / 3.0), y / (3.0 * delta * delta) + 4.0 / 29.0)
-    fz = np.where(z > delta ** 3, z ** (1.0 / 3.0), z / (3.0 * delta * delta) + 4.0 / 29.0)
-
-    lab_pixels = np.column_stack([116.0 * fy - 16.0, 500.0 * (fx - fy), 200.0 * (fy - fz)])
+    # Convert all pixels to CIELAB using unified batch function
+    lab_pixels = rgb_to_lab_batch(pixels.astype(np.float64))
 
     # Simple k-means in CIELAB space using Euclidean distance (fast)
     # Initialize centroids using k-means++
@@ -294,8 +131,9 @@ def _kmeans_colors(img_array: np.ndarray, k: int = 3) -> List[Tuple[int, int, in
             if mask.sum() > 0:
                 centroids[j] = lab_pixels[mask].mean(axis=0)
 
-    # Convert centroids back to RGB
-    dominant_rgb = [_lab_to_rgb(float(c[0]), float(c[1]), float(c[2])) for c in centroids]
+    # Convert centroids back to RGB using unified batch function
+    dominant_rgb_arr = lab_to_rgb_batch(centroids)
+    dominant_rgb = [tuple(row) for row in dominant_rgb_arr]
     return dominant_rgb
 
 
@@ -610,26 +448,9 @@ class TryonPreprocessor:
                 avg_lab=(50.0, 0.0, 0.0),
             )
 
-        # Convert to CIELAB using vectorized operation
+        # Convert to CIELAB using unified batch function
         skin_arr = np.array(skin_pixels, dtype=np.float64)
-        r_f = skin_arr[:, 0] / 255.0
-        g_f = skin_arr[:, 1] / 255.0
-        b_f = skin_arr[:, 2] / 255.0
-
-        rl = np.where(r_f > 0.04045, ((r_f + 0.055) / 1.055) ** 2.4, r_f / 12.92)
-        gl = np.where(g_f > 0.04045, ((g_f + 0.055) / 1.055) ** 2.4, g_f / 12.92)
-        bl = np.where(b_f > 0.04045, ((b_f + 0.055) / 1.055) ** 2.4, b_f / 12.92)
-
-        x = (rl * 0.4124564 + gl * 0.3575761 + bl * 0.1804375) / _D65_XN
-        y = (rl * 0.2126729 + gl * 0.7151522 + bl * 0.0721750) / _D65_YN
-        z = (rl * 0.0193339 + gl * 0.1191920 + bl * 0.9503041) / _D65_ZN
-
-        delta = 6.0 / 29.0
-        fx = np.where(x > delta ** 3, x ** (1.0 / 3.0), x / (3.0 * delta * delta) + 4.0 / 29.0)
-        fy = np.where(y > delta ** 3, y ** (1.0 / 3.0), y / (3.0 * delta * delta) + 4.0 / 29.0)
-        fz = np.where(z > delta ** 3, z ** (1.0 / 3.0), z / (3.0 * delta * delta) + 4.0 / 29.0)
-
-        lab_arr = np.column_stack([116.0 * fy - 16.0, 500.0 * (fx - fy), 200.0 * (fy - fz)])
+        lab_arr = rgb_to_lab_batch(skin_arr)
         avg_l = float(np.mean(lab_arr[:, 0]))
         avg_a = float(np.mean(lab_arr[:, 1]))
         avg_b = float(np.mean(lab_arr[:, 2]))

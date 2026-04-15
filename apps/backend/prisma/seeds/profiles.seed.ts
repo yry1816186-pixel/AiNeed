@@ -89,7 +89,7 @@ const USER_PHOTOS = [
     ],
   },
   {
-    email: 'demo@aineed.ai',
+    email: 'demo@xuno.app',
     photos: [
       { type: 'full_body' as PhotoType, url: 'https://picsum.photos/seed/user2-full/600/900', thumbnailUrl: 'https://picsum.photos/seed/user2-full/200/300', originalName: 'full_body_demo.jpg', mimeType: 'image/jpeg', size: 230000, analysisStatus: 'completed' as AnalysisStatus, analyzedAt: new Date('2026-03-02T14:00:00Z'), analysisResult: { bodyType: 'rectangle', skinTone: 'fair', confidence: 0.90 } },
     ],
@@ -102,7 +102,7 @@ const USER_PHOTOS = [
     ],
   },
   {
-    email: 'admin@aineed.ai',
+    email: 'admin@xuno.app',
     photos: [
       { type: 'half_body' as PhotoType, url: 'https://picsum.photos/seed/user4-half/600/800', thumbnailUrl: 'https://picsum.photos/seed/user4-half/200/267', originalName: 'half_body_admin.jpg', mimeType: 'image/jpeg', size: 210000, analysisStatus: 'completed' as AnalysisStatus, analyzedAt: new Date('2026-03-04T11:00:00Z'), analysisResult: { bodyType: 'hourglass', skinTone: 'olive', confidence: 0.91 } },
     ],
@@ -165,7 +165,7 @@ const USER_BEHAVIORS = [
     ],
   },
   {
-    email: 'demo@aineed.ai',
+    email: 'demo@xuno.app',
     behaviors: [
       { type: 'page_view', itemId: null, daysAgo: 5 },
       { type: 'item_view', itemId: 'clothing-demo-010', daysAgo: 4 },
@@ -190,7 +190,7 @@ const USER_BEHAVIORS = [
     ],
   },
   {
-    email: 'admin@aineed.ai',
+    email: 'admin@xuno.app',
     behaviors: [
       { type: 'page_view', itemId: null, daysAgo: 6 },
       { type: 'search', itemId: null, daysAgo: 5 },

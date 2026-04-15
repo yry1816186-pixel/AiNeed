@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+
 import { RedisService } from "../../../common/redis/redis.service";
 
 const BLACKLIST_KEY_PREFIX = "token:blacklist:";
@@ -58,6 +59,12 @@ export class TokenBlacklistService {
     }
     const userTokensKey = `${USER_TOKENS_KEY_PREFIX}${userId}`;
     await this.redisService.lpush(userTokensKey, jti);
-    await this.redisService.expire(userTokensKey, expiresInSeconds);
+    // 仅在 key 首次创建时设置 expire，避免每次 lpush 都重置 TTL
+    // 检查当前 TTL：-1 表示 key 存在但无过期时间（需要设置），-2 表示 key 不存在
+    const currentTtl = await this.redisService.ttl(userTokensKey);
+    if (currentTtl === -1 || currentTtl === -2) {
+      await this.redisService.expire(userTokensKey, expiresInSeconds);
+    }
+    // currentTtl > 0 表示 key 已有 TTL，保留不重置
   }
 }

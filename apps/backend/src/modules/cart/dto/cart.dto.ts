@@ -1,21 +1,21 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsString, IsNumber, IsOptional, IsBoolean, IsArray, Min, Max } from "class-validator";
 import { Type } from "class-transformer";
+import { IsString, IsNumber, IsOptional, IsBoolean, IsArray, Min, Max, IsNotEmpty } from "class-validator";
 
 export class AddToCartDto {
   @ApiProperty({ description: "商品ID" })
   @IsString()
   itemId!: string;
 
-  @ApiPropertyOptional({ description: "颜色" })
-  @IsOptional()
+  @ApiProperty({ description: "颜色" })
+  @IsNotEmpty()
   @IsString()
-  color?: string;
+  color!: string;
 
-  @ApiPropertyOptional({ description: "尺码" })
-  @IsOptional()
+  @ApiProperty({ description: "尺码" })
+  @IsNotEmpty()
   @IsString()
-  size?: string;
+  size!: string;
 
   @ApiProperty({ description: "数量", default: 1 })
   @Type(() => Number)

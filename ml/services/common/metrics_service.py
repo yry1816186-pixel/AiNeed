@@ -1,13 +1,99 @@
 """
 Prometheus Metrics Module for AI Service
 Collects LLM, vector search, and model inference metrics
+
+A-P2-14: Added sampling rate control to prevent metrics collection
+from becoming a performance bottleneck under high concurrency.
 """
 
 from prometheus_client import Counter, Histogram, Gauge, Info, CollectorRegistry
 import time
+import random
+import os
 from functools import wraps
 from typing import Callable, Any, Optional
-import os
+
+
+# A-P2-14: 全局采样率控制
+# 采样率 0.0-1.0，1.0 表示 100% 采集，0.1 表示 10% 采集
+# 可通过环境变量 METRICS_SAMPLE_RATE 配置
+_global_sample_rate: float = float(os.getenv("METRICS_SAMPLE_RATE", "1.0"))
+
+# 各类别指标的独立采样率，优先级高于全局采样率
+_category_sample_rates: dict = {}
+
+# 是否启用采样率控制（默认启用）
+_sampling_enabled: bool = os.getenv("METRICS_SAMPLING_ENABLED", "true").lower() in ("true", "1", "yes")
+
+
+def set_sample_rate(rate: float, category: Optional[str] = None):
+    """
+    A-P2-14: 设置指标采样率
+
+    Args:
+        rate: 采样率 0.0-1.0
+        category: 可选的指标类别。如果指定，仅设置该类别的采样率；
+                  如果不指定，设置全局采样率。
+
+    类别列表：
+    - llm: LLM 调用指标
+    - vector_search: 向量搜索指标
+    - model_inference: 模型推理指标
+    - try_on: 虚拟试衣指标
+    - style_analysis: 风格分析指标
+    - body_analysis: 身体分析指标
+    - hallucination: 幻觉检测指标
+    """
+    rate = max(0.0, min(1.0, rate))
+    if category:
+        _category_sample_rates[category] = rate
+    else:
+        global _global_sample_rate
+        _global_sample_rate = rate
+
+
+def get_sample_rate(category: Optional[str] = None) -> float:
+    """
+    A-P2-14: 获取指标采样率
+
+    Args:
+        category: 可选的指标类别
+
+    Returns:
+        采样率 0.0-1.0
+    """
+    if category and category in _category_sample_rates:
+        return _category_sample_rates[category]
+    return _global_sample_rate
+
+
+def should_sample(category: Optional[str] = None) -> bool:
+    """
+    A-P2-14: 判断当前请求是否应该采集指标
+
+    使用随机采样决定是否采集，避免高并发时指标收集成为瓶颈。
+
+    Args:
+        category: 可选的指标类别
+
+    Returns:
+        True 如果应该采集，False 如果应该跳过
+    """
+    if not _sampling_enabled:
+        return True
+
+    rate = get_sample_rate(category)
+    if rate >= 1.0:
+        return True
+    if rate <= 0.0:
+        return False
+    return random.random() < rate
+
+
+def set_sampling_enabled(enabled: bool):
+    """A-P2-14: 启用或禁用采样率控制"""
+    global _sampling_enabled
+    _sampling_enabled = enabled
 
 # ===================
 # LLM Metrics
@@ -193,43 +279,55 @@ service_info.info({
 def track_llm_call(model: str, provider: str = 'openai'):
     """
     Decorator to track LLM API calls
+
+    A-P2-14: 支持采样率控制，默认使用 llm 类别采样率
     """
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def async_wrapper(*args, **kwargs) -> Any:
+            # A-P2-14: 采样率检查
+            do_sample = should_sample("llm")
             start_time = time.time()
             try:
                 result = await func(*args, **kwargs)
-                llm_calls_total.labels(model=model, provider=provider, endpoint=func.__name__).inc()
+                if do_sample:
+                    llm_calls_total.labels(model=model, provider=provider, endpoint=func.__name__).inc()
 
-                # Track tokens if available in response
-                if hasattr(result, 'usage'):
-                    if hasattr(result.usage, 'prompt_tokens'):
-                        llm_tokens_total.labels(model=model, type='prompt').inc(result.usage.prompt_tokens)
-                    if hasattr(result.usage, 'completion_tokens'):
-                        llm_tokens_total.labels(model=model, type='completion').inc(result.usage.completion_tokens)
+                    # Track tokens if available in response
+                    if hasattr(result, 'usage'):
+                        if hasattr(result.usage, 'prompt_tokens'):
+                            llm_tokens_total.labels(model=model, type='prompt').inc(result.usage.prompt_tokens)
+                        if hasattr(result.usage, 'completion_tokens'):
+                            llm_tokens_total.labels(model=model, type='completion').inc(result.usage.completion_tokens)
 
                 return result
             except Exception as e:
-                llm_errors_total.labels(model=model, provider=provider, error_type=type(e).__name__).inc()
+                if do_sample:
+                    llm_errors_total.labels(model=model, provider=provider, error_type=type(e).__name__).inc()
                 raise
             finally:
-                duration = time.time() - start_time
-                llm_call_duration_seconds.labels(model=model, provider=provider).observe(duration)
+                if do_sample:
+                    duration = time.time() - start_time
+                    llm_call_duration_seconds.labels(model=model, provider=provider).observe(duration)
 
         @wraps(func)
         def sync_wrapper(*args, **kwargs) -> Any:
+            # A-P2-14: 采样率检查
+            do_sample = should_sample("llm")
             start_time = time.time()
             try:
                 result = func(*args, **kwargs)
-                llm_calls_total.labels(model=model, provider=provider, endpoint=func.__name__).inc()
+                if do_sample:
+                    llm_calls_total.labels(model=model, provider=provider, endpoint=func.__name__).inc()
                 return result
             except Exception as e:
-                llm_errors_total.labels(model=model, provider=provider, error_type=type(e).__name__).inc()
+                if do_sample:
+                    llm_errors_total.labels(model=model, provider=provider, error_type=type(e).__name__).inc()
                 raise
             finally:
-                duration = time.time() - start_time
-                llm_call_duration_seconds.labels(model=model, provider=provider).observe(duration)
+                if do_sample:
+                    duration = time.time() - start_time
+                    llm_call_duration_seconds.labels(model=model, provider=provider).observe(duration)
 
         import asyncio
         if asyncio.iscoroutinefunction(func):
@@ -242,43 +340,55 @@ def track_llm_call(model: str, provider: str = 'openai'):
 def track_vector_search(collection: str):
     """
     Decorator to track vector search operations
+
+    A-P2-14: 支持采样率控制，默认使用 vector_search 类别采样率
     """
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def async_wrapper(*args, **kwargs) -> Any:
+            # A-P2-14: 采样率检查
+            do_sample = should_sample("vector_search")
             start_time = time.time()
             try:
                 result = await func(*args, **kwargs)
-                vector_search_total.labels(collection=collection, status='success').inc()
+                if do_sample:
+                    vector_search_total.labels(collection=collection, status='success').inc()
 
-                # Track result count
-                if result is not None:
-                    if isinstance(result, list):
-                        vector_search_results.labels(collection=collection).observe(len(result))
-                    elif hasattr(result, '__len__'):
-                        vector_search_results.labels(collection=collection).observe(len(result))
+                    # Track result count
+                    if result is not None:
+                        if isinstance(result, list):
+                            vector_search_results.labels(collection=collection).observe(len(result))
+                        elif hasattr(result, '__len__'):
+                            vector_search_results.labels(collection=collection).observe(len(result))
 
                 return result
             except Exception as e:
-                vector_search_total.labels(collection=collection, status='error').inc()
+                if do_sample:
+                    vector_search_total.labels(collection=collection, status='error').inc()
                 raise
             finally:
-                duration = time.time() - start_time
-                vector_search_duration_seconds.labels(collection=collection).observe(duration)
+                if do_sample:
+                    duration = time.time() - start_time
+                    vector_search_duration_seconds.labels(collection=collection).observe(duration)
 
         @wraps(func)
         def sync_wrapper(*args, **kwargs) -> Any:
+            # A-P2-14: 采样率检查
+            do_sample = should_sample("vector_search")
             start_time = time.time()
             try:
                 result = func(*args, **kwargs)
-                vector_search_total.labels(collection=collection, status='success').inc()
+                if do_sample:
+                    vector_search_total.labels(collection=collection, status='success').inc()
                 return result
             except Exception as e:
-                vector_search_total.labels(collection=collection, status='error').inc()
+                if do_sample:
+                    vector_search_total.labels(collection=collection, status='error').inc()
                 raise
             finally:
-                duration = time.time() - start_time
-                vector_search_duration_seconds.labels(collection=collection).observe(duration)
+                if do_sample:
+                    duration = time.time() - start_time
+                    vector_search_duration_seconds.labels(collection=collection).observe(duration)
 
         import asyncio
         if asyncio.iscoroutinefunction(func):
@@ -291,57 +401,69 @@ def track_vector_search(collection: str):
 def track_model_inference(model_name: str, model_type: str):
     """
     Decorator to track model inference
+
+    A-P2-14: 支持采样率控制，默认使用 model_inference 类别采样率
     """
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         async def async_wrapper(*args, **kwargs) -> Any:
+            # A-P2-14: 采样率检查
+            do_sample = should_sample("model_inference")
             start_time = time.time()
             try:
                 result = await func(*args, **kwargs)
-                model_inference_total.labels(
-                    model_name=model_name,
-                    model_type=model_type,
-                    status='success'
-                ).inc()
+                if do_sample:
+                    model_inference_total.labels(
+                        model_name=model_name,
+                        model_type=model_type,
+                        status='success'
+                    ).inc()
                 return result
             except Exception as e:
-                model_inference_total.labels(
-                    model_name=model_name,
-                    model_type=model_type,
-                    status='error'
-                ).inc()
+                if do_sample:
+                    model_inference_total.labels(
+                        model_name=model_name,
+                        model_type=model_type,
+                        status='error'
+                    ).inc()
                 raise
             finally:
-                duration = time.time() - start_time
-                model_inference_duration_seconds.labels(
-                    model_name=model_name,
-                    model_type=model_type
-                ).observe(duration)
+                if do_sample:
+                    duration = time.time() - start_time
+                    model_inference_duration_seconds.labels(
+                        model_name=model_name,
+                        model_type=model_type
+                    ).observe(duration)
 
         @wraps(func)
         def sync_wrapper(*args, **kwargs) -> Any:
+            # A-P2-14: 采样率检查
+            do_sample = should_sample("model_inference")
             start_time = time.time()
             try:
                 result = func(*args, **kwargs)
-                model_inference_total.labels(
-                    model_name=model_name,
-                    model_type=model_type,
-                    status='success'
-                ).inc()
+                if do_sample:
+                    model_inference_total.labels(
+                        model_name=model_name,
+                        model_type=model_type,
+                        status='success'
+                    ).inc()
                 return result
             except Exception as e:
-                model_inference_total.labels(
-                    model_name=model_name,
-                    model_type=model_type,
-                    status='error'
-                ).inc()
+                if do_sample:
+                    model_inference_total.labels(
+                        model_name=model_name,
+                        model_type=model_type,
+                        status='error'
+                    ).inc()
                 raise
             finally:
-                duration = time.time() - start_time
-                model_inference_duration_seconds.labels(
-                    model_name=model_name,
-                    model_type=model_type
-                ).observe(duration)
+                if do_sample:
+                    duration = time.time() - start_time
+                    model_inference_duration_seconds.labels(
+                        model_name=model_name,
+                        model_type=model_type
+                    ).observe(duration)
 
         import asyncio
         if asyncio.iscoroutinefunction(func):
@@ -406,42 +528,49 @@ class MetricsContext:
 # Convenience functions
 def record_llm_tokens(model: str, prompt_tokens: int, completion_tokens: int):
     """Record token usage for LLM calls"""
-    llm_tokens_total.labels(model=model, type='prompt').inc(prompt_tokens)
-    llm_tokens_total.labels(model=model, type='completion').inc(completion_tokens)
+    if should_sample("llm"):
+        llm_tokens_total.labels(model=model, type='prompt').inc(prompt_tokens)
+        llm_tokens_total.labels(model=model, type='completion').inc(completion_tokens)
 
 
 def record_llm_cost(model: str, provider: str, cost: float):
     """Record cost for LLM calls"""
-    llm_cost_dollars_total.labels(model=model, provider=provider).inc(cost)
+    if should_sample("llm"):
+        llm_cost_dollars_total.labels(model=model, provider=provider).inc(cost)
 
 
 def update_gpu_memory(gpu_id: int, used_bytes: int, total_bytes: int):
     """Update GPU memory metrics"""
+    # GPU 指标通常不频繁，始终采集
     gpu_memory_used_bytes.labels(gpu_id=str(gpu_id)).set(used_bytes)
     gpu_memory_total_bytes.labels(gpu_id=str(gpu_id)).set(total_bytes)
 
 
 def update_gpu_utilization(gpu_id: int, utilization_percent: float):
     """Update GPU utilization metric"""
+    # GPU 指标通常不频繁，始终采集
     gpu_utilization.labels(gpu_id=str(gpu_id)).set(utilization_percent)
 
 
 def record_try_on(status: str, duration: float):
     """Record virtual try-on metrics"""
-    try_on_requests_total.labels(status=status).inc()
-    try_on_duration_seconds.labels(status=status).observe(duration)
+    if should_sample("try_on"):
+        try_on_requests_total.labels(status=status).inc()
+        try_on_duration_seconds.labels(status=status).observe(duration)
 
 
 def record_style_analysis(analysis_type: str, duration: float, status: str = 'success'):
     """Record style analysis metrics"""
-    style_analysis_total.labels(type=analysis_type, status=status).inc()
-    style_analysis_duration_seconds.labels(type=analysis_type).observe(duration)
+    if should_sample("style_analysis"):
+        style_analysis_total.labels(type=analysis_type, status=status).inc()
+        style_analysis_duration_seconds.labels(type=analysis_type).observe(duration)
 
 
 def record_body_analysis(duration: float, status: str = 'success'):
     """Record body analysis metrics"""
-    body_analysis_total.labels(status=status).inc()
-    body_analysis_duration_seconds.observe(duration)
+    if should_sample("body_analysis"):
+        body_analysis_total.labels(status=status).inc()
+        body_analysis_duration_seconds.observe(duration)
 
 
 # ===================

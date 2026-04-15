@@ -10,8 +10,11 @@ if %errorlevel% neq 0 (
 )
 
 REM Set environment variables
-set REDIS_URL=redis://localhost:6379
-set LOG_LEVEL=INFO
+set REDIS_URL=%REDIS_URL%||redis://localhost:6379
+if "%REDIS_URL%"=="redis://localhost:6379" (
+    set REDIS_URL=redis://:redis123@localhost:6379
+)
+set LOG_LEVEL=%LOG_LEVEL%||INFO
 
 REM Change to ml directory
 cd /d "%~dp0ml"

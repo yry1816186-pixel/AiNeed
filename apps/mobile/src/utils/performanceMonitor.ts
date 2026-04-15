@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from "react";
-import { Platform, InteractionManager } from "react-native";
+import { InteractionManager } from "react-native";
 
 interface FrameTiming {
   frameCount: number;
@@ -49,7 +49,9 @@ class PerformanceMonitor {
   }
 
   start() {
-    if (this.isMonitoring) return;
+    if (this.isMonitoring) {
+      return;
+    }
 
     this.isMonitoring = true;
     this.frameTimings = [];
@@ -77,7 +79,9 @@ class PerformanceMonitor {
   }
 
   private scheduleNextFrame() {
-    if (!this.isMonitoring) return;
+    if (!this.isMonitoring) {
+      return;
+    }
 
     this.animationFrameId = requestAnimationFrame((timestamp) => {
       this.recordFrame(timestamp);
@@ -89,7 +93,9 @@ class PerformanceMonitor {
     const frameDuration = timestamp - this.lastFrameTime;
     this.lastFrameTime = timestamp;
 
-    if (frameDuration <= 0) return;
+    if (frameDuration <= 0) {
+      return;
+    }
 
     const fps = 1000 / frameDuration;
 
@@ -103,9 +109,7 @@ class PerformanceMonitor {
       this.droppedFrameCount++;
 
       if (this.config.enableLogging) {
-        console.warn(
-          `[PerformanceMonitor] Dropped frame detected: ${fps.toFixed(1)} FPS`,
-        );
+        console.warn(`[PerformanceMonitor] Dropped frame detected: ${fps.toFixed(1)} FPS`);
       }
     }
 
@@ -176,9 +180,7 @@ export interface UsePerformanceMonitorOptions {
   config?: Partial<PerformanceConfig>;
 }
 
-export function usePerformanceMonitor(
-  options: UsePerformanceMonitorOptions = {},
-) {
+export function usePerformanceMonitor(options: UsePerformanceMonitorOptions = {}) {
   const { autoStart = true, onWarning, onCritical, config } = options;
   const [metrics, setMetrics] = useState<FrameTiming | null>(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -299,7 +301,7 @@ export function useInteractionManager() {
 
 export function useDebouncedCallback<T extends (...args: unknown[]) => unknown>(
   callback: T,
-  delay: number,
+  delay: number
 ): T {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -313,7 +315,7 @@ export function useDebouncedCallback<T extends (...args: unknown[]) => unknown>(
         callback(...args);
       }, delay);
     },
-    [callback, delay],
+    [callback, delay]
   ) as T;
 
   useEffect(() => {
@@ -329,7 +331,7 @@ export function useDebouncedCallback<T extends (...args: unknown[]) => unknown>(
 
 export function useThrottledCallback<T extends (...args: unknown[]) => unknown>(
   callback: T,
-  delay: number,
+  delay: number
 ): T {
   const lastRunRef = useRef<number>(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -353,7 +355,7 @@ export function useThrottledCallback<T extends (...args: unknown[]) => unknown>(
         }, delay - timeSinceLastRun);
       }
     },
-    [callback, delay],
+    [callback, delay]
   ) as T;
 
   useEffect(() => {
@@ -372,13 +374,13 @@ export function logPerformanceMetrics(metrics: FrameTiming, label?: string) {
 
   console.log(
     `${prefix} FPS: ${metrics.averageFPS.toFixed(1)} ` +
-      `(min: ${metrics.minFPS.toFixed(1)}, max: ${metrics.maxFPS.toFixed(1)})`,
+      `(min: ${metrics.minFPS.toFixed(1)}, max: ${metrics.maxFPS.toFixed(1)})`
   );
 
   if (metrics.droppedFrames > 0) {
     console.warn(
       `${prefix} Dropped frames: ${metrics.droppedFrames} ` +
-        `(${metrics.droppedFramePercentage.toFixed(1)}%)`,
+        `(${metrics.droppedFramePercentage.toFixed(1)}%)`
     );
   }
 }

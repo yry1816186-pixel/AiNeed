@@ -1,38 +1,39 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "react-native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import type { RootStackParamList } from "../types/navigation";
+import { theme } from '../design-system/theme';
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { clothingApi } from "../services/api/clothing.api";
+import { useScreenTracking } from "../hooks/useAnalytics";
+import { useTranslation } from "../i18n";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import type { RootStackParamList } from '../types/navigation';
-import { theme } from '../theme';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { clothingApi } from '../services/api/clothing.api';
-import { searchApi, searchEnhancementApi, clothingEnhancementApi, type FilterOptions as FilterOptionsType, type Subcategory } from '../services/api/commerce.api';
+  searchApi,
+  searchEnhancementApi,
+  clothingEnhancementApi,
+  type FilterOptions as FilterOptionsType,
+  type Subcategory,
+} from "../services/api/commerce.api";
 import type {
   ClothingItem,
   ClothingFilter,
   ClothingCategory,
   Season,
   Occasion,
-} from '../types/clothing';
-import { CategoryNavigation } from '../components/CategoryNavigation';
-import { SubcategoryTabs } from '../components/SubcategoryTabs';
-import { FilterTags } from '../components/FilterTags';
-import { SortBar } from '../components/SortBar';
+} from "../types/clothing";
+import { CategoryNavigation } from "../components/CategoryNavigation";
+import { SubcategoryTabs } from "../components/SubcategoryTabs";
+import { FilterTags } from "../components/FilterTags";
+import { SortBar } from "../components/SortBar";
 import {
   launchImageLibraryAsync,
   launchCameraAsync,
   MediaTypeOptions,
   requestCameraPermissionsAsync,
   requestMediaLibraryPermissionsAsync,
-} from '@/src/polyfills/expo-image-picker';
+} from "@/src/polyfills/expo-image-picker";
 import {
   FilterPanel,
   ActiveFilterPills,
@@ -40,29 +41,30 @@ import {
   SearchSuggestions,
   SearchResultList,
   LoadingOverlay,
-  PRICE_RANGES,
-} from '../components/search/SearchScreenParts';
+  PRICERANGES,
+} from "../components/search/SearchScreenParts";
 
 const DEBOUNCE_MS = 300;
 
 export const SearchScreen: React.FC = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  useScreenTracking("Search");
+  const t = useTranslation();
 
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<ClothingItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMorePages, setHasMorePages] = useState(false);
 
   const [history, setHistory] = useState<string[]>([]);
   const [trending, setTrending] = useState<string[]>([]);
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<ClothingCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ClothingCategory | null>(null);
   const [selectedSeason, setSelectedSeason] = useState<Season | null>(null);
-  const [selectedOccasion, setSelectedOccasion] =
-    useState<Occasion | null>(null);
+  const [selectedOccasion, setSelectedOccasion] = useState<Occasion | null>(null);
   const [selectedPriceRange, setSelectedPriceRange] = useState<number | null>(null);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -88,7 +90,7 @@ export const SearchScreen: React.FC = () => {
       seasons: selectedSeason ? [selectedSeason] : undefined,
       occasions: selectedOccasion ? [selectedOccasion] : undefined,
     }),
-    [selectedCategory, selectedSeason, selectedOccasion],
+    [selectedCategory, selectedSeason, selectedOccasion]
   );
 
   const currentExtraParams = useMemo(
@@ -97,18 +99,15 @@ export const SearchScreen: React.FC = () => {
       maxPrice: selectedPriceRange !== null ? PRICE_RANGES[selectedPriceRange].max : undefined,
       sizes: selectedSizes.length > 0 ? selectedSizes : undefined,
     }),
-    [selectedPriceRange, selectedSizes],
+    [selectedPriceRange, selectedSizes]
   );
 
   const loadInitialData = useCallback(async () => {
-    const settled = await Promise.allSettled([
-      searchApi.getHistory(),
-      searchApi.getTrending(),
-    ]);
+    const settled = await Promise.allSettled([searchApi.getHistory(), searchApi.getTrending()]);
 
     const historyResult = settled[0];
     if (
-      historyResult.status === 'fulfilled' &&
+      historyResult.status === "fulfilled" &&
       historyResult.value.success &&
       historyResult.value.data
     ) {
@@ -117,7 +116,7 @@ export const SearchScreen: React.FC = () => {
 
     const trendingResult = settled[1];
     if (
-      trendingResult.status === 'fulfilled' &&
+      trendingResult.status === "fulfilled" &&
       trendingResult.value.success &&
       trendingResult.value.data
     ) {
@@ -134,11 +133,22 @@ export const SearchScreen: React.FC = () => {
       searchQuery: string,
       filter: ClothingFilter,
       extraParams?: { minPrice?: number; maxPrice?: number; sizes?: string[] },
+      page: number = 1
     ) => {
       const trimmed = searchQuery.trim();
       const hasFilters =
-        !!filter.category || !!filter.seasons?.length || !!filter.occasions?.length ||
-        extraParams?.minPrice !== undefined || extraParams?.maxPrice !== undefined || !!extraParams?.sizes?.length;
+        !!filter.category ||
+        !!filter.seasons?.length ||
+        !!filter.occasions?.length ||
+        extraParams?.minPrice !== undefined ||
+        extraParams?.maxPrice !== undefined ||
+        !!extraParams?.sizes?.length ||
+        !!activeSort ||
+        !!selectedSubcategory ||
+        !!activeFilterDimensions.brands?.length ||
+        !!activeFilterDimensions.colors?.length ||
+        !!activeFilterDimensions.sizes?.length ||
+        !!activeFilterDimensions.priceRange;
 
       if (!trimmed && !hasFilters) {
         setResults([]);
@@ -150,26 +160,45 @@ export const SearchScreen: React.FC = () => {
       setHasSearched(true);
 
       try {
-        const response = await clothingApi.search(trimmed, filter, extraParams);
+        const response = await clothingApi.search(trimmed, filter, {
+          ...extraParams,
+          sort: activeSort || undefined,
+          brands: activeFilterDimensions.brands?.length
+            ? activeFilterDimensions.brands
+            : undefined,
+          colors: activeFilterDimensions.colors?.length
+            ? activeFilterDimensions.colors
+            : undefined,
+          subcategory: selectedSubcategory || undefined,
+          page,
+          limit: 20,
+        });
         if (response.success && response.data) {
-          setResults(response.data);
-          if (trimmed) {
+          const newItems = response.data.items;
+          setResults(page === 1 ? newItems : (prev) => [...prev, ...newItems]);
+          setCurrentPage(page);
+          setHasMorePages(response.data.hasMore ?? false);
+          if (trimmed && page === 1) {
             const historyResponse = await searchApi.saveHistory(trimmed);
             if (historyResponse.success && historyResponse.data) {
               setHistory(historyResponse.data);
             }
           }
         } else {
-          setResults([]);
+          if (page === 1) {
+            setResults([]);
+          }
         }
       } catch {
-        setResults([]);
+        if (page === 1) {
+          setResults([]);
+        }
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);
       }
     },
-    [],
+    [activeSort, activeFilterDimensions, selectedSubcategory]
   );
 
   useEffect(() => {
@@ -177,8 +206,7 @@ export const SearchScreen: React.FC = () => {
       clearTimeout(debounceTimer.current);
     }
 
-    const hasActiveFilter =
-      !!selectedCategory || !!selectedSeason || !!selectedOccasion;
+    const hasActiveFilter = !!selectedCategory || !!selectedSeason || !!selectedOccasion;
     const hasQuery = query.trim().length > 0;
 
     if (!hasQuery && !hasActiveFilter) {
@@ -189,7 +217,7 @@ export const SearchScreen: React.FC = () => {
 
     const delay = hasQuery ? DEBOUNCE_MS : 0;
     debounceTimer.current = setTimeout(() => {
-      void performSearch(query, currentFilter, currentExtraParams);
+      void performSearch(query, currentFilter, currentExtraParams, 1);
     }, delay);
 
     return () => {
@@ -205,11 +233,14 @@ export const SearchScreen: React.FC = () => {
     selectedCategory,
     selectedOccasion,
     selectedSeason,
+    activeSort,
+    activeFilterDimensions,
+    selectedSubcategory,
   ]);
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
-    await performSearch(query, currentFilter, currentExtraParams);
+    await performSearch(query, currentFilter, currentExtraParams, 1);
   }, [currentFilter, currentExtraParams, performSearch, query]);
 
   const handleTagPress = useCallback((tag: string) => {
@@ -244,24 +275,24 @@ export const SearchScreen: React.FC = () => {
         setResults(response.data);
       } else {
         setResults([]);
-        Alert.alert('搜索完成', '暂时没有找到相似单品');
+        Alert.alert(t.search.noResults, t.search.noResults);
       }
     } catch {
       setResults([]);
-      Alert.alert('搜索失败', '以图搜衣暂时不可用，请稍后重试');
+      Alert.alert("搜索失败", "以图搜衣暂时不可用，请稍后重试");
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   const handleImageSearch = useCallback(() => {
-    Alert.alert('以图搜衣', '选择图片来源', [
+    Alert.alert("以图搜衣", "选择图片来源", [
       {
-        text: '拍照',
+        text: "拍照",
         onPress: async () => {
           const permission = await requestCameraPermissionsAsync();
           if (!permission.granted) {
-            Alert.alert('权限不足', '需要相机权限才能拍照搜衣');
+            Alert.alert("权限不足", "需要相机权限才能拍照搜衣");
             return;
           }
 
@@ -277,11 +308,11 @@ export const SearchScreen: React.FC = () => {
         },
       },
       {
-        text: '从相册选择',
+        text: "从相册选择",
         onPress: async () => {
           const permission = await requestMediaLibraryPermissionsAsync();
           if (!permission.granted) {
-            Alert.alert('权限不足', '需要相册权限才能选择图片');
+            Alert.alert("权限不足", "需要相册权限才能选择图片");
             return;
           }
 
@@ -296,19 +327,19 @@ export const SearchScreen: React.FC = () => {
           }
         },
       },
-      { text: '取消', style: 'cancel' },
+      { text: "取消", style: "cancel" },
     ]);
   }, [handleImageSelected]);
 
   const handleItemPress = useCallback(
     (item: ClothingItem) => {
-      navigation.navigate('ClothingDetail', { clothingId: item.id });
+      navigation.navigate("Product", { clothingId: item.id });
     },
-    [navigation],
+    [navigation]
   );
 
   const handleClearSearch = useCallback(() => {
-    setQuery('');
+    setQuery("");
     setResults([]);
     setHasSearched(false);
     searchInputRef.current?.focus();
@@ -319,19 +350,23 @@ export const SearchScreen: React.FC = () => {
       setSelectedCategory(category);
       setShowFilters(true);
       setHasSearched(true);
-      void performSearch('', { ...currentFilter, category }, currentExtraParams);
+      void performSearch("", { ...currentFilter, category }, currentExtraParams, 1);
     },
-    [currentFilter, currentExtraParams, performSearch],
+    [currentFilter, currentExtraParams, performSearch]
   );
 
   const hasActiveFilters =
-    !!selectedCategory || !!selectedSeason || !!selectedOccasion || selectedPriceRange !== null || selectedSizes.length > 0;
+    !!selectedCategory ||
+    !!selectedSeason ||
+    !!selectedOccasion ||
+    selectedPriceRange !== null ||
+    selectedSizes.length > 0;
   const activeFilterCount = [
     selectedCategory,
     selectedSeason,
     selectedOccasion,
-    selectedPriceRange !== null ? 'price' : null,
-    selectedSizes.length > 0 ? 'sizes' : null,
+    selectedPriceRange !== null ? "price" : null,
+    selectedSizes.length > 0 ? "sizes" : null,
   ].filter(Boolean).length;
 
   const renderContent = () => {
@@ -375,16 +410,12 @@ export const SearchScreen: React.FC = () => {
       <View style={styles.header}>
         <View style={styles.searchRow}>
           <View style={styles.searchBar}>
-            <Ionicons
-              name="search-outline"
-              size={20}
-              color={theme.colors.textTertiary}
-            />
+            <Ionicons name="search-outline" size={20} color={theme.colors.textTertiary} />
             <TextInput
               ref={searchInputRef}
               style={styles.searchInput}
-              placeholder="搜索服装、搭配或品牌"
-              accessibilityLabel="搜索服装"
+              placeholder={t.search.placeholder}
+              accessibilityLabel={t.search.placeholder}
               placeholderTextColor={theme.colors.textTertiary}
               value={query}
               onChangeText={setQuery}
@@ -397,11 +428,7 @@ export const SearchScreen: React.FC = () => {
                 onPress={handleClearSearch}
                 hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
               >
-                <Ionicons
-                  name="close-circle"
-                  size={18}
-                  color={theme.colors.textTertiary}
-                />
+                <Ionicons name="close-circle" size={18} color={theme.colors.textTertiary} />
               </TouchableOpacity>
             ) : null}
           </View>
@@ -420,23 +447,16 @@ export const SearchScreen: React.FC = () => {
           <TouchableOpacity
             style={[styles.filterToggle, showFilters && styles.filterToggleActive]}
             onPress={() => setShowFilters((value) => !value)}
-            accessibilityLabel="展开筛选"
+            accessibilityLabel={t.search.filters}
             accessibilityRole="button"
           >
             <Ionicons
               name="options-outline"
               size={16}
-              color={
-                showFilters ? theme.colors.primary : theme.colors.textSecondary
-              }
+              color={showFilters ? theme.colors.primary : theme.colors.textSecondary}
             />
-            <Text
-              style={[
-                styles.filterToggleText,
-                showFilters && styles.filterToggleTextActive,
-              ]}
-            >
-              筛选
+            <Text style={[styles.filterToggleText, showFilters && styles.filterToggleTextActive]}>
+              {t.search.filters}
             </Text>
             {activeFilterCount > 0 ? (
               <View style={styles.filterBadge}>
@@ -467,8 +487,10 @@ export const SearchScreen: React.FC = () => {
         setSelectedCategory={(cat) => {
           setSelectedCategory(cat);
           if (cat) {
-            clothingEnhancementApi.getSubcategories(cat).then((res) => {
-              if (res.success && res.data) setSubcategories(res.data);
+            void clothingEnhancementApi.getSubcategories(cat).then((res) => {
+              if (res.success && res.data) {
+                setSubcategories(res.data);
+              }
             });
           } else {
             setSubcategories([]);
@@ -486,11 +508,15 @@ export const SearchScreen: React.FC = () => {
         onSelectCategory={(cat) => {
           setSelectedCategory(cat as ClothingCategory | null);
           if (cat) {
-            clothingEnhancementApi.getSubcategories(cat).then((res) => {
-              if (res.success && res.data) setSubcategories(res.data);
+            void clothingEnhancementApi.getSubcategories(cat).then((res) => {
+              if (res.success && res.data) {
+                setSubcategories(res.data);
+              }
             });
-            searchEnhancementApi.getFilterOptions(cat).then((res) => {
-              if (res.success && res.data) setFilterOptions(res.data);
+            void searchEnhancementApi.getFilterOptions(cat).then((res) => {
+              if (res.success && res.data) {
+                setFilterOptions(res.data);
+              }
             });
           } else {
             setSubcategories([]);
@@ -539,14 +565,14 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   searchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 12,
   },
   searchBar: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.colors.divider,
     borderRadius: 16,
     paddingHorizontal: 16,
@@ -563,18 +589,18 @@ const styles = StyleSheet.create({
     height: 46,
     borderRadius: 14,
     backgroundColor: theme.colors.cartLight,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   filterRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 12,
     gap: 8,
   },
   filterToggle: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -590,20 +616,20 @@ const styles = StyleSheet.create({
   },
   filterToggleTextActive: {
     color: theme.colors.primary,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   filterBadge: {
     backgroundColor: theme.colors.primary,
     borderRadius: 10,
     minWidth: 18,
     height: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 4,
   },
   filterBadgeText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.surface,
   },
   separator: {

@@ -15,6 +15,7 @@ import { ConsultantCard } from "../../components/consultant/ConsultantCard";
 import { ServiceTypeChip } from "../../components/consultant/ServiceTypeChip";
 import type { ServiceType } from "../../types/consultant";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ParamListBase } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SERVICE_TYPES = [
@@ -27,14 +28,9 @@ const SERVICE_TYPES = [
 
 export const AdvisorListScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const {
-    consultants,
-    matchResults,
-    isLoading,
-    fetchConsultants,
-    matchConsultants,
-  } = useConsultantStore();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const { consultants, matchResults, isLoading, fetchConsultants, matchConsultants } =
+    useConsultantStore();
 
   const [selectedFilter, setSelectedFilter] = useState("");
   const [showMatchSheet, setShowMatchSheet] = useState(false);
@@ -44,8 +40,8 @@ export const AdvisorListScreen: React.FC = () => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchConsultants({ specialty: selectedFilter || undefined });
-    }, [fetchConsultants, selectedFilter]),
+      void fetchConsultants({ specialty: selectedFilter || undefined });
+    }, [fetchConsultants, selectedFilter])
   );
 
   const handleMatch = async () => {
@@ -100,10 +96,7 @@ export const AdvisorListScreen: React.FC = () => {
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top }]}>
         <Text style={styles.headerTitle}>私人顾问</Text>
-        <TouchableOpacity
-          style={styles.matchButton}
-          onPress={() => setShowMatchSheet(true)}
-        >
+        <TouchableOpacity style={styles.matchButton} onPress={() => setShowMatchSheet(true)}>
           <Text style={styles.matchButtonText}>智能匹配</Text>
         </TouchableOpacity>
       </View>
@@ -114,9 +107,7 @@ export const AdvisorListScreen: React.FC = () => {
       {/* Match results indicator */}
       {matchResultsView && (
         <View style={styles.matchResultsBar}>
-          <Text style={styles.matchResultsText}>
-            为你推荐 {matchResults.length} 位顾问
-          </Text>
+          <Text style={styles.matchResultsText}>为你推荐 {matchResults.length} 位顾问</Text>
           <TouchableOpacity onPress={() => setMatchResultsView(false)}>
             <Text style={styles.clearMatchText}>清除</Text>
           </TouchableOpacity>
@@ -126,21 +117,21 @@ export const AdvisorListScreen: React.FC = () => {
       {/* Consultant list */}
       <FlatList
         data={displayData}
-        keyExtractor={(item: any) => item.consultantId || item.id}
-        renderItem={({ item, index }: any) => (
+        keyExtractor={(item: Record<string, unknown>) => String(item.consultantId || item.id)}
+        renderItem={({ item, index }: { item: Record<string, unknown>; index: number }) => (
           <ConsultantCard
-            id={item.consultantId || item.id}
-            studioName={item.studioName || "造型顾问"}
-            avatar={item.avatar || item.user?.avatar || null}
-            specialties={item.specialties || []}
-            rating={item.rating || 0}
-            reviewCount={item.reviewCount || 0}
-            matchPercentage={item.matchPercentage}
-            matchReasons={item.matchReasons}
-            price={item.price}
+            id={String(item.consultantId || item.id)}
+            studioName={String(item.studioName || "造型顾问")}
+            avatar={(item.avatar || (item.user as Record<string, unknown> | undefined)?.avatar || null) as string | null}
+            specialties={(item.specialties || []) as string[]}
+            rating={(item.rating || 0) as number}
+            reviewCount={(item.reviewCount || 0) as number}
+            matchPercentage={item.matchPercentage as number | undefined}
+            matchReasons={item.matchReasons as string[] | undefined}
+            price={item.price as number | undefined}
             onPress={() =>
               navigation.navigate("AdvisorProfile", {
-                id: item.consultantId || item.id,
+                id: String(item.consultantId || item.id),
               })
             }
             index={index}
@@ -177,10 +168,7 @@ export const AdvisorListScreen: React.FC = () => {
               multiline
             />
             <View style={styles.sheetActions}>
-              <TouchableOpacity
-                style={styles.sheetCancel}
-                onPress={() => setShowMatchSheet(false)}
-              >
+              <TouchableOpacity style={styles.sheetCancel} onPress={() => setShowMatchSheet(false)}>
                 <Text style={styles.sheetCancelText}>取消</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.sheetSubmit} onPress={handleMatch}>

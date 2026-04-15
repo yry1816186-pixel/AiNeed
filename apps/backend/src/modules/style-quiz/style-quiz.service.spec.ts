@@ -2,12 +2,13 @@ import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
+import { ProfileEventEmitter } from "../profile/services/profile-event-emitter.service";
 
-import { StyleQuizService } from "./style-quiz.service";
+import { ColorDerivationEngine } from "./services/color-derivation.service";
 import { ColorDeriverService } from "./services/color-deriver";
 import { StyleKeywordExtractorService } from "./services/style-keyword-extractor";
-import { ColorDerivationEngine } from "./services/color-derivation.service";
-import { ProfileEventEmitter } from "../profile/services/profile-event-emitter.service";
+import { StyleQuizService } from "./style-quiz.service";
+
 
 jest.mock("./services/question-selector", () => ({
   QuestionSelectorService: class QuestionSelectorService {

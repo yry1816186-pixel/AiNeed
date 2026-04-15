@@ -1,4 +1,4 @@
-import { unifiedApiClient } from "../apiClient";
+import { apiClient } from "./client";
 
 /**
  * Push notification settings - per-category toggles with quiet hours
@@ -79,7 +79,7 @@ export const notificationApi = {
     offset?: number;
     unreadOnly?: boolean;
   }): Promise<NotificationListResponse> {
-    const response = await unifiedApiClient.get<NotificationListResponse>(
+    const response = await apiClient.get<NotificationListResponse>(
       "/notifications",
       params as Record<string, unknown>,
     );
@@ -93,28 +93,28 @@ export const notificationApi = {
    * Mark a notification as read
    */
   async markAsRead(notificationId: string): Promise<void> {
-    await unifiedApiClient.post(`/notifications/${notificationId}/read`);
+    await apiClient.post(`/notifications/${notificationId}/read`);
   },
 
   /**
    * Mark all notifications as read
    */
   async markAllAsRead(): Promise<void> {
-    await unifiedApiClient.post("/notifications/read-all");
+    await apiClient.post("/notifications/read-all");
   },
 
   /**
    * Delete a notification
    */
   async deleteNotification(notificationId: string): Promise<void> {
-    await unifiedApiClient.delete(`/notifications/${notificationId}`);
+    await apiClient.delete(`/notifications/${notificationId}`);
   },
 
   /**
    * Get notification settings
    */
   async getNotificationSettings(): Promise<NotificationSettingsResponse | null> {
-    const response = await unifiedApiClient.get<NotificationSettingsResponse>(
+    const response = await apiClient.get<NotificationSettingsResponse>(
       "/notifications/settings",
     );
     if (response.success && response.data) {
@@ -129,7 +129,7 @@ export const notificationApi = {
   async updateNotificationSettings(
     settings: Partial<PushNotificationSettings>,
   ): Promise<void> {
-    await unifiedApiClient.post("/notifications/settings", { push: settings });
+    await apiClient.post("/notifications/settings", { push: settings });
   },
 
   /**
@@ -140,7 +140,7 @@ export const notificationApi = {
     platform: "ios" | "android",
     appId?: string,
   ): Promise<void> {
-    await unifiedApiClient.post("/notifications/device-token", {
+    await apiClient.post("/notifications/device-token", {
       token,
       platform,
       appId,
@@ -151,6 +151,6 @@ export const notificationApi = {
    * Deregister device push token
    */
   async deregisterDeviceToken(token: string): Promise<void> {
-    await unifiedApiClient.delete(`/notifications/device-token/${encodeURIComponent(token)}`);
+    await apiClient.delete(`/notifications/device-token/${encodeURIComponent(token)}`);
   },
 };

@@ -6,7 +6,7 @@ from typing import Literal, Optional
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from ml.services.virtual_tryon_service import virtual_tryon_service
+from ml.services.tryon.virtual_tryon_service import virtual_tryon_service
 
 logger = logging.getLogger(__name__)
 

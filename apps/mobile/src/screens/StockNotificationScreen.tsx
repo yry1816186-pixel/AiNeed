@@ -13,11 +13,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { stockNotificationApi, type StockNotification } from "../services/api/commerce.api";
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  PENDING: { label: "等待中", color: "#FAAD14" },
-  NOTIFIED: { label: "已通知", color: "#52C41A" },
-  CANCELLED: { label: "已取消", color: "#CCCCCC" },
+  PENDING: { label: "等待中", color: DesignTokens.colors.semantic.warning },
+  NOTIFIED: { label: "已通知", color: DesignTokens.colors.semantic.success },
+  CANCELLED: { label: "已取消", color: DesignTokens.colors.neutral[300] },
 };
 
 export const StockNotificationScreen: React.FC = () => {
@@ -40,12 +41,12 @@ export const StockNotificationScreen: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchNotifications();
+    void fetchNotifications();
   }, [fetchNotifications]);
 
   const handleRefresh = () => {
     setRefreshing(true);
-    fetchNotifications();
+    void fetchNotifications();
   };
 
   const handleUnsubscribe = async (id: string) => {
@@ -59,7 +60,7 @@ export const StockNotificationScreen: React.FC = () => {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="bell-off-outline" size={64} color="#CCCCCC" />
+      <Ionicons name="bell-off-outline" size={64} color={DesignTokens.colors.neutral[300]} />
       <Text style={styles.emptyTitle}>暂无到货通知</Text>
       <TouchableOpacity
         style={styles.goButton}
@@ -75,20 +76,17 @@ export const StockNotificationScreen: React.FC = () => {
   const renderItem = ({ item }: { item: StockNotification }) => {
     const statusCfg = STATUS_CONFIG[item.status] ?? {
       label: item.status,
-      color: "#999999",
+      color: DesignTokens.colors.text.tertiary,
     };
 
     return (
       <View style={styles.card}>
         <View style={styles.cardLeft}>
           {item.item?.images?.[0] ? (
-            <Image
-              source={{ uri: item.item.images[0] }}
-              style={styles.itemImage}
-            />
+            <Image source={{ uri: item.item.images[0] }} style={styles.itemImage} />
           ) : (
             <View style={styles.itemImageFallback}>
-              <Ionicons name="shirt-outline" size={18} color="#CCCCCC" />
+              <Ionicons name="shirt-outline" size={18} color={DesignTokens.colors.neutral[300]} />
             </View>
           )}
         </View>
@@ -100,16 +98,11 @@ export const StockNotificationScreen: React.FC = () => {
             {item.color ?? "-"} / {item.size ?? "-"}
           </Text>
           <View style={[styles.statusBadge, { backgroundColor: `${statusCfg.color}20` }]}>
-            <Text style={[styles.statusText, { color: statusCfg.color }]}>
-              {statusCfg.label}
-            </Text>
+            <Text style={[styles.statusText, { color: statusCfg.color }]}>{statusCfg.label}</Text>
           </View>
         </View>
         {item.status === "PENDING" ? (
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => handleUnsubscribe(item.id)}
-          >
+          <TouchableOpacity style={styles.cancelButton} onPress={() => handleUnsubscribe(item.id)}>
             <Text style={styles.cancelText}>取消通知</Text>
           </TouchableOpacity>
         ) : null}
@@ -124,7 +117,7 @@ export const StockNotificationScreen: React.FC = () => {
           <Text style={styles.headerTitle}>到货通知</Text>
         </View>
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#FF4D4F" />
+          <ActivityIndicator size="large" color={DesignTokens.colors.semantic.error} />
         </View>
       </SafeAreaView>
     );
@@ -142,30 +135,24 @@ export const StockNotificationScreen: React.FC = () => {
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            colors={["#FF4D4F"]}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[DesignTokens.colors.semantic.error]} />
         }
-        contentContainerStyle={
-          notifications.length === 0 ? { flex: 1 } : { paddingBottom: 20 }
-        }
+        contentContainerStyle={notifications.length === 0 ? { flex: 1 } : { paddingBottom: 20 }}
       />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFFFF" },
+  container: { flex: 1, backgroundColor: DesignTokens.colors.backgrounds.primary },
   header: {
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
   },
-  headerTitle: { fontSize: 17, fontWeight: "600", color: "#333333" },
+  headerTitle: { fontSize: 17, fontWeight: "600", color: DesignTokens.colors.text.primary },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   card: {
     flexDirection: "row",
@@ -173,7 +160,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#F5F5F5",
+    borderBottomColor: DesignTokens.colors.neutral[100],
     gap: 12,
   },
   cardLeft: {},
@@ -181,13 +168,13 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 8,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: DesignTokens.colors.neutral[100],
   },
   itemImageFallback: {
     width: 50,
     height: 50,
     borderRadius: 8,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
@@ -195,11 +182,11 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#333333",
+    color: DesignTokens.colors.text.primary,
   },
   itemSpec: {
     fontSize: 12,
-    color: "#999999",
+    color: DesignTokens.colors.text.tertiary,
     marginTop: 2,
   },
   statusBadge: {
@@ -219,7 +206,7 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 13,
-    color: "#FF4D4F",
+    color: DesignTokens.colors.semantic.error,
   },
   emptyContainer: {
     flex: 1,
@@ -230,18 +217,18 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333333",
+    color: DesignTokens.colors.text.primary,
     marginTop: 16,
   },
   goButton: {
     marginTop: 24,
-    backgroundColor: "#FF4D4F",
+    backgroundColor: DesignTokens.colors.semantic.error,
     paddingHorizontal: 32,
     paddingVertical: 12,
     borderRadius: 24,
   },
   goButtonText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     fontSize: 15,
     fontWeight: "600",
   },

@@ -1,16 +1,11 @@
+import { useState, useCallback, useRef, useEffect } from "react";
+import { Platform, PermissionsAndroid } from "react-native";
+import * as FileSystem from "@/src/polyfills/expo-file-system";
+import { Audio, Recording } from "@/src/polyfills/expo-av";
+
 declare const process: { env: Record<string, string | undefined> };
 
-import { useState, useCallback, useRef, useEffect } from "react";
-import { Platform, PermissionsAndroid, PermissionStatus } from "react-native";
-import * as FileSystem from '@/src/polyfills/expo-file-system';
-import { Audio, Recording } from '@/src/polyfills/expo-av';
-
-export type SpeechRecognitionStatus =
-  | "idle"
-  | "listening"
-  | "processing"
-  | "error"
-  | "success";
+export type SpeechRecognitionStatus = "idle" | "listening" | "processing" | "error" | "success";
 
 export interface SpeechRecognitionResult {
   text: string;
@@ -34,8 +29,10 @@ export interface SpeechRecognitionConfig {
 
 const SPEECH_SERVICE_CONFIG = {
   apiUrl:
-    (typeof process !== 'undefined' ? process.env?.EXPO_PUBLIC_SPEECH_API_URL : undefined) || "https://api.example.com/speech",
-  apiKey: (typeof process !== 'undefined' ? process.env?.EXPO_PUBLIC_SPEECH_API_KEY : undefined) || "",
+    (typeof process !== "undefined" ? process.env?.EXPO_PUBLIC_SPEECH_API_URL : undefined) ||
+    "https://api.example.com/speech",
+  apiKey:
+    (typeof process !== "undefined" ? process.env?.EXPO_PUBLIC_SPEECH_API_KEY : undefined) || "",
   defaultLanguage: "zh-CN",
   defaultTimeout: 30000,
 };
@@ -51,9 +48,9 @@ export function useSpeechRecognition(config: SpeechRecognitionConfig = {}) {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    checkAvailability();
+    void checkAvailability();
     return () => {
-      stopListening();
+      void stopListening();
     };
   }, []);
 
@@ -74,7 +71,7 @@ export function useSpeechRecognition(config: SpeechRecognitionConfig = {}) {
     try {
       if (Platform.OS === "android") {
         const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } else {
@@ -112,16 +109,14 @@ export function useSpeechRecognition(config: SpeechRecognitionConfig = {}) {
         playsInSilentModeIOS: true,
       });
 
-      const { recording } = await Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY,
-      );
+      const { recording } = await Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
 
       recordingRef.current = recording;
 
       const timeout = config.timeout || SPEECH_SERVICE_CONFIG.defaultTimeout;
       setTimeout(() => {
         if (status === "listening") {
-          stopListening();
+          void stopListening();
         }
       }, timeout);
     } catch (err) {
@@ -178,22 +173,19 @@ export function useSpeechRecognition(config: SpeechRecognitionConfig = {}) {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      const response = await fetch(
-        `${SPEECH_SERVICE_CONFIG.apiUrl}/recognize`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${SPEECH_SERVICE_CONFIG.apiKey}`,
-          },
-          body: JSON.stringify({
-            audio: base64Audio,
-            language: config.language || SPEECH_SERVICE_CONFIG.defaultLanguage,
-            format: "wav",
-          }),
-          signal: abortControllerRef.current.signal,
+      const response = await fetch(`${SPEECH_SERVICE_CONFIG.apiUrl}/recognize`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${SPEECH_SERVICE_CONFIG.apiKey}`,
         },
-      );
+        body: JSON.stringify({
+          audio: base64Audio,
+          language: config.language || SPEECH_SERVICE_CONFIG.defaultLanguage,
+          format: "wav",
+        }),
+        signal: abortControllerRef.current.signal,
+      });
 
       if (!response.ok) {
         throw new Error(`Speech API error: ${response.status}`);
@@ -233,7 +225,7 @@ export function useSpeechRecognition(config: SpeechRecognitionConfig = {}) {
     }
 
     if (recordingRef.current) {
-      recordingRef.current.stopAndUnloadAsync();
+      void recordingRef.current.stopAndUnloadAsync();
       recordingRef.current = null;
     }
 
@@ -279,10 +271,7 @@ export class SpeechRecognitionService {
     };
   }
 
-  async recognize(
-    audioBase64: string,
-    language?: string,
-  ): Promise<SpeechRecognitionResult> {
+  async recognize(audioBase64: string, language?: string): Promise<SpeechRecognitionResult> {
     const response = await fetch(`${this.config.apiUrl}/recognize`, {
       method: "POST",
       headers: {

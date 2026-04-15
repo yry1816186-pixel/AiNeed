@@ -15,12 +15,12 @@ export interface QuizQuestionData {
   options: QuizOption[];
   category: string;
   order: number;
-  images?: Array<{
+  images?: {
     id: string;
     uri: string;
     thumbnailUri?: string;
     label: string;
-  }>;
+  }[];
 }
 
 export interface QuizData {
@@ -59,7 +59,7 @@ export const styleQuizApi = {
   async submitAnswer(
     quizId: string,
     questionId: string,
-    optionId: string,
+    optionId: string
   ): Promise<ApiResponse<AnswerResponse>> {
     return apiClient.post<AnswerResponse>(`/quizzes/${quizId}/answers`, {
       questionId,
@@ -69,30 +69,26 @@ export const styleQuizApi = {
 
   async batchSubmit(
     quizId: string,
-    answers: Array<{ questionId: string; optionId: string }>,
+    answers: { questionId: string; optionId: string }[]
   ): Promise<ApiResponse<QuizResult>> {
     return apiClient.post<QuizResult>(`/quizzes/${quizId}/batch-answers`, {
       answers,
     });
   },
 
-  async getProgress(
-    quizId: string,
-  ): Promise<ApiResponse<QuizProgress | null>> {
-    return apiClient.get<QuizProgress | null>(
-      `/quizzes/${quizId}/progress`,
-    );
+  async getProgress(quizId: string): Promise<ApiResponse<QuizProgress | null>> {
+    return apiClient.get<QuizProgress | null>(`/quizzes/${quizId}/progress`);
   },
 
   async saveProgress(
     quizId: string,
     questionIndex: number,
-    answers: Record<string, string>,
+    answers: Record<string, string>
   ): Promise<ApiResponse<{ saved: boolean }>> {
-    return apiClient.post<{ saved: boolean }>(
-      `/quizzes/${quizId}/progress`,
-      { questionIndex, answers },
-    );
+    return apiClient.post<{ saved: boolean }>(`/quizzes/${quizId}/progress`, {
+      questionIndex,
+      answers,
+    });
   },
 
   async getResult(quizId: string): Promise<ApiResponse<QuizResult>> {

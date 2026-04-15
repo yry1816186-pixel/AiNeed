@@ -18,17 +18,14 @@ export const smsApi = {
     return apiClient.post<{ sent: boolean }>("/auth/send-code", { phone });
   },
 
-  async loginWithPhone(
-    phone: string,
-    code: string,
-  ): Promise<ApiResponse<AuthResponse>> {
+  async loginWithPhone(phone: string, code: string): Promise<ApiResponse<AuthResponse>> {
     return apiClient.post<AuthResponse>("/auth/phone-login", { phone, code });
   },
 
   async registerWithPhone(
     phone: string,
     code: string,
-    nickname?: string,
+    nickname?: string
   ): Promise<ApiResponse<AuthResponse>> {
     return apiClient.post<AuthResponse>("/auth/phone-register", {
       phone,

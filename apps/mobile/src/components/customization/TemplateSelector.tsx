@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../../theme";
+import { theme, Colors, Spacing, BorderRadius } from '../design-system/theme';
 import type { Template } from "../../stores/customizationEditorStore";
 
 interface TemplateSelectorProps {
@@ -52,48 +52,33 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         return (
           <TouchableOpacity
             key={template.id}
-            style={[
-              styles.templateCard,
-              isSelected && styles.templateCardSelected,
-            ]}
+            style={[styles.templateCard, isSelected && styles.templateCardSelected]}
             onPress={() => onSelect(template)}
             activeOpacity={0.7}
           >
-            <View
-              style={[
-                styles.templateIconContainer,
-                isSelected && styles.templateIconSelected,
-              ]}
-            >
+            <View style={[styles.templateIconContainer, isSelected && styles.templateIconSelected]}>
               <Ionicons
                 name={
                   template.type === "tshirt"
                     ? "shirt-outline"
                     : template.type === "hat"
-                      ? "baseball-outline"
-                      : template.type === "shoes"
-                        ? "footsteps-outline"
-                        : template.type === "bag"
-                          ? "bag-outline"
-                          : template.type === "phone_case"
-                            ? "phone-portrait-outline"
-                            : "cafe-outline"
+                    ? "baseball-outline"
+                    : template.type === "shoes"
+                    ? "footsteps-outline"
+                    : template.type === "bag"
+                    ? "bag-outline"
+                    : template.type === "phone_case"
+                    ? "phone-portrait-outline"
+                    : "cafe-outline"
                 }
                 size={28}
                 color={isSelected ? theme.colors.surface : theme.colors.primary}
               />
             </View>
-            <Text
-              style={[
-                styles.templateName,
-                isSelected && styles.templateNameSelected,
-              ]}
-            >
+            <Text style={[styles.templateName, isSelected && styles.templateNameSelected]}>
               {template.name}
             </Text>
-            <Text style={styles.templatePrice}>
-              {template.basePrice} CNY 起
-            </Text>
+            <Text style={styles.templatePrice}>{template.basePrice} CNY 起</Text>
           </TouchableOpacity>
         );
       })}

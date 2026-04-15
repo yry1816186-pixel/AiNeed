@@ -5,8 +5,8 @@ import * as QRCode from "qrcode";
 import { v4 as uuidv4 } from "uuid";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { StorageService } from "../../../common/storage/storage.service";
 import { RedisService, RedisKeyBuilder } from "../../../common/redis/redis.service";
+import { StorageService } from "../../../common/storage/storage.service";
 import { ProfileService, BodyAnalysisResult, ColorAnalysisResult } from "../profile.service";
 import { getTemplateByColorSeason, PosterTemplate, ColorSeasonConfig } from "../templates";
 
@@ -52,7 +52,7 @@ export class PosterGeneratorService {
       }
     }
 
-    const [profile, bodyAnalysis, colorAnalysis] = await Promise.all([
+    const [profile, bodyAnalysis, _colorAnalysis] = await Promise.all([
       this.profileService.getProfile(userId),
       this.profileService.getBodyAnalysis(userId),
       this.profileService.getColorAnalysis(userId),

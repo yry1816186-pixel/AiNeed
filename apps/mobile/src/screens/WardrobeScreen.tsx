@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
+﻿import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import {
   View,
   Text,
@@ -11,29 +11,25 @@ import {
   RefreshControl,
   Image,
   Alert,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme } from '../theme';
-import { clothingApi } from '../services/api/clothing.api';
-import { outfitApi } from '../services/api/outfit.api';
-import {
-  ClothingItem,
-  ClothingCategory,
-  CATEGORY_LABELS,
-} from '../types/clothing';
-import type { RootStackParamList } from '../types/navigation';
-import { ImportSheet } from '../components/wardrobe/ImportSheet';
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useScreenTracking } from "../hooks/useAnalytics";
+import { useTranslation } from "../i18n";
+import { theme } from '../design-system/theme';
+import { clothingApi } from "../services/api/clothing.api";
+import { outfitApi } from "../services/api/outfit.api";
+import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from "../types/clothing";
+import type { RootStackParamList } from "../types/navigation";
+import { ImportSheet } from "../components/wardrobe/ImportSheet";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
 const PAGE_SIZE = 20;
 
-const ALL_CATEGORIES = Object.entries(CATEGORY_LABELS) as Array<
-  [ClothingCategory, string]
->;
+const ALL_CATEGORIES = Object.entries(CATEGORY_LABELS) as [ClothingCategory, string][];
 
 interface WardrobeStats {
   clothingTotal: number;
@@ -64,11 +60,7 @@ const ClothingGridItem = memo(function ClothingGridItem({ item, onPress }: Cloth
     >
       <View style={styles.gridItemImageContainer}>
         {imageSource ? (
-          <Image
-            source={{ uri: imageSource }}
-            style={styles.gridItemImage}
-            resizeMode="cover"
-          />
+          <Image source={{ uri: imageSource }} style={styles.gridItemImage} resizeMode="cover" />
         ) : (
           <View style={styles.gridItemPlaceholder}>
             <Ionicons name="shirt-outline" size={32} color={theme.colors.textTertiary} />
@@ -92,6 +84,8 @@ const ClothingGridItem = memo(function ClothingGridItem({ item, onPress }: Cloth
 
 export const WardrobeScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
+  useScreenTracking("Wardrobe");
+  const t = useTranslation();
 
   const [stats, setStats] = useState<WardrobeStats>({
     clothingTotal: 0,
@@ -104,10 +98,8 @@ export const WardrobeScreen: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<
-    ClothingCategory | null
-  >(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<ClothingCategory | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [showImportSheet, setShowImportSheet] = useState(false);
 
@@ -140,29 +132,27 @@ export const WardrobeScreen: React.FC = () => {
             category: selectedCategory,
             searchQuery: searchQuery.trim() || undefined,
           },
-          sort: { field: 'createdAt', direction: 'desc' },
+          sort: { field: "createdAt", direction: "desc" },
           page: pageNum,
           limit: PAGE_SIZE,
         });
 
         if (!response.success || !response.data) {
-          throw new Error(response.error?.message || 'Failed to load items');
+          throw new Error(response.error?.message || "Failed to load items");
         }
 
         const newItems = response.data.items;
         const totalPages = response.data.totalPages;
 
-        setItems((prev) =>
-          isRefresh ? newItems : [...prev, ...newItems],
-        );
+        setItems((prev) => (isRefresh ? newItems : [...prev, ...newItems]));
         setHasMore(pageNum < totalPages);
         setPage(pageNum);
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Failed to load items';
+        const message = err instanceof Error ? err.message : "Failed to load items";
         setError(message);
       }
     },
-    [selectedCategory, searchQuery],
+    [selectedCategory, searchQuery]
   );
 
   const initialLoad = useCallback(async () => {
@@ -178,7 +168,7 @@ export const WardrobeScreen: React.FC = () => {
   }, [fetchStats, fetchItems]);
 
   useEffect(() => {
-    initialLoad();
+    void initialLoad();
   }, [initialLoad]);
 
   const handleRefresh = useCallback(async () => {
@@ -191,18 +181,17 @@ export const WardrobeScreen: React.FC = () => {
   }, [fetchStats, fetchItems]);
 
   const handleLoadMore = useCallback(async () => {
-    if (loadingMore || !hasMore) return;
+    if (loadingMore || !hasMore) {
+      return;
+    }
     setLoadingMore(true);
     await fetchItems(page + 1);
     setLoadingMore(false);
   }, [loadingMore, hasMore, page, fetchItems]);
 
-  const handleCategorySelect = useCallback(
-    (category: ClothingCategory | null) => {
-      setSelectedCategory(category);
-    },
-    [],
-  );
+  const handleCategorySelect = useCallback((category: ClothingCategory | null) => {
+    setSelectedCategory(category);
+  }, []);
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
@@ -210,20 +199,22 @@ export const WardrobeScreen: React.FC = () => {
 
   const handleItemPress = useCallback(
     (item: ClothingItem) => {
-      navigation.navigate('ClothingDetail', { clothingId: item.id });
+      navigation.navigate("Product", { clothingId: item.id });
     },
-    [navigation],
+    [navigation]
   );
 
   const filteredItems = useMemo(() => {
-    if (!searchQuery.trim()) return items;
+    if (!searchQuery.trim()) {
+      return items;
+    }
     const q = searchQuery.toLowerCase().trim();
     return items.filter(
       (item) =>
         item.name?.toLowerCase().includes(q) ||
         item.brand?.toLowerCase().includes(q) ||
         item.color?.toLowerCase().includes(q) ||
-        item.tags?.some((tag) => tag.toLowerCase().includes(q)),
+        item.tags?.some((tag) => tag.toLowerCase().includes(q))
     );
   }, [items, searchQuery]);
 
@@ -231,7 +222,7 @@ export const WardrobeScreen: React.FC = () => {
     ({ item }: { item: ClothingItem }) => (
       <ClothingGridItem item={item} onPress={handleItemPress} />
     ),
-    [handleItemPress],
+    [handleItemPress]
   );
 
   // 固定高度的网格项，使用 getItemLayout 优化 FlatList 性能
@@ -242,11 +233,13 @@ export const WardrobeScreen: React.FC = () => {
       offset: GRID_ITEM_HEIGHT * Math.floor(index / 2) + GRID_ROW_GAP * Math.floor(index / 2),
       index,
     }),
-    [],
+    []
   );
 
   const renderFooter = useCallback(() => {
-    if (!loadingMore) return null;
+    if (!loadingMore) {
+      return null;
+    }
     return (
       <View style={styles.loadingMoreContainer}>
         <ActivityIndicator size="small" color={theme.colors.primary} />
@@ -255,30 +248,30 @@ export const WardrobeScreen: React.FC = () => {
   }, [loadingMore]);
 
   const renderEmpty = useCallback(() => {
-    if (loading) return null;
+    if (loading) {
+      return null;
+    }
 
     return (
       <View style={styles.emptyContainer}>
         <Ionicons name="shirt-outline" size={64} color={theme.colors.textTertiary} />
         <Text style={styles.emptyText}>
-          {searchQuery.trim() || selectedCategory
-            ? '没有找到匹配的服装'
-            : '衣橱是空的'}
+          {searchQuery.trim() || selectedCategory ? t.search.noResults : t.wardrobe.title}
         </Text>
         <Text style={styles.emptySubtext}>
           {searchQuery.trim() || selectedCategory
-            ? '试试其他筛选条件'
-            : '点击右上角添加你的第一件服装'}
+            ? "试试其他筛选条件"
+            : "点击右上角添加你的第一件服装"}
         </Text>
         {!searchQuery.trim() && !selectedCategory && (
           <TouchableOpacity
             style={styles.emptyAddButton}
-            onPress={() => navigation.navigate('AddClothing', {})}
-            accessibilityLabel="Add clothing"
+            onPress={() => navigation.navigate("AddClothing", {})}
+            accessibilityLabel="添加服装"
             accessibilityRole="button"
           >
             <Ionicons name="add" size={20} color={theme.colors.surface} />
-            <Text style={styles.emptyAddButtonText}>添加服装</Text>
+            <Text style={styles.emptyAddButtonText}>{t.wardrobe.addClothing}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -304,7 +297,7 @@ export const WardrobeScreen: React.FC = () => {
           <TouchableOpacity
             style={styles.retryButton}
             onPress={initialLoad}
-            accessibilityLabel="Retry loading"
+            accessibilityLabel="重试加载"
             accessibilityRole="button"
           >
             <Text style={styles.retryButtonText}>重试</Text>
@@ -320,9 +313,7 @@ export const WardrobeScreen: React.FC = () => {
         renderItem={renderItem}
         numColumns={2}
         columnWrapperStyle={styles.gridRow}
-        contentContainerStyle={
-          filteredItems.length === 0 ? styles.flatListEmpty : styles.flatList
-        }
+        contentContainerStyle={filteredItems.length === 0 ? styles.flatListEmpty : styles.flatList}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -361,20 +352,20 @@ export const WardrobeScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>我的衣橱</Text>
+        <Text style={styles.headerTitle}>{t.wardrobe.title}</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity
             style={styles.importButton}
             onPress={() => setShowImportSheet(true)}
-            accessibilityLabel="Import to wardrobe"
+            accessibilityLabel="导入衣橱"
             accessibilityRole="button"
           >
             <Ionicons name="download-outline" size={22} color={theme.colors.primary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.addButton}
-            onPress={() => navigation.navigate('AddClothing', {})}
-            accessibilityLabel="Add clothing"
+            onPress={() => navigation.navigate("AddClothing", {})}
+            accessibilityLabel="添加服装"
             accessibilityRole="button"
           >
             <Ionicons name="add" size={24} color={theme.colors.surface} />
@@ -408,7 +399,7 @@ export const WardrobeScreen: React.FC = () => {
           onChangeText={handleSearch}
           returnKeyType="search"
           clearButtonMode="while-editing"
-          accessibilityLabel="Search clothing"
+          accessibilityLabel="搜索服装"
         />
       </View>
 
@@ -419,12 +410,9 @@ export const WardrobeScreen: React.FC = () => {
         contentContainerStyle={styles.categoryScrollContent}
       >
         <TouchableOpacity
-          style={[
-            styles.categoryTab,
-            selectedCategory === null && styles.categoryTabActive,
-          ]}
+          style={[styles.categoryTab, selectedCategory === null && styles.categoryTabActive]}
           onPress={() => handleCategorySelect(null)}
-          accessibilityLabel="All categories"
+          accessibilityLabel="全部"
           accessibilityRole="button"
           accessibilityState={{ selected: selectedCategory === null }}
         >
@@ -440,10 +428,7 @@ export const WardrobeScreen: React.FC = () => {
         {ALL_CATEGORIES.map(([category, label]) => (
           <TouchableOpacity
             key={category}
-            style={[
-              styles.categoryTab,
-              selectedCategory === category && styles.categoryTabActive,
-            ]}
+            style={[styles.categoryTab, selectedCategory === category && styles.categoryTabActive]}
             onPress={() => handleCategorySelect(category)}
             accessibilityLabel={label}
             accessibilityRole="button"
@@ -456,7 +441,7 @@ export const WardrobeScreen: React.FC = () => {
               ]}
             >
               {label}
-              {stats.byCategory[category] != null &&
+              {stats.byCategory[category] !== null &&
                 stats.byCategory[category] > 0 &&
                 ` (${stats.byCategory[category]})`}
             </Text>
@@ -484,9 +469,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 20,
     backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
@@ -494,21 +479,21 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.text,
   },
   headerActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   importButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: theme.colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
     borderColor: theme.colors.border,
   },
@@ -517,11 +502,11 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: theme.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   statsRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     padding: 16,
     paddingBottom: 8,
@@ -531,8 +516,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: 16,
     padding: 16,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 3,
@@ -540,7 +525,7 @@ const styles = StyleSheet.create({
   },
   statNumber: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.primary,
   },
   statLabel: {
@@ -549,8 +534,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.colors.surface,
     marginHorizontal: 16,
     marginVertical: 8,
@@ -575,7 +560,7 @@ const styles = StyleSheet.create({
   categoryScrollContent: {
     paddingHorizontal: 16,
     gap: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   categoryTab: {
     paddingHorizontal: 14,
@@ -591,12 +576,12 @@ const styles = StyleSheet.create({
   },
   categoryTabText: {
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: "500",
     color: theme.colors.textSecondary,
   },
   categoryTabTextActive: {
     color: theme.colors.surface,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   flatList: {
     paddingHorizontal: 12,
@@ -614,43 +599,43 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.surface,
     borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 3,
     elevation: 2,
   },
   gridItemImageContainer: {
-    position: 'relative',
-    width: '100%',
+    position: "relative",
+    width: "100%",
     aspectRatio: 1,
     backgroundColor: theme.colors.placeholderBg,
   },
   gridItemImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   gridItemPlaceholder: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: theme.colors.placeholderBg,
   },
   favoriteBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 6,
     right: 6,
     width: 20,
     height: 20,
     borderRadius: 10,
     backgroundColor: theme.colors.error,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   gridItemName: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.text,
     paddingHorizontal: 8,
     paddingTop: 8,
@@ -664,8 +649,8 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 64,
   },
   loadingText: {
@@ -675,17 +660,17 @@ const styles = StyleSheet.create({
   },
   loadingMoreContainer: {
     paddingVertical: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   emptyContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 64,
   },
   emptyText: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.text,
     marginTop: 16,
   },
@@ -695,8 +680,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   emptyAddButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.colors.primary,
     borderRadius: 12,
     paddingHorizontal: 20,
@@ -706,13 +691,13 @@ const styles = StyleSheet.create({
   },
   emptyAddButtonText: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.surface,
   },
   errorContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 64,
     paddingHorizontal: 32,
   },
@@ -720,7 +705,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: theme.colors.textSecondary,
     marginTop: 12,
-    textAlign: 'center',
+    textAlign: "center",
   },
   retryButton: {
     marginTop: 16,
@@ -731,7 +716,7 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.surface,
   },
 });

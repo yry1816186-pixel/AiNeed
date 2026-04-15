@@ -1,14 +1,13 @@
 import { Injectable, Logger, NotFoundException, ConflictException, ForbiddenException, Inject, Optional } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { Cron } from "@nestjs/schedule";
+import { Prisma } from "@prisma/client";
 import Redis from "ioredis";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
-import { StorageService } from "../../common/storage/storage.service";
 import { REDIS_CLIENT, RedisKeyBuilder } from "../../common/redis/redis.service";
+import { StorageService } from "../../common/storage/storage.service";
 
 import { ContentModerationService } from "./content-moderation.service";
-
 import {
   CreatePostDto,
   UpdatePostDto,
@@ -347,7 +346,7 @@ export class CommunityService {
       isBookmarked = !!bookmarkRecord;
     }
 
-    const relatedItems = (post as any).relatedItems?.map((ri: any) => ri.item) ?? [];
+    const relatedItems = (post as { relatedItems?: Array<{ item: unknown }> }).relatedItems?.map((ri) => ri.item) ?? [];
 
     return {
       ...post,
@@ -766,7 +765,7 @@ export class CommunityService {
       };
     }
 
-    const [posts, likes, tryOns] = await Promise.all([
+    const [posts, likes] = await Promise.all([
       this.prisma.communityPost.findMany({
         where: { authorId: { in: followingIds }, isDeleted: false },
         orderBy: { createdAt: "desc" },
@@ -799,12 +798,13 @@ export class CommunityService {
           },
         },
       }),
-      [] as any[],
     ]);
 
+    const tryOns: { id: string; createdAt: Date; userId: string; user: unknown; tryOnResult?: unknown; resultImageUrl?: string }[] = [];
+
     const feedItems = [
-      ...posts.map((p: any) => ({ ...p, feedType: "post" as const, feedTime: p.createdAt.getTime() })),
-      ...likes.map((l: any) => ({
+      ...posts.map((p: typeof posts[number]) => ({ ...p, feedType: "post" as const, feedTime: p.createdAt.getTime() })),
+      ...likes.map((l: typeof likes[number]) => ({
         feedType: "like" as const,
         feedTime: l.createdAt.getTime(),
         userId: l.userId,
@@ -812,7 +812,7 @@ export class CommunityService {
         postId: l.postId,
         post: l.post,
       })),
-      ...(tryOns as any[]).map((t: any) => ({
+      ...tryOns.map((t: typeof tryOns[number]) => ({
         feedType: "try_on" as const,
         feedTime: t.createdAt?.getTime() ?? 0,
         userId: t.userId,

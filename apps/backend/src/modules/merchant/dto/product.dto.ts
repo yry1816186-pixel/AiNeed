@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsString,
   IsNumber,
@@ -11,7 +12,6 @@ import {
   MaxLength,
   IsUrl,
 } from "class-validator";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 const ClothingCategoryValues = [
   "tops",

@@ -434,7 +434,23 @@ class AlgorithmRegistry:
 
 
 class APIGateway:
-    """API网关主类"""
+    """API网关主类
+
+    P1-11: Enhanced with route validation and default fallback algorithm.
+    """
+
+    # P1-11: Default fallback algorithms for each type
+    DEFAULT_FALLBACK_ALGORITHMS = {
+        AlgorithmType.BODY_METRICS: "body_metrics_v1",
+        AlgorithmType.BODY_DETECTION: "body_detection_v1",
+        AlgorithmType.STYLE_RECOGNITION: "style_recognition_v1",
+        AlgorithmType.CLOTHING_SEGMENTATION: "segmentation_v1",
+        AlgorithmType.RECOMMENDATION: "recommendation_v1",
+        AlgorithmType.TREND_PREDICTION: "trend_prediction_v1",
+        AlgorithmType.AESTHETIC_SCORING: "aesthetic_scoring_v1",
+        AlgorithmType.VIRTUAL_TRYON: "virtual_tryon_v1",
+        AlgorithmType.VISUAL_SEARCH: "visual_search_v1",
+    }
 
     def __init__(self, config: APIConfig = None):
         self.config = config or APIConfig()
@@ -476,6 +492,20 @@ class APIGateway:
     ) -> APIResponse:
         start_time = time.time()
         request_id = self._generate_request_id()
+
+        # P1-11: Validate algorithm route
+        validated_algorithm = self._validate_algorithm_route(algorithm)
+        if validated_algorithm is None:
+            return APIResponse(
+                request_id=request_id,
+                success=False,
+                result=None,
+                error=f"Invalid algorithm route: {algorithm}. Valid routes: {[e.value for e in AlgorithmType]}",
+                execution_time_ms=0,
+                cache_hit=False,
+                model_version=version or "unknown",
+                timestamp=datetime.now()
+            )
 
         if self.config.enable_authentication and api_key:
             auth_success, user_id = self.authenticator.authenticate(api_key, algorithm)
@@ -525,12 +555,24 @@ class APIGateway:
                 )
 
         handler = self.algorithm_registry.get_handler(algorithm, version)
+        # P1-11: If handler not found, try default fallback algorithm
+        if handler is None:
+            fallback_id = self.DEFAULT_FALLBACK_ALGORITHMS.get(validated_algorithm)
+            if fallback_id and fallback_id != algorithm:
+                handler = self.algorithm_registry.get_handler(fallback_id)
+                if handler is not None:
+                    logger.warning(
+                        "Algorithm %s not found, using fallback: %s",
+                        algorithm, fallback_id
+                    )
+                    algorithm = fallback_id
+
         if handler is None:
             return APIResponse(
                 request_id=request_id,
                 success=False,
                 result=None,
-                error=f"Algorithm not found: {algorithm}",
+                error=f"Algorithm not found: {algorithm} (no fallback available)",
                 execution_time_ms=0,
                 cache_hit=False,
                 model_version=version or "unknown",
@@ -578,6 +620,20 @@ class APIGateway:
 
     def _generate_request_id(self) -> str:
         return hashlib.md5(f"{time.time()}{np.random.random()}".encode()).hexdigest()[:16]
+
+    def _validate_algorithm_route(self, algorithm: str) -> Optional[AlgorithmType]:
+        """P1-11: Validate that the algorithm route is a known AlgorithmType.
+
+        Returns the corresponding AlgorithmType enum if valid, None otherwise.
+        """
+        try:
+            return AlgorithmType(algorithm)
+        except ValueError:
+            # Also check by name (case-insensitive)
+            for algo_type in AlgorithmType:
+                if algo_type.value.lower() == algorithm.lower():
+                    return algo_type
+            return None
 
     def _generate_cache_key(
         self,

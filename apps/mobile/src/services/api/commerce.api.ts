@@ -1,5 +1,6 @@
 import apiClient from "./client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { compressImage } from "../../utils/imageCompressor";
 import {
   ApiResponse,
   PaginatedResponse,
@@ -158,14 +159,10 @@ function normalizeIsoDate(value?: string | null): string {
   }
 
   const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime())
-    ? new Date(0).toISOString()
-    : parsed.toISOString();
+  return Number.isNaN(parsed.getTime()) ? new Date(0).toISOString() : parsed.toISOString();
 }
 
-function normalizeSearchCategory(
-  value?: string | null,
-): ClothingItem["category"] {
+function normalizeSearchCategory(value?: string | null): ClothingItem["category"] {
   if (!value) {
     return "other";
   }
@@ -197,9 +194,7 @@ function normalizeCartItem(item: BackendCartItem): CartItem {
     quantity: item.quantity ?? 1,
     price: normalizePrice(item.item?.price),
     originalPrice:
-      item.item?.originalPrice == null
-        ? undefined
-        : normalizePrice(item.item.originalPrice),
+      item.item?.originalPrice === null ? undefined : normalizePrice(item.item?.originalPrice),
     selected: item.selected ?? false,
   };
 }
@@ -269,9 +264,7 @@ function normalizeOrderItem(item: BackendOrderItem): CartItem {
   };
 }
 
-function normalizeShippingAddress(
-  address: BackendOrder["shippingAddress"],
-): Address {
+function normalizeShippingAddress(address: BackendOrder["shippingAddress"]): Address {
   return {
     id: "",
     name: address.name,
@@ -318,7 +311,7 @@ async function loadLocalSearchHistory(): Promise<string[]> {
 async function persistLocalSearchHistory(history: string[]): Promise<void> {
   await AsyncStorage.setItem(
     LOCAL_SEARCH_HISTORY_KEY,
-    JSON.stringify(history.slice(0, LOCAL_SEARCH_HISTORY_LIMIT)),
+    JSON.stringify(history.slice(0, LOCAL_SEARCH_HISTORY_LIMIT))
   );
 }
 
@@ -332,7 +325,7 @@ async function saveLocalSearchHistory(query: string): Promise<string[]> {
   const nextHistory = [
     trimmed,
     ...history.filter(
-      (entry) => entry.localeCompare(trimmed, "zh-CN", { sensitivity: "accent" }) !== 0,
+      (entry) => entry.localeCompare(trimmed, "zh-CN", { sensitivity: "accent" }) !== 0
     ),
   ].slice(0, LOCAL_SEARCH_HISTORY_LIMIT);
 
@@ -414,7 +407,7 @@ export const cartApi = {
 
   async update(
     itemId: string,
-    data: { quantity?: number; color?: string; size?: string; selected?: boolean },
+    data: { quantity?: number; color?: string; size?: string; selected?: boolean }
   ): Promise<ApiResponse<CartItem>> {
     const response = await apiClient.put<BackendCartItem>(`/cart/${itemId}`, {
       quantity: data.quantity,
@@ -472,10 +465,7 @@ export const orderApi = {
     page?: number;
     limit?: number;
   }): Promise<ApiResponse<PaginatedResponse<Order>>> {
-    const response = await apiClient.get<BackendPaginatedResponse<BackendOrder>>(
-      "/orders",
-      params,
-    );
+    const response = await apiClient.get<BackendPaginatedResponse<BackendOrder>>("/orders", params);
 
     if (!response.success || !response.data) {
       return {
@@ -488,9 +478,7 @@ export const orderApi = {
     const pageSize = response.data.pageSize ?? response.data.limit ?? params?.limit ?? 10;
     const total = response.data.total ?? 0;
     const items = (response.data.items ?? []).map(normalizeOrder);
-    const hasMore =
-      response.data.hasMore ??
-      (pageSize > 0 ? page * pageSize < total : false);
+    const hasMore = response.data.hasMore ?? (pageSize > 0 ? page * pageSize < total : false);
 
     return {
       success: true,
@@ -524,12 +512,12 @@ export const orderApi = {
 
   async create(params: {
     addressId: string;
-    items?: Array<{
+    items?: {
       itemId: string;
       color: string;
       size: string;
       quantity: number;
-    }>;
+    }[];
     remark?: string;
     paymentMethod?: string;
   }): Promise<ApiResponse<Order>> {
@@ -596,7 +584,7 @@ export const addressApi = {
   async create(data: Omit<Address, "id">): Promise<ApiResponse<Address>> {
     const response = await apiClient.post<BackendAddress>(
       "/addresses",
-      toBackendAddressPayload(data),
+      toBackendAddressPayload(data)
     );
 
     if (!response.success || !response.data) {
@@ -612,13 +600,10 @@ export const addressApi = {
     };
   },
 
-  async update(
-    id: string,
-    data: Partial<Address>,
-  ): Promise<ApiResponse<Address>> {
+  async update(id: string, data: Partial<Address>): Promise<ApiResponse<Address>> {
     const response = await apiClient.put<BackendAddress>(
       `/addresses/${id}`,
-      toBackendAddressPayload(data),
+      toBackendAddressPayload(data)
     );
 
     if (!response.success || !response.data) {
@@ -644,16 +629,13 @@ export const addressApi = {
 };
 
 export const favoriteApi = {
-  async getAll(params?: {
-    page?: number;
-    limit?: number;
-  }): Promise<ApiResponse<ClothingItem[]>> {
+  async getAll(params?: { page?: number; limit?: number }): Promise<ApiResponse<ClothingItem[]>> {
     const response = await apiClient.get<BackendPaginatedResponse<BackendCommerceItem>>(
       "/favorites",
       {
         page: params?.page,
         limit: params?.limit,
-      },
+      }
     );
 
     if (!response.success || !response.data) {
@@ -691,9 +673,11 @@ export const searchApi = {
     if (filters.category) {
       params.category = filters.category;
     }
+    // eslint-disable-next-line eqeqeq
     if (filters.minPrice != null) {
       params.minPrice = filters.minPrice;
     }
+    // eslint-disable-next-line eqeqeq
     if (filters.maxPrice != null) {
       params.maxPrice = filters.maxPrice;
     }
@@ -702,15 +686,16 @@ export const searchApi = {
 
   async searchByImage(
     imageUri: string,
-    params?: { category?: string; limit?: number },
+    params?: { category?: string; limit?: number }
   ): Promise<ApiResponse<ClothingItem[]>> {
+    const compressedUri = await compressImage(imageUri);
     const formData = new FormData();
-    const filename = imageUri.split("/").pop() || "image.jpg";
+    const filename = compressedUri.split("/").pop() || "image.jpg";
     const match = /\.(\w+)$/.exec(filename);
     const type = match ? `image/${match[1]}` : "image/jpeg";
 
     formData.append("file", {
-      uri: imageUri,
+      uri: compressedUri,
       name: filename,
       type,
     } satisfies FormDataValue);
@@ -742,7 +727,7 @@ export const searchApi = {
 
   async getTrending(): Promise<ApiResponse<string[]>> {
     const response = await apiClient.get<BackendTrendingSearchResponse | string[]>(
-      "/search/trending",
+      "/search/trending"
     );
 
     if (!response.success || !response.data) {
@@ -944,7 +929,7 @@ function normalizeCoupon(raw: BackendCoupon): Coupon {
     type: (raw.type as Coupon["type"]) ?? "FIXED",
     value: normalizePrice(raw.value),
     minOrderAmount: normalizePrice(raw.minOrderAmount),
-    maxDiscount: raw.maxDiscount != null ? normalizePrice(raw.maxDiscount) : null,
+    maxDiscount: raw.maxDiscount !== null ? normalizePrice(raw.maxDiscount) : null,
     startDate: raw.startDate ?? "",
     endDate: raw.endDate ?? "",
     usageLimit: raw.usageLimit ?? 0,
@@ -960,22 +945,24 @@ function normalizeUserCoupon(raw: BackendUserCoupon): UserCoupon {
   return {
     id: raw.id,
     couponId: raw.couponId ?? "",
-    coupon: raw.coupon ? normalizeCoupon(raw.coupon) : {
-      id: raw.couponId ?? "",
-      code: "",
-      type: "FIXED",
-      value: 0,
-      minOrderAmount: 0,
-      maxDiscount: null,
-      startDate: "",
-      endDate: "",
-      usageLimit: 0,
-      usedCount: 0,
-      isActive: false,
-      applicableCategories: [],
-      applicableBrandId: null,
-      description: "",
-    },
+    coupon: raw.coupon
+      ? normalizeCoupon(raw.coupon)
+      : {
+          id: raw.couponId ?? "",
+          code: "",
+          type: "FIXED",
+          value: 0,
+          minOrderAmount: 0,
+          maxDiscount: null,
+          startDate: "",
+          endDate: "",
+          usageLimit: 0,
+          usedCount: 0,
+          isActive: false,
+          applicableCategories: [],
+          applicableBrandId: null,
+          description: "",
+        },
     status: (raw.status as UserCoupon["status"]) ?? "AVAILABLE",
     usedAt: raw.usedAt ?? null,
     createdAt: raw.createdAt ?? new Date(0).toISOString(),
@@ -1041,10 +1028,8 @@ function normalizeFilterOptions(raw: BackendFilterOptions): FilterOptions {
 export const paymentApi = {
   async createPayment(
     orderId: string,
-    provider: "alipay" | "wechat",
-  ): Promise<
-    ApiResponse<{ paymentUrl?: string; qrCode?: string; orderId: string }>
-  > {
+    provider: "alipay" | "wechat"
+  ): Promise<ApiResponse<{ paymentUrl?: string; qrCode?: string; orderId: string }>> {
     const response = await apiClient.post<{
       paymentUrl?: string;
       qrCode?: string;
@@ -1067,7 +1052,7 @@ export const paymentApi = {
   },
 
   async pollPaymentStatus(
-    orderId: string,
+    orderId: string
   ): Promise<ApiResponse<{ status: string; paid: boolean }>> {
     return apiClient.get(`/payment/query/${orderId}`);
   },
@@ -1080,10 +1065,8 @@ export const couponApi = {
     code: string,
     orderAmount: number,
     categoryIds?: string[],
-    brandId?: string,
-  ): Promise<
-    ApiResponse<{ valid: boolean; discount: number; coupon?: Coupon }>
-  > {
+    brandId?: string
+  ): Promise<ApiResponse<{ valid: boolean; discount: number; coupon?: Coupon }>> {
     return apiClient.post("/coupons/validate", {
       code,
       orderAmount,
@@ -1139,10 +1122,7 @@ export const refundApi = {
     description?: string;
     images?: string[];
   }): Promise<ApiResponse<RefundRequest>> {
-    const response = await apiClient.post<BackendRefundRequest>(
-      "/refund-requests",
-      data,
-    );
+    const response = await apiClient.post<BackendRefundRequest>("/refund-requests", data);
 
     if (!response.success || !response.data) {
       return { success: false, error: response.error };
@@ -1151,11 +1131,9 @@ export const refundApi = {
     return { success: true, data: normalizeRefundRequest(response.data) };
   },
 
-  async getOrderRefunds(
-    orderId: string,
-  ): Promise<ApiResponse<RefundRequest[]>> {
+  async getOrderRefunds(orderId: string): Promise<ApiResponse<RefundRequest[]>> {
     const response = await apiClient.get<BackendRefundRequest[]>(
-      `/refund-requests/order/${orderId}`,
+      `/refund-requests/order/${orderId}`
     );
 
     if (!response.success || !response.data) {
@@ -1181,13 +1159,10 @@ export const refundApi = {
     };
   },
 
-  async addRefundTracking(
-    id: string,
-    trackingNumber: string,
-  ): Promise<ApiResponse<RefundRequest>> {
+  async addRefundTracking(id: string, trackingNumber: string): Promise<ApiResponse<RefundRequest>> {
     const response = await apiClient.patch<BackendRefundRequest>(
       `/refund-requests/${id}/tracking`,
-      { trackingNumber },
+      { trackingNumber }
     );
 
     if (!response.success || !response.data) {
@@ -1204,12 +1179,13 @@ export const stockNotificationApi = {
   async subscribe(
     itemId: string,
     color?: string,
-    size?: string,
+    size?: string
   ): Promise<ApiResponse<StockNotification>> {
-    const response = await apiClient.post<BackendStockNotification>(
-      "/stock-notifications",
-      { itemId, color, size },
-    );
+    const response = await apiClient.post<BackendStockNotification>("/stock-notifications", {
+      itemId,
+      color,
+      size,
+    });
 
     if (!response.success || !response.data) {
       return { success: false, error: response.error };
@@ -1226,9 +1202,7 @@ export const stockNotificationApi = {
   },
 
   async getAll(): Promise<ApiResponse<StockNotification[]>> {
-    const response = await apiClient.get<BackendStockNotification[]>(
-      "/stock-notifications",
-    );
+    const response = await apiClient.get<BackendStockNotification[]>("/stock-notifications");
 
     if (!response.success || !response.data) {
       return { success: false, error: response.error };
@@ -1255,18 +1229,18 @@ export const orderEnhancementApi = {
   async getOrdersByTab(
     tab: string,
     page?: number,
-    limit?: number,
+    limit?: number
   ): Promise<ApiResponse<PaginatedResponse<Order>>> {
     const params: Record<string, unknown> = {};
-    if (page != null) {
+    if (page !== null) {
       params.page = page;
     }
-    if (limit != null) {
+    if (limit !== null) {
       params.limit = limit;
     }
     const response = await apiClient.get<BackendPaginatedResponse<BackendOrder>>(
       `/orders/tab/${tab}`,
-      params,
+      params
     );
 
     if (!response.success || !response.data) {
@@ -1277,9 +1251,7 @@ export const orderEnhancementApi = {
     const pageSize = response.data.pageSize ?? response.data.limit ?? limit ?? 10;
     const total = response.data.total ?? 0;
     const items = (response.data.items ?? []).map(normalizeOrder);
-    const hasMore =
-      response.data.hasMore ??
-      (pageSize > 0 ? resPage * pageSize < total : false);
+    const hasMore = response.data.hasMore ?? (pageSize > 0 ? resPage * pageSize < total : false);
 
     return {
       success: true,
@@ -1299,11 +1271,9 @@ export const orderEnhancementApi = {
 // ==================== Phase 5: Size Recommendation API ====================
 
 export const sizeRecommendationApi = {
-  async getSizeRecommendation(
-    itemId: string,
-  ): Promise<ApiResponse<SizeRecommendation | null>> {
+  async getSizeRecommendation(itemId: string): Promise<ApiResponse<SizeRecommendation | null>> {
     const response = await apiClient.get<BackendSizeRecommendation>(
-      `/size-recommendation/${itemId}`,
+      `/size-recommendation/${itemId}`
     );
 
     if (!response.success || !response.data) {
@@ -1317,7 +1287,7 @@ export const sizeRecommendationApi = {
   },
 
   async getSizeChart(
-    itemId: string,
+    itemId: string
   ): Promise<ApiResponse<{ size: string; label: string; matchScore: number }[]>> {
     return apiClient.get(`/size-recommendation/${itemId}/chart`);
   },
@@ -1326,17 +1296,12 @@ export const sizeRecommendationApi = {
 // ==================== Phase 5: Search Enhancement API ====================
 
 export const searchEnhancementApi = {
-  async getFilterOptions(
-    category?: string,
-  ): Promise<ApiResponse<FilterOptions>> {
+  async getFilterOptions(category?: string): Promise<ApiResponse<FilterOptions>> {
     const params: Record<string, unknown> = {};
     if (category) {
       params.category = category;
     }
-    const response = await apiClient.get<BackendFilterOptions>(
-      "/search/filter-options",
-      params,
-    );
+    const response = await apiClient.get<BackendFilterOptions>("/search/filter-options", params);
 
     if (!response.success || !response.data) {
       return { success: false, error: response.error };
@@ -1353,9 +1318,7 @@ export const searchEnhancementApi = {
 
 export const clothingEnhancementApi = {
   async getRelatedItems(itemId: string): Promise<ApiResponse<ClothingItem[]>> {
-    const response = await apiClient.get<BackendCommerceItem[]>(
-      `/clothing/${itemId}/related`,
-    );
+    const response = await apiClient.get<BackendCommerceItem[]>(`/clothing/${itemId}/related`);
 
     if (!response.success || !response.data) {
       return { success: false, error: response.error };
@@ -1367,9 +1330,7 @@ export const clothingEnhancementApi = {
     };
   },
 
-  async getSubcategories(
-    category?: string,
-  ): Promise<ApiResponse<Subcategory[]>> {
+  async getSubcategories(category?: string): Promise<ApiResponse<Subcategory[]>> {
     const params: Record<string, unknown> = {};
     if (category) {
       params.category = category;
@@ -1464,7 +1425,7 @@ export const cartEnhancementApi = {
     };
   },
 
-  async batchDeleteCartItems(ids: string[]): Promise<ApiResponse<{ count: number }>> {
+  async batchDeleteCartItems(_ids: string[]): Promise<ApiResponse<{ count: number }>> {
     return apiClient.delete<{ count: number }>("/cart/batch");
   },
 
@@ -1477,7 +1438,7 @@ export const cartEnhancementApi = {
   async updateCartItemSku(
     id: string,
     color?: string,
-    size?: string,
+    size?: string
   ): Promise<ApiResponse<CartItem>> {
     const response = await apiClient.patch<BackendCartItem>(`/cart/${id}/sku`, {
       color,

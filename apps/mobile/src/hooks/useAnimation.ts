@@ -8,7 +8,7 @@ export function useAnimation(initialValue = 0) {
   const animate = useCallback(
     (
       toValue: number,
-      config?: { duration?: number; useNativeDriver?: boolean; easing?: EasingFunction },
+      config?: { duration?: number; useNativeDriver?: boolean; easing?: EasingFunction }
     ) => {
       return Animated.timing(anim, {
         toValue,
@@ -17,7 +17,7 @@ export function useAnimation(initialValue = 0) {
         easing: config?.easing ?? Easing.out(Easing.cubic),
       });
     },
-    [anim],
+    [anim]
   );
 
   const spring = useCallback(
@@ -29,7 +29,7 @@ export function useAnimation(initialValue = 0) {
         ...config,
       });
     },
-    [anim],
+    [anim]
   );
 
   return { anim, animate, spring };
@@ -128,12 +128,10 @@ export function useScaleAnimation(triggerOnMount = false) {
 
 export function useSlideAnimation(
   direction: "up" | "down" | "left" | "right" = "up",
-  distance = 100,
+  distance = 100
 ) {
-  const translateValue =
-    direction === "up" || direction === "down" ? "translateY" : "translateX";
-  const offset =
-    direction === "down" || direction === "right" ? distance : -distance;
+  const translateValue = direction === "up" || direction === "down" ? "translateY" : "translateX";
+  const offset = direction === "down" || direction === "right" ? distance : -distance;
 
   const translate = useRef(new Animated.Value(offset)).current;
   const opacity = useRef(new Animated.Value(0)).current;
@@ -182,7 +180,7 @@ export function useStaggerAnimation(itemCount: number, staggerDelay = 50) {
     Array.from({ length: itemCount }, () => ({
       opacity: new Animated.Value(0),
       translateY: new Animated.Value(20),
-    })),
+    }))
   ).current;
 
   const start = useCallback(() => {
@@ -200,7 +198,7 @@ export function useStaggerAnimation(itemCount: number, staggerDelay = 50) {
           ...SpringConfigs.gentle,
           useNativeDriver: true,
         }),
-      ]),
+      ])
     );
 
     Animated.stagger(staggerDelay, animatedItems).start();
@@ -285,7 +283,9 @@ export function usePulseAnimation(active = true, interval = 2000) {
   const opacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    if (!active) return;
+    if (!active) {
+      return;
+    }
 
     const animation = Animated.loop(
       Animated.sequence([
@@ -313,7 +313,7 @@ export function usePulseAnimation(active = true, interval = 2000) {
             useNativeDriver: true,
           }),
         ]),
-      ]),
+      ])
     );
 
     animation.start();

@@ -52,6 +52,7 @@ model User {
   addresses   UserAddress[]
   behaviors   UserBehavior[]
   behaviorEvents     UserBehaviorEvent[]
+  preferenceWeights  UserPreferenceWeight[]
   recommendationCaches RecommendationCache[]
   userClothings UserClothing[]
   outfits    Outfit[]
@@ -62,6 +63,7 @@ model User {
   styleRecommendations StyleRecommendation[]
   notifications     Notification[]
   paymentOrders     PaymentOrder[]
+  paymentRecords    PaymentRecord[]
   userSubscriptions UserSubscription[]
 
   posts         CommunityPost[] @relation("AuthorPosts")
@@ -101,9 +103,18 @@ model User {
   // Phase 9: Admin audit log
   adminAuditLogs       AdminAuditLog[]
 
+  // 补全缺失的 User 关联
+  dataExportRequests   DataExportRequest[]
+  dataDeletionRequests DataDeletionRequest[]
+  searchHistories      SearchHistory[]
+  userSessions         UserSession[]
+
   @@index([email])
   @@index([phone])
   @@index([isActive])
+  // D-P2-5: isDeleted索引 — 软删除过滤查询优化
+  @@index([isDeleted])
+  @@index([isActive, isDeleted])
   @@index([createdAt(sort: Desc)])
 }
 
@@ -159,7 +170,7 @@ model UserProfile {
   bodyType      BodyType?
   skinTone      SkinTone?
   faceShape     FaceShape?
-            colorSeason   ColorSeason?
+  colorSeason   ColorSeason?
 
   height    Float?
   weight    Float?
@@ -192,10 +203,13 @@ model UserBehavior {
   id          String   @id @default(uuid())
   userId      String
   itemId      String?
-  type        String
+  type        BehaviorEventType
   createdAt   DateTime @default(now())
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // D-P1-2: 添加ClothingItem外键关系 — 商品删除时置空itemId保留行为记录
+  item        ClothingItem? @relation(fields: [itemId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([type])
@@ -246,7 +260,7 @@ model StyleProfile {
   description String
   keywords    String[]
   palette     String[]
-  confidence  Int      @default(70)
+  confidence  Int      @default(70) // D-P2-12: 范围约束 0-100，应用层必须校验 confidence >= 0 && confidence <= 100
   isDefault   Boolean  @default(false)
   isActive    Boolean  @default(true)
 
@@ -301,6 +315,12 @@ enum ColorSeason {
   autumn_deep
   winter_cool
   winter_deep
+}
+
+enum FitPreference {
+  tight
+  regular
+  loose
 }
 
 model UserPhoto {
@@ -365,8 +385,8 @@ model Brand {
   verifiedAt      DateTime?
 
   // 结算信息
-  bankName       String?
-  bankAccount    String?
+  bankName       String? /// @encrypted - PII field, must be encrypted at rest
+  bankAccount    String? /// @encrypted - PII field, must be encrypted at rest
   commissionRate Decimal @default(0.10) @db.Decimal(5, 4)
 
   products    ClothingItem[]
@@ -401,8 +421,8 @@ model ClothingItem {
   sizes       String[]
   tags        String[]
 
-  price       Decimal  @db.Decimal(10, 2)
-  originalPrice Decimal? @db.Decimal(10, 2)
+  price       Decimal  @db.Decimal(10, 2) /// D-P2-13: 非负约束 — 应用层必须校验 price >= 0，数据库层通过 CHECK 约束或触发器保证
+  originalPrice Decimal? @db.Decimal(10, 2) /// 非负约束 — 应用层必须校验 originalPrice >= 0
   currency    String   @default("CNY")
 
   // FIX-BL-006: 库存管理字段 (修复时间: 2026-03-19)
@@ -435,6 +455,7 @@ model ClothingItem {
   orderItems  OrderItem[]
   postItems   CommunityPostItem[]
   rankingFeedback RankingFeedback[]
+  userBehaviors   UserBehavior[]
   stockNotifications StockNotification[]
 
   // 核心业务索引（精简至15个，优化写入性能）
@@ -755,6 +776,8 @@ model SearchHistory {
 
   createdAt DateTime @default(now())
 
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([sessionId])
   @@index([userId, createdAt(sort: Desc)])
@@ -772,6 +795,7 @@ model AIAnalysisCache {
 
   hitCount    Int      @default(1)
   createdAt   DateTime @default(now())
+  /// 过期时间 - 需要定时任务清理过期记录（建议通过 BullMQ 定时 Job 或 pg_cron 定期执行 DELETE WHERE expiresAt < NOW()）
   expiresAt   DateTime
 
   @@index([imageHash])
@@ -865,10 +889,14 @@ model UserPreferenceWeight {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // D-P2-15: 添加User外键关系 — 用户删除时级联删除偏好权重
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId, category, key])
   @@index([userId])
 }
 
+/// 用户会话 - 需要定时任务清理过期会话（建议通过 BullMQ 定时 Job 或 pg_cron 定期执行 DELETE WHERE endedAt < NOW() - INTERVAL '30 days'）
 model UserSession {
   id            String   @id @default(uuid())
   userId        String?
@@ -889,8 +917,15 @@ model UserSession {
   duration      Int?
   pageViews     Int      @default(0)
 
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([anonymousId])
+}
+
+enum AiStylistSessionStatus {
+  active
+  archived
 }
 
 model AiStylistSession {
@@ -899,7 +934,7 @@ model AiStylistSession {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   payload   Json
-  status    String   @default("active")
+  status    AiStylistSessionStatus @default(active)
 
   expiresAt DateTime
 
@@ -972,8 +1007,8 @@ model UserSubscription {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  plan        MembershipPlan @relation(fields: [planId], references: [id])
+  user        User           @relation(fields: [userId], references: [id], onDelete: Restrict)
+  plan        MembershipPlan @relation(fields: [planId], references: [id], onDelete: Restrict)
   paymentOrders PaymentOrder[]
 
   @@index([userId])
@@ -1009,7 +1044,7 @@ model PaymentOrder {
   refundedAt    DateTime?
   createdAt     DateTime @default(now())
 
-  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User            @relation(fields: [userId], references: [id], onDelete: Restrict)
   subscription  UserSubscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
 
   @@index([userId])
@@ -1148,6 +1183,8 @@ model DataExportRequest {
   requestedAt DateTime @default(now())
   completedAt DateTime?
 
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([status])
 }
@@ -1170,6 +1207,8 @@ model DataDeletionRequest {
   requestedAt DateTime @default(now())
   processedAt DateTime?
   completedAt DateTime?
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([status])
@@ -1282,7 +1321,7 @@ model BrandScanRecord {
 model ProductSalesStats {
   id          String   @id @default(uuid())
   itemId      String
-  item        ClothingItem @relation(fields: [itemId], references: [id])
+  item        ClothingItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   date        DateTime @db.Date
 
@@ -1331,6 +1370,9 @@ model PaymentRecord {
 
   refunds         RefundRecord[]
 
+  // D-P1-3: 添加User外键关系 — 支付记录必须关联用户，阻止删除有支付记录的用户
+  user            User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+
   @@index([userId])
   @@index([status])
   @@index([provider])
@@ -1364,7 +1406,7 @@ model RefundRecord {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  paymentRecord   PaymentRecord @relation(fields: [paymentRecordId], references: [id])
+  paymentRecord   PaymentRecord @relation(fields: [paymentRecordId], references: [id], onDelete: Restrict)
 
   @@index([paymentRecordId])
   @@index([status])
@@ -1381,7 +1423,7 @@ enum RefundRecordStatus {
 model CartItem {
   id        String   @id @default(uuid())
   userId    String
-  itemId    String
+  itemId    String?  // D-P2-16: 改为可选 — 商品删除时置空保留购物车记录
   
   color     String
   size      String
@@ -1392,7 +1434,8 @@ model CartItem {
   updatedAt DateTime @updatedAt
   
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  item      ClothingItem  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  // D-P2-16: onDelete SetNull — 商品下架时保留购物车记录，itemId置空
+  item      ClothingItem?  @relation(fields: [itemId], references: [id], onDelete: SetNull)
   
   @@unique([userId, itemId, color, size])
   @@index([userId])
@@ -1431,7 +1474,8 @@ model Order {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // D-P1-4: onDelete Restrict — 阻止误删有订单的用户，需先处理订单再删除用户
+  user          User          @relation(fields: [userId], references: [id], onDelete: Restrict)
   items         OrderItem[]
   address       OrderAddress?
   refundRequests RefundRequest[]
@@ -1459,7 +1503,7 @@ enum OrderStatus {
 model OrderItem {
   id          String   @id @default(uuid())
   orderId     String
-  itemId      String
+  itemId      String?  // 商品删除时置空，订单项仍保留（依赖itemName/itemImage快照）
   
   itemName    String
   itemImage   String
@@ -1471,7 +1515,7 @@ model OrderItem {
   createdAt   DateTime @default(now())
   
   order       Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  item        ClothingItem @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  item        ClothingItem? @relation(fields: [itemId], references: [id], onDelete: SetNull)
   
   @@index([orderId])
   @@index([itemId])
@@ -1849,6 +1893,7 @@ model QuizAnswer {
   @@index([questionId])
   @@index([userId, questionId])
   @@index([userId, createdAt(sort: Desc)])
+  @@unique([userId, questionId])
 }
 
 model StyleQuizResult {
@@ -2072,7 +2117,7 @@ model ConsultantReview {
   userId        String
   consultantId  String
 
-  rating        Int      // 1-5
+  rating        Int      // D-P2-11: 范围约束 1-5，应用层必须校验 rating >= 1 && rating <= 5
   content       String?  @db.Text
   tags          Json     // string[]
   beforeImages  Json     // string[]
@@ -2125,7 +2170,7 @@ model ConsultantEarning {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User              @relation(fields: [userId], references: [id], onDelete: Restrict)
   consultant      ConsultantProfile @relation(fields: [consultantId], references: [id], onDelete: Cascade)
   booking         ServiceBooking    @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 
@@ -2140,16 +2185,16 @@ model ConsultantWithdrawal {
   userId          String
   amount          Decimal  @db.Decimal(10, 2)
   status          WithdrawalStatus @default(pending)
-  bankName        String?
-  bankAccount     String?
-  accountHolder   String?
+  bankName        String? /// @encrypted - PII field, must be encrypted at rest
+  bankAccount     String? /// @encrypted - PII field, must be encrypted at rest
+  accountHolder   String? /// @encrypted - PII field, must be encrypted at rest
   rejectedReason  String?
   processedAt     DateTime?
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User              @relation(fields: [userId], references: [id], onDelete: Restrict)
   consultant      ConsultantProfile @relation(fields: [consultantId], references: [id], onDelete: Cascade)
 
   @@index([consultantId])
@@ -2208,7 +2253,7 @@ model WardrobeCollectionItem {
 // ==================== 推荐引擎缓存系统 ====================
 
 model RecommendationCache {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   userId      String
   category    String
   subCategory String?
@@ -2226,7 +2271,7 @@ model RecommendationCache {
 }
 
 model KnowledgeGraphEntity {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   entityType  String
   entityId    String
   syncedAt    DateTime @default(now())
@@ -2278,7 +2323,7 @@ model FeatureFlagEvaluation {
 // ==================== 社区扩展：收藏/举报/博主商品/审核 ====================
 
 model PostBookmark {
-  id            String   @id @default(cuid())
+  id            String   @id @default(uuid())
   userId        String
   postId        String
   collectionId  String?
@@ -2293,7 +2338,7 @@ model PostBookmark {
 }
 
 model ContentReport {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   reporterId  String
   contentType String
   contentId   String
@@ -2313,7 +2358,7 @@ model ContentReport {
 }
 
 model BloggerProduct {
-  id            String   @id @default(cuid())
+  id            String   @id @default(uuid())
   bloggerId     String
   type          String
   title         String
@@ -2333,7 +2378,7 @@ model BloggerProduct {
 }
 
 model ContentModerationLog {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   contentType String
   contentId   String
   action      String
@@ -2383,7 +2428,7 @@ model UserCoupon {
   createdAt DateTime @default(now())
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  coupon    Coupon   @relation(fields: [couponId], references: [id])
+  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Restrict)
 
   @@unique([userId, couponId])
   @@index([userId, status])
@@ -2400,7 +2445,7 @@ model StockNotification {
   createdAt DateTime @default(now())
 
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  item      ClothingItem  @relation(fields: [itemId], references: [id])
+  item      ClothingItem  @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@unique([userId, itemId, color, size])
   @@index([itemId, status])
@@ -2423,8 +2468,8 @@ model RefundRequest {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  order           Order    @relation(fields: [orderId], references: [id])
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   @@index([orderId])
   @@index([userId, status])

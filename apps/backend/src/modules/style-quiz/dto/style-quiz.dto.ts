@@ -1,3 +1,5 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import {
   IsString,
   IsOptional,
@@ -10,8 +12,6 @@ import {
   IsObject,
   ValidateNested,
 } from "class-validator";
-import { Type } from "class-transformer";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 // ==================== 枚举 ====================
 

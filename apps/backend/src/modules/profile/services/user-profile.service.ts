@@ -391,8 +391,8 @@ export class UserProfileService {
     });
 
     const behaviorStats = {
-      totalViews: behaviors.find((b) => b.type === "view")?._count || 0,
-      totalLikes: behaviors.find((b) => b.type === "like")?._count || 0,
+      totalViews: behaviors.find((b) => b.type === "page_view")?._count || 0,
+      totalLikes: behaviors.find((b) => b.type === "post_like")?._count || 0,
       totalPurchases: behaviors.find((b) => b.type === "purchase")?._count || 0,
       preferredCategories: [],
       preferredBrands: [],

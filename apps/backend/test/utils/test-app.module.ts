@@ -11,17 +11,17 @@ import { INestApplication, ValidationPipe, Logger, Provider } from "@nestjs/comm
 import { Test, TestingModule } from "@nestjs/testing";
 import { PrismaClient } from "@prisma/client";
 
+import { EmailService } from "../../src/common/email/email.service";
 import { PrismaService } from "../../src/common/prisma/prisma.service";
 import {
   RedisService,
   REDIS_CLIENT,
 } from "../../src/common/redis/redis.service";
 import { StorageService } from "../../src/common/storage/storage.service";
-import { EmailService } from "../../src/common/email/email.service";
 import { LlmProviderService } from "../../src/modules/ai-stylist/llm-provider.service";
+import { QUEUE_NAMES } from "../../src/modules/queue/queue.constants";
 import { DoubaoSeedreamProvider } from "../../src/modules/try-on/services/doubao-seedream.provider";
 import { GlmTryOnProvider } from "../../src/modules/try-on/services/glm-tryon.provider";
-import { QUEUE_NAMES } from "../../src/modules/queue/queue.constants";
 
 import { createMockRedisClient, createMockRedisService as buildMockRedisService } from "./redis-test-utils";
 

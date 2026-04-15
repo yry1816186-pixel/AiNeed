@@ -1,15 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-} from "react-native";
+﻿import React, { useCallback, useEffect, useState } from "react";
+import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from "../theme";
+import { theme } from '../design-system/theme';
 import { useAiStylistStore } from "../stores/aiStylistStore";
 import { DesignTokens } from "../theme/tokens/design-tokens";
 
@@ -39,12 +32,12 @@ export const SessionCalendarScreen: React.FC = () => {
   } = useAiStylistStore();
 
   useEffect(() => {
-    fetchCalendarDays(year, month);
+    void fetchCalendarDays(year, month);
   }, [year, month, fetchCalendarDays]);
 
   useEffect(() => {
     if (selectedDate) {
-      fetchArchivedSessions(selectedDate);
+      void fetchArchivedSessions(selectedDate);
     }
   }, [selectedDate, fetchArchivedSessions]);
 
@@ -72,21 +65,24 @@ export const SessionCalendarScreen: React.FC = () => {
     setSelectedDate(null);
   }, [month]);
 
-  const handleDayPress = useCallback((day: number) => {
-    const dateStr = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-    setSelectedDate(dateStr);
-  }, [year, month]);
+  const handleDayPress = useCallback(
+    (day: number) => {
+      const dateStr = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      setSelectedDate(dateStr);
+    },
+    [year, month]
+  );
 
   const handleSessionPress = useCallback(
     async (sessionId: string) => {
       setCurrentSessionId(sessionId);
       await fetchOutfitPlan(sessionId);
     },
-    [setCurrentSessionId, fetchOutfitPlan],
+    [setCurrentSessionId, fetchOutfitPlan]
   );
 
   // Build calendar grid
-  const calendarCells: Array<{ day: number | null; dateStr: string | null }> = [];
+  const calendarCells: { day: number | null; dateStr: string | null }[] = [];
   for (let i = 0; i < firstDay; i++) {
     calendarCells.push({ day: null, dateStr: null });
   }
@@ -127,24 +123,18 @@ export const SessionCalendarScreen: React.FC = () => {
         {calendarCells.map((cell, idx) => (
           <Pressable
             key={idx}
-            style={[
-              styles.dayCell,
-              cell.dateStr === selectedDate && styles.dayCellSelected,
-            ]}
+            style={[styles.dayCell, cell.dateStr === selectedDate && styles.dayCellSelected]}
             onPress={() => cell.day && handleDayPress(cell.day)}
             disabled={!cell.day}
           >
             {cell.day !== null && (
               <>
-                <Text style={[
-                  styles.dayText,
-                  cell.dateStr === selectedDate && styles.dayTextSelected,
-                ]}>
+                <Text
+                  style={[styles.dayText, cell.dateStr === selectedDate && styles.dayTextSelected]}
+                >
                   {cell.day}
                 </Text>
-                {cell.dateStr && markedDates.has(cell.dateStr) && (
-                  <View style={styles.dotMarker} />
-                )}
+                {cell.dateStr && markedDates.has(cell.dateStr) && <View style={styles.dotMarker} />}
               </>
             )}
           </Pressable>
@@ -167,7 +157,10 @@ export const SessionCalendarScreen: React.FC = () => {
             <View style={styles.sessionCardInfo}>
               <Text style={styles.sessionGoal}>{session.goal || "AI Stylist Session"}</Text>
               <Text style={styles.sessionTime}>
-                {new Date(session.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                {new Date(session.createdAt).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </Text>
             </View>
             {session.hasOutfitPlan && (
@@ -221,7 +214,7 @@ const styles = StyleSheet.create({
   },
   dayCellSelected: { backgroundColor: DesignTokens.colors.brand.terracotta },
   dayText: { fontSize: 14, color: theme.colors.text },
-  dayTextSelected: { color: "#fff", fontWeight: "600" },
+  dayTextSelected: { color: DesignTokens.colors.neutral.white, fontWeight: "600" },
   dotMarker: {
     width: 4,
     height: 4,

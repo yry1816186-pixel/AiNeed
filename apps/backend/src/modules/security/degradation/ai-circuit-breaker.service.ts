@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
+
 import { REDIS_CLIENT } from '../../../common/redis/redis.service';
 
 export enum CircuitState {
@@ -84,7 +85,7 @@ export class AiCircuitBreakerService {
 
   async getState(serviceName: string): Promise<CircuitState> {
     const raw = await this.redis.get(this.key(serviceName, 'state'));
-    if (!raw) return CircuitState.CLOSED;
+    if (!raw) {return CircuitState.CLOSED;}
     return raw as CircuitState;
   }
 
@@ -178,7 +179,7 @@ export class AiCircuitBreakerService {
 
   private async transitionTo(serviceName: string, newState: CircuitState): Promise<void> {
     const currentState = await this.getState(serviceName);
-    if (currentState === newState) return;
+    if (currentState === newState) {return;}
 
     await this.redis.set(this.key(serviceName, 'state'), newState);
 

@@ -1,18 +1,12 @@
-import React, { useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Share,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '../../polyfills/expo-vector-icons';
-import Animated, { FadeInUp } from 'react-native-reanimated';
-import { useQuizStore } from '../../stores/quizStore';
-import { theme, Colors, Spacing, BorderRadius } from '../../theme';
+﻿import React, { useCallback, useMemo } from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "../../polyfills/expo-vector-icons";
+import Animated, { FadeInUp } from "react-native-reanimated";
+import { useQuizStore } from "../../stores/quizStore";
+import { theme, Colors, Spacing, BorderRadius } from '../design-system/theme';
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 const TAG_COLORS = [
   Colors.primary[500],
@@ -24,14 +18,14 @@ const TAG_COLORS = [
 ];
 
 const OCCASION_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
-  '日常': 'sunny-outline',
-  '工作': 'briefcase-outline',
-  '约会': 'heart-outline',
-  '聚会': 'wine-outline',
-  '运动': 'fitness-outline',
-  '旅行': 'airplane-outline',
-  '正式': 'ribbon-outline',
-  '休闲': 'cafe-outline',
+  日常: "sunny-outline",
+  工作: "briefcase-outline",
+  约会: "heart-outline",
+  聚会: "wine-outline",
+  运动: "fitness-outline",
+  旅行: "airplane-outline",
+  正式: "ribbon-outline",
+  休闲: "cafe-outline",
 };
 
 const CONFETTI_COLORS = [
@@ -63,14 +57,14 @@ export const QuizResultScreen: React.FC = () => {
   }, []);
 
   const handleViewProfile = useCallback(() => {
-    navigation.navigate('Profile' as never);
+    navigation.navigate("Profile" as never);
   }, [navigation]);
 
   const handleShare = useCallback(async () => {
     try {
       await Share.share({
-        title: '我的风格画像',
-        message: `我在寻裳完成了风格测试！我的风格标签：${styleTags.join('、')}`,
+        title: "我的风格画像",
+        message: `我在寻裳完成了风格测试！我的风格标签：${styleTags.join("、")}`,
       });
     } catch {
       // Share failed silently
@@ -85,19 +79,16 @@ export const QuizResultScreen: React.FC = () => {
   const getTagColor = (index: number) => TAG_COLORS[index % TAG_COLORS.length];
 
   const confidencePercent = Math.round(confidence * 100);
-  const confidenceStrokeDashoffset = 188.5 - (188.5 * confidence);
+  const _confidenceStrokeDashoffset = 188.5 - 188.5 * confidence;
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Animated.View
-          entering={FadeInUp.duration(600).delay(0)}
-          style={styles.headerSection}
-        >
+        <Animated.View entering={FadeInUp.duration(600).delay(0)} style={styles.headerSection}>
           <View style={styles.confettiContainer}>
             {confettiDots.map((dot) => (
               <View
@@ -119,27 +110,18 @@ export const QuizResultScreen: React.FC = () => {
           <Text style={styles.subtitle}>基于你的选择，AI 为你生成专属风格分析</Text>
         </Animated.View>
 
-        <Animated.View
-          entering={FadeInUp.duration(600).delay(100)}
-          style={styles.section}
-        >
+        <Animated.View entering={FadeInUp.duration(600).delay(100)} style={styles.section}>
           <Text style={styles.sectionTitle}>风格标签</Text>
           <View style={styles.tagCloud}>
             {styleTags.map((tag, index) => (
-              <View
-                key={tag}
-                style={[styles.tag, { backgroundColor: getTagColor(index) }]}
-              >
+              <View key={tag} style={[styles.tag, { backgroundColor: getTagColor(index) }]}>
                 <Text style={styles.tagText}>{tag}</Text>
               </View>
             ))}
           </View>
         </Animated.View>
 
-        <Animated.View
-          entering={FadeInUp.duration(600).delay(200)}
-          style={styles.section}
-        >
+        <Animated.View entering={FadeInUp.duration(600).delay(200)} style={styles.section}>
           <Text style={styles.sectionTitle}>色彩偏好</Text>
           <View style={styles.colorRow}>
             {colorPalette.map((hex, index) => (
@@ -151,16 +133,13 @@ export const QuizResultScreen: React.FC = () => {
           </View>
         </Animated.View>
 
-        <Animated.View
-          entering={FadeInUp.duration(600).delay(300)}
-          style={styles.section}
-        >
+        <Animated.View entering={FadeInUp.duration(600).delay(300)} style={styles.section}>
           <Text style={styles.sectionTitle}>场合偏好</Text>
           <View style={styles.occasionList}>
             {occasionPreferences.map((occasion) => (
               <View key={occasion} style={styles.occasionItem}>
                 <Ionicons
-                  name={OCCASION_ICONS[occasion] ?? 'star-outline'}
+                  name={OCCASION_ICONS[occasion] ?? "star-outline"}
                   size={20}
                   color={theme.colors.primary}
                 />
@@ -170,10 +149,7 @@ export const QuizResultScreen: React.FC = () => {
           </View>
         </Animated.View>
 
-        <Animated.View
-          entering={FadeInUp.duration(600).delay(400)}
-          style={styles.section}
-        >
+        <Animated.View entering={FadeInUp.duration(600).delay(400)} style={styles.section}>
           <Text style={styles.sectionTitle}>匹配度</Text>
           <View style={styles.confidenceContainer}>
             <View style={styles.confidenceCircle}>
@@ -182,9 +158,7 @@ export const QuizResultScreen: React.FC = () => {
                   style={[
                     styles.confidenceCircleProgress,
                     {
-                      transform: [
-                        { rotate: `${-90 + confidencePercent * 3.6}deg` },
-                      ],
+                      transform: [{ rotate: `${-90 + confidencePercent * 3.6}deg` }],
                     },
                   ]}
                 />
@@ -198,10 +172,7 @@ export const QuizResultScreen: React.FC = () => {
           </View>
         </Animated.View>
 
-        <Animated.View
-          entering={FadeInUp.duration(600).delay(500)}
-          style={styles.actionsSection}
-        >
+        <Animated.View entering={FadeInUp.duration(600).delay(500)} style={styles.actionsSection}>
           <TouchableOpacity
             style={styles.primaryButton}
             onPress={handleViewProfile}
@@ -210,20 +181,12 @@ export const QuizResultScreen: React.FC = () => {
             <Text style={styles.primaryButtonText}>查看完整画像</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.outlinedButton}
-            onPress={handleShare}
-            activeOpacity={0.8}
-          >
+          <TouchableOpacity style={styles.outlinedButton} onPress={handleShare} activeOpacity={0.8}>
             <Ionicons name="share-outline" size={18} color={theme.colors.primary} />
             <Text style={styles.outlinedButtonText}>分享</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.retakeButton}
-            onPress={handleRetake}
-            activeOpacity={0.6}
-          >
+          <TouchableOpacity style={styles.retakeButton} onPress={handleRetake} activeOpacity={0.6}>
             <Text style={styles.retakeText}>重新测试</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -246,25 +209,25 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[10],
   },
   headerSection: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: Spacing[8],
-    position: 'relative',
+    position: "relative",
   },
   confettiContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: -Spacing[4],
     left: 0,
     right: 0,
     height: 80,
   },
   confettiDot: {
-    position: 'absolute',
+    position: "absolute",
     borderRadius: BorderRadius.full,
     opacity: 0.7,
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.text,
     marginTop: Spacing[4],
   },
@@ -278,32 +241,32 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.text,
     marginBottom: Spacing[3],
   },
   tagCloud: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Spacing[2],
   },
   tag: {
     paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[2],
-    borderRadius: BorderRadius['2xl'],
+    borderRadius: BorderRadius["2xl"],
   },
   tagText: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#FFFFFF',
+    fontWeight: "500",
+    color: DesignTokens.colors.neutral.white,
   },
   colorRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Spacing[3],
   },
   colorSwatchContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: Spacing[1],
   },
   colorSwatch: {
@@ -321,8 +284,8 @@ const styles = StyleSheet.create({
     gap: Spacing[3],
   },
   occasionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing[3],
     paddingVertical: Spacing[2],
     paddingHorizontal: Spacing[3],
@@ -336,17 +299,17 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   confidenceContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: Spacing[3],
   },
   confidenceCircle: {
     width: 120,
     height: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   confidenceCircleBg: {
-    position: 'absolute',
+    position: "absolute",
     width: 120,
     height: 120,
     borderRadius: 60,
@@ -354,28 +317,28 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
   },
   confidenceCircleProgress: {
-    position: 'absolute',
+    position: "absolute",
     width: 120,
     height: 120,
     borderRadius: 60,
     borderWidth: 8,
     borderColor: theme.colors.primary,
-    borderTopColor: 'transparent',
-    borderRightColor: 'transparent',
+    borderTopColor: "transparent",
+    borderRightColor: "transparent",
   },
   confidenceInner: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "baseline",
+    justifyContent: "center",
   },
   confidenceValue: {
     fontSize: 32,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.primary,
   },
   confidenceUnit: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.primary,
   },
   confidenceLabel: {
@@ -390,17 +353,17 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     paddingVertical: Spacing[4],
     borderRadius: BorderRadius.xl,
-    alignItems: 'center',
+    alignItems: "center",
   },
   primaryButtonText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: DesignTokens.colors.neutral.white,
   },
   outlinedButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     gap: Spacing[2],
     paddingVertical: Spacing[4],
     borderRadius: BorderRadius.xl,
@@ -410,17 +373,17 @@ const styles = StyleSheet.create({
   },
   outlinedButtonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.primary,
   },
   retakeButton: {
     paddingVertical: Spacing[3],
-    alignItems: 'center',
+    alignItems: "center",
   },
   retakeText: {
     fontSize: 14,
     color: theme.colors.textTertiary,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
 });
 

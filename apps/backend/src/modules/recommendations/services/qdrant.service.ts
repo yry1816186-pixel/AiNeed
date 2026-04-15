@@ -367,7 +367,7 @@ export class QdrantService implements OnModuleInit, OnModuleDestroy {
     name: string,
     vectorSize: number = 512,
   ): Promise<void> {
-    if (!this.client) return;
+    if (!this.client) {return;}
 
     try {
       const collections = await this.client.getCollections();

@@ -8,7 +8,7 @@ const CACHEABLE_TTL = 'cacheable:ttl';
 const CACHEABLE_KEY_GENERATOR = 'cacheable:keyGenerator';
 const CACHE_EVICT_PATTERN = 'cacheEvict:pattern';
 
-export const Cacheable = (ttl?: number, keyGenerator?: (...args: any[]) => string) => {
+export const Cacheable = (ttl?: number, keyGenerator?: (...args: unknown[]) => string) => {
   const decorators: (ClassDecorator | MethodDecorator)[] = [];
   if (ttl !== undefined) {
     decorators.push(SetMetadata(CACHEABLE_TTL, ttl));
@@ -16,12 +16,12 @@ export const Cacheable = (ttl?: number, keyGenerator?: (...args: any[]) => strin
   if (keyGenerator) {
     decorators.push(SetMetadata(CACHEABLE_KEY_GENERATOR, keyGenerator));
   }
-  return (target: any, propertyKey?: string, descriptor?: PropertyDescriptor) => {
+  return (target: object, propertyKey?: string, descriptor?: PropertyDescriptor) => {
     decorators.forEach((decorator) => {
       if (descriptor && propertyKey) {
         (decorator as MethodDecorator)(target, propertyKey, descriptor);
       } else {
-        (decorator as ClassDecorator)(target);
+        (decorator as ClassDecorator)(target as new (...args: unknown[]) => unknown);
       }
     });
   };
@@ -36,9 +36,9 @@ export class CacheInterceptor implements NestInterceptor {
     @Inject(TypedCacheService) private readonly cacheService: TypedCacheService,
   ) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const ttl = this.reflector.get<number>(CACHEABLE_TTL, context.getHandler());
-    const keyGenerator = this.reflector.get<(...args: any[]) => string>(
+    const keyGenerator = this.reflector.get<(...args: unknown[]) => string>(
       CACHEABLE_KEY_GENERATOR,
       context.getHandler(),
     );
@@ -51,7 +51,7 @@ export class CacheInterceptor implements NestInterceptor {
       ? keyGenerator(...args)
       : `${className}:${methodName}:${JSON.stringify(args)}`;
 
-    return from(this.cacheService.get<any>(cacheKey)).pipe(
+    return from(this.cacheService.get<unknown>(cacheKey)).pipe(
       switchMap((cached) => {
         if (cached !== null) {
           return of(cached);
@@ -76,7 +76,7 @@ export class CacheEvictInterceptor implements NestInterceptor {
     @Inject(TypedCacheService) private readonly cacheService: TypedCacheService,
   ) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const pattern = this.reflector.get<string>(CACHE_EVICT_PATTERN, context.getHandler());
 
     return next.handle().pipe(

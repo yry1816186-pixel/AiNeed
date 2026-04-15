@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useCallback } from 'react';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { useAuthStore } from '../../stores/index';
-import { navigateAuth, navigateProfile } from '../navigationService';
-import { GUARDED_ROUTES, type GuardType } from '../types';
+﻿import React, { useRef, useCallback } from "react";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useAuthStore } from "../../stores/index";
+import { navigateAuth, navigateProfile } from "../navigationService";
+import { GUARDED_ROUTES, type GuardType } from "../types";
 
 interface GuardResult {
   canAccess: boolean;
@@ -11,21 +11,23 @@ interface GuardResult {
 
 function checkGuards(routeName: string): GuardResult {
   const guardConfig = GUARDED_ROUTES.find((g) => g.route === routeName);
-  if (!guardConfig) return { canAccess: true, failedGuard: null };
+  if (!guardConfig) {
+    return { canAccess: true, failedGuard: null };
+  }
 
   const isAuthenticated = useAuthStore.getState().isAuthenticated;
   const onboardingCompleted = useAuthStore.getState().onboardingCompleted;
   const isVip = useAuthStore.getState().isVip;
 
   for (const guard of guardConfig.guards) {
-    if (guard === 'auth' && !isAuthenticated) {
-      return { canAccess: false, failedGuard: 'auth' };
+    if (guard === "auth" && !isAuthenticated) {
+      return { canAccess: false, failedGuard: "auth" };
     }
-    if (guard === 'profile' && (!isAuthenticated || !onboardingCompleted)) {
-      return { canAccess: false, failedGuard: 'profile' };
+    if (guard === "profile" && (!isAuthenticated || !onboardingCompleted)) {
+      return { canAccess: false, failedGuard: "profile" };
     }
-    if (guard === 'vip' && (!isAuthenticated || !isVip)) {
-      return { canAccess: false, failedGuard: 'vip' };
+    if (guard === "vip" && (!isAuthenticated || !isVip)) {
+      return { canAccess: false, failedGuard: "vip" };
     }
   }
 
@@ -34,20 +36,20 @@ function checkGuards(routeName: string): GuardResult {
 
 function handleGuardFailure(failedGuard: GuardType) {
   switch (failedGuard) {
-    case 'auth':
-      navigateAuth('Login');
+    case "auth":
+      navigateAuth("Login");
       break;
-    case 'profile':
-      navigateAuth('Onboarding');
+    case "profile":
+      navigateAuth("Onboarding");
       break;
-    case 'vip':
-      navigateProfile('Subscription');
+    case "vip":
+      navigateProfile("Subscription");
       break;
   }
 }
 
 export function useRouteGuard(routeName: string): GuardResult {
-  const navigation = useNavigation();
+  const _navigation = useNavigation();
   const hasRedirected = useRef(false);
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -65,7 +67,7 @@ export function useRouteGuard(routeName: string): GuardResult {
         }, 0);
         return () => clearTimeout(timer);
       }
-    }, [routeName, isAuthenticated, onboardingCompleted, isVip]),
+    }, [routeName, isAuthenticated, onboardingCompleted, isVip])
   );
 
   return checkGuards(routeName);

@@ -7,6 +7,7 @@ import {
 
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { BehaviorTrackerService } from "../analytics/services/behavior-tracker.service";
+
 import { CreateStyleProfileDto, UpdateStyleProfileDto } from "./dto";
 
 @Injectable()

@@ -12,7 +12,9 @@ interface TokenPayload {
 function decodeJwtPayload(token: string): TokenPayload | null {
   try {
     const parts = token.split(".");
-    if (parts.length !== 3) return null;
+    if (parts.length !== 3) {
+      return null;
+    }
     const payload = parts[1];
     const padded = payload + "=".repeat((4 - (payload.length % 4)) % 4);
     const decoded = atob(padded);
@@ -66,27 +68,39 @@ export const tokenManager = {
 
   async isAccessTokenExpired(): Promise<boolean> {
     const token = await this.getAccessToken();
-    if (!token) return true;
+    if (!token) {
+      return true;
+    }
     const payload = decodeJwtPayload(token);
-    if (!payload?.exp) return true;
+    if (!payload?.exp) {
+      return true;
+    }
     const expiresAt = payload.exp * 1000;
     return Date.now() >= expiresAt - TOKEN_EXPIRY_BUFFER_MS;
   },
 
   async getTimeUntilExpiry(): Promise<number> {
     const token = await this.getAccessToken();
-    if (!token) return 0;
+    if (!token) {
+      return 0;
+    }
     const payload = decodeJwtPayload(token);
-    if (!payload?.exp) return 0;
+    if (!payload?.exp) {
+      return 0;
+    }
     const expiresAt = payload.exp * 1000;
     return Math.max(0, expiresAt - Date.now());
   },
 
   async hasValidRefreshToken(): Promise<boolean> {
     const token = await this.getRefreshToken();
-    if (!token) return false;
+    if (!token) {
+      return false;
+    }
     const payload = decodeJwtPayload(token);
-    if (!payload?.exp) return true;
+    if (!payload?.exp) {
+      return true;
+    }
     return Date.now() < payload.exp * 1000;
   },
 

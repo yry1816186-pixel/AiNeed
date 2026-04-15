@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+﻿import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,8 +11,8 @@ import {
   ActivityIndicator,
   ActionSheetIOS,
 } from "react-native";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -35,7 +35,7 @@ import { PreferenceSelector } from "./PreferenceSelector";
 import { OutfitCard } from "./OutfitCard";
 import { AnalysisProgress } from "./AnalysisProgress";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: _SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 
 export interface ChatMessage {
@@ -157,7 +157,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
           } else if (buttonIndex === 2) {
             onUploadPhoto?.("library");
           }
-        },
+        }
       );
     } else {
       setShowPhotoOptions(true);
@@ -177,21 +177,21 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
       case "listening":
         return (
           <View style={styles.stateIndicator}>
-            <View style={[styles.stateDot, { backgroundColor: "#7B8FA2" }]} />
+            <View style={[styles.stateDot, { backgroundColor: DesignTokens.colors.brand.slate }]} />
             <Text style={styles.stateText}>正在聆听...</Text>
           </View>
         );
       case "thinking":
         return (
           <View style={styles.stateIndicator}>
-            <ActivityIndicator size="small" color="#D9A441" />
+            <ActivityIndicator size="small" color={DesignTokens.colors.semantic.warning} />
             <Text style={styles.stateText}>思考中...</Text>
           </View>
         );
       case "responding":
         return (
           <View style={styles.stateIndicator}>
-            <View style={[styles.stateDot, { backgroundColor: "#5B8A72" }]} />
+            <View style={[styles.stateDot, { backgroundColor: DesignTokens.colors.semantic.success }]} />
             <Text style={styles.stateText}>回复中...</Text>
           </View>
         );
@@ -204,10 +204,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
     if (message.isLoading) {
       return (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator
-            size="small"
-            color={DesignTokens.colors.brand.sage}
-          />
+          <ActivityIndicator size="small" color={DesignTokens.colors.brand.sage} />
           <Text style={styles.loadingText}>AI 正在思考...</Text>
         </View>
       );
@@ -220,9 +217,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
     if (message.outfitResult) {
       return (
         <View>
-          <Text style={[styles.messageText, styles.assistantMessageText]}>
-            {message.content}
-          </Text>
+          <Text style={[styles.messageText, styles.assistantMessageText]}>{message.content}</Text>
           <OutfitCard result={message.outfitResult} />
         </View>
       );
@@ -232,9 +227,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
       <Text
         style={[
           styles.messageText,
-          message.role === "user"
-            ? styles.userMessageText
-            : styles.assistantMessageText,
+          message.role === "user" ? styles.userMessageText : styles.assistantMessageText,
         ]}
       >
         {message.content}
@@ -243,15 +236,14 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
   };
 
   const renderActionUI = () => {
-    if (!currentAction) return null;
+    if (!currentAction) {
+      return null;
+    }
 
     switch (currentAction.type) {
       case "show_preference_buttons":
         return (
-          <PreferenceSelector
-            action={currentAction}
-            onSelect={onSelectPreference || (() => {})}
-          />
+          <PreferenceSelector action={currentAction} onSelect={onSelectPreference || (() => {})} />
         );
 
       case "request_photo_upload":
@@ -259,30 +251,18 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
           <View style={styles.photoPrompt}>
             <Text style={styles.photoPromptText}>请上传一张照片</Text>
             <View style={styles.photoButtons}>
-              <Pressable
-                style={styles.photoButton}
-                onPress={() => onUploadPhoto?.("camera")}
-              >
+              <Pressable style={styles.photoButton} onPress={() => onUploadPhoto?.("camera")}>
                 <LinearGradient
-                  colors={[
-                    DesignTokens.colors.brand.sage,
-                    DesignTokens.colors.brand.camel,
-                  ]}
+                  colors={[DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel]}
                   style={styles.photoButtonGradient}
                 >
-                  <Ionicons name="camera" size={24} color="#FFFFFF" />
+                  <Ionicons name="camera" size={24} color={DesignTokens.colors.text.inverse} />
                   <Text style={styles.photoButtonText}>拍照</Text>
                 </LinearGradient>
               </Pressable>
-              <Pressable
-                style={styles.photoButton}
-                onPress={() => onUploadPhoto?.("library")}
-              >
-                <LinearGradient
-                  colors={["#7B8FA2", "#96A6B5"]}
-                  style={styles.photoButtonGradient}
-                >
-                  <Ionicons name="images" size={24} color="#FFFFFF" />
+              <Pressable style={styles.photoButton} onPress={() => onUploadPhoto?.("library")}>
+                <LinearGradient colors={[DesignTokens.colors.brand.slate, "#96A6B5"]} style={styles.photoButtonGradient}>
+                  <Ionicons name="images" size={24} color={DesignTokens.colors.text.inverse} />
                   <Text style={styles.photoButtonText}>相册</Text>
                 </LinearGradient>
               </Pressable>
@@ -303,13 +283,10 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
             </Text>
             <Pressable style={styles.generateButton} onPress={onGenerateOutfit}>
               <LinearGradient
-                colors={[
-                  DesignTokens.colors.brand.terracotta,
-                  DesignTokens.colors.brand.camel,
-                ]}
+                colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
                 style={styles.generateButtonGradient}
               >
-                <Ionicons name="sparkles" size={18} color="#FFFFFF" />
+                <Ionicons name="sparkles" size={18} color={DesignTokens.colors.text.inverse} />
                 <Text style={styles.generateButtonText}>生成穿搭方案</Text>
               </LinearGradient>
             </Pressable>
@@ -330,15 +307,11 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
 
   return (
     <AnimatedView style={[styles.container, panelStyle]}>
-      <LinearGradient colors={["#FFFFFF", "#FAFAF8"]} style={styles.gradient}>
+      <LinearGradient colors={[DesignTokens.colors.backgrounds.primary, DesignTokens.colors.backgrounds.secondary]} style={styles.gradient}>
         <AnimatedView style={[styles.header, headerStyle]}>
           <View style={styles.headerLeft}>
             <Pressable onPress={onClose} style={styles.closeButton}>
-              <Ionicons
-                name="close"
-                size={20}
-                color={DesignTokens.colors.neutral[600]}
-              />
+              <Ionicons name="close" size={20} color={DesignTokens.colors.neutral[600]} />
             </Pressable>
           </View>
           <View style={styles.headerCenter}>
@@ -357,18 +330,13 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
           {messages.length === 0 && (
             <View style={styles.emptyState}>
               <LinearGradient
-                colors={[
-                  DesignTokens.colors.brand.sage,
-                  DesignTokens.colors.brand.camel,
-                ]}
+                colors={[DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel]}
                 style={styles.emptyIcon}
               >
                 <Text style={styles.emptyIconText}>AI</Text>
               </LinearGradient>
               <Text style={styles.emptyTitle}>你好！我是 AI 造型师</Text>
-              <Text style={styles.emptySubtitle}>
-                我可以帮你分析身材、推荐穿搭、解答时尚问题
-              </Text>
+              <Text style={styles.emptySubtitle}>我可以帮你分析身材、推荐穿搭、解答时尚问题</Text>
               <View style={styles.suggestions}>
                 <Pressable
                   style={styles.suggestionChip}
@@ -407,10 +375,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
                 !message.progress &&
                 !message.outfitResult && (
                   <LinearGradient
-                    colors={[
-                      DesignTokens.colors.brand.sage,
-                      DesignTokens.colors.brand.camel,
-                    ]}
+                    colors={[DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel]}
                     style={styles.assistantAvatar}
                   >
                     <Text style={styles.assistantAvatarText}>AI</Text>
@@ -419,12 +384,8 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
               <View
                 style={[
                   styles.messageBubble,
-                  message.role === "user"
-                    ? styles.userBubble
-                    : styles.assistantBubble,
-                  (message.isLoading ||
-                    message.progress ||
-                    message.outfitResult) &&
+                  message.role === "user" ? styles.userBubble : styles.assistantBubble,
+                  (message.isLoading || message.progress || message.outfitResult) &&
                     styles.wideBubble,
                 ]}
               >
@@ -437,11 +398,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
         </ScrollView>
 
         <AnimatedView
-          style={[
-            styles.inputContainer,
-            inputStyle,
-            { paddingBottom: insets.bottom + 16 },
-          ]}
+          style={[styles.inputContainer, inputStyle, { paddingBottom: insets.bottom + 16 }]}
         >
           <View style={styles.inputWrapper}>
             {onUploadPhoto && (
@@ -467,10 +424,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
 
             {isVoiceAvailable && onStartVoice && (
               <Pressable
-                style={[
-                  styles.voiceButton,
-                  state === "listening" && styles.voiceButtonActive,
-                ]}
+                style={[styles.voiceButton, state === "listening" && styles.voiceButtonActive]}
                 onPress={handleVoicePress}
               >
                 <Ionicons
@@ -486,28 +440,19 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
             )}
 
             <Pressable
-              style={[
-                styles.sendButton,
-                !inputText.trim() && styles.sendButtonDisabled,
-              ]}
+              style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]}
               onPress={handleSend}
               disabled={!inputText.trim() || state === "thinking"}
             >
               <LinearGradient
                 colors={
                   inputText.trim() && state !== "thinking"
-                    ? [
-                        DesignTokens.colors.brand.terracotta,
-                        DesignTokens.colors.brand.camel,
-                      ]
-                    : [
-                        DesignTokens.colors.neutral[300],
-                        DesignTokens.colors.neutral[400],
-                      ]
+                    ? [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]
+                    : [DesignTokens.colors.neutral[300], DesignTokens.colors.neutral[400]]
                 }
                 style={styles.sendButtonGradient}
               >
-                <Ionicons name="send" size={18} color="#FFFFFF" />
+                <Ionicons name="send" size={18} color={DesignTokens.colors.text.inverse} />
               </LinearGradient>
             </Pressable>
           </View>
@@ -528,11 +473,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
                 onUploadPhoto?.("camera");
               }}
             >
-              <Ionicons
-                name="camera"
-                size={24}
-                color={DesignTokens.colors.neutral[700]}
-              />
+              <Ionicons name="camera" size={24} color={DesignTokens.colors.neutral[700]} />
               <Text style={styles.photoOptionText}>拍照</Text>
             </Pressable>
             <Pressable
@@ -542,11 +483,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
                 onUploadPhoto?.("library");
               }}
             >
-              <Ionicons
-                name="images"
-                size={24}
-                color={DesignTokens.colors.neutral[700]}
-              />
+              <Ionicons name="images" size={24} color={DesignTokens.colors.neutral[700]} />
               <Text style={styles.photoOptionText}>从相册选择</Text>
             </Pressable>
             <Pressable
@@ -644,7 +581,7 @@ const styles = StyleSheet.create({
   emptyIconText: {
     fontSize: 28,
     fontWeight: "800",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
   },
   emptyTitle: {
     fontSize: 22,
@@ -701,7 +638,7 @@ const styles = StyleSheet.create({
   assistantAvatarText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
   },
   messageBubble: {
     maxWidth: "75%",
@@ -725,7 +662,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   userMessageText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
   },
   assistantMessageText: {
     color: DesignTokens.colors.neutral[800],
@@ -772,7 +709,7 @@ const styles = StyleSheet.create({
   photoButtonText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
     marginTop: 6,
   },
   skipPhotoButton: {
@@ -814,14 +751,14 @@ const styles = StyleSheet.create({
   generateButtonText: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
   },
   inputContainer: {
     paddingHorizontal: 16,
     paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[200],
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
   },
   inputWrapper: {
     flexDirection: "row",
@@ -881,7 +818,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.3)",
   },
   photoOptionsSheet: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingBottom: 34,

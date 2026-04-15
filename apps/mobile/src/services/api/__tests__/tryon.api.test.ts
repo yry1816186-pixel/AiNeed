@@ -16,14 +16,14 @@ jest.mock("../client", () => ({
 
 jest.mock("../asset-url", () => ({
   buildTryOnResultAssetUrl: jest.fn((_id: string, url?: string | null) => url ?? ""),
-  buildPhotoAssetUrl: jest.fn((_id: string, _variant: string, url?: string | null) => url ?? ""),
+  buildPhotoAssetUrl: jest.fn((_id: string, variant: string, url?: string | null) => url ?? ""),
   normalizeAssetUrl: jest.fn((url?: string | null) => url ?? ""),
 }));
 
 const mockGet = apiClient.get as jest.Mock;
 const mockPost = apiClient.post as jest.Mock;
 const mockDelete = apiClient.delete as jest.Mock;
-const mockPatch = apiClient.patch as jest.Mock;
+const _mockPatch = apiClient.patch as jest.Mock;
 
 // ---- Test Data ----
 const tryOnResult = {
@@ -153,7 +153,10 @@ describe("tryOnApi", () => {
 
       const result = await tryOnApi.getHistory();
 
-      expect(mockGet).toHaveBeenCalledWith("/try-on/history", { page: undefined, limit: undefined });
+      expect(mockGet).toHaveBeenCalledWith("/try-on/history", {
+        page: undefined,
+        limit: undefined,
+      });
       expect(result.success).toBe(true);
     });
 
@@ -437,7 +440,12 @@ describe("recommendationsApi", () => {
       mockGet.mockResolvedValue({
         success: true,
         data: {
-          anchor: { id: "item-1", name: "Jacket", category: "outerwear", imageUrl: "http://img.jpg" },
+          anchor: {
+            id: "item-1",
+            name: "Jacket",
+            category: "outerwear",
+            imageUrl: "http://img.jpg",
+          },
           suggestions: { top: [], bottom: [], shoes: [], accessories: [] },
           harmonyScore: 0.9,
           harmonyRule: "complementary",

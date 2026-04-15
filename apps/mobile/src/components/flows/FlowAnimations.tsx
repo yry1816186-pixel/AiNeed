@@ -1,15 +1,7 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Platform,
-  StatusBar,
-  Pressable,
-} from "react-native";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import { router } from "expo-router";
+﻿import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Pressable } from "react-native";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -25,23 +17,12 @@ import {
   cancelAnimation,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import {
-  ParticleEffect,
-  FloatingElement,
-  GlowText,
-  MagneticButton,
-} from "../ui/FluidAnimations";
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-  Shadows,
-  Typography,
-} from "../../theme";
+import { ParticleEffect, FloatingElement, GlowText, MagneticButton } from "../../design-system/ui/FluidAnimations";
+import { Colors, Spacing, BorderRadius } from '../design-system/theme';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
-const AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
+const _AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
 
 export interface SplashScreenProps {
   onFinish: () => void;
@@ -63,10 +44,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
     logoRotate.value = withSpring(0, { damping: 12, stiffness: 80 });
 
     textOpacity.value = withDelay(600, withTiming(1, { duration: 400 }));
-    textTranslateY.value = withDelay(
-      600,
-      withSpring(0, { damping: 15, stiffness: 100 }),
-    );
+    textTranslateY.value = withDelay(600, withSpring(0, { damping: 15, stiffness: 100 }));
 
     particleOpacity.value = withDelay(300, withTiming(1, { duration: 500 }));
 
@@ -76,12 +54,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
     });
 
     glowValue.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0, { duration: 1000 }),
-      ),
+      withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
       -1,
-      true,
+      true
     );
 
     const timer = setTimeout(() => {
@@ -92,10 +67,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   }, []);
 
   const logoAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: logoScale.value },
-      { rotate: `${logoRotate.value}deg` },
-    ],
+    transform: [{ scale: logoScale.value }, { rotate: `${logoRotate.value}deg` }],
     opacity: logoOpacity.value,
   }));
 
@@ -122,41 +94,24 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
         locations={[0, 0.3, 0.7, 1]}
         style={styles.splashGradient}
       >
-        <AnimatedView
-          style={[styles.particleContainer, { opacity: particleOpacity }]}
-        >
+        <AnimatedView style={[styles.particleContainer, { opacity: particleOpacity }]}>
           <ParticleEffect count={40} color="rgba(168, 85, 247, 0.3)" size={3} />
         </AnimatedView>
 
-        <AnimatedView
-          style={[
-            styles.splashLogoContainer,
-            logoAnimatedStyle,
-            glowAnimatedStyle,
-          ]}
-        >
-          <LinearGradient
-            colors={["#a855f7", "#ec4899"]}
-            style={styles.splashLogoGradient}
-          >
+        <AnimatedView style={[styles.splashLogoContainer, logoAnimatedStyle, glowAnimatedStyle]}>
+          <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.splashLogoGradient}>
             <Text style={styles.splashLogoText}>AI</Text>
           </LinearGradient>
         </AnimatedView>
 
         <AnimatedView style={[styles.splashTextContainer, textAnimatedStyle]}>
-          <GlowText
-            text="寻裳"
-            style={styles.splashTitle}
-            glowColor={Colors.primary[400]}
-          />
+          <GlowText text="寻裳" style={styles.splashTitle} glowColor={Colors.primary[400]} />
           <Text style={styles.splashSubtitle}>智能穿搭助手</Text>
         </AnimatedView>
 
         <View style={styles.progressContainer}>
           <View style={styles.progressBackground}>
-            <AnimatedView
-              style={[styles.progressFill, progressAnimatedStyle]}
-            />
+            <AnimatedView style={[styles.progressFill, progressAnimatedStyle]} />
           </View>
           <Text style={styles.progressText}>正在加载...</Text>
         </View>
@@ -227,14 +182,10 @@ const OnboardingDot: React.FC<OnboardingDotProps> = ({ color, isActive }) => {
     opacity: dotOpacity.value,
   }));
 
-  return (
-    <AnimatedView style={[styles.dot, { backgroundColor: color }, dotStyle]} />
-  );
+  return <AnimatedView style={[styles.dot, { backgroundColor: color }, dotStyle]} />;
 };
 
-export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
-  onComplete,
-}) => {
+export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const slideOffset = useSharedValue(0);
 
@@ -256,10 +207,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
 
   return (
     <View style={styles.onboardingContainer}>
-      <LinearGradient
-        colors={["#0f0a1a", "#1e1b4b", "#312e81"]}
-        style={styles.onboardingGradient}
-      >
+      <LinearGradient colors={["#0f0a1a", "#1e1b4b", "#312e81"]} style={styles.onboardingGradient}>
         <View style={styles.onboardingHeader}>
           <Pressable onPress={skip}>
             <Text style={styles.skipText}>跳过</Text>
@@ -267,17 +215,10 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
         </View>
 
         <AnimatedView
-          style={[
-            styles.slidesContainer,
-            { transform: [{ translateX: slideOffset }] },
-          ]}
+          style={[styles.slidesContainer, { transform: [{ translateX: slideOffset }] }]}
         >
           {ONBOARDING_DATA.map((item, index) => (
-            <OnboardingSlide
-              key={item.id}
-              data={item}
-              isActive={index === currentIndex}
-            />
+            <OnboardingSlide key={item.id} data={item} isActive={index === currentIndex} />
           ))}
         </AnimatedView>
 
@@ -293,11 +234,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
           </View>
 
           <MagneticButton
-            title={
-              currentIndex === ONBOARDING_DATA.length - 1
-                ? "开始体验"
-                : "下一步"
-            }
+            title={currentIndex === ONBOARDING_DATA.length - 1 ? "开始体验" : "下一步"}
             onPress={goToNext}
             size="lg"
           />
@@ -312,10 +249,7 @@ interface OnboardingSlideProps {
   isActive: boolean;
 }
 
-const OnboardingSlide: React.FC<OnboardingSlideProps> = ({
-  data,
-  isActive,
-}) => {
+const OnboardingSlide: React.FC<OnboardingSlideProps> = ({ data, isActive }) => {
   const iconScale = useSharedValue(0);
   const iconRotate = useSharedValue(-90);
   const titleOpacity = useSharedValue(0);
@@ -330,12 +264,9 @@ const OnboardingSlide: React.FC<OnboardingSlideProps> = ({
       subtitleOpacity.value = withDelay(400, withTiming(1, { duration: 400 }));
 
       glowValue.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 1500 }),
-          withTiming(0, { duration: 1500 }),
-        ),
+        withSequence(withTiming(1, { duration: 1500 }), withTiming(0, { duration: 1500 })),
         -1,
-        true,
+        true
       );
     } else {
       iconScale.value = withTiming(0.8, { duration: 200 });
@@ -345,10 +276,7 @@ const OnboardingSlide: React.FC<OnboardingSlideProps> = ({
   }, [isActive]);
 
   const iconAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: iconScale.value },
-      { rotate: `${iconRotate.value}deg` },
-    ],
+    transform: [{ scale: iconScale.value }, { rotate: `${iconRotate.value}deg` }],
     shadowColor: data.gradient[0],
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: interpolate(glowValue.value, [0, 1], [0.2, 0.5]),
@@ -366,10 +294,7 @@ const OnboardingSlide: React.FC<OnboardingSlideProps> = ({
   return (
     <View style={styles.slide}>
       <AnimatedView style={[styles.slideIconContainer, iconAnimatedStyle]}>
-        <LinearGradient
-          colors={data.gradient as [string, string]}
-          style={styles.slideIconGradient}
-        >
+        <LinearGradient colors={data.gradient as [string, string]} style={styles.slideIconGradient}>
           <FloatingElement amplitude={5} duration={3000}>
             <Text style={styles.slideIcon}>{data.icon}</Text>
           </FloatingElement>
@@ -377,11 +302,7 @@ const OnboardingSlide: React.FC<OnboardingSlideProps> = ({
       </AnimatedView>
 
       <AnimatedView style={[styles.slideTextContainer, titleAnimatedStyle]}>
-        <GlowText
-          text={data.title}
-          style={styles.slideTitle}
-          glowColor={data.gradient[0]}
-        />
+        <GlowText text={data.title} style={styles.slideTitle} glowColor={data.gradient[0]} />
       </AnimatedView>
 
       <AnimatedView style={[styles.slideTextContainer, subtitleAnimatedStyle]}>
@@ -411,20 +332,17 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
     frameOpacity.value = withTiming(1, { duration: 500 });
     frameScale.value = withSpring(1, { damping: 15, stiffness: 100 });
 
-    cornerScale.value = withDelay(
-      300,
-      withSpring(1, { damping: 12, stiffness: 100 }),
-    );
+    cornerScale.value = withDelay(300, withSpring(1, { damping: 12, stiffness: 100 }));
 
     guideOpacity.value = withDelay(600, withTiming(1, { duration: 400 }));
 
     pulseValue.value = withRepeat(
       withSequence(
         withTiming(1, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration: 1500, easing: Easing.inOut(Easing.ease) })
       ),
       -1,
-      true,
+      true
     );
   }, []);
 
@@ -434,10 +352,7 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
     return {
       transform: [{ scale: frameScale.value }],
       opacity: frameOpacity.value,
-      borderColor:
-        borderColorValue > 0.5
-          ? "rgba(168, 85, 247, 0.8)"
-          : "rgba(168, 85, 247, 0.3)",
+      borderColor: borderColorValue > 0.5 ? "rgba(168, 85, 247, 0.8)" : "rgba(168, 85, 247, 0.3)",
     };
   });
 
@@ -478,18 +393,10 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
 
       <View style={styles.cameraPreview}>
         <AnimatedView style={[styles.guideFrame, frameAnimatedStyle]}>
-          <AnimatedView
-            style={[styles.corner, styles.cornerTL, cornerAnimatedStyle]}
-          />
-          <AnimatedView
-            style={[styles.corner, styles.cornerTR, cornerAnimatedStyle]}
-          />
-          <AnimatedView
-            style={[styles.corner, styles.cornerBL, cornerAnimatedStyle]}
-          />
-          <AnimatedView
-            style={[styles.corner, styles.cornerBR, cornerAnimatedStyle]}
-          />
+          <AnimatedView style={[styles.corner, styles.cornerTL, cornerAnimatedStyle]} />
+          <AnimatedView style={[styles.corner, styles.cornerTR, cornerAnimatedStyle]} />
+          <AnimatedView style={[styles.corner, styles.cornerBL, cornerAnimatedStyle]} />
+          <AnimatedView style={[styles.corner, styles.cornerBR, cornerAnimatedStyle]} />
 
           <AnimatedView style={[styles.bodyGuide, pulseAnimatedStyle]}>
             <Text style={styles.bodyGuideIcon}>👤</Text>
@@ -510,10 +417,7 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
             onPress={onCapture}
             style={styles.captureButtonInner}
           >
-            <LinearGradient
-              colors={["#a855f7", "#ec4899"]}
-              style={styles.captureButtonGradient}
-            >
+            <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.captureButtonGradient}>
               <Text style={styles.captureIcon}>📷</Text>
             </LinearGradient>
           </Pressable>
@@ -525,7 +429,7 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
 
 export interface AnalysisAnimationProps {
   type: "body" | "color" | "style" | "tryon";
-  onComplete: (result: any) => void;
+  onComplete: (result: Record<string, unknown>) => void;
 }
 
 const ANALYSIS_CONFIG = {
@@ -599,8 +503,7 @@ const AnalysisStepItem: React.FC<AnalysisStepItemProps> = ({
         style={[
           styles.stepDot,
           {
-            backgroundColor:
-              index <= currentStep ? accentColor : "rgba(255,255,255,0.2)",
+            backgroundColor: index <= currentStep ? accentColor : "rgba(255,255,255,0.2)",
           },
         ]}
       />
@@ -608,8 +511,7 @@ const AnalysisStepItem: React.FC<AnalysisStepItemProps> = ({
         style={[
           styles.stepText,
           {
-            color:
-              index <= currentStep ? Colors.white : "rgba(255,255,255,0.4)",
+            color: index <= currentStep ? Colors.white : "rgba(255,255,255,0.4)",
           },
         ]}
       >
@@ -620,10 +522,7 @@ const AnalysisStepItem: React.FC<AnalysisStepItemProps> = ({
   );
 };
 
-export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({
-  type,
-  onComplete,
-}) => {
+export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({ type, onComplete }) => {
   const config = ANALYSIS_CONFIG[type];
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -637,28 +536,22 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({
     iconScale.value = withRepeat(
       withSequence(
         withSpring(1.1, { damping: 10, stiffness: 100 }),
-        withSpring(1, { damping: 10, stiffness: 100 }),
+        withSpring(1, { damping: 10, stiffness: 100 })
       ),
       -1,
-      true,
+      true
     );
 
     iconRotate.value = withRepeat(
-      withSequence(
-        withTiming(5, { duration: 1000 }),
-        withTiming(-5, { duration: 1000 }),
-      ),
+      withSequence(withTiming(5, { duration: 1000 }), withTiming(-5, { duration: 1000 })),
       -1,
-      true,
+      true
     );
 
     glowValue.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 800 }),
-        withTiming(0, { duration: 800 }),
-      ),
+      withSequence(withTiming(1, { duration: 800 }), withTiming(0, { duration: 800 })),
       -1,
-      true,
+      true
     );
 
     particleOpacity.value = withTiming(1, { duration: 500 });
@@ -679,12 +572,9 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({
       duration: totalSteps * stepDuration,
     });
 
-    const completeTimer = setTimeout(
-      () => {
-        onComplete({ success: true, type });
-      },
-      totalSteps * stepDuration + 500,
-    );
+    const completeTimer = setTimeout(() => {
+      onComplete({ success: true, type });
+    }, totalSteps * stepDuration + 500);
 
     return () => {
       clearInterval(stepInterval);
@@ -693,10 +583,7 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({
   }, []);
 
   const iconAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: iconScale.value },
-      { rotate: `${iconRotate.value}deg` },
-    ],
+    transform: [{ scale: iconScale.value }, { rotate: `${iconRotate.value}deg` }],
     shadowColor: config.gradient[0],
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: interpolate(glowValue.value, [0, 1], [0.2, 0.6]),
@@ -709,18 +596,9 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({
 
   return (
     <View style={styles.analysisContainer}>
-      <LinearGradient
-        colors={["#0f0a1a", "#1e1b4b", "#312e81"]}
-        style={styles.analysisGradient}
-      >
-        <AnimatedView
-          style={[styles.particleContainer, { opacity: particleOpacity }]}
-        >
-          <ParticleEffect
-            count={30}
-            color={`${config.gradient[0]}50`}
-            size={3}
-          />
+      <LinearGradient colors={["#0f0a1a", "#1e1b4b", "#312e81"]} style={styles.analysisGradient}>
+        <AnimatedView style={[styles.particleContainer, { opacity: particleOpacity }]}>
+          <ParticleEffect count={30} color={`${config.gradient[0]}50`} size={3} />
         </AnimatedView>
 
         <AnimatedView style={[styles.analysisIconContainer, iconAnimatedStyle]}>
@@ -732,11 +610,7 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({
           </LinearGradient>
         </AnimatedView>
 
-        <GlowText
-          text={config.title}
-          style={styles.analysisTitle}
-          glowColor={config.gradient[0]}
-        />
+        <GlowText text={config.title} style={styles.analysisTitle} glowColor={config.gradient[0]} />
 
         <View style={styles.stepsContainer}>
           {config.steps.map((step, index) => (
@@ -768,7 +642,7 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({
 
 export interface ResultAnimationProps {
   type: "body" | "color" | "style" | "tryon";
-  result: any;
+  result: Record<string, unknown>;
   onContinue: () => void;
   onRetry: () => void;
 }
@@ -817,13 +691,8 @@ export const ResultAnimation: React.FC<ResultAnimationProps> = ({
 
   return (
     <View style={styles.resultContainer}>
-      <LinearGradient
-        colors={["#0f0a1a", "#1e1b4b", "#312e81"]}
-        style={styles.resultGradient}
-      >
-        <AnimatedView
-          style={[styles.celebrationContainer, celebrationAnimatedStyle]}
-        >
+      <LinearGradient colors={["#0f0a1a", "#1e1b4b", "#312e81"]} style={styles.resultGradient}>
+        <AnimatedView style={[styles.celebrationContainer, celebrationAnimatedStyle]}>
           <ParticleEffect count={50} color={config.gradient[0]} size={4} />
         </AnimatedView>
 
@@ -836,11 +705,7 @@ export const ResultAnimation: React.FC<ResultAnimationProps> = ({
           </LinearGradient>
 
           <AnimatedView style={contentAnimatedStyle}>
-            <GlowText
-              text="分析完成"
-              style={styles.resultTitle}
-              glowColor={config.gradient[0]}
-            />
+            <GlowText text="分析完成" style={styles.resultTitle} glowColor={config.gradient[0]} />
             <Text style={styles.resultSubtitle}>您的专属分析报告已生成</Text>
           </AnimatedView>
         </AnimatedView>
@@ -934,8 +799,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     paddingHorizontal: Spacing[5],
-    paddingTop:
-      Platform.OS === "ios" ? 60 : (StatusBar.currentHeight || 24) + 20,
+    paddingTop: Platform.OS === "ios" ? 60 : (StatusBar.currentHeight || 24) + 20,
   },
   skipText: {
     fontSize: 16,
@@ -1001,15 +865,14 @@ const styles = StyleSheet.create({
   },
   cameraGuideContainer: {
     flex: 1,
-    backgroundColor: "#0f0a1a",
+    backgroundColor: "#0f0a1a", // custom color
   },
   cameraHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: Spacing[5],
-    paddingTop:
-      Platform.OS === "ios" ? 60 : (StatusBar.currentHeight || 24) + 20,
+    paddingTop: Platform.OS === "ios" ? 60 : (StatusBar.currentHeight || 24) + 20,
     paddingBottom: Spacing[4],
   },
   closeButton: {

@@ -8,7 +8,7 @@ export REDIS_URL=${REDIS_URL:-"redis://localhost:6379"}
 export LOG_LEVEL=${LOG_LEVEL:-"INFO"}
 
 # Change to ml directory
-cd "$(dirname "$0")/ml"
+cd "$(dirname "$0")/../ml"
 
 # Start the task worker
 echo "Starting task worker for all queues..."

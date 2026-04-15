@@ -62,7 +62,7 @@ export function useUploadProgress(options: UseUploadProgressOptions = {}): UseUp
         return null;
       }
     },
-    [onProgress, onSuccess, onError],
+    [onProgress, onSuccess, onError]
   );
 
   const cancel = useCallback(() => {
@@ -75,7 +75,7 @@ export function useUploadProgress(options: UseUploadProgressOptions = {}): UseUp
 
   const retry = useCallback(() => {
     if (lastUploadRef.current) {
-      upload(lastUploadRef.current.url, lastUploadRef.current.formData);
+      void upload(lastUploadRef.current.url, lastUploadRef.current.formData);
     }
   }, [upload]);
 

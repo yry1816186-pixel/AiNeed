@@ -1,6 +1,8 @@
 import { BadRequestException } from "@nestjs/common";
-import { SmsThrottleGuard } from "./sms-throttle.guard";
+
 import { RedisService } from "../../../common/redis/redis.service";
+
+import { SmsThrottleGuard } from "./sms-throttle.guard";
 
 describe("SmsThrottleGuard", () => {
   let guard: SmsThrottleGuard;

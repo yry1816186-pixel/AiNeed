@@ -8,15 +8,14 @@ SELECT
   ub."userId",
   ub."itemId",
   SUM(CASE ub."type"
-    WHEN 'view' THEN 1
+    WHEN 'page_view' THEN 1
     WHEN 'click' THEN 2
-    WHEN 'like' THEN 3
+    WHEN 'post_like' THEN 3
     WHEN 'favorite' THEN 4
-    WHEN 'addToCart' THEN 5
+    WHEN 'add_to_cart' THEN 5
     WHEN 'purchase' THEN 8
-    WHEN 'tryOn' THEN 6
+    WHEN 'try_on_complete' THEN 6
     WHEN 'share' THEN 4
-    WHEN 'dislike' THEN -2
     ELSE 1
   END) AS implicit_rating
 FROM "UserBehavior" ub

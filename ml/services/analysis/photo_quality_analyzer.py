@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import tempfile
 from dataclasses import dataclass, field
 from enum import Enum
@@ -12,6 +13,71 @@ from PIL import Image
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# A-P1-1: Allowed directories for image loading (whitelist)
+_ALLOWED_IMAGE_DIRS: List[str] = []
+
+def _init_allowed_dirs() -> None:
+    """Initialize allowed image directories from environment or defaults."""
+    global _ALLOWED_IMAGE_DIRS
+    env_dirs = os.getenv("PHOTO_ANALYZER_ALLOWED_DIRS", "")
+    if env_dirs:
+        _ALLOWED_IMAGE_DIRS = [d.strip() for d in env_dirs.split(",") if d.strip()]
+    else:
+        # Default: temp directory and current working directory
+        _ALLOWED_IMAGE_DIRS = [
+            tempfile.gettempdir(),
+            os.getcwd(),
+        ]
+
+_init_allowed_dirs()
+
+
+def _validate_image_path(image_path: str) -> str:
+    """Validate that an image path is safe to access (prevents path traversal).
+
+    Security checks:
+    1. Resolve the real path using os.path.realpath()
+    2. Reject paths containing '..' components
+    3. Verify the resolved path is within an allowed directory
+
+    Args:
+        image_path: The file path to validate.
+
+    Returns:
+        The resolved real path if validation passes.
+
+    Raises:
+        ValueError: If the path fails validation (traversal attempt or outside allowed dirs).
+    """
+    if not image_path:
+        raise ValueError("Image path cannot be empty")
+
+    # Reject obvious traversal patterns before resolution
+    # Check for '..' path components (e.g., '../../etc/passwd')
+    normalized = os.path.normpath(image_path)
+    parts = normalized.replace("\\", "/").split("/")
+    if ".." in parts:
+        raise ValueError(f"Path traversal detected: '{image_path}' contains '..' component")
+
+    # Resolve the real absolute path (follows symlinks)
+    real_path = os.path.realpath(image_path)
+
+    # Verify the resolved path is within an allowed directory
+    if _ALLOWED_IMAGE_DIRS:
+        allowed = False
+        for allowed_dir in _ALLOWED_IMAGE_DIRS:
+            allowed_real = os.path.realpath(allowed_dir)
+            if real_path.startswith(allowed_real + os.sep) or real_path == allowed_real:
+                allowed = True
+                break
+        if not allowed:
+            raise ValueError(
+                f"Path traversal blocked: '{image_path}' resolves to '{real_path}' "
+                f"which is outside allowed directories"
+            )
+
+    return real_path
 
 
 class QualityIssue(Enum):
@@ -197,6 +263,8 @@ class PhotoQualityAnalyzer:
     def __init__(self, person_detector: Optional[MediaPipePersonDetector] = None):
         self.person_detector = person_detector or MediaPipePersonDetector()
         self.thresholds = QUALITY_THRESHOLDS
+        # P1-10: Track last successful analysis for degradation
+        self._last_successful_report: Optional[QualityReport] = None
 
     def analyze_quality(self, image: Union[np.ndarray, Image.Image, str]) -> QualityReport:
         try:
@@ -224,7 +292,7 @@ class PhotoQualityAnalyzer:
             passed = len(issues) == 0
             suggestions = self._generate_suggestions(sharpness, brightness, contrast, composition)
 
-            return QualityReport(
+            report = QualityReport(
                 sharpness=sharpness,
                 brightness=brightness,
                 contrast=contrast,
@@ -234,9 +302,24 @@ class PhotoQualityAnalyzer:
                 suggestions=suggestions,
                 issues=[i.value for i in issues],
             )
+            # P1-10: Cache successful result for degradation
+            self._last_successful_report = report
+            return report
 
         except Exception as e:
             logger.error(f"Quality analysis failed: {e}")
+            # P1-10: Return degraded result instead of bare error report
+            if self._last_successful_report is not None:
+                degraded = QualityReport(
+                    sharpness=self._last_successful_report.sharpness,
+                    brightness=self._last_successful_report.brightness,
+                    contrast=self._last_successful_report.contrast,
+                    overall_score=max(0, self._last_successful_report.overall_score - 10),
+                    passed=False,
+                    suggestions=[f"分析降级运行（上次成功结果）: {str(e)}"] + self._last_successful_report.suggestions,
+                    issues=["degraded_analysis"] + self._last_successful_report.issues,
+                )
+                return degraded
             return QualityReport(
                 suggestions=[f"分析失败: {str(e)}"],
                 issues=["analysis_error"],
@@ -308,8 +391,14 @@ class PhotoQualityAnalyzer:
             return np.array(image.convert("RGB"))
         elif isinstance(image, str):
             try:
-                img = Image.open(image).convert("RGB")
+                # A-P1-1: Validate path to prevent path traversal attacks
+                safe_path = _validate_image_path(image)
+                img = Image.open(safe_path).convert("RGB")
                 return np.array(img)
+            except ValueError as e:
+                # Path validation failure (traversal attempt)
+                logger.error(f"Path validation failed: {e}")
+                return None
             except Exception as e:
                 logger.error(f"Failed to load image from path: {e}")
                 return None

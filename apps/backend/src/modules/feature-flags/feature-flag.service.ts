@@ -5,8 +5,8 @@ import {
   NotFoundException,
   Inject,
 } from '@nestjs/common';
-import { Queue } from 'bullmq';
 import { Prisma } from '@prisma/client';
+import { Queue } from 'bullmq';
 
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { RedisService, RedisKeyBuilder } from '../../common/redis/redis.service';
@@ -43,8 +43,8 @@ export class FeatureFlagService {
 
   async findAll(query?: { skip?: number; take?: number; type?: string; enabled?: boolean }) {
     const where: Prisma.FeatureFlagWhereInput = {};
-    if (query?.type) where.type = query.type;
-    if (query?.enabled !== undefined) where.enabled = query.enabled;
+    if (query?.type) {where.type = query.type;}
+    if (query?.enabled !== undefined) {where.enabled = query.enabled;}
 
     const [items, total] = await Promise.all([
       this.prisma.featureFlag.findMany({
@@ -61,7 +61,7 @@ export class FeatureFlagService {
 
   async findOne(id: string) {
     const flag = await this.prisma.featureFlag.findUnique({ where: { id } });
-    if (!flag) throw new NotFoundException(`Feature flag ${id} not found`);
+    if (!flag) {throw new NotFoundException(`Feature flag ${id} not found`);}
     return flag;
   }
 
@@ -88,13 +88,13 @@ export class FeatureFlagService {
   async update(id: string, data: UpdateFeatureFlagDto) {
     const existing = await this.findOne(id);
     const updateData: Prisma.FeatureFlagUpdateInput = {};
-    if (data.key !== undefined) updateData.key = data.key;
-    if (data.name !== undefined) updateData.name = data.name;
-    if (data.description !== undefined) updateData.description = data.description;
-    if (data.type !== undefined) updateData.type = data.type;
-    if (data.value !== undefined) updateData.value = data.value as Prisma.InputJsonObject;
-    if (data.enabled !== undefined) updateData.enabled = data.enabled;
-    if (data.rules !== undefined) updateData.rules = data.rules as Prisma.InputJsonObject;
+    if (data.key !== undefined) {updateData.key = data.key;}
+    if (data.name !== undefined) {updateData.name = data.name;}
+    if (data.description !== undefined) {updateData.description = data.description;}
+    if (data.type !== undefined) {updateData.type = data.type;}
+    if (data.value !== undefined) {updateData.value = data.value as Prisma.InputJsonObject;}
+    if (data.enabled !== undefined) {updateData.enabled = data.enabled;}
+    if (data.rules !== undefined) {updateData.rules = data.rules as Prisma.InputJsonObject;}
 
     const flag = await this.prisma.featureFlag.update({
       where: { id },

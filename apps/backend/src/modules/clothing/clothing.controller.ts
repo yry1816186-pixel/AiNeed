@@ -21,9 +21,12 @@ import {
   ApiBearerAuth,
 } from "@nestjs/swagger";
 
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
-
 import { CacheKey, CacheTTL } from "../../common/decorators/cache.decorators";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { Public } from "../auth/decorators/public.decorator";
+import { RolesGuard } from "../../common/guards/roles.guard";
+import { Roles } from "../../common/decorators/roles.decorator";
+
 import { ClothingService } from "./clothing.service";
 import {
   GetClothingQueryDto,
@@ -53,6 +56,7 @@ export class ClothingController {
   constructor(private clothingService: ClothingService) {}
 
   @Get()
+  @Public()
   @CacheKey("clothing:list")
   @CacheTTL(120)
   @ApiOperation({
@@ -86,6 +90,7 @@ export class ClothingController {
   }
 
   @Get("featured")
+  @Public()
   @ApiOperation({
     summary: "获取精选商品",
     description: "获取平台精选推荐的服装商品，通常为热门或高质量商品。",
@@ -109,6 +114,7 @@ export class ClothingController {
   }
 
   @Get("categories")
+  @Public()
   @CacheKey("clothing:categories")
   @CacheTTL(600)
   @ApiOperation({
@@ -125,6 +131,7 @@ export class ClothingController {
   }
 
   @Get("tags")
+  @Public()
   @ApiOperation({
     summary: "获取热门标签",
     description: "获取平台热门标签列表，按使用次数降序排列。",
@@ -161,6 +168,7 @@ export class ClothingController {
   }
 
   @Get(":id")
+  @Public()
   @CacheKey("clothing:detail")
   @CacheTTL(300)
   @ApiOperation({
@@ -192,6 +200,7 @@ export class ClothingController {
   }
 
   @Get(":id/related")
+  @Public()
   @ApiOperation({ summary: "获取搭配推荐", description: "获取与指定商品搭配的推荐组合" })
   @ApiParam({ name: "id", description: "商品 ID", type: String })
   @ApiQuery({ name: "limit", required: false, type: Number, description: "推荐数量，默认5" })
@@ -206,6 +215,7 @@ export class ClothingController {
   }
 
   @Get("subcategories")
+  @Public()
   @ApiOperation({ summary: "获取子分类列表", description: "获取服装子分类列表，按主分类分组" })
   @ApiQuery({ name: "category", required: false, type: String, description: "主分类筛选" })
   async getSubcategories(@Query("category") category?: string) {
@@ -213,7 +223,8 @@ export class ClothingController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("admin", "brand")
   @ApiBearerAuth()
   @ApiOperation({ summary: "创建服装商品", description: "创建一个新的服装商品" })
   @ApiResponse({ status: 201, description: "创建成功", type: ClothingItemDto })
@@ -227,7 +238,8 @@ export class ClothingController {
   }
 
   @Put(":id")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("admin", "brand")
   @ApiBearerAuth()
   @ApiOperation({ summary: "更新服装商品", description: "根据商品 ID 更新服装商品信息" })
   @ApiParam({ name: "id", description: "商品 ID", type: String, format: "uuid" })
@@ -243,7 +255,8 @@ export class ClothingController {
   }
 
   @Delete(":id")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("admin", "brand")
   @ApiBearerAuth()
   @ApiOperation({ summary: "删除服装商品", description: "软删除指定的服装商品" })
   @ApiParam({ name: "id", description: "商品 ID", type: String, format: "uuid" })

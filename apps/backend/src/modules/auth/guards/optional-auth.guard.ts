@@ -31,7 +31,7 @@ export class OptionalAuthGuard extends AuthGuard("jwt") {
     }
   }
 
-  handleRequest<TUser = JwtUserPayload>(err: Error | null, user: TUser | false, info: unknown, context: ExecutionContext): TUser | null {
+  handleRequest<TUser = JwtUserPayload>(err: Error | null, user: TUser | false, _info: unknown, _context: ExecutionContext): TUser | null {
     // 不抛出错误，允许无用户访问
     return user || null;
   }

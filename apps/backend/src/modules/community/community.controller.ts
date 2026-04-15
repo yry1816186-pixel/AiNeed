@@ -13,6 +13,7 @@ import {
   UseInterceptors,
   UploadedFiles,
 } from "@nestjs/common";
+import { FilesInterceptor } from "@nestjs/platform-express";
 import {
   ApiTags,
   ApiOperation,
@@ -22,11 +23,10 @@ import {
   ApiQuery,
   ApiConsumes,
 } from "@nestjs/swagger";
-import { FilesInterceptor } from "@nestjs/platform-express";
 import { Throttle } from "@nestjs/throttler";
 
-import { AuthGuard } from "../auth/guards/auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
+import { AuthGuard } from "../auth/guards/auth.guard";
 
 import { CommunityService } from "./community.service";
 import {
@@ -72,7 +72,7 @@ export class CommunityController {
   async createPost(
     @Request() req: RequestWithUser,
     @Body() dto: CreatePostDto,
-    @UploadedFiles() files: Express.Multer.File[],
+    @UploadedFiles() _files: Express.Multer.File[],
   ) {
     return this.communityService.createPost(req.user.id, dto);
   }

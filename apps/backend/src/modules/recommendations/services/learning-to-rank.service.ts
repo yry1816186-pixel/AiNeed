@@ -91,7 +91,7 @@ export class LearningToRankService {
   async rankItems(
     userId: string,
     items: RankingFeatures[],
-    context: { occasion?: string; season?: string; timeOfDay?: string } = {},
+    _context: { occasion?: string; season?: string; timeOfDay?: string } = {},
   ): Promise<RankingResult[]> {
     const results: RankingResult[] = [];
 
@@ -115,8 +115,8 @@ export class LearningToRankService {
 
   private calculateFinalScore(
     features: RankingFeatures,
-    seenCategories: Set<string>,
-    seenBrands: Set<string>,
+    _seenCategories: Set<string>,
+    _seenBrands: Set<string>,
   ): number {
     let score = 0;
 
@@ -133,7 +133,7 @@ export class LearningToRankService {
 
   private generateExplanation(
     features: RankingFeatures,
-    score: number,
+    _score: number,
   ): string[] {
     const explanations: string[] = [];
 
@@ -279,7 +279,7 @@ export class LearningToRankService {
 
   private async getItemFeatures(
     itemId: string,
-    userId: string,
+    _userId: string,
   ): Promise<RankingFeatures | null> {
     const item = await this.prisma.clothingItem.findUnique({
       where: { id: itemId },
@@ -400,7 +400,7 @@ export class LearningToRankService {
           feature.weight = Math.max(0, feature.weight);
         }
       }
-      if (totalLoss / feedbackData.length < 0.001) break;
+      if (totalLoss / feedbackData.length < 0.001) {break;}
     }
     const totalWeight = cfg.features.reduce((sum, f) => sum + f.weight, 0);
     if (totalWeight > 0) {

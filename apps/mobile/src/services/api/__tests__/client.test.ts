@@ -1,4 +1,8 @@
-import { AxiosError, AxiosHeaders, AxiosRequestConfig } from "axios";
+﻿import { AxiosError, AxiosHeaders } from "axios";
+
+import { apiClient } from "../client";
+import { secureStorage, SECURE_STORAGE_KEYS } from "../../../utils/secureStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // ---- Mocks ----
 jest.mock("@react-native-async-storage/async-storage", () => ({
@@ -8,12 +12,12 @@ jest.mock("@react-native-async-storage/async-storage", () => ({
   multiRemove: jest.fn(),
 }));
 
-jest.mock("../../config/runtime", () => ({
+jest.mock("../../../config/runtime", () => ({
   mobileRuntimeConfig: { apiUrl: "http://localhost:3001" },
   requireMobileUrl: (_url: string, _label: string) => "http://localhost:3001",
 }));
 
-jest.mock("../../utils/secureStorage", () => ({
+jest.mock("../../../utils/secureStorage", () => ({
   secureStorage: {
     getItem: jest.fn(),
     setItem: jest.fn(),
@@ -26,7 +30,7 @@ jest.mock("../../utils/secureStorage", () => ({
   },
 }));
 
-jest.mock("./error", () => ({
+jest.mock("../error", () => ({
   AppError: class AppError extends Error {
     code: string;
     constructor(code: string, message?: string) {
@@ -46,20 +50,15 @@ jest.mock("./error", () => ({
     (error: AxiosError) =>
       new (class extends Error {
         code = "UNAUTHORIZED";
-      })(error.message),
+      })(error.message)
   ),
 }));
 
-import { apiClient } from "../client";
-// @ts-expect-error -- secureStorage mock path differs in test env
-import { secureStorage, SECURE_STORAGE_KEYS } from "../../utils/secureStorage";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 // ---- Helpers ----
-function createAxiosError(
+function _createAxiosError(
   status: number,
   data?: Record<string, unknown>,
-  url?: string,
+  url?: string
 ): AxiosError {
   const error = new AxiosError(
     "Request failed",
@@ -76,7 +75,7 @@ function createAxiosError(
       statusText: "Error",
       headers: {},
       config: {} as any,
-    },
+    }
   );
   return error;
 }
@@ -99,7 +98,7 @@ describe("ApiClient", () => {
 
       expect(secureStorage.setItem).toHaveBeenCalledWith(
         SECURE_STORAGE_KEYS.AUTH_TOKEN,
-        "test-access-token",
+        "test-access-token"
       );
       expect(apiClient.getToken()).toBe("test-access-token");
     });
@@ -108,9 +107,7 @@ describe("ApiClient", () => {
       await apiClient.setToken("first-token");
       await apiClient.setToken(null);
 
-      expect(secureStorage.deleteItem).toHaveBeenCalledWith(
-        SECURE_STORAGE_KEYS.AUTH_TOKEN,
-      );
+      expect(secureStorage.deleteItem).toHaveBeenCalledWith(SECURE_STORAGE_KEYS.AUTH_TOKEN);
       expect(apiClient.getToken()).toBeNull();
     });
   });
@@ -121,16 +118,14 @@ describe("ApiClient", () => {
 
       expect(secureStorage.setItem).toHaveBeenCalledWith(
         SECURE_STORAGE_KEYS.REFRESH_TOKEN,
-        "test-refresh-token",
+        "test-refresh-token"
       );
     });
 
     it("should delete refresh token from secure storage when null", async () => {
       await apiClient.setRefreshToken(null);
 
-      expect(secureStorage.deleteItem).toHaveBeenCalledWith(
-        SECURE_STORAGE_KEYS.REFRESH_TOKEN,
-      );
+      expect(secureStorage.deleteItem).toHaveBeenCalledWith(SECURE_STORAGE_KEYS.REFRESH_TOKEN);
     });
   });
 
@@ -143,15 +138,9 @@ describe("ApiClient", () => {
       await apiClient.clearAuth();
 
       expect(apiClient.getToken()).toBeNull();
-      expect(secureStorage.deleteItem).toHaveBeenCalledWith(
-        SECURE_STORAGE_KEYS.AUTH_TOKEN,
-      );
-      expect(secureStorage.deleteItem).toHaveBeenCalledWith(
-        SECURE_STORAGE_KEYS.REFRESH_TOKEN,
-      );
-      expect(secureStorage.deleteItem).toHaveBeenCalledWith(
-        SECURE_STORAGE_KEYS.USER_DATA,
-      );
+      expect(secureStorage.deleteItem).toHaveBeenCalledWith(SECURE_STORAGE_KEYS.AUTH_TOKEN);
+      expect(secureStorage.deleteItem).toHaveBeenCalledWith(SECURE_STORAGE_KEYS.REFRESH_TOKEN);
+      expect(secureStorage.deleteItem).toHaveBeenCalledWith(SECURE_STORAGE_KEYS.USER_DATA);
       expect(AsyncStorage.removeItem).toHaveBeenCalledWith("user_data");
       expect(callback).toHaveBeenCalled();
     });
@@ -185,7 +174,7 @@ describe("ApiClient", () => {
 
     it("should return cached data when useCache option is true and cache is populated", async () => {
       // First request to populate cache
-      const firstResult = await apiClient.get("/cache-test", undefined, {
+      const _firstResult = await apiClient.get("/cache-test", undefined, {
         useCache: true,
       });
 
@@ -290,11 +279,7 @@ describe("ApiClient", () => {
 
   describe("getWithRetry", () => {
     it("should attempt retries on failure", async () => {
-      const result = await apiClient.getWithRetry(
-        "/retry-test",
-        undefined,
-        2,
-      );
+      const result = await apiClient.getWithRetry("/retry-test", undefined, 2);
       expect(result).toHaveProperty("success");
     }, 15000);
   });

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+﻿import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,13 +10,16 @@ import {
   Pressable,
   ScrollView,
 } from "react-native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from "../theme";
+import { theme } from '../design-system/theme';
+import { useTranslation } from "../i18n";
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { useAuthStore } from "../stores/index";
 import { useAiStylistStore } from "../stores/aiStylistStore";
 import type { PresetQuestion } from "../stores/aiStylistStore";
+import type { RootStackParamList } from "../types/navigation";
 import {
   OutfitPlanView,
   ItemReplacementModal,
@@ -26,8 +29,10 @@ import {
 } from "../components/aistylist";
 
 export const AiStylistScreen: React.FC = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const authLoading = useAuthStore((s) => s.isLoading);
+  const t = useTranslation();
 
   const {
     currentSessionId,
@@ -63,9 +68,11 @@ export const AiStylistScreen: React.FC = () => {
 
   // Initialize: fetch preset questions on mount
   useEffect(() => {
-    if (authLoading || !isAuthenticated || hasInitialized) return;
+    if (authLoading || !isAuthenticated || hasInitialized) {
+      return;
+    }
     setHasInitialized(true);
-    fetchPresetQuestions().then(() => {
+    void fetchPresetQuestions().then(() => {
       if (isNewUser) {
         setShowPresetModal(true);
       }
@@ -83,12 +90,14 @@ export const AiStylistScreen: React.FC = () => {
         await sendMessage(message);
       }
     },
-    [currentSessionId, createSession, sendMessage],
+    [currentSessionId, createSession, sendMessage]
   );
 
   const handleSend = useCallback(async () => {
     const text = inputText.trim();
-    if (!text || isGenerating) return;
+    if (!text || isGenerating) {
+      return;
+    }
 
     setInputText("");
 
@@ -120,7 +129,7 @@ export const AiStylistScreen: React.FC = () => {
         await sendMessage(question.text);
       }
     },
-    [currentSessionId, createSession, sendMessage],
+    [currentSessionId, createSession, sendMessage]
   );
 
   const handleItemReplace = useCallback(
@@ -129,45 +138,49 @@ export const AiStylistScreen: React.FC = () => {
       setReplacementTarget({
         outfitIndex,
         itemIndex,
-        itemName: item?.name ?? "Item",
+        itemName: item?.name ?? "单品",
       });
       if (currentSessionId) {
-        fetchAlternatives(currentSessionId, outfitIndex, itemIndex);
+        void fetchAlternatives(currentSessionId, outfitIndex, itemIndex);
       }
     },
-    [currentSessionId, currentOutfitPlan, fetchAlternatives],
+    [currentSessionId, currentOutfitPlan, fetchAlternatives]
   );
 
   const handleReplacementSelect = useCallback(
     async (itemId: string) => {
-      if (!currentSessionId || !replacementTarget) return;
+      if (!currentSessionId || !replacementTarget) {
+        return;
+      }
       const success = await replaceItem(
         currentSessionId,
         replacementTarget.outfitIndex,
         replacementTarget.itemIndex,
-        itemId,
+        itemId
       );
       if (success) {
         setReplacementTarget(null);
       }
     },
-    [currentSessionId, replacementTarget, replaceItem],
+    [currentSessionId, replacementTarget, replaceItem]
   );
 
   const handleFeedback = useCallback(
     async (data: { action: "like" | "dislike"; rating?: number; dislikeReason?: string }) => {
-      if (!currentSessionId || !currentOutfitPlan) return;
+      if (!currentSessionId || !currentOutfitPlan) {
+        return;
+      }
       await submitFeedback(
         currentSessionId,
         0,
         data.action,
         undefined,
         data.rating,
-        data.dislikeReason,
+        data.dislikeReason
       );
       setShowFeedbackModal(false);
     },
-    [currentSessionId, currentOutfitPlan, submitFeedback],
+    [currentSessionId, currentOutfitPlan, submitFeedback]
   );
 
   // Render: loading state
@@ -187,12 +200,12 @@ export const AiStylistScreen: React.FC = () => {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Ionicons name="sparkles" size={18} color={theme.colors.primary} />
-          <Text style={styles.headerTitle}>AI Stylist</Text>
+          <Text style={styles.headerTitle}>{t.navigation.stylist}</Text>
         </View>
         <Pressable
           style={styles.historyButton}
           onPress={() => {
-            /* Navigate to SessionCalendar */
+            navigation.navigate("MainTabs", { screen: "Stylist", params: { screen: "SessionCalendar" } });
           }}
         >
           <Ionicons name="calendar-outline" size={22} color={theme.colors.text} />
@@ -209,7 +222,7 @@ export const AiStylistScreen: React.FC = () => {
             <View style={styles.errorBanner}>
               <Text style={styles.errorText}>{error}</Text>
               <Pressable onPress={clearError}>
-                <Text style={styles.errorDismiss}>Dismiss</Text>
+                <Text style={styles.errorDismiss}>关闭</Text>
               </Pressable>
             </View>
           )}
@@ -217,7 +230,7 @@ export const AiStylistScreen: React.FC = () => {
           {isLoading && !currentOutfitPlan ? (
             <View style={styles.generatingContainer}>
               <ActivityIndicator size="large" color={theme.colors.primary} />
-              <Text style={styles.generatingText}>AI is creating your outfit...</Text>
+              <Text style={styles.generatingText}>{t.stylist.generating}</Text>
             </View>
           ) : currentOutfitPlan ? (
             <OutfitPlanView
@@ -229,9 +242,9 @@ export const AiStylistScreen: React.FC = () => {
           ) : (
             <View style={styles.emptyState}>
               <Ionicons name="shirt-outline" size={48} color={theme.colors.textTertiary} />
-              <Text style={styles.emptyTitle}>Tell AI what you want to wear</Text>
+              <Text style={styles.emptyTitle}>{t.stylist.askStyle}</Text>
               <Text style={styles.emptySubtitle}>
-                Describe a scenario, style, or let AI suggest something for you
+                {t.stylist.askOccasion}
               </Text>
             </View>
           )}
@@ -244,7 +257,7 @@ export const AiStylistScreen: React.FC = () => {
             <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.input}
-                placeholder="Describe your outfit needs..."
+                placeholder={t.stylist.askStyle}
                 placeholderTextColor={theme.colors.textTertiary}
                 value={inputText}
                 onChangeText={setInputText}
@@ -255,17 +268,20 @@ export const AiStylistScreen: React.FC = () => {
               />
             </View>
             <Pressable
-              style={[styles.sendButton, (!inputText.trim() || isGenerating) && styles.sendButtonDisabled]}
+              style={[
+                styles.sendButton,
+                (!inputText.trim() || isGenerating) && styles.sendButtonDisabled,
+              ]}
               onPress={handleSend}
               disabled={!inputText.trim() || isGenerating}
             >
               {isGenerating ? (
-                <ActivityIndicator size="small" color="#fff" />
+                <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
               ) : (
                 <Ionicons
                   name="send"
                   size={20}
-                  color={inputText.trim() ? "#fff" : theme.colors.textTertiary}
+                  color={inputText.trim() ? DesignTokens.colors.neutral.white : theme.colors.textTertiary}
                 />
               )}
             </Pressable>
@@ -316,10 +332,27 @@ const styles = StyleSheet.create({
   historyButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   scrollContent: { paddingBottom: 8 },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
-  emptyState: { flex: 1, alignItems: "center", justifyContent: "center", paddingVertical: 60, paddingHorizontal: 32 },
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+    paddingHorizontal: 32,
+  },
   emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text, marginTop: 16 },
-  emptySubtitle: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 8, textAlign: "center", lineHeight: 20 },
-  generatingContainer: { flex: 1, alignItems: "center", justifyContent: "center", paddingVertical: 60 },
+  emptySubtitle: {
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    marginTop: 8,
+    textAlign: "center",
+    lineHeight: 20,
+  },
+  generatingContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+  },
   generatingText: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 12 },
   errorBanner: {
     flexDirection: "row",

@@ -50,7 +50,7 @@ export function useFeatureFlag({
   }, [key, userId, attributes, defaultValue]);
 
   useEffect(() => {
-    evaluate();
+    void evaluate();
   }, [evaluate]);
 
   return { enabled, variant, loading, error, refresh: evaluate };

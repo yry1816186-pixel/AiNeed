@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import { TimeSlotItem } from "../../components/consultant/TimeSlotItem";
 import { ServiceTypeChip } from "../../components/consultant/ServiceTypeChip";
 import type { ServiceType } from "../../types/consultant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 const SERVICE_TYPES = [
   { label: "整体形象改造", value: "styling_consultation" },
@@ -28,12 +29,12 @@ export const BookingScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
-  const { availableSlots, fetchAvailableSlots, createBooking, isLoading } =
-    useConsultantStore();
+  const { availableSlots, fetchAvailableSlots, createBooking, isLoading } = useConsultantStore();
 
   const { consultantId, consultant } = route.params || {};
 
-  const [selectedServiceType, setSelectedServiceType] = useState<ServiceType>("styling_consultation");
+  const [selectedServiceType, setSelectedServiceType] =
+    useState<ServiceType>("styling_consultation");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<any>(null);
   const [notes, setNotes] = useState("");
@@ -55,7 +56,7 @@ export const BookingScreen: React.FC = () => {
 
   useEffect(() => {
     if (consultantId && selectedDate) {
-      fetchAvailableSlots(consultantId, selectedDate);
+      void fetchAvailableSlots(consultantId, selectedDate);
     }
   }, [consultantId, selectedDate, fetchAvailableSlots]);
 
@@ -120,17 +121,20 @@ export const BookingScreen: React.FC = () => {
           <>
             <Text style={styles.sectionLabel}>选择时段</Text>
             {isLoading ? (
-              <ActivityIndicator size="small" color="#C67B5C" />
+              <ActivityIndicator size="small" color={DesignTokens.colors.brand.terracotta} />
             ) : availableSlots.length === 0 ? (
               <Text style={styles.noSlotsText}>该日期暂无可用时段</Text>
             ) : (
-              availableSlots.map((slot: any, idx: number) => (
+              availableSlots.map((slot: any, _idx: number) => (
                 <TimeSlotItem
-                  key={idx}
+                  key={`${slot.startTime}-${slot.endTime}`}
                   startTime={slot.startTime}
                   endTime={slot.endTime}
                   isAvailable={slot.isAvailable}
-                  isSelected={selectedSlot?.startTime === slot.startTime && selectedSlot?.endTime === slot.endTime}
+                  isSelected={
+                    selectedSlot?.startTime === slot.startTime &&
+                    selectedSlot?.endTime === slot.endTime
+                  }
                   onSelect={() => setSelectedSlot(slot)}
                 />
               ))
@@ -172,9 +176,7 @@ export const BookingScreen: React.FC = () => {
           onPress={handleBooking}
           disabled={!selectedDate || !selectedSlot}
         >
-          <Text style={styles.payButtonText}>
-            支付定金 {depositAmount} 元
-          </Text>
+          <Text style={styles.payButtonText}>支付定金 {depositAmount} 元</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -182,7 +184,7 @@ export const BookingScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFFFF" },
+  container: { flex: 1, backgroundColor: DesignTokens.colors.backgrounds.primary },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -191,21 +193,21 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   backBtn: { padding: 8 },
-  backBtnText: { fontSize: 20, color: "#333" },
-  headerTitle: { fontSize: 18, fontWeight: "600", color: "#1A1A1A" },
+  backBtnText: { fontSize: 20, color: DesignTokens.colors.text.primary },
+  headerTitle: { fontSize: 18, fontWeight: "600", color: DesignTokens.colors.text.primary },
   content: { paddingHorizontal: 16, paddingBottom: 100 },
   sectionLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#333",
+    color: DesignTokens.colors.text.primary,
     marginTop: 20,
     marginBottom: 10,
   },
   chipRow: { flexDirection: "row", flexWrap: "wrap" },
-  noSlotsText: { fontSize: 14, color: "#999", paddingVertical: 12 },
+  noSlotsText: { fontSize: 14, color: DesignTokens.colors.text.tertiary, paddingVertical: 12 },
   notesInput: {
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: DesignTokens.colors.neutral[200],
     borderRadius: 12,
     padding: 12,
     fontSize: 14,
@@ -215,7 +217,7 @@ const styles = StyleSheet.create({
   priceSummary: {
     marginTop: 24,
     padding: 16,
-    backgroundColor: "#FAFAF8",
+    backgroundColor: DesignTokens.colors.backgrounds.secondary,
     borderRadius: 12,
   },
   priceRow: {
@@ -223,24 +225,24 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 6,
   },
-  priceLabel: { fontSize: 14, color: "#666" },
-  priceValue: { fontSize: 14, color: "#333", fontWeight: "500" },
+  priceLabel: { fontSize: 14, color: DesignTokens.colors.text.secondary },
+  priceValue: { fontSize: 14, color: DesignTokens.colors.text.primary, fontWeight: "500" },
   bottomCta: {
     paddingHorizontal: 16,
     paddingVertical: 16,
     paddingBottom: 32,
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
-    backgroundColor: "#FFFFFF",
+    borderTopColor: DesignTokens.colors.neutral[100],
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
   },
   payButton: {
-    backgroundColor: "#C67B5C",
+    backgroundColor: DesignTokens.colors.brand.terracotta,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
   },
-  payButtonDisabled: { backgroundColor: "#D4B5A5" },
-  payButtonText: { color: "#FFFFFF", fontSize: 18, fontWeight: "600" },
+  payButtonDisabled: { backgroundColor: DesignTokens.colors.brand.terracottaLight },
+  payButtonText: { color: DesignTokens.colors.text.inverse, fontSize: 18, fontWeight: "600" },
 });
 
 export default BookingScreen;

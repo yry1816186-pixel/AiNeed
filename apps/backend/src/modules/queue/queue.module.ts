@@ -7,8 +7,8 @@ import { AIModule } from '../ai/ai.module';
 import { CommunityModule } from '../community/community.module';
 import { TryOnModule } from '../try-on/try-on.module';
 
-import { QUEUE_NAMES } from './queue.constants';
 import { QueueName } from './queue-config';
+import { QueueMonitorService } from './queue-monitor.service';
 import { QueueController } from './queue.controller';
 import {
   QueueProcessor,
@@ -17,7 +17,6 @@ import {
   WardrobeMatchProcessor,
   ContentModerationProcessor,
 } from './queue.processor';
-import { QueueMonitorService } from './queue-monitor.service';
 import { QueueService } from './queue.service';
 
 
@@ -78,12 +77,12 @@ const logger = new Logger('QueueModule');
       },
       inject: [ConfigService],
     }),
-    // Register individual queues
+    // Register individual queues - all queues from QueueName enum
     BullModule.registerQueue(
-      { name: QUEUE_NAMES.AI_TASKS },
-      { name: QUEUE_NAMES.STYLE_ANALYSIS },
-      { name: QUEUE_NAMES.VIRTUAL_TRYON },
-      { name: QUEUE_NAMES.WARDROBE_MATCH },
+      { name: QueueName.AI_TASKS },
+      { name: QueueName.STYLE_ANALYSIS },
+      { name: QueueName.VIRTUAL_TRYON },
+      { name: QueueName.WARDROBE_MATCH },
       { name: QueueName.BODY_ANALYSIS },
       { name: QueueName.PHOTO_PROCESSING },
       { name: QueueName.AI_GENERATION },

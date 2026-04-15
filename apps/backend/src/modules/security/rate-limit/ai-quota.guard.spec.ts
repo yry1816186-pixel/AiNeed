@@ -2,8 +2,8 @@ import { HttpException, HttpStatus } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { AiQuotaService, QuotaType as QuotaTypeEnum } from "./ai-quota.service";
 import { AiQuotaGuard, QUOTA_TYPE_KEY, SetQuotaType } from "./ai-quota.guard";
+import { AiQuotaService, QuotaType as QuotaTypeEnum } from "./ai-quota.service";
 
 describe("AiQuotaGuard", () => {
   let guard: AiQuotaGuard;

@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Param, UseGuards, UseInterceptors, Request } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { SensitiveDataInterceptor } from "../../common/interceptors/sensitive-data.interceptor";
-import { PosterGeneratorService } from "./services/poster-generator.service";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+
 import { GeneratePosterResponseDto } from "./dto/poster.dto";
+import { PosterGeneratorService } from "./services/poster-generator.service";
 
 interface AuthenticatedRequest {
   user: {

@@ -27,7 +27,7 @@ export function useAuth() {
         throw err as AppError;
       }
     },
-    [login],
+    [login]
   );
 
   const handleRegister = useCallback(
@@ -38,7 +38,7 @@ export function useAuth() {
         throw err as AppError;
       }
     },
-    [register],
+    [register]
   );
 
   const handleLogout = useCallback(async () => {

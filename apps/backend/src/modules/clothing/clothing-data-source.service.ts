@@ -1,7 +1,8 @@
+import crypto from 'crypto';
+
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
-import crypto from 'crypto';
 
 interface JDImageInfo {
   imageList?: string;

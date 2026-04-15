@@ -12,16 +12,16 @@ import {
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
-import { AuthGuard } from "../auth/guards/auth.guard";
 import { AdminGuard } from "../../common/guards/admin.guard";
 import { RequestWithUser } from "../../common/types/common.types";
-import { ContentReviewService } from "./services/content-review.service";
+import { AuthGuard } from "../auth/guards/auth.guard";
 
 import {
   ReviewQueueQueryDto,
   ReviewActionDto,
   BatchReviewDto,
 } from "./dto/content-review.dto";
+import { ContentReviewService } from "./services/content-review.service";
 
 @ApiTags("admin/content-review")
 @Controller("admin/content-review")

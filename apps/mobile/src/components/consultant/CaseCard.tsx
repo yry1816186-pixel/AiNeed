@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, Image } from "react-native";
 
 interface CaseCardProps {
   serviceType: string;
-  beforeImages: any;
-  afterImages: any;
+  beforeImages: string[];
+  afterImages: string[];
   rating: number;
   reviewExcerpt: string | null;
   clientName: string;

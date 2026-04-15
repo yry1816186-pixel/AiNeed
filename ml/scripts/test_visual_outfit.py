@@ -10,7 +10,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv(Path(__file__).parent.parent / ".env")
 
-from ml.services.visual_outfit_service import (
+from ml.services.tryon.visual_outfit_service import (
     VisualOutfitService,
     UserImageInfo
 )

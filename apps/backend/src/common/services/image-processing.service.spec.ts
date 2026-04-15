@@ -1,6 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { ImageProcessingService } from './image-processing.service';
+
 import { IMAGE_SIZES } from '../utils/image-sizes';
+
+import { ImageProcessingService } from './image-processing.service';
 
 jest.mock('sharp', () => {
   const allChains: any[] = [];

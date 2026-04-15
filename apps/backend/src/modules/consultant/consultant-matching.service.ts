@@ -1,5 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
+
 import { PrismaService } from "../../common/prisma/prisma.service";
+
 import { ConsultantMatchRequestDto, MatchResultDto } from "./dto";
 
 /** 四维匹配权重配置 */
@@ -112,13 +114,13 @@ export class ConsultantMatchingService {
     userProfile: { profile: Record<string, unknown> | null; styleProfiles: Array<Record<string, unknown>> } | null,
     consultant: Record<string, unknown>,
   ): number {
-    if (!userProfile?.styleProfiles || userProfile.styleProfiles.length === 0) return 0.5;
+    if (!userProfile?.styleProfiles || userProfile.styleProfiles.length === 0) {return 0.5;}
     const specialties = (consultant.specialties as string[]) || [];
     // 收集用户所有活跃风格的关键词
     const userKeywords = userProfile.styleProfiles.flatMap(
       (sp) => (sp.keywords as string[]) || [],
     );
-    if (userKeywords.length === 0) return 0.5;
+    if (userKeywords.length === 0) {return 0.5;}
     const overlap = userKeywords.filter((s: string) =>
       specialties.some((sp: string) => sp.includes(s) || s.includes(sp)),
     );
@@ -130,10 +132,10 @@ export class ConsultantMatchingService {
    * 权重 25%
    */
   private calcKeywordScore(dto: ConsultantMatchRequestDto, consultant: Record<string, unknown>): number {
-    if (!dto.notes) return 0.5;
+    if (!dto.notes) {return 0.5;}
     const specialties = (consultant.specialties as string[]) || [];
     const keywords = dto.notes.split(/[,，\s]+/).filter(Boolean);
-    if (keywords.length === 0) return 0.5;
+    if (keywords.length === 0) {return 0.5;}
     const matches = keywords.filter((kw) =>
       specialties.some((sp: string) => sp.includes(kw) || kw.includes(sp)),
     );
@@ -147,7 +149,7 @@ export class ConsultantMatchingService {
   private calcSpecialtyScore(dto: ConsultantMatchRequestDto, consultant: Record<string, unknown>): number {
     const specialties = (consultant.specialties as string[]) || [];
     const targetKeywords = SERVICE_TYPE_KEYWORDS[dto.serviceType] || [];
-    if (targetKeywords.length === 0) return 0.5;
+    if (targetKeywords.length === 0) {return 0.5;}
     const matches = targetKeywords.filter((kw) =>
       specialties.some((sp: string) => sp.includes(kw)),
     );
@@ -163,7 +165,7 @@ export class ConsultantMatchingService {
     consultant: Record<string, unknown>,
   ): number {
     const userLocation = userProfile?.profile?.location;
-    if (!userLocation || !consultant.location) return 0.5;
+    if (!userLocation || !consultant.location) {return 0.5;}
     return userLocation === consultant.location ? 1.0 : 0.3;
   }
 
@@ -173,12 +175,12 @@ export class ConsultantMatchingService {
    */
   private buildMatchReasons(scores: Record<string, number>, consultant: Record<string, unknown>): string[] {
     const reasons: string[] = [];
-    if ((scores.profile ?? 0) >= 0.6) reasons.push(MATCH_REASONS.profile);
-    if ((scores.keywords ?? 0) >= 0.6) reasons.push(MATCH_REASONS.keywords);
-    if ((scores.specialty ?? 0) >= 0.6) reasons.push(MATCH_REASONS.specialty);
-    if ((scores.location ?? 0) >= 0.8) reasons.push(MATCH_REASONS.location);
-    if (Number(consultant.rating) >= 4.5) reasons.push(MATCH_REASONS.topRated);
-    if (reasons.length === 0) reasons.push(MATCH_REASONS.specialty);
+    if ((scores.profile ?? 0) >= 0.6) {reasons.push(MATCH_REASONS.profile);}
+    if ((scores.keywords ?? 0) >= 0.6) {reasons.push(MATCH_REASONS.keywords);}
+    if ((scores.specialty ?? 0) >= 0.6) {reasons.push(MATCH_REASONS.specialty);}
+    if ((scores.location ?? 0) >= 0.8) {reasons.push(MATCH_REASONS.location);}
+    if (Number(consultant.rating) >= 4.5) {reasons.push(MATCH_REASONS.topRated);}
+    if (reasons.length === 0) {reasons.push(MATCH_REASONS.specialty);}
     return reasons.slice(0, 3);
   }
 }

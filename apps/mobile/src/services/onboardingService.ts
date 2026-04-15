@@ -1,7 +1,7 @@
-import apiClient from './api/client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { ApiResponse } from '../types';
-import type { OnboardingFormData } from '../stores/onboardingStore';
+import apiClient from "./api/client";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { ApiResponse } from "../types";
+import type { OnboardingFormData } from "../stores/onboardingStore";
 
 export const onboardingService = {
   saveOnboardingData: async (formData: OnboardingFormData): Promise<ApiResponse<unknown>> => {
@@ -25,11 +25,10 @@ export const onboardingService = {
       updateData.photoUri = formData.photoUri;
     }
 
-    return apiClient.put('/profile', updateData);
+    return apiClient.put("/profile", updateData);
   },
 
   markOnboardingComplete: async (): Promise<void> => {
-    await AsyncStorage.setItem('@xuno:onboarding_complete', 'true');
+    await AsyncStorage.setItem("@xuno:onboarding_complete", "true");
   },
 };
-

@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-  ScrollView,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { cartEnhancementApi } from "../services/api/commerce.api";
 
 interface InlineSKUSelectorProps {
@@ -62,11 +55,7 @@ export const InlineSKUSelector: React.FC<InlineSKUSelectorProps> = ({
                   style={[styles.chip, c === color && styles.chipSelected]}
                   onPress={() => setColor(c)}
                 >
-                  <Text
-                    style={[styles.chipText, c === color && styles.chipTextSelected]}
-                  >
-                    {c}
-                  </Text>
+                  <Text style={[styles.chipText, c === color && styles.chipTextSelected]}>{c}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -78,11 +67,7 @@ export const InlineSKUSelector: React.FC<InlineSKUSelectorProps> = ({
                   style={[styles.chip, s === size && styles.chipSelected]}
                   onPress={() => setSize(s)}
                 >
-                  <Text
-                    style={[styles.chipText, s === size && styles.chipTextSelected]}
-                  >
-                    {s}
-                  </Text>
+                  <Text style={[styles.chipText, s === size && styles.chipTextSelected]}>{s}</Text>
                 </TouchableOpacity>
               ))}
             </View>

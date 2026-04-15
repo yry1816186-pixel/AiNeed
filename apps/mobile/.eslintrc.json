@@ -1,6 +1,6 @@
 {
   "extends": ["expo", "prettier", "plugin:@typescript-eslint/recommended"],
-  "plugins": ["prettier", "@typescript-eslint"],
+  "plugins": ["prettier", "@typescript-eslint", "react"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -14,19 +14,24 @@
       "error",
       {
         "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_"
+        "varsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_"
       }
     ],
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-non-null-assertion": "warn",
     "@typescript-eslint/no-floating-promises": "error",
+    "@typescript-eslint/no-var-requires": "warn",
     "prefer-const": "error",
     "no-var": "error",
     "eqeqeq": ["error", "always"],
     "curly": ["error", "all"],
     "no-console": ["warn", { "allow": ["warn", "error"] }],
     "react/react-in-jsx-scope": "off",
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    "import/export": "off",
+    "import/namespace": "off",
+    "import/no-duplicates": "off"
   },
-  "ignorePatterns": ["node_modules", ".expo", "dist", "coverage", "*.config.js"]
+  "ignorePatterns": ["node_modules", ".expo", "dist", "coverage", "*.config.js", "src/types/navigation.d.ts"]
 }

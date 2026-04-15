@@ -3,8 +3,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
 
-import { WardrobeCollectionService } from "./wardrobe-collection.service";
 import { CollectionItemType } from "./dto/wardrobe-collection.dto";
+import { WardrobeCollectionService } from "./wardrobe-collection.service";
 
 describe("WardrobeCollectionService", () => {
   let service: WardrobeCollectionService;

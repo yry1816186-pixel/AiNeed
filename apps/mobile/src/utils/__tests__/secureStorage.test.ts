@@ -1,12 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+﻿import AsyncStorage from "@react-native-async-storage/async-storage";
 import { offlineStorage, OFFLINE_QUEUE_KEY, OFFLINE_DATA_PREFIX } from "../secureStorage";
 
-// Mock dependencies
-jest.mock("@react-native-async-storage/async-storage", () => ({
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-}));
+// Mock dependencies - must be before any imports that use them
+jest.mock("react-native", () => ({ Platform: { OS: "ios" } }));
 
 jest.mock("react-native-encrypted-storage", () => ({
   setItem: jest.fn().mockResolvedValue(undefined),
@@ -14,7 +10,11 @@ jest.mock("react-native-encrypted-storage", () => ({
   removeItem: jest.fn().mockResolvedValue(undefined),
 }));
 
-jest.mock("react-native", () => ({ Platform: { OS: "ios" } }));
+jest.mock("@react-native-async-storage/async-storage", () => ({
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+}));
 
 describe("offlineStorage", () => {
   beforeEach(() => {
@@ -34,14 +34,9 @@ describe("offlineStorage", () => {
 
       expect(id).toBeTruthy();
       expect(typeof id).toBe("string");
-      expect(AsyncStorage.setItem).toHaveBeenCalledWith(
-        OFFLINE_QUEUE_KEY,
-        expect.any(String),
-      );
+      expect(AsyncStorage.setItem).toHaveBeenCalledWith(OFFLINE_QUEUE_KEY, expect.any(String));
 
-      const savedData = JSON.parse(
-        (AsyncStorage.setItem as jest.Mock).mock.calls[0][1],
-      );
+      const savedData = JSON.parse((AsyncStorage.setItem as jest.Mock).mock.calls[0][1]);
       expect(savedData).toHaveLength(1);
       expect(savedData[0].method).toBe("POST");
       expect(savedData[0].url).toBe("/api/v1/test");
@@ -60,9 +55,7 @@ describe("offlineStorage", () => {
           retries: 1,
         },
       ];
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-        JSON.stringify(existingQueue),
-      );
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(existingQueue));
       (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
 
       await offlineStorage.queueRequest({
@@ -70,9 +63,7 @@ describe("offlineStorage", () => {
         url: "/api/v1/new",
       });
 
-      const savedData = JSON.parse(
-        (AsyncStorage.setItem as jest.Mock).mock.calls[0][1],
-      );
+      const savedData = JSON.parse((AsyncStorage.setItem as jest.Mock).mock.calls[0][1]);
       expect(savedData).toHaveLength(2);
     });
   });
@@ -88,9 +79,7 @@ describe("offlineStorage", () => {
           retries: 0,
         },
       ];
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-        JSON.stringify(queue),
-      );
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(queue));
 
       const result = await offlineStorage.getQueue();
       expect(result).toEqual(queue);
@@ -118,16 +107,12 @@ describe("offlineStorage", () => {
         { id: "req_1", method: "POST", url: "/a", timestamp: 1, retries: 0 },
         { id: "req_2", method: "PUT", url: "/b", timestamp: 2, retries: 0 },
       ];
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-        JSON.stringify(queue),
-      );
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(queue));
       (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
 
       await offlineStorage.removeRequest("req_1");
 
-      const savedData = JSON.parse(
-        (AsyncStorage.setItem as jest.Mock).mock.calls[0][1],
-      );
+      const savedData = JSON.parse((AsyncStorage.setItem as jest.Mock).mock.calls[0][1]);
       expect(savedData).toHaveLength(1);
       expect(savedData[0].id).toBe("req_2");
     });
@@ -135,20 +120,14 @@ describe("offlineStorage", () => {
 
   describe("incrementRetries", () => {
     it("should increment retries for a request and return new count", async () => {
-      const queue = [
-        { id: "req_1", method: "POST", url: "/a", timestamp: 1, retries: 2 },
-      ];
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-        JSON.stringify(queue),
-      );
+      const queue = [{ id: "req_1", method: "POST", url: "/a", timestamp: 1, retries: 2 }];
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(queue));
       (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
 
       const newRetries = await offlineStorage.incrementRetries("req_1");
 
       expect(newRetries).toBe(3);
-      const savedData = JSON.parse(
-        (AsyncStorage.setItem as jest.Mock).mock.calls[0][1],
-      );
+      const savedData = JSON.parse((AsyncStorage.setItem as jest.Mock).mock.calls[0][1]);
       expect(savedData[0].retries).toBe(3);
     });
 
@@ -179,12 +158,10 @@ describe("offlineStorage", () => {
 
       expect(AsyncStorage.setItem).toHaveBeenCalledWith(
         `${OFFLINE_DATA_PREFIX}user_profile`,
-        expect.any(String),
+        expect.any(String)
       );
 
-      const savedEntry = JSON.parse(
-        (AsyncStorage.setItem as jest.Mock).mock.calls[0][1],
-      );
+      const savedEntry = JSON.parse((AsyncStorage.setItem as jest.Mock).mock.calls[0][1]);
       expect(savedEntry.data).toEqual({ name: "John" });
       expect(savedEntry.ttl).toBe(3600000);
       expect(savedEntry.timestamp).toBeGreaterThan(0);
@@ -195,9 +172,7 @@ describe("offlineStorage", () => {
 
       await offlineStorage.cacheData("key", "value");
 
-      const savedEntry = JSON.parse(
-        (AsyncStorage.setItem as jest.Mock).mock.calls[0][1],
-      );
+      const savedEntry = JSON.parse((AsyncStorage.setItem as jest.Mock).mock.calls[0][1]);
       expect(savedEntry.ttl).toBe(24 * 60 * 60 * 1000);
     });
   });
@@ -209,9 +184,7 @@ describe("offlineStorage", () => {
         timestamp: Date.now() - 1000, // 1 second ago
         ttl: 3600000, // 1 hour
       };
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-        JSON.stringify(cacheEntry),
-      );
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(cacheEntry));
 
       const result = await offlineStorage.getCachedData("user_profile");
       expect(result).toEqual({ name: "John" });
@@ -223,16 +196,12 @@ describe("offlineStorage", () => {
         timestamp: Date.now() - 7200000, // 2 hours ago
         ttl: 3600000, // 1 hour TTL
       };
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-        JSON.stringify(cacheEntry),
-      );
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(cacheEntry));
       (AsyncStorage.removeItem as jest.Mock).mockResolvedValue(undefined);
 
       const result = await offlineStorage.getCachedData("user_profile");
       expect(result).toBeNull();
-      expect(AsyncStorage.removeItem).toHaveBeenCalledWith(
-        `${OFFLINE_DATA_PREFIX}user_profile`,
-      );
+      expect(AsyncStorage.removeItem).toHaveBeenCalledWith(`${OFFLINE_DATA_PREFIX}user_profile`);
     });
 
     it("should return null when key does not exist", async () => {
@@ -256,9 +225,7 @@ describe("offlineStorage", () => {
 
       await offlineStorage.clearCachedData("user_profile");
 
-      expect(AsyncStorage.removeItem).toHaveBeenCalledWith(
-        `${OFFLINE_DATA_PREFIX}user_profile`,
-      );
+      expect(AsyncStorage.removeItem).toHaveBeenCalledWith(`${OFFLINE_DATA_PREFIX}user_profile`);
     });
   });
 });

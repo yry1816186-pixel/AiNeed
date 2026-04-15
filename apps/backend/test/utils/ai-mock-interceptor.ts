@@ -26,10 +26,11 @@ import type {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import { AiMockRecorder } from "./ai-mock-recorder";
+
 import { AiMockPlayer } from "./ai-mock-player";
-import type { RecordedCall } from "./ai-mock-recorder";
 import type { PlaybackStats } from "./ai-mock-player";
+import { AiMockRecorder } from "./ai-mock-recorder";
+import type { RecordedCall } from "./ai-mock-recorder";
 
 // ==================== Types ====================
 
@@ -293,8 +294,8 @@ export class AiMockInterceptor {
     }
 
     const requestId = instance.interceptors.request.use(
-      (config: InternalAxiosRequestConfig) => this.handleAxiosRequest(config) as Promise<InternalAxiosRequestConfig>,
-      (error: unknown) => Promise.reject(error),
+      (config: InternalAxiosRequestConfig) => this.handleAxiosRequest(config),
+      (error: unknown) => Promise.reject(error instanceof Error ? error : new Error(String(error))),
     );
 
     const responseId = instance.interceptors.response.use(
@@ -415,13 +416,16 @@ export class AiMockInterceptor {
       error.message === "__AI_MOCK_INTERCEPTOR_SHORTCUT__"
     ) {
       const mockResponse = (error as unknown as { __mockResponse: AxiosResponse }).__mockResponse;
-      return Promise.reject({
-        response: mockResponse,
-        __isMockInterceptorResponse: true,
-      });
+      const rejectError = new Error("__AI_MOCK_INTERCEPTOR_RESPONSE__") as Error & {
+        response: AxiosResponse;
+        __isMockInterceptorResponse: boolean;
+      };
+      rejectError.response = mockResponse;
+      rejectError.__isMockInterceptorResponse = true;
+      return Promise.reject(rejectError);
     }
 
-    return Promise.reject(error);
+    return Promise.reject(error instanceof Error ? error : new Error(String(error)));
   }
 
   // ==================== Fetch Interceptor ====================
@@ -443,37 +447,36 @@ export class AiMockInterceptor {
     }
 
     this.originalFetch = globalThis.fetch;
-    const self = this;
 
-    globalThis.fetch = async function interceptedFetch(
+    globalThis.fetch = async (
       input: RequestInfo | URL,
       init?: RequestInit,
-    ): Promise<Response> {
+    ): Promise<Response> => {
       const url = typeof input === "string"
         ? input
         : input instanceof URL
           ? input.toString()
-          : (input as Request).url;
+          : (input).url;
 
-      if (!self.shouldIntercept(url)) {
-        return self.originalFetch!.call(globalThis, input, init);
+      if (!this.shouldIntercept(url)) {
+        return this.originalFetch!.call(globalThis, input, init);
       }
 
-      const provider = self.detectProvider(url);
-      const endpoint = self.extractEndpoint(url);
+      const provider = this.detectProvider(url);
+      const endpoint = this.extractEndpoint(url);
       const method = init?.method ?? "GET";
-      const requestBody = init?.body ? self.parseRequestBody(init.body) : null;
+      const requestBody = init?.body ? this.parseRequestBody(init.body) : null;
 
       // Record mode: forward and capture
-      if (self.mode === "record") {
+      if (this.mode === "record") {
         const startTime = Date.now();
-        const response = await self.originalFetch!.call(globalThis, input, init);
+        const response = await this.originalFetch!.call(globalThis, input, init);
         const latencyMs = Date.now() - startTime;
 
         const clonedResponse = response.clone();
         const responseBody = await clonedResponse.json().catch(() => null);
 
-        self.recorder.recordCall({
+        this.recorder.recordCall({
           apiProvider: provider,
           endpoint,
           method,
@@ -483,7 +486,7 @@ export class AiMockInterceptor {
           latencyMs,
         });
 
-        self.interceptedCalls.push({
+        this.interceptedCalls.push({
           id: `call-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
           provider,
           url,
@@ -503,7 +506,7 @@ export class AiMockInterceptor {
 
       // Playback mode: return fixture response
       try {
-        const mockResponse = await self.player.playback(
+        const mockResponse = await this.player.playback(
           provider,
           endpoint,
           requestBody,
@@ -515,9 +518,9 @@ export class AiMockInterceptor {
           headers: { "Content-Type": "application/json" },
         });
       } catch (error) {
-        if (self.player.getPlaybackStats().misses > 0) {
+        if (this.player.getPlaybackStats().misses > 0) {
           // No match found - fall through to real API if allowed
-          return self.originalFetch!.call(globalThis, input, init);
+          return this.originalFetch!.call(globalThis, input, init);
         }
         throw error;
       }

@@ -10,6 +10,7 @@ import {
 
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { StylePreference } from "../../common/types/common.types";
+
 import { ProfileEventEmitter } from "./services/profile-event-emitter.service";
 
 export interface UpdateProfileDto {
@@ -147,19 +148,19 @@ export class ProfileService {
       colorPreferences: string[];
     }> = {};
 
-    if (dto.height !== undefined) profileData.height = dto.height;
-    if (dto.weight !== undefined) profileData.weight = dto.weight;
-    if (dto.shoulder !== undefined) profileData.shoulder = dto.shoulder;
-    if (dto.bust !== undefined) profileData.bust = dto.bust;
-    if (dto.waist !== undefined) profileData.waist = dto.waist;
-    if (dto.hip !== undefined) profileData.hip = dto.hip;
-    if (dto.inseam !== undefined) profileData.inseam = dto.inseam;
-    if (dto.bodyType !== undefined) profileData.bodyType = dto.bodyType;
-    if (dto.skinTone !== undefined) profileData.skinTone = dto.skinTone;
-    if (dto.faceShape !== undefined) profileData.faceShape = dto.faceShape;
-    if (dto.colorSeason !== undefined) profileData.colorSeason = dto.colorSeason;
-    if (dto.stylePreferences !== undefined) profileData.stylePreferences = dto.stylePreferences;
-    if (dto.colorPreferences !== undefined) profileData.colorPreferences = dto.colorPreferences;
+    if (dto.height !== undefined) {profileData.height = dto.height;}
+    if (dto.weight !== undefined) {profileData.weight = dto.weight;}
+    if (dto.shoulder !== undefined) {profileData.shoulder = dto.shoulder;}
+    if (dto.bust !== undefined) {profileData.bust = dto.bust;}
+    if (dto.waist !== undefined) {profileData.waist = dto.waist;}
+    if (dto.hip !== undefined) {profileData.hip = dto.hip;}
+    if (dto.inseam !== undefined) {profileData.inseam = dto.inseam;}
+    if (dto.bodyType !== undefined) {profileData.bodyType = dto.bodyType;}
+    if (dto.skinTone !== undefined) {profileData.skinTone = dto.skinTone;}
+    if (dto.faceShape !== undefined) {profileData.faceShape = dto.faceShape;}
+    if (dto.colorSeason !== undefined) {profileData.colorSeason = dto.colorSeason;}
+    if (dto.stylePreferences !== undefined) {profileData.stylePreferences = dto.stylePreferences;}
+    if (dto.colorPreferences !== undefined) {profileData.colorPreferences = dto.colorPreferences;}
 
     if (Object.keys(profileData).length > 0) {
       await this.prisma.userProfile.upsert({

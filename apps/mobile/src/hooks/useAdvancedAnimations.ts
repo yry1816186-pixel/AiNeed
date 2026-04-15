@@ -1,24 +1,12 @@
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
   Dimensions,
-  Platform,
-  StatusBar,
-  TouchableWithoutFeedback,
-  Pressable,
-  ViewStyle,
-  TextStyle,
-  PanResponder,
-  GestureResponderEvent,
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from "react-native";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { Gesture } from "react-native-gesture-handler";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -29,17 +17,12 @@ import {
   withDelay,
   interpolate,
   Extrapolate,
-  runOnJS,
   Easing,
-  cancelAnimation,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { createAnimatedComponent } = AnimatedReanimated;
-
-const AnimatedBlurView = createAnimatedComponent(BlurView);
-const AnimatedLinearGradient = createAnimatedComponent(LinearGradient);
 
 export interface ParallaxConfig {
   speed: number;
@@ -57,7 +40,7 @@ export interface LiquidGlassConfig {
 }
 
 export const useParallax = (
-  config: ParallaxConfig = { speed: 0.5, direction: "vertical", enabled: true },
+  config: ParallaxConfig = { speed: 0.5, direction: "vertical", enabled: true }
 ) => {
   const scrollY = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -68,11 +51,13 @@ export const useParallax = (
       scrollY.value = y;
       translateY.value = y * config.speed;
     },
-    [config.speed],
+    [config.speed]
   );
 
   const animatedStyle = useAnimatedStyle(() => {
-    if (!config.enabled) return {};
+    if (!config.enabled) {
+      return {};
+    }
     return {
       transform: [
         config.direction === "vertical"
@@ -93,7 +78,7 @@ export const useLiquidGlass = (
     contrast: 1,
     tint: "light",
     borderRadius: 24,
-  },
+  }
 ) => {
   const intensity = useSharedValue(config.blur);
   const scale = useSharedValue(1);
@@ -142,13 +127,13 @@ export const use3DCard = () => {
         event.translationY,
         [-100, 0, 100],
         [10, 0, -10],
-        Extrapolate.CLAMP,
+        Extrapolate.CLAMP
       );
       rotateY.value = interpolate(
         event.translationX,
         [-100, 0, 100],
         [-10, 0, 10],
-        Extrapolate.CLAMP,
+        Extrapolate.CLAMP
       );
     })
     .onEnd(() => {
@@ -188,14 +173,8 @@ export const useMagneticButton = () => {
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
       const maxDistance = 30;
-      translateX.value = Math.max(
-        -maxDistance,
-        Math.min(maxDistance, event.translationX * 0.5),
-      );
-      translateY.value = Math.max(
-        -maxDistance,
-        Math.min(maxDistance, event.translationY * 0.5),
-      );
+      translateX.value = Math.max(-maxDistance, Math.min(maxDistance, event.translationX * 0.5));
+      translateY.value = Math.max(-maxDistance, Math.min(maxDistance, event.translationY * 0.5));
     })
     .onEnd(() => {
       translateX.value = withSpring(0, { damping: 15, stiffness: 200 });
@@ -225,17 +204,12 @@ export const useShimmer = () => {
     shimmerValue.value = withRepeat(
       withTiming(1, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
       -1,
-      false,
+      false
     );
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      shimmerValue.value,
-      [0, 0.5, 1],
-      [0.3, 0.7, 0.3],
-      Extrapolate.CLAMP,
-    ),
+    opacity: interpolate(shimmerValue.value, [0, 0.5, 1], [0.3, 0.7, 0.3], Extrapolate.CLAMP),
   }));
 
   return animatedStyle;
@@ -249,18 +223,18 @@ export const usePulse = (duration: number = 1000) => {
     scale.value = withRepeat(
       withSequence(
         withTiming(1.05, { duration: duration / 2 }),
-        withTiming(1, { duration: duration / 2 }),
+        withTiming(1, { duration: duration / 2 })
       ),
       -1,
-      true,
+      true
     );
     opacity.value = withRepeat(
       withSequence(
         withTiming(0.8, { duration: duration / 2 }),
-        withTiming(1, { duration: duration / 2 }),
+        withTiming(1, { duration: duration / 2 })
       ),
       -1,
-      true,
+      true
     );
   }, [duration]);
 
@@ -279,10 +253,10 @@ export const useFloating = () => {
     translateY.value = withRepeat(
       withSequence(
         withTiming(-10, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) })
       ),
       -1,
-      true,
+      true
     );
   }, []);
 
@@ -300,10 +274,10 @@ export const useGlow = (color: string = "#a855f7") => {
     glowValue.value = withRepeat(
       withSequence(
         withTiming(1, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration: 1500, easing: Easing.inOut(Easing.ease) })
       ),
       -1,
-      true,
+      true
     );
   }, []);
 
@@ -337,10 +311,7 @@ export const useRipple = () => {
   return { startRipple, animatedStyle };
 };
 
-export const useStaggeredAnimation = (
-  itemCount: number,
-  staggerDelay: number = 100,
-) => {
+export const useStaggeredAnimation = (itemCount: number, staggerDelay: number = 100) => {
   const progress = useSharedValue(0);
 
   const start = useCallback(() => {
@@ -357,7 +328,7 @@ export const useStaggeredAnimation = (
         progress.value,
         [index, index + 1],
         [0, 1],
-        Extrapolate.CLAMP,
+        Extrapolate.CLAMP
       );
 
       return {
@@ -380,14 +351,17 @@ export const useScrollProgress = () => {
   const progress = useSharedValue(0);
   const scrollY = useSharedValue(0);
 
-  const onScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const { y } = event.nativeEvent.contentOffset;
-    const { height } = event.nativeEvent.contentSize;
-    const { height: layoutHeight } = event.nativeEvent.layoutMeasurement;
+  const onScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const { y } = event.nativeEvent.contentOffset;
+      const { height } = event.nativeEvent.contentSize;
+      const { height: layoutHeight } = event.nativeEvent.layoutMeasurement;
 
-    scrollY.value = y;
-    progress.value = y / (height - layoutHeight);
-  }, [progress, scrollY]);
+      scrollY.value = y;
+      progress.value = y / (height - layoutHeight);
+    },
+    [progress, scrollY]
+  );
 
   const animatedStyle = useAnimatedStyle(() => ({
     width: `${progress.value * 100}%`,
@@ -427,7 +401,7 @@ export const useHapticFeedback = () => {
           break;
       }
     },
-    [],
+    []
   );
 
   return trigger;
@@ -440,7 +414,7 @@ export const useSkeletonAnimation = () => {
     shimmerPosition.value = withRepeat(
       withTiming(2, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
       -1,
-      false,
+      false
     );
   }, []);
 
@@ -457,7 +431,7 @@ export const useBounce = () => {
   const bounce = () => {
     scale.value = withSequence(
       withSpring(1.2, { damping: 8, stiffness: 400 }),
-      withSpring(1, { damping: 8, stiffness: 400 }),
+      withSpring(1, { damping: 8, stiffness: 400 })
     );
   };
 
@@ -492,10 +466,7 @@ export const useFlip = () => {
   }));
 
   const backStyle = useAnimatedStyle(() => ({
-    transform: [
-      { perspective: 1000 },
-      { rotateY: `${rotateY.value + 180}deg` },
-    ],
+    transform: [{ perspective: 1000 }, { rotateY: `${rotateY.value + 180}deg` }],
     opacity: backOpacity.value,
     backfaceVisibility: "hidden",
     position: "absolute",
@@ -509,7 +480,7 @@ export const useFlip = () => {
 };
 
 export const useTypewriter = (text: string, speed: number = 50) => {
-  const displayedText = useSharedValue("");
+  const _displayedText = useSharedValue("");
   const [displayText, setDisplayText] = React.useState("");
 
   useEffect(() => {

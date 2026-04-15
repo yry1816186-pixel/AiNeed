@@ -76,10 +76,20 @@ class DegradationState:
 
 
 class NetworkMonitor:
-    """网络状态监控器"""
+    """网络状态监控器
 
-    def __init__(self, window_size: int = 100):
+    A-P2-8: 健康检查阈值支持从配置读取
+    """
+
+    def __init__(
+        self,
+        window_size: int = 100,
+        latency_threshold_ms: float = 3000,
+        error_rate_threshold: float = 0.1,
+    ):
         self.window_size = window_size
+        self.latency_threshold_ms = latency_threshold_ms
+        self.error_rate_threshold = error_rate_threshold
         self._latency_history: deque = deque(maxlen=window_size)
         self._error_history: deque = deque(maxlen=window_size)
         self._lock = threading.Lock()
@@ -127,15 +137,19 @@ class NetworkMonitor:
 
     def is_network_healthy(
         self,
-        latency_threshold_ms: float = 3000,
-        error_rate_threshold: float = 0.1
+        latency_threshold_ms: Optional[float] = None,
+        error_rate_threshold: Optional[float] = None
     ) -> Tuple[bool, Optional[str]]:
+        # A-P2-8: 使用实例属性作为默认阈值，允许调用时覆盖
+        latency_threshold = latency_threshold_ms if latency_threshold_ms is not None else self.latency_threshold_ms
+        error_threshold = error_rate_threshold if error_rate_threshold is not None else self.error_rate_threshold
+
         stats = self.get_stats()
 
-        if stats["avg_latency_ms"] > latency_threshold_ms:
+        if stats["avg_latency_ms"] > latency_threshold:
             return False, f"High latency: {stats['avg_latency_ms']:.0f}ms"
 
-        if stats["error_rate"] > error_rate_threshold:
+        if stats["error_rate"] > error_threshold:
             return False, f"High error rate: {stats['error_rate']:.1%}"
 
         return True, None
@@ -428,10 +442,72 @@ class FallbackHandler:
 
 
 class DegradationManager:
-    """降级管理器"""
+    """降级管理器
 
-    def __init__(self):
-        self.network_monitor = NetworkMonitor()
+    A-P2-8: 降级阈值和策略支持从配置读取
+    - 构造参数 config 可覆盖默认规则
+    - 环境变量 DEGRADATION_CONFIG_JSON 可配置降级规则
+    - 优先级：构造参数 > 环境变量 > 默认值
+    """
+
+    # 默认降级规则配置
+    DEFAULT_RULES_CONFIG = {
+        "network_latency": {
+            "trigger": "network_latency",
+            "threshold": 3000,
+            "action": "degrade_to_local",
+            "cooldown_seconds": 60,
+        },
+        "network_error": {
+            "trigger": "network_error",
+            "threshold": 0.2,
+            "action": "enable_fallback",
+            "cooldown_seconds": 30,
+        },
+        "timeout": {
+            "trigger": "timeout",
+            "threshold": 0.15,
+            "action": "reduce_timeout",
+            "cooldown_seconds": 45,
+        },
+        "service_unavailable": {
+            "trigger": "service_unavailable",
+            "threshold": 3,
+            "action": "switch_to_offline",
+            "cooldown_seconds": 120,
+        },
+    }
+
+    # 默认网络监控阈值
+    DEFAULT_NETWORK_CONFIG = {
+        "latency_threshold_ms": 3000,
+        "error_rate_threshold": 0.1,
+        "window_size": 100,
+    }
+
+    # 默认熔断器配置
+    DEFAULT_CIRCUIT_BREAKER_CONFIG = {
+        "failure_threshold": 5,
+        "success_threshold": 3,
+        "timeout_seconds": 30,
+    }
+
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
+        # A-P2-8: 从配置和环境变量合并设置
+        merged_config = self._load_config(config)
+
+        network_config = merged_config.get("network", self.DEFAULT_NETWORK_CONFIG)
+        self.network_monitor = NetworkMonitor(
+            window_size=network_config.get("window_size", 100),
+            latency_threshold_ms=network_config.get("latency_threshold_ms", 3000),
+            error_rate_threshold=network_config.get("error_rate_threshold", 0.1),
+        )
+
+        cb_config = merged_config.get("circuit_breaker", self.DEFAULT_CIRCUIT_BREAKER_CONFIG)
+        self._cb_failure_threshold = cb_config.get("failure_threshold", 5)
+        self._cb_success_threshold = cb_config.get("success_threshold", 3)
+        self._cb_timeout_seconds = cb_config.get("timeout_seconds", 30)
+
         self.circuit_breakers: Dict[str, CircuitBreaker] = {}
         self.fallback_handler = FallbackHandler()
 
@@ -442,42 +518,68 @@ class DegradationManager:
         self._service_health: Dict[str, ServiceHealth] = {}
         self._lock = threading.Lock()
 
-        self._setup_default_rules()
+        self._setup_rules(merged_config.get("rules", {}))
 
-    def _setup_default_rules(self):
-        self._rules = [
-            DegradationRule(
-                trigger=DegradationTrigger.NETWORK_LATENCY,
-                threshold=3000,
-                action="degrade_to_local",
-                cooldown_seconds=60
-            ),
-            DegradationRule(
-                trigger=DegradationTrigger.NETWORK_ERROR,
-                threshold=0.2,
-                action="enable_fallback",
-                cooldown_seconds=30
-            ),
-            DegradationRule(
-                trigger=DegradationTrigger.TIMEOUT,
-                threshold=0.15,
-                action="reduce_timeout",
-                cooldown_seconds=45
-            ),
-            DegradationRule(
-                trigger=DegradationTrigger.SERVICE_UNAVAILABLE,
-                threshold=3,
-                action="switch_to_offline",
-                cooldown_seconds=120
-            ),
-        ]
+    def _load_config(self, user_config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """A-P2-8: 从环境变量和用户配置加载配置"""
+        import os as _os
+
+        merged = {
+            "network": dict(self.DEFAULT_NETWORK_CONFIG),
+            "circuit_breaker": dict(self.DEFAULT_CIRCUIT_BREAKER_CONFIG),
+            "rules": dict(self.DEFAULT_RULES_CONFIG),
+        }
+
+        # 从环境变量加载
+        env_config_json = _os.getenv("DEGRADATION_CONFIG_JSON")
+        if env_config_json:
+            try:
+                env_config = json.loads(env_config_json)
+                for section in ("network", "circuit_breaker", "rules"):
+                    if section in env_config and isinstance(env_config[section], dict):
+                        merged[section].update(env_config[section])
+                logger.info("Loaded degradation config from environment variable")
+            except (json.JSONDecodeError, TypeError) as e:
+                logger.warning(f"Failed to parse DEGRADATION_CONFIG_JSON: {e}")
+
+        # 用户配置优先级最高
+        if user_config:
+            for section in ("network", "circuit_breaker", "rules"):
+                if section in user_config and isinstance(user_config[section], dict):
+                    merged[section].update(user_config[section])
+
+        return merged
+
+    def _setup_rules(self, rules_config: Dict[str, Any]):
+        """A-P2-8: 根据配置创建降级规则"""
+        self._rules = []
+        for rule_name, rule_data in rules_config.items():
+            trigger_str = rule_data.get("trigger", "network_latency")
+            try:
+                trigger = DegradationTrigger(trigger_str)
+            except ValueError:
+                logger.warning(f"Unknown degradation trigger: {trigger_str}, skipping")
+                continue
+
+            self._rules.append(DegradationRule(
+                trigger=trigger,
+                threshold=rule_data.get("threshold", 3000),
+                action=rule_data.get("action", "degrade_to_local"),
+                cooldown_seconds=rule_data.get("cooldown_seconds", 60),
+                auto_recover=rule_data.get("auto_recover", True),
+            ))
 
     def register_service(
         self,
         service_name: str,
         fallback_handler: Optional[Callable] = None
     ):
-        self.circuit_breakers[service_name] = CircuitBreaker()
+        # A-P2-8: 使用可配置的熔断器参数
+        self.circuit_breakers[service_name] = CircuitBreaker(
+            failure_threshold=self._cb_failure_threshold,
+            success_threshold=self._cb_success_threshold,
+            timeout_seconds=self._cb_timeout_seconds,
+        )
         self._service_health[service_name] = ServiceHealth(
             name=service_name,
             is_available=True,

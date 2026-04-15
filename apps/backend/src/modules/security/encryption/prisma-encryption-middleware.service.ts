@@ -1,5 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
+
 import { SecurityPIIEncryptionService, PII_FIELDS } from "./pii-encryption.service";
 
 @Injectable()

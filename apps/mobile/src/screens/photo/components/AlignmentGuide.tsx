@@ -1,47 +1,47 @@
-import React, { useEffect, useRef, useMemo } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
-import type { AlignmentStatus } from '../../../hooks/useReferenceLines';
+import React, { useEffect, useRef, useMemo } from "react";
+import { Animated, StyleSheet, Text, View } from "react-native";
+import type { AlignmentStatus } from "../../../hooks/useReferenceLines";
 
 interface AlignmentGuideProps {
   alignmentStatus: AlignmentStatus | null;
 }
 
 const STATUS_COLORS = {
-  aligned: '#4CAF50',
-  perfect: '#4CAF50',
-  good: '#4CAF50',
-  slight: '#FFC107',
-  off: '#F44336',
-  adjust: '#F44336',
+  aligned: "#4CAF50",
+  perfect: "#4CAF50",
+  good: "#4CAF50",
+  slight: "#FFC107",
+  off: "#F44336",
+  adjust: "#F44336",
 } as const;
 
 function getStatusMessage(status: AlignmentStatus): { message: string; color: string } | null {
-  if (status.overall === 'perfect') {
-    return { message: '完美！', color: STATUS_COLORS.perfect };
+  if (status.overall === "perfect") {
+    return { message: "完美！", color: STATUS_COLORS.perfect };
   }
-  if (status.overall === 'adjust') {
-    return { message: '请调整姿势', color: STATUS_COLORS.adjust };
+  if (status.overall === "adjust") {
+    return { message: "请调整姿势", color: STATUS_COLORS.adjust };
   }
-  if (status.shoulder === 'off') {
-    return { message: '请调整肩膀水平', color: STATUS_COLORS.off };
+  if (status.shoulder === "off") {
+    return { message: "请调整肩膀水平", color: STATUS_COLORS.off };
   }
-  if (status.shoulder === 'slight') {
-    return { message: '肩膀稍向左/右偏', color: STATUS_COLORS.slight };
+  if (status.shoulder === "slight") {
+    return { message: "肩膀稍向左/右偏", color: STATUS_COLORS.slight };
   }
-  if (status.posture === 'off') {
-    return { message: '请站直', color: STATUS_COLORS.off };
+  if (status.posture === "off") {
+    return { message: "请站直", color: STATUS_COLORS.off };
   }
-  if (status.posture === 'slight') {
-    return { message: '姿势稍有不正', color: STATUS_COLORS.slight };
+  if (status.posture === "slight") {
+    return { message: "姿势稍有不正", color: STATUS_COLORS.slight };
   }
-  if (status.center === 'off') {
-    return { message: '请站到画面中央', color: STATUS_COLORS.off };
+  if (status.center === "off") {
+    return { message: "请站到画面中央", color: STATUS_COLORS.off };
   }
-  if (status.center === 'slight') {
-    return { message: '请稍向左/右移动', color: STATUS_COLORS.slight };
+  if (status.center === "slight") {
+    return { message: "请稍向左/右移动", color: STATUS_COLORS.slight };
   }
-  if (status.overall === 'good') {
-    return { message: '很好，可以拍照', color: STATUS_COLORS.good };
+  if (status.overall === "good") {
+    return { message: "很好，可以拍照", color: STATUS_COLORS.good };
   }
   return null;
 }
@@ -51,7 +51,9 @@ const AlignmentGuide: React.FC<AlignmentGuideProps> = ({ alignmentStatus }) => {
   const prevMessageRef = useRef<string | null>(null);
 
   const statusInfo = useMemo(() => {
-    if (!alignmentStatus) return null;
+    if (!alignmentStatus) {
+      return null;
+    }
     return getStatusMessage(alignmentStatus);
   }, [alignmentStatus]);
 
@@ -80,15 +82,14 @@ const AlignmentGuide: React.FC<AlignmentGuideProps> = ({ alignmentStatus }) => {
     }
   }, [statusInfo, opacityAnim]);
 
-  if (!statusInfo) return null;
+  if (!statusInfo) {
+    return null;
+  }
 
   return (
     <View style={styles.container} pointerEvents="none">
       <Animated.View
-        style={[
-          styles.badge,
-          { backgroundColor: statusInfo.color, opacity: opacityAnim },
-        ]}
+        style={[styles.badge, { backgroundColor: statusInfo.color, opacity: opacityAnim }]}
       >
         <Text style={styles.text}>{statusInfo.message}</Text>
       </Animated.View>
@@ -98,11 +99,11 @@ const AlignmentGuide: React.FC<AlignmentGuideProps> = ({ alignmentStatus }) => {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 120,
     left: 0,
     right: 0,
-    alignItems: 'center',
+    alignItems: "center",
   },
   badge: {
     paddingHorizontal: 20,
@@ -110,9 +111,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   text: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 

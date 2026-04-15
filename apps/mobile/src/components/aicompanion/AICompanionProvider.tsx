@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from "react";
+﻿import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
@@ -62,9 +55,7 @@ interface AICompanionContextValue {
   resetSession: () => void;
 }
 
-const AICompanionContext = createContext<AICompanionContextValue | undefined>(
-  undefined,
-);
+const AICompanionContext = createContext<AICompanionContextValue | undefined>(undefined);
 
 export const useAICompanion = () => {
   const context = useContext(AICompanionContext);
@@ -98,29 +89,18 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [state, setState] = useState<CompanionState>("idle");
-  const [position, setPosition] = useState<
-    { x: number; y: number } | undefined
-  >();
+  const [position, setPosition] = useState<{ x: number; y: number } | undefined>();
   const [menuVisible, setMenuVisible] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [messages, setMessages] = useState<ExtendedChatMessage[]>([]);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(autoShowHint);
-  const [isVoiceMode, setIsVoiceMode] = useState(false);
-  const [sessionState, setSessionState] =
-    useState<AiStylistSessionState | null>(null);
+  const [_isVoiceMode, setIsVoiceMode] = useState(false);
+  const [sessionState, setSessionState] = useState<AiStylistSessionState | null>(null);
   const [slots, setSlots] = useState<AiStylistSlots | null>(null);
-  const [currentAction, setCurrentAction] = useState<AiStylistAction | null>(
-    null,
-  );
-  const [outfitResult, setOutfitResult] = useState<AiStylistResolution | null>(
-    null,
-  );
-  const suppressedRoutes = new Set([
-    "VirtualTryOn",
-    "Checkout",
-    "AiStylist",
-  ]);
+  const [currentAction, setCurrentAction] = useState<AiStylistAction | null>(null);
+  const [_outfitResult, setOutfitResult] = useState<AiStylistResolution | null>(null);
+  const suppressedRoutes = new Set(["VirtualTryOn", "Checkout", "AiStylist"]);
   const shouldSuspendFloatingUI =
     currentRouteName !== undefined && suppressedRoutes.has(currentRouteName);
 
@@ -149,7 +129,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       }
 
       if (enableChat && result.text) {
-        sendMessage(result.text);
+        void sendMessage(result.text);
       }
     },
     onError: (error) => {
@@ -168,13 +148,10 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
   });
 
   useEffect(() => {
-    loadPosition();
-    loadSession();
+    void loadPosition();
+    void loadSession();
 
-    const subscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange,
-    );
+    const subscription = AppState.addEventListener("change", handleAppStateChange);
 
     return () => {
       subscription.remove();
@@ -227,10 +204,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
 
   const savePosition = async (x: number, y: number) => {
     try {
-      await AsyncStorage.setItem(
-        POSITION_STORAGE_KEY,
-        JSON.stringify({ x, y }),
-      );
+      await AsyncStorage.setItem(POSITION_STORAGE_KEY, JSON.stringify({ x, y }));
     } catch (error) {
       console.warn("Failed to save companion position:", error);
     }
@@ -261,10 +235,8 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         SESSION_STORAGE_KEY,
         JSON.stringify({
           sessionId: id,
-          expiresAt:
-            expiresAt ||
-            new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-        }),
+          expiresAt: expiresAt || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        })
       );
     } catch (error) {
       console.warn("Failed to save session:", error);
@@ -280,10 +252,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
   };
 
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
-    if (
-      appStateRef.current.match(/inactive|background/) &&
-      nextAppState === "active"
-    ) {
+    if (appStateRef.current.match(/inactive|background/) && nextAppState === "active") {
       setShowHint(autoShowHint);
     }
     appStateRef.current = nextAppState;
@@ -305,7 +274,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
 
   const handleDragEnd = useCallback((x: number, y: number) => {
     setPosition({ x, y });
-    savePosition(x, y);
+    void savePosition(x, y);
   }, []);
 
   const showCompanion = useCallback(() => {
@@ -358,21 +327,18 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
     return response;
   }, []);
 
-  const buildAssistantMessage = useCallback(
+  const _buildAssistantMessage = useCallback(
     (response: AiStylistSessionResponse): ExtendedChatMessage => ({
       id: `assistant-${Date.now()}`,
       role: "assistant",
-      content:
-        response.assistantMessage ||
-        response.message ||
-        "好的，我来帮你分析。",
+      content: response.assistantMessage || response.message || "好的，我来帮你分析。",
       timestamp: new Date(),
       actionType: response.nextAction?.type,
       actionData: response.nextAction,
       outfitResult: response.result,
       progress: response.progress,
     }),
-    [],
+    []
   );
 
   const startPollingIfNeeded = useCallback(
@@ -415,7 +381,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         }, POLL_INTERVAL);
       }
     },
-    [sessionId, processResponse],
+    [sessionId, processResponse]
   );
 
   const sendMessage = useCallback(
@@ -455,9 +421,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           });
 
           if (!createResponse.success || !createResponse.data) {
-            throw new Error(
-              createResponse.error?.message || "Failed to create session",
-            );
+            throw new Error(createResponse.error?.message || "Failed to create session");
           }
 
           responseData = createResponse.data;
@@ -465,19 +429,14 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           if (responseData.sessionId) {
             currentSessionId = responseData.sessionId;
             setSessionId(currentSessionId);
-            saveSession(currentSessionId, responseData.sessionExpiresAt);
+            void saveSession(currentSessionId, responseData.sessionExpiresAt);
           } else {
             throw new Error("Failed to create session");
           }
         } else {
-          const response = await aiStylistApi.sendMessage(
-            currentSessionId,
-            content,
-          );
+          const response = await aiStylistApi.sendMessage(currentSessionId, content);
           if (!response.success || !response.data) {
-            throw new Error(
-              response.error?.message || "Failed to send message",
-            );
+            throw new Error(response.error?.message || "Failed to send message");
           }
           responseData = response.data;
         }
@@ -489,9 +448,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           id: `assistant-${Date.now()}`,
           role: "assistant",
           content:
-            response.data?.assistantMessage ||
-            response.data?.message ||
-            "好的，我来帮你分析。",
+            response.data?.assistantMessage || response.data?.message || "好的，我来帮你分析。",
           timestamp: new Date(),
           actionType: response.data?.nextAction?.type,
           actionData: response.data?.nextAction,
@@ -502,9 +459,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           assistantMessage.outfitResult = response.data.result;
         }
 
-        setMessages((prev) =>
-          prev.filter((m) => !m.isLoading).concat(assistantMessage),
-        );
+        setMessages((prev) => prev.filter((m) => !m.isLoading).concat(assistantMessage));
         setState("responding");
 
         setTimeout(() => {
@@ -520,13 +475,11 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           timestamp: new Date(),
         };
 
-        setMessages((prev) =>
-          prev.filter((m) => !m.isLoading).concat(errorMessage),
-        );
+        setMessages((prev) => prev.filter((m) => !m.isLoading).concat(errorMessage));
         setState("idle");
       }
     },
-    [sessionId, processResponse],
+    [sessionId, processResponse]
   );
 
   const uploadPhoto = useCallback(
@@ -545,7 +498,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           if (createResponse.data?.sessionId) {
             const newSessionId = createResponse.data.sessionId;
             setSessionId(newSessionId);
-            saveSession(newSessionId);
+            void saveSession(newSessionId);
           }
         } catch (error) {
           console.error("Failed to create session for photo upload:", error);
@@ -575,8 +528,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
             quality: 0.8,
           });
         } else {
-          const { status } =
-            await ImagePicker.requestMediaLibraryPermissionsAsync();
+          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
           if (status !== "granted") {
             const errorMessage: ExtendedChatMessage = {
               id: `error-${Date.now()}`,
@@ -609,11 +561,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           setState("thinking");
 
           const photoType = currentAction?.photoType || "full_body";
-          const response = await aiStylistApi.uploadPhoto(
-            sessionId!,
-            asset.uri,
-            photoType,
-          );
+          const response = await aiStylistApi.uploadPhoto(sessionId!, asset.uri, photoType);
           if (response.data) {
             processResponse(response.data);
           }
@@ -621,8 +569,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           const assistantMessage: ExtendedChatMessage = {
             id: `assistant-${Date.now()}`,
             role: "assistant",
-            content:
-              response.data?.assistantMessage || "照片已上传，正在分析中...",
+            content: response.data?.assistantMessage || "照片已上传，正在分析中...",
             timestamp: new Date(),
             progress: response.data?.progress,
           };
@@ -645,12 +592,14 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         setState("idle");
       }
     },
-    [sessionId, currentAction, processResponse, startPollingIfNeeded],
+    [sessionId, currentAction, processResponse, startPollingIfNeeded]
   );
 
   const selectPreference = useCallback(
     async (field: string, values: string[]) => {
-      if (!sessionId) return;
+      if (!sessionId) {
+        return;
+      }
 
       const userMessage: ExtendedChatMessage = {
         id: `user-${Date.now()}`,
@@ -664,10 +613,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
 
       try {
         const messageContent = `${field}: ${values.join(", ")}`;
-        const response = await aiStylistApi.sendMessage(
-          sessionId,
-          messageContent,
-        );
+        const response = await aiStylistApi.sendMessage(sessionId, messageContent);
         if (response.data) {
           processResponse(response.data);
         }
@@ -692,11 +638,13 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         setState("idle");
       }
     },
-    [sessionId, processResponse],
+    [sessionId, processResponse]
   );
 
   const generateOutfit = useCallback(async () => {
-    if (!sessionId) return;
+    if (!sessionId) {
+      return;
+    }
 
     setState("thinking");
 
@@ -724,9 +672,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         actionType: "show_outfit_cards",
       };
 
-      setMessages((prev) =>
-        prev.filter((m) => !m.isLoading).concat(assistantMessage),
-      );
+      setMessages((prev) => prev.filter((m) => !m.isLoading).concat(assistantMessage));
       setState("responding");
 
       setTimeout(() => {
@@ -740,9 +686,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         content: "生成穿搭方案失败，请重试",
         timestamp: new Date(),
       };
-      setMessages((prev) =>
-        prev.filter((m) => !m.isLoading).concat(errorMessage),
-      );
+      setMessages((prev) => prev.filter((m) => !m.isLoading).concat(errorMessage));
       setState("idle");
     }
   }, [sessionId, processResponse]);
@@ -775,7 +719,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       description: "分析身材和肤色",
       onPress: () => {
         setMenuVisible(false);
-        navigateTab('Profile', 'Wardrobe');
+        navigateTab("Profile", "Wardrobe");
       },
     },
     {
@@ -785,7 +729,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       description: "个性化推荐",
       onPress: () => {
         setMenuVisible(false);
-        navigateTab('Home', 'RecommendationDetail');
+        navigateTab("Home", "RecommendationDetail");
       },
     },
     {
@@ -795,7 +739,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       description: "管理你的衣物",
       onPress: () => {
         setMenuVisible(false);
-        navigateTab('Profile', 'Wardrobe');
+        navigateTab("Profile", "Wardrobe");
       },
     },
   ];
@@ -818,15 +762,10 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
     } catch (error) {
       console.error("Failed to start voice input:", error);
     }
-  }, [
-    enableVoiceInput,
-    isVoiceAvailable,
-    requestVoicePermissions,
-    startListening,
-  ]);
+  }, [enableVoiceInput, isVoiceAvailable, requestVoicePermissions, startListening]);
 
   const stopVoiceInput = useCallback(() => {
-    stopListening();
+    void stopListening();
     setIsVoiceMode(false);
   }, [stopListening]);
 

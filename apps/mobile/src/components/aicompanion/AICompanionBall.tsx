@@ -1,15 +1,7 @@
-import React, { useEffect, useCallback, useState, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Pressable,
-  Platform,
-  StatusBar,
-} from "react-native";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import * as Haptics from '@/src/polyfills/expo-haptics';
+﻿import React, { useEffect, useCallback, useState, useRef } from "react";
+import { View, Text, StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import * as Haptics from "@/src/polyfills/expo-haptics";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -34,12 +26,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 const FOOTER_CLEARANCE = 180;
 
-export type CompanionState =
-  | "idle"
-  | "listening"
-  | "thinking"
-  | "responding"
-  | "collapsed";
+export type CompanionState = "idle" | "listening" | "thinking" | "responding" | "collapsed";
 
 export interface AICompanionBallProps {
   state?: CompanionState;
@@ -58,65 +45,41 @@ export interface AICompanionBallProps {
 
 const STATE_CONFIG = {
   idle: {
-    gradient: [
-      DesignTokens.colors.brand.sage,
-      DesignTokens.colors.brand.camel,
-    ] as [string, string],
-    innerGradient: ["rgba(255,255,255,0.25)", "rgba(255,255,255,0.05)"] as [
-      string,
-      string,
-    ],
+    gradient: [DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel] as [string, string],
+    innerGradient: ["rgba(255,255,255,0.25)", "rgba(255,255,255,0.05)"] as [string, string],
     glowColor: DesignTokens.colors.brand.sage,
     animation: "breathe",
   },
   listening: {
-    gradient: ["#7B8FA2", "#96A6B5"] as [string, string],
-    innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.08)"] as [
-      string,
-      string,
-    ],
-    glowColor: "#7B8FA2",
+    gradient: [DesignTokens.colors.brand.slate, "#96A6B5"] as [string, string], // custom color
+    innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.08)"] as [string, string],
+    glowColor: DesignTokens.colors.brand.slate,
     animation: "pulse",
   },
   thinking: {
-    gradient: ["#D9A441", "#E8B86D"] as [string, string],
-    innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.1)"] as [
-      string,
-      string,
-    ],
-    glowColor: "#D9A441",
+    gradient: [DesignTokens.colors.semantic.warning, "#E8B86D"] as [string, string], // custom color
+    innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.1)"] as [string, string],
+    glowColor: DesignTokens.colors.semantic.warning,
     animation: "pulse",
   },
   responding: {
-    gradient: ["#5B8A72", "#7BA896"] as [string, string],
-    innerGradient: ["rgba(255,255,255,0.28)", "rgba(255,255,255,0.06)"] as [
-      string,
-      string,
-    ],
-    glowColor: "#5B8A72",
+    gradient: [DesignTokens.colors.semantic.success, "#7BA896"] as [string, string], // custom color
+    innerGradient: ["rgba(255,255,255,0.28)", "rgba(255,255,255,0.06)"] as [string, string],
+    glowColor: DesignTokens.colors.semantic.success,
     animation: "glow",
   },
   collapsed: {
-    gradient: [
-      DesignTokens.colors.brand.terracotta,
-      DesignTokens.colors.brand.camel,
-    ] as [string, string],
-    innerGradient: ["rgba(255,255,255,0.2)", "rgba(255,255,255,0.03)"] as [
+    gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel] as [
       string,
-      string,
+      string
     ],
+    innerGradient: ["rgba(255,255,255,0.2)", "rgba(255,255,255,0.03)"] as [string, string],
     glowColor: DesignTokens.colors.brand.terracotta,
     animation: "none",
   },
 };
 
-const STATE_ORDER: CompanionState[] = [
-  "idle",
-  "listening",
-  "thinking",
-  "responding",
-  "collapsed",
-];
+const _STATE_ORDER: CompanionState[] = ["idle", "listening", "thinking", "responding", "collapsed"];
 
 export const AICompanionBall: React.FC<AICompanionBallProps> = ({
   state = "idle",
@@ -127,14 +90,14 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
   size = 64,
   showHint = false,
   hintMessage = "有什么可以帮你的？",
-  enableVoiceInput = true,
+  _enableVoiceInput = true,
   onVoiceStart,
   onVoiceEnd,
   onVoiceResult,
 }) => {
   const insets = useSafeAreaInsets();
   const [isDragging, setIsDragging] = useState(false);
-  const [isVoiceMode, setIsVoiceMode] = useState(false);
+  const [_isVoiceMode, _setIsVoiceMode] = useState(false);
   const prevStateRef = useRef<CompanionState>(state);
 
   const defaultX = SCREEN_WIDTH - size - 20;
@@ -165,20 +128,20 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
       breatheValue.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
-        true,
+        true
       );
       pulseValue.value = 0;
       glowValue.value = 0;
       innerGlowValue.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0, { duration: 3000, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
-        true,
+        true
       );
     } else if (state === "listening" || state === "thinking") {
       cancelAnimation(breatheValue);
@@ -186,30 +149,27 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
       pulseValue.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 600, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0.7, { duration: 600, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0.7, { duration: 600, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
-        true,
+        true
       );
       innerGlowValue.value = withRepeat(
         withSequence(
           withTiming(1, { duration: 400, easing: Easing.inOut(Easing.ease) }),
-          withTiming(0.5, { duration: 400, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0.5, { duration: 400, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
-        true,
+        true
       );
     } else if (state === "responding") {
       cancelAnimation(breatheValue);
       cancelAnimation(pulseValue);
       cancelAnimation(innerGlowValue);
       glowValue.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 800 }),
-          withTiming(0.5, { duration: 800 }),
-        ),
+        withSequence(withTiming(1, { duration: 800 }), withTiming(0.5, { duration: 800 })),
         -1,
-        true,
+        true
       );
       innerGlowValue.value = 0.8;
     } else {
@@ -223,10 +183,7 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
   useEffect(() => {
     if (showHint && state === "idle") {
       hintOpacity.value = withDelay(500, withTiming(1, { duration: 300 }));
-      hintTranslateX.value = withDelay(
-        500,
-        withSpring(0, { damping: 15, stiffness: 150 }),
-      );
+      hintTranslateX.value = withDelay(500, withSpring(0, { damping: 15, stiffness: 150 }));
     } else {
       hintOpacity.value = withTiming(0, { duration: 200 });
       hintTranslateX.value = withTiming(20, { duration: 200 });
@@ -252,9 +209,7 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
       const margin = 16;
       const minX = margin;
       const maxX = SCREEN_WIDTH - size - margin;
-      const minY =
-        (Platform.OS === "ios" ? insets.top : StatusBar.currentHeight || 24) +
-        margin;
+      const minY = (Platform.OS === "ios" ? insets.top : StatusBar.currentHeight || 24) + margin;
       const maxY = SCREEN_HEIGHT - insets.bottom - size - FOOTER_CLEARANCE;
 
       finalX = Math.max(minX, Math.min(maxX, finalX));
@@ -282,7 +237,7 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
       runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
       scale.value = withSequence(
         withSpring(0.9, { damping: 15, stiffness: 300 }),
-        withSpring(1, { damping: 15, stiffness: 150 }),
+        withSpring(1, { damping: 15, stiffness: 150 })
       );
       runOnJS(onPress)();
     }
@@ -301,11 +256,7 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
       scale.value = withSpring(1, { damping: 15, stiffness: 150 });
     });
 
-  const composedGesture = Gesture.Race(
-    panGesture,
-    longPressGesture,
-    tapGesture,
-  );
+  const composedGesture = Gesture.Race(panGesture, longPressGesture, tapGesture);
 
   const ballAnimatedStyle = useAnimatedStyle(() => {
     let animatedScale = scale.value;
@@ -342,9 +293,7 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
 
   const innerGlowAnimatedStyle = useAnimatedStyle(() => ({
     opacity: interpolate(innerGlowValue.value, [0, 1], [0.3, 0.8]),
-    transform: [
-      { scale: interpolate(innerGlowValue.value, [0, 1], [0.85, 0.95]) },
-    ],
+    transform: [{ scale: interpolate(innerGlowValue.value, [0, 1], [0.85, 0.95]) }],
   }));
 
   const getStateLabel = useCallback((currentState: CompanionState): string => {
@@ -367,7 +316,7 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
 
   return (
     <GestureDetector gesture={composedGesture}>
-      <AnimatedView 
+      <AnimatedView
         style={[styles.container, ballAnimatedStyle]}
         accessibilityLabel={getStateLabel(state)}
         accessibilityHint={getStateHint(state)}
@@ -375,13 +324,7 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
         accessibilityState={{ disabled: state === "thinking" || state === "responding" }}
       >
         {showHint && state === "idle" && (
-          <AnimatedView
-            style={[
-              styles.hintContainer,
-              { right: size + 12 },
-              hintAnimatedStyle,
-            ]}
-          >
+          <AnimatedView style={[styles.hintContainer, { right: size + 12 }, hintAnimatedStyle]}>
             <View style={styles.hintBubble}>
               <Text style={styles.hintText}>{hintMessage}</Text>
             </View>
@@ -393,10 +336,7 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
           colors={config.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={[
-            styles.ball,
-            { width: size, height: size, borderRadius: size / 2 },
-          ]}
+          style={[styles.ball, { width: size, height: size, borderRadius: size / 2 }]}
         >
           <AnimatedView style={[styles.innerGlow, innerGlowAnimatedStyle]}>
             <LinearGradient
@@ -470,7 +410,7 @@ const styles = StyleSheet.create({
   },
   hintText: {
     fontSize: 13,
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
     fontWeight: "500",
   },
   hintArrow: {

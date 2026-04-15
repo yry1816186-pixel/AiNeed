@@ -1,7 +1,7 @@
-import React, { useRef, useCallback } from "react";
+﻿import React, { useRef, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable, Animated } from "react-native";
-import { Colors, Spacing, BorderRadius, Shadows } from "../../../theme";
-import { ProgressiveImage } from "../../../components/ux/ProgressiveImage";
+import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { ProgressiveImage } from "../../../shared/components/ux/ProgressiveImage";
 import type { QuizImage } from "../../../stores/quizStore";
 
 interface QuizImageCardProps {
@@ -55,9 +55,7 @@ export const QuizImageCard: React.FC<QuizImageCardProps> = ({
       >
         <ProgressiveImage
           source={{ uri: image.uri }}
-          thumbnailSource={
-            image.thumbnailUri ? { uri: image.thumbnailUri } : undefined
-          }
+          thumbnailSource={image.thumbnailUri ? { uri: image.thumbnailUri } : undefined}
           style={styles.image}
           borderRadius={BorderRadius.lg}
           accessibilityLabel={image.label}

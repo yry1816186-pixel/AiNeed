@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useAuthStore } from '../../stores/index';
-import { theme } from '../../theme';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+﻿import React, { useEffect, useRef } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useAuthStore } from "../../stores/index";
+import { theme } from '../design-system/theme';
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 
 interface VipGuardProps {
   children: React.ReactNode;
@@ -10,7 +10,7 @@ interface VipGuardProps {
   featureName?: string;
 }
 
-export function VipGuard({ children, onNotVip, featureName = '该功能' }: VipGuardProps) {
+export function VipGuard({ children, onNotVip, featureName = "该功能" }: VipGuardProps) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isVip = useAuthStore((state) => state.isVip);
   const hasTriggered = useRef(false);
@@ -37,11 +37,7 @@ export function VipGuard({ children, onNotVip, featureName = '该功能' }: VipG
         </View>
         <Text style={s.title}>{featureName}为 VIP 专属</Text>
         <Text style={s.subtitle}>升级 VIP 尊享全部高级功能</Text>
-        <TouchableOpacity
-          style={s.upgradeBtn}
-          onPress={onNotVip}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity style={s.upgradeBtn} onPress={onNotVip} activeOpacity={0.7}>
           <Ionicons name="star" size={16} color="#fff" />
           <Text style={s.upgradeText}>升级 VIP</Text>
         </TouchableOpacity>
@@ -55,8 +51,8 @@ export function VipGuard({ children, onNotVip, featureName = '该功能' }: VipG
 const s = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 32,
     backgroundColor: theme.colors.background,
   },
@@ -65,13 +61,13 @@ const s = StyleSheet.create({
     height: 64,
     borderRadius: 32,
     backgroundColor: theme.colors.subtleBg,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 16,
   },
   title: {
     fontSize: 17,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.text,
     marginBottom: 6,
   },
@@ -81,8 +77,8 @@ const s = StyleSheet.create({
     marginBottom: 24,
   },
   upgradeBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     backgroundColor: theme.colors.primary,
     paddingHorizontal: 28,
@@ -90,8 +86,8 @@ const s = StyleSheet.create({
     borderRadius: 24,
   },
   upgradeText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

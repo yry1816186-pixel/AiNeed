@@ -695,28 +695,28 @@ export class AiMockPlayer {
     if (!this.providerStats[provider]) {
       this.providerStats[provider] = { attempts: 0, hits: 0, misses: 0, errors: 0 };
     }
-    this.providerStats[provider]!.attempts++;
+    this.providerStats[provider].attempts++;
   }
 
   private recordHit(provider: string, matchLatencyMs: number): void {
     this.hits++;
     this.totalMatchLatencyMs += matchLatencyMs;
     if (this.providerStats[provider]) {
-      this.providerStats[provider]!.hits++;
+      this.providerStats[provider].hits++;
     }
   }
 
   private recordMiss(provider: string): void {
     this.misses++;
     if (this.providerStats[provider]) {
-      this.providerStats[provider]!.misses++;
+      this.providerStats[provider].misses++;
     }
   }
 
   private recordError(provider: string): void {
     this.errors++;
     if (this.providerStats[provider]) {
-      this.providerStats[provider]!.errors++;
+      this.providerStats[provider].errors++;
     }
   }
 

@@ -13,6 +13,7 @@ import { Reflector } from '@nestjs/core';
 import { Response } from 'express';
 
 import { RequestWithUser } from '../../types/common.types';
+
 import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME, CSRF_ERROR_MESSAGES } from './csrf.constants';
 import { CsrfService } from './csrf.service';
 import { EXCLUDE_CSRF_KEY } from './decorators/exclude-csrf.decorator';
@@ -82,7 +83,11 @@ export class CsrfGuard implements CanActivate {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`Error generating CSRF token: ${errorMessage}`);
-      return true; // Don't block on token generation errors
+      // In production, fail closed: reject request when token generation fails
+      if (process.env.NODE_ENV === 'production') {
+        return false;
+      }
+      return true; // Allow in non-production for development convenience
     }
   }
 
@@ -95,7 +100,11 @@ export class CsrfGuard implements CanActivate {
       const sessionId = this.getSessionId(request);
 
       if (!sessionId) {
-        // Allow if no session (public endpoints should use @ExcludeCsrf)
+        // In production, reject requests without session for state-changing operations
+        if (process.env.NODE_ENV === 'production') {
+          return false;
+        }
+        // Allow in non-production (public endpoints should use @ExcludeCsrf)
         return true;
       }
 

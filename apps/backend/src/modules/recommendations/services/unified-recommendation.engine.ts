@@ -248,7 +248,7 @@ export class UnifiedRecommendationEngine {
       ]);
 
     const sequenceLength = userBehaviors.filter(
-      (b) => b.type === "view" || b.type === "click",
+      (b) => b.type === "page_view" || b.type === "click",
     ).length;
 
     return {
@@ -1025,7 +1025,7 @@ export class UnifiedRecommendationEngine {
     item: ClothingItemWithBrand,
     scores: RecommendationScoreBreakdown,
     userProfile: UserProfileData | null,
-    context?: RecommendationContext,
+    _context?: RecommendationContext,
   ): RecommendationReason[] {
     const reasons: RecommendationReason[] = [];
     const itemAttrs = item.attributes;

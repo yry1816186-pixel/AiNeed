@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useEffect, useRef } from 'react';
+﻿import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -9,15 +9,16 @@ import {
   ActivityIndicator,
   Keyboard,
   TouchableWithoutFeedback,
-} from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { smsApi } from '../services/api/sms.api';
-import { useAuthStore } from '../stores/index';
-import { theme } from '../theme';
-import type { RootStackParamList } from '../types/navigation';
+} from "react-native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { smsApi } from "../services/api/sms.api";
+import { useTranslation } from "../i18n";
+import { useAuthStore } from "../stores/index";
+import { theme } from '../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import type { RootStackParamList } from "../types/navigation";
 
 type PhoneLoginNavigationProp = NavigationProp<RootStackParamList>;
 
@@ -25,10 +26,11 @@ const COUNTDOWN_SECONDS = 60;
 
 export const PhoneLoginScreen: React.FC = () => {
   const navigation = useNavigation<PhoneLoginNavigationProp>();
-  const { setUser, setToken } = useAuthStore();
+  const { setUser, setToken, onboardingCompleted } = useAuthStore();
+  const t = useTranslation();
 
-  const [phone, setPhone] = useState('');
-  const [code, setCode] = useState('');
+  const [phone, setPhone] = useState("");
+  const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [countdown, setCountdown] = useState(0);
@@ -64,14 +66,14 @@ export const PhoneLoginScreen: React.FC = () => {
 
   const handleSendCode = useCallback(async () => {
     const trimmedPhone = phone.trim();
-    
+
     if (!trimmedPhone) {
-      Alert.alert('提示', '请输入手机号');
+      Alert.alert(t.common.confirm, t.auth.email);
       return;
     }
 
     if (!validatePhone(trimmedPhone)) {
-      Alert.alert('提示', '请输入有效的手机号');
+      Alert.alert(t.common.confirm, t.errors.validationError);
       return;
     }
 
@@ -84,39 +86,51 @@ export const PhoneLoginScreen: React.FC = () => {
       const response = await smsApi.sendCode(trimmedPhone);
       if (response.success) {
         startCountdown();
-        Alert.alert('发送成功', '验证码已发送到您的手机');
+        Alert.alert(t.common.done, t.common.done);
       } else {
-        Alert.alert('发送失败', response.error?.message || '请稍后重试');
+        Alert.alert(t.common.error, response.error?.message || t.common.retry);
       }
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : '网络错误';
-      Alert.alert('发送失败', message);
+      const message = error instanceof Error ? error.message : t.errors.networkError;
+      Alert.alert(t.common.error, message);
     } finally {
       setIsSendingCode(false);
     }
   }, [phone, countdown, validatePhone, startCountdown]);
 
-  const handleLoginSuccess = useCallback(async (user: { id: string; email: string; nickname?: string; avatar?: string; createdAt?: string; updatedAt?: string }, token: string) => {
-    setToken(token);
-    setUser({
-      ...user,
-      createdAt: user.createdAt || new Date().toISOString(),
-      updatedAt: user.updatedAt || new Date().toISOString(),
-    });
+  const handleLoginSuccess = useCallback(
+    async (
+      user: {
+        id: string;
+        email: string;
+        nickname?: string;
+        avatar?: string;
+        createdAt?: string;
+        updatedAt?: string;
+      },
+      token: string
+    ) => {
+      setToken(token);
+      setUser({
+        ...user,
+        createdAt: user.createdAt || new Date().toISOString(),
+        updatedAt: user.updatedAt || new Date().toISOString(),
+      });
 
-    const onboardingComplete = await AsyncStorage.getItem('@aineed:onboarding_complete');
-    if (onboardingComplete === 'true') {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'MainTabs' }],
-      });
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Onboarding' }],
-      });
-    }
-  }, [setToken, setUser, navigation]);
+      if (onboardingCompleted) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "MainTabs" }],
+        });
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Onboarding" }],
+        });
+      }
+    },
+    [setToken, setUser, navigation]
+  );
 
   const handleLogin = useCallback(async () => {
     Keyboard.dismiss();
@@ -125,22 +139,22 @@ export const PhoneLoginScreen: React.FC = () => {
     const trimmedCode = code.trim();
 
     if (!trimmedPhone) {
-      Alert.alert('提示', '请输入手机号');
+      Alert.alert(t.common.confirm, t.auth.phoneRequired);
       return;
     }
 
     if (!validatePhone(trimmedPhone)) {
-      Alert.alert('提示', '请输入有效的手机号');
+      Alert.alert(t.common.confirm, t.errors.validationError);
       return;
     }
 
     if (!trimmedCode) {
-      Alert.alert('提示', '请输入验证码');
+      Alert.alert(t.common.confirm, t.auth.password);
       return;
     }
 
     if (trimmedCode.length !== 6) {
-      Alert.alert('提示', '验证码应为6位数字');
+      Alert.alert(t.common.confirm, t.errors.validationError);
       return;
     }
 
@@ -150,19 +164,13 @@ export const PhoneLoginScreen: React.FC = () => {
       const response = await smsApi.loginWithPhone(trimmedPhone, trimmedCode);
       if (response.success && response.data) {
         const { user, accessToken } = response.data;
-        await handleLoginSuccess(
-          { ...user, email: user.email ?? '' },
-          accessToken,
-        );
+        await handleLoginSuccess({ ...user, email: user.email ?? "" }, accessToken);
       } else {
-        Alert.alert(
-          '登录失败',
-          response.error?.message || '验证码错误或已过期',
-        );
+        Alert.alert(t.auth.login, response.error?.message || t.errors.unauthorized);
       }
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : '网络错误';
-      Alert.alert('登录失败', message);
+      const message = error instanceof Error ? error.message : t.errors.networkError;
+      Alert.alert(t.auth.login, message);
     } finally {
       setIsLoading(false);
     }
@@ -188,14 +196,14 @@ export const PhoneLoginScreen: React.FC = () => {
             </View>
             <Text style={styles.brandName}>寻裳</Text>
           </View>
-          <Text style={styles.title}>手机号登录</Text>
-          <Text style={styles.subtitle}>使用手机验证码快速登录</Text>
+          <Text style={styles.title}>{t.auth.login}</Text>
+          <Text style={styles.subtitle}>{t.auth.login}</Text>
           <View style={styles.form}>
             <View style={styles.inputGroup}>
               <Ionicons name="phone-portrait-outline" size={20} color={theme.colors.textTertiary} />
               <TextInput
                 style={styles.input}
-                placeholder="手机号"
+                placeholder={t.auth.email}
                 placeholderTextColor={theme.colors.textTertiary}
                 value={phone}
                 onChangeText={setPhone}
@@ -212,7 +220,7 @@ export const PhoneLoginScreen: React.FC = () => {
               <Ionicons name="keypad-outline" size={20} color={theme.colors.textTertiary} />
               <TextInput
                 style={styles.codeInput}
-                placeholder="验证码"
+                placeholder={t.auth.password}
                 placeholderTextColor={theme.colors.textTertiary}
                 value={code}
                 onChangeText={setCode}
@@ -232,26 +240,22 @@ export const PhoneLoginScreen: React.FC = () => {
                 ]}
                 onPress={handleSendCode}
                 disabled={countdown > 0 || isSendingCode || isLoading}
-                accessibilityLabel={countdown > 0 ? `${countdown}秒后重试` : '获取验证码'}
+                accessibilityLabel={countdown > 0 ? t.common.retry : t.common.confirm}
               >
                 {isSendingCode ? (
                   <ActivityIndicator size="small" color={theme.colors.primary} />
                 ) : (
-                  <Text style={[
-                    styles.codeButtonText,
-                    countdown > 0 && styles.codeButtonTextDisabled,
-                  ]}>
-                    {countdown > 0 ? `${countdown}s` : '获取验证码'}
+                  <Text
+                    style={[styles.codeButtonText, countdown > 0 && styles.codeButtonTextDisabled]}
+                  >
+                    {countdown > 0 ? `${countdown}s` : t.common.confirm}
                   </Text>
                 )}
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity
-              style={[
-                styles.loginButton,
-                isLoading && styles.loginButtonDisabled,
-              ]}
+              style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
               onPress={handleLogin}
               disabled={isLoading}
               activeOpacity={0.7}
@@ -261,26 +265,26 @@ export const PhoneLoginScreen: React.FC = () => {
               {isLoading ? (
                 <ActivityIndicator size="small" color={theme.colors.surface} />
               ) : (
-                <Text style={styles.loginButtonText}>登录</Text>
+                <Text style={styles.loginButtonText}>{t.auth.login}</Text>
               )}
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.emailLoginLink}
-              onPress={() => navigation.navigate('Login')}
+              onPress={() => navigation.navigate("Login")}
               disabled={isLoading}
               accessibilityLabel="使用邮箱登录"
             >
-              <Text style={styles.emailLoginText}>使用邮箱登录</Text>
+              <Text style={styles.emailLoginText}>{t.auth.email}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.registerLink}
-              onPress={() => navigation.navigate('Register')}
+              onPress={() => navigation.navigate("Register")}
               disabled={isLoading}
               accessibilityLabel="没有账户？立即注册"
             >
-              <Text style={styles.registerText}>没有账户？立即注册</Text>
+              <Text style={styles.registerText}>{t.auth.register}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -296,13 +300,13 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F1F3F4',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: DesignTokens.colors.neutral[100],
+    alignItems: "center",
+    justifyContent: "center",
   },
   content: { flex: 1, padding: 20 },
   brandSection: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
   },
   logoContainer: {
@@ -310,22 +314,22 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: theme.BorderRadius.xl,
     backgroundColor: theme.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 12,
   },
   brandName: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.primary,
     letterSpacing: 1.2,
   },
-  title: { fontSize: 32, fontWeight: '700', color: theme.colors.text },
+  title: { fontSize: 32, fontWeight: "700", color: theme.colors.text },
   subtitle: { fontSize: 16, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 32 },
   form: { gap: 16 },
   inputGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.colors.background,
     borderRadius: theme.BorderRadius.md,
     paddingHorizontal: 16,
@@ -342,15 +346,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.primary,
     minWidth: 90,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   codeButtonDisabled: {
     borderColor: theme.colors.textTertiary,
   },
   codeButtonText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     color: theme.colors.primary,
   },
   codeButtonTextDisabled: {
@@ -360,17 +364,17 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     borderRadius: theme.BorderRadius.md,
     paddingVertical: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 8,
     minHeight: 52,
     ...theme.Shadows.brand,
   },
   loginButtonDisabled: { backgroundColor: theme.colors.primaryLight },
-  loginButtonText: { fontSize: 16, fontWeight: '600', color: theme.colors.surface },
-  emailLoginLink: { alignItems: 'center', marginTop: 16 },
+  loginButtonText: { fontSize: 16, fontWeight: "600", color: theme.colors.surface },
+  emailLoginLink: { alignItems: "center", marginTop: 16 },
   emailLoginText: { fontSize: 14, color: theme.colors.primary },
-  registerLink: { alignItems: 'center', marginTop: 8 },
+  registerLink: { alignItems: "center", marginTop: 8 },
   registerText: { fontSize: 14, color: theme.colors.primary },
 });
 

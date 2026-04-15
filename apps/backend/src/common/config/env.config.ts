@@ -1,3 +1,6 @@
+import { Logger } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { Type, Transform, plainToInstance } from 'class-transformer';
 import {
   IsString,
   IsOptional,
@@ -9,9 +12,6 @@ import {
   IsBoolean,
   validateSync as classValidateSync,
 } from 'class-validator';
-import { Type, Transform, plainToInstance } from 'class-transformer';
-import { Logger } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 
 const logger = new Logger('EnvConfig');
 
@@ -311,7 +311,7 @@ export function validateConfig(
     forbidNonWhitelisted: false,
   });
   for (const error of validationErrors) {
-    for (const [constraintKey, constraintMsg] of Object.entries(
+    for (const [_constraintKey, constraintMsg] of Object.entries(
       error.constraints || {},
     )) {
       errors.push(`${error.property}: ${constraintMsg}`);

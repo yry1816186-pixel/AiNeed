@@ -1,22 +1,22 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import Svg, { Rect, Text as SvgText, Path, G } from 'react-native-svg';
-import { colors } from '../../theme/tokens/colors';
-import { typography } from '../../theme/tokens/typography';
-import { spacing } from '../../theme/tokens/spacing';
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import Svg, { Rect, Text as SvgText, Path, G } from "react-native-svg";
+import { colors } from "../../theme/tokens/colors";
+import { typography } from "../../theme/tokens/typography";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 export interface ColorPaletteProps {
-  colors: Array<{ name: string; hex: string; label?: string }>;
+  colors: { name: string; hex: string; label?: string }[];
   columns?: number;
   blockSize?: number;
   gap?: number;
   showLabel?: boolean;
-  type?: 'best' | 'avoid' | 'neutral';
+  type?: "best" | "avoid" | "neutral";
   accessibilityLabel?: string;
 }
 
-const CheckPath = 'M4 8.5L7 11.5L12 5.5';
-const CrossPath = 'M5 5L11 11M11 5L5 11';
+const CheckPath = "M4 8.5L7 11.5L12 5.5";
+const CrossPath = "M5 5L11 11M11 5L5 11";
 
 export const ColorPalette: React.FC<ColorPaletteProps> = ({
   colors: paletteColors,
@@ -24,19 +24,21 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
   blockSize = 44,
   gap = 8,
   showLabel = true,
-  type = 'neutral',
+  type = "neutral",
   accessibilityLabel,
 }) => {
   const defaultA11yLabel =
     accessibilityLabel ||
-    `${type === 'best' ? '推荐' : type === 'avoid' ? '避免' : ''}色彩 ${paletteColors.map(c => c.name).join(', ')}`;
+    `${type === "best" ? "推荐" : type === "avoid" ? "避免" : ""}色彩 ${paletteColors
+      .map((c) => c.name)
+      .join(", ")}`;
 
   const indicatorSize = 16;
   const labelHeight = showLabel ? 18 : 0;
   const itemHeight = blockSize + (showLabel ? gap + labelHeight : 0);
 
   const renderIndicator = (x: number, y: number) => {
-    if (type === 'best') {
+    if (type === "best") {
       return (
         <G>
           <Rect
@@ -53,7 +55,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
             x={x + blockSize - indicatorSize - 2}
             y={y + 2}
             fill="none"
-            stroke="#FFFFFF"
+            stroke={DesignTokens.colors.neutral.white}
             strokeWidth={1.5}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -61,7 +63,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
         </G>
       );
     }
-    if (type === 'avoid') {
+    if (type === "avoid") {
       return (
         <G>
           <Rect
@@ -78,7 +80,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
             x={x + blockSize - indicatorSize - 2}
             y={y + 2}
             fill="none"
-            stroke="#FFFFFF"
+            stroke={DesignTokens.colors.neutral.white}
             strokeWidth={1.5}
             strokeLinecap="round"
           />
@@ -94,11 +96,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
     (Math.ceil(paletteColors.length / columns) - 1) * gap;
 
   return (
-    <View
-      accessible={true}
-      accessibilityLabel={defaultA11yLabel}
-      accessibilityRole="list"
-    >
+    <View accessible={true} accessibilityLabel={defaultA11yLabel} accessibilityRole="list">
       <Svg width={totalWidth} height={totalHeight}>
         {paletteColors.map((item, index) => {
           const col = index % columns;
@@ -125,7 +123,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
                   textAnchor="middle"
                   fontSize={typography.fontSize.xs}
                   fontWeight={typography.fontWeight.medium}
-                  fill={type === 'avoid' ? colors.neutral[400] : colors.neutral[600]}
+                  fill={type === "avoid" ? colors.neutral[400] : colors.neutral[600]}
                 >
                   {item.label || item.name}
                 </SvgText>
@@ -138,6 +136,6 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
   );
 };
 
-const styles = StyleSheet.create({});
+const _styles = StyleSheet.create({});
 
 export default ColorPalette;

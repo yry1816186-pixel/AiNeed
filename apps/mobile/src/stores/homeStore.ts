@@ -33,15 +33,25 @@ interface HomeState {
 function calculateProfileCompletion(profile: UserProfile): number {
   let completion = 0;
 
-  if (profile.gender) completion += 10;
+  if (profile.gender) {
+    completion += 10;
+  }
 
-  if (profile.height && profile.weight) completion += 15;
+  if (profile.height && profile.weight) {
+    completion += 15;
+  }
 
-  if (profile.bodyType) completion += 15;
+  if (profile.bodyType) {
+    completion += 15;
+  }
 
-  if (profile.skinTone) completion += 10;
+  if (profile.skinTone) {
+    completion += 10;
+  }
 
-  if (profile.colorSeason) completion += 10;
+  if (profile.colorSeason) {
+    completion += 10;
+  }
 
   if (
     profile.stylePreferences &&
@@ -55,7 +65,9 @@ function calculateProfileCompletion(profile: UserProfile): number {
     completion += 10;
   }
 
-  if (profile.budget) completion += 10;
+  if (profile.budget) {
+    completion += 10;
+  }
 
   return completion;
 }
@@ -127,8 +139,8 @@ export const useHomeStore = create<HomeState>()(
         isProfileComplete: state.isProfileComplete,
         weatherData: state.weatherData,
       }),
-    },
-  ),
+    }
+  )
 );
 
 export const useProfileCompletion = () =>

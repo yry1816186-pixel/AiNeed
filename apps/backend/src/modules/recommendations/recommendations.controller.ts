@@ -21,11 +21,11 @@ import {
 } from "./dto";
 import { RecommendationsService } from "./recommendations.service";
 import { AdvancedRecommendationService } from "./services/advanced-recommendation.service";
-import { OutfitCompletionService } from "./services/outfit-completion.service";
 import {
   BehaviorTrackingService,
   type BehaviorAction,
 } from "./services/behavior-tracking.service";
+import { OutfitCompletionService } from "./services/outfit-completion.service";
 import { RecommendationFeedService } from "./services/recommendation-feed.service";
 
 /**
@@ -459,8 +459,8 @@ export class RecommendationsController {
     @Body() dto: SubmitFeedbackDto,
   ) {
     const actionMap: Record<string, BehaviorAction> = {
-      like: "like",
-      dislike: "dislike",
+      like: "post_like",
+      dislike: "click",
       ignore: "click",
     };
 
@@ -493,8 +493,8 @@ export class RecommendationsController {
     @Body() dto: SubmitBatchFeedbackDto,
   ) {
     const actionMap: Record<string, BehaviorAction> = {
-      like: "like",
-      dislike: "dislike",
+      like: "post_like",
+      dislike: "click",
       ignore: "click",
     };
 

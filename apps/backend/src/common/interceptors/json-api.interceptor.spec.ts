@@ -1,6 +1,7 @@
 import { ExecutionContext, CallHandler } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { of } from 'rxjs';
+
 import {
   JsonApiInterceptor,
   JsonApiType,
@@ -64,9 +65,9 @@ describe('JsonApiInterceptor', () => {
       const handler = createMockCallHandler({ id: '1', name: 'shirt' });
 
       jest.spyOn(reflector, 'getAllAndOverride').mockImplementation(((key: any) => {
-        if (key === JSON_API_TYPE) return 'products';
-        if (key === SKIP_JSON_API) return false;
-        if (key === SKIP_RESPONSE_TRANSFORM) return false;
+        if (key === JSON_API_TYPE) {return 'products';}
+        if (key === SKIP_JSON_API) {return false;}
+        if (key === SKIP_RESPONSE_TRANSFORM) {return false;}
         return undefined;
       }) as any);
 
@@ -104,7 +105,7 @@ describe('JsonApiInterceptor', () => {
       const handler = createMockCallHandler(originalData);
 
       jest.spyOn(reflector, 'getAllAndOverride').mockImplementation(((key: any) => {
-        if (key === SKIP_JSON_API) return true;
+        if (key === SKIP_JSON_API) {return true;}
         return undefined;
       }) as any);
 
@@ -120,7 +121,7 @@ describe('JsonApiInterceptor', () => {
       const handler = createMockCallHandler(originalData);
 
       jest.spyOn(reflector, 'getAllAndOverride').mockImplementation(((key: any) => {
-        if (key === SKIP_RESPONSE_TRANSFORM) return true;
+        if (key === SKIP_RESPONSE_TRANSFORM) {return true;}
         return undefined;
       }) as any);
 

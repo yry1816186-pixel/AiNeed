@@ -7,7 +7,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
 import { CodeRagService } from './code-rag.service';
 import { CodeRagSearchDto, CodeRagFileContextDto } from './dto/code-rag.dto';
 

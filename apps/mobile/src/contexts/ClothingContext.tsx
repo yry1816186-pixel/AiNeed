@@ -20,7 +20,7 @@ import { backgroundRemovalService } from "../services/ai";
 import { clothingCategorizationService } from "../services/ai";
 
 const CLOTHING_STORAGE_KEY = "@clothing_items";
-const CLOTHING_IMAGES_DIR = `${FileSystem.documentDirectory ?? ""}clothing/`;
+const _CLOTHING_IMAGES_DIR = `${FileSystem.documentDirectory ?? ""}clothing/`;
 
 interface ClothingState {
   items: ClothingItem[];
@@ -60,10 +60,7 @@ const initialState: ClothingState = {
   error: null,
 };
 
-function clothingReducer(
-  state: ClothingState,
-  action: ClothingAction,
-): ClothingState {
+function clothingReducer(state: ClothingState, action: ClothingAction): ClothingState {
   switch (action.type) {
     case "SET_ITEMS":
       return { ...state, items: action.payload, isLoading: false };
@@ -76,9 +73,7 @@ function clothingReducer(
       return {
         ...state,
         items: state.items.map((item) =>
-          item.id === action.payload.id
-            ? { ...item, ...action.payload.data }
-            : item,
+          item.id === action.payload.id ? { ...item, ...action.payload.data } : item
         ),
       };
     case "DELETE_ITEM":
@@ -125,7 +120,7 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(clothingReducer, initialState);
 
   useEffect(() => {
-    loadFromStorage();
+    void loadFromStorage();
   }, []);
 
   useEffect(() => {
@@ -153,14 +148,10 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
     let filtered = [...state.items];
 
     if (state.filter.category) {
-      filtered = filtered.filter(
-        (item) => item.category === state.filter.category,
-      );
+      filtered = filtered.filter((item) => item.category === state.filter.category);
     }
     if (state.filter.isFavorite !== undefined) {
-      filtered = filtered.filter(
-        (item) => item.isFavorite === state.filter.isFavorite,
-      );
+      filtered = filtered.filter((item) => item.isFavorite === state.filter.isFavorite);
     }
     if (state.filter.searchQuery) {
       const query = state.filter.searchQuery.toLowerCase();
@@ -168,7 +159,7 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
         (item) =>
           item.name?.toLowerCase().includes(query) ||
           item.brand?.toLowerCase().includes(query) ||
-          item.tags.some((tag) => tag.toLowerCase().includes(query)),
+          item.tags.some((tag) => tag.toLowerCase().includes(query))
       );
     }
 
@@ -178,10 +169,7 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
       if (field === "name") {
         return direction * (a.name || "").localeCompare(b.name || "");
       }
-      return (
-        direction *
-        (new Date(a[field]).getTime() - new Date(b[field]).getTime())
-      );
+      return direction * (new Date(a[field]).getTime() - new Date(b[field]).getTime());
     });
 
     dispatch({ type: "SET_FILTERED_ITEMS", payload: filtered });
@@ -206,14 +194,12 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
       try {
         let imageUri = data.imageUri;
 
-        const bgResult =
-          await backgroundRemovalService.removeBackground(imageUri);
+        const bgResult = await backgroundRemovalService.removeBackground(imageUri);
         if (bgResult.success) {
           imageUri = bgResult.imageUri;
         }
 
-        const categorization =
-          await clothingCategorizationService.categorize(imageUri);
+        const categorization = await clothingCategorizationService.categorize(imageUri);
 
         const newItem: ClothingItem = {
           id: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -246,7 +232,7 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
         return null;
       }
     },
-    [state.items],
+    [state.items]
   );
 
   const updateItem = useCallback(
@@ -256,11 +242,11 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
         payload: { id, data: { ...data, updatedAt: new Date().toISOString() } },
       });
       const updatedItems = state.items.map((item) =>
-        item.id === id ? { ...item, ...data } : item,
+        item.id === id ? { ...item, ...data } : item
       );
       await saveToStorage(updatedItems);
     },
-    [state.items],
+    [state.items]
   );
 
   const deleteItem = useCallback(
@@ -269,7 +255,7 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
       const updatedItems = state.items.filter((item) => item.id !== id);
       await saveToStorage(updatedItems);
     },
-    [state.items],
+    [state.items]
   );
 
   const toggleFavorite = useCallback(
@@ -279,7 +265,7 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
         await updateItem(id, { isFavorite: !item.isFavorite });
       }
     },
-    [state.items, updateItem],
+    [state.items, updateItem]
   );
 
   const incrementWearCount = useCallback(
@@ -292,7 +278,7 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
         });
       }
     },
-    [state.items, updateItem],
+    [state.items, updateItem]
   );
 
   const setFilter = useCallback((filter: ClothingFilter) => {
@@ -308,25 +294,21 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const getItemsByCategory = useCallback(
-    (category: ClothingCategory) =>
-      state.items.filter((item) => item.category === category),
-    [state.items],
+    (category: ClothingCategory) => state.items.filter((item) => item.category === category),
+    [state.items]
   );
 
   const getFavorites = useCallback(
     () => state.items.filter((item) => item.isFavorite),
-    [state.items],
+    [state.items]
   );
 
   const getRecentItems = useCallback(
     (limit: number = 10) =>
       [...state.items]
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        )
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, limit),
-    [state.items],
+    [state.items]
   );
 
   const clearError = useCallback(() => {
@@ -350,11 +332,7 @@ export function ClothingProvider({ children }: { children: ReactNode }) {
     clearError,
   };
 
-  return (
-    <ClothingContext.Provider value={value}>
-      {children}
-    </ClothingContext.Provider>
-  );
+  return <ClothingContext.Provider value={value}>{children}</ClothingContext.Provider>;
 }
 
 export function useClothing() {

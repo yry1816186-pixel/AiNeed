@@ -65,7 +65,7 @@ describe("recommendationFeedApi", () => {
           category: "daily",
           page: 1,
           pageSize: 10,
-        }),
+        })
       );
       expect(result.items).toHaveLength(2);
       expect(result.total).toBe(2);
@@ -89,7 +89,7 @@ describe("recommendationFeedApi", () => {
           subCategory: "tops",
           page: 2,
           pageSize: 20,
-        }),
+        })
       );
       expect(result.items).toHaveLength(2);
     });
@@ -161,7 +161,7 @@ describe("recommendationFeedApi", () => {
           category: "daily",
           page: 1,
           pageSize: 10,
-        }),
+        })
       );
       expect(result.items).toHaveLength(2);
     });
@@ -177,7 +177,7 @@ describe("recommendationFeedApi", () => {
           category: "daily",
           page: 1,
           pageSize: 10,
-        }),
+        })
       );
     });
   });
@@ -197,7 +197,7 @@ describe("recommendationFeedApi", () => {
           subCategory: "work",
           page: 1,
           pageSize: 10,
-        }),
+        })
       );
       expect(result.items).toHaveLength(2);
     });
@@ -229,7 +229,7 @@ describe("recommendationFeedApi", () => {
           category: "trending",
           page: 1,
           pageSize: 15,
-        }),
+        })
       );
       expect(result.items).toHaveLength(2);
     });
@@ -245,7 +245,7 @@ describe("recommendationFeedApi", () => {
           category: "trending",
           page: 1,
           pageSize: 10,
-        }),
+        })
       );
     });
   });
@@ -264,7 +264,7 @@ describe("recommendationFeedApi", () => {
           category: "explore",
           page: 3,
           pageSize: 25,
-        }),
+        })
       );
       expect(result.items).toHaveLength(2);
     });
@@ -280,7 +280,7 @@ describe("recommendationFeedApi", () => {
           category: "explore",
           page: 1,
           pageSize: 10,
-        }),
+        })
       );
     });
   });

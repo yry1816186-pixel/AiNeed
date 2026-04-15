@@ -1,9 +1,10 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { ConfigService } from "@nestjs/config";
 import { UnauthorizedException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { Test, TestingModule } from "@nestjs/testing";
+
+import { WechatService } from "../services/wechat.service";
 
 import { WechatAuthStrategy } from "./wechat.strategy";
-import { WechatService } from "../services/wechat.service";
 
 describe("WechatAuthStrategy", () => {
   let strategy: WechatAuthStrategy;

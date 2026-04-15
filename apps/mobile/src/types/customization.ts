@@ -1,10 +1,4 @@
-export type ProductTemplateType =
-  | "tshirt"
-  | "hat"
-  | "shoes"
-  | "bag"
-  | "phone_case"
-  | "mug";
+export type ProductTemplateType = "tshirt" | "hat" | "shoes" | "bag" | "phone_case" | "mug";
 
 export type DesignLayerType = "image" | "text" | "shape";
 
@@ -112,12 +106,7 @@ export interface ProductionStatusResponse {
   progress: number;
 }
 
-export type CustomizationType =
-  | "tailored"
-  | "bespoke"
-  | "alteration"
-  | "design"
-  | "pod";
+export type CustomizationType = "tailored" | "bespoke" | "alteration" | "design" | "pod";
 
 export type CustomizationStatus =
   | "draft"

@@ -14,24 +14,32 @@ import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native"
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp, SlideInLeft } from "react-native-reanimated";
-import { launchImageLibrary, type ImagePickerResponse } from "react-native-image-picker";
 import Share from "react-native-share";
-import { pickImageSecurely, type SecureImagePickerResult, ImageValidationError } from "../../utils/imagePicker";
+import {
+  pickImageSecurely,
+  ImageValidationError,
+} from "../../utils/imagePicker";
 import { photosApi } from "../../services/api/photos.api";
 import { tryOnApi, type TryOnResult } from "../../services/api/tryon.api";
 import { clothingApi } from "../../services/api/clothing.api";
-import { wsService, type TryOnEventPayload, type TryOnProgressPayload } from "../../services/websocket";
+import {
+  wsService,
+  type TryOnEventPayload,
+  type TryOnProgressPayload,
+} from "../../services/websocket";
 import type { ClothingItem } from "../../types/clothing";
 import { colors } from "../../theme/tokens/colors";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { typography } from "../../theme/tokens/typography";
 import { spacing } from "../../theme/tokens/spacing";
 import { shadows } from "../../theme/tokens/shadows";
+import { TryOnProgress } from "../loading/TryOnProgress";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
 const POLL_INTERVAL = 3000;
 const POLL_MAX_ATTEMPTS = 60;
-const UPLOAD_TIMEOUT = 30000;
+const _UPLOAD_TIMEOUT = 30000;
 const TIP_ROTATION_INTERVAL = 5000;
 const TIMEOUT_WARNING_MS = 30000;
 const TIMEOUT_DEGRADE_MS = 60000;
@@ -50,7 +58,7 @@ const STYLE_TIPS = [
 type TryOnPhase = "idle" | "uploading" | "queued" | "processing" | "completed" | "failed";
 
 export const TryOnScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const _navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
   const routeParams = route.params as { clothingId?: string } | undefined;
@@ -74,9 +82,9 @@ export const TryOnScreen: React.FC = () => {
 
   useEffect(() => {
     if (routeParams?.clothingId) {
-      loadClothingItem(routeParams.clothingId);
+      void loadClothingItem(routeParams.clothingId);
     }
-    wsService.connect();
+    void wsService.connect();
     return () => {
       cleanup();
     };
@@ -117,7 +125,7 @@ export const TryOnScreen: React.FC = () => {
       cleanup();
       if (status === "completed") {
         setProgress(100);
-        tryOnApi.getStatus(tryOnId).then((statusResponse) => {
+        void tryOnApi.getStatus(tryOnId).then((statusResponse) => {
           if (statusResponse.success && statusResponse.data) {
             setResult(statusResponse.data);
           }
@@ -128,7 +136,7 @@ export const TryOnScreen: React.FC = () => {
         setErrorMessage(errorMessage || "试衣处理失败");
       }
     },
-    [cleanup],
+    [cleanup]
   );
 
   const startPolling = useCallback(
@@ -137,9 +145,12 @@ export const TryOnScreen: React.FC = () => {
       startTimeRef.current = Date.now();
       cleanup();
 
-      wsUnsubscribeRef.current = wsService.onTryOnComplete(tryOnId, (payload: TryOnEventPayload) => {
-        onTryOnResolved(tryOnId, payload.status, payload.errorMessage);
-      });
+      wsUnsubscribeRef.current = wsService.onTryOnComplete(
+        tryOnId,
+        (payload: TryOnEventPayload) => {
+          onTryOnResolved(tryOnId, payload.status, payload.errorMessage);
+        }
+      );
 
       wsProgressUnsubscribeRef.current = wsService.onTryOnProgress(
         tryOnId,
@@ -148,7 +159,7 @@ export const TryOnScreen: React.FC = () => {
           if (payload.stage === "generating") {
             setPhase("processing");
           }
-        },
+        }
       );
 
       tipTimerRef.current = setInterval(() => {
@@ -170,10 +181,14 @@ export const TryOnScreen: React.FC = () => {
           return;
         }
 
-        if (!isFocused) return;
+        if (!isFocused) {
+          return;
+        }
 
         const statusResponse = await tryOnApi.getStatus(tryOnId);
-        if (!statusResponse.success || !statusResponse.data) return;
+        if (!statusResponse.success || !statusResponse.data) {
+          return;
+        }
 
         const tryOnData = statusResponse.data;
 
@@ -188,7 +203,7 @@ export const TryOnScreen: React.FC = () => {
         }
       }, POLL_INTERVAL);
     },
-    [isFocused, cleanup, onTryOnResolved, timeoutWarning],
+    [isFocused, cleanup, onTryOnResolved, timeoutWarning]
   );
 
   const pickPersonImage = useCallback(async () => {
@@ -351,7 +366,7 @@ export const TryOnScreen: React.FC = () => {
               <Text style={styles.headerTitle}>AI 虚拟试衣</Text>
               <Text style={styles.headerSubtitle}>上传照片即可体验黑科技试衣效果</Text>
               <View style={styles.headerBadge}>
-                <Ionicons name="flash" size={14} color="#FFFFFF" />
+                <Ionicons name="flash" size={14} color={DesignTokens.colors.text.inverse} />
                 <Text style={styles.headerBadgeText}>AI 驱动</Text>
               </View>
             </View>
@@ -380,7 +395,7 @@ export const TryOnScreen: React.FC = () => {
               <>
                 <Image source={{ uri: personImage }} style={styles.previewImage} />
                 <TouchableOpacity style={styles.changeButton} disabled={isProcessing}>
-                  <Ionicons name="camera-outline" size={16} color="#FFFFFF" />
+                  <Ionicons name="camera-outline" size={16} color={DesignTokens.colors.text.inverse} />
                   <Text style={styles.changeButtonText}>更换</Text>
                 </TouchableOpacity>
               </>
@@ -405,9 +420,7 @@ export const TryOnScreen: React.FC = () => {
               <Text style={styles.stepNumberText}>2</Text>
             </View>
             <Text style={styles.sectionTitle}>选择服装图片</Text>
-            {clothingItem && (
-              <Text style={styles.clothingNameHint}>{clothingItem.name}</Text>
-            )}
+            {clothingItem && <Text style={styles.clothingNameHint}>{clothingItem.name}</Text>}
           </View>
 
           <TouchableOpacity
@@ -420,7 +433,7 @@ export const TryOnScreen: React.FC = () => {
               <>
                 <Image source={{ uri: clothingImage }} style={styles.previewImage} />
                 <TouchableOpacity style={styles.changeButton} disabled={isProcessing}>
-                  <Ionicons name="images-outline" size={16} color="#FFFFFF" />
+                  <Ionicons name="images-outline" size={16} color={DesignTokens.colors.text.inverse} />
                   <Text style={styles.changeButtonText}>更换</Text>
                 </TouchableOpacity>
               </>
@@ -441,7 +454,7 @@ export const TryOnScreen: React.FC = () => {
       <Animated.View entering={FadeInUp.delay(400).springify()}>
         {phase === "failed" ? (
           <TouchableOpacity style={styles.retryButton} onPress={handleRetry} activeOpacity={0.8}>
-            <Ionicons name="refresh" size={20} color="#FFFFFF" />
+            <Ionicons name="refresh" size={20} color={DesignTokens.colors.text.inverse} />
             <Text style={styles.buttonText}>重试</Text>
           </TouchableOpacity>
         ) : (
@@ -453,31 +466,33 @@ export const TryOnScreen: React.FC = () => {
           >
             {isProcessing ? (
               <View style={styles.processingContent}>
-                <ActivityIndicator size="small" color="#FFFFFF" />
+                <ActivityIndicator size="small" color={DesignTokens.colors.text.inverse} />
                 <Text style={styles.buttonText}>
                   {phaseLabel[phase]} {progress > 0 ? `${Math.round(progress)}%` : ""}
                 </Text>
               </View>
             ) : (
               <>
-                <Ionicons name="sparkles" size={20} color="#FFFFFF" />
+                <Ionicons name="sparkles" size={20} color={DesignTokens.colors.text.inverse} />
                 <Text style={styles.buttonText}>开始 AI 试衣</Text>
-                <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
+                <Ionicons name="arrow-forward" size={18} color={DesignTokens.colors.text.inverse} />
               </>
             )}
           </TouchableOpacity>
         )}
       </Animated.View>
 
-      {/* ========== 进度条 ========== */}
+      {/* ========== 进度可视化 ========== */}
       {isProcessing && (
         <Animated.View entering={FadeInUp.duration(300)}>
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBarBg}>
-              <Animated.View style={[styles.progressBarFill, { width: `${progress}%` }]} />
-            </View>
-            <Text style={styles.progressText}>{Math.round(progress)}%</Text>
-          </View>
+          <TryOnProgress
+            currentStep={
+              phase === "uploading" ? 0 :
+              phase === "queued" ? 1 :
+              phase === "processing" ? 2 : -1
+            }
+            progress={progress / 100}
+          />
           <View style={styles.tipContainer}>
             <Ionicons name="bulb-outline" size={16} color={colors.warmPrimary.coral[500]} />
             <Text style={styles.tipText}>{STYLE_TIPS[currentTip]}</Text>
@@ -524,8 +539,10 @@ export const TryOnScreen: React.FC = () => {
 
               <View style={[styles.comparisonCard, styles.comparisonCardAfter]}>
                 <View style={[styles.comparisonLabel, styles.comparisonLabelAfter]}>
-                  <Ionicons name="sparkles" size={12} color="#FFFFFF" />
-                  <Text style={[styles.comparisonLabelText, { color: "#FFFFFF" }]}>AI 试衣效果</Text>
+                  <Ionicons name="sparkles" size={12} color={DesignTokens.colors.text.inverse} />
+                  <Text style={[styles.comparisonLabelText, { color: DesignTokens.colors.text.inverse }]}>
+                    AI 试衣效果
+                  </Text>
                 </View>
                 <Image
                   source={{
@@ -538,11 +555,15 @@ export const TryOnScreen: React.FC = () => {
 
             <View style={styles.actionButtons}>
               <TouchableOpacity style={styles.actionButtonSecondary} onPress={handleShare}>
-                <Ionicons name="share-social-outline" size={20} color={colors.warmPrimary.ocean[700]} />
+                <Ionicons
+                  name="share-social-outline"
+                  size={20}
+                  color={colors.warmPrimary.ocean[700]}
+                />
                 <Text style={styles.actionButtonTextSecondary}>分享结果</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionButtonPrimary} onPress={handleSaveToAlbum}>
-                <Ionicons name="download-outline" size={20} color="#FFFFFF" />
+                <Ionicons name="download-outline" size={20} color={DesignTokens.colors.text.inverse} />
                 <Text style={styles.actionButtonTextPrimary}>保存到相册</Text>
               </TouchableOpacity>
             </View>
@@ -584,8 +605,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: typography.fontSize["2xl"],
-    fontWeight: typography.fontWeight.bold as any,
-    color: "#FFFFFF",
+    fontWeight: typography.fontWeight.bold,
+    color: DesignTokens.colors.text.inverse,
     marginBottom: 8,
   },
   headerSubtitle: {
@@ -605,8 +626,8 @@ const styles = StyleSheet.create({
   },
   headerBadgeText: {
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.bold as any,
-    color: "#FFFFFF",
+    fontWeight: typography.fontWeight.bold,
+    color: DesignTokens.colors.text.inverse,
     marginLeft: 6,
   },
 
@@ -629,18 +650,18 @@ const styles = StyleSheet.create({
   },
   stepNumberText: {
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.bold as any,
-    color: "#FFFFFF",
+    fontWeight: typography.fontWeight.bold,
+    color: DesignTokens.colors.text.inverse,
   },
   sectionTitle: {
     fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold as any,
+    fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[900],
   },
   clothingNameHint: {
     fontSize: typography.fontSize.sm,
     color: colors.warmPrimary.ocean[600],
-    fontWeight: typography.fontWeight.medium as any,
+    fontWeight: typography.fontWeight.medium,
   },
 
   imagePicker: {
@@ -673,7 +694,7 @@ const styles = StyleSheet.create({
   },
   placeholderTitle: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold as any,
+    fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[700],
     marginTop: 10,
   },
@@ -702,8 +723,8 @@ const styles = StyleSheet.create({
   },
   changeButtonText: {
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.semibold as any,
-    color: "#FFFFFF",
+    fontWeight: typography.fontWeight.semibold,
+    color: DesignTokens.colors.text.inverse,
   },
 
   button: {
@@ -722,8 +743,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold as any,
-    color: "#FFFFFF",
+    fontWeight: typography.fontWeight.bold,
+    color: DesignTokens.colors.text.inverse,
   },
   processingContent: {
     flexDirection: "row",
@@ -762,7 +783,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.bold as any,
+    fontWeight: typography.fontWeight.bold,
     color: colors.warmPrimary.mint[600],
   },
 
@@ -827,7 +848,7 @@ const styles = StyleSheet.create({
   },
   resultTitle: {
     fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.bold as any,
+    fontWeight: typography.fontWeight.bold,
     color: colors.neutral[900],
   },
 
@@ -860,7 +881,7 @@ const styles = StyleSheet.create({
   },
   comparisonLabelText: {
     fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.semibold as any,
+    fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[700],
   },
   comparisonImage: {
@@ -895,7 +916,7 @@ const styles = StyleSheet.create({
   },
   actionButtonTextSecondary: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold as any,
+    fontWeight: typography.fontWeight.semibold,
     color: colors.warmPrimary.ocean[700],
   },
   actionButtonPrimary: {
@@ -911,8 +932,8 @@ const styles = StyleSheet.create({
   },
   actionButtonTextPrimary: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold as any,
-    color: "#FFFFFF",
+    fontWeight: typography.fontWeight.semibold,
+    color: DesignTokens.colors.text.inverse,
   },
   tryMoreButton: {
     flexDirection: "row",
@@ -928,7 +949,7 @@ const styles = StyleSheet.create({
   },
   tryMoreButtonText: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold as any,
+    fontWeight: typography.fontWeight.semibold,
     color: colors.brand.warmPrimary,
   },
 });

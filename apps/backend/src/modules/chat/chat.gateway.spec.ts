@@ -1,13 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { JwtService } from '@nestjs/jwt';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { PrismaService } from '../../common/prisma/prisma.service';
+import { CHAT_EVENTS } from '../ws/events';
+import { EventBusService } from '../ws/services/event-bus.service';
 
 import { ChatGateway } from './chat.gateway';
 import { ChatService } from './chat.service';
-import { PrismaService } from '../../common/prisma/prisma.service';
-import { EventBusService } from '../ws/services/event-bus.service';
-import { CHAT_EVENTS } from '../ws/events';
 import { SenderTypeDto, MessageTypeDto } from './dto';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,8 +52,8 @@ describe('ChatGateway', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn((key: string) => {
-              if (key === 'JWT_SECRET') return 'test-jwt-secret';
-              if (key === 'REDIS_URL') return 'redis://localhost:6379';
+              if (key === 'JWT_SECRET') {return 'test-jwt-secret';}
+              if (key === 'REDIS_URL') {return 'redis://localhost:6379';}
               return null;
             }),
           },

@@ -1,18 +1,18 @@
-import { Platform, PermissionsAndroid } from 'react-native';
+import { Platform, PermissionsAndroid } from "react-native";
 
 export const RECORDING_OPTIONS_PRESET = {
   HIGH_QUALITY: {
     android: {
-      extension: '.m4a',
-      outputFormat: 'mpeg4' as const,
-      audioEncoding: 'aac' as const,
+      extension: ".m4a",
+      outputFormat: "mpeg4" as const,
+      audioEncoding: "aac" as const,
       sampleRate: 44100,
       numberOfChannels: 2,
       bitRate: 128000,
     },
     ios: {
-      extension: '.m4a',
-      audioQuality: 'max' as const,
+      extension: ".m4a",
+      audioQuality: "max" as const,
       sampleRate: 44100,
       numberOfChannels: 2,
       bitRate: 128000,
@@ -21,22 +21,22 @@ export const RECORDING_OPTIONS_PRESET = {
       linearPCMIsFloat: false,
     },
     web: {
-      mimeType: 'audio/webm',
+      mimeType: "audio/webm",
       bitsPerSecond: 128000,
     },
   },
   LOW_QUALITY: {
     android: {
-      extension: '.m4a',
-      outputFormat: 'mpeg4' as const,
-      audioEncoding: 'aac' as const,
+      extension: ".m4a",
+      outputFormat: "mpeg4" as const,
+      audioEncoding: "aac" as const,
       sampleRate: 22050,
       numberOfChannels: 1,
       bitRate: 64000,
     },
     ios: {
-      extension: '.m4a',
-      audioQuality: 'min' as const,
+      extension: ".m4a",
+      audioQuality: "min" as const,
       sampleRate: 22050,
       numberOfChannels: 1,
       bitRate: 64000,
@@ -45,7 +45,7 @@ export const RECORDING_OPTIONS_PRESET = {
       linearPCMIsFloat: false,
     },
     web: {
-      mimeType: 'audio/webm',
+      mimeType: "audio/webm",
       bitsPerSecond: 64000,
     },
   },
@@ -54,15 +54,15 @@ export const RECORDING_OPTIONS_PRESET = {
 export interface RecordingOptions {
   android?: {
     extension?: string;
-    outputFormat?: 'mpeg4' | 'amr_nb' | 'amr_wb' | 'ogg';
-    audioEncoding?: 'aac' | 'amr_nb' | 'amr_wb' | 'opus';
+    outputFormat?: "mpeg4" | "amr_nb" | "amr_wb" | "ogg";
+    audioEncoding?: "aac" | "amr_nb" | "amr_wb" | "opus";
     sampleRate?: number;
     numberOfChannels?: number;
     bitRate?: number;
   };
   ios?: {
     extension?: string;
-    audioQuality?: 'min' | 'low' | 'medium' | 'high' | 'max';
+    audioQuality?: "min" | "low" | "medium" | "high" | "max";
     sampleRate?: number;
     numberOfChannels?: number;
     bitRate?: number;
@@ -110,7 +110,7 @@ export class Recording {
     return { recording };
   }
 
-  async prepareToRecordAsync(options: RecordingOptions): Promise<void> {
+  async prepareToRecordAsync(_options: RecordingOptions): Promise<void> {
     this._uri = null;
     this._isRecording = false;
   }
@@ -146,12 +146,15 @@ interface Asset {
 
 export class Sound {
   static async createAsync(
-    source: SoundSource,
-    initialStatus?: Partial<SoundStatus>,
-    onPlaybackStatusUpdate?: SoundStatusCallback
+    _source: SoundSource,
+    _initialStatus?: Partial<SoundStatus>,
+    _onPlaybackStatusUpdate?: SoundStatusCallback
   ): Promise<{ sound: Sound; status: SoundStatus }> {
     const sound = new Sound();
-    return { sound, status: { isLoaded: true, isPlaying: false, durationMillis: 0, positionMillis: 0 } };
+    return {
+      sound,
+      status: { isLoaded: true, isPlaying: false, durationMillis: 0, positionMillis: 0 },
+    };
   }
 
   async playAsync(): Promise<void> {}
@@ -162,35 +165,35 @@ export class Sound {
 
   async unloadAsync(): Promise<void> {}
 
-  async setStatusAsync(status: Partial<SoundStatus>): Promise<void> {}
+  async setStatusAsync(_status: Partial<SoundStatus>): Promise<void> {}
 
   async getStatusAsync(): Promise<SoundStatus> {
     return { isLoaded: true, isPlaying: false, durationMillis: 0, positionMillis: 0 };
   }
 
-  setOnPlaybackStatusUpdate(callback: SoundStatusCallback | null): void {}
+  setOnPlaybackStatusUpdate(_callback: SoundStatusCallback | null): void {}
 }
 
 export const Audio = {
   Recording,
   Sound,
   RecordingOptionsPresets: RECORDING_OPTIONS_PRESET,
-  
+
   async requestPermissionsAsync(): Promise<{ status: string }> {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === "android") {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.RECORD_AUDIO
         );
-        return { status: granted === PermissionsAndroid.RESULTS.GRANTED ? 'granted' : 'denied' };
+        return { status: granted === PermissionsAndroid.RESULTS.GRANTED ? "granted" : "denied" };
       } catch {
-        return { status: 'denied' };
+        return { status: "denied" };
       }
     }
-    return { status: 'granted' };
+    return { status: "granted" };
   },
 
-  async setAudioModeAsync(mode: {
+  async setAudioModeAsync(_mode: {
     allowsRecordingIOS?: boolean;
     playsInSilentModeIOS?: boolean;
   }): Promise<void> {},

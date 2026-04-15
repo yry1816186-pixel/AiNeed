@@ -8,11 +8,6 @@ import {
   normalizePaginationParams,
 } from "../../common/types/api-response.types";
 import { OnboardingService } from "../onboarding/onboarding.service";
-
-import { QuestionSelectorService, QuizQuestionWithMeta, SelectedImageWithMeta, QuizImageMeta, QUESTION_IMAGE_META_MAP } from "./services/question-selector";
-import { ColorDeriverService } from "./services/color-deriver";
-import { StyleKeywordExtractorService } from "./services/style-keyword-extractor";
-import { ColorDerivationEngine } from "./services/color-derivation.service";
 import { ProfileEventEmitter } from "../profile/services/profile-event-emitter.service";
 
 import {
@@ -26,6 +21,12 @@ import {
   StyleQuizQueryDto,
   QuizQuestionQueryDto,
 } from "./dto/style-quiz.dto";
+import { ColorDerivationEngine } from "./services/color-derivation.service";
+import { ColorDeriverService } from "./services/color-deriver";
+import { QuestionSelectorService, QuizQuestionWithMeta, SelectedImageWithMeta, QuizImageMeta, QUESTION_IMAGE_META_MAP } from "./services/question-selector";
+import { StyleKeywordExtractorService } from "./services/style-keyword-extractor";
+
+
 
 @Injectable()
 export class StyleQuizService {
@@ -498,13 +499,13 @@ export class StyleQuizService {
 
     for (const answer of answers) {
       const question = quiz.questions.find((q) => q.id === answer.questionId);
-      if (!question || answer.selectedImageIndex === null || answer.selectedImageIndex === undefined) continue;
+      if (!question || answer.selectedImageIndex === null || answer.selectedImageIndex === undefined) {continue;}
 
       const imageMetas = QUESTION_IMAGE_META_MAP?.[question.id];
-      if (!imageMetas) continue;
+      if (!imageMetas) {continue;}
 
       const imageMeta = imageMetas.find((m) => m.index === answer.selectedImageIndex);
-      if (!imageMeta) continue;
+      if (!imageMeta) {continue;}
 
       selectedImages.push({
         questionId: answer.questionId,
@@ -527,7 +528,7 @@ export class StyleQuizService {
 
       for (const answer of answers) {
         const question = quiz.questions.find((q) => q.id === answer.questionId);
-        if (!question) continue;
+        if (!question) {continue;}
 
         const dim = question.dimension;
 

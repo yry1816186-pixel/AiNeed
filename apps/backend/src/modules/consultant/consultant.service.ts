@@ -207,15 +207,15 @@ export class ConsultantService {
 
     const data: Prisma.ConsultantProfileUpdateInput = {};
 
-    if (dto.studioName !== undefined) data.studioName = dto.studioName;
-    if (dto.specialties !== undefined) data.specialties = asJson(dto.specialties);
-    if (dto.yearsOfExperience !== undefined) data.yearsOfExperience = dto.yearsOfExperience;
-    if (dto.certifications !== undefined) data.certifications = asJson(dto.certifications);
-    if (dto.portfolioCases !== undefined) data.portfolioCases = asJson(dto.portfolioCases);
-    if (dto.bio !== undefined) data.bio = dto.bio;
-    if (dto.avatar !== undefined) data.avatar = dto.avatar;
+    if (dto.studioName !== undefined) {data.studioName = dto.studioName;}
+    if (dto.specialties !== undefined) {data.specialties = asJson(dto.specialties);}
+    if (dto.yearsOfExperience !== undefined) {data.yearsOfExperience = dto.yearsOfExperience;}
+    if (dto.certifications !== undefined) {data.certifications = asJson(dto.certifications);}
+    if (dto.portfolioCases !== undefined) {data.portfolioCases = asJson(dto.portfolioCases);}
+    if (dto.bio !== undefined) {data.bio = dto.bio;}
+    if (dto.avatar !== undefined) {data.avatar = dto.avatar;}
     // status 仅管理员可修改，此处暂允许顾问自行设置 inactive
-    if (dto.status === ConsultantStatusDto.INACTIVE) data.status = "inactive";
+    if (dto.status === ConsultantStatusDto.INACTIVE) {data.status = "inactive";}
 
     return this.prisma.consultantProfile.update({
       where: { id: profileId },
@@ -307,9 +307,9 @@ export class ConsultantService {
 
     const where: Prisma.ServiceBookingWhereInput = { userId };
 
-    if (status) where.status = status;
-    if (serviceType) where.serviceType = serviceType;
-    if (consultantId) where.consultantId = consultantId;
+    if (status) {where.status = status;}
+    if (serviceType) {where.serviceType = serviceType;}
+    if (consultantId) {where.consultantId = consultantId;}
 
     const [bookings, total] = await Promise.all([
       this.prisma.serviceBooking.findMany({
@@ -464,7 +464,7 @@ export class ConsultantService {
         const consultant = await this.prisma.consultantProfile.findUnique({
           where: { id: booking.consultantId },
         });
-        if (!consultant || consultant.userId !== userId) {
+        if (consultant?.userId !== userId) {
           throw new ForbiddenException("仅顾问可更新此预约状态");
         }
         data.status = dto.status;
@@ -511,8 +511,8 @@ export class ConsultantService {
 
     const where: Prisma.ServiceBookingWhereInput = { consultantId };
 
-    if (status) where.status = status;
-    if (serviceType) where.serviceType = serviceType;
+    if (status) {where.status = status;}
+    if (serviceType) {where.serviceType = serviceType;}
 
     const [bookings, total] = await Promise.all([
       this.prisma.serviceBooking.findMany({
@@ -598,7 +598,7 @@ export class ConsultantService {
     const booking = await this.prisma.serviceBooking.findUnique({
       where: { id: bookingId },
     });
-    if (!booking) throw new NotFoundException("预约不存在");
+    if (!booking) {throw new NotFoundException("预约不存在");}
 
     if (booking.depositPaidAt) {
       this.logger.warn(`预约 ${bookingId} 定金已确认，跳过重复操作`);
@@ -621,7 +621,7 @@ export class ConsultantService {
     const booking = await this.prisma.serviceBooking.findUnique({
       where: { id: bookingId },
     });
-    if (!booking) throw new NotFoundException("预约不存在");
+    if (!booking) {throw new NotFoundException("预约不存在");}
 
     if (booking.finalPaidAt) {
       this.logger.warn(`预约 ${bookingId} 尾款已确认，跳过重复操作`);
@@ -671,9 +671,9 @@ export class ConsultantService {
     const consultant = await this.prisma.consultantProfile.findUnique({
       where: { id: consultantId },
     });
-    if (!consultant) throw new NotFoundException("顾问不存在");
+    if (!consultant) {throw new NotFoundException("顾问不存在");}
     if (consultant.userId !== userId)
-      throw new ForbiddenException("无权查看此顾问收入");
+      {throw new ForbiddenException("无权查看此顾问收入");}
 
     const [earnings, totalEarned, pendingAmount, settledAmount] =
       await Promise.all([
@@ -722,9 +722,9 @@ export class ConsultantService {
     const consultant = await this.prisma.consultantProfile.findUnique({
       where: { id: consultantId },
     });
-    if (!consultant) throw new NotFoundException("顾问不存在");
+    if (!consultant) {throw new NotFoundException("顾问不存在");}
     if (consultant.userId !== userId)
-      throw new ForbiddenException("无权操作");
+      {throw new ForbiddenException("无权操作");}
 
     // 查询可提现余额（pending 状态的收入）
     const pendingAmount = await this.prisma.consultantEarning.aggregate({
@@ -776,12 +776,12 @@ export class ConsultantService {
       where: { id: profileId },
     });
 
-    if (!profile) throw new NotFoundException("顾问档案不存在");
+    if (!profile) {throw new NotFoundException("顾问档案不存在");}
     if (profile.status !== "pending")
-      throw new BadRequestException("仅待审核档案可审核");
+      {throw new BadRequestException("仅待审核档案可审核");}
 
     const adminUser = await this.prisma.user.findUnique({ where: { id: adminUserId } });
-    if (!adminUser || adminUser.role !== "admin") {
+    if (adminUser?.role !== "admin") {
       throw new ForbiddenException("仅管理员可审核顾问档案");
     }
 
@@ -803,7 +803,7 @@ export class ConsultantService {
       where: { id: consultantId },
     });
 
-    if (!consultant) throw new NotFoundException("顾问不存在");
+    if (!consultant) {throw new NotFoundException("顾问不存在");}
 
     const completedBookings = await this.prisma.serviceBooking.findMany({
       where: {

@@ -4,13 +4,13 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { PhotoType, AnalysisStatus } from "@prisma/client";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
-import { StorageService } from "../../common/storage/storage.service";
 import { MalwareScannerService } from "../../common/security/malware-scanner.service";
+import { StorageService } from "../../common/storage/storage.service";
+import { OnboardingService } from "../onboarding/onboarding.service";
+import { QueueService } from "../queue/queue.service";
 
 import { PhotosService } from "./photos.service";
 import { AiAnalysisService } from "./services/ai-analysis.service";
-import { OnboardingService } from "../onboarding/onboarding.service";
-import { QueueService } from "../queue/queue.service";
 
 import "multer"; // 引入 Express.Multer.File 类型声明
 

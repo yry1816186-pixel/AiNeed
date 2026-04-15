@@ -123,7 +123,7 @@ async def lifespan(app: FastAPI):
         print(f"风格理解服务初始化失败: {e}")
     
     try:
-        from ml.services.intelligent_style_recommender import StyleRecommendationAPI
+        from ml.services.stylist.intelligent_style_recommender import StyleRecommendationAPI
         recommender_service = StyleRecommendationAPI()
         print("智能推荐服务初始化完成")
     except Exception as e:

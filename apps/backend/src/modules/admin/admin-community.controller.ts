@@ -13,10 +13,10 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 import { Prisma } from "@prisma/client";
 
-import { AuthGuard } from "../auth/guards/auth.guard";
 import { AdminGuard } from "../../common/guards/admin.guard";
-import { RequestWithUser } from "../../common/types/common.types";
 import { PrismaService } from "../../common/prisma/prisma.service";
+import { RequestWithUser } from "../../common/types/common.types";
+import { AuthGuard } from "../auth/guards/auth.guard";
 import { ContentModerationService } from "../community/content-moderation.service";
 
 import {

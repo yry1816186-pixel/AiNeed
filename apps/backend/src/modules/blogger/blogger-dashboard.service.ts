@@ -101,7 +101,7 @@ export class BloggerDashboardService {
     return user?.followerCount ?? 0;
   }
 
-  private async calculateRevenue(userId: string, since: Date): Promise<number> {
+  private async calculateRevenue(userId: string, _since: Date): Promise<number> {
     const products = await this.prisma.bloggerProduct.findMany({
       where: { bloggerId: userId },
       select: { price: true, salesCount: true, createdAt: true },

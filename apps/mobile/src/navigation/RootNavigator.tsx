@@ -1,21 +1,21 @@
-import React, { useCallback, useRef } from 'react';
-import { StyleSheet } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Ionicons } from '../polyfills/expo-vector-icons';
-import type { MainTabParamList, RootStackParamList, GuardType } from './types';
-import { TAB_LABELS, GUARDED_ROUTES } from './types';
-import { AuthNavigator } from './AuthNavigator';
+﻿import React, { useCallback, useRef } from "react";
+import { StyleSheet } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Ionicons } from "../polyfills/expo-vector-icons";
+import type { MainTabParamList, RootStackParamList, GuardType } from "./types";
+import { TAB_LABELS, GUARDED_ROUTES } from "./types";
+import { AuthNavigator } from "./AuthNavigator";
 import {
   HomeStackNavigator,
   StylistStackNavigator,
   TryOnStackNavigator,
   CommunityStackNavigator,
   ProfileStackNavigator,
-} from './MainStackNavigator';
-import { useAuthStore, useCartStore } from '../stores/index';
-import { theme } from '../theme';
-import { navigateAuth, navigateProfile, navigationRef } from './navigationService';
+} from "./MainStackNavigator";
+import { useAuthStore, useCartStore } from "../stores/index";
+import { theme } from '../design-system/theme';
+import { navigateAuth, navigateProfile, navigationRef } from "./navigationService";
 
 // ============================================================
 // Main Tab Navigator (5 Tabs)
@@ -29,23 +29,23 @@ export function MainTabNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'home';
+          let iconName: keyof typeof Ionicons.glyphMap = "home";
 
           switch (route.name) {
-            case 'Home':
-              iconName = focused ? 'home' : 'home-outline';
+            case "Home":
+              iconName = focused ? "home" : "home-outline";
               break;
-            case 'Stylist':
-              iconName = focused ? 'color-wand' : 'color-wand-outline';
+            case "Stylist":
+              iconName = focused ? "color-wand" : "color-wand-outline";
               break;
-            case 'TryOn':
-              iconName = focused ? 'shirt' : 'shirt-outline';
+            case "TryOn":
+              iconName = focused ? "shirt" : "shirt-outline";
               break;
-            case 'Community':
-              iconName = focused ? 'people' : 'people-outline';
+            case "Community":
+              iconName = focused ? "people" : "people-outline";
               break;
-            case 'Profile':
-              iconName = focused ? 'person' : 'person-outline';
+            case "Profile":
+              iconName = focused ? "person" : "person-outline";
               break;
           }
 
@@ -64,7 +64,7 @@ export function MainTabNavigator() {
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
+          fontWeight: "600",
           letterSpacing: 0.3,
         },
       })}
@@ -107,25 +107,54 @@ export function MainTabNavigator() {
 
 // Protected routes that require authentication
 const AUTH_PROTECTED_ROUTES = new Set([
-  'AiStylistChat', 'VirtualTryOn', 'Wardrobe', 'Payment',
-  'OrderDetail', 'Cart', 'Booking', 'AdvisorProfile', 'Chat',
-  'Checkout', 'Orders', 'AddClothing', 'Favorites', 'ProfileEdit',
-  'SharePoster', 'Subscription', 'OutfitPlan', 'ChatHistory',
-  'TryOnResult', 'TryOnHistory', 'PostCreate', 'CustomDesign',
-  'CustomEditor', 'Brand', 'AdvisorList', 'Notifications',
-  'SessionCalendar', 'InspirationWardrobe', 'BloggerDashboard',
-  'StyleQuiz', 'Settings', 'NotificationSettings',
+  "AiStylistChat",
+  "VirtualTryOn",
+  "Wardrobe",
+  "Payment",
+  "OrderDetail",
+  "Cart",
+  "Booking",
+  "AdvisorProfile",
+  "Chat",
+  "Checkout",
+  "Orders",
+  "AddClothing",
+  "Favorites",
+  "ProfileEdit",
+  "SharePoster",
+  "Subscription",
+  "OutfitPlan",
+  "ChatHistory",
+  "TryOnResult",
+  "TryOnHistory",
+  "PostCreate",
+  "CustomDesign",
+  "CustomEditor",
+  "Brand",
+  "AdvisorList",
+  "Notifications",
+  "SessionCalendar",
+  "InspirationWardrobe",
+  "BloggerDashboard",
+  "StyleQuiz",
+  "Settings",
+  "NotificationSettings",
 ]);
 
 // Routes that require profile completion (onboarding)
-const PROFILE_REQUIRED_ROUTES = new Set([
-  'AiStylistChat', 'VirtualTryOn', 'AIStylist',
-]);
+const PROFILE_REQUIRED_ROUTES = new Set(["AiStylistChat", "VirtualTryOn", "AIStylist"]);
 
 // Public routes that never require auth
 const PUBLIC_ROUTES = new Set([
-  'HomeFeed', 'Search', 'Product', 'Login', 'Register',
-  'CommunityFeed', 'PostDetail', 'Onboarding', 'PhoneLogin',
+  "HomeFeed",
+  "Search",
+  "Product",
+  "Login",
+  "Register",
+  "CommunityFeed",
+  "PostDetail",
+  "Onboarding",
+  "PhoneLogin",
 ]);
 
 /**
@@ -135,27 +164,33 @@ const PUBLIC_ROUTES = new Set([
 function checkNavigationGuard(
   routeName: string,
   isAuthenticated: boolean,
-  onboardingCompleted: boolean,
+  onboardingCompleted: boolean
 ): GuardType | null {
   // Public routes are always accessible
-  if (PUBLIC_ROUTES.has(routeName)) return null;
+  if (PUBLIC_ROUTES.has(routeName)) {
+    return null;
+  }
 
   // Check auth guard
   if (AUTH_PROTECTED_ROUTES.has(routeName) && !isAuthenticated) {
-    return 'auth';
+    return "auth";
   }
 
   // Check profile guard
   if (PROFILE_REQUIRED_ROUTES.has(routeName) && isAuthenticated && !onboardingCompleted) {
-    return 'profile';
+    return "profile";
   }
 
   // Also check GUARDED_ROUTES config for consistency
   const guardConfig = GUARDED_ROUTES.find((g) => g.route === routeName);
   if (guardConfig) {
     for (const guard of guardConfig.guards) {
-      if (guard === 'auth' && !isAuthenticated) return 'auth';
-      if (guard === 'profile' && (!isAuthenticated || !onboardingCompleted)) return 'profile';
+      if (guard === "auth" && !isAuthenticated) {
+        return "auth";
+      }
+      if (guard === "profile" && (!isAuthenticated || !onboardingCompleted)) {
+        return "profile";
+      }
       // VipGuard is handled at component level
     }
   }
@@ -168,14 +203,14 @@ function checkNavigationGuard(
  */
 function handleNavigationGuardRedirect(failedGuard: GuardType): void {
   switch (failedGuard) {
-    case 'auth':
-      navigateAuth('Login');
+    case "auth":
+      navigateAuth("Login");
       break;
-    case 'profile':
-      navigateAuth('Onboarding');
+    case "profile":
+      navigateAuth("Onboarding");
       break;
-    case 'vip':
-      navigateProfile('Subscription');
+    case "vip":
+      navigateProfile("Subscription");
       break;
   }
 }
@@ -197,29 +232,37 @@ export function RootNavigator({ isAuthenticated }: RootNavigatorProps) {
   const handleStateChange = useCallback(() => {
     // Get the current route from the navigation tree
     const rootState = navigationRef?.getRootState?.();
-    if (!rootState) return;
+    if (!rootState) {
+      return;
+    }
 
     // Extract the deepest route name from nested navigators
     let currentRouteName: string | undefined;
-    let state = rootState as { routes?: Array<{ name: string; state?: unknown }>; index?: number };
+    let state = rootState as { routes?: { name: string; state?: unknown }[]; index?: number };
 
     while (state?.routes) {
       const idx = state.index ?? 0;
       const route = state.routes[idx];
-      if (!route) break;
+      if (!route) {
+        break;
+      }
       currentRouteName = route.name;
       state = (route.state ?? undefined) as typeof state;
     }
 
-    if (!currentRouteName) return;
+    if (!currentRouteName) {
+      return;
+    }
 
     // Avoid re-checking the same route
-    if (currentRouteName === lastGuardedRouteRef.current) return;
+    if (currentRouteName === lastGuardedRouteRef.current) {
+      return;
+    }
 
     const failedGuard = checkNavigationGuard(
       currentRouteName,
       isAuthenticated,
-      onboardingCompleted,
+      onboardingCompleted
     );
 
     if (failedGuard) {
@@ -234,7 +277,7 @@ export function RootNavigator({ isAuthenticated }: RootNavigatorProps) {
   return (
     <RootStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName={isAuthenticated ? 'MainTabs' : 'Auth'}
+      initialRouteName={isAuthenticated ? "MainTabs" : "Auth"}
       screenListeners={{
         state: handleStateChange,
       }}

@@ -1,19 +1,8 @@
-import React, { useCallback, useRef } from "react";
+﻿import React, { useCallback, useRef } from "react";
 import { StyleSheet, View } from "react-native";
-import {
-  Svg,
-  Rect,
-  Image as SvgImage,
-  Text as SvgText,
-  G,
-  Line,
-} from "react-native-svg";
-import {
-  GestureHandlerRootView,
-  GestureDetector,
-  Gesture,
-} from "react-native-gesture-handler";
-import { theme, Colors } from "../../theme";
+import { Svg, Rect, Image as SvgImage, Text as SvgText, G } from "react-native-svg";
+import { GestureHandlerRootView, GestureDetector, Gesture } from "react-native-gesture-handler";
+import { theme, Colors } from '../design-system/theme';
 import type { DesignLayer, PrintableAreaBounds } from "../../stores/customizationEditorStore";
 
 interface DesignCanvasProps {
@@ -41,51 +30,59 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
     () =>
       Gesture.Pan()
         .onStart(() => {
-          if (!selectedLayerId) return;
+          if (!selectedLayerId) {
+            return;
+          }
           const layer = layers.find((l) => l.id === selectedLayerId);
           if (layer) {
             startRef.current = { x: layer.x, y: layer.y };
           }
         })
         .onUpdate((event) => {
-          if (!selectedLayerId || !template) return;
+          if (!selectedLayerId || !template) {
+            return;
+          }
           const area = template.printableArea;
           const newX = startRef.current.x + event.translationX;
           const newY = startRef.current.y + event.translationY;
 
           const clampedX = Math.max(
             (area.x / 100) * canvasWidth,
-            Math.min(newX, ((area.x + area.width) / 100) * canvasWidth),
+            Math.min(newX, ((area.x + area.width) / 100) * canvasWidth)
           );
           const clampedY = Math.max(
             (area.y / 100) * canvasHeight,
-            Math.min(newY, ((area.y + area.height) / 100) * canvasHeight),
+            Math.min(newY, ((area.y + area.height) / 100) * canvasHeight)
           );
 
           onLayerUpdate(selectedLayerId, { x: clampedX, y: clampedY });
         })
         .enabled(!!selectedLayerId),
-    [selectedLayerId, layers, template, canvasWidth, canvasHeight, onLayerUpdate],
+    [selectedLayerId, layers, template, canvasWidth, canvasHeight, onLayerUpdate]
   );
 
   const pinchGesture = useCallback(
     () =>
       Gesture.Pinch()
         .onUpdate((event) => {
-          if (!selectedLayerId) return;
+          if (!selectedLayerId) {
+            return;
+          }
           onLayerUpdate(selectedLayerId, {
             scale: Math.max(0.1, Math.min(5, event.scale)),
           });
         })
         .enabled(!!selectedLayerId),
-    [selectedLayerId, onLayerUpdate],
+    [selectedLayerId, onLayerUpdate]
   );
 
   const rotationGesture = useCallback(
     () =>
       Gesture.Rotation()
         .onUpdate((event) => {
-          if (!selectedLayerId) return;
+          if (!selectedLayerId) {
+            return;
+          }
           const layer = layers.find((l) => l.id === selectedLayerId);
           if (layer) {
             onLayerUpdate(selectedLayerId, {
@@ -94,17 +91,15 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
           }
         })
         .enabled(!!selectedLayerId),
-    [selectedLayerId, layers, onLayerUpdate],
+    [selectedLayerId, layers, onLayerUpdate]
   );
 
-  const composedGesture = Gesture.Simultaneous(
-    panGesture(),
-    pinchGesture(),
-    rotationGesture(),
-  );
+  const composedGesture = Gesture.Simultaneous(panGesture(), pinchGesture(), rotationGesture());
 
   const renderPrintableArea = () => {
-    if (!template) return null;
+    if (!template) {
+      return null;
+    }
     const area = template.printableArea;
     return (
       <Rect
@@ -166,7 +161,9 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
     return (
       <G
         key={layer.id}
-        transform={`translate(${transformProps.x}, ${transformProps.y}) scale(${transformProps.scale}) rotate(${transformProps.rotation}, ${layer.width / 2}, ${layer.height / 2})`}
+        transform={`translate(${transformProps.x}, ${transformProps.y}) scale(${
+          transformProps.scale
+        }) rotate(${transformProps.rotation}, ${layer.width / 2}, ${layer.height / 2})`}
       >
         {layerElement}
         {isSelected && (
@@ -195,13 +192,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
             viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
           >
             {/* Background */}
-            <Rect
-              x={0}
-              y={0}
-              width={canvasWidth}
-              height={canvasHeight}
-              fill="#F5F5F5"
-            />
+            <Rect x={0} y={0} width={canvasWidth} height={canvasHeight} fill="#F5F5F5" />
             {/* Printable area indicator */}
             {renderPrintableArea()}
             {/* Layers */}

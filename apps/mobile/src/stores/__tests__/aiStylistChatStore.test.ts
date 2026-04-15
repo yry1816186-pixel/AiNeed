@@ -45,12 +45,8 @@ describe("useAiStylistChatStore", () => {
       useAiStylistChatStore.getState().addMessage(msg1);
       useAiStylistChatStore.getState().addMessage(msg2);
       expect(useAiStylistChatStore.getState().messages).toHaveLength(2);
-      expect(useAiStylistChatStore.getState().messages[0].content).toBe(
-        "第一条",
-      );
-      expect(useAiStylistChatStore.getState().messages[1].content).toBe(
-        "第二条",
-      );
+      expect(useAiStylistChatStore.getState().messages[0].content).toBe("第一条");
+      expect(useAiStylistChatStore.getState().messages[1].content).toBe("第二条");
     });
 
     test("应支持添加 user 角色消息", () => {
@@ -65,9 +61,7 @@ describe("useAiStylistChatStore", () => {
         content: "好的，为您推荐...",
       });
       useAiStylistChatStore.getState().addMessage(message);
-      expect(useAiStylistChatStore.getState().messages[0].role).toBe(
-        "assistant",
-      );
+      expect(useAiStylistChatStore.getState().messages[0].role).toBe("assistant");
     });
   });
 
@@ -76,10 +70,7 @@ describe("useAiStylistChatStore", () => {
   describe("setMessages", () => {
     test("应替换所有消息", () => {
       useAiStylistChatStore.getState().addMessage(mockMessage({ id: "old" }));
-      const newMessages = [
-        mockMessage({ id: "new-1" }),
-        mockMessage({ id: "new-2" }),
-      ];
+      const newMessages = [mockMessage({ id: "new-1" }), mockMessage({ id: "new-2" })];
       useAiStylistChatStore.getState().setMessages(newMessages);
       expect(useAiStylistChatStore.getState().messages).toEqual(newMessages);
       expect(useAiStylistChatStore.getState().messages).toHaveLength(2);
@@ -96,12 +87,8 @@ describe("useAiStylistChatStore", () => {
 
   describe("clearMessages", () => {
     test("应清空所有消息", () => {
-      useAiStylistChatStore.getState().addMessage(
-        mockMessage({ id: "msg-1" }),
-      );
-      useAiStylistChatStore.getState().addMessage(
-        mockMessage({ id: "msg-2" }),
-      );
+      useAiStylistChatStore.getState().addMessage(mockMessage({ id: "msg-1" }));
+      useAiStylistChatStore.getState().addMessage(mockMessage({ id: "msg-2" }));
       expect(useAiStylistChatStore.getState().messages).toHaveLength(2);
 
       useAiStylistChatStore.getState().clearMessages();

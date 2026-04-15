@@ -14,7 +14,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery }
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
-import { OrderService, CreateOrderDto } from "./order.service";
+import { OrderService, CreateOrderDto, PayOrderDto } from "./order.service";
 
 @ApiTags("orders")
 @ApiBearerAuth()
@@ -41,6 +41,25 @@ export class OrderController {
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 10,
     });
+  }
+
+  @Get("tab/:tab")
+  @ApiOperation({ summary: "按标签页获取订单列表" })
+  @ApiParam({ name: "tab", description: "标签页: all/pending/paid/shipped/completed/refund" })
+  @ApiQuery({ name: "page", required: false, type: Number })
+  @ApiQuery({ name: "limit", required: false, type: Number })
+  async getOrdersByTab(
+    @Request() req: { user: { id: string } },
+    @Param("tab") tab: string,
+    @Query("page") page?: string,
+    @Query("limit") limit?: string,
+  ) {
+    return this.orderService.getOrdersByTab(
+      req.user.id,
+      tab,
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 10,
+    );
   }
 
   @Get(":id")
@@ -78,9 +97,9 @@ export class OrderController {
   async pay(
     @Request() req: { user: { id: string } },
     @Param("id") id: string,
-    @Body() body: { paymentMethod: string },
+    @Body() dto: PayOrderDto,
   ) {
-    return this.orderService.pay(req.user.id, id, body.paymentMethod);
+    return this.orderService.pay(req.user.id, id, dto.paymentMethod);
   }
 
   @Post(":id/cancel")
@@ -148,24 +167,5 @@ export class OrderController {
     @Param("id") id: string,
   ) {
     return this.orderService.softDeleteOrder(req.user.id, id);
-  }
-
-  @Get("tab/:tab")
-  @ApiOperation({ summary: "按标签页获取订单列表" })
-  @ApiParam({ name: "tab", description: "标签页: all/pending/paid/shipped/completed/refund" })
-  @ApiQuery({ name: "page", required: false, type: Number })
-  @ApiQuery({ name: "limit", required: false, type: Number })
-  async getOrdersByTab(
-    @Request() req: { user: { id: string } },
-    @Param("tab") tab: string,
-    @Query("page") page?: string,
-    @Query("limit") limit?: string,
-  ) {
-    return this.orderService.getOrdersByTab(
-      req.user.id,
-      tab,
-      page ? parseInt(page, 10) : 1,
-      limit ? parseInt(limit, 10) : 10,
-    );
   }
 }

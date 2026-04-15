@@ -14,12 +14,12 @@ from datetime import datetime
 import logging
 import torch
 
-from ml.services.style_understanding_service import (
+from ml.services.stylist.style_understanding_service import (
     StyleUnderstandingService,
     StyleAnalysis,
     OutfitSuggestion
 )
-from ml.services.style_vector_index import StyleIndexService, StyleIndexConfig
+from ml.services.stylist.style_vector_index import StyleIndexService, StyleIndexConfig
 from models.fashion_clip_finetune import FashionCLIPInference, FashionCLIPConfig
 from models.pcmf_model import PCMFModel, PCMFConfig, load_pcmf_model
 

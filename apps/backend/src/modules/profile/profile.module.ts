@@ -6,14 +6,14 @@ import { PhotosModule } from "../photos/photos.module";
 import { RecommendationsModule } from "../recommendations/recommendations.module";
 import { ContentSubmodule } from "../recommendations/submodules";
 
+import { PosterController } from "./poster.controller";
 import { ProfileController } from "./profile.controller";
 import { ProfileService } from "./profile.service";
-import { UserProfileService } from "./services/user-profile.service";
 import { PosterGeneratorService } from "./services/poster-generator.service";
 import { ProfileCompletenessService } from "./services/profile-completeness.service";
-import { SharePosterService } from "./services/share-poster.service";
 import { ProfileEventEmitter } from "./services/profile-event-emitter.service";
-import { PosterController } from "./poster.controller";
+import { SharePosterService } from "./services/share-poster.service";
+import { UserProfileService } from "./services/user-profile.service";
 
 @Module({
   imports: [

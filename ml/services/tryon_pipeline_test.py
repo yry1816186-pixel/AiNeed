@@ -10,7 +10,7 @@ import numpy as np
 from unittest.mock import patch, MagicMock
 from dataclasses import asdict
 
-from ml.services.tryon_preprocessor import (
+from ml.services.tryon.tryon_preprocessor import (
     _rgb_to_lab,
     _lab_to_rgb,
     _ciede2000,
@@ -21,8 +21,8 @@ from ml.services.tryon_preprocessor import (
     PreprocessResult,
     TryonPreprocessor,
 )
-from ml.services.tryon_prompt_engine import TryonPromptEngine
-from ml.services.tryon_postprocessor import QualityMetrics
+from ml.services.tryon.tryon_prompt_engine import TryonPromptEngine
+from ml.services.tryon.tryon_postprocessor import QualityMetrics
 
 
 # ===================================================================

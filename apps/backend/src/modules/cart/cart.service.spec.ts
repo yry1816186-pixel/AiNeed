@@ -2,9 +2,9 @@ import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../common/prisma/prisma.service";
+import { CouponService } from "../coupon/coupon.service";
 
 import { CartService } from "./cart.service";
-import { CouponService } from "../coupon/coupon.service";
 
 describe("CartService", () => {
   let service: CartService;

@@ -35,12 +35,11 @@ export const recommendationFeedApi = {
       page,
       pageSize,
     };
-    if (subCategory) queryParams.subCategory = subCategory;
+    if (subCategory) {
+      queryParams.subCategory = subCategory;
+    }
 
-    const response = await apiClient.get<FeedResult>(
-      "/recommendations/feed",
-      queryParams,
-    );
+    const response = await apiClient.get<FeedResult>("/recommendations/feed", queryParams);
     if (response.success && response.data) {
       return response.data;
     }

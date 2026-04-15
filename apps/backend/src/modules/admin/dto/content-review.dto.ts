@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsString,
   IsOptional,
@@ -8,7 +9,6 @@ import {
   Min,
   Max,
 } from "class-validator";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class ReviewQueueQueryDto {
   @ApiPropertyOptional({ description: "页码", default: 1 })

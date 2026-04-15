@@ -1,35 +1,72 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "target": "esnext",
-    "module": "commonjs",
-    "lib": ["es2020", "dom"],
+    "module": "esnext",
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "allowJs": true,
     "jsx": "react-native",
     "noEmit": true,
     "isolatedModules": true,
     "strict": true,
     "skipLibCheck": true,
-    "ignoreDeprecations": "5.0",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@xuno/types": ["../../packages/types/src/index.ts"],
-      "expo-router": ["src/polyfills/expo-router.tsx"],
-      "expo-image-picker": ["src/polyfills/expo-image-picker.ts"],
-      "expo-blur": ["src/polyfills/expo-blur.tsx"],
-      "expo-camera": ["src/polyfills/expo-camera.tsx"],
-      "expo-media-library": ["src/polyfills/expo-media-library.ts"],
-      "expo-file-system": ["src/polyfills/expo-file-system.ts"],
-      "expo-linear-gradient": ["src/polyfills/expo-linear-gradient.tsx"],
-      "@shopify/flash-list": ["src/polyfills/flash-list.tsx"],
-      "react-native-fast-image": ["src/polyfills/react-native-fast-image.tsx"]
+      "@/*": [
+        "./*"
+      ],
+      "@xuno/types": [
+        "../../packages/types/src/index.ts"
+      ],
+      "expo-router": [
+        "src/polyfills/expo-router.tsx"
+      ],
+      "expo-image-picker": [
+        "src/polyfills/expo-image-picker.ts"
+      ],
+      "expo-blur": [
+        "src/polyfills/expo-blur.tsx"
+      ],
+      "expo-camera": [
+        "src/polyfills/expo-camera.tsx"
+      ],
+      "expo-media-library": [
+        "src/polyfills/expo-media-library.ts"
+      ],
+      "expo-file-system": [
+        "src/polyfills/expo-file-system.ts"
+      ],
+      "expo-linear-gradient": [
+        "src/polyfills/expo-linear-gradient.tsx"
+      ],
+      "@shopify/flash-list": [
+        "src/polyfills/flash-list.tsx"
+      ],
+      "react-native-fast-image": [
+        "src/polyfills/react-native-fast-image.tsx"
+      ]
     },
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["index.js", "App.tsx", "**/*.ts", "**/*.tsx", "**/*.d.ts"],
-  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js", "e2e"]
+  "include": [
+    "index.js",
+    "App.tsx",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js",
+    "e2e"
+  ]
 }

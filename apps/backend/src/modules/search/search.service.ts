@@ -4,11 +4,13 @@ import {
   ServiceUnavailableException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import type { ClothingCategory } from "@prisma/client";
 import axios from "axios";
 
 import { allowUnverifiedAiFallbacks } from "../../common/config/runtime-flags";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { QdrantService } from "../recommendations/services/qdrant.service";
+
 import {
   type ClothingItemWhereInput,
   type ClothingItemOrderByWithRelationInput,
@@ -23,7 +25,6 @@ import {
   buildOrderByClause,
   getClothingAttributes,
 } from "./types/search.types";
-import type { ClothingCategory } from "@prisma/client";
 
 @Injectable()
 export class SearchService {
@@ -525,7 +526,7 @@ export class SearchService {
       (where as Record<string, unknown>).tags = { hasSome: styleTags };
     }
 
-    let orderBy: ClothingItemOrderByWithRelationInput;
+    let orderBy: ClothingItemOrderByWithRelationInput | undefined;
 
     if (sortBy === "sales") {
       // For sales sort, fetch items and join with ProductSalesStats
@@ -560,6 +561,7 @@ export class SearchService {
       return { items: sorted, page, limit, total, totalPages: Math.ceil(total / limit), query };
     }
 
+    // eslint-disable-next-line prefer-const
     orderBy = buildOrderByClause("popular");
     const skip = (page - 1) * limit;
 

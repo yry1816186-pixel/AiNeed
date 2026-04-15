@@ -1,6 +1,7 @@
-import { ImageResponseInterceptor } from './image-response.interceptor';
 import { ExecutionContext, CallHandler } from '@nestjs/common';
 import { of } from 'rxjs';
+
+import { ImageResponseInterceptor } from './image-response.interceptor';
 
 describe('ImageResponseInterceptor', () => {
   let interceptor: ImageResponseInterceptor<any>;

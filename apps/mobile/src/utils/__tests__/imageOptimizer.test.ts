@@ -1,8 +1,4 @@
-import {
-  getOptimizedImageUrl,
-  getPlaceholder,
-  getSrcSet,
-} from "../imageOptimizer";
+import { getOptimizedImageUrl, getPlaceholder, getSrcSet } from "../imageOptimizer";
 
 describe("getOptimizedImageUrl", () => {
   it("should return empty string for empty URL", () => {

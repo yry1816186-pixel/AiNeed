@@ -1,11 +1,14 @@
-import { Test } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
-import { PhotoUploadService } from './photo-upload.service';
-import { ImageProcessingService } from '../../../common/services/image-processing.service';
-import { StorageService } from '../../../common/storage/storage.service';
+import { Test } from '@nestjs/testing';
+
+
 import { PrismaService } from '../../../common/prisma/prisma.service';
 import { MalwareScannerService } from '../../../common/security/malware-scanner.service';
+import { ImageProcessingService } from '../../../common/services/image-processing.service';
+import { StorageService } from '../../../common/storage/storage.service';
 import { ImageSizeName } from '../../../common/utils/image-sizes';
+
+import { PhotoUploadService } from './photo-upload.service';
 
 jest.mock('../../../common/security/image-sanitizer', () => ({
   stripExifFromBuffer: jest.fn().mockResolvedValue(Buffer.from('sanitized')),

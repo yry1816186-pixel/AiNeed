@@ -1,20 +1,9 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import Animated, {
-  SlideInRight,
-  SlideOutLeft,
-  Layout,
-} from 'react-native-reanimated';
-import { theme, Colors, Spacing, BorderRadius } from '../../../theme';
-import type { OnboardingFormData } from '../../../stores/onboardingStore';
+﻿import React, { useState } from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from "react-native";
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
+import { theme, Colors, Spacing, BorderRadius } from '../design-system/theme';
+import type { OnboardingFormData } from "../../../stores/onboardingStore";
 
 interface BasicInfoStepProps {
   formData: OnboardingFormData;
@@ -23,13 +12,19 @@ interface BasicInfoStepProps {
   onSkip?: () => void;
 }
 
-const GENDER_OPTIONS: { id: 'male' | 'female' | 'other'; label: string; icon: string }[] = [
-  { id: 'male', label: '男', icon: 'male-outline' },
-  { id: 'female', label: '女', icon: 'female-outline' },
-  { id: 'other', label: '其他', icon: 'person-outline' },
+const GENDER_OPTIONS: { id: "male" | "female" | "other"; label: string; icon: string }[] = [
+  { id: "male", label: "男", icon: "male-outline" },
+  { id: "female", label: "女", icon: "female-outline" },
+  { id: "other", label: "其他", icon: "person-outline" },
 ];
 
-const AGE_RANGES: ('18-24' | '25-30' | '31-40' | '41-50' | '50+')[] = ['18-24', '25-30', '31-40', '41-50', '50+'];
+const AGE_RANGES: ("18-24" | "25-30" | "31-40" | "41-50" | "50+")[] = [
+  "18-24",
+  "25-30",
+  "31-40",
+  "41-50",
+  "50+",
+];
 
 export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
   formData,
@@ -56,14 +51,9 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
     >
       <View style={styles.stepHeader}>
         <Text style={styles.stepTitle}>基本信息</Text>
-        <Text style={styles.stepSubtitle}>
-          帮助我们了解你的基本情况，提供更精准的穿搭推荐
-        </Text>
+        <Text style={styles.stepSubtitle}>帮助我们了解你的基本情况，提供更精准的穿搭推荐</Text>
       </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.section}>
           <View style={styles.labelRow}>
             <Text style={styles.sectionLabel}>性别</Text>
@@ -75,37 +65,23 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
               return (
                 <TouchableOpacity
                   key={option.id}
-                  style={[
-                    styles.genderCard,
-                    isSelected && styles.genderCardSelected,
-                  ]}
+                  style={[styles.genderCard, isSelected && styles.genderCardSelected]}
                   onPress={() => handleUpdate({ gender: option.id })}
                   activeOpacity={0.7}
                 >
                   <Ionicons
-                    name={option.icon as any}
+                    name={option.icon}
                     size={24}
-                    color={
-                      isSelected
-                        ? theme.colors.surface
-                        : theme.colors.textSecondary
-                    }
+                    color={isSelected ? theme.colors.surface : theme.colors.textSecondary}
                   />
-                  <Text
-                    style={[
-                      styles.genderLabel,
-                      isSelected && styles.genderLabelSelected,
-                    ]}
-                  >
+                  <Text style={[styles.genderLabel, isSelected && styles.genderLabelSelected]}>
                     {option.label}
                   </Text>
                 </TouchableOpacity>
               );
             })}
           </View>
-          {genderError && (
-            <Text style={styles.errorText}>请选择性别</Text>
-          )}
+          {genderError && <Text style={styles.errorText}>请选择性别</Text>}
         </View>
 
         <View style={styles.section}>
@@ -123,28 +99,18 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
               return (
                 <TouchableOpacity
                   key={range}
-                  style={[
-                    styles.agePill,
-                    isSelected && styles.agePillSelected,
-                  ]}
+                  style={[styles.agePill, isSelected && styles.agePillSelected]}
                   onPress={() => handleUpdate({ ageRange: range })}
                   activeOpacity={0.7}
                 >
-                  <Text
-                    style={[
-                      styles.agePillText,
-                      isSelected && styles.agePillTextSelected,
-                    ]}
-                  >
+                  <Text style={[styles.agePillText, isSelected && styles.agePillTextSelected]}>
                     {range}
                   </Text>
                 </TouchableOpacity>
               );
             })}
           </ScrollView>
-          {ageRangeError && (
-            <Text style={styles.errorText}>请选择年龄段</Text>
-          )}
+          {ageRangeError && <Text style={styles.errorText}>请选择年龄段</Text>}
         </View>
 
         <View style={styles.section}>
@@ -199,7 +165,7 @@ const styles = StyleSheet.create({
   },
   stepTitle: {
     fontSize: 26,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.text,
     letterSpacing: -0.5,
     lineHeight: 34,
@@ -218,14 +184,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[5],
   },
   labelRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: Spacing[3],
     gap: Spacing[1],
   },
   sectionLabel: {
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: "500",
     color: theme.colors.textSecondary,
   },
   requiredMark: {
@@ -238,13 +204,13 @@ const styles = StyleSheet.create({
     marginLeft: Spacing[1],
   },
   genderRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing[3],
   },
   genderCard: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
@@ -255,7 +221,7 @@ const styles = StyleSheet.create({
   },
   genderLabel: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     color: theme.colors.textSecondary,
   },
   genderLabelSelected: {
@@ -276,7 +242,7 @@ const styles = StyleSheet.create({
   },
   agePillText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
     color: theme.colors.textSecondary,
   },
   agePillTextSelected: {
@@ -288,15 +254,15 @@ const styles = StyleSheet.create({
     marginTop: Spacing[2],
   },
   inputRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: Spacing[3],
   },
   inputField: {
     flex: 1,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[3],

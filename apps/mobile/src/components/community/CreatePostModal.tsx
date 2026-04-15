@@ -1,22 +1,14 @@
-import React, { useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Modal,
-  Alert,
-} from 'react-native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme } from '../../theme';
+﻿import React, { useState, useCallback } from "react";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme } from '../design-system/theme';
 
 const CATEGORIES = [
-  { key: 'all', label: '全部' },
-  { key: 'outfit', label: '穿搭分享' },
-  { key: 'recommend', label: '好物推荐' },
-  { key: 'style', label: '风格讨论' },
-  { key: 'ootd', label: 'OOTD' },
+  { key: "all", label: "全部" },
+  { key: "outfit", label: "穿搭分享" },
+  { key: "recommend", label: "好物推荐" },
+  { key: "style", label: "风格讨论" },
+  { key: "ootd", label: "OOTD" },
 ] as const;
 
 interface CreatePostModalProps {
@@ -26,19 +18,19 @@ interface CreatePostModalProps {
 }
 
 function CreatePostModalInner({ visible, onClose, onSubmit }: CreatePostModalProps) {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('outfit');
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("outfit");
 
   const handleSubmit = useCallback(() => {
     if (!title.trim()) {
-      Alert.alert('提示', '请输入标题');
+      Alert.alert("提示", "请输入标题");
       return;
     }
     onSubmit(title, content, selectedCategory);
-    setTitle('');
-    setContent('');
-    setSelectedCategory('outfit');
+    setTitle("");
+    setContent("");
+    setSelectedCategory("outfit");
     onClose();
   }, [title, content, selectedCategory, onSubmit, onClose]);
 
@@ -55,14 +47,20 @@ function CreatePostModalInner({ visible, onClose, onSubmit }: CreatePostModalPro
           </TouchableOpacity>
         </View>
         <View style={s.modalCategoryRow}>
-          {CATEGORIES.filter((c) => c.key !== 'all').map((cat) => (
+          {CATEGORIES.filter((c) => c.key !== "all").map((cat) => (
             <TouchableOpacity
               key={cat.key}
-              style={[s.modalCategoryChip, selectedCategory === cat.key && s.modalCategoryChipActive]}
+              style={[
+                s.modalCategoryChip,
+                selectedCategory === cat.key && s.modalCategoryChipActive,
+              ]}
               onPress={() => setSelectedCategory(cat.key)}
             >
               <Text
-                style={[s.modalCategoryChipText, selectedCategory === cat.key && s.modalCategoryChipTextActive]}
+                style={[
+                  s.modalCategoryChipText,
+                  selectedCategory === cat.key && s.modalCategoryChipTextActive,
+                ]}
               >
                 {cat.label}
               </Text>
@@ -107,34 +105,60 @@ export const CreatePostModal = React.memo(CreatePostModalInner);
 const s = StyleSheet.create({
   modalContainer: { flex: 1, backgroundColor: theme.colors.background },
   modalHeader: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 20, paddingVertical: 16,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.border,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
   },
-  modalTitle: { fontSize: 16, fontWeight: '600', color: theme.colors.text },
+  modalTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text },
   modalCancelText: { fontSize: 15, color: theme.colors.textSecondary },
-  modalSubmitText: { fontSize: 15, fontWeight: '600', color: theme.colors.primary },
+  modalSubmitText: { fontSize: 15, fontWeight: "600", color: theme.colors.primary },
   modalCategoryRow: {
-    flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 12,
-    gap: 8, borderBottomWidth: 1, borderBottomColor: theme.colors.border,
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    gap: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
   },
-  modalCategoryChip: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 16, backgroundColor: theme.colors.surface },
+  modalCategoryChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: theme.colors.surface,
+  },
   modalCategoryChipActive: { backgroundColor: theme.colors.primary },
   modalCategoryChipText: { fontSize: 13, color: theme.colors.textSecondary },
-  modalCategoryChipTextActive: { color: theme.colors.surface, fontWeight: '600' },
+  modalCategoryChipTextActive: { color: theme.colors.surface, fontWeight: "600" },
   modalTitleInput: {
-    paddingHorizontal: 20, paddingVertical: 14,
-    fontSize: 18, fontWeight: '600', color: theme.colors.text,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.border,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    fontSize: 18,
+    fontWeight: "600",
+    color: theme.colors.text,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
   },
   modalContentInput: {
-    flex: 1, paddingHorizontal: 20, paddingVertical: 14,
-    fontSize: 15, color: theme.colors.text, lineHeight: 22, minHeight: 150,
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    fontSize: 15,
+    color: theme.colors.text,
+    lineHeight: 22,
+    minHeight: 150,
   },
   modalToolbar: {
-    flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 12,
-    borderTopWidth: 1, borderTopColor: theme.colors.border, gap: 24,
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
+    gap: 24,
   },
-  modalToolBtn: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  modalToolBtn: { flexDirection: "row", alignItems: "center", gap: 6 },
   modalToolText: { fontSize: 13, color: theme.colors.textSecondary },
 });

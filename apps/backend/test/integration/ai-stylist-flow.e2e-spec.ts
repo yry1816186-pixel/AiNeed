@@ -18,14 +18,14 @@ import request from "supertest";
 import { AppModule } from "../../src/app.module";
 import { PrismaService } from "../../src/common/prisma/prisma.service";
 import {
-  generateTestEmail,
-  measureResponseTime,
-} from "../utils/test.utils";
-import {
   stylistSessionFixtures,
   stylistMessageFixtures,
   performanceThresholds,
 } from "../utils/fixtures";
+import {
+  generateTestEmail,
+  measureResponseTime,
+} from "../utils/test.utils";
 
 describe("AI Stylist Flow E2E - AI 造型师流程", () => {
   let app: INestApplication;

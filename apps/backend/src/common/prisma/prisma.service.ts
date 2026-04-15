@@ -54,10 +54,11 @@ export class PrismaService
       // - statement_timeout: 单个语句超时(毫秒)
     });
 
-    // 监听慢查询 (超过 500ms 的查询)
+    // 监听慢查询 (阈值通过 SLOW_QUERY_THRESHOLD_MS 环境变量配置，默认 500ms)
+    const slowQueryThreshold = Number(process.env.SLOW_QUERY_THRESHOLD_MS) || 500;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (this as any).$on("query", (e: Prisma.QueryEvent) => {
-      if (e.duration > 500) {
+      if (e.duration > slowQueryThreshold) {
         this.logger.warn(
           `Slow Prisma query detected (${e.duration}ms): ${e.query.substring(0, 200)}...`,
         );
@@ -130,22 +131,43 @@ export class PrismaService
 
   /**
    * 清理测试数据库（仅用于测试环境）
+   *
+   * 使用 TRUNCATE CASCADE 按依赖关系顺序删除所有表数据。
+   * 相比 Promise.all 并行 deleteMany，TRUNCATE CASCADE 的优势：
+   * 1. 自动处理外键依赖，无需手动排序
+   * 2. 不会因外键约束报错而失败
+   * 3. 重置自增 ID 序列
+   * 4. 性能更优（TRUNCATE 是 DDL 操作，不逐行删除）
    */
   async cleanDatabase() {
     if (process.env.NODE_ENV === "production") {
       throw new Error("Cannot clean database in production");
     }
 
-    const models = Reflect.ownKeys(this).filter(
-      (key) =>
-        typeof key === "string" && !key.startsWith("_") && !key.startsWith("$"),
-    );
+    // 获取所有表名并按依赖关系顺序执行 TRUNCATE CASCADE
+    const tablenames = await this.$queryRaw<
+      Array<{ tablename: string }>
+    >`SELECT tablename FROM pg_tables WHERE schemaname = 'public'`;
 
-    return Promise.all(
-      models.map((model) => {
-        return (this as any)[model].deleteMany();
-      }),
-    );
+    if (tablenames.length === 0) {
+      return;
+    }
+
+    // 使用 TRUNCATE CASCADE 一次性清理所有表，自动处理外键依赖
+    const tables = tablenames.map((row) => `"${row.tablename}"`).join(", ");
+    await this.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
+
+    // 重置所有序列（自增 ID）
+    const sequences = await this.$queryRaw<
+      Array<{ sequencename: string }>
+    >`SELECT sequencename FROM pg_sequences WHERE schemaname = 'public'`;
+
+    if (sequences.length > 0) {
+      const resetStatements = sequences
+        .map((row) => `ALTER SEQUENCE "${row.sequencename}" RESTART WITH 1;`)
+        .join("\n");
+      await this.$executeRawUnsafe(resetStatements);
+    }
   }
 }
 

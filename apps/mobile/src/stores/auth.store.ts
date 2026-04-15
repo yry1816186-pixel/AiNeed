@@ -1,9 +1,9 @@
-import { create } from "zustand";
+﻿import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../utils/secureStorage";
 import apiClient from "../services/api/client";
-import { tokenManager } from "../services/auth/token";
+
 import { AppError, AppErrorCode, toAppError } from "../services/api/error";
 import type { User, AuthTokens, LoginCredentials, RegisterData } from "../types/user";
 
@@ -15,6 +15,8 @@ interface AuthState {
   isLoading: boolean;
   isRefreshing: boolean;
   error: AppError | null;
+  onboardingCompleted: boolean;
+  isVip: boolean;
 
   login: (credentials: LoginCredentials) => Promise<void>;
   loginWithPhone: (phone: string, code: string) => Promise<void>;
@@ -30,18 +32,16 @@ const secureStorageAdapter: StateStorage = {
   getItem: async (name: string): Promise<string | null> => {
     if (name === "auth-v2-storage") {
       const token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
-      const refresh = await secureStorage.getItem(
-        SECURE_STORAGE_KEYS.REFRESH_TOKEN,
-      );
-      const userStr = await secureStorage.getItem(
-        SECURE_STORAGE_KEYS.USER_DATA,
-      );
+      const refresh = await secureStorage.getItem(SECURE_STORAGE_KEYS.REFRESH_TOKEN);
+      const userStr = await secureStorage.getItem(SECURE_STORAGE_KEYS.USER_DATA);
       return JSON.stringify({
         state: {
           accessToken: token,
           refreshToken: refresh,
           user: userStr ? JSON.parse(userStr) : null,
           isAuthenticated: !!token,
+          onboardingCompleted: userStr ? (JSON.parse(userStr) as User)?.onboardingCompleted ?? false : false,
+          isVip: userStr ? deriveIsVip(JSON.parse(userStr) as User) : false,
         },
         version: 0,
       });
@@ -52,26 +52,17 @@ const secureStorageAdapter: StateStorage = {
     if (name === "auth-v2-storage") {
       const { state } = JSON.parse(value);
       if (state.accessToken) {
-        await secureStorage.setItem(
-          SECURE_STORAGE_KEYS.AUTH_TOKEN,
-          state.accessToken,
-        );
+        await secureStorage.setItem(SECURE_STORAGE_KEYS.AUTH_TOKEN, state.accessToken);
       } else {
         await secureStorage.deleteItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
       }
       if (state.refreshToken) {
-        await secureStorage.setItem(
-          SECURE_STORAGE_KEYS.REFRESH_TOKEN,
-          state.refreshToken,
-        );
+        await secureStorage.setItem(SECURE_STORAGE_KEYS.REFRESH_TOKEN, state.refreshToken);
       } else {
         await secureStorage.deleteItem(SECURE_STORAGE_KEYS.REFRESH_TOKEN);
       }
       if (state.user) {
-        await secureStorage.setItem(
-          SECURE_STORAGE_KEYS.USER_DATA,
-          JSON.stringify(state.user),
-        );
+        await secureStorage.setItem(SECURE_STORAGE_KEYS.USER_DATA, JSON.stringify(state.user));
       } else {
         await secureStorage.deleteItem(SECURE_STORAGE_KEYS.USER_DATA);
       }
@@ -95,16 +86,23 @@ interface PersistedAuthState {
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
+  onboardingCompleted: boolean;
+  isVip: boolean;
 }
 
-async function persistTokens(
-  accessToken: string,
-  refreshToken?: string,
-): Promise<void> {
+async function persistTokens(accessToken: string, refreshToken?: string): Promise<void> {
   await apiClient.setToken(accessToken);
   if (refreshToken) {
     await apiClient.setRefreshToken(refreshToken);
   }
+}
+
+function deriveOnboardingCompleted(user: User | null): boolean {
+  return user?.onboardingCompleted ?? false;
+}
+
+function deriveIsVip(user: User | null): boolean {
+  return user?.subscriptionTier === "vip" || user?.subscriptionTier === "premium";
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -117,6 +115,8 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       isRefreshing: false,
       error: null,
+      onboardingCompleted: false,
+      isVip: false,
 
       login: async (credentials: LoginCredentials) => {
         set({ isLoading: true, error: null });
@@ -129,10 +129,7 @@ export const useAuthStore = create<AuthState>()(
           }>("/auth/login", credentials);
 
           if (!response.success || !response.data) {
-            throw new AppError(
-              AppErrorCode.BUSINESS_ERROR,
-              response.error?.message,
-            );
+            throw new AppError(AppErrorCode.BUSINESS_ERROR, response.error?.message);
           }
 
           const { user, token, accessToken, refreshToken } = response.data;
@@ -145,6 +142,8 @@ export const useAuthStore = create<AuthState>()(
             refreshToken: refreshToken ?? null,
             isAuthenticated: true,
             isLoading: false,
+            onboardingCompleted: deriveOnboardingCompleted(user),
+            isVip: deriveIsVip(user),
           });
         } catch (err) {
           const appError = toAppError(err);
@@ -163,10 +162,7 @@ export const useAuthStore = create<AuthState>()(
           }>("/auth/phone-login", { phone, code });
 
           if (!response.success || !response.data) {
-            throw new AppError(
-              AppErrorCode.BUSINESS_ERROR,
-              response.error?.message,
-            );
+            throw new AppError(AppErrorCode.BUSINESS_ERROR, response.error?.message);
           }
 
           const { accessToken, refreshToken, user } = response.data;
@@ -177,6 +173,8 @@ export const useAuthStore = create<AuthState>()(
             refreshToken,
             isAuthenticated: true,
             isLoading: false,
+            onboardingCompleted: deriveOnboardingCompleted(user),
+            isVip: deriveIsVip(user),
           });
         } catch (err) {
           const appError = toAppError(err);
@@ -195,10 +193,7 @@ export const useAuthStore = create<AuthState>()(
           }>("/auth/wechat-login", { code });
 
           if (!response.success || !response.data) {
-            throw new AppError(
-              AppErrorCode.BUSINESS_ERROR,
-              response.error?.message,
-            );
+            throw new AppError(AppErrorCode.BUSINESS_ERROR, response.error?.message);
           }
 
           const { accessToken, refreshToken, user } = response.data;
@@ -209,6 +204,8 @@ export const useAuthStore = create<AuthState>()(
             refreshToken,
             isAuthenticated: true,
             isLoading: false,
+            onboardingCompleted: deriveOnboardingCompleted(user),
+            isVip: deriveIsVip(user),
           });
         } catch (err) {
           const appError = toAppError(err);
@@ -228,10 +225,7 @@ export const useAuthStore = create<AuthState>()(
           }>("/auth/register", data);
 
           if (!response.success || !response.data) {
-            throw new AppError(
-              AppErrorCode.BUSINESS_ERROR,
-              response.error?.message,
-            );
+            throw new AppError(AppErrorCode.BUSINESS_ERROR, response.error?.message);
           }
 
           const { user, token, accessToken, refreshToken } = response.data;
@@ -244,6 +238,8 @@ export const useAuthStore = create<AuthState>()(
             refreshToken: refreshToken ?? null,
             isAuthenticated: true,
             isLoading: false,
+            onboardingCompleted: deriveOnboardingCompleted(user),
+            isVip: deriveIsVip(user),
           });
         } catch (err) {
           const appError = toAppError(err);
@@ -258,18 +254,27 @@ export const useAuthStore = create<AuthState>()(
         } catch {
           // ignore clear errors during logout
         }
+        // Dynamic import to avoid circular dependency at module load time
+        // (auth.store -> index -> auth.store). clearAllStores is only called
+        // at runtime during logout, so the circular reference is safe.
+        const { clearAllStores } = await import("./index");
+        clearAllStores();
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
           error: null,
+          onboardingCompleted: false,
+          isVip: false,
         });
       },
 
       refreshAuth: async () => {
         const { isRefreshing, refreshToken } = get();
-        if (isRefreshing) return;
+        if (isRefreshing) {
+          return;
+        }
         if (!refreshToken) {
           await get().logout();
           return;
@@ -285,16 +290,18 @@ export const useAuthStore = create<AuthState>()(
             throw new AppError(AppErrorCode.TOKEN_REFRESH_FAILED);
           }
 
-          const { accessToken: newAccess, refreshToken: newRefresh } =
-            response.data;
+          const { accessToken: newAccess, refreshToken: newRefresh } = response.data;
           await persistTokens(newAccess, newRefresh);
 
           const meResponse = await apiClient.get<User>("/auth/me");
+          const updatedUser = meResponse.success ? meResponse.data ?? get().user : get().user;
           set({
             accessToken: newAccess,
             refreshToken: newRefresh,
-            user: meResponse.success ? meResponse.data ?? get().user : get().user,
+            user: updatedUser,
             isRefreshing: false,
+            onboardingCompleted: deriveOnboardingCompleted(updatedUser),
+            isVip: deriveIsVip(updatedUser),
           });
         } catch (err) {
           set({ isRefreshing: false });
@@ -307,6 +314,8 @@ export const useAuthStore = create<AuthState>()(
         set((state) => ({
           user,
           isAuthenticated: !!(state.accessToken && user),
+          onboardingCompleted: deriveOnboardingCompleted(user),
+          isVip: deriveIsVip(user),
         })),
 
       clearError: () => set({ error: null }),
@@ -319,11 +328,13 @@ export const useAuthStore = create<AuthState>()(
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
+        onboardingCompleted: state.onboardingCompleted,
+        isVip: state.isVip,
       }),
-    },
-  ),
+    }
+  )
 );
 
 apiClient.onAuthExpired(() => {
-  useAuthStore.getState().logout();
+  void useAuthStore.getState().logout();
 });

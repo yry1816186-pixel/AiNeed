@@ -127,7 +127,13 @@ describe("profileApi", () => {
       const partialData = { nickname: "JustName" };
       mockPut.mockResolvedValue({
         success: true,
-        data: { id: "profile-1", userId: "user-1", nickname: "JustName", createdAt: "", updatedAt: "" },
+        data: {
+          id: "profile-1",
+          userId: "user-1",
+          nickname: "JustName",
+          createdAt: "",
+          updatedAt: "",
+        },
       });
 
       const result = await profileApi.updateProfile(partialData);

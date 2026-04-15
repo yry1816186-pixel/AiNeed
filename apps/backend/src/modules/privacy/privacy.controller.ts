@@ -17,12 +17,12 @@ import {
   ApiParam,
 } from "@nestjs/swagger";
 
-import { AuthGuard } from "../auth/guards/auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
+import { AuthGuard } from "../auth/guards/auth.guard";
 
-import { PrivacyService } from "./privacy.service";
 import { RecordConsentDto, ExportDataDto, DeleteAccountDto } from "./dto";
 import { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION, POLICY_UPDATED_AT } from "./privacy-version";
+import { PrivacyService } from "./privacy.service";
 
 @ApiTags("privacy")
 @ApiBearerAuth()

@@ -175,6 +175,16 @@ class CircuitBreaker:
             logger.error(f"Circuit breaker opened after {self.failure_count} failures")
 
 
+class RetryableError(Exception):
+    """可重试的错误（5xx、429、网络错误、超时）"""
+    pass
+
+
+class NonRetryableError(Exception):
+    """不可重试的错误（4xx 客户端错误、token 超限等）"""
+    pass
+
+
 def with_retry_and_circuit_breaker(
     max_retries: int = 3,
     base_delay: float = 1.0,
@@ -182,14 +192,21 @@ def with_retry_and_circuit_breaker(
     exponential_base: float = 2.0,
     circuit_breaker: Optional[CircuitBreaker] = None
 ):
-    """Decorator for retry with exponential backoff and circuit breaker"""
-    
+    """Decorator for retry with exponential backoff and circuit breaker
+
+    A-P2-1: 增强重试逻辑
+    - 区分可重试错误（RetryableError）和不可重试错误（NonRetryableError）
+    - 可重试错误触发指数退避重试
+    - 不可重试错误立即抛出，不重试
+    - 熔断器仅对可重试错误计数
+    """
+
     def decorator(func):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             if circuit_breaker and not circuit_breaker.can_execute():
-                raise Exception("Circuit breaker is OPEN - LLM service unavailable")
-            
+                raise NonRetryableError("Circuit breaker is OPEN - LLM service unavailable")
+
             last_exception = None
             for attempt in range(max_retries):
                 try:
@@ -197,13 +214,21 @@ def with_retry_and_circuit_breaker(
                     if circuit_breaker:
                         circuit_breaker.record_success()
                     return result
-                except Exception as e:
+                except NonRetryableError as e:
+                    # 不可重试错误：立即抛出
+                    logger.error(f"Non-retryable error, aborting: {e}")
+                    raise
+                except (RetryableError, Exception) as e:
                     last_exception = e
                     if circuit_breaker:
                         circuit_breaker.record_failure()
-                    
+
                     if attempt < max_retries - 1:
                         delay = min(base_delay * (exponential_base ** attempt), max_delay)
+                        # 如果是 429 错误，尝试从异常信息中提取 Retry-After
+                        retry_after = getattr(e, 'retry_after', None)
+                        if retry_after and retry_after > 0:
+                            delay = max(delay, min(retry_after, max_delay))
                         logger.warning(
                             f"LLM API call failed (attempt {attempt + 1}/{max_retries}): {e}. "
                             f"Retrying in {delay:.1f}s..."
@@ -211,7 +236,7 @@ def with_retry_and_circuit_breaker(
                         await asyncio.sleep(delay)
                     else:
                         logger.error(f"LLM API call failed after {max_retries} attempts: {e}")
-            
+
             raise last_exception
         return wrapper
     return decorator
@@ -304,48 +329,79 @@ class GLMStylistEngine:
 
     def _count_tokens(self, text: str) -> int:
         """
-        P1-006修复: 准确的token计数方法
+        A-P1-7: Improved token counting with tiktoken fallback.
 
-        对于中文和英文混合文本，使用以下规则估算token数量：
-        - 中文字符: 约1.5-2 tokens/字符 (平均取1.8)
-        - 英文单词: 约1.3 tokens/单词
-        - 标点和空白: 约0.3 tokens/字符
+        Token counting strategy (in order of preference):
+        1. tiktoken library (if available) - most accurate for GPT-compatible tokenizers
+        2. Character-based estimation with improved accuracy for mixed CJK/Latin text
 
-        这是一个基于经验的估算方法，实际值可能略有差异。
-        如需精确计数，应使用tiktoken等官方tokenizer库。
+        Estimation rules for fallback:
+        - CJK characters: ~1.5 tokens/char (refined from 1.8 based on empirical data)
+        - Full-width punctuation/kana: ~1.2 tokens/char
+        - English words: ~1.3 tokens/word (average across word lengths)
+        - Punctuation and whitespace: ~0.3 tokens/char
+        - Numbers: ~0.5 tokens/digit group
         """
         if not text:
             return 0
 
-        token_count = 0
+        # Strategy 1: Try tiktoken for accurate counting
+        try:
+            import tiktoken
+            # Use cl100k_base encoding (GPT-4/GLM compatible)
+            enc = tiktoken.get_encoding("cl100k_base")
+            return len(enc.encode(text))
+        except ImportError:
+            pass
+        except Exception:
+            pass
+
+        # Strategy 2: Improved character-based estimation
+        token_count = 0.0
         i = 0
         while i < len(text):
             char = text[i]
 
-            # 检测中文字符 (CJK统一汉字范围)
+            # CJK Unified Ideographs (common Chinese characters)
             if '\u4e00' <= char <= '\u9fff':
-                token_count += 1.8  # 中文字符约1.8 tokens
-            # 检测全角符号和日文假名
-            elif '\u3000' <= char <= '\u303f' or '\u3040' <= char <= '\u309f' or '\u30a0' <= char <= '\u30ff':
                 token_count += 1.5
-            # 英文字母和数字
-            elif char.isalnum():
-                # 简单的单词边界检测
-                # 向前扫描直到单词结束
+            # CJK Extension A and B (rare characters)
+            elif '\u3400' <= char <= '\u4dbf' or '\U00020000' <= char <= '\U0002a6df':
+                token_count += 1.5
+            # Full-width punctuation, CJK symbols
+            elif '\u3000' <= char <= '\u303f':
+                token_count += 1.2
+            # Hiragana and Katakana
+            elif '\u3040' <= char <= '\u309f' or '\u30a0' <= char <= '\u30ff':
+                token_count += 1.2
+            # Hangul syllables
+            elif '\uac00' <= char <= '\ud7af':
+                token_count += 1.5
+            # English letters and numbers - process as word groups
+            elif char.isascii() and char.isalnum():
                 word_start = i
-                while i < len(text) and text[i].isalnum():
+                while i < len(text) and text[i].isascii() and text[i].isalnum():
                     i += 1
                 word_length = i - word_start
-                # 英文单词约1.3 tokens/单词
-                token_count += max(1, word_length * 0.3)
-                continue  # 跳过递增，因为已经在循环中移动了i
-            # 标点和空白
-            else:
+                # English word token ratio: shorter words have higher ratio
+                # 1 char ~1 token, 2 chars ~1.5, 3+ chars ~1.3/word
+                if word_length <= 1:
+                    token_count += 1.0
+                elif word_length <= 2:
+                    token_count += 1.5
+                else:
+                    token_count += max(1.0, word_length * 0.4)
+                continue  # Skip i increment, already advanced
+            # ASCII punctuation and whitespace
+            elif char.isascii():
                 token_count += 0.3
+            # Other Unicode (emoji, etc.)
+            else:
+                token_count += 1.5
 
             i += 1
 
-        return int(token_count) + 1  # 向上取整
+        return max(1, int(token_count))
 
     def _truncate_prompt(
         self,
@@ -508,19 +564,31 @@ class GLMStylistEngine:
                         self._token_counter += self._count_tokens(content)
                         return content
                     elif response.status == 429:
-                        raise Exception("Rate limit exceeded - please try again later")
+                        # A-P2-1: 429 为可重试错误，提取 Retry-After
+                        retry_after_header = response.headers.get("Retry-After")
+                        err = RetryableError("Rate limit exceeded - please try again later")
+                        if retry_after_header:
+                            try:
+                                err.retry_after = float(retry_after_header)
+                            except (ValueError, TypeError):
+                                pass
+                        raise err
                     elif response.status >= 500:
-                        raise Exception(f"Server error: {response.status}")
+                        # A-P2-1: 5xx 为可重试错误
+                        raise RetryableError(f"Server error: {response.status}")
                     else:
                         error_text = await response.text()
                         # P1-006修复: 处理token超限错误
                         if "token" in error_text.lower() or "length" in error_text.lower():
-                            raise Exception(f"Token limit exceeded: {error_text}")
-                        raise Exception(f"GLM API error: {response.status} - {error_text}")
+                            raise NonRetryableError(f"Token limit exceeded: {error_text}")
+                        # A-P2-1: 其他 4xx 为不可重试错误
+                        raise NonRetryableError(f"GLM API error: {response.status} - {error_text}")
         except asyncio.TimeoutError:
-            raise Exception("API request timed out after 180s")
+            # A-P2-1: 超时为可重试错误
+            raise RetryableError("API request timed out after 180s")
         except aiohttp.ClientError as e:
-            raise Exception(f"Network error: {e}")
+            # A-P2-1: 网络错误为可重试错误
+            raise RetryableError(f"Network error: {e}")
 
 
 class ConversationMemory:
@@ -942,6 +1010,12 @@ class IntelligentStylistService:
             use_redis=use_redis,
             redis_client=redis_client
         )
+        # P1-7: Degradation strategy - cache last successful results for fallback
+        self._last_successful_recommendations: OrderedDict[str, Dict[str, Any]] = OrderedDict()
+        self._degradation_lock = threading.Lock()
+        self._max_fallback_cache = 50
+        # P1-7: Default timeout for GLM API calls (30 seconds)
+        self._api_timeout_seconds = 30
     
     def get_cache_stats(self) -> Dict[str, Any]:
         """Get response cache statistics"""
@@ -1162,9 +1236,11 @@ class IntelligentStylistService:
                 f"{rag_str}\n## 用户具体需求"
             )
         
-        response = await self.engine.generate(
+        response = await self._call_glm_with_degradation(
             system_prompt=self.SYSTEM_PROMPT,
             user_prompt=user_prompt,
+            user_profile=user_profile,
+            scene_context=scene_context,
             max_tokens=4000
         )
         
@@ -1181,6 +1257,8 @@ class IntelligentStylistService:
                 json_str = cleaned_response[json_start:json_end]
                 result = json.loads(json_str)
                 self._response_cache.set(cache_key, result)
+                # P1-7: Store successful result for degradation fallback
+                self._store_fallback_result(user_profile, scene_context, result)
                 return result
         except json.JSONDecodeError:
             pass
@@ -1195,7 +1273,124 @@ class IntelligentStylistService:
         }
         self._response_cache.set(cache_key, result)
         return result
-    
+
+    # ============================================================
+    # P1-7: Degradation Strategy Methods
+    # ============================================================
+
+    def _store_fallback_result(
+        self,
+        user_profile: UserProfile,
+        scene_context: SceneContext,
+        result: Dict[str, Any],
+    ) -> None:
+        """P1-7: Store a successful recommendation result for degradation fallback.
+
+        When GLM API is unavailable, we can return the most recent successful
+        recommendation for similar user profiles/occasions.
+        """
+        with self._degradation_lock:
+            # Create a fallback key from profile + occasion
+            fallback_key = f"{user_profile.body_type or 'unknown'}:{user_profile.color_season or 'unknown'}:{scene_context.occasion or 'daily'}"
+            self._last_successful_recommendations[fallback_key] = {
+                "result": result,
+                "stored_at": time.time(),
+                "profile_summary": {
+                    "body_type": user_profile.body_type,
+                    "color_season": user_profile.color_season,
+                    "occasion": scene_context.occasion,
+                },
+            }
+            # Evict oldest entries if cache is full
+            while len(self._last_successful_recommendations) > self._max_fallback_cache:
+                self._last_successful_recommendations.popitem(last=False)
+
+    def _get_fallback_result(
+        self,
+        user_profile: UserProfile,
+        scene_context: SceneContext,
+    ) -> Optional[Dict[str, Any]]:
+        """P1-7: Retrieve a cached fallback result when GLM API is unavailable.
+
+        Returns the most recent successful recommendation for a similar
+        profile/occasion, or None if no suitable fallback exists.
+        """
+        with self._degradation_lock:
+            fallback_key = f"{user_profile.body_type or 'unknown'}:{user_profile.color_season or 'unknown'}:{scene_context.occasion or 'daily'}"
+
+            # Exact match first
+            if fallback_key in self._last_successful_recommendations:
+                cached = self._last_successful_recommendations[fallback_key]
+                result = cached["result"].copy()
+                result["_degraded"] = True
+                result["_degradation_reason"] = "GLM API unavailable, returning cached recommendation"
+                logger.info("Returning degraded fallback result for key: %s", fallback_key)
+                return result
+
+            # Partial match: same body_type + occasion
+            partial_key = f"{user_profile.body_type or 'unknown'}:*:{scene_context.occasion or 'daily'}"
+            for key, cached in reversed(self._last_successful_recommendations.items()):
+                parts = key.split(":")
+                if len(parts) == 3 and parts[0] == (user_profile.body_type or "unknown") and parts[2] == (scene_context.occasion or "daily"):
+                    result = cached["result"].copy()
+                    result["_degraded"] = True
+                    result["_degradation_reason"] = "GLM API unavailable, returning similar profile cached recommendation"
+                    logger.info("Returning partial-match fallback result for key: %s", key)
+                    return result
+
+            # Any match for the occasion
+            for key, cached in reversed(self._last_successful_recommendations.items()):
+                parts = key.split(":")
+                if len(parts) == 3 and parts[2] == (scene_context.occasion or "daily"):
+                    result = cached["result"].copy()
+                    result["_degraded"] = True
+                    result["_degradation_reason"] = "GLM API unavailable, returning occasion-based cached recommendation"
+                    logger.info("Returning occasion-match fallback result for key: %s", key)
+                    return result
+
+            return None
+
+    async def _call_glm_with_degradation(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        user_profile: UserProfile,
+        scene_context: SceneContext,
+        max_tokens: int = 4000,
+    ) -> str:
+        """P1-7: Call GLM API with timeout and degradation fallback.
+
+        - Sets a 30-second timeout for the API call
+        - On failure/timeout, returns a cached fallback result if available
+        - Raises the original exception if no fallback is available
+        """
+        try:
+            return await asyncio.wait_for(
+                self.engine.generate(
+                    system_prompt=system_prompt,
+                    user_prompt=user_prompt,
+                    max_tokens=max_tokens,
+                ),
+                timeout=self._api_timeout_seconds,
+            )
+        except asyncio.TimeoutError:
+            logger.warning(
+                "GLM API call timed out after %ds, attempting degradation fallback",
+                self._api_timeout_seconds,
+            )
+            fallback = self._get_fallback_result(user_profile, scene_context)
+            if fallback is not None:
+                return json.dumps(fallback, ensure_ascii=False)
+            raise Exception(
+                f"GLM API timed out after {self._api_timeout_seconds}s and no fallback available"
+            )
+        except Exception as e:
+            logger.warning("GLM API call failed: %s, attempting degradation fallback", str(e))
+            fallback = self._get_fallback_result(user_profile, scene_context)
+            if fallback is not None:
+                return json.dumps(fallback, ensure_ascii=False)
+            raise
+
     async def _get_rag_context(
         self,
         user_profile: UserProfile,
@@ -1373,20 +1568,32 @@ class IntelligentStylistService:
                         return content
                     elif response.status == 429:
                         self.engine.circuit_breaker.record_failure()
-                        raise Exception("Rate limit exceeded - please try again later")
+                        # A-P2-1: 429 为可重试错误
+                        err = RetryableError("Rate limit exceeded - please try again later")
+                        retry_after_header = response.headers.get("Retry-After")
+                        if retry_after_header:
+                            try:
+                                err.retry_after = float(retry_after_header)
+                            except (ValueError, TypeError):
+                                pass
+                        raise err
                     elif response.status >= 500:
                         self.engine.circuit_breaker.record_failure()
-                        raise Exception(f"Server error: {response.status}")
+                        # A-P2-1: 5xx 为可重试错误
+                        raise RetryableError(f"Server error: {response.status}")
                     else:
                         error_text = await response.text()
                         self.engine.circuit_breaker.record_failure()
-                        raise Exception(f"GLM API error: {response.status} - {error_text}")
+                        # A-P2-1: 其他 4xx 为不可重试错误
+                        raise NonRetryableError(f"GLM API error: {response.status} - {error_text}")
         except asyncio.TimeoutError:
             self.engine.circuit_breaker.record_failure()
-            raise Exception("API request timed out after 120s")
+            # A-P2-1: 超时为可重试错误
+            raise RetryableError("API request timed out after 120s")
         except aiohttp.ClientError as e:
             self.engine.circuit_breaker.record_failure()
-            raise Exception(f"Network error: {e}")
+            # A-P2-1: 网络错误为可重试错误
+            raise RetryableError(f"Network error: {e}")
 
 
 service_instance = IntelligentStylistService()

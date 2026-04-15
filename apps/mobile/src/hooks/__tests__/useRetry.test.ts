@@ -2,14 +2,6 @@ import { renderHook, act } from "@testing-library/react-native";
 import { useRetry } from "../useRetry";
 
 describe("useRetry", () => {
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   it("should have correct initial state", () => {
     const { result } = renderHook(() => useRetry());
 
@@ -36,82 +28,53 @@ describe("useRetry", () => {
   });
 
   it("should retry on failure and eventually succeed", async () => {
-    const fn = jest.fn()
+    const fn = jest
+      .fn()
       .mockRejectedValueOnce(new Error("fail 1"))
       .mockResolvedValueOnce("recovered");
 
-    const { result } = renderHook(() =>
-      useRetry({ maxRetries: 2, baseDelay: 100 }),
-    );
+    const { result } = renderHook(() => useRetry({ maxRetries: 2, baseDelay: 10 }));
 
-    const executePromise = act(async () => {
-      const res = await result.current.execute(fn);
-      return res;
-    });
-
-    // Advance timer for the retry delay (100 * 2^0 = 100ms)
     await act(async () => {
-      jest.advanceTimersByTime(100);
+      const res = await result.current.execute(fn);
+      expect(res).toBe("recovered");
     });
 
-    const res = await executePromise;
-    expect(res).toBe("recovered");
     expect(result.current.data).toBe("recovered");
     expect(result.current.error).toBeNull();
-  });
+  }, 10000);
 
   it("should set error after all retries exhausted", async () => {
     const fn = jest.fn().mockRejectedValue(new Error("persistent failure"));
 
-    const { result } = renderHook(() =>
-      useRetry({ maxRetries: 1, baseDelay: 100 }),
-    );
+    const { result } = renderHook(() => useRetry({ maxRetries: 1, baseDelay: 10 }));
 
-    const executePromise = act(async () => {
-      const res = await result.current.execute(fn);
-      return res;
-    });
-
-    // Advance timer for the retry delay (100 * 2^0 = 100ms)
     await act(async () => {
-      jest.advanceTimersByTime(200);
+      const res = await result.current.execute(fn);
+      expect(res).toBeNull();
     });
 
-    const res = await executePromise;
-    expect(res).toBeNull();
     expect(result.current.error).toBeInstanceOf(Error);
     expect(result.current.error?.message).toBe("persistent failure");
     expect(result.current.isLoading).toBe(false);
-  });
+  }, 10000);
 
   it("should call onRetry callback on each retry attempt", async () => {
     const onRetry = jest.fn();
-    const fn = jest.fn()
-      .mockRejectedValueOnce(new Error("fail"))
-      .mockResolvedValueOnce("ok");
+    const fn = jest.fn().mockRejectedValueOnce(new Error("fail")).mockResolvedValueOnce("ok");
 
-    const { result } = renderHook(() =>
-      useRetry({ maxRetries: 2, baseDelay: 100, onRetry }),
-    );
-
-    const executePromise = act(async () => {
-      const res = await result.current.execute(fn);
-      return res;
-    });
+    const { result } = renderHook(() => useRetry({ maxRetries: 2, baseDelay: 10, onRetry }));
 
     await act(async () => {
-      jest.advanceTimersByTime(200);
+      await result.current.execute(fn);
     });
 
-    await executePromise;
     expect(onRetry).toHaveBeenCalledWith(1);
-  });
+  }, 10000);
 
   it("should retry with the last function using retry()", async () => {
     const fn = jest.fn().mockResolvedValue("result");
-    const { result } = renderHook(() =>
-      useRetry({ maxRetries: 2, baseDelay: 100 }),
-    );
+    const { result } = renderHook(() => useRetry({ maxRetries: 2, baseDelay: 10 }));
 
     // First execute
     await act(async () => {
@@ -155,26 +118,18 @@ describe("useRetry", () => {
   });
 
   it("should track retryCount during retries", async () => {
-    const fn = jest.fn()
+    const fn = jest
+      .fn()
       .mockRejectedValueOnce(new Error("fail 1"))
       .mockRejectedValueOnce(new Error("fail 2"))
       .mockResolvedValueOnce("ok");
 
-    const { result } = renderHook(() =>
-      useRetry({ maxRetries: 3, baseDelay: 100 }),
-    );
+    const { result } = renderHook(() => useRetry({ maxRetries: 3, baseDelay: 10 }));
 
-    const executePromise = act(async () => {
-      const res = await result.current.execute(fn);
-      return res;
-    });
-
-    // Advance through retry delays
     await act(async () => {
-      jest.advanceTimersByTime(500);
+      await result.current.execute(fn);
     });
 
-    await executePromise;
     expect(result.current.data).toBe("ok");
-  });
+  }, 10000);
 });

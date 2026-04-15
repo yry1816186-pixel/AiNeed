@@ -12,7 +12,7 @@ function createRedisMock() {
     store,
     get: jest.fn((key: string) => {
       const entry = store.get(key);
-      if (!entry) return Promise.resolve(null);
+      if (!entry) {return Promise.resolve(null);}
       if (entry.ttlMs && Date.now() - entry.setAt > entry.ttlMs) {
         store.delete(key);
         return Promise.resolve(null);
@@ -40,8 +40,8 @@ function createRedisMock() {
     }),
     ttl: jest.fn((key: string) => {
       const entry = store.get(key);
-      if (!entry) return Promise.resolve(-2);
-      if (!entry.ttlMs) return Promise.resolve(-1);
+      if (!entry) {return Promise.resolve(-2);}
+      if (!entry.ttlMs) {return Promise.resolve(-1);}
       const remaining = Math.floor((entry.ttlMs - (Date.now() - entry.setAt)) / 1000);
       return Promise.resolve(remaining > 0 ? remaining : -2);
     }),

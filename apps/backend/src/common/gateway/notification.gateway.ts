@@ -12,8 +12,8 @@ import {
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 
-import { WebSocketNotificationData } from "../types/common.types";
 import { RedisService } from "../redis/redis.service";
+import { WebSocketNotificationData } from "../types/common.types";
 
 export interface JoinRoomData {
   room: string;

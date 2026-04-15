@@ -164,7 +164,7 @@ export function buildConversationContextPrompt(sessionState: {
   }
 
   if (sessionState.bodyProfile) {
-    const profile = sessionState.bodyProfile as Record<string, unknown>;
+    const profile = sessionState.bodyProfile;
     const nonEmptyProfile = Object.entries(profile)
       .filter(([, value]) => value !== null && value !== undefined)
       .map(([key, value]) => `${key}: ${value}`);

@@ -1,12 +1,12 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet } from 'react-native';
-import Svg, { Polyline, Line, Polygon } from 'react-native-svg';
+import React, { useEffect, useRef } from "react";
+import { Animated, StyleSheet } from "react-native";
+import Svg, { Polyline, Line, Polygon } from "react-native-svg";
 import type {
   ReferenceLines,
   AlignmentStatus,
   AlignmentLevel,
   OverallAlignment,
-} from '../../../hooks/useReferenceLines';
+} from "../../../hooks/useReferenceLines";
 
 interface ReferenceLineOverlayProps {
   referenceLines: ReferenceLines | null;
@@ -17,28 +17,22 @@ interface ReferenceLineOverlayProps {
 
 function getLineColor(level: AlignmentLevel | OverallAlignment): string {
   switch (level) {
-    case 'aligned':
-    case 'perfect':
-    case 'good':
-      return '#4CAF50';
-    case 'slight':
-      return '#FFC107';
-    case 'off':
-    case 'adjust':
-      return '#F44336';
+    case "aligned":
+    case "perfect":
+    case "good":
+      return "#4CAF50";
+    case "slight":
+      return "#FFC107";
+    case "off":
+    case "adjust":
+      return "#F44336";
     default:
-      return '#FFC107';
+      return "#FFC107";
   }
 }
 
-function pointsToString(
-  points: { x: number; y: number }[],
-  width: number,
-  height: number,
-): string {
-  return points
-    .map((p) => `${(p.x * width).toFixed(1)},${(p.y * height).toFixed(1)}`)
-    .join(' ');
+function pointsToString(points: { x: number; y: number }[], width: number, height: number): string {
+  return points.map((p) => `${(p.x * width).toFixed(1)},${(p.y * height).toFixed(1)}`).join(" ");
 }
 
 export const ReferenceLineOverlay: React.FC<ReferenceLineOverlayProps> = ({
@@ -65,24 +59,16 @@ export const ReferenceLineOverlay: React.FC<ReferenceLineOverlayProps> = ({
     return null;
   }
 
-  const shoulderColor = getLineColor(alignmentStatus?.shoulder ?? 'slight');
-  const postureColor = getLineColor(alignmentStatus?.posture ?? 'slight');
-  const centerColor = getLineColor(alignmentStatus?.center ?? 'slight');
-  const overallColor = getLineColor(alignmentStatus?.overall ?? 'adjust');
+  const shoulderColor = getLineColor(alignmentStatus?.shoulder ?? "slight");
+  const postureColor = getLineColor(alignmentStatus?.posture ?? "slight");
+  const centerColor = getLineColor(alignmentStatus?.center ?? "slight");
+  const overallColor = getLineColor(alignmentStatus?.overall ?? "adjust");
 
-  const shoulderPoints = pointsToString(
-    referenceLines.shoulderLine,
-    width,
-    height,
-  );
+  const shoulderPoints = pointsToString(referenceLines.shoulderLine, width, height);
   const waistPoints = pointsToString(referenceLines.waistLine, width, height);
   const centerStart = referenceLines.centerLine[0];
   const centerEnd = referenceLines.centerLine[referenceLines.centerLine.length - 1];
-  const outlinePoints = pointsToString(
-    referenceLines.bodyOutline,
-    width,
-    height,
-  );
+  const outlinePoints = pointsToString(referenceLines.bodyOutline, width, height);
 
   return (
     <Animated.View style={[styles.container, { opacity: opacityAnim }]}>
@@ -132,7 +118,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   svg: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
   },

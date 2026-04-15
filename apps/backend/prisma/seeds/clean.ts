@@ -244,7 +244,19 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
   console.log(`   ✅ 删除 ClothingItem: ${d28.count} 条`);
 
   // 29. BrandMerchant (通过 Brand slug 关联清理)
-  const seedBrandSlugs = ['aineed-studio', 'zara', 'uniqlo', 'cos', 'nike'];
+  const seedBrandSlugs = [
+    'xuno-studio',
+    'zara', 'uniqlo', 'hm', 'gap', 'pull-and-bear', 'bershka', 'mango',
+    'urban-revivo', 'mjstyle',
+    'cos', 'massimo-dutti', 'sandro', 'maje', 'theory', 'apc',
+    'nike', 'adidas', 'puma', 'under-armour', 'lululemon', 'fila', 'anta', 'li-ning',
+    'bosideng', 'peacebird', 'gxg', 'semir', 'ochirly', 'mo-co', 'jnby', 'ein',
+    'champion', 'carhartt', 'levis', 'calvin-klein', 'tommy-hilfiger',
+    'dr-martens', 'converse', 'vans', 'new-balance', 'asics',
+    'furla', 'longchamp', 'coach', 'michael-kors',
+    'acne-studios', 'mm6', 'kenzo',
+    'speedo', 'roxy',
+  ];
   const seedBrands = await prisma.brand.findMany({
     where: { slug: { in: seedBrandSlugs } },
     select: { id: true },
@@ -327,6 +339,119 @@ export async function cleanSeedData(prisma: PrismaClient): Promise<void> {
     where: { userId: { in: seedUserIds } },
   });
   console.log(`   ✅ 删除 DataDeletionRequest: ${d32k.count} 条`);
+
+  // 补全遗漏模型的清理（注意顺序：先删依赖表）
+  const d32l = await prisma.userBehaviorEvent.deleteMany({
+    where: { userId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 UserBehaviorEvent: ${d32l.count} 条`);
+
+  const d32m = await prisma.userPreferenceWeight.deleteMany({
+    where: { userId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 UserPreferenceWeight: ${d32m.count} 条`);
+
+  const d32n = await prisma.userSession.deleteMany({
+    where: { userId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 UserSession: ${d32n.count} 条`);
+
+  const d32o = await prisma.aiStylistSession.deleteMany({
+    where: { userId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 AiStylistSession: ${d32o.count} 条`);
+
+  const d32p = await prisma.userDecision.deleteMany({
+    where: { userId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 UserDecision: ${d32p.count} 条`);
+
+  const d32q = await prisma.aIAnalysisCache.deleteMany({});
+  console.log(`   ✅ 删除 AIAnalysisCache: ${d32q.count} 条`);
+
+  const d32r = await prisma.auditLog.deleteMany({
+    where: { userId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 AuditLog: ${d32r.count} 条`);
+
+  const d32s = await prisma.adminAuditLog.deleteMany({
+    where: { userId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 AdminAuditLog: ${d32s.count} 条`);
+
+  const d32t = await prisma.userNotificationSetting.deleteMany({
+    where: { userId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 UserNotificationSetting: ${d32t.count} 条`);
+
+  const d32u = await prisma.pushDeviceToken.deleteMany({
+    where: { userId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 PushDeviceToken: ${d32u.count} 条`);
+
+  const d32v = await prisma.shareTemplate.deleteMany({});
+  console.log(`   ✅ 删除 ShareTemplate: ${d32v.count} 条`);
+
+  const d32w = await prisma.systemConfig.deleteMany({});
+  console.log(`   ✅ 删除 SystemConfig: ${d32w.count} 条`);
+
+  const d32x = await prisma.featureFlag.deleteMany({});
+  console.log(`   ✅ 删除 FeatureFlag: ${d32x.count} 条`);
+
+  const d32y = await prisma.featureFlagEvaluation.deleteMany({});
+  console.log(`   ✅ 删除 FeatureFlagEvaluation: ${d32y.count} 条`);
+
+  const d32z = await prisma.knowledgeGraphEntity.deleteMany({});
+  console.log(`   ✅ 删除 KnowledgeGraphEntity: ${d32z.count} 条`);
+
+  // ProductSalesStats: 通过 ClothingItem 关联清理 (seed 创建的商品 sku 以 AN- 开头)
+  const seedItemIds = (await prisma.clothingItem.findMany({
+    where: { sku: { startsWith: 'AN-' } },
+    select: { id: true },
+  })).map(i => i.id);
+  if (seedItemIds.length > 0) {
+    const d32aa = await prisma.productSalesStats.deleteMany({
+      where: { itemId: { in: seedItemIds } },
+    });
+    console.log(`   ✅ 删除 ProductSalesStats: ${d32aa.count} 条`);
+  }
+
+  // PaymentRecord + RefundRecord: 通过 userId 清理
+  const seedPaymentRecords = await prisma.paymentRecord.findMany({
+    where: { userId: { in: seedUserIds } },
+    select: { id: true },
+  });
+  const seedPaymentRecordIds = seedPaymentRecords.map(r => r.id);
+  if (seedPaymentRecordIds.length > 0) {
+    const d32bb = await prisma.refundRecord.deleteMany({
+      where: { paymentRecordId: { in: seedPaymentRecordIds } },
+    });
+    console.log(`   ✅ 删除 RefundRecord: ${d32bb.count} 条`);
+  }
+  const d32cc = await prisma.paymentRecord.deleteMany({
+    where: { userId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 PaymentRecord: ${d32cc.count} 条`);
+
+  // BloggerProduct: 通过 bloggerId 清理
+  const d32dd = await prisma.bloggerProduct.deleteMany({
+    where: { bloggerId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 BloggerProduct: ${d32dd.count} 条`);
+
+  // ContentModerationLog: 通过 CommunityPost 关联清理
+  if (seedPostIds.length > 0) {
+    const d32ee = await prisma.contentModerationLog.deleteMany({
+      where: { contentId: { in: seedPostIds } },
+    });
+    console.log(`   ✅ 删除 ContentModerationLog: ${d32ee.count} 条`);
+  }
+
+  // PostBookmark: 通过 userId 清理
+  const d32ff = await prisma.postBookmark.deleteMany({
+    where: { userId: { in: seedUserIds } },
+  });
+  console.log(`   ✅ 删除 PostBookmark: ${d32ff.count} 条`);
 
   // 删除 User
   const d32 = await prisma.user.deleteMany({

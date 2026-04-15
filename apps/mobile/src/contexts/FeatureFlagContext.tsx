@@ -46,10 +46,7 @@ const initialState: FeatureFlagState = {
   lastUpdated: null,
 };
 
-function featureFlagReducer(
-  state: FeatureFlagState,
-  action: FeatureFlagAction,
-): FeatureFlagState {
+function featureFlagReducer(state: FeatureFlagState, action: FeatureFlagAction): FeatureFlagState {
   switch (action.type) {
     case "SET_FLAGS":
       return {
@@ -95,16 +92,13 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const saveToStorage = useCallback(
-    async (flags: Record<string, FeatureFlagClientDto>) => {
-      try {
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(flags));
-      } catch {
-        // ignore storage errors
-      }
-    },
-    [],
-  );
+  const saveToStorage = useCallback(async (flags: Record<string, FeatureFlagClientDto>) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(flags));
+    } catch {
+      // ignore storage errors
+    }
+  }, []);
 
   const refreshFlags = useCallback(async () => {
     dispatch({ type: "SET_LOADING", payload: true });
@@ -126,14 +120,14 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
   }, [saveToStorage]);
 
   useEffect(() => {
-    loadFromStorage().then(() => {
-      refreshFlags();
+    void loadFromStorage().then(() => {
+      void refreshFlags();
     });
   }, [loadFromStorage, refreshFlags]);
 
   useEffect(() => {
     const handleFlagUpdate = () => {
-      refreshFlags();
+      void refreshFlags();
     };
 
     const socket = (wsService as any).socket;
@@ -150,16 +144,18 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
       const flag = state.flags[key];
       return flag?.enabled ?? false;
     },
-    [state.flags],
+    [state.flags]
   );
 
   const getVariant = useCallback(
     (key: string): string | null => {
       const flag = state.flags[key];
-      if (!flag || !flag.enabled) return null;
+      if (!flag || !flag.enabled) {
+        return null;
+      }
       return (flag.value?.variant as string) ?? null;
     },
-    [state.flags],
+    [state.flags]
   );
 
   const value: FeatureFlagContextValue = {
@@ -169,11 +165,7 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
     refreshFlags,
   };
 
-  return (
-    <FeatureFlagContext.Provider value={value}>
-      {children}
-    </FeatureFlagContext.Provider>
-  );
+  return <FeatureFlagContext.Provider value={value}>{children}</FeatureFlagContext.Provider>;
 }
 
 export function useFeatureFlags() {

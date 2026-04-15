@@ -1,5 +1,3 @@
-import { logger } from "../logger";
-
 describe("logger", () => {
   let consoleLogSpy: jest.SpyInstance;
   let consoleWarnSpy: jest.SpyInstance;
@@ -24,8 +22,12 @@ describe("logger", () => {
   });
 
   describe("when __DEV__ is true", () => {
+    let logger: typeof import("../logger").logger;
+
     beforeEach(() => {
       (global as any).__DEV__ = true;
+      jest.resetModules();
+      logger = require("../logger").logger;
     });
 
     it("should output log messages", () => {
@@ -60,8 +62,12 @@ describe("logger", () => {
   });
 
   describe("when __DEV__ is false", () => {
+    let logger: typeof import("../logger").logger;
+
     beforeEach(() => {
       (global as any).__DEV__ = false;
+      jest.resetModules();
+      logger = require("../logger").logger;
     });
 
     afterEach(() => {

@@ -4,16 +4,6 @@
  * except __DEV__ which is provided via jest globals
  */
 
-jest.mock("react-native", () => ({
-  InteractionManager: {
-    runAfterInteractions: (cb: () => void) => cb(),
-  },
-}));
-
-jest.mock("react-native-fast-image", () => ({
-  preload: jest.fn(),
-}), { virtual: true });
-
 import {
   MemoryCache,
   PerformanceTimer,
@@ -22,6 +12,20 @@ import {
   batchExecute,
   delayLoad,
 } from "../performanceUtils";
+
+jest.mock("react-native", () => ({
+  InteractionManager: {
+    runAfterInteractions: (cb: () => void) => cb(),
+  },
+}));
+
+jest.mock(
+  "react-native-fast-image",
+  () => ({
+    preload: jest.fn(),
+  }),
+  { virtual: true }
+);
 
 describe("MemoryCache", () => {
   it("should store and retrieve values", () => {
@@ -174,11 +178,7 @@ describe("debounce", () => {
 
 describe("batchExecute", () => {
   it("should execute all tasks and return results", async () => {
-    const tasks = [
-      () => 1,
-      () => 2,
-      () => 3,
-    ];
+    const tasks = [() => 1, () => 2, () => 3];
 
     const results = await batchExecute(tasks, 10, 0);
     expect(results).toEqual([1, 2, 3]);

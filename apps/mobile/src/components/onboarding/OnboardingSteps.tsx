@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import {
   View,
   Text,
@@ -10,12 +10,8 @@ import {
 } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../polyfills/expo-linear-gradient";
-import Animated, {
-  SlideInRight,
-  SlideOutLeft,
-  Layout,
-} from "react-native-reanimated";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../../theme";
+import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -141,10 +137,7 @@ interface StyleStepProps {
   onToggleStyle: (id: string) => void;
 }
 
-export const StyleStep: React.FC<StyleStepProps> = ({
-  selectedStyles,
-  onToggleStyle,
-}) => (
+export const StyleStep: React.FC<StyleStepProps> = ({ selectedStyles, onToggleStyle }) => (
   <Animated.View
     entering={SlideInRight.duration(350)}
     exiting={SlideOutLeft.duration(250)}
@@ -167,10 +160,7 @@ export const StyleStep: React.FC<StyleStepProps> = ({
           return (
             <TouchableOpacity
               key={option.id}
-              style={[
-                stepStyles.styleCard,
-                isSelected && stepStyles.styleCardSelected,
-              ]}
+              style={[stepStyles.styleCard, isSelected && stepStyles.styleCardSelected]}
               onPress={() => onToggleStyle(option.id)}
               activeOpacity={0.7}
             >
@@ -181,19 +171,12 @@ export const StyleStep: React.FC<StyleStepProps> = ({
                 ]}
               >
                 <Ionicons
-                  name={option.icon as any}
+                  name={option.icon}
                   size={24}
-                  color={
-                    isSelected ? theme.colors.surface : theme.colors.primary
-                  }
+                  color={isSelected ? theme.colors.surface : theme.colors.primary}
                 />
               </View>
-              <Text
-                style={[
-                  stepStyles.styleLabel,
-                  isSelected && stepStyles.styleLabelSelected,
-                ]}
-              >
+              <Text style={[stepStyles.styleLabel, isSelected && stepStyles.styleLabelSelected]}>
                 {option.label}
               </Text>
               <Text style={stepStyles.styleEnLabel}>{option.labelEn}</Text>
@@ -208,11 +191,7 @@ export const StyleStep: React.FC<StyleStepProps> = ({
               </Text>
               {isSelected && (
                 <View style={stepStyles.checkMark}>
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={20}
-                    color={theme.colors.surface}
-                  />
+                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.surface} />
                 </View>
               )}
             </TouchableOpacity>
@@ -228,10 +207,7 @@ interface ColorStepProps {
   onToggleColor: (id: string) => void;
 }
 
-export const ColorStep: React.FC<ColorStepProps> = ({
-  selectedColors,
-  onToggleColor,
-}) => (
+export const ColorStep: React.FC<ColorStepProps> = ({ selectedColors, onToggleColor }) => (
   <Animated.View
     entering={SlideInRight.duration(350)}
     exiting={SlideOutLeft.duration(250)}
@@ -240,9 +216,7 @@ export const ColorStep: React.FC<ColorStepProps> = ({
   >
     <View style={stepStyles.stepHeader}>
       <Text style={stepStyles.stepTitle}>偏好色彩</Text>
-      <Text style={stepStyles.stepSubtitle}>
-        选择你日常穿搭中最常出现的色彩方向
-      </Text>
+      <Text style={stepStyles.stepSubtitle}>选择你日常穿搭中最常出现的色彩方向</Text>
     </View>
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={stepStyles.colorGrid}>
@@ -251,10 +225,7 @@ export const ColorStep: React.FC<ColorStepProps> = ({
           return (
             <TouchableOpacity
               key={palette.id}
-              style={[
-                stepStyles.colorCard,
-                isSelected && stepStyles.colorCardSelected,
-              ]}
+              style={[stepStyles.colorCard, isSelected && stepStyles.colorCardSelected]}
               onPress={() => onToggleColor(palette.id)}
               activeOpacity={0.7}
             >
@@ -270,12 +241,7 @@ export const ColorStep: React.FC<ColorStepProps> = ({
                   />
                 ))}
               </View>
-              <Text
-                style={[
-                  stepStyles.colorLabel,
-                  isSelected && stepStyles.colorLabelSelected,
-                ]}
-              >
+              <Text style={[stepStyles.colorLabel, isSelected && stepStyles.colorLabelSelected]}>
                 {palette.label}
               </Text>
               <Text style={stepStyles.colorDescription} numberOfLines={2}>
@@ -283,11 +249,7 @@ export const ColorStep: React.FC<ColorStepProps> = ({
               </Text>
               {isSelected && (
                 <View style={stepStyles.checkMark}>
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={20}
-                    color={theme.colors.surface}
-                  />
+                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.surface} />
                 </View>
               )}
             </TouchableOpacity>
@@ -338,11 +300,7 @@ export const BodyStep: React.FC<BodyStepProps> = ({
           <View style={stepStyles.inputField}>
             <Text style={stepStyles.inputLabel}>身高 (cm)</Text>
             <View style={stepStyles.inputContainer}>
-              <Ionicons
-                name="resize-outline"
-                size={18}
-                color={theme.colors.textTertiary}
-              />
+              <Ionicons name="resize-outline" size={18} color={theme.colors.textTertiary} />
               <TextInput
                 style={stepStyles.textInput}
                 placeholder="170"
@@ -357,11 +315,7 @@ export const BodyStep: React.FC<BodyStepProps> = ({
           <View style={stepStyles.inputField}>
             <Text style={stepStyles.inputLabel}>体重 (kg)</Text>
             <View style={stepStyles.inputContainer}>
-              <Ionicons
-                name="scale-outline"
-                size={18}
-                color={theme.colors.textTertiary}
-              />
+              <Ionicons name="scale-outline" size={18} color={theme.colors.textTertiary} />
               <TextInput
                 style={stepStyles.textInput}
                 placeholder="65"
@@ -391,27 +345,17 @@ export const BodyStep: React.FC<BodyStepProps> = ({
             return (
               <TouchableOpacity
                 key={option.id}
-                style={[
-                  stepStyles.bodyTypeOption,
-                  isSelected && stepStyles.bodyTypeOptionSelected,
-                ]}
+                style={[stepStyles.bodyTypeOption, isSelected && stepStyles.bodyTypeOptionSelected]}
                 onPress={() => onBodyTypeChange(isSelected ? null : option.id)}
                 activeOpacity={0.7}
               >
                 <Ionicons
-                  name={option.icon as any}
+                  name={option.icon}
                   size={20}
-                  color={
-                    isSelected
-                      ? theme.colors.surface
-                      : theme.colors.textSecondary
-                  }
+                  color={isSelected ? theme.colors.surface : theme.colors.textSecondary}
                 />
                 <Text
-                  style={[
-                    stepStyles.bodyTypeLabel,
-                    isSelected && stepStyles.bodyTypeLabelSelected,
-                  ]}
+                  style={[stepStyles.bodyTypeLabel, isSelected && stepStyles.bodyTypeLabelSelected]}
                 >
                   {option.label}
                 </Text>
@@ -442,20 +386,12 @@ export const AIIntroStep: React.FC = () => (
         <View style={stepStyles.aiOrbContainer}>
           <View style={stepStyles.aiOrbOuter}>
             <LinearGradient
-              colors={[
-                theme.colors.primary,
-                theme.colors.primaryLight,
-                theme.colors.secondary,
-              ]}
+              colors={[theme.colors.primary, theme.colors.primaryLight, theme.colors.secondary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={stepStyles.aiOrb}
             >
-              <Ionicons
-                name="sparkles"
-                size={36}
-                color={theme.colors.surface}
-              />
+              <Ionicons name="sparkles" size={36} color={theme.colors.surface} />
             </LinearGradient>
           </View>
         </View>
@@ -465,8 +401,7 @@ export const AIIntroStep: React.FC = () => (
             {
               icon: "shirt-outline",
               title: "智能穿搭推荐",
-              description:
-                "根据你的风格偏好、身材数据和场景需求，生成个性化穿搭方案",
+              description: "根据你的风格偏好、身材数据和场景需求，生成个性化穿搭方案",
             },
             {
               icon: "camera-outline",
@@ -486,17 +421,11 @@ export const AIIntroStep: React.FC = () => (
           ].map((feature, index) => (
             <View key={index} style={stepStyles.featureItem}>
               <View style={stepStyles.featureIconContainer}>
-                <Ionicons
-                  name={feature.icon as any}
-                  size={22}
-                  color={theme.colors.primary}
-                />
+                <Ionicons name={feature.icon} size={22} color={theme.colors.primary} />
               </View>
               <View style={stepStyles.featureContent}>
                 <Text style={stepStyles.featureTitle}>{feature.title}</Text>
-                <Text style={stepStyles.featureDescription}>
-                  {feature.description}
-                </Text>
+                <Text style={stepStyles.featureDescription}>{feature.description}</Text>
               </View>
             </View>
           ))}

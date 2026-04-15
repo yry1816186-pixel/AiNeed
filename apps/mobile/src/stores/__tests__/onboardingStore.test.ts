@@ -71,12 +71,7 @@ describe("useOnboardingStore", () => {
     });
 
     test("应能设置到任意步骤", () => {
-      const steps: OnboardingStep[] = [
-        "basicInfo",
-        "photo",
-        "styleTest",
-        "complete",
-      ];
+      const steps: OnboardingStep[] = ["basicInfo", "photo", "styleTest", "complete"];
       steps.forEach((step) => {
         useOnboardingStore.getState().setCurrentStep(step);
         expect(useOnboardingStore.getState().currentStep).toBe(step);
@@ -89,26 +84,19 @@ describe("useOnboardingStore", () => {
   describe("completeStep", () => {
     test("应将步骤添加到 completedSteps", () => {
       useOnboardingStore.getState().completeStep("basicInfo");
-      expect(useOnboardingStore.getState().completedSteps).toContain(
-        "basicInfo",
-      );
+      expect(useOnboardingStore.getState().completedSteps).toContain("basicInfo");
     });
 
     test("不应重复添加已完成的步骤", () => {
       useOnboardingStore.getState().completeStep("basicInfo");
       useOnboardingStore.getState().completeStep("basicInfo");
-      expect(useOnboardingStore.getState().completedSteps).toEqual([
-        "basicInfo",
-      ]);
+      expect(useOnboardingStore.getState().completedSteps).toEqual(["basicInfo"]);
     });
 
     test("应支持完成多个步骤", () => {
       useOnboardingStore.getState().completeStep("basicInfo");
       useOnboardingStore.getState().completeStep("photo");
-      expect(useOnboardingStore.getState().completedSteps).toEqual([
-        "basicInfo",
-        "photo",
-      ]);
+      expect(useOnboardingStore.getState().completedSteps).toEqual(["basicInfo", "photo"]);
     });
   });
 
@@ -148,9 +136,7 @@ describe("useOnboardingStore", () => {
       useOnboardingStore.getState().updateFormData({
         photoUri: "file:///photo.jpg",
       });
-      expect(useOnboardingStore.getState().formData.photoUri).toBe(
-        "file:///photo.jpg",
-      );
+      expect(useOnboardingStore.getState().formData.photoUri).toBe("file:///photo.jpg");
     });
   });
 

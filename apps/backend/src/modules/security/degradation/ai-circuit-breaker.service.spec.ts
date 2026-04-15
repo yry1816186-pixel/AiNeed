@@ -17,7 +17,7 @@ function createRedisMock() {
     store,
     get: jest.fn((key: string) => {
       const entry = store.get(key);
-      if (!entry) return Promise.resolve(null);
+      if (!entry) {return Promise.resolve(null);}
       if (entry.pttlMs && Date.now() - entry.setAt > entry.pttlMs) {
         store.delete(key);
         return Promise.resolve(null);
@@ -42,7 +42,7 @@ function createRedisMock() {
     del: jest.fn((...keys: string[]) => {
       let count = 0;
       for (const key of keys) {
-        if (store.delete(key)) count++;
+        if (store.delete(key)) {count++;}
       }
       return Promise.resolve(count);
     }),

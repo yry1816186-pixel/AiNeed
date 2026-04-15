@@ -25,7 +25,7 @@ interface UseInfiniteScrollReturn<T> {
 }
 
 export function useInfiniteScroll<T>(
-  options: UseInfiniteScrollOptions<T>,
+  options: UseInfiniteScrollOptions<T>
 ): UseInfiniteScrollReturn<T> {
   const {
     url,
@@ -37,7 +37,7 @@ export function useInfiniteScroll<T>(
   } = options;
 
   const [items, setItems] = useState<T[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, _setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -47,21 +47,27 @@ export function useInfiniteScroll<T>(
   const isMountedRef = useRef(true);
 
   const loadMore = useCallback(async () => {
-    if (!enabled || loadingMore || !hasMore || loading) return;
+    if (!enabled || loadingMore || !hasMore || loading) {
+      return;
+    }
 
     setLoadingMore(true);
     setError(null);
 
     try {
       const page = pageRef.current;
-      const response: ApiResponse<PaginatedResponse<T>> =
-        await apiClient.get<PaginatedResponse<T>>(url, {
+      const response: ApiResponse<PaginatedResponse<T>> = await apiClient.get<PaginatedResponse<T>>(
+        url,
+        {
           page,
           pageSize,
           ...params,
-        });
+        }
+      );
 
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current) {
+        return;
+      }
 
       if (response.success && response.data) {
         const newItems = getItems(response.data);
@@ -85,21 +91,27 @@ export function useInfiniteScroll<T>(
   }, [url, pageSize, params, enabled, loadingMore, hasMore, loading, getItems, getHasMore]);
 
   const refresh = useCallback(async () => {
-    if (!enabled) return;
+    if (!enabled) {
+      return;
+    }
 
     setRefreshing(true);
     setError(null);
     pageRef.current = 1;
 
     try {
-      const response: ApiResponse<PaginatedResponse<T>> =
-        await apiClient.get<PaginatedResponse<T>>(url, {
+      const response: ApiResponse<PaginatedResponse<T>> = await apiClient.get<PaginatedResponse<T>>(
+        url,
+        {
           page: 1,
           pageSize,
           ...params,
-        });
+        }
+      );
 
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current) {
+        return;
+      }
 
       if (response.success && response.data) {
         const newItems = getItems(response.data);

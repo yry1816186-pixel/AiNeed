@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
-import { launchCamera, launchImageLibrary, type CameraOptions, type ImageLibraryOptions } from 'react-native-image-picker';
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import Animated, { SlideInRight } from 'react-native-reanimated';
-import { theme, Colors, Spacing, BorderRadius } from '../../../theme';
+  launchCamera,
+  launchImageLibrary,
+  type CameraOptions,
+  type ImageLibraryOptions,
+} from "react-native-image-picker";
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import Animated, { SlideInRight } from "react-native-reanimated";
+import { theme, Colors, Spacing, BorderRadius } from '../design-system/theme';
 
 interface PhotoStepProps {
   onNext: () => void;
@@ -18,55 +16,50 @@ interface PhotoStepProps {
 }
 
 const IMAGE_PICKER_OPTIONS: CameraOptions & ImageLibraryOptions = {
-  mediaType: 'photo',
+  mediaType: "photo",
   quality: 0.8,
   maxWidth: 1024,
   maxHeight: 1024,
 };
 
-export const PhotoStep: React.FC<PhotoStepProps> = ({
-  onNext,
-  onSkip,
-}) => {
+export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
 
   const handleTakePhoto = () => {
-    launchCamera(IMAGE_PICKER_OPTIONS, (response) => {
-      if (response.didCancel || response.errorCode) return;
+    void launchCamera(IMAGE_PICKER_OPTIONS, (response) => {
+      if (response.didCancel || response.errorCode) {
+        return;
+      }
       const uri = response.assets?.[0]?.uri;
-      if (uri) setPhotoUri(uri);
+      if (uri) {
+        setPhotoUri(uri);
+      }
     });
   };
 
   const handlePickFromLibrary = () => {
-    launchImageLibrary(IMAGE_PICKER_OPTIONS, (response) => {
-      if (response.didCancel || response.errorCode) return;
+    void launchImageLibrary(IMAGE_PICKER_OPTIONS, (response) => {
+      if (response.didCancel || response.errorCode) {
+        return;
+      }
       const uri = response.assets?.[0]?.uri;
-      if (uri) setPhotoUri(uri);
+      if (uri) {
+        setPhotoUri(uri);
+      }
     });
   };
 
   return (
-    <Animated.View
-      entering={SlideInRight.duration(350)}
-      style={styles.stepContent}
-    >
+    <Animated.View entering={SlideInRight.duration(350)} style={styles.stepContent}>
       <View style={styles.stepHeader}>
         <Text style={styles.stepTitle}>上传照片解锁个性化分析</Text>
         <Text style={styles.stepSubtitle}>
           上传一张全身照，帮助我们更好地分析体型和生成试衣效果
         </Text>
       </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.privacyBox}>
-          <Ionicons
-            name="lock-closed-outline"
-            size={20}
-            color={theme.colors.primary}
-          />
+          <Ionicons name="lock-closed-outline" size={20} color={theme.colors.primary} />
           <Text style={styles.privacyText}>
             你的照片仅用于体型分析和试衣效果生成，绝不会分享给第三方
           </Text>
@@ -81,11 +74,7 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({
               onPress={handlePickFromLibrary}
               activeOpacity={0.7}
             >
-              <Ionicons
-                name="camera-outline"
-                size={48}
-                color={theme.colors.textTertiary}
-              />
+              <Ionicons name="camera-outline" size={48} color={theme.colors.textTertiary} />
               <Text style={styles.photoPlaceholderText}>点击上传照片</Text>
             </TouchableOpacity>
           )}
@@ -97,11 +86,7 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({
             onPress={handleTakePhoto}
             activeOpacity={0.7}
           >
-            <Ionicons
-              name="camera-outline"
-              size={20}
-              color={theme.colors.surface}
-            />
+            <Ionicons name="camera-outline" size={20} color={theme.colors.surface} />
             <Text style={styles.cameraButtonText}>拍照</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -109,21 +94,13 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({
             onPress={handlePickFromLibrary}
             activeOpacity={0.7}
           >
-            <Ionicons
-              name="images-outline"
-              size={20}
-              color={theme.colors.textSecondary}
-            />
+            <Ionicons name="images-outline" size={20} color={theme.colors.textSecondary} />
             <Text style={styles.galleryButtonText}>从相册选择</Text>
           </TouchableOpacity>
         </View>
 
         {onSkip && (
-          <TouchableOpacity
-            style={styles.skipLink}
-            onPress={onSkip}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity style={styles.skipLink} onPress={onSkip} activeOpacity={0.7}>
             <Text style={styles.skipLinkText}>跳过，稍后上传</Text>
           </TouchableOpacity>
         )}
@@ -143,7 +120,7 @@ const styles = StyleSheet.create({
   },
   stepTitle: {
     fontSize: 26,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.text,
     letterSpacing: -0.5,
     lineHeight: 34,
@@ -157,16 +134,16 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: Spacing[5],
     paddingBottom: Spacing[6],
-    alignItems: 'center',
+    alignItems: "center",
   },
   privacyBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     gap: Spacing[3],
-    width: '100%',
+    width: "100%",
     marginBottom: Spacing[6],
   },
   privacyText: {
@@ -176,7 +153,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   photoContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: Spacing[6],
   },
   photoPreview: {
@@ -190,9 +167,9 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
     borderWidth: 2,
     borderColor: Colors.neutral[300],
-    borderStyle: 'dashed',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderStyle: "dashed",
+    alignItems: "center",
+    justifyContent: "center",
     gap: Spacing[3],
   },
   photoPlaceholderText: {
@@ -200,14 +177,14 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
   buttonGroup: {
-    width: '100%',
+    width: "100%",
     gap: Spacing[3],
     marginBottom: Spacing[4],
   },
   cameraButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: theme.colors.primary,
     borderRadius: BorderRadius.xl,
     height: 52,
@@ -215,13 +192,13 @@ const styles = StyleSheet.create({
   },
   cameraButtonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.surface,
   },
   galleryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.xl,
     height: 52,
@@ -231,7 +208,7 @@ const styles = StyleSheet.create({
   },
   galleryButtonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.textSecondary,
   },
   skipLink: {

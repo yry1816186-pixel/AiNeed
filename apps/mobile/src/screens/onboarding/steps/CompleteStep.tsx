@@ -1,12 +1,5 @@
-import React, { useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Dimensions,
-} from "react-native";
+﻿import React, { useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from "react-native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, {
@@ -17,9 +10,9 @@ import Animated, {
   FadeIn,
   SlideInUp,
 } from "react-native-reanimated";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../../../theme";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
 interface CompleteStepProps {
   onComplete: () => void;
@@ -45,7 +38,7 @@ export const CompleteStep: React.FC<CompleteStepProps> = ({ onComplete }) => {
   useEffect(() => {
     scaleValue.value = withSequence(
       withSpring(1.1, { damping: 8, stiffness: 100 }),
-      withSpring(1.0, { damping: 15, stiffness: 150 }),
+      withSpring(1.0, { damping: 15, stiffness: 150 })
     );
   }, []);
 
@@ -54,20 +47,17 @@ export const CompleteStep: React.FC<CompleteStepProps> = ({ onComplete }) => {
   }));
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.scrollContent}
-      showsVerticalScrollIndicator={false}
-    >
+    <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
       <View style={styles.celebrationContainer}>
         <View style={styles.iconWrapper}>
           <Animated.View style={[styles.iconOuter, iconAnimatedStyle]}>
             <LinearGradient
-              colors={[theme.colors.primary, theme.colors.secondary]}
+              colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.iconGradient}
             >
-              <Ionicons name="checkmark-circle" size={48} color="#FFFFFF" />
+              <Ionicons name="checkmark-circle" size={48} color={DesignTokens.colors.neutral.white} />
             </LinearGradient>
           </Animated.View>
           {DECORATIONS.map((deco, index) => (
@@ -92,45 +82,26 @@ export const CompleteStep: React.FC<CompleteStepProps> = ({ onComplete }) => {
         </View>
       </View>
 
-      <Animated.View
-        entering={FadeIn.duration(400).delay(400)}
-        style={styles.textContainer}
-      >
+      <Animated.View entering={FadeIn.duration(400).delay(400)} style={styles.textContainer}>
         <Text style={styles.mainTitle}>设置完成！</Text>
-        <Text style={styles.mainSubtitle}>
-          你的个人档案已创建，AI 造型师已准备就绪
-        </Text>
+        <Text style={styles.mainSubtitle}>你的个人档案已创建，AI 造型师已准备就绪</Text>
       </Animated.View>
 
-      <Animated.View
-        entering={FadeIn.duration(400).delay(600)}
-        style={styles.previewContainer}
-      >
+      <Animated.View entering={FadeIn.duration(400).delay(600)} style={styles.previewContainer}>
         {PREVIEW_ITEMS.map((item) => (
           <View key={item.icon} style={styles.previewCard}>
             <View style={styles.previewIconContainer}>
-              <Ionicons
-                name={item.icon as any}
-                size={20}
-                color={theme.colors.primary}
-              />
+              <Ionicons name={item.icon} size={20} color={theme.colors.primary} />
             </View>
             <Text style={styles.previewTitle}>{item.title}</Text>
           </View>
         ))}
       </Animated.View>
 
-      <Animated.View
-        entering={FadeIn.duration(400).delay(800)}
-        style={styles.buttonContainer}
-      >
-        <TouchableOpacity
-          style={styles.exploreButton}
-          onPress={onComplete}
-          activeOpacity={0.7}
-        >
+      <Animated.View entering={FadeIn.duration(400).delay(800)} style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.exploreButton} onPress={onComplete} activeOpacity={0.7}>
           <Text style={styles.exploreButtonText}>开始探索</Text>
-          <Ionicons name="arrow-forward-outline" size={20} color="#FFFFFF" />
+          <Ionicons name="arrow-forward-outline" size={20} color={DesignTokens.colors.neutral.white} />
         </TouchableOpacity>
       </Animated.View>
     </ScrollView>
@@ -231,7 +202,7 @@ const styles = StyleSheet.create({
   exploreButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
   },
 });
 

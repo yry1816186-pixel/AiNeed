@@ -12,7 +12,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from './src/polyfills/expo-vector-icons';
-import { ErrorBoundary } from './src/components/ErrorBoundary';
+import { ErrorBoundary } from './src/shared/components/ErrorBoundary';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import {
   navigationRef,
@@ -20,9 +20,13 @@ import {
   navigateDeepLink,
   isNavigationReady as checkNavigationReady,
 } from './src/navigation/navigationService';
-import { theme } from './src/theme';
+import { theme } from './src/design-system/theme';
+import { ThemeProvider as UnifiedThemeProvider } from './src/contexts/ThemeContext';
+import { ThemeProvider as PaperThemeProvider } from './src/design-system/ui/PaperThemeProvider';
 import { useAuthStore } from './src/stores/index';
-import { OfflineBanner } from './src/components/common/OfflineBanner';
+import { OfflineBanner } from './src/shared/components/common/OfflineBanner';
+import { I18nProvider } from './src/i18n';
+import { FeatureFlagProvider } from './src/contexts/FeatureFlagContext';
 import { initSentry } from './src/services/sentry';
 import apiClient from './src/services/api/client';
 import { authApi } from './src/services/api/auth.api';
@@ -191,13 +195,21 @@ export default function App() {
         }}
       >
         <GestureHandlerRootView style={styles.root}>
-          <SafeAreaProvider>
-            <StatusBar
-              barStyle="dark-content"
-              backgroundColor={theme.colors.surface}
-            />
-            <SplashScreen />
-          </SafeAreaProvider>
+          <UnifiedThemeProvider>
+            <PaperThemeProvider>
+              <I18nProvider>
+                <FeatureFlagProvider>
+                <SafeAreaProvider>
+                  <StatusBar
+                    barStyle="dark-content"
+                    backgroundColor={theme.colors.surface}
+                  />
+                  <SplashScreen />
+                </SafeAreaProvider>
+                </FeatureFlagProvider>
+              </I18nProvider>
+            </PaperThemeProvider>
+          </UnifiedThemeProvider>
         </GestureHandlerRootView>
       </ErrorBoundary>
     );
@@ -216,35 +228,43 @@ export default function App() {
       }}
     >
       <GestureHandlerRootView style={styles.root}>
-        <SafeAreaProvider>
-          <QueryClientProvider client={queryClient}>
-            <NavigationContainer
-              ref={navigationRef}
-              onReady={() => {
-                setNavigationReady(true);
-                const routeName = navigationRef.getCurrentRoute()?.name;
-                setCurrentRouteName(routeName);
-                if (routeName) {
-                  analytics.trackScreen(routeName);
-                }
-              }}
-              onStateChange={() => {
-                const routeName = navigationRef.getCurrentRoute()?.name;
-                setCurrentRouteName(routeName);
-                if (routeName) {
-                  analytics.trackScreen(routeName);
-                }
-              }}
-            >
-              <StatusBar
-                barStyle="dark-content"
-                backgroundColor={theme.colors.surface}
-              />
-              <OfflineBanner />
-              <RootNavigator isAuthenticated={isAuthenticated} />
-            </NavigationContainer>
-          </QueryClientProvider>
-        </SafeAreaProvider>
+        <UnifiedThemeProvider>
+          <PaperThemeProvider>
+            <I18nProvider>
+              <FeatureFlagProvider>
+              <SafeAreaProvider>
+                <QueryClientProvider client={queryClient}>
+                  <NavigationContainer
+                    ref={navigationRef}
+                    onReady={() => {
+                      setNavigationReady(true);
+                      const routeName = navigationRef.getCurrentRoute()?.name;
+                      setCurrentRouteName(routeName);
+                      if (routeName) {
+                        analytics.trackScreen(routeName);
+                      }
+                    }}
+                    onStateChange={() => {
+                      const routeName = navigationRef.getCurrentRoute()?.name;
+                      setCurrentRouteName(routeName);
+                      if (routeName) {
+                        analytics.trackScreen(routeName);
+                      }
+                    }}
+                  >
+                    <StatusBar
+                      barStyle="dark-content"
+                      backgroundColor={theme.colors.surface}
+                    />
+                    <OfflineBanner />
+                    <RootNavigator isAuthenticated={isAuthenticated} />
+                  </NavigationContainer>
+                </QueryClientProvider>
+              </SafeAreaProvider>
+              </FeatureFlagProvider>
+            </I18nProvider>
+          </PaperThemeProvider>
+        </UnifiedThemeProvider>
       </GestureHandlerRootView>
     </ErrorBoundary>
   );

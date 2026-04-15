@@ -1,8 +1,8 @@
 ﻿import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 
-import { PaymentService } from "../payment.service";
 import { CreatePaymentDto, PaymentProvider, PaymentMethod } from "../dto";
+import { PaymentService } from "../payment.service";
 
 @Injectable()
 export class SubscriptionRenewalListener {

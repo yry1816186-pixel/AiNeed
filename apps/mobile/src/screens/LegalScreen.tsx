@@ -1,31 +1,24 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Linking,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme } from '../theme';
-import type { RootStackParamList } from '../types/navigation';
+﻿import React from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme } from '../design-system/theme';
+import type { RootStackParamList } from "../types/navigation";
 
 type LegalScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 type LegalScreenProps = {
-  type: 'terms' | 'privacy';
+  type: "terms" | "privacy";
 };
 
 export const LegalScreen: React.FC<LegalScreenProps> = ({ type }) => {
   const navigation = useNavigation<LegalScreenNavigationProp>();
-  const isTerms = type === 'terms';
+  const isTerms = type === "terms";
 
-  const title = isTerms ? '用户服务协议' : '隐私政策';
-  const lastUpdated = '2026年4月1日';
+  const title = isTerms ? "用户服务协议" : "隐私政策";
+  const lastUpdated = "2026年4月1日";
 
   const termsContent = `
 ## 一、总则
@@ -250,27 +243,27 @@ export const LegalScreen: React.FC<LegalScreenProps> = ({ type }) => {
   const content = isTerms ? termsContent : privacyContent;
 
   const renderContent = () => {
-    const lines = content.trim().split('\n');
+    const lines = content.trim().split("\n");
     return lines.map((line, index) => {
-      if (line.startsWith('## ')) {
+      if (line.startsWith("## ")) {
         return (
           <Text key={index} style={styles.heading1}>
-            {line.replace('## ', '')}
+            {line.replace("## ", "")}
           </Text>
         );
-      } else if (line.startsWith('### ')) {
+      } else if (line.startsWith("### ")) {
         return (
           <Text key={index} style={styles.heading2}>
-            {line.replace('### ', '')}
+            {line.replace("### ", "")}
           </Text>
         );
-      } else if (line.startsWith('- ')) {
+      } else if (line.startsWith("- ")) {
         return (
           <Text key={index} style={styles.bulletItem}>
-            • {line.replace('- ', '')}
+            • {line.replace("- ", "")}
           </Text>
         );
-      } else if (line.trim() === '') {
+      } else if (line.trim() === "") {
         return <View key={index} style={styles.spacer} />;
       } else {
         return (
@@ -307,10 +300,7 @@ export const LegalScreen: React.FC<LegalScreenProps> = ({ type }) => {
       <View style={styles.footer}>
         <Text style={styles.footerText}>
           如有疑问，请联系
-          <Text
-            style={styles.linkText}
-            onPress={() => Linking.openURL('mailto:support@xuno.app')}
-          >
+          <Text style={styles.linkText} onPress={() => Linking.openURL("mailto:support@xuno.app")}>
             support@xuno.app
           </Text>
         </Text>
@@ -325,9 +315,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
     backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
@@ -336,12 +326,12 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.text,
   },
   content: {
@@ -360,14 +350,14 @@ const styles = StyleSheet.create({
   },
   heading1: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.text,
     marginTop: 24,
     marginBottom: 12,
   },
   heading2: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.text,
     marginTop: 16,
     marginBottom: 8,
@@ -393,7 +383,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
-    alignItems: 'center',
+    alignItems: "center",
   },
   footerText: {
     fontSize: 12,
@@ -401,7 +391,7 @@ const styles = StyleSheet.create({
   },
   linkText: {
     color: theme.colors.primary,
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
 });
 

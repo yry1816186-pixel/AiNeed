@@ -44,13 +44,9 @@ async function checkWechatInstalled(): Promise<boolean> {
 
 async function authorize(): Promise<WechatAuthResult | null> {
   const installed = await checkWechatInstalled();
-  
+
   if (!installed) {
-    Alert.alert(
-      "微信未安装",
-      "请先安装微信客户端后再使用微信登录",
-      [{ text: "知道了" }]
-    );
+    Alert.alert("微信未安装", "请先安装微信客户端后再使用微信登录", [{ text: "知道了" }]);
     return null;
   }
 
@@ -64,17 +60,17 @@ async function authorize(): Promise<WechatAuthResult | null> {
       const redirectUri = encodeURIComponent(WECHAT_UNIVERSAL_LINK || "xuno://wechat-callback");
       const state = Math.random().toString(36).substring(7);
       const authUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${WECHAT_APP_ID}&redirect_uri=${redirectUri}&response_type=code&scope=snsapi_userinfo&state=${state}#wechat_redirect`;
-      
+
       Linking.openURL(authUrl).catch(() => {
         resolve(null);
       });
-      
+
       const handleOpenURL = (event: { url: string }) => {
         const url = event.url;
         if (url.includes("wechat-callback") || url.includes("code=")) {
           const codeMatch = url.match(/code=([^&]+)/);
           const stateMatch = url.match(/state=([^&]+)/);
-          
+
           if (codeMatch) {
             resolve({
               code: codeMatch[1],
@@ -102,7 +98,7 @@ function mockAuthorize(): WechatAuthResult {
 
 async function loginWithWechat(): Promise<ApiResponse<WechatAuthResponse>> {
   const authResult = await authorize();
-  
+
   if (!authResult) {
     return {
       success: false,
@@ -134,13 +130,9 @@ async function shareToWechat(options: {
   webpageUrl?: string;
 }): Promise<boolean> {
   const installed = await checkWechatInstalled();
-  
+
   if (!installed) {
-    Alert.alert(
-      "微信未安装",
-      "请先安装微信客户端后再分享",
-      [{ text: "知道了" }]
-    );
+    Alert.alert("微信未安装", "请先安装微信客户端后再分享", [{ text: "知道了" }]);
     return false;
   }
 

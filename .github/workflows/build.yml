@@ -22,7 +22,6 @@ env:
   PNPM_VERSION: '8'
   REGISTRY: ghcr.io
   IMAGE_NAME_BACKEND: ${{ github.repository }}/backend
-  IMAGE_NAME_FRONTEND: ${{ github.repository }}/frontend
 
 jobs:
   # ==================== Build Backend ====================
@@ -125,7 +124,7 @@ jobs:
           restore-keys: gradle-${{ runner.os }}-
 
       - name: Build Android Release APK
-        run: cd apps/mobile && npx react-native assemble-release
+        run: cd apps/mobile/android && ./gradlew assembleRelease
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_17_X64 }}
 
@@ -256,7 +255,7 @@ jobs:
 
       - name: Build Status
         run: |
-          if [[ "${{ needs.build-backend.result }}" == "failure" || "${{ needs.build-frontend.result }}" == "failure" ]]; then
+          if [[ "${{ needs.build-backend.result }}" == "failure" || "${{ needs.build-mobile.result }}" == "failure" ]]; then
             echo "Build failed!"
             exit 1
           fi

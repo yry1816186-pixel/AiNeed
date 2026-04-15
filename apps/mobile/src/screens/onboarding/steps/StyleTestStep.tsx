@@ -1,15 +1,9 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
+﻿import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, { SlideInRight } from "react-native-reanimated";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../../../theme";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -36,28 +30,16 @@ const FEATURES = [
   },
 ] as const;
 
-export const StyleTestStep: React.FC<StyleTestStepProps> = ({
-  onNext,
-  onSkip,
-}) => (
-  <Animated.View
-    entering={SlideInRight.duration(350)}
-    style={styles.container}
-  >
+export const StyleTestStep: React.FC<StyleTestStepProps> = ({ onNext, onSkip }) => (
+  <Animated.View entering={SlideInRight.duration(350)} style={styles.container}>
     <View style={styles.header}>
       <Text style={styles.title}>发现你的时尚风格</Text>
-      <Text style={styles.subtitle}>
-        通过简单的图片选择测试，AI 将为你找到最适合的穿搭风格
-      </Text>
+      <Text style={styles.subtitle}>通过简单的图片选择测试，AI 将为你找到最适合的穿搭风格</Text>
     </View>
 
     <View style={styles.previewContainer}>
       <LinearGradient
-        colors={[
-          theme.colors.primary,
-          theme.colors.primaryLight,
-          theme.colors.secondary,
-        ]}
+        colors={[theme.colors.primary, theme.colors.primaryLight, theme.colors.secondary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.previewCard}
@@ -72,11 +54,7 @@ export const StyleTestStep: React.FC<StyleTestStepProps> = ({
       {FEATURES.map((feature) => (
         <View key={feature.icon} style={styles.featureCard}>
           <View style={styles.featureIconContainer}>
-            <Ionicons
-              name={feature.icon as any}
-              size={22}
-              color={theme.colors.primary}
-            />
+            <Ionicons name={feature.icon} size={22} color={theme.colors.primary} />
           </View>
           <Text style={styles.featureTitle}>{feature.title}</Text>
           <Text style={styles.featureDescription}>{feature.description}</Text>
@@ -85,20 +63,12 @@ export const StyleTestStep: React.FC<StyleTestStepProps> = ({
     </View>
 
     <View style={styles.actions}>
-      <TouchableOpacity
-        style={styles.startButton}
-        onPress={onNext}
-        activeOpacity={0.7}
-      >
+      <TouchableOpacity style={styles.startButton} onPress={onNext} activeOpacity={0.7}>
         <Text style={styles.startButtonText}>开始测试</Text>
         <Ionicons name="play-outline" size={20} color="#FFFFFF" />
       </TouchableOpacity>
       {onSkip && (
-        <TouchableOpacity
-          style={styles.skipButton}
-          onPress={onSkip}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity style={styles.skipButton} onPress={onSkip} activeOpacity={0.7}>
           <Text style={styles.skipText}>跳过</Text>
         </TouchableOpacity>
       )}

@@ -12,7 +12,8 @@ export interface RedisPoolOptions {
   maxRedirections: number;
   retryStrategy: (times: number) => number | null;
   reconnectOnError: (err: Error) => boolean;
-  connectionPoolSize: number;
+  /** @deprecated ioredis 单节点模式不支持连接池，此参数无效。如需连接池请使用 Redis Cluster 模式。 */
+  connectionPoolSize?: number;
   keepAlive: number;
   connectTimeout: number;
   commandTimeout: number;
@@ -25,7 +26,7 @@ const DEFAULT_POOL_OPTIONS: Partial<RedisPoolOptions> = {
   keepAlive: 10000,
   connectTimeout: 10000,
   commandTimeout: 5000,
-  connectionPoolSize: 10,
+  // connectionPoolSize 已移除：ioredis 单节点模式不支持连接池参数
 };
 
 function createRetryStrategy(times: number): number | null {
@@ -60,7 +61,6 @@ function createReconnectOnError(err: Error): boolean {
           enableReadyCheck: DEFAULT_POOL_OPTIONS.enableReadyCheck ?? false,
           maxRedirections: DEFAULT_POOL_OPTIONS.maxRedirections ?? 16,
           maxRetriesPerRequest: configService.get<number>("REDIS_MAX_RETRIES", 3),
-          connectionPoolSize: configService.get<number>("REDIS_POOL_SIZE", 10),
           keepAlive: configService.get<number>("REDIS_KEEP_ALIVE", 10000),
           connectTimeout: configService.get<number>("REDIS_CONNECT_TIMEOUT", 10000),
           commandTimeout: configService.get<number>("REDIS_COMMAND_TIMEOUT", 5000),

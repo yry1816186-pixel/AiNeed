@@ -1,7 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { QuizProgressService, QuizProgress } from "./quiz-progress.service";
 import { RedisService } from "../../../common/redis/redis.service";
+
+import { QuizProgressService, QuizProgress } from "./quiz-progress.service";
 
 describe("QuizProgressService", () => {
   let service: QuizProgressService;

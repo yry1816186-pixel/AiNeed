@@ -673,7 +673,7 @@ class VisualOutfitService:
         outfit_plan: VisualOutfitPlan
     ) -> Optional[str]:
         try:
-            from ml.services.virtual_tryon_service import virtual_tryon_service
+            from ml.services.tryon.virtual_tryon_service import virtual_tryon_service
 
             top_item = None
             for item in outfit_plan.items:

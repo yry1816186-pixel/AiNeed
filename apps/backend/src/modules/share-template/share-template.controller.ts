@@ -13,12 +13,12 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiParam } from "@ne
 
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
-import { ShareTemplateService } from "./share-template.service";
 import {
   CreateShareTemplateDto,
   UpdateShareTemplateDto,
   ShareTemplateQueryDto,
 } from "./dto/share-template.dto";
+import { ShareTemplateService } from "./share-template.service";
 
 @ApiTags("share-template")
 @ApiBearerAuth()

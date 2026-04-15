@@ -4,10 +4,10 @@ import { PrismaModule } from "../../common/prisma/prisma.module";
 import { RedisModule } from "../../common/redis/redis.module";
 import { NotificationModule } from "../notification/notification.module";
 
-import { BloggerController } from "./blogger.controller";
-import { BloggerScoreService } from "./blogger-score.service";
-import { BloggerProductService } from "./blogger-product.service";
 import { BloggerDashboardService } from "./blogger-dashboard.service";
+import { BloggerProductService } from "./blogger-product.service";
+import { BloggerScoreService } from "./blogger-score.service";
+import { BloggerController } from "./blogger.controller";
 
 @Module({
   imports: [PrismaModule, RedisModule, NotificationModule],

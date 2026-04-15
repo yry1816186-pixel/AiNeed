@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from "react";
+﻿import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Dimensions,
   Alert,
   ActivityIndicator,
+  Dimensions,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
@@ -21,13 +22,16 @@ import Animated, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp as NavProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
-import { profileApi } from "../services/api/profile.api";
+import { useTranslation } from "../i18n";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import { profileApi, type UpdateProfileDto } from "../services/api/profile.api";
+import { pickImageSecurely, ImageValidationError } from "../utils/imagePicker";
 import { PhotoGuideOverlay } from "../components/photo/PhotoGuideOverlay";
 import { PrivacyConsentModal } from "../components/privacy/PrivacyConsentModal";
 import type { RootStackParamList } from "../types/navigation";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 const ONBOARDING_COMPLETE_KEY = "@aineed:onboarding_complete";
 
 type NavigationProp = NavProp<RootStackParamList>;
@@ -44,8 +48,21 @@ const GENDER_OPTIONS = [
 
 const AGE_RANGES = ["18-24", "25-30", "31-40", "40+"];
 
+function getBirthDateFromRange(range: string): string {
+  const currentYear = new Date().getFullYear();
+  const rangeToYear: Record<string, number> = {
+    "18-24": currentYear - 21,
+    "25-30": currentYear - 27,
+    "31-40": currentYear - 35,
+    "40+": currentYear - 45,
+  };
+  const year = rangeToYear[range] ?? currentYear - 25;
+  return `${year}-01-01`;
+}
+
 export const OnboardingScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
+  const t = useTranslation();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>("BASIC_INFO");
   const [isSaving, setIsSaving] = useState(false);
 
@@ -70,7 +87,7 @@ export const OnboardingScreen: React.FC = () => {
         stiffness: 120,
       });
     },
-    [progressValue],
+    [progressValue]
   );
 
   const progressStyle = useAnimatedStyle(() => ({
@@ -100,7 +117,7 @@ export const OnboardingScreen: React.FC = () => {
       setCurrentStep(nextStep);
       updateProgress(nextStep);
     } else if (currentStep === "QUIZ") {
-      handleComplete();
+      void handleComplete();
     }
   }, [currentStep, updateProgress]);
 
@@ -118,19 +135,19 @@ export const OnboardingScreen: React.FC = () => {
     if (currentStep === "PHOTO") {
       handleNext();
     } else if (currentStep === "QUIZ") {
-      handleComplete();
+      void handleComplete();
     }
   }, [currentStep, handleNext]);
 
   const handleComplete = useCallback(async () => {
     setIsSaving(true);
     try {
-      const updateData: Record<string, unknown> = {
-        gender: gender ?? undefined,
-        ageRange: ageRange ?? undefined,
+      const updateData: UpdateProfileDto = {
+        gender: (gender as "male" | "female" | "other") ?? undefined,
+        birthDate: ageRange ? getBirthDateFromRange(ageRange) : undefined,
       };
 
-      await profileApi.updateProfile(updateData as any);
+      await profileApi.updateProfile(updateData);
       await AsyncStorage.setItem(ONBOARDING_COMPLETE_KEY, "true");
 
       navigation.reset({
@@ -138,13 +155,24 @@ export const OnboardingScreen: React.FC = () => {
         routes: [{ name: "MainTabs" }],
       });
     } catch {
-      await AsyncStorage.setItem(ONBOARDING_COMPLETE_KEY, "true");
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "MainTabs" }],
-      });
-    } finally {
       setIsSaving(false);
+      Alert.alert(
+        t.common.error,
+        "无法保存您的偏好设置，请检查网络后重试。您可以稍后在个人设置中完善。",
+        [
+          { text: t.common.retry, onPress: () => void handleComplete() },
+          {
+            text: t.common.skip,
+            style: "cancel",
+            onPress: () => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "MainTabs" }],
+              });
+            },
+          },
+        ]
+      );
     }
   }, [gender, ageRange, navigation]);
 
@@ -161,10 +189,20 @@ export const OnboardingScreen: React.FC = () => {
     setShowPrivacyModal(false);
   }, []);
 
-  const handleTakePhoto = useCallback(() => {
-    // Placeholder: in production this would open camera via expo-image-picker
+  const handleTakePhoto = useCallback(async () => {
     setShowCameraGuide(false);
-    setPhotoUri("placeholder://photo-taken");
+    try {
+      const result = await pickImageSecurely();
+      if (result) {
+        setPhotoUri(result.uri);
+      }
+    } catch (err) {
+      if (err instanceof ImageValidationError) {
+        Alert.alert("图片选择失败", err.message);
+      } else {
+        Alert.alert("图片选择失败", "请稍后重试");
+      }
+    }
   }, []);
 
   const renderProgressBar = () => (
@@ -196,10 +234,7 @@ export const OnboardingScreen: React.FC = () => {
               return (
                 <TouchableOpacity
                   key={option.id}
-                  style={[
-                    styles.genderPill,
-                    isSelected && styles.genderPillSelected,
-                  ]}
+                  style={[styles.genderPill, isSelected && styles.genderPillSelected]}
                   onPress={() => setGender(option.id)}
                   activeOpacity={0.7}
                   accessibilityLabel={option.label}
@@ -208,13 +243,10 @@ export const OnboardingScreen: React.FC = () => {
                   <Ionicons
                     name={option.icon}
                     size={20}
-                    color={isSelected ? "#FFFFFF" : theme.colors.textSecondary}
+                    color={isSelected ? DesignTokens.colors.neutral.white : theme.colors.textSecondary}
                   />
                   <Text
-                    style={[
-                      styles.genderPillText,
-                      isSelected && styles.genderPillTextSelected,
-                    ]}
+                    style={[styles.genderPillText, isSelected && styles.genderPillTextSelected]}
                   >
                     {option.label}
                   </Text>
@@ -229,27 +261,23 @@ export const OnboardingScreen: React.FC = () => {
           <Text style={styles.sectionLabel}>
             年龄段 <Text style={styles.requiredAsterisk}>*</Text>
           </Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.ageRow}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.ageRow}
+          >
             {AGE_RANGES.map((range) => {
               const isSelected = ageRange === range;
               return (
                 <TouchableOpacity
                   key={range}
-                  style={[
-                    styles.agePill,
-                    isSelected && styles.agePillSelected,
-                  ]}
+                  style={[styles.agePill, isSelected && styles.agePillSelected]}
                   onPress={() => setAgeRange(range)}
                   activeOpacity={0.7}
                   accessibilityLabel={range}
                   accessibilityRole="button"
                 >
-                  <Text
-                    style={[
-                      styles.agePillText,
-                      isSelected && styles.agePillTextSelected,
-                    ]}
-                  >
+                  <Text style={[styles.agePillText, isSelected && styles.agePillTextSelected]}>
                     {range}
                   </Text>
                 </TouchableOpacity>
@@ -282,8 +310,15 @@ export const OnboardingScreen: React.FC = () => {
 
         {photoUri && (
           <View style={styles.photoUploadedContainer}>
-            <Ionicons name="checkmark-circle" size={20} color={Colors.semantic.success} />
-            <Text style={styles.photoUploadedText}>照片已选择</Text>
+            <Image source={{ uri: photoUri }} style={styles.photoPreview} resizeMode="cover" />
+            <TouchableOpacity
+              style={styles.photoRemoveButton}
+              onPress={() => setPhotoUri(null)}
+              accessibilityLabel="移除照片"
+              accessibilityRole="button"
+            >
+              <Ionicons name="close-circle" size={24} color={theme.colors.surface} />
+            </TouchableOpacity>
           </View>
         )}
 
@@ -298,7 +333,7 @@ export const OnboardingScreen: React.FC = () => {
               accessibilityLabel="拍照"
               accessibilityRole="button"
             >
-              <Ionicons name="camera" size={24} color="#FFFFFF" />
+              <Ionicons name="camera" size={24} color={DesignTokens.colors.neutral.white} />
               <Text style={styles.captureButtonText}>拍照</Text>
             </TouchableOpacity>
           </View>
@@ -313,7 +348,7 @@ export const OnboardingScreen: React.FC = () => {
         accessibilityLabel="跳过这一步"
         accessibilityRole="button"
       >
-        <Text style={styles.skipText}>跳过这一步</Text>
+        <Text style={styles.skipText}>{t.common.skip}</Text>
       </TouchableOpacity>
 
       <PrivacyConsentModal
@@ -357,7 +392,7 @@ export const OnboardingScreen: React.FC = () => {
         accessibilityLabel="跳过"
         accessibilityRole="button"
       >
-        <Text style={styles.skipText}>跳过</Text>
+        <Text style={styles.skipText}>{t.common.skip}</Text>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -387,27 +422,20 @@ export const OnboardingScreen: React.FC = () => {
             style={styles.backButton}
             onPress={handleBack}
             activeOpacity={0.7}
-            accessibilityLabel="上一步"
+            accessibilityLabel={t.common.back}
             accessibilityRole="button"
           >
-            <Ionicons
-              name="arrow-back"
-              size={20}
-              color={theme.colors.textSecondary}
-            />
-            <Text style={styles.backButtonText}>上一步</Text>
+            <Ionicons name="arrow-back" size={20} color={theme.colors.textSecondary} />
+            <Text style={styles.backButtonText}>{t.common.back}</Text>
           </TouchableOpacity>
         )}
         <View style={styles.footerSpacer} />
         <TouchableOpacity
-          style={[
-            styles.nextButton,
-            !canProceed() && styles.nextButtonDisabled,
-          ]}
+          style={[styles.nextButton, !canProceed() && styles.nextButtonDisabled]}
           onPress={handleNext}
           disabled={!canProceed() || isSaving}
           activeOpacity={0.7}
-          accessibilityLabel={currentStep === "QUIZ" ? "完成" : "下一步"}
+          accessibilityLabel={currentStep === "QUIZ" ? t.common.done : t.common.next}
           accessibilityRole="button"
         >
           {isSaving ? (
@@ -415,14 +443,10 @@ export const OnboardingScreen: React.FC = () => {
           ) : (
             <>
               <Text style={styles.nextButtonText}>
-                {currentStep === "QUIZ" ? "完成" : "下一步"}
+                {currentStep === "QUIZ" ? t.common.done : t.common.next}
               </Text>
               {currentStep !== "QUIZ" && (
-                <Ionicons
-                  name="arrow-forward"
-                  size={18}
-                  color={theme.colors.surface}
-                />
+                <Ionicons name="arrow-forward" size={18} color={theme.colors.surface} />
               )}
             </>
           )}
@@ -503,7 +527,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[3],
   },
   requiredAsterisk: {
-    color: "#C44536",
+    color: DesignTokens.colors.semantic.error,
   },
   genderRow: {
     flexDirection: "row",
@@ -531,7 +555,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
   genderPillTextSelected: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     fontWeight: "600",
   },
   ageRow: {
@@ -556,7 +580,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
   agePillTextSelected: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     fontWeight: "600",
   },
   uploadArea: {
@@ -581,22 +605,33 @@ const styles = StyleSheet.create({
     marginTop: Spacing[1],
   },
   photoUploadedContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing[2],
     marginTop: Spacing[3],
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+    position: "relative",
   },
-  photoUploadedText: {
-    fontSize: 14,
-    color: Colors.semantic.success,
-    fontWeight: "500",
+  photoPreview: {
+    width: "100%",
+    height: 200,
+    borderRadius: BorderRadius.xl,
+  },
+  photoRemoveButton: {
+    position: "absolute",
+    top: Spacing[2],
+    right: Spacing[2],
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   cameraGuideContainer: {
     height: 300,
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
     marginTop: Spacing[4],
-    backgroundColor: "#000000",
+    backgroundColor: DesignTokens.colors.neutral.black,
     alignItems: "center",
     justifyContent: "flex-end",
     paddingBottom: Spacing[4],
@@ -613,7 +648,7 @@ const styles = StyleSheet.create({
   captureButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
   },
   skipButton: {
     paddingHorizontal: Spacing[5],
@@ -654,7 +689,7 @@ const styles = StyleSheet.create({
   quizStartButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
   },
   footer: {
     flexDirection: "row",

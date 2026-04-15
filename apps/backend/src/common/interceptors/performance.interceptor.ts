@@ -5,8 +5,8 @@ import {
   CallHandler,
   Logger,
 } from "@nestjs/common";
-import { Observable, tap } from "rxjs";
 import { Request, Response } from "express";
+import { Observable, tap } from "rxjs";
 
 import { MetricsService } from "../../modules/metrics/metrics.service";
 

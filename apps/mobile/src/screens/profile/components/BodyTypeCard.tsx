@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { Svg, Circle, Rect, Text as SvgText, Line, Path } from 'react-native-svg';
-import { colors } from '@/src/theme/tokens/colors';
-import { typography } from '@/src/theme/tokens/typography';
-import { spacing } from '@/src/theme/tokens/spacing';
-import { shadows } from '@/src/theme/tokens/shadows';
-import type { BodyAnalysisReport } from '@/src/services/api/profile.api';
+import React, { useMemo } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { Svg, Circle, Rect, Text as SvgText, Line, Path } from "react-native-svg";
+import { colors } from "@/src/theme/tokens/colors";
+import { typography } from "@/src/theme/tokens/typography";
+import { spacing } from "@/src/theme/tokens/spacing";
+import { shadows } from "@/src/theme/tokens/shadows";
+import type { BodyAnalysisReport } from "@/src/services/api/profile.api";
 
 interface BodyTypeCardProps {
   bodyAnalysis: BodyAnalysisReport | null;
@@ -18,19 +18,19 @@ interface BodyTypeCardProps {
 }
 
 const BODY_TYPE_ICONS: Record<string, string> = {
-  hourglass: 'hourglass-outline',
-  rectangle: 'remove-outline',
-  triangle: 'triangle-outline',
-  inverted_triangle: 'triangle-outline',
-  oval: 'ellipse-outline',
+  hourglass: "hourglass-outline",
+  rectangle: "remove-outline",
+  triangle: "triangle-outline",
+  inverted_triangle: "triangle-outline",
+  oval: "ellipse-outline",
 };
 
 const BODY_TYPE_LABELS: Record<string, string> = {
-  hourglass: 'X型（沙漏）',
-  rectangle: 'H型（矩形）',
-  triangle: 'A型（梨形）',
-  inverted_triangle: 'Y型（倒三角）',
-  oval: 'O型（椭圆）',
+  hourglass: "X型（沙漏）",
+  rectangle: "H型（矩形）",
+  triangle: "A型（梨形）",
+  inverted_triangle: "Y型（倒三角）",
+  oval: "O型（椭圆）",
 };
 
 function BodySilhouette({
@@ -62,25 +62,27 @@ function BodySilhouette({
   const pathD = [
     `M ${centerX} ${topY}`,
     `C ${centerX + 15} ${topY}, ${centerX + sW} ${shoulderY - 15}, ${centerX + sW} ${shoulderY}`,
-    `C ${centerX + sW + 5} ${shoulderY + 20}, ${centerX + wW + 8} ${waistY - 30}, ${centerX + wW} ${waistY}`,
-    `C ${centerX + wW - 5} ${waistY + 20}, ${centerX + hW + 8} ${hipY - 30}, ${centerX + hW} ${hipY}`,
+    `C ${centerX + sW + 5} ${shoulderY + 20}, ${centerX + wW + 8} ${waistY - 30}, ${
+      centerX + wW
+    } ${waistY}`,
+    `C ${centerX + wW - 5} ${waistY + 20}, ${centerX + hW + 8} ${hipY - 30}, ${
+      centerX + hW
+    } ${hipY}`,
     `C ${centerX + hW - 5} ${hipY + 15}, ${centerX + 15} ${bottomY - 10}, ${centerX} ${bottomY}`,
     `C ${centerX - 15} ${bottomY - 10}, ${centerX - hW + 5} ${hipY + 15}, ${centerX - hW} ${hipY}`,
-    `C ${centerX - hW - 8} ${hipY - 30}, ${centerX - wW + 5} ${waistY + 20}, ${centerX - wW} ${waistY}`,
-    `C ${centerX - wW - 8} ${waistY - 30}, ${centerX - sW - 5} ${shoulderY + 20}, ${centerX - sW} ${shoulderY}`,
+    `C ${centerX - hW - 8} ${hipY - 30}, ${centerX - wW + 5} ${waistY + 20}, ${
+      centerX - wW
+    } ${waistY}`,
+    `C ${centerX - wW - 8} ${waistY - 30}, ${centerX - sW - 5} ${shoulderY + 20}, ${
+      centerX - sW
+    } ${shoulderY}`,
     `C ${centerX - sW} ${shoulderY - 15}, ${centerX - 15} ${topY}, ${centerX} ${topY}`,
-    'Z',
-  ].join(' ');
+    "Z",
+  ].join(" ");
 
   return (
     <Svg width={svgWidth} height={svgHeight} viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-      <Rect
-        x={0}
-        y={0}
-        width={svgWidth}
-        height={svgHeight}
-        fill="transparent"
-      />
+      <Rect x={0} y={0} width={svgWidth} height={svgHeight} fill="transparent" />
       <Line
         x1={centerX - maxHalfWidth - 15}
         y1={shoulderY}
@@ -136,7 +138,14 @@ function BodySilhouette({
         臀
       </SvgText>
       <Circle cx={centerX} cy={topY - 8} r={14} fill={colors.brand.warmPrimary} opacity={0.15} />
-      <Circle cx={centerX} cy={topY - 8} r={14} fill="transparent" stroke={colors.brand.warmPrimary} strokeWidth={1.5} />
+      <Circle
+        cx={centerX}
+        cy={topY - 8}
+        r={14}
+        fill="transparent"
+        stroke={colors.brand.warmPrimary}
+        strokeWidth={1.5}
+      />
       <SvgText
         x={centerX}
         y={topY - 4}
@@ -145,7 +154,15 @@ function BodySilhouette({
         fontSize={10}
         fontWeight="600"
       >
-        {bodyType === 'hourglass' ? 'X' : bodyType === 'rectangle' ? 'H' : bodyType === 'triangle' ? 'A' : bodyType === 'inverted_triangle' ? 'Y' : 'O'}
+        {bodyType === "hourglass"
+          ? "X"
+          : bodyType === "rectangle"
+          ? "H"
+          : bodyType === "triangle"
+          ? "A"
+          : bodyType === "inverted_triangle"
+          ? "Y"
+          : "O"}
       </SvgText>
       <Path d={pathD} fill={colors.brand.warmPrimary} opacity={0.12} />
       <Path d={pathD} fill="transparent" stroke={colors.brand.warmPrimary} strokeWidth={2} />
@@ -161,13 +178,15 @@ export const BodyTypeCard: React.FC<BodyTypeCardProps> = ({
   collapsed,
   onToggle,
 }) => {
-  const bodyType = bodyAnalysis?.bodyType?.type || '';
-  const bodyTypeName = bodyAnalysis?.bodyType?.label || BODY_TYPE_LABELS[bodyType] || '未知';
-  const bodyTypeIcon = BODY_TYPE_ICONS[bodyType] || 'body-outline';
+  const bodyType = bodyAnalysis?.bodyType?.type || "";
+  const bodyTypeName = bodyAnalysis?.bodyType?.label || BODY_TYPE_LABELS[bodyType] || "未知";
+  const bodyTypeIcon = BODY_TYPE_ICONS[bodyType] || "body-outline";
 
   const ratios = useMemo(() => {
     const maxVal = Math.max(shoulder || 0, waist || 0, hip || 0);
-    if (maxVal === 0) return { shoulderRatio: 0.7, waistRatio: 0.5, hipRatio: 0.7 };
+    if (maxVal === 0) {
+      return { shoulderRatio: 0.7, waistRatio: 0.5, hipRatio: 0.7 };
+    }
     return {
       shoulderRatio: (shoulder || maxVal * 0.9) / maxVal,
       waistRatio: (waist || maxVal * 0.6) / maxVal,
@@ -176,7 +195,9 @@ export const BodyTypeCard: React.FC<BodyTypeCardProps> = ({
   }, [shoulder, waist, hip]);
 
   const recommendations = useMemo(() => {
-    if (!bodyAnalysis?.recommendations) return [];
+    if (!bodyAnalysis?.recommendations) {
+      return [];
+    }
     const items: string[] = [];
     if (bodyAnalysis.recommendations.tops?.length) {
       items.push(...bodyAnalysis.recommendations.tops.slice(0, 2));
@@ -196,18 +217,18 @@ export const BodyTypeCard: React.FC<BodyTypeCardProps> = ({
         style={styles.cardHeader}
         onPress={onToggle}
         activeOpacity={0.7}
-        accessibilityLabel={`体型分析：${bodyTypeName}，${collapsed ? '点击展开' : '点击收起'}`}
+        accessibilityLabel={`体型分析：${bodyTypeName}，${collapsed ? "点击展开" : "点击收起"}`}
         accessibilityRole="button"
       >
         <View style={styles.cardHeaderLeft}>
-          <Ionicons name={bodyTypeIcon as any} size={20} color={colors.brand.warmPrimary} />
+          <Ionicons name={bodyTypeIcon} size={20} color={colors.brand.warmPrimary} />
           <Text style={styles.cardHeaderTitle}>体型分析</Text>
           <View style={styles.typeBadge}>
             <Text style={styles.typeBadgeText}>{bodyTypeName}</Text>
           </View>
         </View>
         <Ionicons
-          name={collapsed ? 'chevron-down' : 'chevron-up'}
+          name={collapsed ? "chevron-down" : "chevron-up"}
           size={20}
           color={colors.neutral[400]}
         />
@@ -299,13 +320,13 @@ const styles = StyleSheet.create({
     ...shadows.presets.sm,
   },
   cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   cardHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.scale[2],
     flex: 1,
   },
@@ -330,18 +351,18 @@ const styles = StyleSheet.create({
     gap: spacing.scale[4],
   },
   silhouetteContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: spacing.scale[2],
   },
   proportionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     backgroundColor: colors.neutral[50],
     borderRadius: spacing.borderRadius.lg,
     paddingVertical: spacing.scale[3],
   },
   proportionItem: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: spacing.scale[1],
   },
   proportionLabel: {
@@ -362,8 +383,8 @@ const styles = StyleSheet.create({
     color: colors.neutral[700],
   },
   recommendationItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: spacing.scale[2],
   },
   recommendationDot: {
@@ -380,8 +401,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tagsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: spacing.scale[2],
   },
   idealTag: {

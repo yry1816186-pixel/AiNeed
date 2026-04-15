@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import apiClient from '@/src/services/api/client';
+import { useState, useCallback } from "react";
+import apiClient from "@/src/services/api/client";
 
 export interface ReferenceLinePoint {
   x: number;
@@ -13,8 +13,8 @@ export interface ReferenceLines {
   bodyOutline: ReferenceLinePoint[];
 }
 
-export type AlignmentLevel = 'aligned' | 'slight' | 'off';
-export type OverallAlignment = 'perfect' | 'good' | 'adjust';
+export type AlignmentLevel = "aligned" | "slight" | "off";
+export type OverallAlignment = "perfect" | "good" | "adjust";
 
 export interface AlignmentStatus {
   shoulder: AlignmentLevel;
@@ -72,10 +72,8 @@ const DEFAULT_REFERENCE_LINES: ReferenceLines = {
 };
 
 export function useReferenceLines(): UseReferenceLinesResult {
-  const [referenceLines, setReferenceLines] =
-    useState<ReferenceLines | null>(null);
-  const [alignmentStatus, setAlignmentStatus] =
-    useState<AlignmentStatus | null>(null);
+  const [referenceLines, setReferenceLines] = useState<ReferenceLines | null>(null);
+  const [alignmentStatus, setAlignmentStatus] = useState<AlignmentStatus | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -89,7 +87,7 @@ export function useReferenceLines(): UseReferenceLinesResult {
         const response = await apiClient.post<{
           referenceLines: ReferenceLines;
           alignmentStatus: AlignmentStatus;
-        }>('/api/v1/ai-stylist/reference-lines', payload);
+        }>("/api/v1/ai-stylist/reference-lines", payload);
 
         if (response.success && response.data) {
           setReferenceLines(response.data.referenceLines);
@@ -99,27 +97,27 @@ export function useReferenceLines(): UseReferenceLinesResult {
 
         setReferenceLines(DEFAULT_REFERENCE_LINES);
         setAlignmentStatus({
-          shoulder: 'slight',
-          posture: 'slight',
-          center: 'slight',
-          overall: 'adjust',
+          shoulder: "slight",
+          posture: "slight",
+          center: "slight",
+          overall: "adjust",
         });
         return DEFAULT_REFERENCE_LINES;
       } catch {
-        setError('获取参考线数据失败');
+        setError("获取参考线数据失败");
         setReferenceLines(DEFAULT_REFERENCE_LINES);
         setAlignmentStatus({
-          shoulder: 'slight',
-          posture: 'slight',
-          center: 'slight',
-          overall: 'adjust',
+          shoulder: "slight",
+          posture: "slight",
+          center: "slight",
+          overall: "adjust",
         });
         return DEFAULT_REFERENCE_LINES;
       } finally {
         setIsLoading(false);
       }
     },
-    [],
+    []
   );
 
   return { referenceLines, alignmentStatus, isLoading, error, fetchReferenceLines };

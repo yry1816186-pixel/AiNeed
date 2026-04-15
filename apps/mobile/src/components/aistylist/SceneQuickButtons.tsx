@@ -8,12 +8,27 @@ interface SceneQuickButtonsProps {
 }
 
 const SCENES = [
-  { id: "commute", label: "Commute", icon: "briefcase-outline", message: "Help me put together a commute outfit" },
+  {
+    id: "commute",
+    label: "Commute",
+    icon: "briefcase-outline",
+    message: "Help me put together a commute outfit",
+  },
   { id: "date", label: "Date", icon: "heart-outline", message: "What should I wear on a date" },
   { id: "sport", label: "Sport", icon: "fitness-outline", message: "Sport outfit recommendation" },
-  { id: "interview", label: "Interview", icon: "ribbon-outline", message: "I need an interview outfit" },
+  {
+    id: "interview",
+    label: "Interview",
+    icon: "ribbon-outline",
+    message: "I need an interview outfit",
+  },
   { id: "casual", label: "Casual", icon: "sunny-outline", message: "Casual outfit for today" },
-  { id: "travel", label: "Travel", icon: "airplane-outline", message: "Travel outfit recommendation" },
+  {
+    id: "travel",
+    label: "Travel",
+    icon: "airplane-outline",
+    message: "Travel outfit recommendation",
+  },
 ];
 
 const SCENE_ICONS: Record<string, string> = {

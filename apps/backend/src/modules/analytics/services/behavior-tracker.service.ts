@@ -368,7 +368,7 @@ export class BehaviorTrackerService {
    * 获取用户行为画像
    */
   async getUserBehaviorProfile(userId: string): Promise<BehaviorProfile> {
-    const [preferencesRaw, recentEvents, stats, implicitSignals, sessionSummary] =
+    const [preferencesRaw, recentEvents, stats, implicitSignals, _sessionSummary] =
       await Promise.all([
         this.prisma.userPreferenceWeight.findMany({
           where: { userId },

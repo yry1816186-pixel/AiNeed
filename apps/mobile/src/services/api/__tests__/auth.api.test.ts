@@ -325,7 +325,7 @@ describe("userApi", () => {
 
       expect(mockUpload).toHaveBeenCalledWith(
         "/profile/body-analysis/upload",
-        expect.any(FormData),
+        expect.any(FormData)
       );
       expect(result.success).toBe(true);
     });
@@ -351,7 +351,7 @@ describe("userApi", () => {
 
       expect(mockUpload).toHaveBeenCalledWith(
         "/profile/color-analysis/upload",
-        expect.any(FormData),
+        expect.any(FormData)
       );
       expect(result.success).toBe(true);
     });
@@ -366,10 +366,7 @@ describe("userApi", () => {
 
       const result = await userApi.uploadAvatar("file:///path/to/avatar.jpg");
 
-      expect(mockUpload).toHaveBeenCalledWith(
-        "/users/me/avatar/upload",
-        expect.any(FormData),
-      );
+      expect(mockUpload).toHaveBeenCalledWith("/users/me/avatar/upload", expect.any(FormData));
       expect(result.success).toBe(true);
       expect(result.data?.avatar).toBe("http://cdn.example.com/avatar.jpg");
     });

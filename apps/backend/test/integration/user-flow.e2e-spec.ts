@@ -24,18 +24,18 @@ import request from "supertest";
 
 import { AppModule } from "../../src/app.module";
 import { PrismaService } from "../../src/common/prisma/prisma.service";
+import { profileFixtures, performanceThresholds } from "../utils/fixtures";
 import {
   generateTestEmail,
   measureResponseTime,
 } from "../utils/test.utils";
-import { profileFixtures, performanceThresholds } from "../utils/fixtures";
 
 const API = "/api/v1";
 
 /** Extract data from JSON:API response, merging id from data level into attributes */
 const extractData = (body: Record<string, unknown>) => {
   const d = (body as any).data;
-  if (d && d.attributes && typeof d === "object") {
+  if (d?.attributes && typeof d === "object") {
     return { id: d.id, ...d.attributes };
   }
   return d ?? body;
@@ -260,7 +260,7 @@ describe("User Flow E2E - 完整用户流程", () => {
         .get(`${API}/clothing/categories`)
         .expect(200);
 
-      const categories = (response.body as any).data ?? response.body;
+      const categories = (response.body).data ?? response.body;
       expect(Array.isArray(categories)).toBe(true);
     });
 
@@ -275,7 +275,7 @@ describe("User Flow E2E - 完整用户流程", () => {
       expect(clothingData).toHaveProperty("total");
 
       // Items are in included array for JSON:API
-      const included = (response.body as any).included ?? [];
+      const included = (response.body).included ?? [];
       if (included.length > 0) {
         itemId = included[0].id;
       }
@@ -350,7 +350,7 @@ describe("User Flow E2E - 完整用户流程", () => {
       const historyData = extractData(response.body);
       expect(historyData).toHaveProperty("total");
       // Items may be in included array for JSON:API
-      const items = (response.body as any).included ?? historyData.items ?? [];
+      const items = (response.body).included ?? historyData.items ?? [];
       expect(Array.isArray(items)).toBe(true);
     });
 

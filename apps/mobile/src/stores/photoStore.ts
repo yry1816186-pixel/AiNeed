@@ -12,8 +12,8 @@ interface QualityCheckResult {
 }
 
 export interface PhotoQualityIssue {
-  type: 'blur' | 'brightness' | 'pose' | 'occlusion' | 'background';
-  severity: 'low' | 'medium' | 'high';
+  type: "blur" | "brightness" | "pose" | "occlusion" | "background";
+  severity: "low" | "medium" | "high";
   message: string;
 }
 
@@ -31,7 +31,7 @@ interface PhotoState {
   isCapturing: boolean;
   qualityResult: PhotoQualityResult | null;
   showQualityFeedback: boolean;
-  cameraType: 'front' | 'back';
+  cameraType: "front" | "back";
   isLoading: boolean;
   error: string | null;
   uploadPhoto: (file: { uri: string; type: string; name: string }) => Promise<void>;
@@ -48,7 +48,7 @@ interface PhotoState {
 }
 
 export const usePhotoStore = createWithEqualityFn<PhotoState>(
-  (set, get) => ({
+  (set) => ({
     photos: [],
     uploadProgress: {},
     selectedPhoto: null,
@@ -56,7 +56,7 @@ export const usePhotoStore = createWithEqualityFn<PhotoState>(
     isCapturing: false,
     qualityResult: null,
     showQualityFeedback: false,
-    cameraType: 'back',
+    cameraType: "back",
     isLoading: false,
     error: null,
 
@@ -85,10 +85,12 @@ export const usePhotoStore = createWithEqualityFn<PhotoState>(
     checkQuality: async (file) => {
       set({ isLoading: true, error: null });
       try {
-        const response: ApiResponse<QualityCheckResult> =
-          await apiClient.post<QualityCheckResult>("/photos/check-quality", {
+        const response: ApiResponse<QualityCheckResult> = await apiClient.post<QualityCheckResult>(
+          "/photos/check-quality",
+          {
             uri: file.uri,
-          });
+          }
+        );
         if (response.success && response.data) {
           set({ isLoading: false });
           return response.data;
@@ -111,8 +113,7 @@ export const usePhotoStore = createWithEqualityFn<PhotoState>(
         if (response.success) {
           set((state) => ({
             photos: state.photos.filter((p) => p.id !== id),
-            selectedPhoto:
-              state.selectedPhoto?.id === id ? null : state.selectedPhoto,
+            selectedPhoto: state.selectedPhoto?.id === id ? null : state.selectedPhoto,
             uploadProgress: (() => {
               const { [id]: _, ...rest } = state.uploadProgress;
               return rest;
@@ -142,7 +143,7 @@ export const usePhotoStore = createWithEqualityFn<PhotoState>(
 
     toggleCameraType: () =>
       set((state) => ({
-        cameraType: state.cameraType === 'back' ? 'front' : 'back',
+        cameraType: state.cameraType === "back" ? "front" : "back",
       })),
 
     reset: () =>
@@ -170,7 +171,7 @@ export const usePhotoStore = createWithEqualityFn<PhotoState>(
       }
     },
   }),
-  shallow,
+  shallow
 );
 
 export const usePhotos = () => usePhotoStore((s) => s.photos);

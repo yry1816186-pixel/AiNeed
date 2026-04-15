@@ -26,6 +26,10 @@ export class EncryptionService {
   }
 
   encrypt(plaintext: string): string {
+    // 设计决策：空字符串/falsy 值不加密，直接原样返回。
+    // 原因：1) 加密空字符串会产生无意义的密文开销；2) decrypt 方法依赖 "enc:" 前缀判断，
+    // 对空字符串加密后 decrypt("") 会跳过解密逻辑，导致数据不一致；
+    // 3) 数据库中空字符串通常表示"未填写"，与 null 语义一致，无需加密保护。
     if (!plaintext) {return plaintext;}
 
     const iv = crypto.randomBytes(IV_LENGTH);

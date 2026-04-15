@@ -1,4 +1,4 @@
-declare module 'detox' {
+declare module "detox" {
   interface Device {
     reloadReactNative(): Promise<void>;
     takeScreenshot(name: string): Promise<string>;
@@ -9,7 +9,7 @@ declare module 'detox' {
   interface Element {
     tap(): Promise<void>;
     typeText(text: string): Promise<void>;
-    scroll(amount: number, direction: 'down' | 'up' | 'left' | 'right'): Promise<void>;
+    scroll(amount: number, direction: "down" | "up" | "left" | "right"): Promise<void>;
     atIndex(index: number): Element;
   }
 

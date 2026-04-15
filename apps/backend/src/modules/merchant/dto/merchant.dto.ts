@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsString,
   IsEmail,
@@ -7,7 +8,6 @@ import {
   IsPhoneNumber,
   IsUrl,
 } from "class-validator";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class MerchantApplyDto {
   @ApiProperty({ description: "品牌名称", example: "时尚品牌" })

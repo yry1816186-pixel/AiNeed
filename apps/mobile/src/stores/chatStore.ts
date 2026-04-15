@@ -73,9 +73,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const paginated = res.data as PaginatedResponse<ChatMessage>;
         const newMessages = paginated.items ?? (res.data as unknown as ChatMessage[]);
         set((state) => ({
-          messages: beforeId
-            ? [...newMessages, ...state.messages]
-            : newMessages,
+          messages: beforeId ? [...newMessages, ...state.messages] : newMessages,
           isLoading: false,
         }));
       } else {

@@ -130,11 +130,7 @@ describe("useClothingStore", () => {
       useClothingStore.getState().setItems([mockItem({ id: "1" })]);
       useClothingStore.getState().addItems([mockItem({ id: "2" }), mockItem({ id: "3" })]);
       expect(useClothingStore.getState().items).toHaveLength(3);
-      expect(useClothingStore.getState().items.map((i) => i.id)).toEqual([
-        "1",
-        "2",
-        "3",
-      ]);
+      expect(useClothingStore.getState().items.map((i) => i.id)).toEqual(["1", "2", "3"]);
     });
 
     test("在空列表上追加", () => {

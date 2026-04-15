@@ -22,13 +22,13 @@ export interface CommunityPost {
   updatedAt: string;
   outfit?: {
     id: string;
-    items: Array<{
+    items: {
       id: string;
       name: string;
       brand: string;
       price: number;
       image: string;
-    }>;
+    }[];
   };
 }
 
@@ -77,13 +77,13 @@ interface BackendCommunityItem {
   isLiked?: boolean;
   createdAt?: string;
   updatedAt?: string;
-  relatedItems?: Array<{
+  relatedItems?: {
     id: string;
     name?: string | null;
     mainImage?: string | null;
     price?: number | null;
     brand?: { name?: string | null } | null;
-  }>;
+  }[];
   _count?: {
     likes?: number;
     comments?: number;
@@ -135,9 +135,7 @@ function normalizeCategory(category?: string): string | undefined {
   return communityCategoryMap[category] ?? category;
 }
 
-function normalizeCommunityPost(
-  post: BackendCommunityItem,
-): CommunityPost {
+function normalizeCommunityPost(post: BackendCommunityItem): CommunityPost {
   const relatedItems = (post.relatedItems ?? []).map((item) => ({
     id: item.id,
     name: item.name ?? "",
@@ -194,16 +192,15 @@ function normalizePostComment(comment: BackendCommentItem): PostComment {
 
 function normalizePaginatedResponse<TInput, TOutput>(
   response: ApiResponse<BackendPaginatedResponse<TInput>>,
-  itemMapper: (item: TInput) => TOutput,
+  itemMapper: (item: TInput) => TOutput
 ): ApiResponse<PaginatedResponse<TOutput>> {
   if (!response.success || !response.data) {
     return {
       success: false,
-      error:
-        response.error ?? {
-          code: "COMMUNITY_REQUEST_FAILED",
-          message: "Failed to load community data",
-        },
+      error: response.error ?? {
+        code: "COMMUNITY_REQUEST_FAILED",
+        message: "Failed to load community data",
+      },
     };
   }
 
@@ -212,8 +209,7 @@ function normalizePaginatedResponse<TInput, TOutput>(
   const page = meta.page ?? 1;
   const pageSize = meta.pageSize ?? items.length;
   const total = meta.total ?? items.length;
-  const totalPages =
-    meta.totalPages ?? (pageSize > 0 ? Math.ceil(total / pageSize) : 0);
+  const totalPages = meta.totalPages ?? (pageSize > 0 ? Math.ceil(total / pageSize) : 0);
 
   return {
     success: true,
@@ -247,7 +243,7 @@ export const communityApi = {
         sortBy: params?.sort,
         page: params?.page,
         pageSize: params?.limit,
-      },
+      }
     );
 
     return normalizePaginatedResponse(response, normalizeCommunityPost);
@@ -262,7 +258,7 @@ export const communityApi = {
       {
         page: params?.page,
         pageSize: params?.limit,
-      },
+      }
     );
 
     return normalizePaginatedResponse(response, normalizeCommunityPost);
@@ -277,25 +273,22 @@ export const communityApi = {
       {
         page: params?.page,
         pageSize: params?.limit,
-      },
+      }
     );
 
     return normalizePaginatedResponse(response, normalizeCommunityPost);
   },
 
   async getPostById(id: string): Promise<ApiResponse<CommunityPost>> {
-    const response = await apiClient.get<BackendCommunityItem>(
-      `/community/posts/${id}`,
-    );
+    const response = await apiClient.get<BackendCommunityItem>(`/community/posts/${id}`);
 
     if (!response.success || !response.data) {
       return {
         success: false,
-        error:
-          response.error ?? {
-            code: "COMMUNITY_POST_NOT_FOUND",
-            message: "Failed to load community post",
-          },
+        error: response.error ?? {
+          code: "COMMUNITY_POST_NOT_FOUND",
+          message: "Failed to load community post",
+        },
       };
     }
 
@@ -313,25 +306,21 @@ export const communityApi = {
     tags?: string[];
     outfitId?: string;
   }): Promise<ApiResponse<CommunityPost>> {
-    const response = await apiClient.post<BackendCommunityItem>(
-      "/community/posts",
-      {
-        title: data.title,
-        content: data.content,
-        category: normalizeCategory(data.category),
-        images: data.images,
-        tags: data.tags,
-      },
-    );
+    const response = await apiClient.post<BackendCommunityItem>("/community/posts", {
+      title: data.title,
+      content: data.content,
+      category: normalizeCategory(data.category),
+      images: data.images,
+      tags: data.tags,
+    });
 
     if (!response.success || !response.data) {
       return {
         success: false,
-        error:
-          response.error ?? {
-            code: "COMMUNITY_POST_CREATE_FAILED",
-            message: "Failed to create community post",
-          },
+        error: response.error ?? {
+          code: "COMMUNITY_POST_CREATE_FAILED",
+          message: "Failed to create community post",
+        },
       };
     }
 
@@ -349,24 +338,20 @@ export const communityApi = {
       category: string;
       images: string[];
       tags: string[];
-    }>,
+    }>
   ): Promise<ApiResponse<CommunityPost>> {
-    const response = await apiClient.put<BackendCommunityItem>(
-      `/community/posts/${id}`,
-      {
-        ...data,
-        category: normalizeCategory(data.category),
-      },
-    );
+    const response = await apiClient.put<BackendCommunityItem>(`/community/posts/${id}`, {
+      ...data,
+      category: normalizeCategory(data.category),
+    });
 
     if (!response.success || !response.data) {
       return {
         success: false,
-        error:
-          response.error ?? {
-            code: "COMMUNITY_POST_UPDATE_FAILED",
-            message: "Failed to update community post",
-          },
+        error: response.error ?? {
+          code: "COMMUNITY_POST_UPDATE_FAILED",
+          message: "Failed to update community post",
+        },
       };
     }
 
@@ -381,21 +366,19 @@ export const communityApi = {
   },
 
   async toggleLike(postId: string): Promise<ApiResponse<{ liked: boolean }>> {
-    return apiClient.post<{ liked: boolean }>(
-      `/community/posts/${postId}/like`,
-    );
+    return apiClient.post<{ liked: boolean }>(`/community/posts/${postId}/like`);
   },
 
   async getComments(
     postId: string,
-    params?: { page?: number; limit?: number },
+    params?: { page?: number; limit?: number }
   ): Promise<ApiResponse<PaginatedResponse<PostComment>>> {
     const response = await apiClient.get<BackendPaginatedResponse<BackendCommentItem>>(
       `/community/posts/${postId}/comments`,
       {
         page: params?.page,
         pageSize: params?.limit,
-      },
+      }
     );
 
     return normalizePaginatedResponse(response, normalizePostComment);
@@ -403,21 +386,20 @@ export const communityApi = {
 
   async addComment(
     postId: string,
-    data: { content: string; images?: string[] },
+    data: { content: string; images?: string[] }
   ): Promise<ApiResponse<PostComment>> {
     const response = await apiClient.post<BackendCommentItem>(
       `/community/posts/${postId}/comments`,
-      data,
+      data
     );
 
     if (!response.success || !response.data) {
       return {
         success: false,
-        error:
-          response.error ?? {
-            code: "COMMUNITY_COMMENT_CREATE_FAILED",
-            message: "Failed to create comment",
-          },
+        error: response.error ?? {
+          code: "COMMUNITY_COMMENT_CREATE_FAILED",
+          message: "Failed to create comment",
+        },
       };
     }
 
@@ -427,62 +409,57 @@ export const communityApi = {
     };
   },
 
-  async toggleFollow(
-    userId: string,
-  ): Promise<ApiResponse<{ following: boolean }>> {
-    return apiClient.post<{ following: boolean }>(
-      `/community/users/${userId}/follow`,
-    );
+  async toggleFollow(userId: string): Promise<ApiResponse<{ following: boolean }>> {
+    return apiClient.post<{ following: boolean }>(`/community/users/${userId}/follow`);
   },
 
   async getFollowingFeed(params?: {
     page?: number;
     limit?: number;
   }): Promise<ApiResponse<PaginatedResponse<CommunityPost & { feedType?: string }>>> {
-    const response = await apiClient.get<BackendPaginatedResponse<BackendCommunityItem & { feedType?: string }>>(
-      "/community/following/feed",
-      {
-        page: params?.page,
-        pageSize: params?.limit,
-      },
-    );
+    const response = await apiClient.get<
+      BackendPaginatedResponse<BackendCommunityItem & { feedType?: string }>
+    >("/community/following/feed", {
+      page: params?.page,
+      pageSize: params?.limit,
+    });
 
     return normalizePaginatedResponse(
-      response as ApiResponse<BackendPaginatedResponse<BackendCommunityItem & { feedType?: string }>>,
+      response as ApiResponse<
+        BackendPaginatedResponse<BackendCommunityItem & { feedType?: string }>
+      >,
       (item) => ({
         ...normalizeCommunityPost(item),
         feedType: (item as BackendCommunityItem & { feedType?: string }).feedType,
-      }),
+      })
     ) as ApiResponse<PaginatedResponse<CommunityPost & { feedType?: string }>>;
   },
 
   async getTrending(params?: {
     type?: string;
     limit?: number;
-  }): Promise<ApiResponse<Array<{ name: string; direction: string; count?: number }>>> {
-    return apiClient.get<Array<{ name: string; direction: string; count?: number }>>(
+  }): Promise<ApiResponse<{ name: string; direction: string; count?: number }[]>> {
+    return apiClient.get<{ name: string; direction: string; count?: number }[]>(
       "/community/trending",
       {
         type: params?.type,
         limit: params?.limit,
-      },
+      }
     );
   },
 
   async bookmarkPost(
     postId: string,
-    data?: { collectionId?: string },
+    data?: { collectionId?: string }
   ): Promise<ApiResponse<{ bookmarked: boolean }>> {
     return apiClient.post<{ bookmarked: boolean }>(
       `/community/posts/${postId}/bookmark`,
-      data ?? {},
+      data ?? {}
     );
   },
 
   async sharePost(postId: string): Promise<ApiResponse<{ shared: boolean }>> {
-    return apiClient.post<{ shared: boolean }>(
-      `/community/posts/${postId}/share`,
-    );
+    return apiClient.post<{ shared: boolean }>(`/community/posts/${postId}/share`);
   },
 
   async reportContent(data: {
@@ -491,15 +468,14 @@ export const communityApi = {
     reason: string;
     description?: string;
   }): Promise<ApiResponse<{ reported: boolean }>> {
-    return apiClient.post<{ reported: boolean }>(
-      "/community/reports",
-      data,
-    );
+    return apiClient.post<{ reported: boolean }>("/community/reports", data);
   },
 
-  async getCollections(): Promise<ApiResponse<Array<{ id: string; name: string; icon: string; _count: { items: number } }>>> {
-    return apiClient.get<Array<{ id: string; name: string; icon: string; _count: { items: number } }>>(
-      "/wardrobe/collections",
+  async getCollections(): Promise<
+    ApiResponse<{ id: string; name: string; icon: string; _count: { items: number } }[]>
+  > {
+    return apiClient.get<{ id: string; name: string; icon: string; _count: { items: number } }[]>(
+      "/wardrobe/collections"
     );
   },
 
@@ -507,23 +483,22 @@ export const communityApi = {
     name: string;
     icon?: string;
   }): Promise<ApiResponse<{ id: string; name: string }>> {
-    return apiClient.post<{ id: string; name: string }>(
-      "/wardrobe/collections",
-      data,
-    );
+    return apiClient.post<{ id: string; name: string }>("/wardrobe/collections", data);
   },
 
-  async getUserProfile(userId: string): Promise<ApiResponse<{
-    id: string;
-    nickname: string;
-    avatar: string | null;
-    bio: string;
-    bloggerLevel?: string | null;
-    followersCount: number;
-    followingCount: number;
-    postsCount: number;
-    isFollowing: boolean;
-  }>> {
+  async getUserProfile(userId: string): Promise<
+    ApiResponse<{
+      id: string;
+      nickname: string;
+      avatar: string | null;
+      bio: string;
+      bloggerLevel?: string | null;
+      followersCount: number;
+      followingCount: number;
+      postsCount: number;
+      isFollowing: boolean;
+    }>
+  > {
     return apiClient.get(`/community/users/${userId}/profile`);
   },
 };

@@ -1,12 +1,12 @@
-export { RootNavigator, MainTabNavigator } from './RootNavigator';
-export { AuthNavigator } from './AuthNavigator';
+export { RootNavigator, MainTabNavigator } from "./RootNavigator";
+export { AuthNavigator } from "./AuthNavigator";
 export {
   HomeStackNavigator,
   StylistStackNavigator,
   TryOnStackNavigator,
   CommunityStackNavigator,
   ProfileStackNavigator,
-} from './MainStackNavigator';
+} from "./MainStackNavigator";
 
 export {
   navigationRef,
@@ -29,11 +29,11 @@ export {
   parseDeepLink,
   navigateDeepLink,
   navigateFromPush,
-} from './navigationService';
-export type { ParsedDeepLink, PushNotificationData } from './navigationService';
+} from "./navigationService";
+export type { ParsedDeepLink, PushNotificationData } from "./navigationService";
 
-export { AuthGuard, ProfileGuard, VipGuard } from './RouteGuards';
-export { useRouteGuard, GuardedScreen } from './RouteGuards';
+export { AuthGuard, ProfileGuard, VipGuard } from "./RouteGuards";
+export { useRouteGuard, GuardedScreen } from "./RouteGuards";
 
 export type {
   AuthStackParamList,
@@ -50,4 +50,4 @@ export type {
   ROUTE_PHASE_MAP,
   GUARDED_ROUTES,
   DEEP_LINK_ROUTES,
-} from './types';
+} from "./types";

@@ -1,14 +1,7 @@
-import React, { useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  Pressable,
-  ScrollView,
-} from "react-native";
+﻿import React, { useEffect, useCallback } from "react";
+import { View, Text, StyleSheet, Dimensions, Pressable, ScrollView } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -30,7 +23,7 @@ const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 const ICON_SIZE = 24;
 
 const Icons = {
-  stylist: ({ color = "#FFFFFF" }) => (
+  stylist: ({ color = DesignTokens.colors.text.inverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2Z"
@@ -47,7 +40,7 @@ const Icons = {
       />
     </Svg>
   ),
-  photo: ({ color = "#FFFFFF" }) => (
+  photo: ({ color = DesignTokens.colors.text.inverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4Z"
@@ -69,7 +62,7 @@ const Icons = {
       />
     </Svg>
   ),
-  recommend: ({ color = "#FFFFFF" }) => (
+  recommend: ({ color = DesignTokens.colors.text.inverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
@@ -80,7 +73,7 @@ const Icons = {
       />
     </Svg>
   ),
-  wardrobe: ({ color = "#FFFFFF" }) => (
+  wardrobe: ({ color = DesignTokens.colors.text.inverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3Z"
@@ -89,24 +82,9 @@ const Icons = {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <Path
-        d="M12 3V21"
-        stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <Path
-        d="M9 10H10"
-        stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <Path
-        d="M14 10H15"
-        stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
+      <Path d="M12 3V21" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+      <Path d="M9 10H10" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+      <Path d="M14 10H15" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
     </Svg>
   ),
 };
@@ -127,25 +105,14 @@ interface ActionItemProps {
   onPress: (action: QuickAction) => void;
 }
 
-const ActionItemComponent: React.FC<ActionItemProps> = ({
-  action,
-  index,
-  visible,
-  onPress,
-}) => {
+const ActionItemComponent: React.FC<ActionItemProps> = ({ action, index, visible, onPress }) => {
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.8);
 
   useEffect(() => {
     if (visible) {
-      opacity.value = withDelay(
-        100 + index * 50,
-        withTiming(1, { duration: 200 }),
-      );
-      scale.value = withDelay(
-        100 + index * 50,
-        withSpring(1, { damping: 12, stiffness: 200 }),
-      );
+      opacity.value = withDelay(100 + index * 50, withTiming(1, { duration: 200 }));
+      scale.value = withDelay(100 + index * 50, withSpring(1, { damping: 12, stiffness: 200 }));
     } else {
       opacity.value = withTiming(0, { duration: 100 });
       scale.value = withTiming(0.8, { duration: 100 });
@@ -158,7 +125,7 @@ const ActionItemComponent: React.FC<ActionItemProps> = ({
   }));
 
   const renderIcon = () => {
-    const iconColor = "#FFFFFF";
+    const iconColor = DesignTokens.colors.text.inverse;
     switch (action.id) {
       case "stylist":
         return <Icons.stylist color={iconColor} />;
@@ -175,7 +142,7 @@ const ActionItemComponent: React.FC<ActionItemProps> = ({
 
   return (
     <AnimatedView style={actionStyle}>
-      <Pressable style={styles.actionItem} onPress={() => onPress(action)}>
+      <Pressable style={styles.actionItem} onPress={() => onPress(action)} accessibilityLabel={action.label} accessibilityRole="button">
         <LinearGradient
           colors={
             action.gradient || [
@@ -189,9 +156,7 @@ const ActionItemComponent: React.FC<ActionItemProps> = ({
         </LinearGradient>
         <View style={styles.actionContent}>
           <Text style={styles.actionLabel}>{action.label}</Text>
-          {action.description && (
-            <Text style={styles.actionDescription}>{action.description}</Text>
-          )}
+          {action.description && <Text style={styles.actionDescription}>{action.description}</Text>}
         </View>
         <Text style={styles.actionArrow}>→</Text>
       </Pressable>
@@ -213,10 +178,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "stylist",
     label: "AI 造型师",
     description: "获取穿搭建议",
-    gradient: [
-      DesignTokens.colors.brand.terracotta,
-      DesignTokens.colors.brand.camel,
-    ],
+    gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel],
     onPress: () => {},
   },
   {
@@ -224,7 +186,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "photo",
     label: "拍照分析",
     description: "分析身材和肤色",
-    gradient: ["#7B8FA2", "#96A6B5"],
+    gradient: [DesignTokens.colors.brand.slate, "#96A6B5"], // custom color
     onPress: () => {},
   },
   {
@@ -232,7 +194,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "recommend",
     label: "智能推荐",
     description: "个性化推荐",
-    gradient: ["#5B8A72", "#7BA896"],
+    gradient: [DesignTokens.colors.semantic.success, "#7BA896"], // custom color
     onPress: () => {},
   },
   {
@@ -240,7 +202,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "wardrobe",
     label: "我的衣橱",
     description: "管理你的衣物",
-    gradient: ["#D9A441", "#E8B86D"],
+    gradient: [DesignTokens.colors.semantic.warning, "#E8B86D"], // custom color
     onPress: () => {},
   },
 ];
@@ -252,10 +214,6 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
   onClose,
   actions = DEFAULT_ACTIONS,
 }) => {
-  if (!visible) {
-    return null;
-  }
-
   const insets = useSafeAreaInsets();
 
   const backdropOpacity = useSharedValue(0);
@@ -288,8 +246,12 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
       onClose();
       action.onPress();
     },
-    [onClose],
+    [onClose]
   );
+
+  if (!visible) {
+    return null;
+  }
 
   const isLeftSide = position.x < SCREEN_WIDTH / 2;
   const menuWidth = SCREEN_WIDTH - 40;
@@ -298,19 +260,14 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
   let menuTop = position.y - menuHeight / 2;
   menuTop = Math.max(
     insets.top + 20,
-    Math.min(SCREEN_HEIGHT - insets.bottom - menuHeight - 100, menuTop),
+    Math.min(SCREEN_HEIGHT - insets.bottom - menuHeight - 100, menuTop)
   );
 
-  const menuLeft = isLeftSide
-    ? position.x + ballSize + 16
-    : position.x - menuWidth - 16;
+  const menuLeft = isLeftSide ? position.x + ballSize + 16 : position.x - menuWidth - 16;
 
   return (
     <>
-      <AnimatedPressable
-        style={[styles.backdrop, backdropStyle]}
-        onPress={onClose}
-      />
+      <AnimatedPressable style={[styles.backdrop, backdropStyle]} onPress={onClose} accessibilityLabel="关闭菜单" accessibilityRole="button" />
 
       <AnimatedView
         style={[
@@ -323,19 +280,13 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
           menuStyle,
         ]}
       >
-        <LinearGradient
-          colors={["#FFFFFF", "#FAFAF8"]}
-          style={styles.menuGradient}
-        >
+        <LinearGradient colors={[DesignTokens.colors.backgrounds.primary, DesignTokens.colors.backgrounds.secondary]} style={styles.menuGradient}>
           <View style={styles.menuHeader}>
             <Text style={styles.menuTitle}>AI 助手</Text>
             <Text style={styles.menuSubtitle}>选择你需要的服务</Text>
           </View>
 
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={styles.actionsList}
-          >
+          <ScrollView showsVerticalScrollIndicator={false} style={styles.actionsList}>
             {actions.map((action, index) => (
               <ActionItemComponent
                 key={action.id}
@@ -348,7 +299,7 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
           </ScrollView>
 
           <View style={styles.menuFooter}>
-            <Pressable style={styles.closeButton} onPress={onClose}>
+            <Pressable style={styles.closeButton} onPress={onClose} accessibilityLabel="关闭" accessibilityRole="button">
               <Text style={styles.closeButtonText}>关闭</Text>
             </Pressable>
           </View>

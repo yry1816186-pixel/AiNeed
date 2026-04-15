@@ -9,6 +9,7 @@ import {
   Modal,
   Dimensions,
 } from "react-native";
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -16,12 +17,10 @@ interface ProductImageCarouselProps {
   images: string[];
 }
 
-export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
-  images,
-}) => {
+export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({ images }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [zoomVisible, setZoomVisible] = useState(false);
-  const [zoomIndex, setZoomIndex] = useState(0);
+  const [_zoomIndex, setZoomIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
   const handleScroll = (event: any) => {
@@ -56,11 +55,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
         scrollEventThrottle={16}
       >
         {images.map((uri, index) => (
-          <TouchableOpacity
-            key={index}
-            activeOpacity={0.9}
-            onPress={() => handleImageTap(index)}
-          >
+          <TouchableOpacity key={uri} activeOpacity={0.9} onPress={() => handleImageTap(index)}>
             <Image source={{ uri }} style={styles.image} resizeMode="cover" />
           </TouchableOpacity>
         ))}
@@ -70,7 +65,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
         <View style={styles.dots}>
           {images.map((_, index) => (
             <View
-              key={index}
+              key={`dot-${index}`}
               style={[styles.dot, index === activeIndex && styles.dotActive]}
             />
           ))}
@@ -79,20 +74,12 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
 
       <Modal visible={zoomVisible} transparent animationType="fade">
         <View style={styles.zoomOverlay}>
-          <TouchableOpacity
-            style={styles.zoomClose}
-            onPress={() => setZoomVisible(false)}
-          >
+          <TouchableOpacity style={styles.zoomClose} onPress={() => setZoomVisible(false)}>
             <Text style={styles.zoomCloseText}>X</Text>
           </TouchableOpacity>
           <ScrollView horizontal pagingEnabled>
-            {images.map((uri, index) => (
-              <Image
-                key={index}
-                source={{ uri }}
-                style={styles.zoomImage}
-                resizeMode="contain"
-              />
+            {images.map((uri, _index) => (
+              <Image key={uri} source={{ uri }} style={styles.zoomImage} resizeMode="contain" />
             ))}
           </ScrollView>
         </View>
@@ -113,13 +100,13 @@ const styles = StyleSheet.create({
   placeholder: {
     width: SCREEN_WIDTH,
     height: SCREEN_WIDTH,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
   placeholderText: {
     fontSize: 14,
-    color: "#CCCCCC",
+    color: DesignTokens.colors.neutral[300],
   },
   dots: {
     flexDirection: "row",
@@ -131,18 +118,18 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: DesignTokens.colors.neutral[200],
     marginHorizontal: 3,
   },
   dotActive: {
-    backgroundColor: "#FF4D4F",
+    backgroundColor: "#FF4D4F", // custom color
     width: 8,
     height: 8,
     borderRadius: 4,
   },
   zoomOverlay: {
     flex: 1,
-    backgroundColor: "#000000",
+    backgroundColor: DesignTokens.colors.neutral[900],
   },
   zoomClose: {
     position: "absolute",

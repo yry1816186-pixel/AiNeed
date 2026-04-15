@@ -1,14 +1,8 @@
-import React, { memo, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Pressable,
-  type ViewStyle,
-} from "react-native";
+﻿import React, { memo, useCallback } from "react";
+import { View, Text, StyleSheet, Pressable, type ViewStyle } from "react-native";
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import type { FeedItem } from "../../services/api/recommendation-feed.api";
+import { OptimizedImage } from "../common/OptimizedImage";
 
 interface RecommendationCardProps {
   item: FeedItem;
@@ -40,11 +34,10 @@ export const RecommendationCard = memo(function RecommendationCard({
       accessibilityRole="button"
     >
       <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: item.mainImage }}
+        <OptimizedImage
+          source={item.mainImage}
           style={styles.image as any}
           resizeMode="cover"
-          accessibilityIgnoresInvertColors
         />
         {discount > 0 && (
           <View style={styles.discountBadge}>
@@ -53,9 +46,7 @@ export const RecommendationCard = memo(function RecommendationCard({
         )}
         {item.colorHarmony.score >= 85 && (
           <View style={styles.harmonyBadge}>
-            <Text style={styles.harmonyText}>
-              {item.colorHarmony.score}%
-            </Text>
+            <Text style={styles.harmonyText}>{item.colorHarmony.score}%</Text>
           </View>
         )}
       </View>
@@ -83,9 +74,7 @@ export const RecommendationCard = memo(function RecommendationCard({
         <View style={styles.priceRow}>
           <Text style={styles.price}>¥{item.price}</Text>
           {item.originalPrice && item.originalPrice > item.price && (
-            <Text style={styles.originalPrice}>
-              ¥{item.originalPrice}
-            </Text>
+            <Text style={styles.originalPrice}>¥{item.originalPrice}</Text>
           )}
         </View>
 
@@ -107,8 +96,7 @@ const CARD_GAP = 8;
 const CARD_PADDING = 12;
 const COLUMN_COUNT = 2;
 const { width: SCREEN_WIDTH } = require("react-native").Dimensions.get("window");
-const CARD_WIDTH =
-  (SCREEN_WIDTH - CARD_PADDING * 2 - CARD_GAP) / COLUMN_COUNT;
+const CARD_WIDTH = (SCREEN_WIDTH - CARD_PADDING * 2 - CARD_GAP) / COLUMN_COUNT;
 
 const styles = StyleSheet.create({
   card: {
@@ -119,7 +107,7 @@ const styles = StyleSheet.create({
     marginBottom: CARD_GAP,
   },
   cardCompact: {
-    width: (CARD_WIDTH - CARD_GAP / 2),
+    width: CARD_WIDTH - CARD_GAP / 2,
   },
   imageContainer: {
     position: "relative",
@@ -140,7 +128,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   discountText: {
-    color: "#fff",
+    color: DesignTokens.colors.text.inverse,
     fontSize: 10,
     fontWeight: "700",
   },
@@ -154,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   harmonyText: {
-    color: "#4ADE80",
+    color: "#4ADE80", // custom color
     fontSize: 10,
     fontWeight: "600",
   },

@@ -1,10 +1,16 @@
+﻿/**
+ * 寻裳 ThemeSystem (兼容层)
+ *
+ * @deprecated 此文件为向后兼容层。新代码请直接使用：
+ *   - ThemeProvider / useTheme 来自 `src/contexts/ThemeContext`
+ *   - PaperThemeProvider 来自 `src/design-system/ui/PaperThemeProvider`
+ *
+ * 原有的独立 ThemeProvider 和 AccentColor 系统已废弃。
+ * 所有组件现在消费统一的 ThemeContext。
+ * 品牌色统一使用 Terracotta #C67B5C（暗色模式 #D68B6C）。
+ */
 import React, {
-  createContext,
-  useContext,
-  useState,
   useEffect,
-  useCallback,
-  useMemo,
   ReactNode,
 } from "react";
 import {
@@ -14,28 +20,21 @@ import {
   Dimensions,
   Platform,
   TouchableOpacity,
-  useColorScheme,
-  Appearance,
   Pressable,
   ColorValue,
   ViewStyle,
   StyleProp,
 } from "react-native";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import * as Haptics from '@/src/polyfills/expo-haptics';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import * as Haptics from "@/src/polyfills/expo-haptics";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withTiming,
-  withDelay,
   interpolate,
-  Extrapolate,
-  Easing,
-  runOnJS,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import {
@@ -43,335 +42,40 @@ import {
   BorderRadius,
   Shadows,
   gradients as themeGradients,
-  theme as baseTheme,
-} from "../../theme";
+} from '../design-system/theme';
+import {
+  ThemeProvider as UnifiedThemeProvider,
+  useTheme as useUnifiedTheme,
+  type ThemeMode,
+  type ThemeContextType,
+} from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 
-const THEME_STORAGE_KEY = "@xuno_theme";
-const ACCENT_COLOR_KEY = "@xuno_accent";
+// ─── Re-export unified ThemeProvider ──────────────────────────────────────
 
-/** Ionicons 图标名称联合类型 */
-type ThemeIoniconsIconName =
-  | "checkmark"
-  | "sunny"
-  | "moon"
-  | "phone-portrait";
+/**
+ * @deprecated 使用 `import { ThemeProvider } from '../contexts/ThemeContext'` 代替。
+ * 此 re-export 保持向后兼容，实际指向统一的 ThemeProvider。
+ */
+export const ThemeProvider = UnifiedThemeProvider;
 
-export type ThemeMode = "light" | "dark" | "system";
-export type AccentColor =
-  | "purple"
-  | "blue"
-  | "green"
-  | "orange"
-  | "pink"
-  | "red";
+/**
+ * @deprecated 使用 `import { useTheme } from '../contexts/ThemeContext'` 代替。
+ * 此 re-export 保持向后兼容，实际指向统一的 useTheme。
+ */
+export const useTheme = useUnifiedTheme;
 
-interface ThemeColors {
-  primary: string;
-  primaryLight: string;
-  primaryDark: string;
-  secondary: string;
-  background: string;
-  surface: string;
-  surfaceSecondary: string;
-  text: string;
-  textSecondary: string;
-  textTertiary: string;
-  border: string;
-  borderLight: string;
-  success: string;
-  error: string;
-  warning: string;
-  info: string;
-  card: string;
-  cardElevated: string;
-  overlay: string;
-  shadow: string;
-}
+// ─── Deprecated AccentColor ───────────────────────────────────────────────
 
-interface Theme {
-  mode: "light" | "dark";
-  colors: ThemeColors;
-  gradients: {
-    primary: string[];
-    secondary: string[];
-    warm: string[];
-    cool: string[];
-    hero: string[];
-    card: string[];
-  };
-  spacing: typeof Spacing;
-  borderRadius: typeof BorderRadius;
-  shadows: typeof Shadows;
-}
+/**
+ * @deprecated AccentColor 系统已废弃，与品牌色 Terracotta 冲突。
+ * 新代码不应使用 AccentColor。
+ */
+export type AccentColor = "purple" | "blue" | "green" | "orange" | "pink" | "red";
 
-interface ThemeContextValue {
-  theme: Theme;
-  themeMode: ThemeMode;
-  accentColor: AccentColor;
-  setThemeMode: (mode: ThemeMode) => void;
-  setAccentColor: (color: AccentColor) => void;
-  toggleTheme: () => void;
-  isDark: boolean;
-}
-
-const accentColors: Record<
-  AccentColor,
-  { primary: string; light: string; dark: string }
-> = {
-  purple: { primary: "#667EEA", light: "#A5B4FC", dark: "#4C1D95" },
-  blue: { primary: "#3B82F6", light: "#93C5FD", dark: "#1E3A8A" },
-  green: { primary: "#10B981", light: "#6EE7B7", dark: "#064E3B" },
-  orange: { primary: "#F59E0B", light: "#FCD34D", dark: "#78350F" },
-  pink: { primary: "#EC4899", light: "#F9A8D4", dark: "#831843" },
-  red: { primary: "#EF4444", light: "#FCA5A5", dark: "#7F1D1D" },
-};
-
-interface AccentColorOptionProps {
-  color: AccentColor;
-  isSelected: boolean;
-  onPress: () => void;
-  textColor: string;
-}
-
-const AccentColorOption: React.FC<AccentColorOptionProps> = ({
-  color,
-  isSelected,
-  onPress,
-  textColor,
-}) => {
-  const colorConfig = accentColors[color];
-  const scale = useSharedValue(1);
-
-  useEffect(() => {
-    scale.value = withSpring(isSelected ? 1.15 : 1, {
-      damping: 15,
-      stiffness: 200,
-    });
-  }, [isSelected]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  return (
-    <TouchableOpacity style={styles.colorOption} onPress={onPress}>
-      <AnimatedView
-        style={[
-          styles.colorCircle,
-          { backgroundColor: colorConfig.primary },
-          isSelected && styles.colorCircleSelected,
-          animatedStyle,
-        ]}
-      >
-        {isSelected && <Ionicons name="checkmark" size={16} color="#fff" />}
-      </AnimatedView>
-      <Text style={[styles.colorLabel, { color: textColor }]}>
-        {color.charAt(0).toUpperCase() + color.slice(1)}
-      </Text>
-    </TouchableOpacity>
-  );
-};
-
-const lightColors: Omit<
-  ThemeColors,
-  "primary" | "primaryLight" | "primaryDark"
-> = {
-  secondary: "#764BA2",
-  background: "#FAFAFA",
-  surface: "#FFFFFF",
-  surfaceSecondary: "#F5F5F5",
-  text: "#18181B",
-  textSecondary: "#71717A",
-  textTertiary: "#A1A1AA",
-  border: "#E4E4E7",
-  borderLight: "#F4F4F5",
-  success: "#10B981",
-  error: "#EF4444",
-  warning: "#F59E0B",
-  info: "#3B82F6",
-  card: "#FFFFFF",
-  cardElevated: "#FFFFFF",
-  overlay: "rgba(0,0,0,0.5)",
-  shadow: "#000000",
-};
-
-const darkColors: Omit<
-  ThemeColors,
-  "primary" | "primaryLight" | "primaryDark"
-> = {
-  secondary: "#A78BFA",
-  background: "#0F0F0F",
-  surface: "#1A1A1A",
-  surfaceSecondary: "#262626",
-  text: "#FAFAFA",
-  textSecondary: "#A1A1AA",
-  textTertiary: "#71717A",
-  border: "#3F3F46",
-  borderLight: "#27272A",
-  success: "#34D399",
-  error: "#F87171",
-  warning: "#FBBF24",
-  info: "#60A5FA",
-  card: "#1A1A1A",
-  cardElevated: "#262626",
-  overlay: "rgba(0,0,0,0.7)",
-  shadow: "#000000",
-};
-
-const createTheme = (mode: "light" | "dark", accent: AccentColor): Theme => {
-  const accentConfig = accentColors[accent];
-  const baseColors = mode === "light" ? lightColors : darkColors;
-
-  // Brand primary is always Terracotta (#C67B5C). Accent is a secondary emphasis color.
-  const brandPrimary = "#C67B5C";
-  const brandPrimaryLight = "#E2A782";
-  const brandPrimaryDark = "#A65E3F";
-
-  const colors: ThemeColors = {
-    primary: brandPrimary,
-    primaryLight: brandPrimaryLight,
-    primaryDark: brandPrimaryDark,
-    ...baseColors,
-    // Override secondary with the user-chosen accent color
-    secondary: accentConfig.primary,
-  };
-
-  return {
-    mode,
-    colors,
-    gradients: {
-      primary: [brandPrimary, brandPrimaryDark],
-      secondary: [accentConfig.light, accentConfig.primary],
-      warm: ["#F59E0B", "#EF4444", "#EC4899"],
-      cool: ["#3B82F6", "#8B5CF6", "#EC4899"],
-      hero: [brandPrimary, brandPrimaryDark],
-      card: mode === "light" ? ["#FFFFFF", "#FAFAFA"] : ["#1A1A1A", "#0F0F0F"],
-    },
-    spacing: Spacing,
-    borderRadius: BorderRadius,
-    shadows: Shadows,
-  };
-};
-
-const ThemeContext = createContext<ThemeContextValue | null>(null);
-
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within ThemeProvider");
-  }
-  return context;
-};
-
-export interface ThemeProviderProps {
-  children: ReactNode;
-  defaultMode?: ThemeMode;
-  defaultAccent?: AccentColor;
-}
-
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({
-  children,
-  defaultMode = "system",
-  defaultAccent = "purple",
-}) => {
-  const systemColorScheme = useColorScheme();
-  const [themeMode, setThemeModeState] = useState<ThemeMode>(defaultMode);
-  const [accentColor, setAccentColorState] =
-    useState<AccentColor>(defaultAccent);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    loadThemePreferences();
-  }, []);
-
-  useEffect(() => {
-    const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-      if (themeMode === "system") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      }
-    });
-
-    return () => subscription.remove();
-  }, [themeMode]);
-
-  const loadThemePreferences = async () => {
-    try {
-      const [savedMode, savedAccent] = await Promise.all([
-        AsyncStorage.getItem(THEME_STORAGE_KEY),
-        AsyncStorage.getItem(ACCENT_COLOR_KEY),
-      ]);
-
-      if (savedMode) {
-        setThemeModeState(savedMode as ThemeMode);
-      }
-      if (savedAccent) {
-        setAccentColorState(savedAccent as AccentColor);
-      }
-    } catch (error) {
-      console.error("Failed to load theme preferences:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const setThemeMode = useCallback(async (mode: ThemeMode) => {
-    setThemeModeState(mode);
-    try {
-      await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    } catch (error) {
-      console.error("Failed to save theme mode:", error);
-    }
-  }, []);
-
-  const setAccentColor = useCallback(async (color: AccentColor) => {
-    setAccentColorState(color);
-    try {
-      await AsyncStorage.setItem(ACCENT_COLOR_KEY, color);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    } catch (error) {
-      console.error("Failed to save accent color:", error);
-    }
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    const newMode =
-      themeMode === "light" ? "dark" : themeMode === "dark" ? "light" : "light";
-    setThemeMode(newMode);
-  }, [themeMode, setThemeMode]);
-
-  const isDark = useMemo(() => {
-    if (themeMode === "system") {
-      return systemColorScheme === "dark";
-    }
-    return themeMode === "dark";
-  }, [themeMode, systemColorScheme]);
-
-  const theme = useMemo(() => {
-    return createTheme(isDark ? "dark" : "light", accentColor);
-  }, [isDark, accentColor]);
-
-  const value: ThemeContextValue = {
-    theme,
-    themeMode,
-    accentColor,
-    setThemeMode,
-    setAccentColor,
-    toggleTheme,
-    isDark,
-  };
-
-  if (isLoading) {
-    return null;
-  }
-
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
-};
+// ─── ThemedView ───────────────────────────────────────────────────────────
 
 export interface ThemedViewProps {
   children: React.ReactNode;
@@ -384,28 +88,24 @@ export const ThemedView: React.FC<ThemedViewProps> = ({
   style,
   variant = "background",
 }) => {
-  const { theme } = useTheme();
+  const { colors } = useUnifiedTheme();
 
   const backgroundColor = {
-    background: theme.colors.background,
-    surface: theme.colors.surface,
-    card: theme.colors.card,
+    background: colors.backgrounds.primary,
+    surface: colors.backgrounds.elevated,
+    card: colors.backgrounds.secondary,
     transparent: "transparent",
   }[variant];
 
   return <View style={[{ backgroundColor }, style]}>{children}</View>;
 };
 
+// ─── ThemedText ───────────────────────────────────────────────────────────
+
 export interface ThemedTextProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
-  variant?:
-    | "primary"
-    | "secondary"
-    | "tertiary"
-    | "accent"
-    | "error"
-    | "success";
+  variant?: "primary" | "secondary" | "tertiary" | "accent" | "error" | "success";
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
   weight?: "normal" | "medium" | "semibold" | "bold";
 }
@@ -417,15 +117,15 @@ export const ThemedText: React.FC<ThemedTextProps> = ({
   size = "md",
   weight = "normal",
 }) => {
-  const { theme } = useTheme();
+  const { colors } = useUnifiedTheme();
 
   const color = {
-    primary: theme.colors.text,
-    secondary: theme.colors.textSecondary,
-    tertiary: theme.colors.textTertiary,
-    accent: theme.colors.secondary,
-    error: theme.colors.error,
-    success: theme.colors.success,
+    primary: colors.text.primary,
+    secondary: colors.text.secondary,
+    tertiary: colors.text.tertiary,
+    accent: colors.brand.terracotta,
+    error: colors.semantic.error,
+    success: colors.semantic.success,
   }[variant];
 
   const fontSize = {
@@ -444,17 +144,20 @@ export const ThemedText: React.FC<ThemedTextProps> = ({
     bold: "700" as const,
   }[weight];
 
-  return (
-    <Text style={[{ color, fontSize, fontWeight }, style]}>{children}</Text>
-  );
+  return <Text style={[{ color, fontSize, fontWeight }, style]}>{children}</Text>;
 };
+
+// ─── ThemeSwitch ──────────────────────────────────────────────────────────
+
+/** Ionicons 图标名称联合类型 */
+type ThemeIoniconsIconName = "checkmark" | "sunny" | "moon" | "phone-portrait";
 
 export interface ThemeSwitchProps {
   style?: StyleProp<ViewStyle>;
 }
 
 export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
-  const { themeMode, setThemeMode, isDark, theme } = useTheme();
+  const { mode, isDark, setMode, colors } = useUnifiedTheme();
   const switchTranslateX = useSharedValue(isDark ? 24 : 0);
   const iconRotation = useSharedValue(isDark ? 180 : 0);
 
@@ -484,50 +187,34 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
   }));
 
   const handleToggle = () => {
-    if (themeMode === "system") {
-      setThemeMode(isDark ? "light" : "dark");
+    if (mode === "system") {
+      void setMode(isDark ? "light" : "dark");
     } else {
-      setThemeMode(themeMode === "light" ? "dark" : "light");
+      void setMode(mode === "light" ? "dark" : "light");
     }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   return (
-    <TouchableOpacity
-      style={[styles.themeSwitch, style]}
-      onPress={handleToggle}
-    >
+    <TouchableOpacity style={[styles.themeSwitch, style]} onPress={handleToggle}>
       <View
         style={[
           styles.switchTrack,
           {
-            backgroundColor: isDark
-              ? theme.colors.primary
-              : theme.colors.border,
+            backgroundColor: isDark ? colors.brand.terracotta : colors.borders.default,
           },
         ]}
       >
         <AnimatedView style={[styles.switchThumb, switchAnimatedStyle]}>
           <View style={styles.iconContainer}>
-            <AnimatedView
-              style={[
-                StyleSheet.absoluteFill,
-                styles.iconCenter,
-                sunAnimatedStyle,
-              ]}
-            >
+            <AnimatedView style={[StyleSheet.absoluteFill, styles.iconCenter, sunAnimatedStyle]}>
               <Ionicons
                 name="sunny"
                 size={14}
-                color={isDark ? "#fff" : theme.colors.textSecondary}
+                color={isDark ? "#fff" : colors.text.secondary}
               />
             </AnimatedView>
-            <AnimatedView
-              style={[
-                StyleSheet.absoluteFill,
-                styles.iconCenter,
-                moonAnimatedStyle,
-              ]}
-            >
+            <AnimatedView style={[StyleSheet.absoluteFill, styles.iconCenter, moonAnimatedStyle]}>
               <Ionicons name="moon" size={14} color="#fff" />
             </AnimatedView>
           </View>
@@ -537,46 +224,53 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
   );
 };
 
+// ─── AccentColorPicker (deprecated) ───────────────────────────────────────
+
+/**
+ * @deprecated AccentColorPicker 已废弃，与品牌色 Terracotta 冲突。
+ * 保留组件但内部不再提供 AccentColor 切换功能。
+ */
 export interface AccentColorPickerProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export const AccentColorPicker: React.FC<AccentColorPickerProps> = ({
-  style,
-}) => {
-  const { accentColor, setAccentColor, theme } = useTheme();
-  const colorOptions = Object.keys(accentColors) as AccentColor[];
+export const AccentColorPicker: React.FC<AccentColorPickerProps> = ({ style }) => {
+  const { colors } = useUnifiedTheme();
 
   return (
     <View style={[styles.accentPicker, style]}>
-      <Text style={[styles.pickerTitle, { color: theme.colors.text }]}>
-        辅助强调色
+      <Text style={[styles.pickerTitle, { color: colors.text.primary }]}>
+        品牌强调色
       </Text>
       <View style={styles.colorOptions}>
-        {colorOptions.map((color) => (
-          <AccentColorOption
-            key={color}
-            color={color}
-            isSelected={accentColor === color}
-            onPress={() => setAccentColor(color)}
-            textColor={theme.colors.textSecondary}
-          />
-        ))}
+        <View style={styles.colorOption}>
+          <View
+            style={[
+              styles.colorCircle,
+              { backgroundColor: colors.brand.terracotta },
+              styles.colorCircleSelected,
+            ]}
+          >
+            <Ionicons name="checkmark" size={16} color="#fff" />
+          </View>
+          <Text style={[styles.colorLabel, { color: colors.text.secondary }]}>
+            Terracotta
+          </Text>
+        </View>
       </View>
     </View>
   );
 };
+
+// ─── ThemeSettingsSheet ───────────────────────────────────────────────────
 
 export interface ThemeSettingsSheetProps {
   visible: boolean;
   onClose: () => void;
 }
 
-export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({
-  visible,
-  onClose,
-}) => {
-  const { theme, themeMode, setThemeMode, isDark } = useTheme();
+export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({ visible, onClose }) => {
+  const { colors, mode, setMode, isDark } = useUnifiedTheme();
   const translateY = useSharedValue(SCREEN_WIDTH);
   const backdropOpacity = useSharedValue(0);
 
@@ -604,76 +298,61 @@ export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({
     { mode: "system", label: "跟随系统", icon: "phone-portrait" },
   ];
 
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   return (
     <View style={StyleSheet.absoluteFill}>
-      <AnimatedPressable
-        style={[styles.backdrop, backdropAnimatedStyle]}
-        onPress={onClose}
-      />
+      <AnimatedPressable style={[styles.backdrop, backdropAnimatedStyle]} onPress={onClose} />
       <AnimatedView
-        style={[
-          styles.sheet,
-          { backgroundColor: theme.colors.surface },
-          sheetAnimatedStyle,
-        ]}
+        style={[styles.sheet, { backgroundColor: colors.backgrounds.elevated }, sheetAnimatedStyle]}
       >
         <View style={styles.sheetHandle} />
-        <Text style={[styles.sheetTitle, { color: theme.colors.text }]}>
-          外观设置
-        </Text>
+        <Text style={[styles.sheetTitle, { color: colors.text.primary }]}>外观设置</Text>
 
         <View style={styles.themeOptions}>
           {themeOptions.map((option) => {
-            const isSelected = themeMode === option.mode;
-            const effectiveDark =
-              option.mode === "system" ? isDark : option.mode === "dark";
+            const isSelected = mode === option.mode;
+            const effectiveDark = option.mode === "system" ? isDark : option.mode === "dark";
 
             return (
               <TouchableOpacity
                 key={option.mode}
                 style={[
                   styles.themeOption,
-                  { backgroundColor: theme.colors.surfaceSecondary },
+                  { backgroundColor: colors.backgrounds.tertiary },
                   isSelected && {
-                    borderColor: theme.colors.primary,
+                    borderColor: colors.brand.terracotta,
                     borderWidth: 2,
                   },
                 ]}
-                onPress={() => setThemeMode(option.mode)}
+                onPress={() => {
+                  void setMode(option.mode);
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
               >
                 <View
                   style={[
                     styles.themeOptionIcon,
                     {
                       backgroundColor: effectiveDark
-                        ? theme.colors.primary
-                        : theme.colors.border,
+                        ? colors.brand.terracotta
+                        : colors.borders.default,
                     },
                   ]}
                 >
                   <Ionicons
                     name={option.icon as ThemeIoniconsIconName}
                     size={20}
-                    color={effectiveDark ? "#fff" : theme.colors.textSecondary}
+                    color={effectiveDark ? "#fff" : colors.text.secondary}
                   />
                 </View>
-                <Text
-                  style={[
-                    styles.themeOptionLabel,
-                    { color: theme.colors.text },
-                  ]}
-                >
+                <Text style={[styles.themeOptionLabel, { color: colors.text.primary }]}>
                   {option.label}
                 </Text>
                 {isSelected && (
-                  <View
-                    style={[
-                      styles.checkMark,
-                      { backgroundColor: theme.colors.primary },
-                    ]}
-                  >
+                  <View style={[styles.checkMark, { backgroundColor: colors.brand.terracotta }]}>
                     <Ionicons name="checkmark" size={12} color="#fff" />
                   </View>
                 )}
@@ -688,6 +367,8 @@ export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({
   );
 };
 
+// ─── GradientBackground ───────────────────────────────────────────────────
+
 export interface GradientBackgroundProps {
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "warm" | "cool" | "hero";
@@ -701,15 +382,11 @@ export const GradientBackground: React.FC<GradientBackgroundProps> = ({
   customColors,
   style,
 }) => {
-  const { theme } = useTheme();
+  const { gradients } = useUnifiedTheme();
 
   const gradientColors = (customColors ||
-    theme.gradients[variant] ||
-    themeGradients.primary) as unknown as readonly [
-    string,
-    string,
-    ...string[],
-  ];
+    gradients[variant === "primary" ? "brand" : variant === "secondary" ? "sage" : variant] ||
+    themeGradients.primary) as unknown as readonly [string, string, ...string[]];
 
   return (
     <LinearGradient
@@ -723,6 +400,8 @@ export const GradientBackground: React.FC<GradientBackgroundProps> = ({
   );
 };
 
+// ─── GlassCard ────────────────────────────────────────────────────────────
+
 export interface GlassCardProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
@@ -730,23 +409,12 @@ export interface GlassCardProps {
   tint?: "light" | "dark" | "default";
 }
 
-export const GlassCard: React.FC<GlassCardProps> = ({
-  children,
-  style,
-  intensity = 80,
-  tint,
-}) => {
-  const { isDark, theme } = useTheme();
+export const GlassCard: React.FC<GlassCardProps> = ({ children, style, intensity = 80, tint }) => {
+  const { isDark, colors } = useUnifiedTheme();
   const defaultTint = tint || (isDark ? "dark" : "light");
 
   return (
-    <View
-      style={[
-        styles.glassCard,
-        { backgroundColor: `${theme.colors.surface}40` },
-        style,
-      ]}
-    >
+    <View style={[styles.glassCard, { backgroundColor: `${colors.backgrounds.elevated}40` }, style]}>
       <BlurView
         intensity={intensity}
         tint={defaultTint}
@@ -755,7 +423,7 @@ export const GlassCard: React.FC<GlassCardProps> = ({
         <View
           style={[
             StyleSheet.absoluteFill as ViewStyle,
-            { backgroundColor: `${theme.colors.surface}20` },
+            { backgroundColor: `${colors.backgrounds.elevated}20` },
           ]}
         />
       </BlurView>
@@ -763,6 +431,8 @@ export const GlassCard: React.FC<GlassCardProps> = ({
     </View>
   );
 };
+
+// ─── Styles ───────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   themeSwitch: {

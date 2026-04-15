@@ -38,8 +38,8 @@
  * ```
  */
 
-import { PrismaClient, Prisma } from "@prisma/client";
 import { Logger } from "@nestjs/common";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 /**
  * 事务隔离的 PrismaClient 代理
@@ -118,7 +118,7 @@ export class PrismaTestUtils {
         .$transaction(
           async (tx) => {
             this.txClient = tx;
-            this.transactionCallback = (result: unknown) => {
+            this.transactionCallback = (_result: unknown) => {
               clearTimeout(timeoutId);
               resolve(tx as unknown as TransactionClient);
             };
@@ -127,7 +127,7 @@ export class PrismaTestUtils {
             // 阻止事务提交：等待 rollbackTransaction 被调用
             // 当 rollbackTransaction 调用 reject 时，Prisma 会自动回滚事务
             await new Promise((_resolve, txReject) => {
-              this.transactionCallback = (result: unknown) => {
+              this.transactionCallback = (_result: unknown) => {
                 clearTimeout(timeoutId);
                 resolve(tx as unknown as TransactionClient);
               };
@@ -328,9 +328,6 @@ export function withTransactionRollback<T = void>(
     try {
       const tx = await utils.startTransaction();
       result = await fn(tx);
-    } catch (error) {
-      // 测试失败时也要回滚事务
-      throw error;
     } finally {
       await utils.rollbackTransaction();
     }

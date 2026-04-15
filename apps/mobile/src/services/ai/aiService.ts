@@ -2,10 +2,7 @@ import { mobileRuntimeConfig, requireMobileUrl } from "../../config/runtime";
 import { OutfitRecommendationResult, SimilarItemResult } from "../../types/api";
 import type { FormDataValue } from "../../types";
 
-const AI_SERVICE_URL = requireMobileUrl(
-  mobileRuntimeConfig.aiServiceUrl,
-  "AI_SERVICE_URL",
-);
+const AI_SERVICE_URL = requireMobileUrl(mobileRuntimeConfig.aiServiceUrl, "AI_SERVICE_URL");
 
 /**
  * React Native FormData 文件条目类型
@@ -120,10 +117,7 @@ class AIService {
     return response.json();
   }
 
-  async findSimilar(
-    imagePath: string,
-    topK: number = 10,
-  ): Promise<SimilarItemResult[]> {
+  async findSimilar(imagePath: string, topK: number = 10): Promise<SimilarItemResult[]> {
     const response = await fetch(`${this.baseUrl}/api/similar`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -139,7 +133,7 @@ class AIService {
 
   async recommendOutfit(
     baseItemId: string,
-    occasion?: string,
+    occasion?: string
   ): Promise<OutfitRecommendationResult> {
     const response = await fetch(`${this.baseUrl}/api/outfit`, {
       method: "POST",

@@ -1,5 +1,6 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable, Inject, OnModuleDestroy, Logger } from "@nestjs/common";
 import Redis from "ioredis";
+import { randomUUID } from "crypto";
 
 export const REDIS_CLIENT = "REDIS_CLIENT";
 
@@ -55,7 +56,10 @@ export class RedisKeyBuilder {
 }
 
 @Injectable()
-export class RedisService {
+export class RedisService implements OnModuleDestroy {
+  private readonly logger = new Logger(RedisService.name);
+  private readonly subscribers: Redis[] = [];
+
   constructor(@Inject(REDIS_CLIENT) private redis: Redis) {}
 
   getClient(): Redis {
@@ -146,12 +150,34 @@ export class RedisService {
   async subscribe(
     channel: string,
     callback: (message: string) => void,
-  ): Promise<void> {
+  ): Promise<() => Promise<void>> {
     const subscriber = this.redis.duplicate();
+    this.subscribers.push(subscriber);
     await subscriber.subscribe(channel);
     subscriber.on("message", (_channel, message) => {
       callback(message);
     });
+
+    // Return unsubscribe function
+    return async () => {
+      await subscriber.unsubscribe(channel);
+      await subscriber.quit();
+      const idx = this.subscribers.indexOf(subscriber);
+      if (idx !== -1) {
+        this.subscribers.splice(idx, 1);
+      }
+    };
+  }
+
+  async onModuleDestroy() {
+    for (const subscriber of this.subscribers) {
+      try {
+        await subscriber.quit();
+      } catch (e) {
+        this.logger.warn(`Failed to close subscriber: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    }
+    this.subscribers.length = 0;
   }
 
   async acquireLock(
@@ -159,13 +185,16 @@ export class RedisService {
     ttlMs: number,
     retries: number = 3,
   ): Promise<string | null> {
-    const token = `${Date.now()}-${Math.random()}`;
+    const token = randomUUID();
+    const baseDelayMs = 50;
     for (let i = 0; i < retries; i++) {
       const result = await this.redis.set(key, token, "PX", ttlMs, "NX");
       if (result === "OK") {
         return token;
       }
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      // Exponential backoff: 50ms, 100ms, 200ms, 400ms...
+      const delay = baseDelayMs * Math.pow(2, i);
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
     return null;
   }

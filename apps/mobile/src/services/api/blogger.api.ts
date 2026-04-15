@@ -121,7 +121,7 @@ function normalizeBloggerProduct(item: BackendBloggerProduct): BloggerProduct {
     description: item.description ?? "",
     images: item.images ?? [],
     price: Number(item.price ?? 0),
-    originalPrice: item.originalPrice != null ? Number(item.originalPrice) : undefined,
+    originalPrice: item.originalPrice !== null ? Number(item.originalPrice) : undefined,
     type: item.type ?? "digital",
     externalUrl: item.externalUrl ?? undefined,
     salesCount: item.salesCount ?? item._count?.sales ?? 0,
@@ -177,7 +177,10 @@ export const bloggerApi = {
     if (!response.success || !response.data) {
       return {
         success: false,
-        error: response.error ?? { code: "BLOGGER_PRODUCTS_FAILED", message: "Failed to load products" },
+        error: response.error ?? {
+          code: "BLOGGER_PRODUCTS_FAILED",
+          message: "Failed to load products",
+        },
       };
     }
 
@@ -207,7 +210,10 @@ export const bloggerApi = {
     if (!response.success || !response.data) {
       return {
         success: false,
-        error: response.error ?? { code: "BLOGGER_PRODUCT_NOT_FOUND", message: "Product not found" },
+        error: response.error ?? {
+          code: "BLOGGER_PRODUCT_NOT_FOUND",
+          message: "Product not found",
+        },
       };
     }
 
@@ -220,20 +226,29 @@ export const bloggerApi = {
     if (!response.success || !response.data) {
       return {
         success: false,
-        error: response.error ?? { code: "BLOGGER_PRODUCT_CREATE_FAILED", message: "Failed to create product" },
+        error: response.error ?? {
+          code: "BLOGGER_PRODUCT_CREATE_FAILED",
+          message: "Failed to create product",
+        },
       };
     }
 
     return { success: true, data: normalizeBloggerProduct(response.data) };
   },
 
-  updateProduct: async (id: string, data: Partial<BloggerProductInput>): Promise<ApiResponse<BloggerProduct>> => {
+  updateProduct: async (
+    id: string,
+    data: Partial<BloggerProductInput>
+  ): Promise<ApiResponse<BloggerProduct>> => {
     const response = await apiClient.put<BackendBloggerProduct>(`/blogger/products/${id}`, data);
 
     if (!response.success || !response.data) {
       return {
         success: false,
-        error: response.error ?? { code: "BLOGGER_PRODUCT_UPDATE_FAILED", message: "Failed to update product" },
+        error: response.error ?? {
+          code: "BLOGGER_PRODUCT_UPDATE_FAILED",
+          message: "Failed to update product",
+        },
       };
     }
 
@@ -244,8 +259,14 @@ export const bloggerApi = {
     return apiClient.delete<void>(`/blogger/products/${id}`);
   },
 
-  purchaseProduct: async (id: string, data: PurchaseInput): Promise<ApiResponse<{ success: boolean; orderId?: string }>> => {
-    return apiClient.post<{ success: boolean; orderId?: string }>(`/blogger/products/${id}/purchase`, data);
+  purchaseProduct: async (
+    id: string,
+    data: PurchaseInput
+  ): Promise<ApiResponse<{ success: boolean; orderId?: string }>> => {
+    return apiClient.post<{ success: boolean; orderId?: string }>(
+      `/blogger/products/${id}/purchase`,
+      data
+    );
   },
 
   getDashboard: async (period: "7d" | "30d" = "7d"): Promise<ApiResponse<BloggerDashboardData>> => {
@@ -254,20 +275,32 @@ export const bloggerApi = {
     if (!response.success || !response.data) {
       return {
         success: false,
-        error: response.error ?? { code: "BLOGGER_DASHBOARD_FAILED", message: "Failed to load dashboard" },
+        error: response.error ?? {
+          code: "BLOGGER_DASHBOARD_FAILED",
+          message: "Failed to load dashboard",
+        },
       };
     }
 
     return { success: true, data: normalizeDashboardData(response.data) };
   },
 
-  getTrendData: async (metric: TrendMetric, period: "7d" | "30d" = "7d"): Promise<ApiResponse<TrendDataPoint[]>> => {
-    const response = await apiClient.get<BackendTrendPoint[]>(`/blogger/dashboard/trend/${metric}`, { period });
+  getTrendData: async (
+    metric: TrendMetric,
+    period: "7d" | "30d" = "7d"
+  ): Promise<ApiResponse<TrendDataPoint[]>> => {
+    const response = await apiClient.get<BackendTrendPoint[]>(
+      `/blogger/dashboard/trend/${metric}`,
+      { period }
+    );
 
     if (!response.success || !response.data) {
       return {
         success: false,
-        error: response.error ?? { code: "BLOGGER_TREND_FAILED", message: "Failed to load trend data" },
+        error: response.error ?? {
+          code: "BLOGGER_TREND_FAILED",
+          message: "Failed to load trend data",
+        },
       };
     }
 
@@ -280,10 +313,13 @@ export const bloggerApi = {
     };
   },
 
-  getBloggerProducts: async (bloggerId: string, params?: {
-    page?: number;
-    limit?: number;
-  }): Promise<ApiResponse<PaginatedResponse<BloggerProduct>>> => {
+  getBloggerProducts: async (
+    bloggerId: string,
+    params?: {
+      page?: number;
+      limit?: number;
+    }
+  ): Promise<ApiResponse<PaginatedResponse<BloggerProduct>>> => {
     return bloggerApi.getProducts({ ...params, bloggerId });
   },
 };

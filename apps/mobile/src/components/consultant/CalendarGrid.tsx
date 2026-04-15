@@ -1,10 +1,5 @@
 import React, { useState, useMemo } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 interface CalendarGridProps {
   selectedDate: string | null;
@@ -23,10 +18,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
 
-  const availableSet = useMemo(
-    () => new Set(availableDates),
-    [availableDates],
-  );
+  const availableSet = useMemo(() => new Set(availableDates), [availableDates]);
 
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
   const firstDayOfWeek = new Date(viewYear, viewMonth, 1).getDay();
@@ -66,9 +58,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
 
     // Empty cells before the first day
     for (let i = 0; i < firstDayOfWeek; i++) {
-      cells.push(
-        <View key={`empty-${i}`} style={styles.cell} />,
-      );
+      cells.push(<View key={`empty-${i}`} style={styles.cell} />);
     }
 
     // Day cells
@@ -101,7 +91,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
           >
             {day}
           </Text>
-        </TouchableOpacity>,
+        </TouchableOpacity>
       );
     }
 

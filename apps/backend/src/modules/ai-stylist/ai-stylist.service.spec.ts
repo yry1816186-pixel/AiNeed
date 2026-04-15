@@ -10,10 +10,10 @@ import { PhotosService } from "../photos/photos.service";
 import { RecommendationsService } from "../recommendations/recommendations.service";
 
 import { AiStylistService } from "./ai-stylist.service";
-import { AiStylistSessionService } from "./services/session.service";
 import { AiStylistChatService } from "./services/chat.service";
 import { AiStylistContextService } from "./services/context.service";
 import { AiStylistRecommendationService } from "./services/recommendation.service";
+import { AiStylistSessionService } from "./services/session.service";
 
 describe("AiStylistService", () => {
   let service: AiStylistService;
@@ -188,17 +188,17 @@ describe("AiStylistService", () => {
       }
       const styleKeywords = ["极简", "韩系", "法式", "轻正式", "休闲", "街头", "运动"];
       const foundStyles = styleKeywords.filter((s) => message.includes(s));
-      if (foundStyles.length > 0) updates.preferredStyles = foundStyles;
-      if (message.includes("显高") || message.includes("显瘦")) updates.fitGoals = [message.includes("显高") ? "显高" : "显瘦"];
+      if (foundStyles.length > 0) {updates.preferredStyles = foundStyles;}
+      if (message.includes("显高") || message.includes("显瘦")) {updates.fitGoals = [message.includes("显高") ? "显高" : "显瘦"];}
       const budgetMatch = message.match(/(\d+)\s*元?\s*[以到\-~至]\s*(\d+)/);
       if (budgetMatch) { updates.budgetMin = Number(budgetMatch[1]); updates.budgetMax = Number(budgetMatch[2]); }
       const singleBudget = message.match(/预算\s*(\d+)/);
-      if (singleBudget && !updates.budgetMax) updates.budgetMax = Number(singleBudget[1]);
+      if (singleBudget && !updates.budgetMax) {updates.budgetMax = Number(singleBudget[1]);}
       if (message.includes("黑色") || message.includes("白色")) {
         const colors: string[] = [];
-        if (message.includes("黑色")) colors.push("黑色");
-        if (message.includes("白色")) colors.push("白色");
-        if (colors.length > 0) updates.preferredColors = colors;
+        if (message.includes("黑色")) {colors.push("黑色");}
+        if (message.includes("白色")) {colors.push("白色");}
+        if (colors.length > 0) {updates.preferredColors = colors;}
       }
       return updates;
     }),
@@ -266,12 +266,12 @@ describe("AiStylistService", () => {
           sessionMap.set(`${userId}:${sessionId}`, session);
         }
       }
-      if (!session) throw new Error("AI 造型师会话不存在或已过期");
+      if (!session) {throw new Error("AI 造型师会话不存在或已过期");}
       return processMessageFn(session, trimmedMessage);
     }),
     uploadSessionPhoto: jest.fn().mockImplementation(async (userId: string, sessionId: string, file: unknown, type: unknown, buildChatResultFn: (session: unknown, msg: string, opts: Record<string, unknown>) => unknown) => {
       const session = sessionMap.get(`${userId}:${sessionId}`);
-      if (!session) throw new Error("AI 造型师会话不存在或已过期");
+      if (!session) {throw new Error("AI 造型师会话不存在或已过期");}
       const photo = await mockPhotosService.uploadPhoto(userId, file, type);
       (session as { state: Record<string, unknown> }).state.lastPhotoId = photo.id;
       (session as { state: Record<string, unknown> }).state.lastPhotoStatus = photo.status;
@@ -288,7 +288,7 @@ describe("AiStylistService", () => {
     }),
     getSessionStatus: jest.fn().mockImplementation(async (userId: string, sessionId: string, deriveOrchFn: (s: unknown) => { nextAction: { type: string }; missingFields: string[] }, buildTemplateFn: (s: unknown, na: unknown) => string, buildChatResultFn: (s: unknown, msg: string, opts: Record<string, unknown>) => unknown) => {
       const session = sessionMap.get(`${userId}:${sessionId}`);
-      if (!session) throw new Error("AI 造型师会话不存在或已过期");
+      if (!session) {throw new Error("AI 造型师会话不存在或已过期");}
       const orchestration = deriveOrchFn(session);
       const assistantMessage = buildTemplateFn(session, orchestration.nextAction);
       return buildChatResultFn(session, assistantMessage, {
@@ -298,7 +298,7 @@ describe("AiStylistService", () => {
     }),
     attachExistingPhoto: jest.fn().mockImplementation(async (userId: string, sessionId: string, photoId: string, deriveOrchFn: (s: unknown) => { nextAction: { type: string }; missingFields: string[] }, buildChatResultFn: (s: unknown, msg: string, opts: Record<string, unknown>) => unknown) => {
       const session = sessionMap.get(`${userId}:${sessionId}`);
-      if (!session) throw new Error("AI 造型师会话不存在或已过期");
+      if (!session) {throw new Error("AI 造型师会话不存在或已过期");}
       const orchestration = deriveOrchFn(session);
       const assistantMessage = "我已经接入你最近上传的照片。";
       (session as { state: Record<string, unknown> }).state.lastPhotoId = photoId;
@@ -332,9 +332,9 @@ describe("AiStylistService", () => {
     getSession: jest.fn().mockImplementation(async (userId: string, sessionId: string) => sessionMap.get(`${userId}:${sessionId}`) ?? null),
     getSessionOrThrow: jest.fn().mockImplementation(async (userId: string, sessionId: string) => {
       const session = sessionMap.get(`${userId}:${sessionId}`);
-      if (session) return session;
+      if (session) {return session;}
       const record = await mockPrisma.aiStylistSession.findUnique({ where: { id: sessionId } });
-      if (!record) throw new Error("AI 造型师会话不存在或已过期");
+      if (!record) {throw new Error("AI 造型师会话不存在或已过期");}
       const restored = typeof record.payload === "string" ? JSON.parse(record.payload) : record.payload;
       sessionMap.set(`${userId}:${sessionId}`, restored);
       return restored;

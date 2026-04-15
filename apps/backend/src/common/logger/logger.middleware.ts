@@ -1,9 +1,11 @@
+import { AsyncLocalStorage } from 'async_hooks';
+import { randomUUID } from 'crypto';
+
 import { Injectable, NestMiddleware, Inject } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { randomUUID } from 'crypto';
-import { AsyncLocalStorage } from 'async_hooks';
-import { PinoLoggerService } from './logger.service';
+
 import { PINO_ASYNC_LOCAL_STORAGE } from './logger.module';
+import { PinoLoggerService } from './logger.service';
 
 interface RequestContext {
   requestId: string;
@@ -85,8 +87,8 @@ export class TraceIdMiddleware implements NestMiddleware {
 
   private extractUserId(req: Request): string | undefined {
     const user = req.user as { id?: string; sub?: string } | undefined;
-    if (user?.id) return user.id;
-    if (user?.sub) return user.sub;
+    if (user?.id) {return user.id;}
+    if (user?.sub) {return user.sub;}
 
     const userIdHeader = req.headers['x-user-id'];
     if (typeof userIdHeader === 'string' && userIdHeader.trim()) {

@@ -1,5 +1,5 @@
-﻿import React, { useEffect, useState } from 'react';
-import { Typography, Card, Row, Col, Statistic, Spin } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Typography, Card, Row, Col, Statistic, Spin, message } from 'antd';
 import { UserOutlined, ShoppingOutlined, TeamOutlined, RiseOutlined } from '@ant-design/icons';
 import { get } from '@/services/request';
 
@@ -25,7 +25,7 @@ const Dashboard: React.FC = () => {
     get<DashboardStats>('/admin/dashboard/stats')
       .then((data) => setStats(data))
       .catch(() => {
-        // Keep default zeros on error
+        message.error('加载仪表盘数据失败，请稍后重试');
       })
       .finally(() => setLoading(false));
   }, []);

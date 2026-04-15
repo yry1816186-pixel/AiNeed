@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -11,28 +11,24 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import {
-  NavigationProp,
-  RouteProp,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import * as Haptics from '@/src/polyfills/expo-haptics';
-import { clothingApi } from '../services/api/clothing.api';
-import { cartApi } from '../services/api/commerce.api';
-import { theme } from '../theme';
-import type { RootStackParamList } from '../types/navigation';
-import type { ClothingItem } from '../types/clothing';
+} from "react-native";
+import { NavigationProp, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import * as Haptics from "@/src/polyfills/expo-haptics";
+import { clothingApi } from "../services/api/clothing.api";
+import { cartApi } from "../services/api/commerce.api";
+import { theme } from '../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import type { RootStackParamList } from "../types/navigation";
+import type { ClothingItem } from "../types/clothing";
 import {
   CATEGORY_LABELS,
   OCCASION_LABELS,
   SEASON_LABELS,
   STYLE_LABELS,
-} from '../types/clothing';
+} from "../types/clothing";
 
 interface RecommendationDetail {
   id: string;
@@ -52,12 +48,9 @@ interface RecommendationDetail {
   externalUrl?: string;
 }
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-type RecommendationDetailRouteProp = RouteProp<
-  RootStackParamList,
-  'RecommendationDetail'
->;
+type RecommendationDetailRouteProp = RouteProp<RootStackParamList, "RecommendationDetail">;
 
 interface RecommendationPreview {
   id: string;
@@ -71,16 +64,14 @@ interface RecommendationPreview {
   externalUrl?: string;
 }
 
-function mapRouteRecommendation(
-  preview?: RecommendationPreview,
-): RecommendationDetail | null {
+function _mapRouteRecommendation(preview?: RecommendationPreview): RecommendationDetail | null {
   if (!preview) {
     return null;
   }
 
   return {
     id: preview.id,
-    name: preview.name ?? 'AI 推荐单品',
+    name: preview.name ?? "AI 推荐单品",
     brand: preview.brand,
     description: undefined,
     imageUri: preview.mainImage,
@@ -97,10 +88,7 @@ function mapRouteRecommendation(
   };
 }
 
-function buildFallbackReasons(
-  item: ClothingItem,
-  preview: RecommendationDetail | null,
-): string[] {
+function buildFallbackReasons(item: ClothingItem, preview: RecommendationDetail | null): string[] {
   const reasons = preview?.matchReasons?.filter(Boolean) ?? [];
 
   if (reasons.length > 0) {
@@ -127,7 +115,7 @@ function buildFallbackReasons(
   }
 
   if (reasons.length === 0) {
-    reasons.push('这件单品已进入你的个性化推荐池');
+    reasons.push("这件单品已进入你的个性化推荐池");
   }
 
   return reasons.slice(0, 3);
@@ -135,11 +123,11 @@ function buildFallbackReasons(
 
 function mergeRecommendationDetail(
   item: ClothingItem,
-  preview: RecommendationDetail | null,
+  preview: RecommendationDetail | null
 ): RecommendationDetail {
   return {
     id: item.id,
-    name: item.name ?? preview?.name ?? 'AI 推荐单品',
+    name: item.name ?? preview?.name ?? "AI 推荐单品",
     brand: item.brand ?? preview?.brand,
     description: item.notes ?? preview?.description,
     imageUri: item.imageUri || item.thumbnailUri || preview?.imageUri,
@@ -161,14 +149,9 @@ export const RecommendationDetailScreen: React.FC = () => {
   const route = useRoute<RecommendationDetailRouteProp>();
   const { recommendationId } = route.params;
 
-  const previewDetail = useMemo(
-    () => null,
-    [],
-  );
+  const previewDetail = useMemo(() => null, []);
 
-  const [recommendation, setRecommendation] = useState<RecommendationDetail | null>(
-    previewDetail,
-  );
+  const [recommendation, setRecommendation] = useState<RecommendationDetail | null>(previewDetail);
   const [isLoading, setIsLoading] = useState(!previewDetail);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -186,13 +169,13 @@ export const RecommendationDetailScreen: React.FC = () => {
         setRecommendation(mergeRecommendationDetail(response.data, previewDetail));
       } else {
         setError(
-          typeof response.error === 'string'
+          typeof response.error === "string"
             ? response.error
-            : response.error?.message || '加载推荐详情失败',
+            : response.error?.message || "加载推荐详情失败"
         );
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : '网络异常，请稍后重试');
+      setError(err instanceof Error ? err.message : "网络异常，请稍后重试");
     } finally {
       setIsLoading(false);
     }
@@ -212,39 +195,39 @@ export const RecommendationDetailScreen: React.FC = () => {
     try {
       const response = await cartApi.add({
         itemId: recommendation.id,
-        color: recommendation.colors[0] ?? '默认',
-        size: recommendation.sizes[0] ?? '均码',
+        color: recommendation.colors[0] ?? "默认",
+        size: recommendation.sizes[0] ?? "均码",
         quantity: 1,
       });
 
       if (!response.success) {
         const errorMessage =
-          typeof response.error === 'string'
+          typeof response.error === "string"
             ? response.error
-            : response.error?.message || '加入购物车失败';
+            : response.error?.message || "加入购物车失败";
         throw new Error(errorMessage);
       }
 
-      if (Platform.OS !== 'web') {
-        Haptics.notificationAsync('success');
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync("success");
       }
 
-      Alert.alert('已加入购物车', '这件推荐单品已经进入购物车。', [
+      Alert.alert("已加入购物车", "这件推荐单品已经进入购物车。", [
         {
-          text: '去购物车',
+          text: "去购物车",
           onPress: () =>
-            navigation.navigate('MainTabs', {
-              screen: 'Cart' as never,
+            navigation.navigate("MainTabs", {
+              screen: "Cart" as never,
             } as never),
         },
         {
-          text: '继续浏览',
-          style: 'cancel',
+          text: "继续浏览",
+          style: "cancel",
         },
       ]);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : '加入购物车失败';
-      Alert.alert('操作失败', message);
+      const message = err instanceof Error ? err.message : "加入购物车失败";
+      Alert.alert("操作失败", message);
     } finally {
       setIsAddingToCart(false);
     }
@@ -255,7 +238,7 @@ export const RecommendationDetailScreen: React.FC = () => {
       return;
     }
 
-    navigation.navigate('ClothingDetail', { clothingId: recommendation.id });
+    navigation.navigate("ClothingDetail", { clothingId: recommendation.id });
   }, [navigation, recommendation]);
 
   const handleOpenExternal = useCallback(async () => {
@@ -266,13 +249,13 @@ export const RecommendationDetailScreen: React.FC = () => {
     try {
       const supported = await Linking.canOpenURL(recommendation.externalUrl);
       if (!supported) {
-        throw new Error('当前设备无法打开该购买来源');
+        throw new Error("当前设备无法打开该购买来源");
       }
 
       await Linking.openURL(recommendation.externalUrl);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : '打开购买来源失败';
-      Alert.alert('无法打开链接', message);
+      const message = err instanceof Error ? err.message : "打开购买来源失败";
+      Alert.alert("无法打开链接", message);
     }
   }, [recommendation?.externalUrl]);
 
@@ -291,11 +274,7 @@ export const RecommendationDetailScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerState}>
-          <Ionicons
-            name="alert-circle-outline"
-            size={48}
-            color={theme.colors.error}
-          />
+          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
           <Text style={styles.stateText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
@@ -331,11 +310,11 @@ export const RecommendationDetailScreen: React.FC = () => {
         <TouchableOpacity
           style={styles.iconButton}
           onPress={recommendation.externalUrl ? handleOpenExternal : handleOpenProduct}
-          accessibilityLabel={recommendation.externalUrl ? '打开购买来源' : '查看商品详情'}
+          accessibilityLabel={recommendation.externalUrl ? "打开购买来源" : "查看商品详情"}
           accessibilityRole="button"
         >
           <Ionicons
-            name={recommendation.externalUrl ? 'open-outline' : 'shirt-outline'}
+            name={recommendation.externalUrl ? "open-outline" : "shirt-outline"}
             size={20}
             color={theme.colors.text}
           />
@@ -352,20 +331,13 @@ export const RecommendationDetailScreen: React.FC = () => {
             />
           ) : (
             <View style={styles.heroPlaceholder}>
-              <Ionicons
-                name="shirt-outline"
-                size={80}
-                color={theme.colors.textTertiary}
-              />
+              <Ionicons name="shirt-outline" size={80} color={theme.colors.textTertiary} />
             </View>
           )}
 
-          {typeof recommendation.score === 'number' && recommendation.score > 0 ? (
+          {typeof recommendation.score === "number" && recommendation.score > 0 ? (
             <View style={styles.scoreOverlay}>
-              <LinearGradient
-                colors={['#4F46E5', '#7C3AED']}
-                style={styles.scoreBadge}
-              >
+              <LinearGradient colors={[DesignTokens.colors.brand.slate, DesignTokens.colors.brand.slateDark]} style={styles.scoreBadge}>
                 <Ionicons name="sparkles" size={16} color={theme.colors.surface} />
                 <Text style={styles.scoreText}>
                   匹配度 {Math.round(recommendation.score * 100)}%
@@ -381,21 +353,13 @@ export const RecommendationDetailScreen: React.FC = () => {
           <View style={styles.metaRow}>
             {recommendation.brand ? (
               <View style={styles.metaChip}>
-                <Ionicons
-                  name="pricetag-outline"
-                  size={14}
-                  color={theme.colors.textSecondary}
-                />
+                <Ionicons name="pricetag-outline" size={14} color={theme.colors.textSecondary} />
                 <Text style={styles.metaChipText}>{recommendation.brand}</Text>
               </View>
             ) : null}
             {recommendation.category ? (
               <View style={styles.metaChip}>
-                <Ionicons
-                  name="layers-outline"
-                  size={14}
-                  color={theme.colors.textSecondary}
-                />
+                <Ionicons name="layers-outline" size={14} color={theme.colors.textSecondary} />
                 <Text style={styles.metaChipText}>
                   {CATEGORY_LABELS[recommendation.category as keyof typeof CATEGORY_LABELS] ??
                     recommendation.category}
@@ -404,7 +368,7 @@ export const RecommendationDetailScreen: React.FC = () => {
             ) : null}
           </View>
 
-          {typeof recommendation.price === 'number' ? (
+          {typeof recommendation.price === "number" ? (
             <Text style={styles.price}>¥{recommendation.price.toFixed(0)}</Text>
           ) : null}
 
@@ -416,11 +380,7 @@ export const RecommendationDetailScreen: React.FC = () => {
             <Text style={styles.sectionTitle}>推荐理由</Text>
             {recommendation.matchReasons.map((reason, index) => (
               <View key={`${reason}-${index}`} style={styles.reasonRow}>
-                <Ionicons
-                  name="checkmark-circle"
-                  size={18}
-                  color="#10B981"
-                />
+                <Ionicons name="checkmark-circle" size={18} color={DesignTokens.colors.semantic.success} />
                 <Text style={styles.reasonText}>{reason}</Text>
               </View>
             ))}
@@ -489,8 +449,7 @@ export const RecommendationDetailScreen: React.FC = () => {
                 {recommendation.occasions.map((occasion) => (
                   <View key={occasion} style={styles.tag}>
                     <Text style={styles.tagText}>
-                      {OCCASION_LABELS[occasion as keyof typeof OCCASION_LABELS] ??
-                        occasion}
+                      {OCCASION_LABELS[occasion as keyof typeof OCCASION_LABELS] ?? occasion}
                     </Text>
                   </View>
                 ))}
@@ -505,11 +464,7 @@ export const RecommendationDetailScreen: React.FC = () => {
               accessibilityLabel="打开购买来源链接"
               accessibilityRole="button"
             >
-              <Ionicons
-                name="open-outline"
-                size={18}
-                color={theme.colors.primary}
-              />
+              <Ionicons name="open-outline" size={18} color={theme.colors.primary} />
               <Text style={styles.linkButtonText}>打开购买来源</Text>
             </TouchableOpacity>
           ) : null}
@@ -522,11 +477,11 @@ export const RecommendationDetailScreen: React.FC = () => {
         <TouchableOpacity
           style={styles.secondaryButton}
           onPress={recommendation.externalUrl ? handleOpenExternal : handleOpenProduct}
-          accessibilityLabel={recommendation.externalUrl ? '打开购买来源' : '查看商品详情页'}
+          accessibilityLabel={recommendation.externalUrl ? "打开购买来源" : "查看商品详情页"}
           accessibilityRole="button"
         >
           <Text style={styles.secondaryButtonText}>
-            {recommendation.externalUrl ? '购买来源' : '查看商品'}
+            {recommendation.externalUrl ? "购买来源" : "查看商品"}
           </Text>
         </TouchableOpacity>
 
@@ -537,18 +492,11 @@ export const RecommendationDetailScreen: React.FC = () => {
           accessibilityRole="button"
           disabled={isAddingToCart}
         >
-          <LinearGradient
-            colors={['#4F46E5', '#7C3AED']}
-            style={styles.primaryButtonGradient}
-          />
+          <LinearGradient colors={[DesignTokens.colors.brand.slate, DesignTokens.colors.brand.slateDark]} style={styles.primaryButtonGradient} />
           {isAddingToCart ? (
             <ActivityIndicator size="small" color={theme.colors.surface} />
           ) : (
-            <Ionicons
-              name="cart-outline"
-              size={18}
-              color={theme.colors.surface}
-            />
+            <Ionicons name="cart-outline" size={18} color={theme.colors.surface} />
           )}
           <Text style={styles.primaryButtonText}>加入购物车</Text>
         </TouchableOpacity>
@@ -563,9 +511,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
     backgroundColor: theme.colors.surface,
@@ -576,41 +524,41 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F1F3F4',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: DesignTokens.colors.neutral[100],
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.text,
   },
   content: {
     flex: 1,
   },
   heroSection: {
-    position: 'relative',
+    position: "relative",
   },
   heroImage: {
     width: SCREEN_WIDTH,
     height: SCREEN_WIDTH * 1.12,
-    resizeMode: 'cover',
+    resizeMode: "cover",
   },
   heroPlaceholder: {
     width: SCREEN_WIDTH,
     height: SCREEN_WIDTH * 1.12,
-    backgroundColor: '#F1F3F4',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: DesignTokens.colors.neutral[100],
+    alignItems: "center",
+    justifyContent: "center",
   },
   scoreOverlay: {
-    position: 'absolute',
+    position: "absolute",
     left: 20,
     bottom: 20,
   },
   scoreBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -618,7 +566,7 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.surface,
   },
   infoSection: {
@@ -628,24 +576,24 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.text,
   },
   metaRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
     marginTop: 12,
     marginBottom: 12,
   },
   metaChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 999,
-    backgroundColor: '#F5F5F7',
+    backgroundColor: DesignTokens.colors.neutral[100],
   },
   metaChipText: {
     fontSize: 13,
@@ -653,7 +601,7 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.primary,
     marginBottom: 12,
   },
@@ -667,13 +615,13 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.text,
     marginBottom: 12,
   },
   reasonRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: 10,
     marginBottom: 10,
   },
@@ -684,35 +632,35 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
   tagWrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
   },
   tag: {
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 999,
-    backgroundColor: '#F5F5F7',
+    backgroundColor: DesignTokens.colors.neutral[100],
   },
   tagText: {
     fontSize: 13,
     color: theme.colors.textSecondary,
   },
   linkButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginTop: 24,
   },
   linkButtonText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.primary,
   },
   centerState: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 24,
   },
   stateText: {
@@ -720,7 +668,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
   retryButton: {
     marginTop: 16,
@@ -731,18 +679,18 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.surface,
   },
   bottomSpacer: {
     height: 100,
   },
   footer: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     padding: 20,
     backgroundColor: theme.colors.surface,
@@ -751,8 +699,8 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
@@ -760,21 +708,21 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
     color: theme.colors.textSecondary,
   },
   primaryButton: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     paddingVertical: 14,
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   primaryButtonGradient: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -782,7 +730,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.surface,
   },
 });

@@ -14,6 +14,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { tryOnApi, type TryOnResult } from "../../services/api/tryon.api";
 import { colors } from "../../theme/tokens/colors";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { typography } from "../../theme/tokens/typography";
 import { spacing } from "../../theme/tokens/spacing";
 import { shadows } from "../../theme/tokens/shadows";
@@ -23,7 +24,7 @@ type FilterTab = "all" | "completed" | "failed";
 export const TryOnHistoryScreen: React.FC = () => {
   const navigation = useNavigation();
   const [items, setItems] = useState<TryOnResult[]>([]);
-  const [total, setTotal] = useState(0);
+  const [_total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -32,7 +33,9 @@ export const TryOnHistoryScreen: React.FC = () => {
 
   const loadHistory = useCallback(
     async (pageNum: number = 1, isRefresh: boolean = false) => {
-      if (loading) return;
+      if (loading) {
+        return;
+      }
 
       if (isRefresh) {
         setRefreshing(true);
@@ -62,61 +65,56 @@ export const TryOnHistoryScreen: React.FC = () => {
         setRefreshing(false);
       }
     },
-    [loading],
+    [loading]
   );
 
   useEffect(() => {
-    loadHistory(1);
+    void loadHistory(1);
   }, []);
 
   const handleRefresh = useCallback(() => {
-    loadHistory(1, true);
+    void loadHistory(1, true);
   }, [loadHistory]);
 
   const handleLoadMore = useCallback(() => {
     if (hasMore && !loading) {
-      loadHistory(page + 1);
+      void loadHistory(page + 1);
     }
   }, [hasMore, loading, page, loadHistory]);
 
-  const handleDelete = useCallback(
-    (id: string) => {
-      Alert.alert("确认删除", "确定要删除这条试衣记录吗？", [
-        { text: "取消", style: "cancel" },
-        {
-          text: "删除",
-          style: "destructive",
-          onPress: async () => {
-            await tryOnApi.deleteTryOn(id);
-            setItems((prev) => prev.filter((item) => item.id !== id));
-            setTotal((prev) => prev - 1);
-          },
+  const handleDelete = useCallback((id: string) => {
+    Alert.alert("确认删除", "确定要删除这条试衣记录吗？", [
+      { text: "取消", style: "cancel" },
+      {
+        text: "删除",
+        style: "destructive",
+        onPress: async () => {
+          await tryOnApi.deleteTryOn(id);
+          setItems((prev) => prev.filter((item) => item.id !== id));
+          setTotal((prev) => prev - 1);
         },
-      ]);
-    },
-    [],
-  );
+      },
+    ]);
+  }, []);
 
   const handleRetry = useCallback(
     async (id: string) => {
       const response = await tryOnApi.retryTryOn(id);
       if (response.success && response.data) {
         Alert.alert("提示", "重试请求已提交");
-        loadHistory(1, true);
+        void loadHistory(1, true);
       } else {
         Alert.alert("提示", response.error?.message ?? "重试失败");
       }
     },
-    [loadHistory],
+    [loadHistory]
   );
 
   const filteredItems =
     activeTab === "all"
       ? items
       : items.filter((item) =>
-          activeTab === "completed"
-            ? item.status === "completed"
-            : item.status === "failed",
+          activeTab === "completed" ? item.status === "completed" : item.status === "failed"
         );
 
   const tabs: { key: FilterTab; label: string }[] = [
@@ -131,28 +129,24 @@ export const TryOnHistoryScreen: React.FC = () => {
         item.status === "completed"
           ? colors.warmPrimary.mint[500]
           : item.status === "failed"
-            ? colors.semantic.error.main
-            : colors.warmPrimary.ocean[500];
+          ? colors.semantic.error.main
+          : colors.warmPrimary.ocean[500];
 
       const statusLabel =
         item.status === "completed"
           ? "已完成"
           : item.status === "failed"
-            ? "失败"
-            : item.status === "processing"
-              ? "处理中"
-              : "等待中";
+          ? "失败"
+          : item.status === "processing"
+          ? "处理中"
+          : "等待中";
 
       return (
         <Animated.View entering={FadeInUp.duration(300)}>
           <View style={styles.card}>
             <Image
               source={{
-                uri:
-                  item.resultImageDataUri ??
-                  item.resultImageUrl ??
-                  item.item?.mainImage ??
-                  "",
+                uri: item.resultImageDataUri ?? item.resultImageUrl ?? item.item?.mainImage ?? "",
               }}
               style={styles.cardImage}
             />
@@ -169,17 +163,11 @@ export const TryOnHistoryScreen: React.FC = () => {
             </View>
             <View style={styles.cardActions}>
               {item.status === "failed" && (
-                <TouchableOpacity
-                  style={styles.retryButton}
-                  onPress={() => handleRetry(item.id)}
-                >
+                <TouchableOpacity style={styles.retryButton} onPress={() => handleRetry(item.id)}>
                   <Ionicons name="refresh" size={16} color={colors.warmPrimary.ocean[600]} />
                 </TouchableOpacity>
               )}
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={() => handleDelete(item.id)}
-              >
+              <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
                 <Ionicons name="trash-outline" size={16} color={colors.semantic.error.main} />
               </TouchableOpacity>
             </View>
@@ -187,7 +175,7 @@ export const TryOnHistoryScreen: React.FC = () => {
         </Animated.View>
       );
     },
-    [handleDelete, handleRetry],
+    [handleDelete, handleRetry]
   );
 
   const renderEmpty = useCallback(
@@ -200,12 +188,12 @@ export const TryOnHistoryScreen: React.FC = () => {
           style={styles.emptyButton}
           onPress={() => navigation.navigate("VirtualTryOn" as never)}
         >
-          <Ionicons name="sparkles" size={18} color="#FFFFFF" />
+          <Ionicons name="sparkles" size={18} color={DesignTokens.colors.text.inverse} />
           <Text style={styles.emptyButtonText}>开始试衣</Text>
         </TouchableOpacity>
       </View>
     ),
-    [navigation],
+    [navigation]
   );
 
   return (
@@ -217,12 +205,7 @@ export const TryOnHistoryScreen: React.FC = () => {
             style={[styles.tab, activeTab === tab.key && styles.tabActive]}
             onPress={() => setActiveTab(tab.key)}
           >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === tab.key && styles.tabTextActive,
-              ]}
-            >
+            <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>
               {tab.label}
             </Text>
           </TouchableOpacity>
@@ -234,9 +217,7 @@ export const TryOnHistoryScreen: React.FC = () => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListEmptyComponent={!loading ? renderEmpty : null}
@@ -268,12 +249,12 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium as any,
+    fontWeight: typography.fontWeight.medium,
     color: colors.neutral[600],
   },
   tabTextActive: {
-    color: "#FFFFFF",
-    fontWeight: typography.fontWeight.bold as any,
+    color: DesignTokens.colors.text.inverse,
+    fontWeight: typography.fontWeight.bold,
   },
   listContent: {
     paddingHorizontal: spacing.layout.screenPadding,
@@ -301,7 +282,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold as any,
+    fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[900],
     marginBottom: 4,
   },
@@ -318,8 +299,8 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.bold as any,
-    color: "#FFFFFF",
+    fontWeight: typography.fontWeight.bold,
+    color: DesignTokens.colors.text.inverse,
   },
   cardActions: {
     justifyContent: "center",
@@ -348,7 +329,7 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold as any,
+    fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[700],
     marginTop: 16,
   },
@@ -370,8 +351,8 @@ const styles = StyleSheet.create({
   },
   emptyButtonText: {
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.bold as any,
-    color: "#FFFFFF",
+    fontWeight: typography.fontWeight.bold,
+    color: DesignTokens.colors.text.inverse,
   },
 });
 

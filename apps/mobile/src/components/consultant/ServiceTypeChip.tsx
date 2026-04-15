@@ -7,11 +7,7 @@ interface ServiceTypeChipProps {
   onPress: () => void;
 }
 
-export const ServiceTypeChip: React.FC<ServiceTypeChipProps> = ({
-  label,
-  selected,
-  onPress,
-}) => {
+export const ServiceTypeChip: React.FC<ServiceTypeChipProps> = ({ label, selected, onPress }) => {
   return (
     <TouchableOpacity
       style={[styles.chip, selected ? styles.chipSelected : styles.chipDefault]}

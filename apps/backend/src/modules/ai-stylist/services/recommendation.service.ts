@@ -8,10 +8,6 @@ import {
 } from "../../recommendations/recommendations.service";
 import { DecisionEngineService } from "../decision-engine.service";
 import { LlmProviderService } from "../llm-provider.service";
-
-import { AiStylistSessionService } from "./session.service";
-import { AiStylistContextService } from "./context.service";
-
 import type {
   StylistResolution,
   StylistOutfitPlan,
@@ -20,6 +16,9 @@ import type {
   DecisionContext,
   UserProfile,
 } from "../types";
+
+import { AiStylistContextService } from "./context.service";
+import { AiStylistSessionService } from "./session.service";
 import type { StylistSession } from "./session.service";
 
 const DYNAMIC_STYLE_PROMPT = `你是一个时尚穿搭专家。请生成当前流行的穿搭风格选项，用于给用户选择。

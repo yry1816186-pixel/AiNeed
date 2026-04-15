@@ -173,9 +173,12 @@ describe("cartApi", () => {
         quantity: 1,
       });
 
-      expect(mockPost).toHaveBeenCalledWith("/cart", expect.objectContaining({
-        itemId: "item-1",
-      }));
+      expect(mockPost).toHaveBeenCalledWith(
+        "/cart",
+        expect.objectContaining({
+          itemId: "item-1",
+        })
+      );
     });
 
     it("should return error when neither productId nor itemId is provided", async () => {
@@ -268,7 +271,7 @@ describe("orderApi", () => {
 
       const result = await orderApi.getAll({ status: "paid" as any, page: 1, limit: 10 });
 
-      expect(mockGet).toHaveBeenCalledWith("/orders", { status: "PAID", page: 1, limit: 10 });
+      expect(mockGet).toHaveBeenCalledWith("/orders", { status: "paid", page: 1, limit: 10 });
       expect(result.success).toBe(true);
       if (result.success && result.data) {
         expect(result.data.items).toHaveLength(1);
@@ -396,10 +399,13 @@ describe("addressApi", () => {
 
       const result = await addressApi.create(addressData);
 
-      expect(mockPost).toHaveBeenCalledWith("/addresses", expect.objectContaining({
-        name: "Zhang San",
-        address: "123 Test Road",
-      }));
+      expect(mockPost).toHaveBeenCalledWith(
+        "/addresses",
+        expect.objectContaining({
+          name: "Zhang San",
+          address: "123 Test Road",
+        })
+      );
       expect(result.success).toBe(true);
     });
   });
@@ -410,9 +416,12 @@ describe("addressApi", () => {
 
       const result = await addressApi.update("addr-1", { name: "Li Si" });
 
-      expect(mockPut).toHaveBeenCalledWith("/addresses/addr-1", expect.objectContaining({
-        name: "Li Si",
-      }));
+      expect(mockPut).toHaveBeenCalledWith(
+        "/addresses/addr-1",
+        expect.objectContaining({
+          name: "Li Si",
+        })
+      );
       expect(result.success).toBe(true);
     });
   });
@@ -524,12 +533,15 @@ describe("searchApi", () => {
         maxPrice: 200,
       });
 
-      expect(mockGet).toHaveBeenCalledWith("/search", expect.objectContaining({
-        q: "shirt",
-        category: "tops",
-        minPrice: 50,
-        maxPrice: 200,
-      }));
+      expect(mockGet).toHaveBeenCalledWith(
+        "/search",
+        expect.objectContaining({
+          q: "shirt",
+          category: "tops",
+          minPrice: 50,
+          maxPrice: 200,
+        })
+      );
     });
 
     it("should omit undefined filter params", async () => {
@@ -555,7 +567,7 @@ describe("searchApi", () => {
 
       expect(mockUpload).toHaveBeenCalledWith(
         expect.stringContaining("/search/image"),
-        expect.any(FormData),
+        expect.any(FormData)
       );
     });
 
@@ -803,10 +815,13 @@ describe("refundApi", () => {
         reason: "Wrong size",
       });
 
-      expect(mockPost).toHaveBeenCalledWith("/refund-requests", expect.objectContaining({
-        orderId: "order-1",
-        type: "RETURN_REFUND",
-      }));
+      expect(mockPost).toHaveBeenCalledWith(
+        "/refund-requests",
+        expect.objectContaining({
+          orderId: "order-1",
+          type: "RETURN_REFUND",
+        })
+      );
       expect(result.success).toBe(true);
       if (result.success && result.data) {
         expect(result.data.status).toBe("PENDING");
@@ -1063,9 +1078,12 @@ describe("merchantApi", () => {
         phone: "13800138000",
       });
 
-      expect(mockPost).toHaveBeenCalledWith("/merchants/apply", expect.objectContaining({
-        brandName: "TestBrand",
-      }));
+      expect(mockPost).toHaveBeenCalledWith(
+        "/merchants/apply",
+        expect.objectContaining({
+          brandName: "TestBrand",
+        })
+      );
       expect(result.success).toBe(true);
     });
   });

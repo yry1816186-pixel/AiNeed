@@ -131,6 +131,61 @@ jobs:
       - name: TypeCheck Mobile
         run: cd apps/mobile && npx tsc --noEmit
 
+  admin-typecheck:
+    name: Admin TypeCheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-store-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd apps/backend && pnpm db:generate
+
+      - name: TypeCheck Admin
+        run: cd apps/admin && npx tsc --noEmit
+
+  ml-lint:
+    name: ML Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Compile Check ML API
+        run: cd ml && python -m py_compile api/main.py
+
   security:
     name: Security Scan
     runs-on: ubuntu-latest
@@ -168,6 +223,7 @@ jobs:
         run: pnpm audit --audit-level=moderate
 
       - name: Run Snyk Security Scan
+        if: ${{ secrets.SNYK_TOKEN != '' }}
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -179,7 +235,7 @@ jobs:
     needs: [lint, typecheck]
     services:
       postgres:
-        image: postgres:15-alpine
+        image: postgres:16-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -241,7 +297,7 @@ jobs:
           NODE_ENV: test
 
       - name: Upload Backend Coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           files: ./apps/backend/coverage/lcov.info
           flags: backend
@@ -303,7 +359,7 @@ jobs:
     if: github.event_name == 'pull_request'
     services:
       postgres:
-        image: postgres:15-alpine
+        image: postgres:16-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -390,7 +446,7 @@ jobs:
     name: CI Summary
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [lint, typecheck, mobile-typecheck, security, test-backend, build-backend]
+    needs: [lint, typecheck, mobile-typecheck, admin-typecheck, ml-lint, security, test-backend, build-backend, e2e]
     if: always()
     steps:
       - name: Generate CI Summary
@@ -402,6 +458,8 @@ jobs:
           echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| TypeCheck | ${{ needs.typecheck.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Mobile TypeCheck | ${{ needs.mobile-typecheck.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Admin TypeCheck | ${{ needs.admin-typecheck.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| ML Lint | ${{ needs.ml-lint.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Security Scan | ${{ needs.security.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Test Backend | ${{ needs.test-backend.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Build Backend | ${{ needs.build-backend.result }} |" >> $GITHUB_STEP_SUMMARY

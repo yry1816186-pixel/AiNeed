@@ -39,9 +39,9 @@ export class ProfileCompletenessService {
     const birthDateScore = this.toBooleanScore(userProfile.birthDate);
     const nicknameScore = this.toBooleanScore(userProfile.nickname);
 
-    if (!genderScore) missingFields.push("性别");
-    if (!birthDateScore) missingFields.push("出生日期");
-    if (!nicknameScore) missingFields.push("昵称");
+    if (!genderScore) {missingFields.push("性别");}
+    if (!birthDateScore) {missingFields.push("出生日期");}
+    if (!nicknameScore) {missingFields.push("昵称");}
 
     totalScore += genderScore * 10 + birthDateScore * 10 + nicknameScore * 10;
 
@@ -60,8 +60,8 @@ export class ProfileCompletenessService {
     const hasStyleProfile = this.hasItems(userProfile.styleProfiles);
     const hasStylePreference = this.hasItems(userProfile.stylePreferences);
 
-    if (!hasStyleProfile) missingFields.push("风格档案");
-    if (!hasStylePreference) missingFields.push("风格偏好");
+    if (!hasStyleProfile) {missingFields.push("风格档案");}
+    if (!hasStylePreference) {missingFields.push("风格偏好");}
 
     totalScore += (hasStyleProfile ? 1 : 0) * 10 + (hasStylePreference ? 1 : 0) * 10;
 

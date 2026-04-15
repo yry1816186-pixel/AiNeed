@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, memo, useMemo } from 'react';
+﻿import React, { useState, useCallback, useEffect, memo } from "react";
 import {
   View,
   Text,
@@ -8,26 +8,27 @@ import {
   Dimensions,
   ActivityIndicator,
   FlatList,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { recommendationsApi, type RecommendedItem } from '../services/api/tryon.api';
-import { useAuthStore } from '../stores/index';
-import { theme } from '../theme';
-import type { RootStackParamList } from '../types/navigation';
-import { ImageWithPlaceholder } from '../components/common/ImageWithPlaceholder';
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { recommendationsApi, type RecommendedItem } from "../services/api/tryon.api";
+import { useAuthStore } from "../stores/index";
+import { theme } from '../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+import { ImageWithPlaceholder } from "../shared/components/common/ImageWithPlaceholder";
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = (SCREEN_WIDTH - 36) / 2;
 const CARD_HEIGHT = CARD_WIDTH * 1.2 + 80; // 图片高度 + 信息区域高度
 
-type RecommendationTab = 'personalized' | 'trending' | 'discover';
+type RecommendationTab = "personalized" | "trending" | "discover";
 
 const TABS: { key: RecommendationTab; label: string }[] = [
-  { key: 'personalized', label: '为你推荐' },
-  { key: 'trending', label: '热门趋势' },
-  { key: 'discover', label: '发现好物' },
+  { key: "personalized", label: "为你推荐" },
+  { key: "trending", label: "热门趋势" },
+  { key: "discover", label: "发现好物" },
 ];
 
 /**
@@ -54,10 +55,7 @@ const RecommendationCard = memo(function RecommendationCard({
       onPress={() => onPress(item)}
       activeOpacity={0.85}
     >
-      <ImageWithPlaceholder
-        source={{ uri: item.mainImage }}
-        style={styles.cardImage}
-      />
+      <ImageWithPlaceholder source={{ uri: item.mainImage }} style={styles.cardImage} />
       {item.score && item.score > 0.8 && (
         <View style={styles.matchBadge}>
           <Text style={styles.matchText}>{Math.round(item.score * 100)}% 匹配</Text>
@@ -72,7 +70,7 @@ const RecommendationCard = memo(function RecommendationCard({
             {item.brand}
           </Text>
         )}
-        <Text style={styles.cardPrice}>¥{item.price?.toFixed(0) ?? '--'}</Text>
+        <Text style={styles.cardPrice}>¥{item.price?.toFixed(0) ?? "--"}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -82,7 +80,7 @@ export const RecommendationsScreen: React.FC = () => {
   const navigation = useNavigation();
   const { isAuthenticated } = useAuthStore();
 
-  const [activeTab, setActiveTab] = useState<RecommendationTab>('personalized');
+  const [activeTab, setActiveTab] = useState<RecommendationTab>("personalized");
   const [items, setItems] = useState<RecommendedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -93,13 +91,13 @@ export const RecommendationsScreen: React.FC = () => {
     try {
       let response;
       switch (tab) {
-        case 'personalized':
+        case "personalized":
           response = await recommendationsApi.getPersonalized({ limit: 20 });
           break;
-        case 'trending':
+        case "trending":
           response = await recommendationsApi.getTrending(20);
           break;
-        case 'discover':
+        case "discover":
           response = await recommendationsApi.getDiscover(20);
           break;
       }
@@ -107,11 +105,11 @@ export const RecommendationsScreen: React.FC = () => {
         setItems(Array.isArray(response.data) ? response.data : []);
       } else {
         setItems([]);
-        setError('暂无推荐数据');
+        setError("暂无推荐数据");
       }
     } catch (err) {
       setItems([]);
-      setError('加载失败，请重试');
+      setError("加载失败，请重试");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -120,33 +118,29 @@ export const RecommendationsScreen: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchRecommendations(activeTab);
+    void fetchRecommendations(activeTab);
   }, [activeTab, fetchRecommendations]);
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchRecommendations(activeTab);
+    void fetchRecommendations(activeTab);
   }, [activeTab, fetchRecommendations]);
 
   const handleItemPress = useCallback(
     (item: RecommendedItem) => {
-      (navigation as any).navigate('RecommendationDetail', {
+      (navigation as any).navigate("RecommendationDetail", {
         id: item.id,
         recommendation: item,
       });
     },
-    [navigation],
+    [navigation]
   );
 
   const renderCard = useCallback(
     ({ item, index }: { item: RecommendedItem; index: number }) => (
-      <RecommendationCard
-        item={item}
-        index={index}
-        onPress={handleItemPress}
-      />
+      <RecommendationCard item={item} index={index} onPress={handleItemPress} />
     ),
-    [handleItemPress],
+    [handleItemPress]
   );
 
   // 固定高度的卡片，使用 getItemLayout 优化 FlatList 性能
@@ -156,7 +150,7 @@ export const RecommendationsScreen: React.FC = () => {
       offset: CARD_HEIGHT * Math.floor(index / 2) + 12 * Math.floor(index / 2),
       index,
     }),
-    [],
+    []
   );
 
   const keyExtractor = useCallback((item: RecommendedItem) => item.id, []);
@@ -176,7 +170,10 @@ export const RecommendationsScreen: React.FC = () => {
         <View style={styles.centerContainer}>
           <Ionicons name="cloud-offline-outline" size={48} color={theme.colors.textTertiary} />
           <Text style={styles.emptyTitle}>{error}</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={() => fetchRecommendations(activeTab)}>
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={() => fetchRecommendations(activeTab)}
+          >
             <Text style={styles.retryText}>重新加载</Text>
           </TouchableOpacity>
         </View>
@@ -188,9 +185,7 @@ export const RecommendationsScreen: React.FC = () => {
         <Ionicons name="sparkles-outline" size={64} color={theme.colors.primary} />
         <Text style={styles.emptyTitle}>AI 智能推荐</Text>
         <Text style={styles.emptySubtext}>
-          {isAuthenticated
-            ? '完善你的风格偏好，获取更精准的推荐'
-            : '登录后获取个性化穿搭推荐'}
+          {isAuthenticated ? "完善你的风格偏好，获取更精准的推荐" : "登录后获取个性化穿搭推荐"}
         </Text>
       </View>
     );
@@ -202,7 +197,9 @@ export const RecommendationsScreen: React.FC = () => {
         <Text style={styles.headerTitle}>AI 推荐</Text>
         <TouchableOpacity
           style={styles.filterButton}
-          onPress={() => {/* filter modal - v3 deferred */}}
+          onPress={() => {
+            /* filter modal - v3 deferred */
+          }}
         >
           <Ionicons name="options-outline" size={20} color={theme.colors.text} />
         </TouchableOpacity>
@@ -257,19 +254,19 @@ export const RecommendationsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: theme.colors.surface,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: 22, fontWeight: '700', color: theme.colors.text },
+  headerTitle: { fontSize: 22, fontWeight: "700", color: theme.colors.text },
   filterButton: { padding: 8 },
   tabBar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 16,
     paddingVertical: 8,
     backgroundColor: theme.colors.surface,
@@ -284,8 +281,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   tabActive: { backgroundColor: theme.colors.primary },
-  tabLabel: { fontSize: 14, fontWeight: '600', color: theme.colors.textSecondary },
-  tabLabelActive: { color: '#FFFFFF' },
+  tabLabel: { fontSize: 14, fontWeight: "600", color: theme.colors.textSecondary },
+  tabLabelActive: { color: DesignTokens.colors.neutral.white },
   list: { paddingHorizontal: 6, paddingBottom: 20 },
   emptyList: { flexGrow: 1 },
   card: {
@@ -293,16 +290,16 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 12,
     backgroundColor: theme.colors.surface,
-    overflow: 'hidden',
+    overflow: "hidden",
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
   },
-  cardImage: { width: '100%', height: CARD_WIDTH * 1.2, backgroundColor: theme.colors.background },
+  cardImage: { width: "100%", height: CARD_WIDTH * 1.2, backgroundColor: theme.colors.background },
   matchBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 8,
     left: 8,
     backgroundColor: theme.colors.primary,
@@ -310,20 +307,25 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 10,
   },
-  matchText: { fontSize: 11, fontWeight: '700', color: '#FFFFFF' },
+  matchText: { fontSize: 11, fontWeight: "700", color: DesignTokens.colors.neutral.white },
   cardInfo: { padding: 10 },
-  cardName: { fontSize: 13, fontWeight: '600', color: theme.colors.text, lineHeight: 18 },
+  cardName: { fontSize: 13, fontWeight: "600", color: theme.colors.text, lineHeight: 18 },
   cardBrand: { fontSize: 11, color: theme.colors.textSecondary, marginTop: 2 },
-  cardPrice: { fontSize: 15, fontWeight: '700', color: theme.colors.primary, marginTop: 4 },
+  cardPrice: { fontSize: 15, fontWeight: "700", color: theme.colors.primary, marginTop: 4 },
   centerContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 40,
     paddingVertical: 60,
   },
-  emptyTitle: { fontSize: 16, fontWeight: '600', color: theme.colors.text, marginTop: 16 },
-  emptySubtext: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 8, textAlign: 'center' },
+  emptyTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text, marginTop: 16 },
+  emptySubtext: {
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    marginTop: 8,
+    textAlign: "center",
+  },
   loadingText: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 12 },
   retryButton: {
     marginTop: 16,
@@ -332,7 +334,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: theme.colors.primary,
   },
-  retryText: { fontSize: 14, fontWeight: '600', color: '#FFFFFF' },
+  retryText: { fontSize: 14, fontWeight: "600", color: DesignTokens.colors.neutral.white },
 });
 
 export default RecommendationsScreen;

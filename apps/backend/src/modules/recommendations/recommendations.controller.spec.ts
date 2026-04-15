@@ -20,8 +20,8 @@ jest.mock("./services/recommendation-feed.service", () => ({
 
 // Import after mocks are set up
 import { AdvancedRecommendationService } from "./services/advanced-recommendation.service";
-import { OutfitCompletionService } from "./services/outfit-completion.service";
 import { BehaviorTrackingService } from "./services/behavior-tracking.service";
+import { OutfitCompletionService } from "./services/outfit-completion.service";
 import { RecommendationFeedService } from "./services/recommendation-feed.service";
 
 describe("RecommendationsController", () => {

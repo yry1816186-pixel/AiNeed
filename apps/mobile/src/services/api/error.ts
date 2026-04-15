@@ -44,7 +44,7 @@ export class AppError extends Error {
       statusCode?: number;
       details?: Record<string, unknown>;
       originalError?: unknown;
-    },
+    }
   ) {
     super(message || ERROR_MESSAGES_ZH[code]);
     this.name = "AppError";

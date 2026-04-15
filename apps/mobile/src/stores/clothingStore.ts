@@ -46,8 +46,8 @@ interface PaginationState {
 }
 
 export interface ClothingSortOptions {
-  sortBy: ClothingFilter['sortBy'];
-  sortOrder: 'asc' | 'desc';
+  sortBy: ClothingFilter["sortBy"];
+  sortOrder: "asc" | "desc";
 }
 
 interface ClothingState {
@@ -178,13 +178,10 @@ export const useClothingStore = create<ClothingState>()(
         filters: state.filters,
         viewMode: state.viewMode,
       }),
-    },
-  ),
+    }
+  )
 );
 
-export const useClothingFilters = () =>
-  useClothingStore((state) => state.filters);
-export const useClothingPagination = () =>
-  useClothingStore((state) => state.pagination);
-export const useClothingLoading = () =>
-  useClothingStore((state) => state.isLoading);
+export const useClothingFilters = () => useClothingStore((state) => state.filters);
+export const useClothingPagination = () => useClothingStore((state) => state.pagination);
+export const useClothingLoading = () => useClothingStore((state) => state.isLoading);

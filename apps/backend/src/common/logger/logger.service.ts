@@ -1,7 +1,8 @@
+import { AsyncLocalStorage } from 'async_hooks';
+
 import { Injectable, LoggerService, Scope, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import pino, { Logger, LoggerOptions } from 'pino';
-import { AsyncLocalStorage } from 'async_hooks';
 
 const SENSITIVE_FIELDS = [
   'password',

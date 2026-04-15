@@ -310,7 +310,7 @@ export class WardrobeCollectionService {
       where: { id: itemId },
     });
 
-    if (!item || item.collectionId !== collectionId) {
+    if (item?.collectionId !== collectionId) {
       throw new NotFoundException("分类项不存在");
     }
 
@@ -399,9 +399,9 @@ export class WardrobeCollectionService {
 
     // 构建查找映射
     const detailMap = new Map<string, any>();
-    for (const post of posts) detailMap.set(post.id, post);
-    for (const outfit of outfits) detailMap.set(outfit.id, outfit);
-    for (const tryOn of tryOns) detailMap.set(tryOn.id, tryOn);
+    for (const post of posts) {detailMap.set(post.id, post);}
+    for (const outfit of outfits) {detailMap.set(outfit.id, outfit);}
+    for (const tryOn of tryOns) {detailMap.set(tryOn.id, tryOn);}
 
     // 组装结果
     return items.map((item) => ({
@@ -469,7 +469,7 @@ export class WardrobeCollectionService {
     });
 
     // 已有封面图则不覆盖
-    if (collection?.coverImage) return;
+    if (collection?.coverImage) {return;}
 
     let coverImage: string | null = null;
 

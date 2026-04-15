@@ -1,13 +1,13 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 
 interface BloggerBadgeProps {
-  level: 'blogger' | 'big_v';
+  level: "blogger" | "big_v";
 }
 
 function BloggerBadgeInner({ level }: BloggerBadgeProps) {
-  if (level === 'big_v') {
+  if (level === "big_v") {
     return (
       <View style={s.bigVBadge}>
         <Ionicons name="shield-checkmark" size={10} color="#FFFFFF" />
@@ -25,29 +25,29 @@ export const BloggerBadge = React.memo(BloggerBadgeInner);
 
 const s = StyleSheet.create({
   bloggerBadge: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -2,
     right: -2,
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#6C5CE7',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#6C5CE7",
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
-    borderColor: '#FFFFFF',
+    borderColor: "#FFFFFF",
   },
   bigVBadge: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -3,
     right: -3,
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: '#F1C40F',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#F1C40F",
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
-    borderColor: '#FFFFFF',
+    borderColor: "#FFFFFF",
   },
 });

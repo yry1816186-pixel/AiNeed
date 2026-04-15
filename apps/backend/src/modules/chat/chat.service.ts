@@ -226,7 +226,7 @@ export class ChatService {
     });
 
     if (dto.senderType === "consultant") {
-      if (!consultant || consultant.userId !== userId) {
+      if (consultant?.userId !== userId) {
         throw new ForbiddenException("仅顾问可以 consultant 身份发送消息");
       }
     } else {
@@ -412,7 +412,7 @@ export class ChatService {
       where: { id: room.consultantId },
     });
 
-    if (consultant && consultant.userId === userId) {
+    if (consultant?.userId === userId) {
       return;
     }
 

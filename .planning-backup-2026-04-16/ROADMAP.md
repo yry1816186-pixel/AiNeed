@@ -1,0 +1,253 @@
+# Roadmap: AiNeed
+
+## Overview
+
+AiNeed MVP 路线图：11 Phase 从基础设施到商业闭环。核心用户旅程：建立画像 → AI 造型师推荐 → 虚拟试衣看效果 → 智能推荐发现 → 购买 → 社区分享 → 定制服务 → 私人顾问。现有 34 个后端模块和 28 个移动端页面提供完整骨架，本路线图填充真实业务逻辑和 API 集成。
+
+## Phases
+
+- [x] **Phase 0: 基础设施 & 测试基线** — CI/CD Pipeline + 测试框架配置 + 错误追踪 + 日志策略 + 数据库迁移策略
+- [x] **Phase 1: 用户画像 & 风格测试** — 双通道注册 + 强制画像建立 + 图片风格测试 → 建立个人风格档案
+- [x] **Phase 2: AI 造型师** — 方案页交互 + 文字/场景输入 + GLM API 穿搭推荐 + 天气集成
+- [x] **Phase 3: 虚拟试衣** — Doubao-Seedream API 图生图 → 用户看到自己穿推荐衣服的效果
+- [x] **Phase 4: 推荐引擎** — 瀑布流信息流 + 渐进式推荐算法 + 色彩搭配评分
+- [x] **Phase 5: 电商闭环** — 商品浏览 + 图片搜索 + 购物车 + 双通道支付 + 自营+合作商家
+- [x] **Phase 5.5: App 上架准备 & 推送通知** — 应用商店合规 + 隐私政策 + 推送通知 + ASO 优化
+- [x] **Phase 6: 社区 & 博主生态** — 穿搭社区 + 博主入驻 + 灵感衣橱 + 商品认证上架
+- [x] **Phase 7: 定制服务 & 品牌合作** — 2D定制编辑器 + 品牌扫码导入 + 定制生产配送
+- [x] **Phase 8: 私人形象顾问对接** — 平台撮合 + 即时通讯 + 预约支付 + 评价体系
+- [x] **Phase 9: 运营后台 & 性能优化 & 数据种子** — 管理后台 + 性能基线 + 初始数据填充
+- [x] **Phase 10: 品质审计修复** — 六重视角设计审计修复：双主题统一、导航架构整合、无障碍合规、视觉一致性、交互品质提升 (completed 2026-04-15)
+
+## Phase Details
+
+### Phase 0: 基础设施 & 测试基线
+**Goal**: 建立工程基础设施，确保后续开发有质量保障和自动化支撑
+**Depends on**: 无（项目初始化阶段）
+**Requirements**: INFRA-01 ~ INFRA-09 (9 条)
+**Success Criteria**:
+  1. GitHub Actions CI/CD Pipeline 配置完成（lint → test → build → deploy）
+  2. 后端测试覆盖率提升到 50%+，移动端测试框架配置完成
+  3. Sentry 错误追踪集成（后端 + 移动端）
+  4. 结构化日志策略（Winston/Pino，JSON 格式，请求追踪 ID）
+  5. Prisma 迁移脚本管理策略（migration 而非 db push）
+  6. 开发/测试/生产环境配置分离
+  7. API 响应格式统一为 JSON:API 规范
+  8. Git 分支策略和 PR 模板
+  9. Docker Compose 生产配置（含健康检查和资源限制）
+
+### Phase 1: 用户画像 & 风格测试
+**Goal**: 新用户注册后完成个人画像建立，AI 系统获得精准的用户理解基础
+**Depends on**: 无（已有认证系统和用户画像骨架）
+**Requirements**: PROF-01 ~ PROF-14 (14 条)
+**Success Criteria**:
+  1. 用户可通过手机号+验证码或微信一键登录注册
+  2. 注册后强制填写基本信息（性别/年龄段），照片和风格测试可跳过
+  3. 照片上传有实时参考线引导和隐私承诺展示
+  4. 风格测试为图片选择式问卷（5-8题），色彩偏好隐性推导
+  5. 画像结果以可视化报告展示，支持分享海报
+  6. 照片加密永久存储，用户可删除
+  7. 用户可主动修改画像数据（基本信息/体型/肤色），修改后自动触发画像同步事件
+
+### Phase 2: AI 造型师
+**Goal**: 用户与 AI 造型师交互，获取基于个人画像的精准穿搭方案
+**Depends on**: Phase 1（需要用户画像和风格档案数据）
+**Requirements**: AIS-01 ~ AIS-14 (14 条)
+**Success Criteria**:
+  1. AI 造型师以方案页形式展示（整体效果图 + 单品列表）
+  2. MVP 支持文字输入 + 场景快捷按钮
+  3. 方案附带可折叠推荐理由（体型适配 + 色彩 + 场合）
+  4. 支持弹出同类商品列表替换单品
+  5. 集成天气数据自动考虑天气因素
+  6. 对话历史按日归档，可恢复查看
+  7. AI 降级时展示友好提示（"AI 造型师暂时繁忙，请稍后再试"），而非空白或错误页
+  8. 图片输入作为 Phase 2.1 后续补充（上传衣服图片问"怎么搭"），在路线图中标注为 Phase 2 延伸
+
+### Phase 3: 虚拟试衣
+**Goal**: 用户上传照片后，通过 Doubao-Seedream API 看到自己穿推荐服装的效果图
+**Depends on**: Phase 2（需要造型师推荐的服装）+ 用户上传照片
+**Requirements**: VTO-01 ~ VTO-13 (13 条)
+**Success Criteria**:
+  1. 用户可上传个人照片（推荐全身照，允许其他类型）
+  2. Doubao-Seedream 为主生成 API，GLM 图生图为降级备选；移除所有 CatVTON 引用
+  3. 换装效果图在 30 秒内返回，有进度条 + 趣味内容
+  4. 用户不满意可免费重试（每日限 3 次）
+  5. 结果保存到历史记录和灵感衣橱，支持多平台分享
+  6. 试衣结果缓存 TTL 为 24 小时，同一用户照片+服装组合不重复调用 API
+
+### Phase 4: 推荐引擎
+**Goal**: 用户获得个性化的穿搭推荐信息流，推荐质量随交互不断提升
+**Depends on**: Phase 1（画像数据）, Phase 2（造型师对话数据）, Phase 3（试衣偏好数据）
+**Requirements**: REC-01 ~ REC-13 (13 条)
+**Success Criteria**:
+  1. 首页展示小红书式双列瀑布流推荐信息流
+  2. 支持 4 类推荐：每日/场合/趋势/探索
+  3. 渐进式算法演进（规则 → AI → 协同过滤）
+  4. 新用户基于画像的通用推荐冷启动
+  5. 推荐结果包含色彩搭配评分和推荐理由
+  6. 推荐去重：已浏览/已购买商品在 7 天内不再出现在推荐流中
+  7. 推荐多样性：探索/惊喜类推荐占比 15-20%，避免信息茧房
+
+### Phase 5: 电商闭环
+**Goal**: 用户从推荐/试衣直接进入购买流程，支持自营和合作商家
+**Depends on**: Phase 3（试衣引导购买）, Phase 4（推荐引导发现）
+**Requirements**: COMM-01 ~ COMM-13 (13 条)
+**Plans:** 9/9 plans executed
+
+Plans:
+- [x] 05-01-PLAN.md — Schema + Coupon + StockNotification backend modules
+- [x] 05-02-PLAN.md — RefundRequest + SizeRecommendation backend modules
+- [x] 05-03-PLAN.md — Merchant review + Search filters + Clothing enhancements
+- [x] 05-04-PLAN.md — Cart + Order backend enhancements
+- [x] 05-05-PLAN.md — Mobile API layer + Zustand stores
+- [x] 05-06-PLAN.md — Product detail + Search frontend screens
+- [x] 05-07-PLAN.md — Cart + Checkout + Payment frontend screens
+- [x] 05-08-PLAN.md — Order detail + Refund frontend screens
+- [x] 05-09-PLAN.md — Merchant apply + Stock notification frontend screens
+
+**Success Criteria**:
+  1. GLM 视觉理解图片搜索 + 文字搜索 + 多维筛选
+  2. AI 智能尺码推荐（基于体型数据 + 品牌尺码表）
+  3. 支付宝 + 微信支付双通道
+  4. 平台自营 + 合作商家入驻（审核制）
+  5. 完整订单生命周期管理
+  6. 基础退款流程：用户可申请退款 → 商家审核 → 退款/驳回，退款到原支付方式
+  7. 物流追踪集成：对接快递 100/快递鸟 API，用户可查看物流详情
+
+### Phase 5.5
+**Goal**: 完成 App 上架所需的合规、隐私、推送等必备功能，确保应用可正常上架和留存用户
+**Depends on**: Phase 1（用户系统）, Phase 5（支付系统用于推送订单通知）
+**Requirements**: LAUNCH-01 ~ LAUNCH-07 (7 条)
+**Success Criteria**:
+  1. App Store & Google Play 合规检查通过（隐私政策、数据收集声明、权限说明）
+  2. 隐私政策和用户协议页面完整，用户注册时强制同意
+  3. FCM (Android) + APNs (iOS) 推送通知集成
+  4. 通知模板系统（订单/推荐/社区/系统 4 类通知模板）
+  5. 用户通知偏好管理（按类型开关推送）
+  6. App 签名、图标、启动页、应用截图等上架素材
+  7. ASO 基础优化（关键词、描述、分类）
+
+### Phase 6: 社区 & 博主生态
+**Goal**: 建立穿搭内容社区，支持博主入驻和商品销售，形成内容-电商闭环
+**Depends on**: Phase 1（用户画像）, Phase 2（AI 方案内容）, Phase 3（试衣效果图）
+**Requirements**: SOC-01 ~ SOC-14 (14 条)
+**Success Criteria**:
+  1. 用户可发穿搭内容（9图+标签+单品标注）
+  2. 社区信息流支持热门/最新/关注三种排序
+  3. 博主可上架穿搭设计为可购买商品，平台抽成
+  4. 灵感衣橱支持自定义分类 + 拖拽排序
+  5. 内容双重审核（AI + 人工）
+  6. 社区冷启动策略：官方种子内容（每日穿搭推荐 10 条）+ 邀请制内测用户 + AI 生成穿搭内容填充
+  7. 博主上架商品需通过平台认证（实名认证 + 至少 3 篇优质内容），确保商品质量
+
+### Phase 7: 定制服务 & 品牌合作
+**Goal**: 提供个性化服装定制服务和品牌扫码导入，拓展商业模式
+**Depends on**: Phase 5（电商基础）, Phase 6（社区内容素材）
+**Requirements**: CUS-01 ~ CUS-12 (12 条)
+**Plans:** 4/4 plans executed
+
+Plans:
+- [x] 07-01-PLAN.md -- Customization editor backend (schema, templates, pricing, API)
+- [x] 07-02-PLAN.md -- Brand QR code system + brand portal backend
+- [x] 07-03-PLAN.md -- Mobile customization editor + brand QR scan frontend
+- [x] 07-04-PLAN.md -- Brand portal extension + POD integration + payment flow
+
+**Success Criteria**:
+  1. 2D 模板定制编辑器（选择衣服→上传图案→拖拽定位→预览）
+  2. 完整定制流程（设计→报价→确认→制作→精美包装快递）
+  3. 品牌合作专属二维码，扫码自动导入服装数据
+  4. 品牌管理后台（商品数据/扫码统计/用户偏好分析）
+  5. 2D 编辑器基于 React Native Canvas/SVG 实现，支持缩放/旋转/拖拽，参考 react-native-skia 方案
+  6. 定制商品供应链对接：MVP 与 1-2 家 POD（Print-on-Demand）服务商合作
+
+### Phase 8: 私人形象顾问对接
+**Goal**: 高价值用户可对接专业造型工作室/顾问，获得深度私人形象定制服务
+**Depends on**: Phase 5（支付系统）, Phase 6（评价体系参考）
+**Requirements**: ADV-01 ~ ADV-13 (13 条)
+**Plans:** 5/5 plans executed
+
+Plans:
+- [x] 08-01-PLAN.md -- Schema extension + four-dimension matching algorithm + match endpoint
+- [x] 08-02-PLAN.md -- ChatGateway /ws/chat namespace + proposal message type
+- [x] 08-03-PLAN.md -- Availability scheduling + staged payment + earnings/withdrawal
+- [x] 08-04-PLAN.md -- Review system + weighted ranking + admin audit + case display
+- [x] 08-05-PLAN.md -- Mobile: 4 screens + 8 components + stores + API + WebSocket
+
+**Success Criteria**:
+  1. 平台撮合模式：用户提交需求 → 智能匹配顾问 → App 内沟通
+  2. 在线预约 + App 内即时通讯 + 方案文件分享
+  3. 分阶段付款 + 平台抽成结算
+  4. 评价评分体系影响顾问排名
+  5. 工作室/顾问入驻审核和服务案例展示
+  6. 即时通讯消息送达保证：消息已发送/已送达/已读状态，离线消息推送
+  7. 资金托管机制：用户付款进入平台托管账户，服务完成后自动结算给顾问，保障双方权益
+
+### Phase 9: 运营后台 & 性能优化 & 数据种子
+**Goal**: 建立运营所需的管理后台，优化性能达到上线标准，填充初始数据确保 App 不空白
+**Depends on**: Phase 5（电商数据）, Phase 6（社区内容审核）
+**Requirements**: OPS-01 ~ OPS-08 (8 条)
+**Plans:** 4/4 plans executed
+
+Plans:
+- [x] 09-01-PLAN.md -- Admin module foundation with RBAC, audit, dashboard, config
+- [x] 09-02-PLAN.md -- Content review system with AI + human dual-track moderation
+- [x] 09-03-PLAN.md -- Initial data seed (526 products, 53 brands, 20 quiz questions)
+- [x] 09-04-PLAN.md -- Performance optimization (cache interceptors, mobile perf components)
+
+**Success Criteria**:
+  1. 管理后台基础框架（用户管理/内容审核/数据看板/配置管理）
+  2. 内容审核后台（AI 审核 + 人工审核队列）
+  3. 数据看板（DAU/订单量/转化率/热门商品）
+  4. 初始服装数据种子（至少 500 件商品，覆盖 8 大分类）
+  5. 首屏加载 < 2 秒，API P95 响应 < 500ms
+  6. 图片 CDN 加速和懒加载
+  7. API 响应缓存策略（Redis 热点数据缓存）
+  8. 移动端性能优化（列表虚拟化、图片压缩、Bundle 优化）
+
+### Phase 10: 品质审计修复
+**Goal**: 基于设计师、艺术家、前端工程师、人体工程学家、算法大师、真实用户六重视角审计，系统性修复移动端前端的设计缺陷、架构冲突、无障碍缺失和交互品质问题，使寻裳达到最高审美和性能标准
+**Depends on**: Phase 0-9（全部已完成，本轮为品质提升）
+**Requirements**: QA-01 ~ QA-20 (20 条)
+**Success Criteria**:
+  1. 双主题系统统一为 Terracotta 品牌色 token 体系，消除 NightBlue/Terracotta/Purple 三色打架
+  2. 双导航架构合并为单一 5-tab 嵌套栈版本，删除 App.tsx 旧版导航
+  3. VipGuard 接入真实用户状态，VIP 功能可正常访问
+  4. PaymentScreen 全量中文化，消除全英文界面
+  5. 所有 paddingTop: 56 硬编码改为 useSafeAreaInsets()
+  6. 天气坐标接入设备定位，消除北京坐标硬编码
+  7. AI 造型师聊天消息持久化到 Zustand store
+  8. ClothingDetailScreen 29 个硬编码色值迁移到主题 token
+  9. 创建 useReducedMotion hook，所有动画组件接入 reduced-motion 检测
+  10. 深色模式文字色提升到 WCAG AA 4.5:1 对比度标准
+  11. 路由守卫接入 MainStackNavigator，26 条规则生效
+  12. SharedElement 转场接入 react-navigation-shared-element
+  13. 动画弹簧参数分层映射到交互语义（轻/中/重操作）
+  14. 社区瀑布流高度基于图片宽高比而非伪随机
+  15. AI 思考态从 ActivityIndicator 升级为渐进式视觉叙事
+  16. CommunityScreen 735 行巨石拆分为独立组件
+  17. 推荐卡片增加评分/理由/色彩和谐度可视化
+  18. 四季色彩可视化使用 colorSeasons token 而非硬编码
+  19. Accent 系统降为辅助强调色，品牌色始终为 Terracotta
+  20. ui/index.tsx 内联重复组件统一从 primitives/ 导出
+
+## Progress
+
+**Execution Order:** 0 → 1 → 2 → 3 → 4 → 5 → 5.5 → 6 → 7 → 8 → 9 → 10
+
+| Phase | Status | Requirements |
+|-------|--------|-------------|
+| 0. 基础设施 & 测试基线 | Completed | 9 |
+| 1. 用户画像 & 风格测试 | Completed | 14 |
+| 2. AI 造型师 | Completed | 14 |
+| 3. 虚拟试衣 | Completed | 13 |
+| 4. 推荐引擎 | Completed | 13 |
+| 5. 电商闭环 | Completed | 13 |
+| 5.5. App 上架准备 & 推送通知 | Completed | 7 |
+| 6. 社区 & 博主生态 | Completed | 14 |
+| 7. 定制服务 & 品牌合作 | Completed | 12 |
+| 8. 私人形象顾问对接 | Completed | 13 |
+| 9. 运营后台 & 性能优化 & 数据种子 | Completed | 8 |
+| 10. 品质审计修复 | Completed | 20 |
+
+---
+*Last updated: 2026-04-15 — Phase 10 品质审计修复 added*

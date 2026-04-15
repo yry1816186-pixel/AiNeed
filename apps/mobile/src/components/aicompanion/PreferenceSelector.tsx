@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -122,7 +122,7 @@ export const PreferenceSelector: React.FC<PreferenceSelectorProps> = ({
   const config = PREFERENCE_CONFIG[field] || PREFERENCE_CONFIG.preferredStyles;
   const rawOptions = action.options || config.options;
   const options: PreferenceOption[] = rawOptions.map((opt) =>
-    typeof opt === "string" ? { label: opt, value: opt } : opt,
+    typeof opt === "string" ? { label: opt, value: opt } : opt
   );
 
   useEffect(() => {
@@ -133,9 +133,7 @@ export const PreferenceSelector: React.FC<PreferenceSelectorProps> = ({
   const toggleOption = (value: string) => {
     if (config.multiSelect) {
       setSelectedValues((prev) =>
-        prev.includes(value)
-          ? prev.filter((v) => v !== value)
-          : [...prev, value],
+        prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
       );
     } else {
       setSelectedValues([value]);
@@ -161,9 +159,7 @@ export const PreferenceSelector: React.FC<PreferenceSelectorProps> = ({
       <View style={styles.header}>
         <Text style={styles.title}>{config.title}</Text>
         {config.multiSelect && (
-          <Text style={styles.subtitle}>
-            可多选 ({selectedValues.length} 已选)
-          </Text>
+          <Text style={styles.subtitle}>可多选 ({selectedValues.length} 已选)</Text>
         )}
       </View>
 
@@ -204,14 +200,8 @@ export const PreferenceSelector: React.FC<PreferenceSelectorProps> = ({
             <LinearGradient
               colors={
                 selectedValues.length > 0
-                  ? [
-                      DesignTokens.colors.brand.terracotta,
-                      DesignTokens.colors.brand.camel,
-                    ]
-                  : [
-                      DesignTokens.colors.neutral[300],
-                      DesignTokens.colors.neutral[400],
-                    ]
+                  ? [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]
+                  : [DesignTokens.colors.neutral[300], DesignTokens.colors.neutral[400]]
               }
               style={styles.confirmGradient}
             >
@@ -231,20 +221,12 @@ interface OptionChipProps {
   onPress: () => void;
 }
 
-const OptionChip: React.FC<OptionChipProps> = ({
-  option,
-  isSelected,
-  index,
-  onPress,
-}) => {
+const OptionChip: React.FC<OptionChipProps> = ({ option, isSelected, index, onPress }) => {
   const scale = useSharedValue(0.8);
   const opacity = useSharedValue(0);
 
   useEffect(() => {
-    scale.value = withDelay(
-      index * 50,
-      withSpring(1, { damping: 12, stiffness: 200 }),
-    );
+    scale.value = withDelay(index * 50, withSpring(1, { damping: 12, stiffness: 200 }));
     opacity.value = withDelay(index * 50, withTiming(1, { duration: 200 }));
   }, []);
 
@@ -259,9 +241,7 @@ const OptionChip: React.FC<OptionChipProps> = ({
       onPress={onPress}
     >
       {option.icon && <Text style={styles.chipIcon}>{option.icon}</Text>}
-      <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
-        {option.label}
-      </Text>
+      <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>{option.label}</Text>
       {isSelected && (
         <View style={styles.checkmark}>
           <Text style={styles.checkmarkText}>✓</Text>
@@ -336,7 +316,7 @@ const styles = StyleSheet.create({
   },
   checkmarkText: {
     fontSize: 12,
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
     fontWeight: "700",
   },
   footer: {
@@ -371,6 +351,6 @@ const styles = StyleSheet.create({
   confirmText: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
   },
 });

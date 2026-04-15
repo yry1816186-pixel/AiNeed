@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 import { notificationApi } from "./api/notification.api";
-import { secureStorage, SECURE_STORAGE_KEYS } from "../utils/secureStorage";
+import { secureStorage } from "../utils/secureStorage";
 
 const PUSH_TOKEN_KEY = "@xuno_push_token";
 
@@ -18,7 +18,9 @@ class PushNotificationService {
    * Call this once on app startup.
    */
   async initialize(): Promise<void> {
-    if (this.initialized) return;
+    if (this.initialized) {
+      return;
+    }
 
     try {
       // Try to load existing token
@@ -51,7 +53,8 @@ class PushNotificationService {
 
       // Fallback: on iOS, use PushNotificationIOS
       if (Platform.OS === "ios") {
-        const PushNotificationIOS = require("@react-native-community/push-notification-ios").default;
+        const PushNotificationIOS =
+          require("@react-native-community/push-notification-ios").default;
         return new Promise((resolve) => {
           PushNotificationIOS.requestPermissions({ alert: true, badge: true, sound: true })
             .then((permissions: { alert?: boolean }) => {
@@ -109,7 +112,9 @@ class PushNotificationService {
    * Deregister the current token from the backend (e.g., on logout).
    */
   async deregisterToken(): Promise<void> {
-    if (!this.token) return;
+    if (!this.token) {
+      return;
+    }
 
     try {
       await notificationApi.deregisterDeviceToken(this.token);
@@ -130,13 +135,15 @@ class PushNotificationService {
       title?: string;
       body?: string;
       data?: Record<string, unknown>;
-    }) => void,
+    }) => void
   ): () => void {
     try {
       const messaging = this.getFirebaseMessaging();
       if (messaging) {
         return messaging.onMessage(async (remoteMessage: Record<string, unknown>) => {
-          const notification = remoteMessage.notification as { title?: string; body?: string } | undefined;
+          const notification = remoteMessage.notification as
+            | { title?: string; body?: string }
+            | undefined;
           callback({
             title: notification?.title,
             body: notification?.body,
@@ -159,7 +166,7 @@ class PushNotificationService {
       title?: string;
       body?: string;
       data?: Record<string, unknown>;
-    }) => void,
+    }) => void
   ): () => void {
     try {
       const messaging = this.getFirebaseMessaging();
@@ -167,28 +174,32 @@ class PushNotificationService {
         // App in foreground when notification tapped
         const unsub1 = messaging.onNotificationOpenedApp(
           (remoteMessage: Record<string, unknown>) => {
-            const notification = remoteMessage.notification as { title?: string; body?: string } | undefined;
+            const notification = remoteMessage.notification as
+              | { title?: string; body?: string }
+              | undefined;
             callback({
               title: notification?.title,
               body: notification?.body,
               data: (remoteMessage.data as Record<string, unknown>) || {},
             });
-          },
+          }
         );
 
         // App opened from quit state by notification tap
-        messaging.getInitialNotification().then(
-          (remoteMessage: Record<string, unknown> | null) => {
+        void messaging
+          .getInitialNotification()
+          .then((remoteMessage: Record<string, unknown> | null) => {
             if (remoteMessage) {
-              const notification = remoteMessage.notification as { title?: string; body?: string } | undefined;
+              const notification = remoteMessage.notification as
+                | { title?: string; body?: string }
+                | undefined;
               callback({
                 title: notification?.title,
                 body: notification?.body,
                 data: (remoteMessage.data as Record<string, unknown>) || {},
               });
             }
-          },
-        );
+          });
 
         return unsub1;
       }

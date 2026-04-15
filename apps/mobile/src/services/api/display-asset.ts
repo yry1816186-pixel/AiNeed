@@ -1,20 +1,13 @@
 import axios from "axios";
 
 import apiClient from "./client";
-import {
-  ensureAuthenticatedAssetUrl,
-  isLocalStorageAssetUrl,
-} from "./asset-url";
+import { ensureAuthenticatedAssetUrl, isLocalStorageAssetUrl } from "./asset-url";
 
 const displayUriCache = new Map<string, string>();
 const inflightRequests = new Map<string, Promise<string>>();
 
 function shouldResolveDisplayUri(uri: string): boolean {
-  if (
-    uri.startsWith("data:") ||
-    uri.startsWith("file:") ||
-    uri.startsWith("content:")
-  ) {
+  if (uri.startsWith("data:") || uri.startsWith("file:") || uri.startsWith("content:")) {
     return false;
   }
 
@@ -59,17 +52,13 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string | null {
   let binary = "";
 
   for (let index = 0; index < bytes.length; index += chunkSize) {
-    binary += String.fromCharCode(
-      ...bytes.slice(index, Math.min(index + chunkSize, bytes.length)),
-    );
+    binary += String.fromCharCode(...bytes.slice(index, Math.min(index + chunkSize, bytes.length)));
   }
 
   return globalObject.btoa(binary);
 }
 
-export async function resolveDisplayUri(
-  uri?: string | null,
-): Promise<string> {
+export async function resolveDisplayUri(uri?: string | null): Promise<string> {
   if (!uri) {
     return "";
   }
@@ -97,8 +86,7 @@ export async function resolveDisplayUri(
         responseType: "arraybuffer",
       });
 
-      const contentType =
-        response.headers["content-type"] ?? "application/octet-stream";
+      const contentType = response.headers["content-type"] ?? "application/octet-stream";
       const base64 = arrayBufferToBase64(response.data);
 
       if (!base64) {

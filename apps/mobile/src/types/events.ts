@@ -2,7 +2,7 @@
  * React Native 事件类型定义
  */
 
-import { NativeSyntheticEvent } from 'react-native';
+import { NativeSyntheticEvent } from "react-native";
 
 // 滚动事件
 export interface ScrollEvent {
@@ -23,7 +23,7 @@ export interface ScrollEvent {
   };
 }
 
-export type ScrollEventHandler = (event: NativeSyntheticEvent<ScrollEvent['nativeEvent']>) => void;
+export type ScrollEventHandler = (event: NativeSyntheticEvent<ScrollEvent["nativeEvent"]>) => void;
 
 // 触摸事件
 export interface TouchEvent {
@@ -35,26 +35,26 @@ export interface TouchEvent {
     identifier: number;
     target: number;
     timestamp: number;
-    touches: Array<{
+    touches: {
       identifier: number;
       locationX: number;
       locationY: number;
       pageX: number;
       pageY: number;
       target: number;
-    }>;
-    changedTouches: Array<{
+    }[];
+    changedTouches: {
       identifier: number;
       locationX: number;
       locationY: number;
       pageX: number;
       pageY: number;
       target: number;
-    }>;
+    }[];
   };
 }
 
-export type TouchEventHandler = (event: NativeSyntheticEvent<TouchEvent['nativeEvent']>) => void;
+export type TouchEventHandler = (event: NativeSyntheticEvent<TouchEvent["nativeEvent"]>) => void;
 
 // 输入框事件
 export interface InputFocusEvent {
@@ -65,7 +65,9 @@ export interface InputFocusEvent {
   };
 }
 
-export type InputFocusEventHandler = (event: NativeSyntheticEvent<InputFocusEvent['nativeEvent']>) => void;
+export type InputFocusEventHandler = (
+  event: NativeSyntheticEvent<InputFocusEvent["nativeEvent"]>
+) => void;
 
 // 布局事件
 export interface LayoutEvent {
@@ -80,7 +82,7 @@ export interface LayoutEvent {
   };
 }
 
-export type LayoutEventHandler = (event: NativeSyntheticEvent<LayoutEvent['nativeEvent']>) => void;
+export type LayoutEventHandler = (event: NativeSyntheticEvent<LayoutEvent["nativeEvent"]>) => void;
 
 // 键盘事件
 export interface KeyboardEvent {

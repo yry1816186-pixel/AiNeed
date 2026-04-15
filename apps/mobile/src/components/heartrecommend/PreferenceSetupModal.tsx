@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -18,9 +18,10 @@ import Animated, {
   interpolate,
   Extrapolate,
 } from "react-native-reanimated";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../../theme";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme, Colors, BorderRadius, Shadows } from '../design-system/theme';
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { profileApi } from "../../services/api/profile.api";
 import { useAuthStore } from "../../stores";
 
@@ -35,7 +36,7 @@ interface PreferenceSetupModalProps {
 interface PreferenceOption {
   id: string;
   label: string;
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
   description?: string;
 }
 
@@ -48,16 +49,16 @@ interface AnimatedPreferenceOptionCardProps {
   option: PreferenceOption;
 }
 
-const AnimatedPreferenceOptionCard: React.FC<
-  AnimatedPreferenceOptionCardProps
-> = ({ index, isSelected, onPress, option }) => {
+const AnimatedPreferenceOptionCard: React.FC<AnimatedPreferenceOptionCardProps> = ({
+  index,
+  isSelected,
+  onPress,
+  option,
+}) => {
   const scaleAnim = useSharedValue(0.9);
 
   useEffect(() => {
-    scaleAnim.value = withDelay(
-      index * 50,
-      withSpring(1, { damping: 15, stiffness: 150 }),
-    );
+    scaleAnim.value = withDelay(index * 50, withSpring(1, { damping: 15, stiffness: 150 }));
   }, [index, scaleAnim]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -66,26 +67,18 @@ const AnimatedPreferenceOptionCard: React.FC<
 
   return (
     <AnimatedTouchable
-      style={[
-        styles.optionCard,
-        isSelected && styles.optionCardSelected,
-        animatedStyle,
-      ]}
+      style={[styles.optionCard, isSelected && styles.optionCardSelected, animatedStyle]}
       onPress={onPress}
       activeOpacity={0.9}
     >
-      <Text style={styles.optionIcon}>{option.icon}</Text>
-      <Text
-        style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}
-      >
+      <Ionicons name={option.icon} size={32} color={isSelected ? Colors.primary[600] : theme.colors.textSecondary} />
+      <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
         {option.label}
       </Text>
-      {option.description && (
-        <Text style={styles.optionDescription}>{option.description}</Text>
-      )}
+      {option.description && <Text style={styles.optionDescription}>{option.description}</Text>}
       {isSelected && (
         <View style={styles.checkMark}>
-          <Ionicons name="checkmark" size={14} color="#fff" />
+          <Ionicons name="checkmark" size={14} color={DesignTokens.colors.text.inverse} />
         </View>
       )}
     </AnimatedTouchable>
@@ -129,53 +122,53 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
   }));
 
   const genderOptions: PreferenceOption[] = [
-    { id: "female", label: "女士", icon: "👩" },
-    { id: "male", label: "男士", icon: "👨" },
-    { id: "other", label: "其他", icon: "🧑" },
+    { id: "female", label: "女士", icon: "woman-outline" },
+    { id: "male", label: "男士", icon: "man-outline" },
+    { id: "other", label: "其他", icon: "person-outline" },
   ];
 
   const styleOptions: PreferenceOption[] = [
-    { id: "minimalist", label: "简约", icon: "✨", description: "干净利落" },
-    { id: "romantic", label: "浪漫", icon: "🌸", description: "柔美优雅" },
-    { id: "streetwear", label: "街头", icon: "🔥", description: "潮流个性" },
-    { id: "vintage", label: "复古", icon: "🎬", description: "经典文艺" },
-    { id: "casual", label: "休闲", icon: "👕", description: "舒适自在" },
-    { id: "business", label: "商务", icon: "💼", description: "干练专业" },
-    { id: "sporty", label: "运动", icon: "🏃", description: "活力动感" },
-    { id: "bohemian", label: "波西米亚", icon: "🎨", description: "自由艺术" },
+    { id: "minimalist", label: "简约", icon: "sparkles-outline", description: "干净利落" },
+    { id: "romantic", label: "浪漫", icon: "flower-outline", description: "柔美优雅" },
+    { id: "streetwear", label: "街头", icon: "flame-outline", description: "潮流个性" },
+    { id: "vintage", label: "复古", icon: "time-outline", description: "经典文艺" },
+    { id: "casual", label: "休闲", icon: "shirt-outline", description: "舒适自在" },
+    { id: "business", label: "商务", icon: "briefcase-outline", description: "干练专业" },
+    { id: "sporty", label: "运动", icon: "fitness-outline", description: "活力动感" },
+    { id: "bohemian", label: "波西米亚", icon: "color-palette-outline", description: "自由艺术" },
   ];
 
   const colorOptions: PreferenceOption[] = [
-    { id: "black", label: "黑色系", icon: "⬛" },
-    { id: "white", label: "白色系", icon: "⬜" },
-    { id: "neutral", label: "大地色", icon: "🟫" },
-    { id: "pastel", label: "粉彩色", icon: "🎨" },
-    { id: "bright", label: "亮色系", icon: "🌈" },
-    { id: "blue", label: "蓝色系", icon: "💙" },
+    { id: "black", label: "黑色系", icon: "contrast-outline" },
+    { id: "white", label: "白色系", icon: "sunny-outline" },
+    { id: "neutral", label: "大地色", icon: "earth-outline" },
+    { id: "pastel", label: "粉彩色", icon: "color-palette-outline" },
+    { id: "bright", label: "亮色系", icon: "rainy-outline" },
+    { id: "blue", label: "蓝色系", icon: "water-outline" },
   ];
 
   const occasionOptions: PreferenceOption[] = [
-    { id: "daily", label: "日常通勤", icon: "🏢" },
-    { id: "date", label: "约会聚会", icon: "💕" },
-    { id: "party", label: "派对活动", icon: "🎉" },
-    { id: "travel", label: "旅行度假", icon: "✈️" },
-    { id: "workout", label: "运动健身", icon: "💪" },
-    { id: "home", label: "居家休闲", icon: "🏠" },
+    { id: "daily", label: "日常通勤", icon: "briefcase-outline" },
+    { id: "date", label: "约会聚会", icon: "heart-outline" },
+    { id: "party", label: "派对活动", icon: "wine-outline" },
+    { id: "travel", label: "旅行度假", icon: "airplane-outline" },
+    { id: "workout", label: "运动健身", icon: "fitness-outline" },
+    { id: "home", label: "居家休闲", icon: "home-outline" },
   ];
 
   const budgetOptions: PreferenceOption[] = [
-    { id: "low", label: "经济实惠", icon: "💰", description: "追求性价比" },
+    { id: "low", label: "经济实惠", icon: "wallet-outline", description: "追求性价比" },
     {
       id: "medium",
       label: "适中预算",
-      icon: "💎",
+      icon: "card-outline",
       description: "品质与价格平衡",
     },
-    { id: "high", label: "品质优先", icon: "👑", description: "注重品质体验" },
+    { id: "high", label: "品质优先", icon: "diamond-outline", description: "注重品质体验" },
     {
       id: "luxury",
       label: "奢华享受",
-      icon: "🌟",
+      icon: "star-outline",
       description: "追求顶级品牌",
     },
   ];
@@ -192,7 +185,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
         stepTranslateX.value = withTiming(0, { duration: 200 });
         stepOpacity.value = withTiming(1, { duration: 200 });
       } else {
-        handleComplete();
+        void handleComplete();
       }
     }, 200);
   };
@@ -224,7 +217,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
         budget: budget,
       };
 
-      await profileApi.updateProfile({ preferences } as any);
+      await profileApi.updateProfile({ preferences } as Record<string, unknown>);
 
       if (user) {
         setUser({
@@ -235,7 +228,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
             avoidedColors: [],
             styleAvoidances: [],
             fitGoals: [],
-            budget: budget as any,
+            budget: budget as "low" | "medium" | "high" | "luxury",
             notifications: user.preferences?.notifications || {
               outfitReminders: true,
               newArrivals: true,
@@ -257,7 +250,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
   const toggleSelection = (
     id: string,
     selected: string[],
-    setSelected: (val: string[]) => void,
+    setSelected: (val: string[]) => void
   ) => {
     if (selected.includes(id)) {
       setSelected(selected.filter((item) => item !== id));
@@ -270,7 +263,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
     options: PreferenceOption[],
     selected: string | string[] | null,
     onSelect: (id: string) => void,
-    multiSelect: boolean = false,
+    multiSelect: boolean = false
   ) => {
     return (
       <View style={styles.optionsGrid}>
@@ -299,9 +292,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
         return (
           <Animated.View style={[styles.stepContainer, stepAnimatedStyle]}>
             <Text style={styles.stepTitle}>您的性别是？</Text>
-            <Text style={styles.stepSubtitle}>
-              帮助我们为您推荐更合适的款式
-            </Text>
+            <Text style={styles.stepSubtitle}>帮助我们为您推荐更合适的款式</Text>
             {renderOptionGrid(genderOptions, selectedGender, setSelectedGender)}
           </Animated.View>
         );
@@ -314,7 +305,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
               styleOptions,
               selectedStyles,
               (id) => toggleSelection(id, selectedStyles, setSelectedStyles),
-              true,
+              true
             )}
           </Animated.View>
         );
@@ -327,7 +318,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
               colorOptions,
               selectedColors,
               (id) => toggleSelection(id, selectedColors, setSelectedColors),
-              true,
+              true
             )}
           </Animated.View>
         );
@@ -339,9 +330,8 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
             {renderOptionGrid(
               occasionOptions,
               selectedOccasions,
-              (id) =>
-                toggleSelection(id, selectedOccasions, setSelectedOccasions),
-              true,
+              (id) => toggleSelection(id, selectedOccasions, setSelectedOccasions),
+              true
             )}
           </Animated.View>
         );
@@ -376,11 +366,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
   };
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      presentationStyle="fullScreen"
-    >
+    <Modal visible={visible} animationType="slide" presentationStyle="fullScreen">
       <View style={styles.container}>
         <View style={styles.header}>
           {currentStep > 0 ? (
@@ -415,15 +401,12 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
 
         <View style={styles.footer}>
           <TouchableOpacity
-            style={[
-              styles.nextButton,
-              !canProceed() && styles.nextButtonDisabled,
-            ]}
+            style={[styles.nextButton, !canProceed() && styles.nextButtonDisabled]}
             onPress={handleNext}
             disabled={!canProceed() || loading}
           >
             <LinearGradient
-              colors={canProceed() ? ["#667eea", "#764ba2"] : ["#ccc", "#aaa"]}
+              colors={canProceed() ? [DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark] : [DesignTokens.colors.neutral[300], "#aaa" /* custom color */]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.nextButtonGradient}
@@ -432,7 +415,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
                 {currentStep === totalSteps - 1 ? "开始探索" : "下一步"}
               </Text>
               {currentStep < totalSteps - 1 && (
-                <Ionicons name="arrow-forward" size={20} color="#fff" />
+                <Ionicons name="arrow-forward" size={20} color={DesignTokens.colors.text.inverse} />
               )}
             </LinearGradient>
           </TouchableOpacity>
@@ -541,10 +524,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary[500],
     backgroundColor: Colors.primary[50],
   },
-  optionIcon: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
   optionLabel: {
     fontSize: 14,
     fontWeight: "600",
@@ -594,7 +573,7 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontSize: 17,
     fontWeight: "600",
-    color: "#fff",
+    color: DesignTokens.colors.text.inverse,
   },
 });
 

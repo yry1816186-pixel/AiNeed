@@ -511,7 +511,7 @@ export class CloudCommunicationService
   private async flushPendingTasks(): Promise<void> {
     this.logger.log("Flushing pending tasks...");
 
-    for (const [taskId, callback] of this.pendingCallbacks) {
+    for (const [_taskId, callback] of this.pendingCallbacks) {
       callback.reject(new Error("Service shutting down"));
     }
     this.pendingCallbacks.clear();

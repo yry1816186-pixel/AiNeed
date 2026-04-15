@@ -13,7 +13,7 @@ interface UseAsyncReturn<T, Args extends unknown[] = unknown[]> extends AsyncSta
 
 export function useAsync<T, Args extends unknown[] = unknown[]>(
   asyncFunction: (...args: Args) => Promise<T>,
-  immediate: boolean = false,
+  immediate: boolean = false
 ): UseAsyncReturn<T, Args> {
   const [state, setState] = useState<AsyncState<T>>({
     data: null,
@@ -33,7 +33,7 @@ export function useAsync<T, Args extends unknown[] = unknown[]>(
         return null;
       }
     },
-    [asyncFunction],
+    [asyncFunction]
   );
 
   const reset = useCallback(() => {

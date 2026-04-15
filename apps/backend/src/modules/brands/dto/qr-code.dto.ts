@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsString, IsOptional, IsNumber, IsBoolean, IsArray, ValidateNested } from "class-validator";
 import { Type } from "class-transformer";
+import { IsString, IsOptional, IsNumber, IsBoolean, IsArray, ValidateNested } from "class-validator";
 
 export class GenerateQRCodeDto {
   @ApiProperty({ description: "商品ID" })

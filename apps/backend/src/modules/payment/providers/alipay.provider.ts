@@ -1,8 +1,18 @@
 import * as crypto from "crypto";
 
-import axios from "axios";
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit, ServiceUnavailableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import axios from "axios";
+
+import {
+  AlipayBizContent,
+  AlipayCallbackData,
+  AlipayQueryApiResponse,
+  AlipayRefundApiResponse,
+  AlipayCloseApiResponse,
+  AlipayRequestParams,
+} from "../types/alipay.types";
+import { PaymentRawCallbackData } from "../types/common.types";
 
 import {
   PaymentProviderInterface,
@@ -14,15 +24,6 @@ import {
   RefundResult,
   PaymentQueryResult,
 } from "./payment-provider.interface";
-import {
-  AlipayBizContent,
-  AlipayCallbackData,
-  AlipayQueryApiResponse,
-  AlipayRefundApiResponse,
-  AlipayCloseApiResponse,
-  AlipayRequestParams,
-} from "../types/alipay.types";
-import { PaymentRawCallbackData } from "../types/common.types";
 
 @Injectable()
 export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
@@ -65,6 +66,14 @@ export class AlipayProvider implements PaymentProviderInterface, OnModuleInit {
    * 创建支付订单
    */
   async createPayment(options: CreatePaymentOptions): Promise<PaymentResult> {
+    // 配置完整性检查：appId 和 privateKey 是支付宝支付的必要参数
+    if (!this.appId || !this.privateKey) {
+      throw new ServiceUnavailableException(
+        "Alipay payment is not available: appId or privateKey is not configured. " +
+        "Please set ALIPAY_APP_ID and ALIPAY_PRIVATE_KEY environment variables.",
+      );
+    }
+
     try {
       const {
         orderId,

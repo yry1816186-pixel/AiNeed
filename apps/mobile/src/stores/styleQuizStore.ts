@@ -72,14 +72,12 @@ export const useStyleQuizStore = createWithEqualityFn<StyleQuizState>()(
         set({ isLoading: true, error: null });
         try {
           const { progress } = get();
-          const answers = Object.entries(progress.answers).map(
-            ([questionId, optionId]) => ({ questionId, optionId }),
-          );
+          const answers = Object.entries(progress.answers).map(([questionId, optionId]) => ({
+            questionId,
+            optionId,
+          }));
 
-          const response: ApiResponse<QuizResult> = await styleQuizApi.batchSubmit(
-            quizId,
-            answers,
-          );
+          const response: ApiResponse<QuizResult> = await styleQuizApi.batchSubmit(quizId, answers);
           if (response.success && response.data) {
             set({ result: response.data, isLoading: false });
           } else {
@@ -95,8 +93,7 @@ export const useStyleQuizStore = createWithEqualityFn<StyleQuizState>()(
 
       loadProgress: async (quizId: string) => {
         try {
-          const response: ApiResponse<QuizProgress | null> =
-            await styleQuizApi.getProgress(quizId);
+          const response: ApiResponse<QuizProgress | null> = await styleQuizApi.getProgress(quizId);
           if (response.success && response.data) {
             set({
               progress: {
@@ -125,18 +122,13 @@ export const useStyleQuizStore = createWithEqualityFn<StyleQuizState>()(
       partialize: (state) => ({
         progress: state.progress,
       }),
-    },
+    }
   ),
-  shallow,
+  shallow
 );
 
-export const useStyleQuizCurrentQuiz = () =>
-  useStyleQuizStore((s) => s.currentQuiz);
-export const useStyleQuizProgress = () =>
-  useStyleQuizStore((s) => s.progress);
-export const useStyleQuizResult = () =>
-  useStyleQuizStore((s) => s.result);
-export const useStyleQuizLoading = () =>
-  useStyleQuizStore((s) => s.isLoading);
-export const useStyleQuizError = () =>
-  useStyleQuizStore((s) => s.error);
+export const useStyleQuizCurrentQuiz = () => useStyleQuizStore((s) => s.currentQuiz);
+export const useStyleQuizProgress = () => useStyleQuizStore((s) => s.progress);
+export const useStyleQuizResult = () => useStyleQuizStore((s) => s.result);
+export const useStyleQuizLoading = () => useStyleQuizStore((s) => s.isLoading);
+export const useStyleQuizError = () => useStyleQuizStore((s) => s.error);

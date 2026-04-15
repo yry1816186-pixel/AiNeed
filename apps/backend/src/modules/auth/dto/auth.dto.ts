@@ -20,7 +20,7 @@ import {
 const GenderValues = ["male", "female", "other"] as const;
 type Gender = (typeof GenderValues)[number];
 
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,32}$/;
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]{8,32}$/;
 const PASSWORD_ERROR_MSG = "密码必须为8-32位，包含大小写字母和数字";
 
 /**
@@ -34,7 +34,7 @@ class IsPasswordMatchConstraint implements ValidatorConstraintInterface {
     return password === confirmPassword;
   }
 
-  defaultMessage(args: ValidationArguments) {
+  defaultMessage(_args: ValidationArguments) {
     return "两次输入的密码不一致";
   }
 }
@@ -45,7 +45,7 @@ class IsPasswordMatchConstraint implements ValidatorConstraintInterface {
 @ValidatorConstraint({ name: "isValidBirthDate", async: false })
 class IsValidBirthDateConstraint implements ValidatorConstraintInterface {
   validate(value: string) {
-    if (!value) return true; // 可选字段
+    if (!value) {return true;} // 可选字段
     const date = new Date(value);
     const now = new Date();
     const minAge = new Date(now.getFullYear() - 120, now.getMonth(), now.getDate());

@@ -20,8 +20,7 @@ export const useAiStylistChatStore = create<AiStylistChatState>()(
   persist(
     (set) => ({
       messages: [],
-      addMessage: (message) =>
-        set((state) => ({ messages: [...state.messages, message] })),
+      addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })),
       setMessages: (messages) => set({ messages }),
       clearMessages: () => set({ messages: [] }),
     }),
@@ -31,6 +30,6 @@ export const useAiStylistChatStore = create<AiStylistChatState>()(
       partialize: (state) => ({
         messages: state.messages,
       }),
-    },
-  ),
+    }
+  )
 );

@@ -11,10 +11,10 @@ import { ConfigService } from "@nestjs/config";
 import { Cron } from "@nestjs/schedule";
 import { AnalysisStatus, PhotoType } from "@prisma/client";
 
+import { PrismaService } from "../../common/prisma/prisma.service";
 import { stripExifFromBuffer } from "../../common/security/image-sanitizer";
 import { MalwareScannerService } from "../../common/security/malware-scanner.service";
 import { validateImageFile as sharedValidateImageFile } from "../../common/security/upload-validator";
-import { PrismaService } from "../../common/prisma/prisma.service";
 import { StorageService } from "../../common/storage/storage.service";
 import { OnboardingService } from "../onboarding/onboarding.service";
 import { QueueService } from "../queue/queue.service";
@@ -274,9 +274,9 @@ export class PhotosService {
             clearTimeout(timeoutId);
             resolve(result as unknown as Record<string, unknown>);
           })
-          .catch((error) => {
+          .catch((error: unknown) => {
             clearTimeout(timeoutId);
-            reject(error);
+            reject(error instanceof Error ? error : new Error(String(error)));
           });
       });
     };
@@ -434,7 +434,7 @@ export class PhotosService {
       take: 20,
     });
 
-    if (stuckPhotos.length === 0) return;
+    if (stuckPhotos.length === 0) {return;}
 
     this.logger.warn(`Found ${stuckPhotos.length} photos stuck in processing, resetting to pending`);
 

@@ -2,9 +2,9 @@ import type { PODProvider, PODOrderResult, PODOrderStatus, PODProduct } from "./
 
 export class MockPODProvider implements PODProvider {
   async submitOrder(
-    designData: Record<string, unknown>,
-    template: { type: string; name: string },
-    shippingAddress: Record<string, string>,
+    _designData: Record<string, unknown>,
+    _template: { type: string; name: string },
+    _shippingAddress: Record<string, string>,
   ): Promise<PODOrderResult> {
     const providerOrderId = `pod-mock-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const estimatedDelivery = new Date(

@@ -13,10 +13,7 @@ const SORT_OPTIONS = [
   { key: "sales", label: "销量" },
 ];
 
-export const SortBar: React.FC<SortBarProps> = ({
-  activeSort,
-  onSortChange,
-}) => {
+export const SortBar: React.FC<SortBarProps> = ({ activeSort, onSortChange }) => {
   return (
     <View style={styles.container}>
       {SORT_OPTIONS.map((opt) => (
@@ -25,12 +22,7 @@ export const SortBar: React.FC<SortBarProps> = ({
           style={styles.sortItem}
           onPress={() => onSortChange(opt.key)}
         >
-          <Text
-            style={[
-              styles.sortText,
-              activeSort === opt.key && styles.sortTextActive,
-            ]}
-          >
+          <Text style={[styles.sortText, activeSort === opt.key && styles.sortTextActive]}>
             {opt.label}
           </Text>
         </TouchableOpacity>

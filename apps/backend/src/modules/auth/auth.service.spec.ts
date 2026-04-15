@@ -7,16 +7,16 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
 
+import { StructuredLoggerService } from "../../common/logging/structured-logger.service";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { RedisService } from "../../common/redis/redis.service";
 import * as bcrypt from "../../common/security/bcrypt";
 
+import { AuthHelpersService } from "./auth.helpers";
 import { AuthService } from "./auth.service";
 import { ISmsService, SmsService } from "./services/sms.service";
-import { WechatService } from "./services/wechat.service";
-import { AuthHelpersService } from "./auth.helpers";
-import { StructuredLoggerService } from "../../common/logging/structured-logger.service";
 import { TokenBlacklistService } from "./services/token-blacklist.service";
+import { WechatService } from "./services/wechat.service";
 
 // Mock bcrypt
 jest.mock("../../common/security/bcrypt", () => ({
@@ -787,8 +787,8 @@ describe("AuthService", () => {
   describe("verifySmsCode", () => {
     it("验证码正确时应返回 true", async () => {
       mockRedisService.get.mockImplementation((key: string) => {
-        if (key.startsWith("sms:attempts:")) return Promise.resolve("0");
-        if (key.startsWith("sms:code:")) return Promise.resolve("123456");
+        if (key.startsWith("sms:attempts:")) {return Promise.resolve("0");}
+        if (key.startsWith("sms:code:")) {return Promise.resolve("123456");}
         return Promise.resolve(null);
       });
       mockRedisService.del.mockResolvedValue(1);
@@ -801,8 +801,8 @@ describe("AuthService", () => {
 
     it("验证码错误时应返回 false", async () => {
       mockRedisService.get.mockImplementation((key: string) => {
-        if (key.startsWith("sms:attempts:")) return Promise.resolve("0");
-        if (key.startsWith("sms:code:")) return Promise.resolve("654321");
+        if (key.startsWith("sms:attempts:")) {return Promise.resolve("0");}
+        if (key.startsWith("sms:code:")) {return Promise.resolve("654321");}
         return Promise.resolve(null);
       });
 
@@ -813,7 +813,7 @@ describe("AuthService", () => {
 
     it("验证码不存在时应返回 false", async () => {
       mockRedisService.get.mockImplementation((key: string) => {
-        if (key.startsWith("sms:attempts:")) return Promise.resolve("0");
+        if (key.startsWith("sms:attempts:")) {return Promise.resolve("0");}
         return Promise.resolve(null);
       });
 
@@ -826,8 +826,8 @@ describe("AuthService", () => {
   describe("loginWithPhone", () => {
     it("已注册用户应该成功登录", async () => {
       mockRedisService.get.mockImplementation((key: string) => {
-        if (key.startsWith("sms:attempts:")) return Promise.resolve("0");
-        if (key.startsWith("sms:code:")) return Promise.resolve("123456");
+        if (key.startsWith("sms:attempts:")) {return Promise.resolve("0");}
+        if (key.startsWith("sms:code:")) {return Promise.resolve("123456");}
         return Promise.resolve(null);
       });
       mockRedisService.del.mockResolvedValue(1);
@@ -844,8 +844,8 @@ describe("AuthService", () => {
     it("未注册用户应该自动注册并登录", async () => {
       const newUser = { ...mockUser, phone: "13800138000" };
       mockRedisService.get.mockImplementation((key: string) => {
-        if (key.startsWith("sms:attempts:")) return Promise.resolve("0");
-        if (key.startsWith("sms:code:")) return Promise.resolve("123456");
+        if (key.startsWith("sms:attempts:")) {return Promise.resolve("0");}
+        if (key.startsWith("sms:code:")) {return Promise.resolve("123456");}
         return Promise.resolve(null);
       });
       mockRedisService.del.mockResolvedValue(1);

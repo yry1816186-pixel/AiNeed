@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -17,7 +17,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { orderApi, orderEnhancementApi } from "../services/api/commerce.api";
 import type { Order, OrderStatus } from "../types";
 import type { RootStackParamList } from "../types/navigation";
-import { theme } from "../theme";
+import { theme } from '../design-system/theme';
 
 type OrdersNavigation = NativeStackNavigationProp<RootStackParamList>;
 type TabKey = "all" | "pending" | "paid" | "shipped" | "delivered" | "refund";
@@ -70,7 +70,7 @@ export const OrdersScreen: React.FC = () => {
 
   const activeStatus = useMemo(
     () => TABS.find((tab) => tab.key === activeTab)?.status,
-    [activeTab],
+    [activeTab]
   );
 
   const loadOrders = useCallback(
@@ -97,11 +97,7 @@ export const OrdersScreen: React.FC = () => {
         const payload = response.data;
 
         if (response.success && payload) {
-          setOrders((prev) =>
-            mode === "append"
-              ? [...prev, ...payload.items]
-              : payload.items,
-          );
+          setOrders((prev) => (mode === "append" ? [...prev, ...payload.items] : payload.items));
           setHasMore(payload.hasMore ?? false);
           setPage(pageNumber);
         } else if (mode !== "append") {
@@ -119,7 +115,7 @@ export const OrdersScreen: React.FC = () => {
         setLoadingMore(false);
       }
     },
-    [activeStatus],
+    [activeStatus]
   );
 
   useEffect(() => {
@@ -133,7 +129,7 @@ export const OrdersScreen: React.FC = () => {
         await loadOrders(1, "refresh");
       }
     },
-    [loadOrders],
+    [loadOrders]
   );
 
   const renderOrderCard = useCallback(
@@ -150,15 +146,8 @@ export const OrdersScreen: React.FC = () => {
               <Text style={styles.orderIdLabel}>订单号</Text>
               <Text style={styles.orderIdValue}>{item.id.slice(0, 12).toUpperCase()}</Text>
             </View>
-            <View
-              style={[
-                styles.statusBadge,
-                { backgroundColor: `${status.color}16` },
-              ]}
-            >
-              <Text style={[styles.statusText, { color: status.color }]}>
-                {status.label}
-              </Text>
+            <View style={[styles.statusBadge, { backgroundColor: `${status.color}16` }]}>
+              <Text style={[styles.statusText, { color: status.color }]}>{status.label}</Text>
             </View>
           </View>
 
@@ -172,13 +161,9 @@ export const OrdersScreen: React.FC = () => {
                 />
               ) : (
                 <View key={orderItem.id} style={styles.itemThumbnailFallback}>
-                  <Ionicons
-                    name="shirt-outline"
-                    size={18}
-                    color={theme.colors.textTertiary}
-                  />
+                  <Ionicons name="shirt-outline" size={18} color={theme.colors.textTertiary} />
                 </View>
-              ),
+              )
             )}
             {item.items.length > 4 ? (
               <View style={styles.moreItemsBadge}>
@@ -190,9 +175,7 @@ export const OrdersScreen: React.FC = () => {
           <View style={styles.orderFooter}>
             <Text style={styles.orderDate}>{formatDate(item.createdAt)}</Text>
             <View style={styles.orderSummary}>
-              <Text style={styles.orderSummaryText}>
-                {item.items.length} 件 · 合计
-              </Text>
+              <Text style={styles.orderSummaryText}>{item.items.length} 件 · 合计</Text>
               <Text style={styles.orderTotal}>
                 {"\u00A5"}
                 {item.totalAmount.toFixed(2)}
@@ -263,7 +246,7 @@ export const OrdersScreen: React.FC = () => {
               </TouchableOpacity>
             ) : null}
 
-            {(item.status === "delivered" || item.status === "cancelled") ? (
+            {item.status === "delivered" || item.status === "cancelled" ? (
               <TouchableOpacity
                 style={styles.dangerTextButton}
                 onPress={async () => {
@@ -295,7 +278,7 @@ export const OrdersScreen: React.FC = () => {
         </View>
       );
     },
-    [handleCancelOrder, navigation],
+    [handleCancelOrder, navigation]
   );
 
   return (
@@ -320,12 +303,7 @@ export const OrdersScreen: React.FC = () => {
             onPress={() => setActiveTab(tab.key)}
             accessibilityLabel={`${tab.label}订单`}
           >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === tab.key && styles.tabTextActive,
-              ]}
-            >
+            <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>
               {tab.label}
             </Text>
           </TouchableOpacity>
@@ -342,11 +320,7 @@ export const OrdersScreen: React.FC = () => {
           renderItem={null}
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Ionicons
-                name="bag-handle-outline"
-                size={64}
-                color={theme.colors.textTertiary}
-              />
+              <Ionicons name="bag-handle-outline" size={64} color={theme.colors.textTertiary} />
               <Text style={styles.emptyTitle}>还没有订单</Text>
               <Text style={styles.emptySubtitle}>先去看看推荐的穿搭和单品吧。</Text>
             </View>

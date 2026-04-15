@@ -1,9 +1,6 @@
 import { create } from "zustand";
 
-import {
-  sizeRecommendationApi,
-  type SizeRecommendation,
-} from "../services/api/commerce.api";
+import { sizeRecommendationApi, type SizeRecommendation } from "../services/api/commerce.api";
 
 interface SizeRecommendationStore {
   recommendations: Record<string, SizeRecommendation | null>;
@@ -14,40 +11,38 @@ interface SizeRecommendationStore {
   clearAll: () => void;
 }
 
-export const useSizeRecommendationStore = create<SizeRecommendationStore>(
-  (set, get) => ({
-    recommendations: {},
-    isLoading: {},
+export const useSizeRecommendationStore = create<SizeRecommendationStore>((set, get) => ({
+  recommendations: {},
+  isLoading: {},
 
-    fetchRecommendation: async (itemId: string) => {
-      set((state) => ({
-        isLoading: { ...state.isLoading, [itemId]: true },
-      }));
-      try {
-        const response = await sizeRecommendationApi.getSizeRecommendation(itemId);
-        if (response.success) {
-          set((state) => ({
-            recommendations: {
-              ...state.recommendations,
-              [itemId]: response.data ?? null,
-            },
-          }));
-        }
-      } catch (error) {
-        console.error("Failed to fetch size recommendation:", error);
-      } finally {
+  fetchRecommendation: async (itemId: string) => {
+    set((state) => ({
+      isLoading: { ...state.isLoading, [itemId]: true },
+    }));
+    try {
+      const response = await sizeRecommendationApi.getSizeRecommendation(itemId);
+      if (response.success) {
         set((state) => ({
-          isLoading: { ...state.isLoading, [itemId]: false },
+          recommendations: {
+            ...state.recommendations,
+            [itemId]: response.data ?? null,
+          },
         }));
       }
-    },
+    } catch (error) {
+      console.error("Failed to fetch size recommendation:", error);
+    } finally {
+      set((state) => ({
+        isLoading: { ...state.isLoading, [itemId]: false },
+      }));
+    }
+  },
 
-    getRecommendation: (itemId: string) => {
-      return get().recommendations[itemId];
-    },
+  getRecommendation: (itemId: string) => {
+    return get().recommendations[itemId];
+  },
 
-    clearAll: () => {
-      set({ recommendations: {}, isLoading: {} });
-    },
-  }),
-);
+  clearAll: () => {
+    set({ recommendations: {}, isLoading: {} });
+  },
+}));

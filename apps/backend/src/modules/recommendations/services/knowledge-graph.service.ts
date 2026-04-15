@@ -1,6 +1,7 @@
 import { Injectable, Logger, Optional } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+
 import { Neo4jService } from "./neo4j.service";
 
 interface KnowledgeNode {
@@ -277,12 +278,12 @@ export class KnowledgeGraphService {
         for (let j = i + 1; j < items.length; j++) {
           const firstItem = items[i];
           const secondItem = items[j];
-          if (!firstItem || !secondItem) continue;
+          if (!firstItem || !secondItem) {continue;}
           const key1 = firstItem < secondItem ? firstItem : secondItem;
           const key2 = firstItem < secondItem ? secondItem : firstItem;
-          if (!cooccurrence.has(key1)) cooccurrence.set(key1, new Map());
+          if (!cooccurrence.has(key1)) {cooccurrence.set(key1, new Map());}
           const currentRow = cooccurrence.get(key1);
-          if (!currentRow) continue;
+          if (!currentRow) {continue;}
           currentRow.set(key2, (currentRow.get(key2) ?? 0) + 1);
         }
       }
@@ -296,7 +297,7 @@ export class KnowledgeGraphService {
 
     cooccurrence.forEach((innerMap, item1) => {
       innerMap.forEach((count, item2) => {
-        if (count >= 2) results.push({ item1, item2, score: count / maxCooccur });
+        if (count >= 2) {results.push({ item1, item2, score: count / maxCooccur });}
       });
     });
     return results.slice(0, 500);
@@ -428,9 +429,9 @@ export class KnowledgeGraphService {
     results: RecommendationPath[],
     maxDepth: number,
   ): void {
-    if (nodePath.length > maxDepth) return;
+    if (nodePath.length > maxDepth) {return;}
     const currentNode = this.graph.nodes.get(current);
-    if (!currentNode) return;
+    if (!currentNode) {return;}
     visited.add(current);
     nodePath.push(currentNode);
 
@@ -458,7 +459,7 @@ export class KnowledgeGraphService {
   }
 
   private calculatePathScore(edges: KnowledgeEdge[]): number {
-    if (edges.length === 0) return 0;
+    if (edges.length === 0) {return 0;}
     const avgWeight = edges.reduce((sum, e) => sum + e.weight, 0) / edges.length;
     return avgWeight * Math.pow(0.9, edges.length - 1);
   }
@@ -475,7 +476,7 @@ export class KnowledgeGraphService {
       .forEach((edge) => {
         const relatedId = edge.source === nodePrefix ? edge.target : edge.source;
         const node = this.graph.nodes.get(relatedId);
-        if (node?.type === "item") related.push(node);
+        if (node?.type === "item") {related.push(node);}
       });
     return related;
   }
@@ -485,7 +486,7 @@ export class KnowledgeGraphService {
   ): Array<{ item: KnowledgeNode; score: number }> {
     const nodePrefix = `item_${itemId}`;
     const itemNode = this.graph.nodes.get(nodePrefix);
-    if (!itemNode) return [];
+    if (!itemNode) {return [];}
 
     const itemStyles = this.graph.edges
       .filter((e) => e.source === nodePrefix && e.relation === "has_style")
@@ -513,7 +514,7 @@ export class KnowledgeGraphService {
     const results: Array<{ item: KnowledgeNode; score: number }> = [];
     compatibleItems.forEach((score, id) => {
       const node = this.graph.nodes.get(id);
-      if (node && id !== nodePrefix) results.push({ item: node, score: Math.min(score, 1) });
+      if (node && id !== nodePrefix) {results.push({ item: node, score: Math.min(score, 1) });}
     });
     return results.sort((a, b) => b.score - a.score).slice(0, 20);
   }
@@ -525,7 +526,7 @@ export class KnowledgeGraphService {
       .filter((e) => e.target === occasionNode && e.relation === "suitable_for")
       .forEach((e) => {
         const node = this.graph.nodes.get(e.source);
-        if (node?.type === "item") items.push(node);
+        if (node?.type === "item") {items.push(node);}
       });
     return items;
   }

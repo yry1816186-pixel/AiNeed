@@ -1,17 +1,8 @@
-import axios, {
-  AxiosError,
-  AxiosInstance,
-  InternalAxiosRequestConfig,
-} from "axios";
+import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { mobileRuntimeConfig, requireMobileUrl } from "../../config/runtime";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../../utils/secureStorage";
-import {
-  ApiError,
-  ApiResponse,
-  PaginatedResponse,
-  PaginationParams,
-} from "../../types";
+import { ApiError, ApiResponse, PaginatedResponse, PaginationParams } from "../../types";
 import { AuthTokens } from "../../types/user";
 import { AppError, AppErrorCode, classifyAxiosError } from "./error";
 
@@ -41,7 +32,9 @@ class LRUCache<T> {
 
   get(key: string): T | null {
     const entry = this.cache.get(key);
-    if (!entry) return null;
+    if (!entry) {
+      return null;
+    }
 
     if (Date.now() - entry.timestamp > CACHE_TTL) {
       this.delete(key);
@@ -93,7 +86,9 @@ class LRUCache<T> {
   }
 
   private evictLRU(): void {
-    if (this.order.length === 0) return;
+    if (this.order.length === 0) {
+      return;
+    }
     const lruKey = this.order.pop();
     if (lruKey) {
       this.cache.delete(lruKey);
@@ -131,7 +126,7 @@ class ApiClient {
     });
 
     this.setupInterceptors();
-    this.loadToken();
+    void this.loadToken();
   }
 
   private setupInterceptors() {
@@ -141,27 +136,21 @@ class ApiClient {
           config.headers.Authorization = `Bearer ${this.token}`;
         }
         if (__DEV__) {
-          console.log(
-            `[API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`,
-          );
+          console.log(`[API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
         }
         return config;
       },
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(error)
     );
 
     this.client.interceptors.response.use(
       (response) => {
         const requestId = response.headers["x-request-id"];
         if (requestId && typeof requestId === "string") {
-          (
-            response as unknown as Record<string, unknown>
-          ).__requestId = requestId;
+          (response as unknown as Record<string, unknown>).__requestId = requestId;
         }
         if (__DEV__) {
-          console.log(
-            `[API] ${response.status} ${response.config.url}`,
-          );
+          console.log(`[API] ${response.status} ${response.config.url}`);
         }
         return response;
       },
@@ -174,14 +163,9 @@ class ApiClient {
           return Promise.reject(error);
         }
 
-        if (
-          originalRequest?.url === "/auth/refresh" ||
-          originalRequest?._retry
-        ) {
+        if (originalRequest?.url === "/auth/refresh" || originalRequest?._retry) {
           await this.clearAuth();
-          return Promise.reject(
-            classifyAxiosError(error),
-          );
+          return Promise.reject(classifyAxiosError(error));
         }
 
         if (this.isRefreshing) {
@@ -220,10 +204,10 @@ class ApiClient {
           return Promise.reject(
             new AppError(AppErrorCode.TOKEN_REFRESH_FAILED, undefined, {
               originalError: refreshError,
-            }),
+            })
           );
         }
-      },
+      }
     );
   }
 
@@ -319,7 +303,7 @@ class ApiClient {
   private async retryWithBackoff<T>(
     fn: () => Promise<ApiResponse<T>>,
     maxRetries: number = MAX_RETRY_ATTEMPTS,
-    delay: number = RETRY_BASE_DELAY,
+    delay: number = RETRY_BASE_DELAY
   ): Promise<ApiResponse<T>> {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
@@ -328,9 +312,7 @@ class ApiClient {
         if (attempt === maxRetries - 1) {
           throw error;
         }
-        await new Promise((resolve) =>
-          setTimeout(resolve, delay * Math.pow(2, attempt)),
-        );
+        await new Promise((resolve) => setTimeout(resolve, delay * Math.pow(2, attempt)));
       }
     }
     return {
@@ -341,7 +323,7 @@ class ApiClient {
 
   private deduplicate<T>(
     key: string,
-    fetcher: () => Promise<ApiResponse<T>>,
+    fetcher: () => Promise<ApiResponse<T>>
   ): Promise<ApiResponse<T>> {
     const existing = this.inFlightRequests.get(key);
     if (existing) {
@@ -359,7 +341,7 @@ class ApiClient {
   async get<T>(
     url: string,
     params?: Record<string, unknown>,
-    options?: { useCache?: boolean; retry?: number; deduplicate?: boolean },
+    options?: { useCache?: boolean; retry?: number; deduplicate?: boolean }
   ): Promise<ApiResponse<T>> {
     const cacheKey = this.getCacheKey(url, params);
 
@@ -445,7 +427,7 @@ class ApiClient {
 
   async getPaginated<T>(
     url: string,
-    params?: PaginationParams & Record<string, unknown>,
+    params?: PaginationParams & Record<string, unknown>
   ): Promise<ApiResponse<PaginatedResponse<T>>> {
     return this.get<PaginatedResponse<T>>(url, params);
   }
@@ -453,7 +435,7 @@ class ApiClient {
   async getWithRetry<T>(
     url: string,
     params?: Record<string, unknown>,
-    maxRetries: number = MAX_RETRY_ATTEMPTS,
+    maxRetries: number = MAX_RETRY_ATTEMPTS
   ): Promise<ApiResponse<T>> {
     return this.retryWithBackoff(() => this.get<T>(url, params), maxRetries);
   }
@@ -461,8 +443,7 @@ class ApiClient {
   private handleError<T>(error: AxiosError<ApiError>): ApiResponse<T> {
     const apiError: ApiError = {
       code: error.response?.data?.code || "UNKNOWN_ERROR",
-      message:
-        error.response?.data?.message || error.message || "An error occurred",
+      message: error.response?.data?.message || error.message || "An error occurred",
       details: error.response?.data?.details,
     };
     return { success: false, error: apiError };

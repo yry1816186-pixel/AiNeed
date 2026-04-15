@@ -22,16 +22,16 @@ import { RecommendationOrchestrator } from "./orchestrator";
 import { RecommendationsController } from "./recommendations.controller";
 import { RecommendationsService } from "./recommendations.service";
 import { AdvancedRecommendationService } from "./services/advanced-recommendation.service";
-import { RecommendationExplainerService } from "./services/recommendation-explainer.service";
-import { UnifiedRecommendationEngine } from "./services/unified-recommendation.engine";
-import { OutfitCompletionService } from "./services/outfit-completion.service";
 import { BehaviorTrackingService } from "./services/behavior-tracking.service";
-import { ProfileEventSubscriberService } from "./services/profile-event-subscriber.service";
 import { Neo4jService } from "./services/neo4j.service";
+import { OutfitCompletionService } from "./services/outfit-completion.service";
+import { ProfileEventSubscriberService } from "./services/profile-event-subscriber.service";
 import { QdrantService } from "./services/qdrant.service";
 import { RecommendationCacheService } from "./services/recommendation-cache.service";
-import { SASRecClientService } from "./services/sasrec-client.service";
+import { RecommendationExplainerService } from "./services/recommendation-explainer.service";
 import { RecommendationFeedService } from "./services/recommendation-feed.service";
+import { SASRecClientService } from "./services/sasrec-client.service";
+import { UnifiedRecommendationEngine } from "./services/unified-recommendation.engine";
 import {
   CollaborativeSubmodule,
   ContentSubmodule,

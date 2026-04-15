@@ -7,12 +7,7 @@ import React, {
   ReactNode,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  Outfit,
-  OutfitInput,
-  OutfitItem,
-  OutfitCanvasState,
-} from "../types/outfit";
+import { Outfit, OutfitInput, OutfitItem, OutfitCanvasState } from "../types/outfit";
 import { ClothingItem } from "../types/clothing";
 import { outfitApi } from "../services/api/outfit.api";
 
@@ -68,9 +63,7 @@ function outfitReducer(state: OutfitState, action: OutfitAction): OutfitState {
       return {
         ...state,
         outfits: state.outfits.map((outfit) =>
-          outfit.id === action.payload.id
-            ? { ...outfit, ...action.payload.data }
-            : outfit,
+          outfit.id === action.payload.id ? { ...outfit, ...action.payload.data } : outfit
         ),
       };
     case "DELETE_OUTFIT":
@@ -108,7 +101,7 @@ interface OutfitContextValue extends OutfitState {
   removeItemFromCanvas: (clothingId: string) => void;
   updateItemPosition: (
     clothingId: string,
-    position: { x: number; y: number; rotation?: number },
+    position: { x: number; y: number; rotation?: number }
   ) => void;
   selectCanvasItem: (itemId: string | null) => void;
   setCanvasZoom: (zoom: number) => void;
@@ -126,7 +119,7 @@ export function OutfitProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(outfitReducer, initialState);
 
   useEffect(() => {
-    loadFromStorage();
+    void loadFromStorage();
   }, []);
 
   const loadFromStorage = async () => {
@@ -190,7 +183,7 @@ export function OutfitProvider({ children }: { children: ReactNode }) {
         return null;
       }
     },
-    [state.outfits],
+    [state.outfits]
   );
 
   const updateOutfit = useCallback(
@@ -200,11 +193,11 @@ export function OutfitProvider({ children }: { children: ReactNode }) {
         payload: { id, data: { ...data, updatedAt: new Date().toISOString() } },
       });
       const updatedOutfits = state.outfits.map((outfit) =>
-        outfit.id === id ? { ...outfit, ...data } : outfit,
+        outfit.id === id ? { ...outfit, ...data } : outfit
       );
       await saveToStorage(updatedOutfits);
     },
-    [state.outfits],
+    [state.outfits]
   );
 
   const deleteOutfit = useCallback(
@@ -213,7 +206,7 @@ export function OutfitProvider({ children }: { children: ReactNode }) {
       const updatedOutfits = state.outfits.filter((outfit) => outfit.id !== id);
       await saveToStorage(updatedOutfits);
     },
-    [state.outfits],
+    [state.outfits]
   );
 
   const setCurrentOutfit = useCallback((outfit: Outfit | null) => {
@@ -250,7 +243,7 @@ export function OutfitProvider({ children }: { children: ReactNode }) {
         },
       });
     },
-    [state.canvasState.items],
+    [state.canvasState.items]
   );
 
   const removeItemFromCanvas = useCallback(
@@ -258,30 +251,25 @@ export function OutfitProvider({ children }: { children: ReactNode }) {
       dispatch({
         type: "SET_CANVAS_STATE",
         payload: {
-          items: state.canvasState.items.filter(
-            (item) => item.clothingId !== clothingId,
-          ),
+          items: state.canvasState.items.filter((item) => item.clothingId !== clothingId),
         },
       });
     },
-    [state.canvasState.items],
+    [state.canvasState.items]
   );
 
   const updateItemPosition = useCallback(
-    (
-      clothingId: string,
-      position: { x: number; y: number; rotation?: number },
-    ) => {
+    (clothingId: string, position: { x: number; y: number; rotation?: number }) => {
       dispatch({
         type: "SET_CANVAS_STATE",
         payload: {
           items: state.canvasState.items.map((item) =>
-            item.clothingId === clothingId ? { ...item, ...position } : item,
+            item.clothingId === clothingId ? { ...item, ...position } : item
           ),
         },
       });
     },
-    [state.canvasState.items],
+    [state.canvasState.items]
   );
 
   const selectCanvasItem = useCallback((itemId: string | null) => {
@@ -297,7 +285,9 @@ export function OutfitProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const saveCurrentOutfit = useCallback(async () => {
-    if (!state.currentOutfit) return;
+    if (!state.currentOutfit) {
+      return;
+    }
 
     dispatch({ type: "SET_SAVING", payload: true });
     try {
@@ -318,19 +308,17 @@ export function OutfitProvider({ children }: { children: ReactNode }) {
         await updateOutfit(id, { isFavorite: !outfit.isFavorite });
       }
     },
-    [state.outfits, updateOutfit],
+    [state.outfits, updateOutfit]
   );
 
   const getOutfitsByOccasion = useCallback(
-    (occasion: string) =>
-      state.outfits.filter((outfit) => outfit.occasions.includes(occasion)),
-    [state.outfits],
+    (occasion: string) => state.outfits.filter((outfit) => outfit.occasions.includes(occasion)),
+    [state.outfits]
   );
 
   const getOutfitsBySeason = useCallback(
-    (season: string) =>
-      state.outfits.filter((outfit) => outfit.seasons.includes(season)),
-    [state.outfits],
+    (season: string) => state.outfits.filter((outfit) => outfit.seasons.includes(season)),
+    [state.outfits]
   );
 
   const clearError = useCallback(() => {
@@ -357,9 +345,7 @@ export function OutfitProvider({ children }: { children: ReactNode }) {
     clearError,
   };
 
-  return (
-    <OutfitContext.Provider value={value}>{children}</OutfitContext.Provider>
-  );
+  return <OutfitContext.Provider value={value}>{children}</OutfitContext.Provider>;
 }
 
 export function useOutfit() {

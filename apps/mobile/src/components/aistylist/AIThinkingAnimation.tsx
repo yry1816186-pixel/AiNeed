@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+﻿import React, { useEffect } from "react";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -10,26 +10,29 @@ import Animated, {
   withSpring,
   Easing,
   cancelAnimation,
-} from 'react-native-reanimated';
-import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
-import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { DesignTokens } from '../../theme/tokens/design-tokens';
-import { theme } from '../../theme';
+  interpolate,
+} from "react-native-reanimated";
+import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
+import { useReducedMotion } from "../../hooks/useReducedMotion";
+import { useGlow } from "../../hooks/useAdvancedAnimations";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { SpringConfigs, Duration } from "../../theme/tokens/animations";
+import { theme } from '../design-system/theme';
 
 const TERRACOTTA = DesignTokens.colors.brand.terracotta; // #C67B5C
-const CAMEL = DesignTokens.colors.brand.camel;           // #B5A08C
-const SAGE = DesignTokens.colors.brand.sage;             // #8B9A7D
-const TERRACOTTA_LIGHT = DesignTokens.colors.brand.terracottaLight; // #D4917A
+const CAMEL = DesignTokens.colors.brand.camel; // #B5A08C
+const SAGE = DesignTokens.colors.brand.sage; // #8B9A7D
+const _TERRACOTTA_LIGHT = DesignTokens.colors.brand.terracottaLight; // #D4917A
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const BUBBLE_WIDTH = SCREEN_WIDTH * 0.6;
 
 // Stage timing constants (ms)
-const STAGE_1_DURATION = 2000;
+const _STAGE_1_DURATION = 2000;
 const STAGE_2_START = 2000;
-const STAGE_2_DURATION = 2000;
+const _STAGE_2_DURATION = 2000;
 const STAGE_3_START = 4000;
-const STAGE_3_DURATION = 2000;
+const _STAGE_3_DURATION = 2000;
 const TOTAL_CYCLE = 6000;
 
 // ============ Reduced Motion: Static text with pulsing gradient bar ============
@@ -41,10 +44,10 @@ function ReducedMotionAnimation() {
     opacity.value = withRepeat(
       withSequence(
         withTiming(1, { duration: 1200, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0.4, { duration: 1200, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.4, { duration: 1200, easing: Easing.inOut(Easing.ease) })
       ),
       -1, // infinite
-      false,
+      false
     );
     return () => cancelAnimation(opacity);
   }, []);
@@ -67,8 +70,8 @@ function ReducedMotionAnimation() {
 
 const r = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
@@ -77,26 +80,26 @@ const r = StyleSheet.create({
     maxWidth: BUBBLE_WIDTH,
   },
   contentRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     flex: 1,
   },
   staticText: {
     fontSize: 13,
     color: TERRACOTTA,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   gradientBar: {
     flex: 1,
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(198, 123, 92, 0.15)',
-    overflow: 'hidden',
+    backgroundColor: "rgba(198, 123, 92, 0.15)",
+    overflow: "hidden",
   },
   gradientFill: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderRadius: 3,
     backgroundColor: TERRACOTTA,
   },
@@ -104,15 +107,24 @@ const r = StyleSheet.create({
 
 // ============ Stage 1: Terracotta Gradient Lines (0-2s) ============
 
-function GradientLines({ stageProgress }: { stageProgress: Animated.SharedValue<number> }) {
+function GradientLines({ stageProgress }: { _stageProgress: Animated.SharedValue<number> }) {
   const line1X = useSharedValue(-BUBBLE_WIDTH);
   const line2X = useSharedValue(-BUBBLE_WIDTH);
   const line3X = useSharedValue(-BUBBLE_WIDTH);
 
   useEffect(() => {
-    line1X.value = withDelay(0, withTiming(BUBBLE_WIDTH, { duration: 1800, easing: Easing.out(Easing.ease) }));
-    line2X.value = withDelay(300, withTiming(BUBBLE_WIDTH, { duration: 1800, easing: Easing.out(Easing.ease) }));
-    line3X.value = withDelay(600, withTiming(BUBBLE_WIDTH, { duration: 1800, easing: Easing.out(Easing.ease) }));
+    line1X.value = withDelay(
+      0,
+      withTiming(BUBBLE_WIDTH, { duration: 1800, easing: Easing.out(Easing.ease) })
+    );
+    line2X.value = withDelay(
+      300,
+      withTiming(BUBBLE_WIDTH, { duration: 1800, easing: Easing.out(Easing.ease) })
+    );
+    line3X.value = withDelay(
+      600,
+      withTiming(BUBBLE_WIDTH, { duration: 1800, easing: Easing.out(Easing.ease) })
+    );
     return () => {
       cancelAnimation(line1X);
       cancelAnimation(line2X);
@@ -167,12 +179,7 @@ function ClothingSilhouette({ visible }: { visible: boolean }) {
           strokeDasharray="4 2"
         />
         {/* Hanger */}
-        <Path
-          d="M26 4 L30 8 L34 4"
-          stroke={CAMEL}
-          strokeWidth="1"
-          fill="none"
-        />
+        <Path d="M26 4 L30 8 L34 4" stroke={CAMEL} strokeWidth="1" fill="none" />
       </Svg>
     </Animated.View>
   );
@@ -186,8 +193,8 @@ function CompleteOutfit({ visible }: { visible: boolean }) {
 
   useEffect(() => {
     if (visible) {
-      opacity.value = withTiming(1, { duration: 1200, easing: Easing.out(Easing.ease) });
-      scale.value = withSpring(1, { damping: 12, stiffness: 120, mass: 0.6 });
+      opacity.value = withTiming(1, { duration: Duration.normal, easing: Easing.out(Easing.ease) });
+      scale.value = withSpring(1, SpringConfigs.bouncy);
     } else {
       opacity.value = 0;
       scale.value = 0.8;
@@ -207,7 +214,14 @@ function CompleteOutfit({ visible }: { visible: boolean }) {
     <Animated.View style={[s.outfitContainer, animStyle]}>
       <Svg width="80" height="60" viewBox="0 0 80 60" fill="none">
         <Defs>
-          <LinearGradient id="outfitGrad" x1="0" y1="0" x2="80" y2="60" gradientUnits="userSpaceOnUse">
+          <LinearGradient
+            id="outfitGrad"
+            x1="0"
+            y1="0"
+            x2="80"
+            y2="60"
+            gradientUnits="userSpaceOnUse"
+          >
             <Stop offset="0" stopColor={TERRACOTTA} />
             <Stop offset="0.5" stopColor={CAMEL} />
             <Stop offset="1" stopColor={SAGE} />
@@ -220,17 +234,9 @@ function CompleteOutfit({ visible }: { visible: boolean }) {
           opacity="0.9"
         />
         {/* Skirt */}
-        <Path
-          d="M20 30 L16 54 L44 54 L40 30 Z"
-          fill={SAGE}
-          opacity="0.7"
-        />
+        <Path d="M20 30 L16 54 L44 54 L40 30 Z" fill={SAGE} opacity="0.7" />
         {/* Belt */}
-        <Path
-          d="M20 30 L40 30 L40 33 L20 33 Z"
-          fill={CAMEL}
-          opacity="0.8"
-        />
+        <Path d="M20 30 L40 30 L40 33 L20 33 Z" fill={CAMEL} opacity="0.8" />
       </Svg>
     </Animated.View>
   );
@@ -241,9 +247,13 @@ function CompleteOutfit({ visible }: { visible: boolean }) {
 function AIThinkingAnimationInner() {
   const { reducedMotion } = useReducedMotion();
   const [stage, setStage] = React.useState<1 | 2 | 3>(1);
+  const gradientProgress = useSharedValue(0);
+  const glowStyle = useGlow(TERRACOTTA);
 
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion) {
+      return;
+    }
 
     const timer2 = setTimeout(() => setStage(2), STAGE_2_START);
     const timer3 = setTimeout(() => setStage(3), STAGE_3_START);
@@ -261,11 +271,11 @@ function AIThinkingAnimationInner() {
   }
 
   return (
-    <View style={s.container}>
-      {stage === 1 && <GradientLines stageProgress={useSharedValue(0)} />}
+    <Animated.View style={[s.container, glowStyle]}>
+      {stage === 1 && <GradientLines stageProgress={gradientProgress} />}
       {stage === 2 && <ClothingSilhouette visible={stage >= 2} />}
       {stage === 3 && <CompleteOutfit visible={stage >= 3} />}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -273,8 +283,8 @@ export const AIThinkingAnimation = React.memo(AIThinkingAnimationInner);
 
 const s = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
@@ -284,35 +294,35 @@ const s = StyleSheet.create({
     minHeight: 44,
   },
   linesContainer: {
-    width: '100%',
+    width: "100%",
     gap: 6,
     paddingVertical: 4,
   },
   lineTrack: {
     height: 4,
     borderRadius: 2,
-    backgroundColor: 'rgba(198, 123, 92, 0.1)',
-    overflow: 'hidden',
+    backgroundColor: "rgba(198, 123, 92, 0.1)",
+    overflow: "hidden",
   },
   gradientLine: {
-    height: '100%',
+    height: "100%",
     borderRadius: 2,
     backgroundColor: TERRACOTTA,
   },
   lineShort: {
-    width: '40%',
+    width: "40%",
   },
   lineMedium: {
-    width: '60%',
+    width: "60%",
   },
   silhouetteContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 4,
   },
   outfitContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 4,
   },
 });

@@ -1,4 +1,4 @@
-import apiClient from './api/client';
+import apiClient from "./api/client";
 
 interface AnalyticsEvent {
   name: string;
@@ -10,22 +10,22 @@ interface BackendAnalyticsEvent {
   sessionId: string;
   anonymousId: string;
   eventType:
-    | 'page_view'
-    | 'item_view'
-    | 'search'
-    | 'filter'
-    | 'click'
-    | 'scroll'
-    | 'try_on_start'
-    | 'try_on_complete'
-    | 'favorite'
-    | 'unfavorite'
-    | 'share'
-    | 'add_to_cart'
-    | 'remove_from_cart'
-    | 'purchase'
-    | 'recommendation_view'
-    | 'recommendation_click';
+    | "page_view"
+    | "item_view"
+    | "search"
+    | "filter"
+    | "click"
+    | "scroll"
+    | "try_on_start"
+    | "try_on_complete"
+    | "favorite"
+    | "unfavorite"
+    | "share"
+    | "add_to_cart"
+    | "remove_from_cart"
+    | "purchase"
+    | "recommendation_view"
+    | "recommendation_click";
   category: string;
   action: string;
   targetType?: string;
@@ -38,40 +38,38 @@ function createSessionId(): string {
   return `mobile-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function normalizeEventType(
-  eventName: string,
-): BackendAnalyticsEvent['eventType'] {
+function normalizeEventType(eventName: string): BackendAnalyticsEvent["eventType"] {
   switch (eventName) {
-    case 'screen_view':
-      return 'page_view';
-    case 'search':
-      return 'search';
-    case 'filter':
-      return 'filter';
-    case 'scroll':
-      return 'scroll';
-    case 'try_on_start':
-      return 'try_on_start';
-    case 'try_on_complete':
-      return 'try_on_complete';
-    case 'favorite':
-      return 'favorite';
-    case 'unfavorite':
-      return 'unfavorite';
-    case 'share':
-      return 'share';
-    case 'add_to_cart':
-      return 'add_to_cart';
-    case 'remove_from_cart':
-      return 'remove_from_cart';
-    case 'purchase':
-      return 'purchase';
-    case 'recommendation_view':
-      return 'recommendation_view';
-    case 'recommendation_click':
-      return 'recommendation_click';
+    case "screen_view":
+      return "page_view";
+    case "search":
+      return "search";
+    case "filter":
+      return "filter";
+    case "scroll":
+      return "scroll";
+    case "try_on_start":
+      return "try_on_start";
+    case "try_on_complete":
+      return "try_on_complete";
+    case "favorite":
+      return "favorite";
+    case "unfavorite":
+      return "unfavorite";
+    case "share":
+      return "share";
+    case "add_to_cart":
+      return "add_to_cart";
+    case "remove_from_cart":
+      return "remove_from_cart";
+    case "purchase":
+      return "purchase";
+    case "recommendation_view":
+      return "recommendation_view";
+    case "recommendation_click":
+      return "recommendation_click";
     default:
-      return 'click';
+      return "click";
   }
 }
 
@@ -88,7 +86,7 @@ class AnalyticsService {
   }
 
   trackScreen(screenName: string, params?: Record<string, unknown>): void {
-    this.track('screen_view', { screen: screenName, ...params });
+    this.track("screen_view", { screen: screenName, ...params });
   }
 
   track(eventName: string, properties?: Record<string, unknown>): void {
@@ -103,7 +101,7 @@ class AnalyticsService {
     });
 
     if (this.queue.length >= 20) {
-      this.flush();
+      void this.flush();
     }
   }
 
@@ -118,8 +116,8 @@ class AnalyticsService {
 
     try {
       const response = await apiClient.post<{ success: boolean; count?: number }>(
-        '/analytics/track/batch',
-        payload,
+        "/analytics/track/batch",
+        payload
       );
 
       if (!response.success) {
@@ -132,27 +130,23 @@ class AnalyticsService {
 
   private toBackendEvent(event: AnalyticsEvent): BackendAnalyticsEvent {
     const screen =
-      typeof event.properties?.screen === 'string'
-        ? event.properties.screen
-        : undefined;
+      typeof event.properties?.screen === "string" ? event.properties.screen : undefined;
     const duration =
-      typeof event.properties?.duration === 'number'
-        ? event.properties.duration
-        : undefined;
+      typeof event.properties?.duration === "number" ? event.properties.duration : undefined;
 
     return {
       sessionId: this.sessionId,
       anonymousId: this.anonymousId,
       eventType: normalizeEventType(event.name),
-      category: screen ? 'navigation' : 'engagement',
+      category: screen ? "navigation" : "engagement",
       action: screen ?? event.name,
-      targetType: screen ? 'screen' : 'event',
+      targetType: screen ? "screen" : "event",
       metadata: {
         ...event.properties,
         eventName: event.name,
         clientTimestamp: event.timestamp ?? Date.now(),
       },
-      source: 'mobile-app',
+      source: "mobile-app",
       duration,
     };
   }
@@ -161,7 +155,7 @@ class AnalyticsService {
     if (this.flushInterval) {
       clearInterval(this.flushInterval);
     }
-    this.flush();
+    void this.flush();
     this.isEnabled = false;
   }
 }

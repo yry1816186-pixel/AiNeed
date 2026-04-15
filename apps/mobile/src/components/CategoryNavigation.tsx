@@ -36,35 +36,26 @@ export const CategoryNavigation: React.FC<CategoryNavigationProps> = ({
             style={[styles.item, isSelected && styles.itemSelected]}
             onPress={() => onSelectCategory(isSelected ? null : cat.key)}
           >
-            <View
-              style={[
-                styles.iconCircle,
-                isSelected && styles.iconCircleSelected,
-              ]}
-            >
+            <View style={[styles.iconCircle, isSelected && styles.iconCircleSelected]}>
               <Text style={styles.iconEmoji}>
                 {cat.key === "tops"
                   ? "T"
                   : cat.key === "bottoms"
-                    ? "P"
-                    : cat.key === "dresses"
-                      ? "D"
-                      : cat.key === "outerwear"
-                        ? "C"
-                        : cat.key === "shoes"
-                          ? "S"
-                          : cat.key === "accessories"
-                            ? "A"
-                            : cat.key === "activewear"
-                              ? "R"
-                              : "W"}
+                  ? "P"
+                  : cat.key === "dresses"
+                  ? "D"
+                  : cat.key === "outerwear"
+                  ? "C"
+                  : cat.key === "shoes"
+                  ? "S"
+                  : cat.key === "accessories"
+                  ? "A"
+                  : cat.key === "activewear"
+                  ? "R"
+                  : "W"}
               </Text>
             </View>
-            <Text
-              style={[styles.label, isSelected && styles.labelSelected]}
-            >
-              {cat.label}
-            </Text>
+            <Text style={[styles.label, isSelected && styles.labelSelected]}>{cat.label}</Text>
           </TouchableOpacity>
         );
       })}

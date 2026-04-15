@@ -1,13 +1,8 @@
-import React, { memo, useCallback } from "react";
+﻿import React, { memo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-  Typography,
-  Shadows,
-} from "../../theme";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../design-system/theme';
 
 interface ClothingCardProps {
   id: string;
@@ -44,20 +39,22 @@ export const ClothingCard = memo(function ClothingCard({
   isFavorite = false,
 }: ClothingCardProps) {
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9} accessibilityLabel={`${name}，${category}`} accessibilityRole="button">
       <View style={styles.imageContainer}>
         <FastImage
           source={{ uri: image, priority: FastImage.priority.normal }}
           style={styles.image}
           resizeMode={FastImage.resizeMode.cover}
+          accessibilityLabel={`${name}图片`}
+          accessibilityRole="image"
         />
         {onFavorite && (
-          <TouchableOpacity
-            style={styles.favoriteButton}
-            onPress={onFavorite}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.favoriteIcon}>{isFavorite ? "❤️" : "🤍"}</Text>
+          <TouchableOpacity style={styles.favoriteButton} onPress={onFavorite} activeOpacity={0.7} accessibilityLabel={isFavorite ? "取消收藏" : "收藏"} accessibilityRole="button">
+            <Ionicons
+              name={isFavorite ? "heart" : "heart-outline"}
+              size={18}
+              color={isFavorite ? Colors.rose[500] : Colors.neutral[400]}
+            />
           </TouchableOpacity>
         )}
         {score !== undefined && (
@@ -83,18 +80,18 @@ export const ClothingCard = memo(function ClothingCard({
             {colors.slice(0, 4).map((color, index) => (
               <View
                 key={index}
-                style={[
-                  styles.colorDot,
-                  { backgroundColor: getColorCode(color) },
-                ]}
+                style={[styles.colorDot, { backgroundColor: getColorCode(color) }]}
               />
             ))}
           </View>
         )}
         {reasons && reasons.length > 0 && (
           <View style={styles.reasonsContainer}>
+            <View style={styles.reasonIconContainer}>
+              <Ionicons name="sparkles" size={12} color={Colors.primary[600]} />
+            </View>
             <Text style={styles.reasonText} numberOfLines={1}>
-              ✨ {reasons[0]}
+              {reasons[0]}
             </Text>
           </View>
         )}
@@ -109,16 +106,16 @@ export const ClothingCard = memo(function ClothingCard({
 const COLOR_MAP: Record<string, string> = {
   black: Colors.neutral[900],
   white: Colors.white,
-  red: "#EF4444",
+  red: "#EF4444", // custom color
   blue: Colors.sky[500],
   green: Colors.emerald[500],
-  yellow: "#EAB308",
+  yellow: "#EAB308", // custom color
   orange: Colors.amber[500],
   purple: Colors.primary[500],
-  pink: "#EC4899",
-  brown: "#92400E",
+  pink: "#EC4899", // custom color
+  brown: "#92400E", // custom color
   gray: Colors.neutral[500],
-  beige: "#FEF3C7",
+  beige: "#FEF3C7", // custom color
   navy: Colors.sky[900],
 };
 
@@ -153,9 +150,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     ...Shadows.sm,
-  },
-  favoriteIcon: {
-    fontSize: 18,
   },
   scoreBadge: {
     position: "absolute",
@@ -220,6 +214,17 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.sm,
     borderTopWidth: 1,
     borderTopColor: Colors.neutral[100],
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  reasonIconContainer: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: Colors.primary[50],
+    alignItems: "center",
+    justifyContent: "center",
   },
   reasonText: {
     ...Typography.caption.sm,

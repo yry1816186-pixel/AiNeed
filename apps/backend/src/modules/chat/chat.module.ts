@@ -6,8 +6,8 @@ import { RedisModule } from "../../common/redis/redis.module";
 import { WSModule } from "../ws/ws.module";
 
 import { ChatController } from "./chat.controller";
-import { ChatService } from "./chat.service";
 import { ChatGateway } from "./chat.gateway";
+import { ChatService } from "./chat.service";
 
 @Module({
   imports: [PrismaModule, RedisModule, WSModule, JwtModule.register({})],

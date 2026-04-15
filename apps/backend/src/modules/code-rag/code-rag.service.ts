@@ -1,8 +1,8 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
+import { firstValueFrom } from 'rxjs';
 
 export interface RetrievalResultItem {
   id: string;
@@ -228,7 +228,7 @@ export class CodeRagService implements OnModuleInit {
   }
 
   async formatContextForLLM(results: RetrievalResultItem[], maxChars: number = 8000): Promise<string> {
-    if (!results.length) return '';
+    if (!results.length) {return '';}
 
     const sections: string[] = [];
     let totalChars = 0;
@@ -238,7 +238,7 @@ export class CodeRagService implements OnModuleInit {
 
     for (let i = 0; i < results.length; i++) {
       const r = results[i];
-      if (!r) continue;
+      if (!r) {continue;}
       const maxChunkChars = Math.floor(maxChars / Math.max(results.length, 1));
       const truncated = (r?.content ?? '').length > maxChunkChars
         ? (r?.content ?? '').slice(0, maxChunkChars) + '\n... (truncated)'
@@ -286,7 +286,7 @@ export class CodeRagService implements OnModuleInit {
         }))
         .sort((a: FileContextChunk, b: FileContextChunk) => a.start_line - b.start_line);
 
-      if (!docs.length) return null;
+      if (!docs.length) {return null;}
 
       return {
         file_path: filePath,
@@ -335,7 +335,7 @@ export class CodeRagService implements OnModuleInit {
       }
 
       const sortedModules = Object.entries(modules)
-        .sort(([, a], [, b]) => (b as number) - (a as number))
+        .sort(([, a], [, b]) => (b) - (a))
         .slice(0, 15);
 
       return {
@@ -346,7 +346,7 @@ export class CodeRagService implements OnModuleInit {
           status: collectionInfo?.status || 'unknown',
         },
         languages: Object.fromEntries(
-          Object.entries(languages).sort(([, a], [, b]) => (b as number) - (a as number)),
+          Object.entries(languages).sort(([, a], [, b]) => (b) - (a)),
         ),
         top_modules: Object.fromEntries(sortedModules),
         chunk_types: chunkTypes,

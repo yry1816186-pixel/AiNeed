@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+﻿import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,9 +11,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
-import { LinearGradient } from "../polyfills/expo-linear-gradient";
+
+import { useScreenTracking } from "../hooks/useAnalytics";
+import { useTranslation } from "../i18n";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
 import {
   subscriptionApi,
   type MembershipPlan,
@@ -90,7 +93,7 @@ const DEFAULT_PLANS: MembershipPlan[] = [
 const TIER_GRADIENT: Record<PlanTier, [string, string]> = {
   basic: [Colors.neutral[100], Colors.neutral[50]],
   premium: [theme.colors.primary, theme.colors.primaryLight],
-  vip: ["#8B5CF6", "#A78BFA"],
+  vip: ["#8B5CF6", "#A78BFA"], // custom color
 };
 
 const TIER_ICON: Record<PlanTier, string> = {
@@ -101,9 +104,10 @@ const TIER_ICON: Record<PlanTier, string> = {
 
 export const SubscriptionScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
+  useScreenTracking("Subscription");
+  const t = useTranslation();
   const [plans, setPlans] = useState<MembershipPlan[]>(DEFAULT_PLANS);
-  const [currentSubscription, setCurrentSubscription] =
-    useState<UserSubscription | null>(null);
+  const [currentSubscription, setCurrentSubscription] = useState<UserSubscription | null>(null);
   const [selectedTier, setSelectedTier] = useState<PlanTier>("premium");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubscribing, setIsSubscribing] = useState(false);
@@ -134,7 +138,7 @@ export const SubscriptionScreen: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    loadData();
+    void loadData();
   }, [loadData]);
 
   const handleRefresh = useCallback(async () => {
@@ -143,53 +147,46 @@ export const SubscriptionScreen: React.FC = () => {
     setIsRefreshing(false);
   }, [loadData]);
 
-  const handleSubscribe = useCallback(
-    async (plan: MembershipPlan) => {
-      if (plan.price === 0) {
-        Alert.alert("提示", "基础版为免费计划，无需订阅");
-        return;
-      }
+  const handleSubscribe = useCallback(async (plan: MembershipPlan) => {
+    if (plan.price === 0) {
+      Alert.alert(t.common.confirm, t.common.error);
+      return;
+    }
 
-      Alert.alert(
-        `确认订阅${plan.name}`,
-        `将以 ${plan.price}${plan.currency === "CNY" ? "元" : plan.currency}/月的价格订阅${plan.name}`,
-        [
-          { text: "取消", style: "cancel" },
-          {
-            text: "确认订阅",
-            style: "default",
-            onPress: async () => {
-              setIsSubscribing(true);
-              try {
-                const response = await subscriptionApi.subscribe({
-                  planId: plan.id,
-                  paymentMethod: "wechat",
-                });
+    Alert.alert(
+      `确认订阅${plan.name}`,
+      `将以 ${plan.price}${plan.currency === "CNY" ? "元" : plan.currency}/月的价格订阅${
+        plan.name
+      }`,
+      [
+        { text: t.common.cancel, style: "cancel" },
+      {
+        text: t.common.confirm,
+          style: "default",
+          onPress: async () => {
+            setIsSubscribing(true);
+            try {
+              const response = await subscriptionApi.subscribe({
+                planId: plan.id,
+                paymentMethod: "wechat",
+              });
 
-                if (response.success) {
-                  Alert.alert(
-                    "订阅成功",
-                    `已成功订阅${plan.name}，享受所有专属权益`,
-                  );
-                  setCurrentSubscription(response.data ?? null);
-                } else {
-                  Alert.alert(
-                    "订阅失败",
-                    response.error?.message || "请稍后重试",
-                  );
-                }
-              } catch {
-                Alert.alert("订阅失败", "网络错误，请检查网络后重试");
-              } finally {
-                setIsSubscribing(false);
+              if (response.success) {
+                Alert.alert(t.common.done, `已成功订阅${plan.name}，享受所有专属权益`);
+                setCurrentSubscription(response.data ?? null);
+              } else {
+                Alert.alert(t.common.error, response.error?.message || t.common.retry);
               }
-            },
+            } catch {
+              Alert.alert(t.common.error, t.errors.networkError);
+            } finally {
+              setIsSubscribing(false);
+            }
           },
-        ],
-      );
-    },
-    [],
-  );
+        },
+      ]
+    );
+  }, []);
 
   const renderHeader = () => (
     <View style={styles.header}>
@@ -206,7 +203,9 @@ export const SubscriptionScreen: React.FC = () => {
   );
 
   const renderCurrentPlan = () => {
-    if (!currentSubscription) return null;
+    if (!currentSubscription) {
+      return null;
+    }
 
     const plan = plans.find((p) => p.id === currentSubscription.planId);
     const isActive = currentSubscription.status === "active";
@@ -214,16 +213,10 @@ export const SubscriptionScreen: React.FC = () => {
     return (
       <View style={styles.currentPlanCard}>
         <View style={styles.currentPlanHeader}>
-          <Ionicons
-            name="checkmark-circle"
-            size={20}
-            color={theme.colors.success}
-          />
+          <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
           <Text style={styles.currentPlanLabel}>当前订阅</Text>
         </View>
-        <Text style={styles.currentPlanName}>
-          {plan?.name || "基础版"}
-        </Text>
+        <Text style={styles.currentPlanName}>{plan?.name || "基础版"}</Text>
         {isActive && currentSubscription.endDate && (
           <Text style={styles.currentPlanExpiry}>
             到期时间：
@@ -237,9 +230,8 @@ export const SubscriptionScreen: React.FC = () => {
   const renderPlanCard = (plan: MembershipPlan) => {
     const isSelected = selectedTier === plan.tier;
     const isCurrent =
-      currentSubscription?.planId === plan.id &&
-      currentSubscription?.status === "active";
-    const gradientColors = TIER_GRADIENT[plan.tier];
+      currentSubscription?.planId === plan.id && currentSubscription?.status === "active";
+    const _gradientColors = TIER_GRADIENT[plan.tier];
     const isPaid = plan.price > 0;
 
     return (
@@ -262,22 +254,13 @@ export const SubscriptionScreen: React.FC = () => {
         <View style={styles.planCardHeader}>
           <View style={styles.planIconContainer}>
             <Ionicons
-              name={TIER_ICON[plan.tier] as any}
+              name={TIER_ICON[plan.tier]}
               size={22}
-              color={
-                isSelected && isPaid
-                  ? theme.colors.surface
-                  : theme.colors.primary
-              }
+              color={isSelected && isPaid ? theme.colors.surface : theme.colors.primary}
             />
           </View>
           <View style={styles.planNameSection}>
-            <Text
-              style={[
-                styles.planName,
-                isSelected && isPaid && styles.planNameSelected,
-              ]}
-            >
+            <Text style={[styles.planName, isSelected && isPaid && styles.planNameSelected]}>
               {plan.name}
             </Text>
             <Text
@@ -294,44 +277,18 @@ export const SubscriptionScreen: React.FC = () => {
         <View style={styles.priceSection}>
           <View style={styles.priceRow}>
             {plan.price === 0 ? (
-              <Text
-                style={[
-                  styles.priceFree,
-                  isSelected && styles.planNameSelected,
-                ]}
-              >
-                免费
-              </Text>
+              <Text style={[styles.priceFree, isSelected && styles.planNameSelected]}>免费</Text>
             ) : (
               <>
-                <Text
-                  style={[
-                    styles.priceSymbol,
-                    isSelected && styles.planNameSelected,
-                  ]}
-                >
-                  ¥
-                </Text>
-                <Text
-                  style={[
-                    styles.priceValue,
-                    isSelected && styles.planNameSelected,
-                  ]}
-                >
+                <Text style={[styles.priceSymbol, isSelected && styles.planNameSelected]}>¥</Text>
+                <Text style={[styles.priceValue, isSelected && styles.planNameSelected]}>
                   {plan.price}
                 </Text>
-                <Text
-                  style={[
-                    styles.priceUnit,
-                    isSelected && styles.planDescriptionSelected,
-                  ]}
-                >
+                <Text style={[styles.priceUnit, isSelected && styles.planDescriptionSelected]}>
                   /月
                 </Text>
                 {plan.originalPrice && (
-                  <Text style={styles.originalPrice}>
-                    ¥{plan.originalPrice}/月
-                  </Text>
+                  <Text style={styles.originalPrice}>¥{plan.originalPrice}/月</Text>
                 )}
               </>
             )}
@@ -350,18 +307,15 @@ export const SubscriptionScreen: React.FC = () => {
                       ? theme.colors.surface
                       : theme.colors.success
                     : isSelected && isPaid
-                      ? "rgba(255,255,255,0.3)"
-                      : Colors.neutral[300]
+                    ? "rgba(255,255,255,0.3)"
+                    : Colors.neutral[300]
                 }
               />
               <Text
                 style={[
                   styles.featureName,
                   !feature.included && styles.featureNameDisabled,
-                  isSelected &&
-                    isPaid &&
-                    feature.included &&
-                    styles.planNameSelected,
+                  isSelected && isPaid && feature.included && styles.planNameSelected,
                 ]}
               >
                 {feature.name}
@@ -372,26 +326,15 @@ export const SubscriptionScreen: React.FC = () => {
 
         {isCurrent ? (
           <View
-            style={[
-              styles.currentButton,
-              isPaid && { backgroundColor: "rgba(255,255,255,0.2)" },
-            ]}
+            style={[styles.currentButton, isPaid && { backgroundColor: "rgba(255,255,255,0.2)" }]}
           >
-            <Text
-              style={[
-                styles.currentButtonText,
-                isPaid && { color: theme.colors.surface },
-              ]}
-            >
+            <Text style={[styles.currentButtonText, isPaid && { color: theme.colors.surface }]}>
               当前计划
             </Text>
           </View>
         ) : (
           <TouchableOpacity
-            style={[
-              styles.subscribeButton,
-              isPaid && { backgroundColor: theme.colors.surface },
-            ]}
+            style={[styles.subscribeButton, isPaid && { backgroundColor: theme.colors.surface }]}
             onPress={() => handleSubscribe(plan)}
             disabled={isSubscribing}
             activeOpacity={0.7}
@@ -402,12 +345,7 @@ export const SubscriptionScreen: React.FC = () => {
                 color={isPaid ? theme.colors.primary : theme.colors.surface}
               />
             ) : (
-              <Text
-                style={[
-                  styles.subscribeButtonText,
-                  isPaid && { color: theme.colors.primary },
-                ]}
-              >
+              <Text style={[styles.subscribeButtonText, isPaid && { color: theme.colors.primary }]}>
                 {plan.price === 0 ? "切换到基础版" : "立即订阅"}
               </Text>
             )}
@@ -423,7 +361,7 @@ export const SubscriptionScreen: React.FC = () => {
         {renderHeader()}
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={styles.loadingText}>加载会员计划...</Text>
+          <Text style={styles.loadingText}>{t.common.loading}</Text>
         </View>
       </SafeAreaView>
     );
@@ -446,14 +384,10 @@ export const SubscriptionScreen: React.FC = () => {
 
         <View style={styles.introSection}>
           <Text style={styles.introTitle}>选择适合你的计划</Text>
-          <Text style={styles.introSubtitle}>
-            解锁更多 AI 造型能力，让穿搭更简单
-          </Text>
+          <Text style={styles.introSubtitle}>解锁更多 AI 造型能力，让穿搭更简单</Text>
         </View>
 
-        <View style={styles.plansContainer}>
-          {plans.map(renderPlanCard)}
-        </View>
+        <View style={styles.plansContainer}>{plans.map(renderPlanCard)}</View>
 
         <View style={styles.bottomSpacer} />
       </ScrollView>

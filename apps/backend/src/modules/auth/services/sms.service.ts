@@ -1,6 +1,7 @@
+import { randomInt, timingSafeEqual } from "crypto";
+
 import { Injectable, Inject, Logger, HttpException, HttpStatus } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { randomInt, timingSafeEqual } from "crypto";
 
 import { RedisService } from "../../../common/redis/redis.service";
 

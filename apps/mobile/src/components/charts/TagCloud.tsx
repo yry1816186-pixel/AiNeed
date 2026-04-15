@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../../theme/tokens/colors';
-import { typography } from '../../theme/tokens/typography';
-import { spacing } from '../../theme/tokens/spacing';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { colors } from "../../theme/tokens/colors";
+
+import { spacing } from "../../theme/tokens/spacing";
 
 export interface TagCloudTag {
   label: string;
@@ -43,18 +43,14 @@ const getTagStyle = (weight: number, active: boolean) => {
     paddingVertical,
     paddingHorizontal,
     backgroundColor: active ? colors.brand.warmPrimary : colors.neutral[100],
-    color: active ? '#FFFFFF' : colors.neutral[600],
+    color: active ? "#FFFFFF" : colors.neutral[600],
     borderColor: active ? colors.brand.warmPrimary : colors.neutral[200],
     borderWidth: 1,
   };
 };
 
-export const TagCloud: React.FC<TagCloudProps> = ({
-  tags,
-  accessibilityLabel,
-}) => {
-  const defaultA11yLabel =
-    accessibilityLabel || `标签云: ${tags.map(t => t.label).join(', ')}`;
+export const TagCloud: React.FC<TagCloudProps> = ({ tags, accessibilityLabel }) => {
+  const defaultA11yLabel = accessibilityLabel || `标签云: ${tags.map((t) => t.label).join(", ")}`;
 
   return (
     <View
@@ -80,7 +76,7 @@ export const TagCloud: React.FC<TagCloudProps> = ({
               },
             ]}
             accessible={true}
-            accessibilityLabel={`${tag.label}${tag.active ? ' 已选中' : ''}`}
+            accessibilityLabel={`${tag.label}${tag.active ? " 已选中" : ""}`}
             role="listitem"
           >
             <Text
@@ -103,16 +99,16 @@ export const TagCloud: React.FC<TagCloudProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: spacing.aliases.sm,
   },
   tag: {
     borderRadius: spacing.borderRadius.full,
-    borderStyle: 'solid',
+    borderStyle: "solid",
   },
   tagText: {
-    fontWeight: '500' as const,
+    fontWeight: "500" as const,
   },
 });
 

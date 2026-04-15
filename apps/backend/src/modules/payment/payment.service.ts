@@ -5,8 +5,8 @@ import {
   Logger,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { Cron } from "@nestjs/schedule";
 import { EventEmitter2 } from "@nestjs/event-emitter";
+import { Cron } from "@nestjs/schedule";
 import { PrismaClient, OrderStatus } from "@prisma/client";
 
 import { StructuredLoggerService, ContextualLogger } from "../../common/logging";
@@ -285,13 +285,39 @@ export class PaymentService {
         return { success: false, message: "Order not found" };
       }
 
-      // 检查订单状态
+      // 检查支付记录状态（确认订单处于 pending 状态）
       if (record.status !== "pending") {
         this.logger.log("订单已处理", { orderId, status: record.status });
         return { success: true, message: "Order already processed" };
       }
 
-      // 金额校验
+      // 金额二次校验：从数据库读取 Order 表实际金额与回调金额比对
+      const order = await this.prisma.order.findUnique({
+        where: { id: record.orderId },
+      });
+      if (order) {
+        const orderFinalAmount = Number(order.finalAmount);
+        if (Math.abs(orderFinalAmount - amount) > 0.01) {
+          this.logger.warn("支付金额与订单金额不匹配", {
+            orderId,
+            orderFinalAmount,
+            callbackAmount: amount,
+            paymentRecordAmount: record.amount.toNumber(),
+          });
+          return { success: false, message: "Amount mismatch with order" };
+        }
+
+        // 商品一致性校验：确认订单状态仍为 pending
+        if (order.status !== OrderStatus.pending) {
+          this.logger.warn("订单状态不允许支付", {
+            orderId,
+            orderStatus: order.status,
+          });
+          return { success: false, message: "Order status invalid for payment" };
+        }
+      }
+
+      // 金额校验（支付记录级别）
       if (Math.abs(record.amount.toNumber() - amount) > 0.01) {
         this.logger.warn("支付金额不匹配", {
           orderId,

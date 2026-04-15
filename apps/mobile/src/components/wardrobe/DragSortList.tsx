@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+﻿import React, { useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -8,9 +8,9 @@ import {
   PanResponder,
   GestureResponderEvent,
   PanResponderGestureState,
-} from 'react-native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme } from '../../theme';
+} from "react-native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme } from '../design-system/theme';
 
 interface DragSortItem {
   id: string;
@@ -35,9 +35,7 @@ function DragSortList<T extends DragSortItem>({
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [localData, setLocalData] = useState<T[]>(data);
   const panY = useRef(new Animated.Value(0)).current;
-  const itemAnimations = useRef<Animated.Value[]>(
-    data.map(() => new Animated.Value(0)),
-  ).current;
+  const itemAnimations = useRef<Animated.Value[]>(data.map(() => new Animated.Value(0))).current;
 
   // Sync local data when prop changes
   React.useEffect(() => {
@@ -56,14 +54,17 @@ function DragSortList<T extends DragSortItem>({
       setLocalData(newData);
       onReorder(newData);
     },
-    [localData, onReorder],
+    [localData, onReorder]
   );
 
   const createPanResponder = useCallback(
     (index: number) =>
       PanResponder.create({
         onStartShouldSetPanResponder: () => false,
-        onMoveShouldSetPanResponder: (_: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+        onMoveShouldSetPanResponder: (
+          _: GestureResponderEvent,
+          gestureState: PanResponderGestureState
+        ) => {
           return Math.abs(gestureState.dy) > 10;
         },
         onPanResponderGrant: () => {
@@ -81,15 +82,22 @@ function DragSortList<T extends DragSortItem>({
 
           // Calculate potential new position
           const currentY = index * itemHeight + gestureState.dy;
-          const newIndex = Math.max(0, Math.min(localData.length - 1, Math.round(currentY / itemHeight)));
+          const newIndex = Math.max(
+            0,
+            Math.min(localData.length - 1, Math.round(currentY / itemHeight))
+          );
 
           if (newIndex !== index) {
             // Animate other items to make room
             localData.forEach((_, i) => {
-              if (i === index) return;
+              if (i === index) {
+                return;
+              }
               const targetOffset =
                 i >= Math.min(index, newIndex) && i <= Math.max(index, newIndex)
-                  ? (i < newIndex ? -itemHeight : itemHeight)
+                  ? i < newIndex
+                    ? -itemHeight
+                    : itemHeight
                   : 0;
               Animated.spring(itemAnimations[i], {
                 toValue: targetOffset !== 0 ? 0.5 : 0,
@@ -100,9 +108,15 @@ function DragSortList<T extends DragSortItem>({
             });
           }
         },
-        onPanResponderRelease: (_: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+        onPanResponderRelease: (
+          _: GestureResponderEvent,
+          gestureState: PanResponderGestureState
+        ) => {
           const currentY = index * itemHeight + gestureState.dy;
-          const newIndex = Math.max(0, Math.min(localData.length - 1, Math.round(currentY / itemHeight)));
+          const newIndex = Math.max(
+            0,
+            Math.min(localData.length - 1, Math.round(currentY / itemHeight))
+          );
 
           // Reset all animations
           itemAnimations.forEach((anim) => {
@@ -122,12 +136,12 @@ function DragSortList<T extends DragSortItem>({
           panY.setValue(0);
         },
       }),
-    [localData, itemHeight, moveItem, panY, itemAnimations],
+    [localData, itemHeight, moveItem, panY, itemAnimations]
   );
 
   // Pan responders need to be recreated when data changes
   const panResponders = useRef<Map<number, ReturnType<typeof PanResponder.create>>>(
-    new Map(),
+    new Map()
   ).current;
 
   localData.forEach((_, index) => {
@@ -151,10 +165,12 @@ function DragSortList<T extends DragSortItem>({
               }),
             },
             {
-              translateY: isActive ? panY : itemAnimations[index].interpolate({
-                inputRange: [0, 0.5, 1],
-                outputRange: [0, itemHeight * 0.3, itemHeight],
-              }),
+              translateY: isActive
+                ? panY
+                : itemAnimations[index].interpolate({
+                    inputRange: [0, 0.5, 1],
+                    outputRange: [0, itemHeight * 0.3, itemHeight],
+                  }),
             },
           ],
           opacity: itemAnimations[index].interpolate({
@@ -212,7 +228,7 @@ export const CollectionDragList: React.FC<CollectionDragListProps> = ({
           <Ionicons name="reorder-three-outline" size={20} color={theme.colors.textTertiary} />
         </View>
         <View style={collectionStyles.iconContainer}>
-          <Ionicons name={item.icon as 'folder'} size={22} color="#6C5CE7" />
+          <Ionicons name={item.icon as "folder"} size={22} color="#6C5CE7" />
         </View>
         <View style={collectionStyles.info}>
           <Text style={collectionStyles.name}>{item.name}</Text>
@@ -220,25 +236,19 @@ export const CollectionDragList: React.FC<CollectionDragListProps> = ({
         </View>
         <View style={collectionStyles.actions}>
           {onEdit && (
-            <TouchableOpacity
-              style={collectionStyles.actionBtn}
-              onPress={() => onEdit(item.id)}
-            >
+            <TouchableOpacity style={collectionStyles.actionBtn} onPress={() => onEdit(item.id)}>
               <Ionicons name="create-outline" size={18} color={theme.colors.textSecondary} />
             </TouchableOpacity>
           )}
           {onDelete && (
-            <TouchableOpacity
-              style={collectionStyles.actionBtn}
-              onPress={() => onDelete(item.id)}
-            >
+            <TouchableOpacity style={collectionStyles.actionBtn} onPress={() => onDelete(item.id)}>
               <Ionicons name="trash-outline" size={18} color={theme.colors.error} />
             </TouchableOpacity>
           )}
         </View>
       </TouchableOpacity>
     ),
-    [onEdit, onDelete, onPress],
+    [onEdit, onDelete, onPress]
   );
 
   return (
@@ -254,14 +264,14 @@ export const CollectionDragList: React.FC<CollectionDragListProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
+    position: "relative",
   },
   itemWrapper: {
-    position: 'relative',
+    position: "relative",
     backgroundColor: theme.colors.surface,
     borderRadius: 12,
     marginVertical: 4,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 3,
@@ -271,8 +281,8 @@ const styles = StyleSheet.create({
 const collectionStyles = StyleSheet.create({
   card: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 12,
     gap: 10,
   },
@@ -283,14 +293,14 @@ const collectionStyles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: '#F0EDFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#F0EDFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
   info: { flex: 1 },
-  name: { fontSize: 14, fontWeight: '600', color: theme.colors.text },
+  name: { fontSize: 14, fontWeight: "600", color: theme.colors.text },
   count: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 },
-  actions: { flexDirection: 'row', gap: 4 },
+  actions: { flexDirection: "row", gap: 4 },
   actionBtn: { padding: 8 },
 });
 

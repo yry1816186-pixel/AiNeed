@@ -1,7 +1,7 @@
-import * as Sentry from "@sentry/node";
-import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import { Injectable, OnModuleDestroy, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import * as Sentry from "@sentry/node";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
 @Injectable()
 export class SentryService implements OnModuleDestroy {
@@ -41,7 +41,7 @@ export class SentryService implements OnModuleDestroy {
   }
 
   captureException(exception: unknown, context?: Record<string, unknown>): string | undefined {
-    if (!this.enabled) return undefined;
+    if (!this.enabled) {return undefined;}
 
     const eventId = Sentry.captureException(exception, {
       extra: context,
@@ -55,7 +55,7 @@ export class SentryService implements OnModuleDestroy {
     level: Sentry.SeverityLevel = "info",
     context?: Record<string, unknown>,
   ): string | undefined {
-    if (!this.enabled) return undefined;
+    if (!this.enabled) {return undefined;}
 
     const eventId = Sentry.captureMessage(message, {
       level,
@@ -66,27 +66,27 @@ export class SentryService implements OnModuleDestroy {
   }
 
   setUser(user: { id: string; email?: string; username?: string }): void {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
     Sentry.setUser(user);
   }
 
   setTag(key: string, value: string): void {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
     Sentry.setTag(key, value);
   }
 
   setContext(name: string, context: Record<string, unknown>): void {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
     Sentry.setContext(name, context);
   }
 
   addBreadcrumb(breadcrumb: Sentry.Breadcrumb): void {
-    if (!this.enabled) return;
+    if (!this.enabled) {return;}
     Sentry.addBreadcrumb(breadcrumb);
   }
 
   startSpan(options: { name: string; op: string; tags?: Record<string, string> }): Sentry.Span | undefined {
-    if (!this.enabled) return undefined;
+    if (!this.enabled) {return undefined;}
     return Sentry.startInactiveSpan(options);
   }
 

@@ -3,8 +3,8 @@ import type { FeatureFlag } from '@prisma/client';
 export class PercentageStrategy {
   evaluate(flag: FeatureFlag, userId: string): boolean {
     const percentage = (flag.value as Record<string, any>).percentage ?? 0;
-    if (percentage <= 0) return false;
-    if (percentage >= 100) return true;
+    if (percentage <= 0) {return false;}
+    if (percentage >= 100) {return true;}
     const hash = this.hashUserId(userId, flag.key);
     return (hash % 100) < percentage;
   }

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -7,21 +7,21 @@ import {
   Modal,
   Pressable,
   Dimensions,
-} from 'react-native';
-import { Image } from 'react-native';
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+} from "react-native";
+import { Image } from "react-native";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   withSpring,
   runOnJS,
-} from 'react-native-reanimated';
-import { colors } from '@/src/theme/tokens/colors';
-import { typography } from '@/src/theme/tokens/typography';
-import { spacing } from '@/src/theme/tokens/spacing';
-import { shadows } from '@/src/theme/tokens/shadows';
+} from "react-native-reanimated";
+import { colors } from "@/src/theme/tokens/colors";
+import { typography } from "@/src/theme/tokens/typography";
+import { spacing } from "@/src/theme/tokens/spacing";
+import { shadows } from "@/src/theme/tokens/shadows";
 
 interface SharePosterPreviewProps {
   nickname: string;
@@ -32,14 +32,14 @@ interface SharePosterPreviewProps {
   personalityLine: string;
 }
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_WIDTH = Dimensions.get("window").width;
 const PREVIEW_WIDTH = SCREEN_WIDTH - spacing.layout.screenPadding * 2;
 const PREVIEW_HEIGHT = PREVIEW_WIDTH * (4 / 3);
 
 const ACTION_ITEMS = [
-  { key: 'album', label: '保存到相册', icon: 'image-outline' as const },
-  { key: 'wechat', label: '分享到微信', icon: 'chatbubble-outline' as const },
-  { key: 'moments', label: '分享到朋友圈', icon: 'share-social-outline' as const },
+  { key: "album", label: "保存到相册", icon: "image-outline" as const },
+  { key: "wechat", label: "分享到微信", icon: "chatbubble-outline" as const },
+  { key: "moments", label: "分享到朋友圈", icon: "share-social-outline" as const },
 ];
 
 export const SharePosterPreview: React.FC<SharePosterPreviewProps> = ({
@@ -71,7 +71,7 @@ export const SharePosterPreview: React.FC<SharePosterPreviewProps> = ({
   }));
 
   const topTags = styleTags.slice(0, 3);
-  const displayName = nickname || '用户';
+  const displayName = nickname || "用户";
   const avatarInitial = displayName.charAt(0).toUpperCase();
 
   return (
@@ -190,36 +190,36 @@ export const SharePosterPreview: React.FC<SharePosterPreviewProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    alignItems: "center",
     marginHorizontal: spacing.layout.screenPadding,
     marginBottom: spacing.layout.cardGap,
   },
   previewCard: {
     width: PREVIEW_WIDTH,
     height: PREVIEW_HEIGHT,
-    borderRadius: spacing.borderRadius['2xl'],
-    overflow: 'hidden',
+    borderRadius: spacing.borderRadius["2xl"],
+    overflow: "hidden",
     ...shadows.presets.lg,
   },
   posterGradient: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     padding: spacing.layout.modalPadding,
   },
   posterContent: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingTop: spacing.aliases.xl,
   },
   avatarCircle: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(255,255,255,0.3)",
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.5)',
-    overflow: 'hidden',
+    borderColor: "rgba(255,255,255,0.5)",
+    overflow: "hidden",
   },
   avatarImage: {
     width: 64,
@@ -229,29 +229,29 @@ const styles = StyleSheet.create({
   avatarInitial: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   nickname: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     marginTop: spacing.aliases.sm,
   },
   personalityLine: {
     fontSize: typography.fontSize.sm,
-    color: 'rgba(255,255,255,0.85)',
+    color: "rgba(255,255,255,0.85)",
     marginTop: spacing.scale[1],
-    textAlign: 'center',
+    textAlign: "center",
   },
   infoRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: spacing.aliases.sm,
     marginTop: spacing.aliases.md,
   },
   infoChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.2)",
     paddingHorizontal: spacing.aliases.sm,
     paddingVertical: spacing.scale[1],
     borderRadius: spacing.borderRadius.full,
@@ -259,42 +259,42 @@ const styles = StyleSheet.create({
   },
   infoChipText: {
     fontSize: typography.fontSize.xs,
-    color: 'rgba(255,255,255,0.9)',
+    color: "rgba(255,255,255,0.9)",
     fontWeight: typography.fontWeight.medium,
   },
   tagsRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: spacing.aliases.sm,
     marginTop: spacing.aliases.md,
   },
   posterTag: {
-    backgroundColor: 'rgba(255,255,255,0.25)',
+    backgroundColor: "rgba(255,255,255,0.25)",
     paddingHorizontal: spacing.aliases.sm,
     paddingVertical: spacing.scale[1],
     borderRadius: spacing.borderRadius.lg,
   },
   posterTagText: {
     fontSize: typography.fontSize.xs,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontWeight: typography.fontWeight.medium,
   },
   watermark: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.bold,
-    color: 'rgba(255,255,255,0.4)',
-    textAlign: 'center',
+    color: "rgba(255,255,255,0.4)",
+    textAlign: "center",
     letterSpacing: typography.letterSpacing.wider,
   },
   generateButton: {
     marginTop: spacing.aliases.md,
     borderRadius: spacing.borderRadius.full,
-    overflow: 'hidden',
+    overflow: "hidden",
     ...shadows.presets.md,
   },
   generateButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: spacing.aliases.sm,
     paddingHorizontal: spacing.aliases.xl,
     gap: spacing.aliases.sm,
@@ -302,23 +302,23 @@ const styles = StyleSheet.create({
   generateButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "flex-end",
   },
   actionSheet: {
     backgroundColor: colors.neutral.white,
-    borderTopLeftRadius: spacing.borderRadius['2xl'],
-    borderTopRightRadius: spacing.borderRadius['2xl'],
+    borderTopLeftRadius: spacing.borderRadius["2xl"],
+    borderTopRightRadius: spacing.borderRadius["2xl"],
     paddingBottom: 34,
     ...shadows.presets.xl,
   },
   actionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: spacing.layout.modalPadding,
     paddingVertical: spacing.layout.listItemPadding,
     gap: spacing.aliases.md,
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   },
   actionCancel: {
     paddingVertical: spacing.layout.listItemPadding,
-    alignItems: 'center',
+    alignItems: "center",
   },
   actionCancelText: {
     fontSize: typography.fontSize.base,

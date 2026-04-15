@@ -1,7 +1,9 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { NotFoundException, BadRequestException, ForbiddenException } from "@nestjs/common";
-import { ConsultantReviewService } from "./consultant-review.service";
+import { Test, TestingModule } from "@nestjs/testing";
+
 import { PrismaService } from "../../common/prisma/prisma.service";
+
+import { ConsultantReviewService } from "./consultant-review.service";
 import { CreateReviewDto } from "./dto";
 
 describe("ConsultantReviewService", () => {

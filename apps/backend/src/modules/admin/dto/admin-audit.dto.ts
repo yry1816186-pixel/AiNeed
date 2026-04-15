@@ -1,3 +1,4 @@
+import { ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsString,
   IsOptional,
@@ -6,7 +7,6 @@ import {
   Max,
   IsDateString,
 } from "class-validator";
-import { ApiPropertyOptional } from "@nestjs/swagger";
 
 export class AuditLogQueryDto {
   @ApiPropertyOptional({ description: "页码", default: 1 })

@@ -2,11 +2,11 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PhotoType } from "@prisma/client";
 
-import { AiStylistSessionService } from "./services/session.service";
 import { AiStylistChatService } from "./services/chat.service";
 import { AiStylistContextService } from "./services/context.service";
 import { AiStylistRecommendationService } from "./services/recommendation.service";
-
+import { AiStylistSessionService } from "./services/session.service";
+import type { StylistContextInternal } from "./services/session.service";
 import type {
   ChatMessage,
   StylistActionType,
@@ -21,7 +21,6 @@ import type {
   ChatResult,
   StylistContext,
 } from "./types";
-import type { StylistContextInternal } from "./services/session.service";
 
 export type { ChatMessage };
 export type { StylistActionType };

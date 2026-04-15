@@ -34,7 +34,7 @@ export class SASRecClientService {
     topK: number = 10,
     excludeItems: string[] = [],
   ): Promise<SASRecRecommendation[]> {
-    if (!this.enabled) return [];
+    if (!this.enabled) {return [];}
 
     try {
       const response = await fetch(`${this.baseUrl}/predict`, {
@@ -70,7 +70,7 @@ export class SASRecClientService {
     epochs: number = 10,
     learningRate: number = 0.001,
   ): Promise<{ loss: number; epochs: number } | null> {
-    if (!this.enabled) return null;
+    if (!this.enabled) {return null;}
 
     try {
       const response = await fetch(`${this.baseUrl}/train`, {
@@ -101,7 +101,7 @@ export class SASRecClientService {
   }
 
   async warmup(itemIds: string[]): Promise<boolean> {
-    if (!this.enabled) return false;
+    if (!this.enabled) {return false;}
 
     try {
       const response = await fetch(`${this.baseUrl}/warmup`, {
@@ -117,7 +117,7 @@ export class SASRecClientService {
   }
 
   async healthCheck(): Promise<boolean> {
-    if (!this.enabled) return false;
+    if (!this.enabled) {return false;}
 
     try {
       const response = await fetch(`${this.baseUrl}/health`);

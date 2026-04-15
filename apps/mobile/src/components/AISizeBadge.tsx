@@ -70,9 +70,7 @@ export const AISizeBadge: React.FC<AISizeBadgeProps> = ({ recommendation }) => {
         <View style={styles.detail}>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>置信度</Text>
-            <Text style={styles.detailValue}>
-              {Math.round(recommendation.confidence * 100)}%
-            </Text>
+            <Text style={styles.detailValue}>{Math.round(recommendation.confidence * 100)}%</Text>
           </View>
           {recommendation.reasons.map((reason, index) => (
             <Text key={index} style={styles.reasonText}>

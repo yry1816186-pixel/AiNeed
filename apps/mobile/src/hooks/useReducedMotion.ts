@@ -9,7 +9,7 @@ export function useReducedMotion() {
   useEffect(() => {
     const osVersion = Platform.Version;
     if (Platform.OS === "ios" && typeof osVersion === "number" && osVersion < 16) {
-      AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
+      void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
         setReducedMotion(enabled);
         reducedMotionSV.value = enabled;
       });
@@ -21,7 +21,7 @@ export function useReducedMotion() {
 
     let mounted = true;
 
-    AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
+    void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
       if (mounted) {
         setReducedMotion(enabled);
         reducedMotionSV.value = enabled;
@@ -35,7 +35,7 @@ export function useReducedMotion() {
           setReducedMotion(enabled);
           reducedMotionSV.value = enabled;
         }
-      },
+      }
     );
 
     return () => {

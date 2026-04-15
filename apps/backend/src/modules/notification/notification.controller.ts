@@ -18,12 +18,12 @@ import {
   ApiParam,
 } from "@nestjs/swagger";
 
-import { AuthGuard } from "../auth/guards/auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
+import { AuthGuard } from "../auth/guards/auth.guard";
 
+import { RegisterDeviceTokenDto, DeregisterDeviceTokenDto } from "./dto/push-notification.dto";
 import { NotificationService, UpdateNotificationSettingsDto } from "./services/notification.service";
 import { PushNotificationService } from "./services/push-notification.service";
-import { RegisterDeviceTokenDto, DeregisterDeviceTokenDto } from "./dto/push-notification.dto";
 
 @ApiTags("notification")
 @ApiBearerAuth()

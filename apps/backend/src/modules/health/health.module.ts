@@ -4,6 +4,7 @@ import { ConfigModule } from "@nestjs/config";
 import { PrismaModule } from "../../common/prisma/prisma.module";
 import { RedisModule } from "../../common/redis/redis.module";
 import { StorageModule } from "../../common/storage/storage.module";
+
 import { HealthController } from "./health.controller";
 import { HealthService } from "./health.service";
 

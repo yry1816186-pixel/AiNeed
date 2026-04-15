@@ -22,6 +22,7 @@ import Redis from 'ioredis';
 import { Server, Socket } from 'socket.io';
 
 import { REDIS_CLIENT } from '../../common/redis/redis.service';
+import { TokenBlacklistService } from '../auth/services/token-blacklist.service';
 
 export type AITaskEventType = 'task_created' | 'task_progress' | 'task_completed' | 'task_failed' | 'task_cancelled';
 
@@ -142,6 +143,7 @@ export class AIWebSocketGateway
     private configService: ConfigService,
     private jwtService: JwtService,
     @Inject(REDIS_CLIENT) private redis: Redis,
+    private tokenBlacklistService: TokenBlacklistService,
   ) {
     this.subscriber = new Redis(
       this.configService.get<string>('REDIS_URL', 'redis://localhost:6379'),
@@ -175,7 +177,7 @@ export class AIWebSocketGateway
 
   async handleConnection(client: Socket) {
     try {
-      const userId = this.extractUserId(client);
+      const userId = await this.extractUserId(client);
       if (!userId) {
         this.logger.warn(`Client ${client.id} rejected: no valid token`);
         client.emit('error', { message: 'Authentication required' });
@@ -353,7 +355,7 @@ export class AIWebSocketGateway
     return Array.from(this.userSockets.keys());
   }
 
-  private extractUserId(client: Socket): string | null {
+  private async extractUserId(client: Socket): Promise<string | null> {
     const auth = client.handshake.auth;
 
     const token = auth?.token;
@@ -365,7 +367,7 @@ export class AIWebSocketGateway
     return this.validateToken(token as string);
   }
 
-  private validateToken(token: string): string | null {
+  private async validateToken(token: string): Promise<string | null> {
     try {
       const jwtSecret = this.configService.get<string>('JWT_SECRET');
       if (!jwtSecret) {
@@ -378,6 +380,16 @@ export class AIWebSocketGateway
       });
 
       const userId = payload.sub || payload.userId;
+
+      // 检查 token 是否在黑名单中
+      if (payload.jti) {
+        const blacklisted = await this.tokenBlacklistService.isBlacklisted(payload.jti);
+        if (blacklisted) {
+          this.logger.warn(`Token is blacklisted: ${payload.jti.substring(0, 8)}...`);
+          return null;
+        }
+      }
+
       return userId || null;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
@@ -452,7 +464,7 @@ export class AIWebSocketGateway
   private async getTaskStatus(jobId: string): Promise<TaskStatus | null> {
     const key = `job:${jobId}`;
     const data = await this.redis.get(key);
-    if (!data) return null;
+    if (!data) {return null;}
     try {
       return JSON.parse(data) as TaskStatus;
     } catch {

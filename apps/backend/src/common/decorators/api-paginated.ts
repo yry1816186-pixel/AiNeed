@@ -5,6 +5,7 @@ import {
   ApiQuery,
   getSchemaPath,
 } from "@nestjs/swagger";
+
 import { PaginatedMetaDto, PaginatedResponseDto } from "../dto/paginated-response.dto";
 
 export function ApiPaginated(model: () => new (...args: any[]) => any) {

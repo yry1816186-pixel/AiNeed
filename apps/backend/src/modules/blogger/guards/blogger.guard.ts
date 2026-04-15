@@ -7,8 +7,8 @@ import {
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 
-import { JwtUserPayload } from "../../../common/types/common.types";
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { JwtUserPayload } from "../../../common/types/common.types";
 
 export const REQUIRE_BIG_V = "requireBigV";
 

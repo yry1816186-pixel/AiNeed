@@ -16,7 +16,7 @@ export interface AISession {
 // AI 消息
 export interface AIMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   recommendations?: AIRecommendation[];
   metadata?: Record<string, unknown>;
@@ -40,7 +40,7 @@ export interface AIContext {
 
 // AI 推荐
 export interface AIRecommendation {
-  type: 'clothing' | 'outfit' | 'style' | 'color';
+  type: "clothing" | "outfit" | "style" | "color";
   itemId?: string;
   items?: string[];
   reason: string;
@@ -50,7 +50,7 @@ export interface AIRecommendation {
 
 // AI 分析结果
 export interface AIAnalysisResult {
-  type: 'body' | 'color' | 'style' | 'outfit';
+  type: "body" | "color" | "style" | "outfit";
   data: Record<string, unknown>;
   confidence: number;
   suggestions: string[];
@@ -61,10 +61,10 @@ export interface AIStylistRequest {
   message: string;
   sessionId?: string;
   context?: AIContext;
-  attachments?: Array<{
-    type: 'image' | 'clothing';
+  attachments?: {
+    type: "image" | "clothing";
     uri: string;
-  }>;
+  }[];
 }
 
 // AI 造型师响应
@@ -89,7 +89,7 @@ export interface VirtualTryOnRequest {
 // 虚拟试衣响应
 export interface VirtualTryOnResponse {
   id: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: "pending" | "processing" | "completed" | "failed";
   resultImageUri?: string;
   processingTime?: number;
   error?: string;
@@ -106,17 +106,12 @@ export interface AIServiceConfig {
 }
 
 // AI 模型类型
-export type AIModelType =
-  | 'chat'
-  | 'recommendation'
-  | 'analysis'
-  | 'generation'
-  | 'classification';
+export type AIModelType = "chat" | "recommendation" | "analysis" | "generation" | "classification";
 
 // AI 任务状态
 export interface AITaskStatus {
   taskId: string;
-  status: 'queued' | 'processing' | 'completed' | 'failed';
+  status: "queued" | "processing" | "completed" | "failed";
   progress?: number;
   result?: unknown;
   error?: string;

@@ -1,5 +1,5 @@
-import { IsString, IsEnum, IsOptional, IsArray, MaxLength, IsObject } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsString, IsEnum, IsOptional, IsArray, MaxLength, IsObject } from "class-validator";
 
 export enum PushPlatform {
   IOS = "ios",

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from "react";
+﻿import React, { useEffect, useRef, useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Shadows } from "../../theme";
+import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 import {
   useStyleQuizStore,
   useStyleQuizCurrentQuiz,
@@ -48,7 +49,7 @@ export const StyleQuizScreen: React.FC = () => {
   const currentQuestion = questions[currentQuestionIndex] ?? null;
   const totalQuestions = questions.length;
   const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
-  const isFirstQuestion = currentQuestionIndex === 0;
+  const _isFirstQuestion = currentQuestionIndex === 0;
 
   // Restore previously selected answer for current question
   useEffect(() => {
@@ -60,8 +61,8 @@ export const StyleQuizScreen: React.FC = () => {
 
   // Load quiz and progress on mount
   useEffect(() => {
-    loadQuiz(QUIZ_ID);
-    loadProgress(QUIZ_ID);
+    void loadQuiz(QUIZ_ID);
+    void loadProgress(QUIZ_ID);
   }, [loadQuiz, loadProgress]);
 
   // Cleanup timer on unmount
@@ -75,11 +76,13 @@ export const StyleQuizScreen: React.FC = () => {
 
   const handleSelectOption = useCallback(
     (optionId: string) => {
-      if (!currentQuestion) return;
+      if (!currentQuestion) {
+        return;
+      }
       setSelectedOption(optionId);
 
       // Auto-save answer via store (non-blocking)
-      selectAnswer(QUIZ_ID, currentQuestion.id, optionId);
+      void selectAnswer(QUIZ_ID, currentQuestion.id, optionId);
 
       // Auto-advance after 300ms delay
       if (autoAdvanceTimer.current) {
@@ -95,7 +98,7 @@ export const StyleQuizScreen: React.FC = () => {
         // The selectAnswer already incremented questionIndex in the store
       }, 300);
     },
-    [currentQuestion, selectAnswer, isLastQuestion],
+    [currentQuestion, selectAnswer, isLastQuestion]
   );
 
   const handleSubmit = useCallback(async () => {
@@ -115,9 +118,7 @@ export const StyleQuizScreen: React.FC = () => {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.resultContainer}>
           <Text style={styles.resultTitle}>你的风格画像</Text>
-          <Text style={styles.resultSubtitle}>
-            基于 AI 分析，以下是你的风格测试结果
-          </Text>
+          <Text style={styles.resultSubtitle}>基于 AI 分析，以下是你的风格测试结果</Text>
 
           {result.styleTags && result.styleTags.length > 0 && (
             <View style={styles.resultSection}>
@@ -137,10 +138,7 @@ export const StyleQuizScreen: React.FC = () => {
               <Text style={styles.resultSectionTitle}>色彩偏好</Text>
               <View style={styles.paletteRow}>
                 {result.colorPalette.map((color, i) => (
-                  <View
-                    key={i}
-                    style={[styles.colorDot, { backgroundColor: color }]}
-                  />
+                  <View key={`color-${i}`} style={[styles.colorDot, { backgroundColor: color }]} />
                 ))}
               </View>
             </View>
@@ -149,9 +147,7 @@ export const StyleQuizScreen: React.FC = () => {
           {result.confidence > 0 && (
             <View style={styles.resultSection}>
               <Text style={styles.resultSectionTitle}>匹配度</Text>
-              <Text style={styles.confidenceValue}>
-                {Math.round(result.confidence * 100)}%
-              </Text>
+              <Text style={styles.confidenceValue}>{Math.round(result.confidence * 100)}%</Text>
             </View>
           )}
 
@@ -230,10 +226,7 @@ export const StyleQuizScreen: React.FC = () => {
         <Text style={styles.skipTopRightText}>跳过</Text>
       </TouchableOpacity>
 
-      <QuizProgress
-        currentStep={currentQuestionIndex + 1}
-        totalSteps={totalQuestions}
-      />
+      <QuizProgress currentStep={currentQuestionIndex + 1} totalSteps={totalQuestions} />
 
       <ScrollView
         style={styles.scrollView}
@@ -241,20 +234,16 @@ export const StyleQuizScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.questionHeader}>
-          <Text style={styles.questionTitle}>
-            {currentQuestion.title}
-          </Text>
+          <Text style={styles.questionTitle}>{currentQuestion.title}</Text>
           {currentQuestion.subtitle ? (
-            <Text style={styles.questionSubtitle}>
-              {currentQuestion.subtitle}
-            </Text>
+            <Text style={styles.questionSubtitle}>{currentQuestion.subtitle}</Text>
           ) : null}
         </View>
 
         {/* Image grid (2x2) */}
         {(currentQuestion.images ?? currentQuestion.options ?? []).length > 0 && (
           <View style={styles.imageGrid}>
-            {(currentQuestion.images ?? []).map((image, index) => (
+            {(currentQuestion.images ?? []).map((image, _index) => (
               <View key={image.id} style={styles.imageGridItem}>
                 <TouchableOpacity
                   style={[
@@ -273,7 +262,7 @@ export const StyleQuizScreen: React.FC = () => {
                   </View>
                   {selectedOption === image.id && (
                     <View style={styles.checkBadge}>
-                      <Ionicons name="checkmark" size={14} color="#FFFFFF" />
+                      <Ionicons name="checkmark" size={14} color={DesignTokens.colors.neutral.white} />
                     </View>
                   )}
                 </TouchableOpacity>
@@ -287,10 +276,7 @@ export const StyleQuizScreen: React.FC = () => {
           currentQuestion.options.map((option) => (
             <TouchableOpacity
               key={option.id}
-              style={[
-                styles.optionCard,
-                selectedOption === option.id && styles.optionCardSelected,
-              ]}
+              style={[styles.optionCard, selectedOption === option.id && styles.optionCardSelected]}
               onPress={() => handleSelectOption(option.id)}
               activeOpacity={0.7}
               accessibilityLabel={option.text}
@@ -311,12 +297,7 @@ export const StyleQuizScreen: React.FC = () => {
 
       {/* Bottom bar with submit button for last question */}
       {isLastQuestion && selectedOption && (
-        <View
-          style={[
-            styles.bottomBar,
-            { paddingBottom: Math.max(insets.bottom, Spacing[4]) },
-          ]}
-        >
+        <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, Spacing[4]) }]}>
           <TouchableOpacity
             style={styles.submitButton}
             onPress={handleSubmit}

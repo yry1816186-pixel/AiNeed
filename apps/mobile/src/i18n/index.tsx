@@ -131,6 +131,86 @@ interface TranslationStrings {
     notFound: string;
     validationError: string;
   };
+  cart: {
+    title: string;
+    empty: string;
+    selectAll: string;
+    total: string;
+    checkout: string;
+    deleteSelected: string;
+    quantity: string;
+    removeFromCart: string;
+    addedToCart: string;
+  };
+  checkout: {
+    title: string;
+    confirmItems: string;
+    shippingAddress: string;
+    addAddress: string;
+    province: string;
+    city: string;
+    district: string;
+    detailAddress: string;
+    recipientName: string;
+    phoneNumber: string;
+    paymentPreference: string;
+    placeOrder: string;
+    orderPlaced: string;
+    orderSuccess: string;
+    backToHome: string;
+    viewOrder: string;
+  };
+  profile: {
+    title: string;
+    editProfile: string;
+    myOrders: string;
+    myFavorites: string;
+    settings: string;
+    language: string;
+    about: string;
+    logout: string;
+    logoutConfirm: string;
+    logoutConfirmMessage: string;
+  };
+  wardrobe: {
+    title: string;
+    addClothing: string;
+    myClothes: string;
+    categorize: string;
+    analyze: string;
+  };
+  tryOn: {
+    title: string;
+    selectClothing: string;
+    takePhoto: string;
+    generating: string;
+    result: string;
+    save: string;
+    share: string;
+    retry: string;
+  };
+  notifications: {
+    title: string;
+    markAllRead: string;
+    noNotifications: string;
+    orderUpdate: string;
+    promotion: string;
+    system: string;
+  };
+  home: {
+    greeting: string;
+    forYou: string;
+    newArrivals: string;
+    trending: string;
+    seeAll: string;
+  };
+  search: {
+    placeholder: string;
+    filters: string;
+    noResults: string;
+    recentSearches: string;
+    popularSearches: string;
+  };
 }
 
 const translations: Record<LanguageCode, TranslationStrings> = {
@@ -227,6 +307,86 @@ const translations: Record<LanguageCode, TranslationStrings> = {
       notFound: "内容不存在",
       validationError: "输入信息有误",
     },
+    cart: {
+      title: "购物车",
+      empty: "购物车是空的",
+      selectAll: "全选",
+      total: "合计",
+      checkout: "去结算",
+      deleteSelected: "删除选中",
+      quantity: "数量",
+      removeFromCart: "从购物车移除",
+      addedToCart: "已加入购物车",
+    },
+    checkout: {
+      title: "确认订单",
+      confirmItems: "确认商品",
+      shippingAddress: "收货地址",
+      addAddress: "新增地址",
+      province: "省份",
+      city: "城市",
+      district: "区县",
+      detailAddress: "详细地址",
+      recipientName: "收货人姓名",
+      phoneNumber: "手机号",
+      paymentPreference: "支付偏好",
+      placeOrder: "提交订单",
+      orderPlaced: "订单已提交",
+      orderSuccess: "下单成功",
+      backToHome: "返回首页",
+      viewOrder: "查看订单",
+    },
+    profile: {
+      title: "我的",
+      editProfile: "编辑资料",
+      myOrders: "我的订单",
+      myFavorites: "我的收藏",
+      settings: "设置",
+      language: "语言",
+      about: "关于",
+      logout: "退出登录",
+      logoutConfirm: "退出登录",
+      logoutConfirmMessage: "确定要退出登录吗？",
+    },
+    wardrobe: {
+      title: "衣橱",
+      addClothing: "添加服装",
+      myClothes: "我的服装",
+      categorize: "分类",
+      analyze: "分析",
+    },
+    tryOn: {
+      title: "虚拟试衣",
+      selectClothing: "选择服装",
+      takePhoto: "拍照",
+      generating: "生成中",
+      result: "试衣结果",
+      save: "保存",
+      share: "分享",
+      retry: "重试",
+    },
+    notifications: {
+      title: "通知",
+      markAllRead: "全部已读",
+      noNotifications: "暂无通知",
+      orderUpdate: "订单更新",
+      promotion: "优惠活动",
+      system: "系统通知",
+    },
+    home: {
+      greeting: "你好",
+      forYou: "为你推荐",
+      newArrivals: "新品上架",
+      trending: "热门趋势",
+      seeAll: "查看全部",
+    },
+    search: {
+      placeholder: "搜索服装、搭配或品牌",
+      filters: "筛选",
+      noResults: "没有找到结果",
+      recentSearches: "最近搜索",
+      popularSearches: "热门搜索",
+    },
   },
   "zh-TW": {
     common: {
@@ -320,6 +480,86 @@ const translations: Record<LanguageCode, TranslationStrings> = {
       unauthorized: "請先登入",
       notFound: "內容不存在",
       validationError: "輸入資訊有誤",
+    },
+    cart: {
+      title: "購物車",
+      empty: "購物車是空的",
+      selectAll: "全選",
+      total: "合計",
+      checkout: "去結算",
+      deleteSelected: "刪除選中",
+      quantity: "數量",
+      removeFromCart: "從購物車移除",
+      addedToCart: "已加入購物車",
+    },
+    checkout: {
+      title: "確認訂單",
+      confirmItems: "確認商品",
+      shippingAddress: "收貨地址",
+      addAddress: "新增地址",
+      province: "省份",
+      city: "城市",
+      district: "區縣",
+      detailAddress: "詳細地址",
+      recipientName: "收貨人姓名",
+      phoneNumber: "手機號",
+      paymentPreference: "付款偏好",
+      placeOrder: "提交訂單",
+      orderPlaced: "訂單已提交",
+      orderSuccess: "下單成功",
+      backToHome: "返回首頁",
+      viewOrder: "查看訂單",
+    },
+    profile: {
+      title: "我的",
+      editProfile: "編輯資料",
+      myOrders: "我的訂單",
+      myFavorites: "我的收藏",
+      settings: "設定",
+      language: "語言",
+      about: "關於",
+      logout: "登出",
+      logoutConfirm: "登出",
+      logoutConfirmMessage: "確定要登出嗎？",
+    },
+    wardrobe: {
+      title: "衣櫥",
+      addClothing: "新增服裝",
+      myClothes: "我的服裝",
+      categorize: "分類",
+      analyze: "分析",
+    },
+    tryOn: {
+      title: "虛擬試衣",
+      selectClothing: "選擇服裝",
+      takePhoto: "拍照",
+      generating: "生成中",
+      result: "試衣結果",
+      save: "儲存",
+      share: "分享",
+      retry: "重試",
+    },
+    notifications: {
+      title: "通知",
+      markAllRead: "全部已讀",
+      noNotifications: "暫無通知",
+      orderUpdate: "訂單更新",
+      promotion: "優惠活動",
+      system: "系統通知",
+    },
+    home: {
+      greeting: "你好",
+      forYou: "為你推薦",
+      newArrivals: "新品上架",
+      trending: "熱門趨勢",
+      seeAll: "查看全部",
+    },
+    search: {
+      placeholder: "搜尋服裝、搭配或品牌",
+      filters: "篩選",
+      noResults: "沒有找到結果",
+      recentSearches: "最近搜尋",
+      popularSearches: "熱門搜尋",
     },
   },
   "en-US": {
@@ -415,6 +655,86 @@ const translations: Record<LanguageCode, TranslationStrings> = {
       notFound: "Content not found",
       validationError: "Invalid input",
     },
+    cart: {
+      title: "Cart",
+      empty: "Your cart is empty",
+      selectAll: "Select All",
+      total: "Total",
+      checkout: "Checkout",
+      deleteSelected: "Delete Selected",
+      quantity: "Quantity",
+      removeFromCart: "Remove from Cart",
+      addedToCart: "Added to Cart",
+    },
+    checkout: {
+      title: "Confirm Order",
+      confirmItems: "Confirm Items",
+      shippingAddress: "Shipping Address",
+      addAddress: "Add Address",
+      province: "Province",
+      city: "City",
+      district: "District",
+      detailAddress: "Detail Address",
+      recipientName: "Recipient Name",
+      phoneNumber: "Phone Number",
+      paymentPreference: "Payment Preference",
+      placeOrder: "Place Order",
+      orderPlaced: "Order Placed",
+      orderSuccess: "Order Successful",
+      backToHome: "Back to Home",
+      viewOrder: "View Order",
+    },
+    profile: {
+      title: "Profile",
+      editProfile: "Edit Profile",
+      myOrders: "My Orders",
+      myFavorites: "My Favorites",
+      settings: "Settings",
+      language: "Language",
+      about: "About",
+      logout: "Logout",
+      logoutConfirm: "Logout",
+      logoutConfirmMessage: "Are you sure you want to logout?",
+    },
+    wardrobe: {
+      title: "Wardrobe",
+      addClothing: "Add Clothing",
+      myClothes: "My Clothes",
+      categorize: "Categorize",
+      analyze: "Analyze",
+    },
+    tryOn: {
+      title: "Virtual Try-On",
+      selectClothing: "Select Clothing",
+      takePhoto: "Take Photo",
+      generating: "Generating",
+      result: "Result",
+      save: "Save",
+      share: "Share",
+      retry: "Retry",
+    },
+    notifications: {
+      title: "Notifications",
+      markAllRead: "Mark All Read",
+      noNotifications: "No Notifications",
+      orderUpdate: "Order Update",
+      promotion: "Promotion",
+      system: "System",
+    },
+    home: {
+      greeting: "Hello",
+      forYou: "For You",
+      newArrivals: "New Arrivals",
+      trending: "Trending",
+      seeAll: "See All",
+    },
+    search: {
+      placeholder: "Search clothing, outfits or brands",
+      filters: "Filters",
+      noResults: "No results found",
+      recentSearches: "Recent Searches",
+      popularSearches: "Popular Searches",
+    },
   },
   "ja-JP": {
     common: {
@@ -508,6 +828,86 @@ const translations: Record<LanguageCode, TranslationStrings> = {
       unauthorized: "ログインしてください",
       notFound: "コンテンツが見つかりません",
       validationError: "入力が無効です",
+    },
+    cart: {
+      title: "カート",
+      empty: "カートは空です",
+      selectAll: "全選択",
+      total: "合計",
+      checkout: "レジに進む",
+      deleteSelected: "選択を削除",
+      quantity: "数量",
+      removeFromCart: "カートから削除",
+      addedToCart: "カートに追加しました",
+    },
+    checkout: {
+      title: "注文確認",
+      confirmItems: "商品確認",
+      shippingAddress: "配送先住所",
+      addAddress: "住所を追加",
+      province: "都道府県",
+      city: "市区町村",
+      district: "区町村",
+      detailAddress: "番地・建物名",
+      recipientName: "お届け先名",
+      phoneNumber: "電話番号",
+      paymentPreference: "支払い方法",
+      placeOrder: "注文を確定",
+      orderPlaced: "注文完了",
+      orderSuccess: "注文成功",
+      backToHome: "ホームに戻る",
+      viewOrder: "注文を見る",
+    },
+    profile: {
+      title: "マイページ",
+      editProfile: "プロフィール編集",
+      myOrders: "注文履歴",
+      myFavorites: "お気に入り",
+      settings: "設定",
+      language: "言語",
+      about: "アプリについて",
+      logout: "ログアウト",
+      logoutConfirm: "ログアウト",
+      logoutConfirmMessage: "ログアウトしますか？",
+    },
+    wardrobe: {
+      title: "ワードローブ",
+      addClothing: "服を追加",
+      myClothes: "マイ服",
+      categorize: "カテゴリ分け",
+      analyze: "分析",
+    },
+    tryOn: {
+      title: "バーチャル試着",
+      selectClothing: "服を選ぶ",
+      takePhoto: "写真を撮る",
+      generating: "生成中",
+      result: "試着結果",
+      save: "保存",
+      share: "シェア",
+      retry: "再試行",
+    },
+    notifications: {
+      title: "通知",
+      markAllRead: "すべて既読",
+      noNotifications: "通知はありません",
+      orderUpdate: "注文更新",
+      promotion: "キャンペーン",
+      system: "システム通知",
+    },
+    home: {
+      greeting: "こんにちは",
+      forYou: "おすすめ",
+      newArrivals: "新着",
+      trending: "トレンド",
+      seeAll: "すべて見る",
+    },
+    search: {
+      placeholder: "服、コーデ、ブランドを検索",
+      filters: "絞り込み",
+      noResults: "結果が見つかりません",
+      recentSearches: "最近の検索",
+      popularSearches: "人気の検索",
     },
   },
   "ko-KR": {
@@ -603,6 +1003,86 @@ const translations: Record<LanguageCode, TranslationStrings> = {
       notFound: "콘텐츠를 찾을 수 없습니다",
       validationError: "입력이 올바르지 않습니다",
     },
+    cart: {
+      title: "장바구니",
+      empty: "장바구니가 비어 있습니다",
+      selectAll: "전체 선택",
+      total: "합계",
+      checkout: "결제하기",
+      deleteSelected: "선택 삭제",
+      quantity: "수량",
+      removeFromCart: "장바구니에서 제거",
+      addedToCart: "장바구니에 추가됨",
+    },
+    checkout: {
+      title: "주문 확인",
+      confirmItems: "상품 확인",
+      shippingAddress: "배송 주소",
+      addAddress: "주소 추가",
+      province: "도/시",
+      city: "시/군/구",
+      district: "읍/면/동",
+      detailAddress: "상세 주소",
+      recipientName: "수령인 이름",
+      phoneNumber: "전화번호",
+      paymentPreference: "결제 방법",
+      placeOrder: "주문하기",
+      orderPlaced: "주문 완료",
+      orderSuccess: "주문 성공",
+      backToHome: "홈으로",
+      viewOrder: "주문 조회",
+    },
+    profile: {
+      title: "마이페이지",
+      editProfile: "프로필 편집",
+      myOrders: "주문 내역",
+      myFavorites: "즐겨찾기",
+      settings: "설정",
+      language: "언어",
+      about: "정보",
+      logout: "로그아웃",
+      logoutConfirm: "로그아웃",
+      logoutConfirmMessage: "로그아웃하시겠습니까?",
+    },
+    wardrobe: {
+      title: "옷장",
+      addClothing: "옷 추가",
+      myClothes: "내 옷",
+      categorize: "분류",
+      analyze: "분석",
+    },
+    tryOn: {
+      title: "가상 피팅",
+      selectClothing: "옷 선택",
+      takePhoto: "사진 촬영",
+      generating: "생성 중",
+      result: "피팅 결과",
+      save: "저장",
+      share: "공유",
+      retry: "재시도",
+    },
+    notifications: {
+      title: "알림",
+      markAllRead: "모두 읽음",
+      noNotifications: "알림이 없습니다",
+      orderUpdate: "주문 업데이트",
+      promotion: "프로모션",
+      system: "시스템 알림",
+    },
+    home: {
+      greeting: "안녕하세요",
+      forYou: "추천",
+      newArrivals: "신상품",
+      trending: "트렌딩",
+      seeAll: "전체 보기",
+    },
+    search: {
+      placeholder: "옷, 코디, 브랜드 검색",
+      filters: "필터",
+      noResults: "결과를 찾을 수 없습니다",
+      recentSearches: "최근 검색",
+      popularSearches: "인기 검색",
+    },
   },
 };
 
@@ -636,12 +1116,10 @@ interface I18nProviderProps {
 }
 
 export function I18nProvider({ children, defaultLanguage }: I18nProviderProps) {
-  const [language, setLanguageState] = useState<LanguageCode>(
-    defaultLanguage || "zh-CN",
-  );
+  const [language, setLanguageState] = useState<LanguageCode>(defaultLanguage || "zh-CN");
 
   useEffect(() => {
-    loadSavedLanguage();
+    void loadSavedLanguage();
   }, []);
 
   const loadSavedLanguage = async () => {
@@ -665,8 +1143,7 @@ export function I18nProvider({ children, defaultLanguage }: I18nProviderProps) {
 
     if (Platform.OS === "ios") {
       const settings = NativeModules.SettingsManager?.settings;
-      deviceLocale =
-        settings?.AppleLocale || settings?.AppleLanguages?.[0] || "zh-CN";
+      deviceLocale = settings?.AppleLocale || settings?.AppleLanguages?.[0] || "zh-CN";
     } else if (Platform.OS === "android") {
       deviceLocale = NativeModules.I18nManager?.localeIdentifier || "zh-CN";
     }
@@ -709,18 +1186,14 @@ export function I18nProvider({ children, defaultLanguage }: I18nProviderProps) {
     t: translations[language],
     setLanguage,
     getLanguageName,
-    isRTL:
-      SUPPORTED_LANGUAGES.find((l) => l.code === language)?.direction === "rtl",
+    isRTL: SUPPORTED_LANGUAGES.find((l) => l.code === language)?.direction === "rtl",
     supportedLanguages: SUPPORTED_LANGUAGES,
   };
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
-export function formatMessage(
-  template: string,
-  params: Record<string, string | number>,
-): string {
+export function formatMessage(template: string, params: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (match, key) => {
     return params[key]?.toString() ?? match;
   });
@@ -730,7 +1203,7 @@ export function pluralize(
   count: number,
   singular: string,
   plural: string,
-  language: LanguageCode = "zh-CN",
+  language: LanguageCode = "zh-CN"
 ): string {
   if (
     language === "zh-CN" ||

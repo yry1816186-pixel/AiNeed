@@ -1,7 +1,8 @@
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Request } from 'express';
+
 import { ImageSizeName, DEFAULT_SIZES } from '../utils/image-sizes';
 
 const ACCEPT_SIZE_MAP: Record<string, ImageSizeName> = {
@@ -20,7 +21,7 @@ export class ImageResponseInterceptor<T> implements NestInterceptor<T, any> {
 
     return next.handle().pipe(
       map((data) => {
-        if (!data || !data.urls) {
+        if (!data?.urls) {
           return data;
         }
 
@@ -67,10 +68,10 @@ export class ImageResponseInterceptor<T> implements NestInterceptor<T, any> {
     const viewportWidth = request.headers['x-viewport-width'];
     if (viewportWidth) {
       const width = parseInt(viewportWidth as string, 10);
-      if (width <= 200) return 'thumbnail';
-      if (width <= 400) return 'small';
-      if (width <= 800) return 'medium';
-      if (width <= 1200) return 'large';
+      if (width <= 200) {return 'thumbnail';}
+      if (width <= 400) {return 'small';}
+      if (width <= 800) {return 'medium';}
+      if (width <= 1200) {return 'large';}
       return 'original';
     }
     return 'medium';

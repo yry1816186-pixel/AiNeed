@@ -1,7 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { ProfileEventEmitter } from "./profile-event-emitter.service";
 import { RedisService } from "../../../common/redis/redis.service";
+
+import { ProfileEventEmitter } from "./profile-event-emitter.service";
 
 describe("ProfileEventEmitter", () => {
   let service: ProfileEventEmitter;

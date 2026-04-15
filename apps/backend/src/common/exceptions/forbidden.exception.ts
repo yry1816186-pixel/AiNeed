@@ -115,7 +115,7 @@ export class ForbiddenException extends HttpException {
    */
   static notOwner(
     resourceType: string,
-    resourceId: string,
+    _resourceId: string,
   ): ForbiddenException {
     return new ForbiddenException(
       `access_${resourceType.toLowerCase()}`,

@@ -19,13 +19,8 @@ interface AuthResponsePayload {
 }
 
 export const authApi = {
-  async login(
-    credentials: LoginCredentials,
-  ): Promise<ApiResponse<AuthResponsePayload>> {
-    const response = await apiClient.post<AuthResponsePayload>(
-      "/auth/login",
-      credentials,
-    );
+  async login(credentials: LoginCredentials): Promise<ApiResponse<AuthResponsePayload>> {
+    const response = await apiClient.post<AuthResponsePayload>("/auth/login", credentials);
     if (response.success && response.data?.token) {
       await apiClient.setToken(response.data.token);
       if (response.data.refreshToken) {
@@ -35,13 +30,8 @@ export const authApi = {
     return response;
   },
 
-  async register(
-    data: RegisterData,
-  ): Promise<ApiResponse<AuthResponsePayload>> {
-    const response = await apiClient.post<AuthResponsePayload>(
-      "/auth/register",
-      data,
-    );
+  async register(data: RegisterData): Promise<ApiResponse<AuthResponsePayload>> {
+    const response = await apiClient.post<AuthResponsePayload>("/auth/register", data);
     if (response.success && response.data?.token) {
       await apiClient.setToken(response.data.token);
       if (response.data.refreshToken) {
@@ -64,15 +54,12 @@ export const authApi = {
   },
 
   async updatePreferences(
-    preferences: Partial<UserPreferences>,
+    preferences: Partial<UserPreferences>
   ): Promise<ApiResponse<UserPreferences>> {
     return apiClient.put<UserPreferences>("/profile/preferences", preferences);
   },
 
-  async changePassword(
-    oldPassword: string,
-    newPassword: string,
-  ): Promise<ApiResponse<void>> {
+  async changePassword(oldPassword: string, newPassword: string): Promise<ApiResponse<void>> {
     return apiClient.put<void>("/users/me/password", {
       oldPassword,
       newPassword,
@@ -83,10 +70,7 @@ export const authApi = {
     return apiClient.post<void>("/auth/forgot-password", { email });
   },
 
-  async resetPassword(
-    token: string,
-    newPassword: string,
-  ): Promise<ApiResponse<void>> {
+  async resetPassword(token: string, newPassword: string): Promise<ApiResponse<void>> {
     return apiClient.post<void>("/auth/reset-password", { token, newPassword });
   },
 
@@ -136,9 +120,7 @@ export const userApi = {
     return apiClient.upload<ColorAnalysis>("/profile/color-analysis/upload", formData);
   },
 
-  async uploadAvatar(
-    imageUri: string,
-  ): Promise<ApiResponse<{ avatar: string }>> {
+  async uploadAvatar(imageUri: string): Promise<ApiResponse<{ avatar: string }>> {
     const formData = new FormData();
     const filename = imageUri.split("/").pop() || "avatar.jpg";
     const match = /\.(\w+)$/.exec(filename);

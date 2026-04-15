@@ -2,13 +2,7 @@ export { apiClient, default } from "./client";
 export { clothingApi } from "./clothing.api";
 export { outfitApi } from "./outfit.api";
 export { authApi, userApi } from "./auth.api";
-export {
-  cartApi,
-  orderApi,
-  addressApi,
-  favoriteApi,
-  searchApi,
-} from "./commerce.api";
+export { cartApi, orderApi, addressApi, favoriteApi, searchApi } from "./commerce.api";
 export { aiStylistApi } from "./ai-stylist.api";
 export { tryOnApi, recommendationsApi } from "./tryon.api";
 export { photosApi, type UserPhoto, type PhotoType } from "./photos.api";

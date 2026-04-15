@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+﻿import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,24 +6,26 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme } from '../theme';
-import { useAiStylistStore, type ArchivedSession } from '../stores/aiStylistStore';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme } from '../design-system/theme';
+import { useAiStylistStore, type ArchivedSession } from "../stores/aiStylistStore";
+import type { StylistStackParamList } from "../navigation/types";
+
+type StylistNavigation = NativeStackNavigationProp<StylistStackParamList>;
 
 export const ChatHistoryScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StylistNavigation>();
   const { archivedSessions, isLoading, fetchArchivedSessions } = useAiStylistStore();
 
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string>(
-    new Date().toISOString().split('T')[0],
-  );
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
 
   useEffect(() => {
-    fetchArchivedSessions(selectedDate);
+    void fetchArchivedSessions(selectedDate);
   }, [selectedDate, fetchArchivedSessions]);
 
   const handleRefresh = useCallback(async () => {
@@ -35,12 +37,12 @@ export const ChatHistoryScreen: React.FC = () => {
   const handleSessionPress = useCallback(
     (session: ArchivedSession) => {
       if (session.hasOutfitPlan) {
-        (navigation as any).navigate('OutfitPlan', { planId: session.id });
+        navigation.navigate("OutfitPlan", { planId: session.id });
       } else {
-        (navigation as any).navigate('AiStylistChat', { sessionId: session.id });
+        navigation.navigate("AiStylistChat", { sessionId: session.id });
       }
     },
-    [navigation],
+    [navigation]
   );
 
   const formatDate = (dateStr: string) => {
@@ -48,30 +50,40 @@ export const ChatHistoryScreen: React.FC = () => {
     const now = new Date();
     const diff = now.getTime() - d.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    if (days === 0) return 'Today';
-    if (days === 1) return 'Yesterday';
-    if (days < 7) return `${days} days ago`;
-    return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+    if (days === 0) {
+      return "Today";
+    }
+    if (days === 1) {
+      return "Yesterday";
+    }
+    if (days < 7) {
+      return `${days} days ago`;
+    }
+    return d.toLocaleDateString("zh-CN", { month: "short", day: "numeric" });
   };
 
   const formatTime = (dateStr: string) => {
     const d = new Date(dateStr);
-    return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
   };
 
   const renderItem = useCallback(
     ({ item }: { item: ArchivedSession }) => (
-      <TouchableOpacity style={s.sessionCard} onPress={() => handleSessionPress(item)} activeOpacity={0.7}>
+      <TouchableOpacity
+        style={s.sessionCard}
+        onPress={() => handleSessionPress(item)}
+        activeOpacity={0.7}
+      >
         <View style={s.sessionIcon}>
           <Ionicons
-            name={item.hasOutfitPlan ? 'shirt' : 'chatbubble-ellipses'}
+            name={item.hasOutfitPlan ? "shirt" : "chatbubble-ellipses"}
             size={20}
             color={theme.colors.primary}
           />
         </View>
         <View style={s.sessionInfo}>
           <Text style={s.sessionGoal} numberOfLines={1}>
-            {item.goal || 'AI Stylist Conversation'}
+            {item.goal || "AI Stylist Conversation"}
           </Text>
           <Text style={s.sessionTime}>{formatTime(item.createdAt)}</Text>
         </View>
@@ -85,7 +97,7 @@ export const ChatHistoryScreen: React.FC = () => {
         </View>
       </TouchableOpacity>
     ),
-    [handleSessionPress],
+    [handleSessionPress]
   );
 
   const renderEmpty = useCallback(
@@ -96,13 +108,13 @@ export const ChatHistoryScreen: React.FC = () => {
         <Text style={s.emptySubtitle}>Your AI Stylist chat history will appear here</Text>
         <TouchableOpacity
           style={s.startBtn}
-          onPress={() => (navigation as any).navigate('AIStylist')}
+          onPress={() => navigation.navigate("AIStylist")}
         >
           <Text style={s.startBtnText}>Start a conversation</Text>
         </TouchableOpacity>
       </View>
     ),
-    [navigation],
+    [navigation]
   );
 
   return (
@@ -112,29 +124,36 @@ export const ChatHistoryScreen: React.FC = () => {
           <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Chat History</Text>
-        <TouchableOpacity style={s.backBtn} onPress={() => (navigation as any).navigate('SessionCalendar')}>
+        <TouchableOpacity
+          style={s.backBtn}
+          onPress={() => navigation.navigate("SessionCalendar")}
+        >
           <Ionicons name="calendar-outline" size={22} color={theme.colors.text} />
         </TouchableOpacity>
       </View>
 
       {/* Date selector */}
       <View style={s.dateRow}>
-        <TouchableOpacity onPress={() => {
-          const d = new Date(selectedDate);
-          d.setDate(d.getDate() - 1);
-          setSelectedDate(d.toISOString().split('T')[0]);
-        }}>
+        <TouchableOpacity
+          onPress={() => {
+            const d = new Date(selectedDate);
+            d.setDate(d.getDate() - 1);
+            setSelectedDate(d.toISOString().split("T")[0]);
+          }}
+        >
           <Ionicons name="chevron-back" size={20} color={theme.colors.primary} />
         </TouchableOpacity>
         <Text style={s.dateText}>{formatDate(selectedDate)}</Text>
-        <TouchableOpacity onPress={() => {
-          const d = new Date(selectedDate);
-          d.setDate(d.getDate() + 1);
-          const today = new Date().toISOString().split('T')[0];
-          if (d.toISOString().split('T')[0] <= today) {
-            setSelectedDate(d.toISOString().split('T')[0]);
-          }
-        }}>
+        <TouchableOpacity
+          onPress={() => {
+            const d = new Date(selectedDate);
+            d.setDate(d.getDate() + 1);
+            const today = new Date().toISOString().split("T")[0];
+            if (d.toISOString().split("T")[0] <= today) {
+              setSelectedDate(d.toISOString().split("T")[0]);
+            }
+          }}
+        >
           <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
         </TouchableOpacity>
       </View>
@@ -151,7 +170,9 @@ export const ChatHistoryScreen: React.FC = () => {
           ListEmptyComponent={renderEmpty}
           refreshing={refreshing}
           onRefresh={handleRefresh}
-          contentContainerStyle={archivedSessions.length === 0 ? { flex: 1 } : { paddingBottom: 24 }}
+          contentContainerStyle={
+            archivedSessions.length === 0 ? { flex: 1 } : { paddingBottom: 24 }
+          }
         />
       )}
     </SafeAreaView>
@@ -161,47 +182,72 @@ export const ChatHistoryScreen: React.FC = () => {
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
   header: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: theme.colors.surface,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.border,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: theme.colors.text },
-  backBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
+  backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   dateRow: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    paddingVertical: 12, gap: 16, backgroundColor: theme.colors.surface,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.divider,
-  },
-  dateText: { fontSize: 15, fontWeight: '600', color: theme.colors.text },
-  centerContent: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 },
-  emptyTitle: { fontSize: 18, fontWeight: '600', color: theme.colors.text, marginTop: 16 },
-  emptySubtitle: { fontSize: 14, color: theme.colors.textTertiary, marginTop: 8, textAlign: 'center' },
-  startBtn: {
-    marginTop: 20, backgroundColor: theme.colors.primary,
-    paddingHorizontal: 24, paddingVertical: 10, borderRadius: 20,
-  },
-  startBtnText: { color: theme.colors.surface, fontSize: 14, fontWeight: '600' },
-  sessionCard: {
-    flexDirection: 'row', alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    gap: 16,
     backgroundColor: theme.colors.surface,
-    paddingHorizontal: 16, paddingVertical: 14,
-    borderBottomWidth: 1, borderBottomColor: theme.colors.divider,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.divider,
+  },
+  dateText: { fontSize: 15, fontWeight: "600", color: theme.colors.text },
+  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
+  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text, marginTop: 16 },
+  emptySubtitle: {
+    fontSize: 14,
+    color: theme.colors.textTertiary,
+    marginTop: 8,
+    textAlign: "center",
+  },
+  startBtn: {
+    marginTop: 20,
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  startBtnText: { color: theme.colors.surface, fontSize: 14, fontWeight: "600" },
+  sessionCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: theme.colors.surface,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.divider,
   },
   sessionIcon: {
-    width: 40, height: 40, borderRadius: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: theme.colors.subtleBg,
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   sessionInfo: { flex: 1, marginLeft: 12 },
-  sessionGoal: { fontSize: 15, fontWeight: '500', color: theme.colors.text },
+  sessionGoal: { fontSize: 15, fontWeight: "500", color: theme.colors.text },
   sessionTime: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 },
-  sessionMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  sessionMeta: { flexDirection: "row", alignItems: "center", gap: 8 },
   outfitBadge: {
     backgroundColor: theme.colors.subtleBg,
-    paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
   },
-  outfitBadgeText: { fontSize: 11, fontWeight: '600', color: theme.colors.primary },
+  outfitBadgeText: { fontSize: 11, fontWeight: "600", color: theme.colors.primary },
 });
 
 export default ChatHistoryScreen;

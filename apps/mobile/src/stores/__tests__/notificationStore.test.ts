@@ -316,7 +316,9 @@ describe("useNotificationStore", () => {
     });
 
     it("should set default settings on fetch failure", async () => {
-      mockedNotificationApi.getNotificationSettings.mockRejectedValueOnce(new Error("Network error"));
+      mockedNotificationApi.getNotificationSettings.mockRejectedValueOnce(
+        new Error("Network error")
+      );
 
       await useNotificationStore.getState().fetchSettings();
 
@@ -350,7 +352,9 @@ describe("useNotificationStore", () => {
       const state = useNotificationStore.getState();
       expect(state.settings!.community).toBe(false);
       expect(state.settings!.order).toBe(true);
-      expect(mockedNotificationApi.updateNotificationSettings).toHaveBeenCalledWith({ community: false });
+      expect(mockedNotificationApi.updateNotificationSettings).toHaveBeenCalledWith({
+        community: false,
+      });
     });
 
     it("should revert settings on failure", async () => {
@@ -366,7 +370,9 @@ describe("useNotificationStore", () => {
 
       useNotificationStore.setState({ settings: { ...originalSettings } });
 
-      mockedNotificationApi.updateNotificationSettings.mockRejectedValueOnce(new Error("Network error"));
+      mockedNotificationApi.updateNotificationSettings.mockRejectedValueOnce(
+        new Error("Network error")
+      );
 
       await useNotificationStore.getState().updateSettings({ community: false });
 

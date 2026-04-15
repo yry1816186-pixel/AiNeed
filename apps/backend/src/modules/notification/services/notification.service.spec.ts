@@ -3,12 +3,12 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { NotificationService as WebSocketNotificationService } from "../../../common/gateway/notification.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
+import { NotificationTemplateService } from "./notification-template.service";
 import {
   NotificationService,
   CreateNotificationDto,
 } from "./notification.service";
 import { PushNotificationService } from "./push-notification.service";
-import { NotificationTemplateService } from "./notification-template.service";
 
 describe("NotificationService", () => {
   let service: NotificationService;

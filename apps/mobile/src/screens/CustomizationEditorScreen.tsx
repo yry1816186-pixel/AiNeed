@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -13,12 +13,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
 import { launchImageLibrary } from "react-native-image-picker";
-import {
-  useCustomizationEditorStore,
-  type DesignLayer,
-} from "../stores/customizationEditorStore";
+import { useCustomizationEditorStore, type DesignLayer } from "../stores/customizationEditorStore";
 import { TemplateSelector } from "../components/customization/TemplateSelector";
 import { DesignToolbar } from "../components/customization/DesignToolbar";
 import { LayerPanel } from "../components/customization/LayerPanel";
@@ -37,33 +35,28 @@ export const CustomizationEditorScreen: React.FC = () => {
   const [showTextModal, setShowTextModal] = useState(false);
   const [textContent, setTextContent] = useState("");
   const [textFontSize, setTextFontSize] = useState("24");
-  const [textColor, setTextColor] = useState("#000000");
+  const [textColor, setTextColor] = useState(DesignTokens.colors.neutral.black);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showLayers, setShowLayers] = useState(false);
 
   const store = useCustomizationEditorStore();
 
   useEffect(() => {
-    store.loadTemplates();
-    return () => { store.reset(); };
+    void store.loadTemplates();
+    return () => {
+      store.reset();
+    };
   }, []);
 
   const handleAddImage = useCallback(() => {
-    launchImageLibrary(
-      { mediaType: "photo", quality: 0.8, selectionLimit: 1 },
-      (response) => {
-        if (response.assets && response.assets[0]) {
-          const asset = response.assets[0];
-          if (asset.uri) {
-            store.addImageLayer(
-              asset.uri,
-              asset.width ?? 200,
-              asset.height ?? 200,
-            );
-          }
+    void launchImageLibrary({ mediaType: "photo", quality: 0.8, selectionLimit: 1 }, (response) => {
+      if (response.assets && response.assets[0]) {
+        const asset = response.assets[0];
+        if (asset.uri) {
+          store.addImageLayer(asset.uri, asset.width ?? 200, asset.height ?? 200);
         }
-      },
-    );
+      }
+    });
   }, [store]);
 
   const handleAddText = useCallback(() => {
@@ -75,11 +68,7 @@ export const CustomizationEditorScreen: React.FC = () => {
       Alert.alert("提示", "请输入文字内容");
       return;
     }
-    store.addTextLayer(
-      textContent.trim(),
-      parseInt(textFontSize, 10) || 24,
-      textColor,
-    );
+    store.addTextLayer(textContent.trim(), parseInt(textFontSize, 10) || 24, textColor);
     setTextContent("");
     setShowTextModal(false);
   }, [textContent, textFontSize, textColor, store]);
@@ -91,7 +80,9 @@ export const CustomizationEditorScreen: React.FC = () => {
   }, [store]);
 
   const handleBringForward = useCallback(() => {
-    if (!store.selectedLayerId) return;
+    if (!store.selectedLayerId) {
+      return;
+    }
     const ids = store.designLayers.map((l) => l.id);
     const idx = ids.indexOf(store.selectedLayerId);
     if (idx < ids.length - 1) {
@@ -101,7 +92,9 @@ export const CustomizationEditorScreen: React.FC = () => {
   }, [store]);
 
   const handleSendBack = useCallback(() => {
-    if (!store.selectedLayerId) return;
+    if (!store.selectedLayerId) {
+      return;
+    }
     const ids = store.designLayers.map((l) => l.id);
     const idx = ids.indexOf(store.selectedLayerId);
     if (idx > 0) {
@@ -114,7 +107,7 @@ export const CustomizationEditorScreen: React.FC = () => {
     (layerId: string, props: Partial<DesignLayer>) => {
       store.updateLayerProperty(layerId, props);
     },
-    [store],
+    [store]
   );
 
   const handleSave = useCallback(async () => {
@@ -128,9 +121,12 @@ export const CustomizationEditorScreen: React.FC = () => {
     }
     if (store.designId) {
       await store.generatePreview();
-      navigation.navigate("CustomizationPreview", {
-        designId: store.designId!,
-      });
+      // CustomizationPreview route is defined in RootStackParamList but not yet
+      // registered in ProfileStackNavigator. Uncomment navigation once the route
+      // is added to ProfileStackParamList and the screen is registered.
+      // navigation.navigate("CustomizationPreview", {
+      //   designId: store.designId!,
+      // });
     }
   }, [store, navigation]);
 
@@ -222,9 +218,7 @@ export const CustomizationEditorScreen: React.FC = () => {
             size={16}
             color={theme.colors.textSecondary}
           />
-          <Text style={styles.layerToggleText}>
-            {showLayers ? "收起图层" : "展开图层"}
-          </Text>
+          <Text style={styles.layerToggleText}>{showLayers ? "收起图层" : "展开图层"}</Text>
         </TouchableOpacity>
       )}
 
@@ -272,12 +266,7 @@ export const CustomizationEditorScreen: React.FC = () => {
                 style={styles.colorButton}
                 onPress={() => setShowColorPicker(!showColorPicker)}
               >
-                <View
-                  style={[
-                    styles.colorPreview,
-                    { backgroundColor: textColor },
-                  ]}
-                />
+                <View style={[styles.colorPreview, { backgroundColor: textColor }]} />
                 <Text style={styles.colorButtonText}>颜色</Text>
               </TouchableOpacity>
             </View>
@@ -293,10 +282,7 @@ export const CustomizationEditorScreen: React.FC = () => {
               >
                 <Text style={styles.modalCancelText}>取消</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalConfirmButton}
-                onPress={handleConfirmText}
-              >
+              <TouchableOpacity style={styles.modalConfirmButton} onPress={handleConfirmText}>
                 <Text style={styles.modalConfirmText}>确认</Text>
               </TouchableOpacity>
             </View>

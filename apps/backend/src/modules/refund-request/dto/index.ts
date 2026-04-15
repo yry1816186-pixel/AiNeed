@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsString,
   IsNotEmpty,
@@ -5,7 +6,6 @@ import {
   IsEnum,
   IsArray,
 } from "class-validator";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export enum RefundTypeDto {
   REFUND_ONLY = "REFUND_ONLY",

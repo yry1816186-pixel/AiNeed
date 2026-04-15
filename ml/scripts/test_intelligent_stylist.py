@@ -11,7 +11,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv(Path(__file__).parent.parent / ".env")
 
-from ml.services.intelligent_stylist_service import (
+from ml.services.stylist.intelligent_stylist_service import (
     IntelligentStylistService,
     UserProfile,
     SceneContext

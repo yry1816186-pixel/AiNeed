@@ -1,5 +1,5 @@
-import { IsString, IsOptional, IsEnum, IsNumber, Min, Max } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsString, IsOptional, IsEnum, IsNumber, Min, Max } from "class-validator";
 
 export class AdminPaginationDto {
   @ApiPropertyOptional({ description: "页码", default: 1 })

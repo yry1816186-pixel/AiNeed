@@ -40,7 +40,9 @@ export function useRetry<T>(options: UseRetryOptions = {}): UseRetryReturn<T> {
 
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         if (abortControllerRef.current.signal.aborted) {
-          if (isMountedRef.current) setIsLoading(false);
+          if (isMountedRef.current) {
+            setIsLoading(false);
+          }
           return null;
         }
 
@@ -73,12 +75,12 @@ export function useRetry<T>(options: UseRetryOptions = {}): UseRetryReturn<T> {
       }
       return null;
     },
-    [maxRetries, baseDelay, onRetry],
+    [maxRetries, baseDelay, onRetry]
   );
 
   const retry = useCallback(() => {
     if (lastFnRef.current) {
-      execute(lastFnRef.current);
+      void execute(lastFnRef.current);
     }
   }, [execute]);
 

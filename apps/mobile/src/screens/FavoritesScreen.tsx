@@ -1,4 +1,4 @@
-import React, { useCallback, useState, memo, useMemo } from 'react';
+﻿import React, { useCallback, useState, memo } from "react";
 import {
   View,
   Text,
@@ -7,17 +7,19 @@ import {
   ActivityIndicator,
   RefreshControl,
   TouchableOpacity,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme } from '../theme';
-import { favoriteApi } from '../services/api/commerce.api';
-import { useAuthStore } from '../stores/index';
-import type { ClothingItem } from '../types/clothing';
-import type { RootStackParamList } from '../types/navigation';
-import { ImageWithPlaceholder } from '../components/common/ImageWithPlaceholder';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme } from '../design-system/theme';
+import { useTranslation } from "../i18n";
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import { favoriteApi } from "../services/api/commerce.api";
+import { useAuthStore } from "../stores/index";
+import type { ClothingItem } from "../types/clothing";
+import type { RootStackParamList } from "../types/navigation";
+import { ImageWithPlaceholder } from "../shared/components/common/ImageWithPlaceholder";
 
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -36,16 +38,9 @@ interface FavoriteItemProps {
 
 const FavoriteItem = memo(function FavoriteItem({ item, onPress, onRemove }: FavoriteItemProps) {
   return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => onPress(item.id)}
-      activeOpacity={0.7}
-    >
+    <TouchableOpacity style={styles.card} onPress={() => onPress(item.id)} activeOpacity={0.7}>
       {item.imageUri ? (
-        <ImageWithPlaceholder
-          source={{ uri: item.imageUri }}
-          style={styles.image}
-        />
+        <ImageWithPlaceholder source={{ uri: item.imageUri }} style={styles.image} />
       ) : (
         <View style={styles.placeholder}>
           <Ionicons name="shirt-outline" size={40} color={theme.colors.textTertiary} />
@@ -55,18 +50,15 @@ const FavoriteItem = memo(function FavoriteItem({ item, onPress, onRemove }: Fav
         <Text style={styles.name} numberOfLines={1}>
           {item.name || item.category}
         </Text>
-        {item.brand ? (
-          <Text style={styles.brand}>{item.brand}</Text>
-        ) : null}
-        {item.price != null ? (
-          <Text style={styles.price}>¥{item.price.toFixed(0)}</Text>
-        ) : null}
+        {item.brand ? <Text style={styles.brand}>{item.brand}</Text> : null}
+        {/* eslint-disable-next-line eqeqeq */}
+        {item.price != null ? <Text style={styles.price}>¥{item.price.toFixed(0)}</Text> : null}
       </View>
       <View style={styles.actions}>
         <TouchableOpacity
           style={styles.removeBtn}
           onPress={() => onRemove(item.id)}
-          accessibilityLabel="取消收藏"
+          accessibilityLabel="删除"
           accessibilityRole="button"
         >
           <Ionicons name="heart" size={20} color={theme.colors.error} />
@@ -80,6 +72,7 @@ export const FavoritesScreen: React.FC = () => {
   const navigation = useNavigation<NavProp>();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const authLoading = useAuthStore((state) => state.isLoading);
+  const t = useTranslation();
   const [items, setItems] = useState<ClothingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -111,38 +104,31 @@ export const FavoritesScreen: React.FC = () => {
       }
 
       setLoading(true);
-      fetchFavorites();
-    }, [authLoading, fetchFavorites, isAuthenticated]),
+      void fetchFavorites();
+    }, [authLoading, fetchFavorites, isAuthenticated])
   );
 
-  const handleRemove = useCallback(
-    async (id: string) => {
-      try {
-        await favoriteApi.remove(id);
-        setItems((prev) => prev.filter((item) => item.id !== id));
-      } catch {
-        // ignore
-      }
-    },
-    [],
-  );
+  const handleRemove = useCallback(async (id: string) => {
+    try {
+      await favoriteApi.remove(id);
+      setItems((prev) => prev.filter((item) => item.id !== id));
+    } catch {
+      // ignore
+    }
+  }, []);
 
   const handleNavigate = useCallback(
     (id: string) => {
-      navigation.navigate('ClothingDetail', { clothingId: id });
+      navigation.navigate("Product", { clothingId: id });
     },
-    [navigation],
+    [navigation]
   );
 
   const renderItem = useCallback(
     ({ item }: { item: ClothingItem }) => (
-      <FavoriteItem
-        item={item}
-        onPress={handleNavigate}
-        onRemove={handleRemove}
-      />
+      <FavoriteItem item={item} onPress={handleNavigate} onRemove={handleRemove} />
     ),
-    [handleNavigate, handleRemove],
+    [handleNavigate, handleRemove]
   );
 
   const keyExtractor = useCallback((item: ClothingItem) => item.id, []);
@@ -154,7 +140,7 @@ export const FavoritesScreen: React.FC = () => {
       offset: LIST_ITEM_HEIGHT * index + 12 * index, // 12 是 marginBottom
       index,
     }),
-    [],
+    []
   );
 
   if (loading) {
@@ -162,7 +148,7 @@ export const FavoritesScreen: React.FC = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={styles.loadingText}>加载中...</Text>
+          <Text style={styles.loadingText}>{t.common.loading}</Text>
         </View>
       </SafeAreaView>
     );
@@ -174,7 +160,7 @@ export const FavoritesScreen: React.FC = () => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>我的收藏</Text>
+        <Text style={styles.headerTitle}>{t.profile.myFavorites}</Text>
         <View style={styles.backBtn} />
       </View>
       <FlatList
@@ -187,7 +173,7 @@ export const FavoritesScreen: React.FC = () => {
             refreshing={refreshing}
             onRefresh={() => {
               setRefreshing(true);
-              fetchFavorites();
+              void fetchFavorites();
             }}
             tintColor={theme.colors.primary}
           />
@@ -195,7 +181,7 @@ export const FavoritesScreen: React.FC = () => {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="heart-outline" size={48} color={theme.colors.textTertiary} />
-            <Text style={styles.emptyText}>还没有收藏哦</Text>
+            <Text style={styles.emptyText}>{t.common.loading}</Text>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Text style={styles.emptyAction}>去逛逛</Text>
             </TouchableOpacity>
@@ -215,46 +201,46 @@ export const FavoritesScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
     backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: theme.colors.text },
-  backBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
+  backBtn: { width: 32, height: 32, alignItems: "center", justifyContent: "center" },
   list: { padding: 16 },
   emptyList: { flex: 1 },
   card: {
     backgroundColor: theme.colors.surface,
     borderRadius: 12,
     marginBottom: 12,
-    overflow: 'hidden',
-    flexDirection: 'row',
+    overflow: "hidden",
+    flexDirection: "row",
     elevation: 2,
   },
   image: { width: 100, height: 100 },
   placeholder: {
     width: 100,
     height: 100,
-    backgroundColor: '#F1F3F4',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: DesignTokens.colors.neutral[100],
+    alignItems: "center",
+    justifyContent: "center",
   },
-  info: { flex: 1, padding: 12, justifyContent: 'center' },
-  name: { fontSize: 15, fontWeight: '600', color: theme.colors.text },
+  info: { flex: 1, padding: 12, justifyContent: "center" },
+  name: { fontSize: 15, fontWeight: "600", color: theme.colors.text },
   brand: { fontSize: 12, color: theme.colors.primary, marginTop: 2 },
-  price: { fontSize: 14, fontWeight: '700', color: theme.colors.primary, marginTop: 4 },
-  actions: { justifyContent: 'center', paddingRight: 12 },
+  price: { fontSize: 14, fontWeight: "700", color: theme.colors.primary, marginTop: 4 },
+  actions: { justifyContent: "center", paddingRight: 12 },
   removeBtn: { padding: 8 },
-  centerContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
   loadingText: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 8 },
   emptyContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 60,
   },
   emptyText: { fontSize: 14, color: theme.colors.textTertiary, marginTop: 8 },

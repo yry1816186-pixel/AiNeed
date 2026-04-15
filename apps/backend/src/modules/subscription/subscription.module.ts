@@ -1,6 +1,6 @@
 import { Module, OnModuleInit } from "@nestjs/common";
-import { ScheduleModule } from "@nestjs/schedule";
 import { EventEmitterModule } from "@nestjs/event-emitter";
+import { ScheduleModule } from "@nestjs/schedule";
 
 import { PrismaModule } from "../../common/prisma/prisma.module";
 import { AuthModule } from "../auth/auth.module";

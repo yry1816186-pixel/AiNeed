@@ -140,7 +140,7 @@ export function getBullMQOptions(name: QueueName): Omit<QueueOptions, 'connectio
     defaultJobOptions: {
       attempts: config.attempts,
       backoff: config.backoff
-        ? { type: config.backoff.type as 'exponential' | 'fixed', delay: config.backoff.delay }
+        ? { type: config.backoff.type, delay: config.backoff.delay }
         : undefined,
       removeOnComplete: config.removeOnComplete,
       removeOnFail: config.removeOnFail,

@@ -1,5 +1,5 @@
-import { IsString, IsOptional, IsInt, Min, Max, IsBoolean } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsOptional, IsInt, Min, Max, IsBoolean } from 'class-validator';
 
 export class CodeRagSearchDto {
   @ApiProperty({ description: '搜索查询语句', example: '用户认证逻辑' })

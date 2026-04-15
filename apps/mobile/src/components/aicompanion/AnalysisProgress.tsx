@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from "react";
-import { View, Text, StyleSheet, Animated, Easing } from "react-native";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -29,9 +29,19 @@ const PROGRESS_STAGES = [
   { key: "finalizing", label: "生成中", icon: "checkmark-circle-outline" },
 ];
 
-export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
-  progress,
-}) => {
+interface AnimatedDotProps {
+  dotValue: ReturnType<typeof useSharedValue<number>>;
+}
+
+const AnimatedDot: React.FC<AnimatedDotProps> = ({ dotValue }) => {
+  const style = useAnimatedStyle(() => ({
+    opacity: dotValue.value,
+    transform: [{ scale: interpolate(dotValue.value, [0, 1], [1, 1.3]) }],
+  }));
+  return <AnimatedView style={[styles.dot, style]} />;
+};
+
+export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({ progress }) => {
   const pulseValue = useSharedValue(0);
   const dotValues = [useSharedValue(0), useSharedValue(0), useSharedValue(0)];
   const progressValue = useSharedValue(0);
@@ -46,29 +56,24 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
         withTiming(0, {
           duration: 1000,
           easing: ReanimatedEasing.inOut(ReanimatedEasing.ease),
-        }),
+        })
       ),
       -1,
-      true,
+      true
     );
 
     dotValues.forEach((dot, index) => {
       dot.value = withDelay(
         index * 200,
         withRepeat(
-          withSequence(
-            withTiming(1, { duration: 400 }),
-            withTiming(0, { duration: 400 }),
-          ),
+          withSequence(withTiming(1, { duration: 400 }), withTiming(0, { duration: 400 })),
           -1,
-          true,
-        ),
+          true
+        )
       );
     });
 
-    const etaMatch = progress.etaSeconds
-      ? Math.max(0, 1 - progress.etaSeconds / 60)
-      : 0.5;
+    const etaMatch = progress.etaSeconds ? Math.max(0, 1 - progress.etaSeconds / 60) : 0.5;
     progressValue.value = withTiming(etaMatch, { duration: 500 });
   }, [progress.etaSeconds]);
 
@@ -77,20 +82,17 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
     transform: [{ scale: interpolate(pulseValue.value, [0, 1], [1, 1.1]) }],
   }));
 
-  const dotStyles = dotValues.map((dot) =>
-    useAnimatedStyle(() => ({
-      opacity: dot.value,
-      transform: [{ scale: interpolate(dot.value, [0, 1], [1, 1.3]) }],
-    })),
-  );
-
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progressValue.value * 100}%`,
   }));
 
   const formatEta = (seconds?: number) => {
-    if (!seconds) return null;
-    if (seconds < 60) return `约 ${seconds} 秒`;
+    if (!seconds) {
+      return null;
+    }
+    if (seconds < 60) {
+      return `约 ${seconds} 秒`;
+    }
     const minutes = Math.ceil(seconds / 60);
     return `约 ${minutes} 分钟`;
   };
@@ -112,13 +114,10 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
       <View style={styles.iconContainer}>
         <AnimatedView style={[styles.iconGlow, pulseStyle]}>
           <LinearGradient
-            colors={[
-              DesignTokens.colors.brand.sage,
-              DesignTokens.colors.brand.camel,
-            ]}
+            colors={[DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel]}
             style={styles.iconGradient}
           >
-            <Ionicons name="analytics" size={28} color="#FFFFFF" />
+            <Ionicons name="analytics" size={28} color={DesignTokens.colors.text.inverse} />
           </LinearGradient>
         </AnimatedView>
       </View>
@@ -151,15 +150,13 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
                   ]}
                 >
                   {isCompleted ? (
-                    <Ionicons name="checkmark" size={12} color="#FFFFFF" />
+                    <Ionicons name="checkmark" size={12} color={DesignTokens.colors.text.inverse} />
                   ) : (
                     <Ionicons
-                      name={stage.icon as any}
+                      name={stage.icon}
                       size={12}
                       color={
-                        isActive
-                          ? DesignTokens.colors.brand.sage
-                          : DesignTokens.colors.neutral[400]
+                        isActive ? DesignTokens.colors.brand.sage : DesignTokens.colors.neutral[400]
                       }
                     />
                   )}
@@ -174,12 +171,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
                   {stage.label}
                 </Text>
                 {index < PROGRESS_STAGES.length - 1 && (
-                  <View
-                    style={[
-                      styles.stageLine,
-                      isCompleted && styles.stageLineCompleted,
-                    ]}
-                  />
+                  <View style={[styles.stageLine, isCompleted && styles.stageLineCompleted]} />
                 )}
               </View>
             );
@@ -198,8 +190,8 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({
         )}
 
         <View style={styles.loadingDots}>
-          {dotStyles.map((style, index) => (
-            <AnimatedView key={index} style={[styles.dot, style]} />
+          {dotValues.map((dotValue, index) => (
+            <AnimatedDot key={index} dotValue={dotValue} />
           ))}
         </View>
       </View>

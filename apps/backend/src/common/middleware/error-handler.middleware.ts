@@ -37,6 +37,7 @@ interface ErrorResponseBody {
  * 扩展 Request 接口
  */
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       /** 请求唯一标识符 */

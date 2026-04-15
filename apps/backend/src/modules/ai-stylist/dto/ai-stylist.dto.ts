@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { PhotoType } from "@prisma/client";
+import { Type } from "class-transformer";
 import {
   IsEnum,
   IsIn,
@@ -15,7 +16,6 @@ import {
   Min,
   Max,
 } from "class-validator";
-import { Type } from "class-transformer";
 
 /**
  * 获取同类商品替代列表查询参数 DTO

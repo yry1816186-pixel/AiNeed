@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { merchantApi } from "../services/api/commerce.api";
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 type ScreenState = "form" | "pending" | "approved" | "rejected";
 
@@ -53,7 +54,7 @@ export const MerchantApplyScreen: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    checkExistingApplication();
+    void checkExistingApplication();
   }, [checkExistingApplication]);
 
   const isLicenseValid = BUSINESS_LICENSE_REGEX.test(businessLicense);
@@ -101,7 +102,7 @@ export const MerchantApplyScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#FF4D4F" />
+          <ActivityIndicator size="large" color={DesignTokens.colors.semantic.error} />
         </View>
       </SafeAreaView>
     );
@@ -124,11 +125,9 @@ export const MerchantApplyScreen: React.FC = () => {
               setBrandNameError("");
             }}
             placeholder="请输入品牌名称"
-            placeholderTextColor="#CCCCCC"
+            placeholderTextColor={DesignTokens.colors.neutral[300]}
           />
-          {brandNameError ? (
-            <Text style={styles.errorText}>{brandNameError}</Text>
-          ) : null}
+          {brandNameError ? <Text style={styles.errorText}>{brandNameError}</Text> : null}
 
           <Text style={styles.fieldLabel}>营业执照号</Text>
           <View style={styles.inputRow}>
@@ -137,14 +136,14 @@ export const MerchantApplyScreen: React.FC = () => {
               value={businessLicense}
               onChangeText={setBusinessLicense}
               placeholder="18位统一社会信用代码"
-              placeholderTextColor="#CCCCCC"
+              placeholderTextColor={DesignTokens.colors.neutral[300]}
               maxLength={18}
             />
             {businessLicense.length > 0 && (
               <Ionicons
                 name={isLicenseValid ? "checkmark-circle" : "close-circle"}
                 size={20}
-                color={isLicenseValid ? "#52C41A" : "#FF4D4F"}
+                color={isLicenseValid ? DesignTokens.colors.semantic.success : DesignTokens.colors.semantic.error}
                 style={styles.validationIcon}
               />
             )}
@@ -156,7 +155,7 @@ export const MerchantApplyScreen: React.FC = () => {
             value={contactName}
             onChangeText={setContactName}
             placeholder="请输入联系人姓名"
-            placeholderTextColor="#CCCCCC"
+            placeholderTextColor={DesignTokens.colors.neutral[300]}
           />
 
           <Text style={styles.fieldLabel}>手机号</Text>
@@ -166,7 +165,7 @@ export const MerchantApplyScreen: React.FC = () => {
               value={phone}
               onChangeText={setPhone}
               placeholder="请输入手机号"
-              placeholderTextColor="#CCCCCC"
+              placeholderTextColor={DesignTokens.colors.neutral[300]}
               keyboardType="phone-pad"
               maxLength={11}
             />
@@ -174,7 +173,7 @@ export const MerchantApplyScreen: React.FC = () => {
               <Ionicons
                 name={isPhoneValid ? "checkmark-circle" : "close-circle"}
                 size={20}
-                color={isPhoneValid ? "#52C41A" : "#FF4D4F"}
+                color={isPhoneValid ? DesignTokens.colors.semantic.success : DesignTokens.colors.semantic.error}
                 style={styles.validationIcon}
               />
             )}
@@ -186,22 +185,19 @@ export const MerchantApplyScreen: React.FC = () => {
             value={description}
             onChangeText={setDescription}
             placeholder="请简要介绍品牌（选填）"
-            placeholderTextColor="#CCCCCC"
+            placeholderTextColor={DesignTokens.colors.neutral[300]}
             multiline
             maxLength={500}
           />
           <Text style={styles.charCount}>{description.length}/500</Text>
 
           <TouchableOpacity
-            style={[
-              styles.submitButton,
-              !isFormValid && styles.submitButtonDisabled,
-            ]}
+            style={[styles.submitButton, !isFormValid && styles.submitButtonDisabled]}
             onPress={handleSubmit}
             disabled={!isFormValid || submitting}
           >
             {submitting ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
+              <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
             ) : (
               <Text style={styles.submitButtonText}>提交申请</Text>
             )}
@@ -211,17 +207,15 @@ export const MerchantApplyScreen: React.FC = () => {
 
       {screenState === "pending" ? (
         <View style={styles.statusContainer}>
-          <ActivityIndicator size="large" color="#FF4D4F" />
+          <ActivityIndicator size="large" color={DesignTokens.colors.semantic.error} />
           <Text style={styles.statusTitle}>申请审核中</Text>
-          <Text style={styles.statusMessage}>
-            申请已提交，我们将在1-3个工作日内完成审核
-          </Text>
+          <Text style={styles.statusMessage}>申请已提交，我们将在1-3个工作日内完成审核</Text>
         </View>
       ) : null}
 
       {screenState === "approved" ? (
         <View style={styles.statusContainer}>
-          <Ionicons name="checkmark-circle" size={64} color="#52C41A" />
+          <Ionicons name="checkmark-circle" size={64} color={DesignTokens.colors.semantic.success} />
           <Text style={styles.statusTitle}>恭喜！您的商家申请已通过</Text>
           <TouchableOpacity style={styles.submitButton}>
             <Text style={styles.submitButtonText}>进入商家后台</Text>
@@ -231,11 +225,9 @@ export const MerchantApplyScreen: React.FC = () => {
 
       {screenState === "rejected" ? (
         <View style={styles.statusContainer}>
-          <Ionicons name="close-circle" size={64} color="#FF4D4F" />
+          <Ionicons name="close-circle" size={64} color={DesignTokens.colors.semantic.error} />
           <Text style={styles.statusTitle}>很抱歉，您的申请未通过</Text>
-          <Text style={styles.statusMessage}>
-            原因：{rejectReason}
-          </Text>
+          <Text style={styles.statusMessage}>原因：{rejectReason}</Text>
           <TouchableOpacity style={styles.submitButton} onPress={handleRetry}>
             <Text style={styles.submitButtonText}>重新申请</Text>
           </TouchableOpacity>
@@ -246,56 +238,56 @@ export const MerchantApplyScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFFFF" },
+  container: { flex: 1, backgroundColor: DesignTokens.colors.backgrounds.primary },
   header: {
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
   },
-  headerTitle: { fontSize: 17, fontWeight: "600", color: "#333333" },
+  headerTitle: { fontSize: 17, fontWeight: "600", color: DesignTokens.colors.text.primary },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   content: { flex: 1, padding: 16 },
   fieldLabel: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#333333",
+    color: DesignTokens.colors.text.primary,
     marginBottom: 6,
     marginTop: 12,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: DesignTokens.colors.neutral[200],
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 15,
-    color: "#333333",
+    color: DesignTokens.colors.text.primary,
   },
   inputRow: { position: "relative" },
   inputWithIcon: { paddingRight: 40 },
   validationIcon: { position: "absolute", right: 12, top: 12 },
-  errorText: { fontSize: 12, color: "#FF4D4F", marginTop: 4 },
+  errorText: { fontSize: 12, color: DesignTokens.colors.semantic.error, marginTop: 4 },
   textArea: { height: 80, textAlignVertical: "top" },
   charCount: {
     fontSize: 12,
-    color: "#999999",
+    color: DesignTokens.colors.text.tertiary,
     textAlign: "right",
     marginTop: 4,
   },
   submitButton: {
-    backgroundColor: "#FF4D4F",
+    backgroundColor: DesignTokens.colors.semantic.error,
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: "center",
     marginTop: 24,
   },
-  submitButtonDisabled: { backgroundColor: "#FFB0B0" },
+  submitButtonDisabled: { backgroundColor: "#FFB0B0" }, // custom color
   submitButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
   },
   statusContainer: {
     flex: 1,
@@ -306,13 +298,13 @@ const styles = StyleSheet.create({
   statusTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#333333",
+    color: DesignTokens.colors.text.primary,
     marginTop: 16,
     textAlign: "center",
   },
   statusMessage: {
     fontSize: 14,
-    color: "#999999",
+    color: DesignTokens.colors.text.tertiary,
     marginTop: 8,
     textAlign: "center",
     lineHeight: 22,

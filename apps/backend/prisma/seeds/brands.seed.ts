@@ -83,7 +83,7 @@ const brands = [
   },
   {
     name: 'URBAN REVIVO',
-    slug: 'urban-revico',
+    slug: 'urban-revivo',
     description: '中国快时尚品牌，潮流设计高性价比',
     priceRange: PriceRange.budget,
     categories: ['tops', 'bottoms', 'dresses', 'outerwear', 'accessories'],

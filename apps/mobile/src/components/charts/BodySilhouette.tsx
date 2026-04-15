@@ -1,23 +1,9 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import Svg, {
-  Circle,
-  Path,
-  Line,
-  Text as SvgText,
-  G,
-  Defs,
-  ClipPath,
-} from 'react-native-svg';
-import { colors } from '../../theme/tokens/colors';
-import { typography } from '../../theme/tokens/typography';
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import Svg, { Circle, Path, Line, Text as SvgText, G } from "react-native-svg";
+import { colors } from "../../theme/tokens/colors";
 
-export type BodyType =
-  | 'rectangle'
-  | 'triangle'
-  | 'inverted_triangle'
-  | 'hourglass'
-  | 'oval';
+export type BodyType = "rectangle" | "triangle" | "inverted_triangle" | "hourglass" | "oval";
 
 export interface BodySilhouetteProps {
   bodyType: BodyType;
@@ -31,10 +17,7 @@ export interface BodySilhouetteProps {
   accessibilityLabel?: string;
 }
 
-const BODY_RATIOS: Record<
-  BodyType,
-  { shoulder: number; waist: number; hip: number }
-> = {
+const BODY_RATIOS: Record<BodyType, { shoulder: number; waist: number; hip: number }> = {
   hourglass: { shoulder: 1.0, waist: 0.7, hip: 1.0 },
   triangle: { shoulder: 0.8, waist: 0.85, hip: 1.15 },
   inverted_triangle: { shoulder: 1.15, waist: 0.8, hip: 0.8 },
@@ -106,7 +89,9 @@ export const BodySilhouette: React.FC<BodySilhouetteProps> = ({
   const bodyPath = [
     `M ${cx} ${neckTop}`,
     `L ${cx - neckW} ${neckBot}`,
-    `C ${cx - neckW - 2} ${shoulderY - 3}, ${leftShoulderX + 5} ${shoulderY - 2}, ${leftShoulderX} ${shoulderY}`,
+    `C ${cx - neckW - 2} ${shoulderY - 3}, ${leftShoulderX + 5} ${
+      shoulderY - 2
+    }, ${leftShoulderX} ${shoulderY}`,
     `C ${leftShoulderX - 3} ${shoulderY + 8}, ${leftBustX} ${bustY - 8}, ${leftBustX} ${bustY}`,
     `C ${leftBustX - 2} ${bustY + 10}, ${leftWaistX + 3} ${waistY - 10}, ${leftWaistX} ${waistY}`,
     `C ${leftWaistX - 2} ${waistY + 8}, ${leftHipX + 3} ${hipY - 10}, ${leftHipX} ${hipY}`,
@@ -121,11 +106,15 @@ export const BodySilhouette: React.FC<BodySilhouetteProps> = ({
     `C ${rightLegOutX} ${legSplitY - 4}, ${rightHipX + 2} ${hipY + 6}, ${rightHipX} ${hipY}`,
     `C ${rightHipX - 3} ${hipY - 10}, ${rightWaistX - 2} ${waistY + 8}, ${rightWaistX} ${waistY}`,
     `C ${rightWaistX - 3} ${waistY - 10}, ${rightBustX + 2} ${bustY + 10}, ${rightBustX} ${bustY}`,
-    `C ${rightBustX} ${bustY - 8}, ${rightShoulderX + 3} ${shoulderY + 8}, ${rightShoulderX} ${shoulderY}`,
-    `C ${rightShoulderX - 5} ${shoulderY - 2}, ${cx + neckW + 2} ${shoulderY - 3}, ${cx + neckW} ${neckBot}`,
+    `C ${rightBustX} ${bustY - 8}, ${rightShoulderX + 3} ${
+      shoulderY + 8
+    }, ${rightShoulderX} ${shoulderY}`,
+    `C ${rightShoulderX - 5} ${shoulderY - 2}, ${cx + neckW + 2} ${shoulderY - 3}, ${
+      cx + neckW
+    } ${neckBot}`,
     `L ${cx} ${neckTop}`,
-    'Z',
-  ].join(' ');
+    "Z",
+  ].join(" ");
 
   const labelLineExtension = 12;
   const labelTextOffset = 18;
@@ -135,7 +124,7 @@ export const BodySilhouette: React.FC<BodySilhouetteProps> = ({
     leftX: number,
     rightX: number,
     ratio: number,
-    label: string,
+    label: string
   ) => (
     <G key={label}>
       <Line
@@ -169,19 +158,30 @@ export const BodySilhouette: React.FC<BodySilhouetteProps> = ({
   );
 
   return (
-    <View
-      accessible={true}
-      accessibilityLabel={defaultA11yLabel}
-      accessibilityRole="image"
-    >
+    <View accessible={true} accessibilityLabel={defaultA11yLabel} accessibilityRole="image">
       <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-        <Circle cx={cx} cy={headCy} r={headR} fill={color} fillOpacity={0.15} stroke={colors.neutral[300]} strokeWidth={1.2} />
-        <Path d={bodyPath} fill={color} fillOpacity={0.15} stroke={colors.neutral[300]} strokeWidth={1.2} strokeLinejoin="round" />
+        <Circle
+          cx={cx}
+          cy={headCy}
+          r={headR}
+          fill={color}
+          fillOpacity={0.15}
+          stroke={colors.neutral[300]}
+          strokeWidth={1.2}
+        />
+        <Path
+          d={bodyPath}
+          fill={color}
+          fillOpacity={0.15}
+          stroke={colors.neutral[300]}
+          strokeWidth={1.2}
+          strokeLinejoin="round"
+        />
         {showLabels && (
           <>
-            {renderProportionLabel(shoulderY, leftShoulderX, rightShoulderX, sR, '肩')}
-            {renderProportionLabel(waistY, leftWaistX, rightWaistX, wR, '腰')}
-            {renderProportionLabel(hipY, leftHipX, rightHipX, hR, '臀')}
+            {renderProportionLabel(shoulderY, leftShoulderX, rightShoulderX, sR, "肩")}
+            {renderProportionLabel(waistY, leftWaistX, rightWaistX, wR, "腰")}
+            {renderProportionLabel(hipY, leftHipX, rightHipX, hR, "臀")}
           </>
         )}
       </Svg>
@@ -189,6 +189,6 @@ export const BodySilhouette: React.FC<BodySilhouetteProps> = ({
   );
 };
 
-const styles = StyleSheet.create({});
+const _styles = StyleSheet.create({});
 
 export default BodySilhouette;

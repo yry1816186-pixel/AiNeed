@@ -1,10 +1,4 @@
-import React, {
-  useRef,
-  useEffect,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+﻿import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -19,10 +13,9 @@ import {
   StyleProp,
   ViewStyle,
 } from "react-native";
-import { BlurView } from "expo-blur";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import * as Haptics from '@/src/polyfills/expo-haptics';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+
+import * as Haptics from "@/src/polyfills/expo-haptics";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -40,20 +33,14 @@ import {
   useAnimatedRef,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-  Shadows,
-  Typography,
-} from "../../theme";
+import { Colors } from '../design-system/theme';
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
-const AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
+const _AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
 const AnimatedImage = AnimatedReanimated.createAnimatedComponent(Image);
-const AnimatedTouchableOpacity =
-  AnimatedReanimated.createAnimatedComponent(TouchableOpacity);
+const _AnimatedTouchableOpacity = AnimatedReanimated.createAnimatedComponent(TouchableOpacity);
 
 /** Ionicons 图标名称联合类型 */
 type IoniconsIconName =
@@ -120,10 +107,7 @@ const RecommendationItemCard: React.FC<{
   const isPressed = useSharedValue(false);
 
   useEffect(() => {
-    itemOpacity.value = withDelay(
-      index * 100,
-      withTiming(1, { duration: 300 }),
-    );
+    itemOpacity.value = withDelay(index * 100, withTiming(1, { duration: 300 }));
     itemTranslateX.value = withDelay(index * 100, withSpring(0, springConfig));
     imageScale.value = withDelay(index * 100 + 50, withSpring(1, springConfig));
   }, []);
@@ -175,9 +159,7 @@ const RecommendationItemCard: React.FC<{
           <Text style={styles.itemBrand}>{item.brand}</Text>
           <View style={styles.priceRow}>
             <Text style={styles.itemPrice}>¥{item.price}</Text>
-            {item.originalPrice && (
-              <Text style={styles.originalPrice}>¥{item.originalPrice}</Text>
-            )}
+            {item.originalPrice && <Text style={styles.originalPrice}>¥{item.originalPrice}</Text>}
           </View>
           {item.reason && <Text style={styles.itemReason}>{item.reason}</Text>}
           {item.tags && item.tags.length > 0 && (
@@ -205,14 +187,8 @@ const FeedSectionCard: React.FC<{
   const sectionTranslateY = useSharedValue(50);
 
   useEffect(() => {
-    sectionOpacity.value = withDelay(
-      sectionIndex * 150,
-      withTiming(1, { duration: 400 }),
-    );
-    sectionTranslateY.value = withDelay(
-      sectionIndex * 150,
-      withSpring(0, springConfig),
-    );
+    sectionOpacity.value = withDelay(sectionIndex * 150, withTiming(1, { duration: 400 }));
+    sectionTranslateY.value = withDelay(sectionIndex * 150, withSpring(0, springConfig));
   }, []);
 
   const sectionAnimatedStyle = useAnimatedStyle(() => ({
@@ -253,27 +229,12 @@ const TimelineHistoryItem: React.FC<{
   const isCurrent = item.style === currentStyle;
 
   return (
-    <View
-      style={[
-        styles.timelineItem,
-        { left: `${(index / (totalItems - 1)) * 100}%` },
-      ]}
-    >
+    <View style={[styles.timelineItem, { left: `${(index / (totalItems - 1)) * 100}%` }]}>
       <AnimatedView
-        style={[
-          styles.timelineDot,
-          isCurrent && styles.timelineDotActive,
-          dotAnimatedStyle,
-        ]}
+        style={[styles.timelineDot, isCurrent && styles.timelineDotActive, dotAnimatedStyle]}
       />
-      <Text
-        style={[styles.timelineDate, isCurrent && styles.timelineDateActive]}
-      >
-        {item.date}
-      </Text>
-      <Text
-        style={[styles.timelineStyle, isCurrent && styles.timelineStyleActive]}
-      >
+      <Text style={[styles.timelineDate, isCurrent && styles.timelineDateActive]}>{item.date}</Text>
+      <Text style={[styles.timelineStyle, isCurrent && styles.timelineStyleActive]}>
         {item.style}
       </Text>
       <Image source={{ uri: item.image }} style={styles.timelineImage} />
@@ -298,11 +259,7 @@ const TypeIconHeader: React.FC<{
 
   return (
     <AnimatedView
-      style={[
-        styles.typeIcon,
-        { backgroundColor: `${config.color}20` },
-        iconAnimatedStyle,
-      ]}
+      style={[styles.typeIcon, { backgroundColor: `${config.color}20` }, iconAnimatedStyle]}
     >
       <Ionicons name={config.icon as IoniconsIconName} size={20} color={config.color} />
     </AnimatedView>
@@ -329,9 +286,15 @@ export interface SmartRecommendationCardProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export const SmartRecommendationCard: React.FC<
-  SmartRecommendationCardProps
-> = ({ type, title, subtitle, items, onItemPress, onSeeAll, style }) => {
+export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = ({
+  type,
+  title,
+  subtitle,
+  items,
+  onItemPress,
+  onSeeAll,
+  style,
+}) => {
   const scrollX = useSharedValue(0);
   const cardOpacity = useSharedValue(0);
 
@@ -342,27 +305,27 @@ export const SmartRecommendationCard: React.FC<
   const typeConfig = {
     style: {
       icon: "palette-outline",
-      color: "#667EEA",
+      color: DesignTokens.colors.brand.slateLight,
       label: "风格匹配",
     },
     similar: {
       icon: "copy-outline",
-      color: "#10B981",
+      color: "#10B981", // custom color
       label: "相似推荐",
     },
     trending: {
       icon: "trending-up-outline",
-      color: "#F59E0B",
+      color: "#F59E0B", // custom color
       label: "热门趋势",
     },
     seasonal: {
       icon: "sunny-outline",
-      color: "#EC4899",
+      color: "#EC4899", // custom color
       label: "当季推荐",
     },
     personalized: {
       icon: "person-outline",
-      color: "#8B5CF6",
+      color: "#8B5CF6", // custom color
       label: "为你定制",
     },
   };
@@ -393,11 +356,7 @@ export const SmartRecommendationCard: React.FC<
         {onSeeAll && (
           <TouchableOpacity style={styles.seeAllButton} onPress={onSeeAll}>
             <Text style={styles.seeAllText}>查看全部</Text>
-            <Ionicons
-              name="chevron-forward"
-              size={16}
-              color={Colors.primary[500]}
-            />
+            <Ionicons name="chevron-forward" size={16} color={Colors.primary[500]} />
           </TouchableOpacity>
         )}
       </AnimatedView>
@@ -406,12 +365,7 @@ export const SmartRecommendationCard: React.FC<
 
   const renderItem = (item: RecommendationItem, index: number) => {
     return (
-      <RecommendationItemCard
-        key={item.id}
-        item={item}
-        index={index}
-        onItemPress={onItemPress}
-      />
+      <RecommendationItemCard key={item.id} item={item} index={index} onItemPress={onItemPress} />
     );
   };
 
@@ -451,7 +405,7 @@ export const PersonalizedFeed: React.FC<PersonalizedFeedProps> = ({
   onItemPress,
   onSeeAll,
   onRefresh,
-  refreshing = false,
+  _refreshing = false,
   style,
 }) => {
   const scrollY = useSharedValue(0);
@@ -495,8 +449,7 @@ export const PersonalizedFeed: React.FC<PersonalizedFeedProps> = ({
           <AnimatedView style={[styles.feedHeaderContent, headerAnimatedStyle]}>
             <Text style={styles.feedGreeting}>Hi, 潮流达人 👋</Text>
             <Text style={styles.feedSubGreeting}>
-              今日为你精选了{" "}
-              {sections.reduce((sum, s) => sum + s.items.length, 0)} 件好物
+              今日为你精选了 {sections.reduce((sum, s) => sum + s.items.length, 0)} 件好物
             </Text>
           </AnimatedView>
         </View>
@@ -536,10 +489,7 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
 
   useEffect(() => {
     scale.value = withSpring(1, springConfig);
-    checkScale.value = withDelay(
-      200,
-      withSpring(1, { damping: 10, stiffness: 300 }),
-    );
+    checkScale.value = withDelay(200, withSpring(1, { damping: 10, stiffness: 300 }));
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -553,37 +503,37 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
   const typeConfig = {
     style_match: {
       icon: "checkmark-circle",
-      color: "#667EEA",
+      color: DesignTokens.colors.brand.slateLight,
       bgColor: "rgba(102, 126, 234, 0.1)",
     },
     body_shape: {
       icon: "body-outline",
-      color: "#10B981",
+      color: "#10B981", // custom color
       bgColor: "rgba(16, 185, 129, 0.1)",
     },
     color_harmony: {
       icon: "color-palette",
-      color: "#EC4899",
+      color: "#EC4899", // custom color
       bgColor: "rgba(236, 72, 153, 0.1)",
     },
     trending: {
       icon: "trending-up",
-      color: "#F59E0B",
+      color: "#F59E0B", // custom color
       bgColor: "rgba(245, 158, 11, 0.1)",
     },
     seasonal: {
       icon: "sunny",
-      color: "#3B82F6",
+      color: "#3B82F6", // custom color
       bgColor: "rgba(59, 130, 246, 0.1)",
     },
     price: {
       icon: "pricetag",
-      color: "#10B981",
+      color: "#10B981", // custom color
       bgColor: "rgba(16, 185, 129, 0.1)",
     },
     brand: {
       icon: "ribbon",
-      color: "#8B5CF6",
+      color: "#8B5CF6", // custom color
       bgColor: "rgba(139, 92, 246, 0.1)",
     },
   };
@@ -644,32 +594,23 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
   }));
 
   const typeConfig = {
-    tip: { icon: "bulb", color: "#F59E0B", bgColor: "#FFFBEB" },
-    observation: { icon: "eye", color: "#3B82F6", bgColor: "#EFF6FF" },
-    suggestion: { icon: "sparkles", color: "#8B5CF6", bgColor: "#F5F3FF" },
-    warning: { icon: "alert", color: "#EF4444", bgColor: "#FEF2F2" },
+    tip: { icon: "bulb", color: "#F59E0B", bgColor: "#FFFBEB" }, // custom color
+    observation: { icon: "eye", color: "#3B82F6", bgColor: "#EFF6FF" }, // custom color
+    suggestion: { icon: "sparkles", color: "#8B5CF6", bgColor: "#F5F3FF" }, // custom color
+    warning: { icon: "alert", color: "#EF4444", bgColor: "#FEF2F2" }, // custom color
   };
 
   const config = typeConfig[insight.type];
 
   return (
     <AnimatedView
-      style={[
-        styles.insightCard,
-        animatedStyle,
-        { backgroundColor: config.bgColor },
-        style,
-      ]}
+      style={[styles.insightCard, animatedStyle, { backgroundColor: config.bgColor }, style]}
     >
       <View style={styles.insightHeader}>
-        <View
-          style={[styles.insightIcon, { backgroundColor: `${config.color}20` }]}
-        >
+        <View style={[styles.insightIcon, { backgroundColor: `${config.color}20` }]}>
           <Ionicons name={config.icon as IoniconsIconName} size={18} color={config.color} />
         </View>
-        <Text style={[styles.insightTitle, { color: config.color }]}>
-          {insight.title}
-        </Text>
+        <Text style={[styles.insightTitle, { color: config.color }]}>{insight.title}</Text>
         {dismissible && (
           <TouchableOpacity style={styles.dismissButton} onPress={onDismiss}>
             <Ionicons name="close" size={16} color={Colors.neutral[400]} />
@@ -702,12 +643,8 @@ export interface StyleEvolutionProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export const StyleEvolution: React.FC<StyleEvolutionProps> = ({
-  history,
-  currentStyle,
-  style,
-}) => {
-  const scrollX = useSharedValue(0);
+export const StyleEvolution: React.FC<StyleEvolutionProps> = ({ history, currentStyle, style }) => {
+  const _scrollX = useSharedValue(0);
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -727,9 +664,7 @@ export const StyleEvolution: React.FC<StyleEvolutionProps> = ({
 
       <View style={styles.timelineContainer}>
         <View style={styles.timelineLine}>
-          <AnimatedView
-            style={[styles.timelineProgress, progressAnimatedStyle]}
-          />
+          <AnimatedView style={[styles.timelineProgress, progressAnimatedStyle]} />
         </View>
         {history.map((item, index) => (
           <TimelineHistoryItem
@@ -747,7 +682,7 @@ export const StyleEvolution: React.FC<StyleEvolutionProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 20,
     padding: 16,
     marginBottom: 16,
@@ -825,7 +760,7 @@ const styles = StyleSheet.create({
   },
   matchText: {
     fontSize: 11,
-    color: "#fff",
+    color: DesignTokens.colors.text.inverse,
     fontWeight: "600",
   },
   itemInfo: {
@@ -910,7 +845,7 @@ const styles = StyleSheet.create({
   reasonContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -993,7 +928,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   evolutionContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 20,
     padding: 20,
     marginBottom: 16,

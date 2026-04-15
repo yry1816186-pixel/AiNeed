@@ -79,7 +79,7 @@ class CacheConfig:
     max_size_mb: int = 100
     max_entries: int = 10000
     default_ttl_seconds: int = 3600
-    eviction_policy: EvictionPolicy = EvictionPolicy.HYBRID
+    eviction_policy: EvictionPolicy = EvictionPolicy.LRU  # A-P1-9: Default to LRU for predictable memory control
     enable_compression: bool = True
     enable_persistence: bool = True
     persistence_path: str = "cache"
@@ -205,7 +205,19 @@ class MemoryCache:
         if not self._cache:
             return None
 
-        if self.config.eviction_policy == EvictionPolicy.TIME_BASED:
+        if self.config.eviction_policy == EvictionPolicy.LRU:
+            # A-P1-9: LRU eviction - evict the least recently used entry.
+            # OrderedDict maintains insertion order; move_to_end(key) is called
+            # on every get(), so the first item is the least recently used.
+            # First, try to evict expired entries.
+            for key in self._cache:
+                entry = self._cache[key]
+                if entry.expires_at and datetime.now() > entry.expires_at:
+                    return key
+            # No expired entries; evict the least recently used (first in OrderedDict)
+            return next(iter(self._cache))
+
+        elif self.config.eviction_policy == EvictionPolicy.TIME_BASED:
             expired = [
                 k for k, v in self._cache.items()
                 if v.expires_at and datetime.now() > v.expires_at

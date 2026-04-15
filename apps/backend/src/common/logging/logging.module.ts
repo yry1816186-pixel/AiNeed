@@ -27,14 +27,16 @@
  * ```
  */
 
+import { AsyncLocalStorage } from "async_hooks";
+
 import { Module, Global, Provider, DynamicModule, InjectionToken } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { AsyncLocalStorage } from "async_hooks";
+
+import { RequestIdInterceptor } from "./request-id.interceptor";
 import {
   StructuredLoggerService,
   RequestContext,
 } from "./structured-logger.service";
-import { RequestIdInterceptor } from "./request-id.interceptor";
 
 /**
  * AsyncLocalStorage Provider Token

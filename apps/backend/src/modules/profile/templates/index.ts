@@ -1,9 +1,9 @@
 import { ColorSeason } from "@prisma/client";
 
 import { PosterTemplate } from "./base-template";
+import { autumnTemplate, autumnColorHexes, autumnColorNames } from "./color-season/autumn";
 import { springTemplate, springColorHexes, springColorNames } from "./color-season/spring";
 import { summerTemplate, summerColorHexes, summerColorNames } from "./color-season/summer";
-import { autumnTemplate, autumnColorHexes, autumnColorNames } from "./color-season/autumn";
 import { winterTemplate, winterColorHexes, winterColorNames } from "./color-season/winter";
 
 export { PosterTemplate } from "./base-template";

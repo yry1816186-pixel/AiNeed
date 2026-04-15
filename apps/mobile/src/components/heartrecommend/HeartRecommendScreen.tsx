@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,27 +14,25 @@ import Animated, {
   withTiming,
   withSpring,
 } from "react-native-reanimated";
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
-import { theme, Colors, Shadows } from "../../theme";
+import { theme, Colors, Shadows } from '../design-system/theme';
 import { recommendationsApi } from "../../services/api/tryon.api";
 import { cartApi } from "../../services/api/commerce.api";
 import { useAuthStore, useHeartRecommendStore } from "../../stores";
 import PreferenceSetupModal from "./PreferenceSetupModal";
 import { SwipeCard, ProductItem } from "./SwipeCard";
-import { EmptyState, SwipeHints } from "./ActionButtons";
+import { EmptyState } from "./ActionButtons";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const CARD_WIDTH = SCREEN_WIDTH - 40;
-const CARD_HEIGHT = SCREEN_HEIGHT * 0.65;
+const _CARD_WIDTH = SCREEN_WIDTH - 40;
+const _CARD_HEIGHT = SCREEN_HEIGHT * 0.65;
 
 interface HeartRecommendScreenProps {
   onClose?: () => void;
 }
 
-export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({
-  onClose,
-}) => {
+export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onClose }) => {
   const { user, isAuthenticated } = useAuthStore();
   const heartRecommendStore = useHeartRecommendStore();
   const [products, setProducts] = useState<ProductItem[]>([]);
@@ -48,12 +46,12 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({
   const slideAnim = useSharedValue(50);
 
   useEffect(() => {
-    checkPreferences();
+    void checkPreferences();
   }, [user]);
 
   useEffect(() => {
     if (hasPreferences) {
-      loadRecommendations();
+      void loadRecommendations();
     }
   }, [hasPreferences]);
 
@@ -136,10 +134,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({
       currency: "CNY",
       images: [`https://picsum.photos/400/500?random=${idx + 100}`],
       category: item.category,
-      colors: ["黑色", "白色", "米色", "灰色"].slice(
-        0,
-        Math.floor(Math.random() * 3) + 1,
-      ),
+      colors: ["黑色", "白色", "米色", "灰色"].slice(0, Math.floor(Math.random() * 3) + 1),
       sizes: ["S", "M", "L", "XL"],
       brand: { id: `brand-${idx}`, name: item.brand },
       tags: ["新品", "热卖", "限量"],
@@ -178,7 +173,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({
       heartRecommendStore.updatePreferences(
         currentProduct.category,
         currentProduct.tags || [],
-        currentProduct.price,
+        currentProduct.price
       );
     }
     setStats((prev) => ({ ...prev, liked: prev.liked + 1 }));
@@ -199,7 +194,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({
       heartRecommendStore.updatePreferences(
         currentProduct.category,
         currentProduct.tags || [],
-        currentProduct.price,
+        currentProduct.price
       );
       try {
         const defaultColor = currentProduct.colors?.[0] || "默认";
@@ -239,7 +234,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({
     if (currentIndex < products.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      loadRecommendations();
+      void loadRecommendations();
       setCurrentIndex(0);
     }
   };
@@ -270,7 +265,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text style={styles.loadingEmoji}>✨</Text>
+        <Ionicons name="sparkles-outline" size={48} color={theme.colors.primary} />
         <Text style={styles.loadingText}>正在为您精选好物...</Text>
       </View>
     );
@@ -283,10 +278,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({
       <StatusBar barStyle="dark-content" />
 
       <Animated.View style={[styles.header, fadeStyle]}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
@@ -306,29 +298,27 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({
       </Animated.View>
 
       <View style={styles.cardsContainer}>
-        {products.length === 0
-          ? <EmptyState onRefresh={loadRecommendations} />
-          : visibleProducts.reverse().map((item, idx) => {
-              const actualIndex = visibleProducts.length - 1 - idx;
-              const isTop = actualIndex === 0;
-              return (
-                <SwipeCard
-                  key={item.id}
-                  item={item}
-                  onSwipeLeft={handleSwipeLeft}
-                  onSwipeRight={handleSwipeRight}
-                  onSwipeUp={handleSwipeUp}
-                  onSwipeDown={handleSwipeDown}
-                  isActive={isTop}
-                  index={currentIndex + actualIndex}
-                />
-              );
-            })}
+        {products.length === 0 ? (
+          <EmptyState onRefresh={loadRecommendations} />
+        ) : (
+          visibleProducts.reverse().map((item, idx) => {
+            const actualIndex = visibleProducts.length - 1 - idx;
+            const isTop = actualIndex === 0;
+            return (
+              <SwipeCard
+                key={item.id}
+                item={item}
+                onSwipeLeft={handleSwipeLeft}
+                onSwipeRight={handleSwipeRight}
+                onSwipeUp={handleSwipeUp}
+                onSwipeDown={handleSwipeDown}
+                isActive={isTop}
+                index={currentIndex + actualIndex}
+              />
+            );
+          })
+        )}
       </View>
-
-      <Animated.View style={[styles.hintContainer, fadeStyle]}>
-        <SwipeHints />
-      </Animated.View>
     </View>
   );
 };
@@ -391,19 +381,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  hintContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 30,
-  },
   loadingContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: theme.colors.background,
-  },
-  loadingEmoji: {
-    fontSize: 48,
-    marginBottom: 16,
   },
   loadingText: {
     fontSize: 16,

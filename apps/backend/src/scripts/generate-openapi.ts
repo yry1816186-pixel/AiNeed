@@ -1,7 +1,8 @@
-import { NestFactory } from "@nestjs/core";
-import { SwaggerModule } from "@nestjs/swagger";
 import * as fs from "fs";
 import * as path from "path";
+
+import { NestFactory } from "@nestjs/core";
+import { SwaggerModule } from "@nestjs/swagger";
 
 import { AppModule } from "../app.module";
 import { createSwaggerConfig } from "../config/swagger.config";
@@ -29,6 +30,7 @@ async function generateOpenApiSpec() {
 
   fs.writeFileSync(outputPath, JSON.stringify(document, null, 2), "utf8");
 
+  /* eslint-disable no-console */
   console.log(`OpenAPI spec generated: ${outputPath}`);
   console.log(`Endpoints: ${Object.keys(document.paths || {}).length} paths`);
   console.log(`Schemas: ${Object.keys(document.components?.schemas || {}).length} schemas`);

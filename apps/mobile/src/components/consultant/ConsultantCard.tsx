@@ -1,7 +1,7 @@
-import React from "react";
+﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { RatingBadge } from "../ui/Rating";
+import { RatingBadge } from "../../design-system/ui/Rating";
 import { MatchBadge } from "./MatchBadge";
 
 interface ConsultantCardProps {
@@ -38,9 +38,7 @@ export const ConsultantCard: React.FC<ConsultantCardProps> = ({
             <Image source={{ uri: avatar }} style={styles.avatar} />
           ) : (
             <View style={styles.avatarPlaceholder}>
-              <Text style={styles.avatarPlaceholderText}>
-                {studioName.charAt(0)}
-              </Text>
+              <Text style={styles.avatarPlaceholderText}>{studioName.charAt(0)}</Text>
             </View>
           )}
           <View style={styles.headerInfo}>
@@ -55,9 +53,7 @@ export const ConsultantCard: React.FC<ConsultantCardProps> = ({
               ))}
             </View>
           </View>
-          {matchPercentage !== undefined && (
-            <MatchBadge percentage={matchPercentage} />
-          )}
+          {matchPercentage !== undefined && <MatchBadge percentage={matchPercentage} />}
         </View>
 
         <View style={styles.footer}>
@@ -70,9 +66,7 @@ export const ConsultantCard: React.FC<ConsultantCardProps> = ({
               {matchReasons.join(" / ")}
             </Text>
           )}
-          {price !== undefined && (
-            <Text style={styles.price}>参考价: {price} 元</Text>
-          )}
+          {price !== undefined && <Text style={styles.price}>参考价: {price} 元</Text>}
         </View>
 
         <View style={styles.cta}>

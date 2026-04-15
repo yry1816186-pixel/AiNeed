@@ -960,7 +960,7 @@ describe("PaymentService", () => {
         ],
       });
       mockPrismaService.clothingItem.update.mockResolvedValue({});
-      mockPrismaService.$transaction.mockImplementation((ops) => Promise.resolve());
+      mockPrismaService.$transaction.mockImplementation((_ops) => Promise.resolve());
 
       await service.handleCloseExpiredPayments();
 

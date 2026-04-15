@@ -1,5 +1,6 @@
-import { ApiVersionMiddleware, SUPPORTED_API_VERSIONS } from './api-version.middleware';
 import { Request, Response, NextFunction } from 'express';
+
+import { ApiVersionMiddleware, SUPPORTED_API_VERSIONS } from './api-version.middleware';
 
 function createMockRequest(url: string) {
   return {

@@ -6,6 +6,7 @@ import {
   ColorSeason,
   Gender,
 } from "@prisma/client";
+import { Type } from "class-transformer";
 import {
   IsOptional,
   IsString,
@@ -18,7 +19,6 @@ import {
   IsObject,
   MaxLength,
 } from "class-validator";
-import { Type } from "class-transformer";
 
 /**
  * 形象档案详情 DTO

@@ -1,9 +1,10 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { ConfigService } from "@nestjs/config";
 import { HttpException, HttpStatus } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { Test, TestingModule } from "@nestjs/testing";
+
+import { RedisService } from "../../../common/redis/redis.service";
 
 import { AliyunSmsService, MockSmsService, SmsService } from "./sms.service";
-import { RedisService } from "../../../common/redis/redis.service";
 
 describe("AliyunSmsService", () => {
   let service: AliyunSmsService;
@@ -122,15 +123,15 @@ describe("SmsService", () => {
         (call: unknown[]) => (call as string[])[0]?.startsWith("sms:code:"),
       );
       expect(codeCall).toBeDefined();
-      expect((codeCall as string[])![1]).toBe(300); // 5 minutes TTL
-      expect((codeCall as string[])![2]).toMatch(/^\d{6}$/); // 6-digit code
+      expect((codeCall as string[])[1]).toBe(300); // 5 minutes TTL
+      expect((codeCall as string[])[2]).toMatch(/^\d{6}$/); // 6-digit code
 
       // Should set rate limit with 60s TTL
       const rateCall = redisService.setex.mock.calls.find(
         (call: unknown[]) => (call as string[])[0]?.startsWith("sms:rate:"),
       );
       expect(rateCall).toBeDefined();
-      expect((rateCall as string[])![1]).toBe(60);
+      expect((rateCall as string[])[1]).toBe(60);
 
       // Should call SMS provider
       expect(smsProvider.sendCode).toHaveBeenCalledWith("13800138000", expect.stringMatching(/^\d{6}$/));

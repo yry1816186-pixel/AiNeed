@@ -2,11 +2,11 @@
  * 组件通用类型定义
  */
 
-import { ViewStyle, TextStyle, ImageStyle } from 'react-native';
+import { ViewStyle, TextStyle, ImageStyle } from "react-native";
 
 // 样式类型
 export type Style = ViewStyle | TextStyle | ImageStyle;
-export type StyleProp<T = Style> = T | undefined | null | false | Array<T | undefined | null | false>;
+export type StyleProp<T = Style> = T | undefined | null | false | (T | undefined | null | false)[];
 
 // 组件基础 Props
 export interface BaseComponentProps {
@@ -25,7 +25,7 @@ export interface ListRenderItemInfo<T> {
   separators: {
     highlight: () => void;
     unhighlight: () => void;
-    updateProps: (select: 'leading' | 'trailing', newProps: object) => void;
+    updateProps: (select: "leading" | "trailing", newProps: object) => void;
   };
 }
 
@@ -59,10 +59,10 @@ export interface ButtonProps extends BaseComponentProps {
   onPress: () => void;
   disabled?: boolean;
   loading?: boolean;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'text';
-  size?: 'small' | 'medium' | 'large';
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "text";
+  size?: "small" | "medium" | "large";
   icon?: string;
-  iconPosition?: 'left' | 'right';
+  iconPosition?: "left" | "right";
 }
 
 // 输入框 Props
@@ -71,8 +71,14 @@ export interface InputProps extends BaseComponentProps {
   onChangeText: (text: string) => void;
   placeholder?: string;
   secureTextEntry?: boolean;
-  keyboardType?: 'default' | 'number-pad' | 'decimal-pad' | 'numeric' | 'email-address' | 'phone-pad';
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  keyboardType?:
+    | "default"
+    | "number-pad"
+    | "decimal-pad"
+    | "numeric"
+    | "email-address"
+    | "phone-pad";
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
   autoCorrect?: boolean;
   multiline?: boolean;
   numberOfLines?: number;
@@ -89,7 +95,7 @@ export interface InputProps extends BaseComponentProps {
 // 图片 Props
 export interface ImageProps extends BaseComponentProps {
   source: { uri: string } | number;
-  resizeMode?: 'cover' | 'contain' | 'stretch' | 'repeat' | 'center';
+  resizeMode?: "cover" | "contain" | "stretch" | "repeat" | "center";
   onLoad?: () => void;
   onError?: (error: { nativeEvent: { error: string } }) => void;
   defaultSource?: number;
@@ -100,24 +106,24 @@ export interface ImageProps extends BaseComponentProps {
 export interface ModalProps {
   visible: boolean;
   onClose: () => void;
-  animationType?: 'none' | 'slide' | 'fade';
+  animationType?: "none" | "slide" | "fade";
   transparent?: boolean;
-  presentationStyle?: 'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen';
+  presentationStyle?: "fullScreen" | "pageSheet" | "formSheet" | "overFullScreen";
   children: React.ReactNode;
 }
 
 // Toast Props
 export interface ToastProps {
   message: string;
-  type?: 'success' | 'error' | 'warning' | 'info';
+  type?: "success" | "error" | "warning" | "info";
   duration?: number;
-  position?: 'top' | 'bottom' | 'center';
+  position?: "top" | "bottom" | "center";
   onClose?: () => void;
 }
 
 // 加载状态 Props
 export interface LoadingProps extends BaseComponentProps {
-  size?: 'small' | 'large';
+  size?: "small" | "large";
   color?: string;
 }
 

@@ -21,7 +21,7 @@ from ml.api.schemas.stylist import (
 logger = logging.getLogger(__name__)
 
 try:
-    from ml.services.intelligent_stylist_service import (
+    from ml.services.stylist.intelligent_stylist_service import (
         IntelligentStylistService,
         UserProfile,
         SceneContext,

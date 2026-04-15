@@ -9,34 +9,38 @@ import {
   FlatList,
   ActivityIndicator,
 } from "react-native";
-import { useRoute, useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useRoute, useNavigation, useFocusEffect, RouteProp, NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useConsultantStore } from "../../stores/consultantStore";
 import { CaseCard } from "../../components/consultant/CaseCard";
 import { consultantApi } from "../../services/api/consultant.api";
+import type { ConsultantProfile } from "../../types/consultant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const AdvisorProfileScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+  const route = useRoute<RouteProp<ParamListBase>>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { currentConsultant, fetchConsultantById, isLoading } = useConsultantStore();
-  const [cases, setCases] = useState<any[]>([]);
+  const [cases, setCases] = useState<Record<string, unknown>[]>([]);
 
   const consultantId = route.params?.id;
 
   useFocusEffect(
     useCallback(() => {
       if (consultantId) {
-        fetchConsultantById(consultantId);
+        void fetchConsultantById(consultantId);
       }
-    }, [consultantId, fetchConsultantById]),
+    }, [consultantId, fetchConsultantById])
   );
 
   useEffect(() => {
     if (consultantId) {
-      consultantApi.getCases(consultantId).then((res) => {
-        setCases((res.data || []) as any[]);
-      }).catch(() => {});
+      consultantApi
+        .getCases(consultantId)
+        .then((res) => {
+          setCases((res.data || []) as Record<string, unknown>[]);
+        })
+        .catch(() => {});
     }
   }, [consultantId]);
 
@@ -48,7 +52,7 @@ export const AdvisorProfileScreen: React.FC = () => {
     );
   }
 
-  const profile = 'data' in currentConsultant ? (currentConsultant as any).data : currentConsultant;
+  const profile = "data" in currentConsultant ? (currentConsultant as unknown as { data: ConsultantProfile }).data : currentConsultant as unknown as ConsultantProfile;
   const specialties = Array.isArray(profile.specialties) ? profile.specialties : [];
   const bookingCount = profile._count?.bookings || 0;
 
@@ -127,8 +131,8 @@ export const AdvisorProfileScreen: React.FC = () => {
             <FlatList
               horizontal
               data={cases}
-              keyExtractor={(item: any) => item.bookingId}
-              renderItem={({ item }: any) => <CaseCard {...item} />}
+              keyExtractor={(item: Record<string, unknown>) => String(item.bookingId)}
+              renderItem={({ item }: { item: Record<string, unknown> }) => <CaseCard {...item as Record<string, unknown>} />}
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.casesList}
             />
@@ -140,9 +144,7 @@ export const AdvisorProfileScreen: React.FC = () => {
       <View style={styles.bottomCta}>
         <TouchableOpacity
           style={styles.bookButton}
-          onPress={() =>
-            navigation.navigate("Booking", { consultantId, consultant: profile })
-          }
+          onPress={() => navigation.navigate("Booking", { consultantId, consultant: profile })}
         >
           <Text style={styles.bookButtonText}>预约顾问</Text>
         </TouchableOpacity>

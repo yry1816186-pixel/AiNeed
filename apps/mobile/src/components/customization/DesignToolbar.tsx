@@ -1,12 +1,7 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+﻿import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius } from "../../theme";
+import { theme, Colors, Spacing } from '../design-system/theme';
 
 interface DesignToolbarProps {
   onAddImage: () => void;
@@ -53,25 +48,17 @@ export const DesignToolbar: React.FC<DesignToolbarProps> = ({
       {tools.map((tool) => (
         <TouchableOpacity
           key={tool.label}
-          style={[
-            styles.toolButton,
-            tool.disabled && styles.toolButtonDisabled,
-          ]}
+          style={[styles.toolButton, tool.disabled && styles.toolButtonDisabled]}
           onPress={tool.onPress}
           disabled={tool.disabled}
           activeOpacity={0.7}
         >
           <Ionicons
-            name={tool.icon as any}
+            name={tool.icon}
             size={22}
             color={tool.disabled ? Colors.neutral[300] : theme.colors.text}
           />
-          <Text
-            style={[
-              styles.toolLabel,
-              tool.disabled && styles.toolLabelDisabled,
-            ]}
-          >
+          <Text style={[styles.toolLabel, tool.disabled && styles.toolLabelDisabled]}>
             {tool.label}
           </Text>
         </TouchableOpacity>

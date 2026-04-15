@@ -9,8 +9,8 @@ import { TryOnStatus, Prisma } from "@prisma/client";
 import axios from "axios";
 import Redis from "ioredis";
 
-import { StructuredLoggerService, ContextualLogger } from "../../common/logging";
 import { NotificationService } from "../../common/gateway/notification.service";
+import { StructuredLoggerService, ContextualLogger } from "../../common/logging";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { REDIS_CLIENT } from "../../common/redis/redis.service";
 import { StorageService } from "../../common/storage/storage.service";
@@ -45,7 +45,7 @@ export interface TryOnHistoryItem {
 }
 
 const MAX_CONCURRENT_TRYONS_PER_USER = 3;
-const DAILY_RETRY_LIMIT = 3;
+const DAILY_TRYON_LIMIT = 3;
 const DAILY_RETRY_KEY_PREFIX = "tryon:daily";
 
 @Injectable()
@@ -75,9 +75,9 @@ export class TryOnService {
   ): Promise<CreateTryOnResult> {
     this.logger.log("创建试衣请求", { userId, photoId, itemId });
 
-    await this.checkDailyRetryLimit(userId);
+    await this.checkDailyTryonLimit(userId);
 
-    const [photo, item, existingTryOn, pendingTryOn, activeCount] =
+    const [photo, item, existingRecord, activeCount] =
       await Promise.all([
         this.prisma.userPhoto.findFirst({
           where: { id: photoId, userId },
@@ -92,18 +92,12 @@ export class TryOnService {
             userId,
             photoId,
             itemId,
-            status: TryOnStatus.completed,
+            status: { in: [TryOnStatus.completed, TryOnStatus.pending, TryOnStatus.processing] },
           },
           select: { id: true, status: true },
-        }),
-        this.prisma.virtualTryOn.findFirst({
-          where: {
-            userId,
-            photoId,
-            itemId,
-            status: { in: [TryOnStatus.pending, TryOnStatus.processing] },
-          },
-          select: { id: true, status: true },
+          orderBy: [
+            { status: 'asc' }, // completed < pending < processing in enum order, prefer completed
+          ],
         }),
         this.prisma.virtualTryOn.count({
           where: {
@@ -136,29 +130,30 @@ export class TryOnService {
       }
     }
 
-    if (existingTryOn) {
-      this.logger.log("返回缓存的试衣结果", {
-        tryOnId: existingTryOn.id,
-        userId,
-        photoId,
-        itemId,
-      });
-      return {
-        id: existingTryOn.id,
-        status: existingTryOn.status,
-        estimatedWaitTime: 0,
-      };
-    }
+    if (existingRecord) {
+      if (existingRecord.status === TryOnStatus.completed) {
+        this.logger.log("返回缓存的试衣结果", {
+          tryOnId: existingRecord.id,
+          userId,
+          photoId,
+          itemId,
+        });
+        return {
+          id: existingRecord.id,
+          status: existingRecord.status,
+          estimatedWaitTime: 0,
+        };
+      }
 
-    if (pendingTryOn) {
+      // pending or processing
       this.logger.log("试衣请求正在处理中", {
-        tryOnId: pendingTryOn.id,
+        tryOnId: existingRecord.id,
         userId,
-        status: pendingTryOn.status,
+        status: existingRecord.status,
       });
       return {
-        id: pendingTryOn.id,
-        status: pendingTryOn.status,
+        id: existingRecord.id,
+        status: existingRecord.status,
         estimatedWaitTime: 30,
       };
     }
@@ -213,7 +208,7 @@ export class TryOnService {
       itemId,
     });
 
-    const clothingImageUrl = item.mainImage || (item.images && item.images[0]) || "";
+    const clothingImageUrl = item.mainImage || (item.images?.[0]) || "";
     if (!clothingImageUrl) {
       throw new BadRequestException("服装商品缺少展示图片");
     }
@@ -225,7 +220,7 @@ export class TryOnService {
       item.category ?? undefined,
     );
 
-    await this.incrementDailyRetryCount(userId);
+    await this.incrementDailyTryonCount(userId);
 
     await this.notificationService.sendCustomNotification(userId, {
       type: "system",
@@ -319,7 +314,7 @@ export class TryOnService {
         },
       });
 
-      if (!tryOn || !tryOn.resultImageUrl) {
+      if (!tryOn?.resultImageUrl) {
         return;
       }
 
@@ -480,7 +475,7 @@ export class TryOnService {
       throw new NotFoundException("试衣记录不存在");
     }
 
-    await this.checkDailyRetryLimit(userId);
+    await this.checkDailyTryonLimit(userId);
 
     const retryCount = (original.retryCount ?? 0) + 1;
 
@@ -503,7 +498,7 @@ export class TryOnService {
     });
 
     const clothingImageUrl =
-      item?.mainImage || (item?.images && item.images[0]) || "";
+      item?.mainImage || (item?.images?.[0]) || "";
 
     await this.queueService.addVirtualTryOnTask(
       userId,
@@ -512,7 +507,7 @@ export class TryOnService {
       item?.category ?? undefined,
     );
 
-    await this.incrementDailyRetryCount(userId);
+    await this.incrementDailyTryonCount(userId);
 
     return {
       id: tryOn.id,
@@ -529,8 +524,8 @@ export class TryOnService {
     const used = await this.getDailyRetryCount(userId);
     return {
       used,
-      limit: DAILY_RETRY_LIMIT,
-      remaining: Math.max(0, DAILY_RETRY_LIMIT - used),
+      limit: DAILY_TRYON_LIMIT,
+      remaining: Math.max(0, DAILY_TRYON_LIMIT - used),
     };
   }
 
@@ -545,16 +540,16 @@ export class TryOnService {
     return count ? parseInt(count, 10) : 0;
   }
 
-  private async checkDailyRetryLimit(userId: string): Promise<void> {
+  private async checkDailyTryonLimit(userId: string): Promise<void> {
     const used = await this.getDailyRetryCount(userId);
-    if (used >= DAILY_RETRY_LIMIT) {
+    if (used >= DAILY_TRYON_LIMIT) {
       throw new BadRequestException(
         "今日免费试衣次数已用完，明天再来吧",
       );
     }
   }
 
-  private async incrementDailyRetryCount(userId: string): Promise<void> {
+  private async incrementDailyTryonCount(userId: string): Promise<void> {
     const key = this.getDailyRetryKey(userId);
     const now = new Date();
     const endOfDay = new Date(

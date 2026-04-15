@@ -125,9 +125,7 @@ export const useWardrobeStore = create<WardrobeState>()(
       updateItem: (id, data) => {
         set((state) => ({
           items: state.items.map((item) =>
-            item.id === id
-              ? { ...item, ...data, updatedAt: new Date().toISOString() }
-              : item,
+            item.id === id ? { ...item, ...data, updatedAt: new Date().toISOString() } : item
           ),
         }));
         get().recalculateStats();
@@ -154,9 +152,7 @@ export const useWardrobeStore = create<WardrobeState>()(
       updateOutfit: (id, data) => {
         set((state) => ({
           outfits: state.outfits.map((outfit) =>
-            outfit.id === id
-              ? { ...outfit, ...data, updatedAt: new Date().toISOString() }
-              : outfit,
+            outfit.id === id ? { ...outfit, ...data, updatedAt: new Date().toISOString() } : outfit
           ),
         }));
       },
@@ -197,9 +193,7 @@ export const useWardrobeStore = create<WardrobeState>()(
         if (type === "item") {
           set((state) => ({
             items: state.items.map((item) =>
-              item.id === id
-                ? { ...item, wearCount: item.wearCount + 1, lastWorn: now }
-                : item,
+              item.id === id ? { ...item, wearCount: item.wearCount + 1, lastWorn: now } : item
             ),
           }));
         } else {
@@ -207,7 +201,7 @@ export const useWardrobeStore = create<WardrobeState>()(
             outfits: state.outfits.map((outfit) =>
               outfit.id === id
                 ? { ...outfit, wearCount: outfit.wearCount + 1, lastWorn: now }
-                : outfit,
+                : outfit
             ),
           }));
         }
@@ -269,13 +263,11 @@ export const useWardrobeStore = create<WardrobeState>()(
         outfits: state.outfits,
         sortBy: state.sortBy,
       }),
-    },
-  ),
+    }
+  )
 );
 
 export const useWardrobeItems = () => useWardrobeStore((state) => state.items);
-export const useWardrobeOutfits = () =>
-  useWardrobeStore((state) => state.outfits);
+export const useWardrobeOutfits = () => useWardrobeStore((state) => state.outfits);
 export const useWardrobeStats = () => useWardrobeStore((state) => state.stats);
-export const useWardrobeSelection = () =>
-  useWardrobeStore((state) => state.selectedItems);
+export const useWardrobeSelection = () => useWardrobeStore((state) => state.selectedItems);

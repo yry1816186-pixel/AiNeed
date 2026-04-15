@@ -4,13 +4,17 @@ RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
 
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY .npmrc* ./
 COPY packages/types/package.json ./packages/types/
+COPY packages/shared/package.json ./packages/shared/
 COPY apps/backend/package.json ./apps/backend/
 RUN pnpm install --frozen-lockfile
 
 FROM base AS prod-deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY .npmrc* ./
 COPY packages/types/package.json ./packages/types/
+COPY packages/shared/package.json ./packages/shared/
 COPY apps/backend/package.json ./apps/backend/
 RUN pnpm install --prod --frozen-lockfile
 
@@ -19,6 +23,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY packages/types/package.json ./packages/types/
 COPY packages/types/src ./packages/types/src/
 COPY packages/types/tsconfig.json ./packages/types/
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/shared/src ./packages/shared/src
+COPY packages/shared/tsconfig.json ./packages/shared/
 COPY apps/backend/package.json ./apps/backend/
 COPY apps/backend/src ./apps/backend/src/
 COPY apps/backend/prisma ./apps/backend/prisma/
@@ -26,6 +33,7 @@ COPY apps/backend/tsconfig.json ./apps/backend/
 COPY apps/backend/tsconfig.build.json ./apps/backend/
 COPY apps/backend/nest-cli.json ./apps/backend/
 RUN pnpm --filter @xuno/types build
+RUN pnpm --filter @xuno/shared build
 RUN pnpm --filter @xuno/backend build
 RUN pnpm --filter @xuno/backend db:generate
 
@@ -46,6 +54,7 @@ COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/apps/backend/prisma ./prisma
 COPY --from=builder /app/packages/types/dist ./node_modules/@xuno/types/dist
 COPY --from=builder /app/packages/types/package.json ./node_modules/@xuno/types/package.json
+COPY --from=builder /app/packages/shared ./packages/shared
 COPY scripts/docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh && chown nestjs:nodejs /app/docker-entrypoint.sh
 

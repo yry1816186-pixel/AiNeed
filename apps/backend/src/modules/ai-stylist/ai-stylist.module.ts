@@ -11,20 +11,20 @@ import { WeatherModule } from "../weather/weather.module";
 import { AgentToolsService } from "./agent-tools.service";
 import { AiStylistController } from "./ai-stylist.controller";
 import { AiStylistService } from "./ai-stylist.service";
-import { AiStylistSessionService } from "./services/session.service";
-import { AiStylistChatService } from "./services/chat.service";
-import { AiStylistContextService } from "./services/context.service";
-import { AiStylistRecommendationService } from "./services/recommendation.service";
-import { ProfileEventSubscriberService } from "./services/profile-event-subscriber.service";
 import { DecisionEngineService } from "./decision-engine.service";
 import { LlmProviderService } from "./llm-provider.service";
 import { NlSlotExtractorService } from "./nl-slot-extractor.service";
-import { SystemContextService } from "./system-context.service";
-import { OutfitPlanService } from "./services/outfit-plan.service";
+import { AiStylistChatService } from "./services/chat.service";
+import { AiStylistContextService } from "./services/context.service";
 import { ItemReplacementService } from "./services/item-replacement.service";
-import { SessionArchiveService } from "./services/session-archive.service";
+import { OutfitPlanService } from "./services/outfit-plan.service";
 import { PresetQuestionsService } from "./services/preset-questions.service";
+import { ProfileEventSubscriberService } from "./services/profile-event-subscriber.service";
+import { AiStylistRecommendationService } from "./services/recommendation.service";
+import { SessionArchiveService } from "./services/session-archive.service";
+import { AiStylistSessionService } from "./services/session.service";
 import { WeatherIntegrationService } from "./services/weather-integration.service";
+import { SystemContextService } from "./system-context.service";
 
 @Module({
   imports: [forwardRef(() => RecommendationsModule), PhotosModule, AIModule, RedisModule, CircuitBreakerModule, PrismaModule, WeatherModule],

@@ -5,12 +5,12 @@ import { Job } from "bullmq";
 import { NotificationService } from "../../common/gateway/notification.service";
 import { PrismaService } from "../../common/prisma/prisma.service";
 import { StorageService } from "../../common/storage/storage.service";
-import { TryOnOrchestratorService } from "../try-on/services/tryon-orchestrator.service";
 import { ContentModerationService } from "../community/content-moderation.service";
-
-import { QUEUE_NAMES, JOB_STATUS } from "./queue.constants";
-import { QueueName } from "./queue-config";
 import { generateStableCacheKey } from "../try-on/services/ai-tryon-provider.interface";
+import { TryOnOrchestratorService } from "../try-on/services/tryon-orchestrator.service";
+
+import { QueueName } from "./queue-config";
+import { QUEUE_NAMES, JOB_STATUS } from "./queue.constants";
 
 interface VirtualTryOnJobData {
   jobId: string;
@@ -74,7 +74,10 @@ export class QueueProcessor extends WorkerHost {
   private readonly logger = new Logger(QueueProcessor.name);
 
   async process(job: Job): Promise<unknown> {
-    this.logger.log(`Processing AI task job ${job.id}`);
+    this.logger.warn(
+      `AI task job ${job.id} received but processor is not implemented yet. ` +
+      `Job data will be discarded. Implement this processor to handle AI tasks.`,
+    );
     return { jobId: job.id, status: "completed" };
   }
 }
@@ -84,7 +87,10 @@ export class StyleAnalysisProcessor extends WorkerHost {
   private readonly logger = new Logger(StyleAnalysisProcessor.name);
 
   async process(job: Job<StyleAnalysisJobData>): Promise<unknown> {
-    this.logger.log(`Processing style analysis job ${job.data.jobId}`);
+    this.logger.warn(
+      `Style analysis job ${job.data.jobId} received but processor is not implemented yet. ` +
+      `Job data will be discarded. Implement this processor to handle style analysis tasks.`,
+    );
     return { jobId: job.data.jobId, status: "completed" };
   }
 }
@@ -325,7 +331,10 @@ export class WardrobeMatchProcessor extends WorkerHost {
   private readonly logger = new Logger(WardrobeMatchProcessor.name);
 
   async process(job: Job<WardrobeMatchJobData>): Promise<unknown> {
-    this.logger.log(`Processing wardrobe match job ${job.data.jobId}`);
+    this.logger.warn(
+      `Wardrobe match job ${job.data.jobId} received but processor is not implemented yet. ` +
+      `Job data will be discarded. Implement this processor to handle wardrobe match tasks.`,
+    );
     return { jobId: job.data.jobId, status: "completed" };
   }
 }

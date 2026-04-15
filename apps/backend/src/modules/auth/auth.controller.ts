@@ -16,6 +16,7 @@ import {
 import { Throttle } from "@nestjs/throttler";
 
 import { AuthService } from "./auth.service";
+import { Public } from "./decorators/public.decorator";
 import {
   RegisterDto,
   LoginDto,
@@ -31,7 +32,6 @@ import {
 } from "./dto";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { SmsThrottleGuard } from "./guards/sms-throttle.guard";
-import { Public } from "./decorators/public.decorator";
 
 interface RequestWithUser {
   user: {
@@ -83,6 +83,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 requests per minute for registration
+  @Public()
   @Post("register")
   @ApiOperation({
     summary: "用户注册",
@@ -111,6 +112,7 @@ export class AuthController {
   }
 
   @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 requests per minute for login
+  @Public()
   @Post("login")
   @ApiOperation({
     summary: "用户登录",
@@ -134,11 +136,16 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
+  /**
+   * @deprecated 请使用 POST /auth/wechat 替代，该端点将在未来版本移除
+   */
   @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Public()
   @Post("wechat/login")
   @ApiOperation({
-    summary: "微信一键登录",
+    summary: "微信一键登录 (已废弃，请使用 /auth/wechat)",
     description: "使用微信 OAuth2.0 授权码登录，未注册用户将自动注册。",
+    deprecated: true,
   })
   @ApiResponse({
     status: 200,
@@ -160,6 +167,7 @@ export class AuthController {
   }
 
   @Throttle({ default: { limit: 10, ttl: 60000 } }) // 10 requests per minute for refresh
+  @Public()
   @Post("refresh")
   @ApiOperation({
     summary: "刷新访问令牌",
@@ -245,6 +253,7 @@ export class AuthController {
 
   // FIX-BL-003: 密码找回功能 (修复时间: 2026-03-19)
   @Throttle({ default: { limit: 3, ttl: 60000 } }) // 3 requests per minute
+  @Public()
   @Post("forgot-password")
   @ApiOperation({
     summary: "忘记密码 - 发送重置邮件",
@@ -272,6 +281,7 @@ export class AuthController {
   }
 
   @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 requests per minute
+  @Public()
   @Post("reset-password")
   @ApiOperation({
     summary: "重置密码",
@@ -299,12 +309,17 @@ export class AuthController {
     return { success: true };
   }
 
+  /**
+   * @deprecated 请使用 POST /auth/send-code 替代，该端点将在未来版本移除
+   */
   @UseGuards(SmsThrottleGuard)
   @Throttle({ default: { limit: 1, ttl: 60000 } })
+  @Public()
   @Post("sms/send")
   @ApiOperation({
-    summary: "发送短信验证码",
+    summary: "发送短信验证码 (已废弃，请使用 /auth/send-code)",
     description: "向指定手机号发送6位数字验证码，同一手机号60秒内只能发送一次。",
+    deprecated: true,
   })
   @ApiResponse({
     status: 200,
@@ -326,11 +341,16 @@ export class AuthController {
     return { success: true, message: "验证码已发送" };
   }
 
+  /**
+   * @deprecated 请使用 POST /auth/phone-login 替代，该端点将在未来版本移除
+   */
   @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Public()
   @Post("sms/login")
   @ApiOperation({
-    summary: "手机号验证码登录",
+    summary: "手机号验证码登录 (已废弃，请使用 /auth/phone-login)",
     description: "使用手机号和短信验证码登录，未注册手机号将自动注册。",
+    deprecated: true,
   })
   @ApiResponse({
     status: 200,

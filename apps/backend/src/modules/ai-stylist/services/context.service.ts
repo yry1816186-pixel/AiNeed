@@ -1,12 +1,13 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { PhotoType } from "@prisma/client";
-import { PrismaService } from "../../../common/prisma/prisma.service";
 
+import { PrismaService } from "../../../common/prisma/prisma.service";
 import type {
   StylistContext,
   StylistSlots,
   StylistBodyProfile,
 } from "../types";
+
 import type { StylistSession, StylistContextInternal } from "./session.service";
 
 const VALID_OCCASIONS = [

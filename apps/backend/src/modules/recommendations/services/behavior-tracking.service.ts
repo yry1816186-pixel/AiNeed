@@ -3,18 +3,19 @@ import {
   Logger,
 } from "@nestjs/common";
 import { BehaviorEventType } from "@prisma/client";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
+
 import { RecommendationCacheService } from "./recommendation-cache.service";
 
 export type BehaviorAction =
-  | "view"
+  | "page_view"
   | "click"
-  | "like"
-  | "dislike"
-  | "addToCart"
+  | "post_like"
+  | "add_to_cart"
   | "purchase"
-  | "tryOn"
+  | "try_on_complete"
   | "share";
 
 export interface TrackBehaviorInput {
@@ -30,13 +31,12 @@ export interface TrackBehaviorInput {
 }
 
 const ACTION_WEIGHTS: Record<BehaviorAction, number> = {
-  view: 0.1,
+  page_view: 0.1,
   click: 0.3,
-  like: 0.6,
-  dislike: -0.5,
-  addToCart: 0.7,
+  post_like: 0.6,
+  add_to_cart: 0.7,
   purchase: 1.0,
-  tryOn: 0.8,
+  try_on_complete: 0.8,
   share: 0.5,
 };
 
@@ -67,8 +67,8 @@ export class BehaviorTrackingService {
 
     try {
       const weightMap: Record<string, number> = {
-        view: 1, click: 2, like: 3, favorite: 4,
-        addToCart: 5, purchase: 8, tryOn: 6, share: 4, dislike: -2,
+        view: 1, click: 2, post_like: 3, favorite: 4,
+        add_to_cart: 5, purchase: 8, try_on_complete: 6, share: 4,
       };
       const rawValue = weightMap[action] || 1;
       await this.prisma.userBehaviorEvent.create({
@@ -140,7 +140,7 @@ export class BehaviorTrackingService {
     for (const b of behaviors) {
       const weight = ACTION_WEIGHTS[b.type as BehaviorAction] || 0.1;
       const itemId = b.itemId;
-      if (!itemId) continue;
+      if (!itemId) {continue;}
 
       const item = itemMap.get(itemId);
       if (item) {
@@ -148,7 +148,7 @@ export class BehaviorTrackingService {
         categoryPrefs[cat] = (categoryPrefs[cat] || 0) + weight;
 
         if (item.tags && Array.isArray(item.tags)) {
-          for (const tag of item.tags as string[]) {
+          for (const tag of item.tags) {
             stylePrefs[tag] = (stylePrefs[tag] || 0) + weight * 0.5;
           }
         }
@@ -196,7 +196,7 @@ export class BehaviorTrackingService {
     const recentViews = await this.prisma.userBehavior.findMany({
       where: {
         userId,
-        type: "view",
+        type: "page_view",
         createdAt: {
           gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
         },
@@ -205,7 +205,7 @@ export class BehaviorTrackingService {
       take: 50,
     });
     for (const item of recentViews) {
-      if (item.itemId) excluded.add(item.itemId);
+      if (item.itemId) {excluded.add(item.itemId);}
     }
 
     return excluded;
@@ -226,11 +226,11 @@ export class BehaviorTrackingService {
         select: { category: true, tags: true, colors: true },
       });
 
-      if (!clothing) return;
+      if (!clothing) {return;}
 
       const category = clothing.category as string;
       const color = clothing.colors?.[0] || "";
-      const tags = (clothing.tags as string[]) || [];
+      const tags = (clothing.tags) || [];
 
       const multi = redis.multi();
       multi.hincrbyfloat(cacheKey, `cat:${category}`, weight);

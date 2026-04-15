@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import type { RootStackParamList } from "../types/navigation";
@@ -32,7 +25,7 @@ export const OutfitRecommendationCards: React.FC<OutfitRecommendationCardsProps>
   }
 
   const handleItemPress = (itemId: string) => {
-    navigation.navigate("ClothingDetail", { clothingId: itemId });
+    navigation.navigate("Product", { clothingId: itemId });
   };
 
   return (
@@ -41,15 +34,10 @@ export const OutfitRecommendationCards: React.FC<OutfitRecommendationCardsProps>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {outfits.map((outfit) => (
           <View key={outfit.id} style={styles.card}>
-            <Text style={styles.cardTitle}>
-              {outfit.title ?? "推荐搭配"}
-            </Text>
+            <Text style={styles.cardTitle}>{outfit.title ?? "推荐搭配"}</Text>
             <View style={styles.itemsRow}>
               {outfit.items.slice(0, 3).map((item) => (
-                <TouchableOpacity
-                  key={item.id}
-                  onPress={() => handleItemPress(item.id)}
-                >
+                <TouchableOpacity key={item.id} onPress={() => handleItemPress(item.id)}>
                   <Image
                     source={{ uri: item.imageUri || item.thumbnailUri }}
                     style={styles.itemImage}

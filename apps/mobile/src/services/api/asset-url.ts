@@ -21,11 +21,7 @@ export function ensureAuthenticatedAssetUrl(url?: string | null): string {
     return "";
   }
 
-  if (
-    url.startsWith("data:") ||
-    url.startsWith("file:") ||
-    url.startsWith("content:")
-  ) {
+  if (url.startsWith("data:") || url.startsWith("file:") || url.startsWith("content:")) {
     return url;
   }
 
@@ -78,27 +74,20 @@ export function normalizeAssetUrl(value?: string | null): string {
 export function buildPhotoAssetUrl(
   photoId: string,
   variant: "original" | "thumbnail",
-  value?: string | null,
+  value?: string | null
 ): string {
   if (photoId && isLocalStorageAssetUrl(value)) {
     return ensureAuthenticatedAssetUrl(
-      buildApiAssetUrl(
-        `/photos/${photoId}/${variant === "thumbnail" ? "thumbnail" : "asset"}`,
-      ),
+      buildApiAssetUrl(`/photos/${photoId}/${variant === "thumbnail" ? "thumbnail" : "asset"}`)
     );
   }
 
   return normalizeAssetUrl(value);
 }
 
-export function buildTryOnResultAssetUrl(
-  tryOnId: string,
-  value?: string | null,
-): string {
+export function buildTryOnResultAssetUrl(tryOnId: string, value?: string | null): string {
   if (tryOnId && isLocalStorageAssetUrl(value)) {
-    return ensureAuthenticatedAssetUrl(
-      buildApiAssetUrl(`/try-on/${tryOnId}/result-image`),
-    );
+    return ensureAuthenticatedAssetUrl(buildApiAssetUrl(`/try-on/${tryOnId}/result-image`));
   }
 
   return normalizeAssetUrl(value);

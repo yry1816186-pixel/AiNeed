@@ -10,3 +10,8 @@ data:
   JWT_ACCESS_EXPIRES_IN: "15m"
   JWT_REFRESH_EXPIRES_IN: "7d"
   REDIS_URL: "redis://redis:6379"
+  MINIO_ENDPOINT: "minio"
+  MINIO_BUCKET: "xuno"
+  AI_SERVICE_URL: "http://ai-service:8002"
+  QDRANT_URL: "http://qdrant:6333"
+  GLM_API_ENDPOINT: "https://open.bigmodel.cn/api/paas/v4"

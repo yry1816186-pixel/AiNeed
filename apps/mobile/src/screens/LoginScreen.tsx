@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback } from 'react';
+﻿import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,26 +9,28 @@ import {
   ActivityIndicator,
   Keyboard,
   TouchableWithoutFeedback,
-} from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authApi } from '../services/api/auth.api';
-import { smsApi } from '../services/api/sms.api';
-import { wechatAuth } from '../services/auth/wechat';
-import { useAuthStore } from '../stores/index';
-import { theme } from '../theme';
-import type { RootStackParamList } from '../types/navigation';
+} from "react-native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { authApi } from "../services/api/auth.api";
+import { useTranslation } from "../i18n";
+
+import { wechatAuth } from "../services/auth/wechat";
+import { useAuthStore } from "../stores/index";
+import { theme } from '../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import type { RootStackParamList } from "../types/navigation";
 
 type LoginNavigationProp = NavigationProp<RootStackParamList>;
 
 export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginNavigationProp>();
-  const { setUser, setToken } = useAuthStore();
+  const { setUser, setToken, onboardingCompleted } = useAuthStore();
+  const t = useTranslation();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [wechatLoading, setWechatLoading] = useState(false);
@@ -36,64 +38,80 @@ export const LoginScreen: React.FC = () => {
   const validateInputs = useCallback((): string | null => {
     const trimmedEmail = email.trim();
     if (!trimmedEmail) {
-      return '请输入邮箱地址';
+      return t.auth.email;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmedEmail)) {
-      return '请输入有效的邮箱地址';
+      return t.errors.validationError;
     }
     if (!password) {
-      return '请输入密码';
+      return t.auth.password;
     }
     if (password.length < 6) {
-      return '密码至少需要6个字符';
+      return "密码至少需要6个字符";
     }
     return null;
   }, [email, password]);
 
   const getErrorMessage = (error: unknown): string => {
-    if (typeof error === 'object' && error !== null) {
+    if (typeof error === "object" && error !== null) {
       const err = error as Record<string, unknown>;
-      if (typeof err.response === 'object' && err.response !== null) {
+      if (typeof err.response === "object" && err.response !== null) {
         const response = err.response as Record<string, unknown>;
-        if (typeof response.data === 'object' && response.data !== null) {
+        if (typeof response.data === "object" && response.data !== null) {
           const data = response.data as Record<string, unknown>;
-          if (typeof data.error === 'string') return data.error;
+          if (typeof data.error === "string") {
+            return data.error;
+          }
         }
       }
-      if (typeof err.message === 'string') return err.message;
+      if (typeof err.message === "string") {
+        return err.message;
+      }
     }
-    return '网络连接失败，请检查网络后重试';
+    return t.errors.networkError || "网络连接失败，请检查网络后重试";
   };
 
-  const handleLoginSuccess = useCallback(async (user: { id: string; email: string; nickname?: string; avatar?: string; createdAt?: string; updatedAt?: string }, token: string) => {
-    setToken(token);
-    setUser({
-      ...user,
-      createdAt: user.createdAt || new Date().toISOString(),
-      updatedAt: user.updatedAt || new Date().toISOString(),
-    });
+  const handleLoginSuccess = useCallback(
+    async (
+      user: {
+        id: string;
+        email: string;
+        nickname?: string;
+        avatar?: string;
+        createdAt?: string;
+        updatedAt?: string;
+      },
+      token: string
+    ) => {
+      setToken(token);
+      setUser({
+        ...user,
+        createdAt: user.createdAt || new Date().toISOString(),
+        updatedAt: user.updatedAt || new Date().toISOString(),
+      });
 
-    const onboardingComplete = await AsyncStorage.getItem('@aineed:onboarding_complete');
-    if (onboardingComplete === 'true') {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'MainTabs' }],
-      });
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Onboarding' }],
-      });
-    }
-  }, [setToken, setUser, navigation]);
+      if (onboardingCompleted) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "MainTabs" }],
+        });
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Onboarding" }],
+        });
+      }
+    },
+    [setToken, setUser, navigation]
+  );
 
   const handleLogin = useCallback(async () => {
     Keyboard.dismiss();
 
     const validationError = validateInputs();
     if (validationError) {
-      Alert.alert('输入错误', validationError);
+      Alert.alert(t.errors.validationError, validationError);
       return;
     }
 
@@ -110,13 +128,14 @@ export const LoginScreen: React.FC = () => {
         await handleLoginSuccess(user, token);
       } else {
         Alert.alert(
-          '登录失败',
-          (typeof response.error === 'string' ? response.error : response.error?.message) || '邮箱或密码不正确，请重试',
+          t.auth.login,
+          (typeof response.error === "string" ? response.error : response.error?.message) ||
+            t.errors.unauthorized
         );
       }
     } catch (error: unknown) {
       const message = getErrorMessage(error);
-      Alert.alert('登录失败', message);
+      Alert.alert(t.auth.login, message);
     } finally {
       setIsLoading(false);
     }
@@ -130,67 +149,58 @@ export const LoginScreen: React.FC = () => {
         const { user, accessToken } = response.data;
         await handleLoginSuccess(user, accessToken);
       } else {
-        Alert.alert(
-          '微信登录失败',
-          response.error?.message || '请稍后重试',
-        );
+        Alert.alert(t.auth.login, response.error?.message || t.common.retry);
       }
     } catch (error: unknown) {
       const message = getErrorMessage(error);
-      Alert.alert('微信登录失败', message);
+      Alert.alert(t.auth.login, message);
     } finally {
       setWechatLoading(false);
     }
   }, [handleLoginSuccess]);
 
   const handlePhoneLogin = useCallback(() => {
-    navigation.navigate('PhoneLogin' as never);
+    navigation.navigate("PhoneLogin" as never);
   }, [navigation]);
 
   const handleForgotPassword = useCallback(async () => {
     const trimmedEmail = email.trim();
 
     if (!trimmedEmail) {
-      Alert.alert('提示', '请先输入邮箱地址，然后点击忘记密码');
+      Alert.alert(t.common.confirm, t.auth.email);
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmedEmail)) {
-      Alert.alert('提示', '请输入有效的邮箱地址');
+      Alert.alert(t.common.confirm, t.errors.validationError);
       return;
     }
 
-    Alert.alert(
-      '重置密码',
-      `将向 ${trimmedEmail} 发送密码重置链接，确认发送？`,
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '确认',
-          style: 'default',
-          onPress: async () => {
-            try {
-              const response = await authApi.forgotPassword(trimmedEmail);
-              if (response.success) {
-                Alert.alert(
-                  '发送成功',
-                  '密码重置链接已发送到您的邮箱，请查收',
-                );
-              } else {
-                Alert.alert(
-                  '发送失败',
-                  (typeof response.error === 'string' ? response.error : response.error?.message) || '请稍后重试',
-                );
-              }
-            } catch (error: unknown) {
-              const message = getErrorMessage(error);
-              Alert.alert('发送失败', message);
+    Alert.alert(t.auth.forgotPassword, `将向 ${trimmedEmail} 发送密码重置链接，确认发送？`, [
+      { text: t.common.cancel, style: "cancel" },
+      {
+        text: t.common.confirm,
+        style: "default",
+        onPress: async () => {
+          try {
+            const response = await authApi.forgotPassword(trimmedEmail);
+            if (response.success) {
+              Alert.alert(t.common.done, "密码重置链接已发送到您的邮箱，请查收");
+            } else {
+              Alert.alert(
+                "发送失败",
+                (typeof response.error === "string" ? response.error : response.error?.message) ||
+                  t.common.retry
+              );
             }
-          },
+          } catch (error: unknown) {
+            const message = getErrorMessage(error);
+            Alert.alert(t.common.error, message);
+          }
         },
-      ],
-    );
+      },
+    ]);
   }, [email]);
 
   return (
@@ -201,7 +211,7 @@ export const LoginScreen: React.FC = () => {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
             disabled={isLoading || wechatLoading}
-            accessibilityLabel="返回"
+            accessibilityLabel={t.common.back}
           >
             <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
           </TouchableOpacity>
@@ -213,14 +223,14 @@ export const LoginScreen: React.FC = () => {
             </View>
             <Text style={styles.brandName}>寻裳</Text>
           </View>
-          <Text style={styles.title}>欢迎回来</Text>
-          <Text style={styles.subtitle}>登录您的账户</Text>
+          <Text style={styles.title}>{t.auth.login}</Text>
+          <Text style={styles.subtitle}>{t.auth.login}</Text>
           <View style={styles.form}>
             <View style={styles.inputGroup}>
               <Ionicons name="mail-outline" size={20} color={theme.colors.textTertiary} />
               <TextInput
                 style={styles.input}
-                placeholder="邮箱地址"
+                placeholder={t.auth.email}
                 placeholderTextColor={theme.colors.textTertiary}
                 value={email}
                 onChangeText={setEmail}
@@ -229,12 +239,12 @@ export const LoginScreen: React.FC = () => {
                 autoCorrect={false}
                 editable={!isLoading && !wechatLoading}
                 returnKeyType="next"
-                accessibilityLabel="邮箱地址"
+                accessibilityLabel={t.auth.email}
                 onSubmitEditing={() => {
-                  if (password === '') {
+                  if (password === "") {
                     return;
                   }
-                  handleLogin();
+                  void handleLogin();
                 }}
               />
             </View>
@@ -242,7 +252,7 @@ export const LoginScreen: React.FC = () => {
               <Ionicons name="lock-closed-outline" size={20} color={theme.colors.textTertiary} />
               <TextInput
                 style={styles.input}
-                placeholder="密码"
+                placeholder={t.auth.password}
                 placeholderTextColor={theme.colors.textTertiary}
                 value={password}
                 onChangeText={setPassword}
@@ -251,7 +261,7 @@ export const LoginScreen: React.FC = () => {
                 autoCorrect={false}
                 editable={!isLoading && !wechatLoading}
                 returnKeyType="go"
-                accessibilityLabel="密码"
+                accessibilityLabel={t.auth.password}
                 onSubmitEditing={handleLogin}
               />
               <TouchableOpacity
@@ -259,10 +269,10 @@ export const LoginScreen: React.FC = () => {
                 style={styles.eyeButton}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 disabled={isLoading || wechatLoading}
-                accessibilityLabel={showPassword ? '隐藏密码' : '显示密码'}
+                accessibilityLabel={showPassword ? t.common.cancel : t.auth.password}
               >
                 <Ionicons
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                  name={showPassword ? "eye-outline" : "eye-off-outline"}
                   size={20}
                   color={theme.colors.textTertiary}
                 />
@@ -273,26 +283,23 @@ export const LoginScreen: React.FC = () => {
               style={styles.forgotPasswordLink}
               onPress={handleForgotPassword}
               disabled={isLoading || wechatLoading}
-              accessibilityLabel="忘记密码"
+              accessibilityLabel={t.auth.forgotPassword}
             >
-              <Text style={styles.forgotPasswordText}>忘记密码？</Text>
+              <Text style={styles.forgotPasswordText}>{t.auth.forgotPassword}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[
-                styles.loginButton,
-                isLoading && styles.loginButtonDisabled,
-              ]}
+              style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
               onPress={handleLogin}
               disabled={isLoading || wechatLoading}
               activeOpacity={0.7}
-              accessibilityLabel="登录"
+              accessibilityLabel={t.auth.login}
               accessibilityRole="button"
             >
               {isLoading ? (
                 <ActivityIndicator size="small" color={theme.colors.surface} />
               ) : (
-                <Text style={styles.loginButtonText}>登录</Text>
+                <Text style={styles.loginButtonText}>{t.auth.login}</Text>
               )}
             </TouchableOpacity>
 
@@ -311,10 +318,10 @@ export const LoginScreen: React.FC = () => {
               accessibilityRole="button"
             >
               {wechatLoading ? (
-                <ActivityIndicator size="small" color="#FFFFFF" />
+                <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
               ) : (
                 <>
-                  <Ionicons name="logo-wechat" size={22} color="#FFFFFF" />
+                  <Ionicons name="logo-wechat" size={22} color={DesignTokens.colors.neutral.white} />
                   <Text style={styles.wechatButtonText}>微信一键登录</Text>
                 </>
               )}
@@ -334,11 +341,12 @@ export const LoginScreen: React.FC = () => {
 
             <TouchableOpacity
               style={styles.registerLink}
-              onPress={() => navigation.navigate('Register')}
+              onPress={() => navigation.navigate("Register")}
               disabled={isLoading || wechatLoading}
-              accessibilityLabel="没有账户？立即注册"
+              accessibilityLabel={t.auth.register}
+              accessibilityRole="button"
             >
-              <Text style={styles.registerText}>没有账户？立即注册</Text>
+              <Text style={styles.registerText}>{t.auth.register}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -354,13 +362,13 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F1F3F4',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: DesignTokens.colors.neutral[100],
+    alignItems: "center",
+    justifyContent: "center",
   },
   content: { flex: 1, padding: 20 },
   brandSection: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
   },
   logoContainer: {
@@ -368,22 +376,22 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: theme.BorderRadius.xl,
     backgroundColor: theme.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 12,
   },
   brandName: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.primary,
     letterSpacing: 1.2,
   },
-  title: { fontSize: 32, fontWeight: '700', color: theme.colors.text },
+  title: { fontSize: 32, fontWeight: "700", color: theme.colors.text },
   subtitle: { fontSize: 16, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 32 },
   form: { gap: 16 },
   inputGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.colors.background,
     borderRadius: theme.BorderRadius.md,
     paddingHorizontal: 16,
@@ -392,29 +400,29 @@ const styles = StyleSheet.create({
   },
   input: { flex: 1, fontSize: 16, color: theme.colors.text },
   eyeButton: { padding: 4 },
-  forgotPasswordLink: { alignItems: 'flex-end' },
+  forgotPasswordLink: { alignItems: "flex-end" },
   forgotPasswordText: { fontSize: 14, color: theme.colors.primary },
   loginButton: {
     backgroundColor: theme.colors.primary,
     borderRadius: theme.BorderRadius.md,
     paddingVertical: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 8,
     minHeight: 52,
     ...theme.Shadows.brand,
   },
   loginButtonDisabled: { backgroundColor: theme.colors.primaryLight },
-  loginButtonText: { fontSize: 16, fontWeight: '600', color: theme.colors.surface },
+  loginButtonText: { fontSize: 16, fontWeight: "600", color: theme.colors.surface },
   divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginVertical: 8,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: theme.colors.border || '#E5E5E5',
+    backgroundColor: theme.colors.border || DesignTokens.colors.neutral[200],
   },
   dividerText: {
     marginHorizontal: 16,
@@ -422,29 +430,29 @@ const styles = StyleSheet.create({
     color: theme.colors.textTertiary,
   },
   wechatButton: {
-    backgroundColor: '#07C160',
+    backgroundColor: "#07C160", // custom color
     borderRadius: theme.BorderRadius.md,
     paddingVertical: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
     gap: 8,
     minHeight: 52,
   },
-  wechatButtonText: { fontSize: 16, fontWeight: '600', color: '#FFFFFF' },
+  wechatButtonText: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.neutral.white },
   phoneLoginButton: {
     backgroundColor: theme.colors.background,
     borderRadius: theme.BorderRadius.md,
     paddingVertical: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
     gap: 8,
     borderWidth: 1,
     borderColor: theme.colors.primary,
   },
-  phoneLoginText: { fontSize: 16, fontWeight: '500', color: theme.colors.primary },
-  registerLink: { alignItems: 'center', marginTop: 16 },
+  phoneLoginText: { fontSize: 16, fontWeight: "500", color: theme.colors.primary },
+  registerLink: { alignItems: "center", marginTop: 16 },
   registerText: { fontSize: 14, color: theme.colors.primary },
 });
 

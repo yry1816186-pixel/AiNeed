@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -10,12 +10,13 @@ import {
   Alert,
   Modal,
   FlatList,
-} from 'react-native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme } from '../../theme';
-import { communityApi } from '../../services/api/community.api';
+} from "react-native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme } from '../design-system/theme';
+import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { communityApi } from "../../services/api/community.api";
 
-type ImportSource = 'community' | 'ai_stylist' | 'tryon';
+type ImportSource = "community" | "ai_stylist" | "tryon";
 
 interface ImportItem {
   id: string;
@@ -38,22 +39,22 @@ interface ImportSheetProps {
     sessionId?: string;
     tryOnId?: string;
     images?: string[];
-    items?: Array<{ id: string; name: string; image: string }>;
+    items?: { id: string; name: string; image: string }[];
   };
   onClose: () => void;
   onImported?: () => void;
 }
 
 const SOURCE_LABELS: Record<ImportSource, string> = {
-  community: '社区帖子',
-  ai_stylist: 'AI造型师方案',
-  tryon: '虚拟试衣效果图',
+  community: "社区帖子",
+  ai_stylist: "AI造型师方案",
+  tryon: "虚拟试衣效果图",
 };
 
 const SOURCE_ICONS: Record<ImportSource, string> = {
-  community: 'people-outline',
-  ai_stylist: 'sparkles-outline',
-  tryon: 'shirt-outline',
+  community: "people-outline",
+  ai_stylist: "sparkles-outline",
+  tryon: "shirt-outline",
 };
 
 export const ImportSheet: React.FC<ImportSheetProps> = ({
@@ -63,7 +64,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
   onClose,
   onImported,
 }) => {
-  const [activeSource, setActiveSource] = useState<ImportSource>(source ?? 'community');
+  const [activeSource, setActiveSource] = useState<ImportSource>(source ?? "community");
   const [items, setItems] = useState<ImportItem[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [selectedCollectionId, setSelectedCollectionId] = useState<string | null>(null);
@@ -72,9 +73,11 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
 
   useEffect(() => {
     if (visible) {
-      if (source) setActiveSource(source);
-      fetchItems();
-      fetchCollections();
+      if (source) {
+        setActiveSource(source);
+      }
+      void fetchItems();
+      void fetchCollections();
     }
   }, [visible, source]);
 
@@ -86,7 +89,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
           name: item.name,
           image: item.image,
           selected: true,
-        })),
+        }))
       );
       return;
     }
@@ -94,7 +97,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
     // Default items for source types
     setLoading(true);
     try {
-      if (activeSource === 'community' && sourceData?.postId) {
+      if (activeSource === "community" && sourceData?.postId) {
         const response = await communityApi.getPostById(sourceData.postId);
         if (response.success && response.data) {
           const relatedItems = response.data.outfit?.items ?? [];
@@ -104,7 +107,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
               name: item.name,
               image: item.image,
               selected: true,
-            })),
+            }))
           );
         }
       } else {
@@ -125,10 +128,10 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
         const cols = Array.isArray(response.data) ? response.data : [];
         setCollections(
           cols.map((c: { id?: string; name?: string; _count?: { items?: number } }) => ({
-            id: c.id ?? '',
-            name: c.name ?? '',
+            id: c.id ?? "",
+            name: c.name ?? "",
             itemCount: c._count?.items ?? 0,
-          })),
+          }))
         );
         if (cols.length > 0) {
           setSelectedCollectionId(cols[0].id ?? null);
@@ -141,16 +144,14 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
 
   const toggleItem = useCallback((id: string) => {
     setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, selected: !item.selected } : item,
-      ),
+      prev.map((item) => (item.id === id ? { ...item, selected: !item.selected } : item))
     );
   }, []);
 
   const handleImport = useCallback(async () => {
     const selectedItems = items.filter((item) => item.selected);
     if (selectedItems.length === 0) {
-      Alert.alert('提示', '请至少选择一个单品');
+      Alert.alert("提示", "请至少选择一个单品");
       return;
     }
 
@@ -164,17 +165,19 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
           });
         }
       }
-      Alert.alert('成功', `已导入 ${selectedItems.length} 个单品到灵感衣橱`);
+      Alert.alert("成功", `已导入 ${selectedItems.length} 个单品到灵感衣橱`);
       onImported?.();
       onClose();
     } catch {
-      Alert.alert('提示', '导入失败，请重试');
+      Alert.alert("提示", "导入失败，请重试");
     } finally {
       setImporting(false);
     }
   }, [items, selectedCollectionId, onImported, onClose]);
 
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -194,11 +197,16 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
                   onPress={() => setActiveSource(key)}
                 >
                   <Ionicons
-                    name={SOURCE_ICONS[key] as 'people-outline'}
+                    name={SOURCE_ICONS[key] as "people-outline"}
                     size={14}
-                    color={activeSource === key ? '#FFFFFF' : '#6C5CE7'}
+                    color={activeSource === key ? DesignTokens.colors.text.inverse : DesignTokens.colors.brand.slate}
                   />
-                  <Text style={[styles.sourceChipText, activeSource === key && styles.sourceChipTextActive]}>
+                  <Text
+                    style={[
+                      styles.sourceChipText,
+                      activeSource === key && styles.sourceChipTextActive,
+                    ]}
+                  >
                     {SOURCE_LABELS[key]}
                   </Text>
                 </TouchableOpacity>
@@ -214,10 +222,18 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
                 {collections.map((col) => (
                   <TouchableOpacity
                     key={col.id}
-                    style={[styles.collectionChip, selectedCollectionId === col.id && styles.collectionChipActive]}
+                    style={[
+                      styles.collectionChip,
+                      selectedCollectionId === col.id && styles.collectionChipActive,
+                    ]}
                     onPress={() => setSelectedCollectionId(col.id)}
                   >
-                    <Text style={[styles.collectionChipText, selectedCollectionId === col.id && styles.collectionChipTextActive]}>
+                    <Text
+                      style={[
+                        styles.collectionChipText,
+                        selectedCollectionId === col.id && styles.collectionChipTextActive,
+                      ]}
+                    >
                       {col.name}
                     </Text>
                   </TouchableOpacity>
@@ -244,9 +260,11 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
                       <Ionicons name="shirt-outline" size={18} color={theme.colors.textTertiary} />
                     </View>
                   )}
-                  <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
+                  <Text style={styles.itemName} numberOfLines={1}>
+                    {item.name}
+                  </Text>
                   <View style={[styles.checkbox, item.selected && styles.checkboxChecked]}>
-                    {item.selected && <Ionicons name="checkmark" size={12} color="#FFFFFF" />}
+                    {item.selected && <Ionicons name="checkmark" size={12} color={DesignTokens.colors.text.inverse} />}
                   </View>
                 </TouchableOpacity>
               ))}
@@ -264,7 +282,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
             disabled={importing}
           >
             {importing ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
+              <ActivityIndicator size="small" color={DesignTokens.colors.text.inverse} />
             ) : (
               <Text style={styles.importBtnText}>
                 导入选中项 ({items.filter((i) => i.selected).length})
@@ -278,10 +296,10 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
 };
 
 const styles = StyleSheet.create({
-  overlay: { flex: 1, justifyContent: 'flex-end' },
-  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.4)' },
+  overlay: { flex: 1, justifyContent: "flex-end" },
+  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.4)" },
   sheet: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 16,
@@ -292,28 +310,28 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#E0E0E0',
-    alignSelf: 'center',
+    backgroundColor: DesignTokens.colors.neutral[200],
+    alignSelf: "center",
     marginTop: 10,
     marginBottom: 14,
   },
-  title: { fontSize: 16, fontWeight: '600', color: theme.colors.text, marginBottom: 12 },
-  sourceRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
+  title: { fontSize: 16, fontWeight: "600", color: theme.colors.text, marginBottom: 12 },
+  sourceRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
   sourceChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 14,
-    backgroundColor: '#F0EDFF',
+    backgroundColor: "#F0EDFF", // custom color
   },
-  sourceChipActive: { backgroundColor: '#6C5CE7' },
-  sourceChipText: { fontSize: 12, color: '#6C5CE7', fontWeight: '500' },
-  sourceChipTextActive: { color: '#FFFFFF' },
+  sourceChipActive: { backgroundColor: DesignTokens.colors.brand.slate },
+  sourceChipText: { fontSize: 12, color: DesignTokens.colors.brand.slate, fontWeight: "500" },
+  sourceChipTextActive: { color: DesignTokens.colors.text.inverse },
   collectionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginBottom: 12,
   },
@@ -325,29 +343,29 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
     marginRight: 6,
   },
-  collectionChipActive: { backgroundColor: '#F0EDFF' },
+  collectionChipActive: { backgroundColor: "#F0EDFF" }, // custom color
   collectionChipText: { fontSize: 12, color: theme.colors.textSecondary },
-  collectionChipTextActive: { color: '#6C5CE7', fontWeight: '600' },
+  collectionChipTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "600" },
   loader: { paddingVertical: 24 },
   itemList: { maxHeight: 250 },
   itemRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
     paddingVertical: 10,
     paddingHorizontal: 8,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  itemRowSelected: { backgroundColor: '#F8F7FF' },
+  itemRowSelected: { backgroundColor: "#F8F7FF" }, // custom color
   itemImage: { width: 40, height: 40, borderRadius: 6 },
   itemImagePlaceholder: {
     width: 40,
     height: 40,
     borderRadius: 6,
     backgroundColor: theme.colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   itemName: { flex: 1, fontSize: 14, color: theme.colors.text },
   checkbox: {
@@ -356,24 +374,24 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderWidth: 1.5,
     borderColor: theme.colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   checkboxChecked: {
-    backgroundColor: '#6C5CE7',
-    borderColor: '#6C5CE7',
+    backgroundColor: DesignTokens.colors.brand.slate,
+    borderColor: DesignTokens.colors.brand.slate,
   },
-  emptyItems: { paddingVertical: 32, alignItems: 'center' },
+  emptyItems: { paddingVertical: 32, alignItems: "center" },
   emptyItemsText: { fontSize: 14, color: theme.colors.textTertiary },
   importBtn: {
-    backgroundColor: '#6C5CE7',
+    backgroundColor: DesignTokens.colors.brand.slate,
     borderRadius: 12,
     paddingVertical: 14,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 12,
   },
   importBtnDisabled: { opacity: 0.5 },
-  importBtnText: { color: '#FFFFFF', fontSize: 15, fontWeight: '600' },
+  importBtnText: { color: DesignTokens.colors.text.inverse, fontSize: 15, fontWeight: "600" },
 });
 
 export default ImportSheet;

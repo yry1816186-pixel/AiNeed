@@ -7,7 +7,7 @@ module.exports = {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(jest-)?react-native|@react-native|expo|@expo|@unimodules|unimodules|react-native-paper|@gorhom|@sentry|@shopify|@tanstack|axios|zustand|@react-navigation|react-native-gesture-handler|react-native-reanimated|react-native-svg|react-native-safe-area-context|react-native-screens|react-native-linear-gradient|expo-blur|expo-haptics|@react-native-async-storage)/.+\\.(js|ts)$',
+    'node_modules/(?!(jest-)?react-native|@react-native|expo|@expo|@unimodules|unimodules|react-native-paper|@gorhom|@sentry|@shopify|@tanstack|axios|zustand|@react-navigation|react-native-gesture-handler|react-native-reanimated|react-native-svg|react-native-safe-area-context|react-native-screens|react-native-linear-gradient|expo-blur|expo-haptics|@react-native-async-storage|react-native-encrypted-storage|react-native-haptic-feedback|react-native-image-picker|react-native-share|@react-native-community/geolocation)/.+\\.(js|ts)$',
   ],
   testMatch: [
     '**/__tests__/**/*.[jt]s?(x)',
@@ -16,7 +16,15 @@ module.exports = {
     'src/**/*.(spec|test).(ts|tsx)',
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-  setupFiles: ['./jest.setup.js'],
+  setupFiles: [
+    './jest.rn.setup.js',
+    './jest.setup.js',
+  ],
+  moduleNameMapper: {
+    '^expo-image-manipulator$': '<rootDir>/src/__mocks__/expo-image-manipulator.js',
+    '^@/src/polyfills/(.*)$': '<rootDir>/src/polyfills/$1',
+    '^@/(.*)$': '<rootDir>/$1',
+  },
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     '!**/*.d.ts',
@@ -39,8 +47,8 @@ module.exports = {
       statements: 60,
     },
   },
-  testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
+  testPathIgnorePatterns: ['/node_modules/', '/e2e/', 'jest\\.config\\.js'],
   clearMocks: true,
-  resetMocks: true,
+  resetMocks: false,
   restoreMocks: true,
 };

@@ -28,7 +28,7 @@ export interface PriceRangeFilter {
  */
 export interface SearchWhereBuilderInput {
   query?: string;
-  category?: ClothingCategory | string;
+  category?: string;
   minPrice?: number;
   maxPrice?: number;
 }

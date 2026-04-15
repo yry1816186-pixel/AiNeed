@@ -24,7 +24,8 @@ export class DatabaseService implements OnModuleDestroy {
       const result = await this.pool.query<T>(options.text, options.values);
       const duration = Date.now() - start;
 
-      if (duration > 1000) {
+      const slowQueryThreshold = Number(process.env.SLOW_QUERY_THRESHOLD_MS) || 500;
+      if (duration > slowQueryThreshold) {
         this.logger.warn(
           `Slow query detected (${duration}ms): ${options.name || options.text.substring(0, 100)}`,
         );

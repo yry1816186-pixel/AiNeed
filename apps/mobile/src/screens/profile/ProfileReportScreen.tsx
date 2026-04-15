@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -7,77 +7,89 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Image,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import Animated, { FadeInUp, FadeInDown } from 'react-native-reanimated';
-import { profileApi } from '@/src/services/api/profile.api';
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import Animated, { FadeInUp, FadeInDown } from "react-native-reanimated";
+import { profileApi } from "@/src/services/api/profile.api";
 import type {
   UserProfile,
   BodyAnalysisReport,
   ColorAnalysisReport,
-} from '@/src/services/api/profile.api';
-import type { RootStackParamList } from '@/src/types/navigation';
-import { colors } from '@/src/theme/tokens/colors';
-import { typography } from '@/src/theme/tokens/typography';
-import { spacing } from '@/src/theme/tokens/spacing';
-import { shadows } from '@/src/theme/tokens/shadows';
-import { withErrorBoundary } from '@/src/components/ErrorBoundary';
-import { BodyTypeCard } from './components/BodyTypeCard';
-import { ColorSeasonCard } from './components/ColorSeasonCard';
-import { StyleTagsCard } from './components/StyleTagsCard';
-import { SharePosterPreview } from './components/SharePosterPreview';
+} from "@/src/services/api/profile.api";
+import type { RootStackParamList } from "@/src/types/navigation";
+import { colors } from "@/src/theme/tokens/colors";
+import { typography } from "@/src/theme/tokens/typography";
+import { spacing } from "@/src/theme/tokens/spacing";
+import { shadows } from "@/src/theme/tokens/shadows";
+import { withErrorBoundary } from "@/src/shared/components/ErrorBoundary";
+import { BodyTypeCard } from "./components/BodyTypeCard";
+import { ColorSeasonCard } from "./components/ColorSeasonCard";
+import { StyleTagsCard } from "./components/StyleTagsCard";
+import { SharePosterPreview } from "./components/SharePosterPreview";
 
 type ProfileReportNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const STYLE_PERSONALITY_MAP: Record<string, Record<string, string>> = {
   hourglass: {
-    spring: '优雅知性的春日精灵',
-    summer: '清冷淡雅的夏日仙子',
-    autumn: '温暖醇厚的秋日女神',
-    winter: '冷艳高贵的冬日女王',
+    spring: "优雅知性的春日精灵",
+    summer: "清冷淡雅的夏日仙子",
+    autumn: "温暖醇厚的秋日女神",
+    winter: "冷艳高贵的冬日女王",
   },
   rectangle: {
-    spring: '活力灵动的春日少女',
-    summer: '清新脱俗的夏日精灵',
-    autumn: '自然随性的秋日旅人',
-    winter: '利落干练的冬日先锋',
+    spring: "活力灵动的春日少女",
+    summer: "清新脱俗的夏日精灵",
+    autumn: "自然随性的秋日旅人",
+    winter: "利落干练的冬日先锋",
   },
   triangle: {
-    spring: '温柔甜美的春日玫瑰',
-    summer: '恬静优雅的夏日百合',
-    autumn: '沉稳内敛的秋日枫叶',
-    winter: '深邃迷人的冬日星空',
+    spring: "温柔甜美的春日玫瑰",
+    summer: "恬静优雅的夏日百合",
+    autumn: "沉稳内敛的秋日枫叶",
+    winter: "深邃迷人的冬日星空",
   },
   inverted_triangle: {
-    spring: '阳光自信的春日猎手',
-    summer: '冷静从容的夏日航海者',
-    autumn: '豪迈洒脱的秋日骑士',
-    winter: '锋芒毕露的冬日战士',
+    spring: "阳光自信的春日猎手",
+    summer: "冷静从容的夏日航海者",
+    autumn: "豪迈洒脱的秋日骑士",
+    winter: "锋芒毕露的冬日战士",
   },
   oval: {
-    spring: '亲切温暖的春日暖阳',
-    summer: '温润如玉的夏夜清风',
-    autumn: '包容大气的秋日丰收',
-    winter: '沉稳睿智的冬日智者',
+    spring: "亲切温暖的春日暖阳",
+    summer: "温润如玉的夏夜清风",
+    autumn: "包容大气的秋日丰收",
+    winter: "沉稳睿智的冬日智者",
   },
 };
 
 function getStylePersonality(bodyType?: string, colorSeason?: string): string {
-  if (!bodyType || !colorSeason) return '探索你的专属风格';
+  if (!bodyType || !colorSeason) {
+    return "探索你的专属风格";
+  }
   const typeMap = STYLE_PERSONALITY_MAP[bodyType];
-  if (!typeMap) return '探索你的专属风格';
-  return typeMap[colorSeason] || '探索你的专属风格';
+  if (!typeMap) {
+    return "探索你的专属风格";
+  }
+  return typeMap[colorSeason] || "探索你的专属风格";
 }
 
 function getProfileCompletion(profile: UserProfile): number {
   const fields: (keyof UserProfile)[] = [
-    'nickname', 'gender', 'height', 'weight',
-    'shoulder', 'bust', 'waist', 'hip',
-    'bodyType', 'skinTone', 'colorSeason',
+    "nickname",
+    "gender",
+    "height",
+    "weight",
+    "shoulder",
+    "bust",
+    "waist",
+    "hip",
+    "bodyType",
+    "skinTone",
+    "colorSeason",
   ];
   const filled = fields.filter((f) => profile[f] !== undefined && profile[f] !== null).length;
   return Math.round((filled / fields.length) * 100);
@@ -103,9 +115,15 @@ export const ProfileReportScreenComponent: React.FC = () => {
         profileApi.getBodyAnalysis(),
         profileApi.getColorAnalysis(),
       ]);
-      if (profileRes.success && profileRes.data) setProfile(profileRes.data);
-      if (bodyRes.success && bodyRes.data) setBodyAnalysis(bodyRes.data);
-      if (colorRes.success && colorRes.data) setColorAnalysis(colorRes.data);
+      if (profileRes.success && profileRes.data) {
+        setProfile(profileRes.data);
+      }
+      if (bodyRes.success && bodyRes.data) {
+        setBodyAnalysis(bodyRes.data);
+      }
+      if (colorRes.success && colorRes.data) {
+        setColorAnalysis(colorRes.data);
+      }
     } catch {
       // Error handled by error boundary
     } finally {
@@ -114,7 +132,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    void fetchData();
   }, [fetchData]);
 
   const toggleCard = useCallback((cardKey: string) => {
@@ -122,7 +140,9 @@ export const ProfileReportScreenComponent: React.FC = () => {
   }, []);
 
   const completionPercent = useMemo(() => {
-    if (!profile) return 0;
+    if (!profile) {
+      return 0;
+    }
     return getProfileCompletion(profile);
   }, [profile]);
 
@@ -130,7 +150,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
     return getStylePersonality(profile?.bodyType, profile?.colorSeason);
   }, [profile?.bodyType, profile?.colorSeason]);
 
-  const displayName = profile?.nickname || '用户';
+  const displayName = profile?.nickname || "用户";
   const avatarInitial = displayName.charAt(0).toUpperCase();
 
   const isProfileIncomplete = !profile?.bodyType && !profile?.colorSeason;
@@ -177,7 +197,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
           <Text style={styles.emptySubtitle}>完善你的体型和色彩信息，解锁专属风格画像报告</Text>
           <TouchableOpacity
             style={styles.emptyButton}
-            onPress={() => navigation.navigate('Settings')}
+            onPress={() => navigation.navigate("Settings")}
             accessibilityLabel="去完善画像"
             accessibilityRole="button"
           >
@@ -252,7 +272,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
             waist={profile?.waist}
             hip={profile?.hip}
             collapsed={collapsedCards.bodyType}
-            onToggle={() => toggleCard('bodyType')}
+            onToggle={() => toggleCard("bodyType")}
           />
         </Animated.View>
 
@@ -260,7 +280,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
           <ColorSeasonCard
             colorAnalysis={colorAnalysis}
             collapsed={collapsedCards.colorSeason}
-            onToggle={() => toggleCard('colorSeason')}
+            onToggle={() => toggleCard("colorSeason")}
           />
         </Animated.View>
 
@@ -269,7 +289,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
             stylePreferences={profile?.stylePreferences ?? null}
             styleRecommendations={null}
             collapsed={collapsedCards.styleTags}
-            onToggle={() => toggleCard('styleTags')}
+            onToggle={() => toggleCard("styleTags")}
           />
         </Animated.View>
 
@@ -277,8 +297,8 @@ export const ProfileReportScreenComponent: React.FC = () => {
           <SharePosterPreview
             nickname={displayName}
             avatar={profile?.avatar}
-            bodyTypeName={bodyAnalysis?.bodyType?.label || ''}
-            colorSeasonName={colorAnalysis?.colorSeason?.label || ''}
+            bodyTypeName={bodyAnalysis?.bodyType?.label || ""}
+            colorSeasonName={colorAnalysis?.colorSeason?.label || ""}
             styleTags={bodyAnalysis?.recommendations?.idealStyles || []}
             personalityLine={stylePersonality}
           />
@@ -315,9 +335,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.neutral[50],
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.scale[3],
     backgroundColor: colors.neutral.white,
@@ -342,8 +362,8 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     gap: spacing.scale[4],
   },
   loadingText: {
@@ -352,8 +372,8 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: spacing.layout.screenPadding,
     gap: spacing.scale[3],
   },
@@ -366,13 +386,13 @@ const styles = StyleSheet.create({
   emptySubtitle: {
     fontSize: typography.fontSize.sm,
     color: colors.neutral[500],
-    textAlign: 'center',
+    textAlign: "center",
     lineHeight: 22,
   },
   emptyButton: {
     marginTop: spacing.scale[4],
     borderRadius: spacing.borderRadius.xl,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   emptyButtonGradient: {
     paddingVertical: spacing.scale[3],
@@ -381,17 +401,17 @@ const styles = StyleSheet.create({
   emptyButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   summaryCard: {
-    borderRadius: spacing.borderRadius['2xl'],
+    borderRadius: spacing.borderRadius["2xl"],
     padding: spacing.layout.modalPadding,
     marginBottom: spacing.layout.cardGap,
     ...shadows.presets.lg,
   },
   summaryTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: spacing.scale[4],
   },
   avatarContainer: {
@@ -401,23 +421,23 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "rgba(255,255,255,0.3)",
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.5)',
+    borderColor: "rgba(255,255,255,0.5)",
   },
   avatarText: {
-    fontSize: typography.fontSize['2xl'],
+    fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   avatarImage: {
     width: 64,
     height: 64,
     borderRadius: 32,
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.5)',
+    borderColor: "rgba(255,255,255,0.5)",
   },
   summaryInfo: {
     flex: 1,
@@ -425,12 +445,12 @@ const styles = StyleSheet.create({
   summaryName: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     marginBottom: spacing.scale[1],
   },
   summaryPersonality: {
     fontSize: typography.fontSize.sm,
-    color: 'rgba(255,255,255,0.9)',
+    color: "rgba(255,255,255,0.9)",
     fontWeight: typography.fontWeight.medium,
   },
   progressContainer: {
@@ -439,24 +459,24 @@ const styles = StyleSheet.create({
   progressTrack: {
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    overflow: 'hidden',
+    backgroundColor: "rgba(255,255,255,0.3)",
+    overflow: "hidden",
   },
   progressFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 3,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   progressText: {
     fontSize: typography.fontSize.xs,
-    color: 'rgba(255,255,255,0.85)',
+    color: "rgba(255,255,255,0.85)",
     fontWeight: typography.fontWeight.medium,
   },
   bottomSpacer: {
     height: 80,
   },
   bottomBar: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
@@ -469,24 +489,24 @@ const styles = StyleSheet.create({
   },
   shareButton: {
     borderRadius: spacing.borderRadius.xl,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   shareButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     gap: spacing.scale[2],
     paddingVertical: spacing.scale[3] + 2,
   },
   shareButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.bold,
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
 });
 
 const ProfileReportScreen = withErrorBoundary(ProfileReportScreenComponent, {
-  screenName: 'ProfileReportScreen',
+  screenName: "ProfileReportScreen",
   maxRetries: 3,
 });
 

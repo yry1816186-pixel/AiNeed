@@ -124,20 +124,32 @@ describe("classifyAxiosError", () => {
   });
 
   it("should classify 429 as RATE_LIMITED", () => {
-    const axiosError = new AxiosError("Too Many Requests", "ERR_BAD_REQUEST", undefined, undefined, {
-      status: 429,
-      data: {},
-    } as any);
+    const axiosError = new AxiosError(
+      "Too Many Requests",
+      "ERR_BAD_REQUEST",
+      undefined,
+      undefined,
+      {
+        status: 429,
+        data: {},
+      } as any
+    );
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.RATE_LIMITED);
   });
 
   it("should classify 500 as SERVER_ERROR", () => {
-    const axiosError = new AxiosError("Internal Server Error", "ERR_BAD_REQUEST", undefined, undefined, {
-      status: 500,
-      data: {},
-    } as any);
+    const axiosError = new AxiosError(
+      "Internal Server Error",
+      "ERR_BAD_REQUEST",
+      undefined,
+      undefined,
+      {
+        status: 500,
+        data: {},
+      } as any
+    );
 
     const result = classifyAxiosError(axiosError as AxiosError<ApiError>);
     expect(result.code).toBe(AppErrorCode.SERVER_ERROR);

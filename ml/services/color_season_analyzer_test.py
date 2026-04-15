@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from ml.services.color_season_analyzer import (
+from ml.services.analysis.color_season_analyzer import (
     ChromaType,
     ColorSeason,
     ColorSeasonResult,

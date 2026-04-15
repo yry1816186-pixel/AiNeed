@@ -1,8 +1,10 @@
+import { AsyncLocalStorage } from 'async_hooks';
+
 import { Module, Global, Provider, DynamicModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AsyncLocalStorage } from 'async_hooks';
-import { PinoLoggerService, PinoChildLogger } from './logger.service';
+
 import { TraceIdMiddleware } from './logger.middleware';
+import { PinoLoggerService, PinoChildLogger } from './logger.service';
 
 export const PINO_ASYNC_LOCAL_STORAGE = 'PINO_ASYNC_LOCAL_STORAGE';
 

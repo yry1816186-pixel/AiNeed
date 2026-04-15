@@ -1,13 +1,7 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+﻿import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius } from "../../theme";
+import { theme, Colors, Spacing, BorderRadius } from '../design-system/theme';
 import type { DesignLayer } from "../../stores/customizationEditorStore";
 
 interface LayerPanelProps {
@@ -26,7 +20,9 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
   onDeleteLayer,
   visible = true,
 }) => {
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
 
   if (layers.length === 0) {
     return (
@@ -48,10 +44,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
           return (
             <TouchableOpacity
               key={layer.id}
-              style={[
-                styles.layerRow,
-                isSelected && styles.layerRowSelected,
-              ]}
+              style={[styles.layerRow, isSelected && styles.layerRowSelected]}
               onPress={() => onSelectLayer(layer.id)}
               activeOpacity={0.7}
             >
@@ -60,17 +53,14 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
                   layer.type === "image"
                     ? "image-outline"
                     : layer.type === "text"
-                      ? "text-outline"
-                      : "shapes-outline"
+                    ? "text-outline"
+                    : "shapes-outline"
                 }
                 size={18}
                 color={isSelected ? theme.colors.primary : theme.colors.textSecondary}
               />
               <Text
-                style={[
-                  styles.layerContent,
-                  isSelected && styles.layerContentSelected,
-                ]}
+                style={[styles.layerContent, isSelected && styles.layerContentSelected]}
                 numberOfLines={1}
               >
                 {layer.type === "image" ? "图片" : layer.content}
@@ -79,11 +69,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
                 onPress={() => onDeleteLayer(layer.id)}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <Ionicons
-                  name="close-circle-outline"
-                  size={18}
-                  color={Colors.neutral[400]}
-                />
+                <Ionicons name="close-circle-outline" size={18} color={Colors.neutral[400]} />
               </TouchableOpacity>
             </TouchableOpacity>
           );

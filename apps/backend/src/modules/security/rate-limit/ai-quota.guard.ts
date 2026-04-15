@@ -10,8 +10,9 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
 
-import { AiQuotaService, QuotaType as QuotaTypeEnum } from './ai-quota.service';
 import { JwtUserPayload } from '../../../common/types/common.types';
+
+import { AiQuotaService, QuotaType as QuotaTypeEnum } from './ai-quota.service';
 
 export const QUOTA_TYPE_KEY = 'quotaType';
 

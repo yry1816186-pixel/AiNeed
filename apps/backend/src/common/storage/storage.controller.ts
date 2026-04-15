@@ -8,8 +8,8 @@ import {
   Res,
   UseGuards,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
 import type { Response } from "express";
 
 import { OptionalAuthGuard } from "../../modules/auth/guards/optional-auth.guard";

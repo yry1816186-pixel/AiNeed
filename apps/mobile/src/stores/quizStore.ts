@@ -81,7 +81,7 @@ export const useQuizStore = createWithEqualityFn<QuizState>(
       set({ isLoading: true, error: null });
       try {
         const response: ApiResponse<QuizQuestion[]> = await apiClient.get<QuizQuestion[]>(
-          "/quiz/questions",
+          "/quiz/questions"
         );
         if (response.success && response.data) {
           const sorted = [...response.data].sort((a, b) => a.order - b.order);
@@ -134,10 +134,9 @@ export const useQuizStore = createWithEqualityFn<QuizState>(
       set({ isLoading: true, error: null });
       try {
         const { answers } = get();
-        const response: ApiResponse<QuizResult> = await apiClient.post<QuizResult>(
-          "/quiz/submit",
-          { answers },
-        );
+        const response: ApiResponse<QuizResult> = await apiClient.post<QuizResult>("/quiz/submit", {
+          answers,
+        });
         if (response.success && response.data) {
           set({ result: response.data, isLoading: false });
         } else {
@@ -167,10 +166,7 @@ export const useQuizStore = createWithEqualityFn<QuizState>(
 
     nextQuestion: () =>
       set((state) => ({
-        currentQuestionIndex: Math.min(
-          state.currentQuestionIndex + 1,
-          state.questions.length - 1,
-        ),
+        currentQuestionIndex: Math.min(state.currentQuestionIndex + 1, state.questions.length - 1),
       })),
 
     previousQuestion: () =>
@@ -182,7 +178,7 @@ export const useQuizStore = createWithEqualityFn<QuizState>(
 
     setError: (error) => set({ error }),
   }),
-  shallow,
+  shallow
 );
 
 export const useQuizQuestions = () => useQuizStore((s) => s.questions);

@@ -1,6 +1,6 @@
-import axios from "axios";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import axios from "axios";
 import sharp from "sharp";
 
 import { sanitizeImage } from "../../../common/security/image-sanitizer";

@@ -1,12 +1,5 @@
-import Constants from '@/src/polyfills/expo-constants';
-import {
-  ClothingCategory,
-  ClothingStyle,
-  Season,
-  Occasion,
-} from "../../types/clothing";
-
-const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+import { apiClient } from "../api/client";
+import { ClothingCategory, ClothingStyle, Season, Occasion } from "../../types/clothing";
 
 interface CategorizationResult {
   category: ClothingCategory;
@@ -19,14 +12,6 @@ interface CategorizationResult {
   tags: string[];
   name?: string;
   brand?: string;
-}
-
-interface OpenAIResponse {
-  choices: {
-    message: {
-      content: string;
-    };
-  }[];
 }
 
 const CATEGORY_LIST: ClothingCategory[] = [
@@ -74,97 +59,55 @@ const OCCASION_LIST: Occasion[] = [
   "formal_event",
 ];
 
-declare const process: { env: Record<string, string | undefined> };
-
 class ClothingCategorizationService {
-  private apiKey: string;
-
-  constructor() {
-    this.apiKey =
-      Constants.expoConfig?.extra?.OPENAI_KEY ||
-      (typeof process !== 'undefined' ? process.env?.EXPO_PUBLIC_OPENAI_KEY : undefined) ||
-      "";
-  }
-
   async categorize(imageUri: string): Promise<CategorizationResult> {
-    if (!this.apiKey) {
-      console.warn(
-        "OpenAI API key not configured, returning default categorization",
-      );
-      return this.getDefaultResult();
-    }
-
     try {
-      const base64Image = await this.imageToBase64(imageUri);
+      const formData = new FormData();
+      const filename = imageUri.split("/").pop() || "image.jpg";
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `image/${match[1]}` : "image/jpeg";
 
-      const response = await fetch(OPENAI_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-4o",
-          messages: [
-            {
-              role: "system",
-              content: `You are a fashion expert. Analyze the clothing item in the image and return a JSON object with these fields:
-- category: one of [${CATEGORY_LIST.join(", ")}]
-- subcategory: optional string (e.g., "t-shirt", "jeans", "sneakers")
-- style: array of styles from [${STYLE_LIST.join(", ")}]
-- colors: array of dominant colors (hex codes preferred)
-- seasons: array from [${SEASON_LIST.join(", ")}]
-- occasions: array from [${OCCASION_LIST.join(", ")}]
-- confidence: number 0-1
-- tags: array of descriptive tags
-- name: suggested item name
-- brand: if visible/identifiable
+      formData.append("file", {
+        uri: imageUri,
+        name: filename,
+        type,
+      } satisfies FormDataValue);
 
-Return ONLY valid JSON, no markdown.`,
-            },
-            {
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: "Analyze this clothing item and categorize it.",
-                },
-                {
-                  type: "image_url",
-                  image_url: {
-                    url: base64Image,
-                  },
-                },
-              ],
-            },
-          ],
-          max_tokens: 500,
-          temperature: 0.3,
-        }),
-      });
+      formData.append(
+        "validCategories",
+        JSON.stringify(CATEGORY_LIST)
+      );
+      formData.append(
+        "validStyles",
+        JSON.stringify(STYLE_LIST)
+      );
+      formData.append(
+        "validSeasons",
+        JSON.stringify(SEASON_LIST)
+      );
+      formData.append(
+        "validOccasions",
+        JSON.stringify(OCCASION_LIST)
+      );
 
-      if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.status}`);
+      const response = await apiClient.upload<CategorizationResult>(
+        "/ai/categorize",
+        formData
+      );
+
+      if (!response.success || !response.data) {
+        console.error("Categorization failed:", response.error);
+        return this.getDefaultResult();
       }
 
-      const data: OpenAIResponse = await response.json();
-      const content = data.choices[0]?.message?.content;
-
-      if (!content) {
-        throw new Error("No response from OpenAI");
-      }
-
-      const parsed = JSON.parse(content);
+      const parsed = response.data;
       return {
         category: this.validateCategory(parsed.category),
         subcategory: parsed.subcategory,
         style: this.validateArray(parsed.style, STYLE_LIST) as ClothingStyle[],
         colors: parsed.colors || [],
         seasons: this.validateArray(parsed.seasons, SEASON_LIST) as Season[],
-        occasions: this.validateArray(
-          parsed.occasions,
-          OCCASION_LIST,
-        ) as Occasion[],
+        occasions: this.validateArray(parsed.occasions, OCCASION_LIST) as Occasion[],
         confidence: parsed.confidence || 0.8,
         tags: parsed.tags || [],
         name: parsed.name,
@@ -176,22 +119,6 @@ Return ONLY valid JSON, no markdown.`,
     }
   }
 
-  private async imageToBase64(imageUri: string): Promise<string> {
-    if (imageUri.startsWith("data:")) {
-      return imageUri;
-    }
-
-    const response = await fetch(imageUri);
-    const blob = await response.blob();
-
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  }
-
   private validateCategory(category: string): ClothingCategory {
     if (CATEGORY_LIST.includes(category as ClothingCategory)) {
       return category as ClothingCategory;
@@ -200,7 +127,9 @@ Return ONLY valid JSON, no markdown.`,
   }
 
   private validateArray<T>(arr: unknown, validValues: T[]): T[] {
-    if (!Array.isArray(arr)) return [];
+    if (!Array.isArray(arr)) {
+      return [];
+    }
     return arr.filter((item): item is T => validValues.includes(item));
   }
 
@@ -215,12 +144,7 @@ Return ONLY valid JSON, no markdown.`,
       tags: [],
     };
   }
-
-  setApiKey(key: string) {
-    this.apiKey = key;
-  }
 }
 
-export const clothingCategorizationService =
-  new ClothingCategorizationService();
+export const clothingCategorizationService = new ClothingCategorizationService();
 export default clothingCategorizationService;

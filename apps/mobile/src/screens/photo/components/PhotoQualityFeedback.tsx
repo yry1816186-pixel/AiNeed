@@ -1,15 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  Animated,
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { theme } from '../../../theme';
-import type { PhotoQualityResult, PhotoQualityIssue } from '../../../stores/photoStore';
+﻿import React, { useEffect, useRef } from "react";
+import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { theme } from '../design-system/theme';
+import type { PhotoQualityResult, PhotoQualityIssue } from "../../../stores/photoStore";
 
 interface PhotoQualityFeedbackProps {
   qualityResult: PhotoQualityResult | null;
@@ -17,31 +10,35 @@ interface PhotoQualityFeedbackProps {
   onContinue: () => void;
 }
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CIRCLE_SIZE = 100;
 
 function getScoreColor(score: number): string {
-  if (score > 70) return '#4CAF50';
-  if (score >= 40) return '#FFC107';
-  return '#F44336';
+  if (score > 70) {
+    return "#4CAF50";
+  }
+  if (score >= 40) {
+    return "#FFC107";
+  }
+  return "#F44336";
 }
 
-function getIssueIcon(type: PhotoQualityIssue['type']): keyof typeof Ionicons.glyphMap {
-  const icons: Record<PhotoQualityIssue['type'], keyof typeof Ionicons.glyphMap> = {
-    blur: 'eye-off-outline',
-    brightness: 'sunny-outline',
-    pose: 'body-outline',
-    occlusion: 'hand-left-outline',
-    background: 'image-outline',
+function getIssueIcon(type: PhotoQualityIssue["type"]): keyof typeof Ionicons.glyphMap {
+  const icons: Record<PhotoQualityIssue["type"], keyof typeof Ionicons.glyphMap> = {
+    blur: "eye-off-outline",
+    brightness: "sunny-outline",
+    pose: "body-outline",
+    occlusion: "hand-left-outline",
+    background: "image-outline",
   };
   return icons[type];
 }
 
-function getSeverityColor(severity: PhotoQualityIssue['severity']): string {
-  const colors: Record<PhotoQualityIssue['severity'], string> = {
-    low: '#FFC107',
-    medium: '#FF9800',
-    high: '#F44336',
+function getSeverityColor(severity: PhotoQualityIssue["severity"]): string {
+  const colors: Record<PhotoQualityIssue["severity"], string> = {
+    low: "#FFC107",
+    medium: "#FF9800",
+    high: "#F44336",
   };
   return colors[severity];
 }
@@ -61,10 +58,7 @@ const ScoreCircle: React.FC<{ score: number }> = ({ score }) => {
 
   return (
     <Animated.View
-      style={[
-        styles.scoreCircle,
-        { borderColor: color, transform: [{ scale: animatedValue }] },
-      ]}
+      style={[styles.scoreCircle, { borderColor: color, transform: [{ scale: animatedValue }] }]}
     >
       <Text style={[styles.scoreNumber, { color }]}>{score}</Text>
       <Text style={styles.scoreLabel}>质量分</Text>
@@ -74,8 +68,17 @@ const ScoreCircle: React.FC<{ score: number }> = ({ score }) => {
 
 const IssueItem: React.FC<{ issue: PhotoQualityIssue }> = ({ issue }) => (
   <View style={styles.issueItem}>
-    <View style={[styles.issueIconContainer, { backgroundColor: getSeverityColor(issue.severity) + '20' }]}>
-      <Ionicons name={getIssueIcon(issue.type)} size={18} color={getSeverityColor(issue.severity)} />
+    <View
+      style={[
+        styles.issueIconContainer,
+        { backgroundColor: getSeverityColor(issue.severity) + "20" },
+      ]}
+    >
+      <Ionicons
+        name={getIssueIcon(issue.type)}
+        size={18}
+        color={getSeverityColor(issue.severity)}
+      />
     </View>
     <Text style={styles.issueText}>{issue.message}</Text>
   </View>
@@ -107,16 +110,13 @@ const PhotoQualityFeedback: React.FC<PhotoQualityFeedbackProps> = ({
     }
   }, [qualityResult, slideAnim, opacityAnim]);
 
-  if (!qualityResult) return null;
+  if (!qualityResult) {
+    return null;
+  }
 
   return (
     <Animated.View style={[styles.overlay, { opacity: opacityAnim }]}>
-      <Animated.View
-        style={[
-          styles.card,
-          { transform: [{ translateY: slideAnim }] },
-        ]}
-      >
+      <Animated.View style={[styles.card, { transform: [{ translateY: slideAnim }] }]}>
         <ScoreCircle score={qualityResult.score} />
 
         {qualityResult.isAcceptable ? (
@@ -141,14 +141,11 @@ const PhotoQualityFeedback: React.FC<PhotoQualityFeedbackProps> = ({
             </TouchableOpacity>
           )}
           <TouchableOpacity
-            style={[
-              styles.continueButton,
-              qualityResult.isAcceptable && styles.continueButtonFull,
-            ]}
+            style={[styles.continueButton, qualityResult.isAcceptable && styles.continueButtonFull]}
             onPress={onContinue}
           >
             <Text style={styles.continueButtonText}>
-              {qualityResult.isAcceptable ? '继续' : '仍然继续'}
+              {qualityResult.isAcceptable ? "继续" : "仍然继续"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -160,29 +157,29 @@ const PhotoQualityFeedback: React.FC<PhotoQualityFeedbackProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   card: {
     width: SCREEN_WIDTH - 64,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
     padding: 24,
-    alignItems: 'center',
+    alignItems: "center",
   },
   scoreCircle: {
     width: CIRCLE_SIZE,
     height: CIRCLE_SIZE,
     borderRadius: CIRCLE_SIZE / 2,
     borderWidth: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 16,
   },
   scoreNumber: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   scoreLabel: {
     fontSize: 12,
@@ -190,29 +187,29 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   acceptableContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     marginBottom: 20,
   },
   acceptableText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#4CAF50',
+    fontWeight: "600",
+    color: "#4CAF50",
   },
   issuesContainer: {
-    width: '100%',
+    width: "100%",
     marginBottom: 20,
   },
   issuesTitle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.textSecondary,
     marginBottom: 12,
   },
   issueItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
     gap: 10,
   },
@@ -220,8 +217,8 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   issueText: {
     flex: 1,
@@ -229,40 +226,40 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   buttonContainer: {
-    flexDirection: 'row',
-    width: '100%',
+    flexDirection: "row",
+    width: "100%",
     gap: 12,
   },
   retakeButton: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 48,
     borderRadius: 12,
     backgroundColor: theme.colors.textSecondary,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     gap: 6,
   },
   retakeButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   continueButton: {
     flex: 1,
     height: 48,
     borderRadius: 12,
     backgroundColor: theme.colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   continueButtonFull: {
     flex: 1,
   },
   continueButtonText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 

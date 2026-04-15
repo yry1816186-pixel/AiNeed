@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,8 +9,8 @@ import {
   Linking,
   Dimensions,
 } from "react-native";
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -27,12 +27,14 @@ import {
   AiStylistOutfitItem,
 } from "../../services/api/ai-stylist.api";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 
 const formatPrice = (price?: number | null) => {
-  if (price === null || price === undefined) return null;
+  if (price === null || price === undefined) {
+    return null;
+  }
   return `¥${price.toFixed(0)}`;
 };
 
@@ -41,10 +43,7 @@ export interface OutfitCardProps {
   onItemPress?: (item: AiStylistOutfitItem) => void;
 }
 
-export const OutfitCard: React.FC<OutfitCardProps> = ({
-  result,
-  onItemPress,
-}) => {
+export const OutfitCard = React.memo(function OutfitCard({ result, onItemPress }: OutfitCardProps) {
   const [activeOutfitIndex, setActiveOutfitIndex] = useState(0);
   const containerOpacity = useSharedValue(0);
   const containerScale = useSharedValue(0.95);
@@ -63,7 +62,7 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
 
   const handleItemPress = (item: AiStylistOutfitItem) => {
     if (item.externalUrl) {
-      Linking.openURL(item.externalUrl);
+      void Linking.openURL(item.externalUrl);
     }
     onItemPress?.(item);
   };
@@ -72,13 +71,10 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
     <AnimatedView style={[styles.container, containerStyle]}>
       <View style={styles.summarySection}>
         <LinearGradient
-          colors={[
-            DesignTokens.colors.brand.sage,
-            DesignTokens.colors.brand.camel,
-          ]}
+          colors={[DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel]}
           style={styles.summaryGradient}
         >
-          <Ionicons name="sparkles" size={20} color="#FFFFFF" />
+          <Ionicons name="sparkles" size={20} color={DesignTokens.colors.text.inverse} />
           <Text style={styles.summaryTitle}>穿搭方案</Text>
         </LinearGradient>
         <Text style={styles.summaryText}>{result.lookSummary}</Text>
@@ -103,10 +99,7 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
           {result.outfits.map((outfit, index) => (
             <Pressable
               key={index}
-              style={[
-                styles.outfitTab,
-                index === activeOutfitIndex && styles.outfitTabActive,
-              ]}
+              style={[styles.outfitTab, index === activeOutfitIndex && styles.outfitTabActive]}
               onPress={() => setActiveOutfitIndex(index)}
             >
               <Text
@@ -155,7 +148,7 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
       )}
     </AnimatedView>
   );
-};
+});
 
 interface OutfitItemCardProps {
   item: AiStylistOutfitItem;
@@ -163,20 +156,13 @@ interface OutfitItemCardProps {
   onPress: () => void;
 }
 
-const OutfitItemCard: React.FC<OutfitItemCardProps> = ({
-  item,
-  index,
-  onPress,
-}) => {
+const OutfitItemCard = React.memo(function OutfitItemCard({ item, index, onPress }: OutfitItemCardProps) {
   const opacity = useSharedValue(0);
   const translateX = useSharedValue(20);
 
   useEffect(() => {
     opacity.value = withDelay(index * 100, withTiming(1, { duration: 300 }));
-    translateX.value = withDelay(
-      index * 100,
-      withSpring(0, { damping: 15, stiffness: 150 }),
-    );
+    translateX.value = withDelay(index * 100, withSpring(0, { damping: 15, stiffness: 150 }));
   }, []);
 
   const cardStyle = useAnimatedStyle(() => ({
@@ -193,11 +179,7 @@ const OutfitItemCard: React.FC<OutfitItemCardProps> = ({
     >
       <View style={styles.itemImageContainer}>
         {item.imageUrl ? (
-          <Image
-            source={{ uri: item.imageUrl }}
-            style={styles.itemImage}
-            resizeMode="cover"
-          />
+          <Image source={{ uri: item.imageUrl }} style={styles.itemImage} resizeMode="cover" />
         ) : (
           <View style={styles.itemImagePlaceholder}>
             <Ionicons
@@ -221,9 +203,7 @@ const OutfitItemCard: React.FC<OutfitItemCardProps> = ({
           {item.reason}
         </Text>
         <View style={styles.itemFooter}>
-          {item.price && (
-            <Text style={styles.itemPrice}>{formatPrice(item.price)}</Text>
-          )}
+          {item.price && <Text style={styles.itemPrice}>{formatPrice(item.price)}</Text>}
           {hasLink && (
             <View style={styles.viewLink}>
               <Text style={styles.viewLinkText}>查看商品</Text>
@@ -244,7 +224,7 @@ const OutfitItemCard: React.FC<OutfitItemCardProps> = ({
       )}
     </AnimatedPressable>
   );
-};
+});
 
 const getCategoryIcon = (category: string): keyof typeof Ionicons.glyphMap => {
   const iconMap: Record<string, keyof typeof Ionicons.glyphMap> = {
@@ -283,7 +263,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
     marginLeft: 6,
   },
   summaryText: {
@@ -385,7 +365,7 @@ const styles = StyleSheet.create({
   },
   itemCard: {
     flexDirection: "row",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 12,
     padding: 12,
     marginBottom: 10,
@@ -482,6 +462,6 @@ const styles = StyleSheet.create({
   scoreText: {
     fontSize: 11,
     fontWeight: "700",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
   },
 });

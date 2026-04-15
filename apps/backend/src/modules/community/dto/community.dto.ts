@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsString,
   IsOptional,
@@ -8,7 +9,6 @@ import {
   Max,
   IsBoolean,
 } from "class-validator";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export enum PostCategory {
   OUTFIT_SHARE = "outfit_share",

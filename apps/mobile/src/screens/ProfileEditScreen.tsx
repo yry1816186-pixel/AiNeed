@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+﻿import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,13 +9,15 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { useNavigation, useRoute, NavigationProp } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+
 import { Ionicons } from "../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
 import { useProfileStore } from "../stores/profileStore";
-import { ScreenLayout, Header } from "../components/layout/ScreenLayout";
+import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";
 import type { RootStackParamList } from "../types/navigation";
+import type { UpdateProfileDto } from "../services/api/profile.api";
 
 type ProfileEditNavigationProp = NavigationProp<RootStackParamList>;
 
@@ -28,8 +30,18 @@ const GENDER_OPTIONS = [
 const AGE_RANGES = ["18-24", "25-30", "31-40", "40+"];
 
 const STYLE_KEYWORDS = [
-  "极简", "街头", "商务休闲", "优雅", "运动", "波西米亚",
-  "复古", "学院风", "休闲", "文艺", "朋克", "韩系",
+  "极简",
+  "街头",
+  "商务休闲",
+  "优雅",
+  "运动",
+  "波西米亚",
+  "复古",
+  "学院风",
+  "休闲",
+  "文艺",
+  "朋克",
+  "韩系",
 ];
 
 interface BodyFormState {
@@ -60,21 +72,35 @@ export const ProfileEditScreen: React.FC = () => {
   const [ageRange, setAgeRange] = useState<string | null>(null);
   const [nickname, setNickname] = useState(profile?.nickname ?? "");
   const [body, setBody] = useState<BodyFormState>(INITIAL_BODY);
-  const [selectedStyles, setSelectedStyles] = useState<Set<string>>(new Set(
-    profile?.stylePreferences?.preferredStyles ?? [],
-  ));
+  const [selectedStyles, setSelectedStyles] = useState<Set<string>>(
+    new Set(profile?.stylePreferences?.preferredStyles ?? [])
+  );
 
   useEffect(() => {
     if (profile) {
       setGender(profile.gender ?? null);
       setNickname(profile.nickname ?? "");
-      if (profile.height) setBody((prev) => ({ ...prev, height: String(profile.height) }));
-      if (profile.weight) setBody((prev) => ({ ...prev, weight: String(profile.weight) }));
-      if (profile.shoulder) setBody((prev) => ({ ...prev, shoulder: String(profile.shoulder) }));
-      if (profile.bust) setBody((prev) => ({ ...prev, bust: String(profile.bust) }));
-      if (profile.waist) setBody((prev) => ({ ...prev, waist: String(profile.waist) }));
-      if (profile.hip) setBody((prev) => ({ ...prev, hip: String(profile.hip) }));
-      if (profile.inseam) setBody((prev) => ({ ...prev, inseam: String(profile.inseam) }));
+      if (profile.height) {
+        setBody((prev) => ({ ...prev, height: String(profile.height) }));
+      }
+      if (profile.weight) {
+        setBody((prev) => ({ ...prev, weight: String(profile.weight) }));
+      }
+      if (profile.shoulder) {
+        setBody((prev) => ({ ...prev, shoulder: String(profile.shoulder) }));
+      }
+      if (profile.bust) {
+        setBody((prev) => ({ ...prev, bust: String(profile.bust) }));
+      }
+      if (profile.waist) {
+        setBody((prev) => ({ ...prev, waist: String(profile.waist) }));
+      }
+      if (profile.hip) {
+        setBody((prev) => ({ ...prev, hip: String(profile.hip) }));
+      }
+      if (profile.inseam) {
+        setBody((prev) => ({ ...prev, inseam: String(profile.inseam) }));
+      }
       if (profile.stylePreferences?.preferredStyles) {
         setSelectedStyles(new Set(profile.stylePreferences.preferredStyles));
       }
@@ -98,9 +124,9 @@ export const ProfileEditScreen: React.FC = () => {
   }, []);
 
   const handleSave = useCallback(async () => {
-    const updateData: Record<string, unknown> = {
+    const updateData: UpdateProfileDto = {
       nickname: nickname || undefined,
-      gender: gender ?? undefined,
+      gender: (gender as UpdateProfileDto["gender"]) ?? undefined,
       height: body.height ? parseFloat(body.height) : undefined,
       weight: body.weight ? parseFloat(body.weight) : undefined,
       shoulder: body.shoulder ? parseFloat(body.shoulder) : undefined,
@@ -118,7 +144,7 @@ export const ProfileEditScreen: React.FC = () => {
     };
 
     try {
-      await updateProfile(updateData as any);
+      await updateProfile(updateData);
       if (navigation.canGoBack()) {
         navigation.goBack();
       }
@@ -223,7 +249,11 @@ export const ProfileEditScreen: React.FC = () => {
 
           <View style={styles.formGroup}>
             <Text style={styles.inputLabel}>年龄段</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.pillRow}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.pillRow}
+            >
               {AGE_RANGES.map((range) => {
                 const isSelected = ageRange === range;
                 return (
@@ -294,7 +324,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[8],
   },
   sectionCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.neutral.white,
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     marginBottom: Spacing[4],
@@ -359,7 +389,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
   pillTextSelected: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.neutral.white,
     fontWeight: "600",
   },
   saveButtonText: {

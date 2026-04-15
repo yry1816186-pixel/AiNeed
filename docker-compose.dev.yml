@@ -1,6 +1,17 @@
-version: '3.8'
-
+# =============================================================================
+# Development Environment Docker Compose Configuration
+# =============================================================================
+# NOTE: This configuration uses default credentials for LOCAL DEVELOPMENT ONLY.
+# Production deployments MUST override ALL credentials via environment variables:
+#   - POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB
+#   - REDIS_PASSWORD
+#   - MINIO_ROOT_USER, MINIO_ROOT_PASSWORD
+#   - NEO4J_USER, NEO4J_PASSWORD
+# =============================================================================
 services:
+  # PostgreSQL 16 - Primary database
+  # Dev default: user=xuno, password=postgres, db=xuno
+  # Production: MUST use strong passwords, separate users, and restricted permissions
   postgres:
     image: postgres:16-alpine
     container_name: xuno-dev-postgres
@@ -128,7 +139,7 @@ services:
         max-file: "3"
 
   qdrant:
-    image: qdrant/qdrant:v1.8.4
+    image: qdrant/qdrant:v1.12.1
     container_name: xuno-dev-qdrant
     restart: unless-stopped
     ports:

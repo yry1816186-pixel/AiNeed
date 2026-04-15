@@ -45,7 +45,10 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
       const res = await consultantApi.getProfiles(params);
       if (res.success && res.data) {
         const paginated = res.data as PaginatedResponse<ConsultantProfile>;
-        set({ consultants: paginated.items ?? (res.data as unknown as ConsultantProfile[]), isLoading: false });
+        set({
+          consultants: paginated.items ?? (res.data as unknown as ConsultantProfile[]),
+          isLoading: false,
+        });
       } else {
         set({ isLoading: false });
       }
@@ -122,7 +125,10 @@ export const useConsultantStore = create<ConsultantState>((set) => ({
       const res = await consultantApi.getBookings(params);
       if (res.success && res.data) {
         const paginated = res.data as PaginatedResponse<ServiceBooking>;
-        set({ bookings: paginated.items ?? (res.data as unknown as ServiceBooking[]), isLoading: false });
+        set({
+          bookings: paginated.items ?? (res.data as unknown as ServiceBooking[]),
+          isLoading: false,
+        });
       } else {
         set({ bookings: [], isLoading: false });
       }

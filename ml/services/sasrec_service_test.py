@@ -2,12 +2,16 @@
 Tests for SASRec (Self-Attentive Sequential Recommendation) Service.
 Covers model initialization, core math ops, encoding, training, prediction,
 dropout, causal masking, and weight shape consistency.
+
+NOTE: Test data (item IDs, sequences, hyperparameters) are hardcoded for
+reproducibility and isolation. In production, replace with real user-item
+interaction data and validate against actual recommendation metrics.
 """
 
 import pytest
 import numpy as np
 
-from ml.services.sasrec_service import SASRecModel
+from ml.services.recommender.sasrec_service import SASRecModel
 
 
 # ---------------------------------------------------------------------------

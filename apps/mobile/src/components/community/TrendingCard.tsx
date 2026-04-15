@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,13 +6,13 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-} from 'react-native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { communityApi } from '../../services/api/community.api';
+} from "react-native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { communityApi } from "../../services/api/community.api";
 
 interface TrendingTag {
   name: string;
-  direction: 'up' | 'down' | 'stable';
+  direction: "up" | "down" | "stable";
   count?: number;
 }
 
@@ -21,9 +21,9 @@ interface TrendingCardProps {
 }
 
 const DIRECTION_CONFIG = {
-  up: { icon: 'arrow-up', color: '#27AE60' },
-  down: { icon: 'arrow-down', color: '#E74C3C' },
-  stable: { icon: 'arrow-forward', color: '#999' },
+  up: { icon: "arrow-up", color: "#27AE60" },
+  down: { icon: "arrow-down", color: "#E74C3C" },
+  stable: { icon: "arrow-forward", color: "#999" },
 } as const;
 
 export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
@@ -33,19 +33,19 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
   const fetchTrending = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await communityApi.getTrending({ type: 'tags' });
+      const response = await communityApi.getTrending({ type: "tags" });
       if (response.success && response.data) {
-        const trendingTags: TrendingTag[] = (response.data as Array<{ name?: string; direction?: string; count?: number }>).map(
-          (item) => ({
-            name: item.name ?? '',
-            direction: (item.direction === 'up'
-              ? 'up'
-              : item.direction === 'down'
-                ? 'down'
-                : 'stable') as TrendingTag['direction'],
-            count: item.count,
-          }),
-        );
+        const trendingTags: TrendingTag[] = (
+          response.data as { name?: string; direction?: string; count?: number }[]
+        ).map((item) => ({
+          name: item.name ?? "",
+          direction: (item.direction === "up"
+            ? "up"
+            : item.direction === "down"
+            ? "down"
+            : "stable") as TrendingTag["direction"],
+          count: item.count,
+        }));
         setTags(trendingTags);
       }
     } catch {
@@ -56,7 +56,7 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
   }, []);
 
   useEffect(() => {
-    fetchTrending();
+    void fetchTrending();
   }, [fetchTrending]);
 
   if (loading) {
@@ -90,11 +90,7 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
               accessibilityRole="button"
             >
               <Text style={styles.tagText}>#{tag.name}</Text>
-              <Ionicons
-                name={dirConfig.icon as 'arrow-up'}
-                size={12}
-                color={dirConfig.color}
-              />
+              <Ionicons name={dirConfig.icon as "arrow-up"} size={12} color={dirConfig.color} />
             </TouchableOpacity>
           );
         })}
@@ -105,31 +101,31 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     paddingVertical: 8,
   },
   scrollContent: {
     paddingHorizontal: 12,
     gap: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   tagChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 4,
-    backgroundColor: '#F0EDFF',
+    backgroundColor: "#F0EDFF",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
   },
   tagText: {
     fontSize: 13,
-    color: '#6C5CE7',
-    fontWeight: '500',
+    color: "#6C5CE7",
+    fontWeight: "500",
   },
   loadingContainer: {
     paddingVertical: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
 });
 

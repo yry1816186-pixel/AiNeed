@@ -4,8 +4,9 @@ import {
   NotFoundException,
   BadRequestException,
 } from "@nestjs/common";
-import { OrderStatus, Prisma , Order, OrderItem, OrderAddress } from "@prisma/client";
+import { IsIn, IsString } from "class-validator";
 import { Cron } from "@nestjs/schedule";
+import { OrderStatus, Prisma , Order, OrderItem, OrderAddress } from "@prisma/client";
 
 import { EncryptionService } from "../../common/encryption/encryption.service";
 import { PrismaService } from "../../common/prisma/prisma.service";
@@ -26,6 +27,15 @@ export interface CreateOrderDto {
   }[];
   addressId: string;
   remark?: string;
+}
+
+/**
+ * 支付订单 DTO
+ */
+export class PayOrderDto {
+  @IsString()
+  @IsIn(['alipay', 'wechat'], { message: '支付方式仅支持 alipay 或 wechat' })
+  paymentMethod!: string;
 }
 
 export interface OrderResponse {
@@ -174,6 +184,7 @@ export class OrderService {
         const updated = await tx.clothingItem.updateMany({
           where: {
             id: item.itemId,
+            isActive: true,
             stock: { gte: item.quantity },
           },
           data: {

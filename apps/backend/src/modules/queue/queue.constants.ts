@@ -1,4 +1,11 @@
 /**
+ * @deprecated 此文件已废弃，请使用 queue-config.ts 作为唯一权威配置源。
+ * - 队列名称请使用 QueueName 枚举（来自 queue-config.ts）
+ * - 队列配置请使用 QUEUE_CONFIGS（来自 queue-config.ts）
+ * - 此文件将在下个版本移除
+ */
+
+/**
  * Queue Module Constants
  * Defines queue names, job types, and configuration
  */

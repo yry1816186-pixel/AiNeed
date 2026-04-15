@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+
 import { ciede2000, rgbToLab } from "./ciede2000";
 
 export interface ColdStartStrategy {
@@ -81,7 +82,7 @@ export class ColdStartService {
     const profile = await this.prisma.userProfile.findUnique({ where: { userId } });
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
-    if (!user) return [];
+    if (!user) {return [];}
 
     const reasons: string[] = [];
 

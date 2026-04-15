@@ -24,34 +24,40 @@ export interface SrcSetEntry {
  * - MinIO / other URLs: add query params for image processing
  * - Unknown hosts: return unchanged URL
  */
-export function getOptimizedImageUrl(
-  url: string,
-  options: ImageOptimizationOptions = {},
-): string {
-  if (!url) return url;
+export function getOptimizedImageUrl(url: string, options: ImageOptimizationOptions = {}): string {
+  if (!url) {
+    return url;
+  }
 
-  const {
-    width,
-    height,
-    quality = 80,
-    format,
-  } = options;
+  const { width, height, quality = 80, format } = options;
 
   try {
     const parsed = new URL(url);
 
     // picsum.photos supports width/height/blurr/grayscale params
     if (parsed.hostname === "picsum.photos" || parsed.hostname === "fastly.picsum.photos") {
-      if (width) parsed.searchParams.set("w", String(width));
-      if (height) parsed.searchParams.set("h", String(height));
+      if (width) {
+        parsed.searchParams.set("w", String(width));
+      }
+      if (height) {
+        parsed.searchParams.set("h", String(height));
+      }
       return parsed.toString();
     }
 
     // MinIO / generic image host: append optimization query params
-    if (width) parsed.searchParams.set("width", String(width));
-    if (height) parsed.searchParams.set("height", String(height));
-    if (quality !== 80) parsed.searchParams.set("quality", String(quality));
-    if (format) parsed.searchParams.set("format", format);
+    if (width) {
+      parsed.searchParams.set("width", String(width));
+    }
+    if (height) {
+      parsed.searchParams.set("height", String(height));
+    }
+    if (quality !== 80) {
+      parsed.searchParams.set("quality", String(quality));
+    }
+    if (format) {
+      parsed.searchParams.set("format", format);
+    }
 
     return parsed.toString();
   } catch {
@@ -65,7 +71,9 @@ export function getOptimizedImageUrl(
  * Uses a very small image (10px wide, low quality).
  */
 export function getPlaceholder(url: string): string {
-  if (!url) return url;
+  if (!url) {
+    return url;
+  }
 
   try {
     const parsed = new URL(url);
@@ -90,11 +98,10 @@ export function getPlaceholder(url: string): string {
  *
  * Returns an array of { url, width } objects for each requested width.
  */
-export function getSrcSet(
-  url: string,
-  widths: number[],
-): SrcSetEntry[] {
-  if (!url || !widths.length) return [];
+export function getSrcSet(url: string, widths: number[]): SrcSetEntry[] {
+  if (!url || !widths.length) {
+    return [];
+  }
 
   return widths.map((w) => ({
     url: getOptimizedImageUrl(url, { width: w }),

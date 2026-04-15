@@ -19,6 +19,7 @@ import {
   RecommendationsService,
   type RecommendedItem,
 } from "../recommendations/recommendations.service";
+
 import { SystemContextService } from "./system-context.service";
 
 // Import shared types
@@ -454,12 +455,11 @@ export class AgentToolsService {
 
   private getDecisionWeight(type: string): number {
     const weights: Record<string, number> = {
-      like: 1.0,
+      post_like: 1.0,
       purchase: 2.0,
-      try_on: 0.5,
-      save: 0.8,
-      skip: -0.2,
-      dislike: -1.0,
+      try_on_complete: 0.5,
+      favorite: 0.8,
+      click: -0.2,
     };
     return weights[type] || 0;
   }

@@ -29,16 +29,14 @@ export interface QRImportResult {
 }
 
 export const brandQRApi = {
-  scanQRCode: async (
-    code: string,
-  ): Promise<ApiResponse<QRScanResult>> => {
+  scanQRCode: async (code: string): Promise<ApiResponse<QRScanResult>> => {
     return apiClient.get<QRScanResult>(`/brands/qr-codes/${code}`);
   },
 
   importScannedProduct: async (
     code: string,
     userId?: string,
-    platform?: string,
+    platform?: string
   ): Promise<ApiResponse<QRImportResult>> => {
     return apiClient.post<QRImportResult>(`/brands/qr-codes/${code}/scan`, {
       userId,

@@ -112,8 +112,7 @@ export interface ColorAnalysisReport {
 }
 
 export const profileApi = {
-  getProfile: (): Promise<ApiResponse<UserProfile>> =>
-    apiClient.get<UserProfile>("/profile"),
+  getProfile: (): Promise<ApiResponse<UserProfile>> => apiClient.get<UserProfile>("/profile"),
 
   updateProfile: (data: UpdateProfileDto): Promise<ApiResponse<UserProfile>> =>
     apiClient.put<UserProfile>("/profile", data),
@@ -124,12 +123,8 @@ export const profileApi = {
   getColorAnalysis: (): Promise<ApiResponse<ColorAnalysisReport>> =>
     apiClient.get<ColorAnalysisReport>("/profile/color-analysis"),
 
-  getStyleRecommendations: (): Promise<
-    ApiResponse<{ styles: string[]; reasons: string[] }>
-  > =>
-    apiClient.get<{ styles: string[]; reasons: string[] }>(
-      "/profile/style-recommendations",
-    ),
+  getStyleRecommendations: (): Promise<ApiResponse<{ styles: string[]; reasons: string[] }>> =>
+    apiClient.get<{ styles: string[]; reasons: string[] }>("/profile/style-recommendations"),
 
   getBodyMetrics: (): Promise<
     ApiResponse<{

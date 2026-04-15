@@ -1,43 +1,44 @@
-import React from 'react';
-import { render } from '@testing-library/react-native';
-import { SwipeCard, type ProductItem } from '../SwipeCard';
+import React from "react";
+import { render } from "@testing-library/react-native";
+import { SwipeCard, type ProductItem } from "../SwipeCard";
 
-jest.mock('@/src/polyfills/expo-linear-gradient', () => {
-  const { View } = require('react-native');
+jest.mock("@/src/polyfills/expo-linear-gradient", () => {
+  const { View } = require("react-native");
   const MockLinearGradient = (props: Record<string, unknown>) => <View {...props} />;
-  MockLinearGradient.displayName = 'LinearGradient';
+  MockLinearGradient.displayName = "LinearGradient";
   return { LinearGradient: MockLinearGradient, default: MockLinearGradient };
 });
 
-jest.mock('@/src/polyfills/expo-vector-icons', () => {
-  const { Text } = require('react-native');
-  const createIcon = (name: string) => (props: Record<string, unknown>) => <Text {...props}>{name}</Text>;
+jest.mock("@/src/polyfills/expo-vector-icons", () => {
+  const { Text } = require("react-native");
+  const createIcon = (name: string) => (props: Record<string, unknown>) =>
+    <Text {...props}>{name}</Text>;
   return {
-    Ionicons: createIcon('Ionicons'),
-    MaterialCommunityIcons: createIcon('MaterialCommunityIcons'),
-    Feather: createIcon('Feather'),
-    AntDesign: createIcon('AntDesign'),
+    Ionicons: createIcon("Ionicons"),
+    MaterialCommunityIcons: createIcon("MaterialCommunityIcons"),
+    Feather: createIcon("Feather"),
+    AntDesign: createIcon("AntDesign"),
   };
 });
 
 const mockProductItem: ProductItem = {
-  id: 'test-1',
-  name: 'Test Product',
-  description: 'A test product description',
+  id: "test-1",
+  name: "Test Product",
+  description: "A test product description",
   price: 299,
   originalPrice: 599,
-  currency: 'CNY',
-  images: ['https://example.com/image.jpg'],
-  category: 'tops',
-  colors: ['red', 'blue'],
-  sizes: ['M', 'L'],
+  currency: "CNY",
+  images: ["https://example.com/image.jpg"],
+  category: "tops",
+  colors: ["red", "blue"],
+  sizes: ["M", "L"],
   brand: {
-    id: 'brand-1',
-    name: 'Test Brand',
+    id: "brand-1",
+    name: "Test Brand",
   },
-  tags: ['casual', 'summer'],
+  tags: ["casual", "summer"],
   score: 0.85,
-  matchReasons: ['Matches your style', 'Good for your body type'],
+  matchReasons: ["Matches your style", "Good for your body type"],
 };
 
 const defaultProps = {
@@ -50,117 +51,103 @@ const defaultProps = {
   index: 0,
 };
 
-describe('SwipeCard', () => {
+describe("SwipeCard", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('renders card content', () => {
+  it("renders card content", () => {
     const { getByText } = render(<SwipeCard {...defaultProps} />);
-    expect(getByText('Test Product')).toBeTruthy();
+    expect(getByText("Test Product")).toBeTruthy();
   });
 
-  it('shows product name', () => {
+  it("shows product name", () => {
     const { getByText } = render(<SwipeCard {...defaultProps} />);
-    expect(getByText('Test Product')).toBeTruthy();
+    expect(getByText("Test Product")).toBeTruthy();
   });
 
-  it('shows product price', () => {
+  it("shows product price", () => {
     const { getByText } = render(<SwipeCard {...defaultProps} />);
-    expect(getByText('¥299')).toBeTruthy();
+    expect(getByText("¥299")).toBeTruthy();
   });
 
-  it('shows original price when present', () => {
+  it("shows original price when present", () => {
     const { getByText } = render(<SwipeCard {...defaultProps} />);
-    expect(getByText('¥599')).toBeTruthy();
+    expect(getByText("¥599")).toBeTruthy();
   });
 
-  it('shows brand name when present', () => {
+  it("shows brand name when present", () => {
     const { getByText } = render(<SwipeCard {...defaultProps} />);
-    expect(getByText('Test Brand')).toBeTruthy();
+    expect(getByText("Test Brand")).toBeTruthy();
   });
 
-  it('shows match reasons', () => {
-    const { getByText } = render(<SwipeCard {...defaultProps} />);
-    expect(getByText('Matches your style')).toBeTruthy();
-    expect(getByText('Good for your body type')).toBeTruthy();
+  it("shows match reasons", () => {
+    const { getAllByText } = render(<SwipeCard {...defaultProps} />);
+    expect(getAllByText("Matches your style").length).toBeGreaterThan(0);
+    expect(getAllByText("Good for your body type").length).toBeGreaterThan(0);
   });
 
-  it('renders without brand', () => {
+  it("renders without brand", () => {
     const itemNoBrand = { ...mockProductItem, brand: undefined };
-    const { queryByText } = render(
-      <SwipeCard {...defaultProps} item={itemNoBrand} />
-    );
-    expect(queryByText('Test Brand')).toBeNull();
+    const { queryByText } = render(<SwipeCard {...defaultProps} item={itemNoBrand} />);
+    expect(queryByText("Test Brand")).toBeNull();
   });
 
-  it('renders without original price', () => {
+  it("renders without original price", () => {
     const itemNoOriginal = { ...mockProductItem, originalPrice: undefined };
-    const { queryByText } = render(
-      <SwipeCard {...defaultProps} item={itemNoOriginal} />
-    );
-    expect(queryByText('¥599')).toBeNull();
+    const { queryByText } = render(<SwipeCard {...defaultProps} item={itemNoOriginal} />);
+    expect(queryByText("¥599")).toBeNull();
   });
 
-  it('renders without match reasons', () => {
+  it("renders without match reasons", () => {
     const itemNoReasons = { ...mockProductItem, matchReasons: undefined };
-    const { queryByText } = render(
-      <SwipeCard {...defaultProps} item={itemNoReasons} />
-    );
-    expect(queryByText('Matches your style')).toBeNull();
+    const { queryByText } = render(<SwipeCard {...defaultProps} item={itemNoReasons} />);
+    expect(queryByText("Matches your style")).toBeNull();
   });
 
-  it('renders as inactive card', () => {
-    const { getByText } = render(
-      <SwipeCard {...defaultProps} isActive={false} index={1} />
-    );
-    expect(getByText('Test Product')).toBeTruthy();
+  it("renders as inactive card", () => {
+    const { getByText } = render(<SwipeCard {...defaultProps} isActive={false} index={1} />);
+    expect(getByText("Test Product")).toBeTruthy();
   });
 
-  it('renders with fallback image when no images provided', () => {
+  it("renders with fallback image when no images provided", () => {
     const itemNoImages = { ...mockProductItem, images: [] };
-    const { getByText } = render(
-      <SwipeCard {...defaultProps} item={itemNoImages} />
-    );
-    expect(getByText('Test Product')).toBeTruthy();
+    const { getByText } = render(<SwipeCard {...defaultProps} item={itemNoImages} />);
+    expect(getByText("Test Product")).toBeTruthy();
   });
 
-  it('renders with more than 5 colors showing count', () => {
+  it("renders with more than 5 colors showing count", () => {
     const itemManyColors = {
       ...mockProductItem,
-      colors: ['red', 'blue', 'green', 'yellow', 'black', 'white', 'pink'],
+      colors: ["red", "blue", "green", "yellow", "black", "white", "pink"],
     };
-    const { getByText } = render(
-      <SwipeCard {...defaultProps} item={itemManyColors} />
-    );
-    expect(getByText('+2')).toBeTruthy();
+    const { getByText } = render(<SwipeCard {...defaultProps} item={itemManyColors} />);
+    expect(getByText("+2")).toBeTruthy();
   });
 
-  it('renders with empty colors array', () => {
+  it("renders with empty colors array", () => {
     const itemNoColors = { ...mockProductItem, colors: [] };
-    const { getByText } = render(
-      <SwipeCard {...defaultProps} item={itemNoColors} />
-    );
-    expect(getByText('Test Product')).toBeTruthy();
+    const { getByText } = render(<SwipeCard {...defaultProps} item={itemNoColors} />);
+    expect(getByText("Test Product")).toBeTruthy();
   });
 
-  it('renders like indicator text', () => {
+  it("renders like indicator text", () => {
     const { getByText } = render(<SwipeCard {...defaultProps} />);
-    expect(getByText('喜欢')).toBeTruthy();
+    expect(getByText("喜欢")).toBeTruthy();
   });
 
-  it('renders nope indicator text', () => {
+  it("renders nope indicator text", () => {
     const { getByText } = render(<SwipeCard {...defaultProps} />);
-    expect(getByText('跳过')).toBeTruthy();
+    expect(getByText("跳过")).toBeTruthy();
   });
 
-  it('renders cart indicator text', () => {
+  it("renders cart indicator text", () => {
     const { getByText } = render(<SwipeCard {...defaultProps} />);
-    expect(getByText('加入购物车')).toBeTruthy();
+    expect(getByText("加入购物车")).toBeTruthy();
   });
 
-  it('renders skip indicator text', () => {
+  it("renders skip indicator text", () => {
     const { getByText } = render(<SwipeCard {...defaultProps} />);
-    expect(getByText('不喜欢')).toBeTruthy();
+    expect(getByText("不喜欢")).toBeTruthy();
   });
 });

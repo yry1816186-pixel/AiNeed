@@ -17,8 +17,8 @@ import {
   ApiParam,
 } from "@nestjs/swagger";
 
-import { AuthGuard } from "../auth/guards/auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
+import { AuthGuard } from "../auth/guards/auth.guard";
 
 import { ChatService } from "./chat.service";
 import {

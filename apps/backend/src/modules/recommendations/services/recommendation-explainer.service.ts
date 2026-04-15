@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { LlmProviderService } from "../../ai-stylist/llm-provider.service";
 
@@ -521,7 +522,7 @@ ${matchingFactors.map((f) => `- ${f.factor}: 用户${f.userValue} ↔ 单品${f.
 
   private async callGLM(prompt: string): Promise<string | null> {
     const apiKey = this.configService.get("GLM_API_KEY");
-    if (!apiKey) return null;
+    if (!apiKey) {return null;}
 
     try {
       const response = await fetch(

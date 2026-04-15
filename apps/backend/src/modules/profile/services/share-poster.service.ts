@@ -106,7 +106,7 @@ export class SharePosterService {
     layoutConfig: Record<string, unknown>,
   ): void {
     const colors = profileData.colorPalette ?? [];
-    if (colors.length === 0) return;
+    if (colors.length === 0) {return;}
 
     const paletteSection = (layoutConfig.paletteSection as Record<string, unknown>) ?? {};
     const circleRadius = (paletteSection.circleRadius as number) ?? 30;

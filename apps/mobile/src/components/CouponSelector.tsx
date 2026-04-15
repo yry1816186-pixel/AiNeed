@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-  FlatList,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { UserCoupon } from "../services/api/commerce.api";
 
@@ -54,9 +47,7 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
             }}
           >
             <Text style={styles.noCouponText}>不使用优惠券</Text>
-            {selectedCouponId === null && (
-              <Ionicons name="checkmark" size={20} color="#FF4D4F" />
-            )}
+            {selectedCouponId === null && <Ionicons name="checkmark" size={20} color="#FF4D4F" />}
           </TouchableOpacity>
 
           <FlatList
@@ -73,12 +64,8 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
                   }}
                 >
                   <View style={styles.couponLeft}>
-                    <Text style={styles.couponDiscount}>
-                      {formatDiscount(item.coupon)}
-                    </Text>
-                    <Text style={styles.couponCondition}>
-                      满¥{item.coupon.minOrderAmount}可用
-                    </Text>
+                    <Text style={styles.couponDiscount}>{formatDiscount(item.coupon)}</Text>
+                    <Text style={styles.couponCondition}>满¥{item.coupon.minOrderAmount}可用</Text>
                   </View>
                   <View style={styles.couponRight}>
                     <Text style={styles.couponDesc}>{item.coupon.description}</Text>

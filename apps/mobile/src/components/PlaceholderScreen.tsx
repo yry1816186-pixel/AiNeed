@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '../polyfills/expo-vector-icons';
-import { theme } from '../theme';
+﻿import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { Ionicons } from "../polyfills/expo-vector-icons";
+import { theme } from '../design-system/theme';
 
 interface PlaceholderScreenProps {
   route: {
@@ -11,7 +11,7 @@ interface PlaceholderScreenProps {
 }
 
 export function PlaceholderScreen({ route }: PlaceholderScreenProps) {
-  const phase = (route.params?.phase as number | undefined);
+  const phase = route.params?.phase as number | undefined;
   const title = (route.params?.title as string | undefined) || route.name;
 
   return (
@@ -20,7 +20,7 @@ export function PlaceholderScreen({ route }: PlaceholderScreenProps) {
         <Ionicons name="construct-outline" size={48} color={theme.colors.primary} />
       </View>
       <Text style={styles.title}>{title}</Text>
-      {phase != null && (
+      {phase !== null && (
         <View style={styles.phaseBadge}>
           <Text style={styles.phaseText}>Phase {phase}</Text>
         </View>
@@ -35,8 +35,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 24,
   },
   iconContainer: {
@@ -44,13 +44,13 @@ const styles = StyleSheet.create({
     height: 96,
     borderRadius: 48,
     backgroundColor: theme.colors.subtleBg,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 24,
   },
   title: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: "700",
     color: theme.colors.text,
     marginBottom: 12,
   },
@@ -63,18 +63,18 @@ const styles = StyleSheet.create({
   },
   phaseText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.surface,
   },
   comingSoon: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     color: theme.colors.textSecondary,
     marginBottom: 8,
   },
   description: {
     fontSize: 14,
     color: theme.colors.textTertiary,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

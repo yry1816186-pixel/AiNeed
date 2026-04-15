@@ -1,15 +1,15 @@
-import { HeartRecommendScreen } from '../components/heartrecommend/HeartRecommendScreen';
-import { withErrorBoundary } from '../components/ErrorBoundary';
-import { logger } from '../utils/logger';
+﻿import { HeartRecommendScreen } from "../components/heartrecommend/HeartRecommendScreen";
+import { withErrorBoundary } from "../shared/components/ErrorBoundary";
+import { logger } from "../utils/logger";
 
 const HeartScreenWithErrorBoundary = withErrorBoundary(HeartRecommendScreen, {
-  screenName: 'HeartScreen',
+  screenName: "HeartScreen",
   maxRetries: 3,
   onError: (error, errorInfo, structuredError) => {
-    logger.error('[HeartScreen] Error:', structuredError);
+    logger.error("[HeartScreen] Error:", structuredError);
   },
   onReset: () => {
-    logger.log('[HeartScreen] Error boundary reset');
+    logger.log("[HeartScreen] Error boundary reset");
   },
 });
 

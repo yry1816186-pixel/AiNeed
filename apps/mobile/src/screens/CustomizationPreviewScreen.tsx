@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from "../theme";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
 import { useCustomizationEditorStore } from "../stores/customizationEditorStore";
 import customizationApi from "../services/api/customization.api";
 import type { RootStackParamList } from "../types/navigation";
@@ -28,10 +28,10 @@ export const CustomizationPreviewScreen: React.FC = () => {
   const [printSide, setPrintSide] = useState<"front" | "back" | "both">("front");
   const [isCalculating, setIsCalculating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [designData, setDesignData] = useState<any>(null);
+  const [_designData, setDesignData] = useState<any>(null);
 
   useEffect(() => {
-    loadDesign();
+    void loadDesign();
   }, [designId]);
 
   const loadDesign = async () => {
@@ -105,7 +105,9 @@ export const CustomizationPreviewScreen: React.FC = () => {
   );
 
   const renderQuoteDetails = () => {
-    if (!store.quote) return null;
+    if (!store.quote) {
+      return null;
+    }
 
     return (
       <View style={styles.section}>
@@ -137,9 +139,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
             <Text style={styles.quoteTotalLabel}>合计</Text>
             <Text style={styles.quoteTotalValue}>{store.quote.totalPrice} CNY</Text>
           </View>
-          <Text style={styles.estimatedDays}>
-            预计制作时间：{store.quote.estimatedDays} 天
-          </Text>
+          <Text style={styles.estimatedDays}>预计制作时间：{store.quote.estimatedDays} 天</Text>
         </View>
       </View>
     );
@@ -159,10 +159,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
         <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Preview Image */}
         <View style={styles.previewContainer}>
           {store.previewUrl ? (
@@ -226,9 +223,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
           </TouchableOpacity>
         )}
 
-        <Text style={styles.disclaimer}>
-          定制商品因其生产特殊性，确认付款后不支持退款
-        </Text>
+        <Text style={styles.disclaimer}>定制商品因其生产特殊性，确认付款后不支持退款</Text>
       </ScrollView>
     </SafeAreaView>
   );

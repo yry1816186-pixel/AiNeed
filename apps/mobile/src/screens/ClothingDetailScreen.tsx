@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+﻿import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { RootStackParamList } from "../types/navigation";
 import type { ClothingItem } from "../types/clothing";
 import { clothingApi } from "../services/api/clothing.api";
-import { theme } from "../theme";
+import { theme } from '../design-system/theme';
 import {
   cartApi,
   favoriteApi,
@@ -75,10 +75,10 @@ export const ClothingDetailScreen: React.FC = () => {
   }, [clothingId]);
 
   useEffect(() => {
-    loadItem();
-    sizeRecStore.fetchRecommendation(clothingId);
+    void loadItem();
+    void sizeRecStore.fetchRecommendation(clothingId);
 
-    clothingEnhancementApi.getRelatedItems(clothingId).then((res) => {
+    void clothingEnhancementApi.getRelatedItems(clothingId).then((res) => {
       if (res.success && res.data) {
         const outfits = res.data.slice(0, 5).map((ri, idx) => ({
           id: `outfit-${idx}`,
@@ -103,8 +103,10 @@ export const ClothingDetailScreen: React.FC = () => {
     }
   }, [clothingId, isFavorite]);
 
-  const handleAddToCart = useCallback(async () => {
-    if (!item) return;
+  const _handleAddToCart = useCallback(async () => {
+    if (!item) {
+      return;
+    }
     try {
       const response = await cartApi.add({
         itemId: item.id,
@@ -123,19 +125,18 @@ export const ClothingDetailScreen: React.FC = () => {
   }, [item, selectedColor, selectedSize, quantity]);
 
   const handleBuyNow = useCallback(async () => {
-    if (!item) return;
+    if (!item) {
+      return;
+    }
     setShowSKU(false);
     Alert.alert("提示", "请先添加到购物车或从购物车结算");
   }, [item]);
 
-  const handleSKUChange = useCallback(
-    (color: string, size: string, qty: number) => {
-      setSelectedColor(color);
-      setSelectedSize(size);
-      setQuantity(qty);
-    },
-    [],
-  );
+  const handleSKUChange = useCallback((color: string, size: string, qty: number) => {
+    setSelectedColor(color);
+    setSelectedSize(size);
+    setQuantity(qty);
+  }, []);
 
   if (isLoading) {
     return (
@@ -162,22 +163,22 @@ export const ClothingDetailScreen: React.FC = () => {
     );
   }
 
-  const images = [
-    item.imageUri,
-    ...(item.thumbnailUri ? [item.thumbnailUri] : []),
-  ].filter(Boolean) as string[];
+  const images = [item.imageUri, ...(item.thumbnailUri ? [item.thumbnailUri] : [])].filter(
+    Boolean
+  ) as string[];
 
-  const _item = item as ClothingItem & { originalPrice?: number };
+  const clothingItem = item as ClothingItem & { originalPrice?: number };
+  /* eslint-disable eqeqeq */
   const hasDiscount =
-    _item.originalPrice != null && item.price != null && _item.originalPrice > item.price;
+    clothingItem.originalPrice != null &&
+    clothingItem.price != null &&
+    clothingItem.originalPrice > clothingItem.price;
+  /* eslint-enable eqeqeq */
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>商品详情</Text>
@@ -195,18 +196,15 @@ export const ClothingDetailScreen: React.FC = () => {
 
         <View style={styles.priceSection}>
           <View style={styles.priceRow}>
-            <Text style={styles.currentPrice}>¥{item.price}</Text>
-            {hasDiscount && (
-              <Text style={styles.originalPrice}>
-                ¥{_item.originalPrice}
-              </Text>
-            )}
+            <Text style={styles.currentPrice}>¥{clothingItem.price}</Text>
+            {hasDiscount && <Text style={styles.originalPrice}>¥{clothingItem.originalPrice}</Text>}
             {hasDiscount && (
               <View style={styles.discountBadge}>
                 <Text style={styles.discountText}>
                   {Math.round(
-                    ((_item.originalPrice! - item.price!) / _item.originalPrice!) *
-                      100,
+                    ((clothingItem.originalPrice! - clothingItem.price!) /
+                      clothingItem.originalPrice!) *
+                      100
                   )}
                   %OFF
                 </Text>
@@ -215,10 +213,7 @@ export const ClothingDetailScreen: React.FC = () => {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.skuTrigger}
-          onPress={() => setShowSKU(true)}
-        >
+        <TouchableOpacity style={styles.skuTrigger} onPress={() => setShowSKU(true)}>
           <Text style={styles.skuTriggerLabel}>
             {selectedColor && selectedSize
               ? `${selectedColor} / ${selectedSize} / x${quantity}`
@@ -229,9 +224,7 @@ export const ClothingDetailScreen: React.FC = () => {
 
         <View style={styles.infoSection}>
           <Text style={styles.itemName}>{item.name ?? "未命名商品"}</Text>
-          {item.brand && (
-            <Text style={styles.itemBrand}>{item.brand}</Text>
-          )}
+          {item.brand && <Text style={styles.itemBrand}>{item.brand}</Text>}
         </View>
 
         {relatedItems.length > 0 && (
@@ -245,10 +238,7 @@ export const ClothingDetailScreen: React.FC = () => {
 
       <View style={styles.bottomBar}>
         <View style={styles.bottomLeft}>
-          <TouchableOpacity
-            style={styles.bottomIconButton}
-            onPress={handleToggleFavorite}
-          >
+          <TouchableOpacity style={styles.bottomIconButton} onPress={handleToggleFavorite}>
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
               size={22}
@@ -258,25 +248,17 @@ export const ClothingDetailScreen: React.FC = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.bottomIconButton}
-            onPress={() =>
-              navigation.navigate("VirtualTryOn", { clothingId })
-            }
+            onPress={() => navigation.navigate("VirtualTryOn", { clothingId })}
           >
             <Ionicons name="sparkles-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.bottomIconLabel}>试衣</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.bottomRight}>
-          <TouchableOpacity
-            style={styles.addToCartButton}
-            onPress={() => setShowSKU(true)}
-          >
+          <TouchableOpacity style={styles.addToCartButton} onPress={() => setShowSKU(true)}>
             <Text style={styles.addToCartText}>加入购物车</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buyNowButton}
-            onPress={handleBuyNow}
-          >
+          <TouchableOpacity style={styles.buyNowButton} onPress={handleBuyNow}>
             <Text style={styles.buyNowText}>立即购买</Text>
           </TouchableOpacity>
         </View>

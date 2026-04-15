@@ -52,7 +52,7 @@ export class Neo4jService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async ensureConstraints(): Promise<void> {
-    if (!this.driver) return;
+    if (!this.driver) {return;}
 
     const session = this.driver.session();
     try {

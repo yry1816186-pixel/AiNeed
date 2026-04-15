@@ -109,7 +109,7 @@ export class NotificationTemplateService {
   private interpolate(template: string, variables: Record<string, string>): string {
     return template.replace(/\{(\w+)\}/g, (match: string, varName: string): string => {
       if (varName in variables && variables[varName] !== undefined) {
-        return variables[varName]!;
+        return variables[varName];
       }
       this.logger.debug(
         `Template variable {${varName}} not provided, leaving placeholder`,

@@ -1,8 +1,4 @@
-export type ConsultantStatus =
-  | "pending"
-  | "active"
-  | "suspended"
-  | "inactive";
+export type ConsultantStatus = "pending" | "active" | "suspended" | "inactive";
 
 export type ServiceType =
   | "styling_consultation"

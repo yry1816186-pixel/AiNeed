@@ -4,9 +4,9 @@ import { NotificationType, Prisma } from "@prisma/client";
 import { NotificationService as WebSocketNotificationService } from "../../../common/gateway/notification.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
+import { NotificationTemplateService } from "./notification-template.service";
 import type { PushPayload } from "./push-notification.service";
 import { PushNotificationService } from "./push-notification.service";
-import { NotificationTemplateService } from "./notification-template.service";
 
 export interface CreateNotificationDto {
   type: NotificationType;
@@ -255,7 +255,7 @@ export class NotificationService {
    * Map NotificationType to category for push preference checking.
    */
   private mapNotificationTypeToCategory(
-    type: NotificationType | string,
+    type: string,
   ): keyof Pick<PushNotificationSettings, "order" | "recommendation" | "community" | "system"> | null {
     const categoryMap: Record<string, "order" | "recommendation" | "community" | "system"> = {
       // Order
@@ -281,14 +281,14 @@ export class NotificationService {
       try_on_failed: "system",
       privacy_reminder: "system",
     };
-    return categoryMap[type as string] || null;
+    return categoryMap[type] || null;
   }
 
   /**
    * Map database notification type to WebSocket notification type
    */
   private mapNotificationType(
-    type: NotificationType | string,
+    type: string,
   ):
     | "try_on_complete"
     | "recommendation"
@@ -328,7 +328,7 @@ export class NotificationService {
       system_update: "system",
       privacy_reminder: "system",
     };
-    return typeMap[type as string] || "system";
+    return typeMap[type] || "system";
   }
 
   /**

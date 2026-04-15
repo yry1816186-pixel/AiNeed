@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 # =============================================================================
 # xuno Backup Script
 # =============================================================================
@@ -100,8 +100,8 @@ log_info "Backup directory: ${BACKUP_PATH}"
 backup_postgres() {
     log_info "Starting PostgreSQL backup..."
 
-    local CONTAINER_NAME="stylemind-postgres"
-    local DB_NAME="stylemind"
+    local CONTAINER_NAME="${POSTGRES_CONTAINER:-xuno-dev-postgres}"
+    local DB_NAME="${POSTGRES_DB:-xuno}"
     local BACKUP_FILE="${BACKUP_PATH}/postgres_${TIMESTAMP}.sql.gz"
 
     # Check if container is running
@@ -131,7 +131,7 @@ backup_postgres() {
 backup_redis() {
     log_info "Starting Redis backup..."
 
-    local CONTAINER_NAME="stylemind-redis"
+    local CONTAINER_NAME="${REDIS_CONTAINER:-xuno-dev-redis}"
     local BACKUP_FILE="${BACKUP_PATH}/redis_${TIMESTAMP}.rdb"
 
     # Check if container is running
@@ -176,9 +176,9 @@ backup_minio() {
 
     log_info "Starting MinIO backup..."
 
-    local CONTAINER_NAME="stylemind-minio"
+    local CONTAINER_NAME="${MINIO_CONTAINER:-xuno-dev-minio}"
     local BACKUP_FILE="${BACKUP_PATH}/minio_${TIMESTAMP}.tar.gz"
-    local BUCKET_NAME="stylemind"
+    local BUCKET_NAME="${MINIO_BUCKET:-xuno}"
 
     # Check if container is running
     if ! docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
@@ -227,7 +227,7 @@ backup_qdrant() {
 
     log_info "Starting Qdrant backup..."
 
-    local CONTAINER_NAME="stylemind-qdrant"
+    local CONTAINER_NAME="${QDRANT_CONTAINER:-xuno-dev-qdrant}"
     local BACKUP_FILE="${BACKUP_PATH}/qdrant_${TIMESTAMP}.tar.gz"
 
     # Check if container is running
@@ -237,7 +237,7 @@ backup_qdrant() {
     fi
 
     # Create snapshot via API
-    curl -s -X POST "http://localhost:6333/collections/stylemind/snapshots" || log_warn "Could not create Qdrant snapshot via API"
+    curl -s -X POST "http://localhost:6333/collections/${QDRANT_COLLECTION:-xuno}/snapshots" || log_warn "Could not create Qdrant snapshot via API"
 
     # Copy Qdrant storage directory
     local TEMP_DIR="${BACKUP_PATH}/qdrant_temp"

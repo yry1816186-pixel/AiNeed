@@ -4,6 +4,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "module": "commonjs",
+    "composite": true,
     "types": ["jest", "node"],
     "ignoreDeprecations": "5.0"
   },

@@ -47,10 +47,7 @@ export const styleProfilesApi = {
   create: (data: CreateStyleProfileDto): Promise<ApiResponse<StyleProfile>> =>
     apiClient.post<StyleProfile>("/style-profiles", data),
 
-  update: (
-    id: string,
-    data: UpdateStyleProfileDto,
-  ): Promise<ApiResponse<StyleProfile>> =>
+  update: (id: string, data: UpdateStyleProfileDto): Promise<ApiResponse<StyleProfile>> =>
     apiClient.put<StyleProfile>(`/style-profiles/${id}`, data),
 
   delete: (id: string): Promise<ApiResponse<{ success: boolean }>> =>

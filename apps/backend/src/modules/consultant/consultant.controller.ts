@@ -17,13 +17,13 @@ import {
   ApiParam,
 } from "@nestjs/swagger";
 
-import { AuthGuard } from "../auth/guards/auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
+import { AuthGuard } from "../auth/guards/auth.guard";
 
-import { ConsultantService } from "./consultant.service";
-import { ConsultantMatchingService } from "./consultant-matching.service";
 import { ConsultantAvailabilityService } from "./consultant-availability.service";
+import { ConsultantMatchingService } from "./consultant-matching.service";
 import { ConsultantReviewService } from "./consultant-review.service";
+import { ConsultantService } from "./consultant.service";
 import {
   CreateConsultantProfileDto,
   UpdateConsultantProfileDto,

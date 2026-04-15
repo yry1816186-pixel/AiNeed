@@ -79,11 +79,11 @@ export class BloggerProductService {
     }
 
     const updateData: Prisma.BloggerProductUpdateInput = {};
-    if (dto.title !== undefined) updateData.title = dto.title;
-    if (dto.description !== undefined) updateData.description = dto.description;
-    if (dto.price !== undefined) updateData.price = dto.price;
-    if (dto.images !== undefined) updateData.images = dto.images;
-    if (dto.status !== undefined) updateData.status = dto.status;
+    if (dto.title !== undefined) {updateData.title = dto.title;}
+    if (dto.description !== undefined) {updateData.description = dto.description;}
+    if (dto.price !== undefined) {updateData.price = dto.price;}
+    if (dto.images !== undefined) {updateData.images = dto.images;}
+    if (dto.status !== undefined) {updateData.status = dto.status;}
 
     return this.prisma.bloggerProduct.update({
       where: { id: productId },
@@ -113,9 +113,9 @@ export class BloggerProductService {
   async getProducts(query: BloggerProductQueryDto) {
     const where: Prisma.BloggerProductWhereInput = {};
 
-    if (query.bloggerId) where.bloggerId = query.bloggerId;
-    if (query.type) where.type = query.type;
-    if (query.status) where.status = query.status;
+    if (query.bloggerId) {where.bloggerId = query.bloggerId;}
+    if (query.type) {where.type = query.type;}
+    if (query.status) {where.status = query.status;}
 
     const [items, total] = await Promise.all([
       this.prisma.bloggerProduct.findMany({

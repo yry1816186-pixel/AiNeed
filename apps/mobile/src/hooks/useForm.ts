@@ -34,6 +34,7 @@ export function useForm<T extends Record<string, FormFieldValue>>({
   const [touched, setTouched] = useState<Partial<Record<keyof T, boolean>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const initialValuesRef = useRef(initialValues);
+  const skipValidateRef = useRef(false);
 
   const isValid = Object.keys(errors).length === 0;
 
@@ -42,7 +43,7 @@ export function useForm<T extends Record<string, FormFieldValue>>({
       setValuesState((prev) => ({ ...prev, [field]: value }));
       setTouched((prev) => ({ ...prev, [field]: true }));
     },
-    [],
+    []
   );
 
   const handleBlur = useCallback(
@@ -61,7 +62,7 @@ export function useForm<T extends Record<string, FormFieldValue>>({
         }
       }
     },
-    [values, validate],
+    [values, validate]
   );
 
   const handleSubmit = useCallback(async () => {
@@ -94,6 +95,7 @@ export function useForm<T extends Record<string, FormFieldValue>>({
   }, []);
 
   const resetForm = useCallback(() => {
+    skipValidateRef.current = true;
     setValuesState(initialValuesRef.current);
     setErrors({});
     setTouched({});
@@ -101,6 +103,10 @@ export function useForm<T extends Record<string, FormFieldValue>>({
   }, []);
 
   useEffect(() => {
+    if (skipValidateRef.current) {
+      skipValidateRef.current = false;
+      return;
+    }
     if (validate) {
       const validationErrors = validate(values);
       setErrors(validationErrors);

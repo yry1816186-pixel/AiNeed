@@ -2,6 +2,10 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+/**
+ * @deprecated 使用 `import { ThemeMode } from '../contexts/ThemeContext'` 代替。
+ * 保留此类型以向后兼容。
+ */
 export type ThemeMode = "light" | "dark" | "system";
 export type ModalType =
   | "none"
@@ -27,6 +31,7 @@ interface LoadingState {
 }
 
 interface UIState {
+  /** @deprecated 使用 ThemeContext (contexts/ThemeContext) 管理主题状态 */
   theme: ThemeMode;
   activeModal: ModalType;
   modalData: Record<string, unknown>;
@@ -38,13 +43,12 @@ interface UIState {
   searchQuery: string;
   isSearchFocused: boolean;
 
+  /** @deprecated 使用 ThemeContext 的 setMode 代替 */
   setTheme: (theme: ThemeMode) => void;
   showModal: (modal: ModalType, data?: Record<string, unknown>) => void;
   hideModal: () => void;
   setLoading: (key: string, loading: boolean) => void;
-  addNotification: (
-    notification: Omit<Notification, "id" | "timestamp">,
-  ) => void;
+  addNotification: (notification: Omit<Notification, "id" | "timestamp">) => void;
   removeNotification: (id: string) => void;
   clearNotifications: () => void;
   setOnline: (online: boolean) => void;
@@ -70,8 +74,7 @@ export const useUIStore = create<UIState>()(
 
       setTheme: (theme) => set({ theme }),
 
-      showModal: (modal, data = {}) =>
-        set({ activeModal: modal, modalData: data }),
+      showModal: (modal, data = {}) => set({ activeModal: modal, modalData: data }),
 
       hideModal: () => set({ activeModal: "none", modalData: {} }),
 
@@ -120,18 +123,17 @@ export const useUIStore = create<UIState>()(
       name: "ui-storage",
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({ theme: state.theme }),
-    },
-  ),
+    }
+  )
 );
 
+/** @deprecated 使用 `useTheme` from `../contexts/ThemeContext` 代替 */
 export const useTheme = () => useUIStore((state) => state.theme);
 export const useModal = () =>
   useUIStore((state) => ({
     activeModal: state.activeModal,
     modalData: state.modalData,
   }));
-export const useLoading = (key: string) =>
-  useUIStore((state) => state.isLoading[key] ?? false);
-export const useNotifications = () =>
-  useUIStore((state) => state.notifications);
+export const useLoading = (key: string) => useUIStore((state) => state.isLoading[key] ?? false);
+export const useNotifications = () => useUIStore((state) => state.notifications);
 export const useOnline = () => useUIStore((state) => state.isOnline);

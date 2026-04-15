@@ -16,7 +16,7 @@ export type PIIEntity = keyof typeof PII_FIELDS;
 @Injectable()
 export class PIIEncryptionService implements OnModuleInit {
   private readonly logger = new Logger(PIIEncryptionService.name);
-  private enabled: boolean = false;
+  private enabled: boolean = true;
 
   constructor(
     private readonly configService: ConfigService,
@@ -30,13 +30,13 @@ export class PIIEncryptionService implements OnModuleInit {
     if (nodeEnv === "production") {
       this.enabled = true;
       this.logger.log("PII encryption FORCE ENABLED for production environment");
+    } else if (nodeEnv === "development" && configEnabled === "false") {
+      // 仅在开发环境且显式设置 PII_ENCRYPTION_ENABLED=false 时允许禁用
+      this.enabled = false;
+      this.logger.warn("PII encryption DISABLED in development - NOT RECOMMENDED FOR PRODUCTION");
     } else {
-      this.enabled = configEnabled === "true";
-      if (this.enabled) {
-        this.logger.log("PII encryption enabled");
-      } else {
-        this.logger.warn("PII encryption DISABLED - NOT RECOMMENDED FOR PRODUCTION");
-      }
+      this.enabled = true;
+      this.logger.log("PII encryption enabled");
     }
   }
 

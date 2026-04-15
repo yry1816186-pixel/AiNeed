@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
+
 
 interface UseLazyLoadOptions {
   /** How many items ahead of the viewport to preload */
@@ -9,8 +9,8 @@ interface UseLazyLoadOptions {
 interface UseLazyLoadReturn {
   /** Track visibility via onViewableItemsChanged (for FlatList) */
   onViewableItemsChanged: (info: {
-    viewableItems: Array<{ index: number | null; item: unknown }>;
-    changed: Array<{ index: number | null; item: unknown; isViewable: boolean }>;
+    viewableItems: { index: number | null; item: unknown }[];
+    changed: { index: number | null; item: unknown; isViewable: boolean }[];
   }) => void;
   /** Current set of visible item indices */
   visibleIndices: Set<number>;
@@ -31,9 +31,7 @@ interface UseLazyLoadReturn {
  *
  * @param options.preloadThreshold - Number of positions before visible to preload (default: 3)
  */
-export function useLazyLoad(
-  options: UseLazyLoadOptions = {},
-): UseLazyLoadReturn {
+export function useLazyLoad(options: UseLazyLoadOptions = {}): UseLazyLoadReturn {
   const { preloadThreshold = 3 } = options;
 
   const [visibleIndices, setVisibleIndices] = useState<Set<number>>(new Set());
@@ -45,8 +43,8 @@ export function useLazyLoad(
    */
   const onViewableItemsChanged = useCallback(
     (info: {
-      viewableItems: Array<{ index: number | null; item: unknown }>;
-      changed: Array<{ index: number | null; item: unknown; isViewable: boolean }>;
+      viewableItems: { index: number | null; item: unknown }[];
+      changed: { index: number | null; item: unknown; isViewable: boolean }[];
     }) => {
       const newVisible = new Set<number>();
 
@@ -67,7 +65,7 @@ export function useLazyLoad(
 
       setVisibleIndices(newVisible);
     },
-    [],
+    []
   );
 
   /**
@@ -77,7 +75,7 @@ export function useLazyLoad(
     (index: number): boolean => {
       return visibleIndices.has(index);
     },
-    [visibleIndices],
+    [visibleIndices]
   );
 
   // Stable viewabilityConfig ref for FlatList

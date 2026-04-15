@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '@/src/theme/tokens/colors';
-import { typography } from '@/src/theme/tokens/typography';
-import { spacing } from '@/src/theme/tokens/spacing';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { colors } from "@/src/theme/tokens/colors";
+import { typography } from "@/src/theme/tokens/typography";
+import { spacing } from "@/src/theme/tokens/spacing";
 
 interface PercentageBarProps {
   label: string;
@@ -32,9 +32,7 @@ export const PercentageBar: React.FC<PercentageBarProps> = ({
         )}
       </View>
       <View style={styles.track} accessibilityLabel={`${label}进度条`}>
-        <View
-          style={[styles.fill, { width: `${clampedPercentage}%`, backgroundColor: color }]}
-        />
+        <View style={[styles.fill, { width: `${clampedPercentage}%`, backgroundColor: color }]} />
       </View>
     </View>
   );
@@ -45,9 +43,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.aliases.sm,
   },
   labelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: spacing.scale[1],
   },
   label: {
@@ -64,10 +62,10 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: spacing.borderRadius.full,
     backgroundColor: colors.neutral[200],
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   fill: {
-    height: '100%',
+    height: "100%",
     borderRadius: spacing.borderRadius.full,
   },
 });

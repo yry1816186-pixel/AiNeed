@@ -27,9 +27,10 @@
  * ```
  */
 
+import { AsyncLocalStorage } from "async_hooks";
+
 import { Injectable, LoggerService, Scope } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { AsyncLocalStorage } from "async_hooks";
 
 /**
  * 日志级别枚举
@@ -292,10 +293,11 @@ export class StructuredLoggerService implements LoggerService {
   debug(message: string, context?: string, data?: Record<string, unknown>): void;
   debug(message: string, data?: Record<string, unknown>): void;
   debug(message: string, contextOrData?: string | Record<string, unknown>, data?: Record<string, unknown>): void {
-    if (!this.shouldLog("debug")) return;
+    if (!this.shouldLog("debug")) {return;}
 
     const { context, data: logData } = this.parseArguments(contextOrData, data);
     const entry = this.createLogEntry("debug", message, context, logData);
+    // eslint-disable-next-line no-console
     console.debug(this.formatOutput(entry));
   }
 
@@ -305,10 +307,11 @@ export class StructuredLoggerService implements LoggerService {
   log(message: string, context?: string, data?: Record<string, unknown>): void;
   log(message: string, data?: Record<string, unknown>): void;
   log(message: string, contextOrData?: string | Record<string, unknown>, data?: Record<string, unknown>): void {
-    if (!this.shouldLog("info")) return;
+    if (!this.shouldLog("info")) {return;}
 
     const { context, data: logData } = this.parseArguments(contextOrData, data);
     const entry = this.createLogEntry("info", message, context, logData);
+    // eslint-disable-next-line no-console
     console.log(this.formatOutput(entry));
   }
 
@@ -318,7 +321,7 @@ export class StructuredLoggerService implements LoggerService {
   warn(message: string, context?: string, data?: Record<string, unknown>): void;
   warn(message: string, data?: Record<string, unknown>): void;
   warn(message: string, contextOrData?: string | Record<string, unknown>, data?: Record<string, unknown>): void {
-    if (!this.shouldLog("warn")) return;
+    if (!this.shouldLog("warn")) {return;}
 
     const { context, data: logData } = this.parseArguments(contextOrData, data);
     const entry = this.createLogEntry("warn", message, context, logData);
@@ -331,7 +334,7 @@ export class StructuredLoggerService implements LoggerService {
   error(message: string, trace?: string, context?: string, data?: Record<string, unknown>): void;
   error(message: string, data?: Record<string, unknown>): void;
   error(message: string, traceOrData?: string | Record<string, unknown>, contextOrData?: string | Record<string, unknown>, data?: Record<string, unknown>): void {
-    if (!this.shouldLog("error")) return;
+    if (!this.shouldLog("error")) {return;}
 
     let trace: string | undefined;
     let context: string | undefined;

@@ -160,7 +160,7 @@ export class UsersService {
       throw new BadRequestException("新密码不能与原密码相同");
     }
 
-    const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,32}$/;
+    const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]{8,32}$/;
     if (!PASSWORD_REGEX.test(dto.newPassword)) {
       throw new BadRequestException("密码必须为8-32位，包含大小写字母和数字");
     }

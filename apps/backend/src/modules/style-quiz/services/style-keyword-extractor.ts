@@ -89,7 +89,7 @@ export class StyleKeywordExtractorService {
     durations: number[],
   ): number {
     const tags = Object.entries(tagWeights);
-    if (tags.length === 0) return 0;
+    if (tags.length === 0) {return 0;}
 
     const totalCount = tags.reduce((sum, [, data]) => sum + data.count, 0);
     const maxEntropy = Math.log(tags.length);

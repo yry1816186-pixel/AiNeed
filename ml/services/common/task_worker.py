@@ -318,7 +318,7 @@ class TaskWorker:
 
         # Get or initialize style service
         if self._style_service is None:
-            from ml.services.style_understanding_service import StyleUnderstandingService
+            from ml.services.stylist.style_understanding_service import StyleUnderstandingService
             self._style_service = StyleUnderstandingService(use_mock=False)
             logger.info("Style understanding service initialized")
 
@@ -391,7 +391,7 @@ class TaskWorker:
         )
 
         try:
-            from ml.services.virtual_tryon_service import virtual_tryon_service
+            from ml.services.tryon.virtual_tryon_service import virtual_tryon_service
 
             result = await virtual_tryon_service.generate_tryon(
                 person_image=person_image,
@@ -617,7 +617,7 @@ class TaskWorker:
         # Get or initialize recommender service
         if self._recommender_service is None:
             try:
-                from ml.services.intelligent_style_recommender import StyleRecommendationAPI
+                from ml.services.stylist.intelligent_style_recommender import StyleRecommendationAPI
                 self._recommender_service = StyleRecommendationAPI()
                 logger.info("Recommender service initialized")
             except Exception as e:

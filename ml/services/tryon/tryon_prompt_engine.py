@@ -12,7 +12,7 @@ from __future__ import annotations
 import logging
 from typing import Optional
 
-from ml.services.tryon_preprocessor import (
+from ml.services.tryon.tryon_preprocessor import (
     GarmentFeatures,
     AlignmentMetadata,
     LightingInfo,

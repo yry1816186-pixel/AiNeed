@@ -19,11 +19,11 @@ import request from "supertest";
 import { AppModule } from "../../src/app.module";
 import { PrismaService } from "../../src/common/prisma/prisma.service";
 import * as bcrypt from "../../src/common/security/bcrypt";
+import { clothingFixtures } from "../utils/fixtures";
 import {
   generateTestEmail,
   measureResponseTime,
 } from "../utils/test.utils";
-import { clothingFixtures } from "../utils/fixtures";
 
 describe("Payment Flow E2E - 支付流程", () => {
   let app: INestApplication;

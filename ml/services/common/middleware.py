@@ -1,6 +1,11 @@
 """
 Request Validation Middleware for FastAPI
 Provides request size limits, request ID tracking, and security headers.
+
+@deprecated This module is superseded by ml/api/middleware/ which is the
+authoritative implementation. Use ml.api.middleware.auth, ml.api.middleware.logging,
+and ml.api.middleware.error_handler instead. This file is retained only for
+backward compatibility and will be removed in a future release.
 """
 
 import uuid

@@ -12,12 +12,9 @@ import {
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiParam } from "@nestjs/swagger";
 
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RequestWithUser } from "../../common/types/common.types";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
-import { StyleQuizService } from "./style-quiz.service";
-import { QuestionSelectorService } from "./services/question-selector";
-import { QuizProgressService } from "./services/quiz-progress.service";
 import {
   CreateStyleQuizDto,
   UpdateStyleQuizDto,
@@ -33,6 +30,9 @@ import {
   CompleteQuizDto,
   QuizProgressDto,
 } from "./dto/style-quiz.dto";
+import { QuestionSelectorService } from "./services/question-selector";
+import { QuizProgressService } from "./services/quiz-progress.service";
+import { StyleQuizService } from "./style-quiz.service";
 
 @ApiTags("quiz")
 @ApiBearerAuth()

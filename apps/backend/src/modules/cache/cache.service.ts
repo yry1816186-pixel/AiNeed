@@ -100,6 +100,9 @@ export class CacheService {
    * 缓存穿透保护的获取或设置方法
    * 如果缓存不存在，调用 fetcher 获取数据并缓存
    *
+   * @deprecated 推荐使用 getWithLock 方法，提供分布式锁保护防止缓存击穿。
+   * getOrSet 在高并发场景下可能导致多个请求同时穿透到数据库（缓存击穿问题）。
+   *
    * @param key 缓存键
    * @param fetcher 数据获取函数
    * @param ttl 过期时间（秒）
@@ -209,6 +212,15 @@ export class CacheService {
 
   /**
    * 检查布隆过滤器是否包含键
+   *
+   * 注意：当前实现不是真正的布隆过滤器（概率型数据结构），而是使用 Redis SET 命令
+   * 存储键的存在性标记。这仅用于缓存空值防穿透场景——当数据库查询返回空结果时，
+   * 将对应键标记为"已查询过"，避免重复穿透到数据库。
+   *
+   * 与真正布隆过滤器的区别：
+   * - 不存在误判（false positive），但也不支持空间效率优化
+   * - 每个键独立存储，内存开销与键数量成正比
+   * - 如需支持大规模数据集的布隆过滤，应考虑使用 RedisBF 模块或自实现位图布隆过滤器
    */
   async isBloomFilterContains(key: string): Promise<boolean> {
     const client = this.redisService.getClient();
@@ -218,6 +230,10 @@ export class CacheService {
 
   /**
    * 添加键到布隆过滤器
+   *
+   * 注意：当前实现不是真正的布隆过滤器，而是简单的键值标记（SET + EXPIRE）。
+   * 仅用于缓存空值防穿透场景，将已查询过的空结果键标记为存在。
+   * 详见 isBloomFilterContains 方法的注释说明。
    */
   async addToBloomFilter(key: string): Promise<void> {
     const client = this.redisService.getClient();

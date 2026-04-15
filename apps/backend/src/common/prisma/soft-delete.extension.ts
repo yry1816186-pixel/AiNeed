@@ -29,8 +29,9 @@ interface OperationArgs {
 /**
  * Soft Delete Prisma Extension
  *
- * 自动为所有查询添加软删除过滤 (isDeleted: false)
- * 这样可以确保已删除的记录永远不会被查询到
+ * 自动为查询操作添加软删除过滤 (isDeleted: false)
+ * 仅对 findMany、findFirst、count、aggregate 操作注入过滤
+ * 对 findUnique、update、delete 操作不注入，以允许直接操作已删除记录
  *
  * 支持的模型：
  * - ClothingItem (商品)
@@ -44,7 +45,7 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
     query: {
       $allModels: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        async $allOperations({ args, query, model }: { args: OperationArgs; query: (args: OperationArgs) => Promise<unknown>; model: string }) {
+        async $allOperations({ args, query, model, operation }: { args: OperationArgs; query: (args: OperationArgs) => Promise<unknown>; model: string; operation: string }) {
           // 需要软删除的模型列表
           const softDeleteModels = [
             'ClothingItem',
@@ -53,11 +54,14 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
             'PostComment',
           ];
 
-          // 如果是软删除模型，自动添加 isDeleted: false 过滤
-          if (softDeleteModels.includes(model)) {
-            const currentWhere = (args.where || {}) as Record<string, unknown>;
+          // 仅对查询操作注入 isDeleted 过滤
+          const filterOperations = ['findMany', 'findFirst', 'count', 'aggregate'];
 
-            // 处理 findFirst, findMany, findUnique, update, delete 等
+          // 如果是软删除模型且是查询操作，自动添加 isDeleted: false 过滤
+          if (softDeleteModels.includes(model) && filterOperations.includes(operation)) {
+            const currentWhere = (args.where || {});
+
+            // 处理 findFirst, findMany, count, aggregate 等
             if (!('isDeleted' in currentWhere)) {
               // 为 where 子句添加软删除过滤
               args.where = {

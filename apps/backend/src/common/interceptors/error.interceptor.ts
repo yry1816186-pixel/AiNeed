@@ -6,21 +6,23 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Prisma } from '@prisma/client';
+
 import {
   BusinessException,
 } from '../exceptions/business.exception';
 import {
-  ValidationException,
-} from '../exceptions/validation.exception';
+  ForbiddenException,
+} from '../exceptions/forbidden.exception';
 import {
   NotFoundException,
 } from '../exceptions/not-found.exception';
 import {
-  ForbiddenException,
-} from '../exceptions/forbidden.exception';
+  ValidationException,
+} from '../exceptions/validation.exception';
+
 import {
   JsonApiError,
 } from './json-api.interceptor';

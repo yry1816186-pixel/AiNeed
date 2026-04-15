@@ -1,6 +1,6 @@
-import React from "react";
+﻿import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Colors, Spacing, BorderRadius } from "../../theme";
+import { Colors, Spacing } from '../design-system/theme';
 
 interface ProfileCompletenessBarProps {
   percentage: number;
@@ -44,23 +44,14 @@ export const ProfileCompletenessBar: React.FC<ProfileCompletenessBarProps> = ({
         <Text style={styles.percentageText}>画像完整度 {clampedPercentage}%</Text>
       </View>
       <View style={styles.track}>
-        <View
-          style={[
-            styles.fill,
-            { width: `${clampedPercentage}%` },
-          ]}
-        />
+        <View style={[styles.fill, { width: `${clampedPercentage}%` }]} />
       </View>
       {missingFields.length > 0 && (
         <Text style={styles.missingText} numberOfLines={1}>
           {formatMissingFields(missingFields)}
         </Text>
       )}
-      {clampedPercentage < 80 && (
-        <Text style={styles.ctaText}>
-          完善画像解锁个性化推荐
-        </Text>
-      )}
+      {clampedPercentage < 80 && <Text style={styles.ctaText}>完善画像解锁个性化推荐</Text>}
     </View>
   );
 
@@ -77,13 +68,7 @@ export const ProfileCompletenessBar: React.FC<ProfileCompletenessBarProps> = ({
     );
   }
 
-  return (
-    <View
-      accessibilityLabel={`画像完整度 ${clampedPercentage}%`}
-    >
-      {content}
-    </View>
-  );
+  return <View accessibilityLabel={`画像完整度 ${clampedPercentage}%`}>{content}</View>;
 };
 
 const styles = StyleSheet.create({

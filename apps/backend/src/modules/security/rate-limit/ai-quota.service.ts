@@ -39,6 +39,34 @@ export class AiQuotaService {
   private readonly logger = new Logger(AiQuotaService.name);
   private readonly limits: Record<QuotaType, number>;
 
+  /**
+   * Lua script for atomic check-and-increment:
+   * - If key does not exist, set to 1 with TTL and return {1, ttl}
+   * - If current count >= limit, return {current, ttl} without incrementing
+   * - Otherwise, increment and return {newCount, ttl}
+   */
+  private static readonly CHECK_AND_INCREMENT_SCRIPT = `
+    local key = KEYS[1]
+    local limit = tonumber(ARGV[1])
+    local ttl_seconds = tonumber(ARGV[2])
+
+    local current = tonumber(redis.call('GET', key) or '0')
+
+    if current >= limit then
+      local existing_ttl = redis.call('TTL', key)
+      return {current, existing_ttl}
+    end
+
+    local new_count = redis.call('INCR', key)
+
+    if new_count == 1 then
+      redis.call('EXPIRE', key, ttl_seconds)
+    end
+
+    local final_ttl = redis.call('TTL', key)
+    return {new_count, final_ttl}
+  `;
+
   constructor(
     @Inject(REDIS_CLIENT) private readonly redis: Redis,
     private readonly configService: ConfigService,
@@ -81,12 +109,20 @@ export class AiQuotaService {
   ): Promise<QuotaConsumeResult> {
     const key = this.buildKey(userId, quotaType);
     const limit = this.limits[quotaType];
+    const ttlSeconds = this.getSecondsUntilMidnight();
 
-    const current = await this.redis.get(key);
-    const used = current ? parseInt(current, 10) : 0;
+    // Use Lua script for atomic check-and-increment to prevent race conditions
+    const result = await this.redis.eval(
+      AiQuotaService.CHECK_AND_INCREMENT_SCRIPT,
+      1,
+      key,
+      limit,
+      ttlSeconds,
+    ) as [number, number];
 
-    if (used >= limit) {
-      const ttl = await this.redis.ttl(key);
+    const [newCount, ttl] = result;
+
+    if (newCount > limit) {
       return {
         consumed: false,
         remaining: 0,
@@ -94,25 +130,10 @@ export class AiQuotaService {
       };
     }
 
-    const newCount = await this.redis.incr(key);
-
-    if (newCount === 1) {
-      const secondsUntilMidnight = this.getSecondsUntilMidnight();
-      await this.redis.expire(key, secondsUntilMidnight);
-    }
-
-    if (newCount > limit) {
-      return {
-        consumed: false,
-        remaining: 0,
-        resetAt: this.calculateResetAt(await this.redis.ttl(key)),
-      };
-    }
-
     return {
       consumed: true,
-      remaining: limit - newCount,
-      resetAt: this.calculateResetAt(await this.redis.ttl(key)),
+      remaining: Math.max(0, limit - newCount),
+      resetAt: this.calculateResetAt(ttl),
     };
   }
 

@@ -37,7 +37,7 @@ export interface Tag {
 
 export const postApi = {
   getList: (params: PaginationParams & { keyword?: string; status?: string }) =>
-    get<PaginatedResponse<Post>>('/admin/community/posts', params as Record<string, unknown>),
+    get<PaginatedResponse<Post>>('/admin/community/posts', params as unknown as Record<string, unknown>),
   getDetail: (id: string) => get<Post>(`/admin/community/posts/${id}`),
   hide: (id: string) => put(`/admin/community/posts/${id}/hide`),
   show: (id: string) => put(`/admin/community/posts/${id}/show`),
@@ -46,14 +46,14 @@ export const postApi = {
 
 export const reportApi = {
   getList: (params: PaginationParams & { status?: string }) =>
-    get<PaginatedResponse<Report>>('/admin/community/reports', params as Record<string, unknown>),
+    get<PaginatedResponse<Report>>('/admin/community/reports', params as unknown as Record<string, unknown>),
   resolve: (id: string, action: 'hide' | 'dismiss') =>
     put(`/admin/community/reports/${id}/resolve`, { action }),
 };
 
 export const tagApi = {
   getList: (params: PaginationParams & { keyword?: string; category?: string }) =>
-    get<PaginatedResponse<Tag>>('/admin/community/tags', params as Record<string, unknown>),
+    get<PaginatedResponse<Tag>>('/admin/community/tags', params as unknown as Record<string, unknown>),
   create: (data: { name: string; category: string }) => post<Tag>('/admin/community/tags', data),
   update: (id: string, data: { name?: string; category?: string }) => put<Tag>(`/admin/community/tags/${id}`, data),
   delete: (id: string) => del(`/admin/community/tags/${id}`),

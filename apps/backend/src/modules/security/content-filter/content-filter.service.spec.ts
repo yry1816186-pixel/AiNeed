@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
@@ -41,7 +42,7 @@ describe("ContentFilterService", () => {
 
   const createConfigService = (sensitivity: string = "moderate") => ({
     get: jest.fn((key: string, defaultValue?: string) => {
-      if (key === "CONTENT_FILTER_SENSITIVITY") return sensitivity;
+      if (key === "CONTENT_FILTER_SENSITIVITY") {return sensitivity;}
       return defaultValue;
     }),
   });

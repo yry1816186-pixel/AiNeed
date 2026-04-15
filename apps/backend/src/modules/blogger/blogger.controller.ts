@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
 } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import {
   ApiTags,
   ApiOperation,
@@ -17,10 +18,11 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from "@nestjs/swagger";
-import { AuthGuard } from "@nestjs/passport";
 
 import { OptionalAuthGuard } from "../auth/guards/optional-auth.guard";
-import { BloggerGuard } from "./guards/blogger.guard";
+
+import { BloggerDashboardService } from "./blogger-dashboard.service";
+import { BloggerProductService } from "./blogger-product.service";
 import {
   CreateBloggerProductDto,
   UpdateBloggerProductDto,
@@ -28,8 +30,7 @@ import {
   DashboardQueryDto,
   PurchaseBloggerProductDto,
 } from "./dto/blogger.dto";
-import { BloggerProductService } from "./blogger-product.service";
-import { BloggerDashboardService } from "./blogger-dashboard.service";
+import { BloggerGuard } from "./guards/blogger.guard";
 
 @ApiTags("blogger")
 @Controller("blogger")

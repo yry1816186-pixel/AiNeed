@@ -69,7 +69,7 @@ export class BrandsController {
     @Param("code") code: string,
   ) {
     const qrCode = await this.brandsService.getQRCodeByCode(code);
-    if (!qrCode || !qrCode.isActive) {
+    if (!qrCode?.isActive) {
       return { success: false, error: "二维码无效或已停用" };
     }
     return {
@@ -89,7 +89,7 @@ export class BrandsController {
     @Body() body: { userId?: string; platform?: string },
   ) {
     const qrCode = await this.brandsService.getQRCodeByCode(code);
-    if (!qrCode || !qrCode.isActive) {
+    if (!qrCode?.isActive) {
       return { success: false, error: "二维码无效或已停用" };
     }
 

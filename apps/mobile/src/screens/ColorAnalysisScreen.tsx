@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+﻿import React, { useEffect, useCallback, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -10,10 +10,13 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { LinearGradient } from "../polyfills/expo-linear-gradient";
 import { Ionicons } from "../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius, Shadows, Typography } from "../theme";
+import { theme, Colors, Spacing, BorderRadius, Shadows, Typography } from '../design-system/theme';
 import { useProfileStore } from "../stores/profileStore";
-import { ScreenLayout, Header } from "../components/layout/ScreenLayout";
-import { SeasonPalette } from "../components/visualization/SeasonPalette";
+import { useTheme } from "../contexts/ThemeContext";
+import { normalizeColorSeason, seasonLabels, type ColorSeason } from "../theme/tokens/season-colors";
+import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";
+import { SeasonPalette } from "../shared/components/visualization/SeasonPalette";
+import Animated, { FadeIn, SlideInDown } from "react-native-reanimated";
 import type { RootStackParamList } from "../types/navigation";
 
 type ColorAnalysisNavProp = NavigationProp<RootStackParamList>;
@@ -49,23 +52,31 @@ const SEASON_GRADIENTS: Record<string, [string, string]> = {
 };
 
 const DEFAULT_PALETTE = [
-  { hex: Colors.colorSeasons.autumn.colors[0], name: '赤陶' },
-  { hex: Colors.amber[600], name: '琥珀' },
-  { hex: Colors.colorSeasons.autumn.colors[3], name: '驼色' },
-  { hex: Colors.sage[400], name: '橄榄' },
-  { hex: Colors.amber[400], name: '蜂蜜' },
-  { hex: Colors.sage[600], name: '苔绿' },
-  { hex: Colors.colorSeasons.summer.colors[1], name: '米灰' },
-  { hex: Colors.colorSeasons.autumn.colors[2], name: '赭石' },
+  { hex: Colors.colorSeasons.autumn.colors[0], name: "赤陶" },
+  { hex: Colors.amber[600], name: "琥珀" },
+  { hex: Colors.colorSeasons.autumn.colors[3], name: "驼色" },
+  { hex: Colors.sage[400], name: "橄榄" },
+  { hex: Colors.amber[400], name: "蜂蜜" },
+  { hex: Colors.sage[600], name: "苔绿" },
+  { hex: Colors.colorSeasons.summer.colors[1], name: "米灰" },
+  { hex: Colors.colorSeasons.autumn.colors[2], name: "赭石" },
 ];
 
-const FALLBACK_NEUTRALS = [Colors.neutral[950], Colors.neutral[500], Colors.neutral[400], Colors.neutral[50]];
+const FALLBACK_NEUTRALS = [
+  Colors.neutral[950],
+  Colors.neutral[500],
+  Colors.neutral[400],
+  Colors.neutral[50],
+];
 const FALLBACK_AVOID = [Colors.semantic.error, Colors.sky[500]];
 
 export const ColorAnalysisScreen: React.FC = () => {
   const navigation = useNavigation<ColorAnalysisNavProp>();
   const { colorAnalysis, loadColorAnalysis, isLoading } = useProfileStore();
+  const { colorSeason, seasonAccent, setSeasonAccent } = useTheme();
   const [error, setError] = useState<string | null>(null);
+  const [showSeasonBanner, setShowSeasonBanner] = useState(false);
+  const prevSeasonRef = useRef<ColorSeason | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -75,28 +86,93 @@ export const ColorAnalysisScreen: React.FC = () => {
         setError("加载失败，请重试");
       }
     };
-    load();
+    void load();
   }, [loadColorAnalysis]);
+
+  // 当色彩分析数据加载完成且有季节类型时，自动设置季节强调色
+  useEffect(() => {
+    if (!colorAnalysis?.colorSeason?.type) return;
+
+    const normalized = normalizeColorSeason(colorAnalysis.colorSeason.type);
+    if (!normalized) return;
+
+    // 首次设置或季节类型变化时触发
+    if (normalized !== prevSeasonRef.current) {
+      prevSeasonRef.current = normalized;
+      void setSeasonAccent(normalized);
+
+      // 如果之前没有季节色彩（首次分析完成），显示过渡动画提示
+      if (colorSeason === null) {
+        setShowSeasonBanner(true);
+        // 3秒后自动隐藏
+        const timer = setTimeout(() => setShowSeasonBanner(false), 3000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [colorAnalysis?.colorSeason?.type, colorSeason, setSeasonAccent]);
 
   const handleRetry = useCallback(() => {
     setError(null);
-    loadColorAnalysis();
+    void loadColorAnalysis();
   }, [loadColorAnalysis]);
 
-  const seasonType = colorAnalysis?.colorSeason?.type ?? "spring";
-  const seasonInfo = COLOR_SEASON_NAMES[seasonType] ?? COLOR_SEASON_NAMES.spring;
-  const gradient = SEASON_GRADIENTS[seasonType] ?? SEASON_GRADIENTS.spring;
+  const seasonType = colorAnalysis?.colorSeason?.type ?? null;
+  const seasonInfo = seasonType ? (COLOR_SEASON_NAMES[seasonType] ?? COLOR_SEASON_NAMES.spring) : null;
+  const gradient = seasonType ? (SEASON_GRADIENTS[seasonType] ?? SEASON_GRADIENTS.spring) : SEASON_GRADIENTS.spring;
 
-  const bestColors = colorAnalysis?.bestColors ?? DEFAULT_PALETTE.map((p) => p.hex);
-  const neutralColors = colorAnalysis?.neutralColors ?? FALLBACK_NEUTRALS;
-  const avoidColors = colorAnalysis?.avoidColors ?? FALLBACK_AVOID;
+  const bestColors = colorAnalysis?.bestColors ?? [];
+  const neutralColors = colorAnalysis?.neutralColors ?? [];
+  const avoidColors = colorAnalysis?.avoidColors ?? [];
 
-  const paletteItems = bestColors.length > 0
-    ? bestColors.slice(0, 8).map((hex, i) => ({
-        hex,
-        name: DEFAULT_PALETTE[i]?.name ?? `颜色${i + 1}`,
-      }))
-    : DEFAULT_PALETTE;
+  const paletteItems =
+    bestColors.length > 0
+      ? bestColors.slice(0, 8).map((hex, i) => ({
+          hex,
+          name: DEFAULT_PALETTE[i]?.name ?? `颜色${i + 1}`,
+        }))
+      : [];
+
+  // No data state - show empty state instead of fallback data
+  if (!seasonType && !isLoading && !error) {
+    return (
+      <ScreenLayout
+        header={
+          <Header
+            title="色彩分析"
+            leftAction={
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                accessibilityLabel="返回"
+                accessibilityRole="button"
+              >
+                <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+              </TouchableOpacity>
+            }
+          />
+        }
+        backgroundColor={Colors.neutral[50]}
+      >
+        <View style={styles.centerContainer}>
+          <Ionicons name="color-palette-outline" size={64} color={theme.colors.textTertiary} />
+          <Text style={styles.emptyTitle}>还没有色彩分析数据</Text>
+          <Text style={styles.emptySubtitle}>上传照片或完善肤色信息后，AI将为你生成专属色彩季型分析</Text>
+          <TouchableOpacity
+            style={styles.emptyButton}
+            onPress={() => navigation.navigate("ProfileSetup" as never)}
+            accessibilityLabel="去完善数据"
+            accessibilityRole="button"
+          >
+            <Text style={styles.emptyButtonText}>去完善数据</Text>
+          </TouchableOpacity>
+        </View>
+      </ScreenLayout>
+    );
+  }
+
+  // Use seasonType from API, fallback to "spring" only if we have partial data
+  const displaySeasonType = seasonType ?? "spring";
+  const displaySeasonInfo = COLOR_SEASON_NAMES[displaySeasonType] ?? COLOR_SEASON_NAMES.spring;
+  const displayGradient = SEASON_GRADIENTS[displaySeasonType] ?? SEASON_GRADIENTS.spring;
 
   if (isLoading && !colorAnalysis) {
     return (
@@ -105,7 +181,11 @@ export const ColorAnalysisScreen: React.FC = () => {
           <Header
             title="色彩分析"
             leftAction={
-              <TouchableOpacity onPress={() => navigation.goBack()} accessibilityLabel="返回" accessibilityRole="button">
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                accessibilityLabel="返回"
+                accessibilityRole="button"
+              >
                 <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
               </TouchableOpacity>
             }
@@ -128,7 +208,11 @@ export const ColorAnalysisScreen: React.FC = () => {
           <Header
             title="色彩分析"
             leftAction={
-              <TouchableOpacity onPress={() => navigation.goBack()} accessibilityLabel="返回" accessibilityRole="button">
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                accessibilityLabel="返回"
+                accessibilityRole="button"
+              >
                 <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
               </TouchableOpacity>
             }
@@ -139,7 +223,12 @@ export const ColorAnalysisScreen: React.FC = () => {
         <View style={styles.centerContainer}>
           <Ionicons name="alert-circle-outline" size={48} color={theme.colors.textTertiary} />
           <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={handleRetry} accessibilityLabel="重试" accessibilityRole="button">
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={handleRetry}
+            accessibilityLabel="重试"
+            accessibilityRole="button"
+          >
             <Text style={styles.retryButtonText}>重试</Text>
           </TouchableOpacity>
         </View>
@@ -153,7 +242,11 @@ export const ColorAnalysisScreen: React.FC = () => {
         <Header
           title="色彩分析"
           leftAction={
-            <TouchableOpacity onPress={() => navigation.goBack()} accessibilityLabel="返回" accessibilityRole="button">
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              accessibilityLabel="返回"
+              accessibilityRole="button"
+            >
               <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
             </TouchableOpacity>
           }
@@ -163,16 +256,39 @@ export const ColorAnalysisScreen: React.FC = () => {
       backgroundColor={Colors.neutral[50]}
     >
       <View style={styles.content}>
+        {/* 季节色彩融入提示横幅 */}
+        {showSeasonBanner && seasonAccent && (
+          <Animated.View
+            entering={SlideInDown.duration(500).springify()}
+            style={[styles.seasonBanner, { backgroundColor: seasonAccent.accentLight }]}
+          >
+            <Ionicons name="sparkles" size={18} color={seasonAccent.accent} />
+            <Text style={[styles.seasonBannerText, { color: seasonAccent.accentDark }]}>
+              你的专属色彩已融入界面
+            </Text>
+          </Animated.View>
+        )}
+
         <View style={styles.seasonCard}>
           <LinearGradient
-            colors={gradient}
+            colors={displayGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.seasonGradient}
           >
             <Text style={styles.seasonLabel}>你的色彩季型</Text>
-            <Text style={styles.seasonName}>{seasonInfo.name}</Text>
-            <Text style={styles.seasonNameEn}>{seasonInfo.nameEn}</Text>
+            <Text style={styles.seasonName}>{displaySeasonInfo.name}</Text>
+            <Text style={styles.seasonNameEn}>{displaySeasonInfo.nameEn}</Text>
+
+            {/* 季节色彩已激活标识 */}
+            {colorSeason && (
+              <Animated.View entering={FadeIn.duration(600)} style={styles.seasonActiveBadge}>
+                <Ionicons name="checkmark-circle" size={14} color={seasonAccent?.accent ?? Colors.primary[500]} />
+                <Text style={[styles.seasonActiveText, { color: seasonAccent?.accent ?? Colors.primary[500] }]}>
+                  界面色彩已适配
+                </Text>
+              </Animated.View>
+            )}
           </LinearGradient>
         </View>
 
@@ -182,7 +298,12 @@ export const ColorAnalysisScreen: React.FC = () => {
             {paletteItems.map((item, index) => (
               <View key={index} style={styles.paletteItem}>
                 <View style={[styles.colorCircle, { backgroundColor: item.hex }]}>
-                  <Ionicons name="checkmark" size={16} color={Colors.neutral.white} style={styles.checkIcon} />
+                  <Ionicons
+                    name="checkmark"
+                    size={16}
+                    color={Colors.neutral.white}
+                    style={styles.checkIcon}
+                  />
                 </View>
                 <Text style={styles.colorHex}>{item.hex}</Text>
                 <Text style={styles.colorName}>{item.name}</Text>
@@ -192,7 +313,7 @@ export const ColorAnalysisScreen: React.FC = () => {
         </View>
 
         <View style={styles.paletteCard}>
-          <SeasonPalette season={seasonType} bestColors={bestColors} avoidColors={avoidColors} />
+          <SeasonPalette season={displaySeasonType} bestColors={bestColors} avoidColors={avoidColors} />
         </View>
 
         {neutralColors.length > 0 && (
@@ -271,6 +392,20 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: Colors.neutral.white,
   },
+  seasonBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: BorderRadius.xl,
+    marginBottom: Spacing[4],
+  },
+  seasonBannerText: {
+    fontSize: Typography.sizes.md,
+    fontWeight: "600",
+  },
   seasonCard: {
     borderRadius: BorderRadius["2xl"],
     overflow: "hidden",
@@ -295,6 +430,21 @@ const styles = StyleSheet.create({
     ...Typography.body.md,
     fontWeight: "400",
     color: "rgba(255, 255, 255, 0.7)",
+  },
+  seasonActiveBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginTop: Spacing[3],
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: "flex-start",
+  },
+  seasonActiveText: {
+    fontSize: Typography.sizes.xs,
+    fontWeight: "600",
   },
   paletteCard: {
     backgroundColor: Colors.neutral.white,
@@ -384,6 +534,32 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: theme.colors.textSecondary,
     lineHeight: 24,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: theme.colors.text,
+    marginTop: Spacing[4],
+    marginBottom: Spacing[2],
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    color: theme.colors.textSecondary,
+    textAlign: "center",
+    lineHeight: 22,
+    paddingHorizontal: Spacing[4],
+    marginBottom: Spacing[6],
+  },
+  emptyButton: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: BorderRadius.xl,
+    paddingHorizontal: Spacing[6],
+    paddingVertical: Spacing[3],
+  },
+  emptyButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.neutral.white,
   },
 });
 

@@ -1,5 +1,3 @@
-version: '3.8'
-
 networks:
   ainetwork:
     driver: bridge
@@ -145,7 +143,7 @@ services:
   ai-service:
     build:
       context: ./ml
-      dockerfile: Dockerfile
+      dockerfile: api/Dockerfile
     container_name: stylemind-ai
     restart: unless-stopped
     environment:
@@ -194,7 +192,7 @@ services:
   ai-task-worker:
     build:
       context: ./ml
-      dockerfile: Dockerfile.worker
+      dockerfile: api/Dockerfile
     container_name: stylemind-task-worker
     restart: unless-stopped
     environment:
@@ -210,6 +208,12 @@ services:
       qdrant:
         condition: service_healthy
     command: ["python", "-m", "services.task_worker", "--all"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import redis; r=redis.from_url('${REDIS_URL:-redis://localhost:6379}'); r.ping()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     networks:
       - ainetwork
     deploy:
@@ -240,7 +244,7 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET is required}
       JWT_ACCESS_EXPIRES_IN: ${JWT_ACCESS_EXPIRES_IN:-15m}
       JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
-      ENCRYPTION_KEY: ${ENCRYPTION_KEY?:ENCRYPTION_KEY is required}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?ENCRYPTION_KEY is required}
       CSRF_SECRET: ${CSRF_SECRET:-xuno-csrf-secret}
       MINIO_ENDPOINT: minio
       MINIO_PORT: 9000
@@ -385,7 +389,7 @@ services:
     container_name: stylemind-postgres-exporter
     restart: unless-stopped
     environment:
-      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/stylemind?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/stylemind?sslmode=disable"
     ports:
       - "9187:9187"
     depends_on:

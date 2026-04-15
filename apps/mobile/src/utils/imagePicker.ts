@@ -1,4 +1,8 @@
-import { launchImageLibrary, type ImagePickerResponse, type ImageLibraryOptions } from "react-native-image-picker";
+import {
+  launchImageLibrary,
+  type ImagePickerResponse,
+  type ImageLibraryOptions,
+} from "react-native-image-picker";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_DIMENSION = 4096;
@@ -27,7 +31,7 @@ export class ImageValidationError extends Error {
 }
 
 export async function pickImageSecurely(
-  options?: Partial<ImageLibraryOptions>,
+  options?: Partial<ImageLibraryOptions>
 ): Promise<SecureImagePickerResult | null> {
   const mergedOptions: ImageLibraryOptions = {
     ...SECURE_PICKER_OPTIONS,
@@ -35,7 +39,7 @@ export async function pickImageSecurely(
   };
 
   return new Promise((resolve, reject) => {
-    launchImageLibrary(mergedOptions, (response: ImagePickerResponse) => {
+    void launchImageLibrary(mergedOptions, (response: ImagePickerResponse) => {
       if (response.didCancel) {
         resolve(null);
         return;

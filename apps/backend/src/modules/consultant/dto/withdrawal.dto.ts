@@ -1,5 +1,5 @@
-import { IsString, IsNumber, Min } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
+import { IsString, IsNumber, Min } from "class-validator";
 
 export class RequestWithdrawalDto {
   @ApiProperty({ description: "顾问ID" })

@@ -131,7 +131,7 @@ type ClothingItemListItem = {
 };
 
 function normalizeClothingItem(item: ClothingItemWithBrandDetail | null): ClothingItemResponse | null {
-  if (!item) return null;
+  if (!item) {return null;}
   return {
     id: item.id,
     name: item.name,
@@ -262,7 +262,7 @@ export class ClothingService {
           page,
           pageSize,
           sortBy as "price" | "createdAt" | "viewCount" | "likeCount",
-          sortOrder as "asc" | "desc"
+          sortOrder
         );
       },
       CACHE_TTL.CLOTHING_LIST,
@@ -550,7 +550,7 @@ export class ClothingService {
     const grouped: Record<string, Array<{ name: string; count: number }>> = {};
     for (const row of counts) {
       const cat = row.category;
-      if (!grouped[cat]) grouped[cat] = [];
+      if (!grouped[cat]) {grouped[cat] = [];}
       grouped[cat].push({ name: row.subcategory!, count: row._count.subcategory });
     }
 
@@ -694,18 +694,18 @@ export class ClothingService {
     }
 
     const updateData: Record<string, unknown> = {};
-    if (data.name !== undefined) updateData.name = data.name;
-    if (data.category !== undefined) updateData.category = data.category;
-    if (data.subcategory !== undefined) updateData.subcategory = data.subcategory;
-    if (data.price !== undefined) updateData.price = data.price;
-    if (data.originalPrice !== undefined) updateData.originalPrice = data.originalPrice;
-    if (data.description !== undefined) updateData.description = data.description;
-    if (data.mainImage !== undefined) updateData.mainImage = data.mainImage;
-    if (data.images !== undefined) updateData.images = data.images;
-    if (data.colors !== undefined) updateData.colors = data.colors;
-    if (data.sizes !== undefined) updateData.sizes = data.sizes;
-    if (data.tags !== undefined) updateData.tags = data.tags;
-    if (data.externalUrl !== undefined) updateData.externalUrl = data.externalUrl;
+    if (data.name !== undefined) {updateData.name = data.name;}
+    if (data.category !== undefined) {updateData.category = data.category;}
+    if (data.subcategory !== undefined) {updateData.subcategory = data.subcategory;}
+    if (data.price !== undefined) {updateData.price = data.price;}
+    if (data.originalPrice !== undefined) {updateData.originalPrice = data.originalPrice;}
+    if (data.description !== undefined) {updateData.description = data.description;}
+    if (data.mainImage !== undefined) {updateData.mainImage = data.mainImage;}
+    if (data.images !== undefined) {updateData.images = data.images;}
+    if (data.colors !== undefined) {updateData.colors = data.colors;}
+    if (data.sizes !== undefined) {updateData.sizes = data.sizes;}
+    if (data.tags !== undefined) {updateData.tags = data.tags;}
+    if (data.externalUrl !== undefined) {updateData.externalUrl = data.externalUrl;}
 
     if (data.brandId !== undefined) {
       updateData.brand = { connect: { id: data.brandId } };

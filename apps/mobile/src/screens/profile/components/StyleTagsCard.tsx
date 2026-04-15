@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { colors } from '@/src/theme/tokens/colors';
-import { typography } from '@/src/theme/tokens/typography';
-import { spacing } from '@/src/theme/tokens/spacing';
-import { shadows } from '@/src/theme/tokens/shadows';
-import { TagCloud } from '../../../components/charts/TagCloud';
-import { PercentageBar } from '../../../components/charts/PercentageBar';
+import React, { useMemo } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { colors } from "@/src/theme/tokens/colors";
+import { typography } from "@/src/theme/tokens/typography";
+import { spacing } from "@/src/theme/tokens/spacing";
+import { shadows } from "@/src/theme/tokens/shadows";
+import { TagCloud } from "../../../components/charts/TagCloud";
+import { PercentageBar } from "../../../components/charts/PercentageBar";
 
 interface StylePreferences {
   preferredStyles: string[];
@@ -30,15 +30,23 @@ interface StyleTagsCardProps {
 }
 
 const ALL_STYLE_TAGS = [
-  '简约', '街头', '复古', '优雅', '运动',
-  '甜美', '知性', '前卫', '浪漫', '休闲',
+  "简约",
+  "街头",
+  "复古",
+  "优雅",
+  "运动",
+  "甜美",
+  "知性",
+  "前卫",
+  "浪漫",
+  "休闲",
 ];
 
 const OCCASION_CONFIG = [
-  { label: '工作', color: colors.brand.warmAccent },
-  { label: '约会', color: colors.gradients.coralRose[0] },
-  { label: '运动', color: colors.brand.warmSecondary },
-  { label: '休闲', color: colors.brand.primary },
+  { label: "工作", color: colors.brand.warmAccent },
+  { label: "约会", color: colors.gradients.coralRose[0] },
+  { label: "运动", color: colors.brand.warmSecondary },
+  { label: "休闲", color: colors.brand.primary },
 ];
 
 const DEFAULT_OCCASION_PERCENTAGES = [35, 25, 15, 25];
@@ -47,7 +55,9 @@ function buildTagItems(preferredStyles: string[]) {
   const preferredSet = new Set(preferredStyles);
   return ALL_STYLE_TAGS.map((label, index) => ({
     label,
-    weight: preferredSet.has(label) ? 0.8 + (ALL_STYLE_TAGS.length - index) * 0.02 : 0.3 + index * 0.03,
+    weight: preferredSet.has(label)
+      ? 0.8 + (ALL_STYLE_TAGS.length - index) * 0.02
+      : 0.3 + index * 0.03,
     active: preferredSet.has(label),
   }));
 }
@@ -62,7 +72,7 @@ function buildAvoidedTags(avoidedStyles: string[]) {
 
 function buildOccasionData(
   styleRecommendations: StyleRecommendations | null,
-  stylePreferences: StylePreferences | null,
+  _stylePreferences: StylePreferences | null
 ) {
   const occasionMap: Record<string, number> = {};
   if (styleRecommendations?.occasions) {
@@ -77,7 +87,8 @@ function buildOccasionData(
   }
   return OCCASION_CONFIG.map((cfg) => ({
     label: cfg.label,
-    percentage: occasionMap[cfg.label] ?? DEFAULT_OCCASION_PERCENTAGES[OCCASION_CONFIG.indexOf(cfg)] ?? 20,
+    percentage:
+      occasionMap[cfg.label] ?? DEFAULT_OCCASION_PERCENTAGES[OCCASION_CONFIG.indexOf(cfg)] ?? 20,
     color: cfg.color,
   }));
 }
@@ -90,17 +101,17 @@ export const StyleTagsCard: React.FC<StyleTagsCardProps> = ({
 }) => {
   const tagItems = useMemo(
     () => buildTagItems(stylePreferences?.preferredStyles ?? []),
-    [stylePreferences?.preferredStyles],
+    [stylePreferences?.preferredStyles]
   );
 
   const avoidedTagItems = useMemo(
     () => buildAvoidedTags(stylePreferences?.avoidedStyles ?? []),
-    [stylePreferences?.avoidedStyles],
+    [stylePreferences?.avoidedStyles]
   );
 
   const occasionData = useMemo(
     () => buildOccasionData(styleRecommendations, stylePreferences),
-    [styleRecommendations, stylePreferences],
+    [styleRecommendations, stylePreferences]
   );
 
   return (
@@ -109,13 +120,13 @@ export const StyleTagsCard: React.FC<StyleTagsCardProps> = ({
         style={styles.header}
         onPress={onToggle}
         activeOpacity={0.7}
-        accessibilityLabel={collapsed ? '展开风格标签' : '收起风格标签'}
+        accessibilityLabel={collapsed ? "展开风格标签" : "收起风格标签"}
         accessibilityRole="button"
       >
         <Ionicons name="prism-outline" size={20} color={colors.brand.primary} />
         <Text style={styles.headerTitle}>风格标签</Text>
         <Ionicons
-          name={collapsed ? 'chevron-down-outline' : 'chevron-up-outline'}
+          name={collapsed ? "chevron-down-outline" : "chevron-up-outline"}
           size={18}
           color={colors.neutral[400]}
         />
@@ -158,12 +169,12 @@ const styles = StyleSheet.create({
     borderRadius: spacing.borderRadius.xl,
     marginHorizontal: spacing.layout.screenPadding,
     marginBottom: spacing.layout.cardGap,
-    overflow: 'hidden',
+    overflow: "hidden",
     ...shadows.presets.sm,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: spacing.layout.cardPadding,
     gap: spacing.aliases.sm,
   },

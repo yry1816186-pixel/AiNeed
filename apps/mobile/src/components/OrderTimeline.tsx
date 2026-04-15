@@ -14,7 +14,7 @@ interface OrderTimelineProps {
   events: TimelineEvent[];
 }
 
-const STATUS_ORDER = ["pending", "paid", "shipped", "delivered"];
+const _STATUS_ORDER = ["pending", "paid", "shipped", "delivered"];
 
 export const OrderTimeline: React.FC<OrderTimelineProps> = ({ events }) => {
   if (!events || events.length === 0) {
@@ -41,9 +41,7 @@ export const OrderTimeline: React.FC<OrderTimelineProps> = ({ events }) => {
                   isFuture && styles.dotFuture,
                 ]}
               >
-                {isPast && (
-                  <Text style={styles.checkMark}>&#10003;</Text>
-                )}
+                {isPast && <Text style={styles.checkMark}>&#10003;</Text>}
               </View>
               {index < events.length - 1 && <View style={styles.line} />}
             </View>
@@ -57,9 +55,7 @@ export const OrderTimeline: React.FC<OrderTimelineProps> = ({ events }) => {
               >
                 {event.description}
               </Text>
-              <Text style={styles.timeText}>
-                {new Date(event.time).toLocaleString("zh-CN")}
-              </Text>
+              <Text style={styles.timeText}>{new Date(event.time).toLocaleString("zh-CN")}</Text>
               {event.trackingNumber ? (
                 <TouchableOpacity
                   onPress={() => {

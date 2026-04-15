@@ -27,26 +27,14 @@ export const COLD_START_DIALOGS = {
         "面试啊，这可是重要场合！是什么类型的公司呢？",
         "面试穿搭很关键~让我帮你打造专业又自信的形象！",
       ],
-      date: [
-        "约会呀~是第一次见面还是老朋友了？",
-        "约会穿搭要既好看又自然~你希望给对方什么印象？",
-      ],
-      work: [
-        "通勤穿搭~你们公司的着装氛围怎么样？",
-        "日常上班的话，舒适和专业都很重要呢~",
-      ],
-      travel: [
-        "旅行太棒了！去哪里呢？海边、城市还是山里？",
-        "旅行穿搭要考虑舒适度~计划怎么玩？",
-      ],
+      date: ["约会呀~是第一次见面还是老朋友了？", "约会穿搭要既好看又自然~你希望给对方什么印象？"],
+      work: ["通勤穿搭~你们公司的着装氛围怎么样？", "日常上班的话，舒适和专业都很重要呢~"],
+      travel: ["旅行太棒了！去哪里呢？海边、城市还是山里？", "旅行穿搭要考虑舒适度~计划怎么玩？"],
       party: [
         "派对呀~是朋友的聚会还是正式的晚宴？",
         "派对穿搭可以稍微大胆一点~想成为焦点还是低调有品味？",
       ],
-      daily: [
-        "日常穿搭最考验功力了~你平时喜欢什么风格？",
-        "日常的话，舒适和好看都要兼顾呢~",
-      ],
+      daily: ["日常穿搭最考验功力了~你平时喜欢什么风格？", "日常的话，舒适和好看都要兼顾呢~"],
       campus: [
         "校园穿搭~学生党最爱的性价比风格！",
         "校园风可以活泼一点~你平时上课还是社团活动多？",
@@ -128,11 +116,7 @@ export const COLD_START_DIALOGS = {
       "不喜欢这套？没关系，我们换一套试试~",
       "好的，那我们看看其他风格？",
     ],
-    adjustments: [
-      "好的，我帮你换一种风格~",
-      "换个颜色试试？",
-      "预算方面需要调整吗？",
-    ],
+    adjustments: ["好的，我帮你换一种风格~", "换个颜色试试？", "预算方面需要调整吗？"],
   },
 
   fallback: {
@@ -187,16 +171,11 @@ export const COLD_START_DIALOGS = {
   },
 };
 
-export function getRandomDialog<T extends readonly string[]>(
-  dialogs: T,
-): T[number] {
+export function getRandomDialog<T extends readonly string[]>(dialogs: T): T[number] {
   return dialogs[Math.floor(Math.random() * dialogs.length)];
 }
 
-export function formatDialog(
-  template: string,
-  params: Record<string, string | number>,
-): string {
+export function formatDialog(template: string, params: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (match, key) => {
     return params[key]?.toString() ?? match;
   });
@@ -205,7 +184,7 @@ export function formatDialog(
 export function getGreeting(
   isFirstTime: boolean,
   hasProfile: boolean,
-  context?: { style?: string; lastTopic?: string },
+  context?: { style?: string; lastTopic?: string }
 ): string {
   if (hasProfile && context) {
     const dialogs = COLD_START_DIALOGS.greetings.withProfile;
@@ -230,12 +209,7 @@ export function getSceneFollowUp(occasion: string): string {
   return getRandomDialog(COLD_START_DIALOGS.sceneCollection.prompts);
 }
 
-export function getRecommendationMessage(
-  count: number,
-  occasion: string,
-): string {
-  const template = getRandomDialog(
-    COLD_START_DIALOGS.recommendationReady.messages,
-  );
+export function getRecommendationMessage(count: number, occasion: string): string {
+  const template = getRandomDialog(COLD_START_DIALOGS.recommendationReady.messages);
   return formatDialog(template, { count, occasion });
 }

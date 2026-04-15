@@ -271,7 +271,7 @@ export class PhotoQualityService {
       }
     }
 
-    if (count === 0) return 50;
+    if (count === 0) {return 50;}
 
     const avgBrightness = totalBrightness / count;
     return Math.round((avgBrightness / 255) * 100);
@@ -290,7 +290,7 @@ export class PhotoQualityService {
       }
     }
 
-    if (luminances.length < 2) return 50;
+    if (luminances.length < 2) {return 50;}
 
     const mean = luminances.reduce((a, b) => a + b, 0) / luminances.length;
     const variance = luminances.reduce((sum, l) => sum + (l - mean) ** 2, 0) / luminances.length;
@@ -318,9 +318,9 @@ export class PhotoQualityService {
     fullBody: boolean;
   }): number {
     let score = 0;
-    if (composition.hasPerson) score += 50;
-    if (composition.personCentered) score += 25;
-    if (composition.fullBody) score += 25;
+    if (composition.hasPerson) {score += 50;}
+    if (composition.personCentered) {score += 25;}
+    if (composition.fullBody) {score += 25;}
     return score;
   }
 

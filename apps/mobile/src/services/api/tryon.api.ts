@@ -1,10 +1,6 @@
 import apiClient from "./client";
 import { ApiResponse } from "../../types";
-import {
-  buildPhotoAssetUrl,
-  buildTryOnResultAssetUrl,
-  normalizeAssetUrl,
-} from "./asset-url";
+import { buildPhotoAssetUrl, buildTryOnResultAssetUrl, normalizeAssetUrl } from "./asset-url";
 
 export interface TryOnResult {
   id: string;
@@ -35,7 +31,7 @@ function normalizeTryOnResult(payload: TryOnResult): TryOnResult {
       thumbnailUrl: buildPhotoAssetUrl(
         payload.photo?.id ?? "",
         "thumbnail",
-        payload.photo?.thumbnailUrl,
+        payload.photo?.thumbnailUrl
       ),
     },
     item: {
@@ -48,7 +44,7 @@ function normalizeTryOnResult(payload: TryOnResult): TryOnResult {
 export const tryOnApi = {
   async create(
     photoId: string,
-    itemId: string,
+    itemId: string
   ): Promise<ApiResponse<{ id: string; status: string }>> {
     return apiClient.post("/try-on", { photoId, itemId });
   },
@@ -68,7 +64,7 @@ export const tryOnApi = {
 
   async getHistory(
     page?: number,
-    limit?: number,
+    limit?: number
   ): Promise<ApiResponse<{ items: TryOnResult[]; total: number }>> {
     const response = await apiClient.get<{
       items: TryOnResult[];
@@ -139,13 +135,13 @@ interface RecommendationResultRow {
 }
 
 interface RecommendationListResponse {
-  items?: Array<RecommendationResultRow | RecommendationItemPayload>;
+  items?: (RecommendationResultRow | RecommendationItemPayload)[];
   total?: number;
 }
 
 type RecommendationApiPayload =
   | RecommendationListResponse
-  | Array<RecommendationResultRow | RecommendationItemPayload>;
+  | (RecommendationResultRow | RecommendationItemPayload)[];
 
 function toNumber(value?: number | string | null): number {
   if (typeof value === "number") {
@@ -160,9 +156,7 @@ function toNumber(value?: number | string | null): number {
   return 0;
 }
 
-function normalizeBrandName(
-  brand?: RecommendationBrand | string | null,
-): string | undefined {
+function normalizeBrandName(brand?: RecommendationBrand | string | null): string | undefined {
   if (typeof brand === "string") {
     return brand;
   }
@@ -170,9 +164,7 @@ function normalizeBrandName(
   return brand?.name;
 }
 
-function normalizeRecommendationScore(
-  value?: number | string | null,
-): number | undefined {
+function normalizeRecommendationScore(value?: number | string | null): number | undefined {
   const numeric = toNumber(value);
 
   if (!Number.isFinite(numeric) || numeric <= 0) {
@@ -187,26 +179,21 @@ function normalizeRecommendationScore(
 }
 
 function normalizeMatchReasons(value?: string[] | null): string[] | undefined {
-  const reasons =
-    value
-      ?.map((reason) => reason.trim())
-      .filter((reason) => reason.length > 0) ?? [];
+  const reasons = value?.map((reason) => reason.trim()).filter((reason) => reason.length > 0) ?? [];
 
   return reasons.length > 0 ? reasons : undefined;
 }
 
 function isRecommendationResultRow(
-  value: RecommendationResultRow | RecommendationItemPayload,
+  value: RecommendationResultRow | RecommendationItemPayload
 ): value is RecommendationResultRow {
   return "item" in value;
 }
 
 function normalizeRecommendedItem(
-  payload: RecommendationResultRow | RecommendationItemPayload,
+  payload: RecommendationResultRow | RecommendationItemPayload
 ): RecommendedItem {
-  const item = isRecommendationResultRow(payload)
-    ? payload.item ?? {}
-    : payload;
+  const item = isRecommendationResultRow(payload) ? payload.item ?? {} : payload;
 
   return {
     id: item.id ?? "",
@@ -216,43 +203,38 @@ function normalizeRecommendedItem(
     mainImage: item.mainImage ?? item.images?.[0] ?? "",
     category: item.category ?? "",
     score: normalizeRecommendationScore(
-      isRecommendationResultRow(payload) ? payload.score : payload.score,
+      isRecommendationResultRow(payload) ? payload.score : payload.score
     ),
     matchReasons: normalizeMatchReasons(
       isRecommendationResultRow(payload)
         ? payload.matchReasons ?? payload.item?.matchReasons
-        : payload.matchReasons,
+        : payload.matchReasons
     ),
     externalUrl: item.externalUrl ?? undefined,
   };
 }
 
-function normalizeRecommendationList(
-  payload?: RecommendationApiPayload,
-): RecommendedItem[] {
+function normalizeRecommendationList(payload?: RecommendationApiPayload): RecommendedItem[] {
   const rows = Array.isArray(payload) ? payload : payload?.items ?? [];
 
-  return rows
-    .map(normalizeRecommendedItem)
-    .filter((item) => item.id.length > 0);
+  return rows.map(normalizeRecommendedItem).filter((item) => item.id.length > 0);
 }
 
 async function getNormalizedRecommendations(
   path: string,
   params: Record<string, unknown> | undefined,
   fallbackCode: string,
-  fallbackMessage: string,
+  fallbackMessage: string
 ): Promise<ApiResponse<RecommendedItem[]>> {
   const response = await apiClient.get<RecommendationApiPayload>(path, params);
 
   if (!response.success || !response.data) {
     return {
       success: false,
-      error:
-        response.error ?? {
-          code: fallbackCode,
-          message: fallbackMessage,
-        },
+      error: response.error ?? {
+        code: fallbackCode,
+        message: fallbackMessage,
+      },
     };
   }
 
@@ -273,7 +255,7 @@ export const recommendationsApi = {
       "/recommendations",
       params,
       "RECOMMENDATIONS_UNAVAILABLE",
-      "Failed to load recommendations",
+      "Failed to load recommendations"
     );
   },
 
@@ -286,7 +268,7 @@ export const recommendationsApi = {
       "/recommendations/advanced",
       params,
       "ADVANCED_RECOMMENDATIONS_UNAVAILABLE",
-      "Failed to load advanced recommendations",
+      "Failed to load advanced recommendations"
     );
   },
 
@@ -298,7 +280,7 @@ export const recommendationsApi = {
     }>
   > {
     const response = await apiClient.get<{
-      items?: Array<RecommendationResultRow | RecommendationItemPayload>;
+      items?: (RecommendationResultRow | RecommendationItemPayload)[];
       outfitName?: string;
       description?: string;
     }>("/recommendations/daily");
@@ -306,11 +288,10 @@ export const recommendationsApi = {
     if (!response.success || !response.data) {
       return {
         success: false,
-        error:
-          response.error ?? {
-            code: "DAILY_OUTFIT_UNAVAILABLE",
-            message: "Failed to load daily outfit",
-          },
+        error: response.error ?? {
+          code: "DAILY_OUTFIT_UNAVAILABLE",
+          message: "Failed to load daily outfit",
+        },
       };
     }
 
@@ -324,15 +305,12 @@ export const recommendationsApi = {
     };
   },
 
-  async getOccasion(
-    occasion: string,
-    limit?: number,
-  ): Promise<ApiResponse<RecommendedItem[]>> {
+  async getOccasion(occasion: string, limit?: number): Promise<ApiResponse<RecommendedItem[]>> {
     return getNormalizedRecommendations(
       "/recommendations/occasion",
       { type: occasion, limit },
       "OCCASION_RECOMMENDATIONS_UNAVAILABLE",
-      "Failed to load occasion recommendations",
+      "Failed to load occasion recommendations"
     );
   },
 
@@ -341,7 +319,7 @@ export const recommendationsApi = {
       "/recommendations/trending",
       { limit },
       "TRENDING_RECOMMENDATIONS_UNAVAILABLE",
-      "Failed to load trending recommendations",
+      "Failed to load trending recommendations"
     );
   },
 
@@ -350,7 +328,7 @@ export const recommendationsApi = {
       "/recommendations/discover",
       { limit },
       "DISCOVER_RECOMMENDATIONS_UNAVAILABLE",
-      "Failed to load discover recommendations",
+      "Failed to load discover recommendations"
     );
   },
 
@@ -366,9 +344,7 @@ export const recommendationsApi = {
     return apiClient.get("/recommendations/style-guide");
   },
 
-  async getCompleteTheLook(
-    clothingId: string,
-  ): Promise<
+  async getCompleteTheLook(clothingId: string): Promise<
     ApiResponse<{
       anchor: {
         id: string;
@@ -378,7 +354,7 @@ export const recommendationsApi = {
         price?: number;
       };
       suggestions: {
-        top: Array<{
+        top: {
           id: string;
           name: string;
           imageUrl: string;
@@ -386,8 +362,8 @@ export const recommendationsApi = {
           brand?: string;
           matchScore: number;
           reason: string;
-        }>;
-        bottom: Array<{
+        }[];
+        bottom: {
           id: string;
           name: string;
           imageUrl: string;
@@ -395,8 +371,8 @@ export const recommendationsApi = {
           brand?: string;
           matchScore: number;
           reason: string;
-        }>;
-        shoes: Array<{
+        }[];
+        shoes: {
           id: string;
           name: string;
           imageUrl: string;
@@ -404,8 +380,8 @@ export const recommendationsApi = {
           brand?: string;
           matchScore: number;
           reason: string;
-        }>;
-        accessories: Array<{
+        }[];
+        accessories: {
           id: string;
           name: string;
           imageUrl: string;
@@ -413,7 +389,7 @@ export const recommendationsApi = {
           brand?: string;
           matchScore: number;
           reason: string;
-        }>;
+        }[];
       };
       harmonyScore: number;
       harmonyRule: string;
@@ -433,23 +409,21 @@ export const recommendationsApi = {
   },
 
   async submitBatchFeedback(
-    items: Array<{
+    items: {
       clothingId: string;
       action: "like" | "dislike" | "ignore";
       recommendationId?: string;
-    }>,
+    }[]
   ): Promise<ApiResponse<{ success: boolean; message: string }>> {
     return apiClient.post("/recommendations/feedback/batch", { items });
   },
 
-  async getColdStartRecommendations(
-    limit?: number,
-  ): Promise<ApiResponse<RecommendedItem[]>> {
+  async getColdStartRecommendations(limit?: number): Promise<ApiResponse<RecommendedItem[]>> {
     return getNormalizedRecommendations(
       "/recommendations/cold-start",
       { limit },
       "COLD_START_UNAVAILABLE",
-      "Failed to load cold start recommendations",
+      "Failed to load cold start recommendations"
     );
   },
 };

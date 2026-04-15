@@ -1,7 +1,7 @@
 import apiClient from "./client";
 import { ApiResponse } from "../../types";
 import { buildPhotoAssetUrl } from "./asset-url";
-import type { FormDataValue } from "../../types";
+
 
 export type PhotoType = "front" | "side" | "full_body" | "half_body" | "face";
 
@@ -71,10 +71,7 @@ function normalizeUserPhoto(payload: UserPhoto): UserPhoto {
 }
 
 export const photosApi = {
-  async upload(
-    imageUri: string,
-    type: PhotoType = "full_body",
-  ): Promise<ApiResponse<UserPhoto>> {
+  async upload(imageUri: string, type: PhotoType = "full_body"): Promise<ApiResponse<UserPhoto>> {
     const formData = new FormData();
     const filename = imageUri.split("/").pop() || "image.jpg";
     const match = /\.(\w+)$/.exec(filename);
@@ -87,10 +84,7 @@ export const photosApi = {
     } as RNFileBody);
     formData.append("type", type);
 
-    const response = await apiClient.upload<PhotoUploadPayload>(
-      "/photos/upload",
-      formData,
-    );
+    const response = await apiClient.upload<PhotoUploadPayload>("/photos/upload", formData);
 
     if (!response.success || !response.data) {
       return response as ApiResponse<UserPhoto>;
