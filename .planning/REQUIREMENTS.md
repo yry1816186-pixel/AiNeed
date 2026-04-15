@@ -1,418 +1,149 @@
-# Requirements: AiNeed
+# Requirements: 寻裳代码规整
 
-**Defined:** 2026-04-13
-**Core Value:** 基于用户画像的精准 AI 穿搭推荐，用多模态 API 生成换装效果图
-**Updated:** 2026-04-14 — 92→130 requirements, 8→11 phases, 补充横向 Phase 和缺失需求
+**Defined:** 2026-04-16
+**Core Value:** 让寻裳代码库回到健康、可维护、可扩展的状态
 
-## MVP Requirements (v2)
+## v1 Requirements
 
-### Phase 1: 用户画像 & 风格测试 (14 requirements)
+### Design System (DSGN)
 
-- [x] **PROF-01**: 双轨道体型分析 — 用户可通过照片分析（MediaPipe + GLM）或手动输入建立体型数据，两种方式并行可选
-- [x] **PROF-02**: 拍照实时参考线引导 — 上传照片时显示人体轮廓参考线 + 姿势提示（"请稍向左"/"请站直"），类似小米证件照的引导方式；支持相册上传
-- [x] **PROF-03**: 照片质量检测 — 系统自动检测照片质量（清晰度/光线/构图），不合格时提示重新上传或自动增强处理
-- [x] **PROF-04**: 体型分析可视化报告 — 展示完整分析结果：体型分类（5种）+ 身体比例可视化 + 肤色分析 + 色彩季型 + 个性化穿搭建议摘要；支持生成可分享海报
-- [x] **PROF-05**: 双通道注册 — 支持手机号+验证码注册和微信一键登录，集成阿里云/腾讯云短信服务
-- [x] **PROF-06**: 强制基本信息收集 — 注册后必填基本信息（性别/年龄段），确保 AI 推荐有最低数据基础
-- [x] **PROF-07**: 最短链路引导 — 注册 → 基本信息（必填）→ 照片上传/风格测试（可选但强烈鼓励）→ 进入首页；照片和风格测试可跳过，首页持续提示补全
-- [x] **PROF-08**: 风格测试图片选择式问卷 — 5-8 题图片选择（每题展示 4-6 张穿搭图片，用户点选喜欢的），趣味性强、完成率高
-- [x] **PROF-09**: 色彩偏好隐性推导 — 不直接问"你喜欢什么颜色"，通过图片选择行为隐性推导色彩偏好，结合肤色分析生成色彩季型
-- [x] **PROF-10**: 色彩季型系统 — 四型（春夏秋冬）+ 细分维度（暖/冷 × 浅/深），呈现为调色板形式（适合颜色 + 不适合颜色 + 推荐理由）
-- [x] **PROF-11**: 伴随式画像构建 — 通过用户行为数据（浏览/收藏/试衣/购买/AI对话）持续学习和优化用户画像，使用越多画像越精准
-- [x] **PROF-12**: 照片加密永久存储 — 用户照片 AES-256-GCM 加密存储在 MinIO，永久保留（用于后续虚拟试衣），用户可随时手动删除；上传页面展示隐私承诺（"仅用于体型分析和试衣效果生成"）
-- [x] **PROF-13**: 画像数据同步 — UserProfile/StyleProfile 变更后自动通知 AI 造型师和推荐引擎服务更新上下文，确保推荐基于最新画像
-- [x] **PROF-14**: 用户主动修改画像 — 用户可随时在个人设置中修改基本信息（性别/年龄段）、体型数据、肤色等画像信息，修改后自动触发画像同步事件（PROF-13），通知 AI 造型师和推荐引擎更新上下文
+- [ ] **DSGN-01**: 用户可见的所有硬编码颜色（778 处）迁移至 theme.colors Token
+- [ ] **DSGN-02**: 用户可见的所有硬编码 fontSize（921 处）迁移至 theme.typography Token
+- [ ] **DSGN-03**: 用户可见的所有硬编码间距（971 处）迁移至 theme.spacing Token
+- [ ] **DSGN-04**: 移除 NativeWind/Tailwind 死配置（tailwind.config.js, postcss.config.js, nativewind.config.js）
+- [ ] **DSGN-05**: 保留 React Native Paper 仅用于 Dialog/BottomSheet 等复杂交互组件
+- [ ] **DSGN-06**: 创建语义化 Token 体系（text.primary 而非 gray.900），确保替换不丢失语义
 
-### Phase 2: AI 造型师 (14 requirements)
+### Backend Architecture (ARCH)
 
-- [x] **AIS-01**: 方案页交互模式 — 以穿搭方案页为核心（非纯聊天式），顶部展示 AI 生成的穿搭整体效果图 + 下方是每件单品卡片（图片/名称/价格/购买链接），可点击替换单品
-- [x] **AIS-02**: MVP 输入方式 — MVP 支持文字输入 + 场景快捷按钮（通勤/约会/运动/面试/休闲/旅行）；图片上传和语音输入后续 Phase 补充
-- [x] **AIS-03**: 画像驱动推荐 — AI 基于用户体型（适合的版型/剪裁）、肤色（适合的色彩）、风格偏好、色彩季型生成穿搭方案
-- [x] **AIS-04**: 可折叠推荐理由卡片 — 每个推荐方案下方展示可折叠理由：体型适配说明 + 色彩搭配解释 + 场合适合度，默认收起点击展开
-- [x] **AIS-05**: 单品替换交互 — 点击单品卡片的"替换"按钮，弹出同类商品列表（已按用户画像过滤），选择后方案实时更新
-- [x] **AIS-06**: 天气智能集成 — 集成国内免费天气 API（和风天气/心知天气），自动获取用户位置天气，AI 在推荐时考虑温度/湿度/风力/紫外线
-- [x] **AIS-07**: 方案历史按日归档 — 所有生成的穿搭方案按日期归档保存，用户关闭 App 后可恢复和查看之前的方案，支持日历视图快速定位
-- [x] **AIS-08**: AI 安全过滤 — AI 回复经过内容安全过滤，不包含不当/歧视/敏感内容
-- [x] **AIS-09**: API 限流降级 — GLM API 调用有限流（令牌桶/滑动窗口）和降级机制（断路器模式），高峰期优雅降级
-- [x] **AIS-10**: 推荐反馈机制 — 用户对穿搭方案可：喜欢/不喜欢 + 评分、替换单个单品、发送方案调整指令、选择不喜欢原因（太贵/不适合/颜色不对等）
-- [x] **AIS-11**: 场景化快捷推荐 — 提供场景快捷按钮（通勤/约会/运动/面试/休闲/旅行），一键获取对应场景的穿搭推荐
-- [x] **AIS-12**: 预设引导问题 — 新用户首次进入 AI 造型师时展示预设问题（"今天穿什么"/"我适合什么风格"/"帮我搭一套通勤装"），降低使用门槛
-- [x] **AIS-13**: AI 降级用户体验 — 当 GLM API 不可用（断路器打开）时，展示友好提示页面（"AI 造型师暂时繁忙，请稍后再试"），提供历史方案查看入口，而非空白页或技术错误信息
-- [x] **AIS-14**: 图片输入延伸规划 — Phase 2 MVP 不含图片输入，但架构预留图片输入接口；Phase 2.1 后续补充用户上传衣服图片问"怎么搭"的功能，在路线图中标注为 Phase 2 延伸
+- [ ] **ARCH-01**: 将 35+ 模块重组为 6 域 + 1 平台层（identity, ai-core, fashion, commerce, social, customization + platform）
+- [ ] **ARCH-02**: 消除 AiStylistModule ↔ RecommendationsModule 循环依赖（forwardRef）
+- [ ] **ARCH-03**: 消除所有 16 处 forwardRef 循环依赖
+- [ ] **ARCH-04**: 配置 eslint-plugin-boundaries 强制域间依赖规则
+- [ ] **ARCH-05**: 配置 dependency-cruiser 可视化和验证依赖关系
+- [ ] **ARCH-06**: 废弃 demo 模块（无外部消费者）
+- [ ] **ARCH-07**: 废弃 code-rag 模块（无外部消费者）
+- [ ] **ARCH-08**: 合并 style-profiles + style-quiz 为统一风格评估模块
+- [ ] **ARCH-09**: 合并 wardrobe-collection + favorites 为统一衣橱管理模块
+- [ ] **ARCH-10**: 合并 notification + stock-notification 为统一消息推送模块
+- [ ] **ARCH-11**: 将 Recommendations 降级为 platform 层共享服务
 
-### Phase 3: 虚拟试衣 (13 requirements)
+### Engineering Infrastructure (ENGR)
 
-- [x] **VTO-01**: 照片上传灵活性 — 推荐上传正面全身照，但允许半身照/自拍等其他类型，降低使用门槛
-- [x] **VTO-02**: 照片自动修复 — 检测到照片质量不佳时（背景杂乱/光线不足），自动进行背景移除/增强处理后再生成
-- [x] **VTO-03**: Doubao-Seedream 主生成 API — 用户照片 + 商品图片 + 文字辅助描述 → Doubao-Seedream API 生成换装效果图，作为主生成服务
-- [x] **VTO-04**: GLM 图生图降级备选 — Doubao-Seedream 不可用时自动降级到 GLM 图生图 API，保证服务可用性
-- [x] **VTO-05**: 生成等待体验 — 展示进度条 + 趣味穿搭小贴士轮播（色彩知识/搭配技巧/风格常识），减轻等待焦虑
-- [x] **VTO-06**: 结果时效保障 — 换装效果图在 30 秒内返回，超时有降级提示，支持 WebSocket + 轮询双重进度获取
-- [x] **VTO-07**: 用户判断 + 免费重试 — 用户自行判断效果图质量，不满意可免费重新生成，每日限制 3 次防止滥用，重试时自动调整生成参数
-- [x] **VTO-08**: 结果持久化与归档 — 试衣结果自动保存到历史记录和灵感衣橱，支持按日期/服装/场景分类查看
-- [x] **VTO-09**: 智能缓存 — 同一用户照片 + 服装组合有结果缓存，不重复调用 API；缓存设 TTL 自动失效
-- [x] **VTO-10**: 多平台分享 — 支持下载保存到相册、分享到微信/朋友圈/QQ、分享到 App 内社区（可设置公开/仅自己可见）
-- [x] **VTO-11**: 原图对比与多方案对比 — 支持左右滑动对比原图和效果图，支持多套试衣结果并排对比选择
-- [x] **VTO-12**: 对象存储集成 — 试衣效果图保存在 MinIO 对象存储，支持 CDN 加速访问，可生成带水印的分享图
-- [x] **VTO-13**: API 策略统一与 CatVTON 清理 — 统一使用 Doubao-Seedream（主）+ GLM 图生图（备）双 API 策略，移除所有 CatVTON 相关代码引用和配置，确保 try-on 服务仅依赖云端 API
+- [ ] **ENGR-01**: 配置 husky + lint-staged（pre-commit lint, commit-msg 格式）
+- [ ] **ENGR-02**: 清理根目录杂乱文件（ESLint 输出、截图、临时文件、非项目文件）
+- [ ] **ENGR-03**: 统一 monorepo 级别 ESLint 配置
+- [ ] **ENGR-04**: 统一 monorepo 级别 Prettier 配置
+- [ ] **ENGR-05**: 配置 Turborepo 增量构建
+- [ ] **ENGR-06**: 配置 Changesets 版本管理
+- [ ] **ENGR-07**: 建立 CI 流水线（lint + typecheck + test 门禁）
+- [ ] **ENGR-08**: 统一命名规范（文件名、模块名、API 端点）
 
-### Phase 4: 推荐引擎 (13 requirements)
+### Mobile Reorganization (MOBL)
 
-- [x] **REC-01**: 小红书式瀑布流信息流 — 双列瀑布流布局，以穿搭图片为主视觉，展示方案缩略图 + 风格标签 + 价格范围；每次加载 10 条，支持下拉刷新
-- [x] **REC-02**: 多维度推荐分类 — 首页支持切换推荐分类：每日推荐（天气/场景/时间）、场合推荐、热门/趋势、探索/惊喜（未尝试风格）
-- [x] **REC-03**: 单品页搭配推荐 — 商品详情页展示"搭配建议"：推荐与当前商品搭配的上装/下装/鞋子/配饰，组成完整穿搭方案
-- [x] **REC-04**: 渐进式搭配逻辑 — MVP 用色彩搭配规则 + 体型适配规则 + GLM AI 理解；积累 10000+ 用户行为数据后引入协同过滤，后端配置权重渐进调整无需人工切换
-- [x] **REC-05**: 基于画像的通用推荐冷启动 — 新用户基于注册基本信息（性别/年龄段）+ 风格测试初始结果获得推荐，不依赖历史行为数据；每次交互后逐步个性化
-- [x] **REC-06**: 行为权重梯度 — 用户行为对推荐的影响权重：购买 > 试衣反馈 > 收藏 > 点赞 > 浏览时长 > 点击，权重可配置
-- [x] **REC-07**: 实时画像更新 — 用户行为事件实时写入 UserBehavior，触发画像权重更新，影响后续推荐结果
-- [x] **REC-08**: 色彩搭配评分 — 推荐结果包含色彩搭配评分（基于色彩理论：互补色/相近色/三角色等），可视化展示
-- [x] **REC-09**: 探索与惊喜推荐 — 以一定比例推荐用户未尝试但可能喜欢的风格（基于画像相似用户的数据），拓展用户审美边界
-- [x] **REC-10**: 推荐解释性 — 每个推荐方案附带推荐理由（"基于你的沙漏体型"/"适合你的暖春色彩"/"适合今天 25 度的天气"），增强信任
-- [x] **REC-11**: 加载策略优化 — 瀑布流每次加载 10 条，支持无限滚动加载更多，前端预加载下一页数据保证流畅体验
-- [x] **REC-12**: 推荐去重策略 — 已浏览商品在 7 天内不再出现在推荐流中，已购买商品在 30 天内不再推荐（除非用户主动搜索），避免重复推荐降低用户体验
-- [x] **REC-13**: 推荐多样性控制 — 探索/惊喜类推荐占比 15-20%，确保用户不会陷入信息茧房；多样性通过类目分散 + 风格差异度计算实现
+- [ ] **MOBL-01**: 将 50+ 页面从扁平 screens/ 迁移到 features/*/screens/ 结构
+- [ ] **MOBL-02**: 合并 auth.store + user.store 为统一 authStore
+- [ ] **MOBL-03**: 合并 quizStore + styleQuizStore 为统一 quizStore
+- [ ] **MOBL-04**: 合并 clothingStore + homeStore 为统一 clothingStore
+- [ ] **MOBL-05**: 提取 stores/index.ts 中内联定义的 store 为独立文件
+- [ ] **MOBL-06**: 激活 @xuno/types 和 @xuno/shared 共享包的实际使用
 
-### Phase 5: 电商闭环 (13 requirements)
+### Code Quality (QUAL)
 
-- [x] **COMM-01**: 标准电商商品页 — 商品详情页包含：图片轮播 + 价格 + 尺码/颜色选择 + 商品描述 + 搭配推荐 + 购买按钮 + 虚拟试衣入口
-- [x] **COMM-02**: GLM 视觉理解图片搜索 — 支持文字搜索 + 图片搜索（GLM 视觉理解提取属性→商品库匹配）+ 多维筛选（价格/品牌/颜色/尺码/风格标签）+ 个性化排序
-- [x] **COMM-03**: 完整购物车 — 支持选尺码/颜色、修改数量、全选/取消全选、价格实时计算、合并结算
-- [x] **COMM-04**: AI 智能尺码推荐 — 基于用户体型数据（身高/体重/三围）+ 品牌尺码表，推荐最适合的尺码并标注"AI推荐"标签
-- [x] **COMM-05**: 库存管理与通知 — 基础库存管理（商家录入/自动扣减）+ 低库存提醒 + 缺货到货通知（用户可订阅）
-- [x] **COMM-06**: 双通道支付 — 支持支付宝 + 微信支付，集成已有 Payment module 的回调验证机制
-- [x] **COMM-07**: 基础促销体系 — 新用户首单优惠（自动应用）+ 优惠码系统（管理员创建/管理），不做复杂促销规则
-- [x] **COMM-08**: 完整订单生命周期 — 订单状态追踪：待支付 → 已支付 → 处理中 → 已发货 → 已完成，支持取消和退款申请
-- [x] **COMM-09**: 平台自营 + 合作商家 — 平台自营商品 + 合作商家入驻（审核制），商家通过 Merchant API 管理商品和订单，代码已有完整商家模块
-- [x] **COMM-10**: 合作商家入驻审核 — 商家申请入驻，平台审核品牌资质和商品质量，通过后获得商家后台权限
-- [x] **COMM-11**: 多级商品分类 — 8 大商品分类（上装/下装/连衣裙/外套/鞋履/配饰/运动装/泳装）+ 子分类导航
-- [x] **COMM-12**: 基础退款流程 — 用户可在订单完成后 7 天内申请退款，商家 48 小时内审核（通过/驳回），退款到原支付方式；定制商品不支持退款（生产特殊性，在购买前明确告知）
-- [x] **COMM-13**: 物流追踪集成 — 对接快递 100 或快递鸟 API，用户在订单详情页可查看实时物流轨迹；商家发货后自动推送物流更新通知
+- [ ] **QUAL-01**: 配置 ESLint no-explicit-any: error（阻止新增 any）
+- [ ] **QUAL-02**: 修复后端 ~668 处现有 any 类型
+- [ ] **QUAL-03**: 修复移动端 ~121 处现有 any 类型
+- [ ] **QUAL-04**: 后端测试覆盖率从 ~15% 提升至 50%+
+- [ ] **QUAL-05**: 移动端测试覆盖率从 ~5% 提升至 30%+
+- [ ] **QUAL-06**: 修复已知 TypeScript 错误（imagePicker.ts, user-key.service.ts）
+- [ ] **QUAL-07**: 移动端 ESLint 添加 recommended-requiring-type-checking 配置
 
-### Phase 6: 社区 & 博主生态 (14 requirements)
+### AI Service (AISV)
 
-- [x] **SOC-01**: 穿搭内容社区 — 以穿搭内容为核心的社区，用户分享每日穿搭、AI 生成方案、试衣效果图，内容调性聚焦时尚穿搭
-- [x] **SOC-02**: 穿搭发帖 — 小红书式发帖：最多 9 张图 + 文字描述 + 风格标签 + 单品标注（关联商品库），支持草稿保存
-- [x] **SOC-03**: 社区信息流 — 双列瀑布流浏览社区内容，支持热门/最新/关注三种排序方式，下拉刷新 + 无限滚动
-- [x] **SOC-04**: 互动系统 — 支持点赞/评论/收藏帖子，评论支持二级回复，通知用户互动消息
-- [x] **SOC-05**: 关注系统 — 用户可关注其他用户/博主，关注后其新内容优先展示在"关注"信息流中
-- [x] **SOC-06**: 一键导入灵感衣橱 — 看到博主或社区的搭配方案时，一键将搭配方案导入自己的"灵感衣橱"保存
-- [x] **SOC-07**: 灵感衣橱自定义分类 — 用户可创建多个分类（如"通勤穿搭"/"约会装备"），每个分类可收藏帖子/方案/试衣效果图，支持拖拽排序
-- [x] **SOC-08**: 博主自然分化机制 — 任何用户都可以发帖，通过内容质量和粉丝数自然分化为普通用户/博主/大V，不需要平台审核
-- [x] **SOC-09**: 博主商品认证和上架 — 博主可将自己的穿搭设计/搭配方案上架为可购买商品（数字方案或关联实体商品），平台抽成
-- [x] **SOC-10**: 博主内容数据面板 — 为高活跃度用户提供基础数据分析（浏览量/点赞/收藏/转化率），激励优质内容创作
-- [x] **SOC-11**: 内容审核 — 双重审核：AI 自动审核（GLM 内容安全）+ 人工审核（高风险内容），确保社区内容健康
-- [x] **SOC-12**: 举报与热门趋势 — 用户可举报不当内容；热门帖子/趋势排行展示，引导内容方向
-- [x] **SOC-13**: 社区冷启动策略 — 上线初期通过三种方式填充内容：1) 官方每日发布 10 条穿搭推荐（AI 生成 + 人工审核）；2) 邀请制内测用户（时尚博主/穿搭爱好者）；3) AI 生成穿搭内容填充（标注"AI 推荐"）
-- [x] **SOC-14**: 博主商品认证门槛 — 博主上架商品需通过平台认证：实名认证 + 至少发布 3 篇优质穿搭内容 + 无违规记录，确保商品质量和社区信任
+- [ ] **AISV-01**: 移除 sys.path hack，使用 pyproject.toml 替代 requirements.txt
+- [ ] **AISV-02**: 合并重复路由（stylist_chat + intelligent_stylist_api → stylist）
+- [ ] **AISV-03**: 按能力域重组 30+ 服务文件（stylist/, tryon/, analysis/, common/）
+- [ ] **AISV-04**: 合并 body_analysis + style_analysis + photo_quality 路由为统一 analysis 路由
 
-### Phase 7: 定制服务 & 品牌合作 (12 requirements)
+## v2 Requirements
 
-- [x] **CUS-01**: 2D 模板定制编辑器 — 用户选择衣服类型（T恤/帽子/鞋子/包包等）→ 上传图案/设计 → 在 2D 模板上拖拽定位（位置/大小/旋转）→ 实时预览效果，类似 Printful 定制体验
-- [x] **CUS-02**: 定制预览效果生成 — 用户完成设计后，调用 AI 生成定制商品的逼真效果图，确认后提交定制请求
-- [x] **CUS-03**: 完整定制流程 — 设计定制图 → 提交定制请求 → 平台审核/报价 → 用户确认付款 → 制作生产 → 精美专属包装快递配送
-- [x] **CUS-04**: 平台报价审核 — 平台接收定制请求后评估制作成本，生成报价单推送给用户，包含预计制作时间和配送时间
-- [x] **CUS-05**: 定制商品支付结算 — 用户确认报价后在线支付，支持支付宝/微信支付，定制商品不支持退款（生产特殊性）
-- [x] **CUS-06**: 精美专属包装快递 — 定制商品使用 AiNeed 专属包装，支持物流追踪，提升开箱体验和品牌感
-- [x] **CUS-07**: 品牌合作专属二维码 — 与合作品牌达成协议，在商品标签上印 AiNeed 二维码，用户购买后扫码自动导入服装数据到 App
-- [x] **CUS-08**: 扫码自动导入服装数据 — 用户扫描品牌二维码后，自动关联正确的商品信息（品牌/尺码/颜色/材质/价格），添加到个人衣橱
-- [x] **CUS-09**: 品牌合作管理后台 — 为合作品牌提供管理后台，管理商品数据、查看扫码导入统计、用户偏好分析
-- [x] **CUS-10**: 品牌商品数据精准关联 — 合作品牌提供详细的商品数据（尺码表/材质说明/搭配建议），提升 AI 推荐精准度
-- [x] **CUS-11**: 2D 编辑器技术方案 — 基于 react-native-skia 或 react-native-svg + gesture-handler 实现拖拽编辑器，支持缩放/旋转/拖拽/对齐辅助线，参考 Printful 定制体验的交互模式
-- [x] **CUS-12**: 定制商品供应链对接 — MVP 与 1-2 家 POD（Print-on-Demand）服务商合作，支持 T恤/帽子/帆布包等基础品类；接收定制订单后自动推送给 POD 服务商生产
+### Advanced Tooling
 
-### Phase 8: 私人形象顾问对接 (13 requirements)
+- **TOOL-01**: Design Token codemod 自动迁移工具
+- **TOOL-02**: NestJS 模块域文档自动生成
+- **TOOL-03**: dependency-cruiser 依赖可视化仪表盘
 
-- [x] **ADV-01**: 平台撮合模式 — 用户在 App 内提交私人定制需求，平台智能匹配适合的造型工作室/顾问，双方在 App 内沟通，平台撮合抽成
-- [x] **ADV-02**: 需求提交表单 — 用户可提交详细需求：期望服务类型（整体形象改造/特定场合造型/色彩诊断等）、预算范围、时间要求、特殊要求
-- [x] **ADV-03**: 智能匹配算法 — 基于用户画像数据 + 需求关键词，匹配工作室/顾问的专长领域、服务评价、地理位置，推荐最合适的 3-5 个候选
-- [x] **ADV-04**: 在线预约系统 — 用户选定顾问后可在线预约服务时间，支持日历视图查看顾问可用时段，预约确认后双方收到通知
-- [x] **ADV-05**: App 内即时通讯 — 用户和顾问在 App 内实时聊天，支持文字/图片/文件分享，方便讨论方案和发送参考资料
-- [x] **ADV-06**: 方案文件分享 — 顾问可为用户创建和分享造型方案文档（穿搭建议/购物清单/色彩分析报告），用户可保存到灵感衣橱
-- [x] **ADV-07**: 服务费用在线支付 — 支持分阶段付款（定金+尾款），服务完成后自动确认，平台托管资金保障双方权益
-- [x] **ADV-08**: 平台抽成结算 — 平台从服务费中抽取佣金，剩余部分结算给顾问/工作室，支持 T+7/T+15 结算周期
-- [x] **ADV-09**: 评价和评分体系 — 服务完成后用户可评价（1-5 星 + 文字评价），评分影响工作室/顾问的排名和曝光，评价公开展示
-- [x] **ADV-10**: 工作室/顾问入驻审核 — 造型工作室/个人顾问申请入驻，平台审核资质（作品集/从业经验/客户评价），通过后上架服务
-- [x] **ADV-11**: 服务案例展示 — 工作室/顾问可展示服务案例（before/after 对比、客户评价、服务内容），帮助用户决策
-- [x] **ADV-12**: 即时通讯消息送达保证 — 消息展示已发送/已送达/已读三种状态；离线消息在用户上线后自动推送；消息存储在数据库，支持历史消息加载
-- [x] **ADV-13**: 资金托管机制 — 用户付款进入平台托管账户（非直接付给顾问），服务完成并用户确认后自动结算给顾问；争议期间资金冻结，平台仲裁后释放
+### Deep Quality
 
-### Phase 0: 基础设施 & 测试基线 (9 requirements)
+- **DQAL-01**: 后端测试覆盖率 50% → 80%
+- **DQAL-02**: 移动端测试覆盖率 30% → 60%
+- **DQAL-03**: E2E 测试覆盖所有核心业务流程
 
-- [x] **INFRA-01**: CI/CD Pipeline — GitHub Actions 配置：PR 触发 lint + test + build，main 分支合并触发自动部署到测试环境；包含并行测试、缓存依赖、构建产物归档
-- [x] **INFRA-02**: 测试框架与覆盖率 — 后端 Jest 测试覆盖率提升到 50%+（核心业务模块 70%+）；移动端配置 Jest + React Native Testing Library；每个 Phase 完成必须通过测试门槛
-- [x] **INFRA-03**: 错误追踪集成 — 后端集成 Sentry（捕获未处理异常 + 性能监控）；移动端集成 Sentry React Native（崩溃报告 + ANR 检测）；错误自动分类和告警
-- [x] **INFRA-04**: 结构化日志策略 — 后端使用 Pino/Winston 输出 JSON 格式日志；每个请求携带追踪 ID（X-Request-Id）；日志级别：error/warn/info/debug；生产环境 info 以上
-- [x] **INFRA-05**: 数据库迁移管理 — 从 db push 切换到 prisma migrate，所有 Schema 变更通过迁移脚本管理；迁移脚本纳入版本控制；生产环境禁止 db push
-- [x] **INFRA-06**: 环境配置分离 — 开发/测试/生产三套环境配置；敏感配置通过环境变量注入（不硬编码）；.env.example 文档化所有必需配置项
-- [x] **INFRA-07**: API 响应格式统一 — 统一为 JSON:API 规范格式（data/meta/errors 结构）；统一错误响应格式（code/message/details）；分页响应包含 total/page/perPage
-- [x] **INFRA-08**: Git 工作流规范 — Git Flow 分支策略（main/develop/feature/release）；PR 模板包含变更描述/测试说明/截图；代码审查清单
-- [x] **INFRA-09**: Docker Compose 生产配置 — 添加健康检查（healthcheck）；资源限制（memory/CPU limits）；日志驱动配置；数据卷备份策略
-
-### Phase 5.5: App 上架准备 & 推送通知 (7 requirements)
-
-- [x] **LAUNCH-01**: 应用商店合规 — App Store & Google Play 合规检查：数据收集声明、权限使用说明、隐私政策链接、年龄分级；确保无违规 API 使用
-- [x] **LAUNCH-02**: 隐私政策与用户协议 — 完整的隐私政策页面（数据收集/使用/存储/删除说明）；用户服务协议；注册时强制同意，后续可在设置中查看；版本更新时重新确认
-- [x] **LAUNCH-03**: FCM 推送集成 — Android 端集成 Firebase Cloud Messaging；支持通知渠道分类（订单/推荐/社区/系统）；通知点击跳转到对应页面
-- [x] **LAUNCH-04**: APNs 推送集成 — iOS 端集成 Apple Push Notification service；后端统一推送服务抽象层（FCM/APNs 透明切换）；推送证书管理
-- [x] **LAUNCH-05**: 通知模板系统 — 4 类通知模板：订单通知（支付成功/发货/签收）、推荐通知（每日推荐/新风格）、社区通知（点赞/评论/关注）、系统通知（版本更新/活动）；模板支持变量替换
-- [x] **LAUNCH-06**: 通知偏好管理 — 用户可按通知类型开关推送（订单/推荐/社区/系统）；支持免打扰时段设置；通知设置同步到服务端
-- [x] **LAUNCH-07**: 上架素材准备 — App 图标（1024x1024）、启动页、应用截图（6.7"/6.5"/5.5" 三种尺寸）、应用描述和关键词（ASO 优化）、分类选择
-
-### Phase 9: 运营后台 & 性能优化 & 数据种子 (8 requirements)
-
-- [x] **OPS-01**: 管理后台基础框架 — 基于 NestJS + React Admin 搭建管理后台；RBAC 权限控制（超级管理员/运营/客服/审核员）；操作审计日志
-- [x] **OPS-02**: 用户管理 — 用户列表/搜索/详情查看；用户封禁/解封；用户数据导出；异常行为标记
-- [x] **OPS-03**: 内容审核后台 — AI 审核 + 人工审核双队列；审核员可查看/通过/拒绝/删除内容；审核统计和效率报表
-- [x] **OPS-04**: 数据看板 — 核心指标：DAU/MAU、订单量/GMV、转化率、热门商品 Top20、用户留存率；支持日/周/月维度切换；数据每日定时聚合
-- [x] **OPS-05**: 初始数据种子 — 至少 500 件服装商品数据（覆盖 8 大分类，每类 60+件）；至少 50 个品牌数据；风格标签体系；初始风格测试题库（8 题）
-- [x] **OPS-06**: 性能基线与优化 — 首屏加载 < 2 秒；API P95 响应 < 500ms；图片 CDN 加速 + WebP 格式 + 懒加载；Redis 热点数据缓存（商品详情/推荐列表 TTL 5min）
-- [x] **OPS-07**: 移动端性能优化 — 长列表虚拟化（FlashList）；图片压缩和渐进式加载；JS Bundle 分割和懒加载；内存泄漏检测和修复
-- [x] **OPS-08**: 配置管理 — Feature Flag 管理界面（已有模块的可视化）；系统参数配置（推荐算法权重/限流阈值/缓存 TTL）；A/B 测试配置
-
-## Traceability
-
-| Requirement | Phase | Status | Source |
-|-------------|-------|--------|--------|
-| PROF-01 | Phase 1 | Complete | 体型分析讨论 |
-| PROF-02 | Phase 1 | Complete | 拍照引导讨论 |
-| PROF-03 | Phase 1 | Complete | 照片质量讨论 |
-| PROF-04 | Phase 1 | Complete | 可视化报告讨论 |
-| PROF-05 | Phase 1 | Complete | 注册方式讨论 |
-| PROF-06 | Phase 1 | Complete | 引导策略讨论 |
-| PROF-07 | Phase 1 | Complete | 链路设计讨论 |
-| PROF-08 | Phase 1 | Complete | 风格测试讨论 |
-| PROF-09 | Phase 1 | Complete | 色彩推导讨论 |
-| PROF-10 | Phase 1 | Complete | 色彩季型讨论 |
-| PROF-11 | Phase 1 | Complete | 伴随学习讨论 |
-| PROF-12 | Phase 1 | Complete | 照片存储讨论 |
-| PROF-13 | Phase 1 | Complete | 数据同步讨论 |
-| PROF-14 | Phase 1 | Complete | 画像修改讨论 |
-| AIS-01 | Phase 2 | Complete | 方案展示讨论 |
-| AIS-02 | Phase 2 | Complete | 输入方式讨论 |
-| AIS-03 | Phase 2 | Complete | 画像驱动讨论 |
-| AIS-04 | Phase 2 | Complete | 推荐理由讨论 |
-| AIS-05 | Phase 2 | Complete | 替换交互讨论 |
-| AIS-06 | Phase 2 | Complete | 天气集成讨论 |
-| AIS-07 | Phase 2 | Complete | 对话归档讨论 |
-| AIS-08 | Phase 2 | Complete | 原有 |
-| AIS-09 | Phase 2 | Complete | 原有 |
-| AIS-10 | Phase 2 | Complete | 反馈机制讨论 |
-| AIS-11 | Phase 2 | Complete | 场景化讨论 |
-| AIS-12 | Phase 2 | Complete | 引导问题讨论 |
-| AIS-13 | Phase 2 | Complete | 降级体验讨论 |
-| AIS-14 | Phase 2 | Complete | 图片输入讨论 |
-| VTO-01 | Phase 3 | Complete | 照片要求讨论 |
-| VTO-02 | Phase 3 | Complete | 照片修复讨论 |
-| VTO-03 | Phase 3 | Complete | API方案讨论 |
-| VTO-04 | Phase 3 | Complete | 降级方案讨论 |
-| VTO-05 | Phase 3 | Complete | 等待体验讨论 |
-| VTO-06 | Phase 3 | Complete | 时效保障讨论 |
-| VTO-07 | Phase 3 | Complete | 重试机制讨论 |
-| VTO-08 | Phase 3 | Complete | 持久化讨论 |
-| VTO-09 | Phase 3 | Complete | 缓存讨论 |
-| VTO-10 | Phase 3 | Complete | 分享讨论 |
-| VTO-11 | Phase 3 | Complete | 对比讨论 |
-| VTO-12 | Phase 3 | Complete | 存储讨论 |
-| VTO-13 | Phase 3 | Complete | API统一讨论 |
-| REC-01 | Phase 4 | Complete | 信息流讨论 |
-| REC-02 | Phase 4 | Complete | 推荐分类讨论 |
-| REC-03 | Phase 4 | Complete | 搭配推荐讨论 |
-| REC-04 | Phase 4 | Complete | 算法演进讨论 |
-| REC-05 | Phase 4 | Complete | 冷启动讨论 |
-| REC-06 | Phase 4 | Complete | 行为权重讨论 |
-| REC-07 | Phase 4 | Complete | 实时更新讨论 |
-| REC-08 | Phase 4 | Complete | 色彩评分讨论 |
-| REC-09 | Phase 4 | Complete | 探索推荐讨论 |
-| REC-10 | Phase 4 | Complete | 解释性讨论 |
-| REC-11 | Phase 4 | Complete | 加载策略讨论 |
-| REC-12 | Phase 4 | Complete | 去重策略讨论 |
-| REC-13 | Phase 4 | Complete | 多样性讨论 |
-| COMM-01 | Phase 5 | Complete | 商品页讨论 |
-| COMM-02 | Phase 5 | Complete | 图片搜索讨论 |
-| COMM-03 | Phase 5 | Complete | 购物车讨论 |
-| COMM-04 | Phase 5 | Complete | 尺码推荐讨论 |
-| COMM-05 | Phase 5 | Complete | 库存讨论 |
-| COMM-06 | Phase 5 | Complete | 支付讨论 |
-| COMM-07 | Phase 5 | Complete | 促销讨论 |
-| COMM-08 | Phase 5 | Complete | 订单讨论 |
-| COMM-09 | Phase 5 | Complete | 商家体系讨论 |
-| COMM-10 | Phase 5 | Complete | 商家审核讨论 |
-| COMM-11 | Phase 5 | Complete | 商品分类讨论 |
-| COMM-12 | Phase 5 | Complete | 退款流程讨论 |
-| COMM-13 | Phase 5 | Complete | 物流讨论 |
-| SOC-01 | Phase 6 | Complete | 社区定位讨论 |
-| SOC-02 | Phase 6 | Complete | 发帖形式讨论 |
-| SOC-03 | Phase 6 | Complete | 信息流讨论 |
-| SOC-04 | Phase 6 | Complete | 互动系统讨论 |
-| SOC-05 | Phase 6 | Complete | 关注系统讨论 |
-| SOC-06 | Phase 6 | Complete | 导入衣橱讨论 |
-| SOC-07 | Phase 6 | Complete | 衣橱分类讨论 |
-| SOC-08 | Phase 6 | Complete | 博主分化讨论 |
-| SOC-09 | Phase 6 | Complete | 商品上架讨论 |
-| SOC-10 | Phase 6 | Complete | 数据面板讨论 |
-| SOC-11 | Phase 6 | Complete | 内容审核讨论 |
-| SOC-12 | Phase 6 | Complete | 举报趋势讨论 |
-| SOC-13 | Phase 6 | Complete | 冷启动讨论 |
-| SOC-14 | Phase 6 | Complete | 博主认证讨论 |
-| CUS-01 | Phase 7 | Complete | 编辑器讨论 |
-| CUS-02 | Phase 7 | Complete | 预览效果讨论 |
-| CUS-03 | Phase 7 | Complete | 定制流程讨论 |
-| CUS-04 | Phase 7 | Complete | 报价审核讨论 |
-| CUS-05 | Phase 7 | Complete | 定制支付讨论 |
-| CUS-06 | Phase 7 | Complete | 包装快递讨论 |
-| CUS-07 | Phase 7 | Complete | 二维码讨论 |
-| CUS-08 | Phase 7 | Complete | 扫码导入讨论 |
-| CUS-09 | Phase 7 | Complete | 品牌后台讨论 |
-| CUS-10 | Phase 7 | Complete | 数据关联讨论 |
-| CUS-11 | Phase 7 | Complete | 编辑器选型讨论 |
-| CUS-12 | Phase 7 | Complete | 供应链讨论 |
-| ADV-01 | Phase 8 | Complete | 商业模式讨论 |
-| ADV-02 | Phase 8 | Complete | 需求表单讨论 |
-| ADV-03 | Phase 8 | Complete | 匹配算法讨论 |
-| ADV-04 | Phase 8 | Complete | 预约系统讨论 |
-| ADV-05 | Phase 8 | Complete | 即时通讯讨论 |
-| ADV-06 | Phase 8 | Complete | 文件分享讨论 |
-| ADV-07 | Phase 8 | Complete | 服务支付讨论 |
-| ADV-08 | Phase 8 | Complete | 抽成结算讨论 |
-| ADV-09 | Phase 8 | Complete | 评价体系讨论 |
-| ADV-10 | Phase 8 | Complete | 入驻审核讨论 |
-| ADV-11 | Phase 8 | Complete | 案例展示讨论 |
-| ADV-12 | Phase 8 | Complete | IM可靠性讨论 |
-| ADV-13 | Phase 8 | Complete | 资金托管讨论 |
-| INFRA-01 | Phase 0 | Complete | 基础设施讨论 |
-| INFRA-02 | Phase 0 | Complete | 基础设施讨论 |
-| INFRA-03 | Phase 0 | Complete | 基础设施讨论 |
-| INFRA-04 | Phase 0 | Complete | 基础设施讨论 |
-| INFRA-05 | Phase 0 | Complete | 基础设施讨论 |
-| INFRA-06 | Phase 0 | Complete | 基础设施讨论 |
-| INFRA-07 | Phase 0 | Complete | 基础设施讨论 |
-| INFRA-08 | Phase 0 | Complete | 基础设施讨论 |
-| INFRA-09 | Phase 0 | Complete | 基础设施讨论 |
-| LAUNCH-01 | Phase 5.5 | Complete | 上架准备讨论 |
-| LAUNCH-02 | Phase 5.5 | Complete | 上架准备讨论 |
-| LAUNCH-03 | Phase 5.5 | Complete | 上架准备讨论 |
-| LAUNCH-04 | Phase 5.5 | Complete | 上架准备讨论 |
-| LAUNCH-05 | Phase 5.5 | Complete | 上架准备讨论 |
-| LAUNCH-06 | Phase 5.5 | Complete | 上架准备讨论 |
-| LAUNCH-07 | Phase 5.5 | Complete | 上架准备讨论 |
-| OPS-01 | Phase 9 | Complete | 运营后台讨论 |
-| OPS-02 | Phase 9 | Complete | 运营后台讨论 |
-| OPS-03 | Phase 9 | Complete | 运营后台讨论 |
-| OPS-04 | Phase 9 | Complete | 运营后台讨论 |
-| OPS-05 | Phase 9 | Complete | 运营后台讨论 |
-| OPS-06 | Phase 9 | Complete | 运营后台讨论 |
-| OPS-07 | Phase 9 | Complete | 运营后台讨论 |
-| OPS-08 | Phase 9 | Complete | 运营后台讨论 |
-
-**Coverage:** 130 requirements across 11 phases.
-
-## Decision Log
-
-### Phase 1 Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| 注册方式 | 手机号+验证码 + 微信一键登录 | 国内用户习惯，最低摩擦力 |
-| 引导策略 | 基本信息强制，照片/风格测试可选 | 平衡推荐质量和用户体验 |
-| 拍照引导 | 实时参考线 + 姿势提示 | 确保照片质量，降低重拍率 |
-| 照片存储 | 永久保留加密，用户可删 | 支持后续虚拟试衣需求 |
-| 风格测试 | 图片选择式，5-8 题 | 趣味性强完成率高 |
-| 色彩偏好 | 隐性推导，不直接问 | 更自然更准确 |
-| 画像展示 | 可视化报告 + 分享海报 | 增强仪式感，社交传播 |
-| 引导链路 | 最短链路，首页提示补全 | 不阻塞用户，自然引导 |
-
-### Phase 2 Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| 对话 UI | 方案页为主（整体图+单品列表） | 信息密度高，购买转化短 |
-| 输入方式 | MVP：文字+场景按钮 | 覆盖80%场景，开发量最小 |
-| 推荐理由 | 可折叠理由卡片 | 透明度与空间兼顾 |
-| 单品替换 | 弹出同类商品列表 | 灵活调整方案 |
-| 对话历史 | 按日归档 | 快速定位历史方案 |
-
-### Phase 3 Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| 生成 API | Doubao-Seedream（主）+ GLM（备） | 专业换装效果，双保险 |
-| 质量保证 | 用户判断 + 每日3次免费重试 | 用户友好，防滥用 |
-
-### Phase 4 Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| 信息流布局 | 小红书式双列瀑布流 | 适合穿搭图片浏览 |
-| 算法演进 | 渐进式（规则→AI→协同过滤） | MVP可行，后续有提升空间 |
-| 冷启动 | 基于画像的通用推荐 | 衔接 Phase 1 画像数据 |
-
-### Phase 5 Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| 商家体系 | 平台自营 + 合作商家（审核制） | 代码已有商家模块，双轨并行 |
-| 图片搜索 | GLM 视觉理解 + 属性匹配 | 代码已有 search 模块支持 |
-
-### Phase 6 Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| 社区定位 | 穿搭内容社区 | 聚焦时尚，差异化定位 |
-| 博主体系 | 自然分化 | 降低门槛，生态健康 |
-| 博主商品 | 支持上架销售，平台抽成 | 商业闭环，激励优质内容 |
-| 发帖形式 | 小红书式（9图+标签） | 用户熟悉，信息密度高 |
-| 灵感衣橱 | 自定义分类 + 拖拽排序 | 灵活管理，个性化体验 |
-
-### Phase 7 Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| 定制编辑器 | 2D 模板拖拽编辑 | 直观易用，开发量适中 |
-| 品牌扫码 | 合作品牌专属二维码 | 数据精准，用户体验好 |
-| 定制流程 | 设计→报价→确认→制作→配送 | 代码已有基础流程 |
-
-### Phase 8 Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| 商业模式 | 平台撮合 | 轻资产，可扩展 |
-| 功能范围 | 全套：匹配+通讯+支付+评价 | 完整服务闭环 |
-
-### Phase 0 Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| CI/CD | GitHub Actions | 免费，与 GitHub 深度集成 |
-| 测试框架 | Jest (后端+移动端) | 项目已在使用，无需引入新框架 |
-| 错误追踪 | Sentry | 行业标准，支持多平台 |
-| 日志格式 | JSON 结构化 | 便于日志分析和检索 |
-| 迁移策略 | prisma migrate | 生产级 Schema 管理 |
-
-### Phase 5.5 Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| 推送服务 | FCM + APNs 双通道 | 覆盖 Android + iOS |
-| 通知架构 | 统一推送抽象层 | 业务层不感知平台差异 |
-| 合规标准 | App Store + Google Play 双合规 | 覆盖两大应用商店 |
-
-### Phase 9 Decisions
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| 管理后台 | NestJS + React Admin | 复用后端技术栈 |
-| 数据种子 | 500+ 件商品 | 覆盖 8 大分类，确保不空白 |
-| 性能目标 | 首屏 <2s, API P95 <500ms | 移动端用户体验基线 |
-
-## v3 (Deferred)
+## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| AI 图片输入（Phase 2 延伸） | Phase 2.1 后续补充 |
-| 语音输入 | Phase 2.1 后续补充 |
-| Web 端应用 | 移动端优先 |
-| 国际化多语言 | v1 先中文 |
-| 本地 ML 推理（CatVTON/SASRec/DensePose） | 已决定用 API 替代 |
-| 退款完整流程 | v3 完善 |
-| 完整监控 (Prometheus/Grafana) | v3 |
-| 完整测试覆盖 (80%+) | v3 |
-| 复杂促销体系（满减/秒杀/组合优惠） | v3 |
-| 协同过滤推荐 | 等用户数据积累 |
-| 商家独立 Web 管理后台 | v3 |
-| FashionCLIP 向量检索图片搜索 | v3 升级 |
-| 3D 虚拟试衣 | v3 探索 |
-| 微信/QQ 分享 SDK 集成 (VTO-10) | v3 - 当前为 stub |
-| 交互式试衣对比 slider (VTO-11) | v3 - 当前为静态并排 |
+| 新业务功能开发 | 本次只规整，不新增功能 |
+| 数据库 Schema 重设计 | 超出规整范围，风险过高 |
+| 替换核心技术栈 | 不更换 NestJS/RN/Prisma 等 |
+| HarmonyOS 应用规整 | 不在本次范围 |
+| 升级锁定的 RN 依赖 | 兼容性问题未解决 |
+| 100% 测试覆盖率 | 不现实，优先关键路径 |
+| 微服务拆分 | 过度工程 |
+| 引入新 UI 框架 | 现有 Token 体系已足够 |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| DSGN-01 | Phase 2 | Pending |
+| DSGN-02 | Phase 2 | Pending |
+| DSGN-03 | Phase 2 | Pending |
+| DSGN-04 | Phase 2 | Pending |
+| DSGN-05 | Phase 2 | Pending |
+| DSGN-06 | Phase 2 | Pending |
+| ARCH-01 | Phase 4 | Pending |
+| ARCH-02 | Phase 4 | Pending |
+| ARCH-03 | Phase 4 | Pending |
+| ARCH-04 | Phase 4 | Pending |
+| ARCH-05 | Phase 4 | Pending |
+| ARCH-06 | Phase 1 | Pending |
+| ARCH-07 | Phase 1 | Pending |
+| ARCH-08 | Phase 4 | Pending |
+| ARCH-09 | Phase 4 | Pending |
+| ARCH-10 | Phase 4 | Pending |
+| ARCH-11 | Phase 4 | Pending |
+| ENGR-01 | Phase 0 | Pending |
+| ENGR-02 | Phase 1 | Pending |
+| ENGR-03 | Phase 0 | Pending |
+| ENGR-04 | Phase 0 | Pending |
+| ENGR-05 | Phase 0 | Pending |
+| ENGR-06 | Phase 0 | Pending |
+| ENGR-07 | Phase 0 | Pending |
+| ENGR-08 | Phase 1 | Pending |
+| MOBL-01 | Phase 5 | Pending |
+| MOBL-02 | Phase 5 | Pending |
+| MOBL-03 | Phase 5 | Pending |
+| MOBL-04 | Phase 5 | Pending |
+| MOBL-05 | Phase 5 | Pending |
+| MOBL-06 | Phase 5 | Pending |
+| QUAL-01 | Phase 1 | Pending |
+| QUAL-02 | Phase 7 | Pending |
+| QUAL-03 | Phase 7 | Pending |
+| QUAL-04 | Phase 7 | Pending |
+| QUAL-05 | Phase 7 | Pending |
+| QUAL-06 | Phase 1 | Pending |
+| QUAL-07 | Phase 1 | Pending |
+| AISV-01 | Phase 6 | Pending |
+| AISV-02 | Phase 6 | Pending |
+| AISV-03 | Phase 6 | Pending |
+| AISV-04 | Phase 6 | Pending |
+
+**Coverage:**
+- v1 requirements: 36 total
+- Mapped to phases: 36
+- Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-04-13*
-*Updated: 2026-04-14 — All 130 requirements marked Complete, 11 phases executed, audit fixes verified*
+*Requirements defined: 2026-04-16*
+*Last updated: 2026-04-16 after initial definition*
