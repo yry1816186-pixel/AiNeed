@@ -113,7 +113,8 @@ export const FavoritesScreen: React.FC = () => {
     try {
       await favoriteApi.remove(id);
       setItems((prev) => prev.filter((item) => item.id !== id));
-    } catch {
+    } catch (error) {
+      console.error('Favorites operation failed:', error);
       Alert.alert("操作失败", "取消收藏失败，请重试");
     }
   }, []);

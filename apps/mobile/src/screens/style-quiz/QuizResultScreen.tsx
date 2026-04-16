@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { useQuizStore } from "../../stores/quizStore";
-import { theme, Colors, Spacing, BorderRadius } from '../design-system/theme';
+import { theme, Colors, Spacing, BorderRadius } from '../../design-system/theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 const TAG_COLORS = [
@@ -66,8 +66,9 @@ export const QuizResultScreen: React.FC = () => {
         title: "我的风格画像",
         message: `我在寻裳完成了风格测试！我的风格标签：${styleTags.join("、")}`,
       });
-    } catch {
-      // Share failed silently
+    } catch (error) {
+      // Share failed
+      console.error('Share failed:', error);
     }
   }, [styleTags]);
 

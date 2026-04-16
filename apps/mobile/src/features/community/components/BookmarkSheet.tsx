@@ -59,8 +59,9 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
           )
         );
       }
-    } catch {
-      // Silently fail
+    } catch (error) {
+      // Bookmark loading failure is non-critical
+      console.error('Bookmark operation failed:', error);
     } finally {
       setLoading(false);
     }

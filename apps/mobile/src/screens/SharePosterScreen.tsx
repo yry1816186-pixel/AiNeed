@@ -27,8 +27,9 @@ export const SharePosterScreen: React.FC = () => {
     const load = async () => {
       try {
         await Promise.all([loadProfile(), loadColorAnalysis()]);
-      } catch {
+      } catch (error) {
         // Continue with whatever data loaded
+        console.error('Failed to load share data:', error);
       } finally {
         setIsLoading(false);
       }

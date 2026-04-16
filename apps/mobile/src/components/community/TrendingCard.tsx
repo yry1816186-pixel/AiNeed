@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { communityApi } from "../../services/api/community.api";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme";
 
 interface TrendingTag {
   name: string;
@@ -49,8 +49,9 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
         }));
         setTags(trendingTags);
       }
-    } catch {
-      // Silently fail - trending is supplementary content
+    } catch (error) {
+      // Trending is supplementary content
+      console.error('Failed to load trending:', error);
     } finally {
       setLoading(false);
     }

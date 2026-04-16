@@ -12,7 +12,7 @@ import {
   FlatList,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
+import { theme } from '../../design-system/theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { communityApi } from "../../services/api/community.api";
 
@@ -137,8 +137,9 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
           setSelectedCollectionId(cols[0].id ?? null);
         }
       }
-    } catch {
+    } catch (error) {
       // Collections loading failure is non-critical
+      console.error('Failed to load collections:', error);
     }
   }, []);
 

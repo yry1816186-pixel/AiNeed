@@ -137,8 +137,9 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
           setSelectedCollectionId(cols[0].id ?? null);
         }
       }
-    } catch {
+    } catch (error) {
       // Collections loading failure is non-critical
+      console.error('Failed to load collections:', error);
     }
   }, []);
 

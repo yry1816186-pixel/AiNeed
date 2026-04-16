@@ -12,7 +12,7 @@ import {
   Modal,
 } from "react-native";
 import { communityApi } from "../../services/api/community.api";
-import { theme } from '../design-system/theme';
+import { theme } from '../../design-system/theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 
@@ -59,8 +59,9 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
           )
         );
       }
-    } catch {
-      // Silently fail
+    } catch (error) {
+      // Bookmark loading failure is non-critical
+      console.error('Bookmark operation failed:', error);
     } finally {
       setLoading(false);
     }

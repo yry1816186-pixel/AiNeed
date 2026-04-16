@@ -88,16 +88,18 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
         const flags = JSON.parse(stored) as Record<string, FeatureFlagClientDto>;
         dispatch({ type: "SET_FLAGS", payload: flags });
       }
-    } catch {
+    } catch (error) {
       // ignore storage errors
+      console.error('Feature flag storage error:', error);
     }
   }, []);
 
   const saveToStorage = useCallback(async (flags: Record<string, FeatureFlagClientDto>) => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(flags));
-    } catch {
+    } catch (error) {
       // ignore storage errors
+      console.error('Feature flag storage error:', error);
     }
   }, []);
 

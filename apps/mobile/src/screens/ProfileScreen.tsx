@@ -60,8 +60,9 @@ export const ProfileScreenComponent: React.FC = () => {
       if (response.success && response.data) {
         setStats(response.data);
       }
-    } catch {
-      // Stats fetch failed silently
+    } catch (error) {
+      // Stats fetch failed
+      console.error('Failed to load profile stats:', error);
     } finally {
       setLoading(false);
       setRefreshing(false);

@@ -252,8 +252,9 @@ export const SearchScreen: React.FC = () => {
     try {
       await searchApi.clearHistory();
       setHistory([]);
-    } catch {
+    } catch (error) {
       // keep UI stable even if clear history fails
+      console.error('Failed to clear search history:', error);
     }
   }, []);
 

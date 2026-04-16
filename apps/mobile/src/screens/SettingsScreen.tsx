@@ -136,8 +136,9 @@ export const SettingsScreen: React.FC = () => {
         onPress: async () => {
           try {
             await authApi.logout();
-          } catch {
+          } catch (error) {
             // Continue regardless
+            console.error('Settings operation failed:', error);
           }
           void logout();
           navigation.reset({ index: 0, routes: [{ name: 'Login' }] });

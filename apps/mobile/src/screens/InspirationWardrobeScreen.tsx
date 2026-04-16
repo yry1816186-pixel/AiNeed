@@ -62,8 +62,9 @@ export const InspirationWardrobeScreen: React.FC = () => {
           setSelectedCollection(mapped[0].id);
         }
       }
-    } catch {
+    } catch (error) {
       // Collections non-critical
+      console.error('Failed to load collections:', error);
     }
   }, [selectedCollection]);
 
