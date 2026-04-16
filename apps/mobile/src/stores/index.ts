@@ -5,16 +5,15 @@ export * from "../features/wardrobe/stores/clothingStore";
 export * from "../features/wardrobe/stores/wardrobeStore";
 export * from "../features/profile/stores/profileStore";
 export * from "../features/style-quiz/stores/quizStore";
-export * from "../features/style-quiz/stores/styleQuizStore";
 export * from "../features/onboarding/stores/onboardingStore";
 export * from "../features/tryon/stores/photoStore";
 export * from "../features/home/stores/homeStore";
-export * from "../features/auth/stores/user.store";
 export * from "../shared/stores/app.store";
 export * from "../features/stylist/stores/aiStylistStore";
 export * from "../features/stylist/stores/aiStylistChatStore";
 export * from "../features/notifications/stores/notificationStore";
-export { useAuthStore } from "../features/auth/stores/auth.store";
+export { useAuthStore } from "../features/auth/stores/authStore";
+export type { AuthState, StyleProfile } from "../features/auth/stores/authStore";
 
 export { useAnalysisStore } from "../features/profile/stores/analysis.store";
 export { useRecommendationStore } from "../features/home/stores/recommendation.store";

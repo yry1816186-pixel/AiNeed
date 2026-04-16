@@ -3,9 +3,28 @@ import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../../../utils/secureStorage";
 import apiClient from "../../../services/api/client";
-
 import { AppError, AppErrorCode, toAppError } from "../../../services/api/error";
-import type { User, AuthTokens, LoginCredentials, RegisterData } from "../../../types/user";
+import type {
+  User,
+  AuthTokens,
+  LoginCredentials,
+  RegisterData,
+  UserPreferences,
+  UserStats,
+} from "../types";
+import type { ApiResponse } from "../types";
+
+interface StyleProfile {
+  preferredStyles: string[];
+  preferredColors: string[];
+  avoidedColors: string[];
+  styleAvoidances: string[];
+  fitGoals: string[];
+  bodyType?: string;
+  skinTone?: string;
+  colorSeason?: string;
+  budget?: "low" | "medium" | "high" | "luxury";
+}
 
 interface AuthState {
   user: User | null;
@@ -17,6 +36,11 @@ interface AuthState {
   error: AppError | null;
   onboardingCompleted: boolean;
   isVip: boolean;
+  userProfile: User | null;
+  preferences: UserPreferences | null;
+  styleProfile: StyleProfile | null;
+  stats: UserStats | null;
+  lastFetchedAt: number | null;
 
   login: (credentials: LoginCredentials) => Promise<void>;
   loginWithPhone: (phone: string, code: string) => Promise<void>;
@@ -26,6 +50,13 @@ interface AuthState {
   refreshAuth: () => Promise<void>;
   setUser: (user: User | null) => void;
   clearError: () => void;
+  fetchProfile: () => Promise<void>;
+  fetchPreferences: () => Promise<void>;
+  fetchStats: () => Promise<void>;
+  updateProfile: (data: Partial<User>) => Promise<void>;
+  updatePreferences: (data: Partial<UserPreferences>) => Promise<void>;
+  updateStyleProfile: (data: Partial<StyleProfile>) => Promise<void>;
+  refreshAll: () => Promise<void>;
 }
 
 const secureStorageAdapter: StateStorage = {
@@ -105,6 +136,15 @@ function deriveIsVip(user: User | null): boolean {
   return user?.subscriptionTier === "vip" || user?.subscriptionTier === "premium";
 }
 
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
+function isCacheValid(lastFetchedAt: number | null): boolean {
+  if (!lastFetchedAt) {
+    return false;
+  }
+  return Date.now() - lastFetchedAt < CACHE_TTL_MS;
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -117,6 +157,11 @@ export const useAuthStore = create<AuthState>()(
       error: null,
       onboardingCompleted: false,
       isVip: false,
+      userProfile: null,
+      preferences: null,
+      styleProfile: null,
+      stats: null,
+      lastFetchedAt: null,
 
       login: async (credentials: LoginCredentials) => {
         set({ isLoading: true, error: null });
@@ -254,9 +299,6 @@ export const useAuthStore = create<AuthState>()(
         } catch {
           // ignore clear errors during logout
         }
-        // Dynamic import to avoid circular dependency at module load time
-        // (auth.store -> index -> auth.store). clearAllStores is only called
-        // at runtime during logout, so the circular reference is safe.
         const { clearAllStores } = await import("../../../stores/index");
         clearAllStores();
         set({
@@ -267,6 +309,11 @@ export const useAuthStore = create<AuthState>()(
           error: null,
           onboardingCompleted: false,
           isVip: false,
+          userProfile: null,
+          preferences: null,
+          styleProfile: null,
+          stats: null,
+          lastFetchedAt: null,
         });
       },
 
@@ -319,6 +366,139 @@ export const useAuthStore = create<AuthState>()(
         })),
 
       clearError: () => set({ error: null }),
+
+      fetchProfile: async () => {
+        const { lastFetchedAt, userProfile } = get();
+        if (userProfile && isCacheValid(lastFetchedAt)) {
+          return;
+        }
+
+        set({ isLoading: true, error: null });
+        try {
+          const response: ApiResponse<User> = await apiClient.get<User>("/auth/me");
+          if (response.success && response.data) {
+            set({ userProfile: response.data, lastFetchedAt: Date.now() });
+          } else {
+            set({ error: response.error ? toAppError(response.error) : null });
+          }
+        } catch (err) {
+          set({ error: toAppError(err) });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      fetchPreferences: async () => {
+        try {
+          const response: ApiResponse<UserPreferences> = await apiClient.get<UserPreferences>(
+            "/auth/preferences"
+          );
+          if (response.success && response.data) {
+            set({ preferences: response.data });
+          }
+        } catch {
+          // non-blocking
+        }
+      },
+
+      fetchStats: async () => {
+        try {
+          const response: ApiResponse<UserStats> = await apiClient.get<UserStats>("/user/stats");
+          if (response.success && response.data) {
+            set({ stats: response.data });
+          }
+        } catch {
+          // non-blocking
+        }
+      },
+
+      updateProfile: async (data: Partial<User>) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response: ApiResponse<User> = await apiClient.put<User>("/auth/profile", data);
+          if (response.success && response.data) {
+            set({ userProfile: response.data, lastFetchedAt: Date.now() });
+          } else {
+            set({ error: response.error ? toAppError(response.error) : null });
+          }
+        } catch (err) {
+          set({ error: toAppError(err) });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      updatePreferences: async (data: Partial<UserPreferences>) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response: ApiResponse<UserPreferences> = await apiClient.put<UserPreferences>(
+            "/auth/preferences",
+            data
+          );
+          if (response.success && response.data) {
+            set({ preferences: response.data });
+          } else {
+            set({ error: response.error ? toAppError(response.error) : null });
+          }
+        } catch (err) {
+          set({ error: toAppError(err) });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      updateStyleProfile: async (data: Partial<StyleProfile>) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response: ApiResponse<StyleProfile> = await apiClient.put<StyleProfile>(
+            "/profile/style",
+            data
+          );
+          if (response.success && response.data) {
+            set({ styleProfile: response.data });
+          } else {
+            set({ styleProfile: { ...get().styleProfile, ...data } as StyleProfile });
+          }
+        } catch {
+          set({ styleProfile: { ...get().styleProfile, ...data } as StyleProfile });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      refreshAll: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const [profileRes, prefsRes, statsRes] = await Promise.allSettled([
+            apiClient.get<User>("/auth/me"),
+            apiClient.get<UserPreferences>("/auth/preferences"),
+            apiClient.get<UserStats>("/user/stats"),
+          ]);
+
+          const userProfile =
+            profileRes.status === "fulfilled" && profileRes.value.success
+              ? profileRes.value.data ?? null
+              : null;
+          const preferences =
+            prefsRes.status === "fulfilled" && prefsRes.value.success
+              ? prefsRes.value.data ?? null
+              : null;
+          const stats =
+            statsRes.status === "fulfilled" && statsRes.value.success
+              ? statsRes.value.data ?? null
+              : null;
+
+          set({
+            userProfile,
+            preferences,
+            stats,
+            lastFetchedAt: Date.now(),
+            isLoading: false,
+          });
+        } catch (err) {
+          set({ error: toAppError(err), isLoading: false });
+        }
+      },
     }),
     {
       name: "auth-v2-storage",
@@ -338,3 +518,5 @@ export const useAuthStore = create<AuthState>()(
 apiClient.onAuthExpired(() => {
   void useAuthStore.getState().logout();
 });
+
+export type { AuthState, StyleProfile };
