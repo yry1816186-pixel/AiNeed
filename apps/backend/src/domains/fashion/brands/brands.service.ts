@@ -456,7 +456,7 @@ export class BrandsService {
         brandId,
         productId,
         code,
-        payload: payload as unknown as Prisma.InputJsonValue,
+        payload: payload as unknown as Prisma.JsonValue,
       },
     });
   }

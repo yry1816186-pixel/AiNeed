@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 /**
  * Prisma 客户端接口（支持动态模型访问）
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface PrismaClientWithModels extends PrismaClient {
   [model: string]: any;
 }

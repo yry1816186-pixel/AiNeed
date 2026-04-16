@@ -7,7 +7,7 @@ import { REDIS_CLIENT } from '../../../common/redis/redis.service';
 
 const CHANNEL_PREFIX = 'ws:event:';
 
-interface EventEnvelope {
+export interface EventEnvelope {
   type: string;
   userId: string;
   payload: Record<string, unknown>;

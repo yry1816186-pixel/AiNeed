@@ -8,11 +8,12 @@ import {
   Param,
   Query,
   UseGuards,
-  Request,
+  Request as NestRequest,
   ParseIntPipe,
   UseInterceptors,
   UploadedFiles,
 } from "@nestjs/common";
+import { Request } from "express";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import {
   ApiTags,
@@ -28,7 +29,7 @@ import { Throttle } from "@nestjs/throttler";
 import { Request } from "express";
 
 import { RequestWithUser } from "../../common/types/common.types";
-import { AuthGuard } from "../auth/guards/auth.guard";
+import { AuthGuard } from "../../domains/identity/auth/guards/auth.guard";
 
 import { CommunityService } from "./community.service";
 import {
@@ -72,7 +73,7 @@ export class CommunityController {
   @ApiResponse({ status: 400, description: "请求参数错误" })
   @ApiResponse({ status: 401, description: "未授权" })
   async createPost(
-    @Request() req: RequestWithUser,
+    @NestRequest() req: RequestWithUser,
     @Body() dto: CreatePostDto,
     @UploadedFiles() _files: Express.Multer.File[],
   ) {

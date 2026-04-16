@@ -23,13 +23,13 @@ import { Server, Socket } from 'socket.io';
 
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { REDIS_CLIENT } from '../../common/redis/redis.service';
-import { TokenBlacklistService } from '../auth/services/token-blacklist.service';
+import { TokenBlacklistService } from '../../domains/identity/auth/services/token-blacklist.service';
 import {
   CHAT_EVENTS,
   ChatMessageCreatedPayload,
   ChatMessageReadPayload,
 } from '../ws/events';
-import { EventBusService } from '../ws/services/event-bus.service';
+import { EventBusService, EventEnvelope } from '../ws/services/event-bus.service';
 
 import { ChatService } from './chat.service';
 import { SenderTypeDto, MessageTypeDto } from './dto/chat.dto';
@@ -75,8 +75,8 @@ export class ChatGateway
 
   onModuleInit() {
     const eventMappings = [
-      { eventType: CHAT_EVENTS.MESSAGE_CREATED, handler: (envelope: { data: { messageId: string; conversationId: string } }) => this.handleMessageCreated(envelope) },
-      { eventType: CHAT_EVENTS.MESSAGE_READ, handler: (envelope: { data: { conversationId: string; userId: string } }) => this.handleMessageRead(envelope) },
+      { eventType: CHAT_EVENTS.MESSAGE_CREATED, handler: (envelope: EventEnvelope) => this.handleMessageCreated(envelope) },
+      { eventType: CHAT_EVENTS.MESSAGE_READ, handler: (envelope: EventEnvelope) => this.handleMessageRead(envelope) },
     ];
 
     for (const mapping of eventMappings) {
