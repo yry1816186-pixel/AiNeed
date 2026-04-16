@@ -63,8 +63,9 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
         if (response.success && response.data) {
           set({ completeness: response.data });
         }
-      } catch {
+      } catch (error) {
         // Non-blocking completeness load
+        console.error('Style quiz operation failed:', error);
       }
     },
 
@@ -74,8 +75,9 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
         if (response.success && response.data) {
           set({ bodyAnalysis: response.data });
         }
-      } catch {
+      } catch (error) {
         // Non-blocking analysis load
+        console.error('Style quiz operation failed:', error);
       }
     },
 
@@ -85,8 +87,9 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
         if (response.success && response.data) {
           set({ colorAnalysis: response.data });
         }
-      } catch {
+      } catch (error) {
         // Non-blocking analysis load
+        console.error('Style quiz operation failed:', error);
       }
     },
 

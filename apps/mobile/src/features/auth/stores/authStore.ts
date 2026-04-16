@@ -296,8 +296,9 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         try {
           await apiClient.clearAuth();
-        } catch {
+        } catch (error) {
           // ignore clear errors during logout
+          console.error('Auth cleanup failed:', error);
         }
         const { clearAllStores } = await import("../../../stores/index");
         clearAllStores();
@@ -396,8 +397,9 @@ export const useAuthStore = create<AuthState>()(
           if (response.success && response.data) {
             set({ preferences: response.data });
           }
-        } catch {
+        } catch (error) {
           // non-blocking
+          console.error('Auth operation failed:', error);
         }
       },
 
@@ -407,8 +409,9 @@ export const useAuthStore = create<AuthState>()(
           if (response.success && response.data) {
             set({ stats: response.data });
           }
-        } catch {
+        } catch (error) {
           // non-blocking
+          console.error('Auth operation failed:', error);
         }
       },
 

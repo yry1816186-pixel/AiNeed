@@ -260,8 +260,9 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         try {
           await apiClient.clearAuth();
-        } catch {
+        } catch (error) {
           // ignore clear errors during logout
+          console.error('Auth cleanup failed:', error);
         }
         // Dynamic import to avoid circular dependency at module load time
         const { clearAllStores } = await import("../../../stores/index");
