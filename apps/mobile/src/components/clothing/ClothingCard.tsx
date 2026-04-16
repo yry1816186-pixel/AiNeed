@@ -2,7 +2,8 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../theme";
+import { Colors, Spacing, BorderRadius, Typography, Shadows , colors} from "../../theme";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface ClothingCardProps {
   id: string;
@@ -110,7 +111,7 @@ const COLOR_MAP: Record<string, string> = {
   yellow: "#EAB308", // custom color
   orange: Colors.amber[500],
   purple: Colors.primary[500],
-  pink: "#EC4899", // custom color
+  pink: DesignTokens.colors.brand.terracottaLight,
   brown: "#92400E", // custom color
   gray: Colors.neutral[500],
   beige: "#FEF3C7", // custom color
