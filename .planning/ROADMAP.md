@@ -50,11 +50,11 @@
 **Requirements:** ENGR-02, ENGR-08, ARCH-06, ARCH-07, QUAL-01, QUAL-06, QUAL-07
 
 **UAT Criteria:**
-- [ ] 根目录无杂乱文件（ESLint 输出、截图、临时文件）
-- [ ] demo/code-rag 模块已从 AppModule 移除
-- [ ] `tsc --noEmit` 无已知错误
-- [ ] 新增 `any` 类型被 ESLint 阻止
-- [ ] 移动端 ESLint 包含 recommended-requiring-type-checking
+- [x] 根目录无杂乱文件（ESLint 输出、截图、临时文件）
+- [x] demo/code-rag 模块已从 AppModule 移除
+- [x] `tsc --noEmit` 无已知错误（user-key.service.ts, imagePicker.ts 已修复）
+- [x] 新增 `any` 类型被 ESLint 阻止（no-explicit-any: error）
+- [x] 移动端 ESLint 包含 recommended-requiring-type-checking
 
 **Risk:** 低 — 清理和配置为主，不涉及业务逻辑变更
 
