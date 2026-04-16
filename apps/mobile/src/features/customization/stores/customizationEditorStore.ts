@@ -249,7 +249,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
       return;
     }
 
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const response = await customizationApi.calculateQuote(state.designId, printSide);
       if (response.success && response.data) {
@@ -268,7 +268,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
         });
       }
     } catch {
-      // handle error
+      set({ error: '获取报价失败' });
     } finally {
       set({ isLoading: false });
     }
@@ -280,7 +280,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
       return;
     }
 
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const response = await customizationApi.generatePreview(state.designId);
       if (response.success && response.data) {
@@ -288,7 +288,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
         set({ previewUrl: previewData.previewUrl });
       }
     } catch {
-      // handle error
+      set({ error: '生成预览失败' });
     } finally {
       set({ isLoading: false });
     }
@@ -300,7 +300,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
       return null;
     }
 
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const response = await customizationApi.createFromDesign(state.designId, quoteId);
       if (response.success && response.data) {
@@ -309,11 +309,15 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
       }
       return null;
     } catch {
+      set({ error: '提交定制订单失败' });
       return null;
     } finally {
       set({ isLoading: false });
     }
   },
+
+  setError: (message: string) => set({ error: message }),
+  clearError: () => set({ error: null }),
 
   reset: () => {
     set(initialState);
