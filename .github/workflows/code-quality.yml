@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [main, develop]
   schedule:
-    # Run weekly on Sunday at 00:00 UTC
     - cron: '0 0 * * 0'
   workflow_dispatch:
 
@@ -19,7 +18,6 @@ env:
   PNPM_VERSION: '8'
 
 jobs:
-  # ==================== ESLint ====================
   eslint:
     name: ESLint
     runs-on: ubuntu-latest
@@ -41,13 +39,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-quality-${{ runner.os }}-${{ github.sha }}
+          restore-keys: turbo-quality-${{ runner.os }}-
+
       - name: Run ESLint - Backend
-        run: cd apps/backend && npx eslint . --ext .ts,.tsx --format json --output-file eslint-backend-report.json
-        continue-on-error: true
+        run: pnpm turbo lint --filter=@xuno/backend
 
       - name: Run ESLint - Frontend (Mobile)
-        run: cd apps/mobile && npx eslint . --ext .ts,.tsx --format json --output-file eslint-mobile-report.json
-        continue-on-error: true
+        run: pnpm turbo lint --filter=@xuno/mobile
 
       - name: Upload ESLint Reports
         uses: actions/upload-artifact@v4
@@ -67,7 +70,6 @@ jobs:
           workdir: apps/backend
         continue-on-error: true
 
-  # ==================== Prettier ====================
   prettier:
     name: Prettier Check
     runs-on: ubuntu-latest
@@ -89,11 +91,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Check Formatting
-        run: npx prettier --check "**/*.{ts,tsx,js,jsx,json,md,css,scss}" --ignore-path .gitignore
-        continue-on-error: true
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-quality-${{ runner.os }}-${{ github.sha }}
+          restore-keys: turbo-quality-${{ runner.os }}-
 
-  # ==================== TypeScript Strict Check ====================
+      - name: Check Formatting
+        run: pnpm format:check
+
   typescript:
     name: TypeScript Check
     runs-on: ubuntu-latest
@@ -118,13 +125,19 @@ jobs:
       - name: Generate Prisma Client
         run: cd apps/backend && pnpm db:generate
 
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-quality-${{ runner.os }}-${{ github.sha }}
+          restore-keys: turbo-quality-${{ runner.os }}-
+
       - name: TypeScript Check - Backend
-        run: cd apps/backend && npx tsc --noEmit --project tsconfig.build.json
+        run: pnpm turbo typecheck --filter=@xuno/backend
 
       - name: TypeScript Check - Frontend (Mobile)
-        run: cd apps/mobile && npx tsc --noEmit
+        run: pnpm turbo typecheck --filter=@xuno/mobile
 
-  # ==================== Dependency Security Audit ====================
   audit:
     name: Dependency Audit
     runs-on: ubuntu-latest
@@ -162,7 +175,6 @@ jobs:
           retention-days: 7
         continue-on-error: true
 
-  # ==================== CodeQL Analysis ====================
   codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
@@ -189,7 +201,6 @@ jobs:
         with:
           category: '/language:${{ matrix.language }}'
 
-  # ==================== SonarCloud Analysis ====================
   sonarcloud:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
@@ -235,7 +246,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         continue-on-error: true
 
-  # ==================== Unused Dependencies ====================
   unused-deps:
     name: Check Unused Dependencies
     runs-on: ubuntu-latest
@@ -265,7 +275,6 @@ jobs:
         run: cd apps/mobile && npx depcheck
         continue-on-error: true
 
-  # ==================== Bundle Size Check ====================
   bundle-size:
     name: Bundle Size Check
     runs-on: ubuntu-latest
@@ -294,7 +303,6 @@ jobs:
           echo "Use E2E profiling on device for bundle analysis"
         continue-on-error: true
 
-  # ==================== Quality Summary ====================
   quality-summary:
     name: Quality Summary
     runs-on: ubuntu-latest
@@ -315,6 +323,14 @@ jobs:
 
       - name: Quality Gate
         run: |
+          if [[ "${{ needs.eslint.result }}" == "failure" ]]; then
+            echo "ESLint check failed - quality gate failed!"
+            exit 1
+          fi
+          if [[ "${{ needs.prettier.result }}" == "failure" ]]; then
+            echo "Prettier check failed - quality gate failed!"
+            exit 1
+          fi
           if [[ "${{ needs.typescript.result }}" == "failure" ]]; then
             echo "TypeScript check failed - quality gate failed!"
             exit 1

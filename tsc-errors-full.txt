@@ -1,1 +1,0 @@
-﻿src/utils/imageCompressor.ts(2,45): error TS2307: Cannot find module 'expo-image-manipulator' or its corresponding type declarations.

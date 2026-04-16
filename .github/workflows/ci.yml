@@ -1,3 +1,12 @@
+# CI Pipeline - Required Checks for PR merge:
+# - Lint
+# - TypeCheck
+# - Test Backend
+# - Build Backend
+# - CI Summary
+#
+# Configure in: GitHub Settings > Branches > Branch protection rules > main
+
 name: CI
 
 on:
@@ -13,6 +22,7 @@ concurrency:
 env:
   NODE_VERSION: '20'
   PNPM_VERSION: '8'
+  TURBO_VERSION: '2'
 
 jobs:
   lint:
@@ -48,9 +58,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Lint Backend
-        run: cd apps/backend && pnpm lint
-        continue-on-error: false
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: turbo-${{ runner.os }}-
+
+      - name: Lint All Packages
+        run: pnpm turbo lint
 
   typecheck:
     name: TypeCheck
@@ -88,87 +104,15 @@ jobs:
       - name: Generate Prisma Client
         run: cd apps/backend && pnpm db:generate
 
-      - name: TypeCheck Backend
-        run: cd apps/backend && npx tsc --noEmit
-
-  mobile-typecheck:
-    name: Mobile TypeCheck
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Cache pnpm store
+      - name: Cache Turborepo
         uses: actions/cache@v4
         with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: pnpm-store-${{ runner.os }}-
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: turbo-${{ runner.os }}-
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Generate Prisma Client
-        run: cd apps/backend && pnpm db:generate
-
-      - name: TypeCheck Mobile
-        run: cd apps/mobile && npx tsc --noEmit
-
-  admin-typecheck:
-    name: Admin TypeCheck
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Cache pnpm store
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: pnpm-store-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Generate Prisma Client
-        run: cd apps/backend && pnpm db:generate
-
-      - name: TypeCheck Admin
-        run: cd apps/admin && npx tsc --noEmit
+      - name: TypeCheck All Packages
+        run: pnpm turbo typecheck
 
   ml-lint:
     name: ML Lint
@@ -288,8 +232,15 @@ jobs:
       - name: Generate Prisma Client
         run: cd apps/backend && pnpm db:generate
 
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: turbo-${{ runner.os }}-
+
       - name: Run Backend Tests
-        run: cd apps/backend && pnpm test -- --coverage --ci
+        run: pnpm turbo test --filter=@xuno/backend
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/stylemind_test
           JWT_SECRET: test-jwt-secret-key-for-ci
@@ -341,8 +292,15 @@ jobs:
       - name: Generate Prisma Client
         run: cd apps/backend && pnpm db:generate
 
-      - name: Build Backend
-        run: cd apps/backend && pnpm build
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: turbo-${{ runner.os }}-
+
+      - name: Build All Packages
+        run: pnpm turbo build
 
       - name: Upload Backend Build
         uses: actions/upload-artifact@v4
@@ -446,7 +404,7 @@ jobs:
     name: CI Summary
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [lint, typecheck, mobile-typecheck, admin-typecheck, ml-lint, security, test-backend, build-backend, e2e]
+    needs: [lint, typecheck, ml-lint, security, test-backend, build-backend, e2e]
     if: always()
     steps:
       - name: Generate CI Summary
@@ -457,8 +415,6 @@ jobs:
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| TypeCheck | ${{ needs.typecheck.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Mobile TypeCheck | ${{ needs.mobile-typecheck.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Admin TypeCheck | ${{ needs.admin-typecheck.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| ML Lint | ${{ needs.ml-lint.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Security Scan | ${{ needs.security.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Test Backend | ${{ needs.test-backend.result }} |" >> $GITHUB_STEP_SUMMARY
@@ -466,13 +422,20 @@ jobs:
 
       - name: Check CI Status
         run: |
-          if [[ "${{ needs.build-backend.result }}" == "success" ]]; then
-            echo "CI Pipeline completed successfully!"
-            exit 0
-          else
+          FAILED=0
+          for job in lint typecheck ml-lint security test-backend build-backend; do
+            RESULT="${{ needs.${job}.result }}"
+            if [[ "$RESULT" == "failure" ]]; then
+              echo "$job failed!"
+              FAILED=1
+            fi
+          done
+          if [[ $FAILED -eq 1 ]]; then
             echo "CI Pipeline failed!"
             exit 1
           fi
+          echo "CI Pipeline completed successfully!"
+          exit 0
 
       - name: Notify Slack
         uses: 8398a7/action-slack@v3
