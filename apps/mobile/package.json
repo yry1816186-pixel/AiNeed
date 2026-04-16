@@ -7,9 +7,10 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "test": "jest --runInBand",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit"
+    "lint": "node ../../node_modules/eslint/bin/eslint.js .",
+    "lint:fix": "node ../../node_modules/eslint/bin/eslint.js . --fix",
+    "typecheck": "tsc --noEmit",
+    "build": "echo 'Mobile build handled by Metro bundler'"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.0.0",

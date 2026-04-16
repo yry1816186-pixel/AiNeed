@@ -59,6 +59,9 @@ build/
 *.aab
 *.ipa
 
+# --- Turborepo ---
+.turbo/
+
 # --- Expo / React Native ---
 .expo/
 **/.expo/
