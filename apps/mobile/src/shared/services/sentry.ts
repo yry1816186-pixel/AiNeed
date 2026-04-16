@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/react-native";
-import Constants from "../polyfills/expo-constants";
+import Constants from "../../polyfills/expo-constants";
 
 type _ExpoExtra = {
   SENTRY_DSN?: string;

@@ -26,10 +26,10 @@ import { useAuthStore } from './src/stores/index';
 import { OfflineBanner } from './src/shared/components/common/OfflineBanner';
 import { I18nProvider } from './src/i18n';
 import { FeatureFlagProvider } from './src/shared/contexts/FeatureFlagContext';
-import { initSentry } from './src/services/sentry';
-import apiClient from './src/services/api/client';
-import { authApi } from './src/services/api/auth.api';
-import { analytics } from './src/services/analytics';
+import { initSentry } from './src/shared/services/sentry';
+import apiClient from './src/shared/services/apiClient';
+import { authApi } from './src/features/auth/services/auth.api';
+import { analytics } from './src/shared/services/analytics';
 
 const queryClient = new QueryClient({
   defaultOptions: {

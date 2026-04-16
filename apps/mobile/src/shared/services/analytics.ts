@@ -1,4 +1,4 @@
-import apiClient from "./api/client";
+import apiClient from "../../services/api/client";
 
 interface AnalyticsEvent {
   name: string;
