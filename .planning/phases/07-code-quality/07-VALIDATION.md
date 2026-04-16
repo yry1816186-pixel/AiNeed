@@ -53,11 +53,9 @@ created: 2026-04-16
 
 ## Wave 0 Requirements
 
-- [ ] `apps/backend/package.json` — ts-morph dev dependency added
-- [ ] `apps/mobile/package.json` — ts-morph dev dependency added (if shared)
 - [ ] Existing test infrastructure covers all phase requirements
 
-*Existing infrastructure covers all phase requirements. ts-morph is the only new dependency.*
+*Note: ts-morph was originally considered for codemod-based `any` elimination, but the plan uses manual fixes instead (more controllable for ~39 backend and ~67 mobile production `any` instances). ts-morph is NOT required for this phase.*
 
 ---
 
