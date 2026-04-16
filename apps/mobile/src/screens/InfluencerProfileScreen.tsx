@@ -92,12 +92,13 @@ export const InfluencerProfileScreen: React.FC = () => {
     try {
       const response = await communityApi.toggleFollow(profile.id);
       if (response.success && response.data) {
+        const following = response.data.following;
         setProfile((prev) =>
           prev
             ? {
                 ...prev,
-                isFollowing: response.data!.following,
-                followersCount: prev.followersCount + (response.data!.following ? 1 : -1),
+                isFollowing: following,
+                followersCount: prev.followersCount + (following ? 1 : -1),
               }
             : prev
         );

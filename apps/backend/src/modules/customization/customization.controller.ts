@@ -85,7 +85,26 @@ export class CustomizationController {
       designId,
       userId,
       body.canvasData,
-      body.layers as any,
+      body.layers as unknown as Array<{
+        type: string;
+        content: string;
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+        scale: number;
+        rotation: number;
+        opacity: number;
+        zIndex: number;
+        fontSize?: number;
+        color?: string;
+        fontFamily?: string;
+        imageUrl?: string;
+        shapeType?: string;
+        fillColor?: string;
+        strokeColor?: string;
+        strokeWidth?: number;
+      }>,
     );
   }
 

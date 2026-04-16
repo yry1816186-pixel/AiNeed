@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -113,7 +114,7 @@ export const FavoritesScreen: React.FC = () => {
       await favoriteApi.remove(id);
       setItems((prev) => prev.filter((item) => item.id !== id));
     } catch {
-      // ignore
+      Alert.alert("操作失败", "取消收藏失败，请重试");
     }
   }, []);
 
@@ -181,7 +182,7 @@ export const FavoritesScreen: React.FC = () => {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="heart-outline" size={48} color={theme.colors.textTertiary} />
-            <Text style={styles.emptyText}>{t.common.loading}</Text>
+            <Text style={styles.emptyText}>暂无收藏</Text>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Text style={styles.emptyAction}>去逛逛</Text>
             </TouchableOpacity>

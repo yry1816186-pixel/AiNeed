@@ -1,3 +1,5 @@
+import { NotificationType } from "@prisma/client";
+
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 
@@ -31,7 +33,7 @@ export class PaymentNotificationListener {
 
     try {
       await this.notificationService.sendToUser(payload.userId, {
-        type: "subscription_activated" as any,
+        type: "subscription_activated" as NotificationType,
         title: "支付成功",
         content: `您的订单 ${payload.orderId} 已支付成功，金额 ¥${payload.amount.toFixed(2)}。`,
         targetType: "payment",
@@ -55,7 +57,7 @@ export class PaymentNotificationListener {
 
     try {
       await this.notificationService.sendToUser(payload.userId, {
-        type: "system_update" as any,
+        type: "system_update" as NotificationType,
         title: "支付失败",
         content: `您的订单 ${payload.orderId} 支付失败${payload.reason ? `: ${payload.reason}` : ""}，请重试或联系客服。`,
         targetType: "payment",
@@ -79,7 +81,7 @@ export class PaymentNotificationListener {
 
     try {
       await this.notificationService.sendToUser(payload.userId, {
-        type: "system_update" as any,
+        type: "system_update" as NotificationType,
         title: "退款通知",
         content: `您的订单 ${payload.orderId} 已退款 ¥${payload.amount.toFixed(2)}${payload.reason ? `，原因: ${payload.reason}` : ""}。`,
         targetType: "payment",

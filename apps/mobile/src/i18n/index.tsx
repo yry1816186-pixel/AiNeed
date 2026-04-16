@@ -60,6 +60,10 @@ interface TranslationStrings {
     email: string;
     password: string;
     forgotPassword: string;
+    phonePlaceholder: string;
+    codePlaceholder: string;
+    phoneRequired: string;
+    welcomeBack: string;
   };
   navigation: {
     home: string;
@@ -236,6 +240,10 @@ const translations: Record<LanguageCode, TranslationStrings> = {
       email: "邮箱",
       password: "密码",
       forgotPassword: "忘记密码",
+      phonePlaceholder: "请输入手机号",
+      codePlaceholder: "请输入验证码",
+      phoneRequired: "请输入手机号",
+      welcomeBack: "欢迎回来，登录以继续",
     },
     navigation: {
       home: "首页",
@@ -410,6 +418,10 @@ const translations: Record<LanguageCode, TranslationStrings> = {
       email: "電子郵件",
       password: "密碼",
       forgotPassword: "忘記密碼",
+      phonePlaceholder: "請輸入手機號",
+      codePlaceholder: "請輸入驗證碼",
+      phoneRequired: "請輸入手機號",
+      welcomeBack: "歡迎回來，登入以繼續",
     },
     navigation: {
       home: "首頁",
@@ -584,6 +596,10 @@ const translations: Record<LanguageCode, TranslationStrings> = {
       email: "Email",
       password: "Password",
       forgotPassword: "Forgot Password",
+      phonePlaceholder: "Enter phone number",
+      codePlaceholder: "Enter verification code",
+      phoneRequired: "Phone number required",
+      welcomeBack: "Welcome back",
     },
     navigation: {
       home: "Home",
@@ -758,6 +774,10 @@ const translations: Record<LanguageCode, TranslationStrings> = {
       email: "メール",
       password: "パスワード",
       forgotPassword: "パスワードを忘れた",
+      phonePlaceholder: "電話番号を入力",
+      codePlaceholder: "認証コードを入力",
+      phoneRequired: "電話番号を入力してください",
+      welcomeBack: "おかえりなさい",
     },
     navigation: {
       home: "ホーム",
@@ -932,6 +952,10 @@ const translations: Record<LanguageCode, TranslationStrings> = {
       email: "이메일",
       password: "비밀번호",
       forgotPassword: "비밀번호 찾기",
+      phonePlaceholder: "전화번호 입력",
+      codePlaceholder: "인증번호 입력",
+      phoneRequired: "전화번호를 입력하세요",
+      welcomeBack: "다시 오셨군요",
     },
     navigation: {
       home: "홈",

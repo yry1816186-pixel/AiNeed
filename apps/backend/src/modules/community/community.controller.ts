@@ -25,6 +25,8 @@ import {
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 
+import { Request } from "express";
+
 import { RequestWithUser } from "../../common/types/common.types";
 import { AuthGuard } from "../auth/guards/auth.guard";
 
@@ -42,7 +44,7 @@ import {
   TrendingQueryDto,
 } from "./dto/community.dto";
 
-const imageFileFilter = (_req: any, file: Express.Multer.File, callback: (error: Error | null, acceptFile: boolean) => void) => {
+const imageFileFilter = (_req: Request, file: Express.Multer.File, callback: (error: Error | null, acceptFile: boolean) => void) => {
   if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
     return callback(new Error("Only image files are allowed"), false);
   }

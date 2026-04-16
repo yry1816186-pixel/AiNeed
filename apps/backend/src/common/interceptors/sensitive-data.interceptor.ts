@@ -21,13 +21,13 @@ const SENSITIVE_NESTED_PREFIXES = ["analysisResult", "measurements"];
 
 @Injectable()
 export class SensitiveDataInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next.handle().pipe(
       map((data) => this.sanitizeResponse(data)),
     );
   }
 
-  private sanitizeResponse(data: any): any {
+  private sanitizeResponse(data: unknown): unknown {
     if (!data || typeof data !== "object") {
       return data;
     }
@@ -36,7 +36,7 @@ export class SensitiveDataInterceptor implements NestInterceptor {
       return data.map((item) => this.sanitizeResponse(item));
     }
 
-    const sanitized = { ...data };
+    const sanitized = { ...data as Record<string, unknown> };
 
     for (const field of SENSITIVE_PROFILE_FIELDS) {
       if (field in sanitized) {

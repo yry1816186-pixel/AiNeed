@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
 
-import { ciede2000, rgbToLab } from "./ciede2000";
+import { ciede2000, rgbToLab, LabColor } from "./ciede2000";
 
 export interface ClothingNode {
   id: string;
@@ -392,7 +392,7 @@ export class GNNCompatibilityService {
     let minDist = Infinity;
     for (const c1 of lab1) {
       for (const c2 of lab2) {
-        const delta = ciede2000(c1 as any, c2 as any);
+        const delta = ciede2000(c1 as LabColor, c2 as LabColor);
         if (delta < minDist) {
           minDist = delta;
         }

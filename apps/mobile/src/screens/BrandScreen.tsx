@@ -118,7 +118,7 @@ export const BrandScreen: React.FC = () => {
           {item.brand && <Text style={s.productBrand}>{item.brand}</Text>}
           {item.price !== null && (
             <View style={s.priceRow}>
-              <Text style={s.productPrice}>¥{item.price!.toFixed(2)}</Text>
+              <Text style={s.productPrice}>¥{(item.price ?? 0).toFixed(2)}</Text>
               {item.colors && item.colors.length > 0 && (
                 <Text style={s.productColors}>{item.colors.length} colors</Text>
               )}

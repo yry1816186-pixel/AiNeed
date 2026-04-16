@@ -30,7 +30,7 @@ export class FeatureFlagService {
   private readonly LOCAL_TTL = 5000;
   private readonly REDIS_TTL = 30;
 
-  private localCache = new Map<string, { value: any; expiresAt: number }>();
+  private localCache = new Map<string, { value: string | boolean | number | Record<string, unknown>; expiresAt: number }>();
   private percentageStrategy = new PercentageStrategy();
   private userSegmentStrategy = new UserSegmentStrategy();
   private abTestStrategy = new ABTestStrategy();
@@ -114,7 +114,7 @@ export class FeatureFlagService {
     return { deleted: true };
   }
 
-  async evaluate(key: string, userId?: string, attributes?: Record<string, any>): Promise<EvaluateResult> {
+  async evaluate(key: string, userId?: string, attributes?: Record<string, unknown>): Promise<EvaluateResult> {
     const flag = await this.getFlagWithCache(key);
     if (!flag) {
       return { enabled: false, reason: 'flag_not_found' };
@@ -129,7 +129,7 @@ export class FeatureFlagService {
 
     switch (flag.type) {
       case 'boolean': {
-        const enabled = (flag.value as Record<string, any>).enabled ?? false;
+        const enabled = (flag.value as Record<string, unknown>).enabled ?? false;
         result = { enabled, reason: 'boolean_toggle' };
         break;
       }
@@ -186,7 +186,7 @@ export class FeatureFlagService {
     return flags.map((f) => ({
       key: f.key,
       type: f.type,
-      value: f.type === 'boolean' ? (f.value as Record<string, any>).enabled ?? false : f.value,
+      value: f.type === 'boolean' ? (f.value as Record<string, unknown>).enabled ?? false : f.value,
     }));
   }
 
@@ -218,7 +218,7 @@ export class FeatureFlagService {
     userId: string | undefined,
     result: boolean,
     variant: string | null,
-    attributes: Record<string, any> | undefined,
+    attributes: Record<string, unknown> | undefined,
   ) {
     try {
       await this.evaluationQueue.add('log-evaluation', {

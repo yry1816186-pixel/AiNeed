@@ -75,8 +75,8 @@ export class ChatGateway
 
   onModuleInit() {
     const eventMappings = [
-      { eventType: CHAT_EVENTS.MESSAGE_CREATED, handler: (envelope: any) => this.handleMessageCreated(envelope) },
-      { eventType: CHAT_EVENTS.MESSAGE_READ, handler: (envelope: any) => this.handleMessageRead(envelope) },
+      { eventType: CHAT_EVENTS.MESSAGE_CREATED, handler: (envelope: { data: { messageId: string; conversationId: string } }) => this.handleMessageCreated(envelope) },
+      { eventType: CHAT_EVENTS.MESSAGE_READ, handler: (envelope: { data: { conversationId: string; userId: string } }) => this.handleMessageRead(envelope) },
     ];
 
     for (const mapping of eventMappings) {

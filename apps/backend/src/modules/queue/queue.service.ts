@@ -14,6 +14,7 @@ import { PrismaService } from '../../common/prisma/prisma.service';
 import {
   JOB_STATUS,
 } from './queue.constants';
+import type { JobStatus } from './queue.constants';
 import { QueueName } from './queue-config';
 import {
   JobResult,
@@ -207,7 +208,7 @@ export class QueueService implements OnModuleInit {
   async addRecommendationTask(
     userId: string,
     userInput: string,
-    userProfile?: Record<string, any>,
+    userProfile?: Record<string, unknown>,
     occasion?: string,
     category?: string,
     topK?: number,
@@ -369,7 +370,7 @@ export class QueueService implements OnModuleInit {
 
     return {
       jobId: job.id || '',
-      status: status as any,
+      status: status as JobStatus,
       result: job.returnvalue,
       error: job.failedReason,
       processedAt: job.processedOn ? new Date(job.processedOn).toISOString() : undefined,
@@ -479,8 +480,8 @@ export class QueueService implements OnModuleInit {
   /**
    * Get queue statistics
    */
-  async getQueueStats(): Promise<Record<string, any>> {
-    const stats: Record<string, any> = {};
+  async getQueueStats(): Promise<Record<string, unknown>> {
+    const stats: Record<string, unknown> = {};
 
     const queues = [
       { name: QueueName.AI_TASKS, queue: this.aiTasksQueue },

@@ -20,7 +20,7 @@ export interface QueueMetrics {
 export interface DeadLetterJob {
   jobId: string;
   queueName: string;
-  data: any;
+  data: Record<string, unknown>;
   failedReason: string;
   attemptsMade: number;
   movedAt: string;

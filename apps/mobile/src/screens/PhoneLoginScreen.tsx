@@ -68,7 +68,7 @@ export const PhoneLoginScreen: React.FC = () => {
     const trimmedPhone = phone.trim();
 
     if (!trimmedPhone) {
-      Alert.alert(t.common.confirm, t.auth.email);
+      Alert.alert(t.common.confirm, t.auth.phoneRequired);
       return;
     }
 
@@ -149,7 +149,7 @@ export const PhoneLoginScreen: React.FC = () => {
     }
 
     if (!trimmedCode) {
-      Alert.alert(t.common.confirm, t.auth.password);
+      Alert.alert(t.common.confirm, t.auth.codePlaceholder);
       return;
     }
 
@@ -197,13 +197,13 @@ export const PhoneLoginScreen: React.FC = () => {
             <Text style={styles.brandName}>寻裳</Text>
           </View>
           <Text style={styles.title}>{t.auth.login}</Text>
-          <Text style={styles.subtitle}>{t.auth.login}</Text>
+          <Text style={styles.subtitle}>{t.auth.welcomeBack}</Text>
           <View style={styles.form}>
             <View style={styles.inputGroup}>
               <Ionicons name="phone-portrait-outline" size={20} color={theme.colors.textTertiary} />
               <TextInput
                 style={styles.input}
-                placeholder={t.auth.email}
+                placeholder={t.auth.phonePlaceholder}
                 placeholderTextColor={theme.colors.textTertiary}
                 value={phone}
                 onChangeText={setPhone}
@@ -220,7 +220,7 @@ export const PhoneLoginScreen: React.FC = () => {
               <Ionicons name="keypad-outline" size={20} color={theme.colors.textTertiary} />
               <TextInput
                 style={styles.codeInput}
-                placeholder={t.auth.password}
+                placeholder={t.auth.codePlaceholder}
                 placeholderTextColor={theme.colors.textTertiary}
                 value={code}
                 onChangeText={setCode}

@@ -209,7 +209,8 @@ class WebSocketService {
     if (!this.chatMessageListeners.has(roomId)) {
       this.chatMessageListeners.set(roomId, new Set());
     }
-    this.chatMessageListeners.get(roomId)!.add(listener);
+    const listeners = this.chatMessageListeners.get(roomId);
+    if (listeners) listeners.add(listener);
     return () => {
       const listeners = this.chatMessageListeners.get(roomId);
       if (listeners) {
@@ -225,7 +226,8 @@ class WebSocketService {
     if (!this.chatTypingListeners.has(roomId)) {
       this.chatTypingListeners.set(roomId, new Set());
     }
-    this.chatTypingListeners.get(roomId)!.add(listener);
+    const listeners = this.chatTypingListeners.get(roomId);
+    if (listeners) listeners.add(listener);
     return () => {
       const listeners = this.chatTypingListeners.get(roomId);
       if (listeners) {
@@ -241,7 +243,8 @@ class WebSocketService {
     if (!this.chatReadListeners.has(roomId)) {
       this.chatReadListeners.set(roomId, new Set());
     }
-    this.chatReadListeners.get(roomId)!.add(listener);
+    const listeners = this.chatReadListeners.get(roomId);
+    if (listeners) listeners.add(listener);
     return () => {
       const listeners = this.chatReadListeners.get(roomId);
       if (listeners) {
@@ -261,7 +264,8 @@ class WebSocketService {
     if (!this.tryOnListeners.has(tryOnId)) {
       this.tryOnListeners.set(tryOnId, new Set());
     }
-    this.tryOnListeners.get(tryOnId)!.add(listener);
+    const listeners = this.tryOnListeners.get(tryOnId);
+    if (listeners) listeners.add(listener);
 
     return () => {
       const listeners = this.tryOnListeners.get(tryOnId);
@@ -278,7 +282,8 @@ class WebSocketService {
     if (!this.progressListeners.has(tryOnId)) {
       this.progressListeners.set(tryOnId, new Set());
     }
-    this.progressListeners.get(tryOnId)!.add(listener);
+    const listeners = this.progressListeners.get(tryOnId);
+    if (listeners) listeners.add(listener);
 
     return () => {
       const listeners = this.progressListeners.get(tryOnId);

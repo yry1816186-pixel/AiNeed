@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { Request } from "express";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { JwtUserPayload } from "../../../common/types/common.types";
@@ -47,7 +48,7 @@ export class MerchantAuthGuard implements CanActivate {
     }
   }
 
-  private extractToken(request: any): string | null {
+  private extractToken(request: Request): string | null {
     const authHeader = request.headers.authorization;
     if (!authHeader) {return null;}
 

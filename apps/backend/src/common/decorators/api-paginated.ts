@@ -8,6 +8,7 @@ import {
 
 import { PaginatedMetaDto, PaginatedResponseDto } from "../dto/paginated-response.dto";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function ApiPaginated(model: () => new (...args: any[]) => any) {
   return applyDecorators(
     ApiExtraModels(model, PaginatedResponseDto, PaginatedMetaDto),

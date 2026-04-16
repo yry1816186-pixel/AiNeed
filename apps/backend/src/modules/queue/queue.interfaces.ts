@@ -71,6 +71,7 @@ export type AITaskJobData =
   | BodyAnalysisJobData
   | RecommendationJobData;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface JobResult<T = any> {
   jobId: string;
   status: JobStatus;

@@ -77,8 +77,10 @@ XunO/
 ## 常用命令
 
 ```bash
-# 安装依赖
-pnpm install
+# 安装依赖（使用国内镜像源，避免下载超时）
+pnpm install --registry=https://registry.npmmirror.com
+# 备用：官方源（国内较慢）
+# pnpm install --registry=https://registry.npmjs.org
 
 # 启动后端
 cd apps/backend && pnpm dev
@@ -95,6 +97,13 @@ docker-compose -f docker-compose.dev.yml up -d
 
 # Android 构建
 cd apps/mobile && npx react-native run-android
+
+# Python AI 服务（使用国内镜像源安装依赖）
+cd ml && pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --trusted-host pypi.tuna.tsinghua.edu.cn
+# 备用：阿里云镜像
+# cd ml && pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com
+# 备用：官方 PyPI（国内较慢）
+# cd ml && pip install -r requirements.txt
 ```
 
 ## API 端点 (v1)

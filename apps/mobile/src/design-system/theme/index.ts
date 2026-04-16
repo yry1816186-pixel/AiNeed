@@ -1,6 +1,6 @@
 import { Dimensions, Platform, StatusBar } from "react-native";
 import { DesignTokens, darkTokens } from "./tokens/design-tokens";
-import type { FlatColors } from "../contexts/ThemeContext";
+import type { FlatColors } from "./FlatColors";
 
 export { DesignTokens, darkTokens } from "./tokens/design-tokens";
 export type { DesignTokensType, DarkTokensType } from "./tokens/design-tokens";

@@ -3,6 +3,7 @@ import {
   CustomizationType,
   CustomizationStatus,
   ProductTemplateType,
+  DesignLayerType,
   Prisma,
 } from "@prisma/client";
 
@@ -105,7 +106,7 @@ export class CustomizationService {
       await this.prisma.customizationDesignLayer.createMany({
         data: layers.map((layer, index) => ({
           designId,
-          type: layer.type as any,
+          type: layer.type as DesignLayerType,
           content: layer.content,
           x: layer.x ?? 0,
           y: layer.y ?? 0,

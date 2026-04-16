@@ -199,7 +199,11 @@ export const OnboardingWizard: React.FC = () => {
       <View style={styles.content}>{renderStep}</View>
 
       <View style={styles.footer}>
-        {!isFirstStep && (
+        {isFirstStep ? (
+          <TouchableOpacity style={styles.skipButton} onPress={handleSkip} activeOpacity={0.7}>
+            <Text style={styles.skipButtonText}>稍后设置</Text>
+          </TouchableOpacity>
+        ) : (
           <TouchableOpacity style={styles.backButton} onPress={handleBack} activeOpacity={0.7}>
             <Ionicons name="arrow-back" size={20} color={theme.colors.textSecondary} />
             <Text style={styles.backButtonText}>上一步</Text>

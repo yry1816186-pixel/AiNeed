@@ -6,7 +6,7 @@ import { RedisModule } from "../../common/redis/redis.module";
 import { AIModule } from "../ai/ai.module";
 import { PhotosModule } from "../photos/photos.module";
 import { RecommendationsModule } from "../recommendations/recommendations.module";
-import { WeatherModule } from "../weather/weather.module";
+import { WeatherModule } from "../../domains/fashion/weather/weather.module";
 
 import { AgentToolsService } from "./agent-tools.service";
 import { AiStylistController } from "./ai-stylist.controller";

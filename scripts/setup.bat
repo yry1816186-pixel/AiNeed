@@ -5,11 +5,15 @@ echo ========================================
 echo.
 
 echo [1/4] Installing dependencies...
-call pnpm install
+call pnpm install --registry=https://registry.npmmirror.com
 if %errorlevel% neq 0 (
-    echo Failed to install dependencies!
-    pause
-    exit /b 1
+    echo Failed to install dependencies! Trying with official registry...
+    call pnpm install --registry=https://registry.npmjs.org
+    if %errorlevel% neq 0 (
+        echo Failed to install dependencies!
+        pause
+        exit /b 1
+    )
 )
 
 echo [2/4] Generating Prisma Client...

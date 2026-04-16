@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -199,7 +199,16 @@ export const ProfileScreenComponent: React.FC = () => {
       label: t.profile.logout,
       accessibilityLabel: t.profile.logout,
       color: theme.colors.error,
-      onPress: () => { void handleLogout(); },
+      onPress: () => {
+        Alert.alert(
+          t.profile.logoutConfirm,
+          t.profile.logoutConfirmMessage,
+          [
+            { text: t.common.cancel, style: "cancel" },
+            { text: t.profile.logout, style: "destructive", onPress: () => { void handleLogout(); } },
+          ]
+        );
+      },
     },
   ];
 
@@ -249,7 +258,7 @@ export const ProfileScreenComponent: React.FC = () => {
 
             <TouchableOpacity
               style={styles.editButton}
-              onPress={() => navigation.navigate("Settings")}
+              onPress={() => navigation.navigate("ProfileEdit" as never)}
               accessibilityLabel="编辑个人资料"
               accessibilityRole="button"
             >

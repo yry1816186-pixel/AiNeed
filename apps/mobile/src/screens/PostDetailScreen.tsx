@@ -114,12 +114,13 @@ export const PostDetailScreen: React.FC = () => {
     try {
       const response = await communityApi.toggleLike(postId);
       if (response.success && response.data) {
+        const liked = response.data.liked;
         setPost((prev) =>
           prev
             ? {
                 ...prev,
-                isLiked: response.data!.liked,
-                likesCount: prev.likesCount + (response.data!.liked ? 1 : -1),
+                isLiked: liked,
+                likesCount: prev.likesCount + (liked ? 1 : -1),
               }
             : prev
         );

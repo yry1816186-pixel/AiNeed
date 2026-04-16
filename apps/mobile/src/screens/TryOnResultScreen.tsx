@@ -50,10 +50,10 @@ export const TryOnResultScreen: React.FC = () => {
           pollingRef.current = setTimeout(() => fetchResult(), 3000);
         }
       } else {
-        setError(response.error?.message || "Failed to load try-on result");
+        setError(response.error?.message || "加载试衣结果失败");
       }
     } catch {
-      setError("Network error, please retry");
+      setError("网络错误，请重试");
     } finally {
       setLoading(false);
     }
@@ -81,21 +81,21 @@ export const TryOnResultScreen: React.FC = () => {
       if (response.success && response.data) {
         void fetchResult();
       } else {
-        Alert.alert("Error", "Failed to retry try-on");
+        Alert.alert("重试失败", "请稍后再试");
       }
     } catch {
-      Alert.alert("Error", "Network error, please try again");
+      Alert.alert("网络错误", "请检查网络后重试");
     } finally {
       setRetrying(false);
     }
   }, [resultId, fetchResult]);
 
   const handleShare = useCallback(() => {
-    Alert.alert("Share", "Share functionality coming soon");
+    Alert.alert("分享", "分享功能即将上线");
   }, []);
 
   const handleSaveToWardrobe = useCallback(() => {
-    Alert.alert("Saved", "Result saved to your wardrobe");
+    Alert.alert("已保存", "试衣结果已保存到衣橱");
   }, []);
 
   if (loading && !result) {
@@ -105,12 +105,12 @@ export const TryOnResultScreen: React.FC = () => {
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
             <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={s.headerTitle}>Try-On Result</Text>
+          <Text style={s.headerTitle}>试衣结果</Text>
           <View style={s.iconBtn} />
         </View>
         <View style={s.centerContent}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
-          <Text style={s.loadingText}>Loading result...</Text>
+          <Text style={s.loadingText}>加载结果中...</Text>
         </View>
       </SafeAreaView>
     );
@@ -123,14 +123,14 @@ export const TryOnResultScreen: React.FC = () => {
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
             <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={s.headerTitle}>Try-On Result</Text>
+          <Text style={s.headerTitle}>试衣结果</Text>
           <View style={s.iconBtn} />
         </View>
         <View style={s.centerContent}>
           <Ionicons name="alert-circle-outline" size={48} color={theme.colors.textTertiary} />
           <Text style={s.errorText}>{error}</Text>
           <TouchableOpacity style={s.actionBtn} onPress={fetchResult}>
-            <Text style={s.actionBtnText}>Retry</Text>
+            <Text style={s.actionBtnText}>重试</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -147,7 +147,7 @@ export const TryOnResultScreen: React.FC = () => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
           <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Try-On Result</Text>
+        <Text style={s.headerTitle}>试衣结果</Text>
         <TouchableOpacity style={s.iconBtn} onPress={handleShare}>
           <Ionicons name="share-outline" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
@@ -173,7 +173,7 @@ export const TryOnResultScreen: React.FC = () => {
           <Text
             style={[s.statusText, isComplete && s.statusTextSuccess, isFailed && s.statusTextError]}
           >
-            {isComplete ? "Completed" : isFailed ? "Failed" : "Processing..."}
+            {isComplete ? "已完成" : isFailed ? "生成失败" : "AI 处理中..."}
           </Text>
         </View>
 
@@ -181,7 +181,7 @@ export const TryOnResultScreen: React.FC = () => {
         <View style={s.comparisonContainer}>
           {/* Original photo */}
           <View style={s.comparisonItem}>
-            <Text style={s.comparisonLabel}>Original</Text>
+            <Text style={s.comparisonLabel}>原始照片</Text>
             <View style={s.imageBox}>
               {result?.photo?.thumbnailUrl ? (
                 <Image
@@ -205,7 +205,7 @@ export const TryOnResultScreen: React.FC = () => {
           </View>
 
           <View style={s.comparisonItem}>
-            <Text style={s.comparisonLabel}>Try-On</Text>
+            <Text style={s.comparisonLabel}>AI 试衣效果</Text>
             <View style={s.imageBox}>
               {isComplete && result?.resultImageUrl ? (
                 <Image
@@ -216,7 +216,7 @@ export const TryOnResultScreen: React.FC = () => {
               ) : isProcessing ? (
                 <View style={s.imagePlaceholder}>
                   <ActivityIndicator size="large" color={theme.colors.primary} />
-                  <Text style={s.processingText}>Processing...</Text>
+                  <Text style={s.processingText}>AI 生成中...</Text>
                 </View>
               ) : isFailed ? (
                 <View style={s.imagePlaceholder}>
@@ -262,24 +262,24 @@ export const TryOnResultScreen: React.FC = () => {
               ) : (
                 <Ionicons name="refresh" size={18} color={DesignTokens.colors.neutral.white} />
               )}
-              <Text style={s.actionBtnWhiteText}>Retry</Text>
+              <Text style={s.actionBtnWhiteText}>重试</Text>
             </TouchableOpacity>
           )}
           {isComplete && (
             <>
               <TouchableOpacity style={s.actionBtnOutline} onPress={handleSaveToWardrobe}>
                 <Ionicons name="download-outline" size={18} color={theme.colors.primary} />
-                <Text style={s.actionBtnPrimaryText}>Save</Text>
+                <Text style={s.actionBtnPrimaryText}>保存</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[s.actionBtn, s.shareActionBtn]} onPress={handleShare}>
                 <Ionicons name="share-outline" size={18} color={DesignTokens.colors.neutral.white} />
-                <Text style={s.actionBtnWhiteText}>Share</Text>
+                <Text style={s.actionBtnWhiteText}>分享</Text>
               </TouchableOpacity>
             </>
           )}
           <TouchableOpacity style={s.actionBtnOutline} onPress={() => navigation.goBack()}>
             <Ionicons name="sparkles-outline" size={18} color={theme.colors.primary} />
-            <Text style={s.actionBtnPrimaryText}>New Try-On</Text>
+            <Text style={s.actionBtnPrimaryText}>再次试衣</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

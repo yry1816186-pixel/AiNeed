@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
+import { Request } from 'express';
 import {
   ApiTags,
   ApiOperation,
@@ -95,7 +96,7 @@ export class FeatureFlagController {
   @Post('evaluate')
   @ApiOperation({ summary: 'Evaluate a feature flag for the current user' })
   @ApiResponse({ status: 200, description: 'Evaluation result' })
-  async evaluate(@Body() dto: EvaluateFlagDto, @Request() req: any) {
+  async evaluate(@Body() dto: EvaluateFlagDto, @Request() req: Request) {
     const userId = dto.userId ?? req.user?.id;
     return this.featureFlagService.evaluate(dto.key, userId, dto.attributes);
   }

@@ -183,7 +183,7 @@ export const CheckoutScreen: React.FC = () => {
     try {
       const response = await addressApi.create(draftAddress);
       if (response.success && response.data) {
-        setAddresses((prev) => [response.data!, ...prev]);
+        setAddresses((prev) => [...prev, response.data as Address]);
         setSelectedAddress(response.data);
         setDraftAddress(EMPTY_ADDRESS);
         setShowAddressForm(false);
@@ -197,16 +197,16 @@ export const CheckoutScreen: React.FC = () => {
     }
   }, [draftAddress]);
 
-  const handlePlaceOrder = useCallback(async () => {
+  const handlePlaceOrder = useCallback(async (): Promise<string | null> => {
     if (cartItems.length === 0) {
       Alert.alert("暂无可结算商品", "请先从购物车中选择商品。");
-      return;
+      return null;
     }
 
     if (!selectedAddress) {
       Alert.alert("请选择地址", "请先选择或新增收货地址。");
       setStep("address");
-      return;
+      return null;
     }
 
     setSubmitting(true);
@@ -222,15 +222,19 @@ export const CheckoutScreen: React.FC = () => {
       });
 
       if (response.success && response.data) {
-        setOrderId(response.data.id);
+        const newOrderId = response.data.id;
+        setOrderId(newOrderId);
         setCartItems([]);
         clear();
         setStep("success");
+        return newOrderId;
       } else {
         Alert.alert("提交订单失败", response.error?.message ?? "请稍后重试。");
+        return null;
       }
     } catch {
       Alert.alert("提交订单失败", "网络异常，请稍后重试。");
+      return null;
     } finally {
       setSubmitting(false);
     }
@@ -581,11 +585,11 @@ export const CheckoutScreen: React.FC = () => {
                   <TouchableOpacity
                     style={styles.alipayButton}
                     onPress={async () => {
-                      await handlePlaceOrder();
-                      if (orderId) {
-                        const res = await paymentApi.createPayment(orderId, "alipay");
+                      const newOrderId = await handlePlaceOrder();
+                      if (newOrderId) {
+                        const res = await paymentApi.createPayment(newOrderId, "alipay");
                         if (res.success) {
-                          setPaymentOrderId(orderId);
+                          setPaymentOrderId(newOrderId);
                           setShowPaymentWaiting(true);
                         }
                       }
@@ -601,11 +605,11 @@ export const CheckoutScreen: React.FC = () => {
                   <TouchableOpacity
                     style={styles.wechatButton}
                     onPress={async () => {
-                      await handlePlaceOrder();
-                      if (orderId) {
-                        const res = await paymentApi.createPayment(orderId, "wechat");
+                      const newOrderId = await handlePlaceOrder();
+                      if (newOrderId) {
+                        const res = await paymentApi.createPayment(newOrderId, "wechat");
                         if (res.success) {
-                          setPaymentOrderId(orderId);
+                          setPaymentOrderId(newOrderId);
                           setShowPaymentWaiting(true);
                         }
                       }

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
@@ -71,7 +72,7 @@ export class RecommendationCacheService {
         },
       },
       update: {
-        results: results as any,
+        results: results as unknown as Prisma.InputJsonValue,
         expiresAt,
         updatedAt: new Date(),
       },
@@ -79,7 +80,7 @@ export class RecommendationCacheService {
         userId,
         category,
         subCategory,
-        results: results as any,
+        results: results as unknown as Prisma.InputJsonValue,
         version,
         expiresAt,
       },

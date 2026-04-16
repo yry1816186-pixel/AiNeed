@@ -49,6 +49,13 @@ export const tryOnApi = {
     return apiClient.post("/try-on", { photoId, itemId });
   },
 
+  async createWithClothingImage(
+    photoId: string,
+    clothingPhotoId: string
+  ): Promise<ApiResponse<{ id: string; status: string }>> {
+    return apiClient.post("/try-on", { photoId, clothingPhotoId });
+  },
+
   async getStatus(id: string): Promise<ApiResponse<TryOnResult>> {
     const response = await apiClient.get<TryOnResult>(`/try-on/${id}`);
 
