@@ -4,17 +4,27 @@
  * 搜索模块类型定义 - 消除 any 类型，提供类型安全
  */
 
-import type { Prisma, ClothingCategory } from "@prisma/client";
+import type { ClothingCategory } from "../../../../types/prisma-enums";
 
 // ============================================================================
-// Prisma Where 条件类型
+// Prisma Where 条件类型（本地定义，替代 Prisma namespace 中缺失的类型）
 // ============================================================================
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ClothingItemWhereInput = Record<string, any>;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ClothingItemOrderByWithRelationInput = Record<string, any>;
 
 /**
- * 服装商品搜索 Where 条件
- * 用于 searchItems 和相关查询
+ * Prisma Decimal 的本地替代类型
  */
-export type ClothingItemWhereInput = Prisma.ClothingItemWhereInput;
+export type PrismaDecimal = { toString(): string };
+
+/**
+ * Prisma JsonValue 的本地替代类型
+ */
+export type PrismaJsonValue = string | number | boolean | null | PrismaJsonValue[] | { [key: string]: PrismaJsonValue };
 
 /**
  * 服装商品价格范围条件
@@ -33,16 +43,6 @@ export interface SearchWhereBuilderInput {
   minPrice?: number;
   maxPrice?: number;
 }
-
-// ============================================================================
-// Prisma OrderBy 类型
-// ============================================================================
-
-/**
- * 服装商品排序选项
- */
-export type ClothingItemOrderByWithRelationInput =
-  Prisma.ClothingItemOrderByWithRelationInput;
 
 /**
  * 排序方式枚举
@@ -144,12 +144,12 @@ export interface ClothingItemWithBrand {
   colors: string[];
   sizes: string[];
   tags: string[];
-  price: Prisma.Decimal;
-  originalPrice: Prisma.Decimal | null;
+  price: PrismaDecimal;
+  originalPrice: PrismaDecimal | null;
   currency: string;
   images: string[];
   mainImage: string | null;
-  attributes: Prisma.JsonValue | null;
+  attributes: PrismaJsonValue | null;
   isActive: boolean;
   viewCount: number;
   likeCount: number;
@@ -309,7 +309,7 @@ export function buildOrderByClause(
  * 安全获取服装属性
  */
 export function getClothingAttributes(
-  attributes: Prisma.JsonValue | null,
+  attributes: PrismaJsonValue | null,
 ): ClothingAttributes | null {
   if (attributes === null || attributes === undefined) {
     return null;

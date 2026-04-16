@@ -5,7 +5,7 @@
   BadRequestException,
   Logger,
 } from "@nestjs/common";
-import { User, Gender } from "@prisma/client";
+import { Gender } from "../../../types/prisma-enums";
 
 import { EncryptionService } from "../../../common/encryption";
 import { PIIEncryptionService, PII_FIELDS } from "../../../common/encryption/pii-encryption.service";

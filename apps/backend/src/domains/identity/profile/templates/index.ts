@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ColorSeason } from "@prisma/client";
+import { ColorSeason } from "../../../../../types/prisma-enums";
 
 import { PosterTemplate } from "./base-template";
 import { autumnTemplate, autumnColorHexes, autumnColorNames } from "./color-season/autumn";

@@ -6,7 +6,7 @@ import {
   FaceShape,
   ColorSeason,
   Gender,
-} from "@prisma/client";
+} from "../../../../../types/prisma-enums";
 import { Type } from "class-transformer";
 import {
   IsOptional,
