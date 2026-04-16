@@ -19,7 +19,7 @@ export { useCouponStore } from "../features/commerce/stores/couponStore";
 export { useOrderStore } from "../features/commerce/stores/orderStore";
 export { useSizeRecommendationStore } from "../features/commerce/stores/sizeRecommendationStore";
 export { useQuizStore } from "../features/style-quiz/stores/quizStore";
-export { useStyleQuizStore } from "../features/style-quiz/stores/index";
+export { useStyleQuizStore, useStyleQuizCurrentQuiz, useStyleQuizProgress, useStyleQuizResult, useStyleQuizLoading, useStyleQuizError } from "../features/style-quiz/stores/index";
 export { useProfileStore } from "../features/profile/stores/profileStore";
 export { usePhotoStore } from "../features/tryon/stores/photoStore";
 export { useAiStylistStore } from "../features/stylist/stores/aiStylistStore";
