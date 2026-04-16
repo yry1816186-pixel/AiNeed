@@ -39,9 +39,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   sortItem: { paddingHorizontal: 8, paddingVertical: 4 },
   sortText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.tertiary },
-  sortTextActive: { color: "#FF4D4F", fontWeight: "600" },
+  sortTextActive: { color: "DesignTokens.colors.semantic.error", fontWeight: "600" },
 });

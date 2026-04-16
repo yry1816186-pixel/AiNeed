@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 4,
   },
-  iconCircleSelected: { backgroundColor: "#FFF0F0" },
+  iconCircleSelected: { backgroundColor: "DesignTokens.colors.semantic.errorLight" },
   iconEmoji: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.secondary },
   label: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary },
-  labelSelected: { color: "#FF4D4F", fontWeight: "500" },
+  labelSelected: { color: "DesignTokens.colors.semantic.error", fontWeight: "500" },
 });

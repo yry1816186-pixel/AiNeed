@@ -3,30 +3,30 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "reac
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { RootStackParamList } from "../types/navigation";
-import { theme } from '../design-system/theme';
+import type { RootStackParamList } from '../../../types/navigation';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { clothingApi } from "../services/api/clothing.api";
-import { useScreenTracking } from "../hooks/useAnalytics";
-import { useTranslation } from "../i18n";
+import { clothingApi } from '../../../services/api/clothing.api';
+import { useScreenTracking } from '../../../hooks/useAnalytics';
+import { useTranslation } from '../../../i18n';
 import {
   searchApi,
   searchEnhancementApi,
   clothingEnhancementApi,
   type FilterOptions as FilterOptionsType,
   type Subcategory,
-} from "../services/api/commerce.api";
+} from '../../../services/api/commerce.api';
 import type {
   ClothingItem,
   ClothingFilter,
   ClothingCategory,
   Season,
   Occasion,
-} from "../types/clothing";
-import { CategoryNavigation } from "../components/CategoryNavigation";
-import { SubcategoryTabs } from "../components/SubcategoryTabs";
-import { FilterTags } from "../components/FilterTags";
-import { SortBar } from "../components/SortBar";
+} from '../../../types/clothing';
+import { CategoryNavigation } from '../../../components/CategoryNavigation';
+import { SubcategoryTabs } from '../../../components/SubcategoryTabs';
+import { FilterTags } from '../../../components/FilterTags';
+import { SortBar } from '../../../components/SortBar';
 import {
   launchImageLibraryAsync,
   launchCameraAsync,
@@ -43,7 +43,7 @@ import {
   SearchResultList,
   LoadingOverlay,
   PRICERANGES,
-} from "../components/search/SearchScreenParts";
+} from '../../../components/search/SearchScreenParts';
 
 const DEBOUNCE_MS = 300;
 
@@ -372,6 +372,7 @@ export const SearchScreen: React.FC = () => {
   ].filter(Boolean).length;
 
   const renderContent = () => {
+    const { colors } = useTheme();
     if (!hasSearched) {
       return (
         <SearchSuggestions
@@ -412,13 +413,13 @@ export const SearchScreen: React.FC = () => {
       <View style={styles.header}>
         <View style={styles.searchRow}>
           <View style={styles.searchBar}>
-            <Ionicons name="search-outline" size={20} color={theme.colors.textTertiary} />
+            <Ionicons name="search-outline" size={20} color={colors.textTertiary} />
             <TextInput
               ref={searchInputRef}
               style={styles.searchInput}
               placeholder={t.search.placeholder}
               accessibilityLabel={t.search.placeholder}
-              placeholderTextColor={theme.colors.textTertiary}
+              placeholderTextColor={colors.textTertiary}
               value={query}
               onChangeText={setQuery}
               returnKeyType="search"
@@ -430,7 +431,7 @@ export const SearchScreen: React.FC = () => {
                 onPress={handleClearSearch}
                 hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
               >
-                <Ionicons name="close-circle" size={18} color={theme.colors.textTertiary} />
+                <Ionicons name="close-circle" size={18} color={colors.textTertiary} />
               </TouchableOpacity>
             ) : null}
           </View>
@@ -441,7 +442,7 @@ export const SearchScreen: React.FC = () => {
             accessibilityLabel="以图搜衣"
             accessibilityRole="button"
           >
-            <Ionicons name="camera-outline" size={22} color={theme.colors.primary} />
+            <Ionicons name="camera-outline" size={22} color={colors.primary} />
           </TouchableOpacity>
         </View>
 
@@ -455,7 +456,7 @@ export const SearchScreen: React.FC = () => {
             <Ionicons
               name="options-outline"
               size={16}
-              color={showFilters ? theme.colors.primary : theme.colors.textSecondary}
+              color={showFilters ? colors.primary : colors.textSecondary}
             />
             <Text style={[styles.filterToggleText, showFilters && styles.filterToggleTextActive]}>
               {t.search.filters}
@@ -558,10 +559,10 @@ export const SearchScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 12,
@@ -575,7 +576,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.divider,
+    backgroundColor: colors.divider,
     borderRadius: 16,
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -584,13 +585,13 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   cameraButton: {
     width: 46,
     height: 46,
     borderRadius: 14,
-    backgroundColor: theme.colors.cartLight,
+    backgroundColor: colors.cartLight,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -607,21 +608,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: theme.colors.divider,
+    backgroundColor: colors.divider,
   },
   filterToggleActive: {
-    backgroundColor: theme.colors.cartLight,
+    backgroundColor: colors.cartLight,
   },
   filterToggleText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   filterToggleTextActive: {
-    color: theme.colors.primary,
+    color: colors.primary,
     fontWeight: "500",
   },
   filterBadge: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 10,
     minWidth: 18,
     height: 18,
@@ -632,11 +633,11 @@ const styles = StyleSheet.create({
   filterBadgeText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   separator: {
     height: 1,
-    backgroundColor: theme.colors.border,
+    backgroundColor: colors.border,
   },
 });
 

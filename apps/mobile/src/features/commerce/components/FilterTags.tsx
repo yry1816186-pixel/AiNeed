@@ -8,7 +8,7 @@ import {
   Modal,
   FlatList,
 } from "react-native";
-import type { FilterOptions } from "../services/api/commerce.api";
+import type { FilterOptions } from '../../../services/api/commerce.api';
 import { DesignTokens } from "../../../design-system/theme";
 
 interface FilterTagsProps {

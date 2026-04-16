@@ -19,7 +19,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { pickImageSecurely, ImageValidationError } from "../utils/imagePicker";
 import { clothingApi } from "../services/api/clothing.api";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import type { ClothingCategory, ClothingStyle, Season, Occasion } from "../types/clothing";
 import { CATEGORY_LABELS } from "../types/clothing";
@@ -177,7 +177,7 @@ export const AddClothingScreen: React.FC = () => {
           accessibilityLabel="关闭添加服装"
           accessibilityRole="button"
         >
-          <Ionicons name="close" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="close" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>添加服装</Text>
         <TouchableOpacity
@@ -203,7 +203,7 @@ export const AddClothingScreen: React.FC = () => {
                 accessibilityLabel="移除图片"
                 accessibilityRole="button"
               >
-                <Ionicons name="close-circle" size={28} color={theme.colors.surface} />
+                <Ionicons name="close-circle" size={28} color={colors.surface} />
               </TouchableOpacity>
             </View>
           ) : (
@@ -216,10 +216,10 @@ export const AddClothingScreen: React.FC = () => {
               accessibilityRole="button"
             >
               {isPickingImage ? (
-                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <ActivityIndicator size="large" color={colors.primary} />
               ) : (
                 <>
-                  <Ionicons name="camera-outline" size={48} color={theme.colors.textTertiary} />
+                  <Ionicons name="camera-outline" size={48} color={colors.textTertiary} />
                   <Text style={styles.imagePlaceholderText}>点击添加图片</Text>
                   <Text style={styles.imagePlaceholderHint}>支持相册选择或拍照</Text>
                 </>
@@ -233,7 +233,7 @@ export const AddClothingScreen: React.FC = () => {
             <TextInput
               style={styles.textInput}
               placeholder="给服装起个名字"
-              placeholderTextColor={theme.colors.textTertiary}
+              placeholderTextColor={colors.textTertiary}
               value={formData.name}
               onChangeText={(text) => setFormData((prev) => ({ ...prev, name: text }))}
               accessibilityLabel="服装名称"
@@ -244,7 +244,7 @@ export const AddClothingScreen: React.FC = () => {
             <TextInput
               style={styles.textInput}
               placeholder="品牌名称（可选）"
-              placeholderTextColor={theme.colors.textTertiary}
+              placeholderTextColor={colors.textTertiary}
               value={formData.brand}
               onChangeText={(text) => setFormData((prev) => ({ ...prev, brand: text }))}
               accessibilityLabel="品牌"
@@ -262,7 +262,7 @@ export const AddClothingScreen: React.FC = () => {
               <TextInput
                 style={styles.textInput}
                 placeholder="如：黑色"
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={formData.color}
                 onChangeText={(text) => setFormData((prev) => ({ ...prev, color: text }))}
                 accessibilityLabel="颜色"
@@ -273,7 +273,7 @@ export const AddClothingScreen: React.FC = () => {
               <TextInput
                 style={styles.textInput}
                 placeholder="如：M"
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={formData.size}
                 onChangeText={(text) => setFormData((prev) => ({ ...prev, size: text }))}
                 accessibilityLabel="尺码"
@@ -288,16 +288,16 @@ export const AddClothingScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   backButton: {
     width: 40,
@@ -307,18 +307,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
   saveButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
-  saveButtonDisabled: { backgroundColor: theme.colors.textTertiary },
-  saveButtonText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.surface },
-  saveButtonTextDisabled: { color: theme.colors.surface },
+  saveButtonDisabled: { backgroundColor: colors.textTertiary },
+  saveButtonText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.surface },
+  saveButtonTextDisabled: { color: colors.surface },
   content: { flex: 1 },
-  imageSection: { backgroundColor: theme.colors.surface, padding: 20 },
+  imageSection: { backgroundColor: colors.surface, padding: 20 },
   imagePlaceholder: {
     backgroundColor: DesignTokens.colors.neutral[100],
     borderRadius: 16,
@@ -326,8 +326,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  imagePlaceholderText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary, marginTop: 8 },
-  imagePlaceholderHint: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 4, opacity: 0.7 },
+  imagePlaceholderText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: 8 },
+  imagePlaceholderHint: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 4, opacity: 0.7 },
   imagePreviewContainer: {
     borderRadius: 16,
     overflow: "hidden",
@@ -349,20 +349,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  formSection: { backgroundColor: theme.colors.surface, marginTop: 16, padding: 20 },
+  formSection: { backgroundColor: colors.surface, marginTop: 16, padding: 20 },
   inputGroup: { marginBottom: 20 },
-  inputLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.textPrimary, marginBottom: 8 },
+  inputLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary, marginBottom: 8 },
   textInput: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   rowInputs: { flexDirection: "row", gap: 12 },
   chipSection: { marginBottom: 20 },
-  chipTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.textPrimary, marginBottom: 12 },
+  chipTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary, marginBottom: 12 },
   chipContainer: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   chip: {
     backgroundColor: DesignTokens.colors.neutral[100],
@@ -370,9 +370,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
-  chipSelected: { backgroundColor: "#EEF2FF", borderWidth: 1, borderColor: theme.colors.primary }, // custom color
-  chipText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
-  chipTextSelected: { color: theme.colors.primary, fontWeight: "500" },
+  chipSelected: { backgroundColor: "DesignTokens.colors.semantic.infoLight", borderWidth: 1, borderColor: colors.primary }, // custom color
+  chipText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
+  chipTextSelected: { color: colors.primary, fontWeight: "500" },
   bottomSpacer: { height: 40 },
 });
 

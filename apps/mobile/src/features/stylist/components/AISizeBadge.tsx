@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import type { SizeRecommendation } from "../services/api/commerce.api";
+import type { SizeRecommendation } from '../../../services/api/commerce.api';
 import { DesignTokens } from "../../../design-system/theme";
 
 interface AISizeBadgeProps {

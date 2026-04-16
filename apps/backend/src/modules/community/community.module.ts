@@ -1,15 +1,15 @@
 import { BullModule } from '@nestjs/bullmq';
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { PrismaModule } from '../../common/prisma/prisma.module';
 import { RedisModule } from '../../common/redis/redis.module';
 import { StorageModule } from '../../common/storage/storage.module';
 import { AdminCommunityController } from '../admin/admin-community.controller';
-import { QueueModule } from '../queue/queue.module';
 
 import { CommunityController } from './community.controller';
 import { CommunityService } from './community.service';
 import { ContentModerationService, CONTENT_MODERATION_QUEUE } from './content-moderation.service';
+import { ContentModerationProcessor } from './content-moderation.processor';
 
 
 @Module({
@@ -17,11 +17,10 @@ import { ContentModerationService, CONTENT_MODERATION_QUEUE } from './content-mo
     PrismaModule,
     StorageModule,
     RedisModule,
-    forwardRef(() => QueueModule),
     BullModule.registerQueue({ name: CONTENT_MODERATION_QUEUE }),
   ],
   controllers: [CommunityController, AdminCommunityController],
-  providers: [CommunityService, ContentModerationService],
+  providers: [CommunityService, ContentModerationService, ContentModerationProcessor],
   exports: [CommunityService, ContentModerationService],
 })
 export class CommunityModule {}

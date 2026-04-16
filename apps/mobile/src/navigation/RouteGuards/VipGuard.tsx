@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useAuthStore } from "../../stores/index";
-import { theme } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
@@ -12,6 +12,7 @@ interface VipGuardProps {
 }
 
 export function VipGuard({ children, onNotVip, featureName = "该功能" }: VipGuardProps) {
+    const { colors } = useTheme();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isVip = useAuthStore((state) => state.isVip);
   const hasTriggered = useRef(false);
@@ -34,7 +35,7 @@ export function VipGuard({ children, onNotVip, featureName = "该功能" }: VipG
     return (
       <View style={s.container}>
         <View style={s.iconCircle}>
-          <Ionicons name="lock-closed" size={28} color={theme.colors.primary} />
+          <Ionicons name="lock-closed" size={28} color={colors.primary} />
         </View>
         <Text style={s.title}>{featureName}为 VIP 专属</Text>
         <Text style={s.subtitle}>升级 VIP 尊享全部高级功能</Text>
@@ -55,13 +56,13 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 32,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   iconCircle: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 16,
@@ -69,19 +70,19 @@ const s = StyleSheet.create({
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 24,
   },
   upgradeBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 28,
     paddingVertical: 12,
     borderRadius: 24,

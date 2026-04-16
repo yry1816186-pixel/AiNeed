@@ -23,7 +23,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp as NavProp } from "@react-navigation/native";
 import { useTranslation } from "../i18n";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { profileApi, type UpdateProfileDto } from "../services/api/profile.api";
 import { pickImageSecurely, ImageValidationError } from "../utils/imagePicker";
@@ -243,7 +244,7 @@ export const OnboardingScreen: React.FC = () => {
                   <Ionicons
                     name={option.icon}
                     size={20}
-                    color={isSelected ? DesignTokens.colors.neutral.white : theme.colors.textSecondary}
+                    color={isSelected ? DesignTokens.colors.neutral.white : colors.textSecondary}
                   />
                   <Text
                     style={[styles.genderPillText, isSelected && styles.genderPillTextSelected]}
@@ -303,7 +304,7 @@ export const OnboardingScreen: React.FC = () => {
           accessibilityLabel="点击上传照片"
           accessibilityRole="button"
         >
-          <Ionicons name="camera-outline" size={40} color={theme.colors.textTertiary} />
+          <Ionicons name="camera-outline" size={40} color={colors.textTertiary} />
           <Text style={styles.uploadLabel}>点击上传</Text>
           <Text style={styles.uploadHint}>仅用于体型分析和试衣效果生成</Text>
         </TouchableOpacity>
@@ -317,7 +318,7 @@ export const OnboardingScreen: React.FC = () => {
               accessibilityLabel="移除照片"
               accessibilityRole="button"
             >
-              <Ionicons name="close-circle" size={24} color={theme.colors.surface} />
+              <Ionicons name="close-circle" size={24} color={colors.surface} />
             </TouchableOpacity>
           </View>
         )}
@@ -366,7 +367,7 @@ export const OnboardingScreen: React.FC = () => {
         <Text style={styles.stepSubtitle}>发现你的专属风格</Text>
       </View>
       <View style={styles.quizPlaceholder}>
-        <Ionicons name="sparkles-outline" size={48} color={theme.colors.primary} />
+        <Ionicons name="sparkles-outline" size={48} color={colors.primary} />
         <Text style={styles.quizPlaceholderTitle}>风格测试</Text>
         <Text style={styles.quizPlaceholderSubtitle}>
           通过几道图片选择题，帮你找到最适合的风格方向
@@ -398,6 +399,7 @@ export const OnboardingScreen: React.FC = () => {
   );
 
   const renderCurrentStep = () => {
+    const { colors } = useTheme();
     switch (currentStep) {
       case "BASIC_INFO":
         return renderBasicInfoStep();
@@ -425,7 +427,7 @@ export const OnboardingScreen: React.FC = () => {
             accessibilityLabel={t.common.back}
             accessibilityRole="button"
           >
-            <Ionicons name="arrow-back" size={20} color={theme.colors.textSecondary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textSecondary} />
             <Text style={styles.backButtonText}>{t.common.back}</Text>
           </TouchableOpacity>
         )}
@@ -439,14 +441,14 @@ export const OnboardingScreen: React.FC = () => {
           accessibilityRole="button"
         >
           {isSaving ? (
-            <ActivityIndicator size="small" color={theme.colors.surface} />
+            <ActivityIndicator size="small" color={colors.surface} />
           ) : (
             <>
               <Text style={styles.nextButtonText}>
                 {currentStep === "QUIZ" ? t.common.done : t.common.next}
               </Text>
               {currentStep !== "QUIZ" && (
-                <Ionicons name="arrow-forward" size={18} color={theme.colors.surface} />
+                <Ionicons name="arrow-forward" size={18} color={colors.surface} />
               )}
             </>
           )}
@@ -459,7 +461,7 @@ export const OnboardingScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   progressContainer: {
     flexDirection: "row",
@@ -477,13 +479,13 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: "100%",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.full,
   },
   progressText: {
     marginLeft: Spacing[3],
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     fontWeight: "400",
     minWidth: 40,
   },
@@ -502,13 +504,13 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   stepSubtitle: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 24,
     fontWeight: "400",
@@ -523,7 +525,7 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: Spacing[3],
   },
   requiredAsterisk: {
@@ -546,13 +548,13 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   genderPillSelected: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   genderPillText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   genderPillTextSelected: {
     color: DesignTokens.colors.neutral.white,
@@ -571,13 +573,13 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   agePillSelected: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   agePillText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   agePillTextSelected: {
     color: DesignTokens.colors.neutral.white,
@@ -596,12 +598,12 @@ const styles = StyleSheet.create({
   uploadLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   uploadHint: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "400",
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: Spacing[1],
   },
   photoUploadedContainer: {
@@ -639,7 +641,7 @@ const styles = StyleSheet.create({
   captureButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[6],
     paddingVertical: Spacing[3],
@@ -658,7 +660,7 @@ const styles = StyleSheet.create({
   skipText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   quizPlaceholder: {
     flex: 1,
@@ -670,17 +672,17 @@ const styles = StyleSheet.create({
   quizPlaceholderTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   quizPlaceholderSubtitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 24,
   },
   quizStartButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[8],
     paddingVertical: Spacing[4],
@@ -707,7 +709,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontWeight: "400",
   },
   footerSpacer: {
@@ -716,7 +718,7 @@ const styles = StyleSheet.create({
   nextButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     paddingHorizontal: Spacing[6],
@@ -730,7 +732,7 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
 });
 

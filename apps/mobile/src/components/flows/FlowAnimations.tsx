@@ -91,7 +91,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   return (
     <View style={styles.splashContainer}>
       <LinearGradient
-        colors={["#0f0a1a", "#1e1b4b", "#312e81", DesignTokens.colors.neutral[800]]}
+        colors={["DesignTokens.colors.text.primary", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.brand.slateDark", DesignTokens.colors.neutral[800]]}
         locations={[0, 0.3, 0.7, 1]}
         style={styles.splashGradient}
       >
@@ -152,7 +152,7 @@ const ONBOARDING_DATA = [
     title: "虚拟试穿",
     subtitle: "AI虚拟试穿，足不出户体验万千穿搭",
     icon: "👗",
-    gradient: ["#f97316", "#fb923c"],
+    gradient: ["DesignTokens.colors.semantic.warning", "DesignTokens.colors.semantic.warning"],
   },
 ];
 
@@ -208,7 +208,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 
   return (
     <View style={styles.onboardingContainer}>
-      <LinearGradient colors={["#0f0a1a", "#1e1b4b", "#312e81"]} style={styles.onboardingGradient}>
+      <LinearGradient colors={["DesignTokens.colors.text.primary", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.brand.slateDark"]} style={styles.onboardingGradient}>
         <View style={styles.onboardingHeader}>
           <Pressable onPress={skip}>
             <Text style={styles.skipText}>跳过</Text>
@@ -456,7 +456,7 @@ const ANALYSIS_CONFIG = {
     title: "虚拟试穿中",
     steps: ["处理人物图像", "分析服装属性", "生成试穿效果", "优化细节"],
     icon: "👗",
-    gradient: ["#f97316", "#fb923c"],
+    gradient: ["DesignTokens.colors.semantic.warning", "DesignTokens.colors.semantic.warning"],
   },
 };
 
@@ -597,7 +597,7 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({ type, onCo
 
   return (
     <View style={styles.analysisContainer}>
-      <LinearGradient colors={["#0f0a1a", "#1e1b4b", "#312e81"]} style={styles.analysisGradient}>
+      <LinearGradient colors={["DesignTokens.colors.text.primary", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.brand.slateDark"]} style={styles.analysisGradient}>
         <AnimatedView style={[styles.particleContainer, { opacity: particleOpacity }]}>
           <ParticleEffect count={30} color={`${config.gradient[0]}50`} size={3} />
         </AnimatedView>
@@ -692,7 +692,7 @@ export const ResultAnimation: React.FC<ResultAnimationProps> = ({
 
   return (
     <View style={styles.resultContainer}>
-      <LinearGradient colors={["#0f0a1a", "#1e1b4b", "#312e81"]} style={styles.resultGradient}>
+      <LinearGradient colors={["DesignTokens.colors.text.primary", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.brand.slateDark"]} style={styles.resultGradient}>
         <AnimatedView style={[styles.celebrationContainer, celebrationAnimatedStyle]}>
           <ParticleEffect count={50} color={config.gradient[0]} size={4} />
         </AnimatedView>
@@ -866,7 +866,7 @@ const styles = StyleSheet.create({
   },
   cameraGuideContainer: {
     flex: 1,
-    backgroundColor: "#0f0a1a", // custom color
+    backgroundColor: "DesignTokens.colors.text.primary", // custom color
   },
   cameraHeader: {
     flexDirection: "row",

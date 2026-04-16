@@ -13,7 +13,7 @@ import { pickImageSecurely } from "../../utils/imagePicker";
 import { useCameraPermissions } from "../../hooks/useCameraPermissions";
 import { useReferenceLines } from "../../hooks/useReferenceLines";
 import { usePhotoStore } from "../../stores/photoStore";
-import { theme } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { ReferenceLineOverlay } from "./components/ReferenceLineOverlay";
 import AlignmentGuide from "./components/AlignmentGuide";
@@ -186,18 +186,18 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
         <View style={styles.header}>
           <TouchableOpacity onPress={navigation.goBack} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.title}>拍照</Text>
           <View style={styles.headerSpacer} />
         </View>
         <View style={styles.permissionContainer}>
-          <Ionicons name="camera-outline" size={64} color={theme.colors.textSecondary} />
+          <Ionicons name="camera-outline" size={64} color={colors.textSecondary} />
           <Text style={styles.permissionTitle}>需要相机权限</Text>
           <Text style={styles.permissionMessage}>请在系统设置中开启相机权限，以便使用拍照功能</Text>
           <TouchableOpacity style={styles.settingsButton} onPress={openSettings}>
             <LinearGradient
-              colors={[theme.colors.primary, theme.colors.primaryDark]}
+              colors={[colors.primary, colors.primaryDark]}
               style={styles.settingsGradient}
             >
               <Text style={styles.settingsButtonText}>打开系统设置</Text>
@@ -248,7 +248,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
           >
             <View style={styles.captureButtonOuter}>
               {isCapturing ? (
-                <ActivityIndicator color={theme.colors.primary} size="small" />
+                <ActivityIndicator color={colors.primary} size="small" />
               ) : (
                 <View style={styles.captureButtonInner} />
               )}
@@ -367,18 +367,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 40,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   permissionTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: 24,
     marginBottom: 12,
   },
   permissionMessage: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 22,
     marginBottom: 32,
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   },
   laterButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
 });
 

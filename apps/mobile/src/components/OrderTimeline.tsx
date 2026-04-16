@@ -85,21 +85,21 @@ const styles = StyleSheet.create({
     height: 14,
     borderRadius: 7,
     borderWidth: 2,
-    borderColor: "#E0E0E0",
+    borderColor: "DesignTokens.colors.borders.default",
     backgroundColor: DesignTokens.colors.backgrounds.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   dotCurrent: {
-    backgroundColor: "#FF4D4F",
-    borderColor: "#FF4D4F",
+    backgroundColor: "DesignTokens.colors.semantic.error",
+    borderColor: "DesignTokens.colors.semantic.error",
   },
   dotPast: {
-    backgroundColor: "#52C41A",
-    borderColor: "#52C41A",
+    backgroundColor: "DesignTokens.colors.semantic.success",
+    borderColor: "DesignTokens.colors.semantic.success",
   },
   dotFuture: {
-    borderColor: "#E0E0E0",
+    borderColor: "DesignTokens.colors.borders.default",
   },
   checkMark: {
     fontSize: 8,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   line: {
     width: 2,
     flex: 1,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: "DesignTokens.colors.borders.default",
     marginVertical: 4,
   },
   content: { flex: 1, paddingBottom: 20 },
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   statusTextCurrent: {
     fontWeight: "700",
-    color: "#FF4D4F",
+    color: "DesignTokens.colors.semantic.error",
   },
   statusTextFuture: {
     color: DesignTokens.colors.neutral[300],
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   },
   trackingText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "#1677FF",
+    color: "DesignTokens.colors.semantic.info",
     marginTop: 4,
   },
 });

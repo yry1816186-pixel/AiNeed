@@ -1,7 +1,7 @@
 ﻿import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { Skeleton } from "../../design-system/ui/Skeleton";
-import { Colors, Spacing, BorderRadius } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_GAP = 12;

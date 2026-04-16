@@ -10,7 +10,7 @@ import {
   PanResponderGestureState,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme";
 
 interface DragSortItem {
@@ -226,7 +226,7 @@ export const CollectionDragList: React.FC<CollectionDragListProps> = ({
         activeOpacity={0.7}
       >
         <View style={collectionStyles.dragHandle}>
-          <Ionicons name="reorder-three-outline" size={20} color={theme.colors.textTertiary} />
+          <Ionicons name="reorder-three-outline" size={20} color={colors.textTertiary} />
         </View>
         <View style={collectionStyles.iconContainer}>
           <Ionicons name={item.icon as "folder"} size={22} color={DesignTokens.colors.brand.terracotta} />
@@ -238,12 +238,12 @@ export const CollectionDragList: React.FC<CollectionDragListProps> = ({
         <View style={collectionStyles.actions}>
           {onEdit && (
             <TouchableOpacity style={collectionStyles.actionBtn} onPress={() => onEdit(item.id)}>
-              <Ionicons name="create-outline" size={18} color={theme.colors.textSecondary} />
+              <Ionicons name="create-outline" size={18} color={colors.textSecondary} />
             </TouchableOpacity>
           )}
           {onDelete && (
             <TouchableOpacity style={collectionStyles.actionBtn} onPress={() => onDelete(item.id)}>
-              <Ionicons name="trash-outline" size={18} color={theme.colors.error} />
+              <Ionicons name="trash-outline" size={18} color={colors.error} />
             </TouchableOpacity>
           )}
         </View>
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   },
   itemWrapper: {
     position: "relative",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     marginVertical: 4,
     shadowColor: DesignTokens.colors.neutral.black,
@@ -299,8 +299,8 @@ const collectionStyles = StyleSheet.create({
     justifyContent: "center",
   },
   info: { flex: 1 },
-  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
-  count: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
+  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  count: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
   actions: { flexDirection: "row", gap: 4 },
   actionBtn: { padding: 8 },
 });

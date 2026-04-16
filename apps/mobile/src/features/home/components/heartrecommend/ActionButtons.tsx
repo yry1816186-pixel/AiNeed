@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, Pressable } from "react-nativ
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme, Colors, DesignTokens } from '../design-system/theme';
+import { Colors, DesignTokens } from '../../../../design-system/theme';
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import { haptics } from '../../../utils/haptics';
-import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface ActionButtonsProps {
   onRefresh: () => void;
@@ -13,7 +13,7 @@ interface ActionButtonsProps {
 
 export const EmptyState: React.FC<ActionButtonsProps> = ({ onRefresh }) => (
   <View style={styles.emptyContainer}>
-    <Ionicons name="shirt-outline" size={64} color={theme.colors.textTertiary} />
+    <Ionicons name="shirt-outline" size={64} color={colors.textTertiary} />
     <Text style={styles.emptyTitle}>暂无更多推荐</Text>
     <Text style={styles.emptySubtitle}>我们正在为您寻找更多心仪好物</Text>
     <TouchableOpacity style={styles.refreshButton} onPress={onRefresh} accessibilityLabel="刷新推荐" accessibilityRole="button">
@@ -148,12 +148,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     marginBottom: 24,
   },

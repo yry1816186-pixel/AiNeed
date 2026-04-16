@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary, marginBottom: 12 },
   card: {
     width: 200,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "DesignTokens.colors.backgrounds.secondary",
     borderRadius: 12,
     padding: 12,
     marginRight: 12,

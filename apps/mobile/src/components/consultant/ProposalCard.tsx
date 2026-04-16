@@ -35,16 +35,16 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#F8F6F3",
+    backgroundColor: "DesignTokens.colors.neutral[50]",
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#E8E2DC",
+    borderColor: "DesignTokens.colors.neutral[200]",
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: "#1A1A1A",
+    color: "DesignTokens.colors.text.primary",
     marginBottom: 6,
   },
   summary: {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   primaryBtn: {
-    backgroundColor: "#C67B5C",
+    backgroundColor: "DesignTokens.colors.brand.terracotta",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
@@ -73,10 +73,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#C67B5C",
+    borderColor: "DesignTokens.colors.brand.terracotta",
   },
   secondaryBtnText: {
-    color: "#C67B5C",
+    color: "DesignTokens.colors.brand.terracotta",
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },

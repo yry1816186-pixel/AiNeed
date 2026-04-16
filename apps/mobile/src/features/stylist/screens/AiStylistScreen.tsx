@@ -13,20 +13,20 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { useTranslation } from "../i18n";
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { useAuthStore } from "../stores/index";
-import { useAiStylistStore } from "../stores/aiStylistStore";
-import type { PresetQuestion } from "../stores/aiStylistStore";
-import type { RootStackParamList } from "../types/navigation";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTranslation } from '../../../i18n';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { useAuthStore } from '../stores/index';
+import { useAiStylistStore } from '../stores/aiStylistStore';
+import type { PresetQuestion } from '../stores/aiStylistStore';
+import type { RootStackParamList } from '../../../types/navigation';
 import {
   OutfitPlanView,
   ItemReplacementModal,
   FeedbackModal,
   SceneQuickButtons,
   PresetQuestionsModal,
-} from "../components/aistylist";
+} from '../../../components/aistylist';
 
 export const AiStylistScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -188,7 +188,7 @@ export const AiStylistScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerContent}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -199,7 +199,7 @@ export const AiStylistScreen: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Ionicons name="sparkles" size={18} color={theme.colors.primary} />
+          <Ionicons name="sparkles" size={18} color={colors.primary} />
           <Text style={styles.headerTitle}>{t.navigation.stylist}</Text>
         </View>
         <Pressable
@@ -208,7 +208,7 @@ export const AiStylistScreen: React.FC = () => {
             navigation.navigate("MainTabs", { screen: "Stylist", params: { screen: "SessionCalendar" } });
           }}
         >
-          <Ionicons name="calendar-outline" size={22} color={theme.colors.textPrimary} />
+          <Ionicons name="calendar-outline" size={22} color={colors.textPrimary} />
         </Pressable>
       </View>
 
@@ -229,7 +229,7 @@ export const AiStylistScreen: React.FC = () => {
 
           {isLoading && !currentOutfitPlan ? (
             <View style={styles.generatingContainer}>
-              <ActivityIndicator size="large" color={theme.colors.primary} />
+              <ActivityIndicator size="large" color={colors.primary} />
               <Text style={styles.generatingText}>{t.stylist.generating}</Text>
             </View>
           ) : currentOutfitPlan ? (
@@ -241,7 +241,7 @@ export const AiStylistScreen: React.FC = () => {
             />
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="shirt-outline" size={48} color={theme.colors.textTertiary} />
+              <Ionicons name="shirt-outline" size={48} color={colors.textTertiary} />
               <Text style={styles.emptyTitle}>{t.stylist.askStyle}</Text>
               <Text style={styles.emptySubtitle}>
                 {t.stylist.askOccasion}
@@ -258,7 +258,7 @@ export const AiStylistScreen: React.FC = () => {
               <TextInput
                 style={styles.input}
                 placeholder={t.stylist.askStyle}
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={inputText}
                 onChangeText={setInputText}
                 onSubmitEditing={handleSend}
@@ -281,7 +281,7 @@ export const AiStylistScreen: React.FC = () => {
                 <Ionicons
                   name="send"
                   size={20}
-                  color={inputText.trim() ? DesignTokens.colors.neutral.white : theme.colors.textTertiary}
+                  color={inputText.trim() ? DesignTokens.colors.neutral.white : colors.textTertiary}
                 />
               )}
             </Pressable>
@@ -316,19 +316,19 @@ export const AiStylistScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   flex: { flex: 1 },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   headerLeft: { flexDirection: "row", alignItems: "center", gap: 6 },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
   historyButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   scrollContent: { paddingBottom: 8 },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
@@ -339,10 +339,10 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
     paddingHorizontal: 32,
   },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: 16 },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 8,
     textAlign: "center",
     lineHeight: 20,
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 60,
   },
-  generatingText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 12 },
+  generatingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 12 },
   errorBanner: {
     flexDirection: "row",
     alignItems: "center",
@@ -364,12 +364,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: DesignTokens.colors.semantic.errorLight,
   },
-  errorText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.error, flex: 1 },
-  errorDismiss: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.error, fontWeight: "600", marginLeft: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, flex: 1 },
+  errorDismiss: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, fontWeight: "600", marginLeft: 12 },
   bottomArea: {
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
-    backgroundColor: theme.colors.surface,
+    borderTopColor: colors.border,
+    backgroundColor: colors.surface,
   },
   inputRow: {
     flexDirection: "row",
@@ -381,21 +381,21 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: 20,
     paddingHorizontal: 12,
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, maxHeight: 80, paddingVertical: 8 },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, maxHeight: 80, paddingVertical: 8 },
   sendButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 8,
   },
-  sendButtonDisabled: { backgroundColor: theme.colors.surface },
+  sendButtonDisabled: { backgroundColor: colors.surface },
 });
 
 export default AiStylistScreen;

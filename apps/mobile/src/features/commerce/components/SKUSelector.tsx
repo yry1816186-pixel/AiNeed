@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { AISizeBadge } from "./AISizeBadge";
-import type { SizeRecommendation } from "../services/api/commerce.api";
-import { stockNotificationApi } from "../services/api/commerce.api";
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import type { SizeRecommendation } from '../../../services/api/commerce.api';
+import { stockNotificationApi } from '../../../services/api/commerce.api';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 interface SKUSelectorProps {
   visible: boolean;

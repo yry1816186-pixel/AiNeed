@@ -10,20 +10,21 @@ import {
   RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "../polyfills/expo-vector-icons";
+import { Ionicons } from '../../../polyfills/expo-vector-icons';
 
-import { useScreenTracking } from "../hooks/useAnalytics";
-import { useTranslation } from "../i18n";
+import { useScreenTracking } from '../../../hooks/useAnalytics';
+import { useTranslation } from '../../../i18n';
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import {
   subscriptionApi,
   type MembershipPlan,
   type UserSubscription,
   type PlanTier,
-} from "../services/api/subscription.api";
-import type { RootStackParamList } from "../types/navigation";
+} from '../../../services/api/subscription.api';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type Navigation = NavigationProp<RootStackParamList>;
 
@@ -92,7 +93,7 @@ const DEFAULT_PLANS: MembershipPlan[] = [
 
 const TIER_GRADIENT: Record<PlanTier, [string, string]> = {
   basic: [Colors.neutral[100], Colors.neutral[50]],
-  premium: [theme.colors.primary, theme.colors.primaryLight],
+  premium: [colors.primary, colors.primaryLight],
   vip: [DesignTokens.colors.brand.terracottaDark, DesignTokens.colors.brand.terracotta], // custom color
 };
 
@@ -195,7 +196,7 @@ export const SubscriptionScreen: React.FC = () => {
         onPress={() => navigation.goBack()}
         activeOpacity={0.7}
       >
-        <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+        <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>会员订阅</Text>
       <View style={styles.headerSpacer} />
@@ -203,6 +204,7 @@ export const SubscriptionScreen: React.FC = () => {
   );
 
   const renderCurrentPlan = () => {
+    const { colors } = useTheme();
     if (!currentSubscription) {
       return null;
     }
@@ -213,7 +215,7 @@ export const SubscriptionScreen: React.FC = () => {
     return (
       <View style={styles.currentPlanCard}>
         <View style={styles.currentPlanHeader}>
-          <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+          <Ionicons name="checkmark-circle" size={20} color={colors.success} />
           <Text style={styles.currentPlanLabel}>当前订阅</Text>
         </View>
         <Text style={styles.currentPlanName}>{plan?.name || "基础版"}</Text>
@@ -256,7 +258,7 @@ export const SubscriptionScreen: React.FC = () => {
             <Ionicons
               name={TIER_ICON[plan.tier]}
               size={22}
-              color={isSelected && isPaid ? theme.colors.surface : theme.colors.primary}
+              color={isSelected && isPaid ? colors.surface : colors.primary}
             />
           </View>
           <View style={styles.planNameSection}>
@@ -304,8 +306,8 @@ export const SubscriptionScreen: React.FC = () => {
                 color={
                   feature.included
                     ? isSelected && isPaid
-                      ? theme.colors.surface
-                      : theme.colors.success
+                      ? colors.surface
+                      : colors.success
                     : isSelected && isPaid
                     ? "rgba(255,255,255,0.3)"
                     : Colors.neutral[300]
@@ -328,13 +330,13 @@ export const SubscriptionScreen: React.FC = () => {
           <View
             style={[styles.currentButton, isPaid && { backgroundColor: "rgba(255,255,255,0.2)" }]}
           >
-            <Text style={[styles.currentButtonText, isPaid && { color: theme.colors.surface }]}>
+            <Text style={[styles.currentButtonText, isPaid && { color: colors.surface }]}>
               当前计划
             </Text>
           </View>
         ) : (
           <TouchableOpacity
-            style={[styles.subscribeButton, isPaid && { backgroundColor: theme.colors.surface }]}
+            style={[styles.subscribeButton, isPaid && { backgroundColor: colors.surface }]}
             onPress={() => handleSubscribe(plan)}
             disabled={isSubscribing}
             activeOpacity={0.7}
@@ -342,10 +344,10 @@ export const SubscriptionScreen: React.FC = () => {
             {isSubscribing && isSelected ? (
               <ActivityIndicator
                 size="small"
-                color={isPaid ? theme.colors.primary : theme.colors.surface}
+                color={isPaid ? colors.primary : colors.surface}
               />
             ) : (
-              <Text style={[styles.subscribeButtonText, isPaid && { color: theme.colors.primary }]}>
+              <Text style={[styles.subscribeButtonText, isPaid && { color: colors.primary }]}>
                 {plan.price === 0 ? "切换到基础版" : "立即订阅"}
               </Text>
             )}
@@ -360,7 +362,7 @@ export const SubscriptionScreen: React.FC = () => {
       <SafeAreaView style={styles.container}>
         {renderHeader()}
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>{t.common.loading}</Text>
         </View>
       </SafeAreaView>
@@ -376,7 +378,7 @@ export const SubscriptionScreen: React.FC = () => {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            tintColor={theme.colors.primary}
+            tintColor={colors.primary}
           />
         }
       >
@@ -398,7 +400,7 @@ export const SubscriptionScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   header: {
     flexDirection: "row",
@@ -419,7 +421,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   headerSpacer: {
     width: 40,
@@ -431,7 +433,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[3],
   },
   currentPlanCard: {
@@ -453,16 +455,16 @@ const styles = StyleSheet.create({
   currentPlanLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: theme.colors.success,
+    color: colors.success,
   },
   currentPlanName: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   currentPlanExpiry: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[1],
   },
   introSection: {
@@ -472,12 +474,12 @@ const styles = StyleSheet.create({
   introTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     letterSpacing: -0.3,
   },
   introSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
   },
@@ -495,17 +497,17 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   planCardSelected: {
-    borderColor: theme.colors.primary,
-    backgroundColor: theme.colors.primary,
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
   },
   planCardPopular: {
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
   },
   popularBadge: {
     position: "absolute",
     top: 0,
     right: Spacing[5],
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: Spacing[3],
     paddingVertical: Spacing[1],
     borderBottomLeftRadius: BorderRadius.lg,
@@ -513,7 +515,7 @@ const styles = StyleSheet.create({
   popularBadgeText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   planCardHeader: {
     flexDirection: "row",
@@ -535,14 +537,14 @@ const styles = StyleSheet.create({
   planName: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   planNameSelected: {
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   planDescription: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[1],
   },
   planDescriptionSelected: {
@@ -558,27 +560,27 @@ const styles = StyleSheet.create({
   priceFree: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   priceSymbol: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   priceValue: {
     fontSize: DesignTokens.typography.sizes['4xl'],
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     letterSpacing: -1,
   },
   priceUnit: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginLeft: Spacing[1],
   },
   originalPrice: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textDecorationLine: "line-through",
     marginLeft: Spacing[2],
   },
@@ -593,7 +595,7 @@ const styles = StyleSheet.create({
   },
   featureName: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   featureNameDisabled: {
     color: Colors.neutral[300],
@@ -609,7 +611,7 @@ const styles = StyleSheet.create({
   currentButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   subscribeButton: {
     alignItems: "center",
@@ -621,7 +623,7 @@ const styles = StyleSheet.create({
   subscribeButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   bottomSpacer: {
     height: Spacing[10],

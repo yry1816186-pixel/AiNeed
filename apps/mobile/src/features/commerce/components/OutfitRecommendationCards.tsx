@@ -2,8 +2,8 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import type { RootStackParamList } from "../types/navigation";
-import type { ClothingItem } from "../types/clothing";
+import type { RootStackParamList } from '../../../types/navigation';
+import type { ClothingItem } from '../../../types/clothing';
 import { DesignTokens } from "../../../design-system/theme";
 
 interface OutfitSet {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary, marginBottom: 12 },
   card: {
     width: 200,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "DesignTokens.colors.backgrounds.secondary",
     borderRadius: 12,
     padding: 12,
     marginRight: 12,

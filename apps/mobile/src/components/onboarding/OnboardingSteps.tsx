@@ -11,7 +11,8 @@ import {
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../polyfills/expo-linear-gradient";
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../design-system/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -96,37 +97,37 @@ export const COLOR_PALETTES: ColorPaletteOption[] = [
   {
     id: "warm",
     label: "暖色调",
-    colors: ["#C67B5C", "#D9A441", "#E8B451", DesignTokens.colors.brand.camel],
+    colors: ["DesignTokens.colors.brand.terracotta", "DesignTokens.colors.semantic.warning", "DesignTokens.colors.brand.camel", DesignTokens.colors.brand.camel],
     description: "温暖阳光，亲切自然",
   },
   {
     id: "cool",
     label: "冷色调",
-    colors: ["#7B8FA2", "#5F6F7F", "#96A6B5", "#8B9A7D"],
+    colors: ["DesignTokens.colors.brand.slate", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.text.tertiary", "DesignTokens.colors.brand.sage"],
     description: "沉静理智，高级质感",
   },
   {
     id: "neutral",
     label: "中性色",
-    colors: [DesignTokens.colors.text.primary, "#52524D", "#D4D4D0", "#FAFAF8"],
+    colors: [DesignTokens.colors.text.primary, "DesignTokens.colors.text.secondary", "DesignTokens.colors.neutral[300]", "DesignTokens.colors.backgrounds.secondary"],
     description: "百搭经典，永不褪色",
   },
   {
     id: "earth",
     label: "大地色",
-    colors: ["#8B9A7D", DesignTokens.colors.brand.camel, "#A86548", "#6E7A62"],
+    colors: ["DesignTokens.colors.brand.sage", DesignTokens.colors.brand.camel, "DesignTokens.colors.brand.terracottaDark", "#6E7A62"],
     description: "自然沉稳，低调内敛",
   },
   {
     id: "morandi",
     label: "莫兰迪色",
-    colors: ["#C9B8A6", "#A3B096", "#96A6B5", "#D4917A"],
+    colors: ["DesignTokens.colors.brand.camel", "DesignTokens.colors.brand.sage", "DesignTokens.colors.text.tertiary", "DesignTokens.colors.brand.terracottaLight"],
     description: "低饱和度，温柔高级",
   },
   {
     id: "vivid",
     label: "高饱和",
-    colors: ["#C44536", DesignTokens.colors.semantic.warning, DesignTokens.colors.semantic.success, "#0EA5E9"],
+    colors: ["DesignTokens.colors.semantic.error", DesignTokens.colors.semantic.warning, DesignTokens.colors.semantic.success, "DesignTokens.colors.semantic.info"],
     description: "鲜明醒目，大胆出众",
   },
 ];
@@ -174,7 +175,7 @@ export const StyleStep: React.FC<StyleStepProps> = ({ selectedStyles, onToggleSt
                 <Ionicons
                   name={option.icon}
                   size={24}
-                  color={isSelected ? theme.colors.surface : theme.colors.primary}
+                  color={isSelected ? colors.surface : colors.primary}
                 />
               </View>
               <Text style={[stepStyles.styleLabel, isSelected && stepStyles.styleLabelSelected]}>
@@ -192,7 +193,7 @@ export const StyleStep: React.FC<StyleStepProps> = ({ selectedStyles, onToggleSt
               </Text>
               {isSelected && (
                 <View style={stepStyles.checkMark}>
-                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.surface} />
+                  <Ionicons name="checkmark-circle" size={20} color={colors.surface} />
                 </View>
               )}
             </TouchableOpacity>
@@ -250,7 +251,7 @@ export const ColorStep: React.FC<ColorStepProps> = ({ selectedColors, onToggleCo
               </Text>
               {isSelected && (
                 <View style={stepStyles.checkMark}>
-                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.surface} />
+                  <Ionicons name="checkmark-circle" size={20} color={colors.surface} />
                 </View>
               )}
             </TouchableOpacity>
@@ -301,11 +302,11 @@ export const BodyStep: React.FC<BodyStepProps> = ({
           <View style={stepStyles.inputField}>
             <Text style={stepStyles.inputLabel}>身高 (cm)</Text>
             <View style={stepStyles.inputContainer}>
-              <Ionicons name="resize-outline" size={18} color={theme.colors.textTertiary} />
+              <Ionicons name="resize-outline" size={18} color={colors.textTertiary} />
               <TextInput
                 style={stepStyles.textInput}
                 placeholder="170"
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={height}
                 onChangeText={onHeightChange}
                 keyboardType="numeric"
@@ -316,11 +317,11 @@ export const BodyStep: React.FC<BodyStepProps> = ({
           <View style={stepStyles.inputField}>
             <Text style={stepStyles.inputLabel}>体重 (kg)</Text>
             <View style={stepStyles.inputContainer}>
-              <Ionicons name="scale-outline" size={18} color={theme.colors.textTertiary} />
+              <Ionicons name="scale-outline" size={18} color={colors.textTertiary} />
               <TextInput
                 style={stepStyles.textInput}
                 placeholder="65"
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={weight}
                 onChangeText={onWeightChange}
                 keyboardType="numeric"
@@ -353,7 +354,7 @@ export const BodyStep: React.FC<BodyStepProps> = ({
                 <Ionicons
                   name={option.icon}
                   size={20}
-                  color={isSelected ? theme.colors.surface : theme.colors.textSecondary}
+                  color={isSelected ? colors.surface : colors.textSecondary}
                 />
                 <Text
                   style={[stepStyles.bodyTypeLabel, isSelected && stepStyles.bodyTypeLabelSelected]}
@@ -387,12 +388,12 @@ export const AIIntroStep: React.FC = () => (
         <View style={stepStyles.aiOrbContainer}>
           <View style={stepStyles.aiOrbOuter}>
             <LinearGradient
-              colors={[theme.colors.primary, theme.colors.primaryLight, theme.colors.secondary]}
+              colors={[colors.primary, colors.primaryLight, colors.secondary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={stepStyles.aiOrb}
             >
-              <Ionicons name="sparkles" size={36} color={theme.colors.surface} />
+              <Ionicons name="sparkles" size={36} color={colors.surface} />
             </LinearGradient>
           </View>
         </View>
@@ -422,7 +423,7 @@ export const AIIntroStep: React.FC = () => (
           ].map((feature, index) => (
             <View key={index} style={stepStyles.featureItem}>
               <View style={stepStyles.featureIconContainer}>
-                <Ionicons name={feature.icon} size={22} color={theme.colors.primary} />
+                <Ionicons name={feature.icon} size={22} color={colors.primary} />
               </View>
               <View style={stepStyles.featureContent}>
                 <Text style={stepStyles.featureTitle}>{feature.title}</Text>
@@ -450,13 +451,13 @@ export const stepStyles = StyleSheet.create({
   stepTitle: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   stepSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
   },
@@ -480,7 +481,7 @@ export const stepStyles = StyleSheet.create({
   },
   styleCardSelected: {
     backgroundColor: "rgba(198, 123, 92, 0.08)",
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
   },
   styleIconContainer: {
     width: 44,
@@ -492,30 +493,30 @@ export const stepStyles = StyleSheet.create({
     marginBottom: Spacing[3],
   },
   styleIconContainerSelected: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   styleLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 2,
   },
   styleLabelSelected: {
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   styleEnLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginBottom: Spacing[2],
     letterSpacing: 0.5,
   },
   styleDescription: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 18,
   },
   styleDescriptionSelected: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   checkMark: {
     position: "absolute",
@@ -539,7 +540,7 @@ export const stepStyles = StyleSheet.create({
     position: "relative",
   },
   colorCardSelected: {
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
     backgroundColor: "rgba(198, 123, 92, 0.05)",
   },
   colorSwatches: {
@@ -555,15 +556,15 @@ export const stepStyles = StyleSheet.create({
   colorLabel: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[1],
   },
   colorLabelSelected: {
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   colorDescription: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 18,
   },
   skipButton: {
@@ -572,7 +573,7 @@ export const stepStyles = StyleSheet.create({
   },
   skipText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textDecorationLine: "underline",
   },
   bodyForm: {
@@ -590,7 +591,7 @@ export const stepStyles = StyleSheet.create({
   inputLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: Spacing[2],
   },
   inputContainer: {
@@ -607,13 +608,13 @@ export const stepStyles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     padding: 0,
   },
   sectionLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: Spacing[3],
   },
   bodyTypeGrid: {
@@ -633,16 +634,16 @@ export const stepStyles = StyleSheet.create({
     gap: Spacing[2],
   },
   bodyTypeOptionSelected: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   bodyTypeLabel: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   bodyTypeLabelSelected: {
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   aiIntroContainer: {
     paddingHorizontal: Spacing[5],
@@ -695,12 +696,12 @@ export const stepStyles = StyleSheet.create({
   featureTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[1],
   },
   featureDescription: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
 });

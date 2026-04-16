@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "../polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 interface PlaceholderScreenProps {
@@ -12,13 +12,14 @@ interface PlaceholderScreenProps {
 }
 
 export function PlaceholderScreen({ route }: PlaceholderScreenProps) {
+    const { colors } = useTheme();
   const phase = route.params?.phase as number | undefined;
   const title = (route.params?.title as string | undefined) || route.name;
 
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <Ionicons name="construct-outline" size={48} color={theme.colors.primary} />
+        <Ionicons name="construct-outline" size={48} color={colors.primary} />
       </View>
       <Text style={styles.title}>{title}</Text>
       {phase !== null && (
@@ -35,7 +36,7 @@ export function PlaceholderScreen({ route }: PlaceholderScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     alignItems: "center",
     justifyContent: "center",
     padding: 24,
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 24,
@@ -52,11 +53,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   phaseBadge: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
@@ -65,17 +66,17 @@ const styles = StyleSheet.create({
   phaseText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   comingSoon: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   description: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textAlign: "center",
   },
 });

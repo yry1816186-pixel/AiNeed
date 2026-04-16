@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { recommendationsApi, type RecommendedItem } from "../services/api/tryon.api";
 import { useAuthStore } from "../stores/index";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 
 import { ImageWithPlaceholder } from "../shared/components/common/ImageWithPlaceholder";
@@ -46,6 +46,7 @@ const RecommendationCard = memo(function RecommendationCard({
   index,
   onPress,
 }: RecommendationCardProps) {
+    const { colors } = useTheme();
   return (
     <TouchableOpacity
       style={[
@@ -159,7 +160,7 @@ export const RecommendationsScreen: React.FC = () => {
     if (loading) {
       return (
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>正在获取推荐...</Text>
         </View>
       );
@@ -168,7 +169,7 @@ export const RecommendationsScreen: React.FC = () => {
     if (error) {
       return (
         <View style={styles.centerContainer}>
-          <Ionicons name="cloud-offline-outline" size={48} color={theme.colors.textTertiary} />
+          <Ionicons name="cloud-offline-outline" size={48} color={colors.textTertiary} />
           <Text style={styles.emptyTitle}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
@@ -182,7 +183,7 @@ export const RecommendationsScreen: React.FC = () => {
 
     return (
       <View style={styles.centerContainer}>
-        <Ionicons name="sparkles-outline" size={64} color={theme.colors.primary} />
+        <Ionicons name="sparkles-outline" size={64} color={colors.primary} />
         <Text style={styles.emptyTitle}>AI 智能推荐</Text>
         <Text style={styles.emptySubtext}>
           {isAuthenticated ? "完善你的风格偏好，获取更精准的推荐" : "登录后获取个性化穿搭推荐"}
@@ -201,7 +202,7 @@ export const RecommendationsScreen: React.FC = () => {
             /* filter modal - v3 deferred */
           }}
         >
-          <Ionicons name="options-outline" size={20} color={theme.colors.textPrimary} />
+          <Ionicons name="options-outline" size={20} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -235,7 +236,7 @@ export const RecommendationsScreen: React.FC = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor={theme.colors.primary}
+            tintColor={colors.primary}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -252,36 +253,36 @@ export const RecommendationsScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
   filterButton: { padding: 8 },
   tabBar: {
     flexDirection: "row",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   tab: {
     paddingVertical: 8,
     paddingHorizontal: 16,
     marginRight: 8,
     borderRadius: 20,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
-  tabActive: { backgroundColor: theme.colors.primary },
-  tabLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textSecondary },
+  tabActive: { backgroundColor: colors.primary },
+  tabLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textSecondary },
   tabLabelActive: { color: DesignTokens.colors.neutral.white },
   list: { paddingHorizontal: 6, paddingBottom: 20 },
   emptyList: { flexGrow: 1 },
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
     marginBottom: 12,
     borderRadius: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     overflow: "hidden",
     elevation: 2,
     shadowColor: DesignTokens.colors.neutral.black,
@@ -297,21 +298,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 4,
   },
-  cardImage: { width: "100%", height: CARD_WIDTH * 1.2, backgroundColor: theme.colors.background },
+  cardImage: { width: "100%", height: CARD_WIDTH * 1.2, backgroundColor: colors.background },
   matchBadge: {
     position: "absolute",
     top: 8,
     left: 8,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 10,
   },
   matchText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "700", color: DesignTokens.colors.neutral.white },
   cardInfo: { padding: 10 },
-  cardName: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.textPrimary, lineHeight: 18 },
-  cardBrand: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textSecondary, marginTop: 2 },
-  cardPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: theme.colors.primary, marginTop: 4 },
+  cardName: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: colors.textPrimary, lineHeight: 18 },
+  cardBrand: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textSecondary, marginTop: 2 },
+  cardPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: colors.primary, marginTop: 4 },
   centerContainer: {
     flex: 1,
     alignItems: "center",
@@ -319,20 +320,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     paddingVertical: 60,
   },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginTop: 16 },
   emptySubtext: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 8,
     textAlign: "center",
   },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 12 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 12 },
   retryButton: {
     marginTop: 16,
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   retryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: DesignTokens.colors.neutral.white },
 });

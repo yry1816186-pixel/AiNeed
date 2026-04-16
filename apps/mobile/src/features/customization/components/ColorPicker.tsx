@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import { theme, Spacing } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme";
 
 const PRESET_COLORS = [
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[2],
   },
   row: {
@@ -93,6 +94,6 @@ const styles = StyleSheet.create({
   },
   colorDotSelected: {
     borderWidth: 3,
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
   },
 });

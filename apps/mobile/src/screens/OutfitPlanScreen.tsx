@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { useAiStylistStore, type OutfitPlanDetail } from "../stores/aiStylistStore";
 import type { StylistStackParamList } from "../navigation/types";
 import { DesignTokens } from "../design-system/theme";
@@ -54,13 +54,13 @@ export const OutfitPlanScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Outfit Plan</Text>
           <View style={s.backBtn} />
         </View>
         <View style={s.centerContent}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={s.loadingText}>Loading outfit plan...</Text>
         </View>
       </SafeAreaView>
@@ -72,13 +72,13 @@ export const OutfitPlanScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Outfit Plan</Text>
           <View style={s.backBtn} />
         </View>
         <View style={s.centerContent}>
-          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.textTertiary} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textTertiary} />
           <Text style={s.errorText}>{error}</Text>
           <TouchableOpacity
             style={s.retryBtn}
@@ -96,13 +96,13 @@ export const OutfitPlanScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Outfit Plan</Text>
           <View style={s.backBtn} />
         </View>
         <View style={s.centerContent}>
-          <Ionicons name="shirt-outline" size={48} color={theme.colors.textTertiary} />
+          <Ionicons name="shirt-outline" size={48} color={colors.textTertiary} />
           <Text style={s.emptyTitle}>No outfit plan yet</Text>
           <Text style={s.emptySubtitle}>
             Start a conversation with AI Stylist to generate a plan
@@ -116,11 +116,11 @@ export const OutfitPlanScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Outfit Plan</Text>
         <TouchableOpacity style={s.backBtn}>
-          <Ionicons name="share-outline" size={22} color={theme.colors.textPrimary} />
+          <Ionicons name="share-outline" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -131,7 +131,7 @@ export const OutfitPlanScreen: React.FC = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor={theme.colors.primary}
+            tintColor={colors.primary}
           />
         }
       >
@@ -142,7 +142,7 @@ export const OutfitPlanScreen: React.FC = () => {
             <View style={s.reasonsContainer}>
               {currentOutfitPlan.whyItFits.map((reason, _idx) => (
                 <View key={reason} style={s.reasonChip}>
-                  <Ionicons name="checkmark-circle" size={14} color={theme.colors.success} />
+                  <Ionicons name="checkmark-circle" size={14} color={colors.success} />
                   <Text style={s.reasonText}>{reason}</Text>
                 </View>
               ))}
@@ -150,7 +150,7 @@ export const OutfitPlanScreen: React.FC = () => {
           )}
           {currentOutfitPlan.weatherInfo && (
             <View style={s.weatherRow}>
-              <Ionicons name="partly-sunny-outline" size={16} color={theme.colors.amber} />
+              <Ionicons name="partly-sunny-outline" size={16} color={colors.amber} />
               <Text style={s.weatherText}>
                 {currentOutfitPlan.weatherInfo.temperature}C -{" "}
                 {currentOutfitPlan.weatherInfo.suggestion}
@@ -175,7 +175,7 @@ export const OutfitPlanScreen: React.FC = () => {
                     <Image source={{ uri: item.imageUrl }} style={s.itemImage} resizeMode="cover" />
                   ) : (
                     <View style={s.itemImagePlaceholder}>
-                      <Ionicons name="shirt-outline" size={24} color={theme.colors.textTertiary} />
+                      <Ionicons name="shirt-outline" size={24} color={colors.textTertiary} />
                     </View>
                   )}
                   <Text style={s.itemName} numberOfLines={1}>
@@ -191,7 +191,7 @@ export const OutfitPlanScreen: React.FC = () => {
                 <Ionicons
                   name="information-circle-outline"
                   size={14}
-                  color={theme.colors.textSecondary}
+                  color={colors.textSecondary}
                 />
                 <Text style={s.explanationText} numberOfLines={2}>
                   {outfit.styleExplanation.join(". ")}
@@ -206,41 +206,41 @@ export const OutfitPlanScreen: React.FC = () => {
 };
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
   backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 12 },
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.error, marginTop: 12, textAlign: "center" },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: 12, textAlign: "center" },
   retryBtn: {
     marginTop: 16,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 20,
   },
-  retryBtnText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
+  retryBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: 16 },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: 8,
     textAlign: "center",
   },
   scrollView: { flex: 1 },
   scrollContent: { padding: 16, paddingBottom: 40 },
   summaryCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
@@ -250,14 +250,14 @@ const s = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
-  summaryTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, lineHeight: 24 },
+  summaryTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, lineHeight: 24 },
   reasonsContainer: { marginTop: 12, gap: 6 },
   reasonChip: { flexDirection: "row", alignItems: "center", gap: 6 },
-  reasonText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary, flex: 1 },
+  reasonText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, flex: 1 },
   weatherRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 12 },
-  weatherText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  weatherText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   outfitCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
@@ -273,12 +273,12 @@ const s = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
-  outfitTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: theme.colors.text },
-  outfitPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.primary },
+  outfitTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: colors.text },
+  outfitPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
   itemsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   itemCard: {
     width: (SCREEN_WIDTH - 64) / 3,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: 12,
     padding: 8,
     alignItems: "center",
@@ -287,25 +287,25 @@ const s = StyleSheet.create({
     width: "100%",
     height: 80,
     borderRadius: 8,
-    backgroundColor: theme.colors.placeholderBg,
+    backgroundColor: colors.placeholderBg,
   },
   itemImagePlaceholder: {
     width: "100%",
     height: 80,
     borderRadius: 8,
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
   },
   itemName: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: 6,
     width: "100%",
   },
-  itemCategory: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary, marginTop: 2 },
-  itemPrice: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: theme.colors.primary, marginTop: 2 },
+  itemCategory: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary, marginTop: 2 },
+  itemPrice: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: colors.primary, marginTop: 2 },
   explanationRow: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -313,9 +313,9 @@ const s = StyleSheet.create({
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.divider,
+    borderTopColor: colors.divider,
   },
-  explanationText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary, flex: 1, lineHeight: 18 },
+  explanationText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, flex: 1, lineHeight: 18 },
 });
 
 export default OutfitPlanScreen;

@@ -15,10 +15,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { bloggerApi, BloggerProduct } from "../services/api/blogger.api";
-import type { RootStackParamList } from "../types/navigation";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { bloggerApi, BloggerProduct } from '../../../services/api/blogger.api';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type BloggerProductRoute = RouteProp<RootStackParamList, "BloggerProduct">;
@@ -85,7 +85,7 @@ export const BloggerProductScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -115,7 +115,7 @@ export const BloggerProductScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>方案详情</Text>
         <View style={styles.headerSpacer} />
@@ -200,9 +200,9 @@ export const BloggerProductScreen: React.FC = () => {
         {/* External link for physical products */}
         {product.type === "physical" && product.externalUrl && (
           <TouchableOpacity style={styles.externalLink}>
-            <Ionicons name="link-outline" size={18} color={theme.colors.primary} />
+            <Ionicons name="link-outline" size={18} color={colors.primary} />
             <Text style={styles.externalLinkText}>查看原商品</Text>
-            <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+            <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
           </TouchableOpacity>
         )}
 
@@ -306,7 +306,7 @@ export const BloggerProductScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
   header: {
     flexDirection: "row",
@@ -314,11 +314,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
   backBtn: { width: 40, height: 40, justifyContent: "center" },
   headerSpacer: { width: 40 },
   carouselSection: { backgroundColor: DesignTokens.colors.neutral[50] },
@@ -327,29 +327,29 @@ const styles = StyleSheet.create({
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "rgba(0,0,0,0.2)" },
   dotActive: { backgroundColor: DesignTokens.colors.brand.terracotta, width: 8, height: 8, borderRadius: 4 },
   infoSection: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     padding: 16,
     marginTop: 8,
   },
-  productTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.text },
+  productTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
   productPrice: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: DesignTokens.colors.brand.terracotta, marginTop: 8 },
   originalPrice: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textDecorationLine: "line-through",
     marginTop: 4,
   },
   descriptionSection: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     padding: 16,
     marginTop: 8,
   },
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 8 },
-  descriptionText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, lineHeight: 22 },
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: 8 },
+  descriptionText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, lineHeight: 22 },
   bloggerCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     padding: 16,
     marginTop: 8,
     gap: 12,
@@ -359,14 +359,14 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   bloggerAvatarText: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: DesignTokens.colors.backgrounds.primary },
   bloggerInfo: { flex: 1 },
   bloggerNameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  bloggerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
+  bloggerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
   bloggerBadgeSmall: {
     width: 14,
     height: 14,
@@ -383,34 +383,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  bloggerLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
+  bloggerLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
   externalLink: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     marginTop: 8,
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
-  externalLinkText: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary },
+  externalLinkText: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
   salesInfo: {
     flexDirection: "row",
     gap: 16,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     marginTop: 8,
   },
-  salesText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary },
+  salesText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   purchaseBar: {
     position: "absolute",
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.border,
     paddingHorizontal: 16,
     paddingVertical: 12,
     paddingBottom: 20,
@@ -449,19 +449,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 14,
   },
-  sheetTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 14 },
+  sheetTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginBottom: 14 },
   sheetProductInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: 10,
     padding: 12,
     marginBottom: 16,
   },
-  sheetProductName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, marginRight: 12 },
+  sheetProductName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, marginRight: 12 },
   sheetProductPrice: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: DesignTokens.colors.brand.terracotta },
-  paymentLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 10 },
+  paymentLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary, marginBottom: 10 },
   paymentOption: {
     flexDirection: "row",
     alignItems: "center",
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   paymentOptionSelected: { backgroundColor: DesignTokens.colors.backgrounds.tertiary },
   paymentRadio: {
@@ -477,13 +477,13 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     alignItems: "center",
     justifyContent: "center",
   },
   paymentRadioSelected: { borderColor: DesignTokens.colors.brand.terracotta },
   paymentRadioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: DesignTokens.colors.brand.terracotta },
-  paymentName: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, flex: 1 },
+  paymentName: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, flex: 1 },
   confirmPurchaseBtn: {
     backgroundColor: DesignTokens.colors.brand.terracotta,
     borderRadius: 12,
@@ -499,20 +499,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 32,
   },
-  successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: theme.colors.textPrimary, marginTop: 16 },
-  successSubtitle: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 6 },
+  successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.textPrimary, marginTop: 16 },
+  successSubtitle: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 6 },
   contentBox: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginTop: 20,
     width: "100%",
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
-  contentText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, lineHeight: 22 },
+  contentText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, lineHeight: 22 },
   viewSchemeBtn: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 12,
     paddingHorizontal: 32,
     paddingVertical: 14,

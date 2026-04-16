@@ -8,7 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { SharedElement } from "react-navigation-shared-element";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { BloggerBadge } from "./BloggerBadge";
 import { DesignTokens } from "../../../design-system/theme";
 
@@ -43,6 +43,7 @@ function PostMasonryCardInner({
   visible = false,
   onHeightMeasured,
 }: PostMasonryCardProps) {
+    const { colors } = useTheme();
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.92);
   const [measuredHeight, setMeasuredHeight] = useState<number | null>(null);
@@ -80,12 +81,12 @@ function PostMasonryCardInner({
             </SharedElement>
           ) : (
             <View style={s.masonryImagePlaceholder}>
-              <Ionicons name="image-outline" size={28} color={theme.colors.placeholderBg} />
+              <Ionicons name="image-outline" size={28} color={colors.placeholderBg} />
             </View>
           )}
           {item.isFeatured && (
             <View style={s.featuredBadge}>
-              <Ionicons name="star" size={10} color={theme.colors.gold} />
+              <Ionicons name="star" size={10} color={colors.gold} />
               <Text style={s.featuredText}>精华</Text>
             </View>
           )}
@@ -104,7 +105,7 @@ function PostMasonryCardInner({
               ) : (
                 <View style={s.avatarWrapper}>
                   <View style={s.masonryAvatarPlaceholder}>
-                    <Ionicons name="person" size={10} color={theme.colors.surface} />
+                    <Ionicons name="person" size={10} color={colors.surface} />
                   </View>
                   {item.bloggerLevel && <BloggerBadge level={item.bloggerLevel} />}
                 </View>
@@ -114,7 +115,7 @@ function PostMasonryCardInner({
               </Text>
             </View>
             <View style={s.masonryLikes}>
-              <Ionicons name="heart-outline" size={12} color={theme.colors.textTertiary} />
+              <Ionicons name="heart-outline" size={12} color={colors.textTertiary} />
               <Text style={s.masonryLikesCount}>
                 {item.likesCount >= 1000
                   ? `${(item.likesCount / 1000).toFixed(1)}k`
@@ -132,7 +133,7 @@ export const PostMasonryCard = React.memo(PostMasonryCardInner);
 
 const s = StyleSheet.create({
   masonryCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 14,
     overflow: "hidden",
     shadowColor: DesignTokens.colors.neutral.black,
@@ -143,7 +144,7 @@ const s = StyleSheet.create({
   },
   masonryImageContainer: {
     width: "100%",
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     overflow: "hidden",
   },
   masonryImage: { width: "100%", height: "100%" },
@@ -151,7 +152,7 @@ const s = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
   },
   featuredBadge: {
     position: "absolute",
@@ -165,9 +166,9 @@ const s = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 8,
   },
-  featuredText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "700", color: theme.colors.surface },
+  featuredText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "700", color: colors.surface },
   masonryInfo: { padding: 10 },
-  masonryTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.textPrimary, lineHeight: 18 },
+  masonryTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: colors.textPrimary, lineHeight: 18 },
   masonryFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -180,17 +181,17 @@ const s = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
   },
   masonryAvatarPlaceholder: {
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  masonryAuthorName: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary, flex: 1 },
+  masonryAuthorName: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary, flex: 1 },
   masonryLikes: { flexDirection: "row", alignItems: "center", gap: 3 },
-  masonryLikesCount: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary, fontWeight: "500" },
+  masonryLikesCount: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary, fontWeight: "500" },
 });

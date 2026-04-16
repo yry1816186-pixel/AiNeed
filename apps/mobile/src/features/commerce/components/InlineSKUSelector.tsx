@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
-import { cartEnhancementApi } from "../services/api/commerce.api";
+import { cartEnhancementApi } from '../../../services/api/commerce.api';
 import { DesignTokens } from "../../../design-system/theme";
 
 interface InlineSKUSelectorProps {

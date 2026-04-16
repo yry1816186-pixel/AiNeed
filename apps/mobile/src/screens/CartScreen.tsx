@@ -23,7 +23,7 @@ import { useCouponStore } from "../stores/couponStore";
 
 import { useScreenTracking } from "../hooks/useAnalytics";
 import { useTranslation } from "../i18n";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { haptics } from "../utils/haptics";
 import { withErrorBoundary } from "../shared/components/ErrorBoundary";
@@ -233,7 +233,7 @@ export const CartScreenComponent: React.FC = () => {
           <Text style={styles.headerTitle}>{t.cart.title}</Text>
         </View>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>{t.common.loading}</Text>
         </View>
       </SafeAreaView>
@@ -285,10 +285,10 @@ export const CartScreenComponent: React.FC = () => {
                 ]}
               >
                 {allSelected && (
-                  <Ionicons name="checkmark" size={14} color={theme.colors.surface} />
+                  <Ionicons name="checkmark" size={14} color={colors.surface} />
                 )}
                 {someSelected && !allSelected && (
-                  <Ionicons name="remove" size={14} color={theme.colors.surface} />
+                  <Ionicons name="remove" size={14} color={colors.surface} />
                 )}
               </View>
               <Text style={styles.selectAllText}>{t.cart.selectAll}</Text>
@@ -298,7 +298,7 @@ export const CartScreenComponent: React.FC = () => {
         ListEmptyComponent={
           error ? (
             <View style={styles.errorContainer}>
-              <Ionicons name="cloud-offline-outline" size={40} color={theme.colors.textTertiary} />
+              <Ionicons name="cloud-offline-outline" size={40} color={colors.textTertiary} />
               <Text style={styles.errorText}>{error}</Text>
               <TouchableOpacity style={styles.retryButton} onPress={handleRefresh}>
                 <Text style={styles.retryButtonText}>Retry</Text>
@@ -314,8 +314,8 @@ export const CartScreenComponent: React.FC = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={[theme.colors.primary]}
-            tintColor={theme.colors.primary}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
           />
         }
         contentContainerStyle={[styles.scrollContent, items.length === 0 && { flex: 1 }]}
@@ -352,7 +352,7 @@ export const CartScreenComponent: React.FC = () => {
             >
               <View style={[styles.checkbox, allSelected && styles.checkboxChecked]}>
                 {allSelected && (
-                  <Ionicons name="checkmark" size={14} color={theme.colors.surface} />
+                  <Ionicons name="checkmark" size={14} color={colors.surface} />
                 )}
               </View>
               <Text style={styles.selectAllText}>{t.cart.selectAll}</Text>
@@ -411,10 +411,10 @@ export const CartScreenComponent: React.FC = () => {
                 ]}
               >
                 {allSelected && (
-                  <Ionicons name="checkmark" size={14} color={theme.colors.surface} />
+                  <Ionicons name="checkmark" size={14} color={colors.surface} />
                 )}
                 {someSelected && !allSelected && (
-                  <Ionicons name="remove" size={14} color={theme.colors.surface} />
+                  <Ionicons name="remove" size={14} color={colors.surface} />
                 )}
               </View>
               <Text style={styles.selectAllText}>{t.cart.selectAll}</Text>
@@ -532,7 +532,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
           accessibilityLabel={isSelected ? "取消选择" : "选择商品"}
         >
           <View style={[styles.checkbox, isSelected && styles.checkboxChecked]}>
-            {isSelected && <Ionicons name="checkmark" size={14} color={theme.colors.surface} />}
+            {isSelected && <Ionicons name="checkmark" size={14} color={colors.surface} />}
           </View>
         </TouchableOpacity>
 
@@ -545,7 +545,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
             />
           ) : (
             <View style={styles.cardImagePlaceholder}>
-              <Ionicons name="image-outline" size={24} color={theme.colors.textTertiary} />
+              <Ionicons name="image-outline" size={24} color={colors.textTertiary} />
             </View>
           )}
         </View>
@@ -579,12 +579,12 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
                 <Ionicons
                   name="remove"
                   size={16}
-                  color={item.quantity <= 1 ? theme.colors.border : theme.colors.primary}
+                  color={item.quantity <= 1 ? colors.border : colors.primary}
                 />
               </TouchableOpacity>
               <View style={styles.quantityDisplay}>
                 {isUpdating ? (
-                  <ActivityIndicator size="small" color={theme.colors.primary} />
+                  <ActivityIndicator size="small" color={colors.primary} />
                 ) : (
                   <Text style={styles.quantityText}>{item.quantity}</Text>
                 )}
@@ -596,7 +596,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
                 activeOpacity={0.7}
                 accessibilityLabel="增加数量"
               >
-                <Ionicons name="add" size={16} color={theme.colors.primary} />
+                <Ionicons name="add" size={16} color={colors.primary} />
               </TouchableOpacity>
             </View>
           </View>
@@ -613,7 +613,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
           activeOpacity={0.7}
           accessibilityLabel="删除商品"
         >
-          <Ionicons name="trash-outline" size={22} color={theme.colors.surface} />
+          <Ionicons name="trash-outline" size={22} color={colors.surface} />
           <Text style={styles.deleteText}>{t.common.delete}</Text>
         </TouchableOpacity>
       </View>
@@ -622,21 +622,21 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
     flexDirection: "row",
     alignItems: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.text },
   badge: {
     marginLeft: 10,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  badgeText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600" },
+  badgeText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600" },
   content: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
   loadingContainer: {
@@ -652,7 +652,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  loadingText: { marginTop: 12, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
+  loadingText: { marginTop: 12, fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
   emptyContainer: {
     flex: 1,
     alignItems: "center",
@@ -662,33 +662,33 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: 16,
   },
-  emptySubtext: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 8 },
+  emptySubtext: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 8 },
   emptyButton: {
     marginTop: 24,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 32,
     paddingVertical: 12,
     borderRadius: 24,
   },
-  emptyButtonText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  emptyButtonText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
 
   selectAllRow: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
+    borderBottomColor: colors.divider,
   },
   selectAllFooter: {
     flexDirection: "row",
     alignItems: "center",
   },
-  selectAllText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginLeft: 8 },
+  selectAllText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginLeft: 8 },
 
   checkboxTouchable: {
     padding: 11,
@@ -700,18 +700,18 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   checkboxChecked: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   checkboxIndeterminate: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
 
   cardOuter: {
@@ -721,11 +721,11 @@ const styles = StyleSheet.create({
   cardSwipeable: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     paddingHorizontal: 12,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
+    borderBottomColor: colors.divider,
   },
   deleteAction: {
     position: "absolute",
@@ -735,7 +735,7 @@ const styles = StyleSheet.create({
     width: 120,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: theme.colors.error,
+    backgroundColor: colors.error,
   },
   deleteButton: {
     alignItems: "center",
@@ -743,7 +743,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  deleteText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.sm, marginTop: 4 },
+  deleteText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.sm, marginTop: 4 },
 
   cardImageWrap: {
     width: 80,
@@ -751,7 +751,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: "hidden",
     marginLeft: 4,
-    backgroundColor: theme.colors.placeholderBg,
+    backgroundColor: colors.placeholderBg,
   },
   cardImage: { width: "100%", height: "100%" },
   cardImagePlaceholder: {
@@ -759,7 +759,7 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.placeholderBg,
+    backgroundColor: colors.placeholderBg,
   },
   cardInfo: {
     flex: 1,
@@ -770,31 +770,31 @@ const styles = StyleSheet.create({
   cardName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     lineHeight: 20,
   },
   cardSpecs: { flexDirection: "row", marginTop: 6 },
   specChip: {
-    backgroundColor: theme.colors.placeholderBg,
+    backgroundColor: colors.placeholderBg,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 4,
     marginRight: 6,
   },
-  specText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  specText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   cardBottom: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginTop: 8,
   },
-  cardPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.primary },
+  cardPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
 
   quantityControls: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: theme.colors.placeholderBg,
+    borderColor: colors.placeholderBg,
     borderRadius: 8,
     overflow: "hidden",
   },
@@ -810,12 +810,12 @@ const styles = StyleSheet.create({
     height: 28,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderLeftWidth: 1,
     borderRightWidth: 1,
-    borderColor: theme.colors.placeholderBg,
+    borderColor: colors.placeholderBg,
   },
-  quantityText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.text },
+  quantityText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.text },
 
   footer: {
     flexDirection: "row",
@@ -823,9 +823,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.border,
     ...({
       shadowColor: DesignTokens.colors.neutral.black,
       shadowOffset: { width: 0, height: -2 },
@@ -841,27 +841,27 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     marginRight: 12,
   },
-  totalLabel: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
-  totalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.primary },
+  totalLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
+  totalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
 
   checkoutButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 28,
     paddingVertical: 12,
     borderRadius: 24,
     minWidth: 110,
     alignItems: "center",
   },
-  checkoutButtonDisabled: { backgroundColor: "#C7D2FE" }, // custom color
+  checkoutButtonDisabled: { backgroundColor: "DesignTokens.colors.semantic.infoLight" }, // custom color
   checkoutButtonText: {
-    color: theme.colors.surface,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
   },
   editToggleText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: theme.colors.primary,
+    color: colors.primary,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
@@ -876,7 +876,7 @@ const styles = StyleSheet.create({
   },
   couponEntryText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: "#FF4D4F", // custom color
+    color: "DesignTokens.colors.semantic.error", // custom color
   },
   batchRow: {
     flexDirection: "row",
@@ -908,12 +908,12 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: 12,
     marginBottom: 16,
   },
   retryButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 20,

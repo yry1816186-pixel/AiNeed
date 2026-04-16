@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { FlashList } from "../../polyfills/flash-list";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { PostMasonryCard } from '../../../components/community/PostMasonryCard';
 import type { PostCardData } from '../../../components/community/PostMasonryCard';
@@ -52,6 +52,7 @@ function CommunityFeedInner({
   onViewableItemsChanged,
   viewabilityConfig,
 }: CommunityFeedProps) {
+    const { colors } = useTheme();
   const currentPosts = activeMainTab === "discover" ? posts : followingFeed;
 
   const renderFollowingFeedItem = (item: PostCardDataInternal, index: number) => {
@@ -83,7 +84,7 @@ function CommunityFeedInner({
   if (loading && currentPosts.length === 0) {
     return (
       <View style={s.centerContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={s.loadingText}>加载中...</Text>
       </View>
     );
@@ -92,7 +93,7 @@ function CommunityFeedInner({
   if (error) {
     return (
       <View style={s.centerContainer}>
-        <Ionicons name="cloud-offline-outline" size={64} color={theme.colors.textTertiary} />
+        <Ionicons name="cloud-offline-outline" size={64} color={colors.textTertiary} />
         <Text style={s.errorTitle}>{error}</Text>
         <TouchableOpacity style={s.retryBtn} onPress={onRetry}>
           <Text style={s.retryBtnText}>重试</Text>
@@ -104,7 +105,7 @@ function CommunityFeedInner({
   if (currentPosts.length === 0) {
     return (
       <View style={s.centerContainer}>
-        <Ionicons name="chatbubbles-outline" size={56} color={theme.colors.textTertiary} />
+        <Ionicons name="chatbubbles-outline" size={56} color={colors.textTertiary} />
         <Text style={s.emptyTitle}>
           {activeMainTab === "following" ? "还没有关注动态" : "还没有内容"}
         </Text>
@@ -123,7 +124,7 @@ function CommunityFeedInner({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={theme.colors.primary}
+            tintColor={colors.primary}
           />
         }
         contentContainerStyle={s.scrollContent}
@@ -154,7 +155,7 @@ function CommunityFeedInner({
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          tintColor={theme.colors.primary}
+          tintColor={colors.primary}
         />
       }
       contentContainerStyle={s.masonryListContent}
@@ -163,7 +164,7 @@ function CommunityFeedInner({
       ListFooterComponent={
         loading && posts.length > 0 ? (
           <View style={s.loadingMore}>
-            <ActivityIndicator size="small" color={theme.colors.primary} />
+            <ActivityIndicator size="small" color={colors.primary} />
             <Text style={s.loadingMoreText}>加载更多...</Text>
           </View>
         ) : null
@@ -181,18 +182,18 @@ const s = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 40,
   },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 12 },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
-  emptySubtext: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary, marginTop: 6 },
-  errorTitle: { fontSize: DesignTokens.typography.sizes.md, color: theme.colors.textPrimary, marginTop: 16, textAlign: "center" },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 12 },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: 16 },
+  emptySubtext: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: 6 },
+  errorTitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary, marginTop: 16, textAlign: "center" },
   retryBtn: {
     marginTop: 24,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 32,
     paddingVertical: 14,
     borderRadius: 28,
   },
-  retryBtnText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  retryBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   scrollContent: { paddingTop: 12, paddingBottom: 40 },
   masonryListContent: { paddingHorizontal: 12, paddingTop: 12, paddingBottom: 40 },
   loadingMore: {
@@ -202,9 +203,9 @@ const s = StyleSheet.create({
     gap: 8,
     paddingVertical: 16,
   },
-  loadingMoreText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary },
+  loadingMoreText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   feedActivityCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginHorizontal: 12,
@@ -220,7 +221,7 @@ const s = StyleSheet.create({
   },
   feedActivityText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     flex: 1,
   },
 });

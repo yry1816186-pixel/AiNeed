@@ -261,7 +261,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
                 </LinearGradient>
               </Pressable>
               <Pressable style={styles.photoButton} onPress={() => onUploadPhoto?.("library")}>
-                <LinearGradient colors={[DesignTokens.colors.brand.slate, "#96A6B5"]} style={styles.photoButtonGradient}>
+                <LinearGradient colors={[DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"]} style={styles.photoButtonGradient}>
                   <Ionicons name="images" size={24} color={DesignTokens.colors.text.inverse} />
                   <Text style={styles.photoButtonText}>相册</Text>
                 </LinearGradient>

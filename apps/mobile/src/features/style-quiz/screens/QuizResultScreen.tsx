@@ -2,10 +2,11 @@ import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "../../polyfills/expo-vector-icons";
+import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { useQuizStore } from '../stores/quizStore';
-import { theme, Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 const TAG_COLORS = [
@@ -142,7 +143,7 @@ export const QuizResultScreen: React.FC = () => {
                 <Ionicons
                   name={OCCASION_ICONS[occasion] ?? "star-outline"}
                   size={20}
-                  color={theme.colors.primary}
+                  color={colors.primary}
                 />
                 <Text style={styles.occasionText}>{occasion}</Text>
               </View>
@@ -183,7 +184,7 @@ export const QuizResultScreen: React.FC = () => {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.outlinedButton} onPress={handleShare} activeOpacity={0.8}>
-            <Ionicons name="share-outline" size={18} color={theme.colors.primary} />
+            <Ionicons name="share-outline" size={18} color={colors.primary} />
             <Text style={styles.outlinedButtonText}>分享</Text>
           </TouchableOpacity>
 
@@ -199,7 +200,7 @@ export const QuizResultScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -229,12 +230,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: Spacing[4],
   },
   subtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[2],
   },
   section: {
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[3],
   },
   tagCloud: {
@@ -275,11 +276,11 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
   colorHex: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   occasionList: {
     gap: Spacing[3],
@@ -290,14 +291,14 @@ const styles = StyleSheet.create({
     gap: Spacing[3],
     paddingVertical: Spacing[2],
     paddingHorizontal: Spacing[3],
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
   occasionText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   confidenceContainer: {
     alignItems: "center",
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     borderWidth: 8,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
   confidenceCircleProgress: {
     position: "absolute",
@@ -323,7 +324,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     borderWidth: 8,
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
     borderTopColor: "transparent",
     borderRightColor: "transparent",
   },
@@ -335,23 +336,23 @@ const styles = StyleSheet.create({
   confidenceValue: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   confidenceUnit: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   confidenceLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   actionsSection: {
     marginTop: Spacing[4],
     gap: Spacing[3],
   },
   primaryButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingVertical: Spacing[4],
     borderRadius: BorderRadius.xl,
     alignItems: "center",
@@ -369,13 +370,13 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[4],
     borderRadius: BorderRadius.xl,
     borderWidth: 1.5,
-    borderColor: theme.colors.primary,
-    backgroundColor: theme.colors.surface,
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
   },
   outlinedButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   retakeButton: {
     paddingVertical: Spacing[3],
@@ -383,7 +384,7 @@ const styles = StyleSheet.create({
   },
   retakeText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textDecorationLine: "underline",
   },
 });

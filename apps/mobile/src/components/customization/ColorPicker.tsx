@@ -1,25 +1,26 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import { theme, Spacing } from '../../design-system/theme';
+import { Spacing } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../design-system/theme";
 
 const PRESET_COLORS = [
   DesignTokens.colors.neutral.black,
   DesignTokens.colors.backgrounds.primary,
-  "#FF0000",
+  "DesignTokens.colors.semantic.error",
   "#FF6B00",
-  "#FFD700",
+  "DesignTokens.colors.semantic.warning",
   "#00C853",
   DesignTokens.colors.semantic.info,
   "#7B1FA2",
   DesignTokens.colors.brand.terracotta,
   DesignTokens.colors.brand.camel,
   DesignTokens.colors.backgrounds.tertiary,
-  "#FFC0CB",
-  "#87CEEB",
-  "#98FB98",
+  "DesignTokens.colors.semantic.errorLight",
+  "DesignTokens.colors.semantic.infoLight",
+  "DesignTokens.colors.semantic.successLight",
   DesignTokens.colors.brand.terracottaLight,
-  "#C0C0C0",
+  "DesignTokens.colors.neutral[400]",
   "#808080",
   "#4A4A4A",
   "#C6775C",
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[2],
   },
   row: {
@@ -89,10 +90,10 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: "DesignTokens.colors.borders.default",
   },
   colorDotSelected: {
     borderWidth: 3,
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
   },
 });

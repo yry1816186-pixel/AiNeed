@@ -9,7 +9,7 @@ import {
   Modal,
   Dimensions,
 } from "react-native";
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

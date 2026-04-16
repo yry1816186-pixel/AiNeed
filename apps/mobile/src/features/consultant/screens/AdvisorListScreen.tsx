@@ -10,14 +10,14 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useConsultantStore } from '../stores/consultantStore';
+import { useConsultantStore } from '../../stores/consultantStore';
 import { ConsultantCard } from '../../../components/consultant/ConsultantCard';
 import { ServiceTypeChip } from '../../../components/consultant/ServiceTypeChip';
-import type { ServiceType } from '../types/consultant';
+import type { ServiceType } from '../../../types/consultant';
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamListBase } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from "../../design-system/theme";
+import { DesignTokens } from '../../../design-system/theme';
 
 const SERVICE_TYPES = [
   { label: "全部", value: "" },

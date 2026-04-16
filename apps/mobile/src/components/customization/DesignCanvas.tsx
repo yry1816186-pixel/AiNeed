@@ -2,7 +2,8 @@
 import { StyleSheet, View } from "react-native";
 import { Svg, Rect, Image as SvgImage, Text as SvgText, G } from "react-native-svg";
 import { GestureHandlerRootView, GestureDetector, Gesture } from "react-native-gesture-handler";
-import { theme, Colors } from '../../design-system/theme';
+import { Colors } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import type { DesignLayer, PrintableAreaBounds } from "../../stores/customizationEditorStore";
 import { DesignTokens } from "../../design-system/theme";
 
@@ -98,6 +99,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
   const composedGesture = Gesture.Simultaneous(panGesture(), pinchGesture(), rotationGesture());
 
   const renderPrintableArea = () => {
+    const { colors } = useTheme();
     if (!template) {
       return null;
     }
@@ -174,7 +176,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
             width={layer.width * layer.scale + 8}
             height={layer.height * layer.scale + 8}
             fill="none"
-            stroke={theme.colors.primary}
+            stroke={colors.primary}
             strokeWidth={1.5}
             strokeDasharray="6 3"
           />

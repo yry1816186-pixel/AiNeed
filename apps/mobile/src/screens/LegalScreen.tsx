@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import type { RootStackParamList } from "../types/navigation";
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
@@ -244,6 +244,7 @@ export const LegalScreen: React.FC<LegalScreenProps> = ({ type }) => {
   const content = isTerms ? termsContent : privacyContent;
 
   const renderContent = () => {
+    const { colors } = useTheme();
     const lines = content.trim().split("\n");
     return lines.map((line, index) => {
       if (line.startsWith("## ")) {
@@ -285,7 +286,7 @@ export const LegalScreen: React.FC<LegalScreenProps> = ({ type }) => {
           accessibilityLabel="返回"
           accessibilityRole="button"
         >
-          <Ionicons name="chevron-back-outline" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="chevron-back-outline" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{title}</Text>
         <View style={styles.backButton} />
@@ -313,16 +314,16 @@ export const LegalScreen: React.FC<LegalScreenProps> = ({ type }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   backButton: {
     width: 40,
@@ -333,7 +334,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -344,7 +345,7 @@ const styles = StyleSheet.create({
   },
   lastUpdatedText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   documentContent: {
     paddingBottom: 40,
@@ -352,27 +353,27 @@ const styles = StyleSheet.create({
   heading1: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: 24,
     marginBottom: 12,
   },
   heading2: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: 16,
     marginBottom: 8,
   },
   paragraph: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   bulletItem: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginLeft: 16,
     marginBottom: 4,
   },
@@ -381,17 +382,17 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.border,
     alignItems: "center",
   },
   footerText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   linkText: {
-    color: theme.colors.primary,
+    color: colors.primary,
     textDecorationLine: "underline",
   },
 });

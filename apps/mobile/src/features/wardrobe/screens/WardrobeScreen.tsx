@@ -16,15 +16,15 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useScreenTracking } from "../hooks/useAnalytics";
-import { useTranslation } from "../i18n";
-import { theme } from '../design-system/theme';
-import { clothingApi } from "../services/api/clothing.api";
-import { outfitApi } from "../services/api/outfit.api";
-import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from "../types/clothing";
-import type { RootStackParamList } from "../types/navigation";
-import { ImportSheet } from "../components/wardrobe/ImportSheet";
-import { DesignTokens } from "../design-system/theme";
+import { useScreenTracking } from '../../../hooks/useAnalytics';
+import { useTranslation } from '../../../i18n';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { clothingApi } from '../../../services/api/clothing.api';
+import { outfitApi } from '../../../services/api/outfit.api';
+import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from '../../types/clothing';
+import type { RootStackParamList } from '../../../types/navigation';
+import { ImportSheet } from '../../../components/wardrobe/ImportSheet';
+import { DesignTokens } from '../../../design-system/theme';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -48,6 +48,7 @@ interface ClothingGridItemProps {
 }
 
 const ClothingGridItem = memo(function ClothingGridItem({ item, onPress }: ClothingGridItemProps) {
+    const { colors } = useTheme();
   const imageSource = item.thumbnailUri || item.imageUri;
   const categoryLabel = CATEGORY_LABELS[item.category] || item.category;
 
@@ -64,12 +65,12 @@ const ClothingGridItem = memo(function ClothingGridItem({ item, onPress }: Cloth
           <Image source={{ uri: imageSource }} style={styles.gridItemImage} resizeMode="cover" />
         ) : (
           <View style={styles.gridItemPlaceholder}>
-            <Ionicons name="shirt-outline" size={32} color={theme.colors.textTertiary} />
+            <Ionicons name="shirt-outline" size={32} color={colors.textTertiary} />
           </View>
         )}
         {item.isFavorite && (
           <View style={styles.favoriteBadge}>
-            <Ionicons name="heart" size={12} color={theme.colors.surface} />
+            <Ionicons name="heart" size={12} color={colors.surface} />
           </View>
         )}
       </View>
@@ -243,7 +244,7 @@ export const WardrobeScreen: React.FC = () => {
     }
     return (
       <View style={styles.loadingMoreContainer}>
-        <ActivityIndicator size="small" color={theme.colors.primary} />
+        <ActivityIndicator size="small" color={colors.primary} />
       </View>
     );
   }, [loadingMore]);
@@ -255,7 +256,7 @@ export const WardrobeScreen: React.FC = () => {
 
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="shirt-outline" size={64} color={theme.colors.textTertiary} />
+        <Ionicons name="shirt-outline" size={64} color={colors.textTertiary} />
         <Text style={styles.emptyText}>
           {searchQuery.trim() || selectedCategory ? t.search.noResults : t.wardrobe.title}
         </Text>
@@ -271,7 +272,7 @@ export const WardrobeScreen: React.FC = () => {
             accessibilityLabel="添加服装"
             accessibilityRole="button"
           >
-            <Ionicons name="add" size={20} color={theme.colors.surface} />
+            <Ionicons name="add" size={20} color={colors.surface} />
             <Text style={styles.emptyAddButtonText}>{t.wardrobe.addClothing}</Text>
           </TouchableOpacity>
         )}
@@ -284,7 +285,7 @@ export const WardrobeScreen: React.FC = () => {
     if (loading) {
       return (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>加载中...</Text>
         </View>
       );
@@ -293,7 +294,7 @@ export const WardrobeScreen: React.FC = () => {
     if (error && items.length === 0) {
       return (
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.error} />
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
@@ -319,8 +320,8 @@ export const WardrobeScreen: React.FC = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={[theme.colors.primary]}
-            tintColor={theme.colors.primary}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
           />
         }
         onEndReached={handleLoadMore}
@@ -361,7 +362,7 @@ export const WardrobeScreen: React.FC = () => {
             accessibilityLabel="导入衣橱"
             accessibilityRole="button"
           >
-            <Ionicons name="download-outline" size={22} color={theme.colors.primary} />
+            <Ionicons name="download-outline" size={22} color={colors.primary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.addButton}
@@ -369,7 +370,7 @@ export const WardrobeScreen: React.FC = () => {
             accessibilityLabel="添加服装"
             accessibilityRole="button"
           >
-            <Ionicons name="add" size={24} color={theme.colors.surface} />
+            <Ionicons name="add" size={24} color={colors.surface} />
           </TouchableOpacity>
         </View>
       </View>
@@ -389,13 +390,13 @@ export const WardrobeScreen: React.FC = () => {
         <Ionicons
           name="search-outline"
           size={18}
-          color={theme.colors.textTertiary}
+          color={colors.textTertiary}
           style={styles.searchIcon}
         />
         <TextInput
           style={styles.searchInput}
           placeholder="搜索服装名称、品牌..."
-          placeholderTextColor={theme.colors.textTertiary}
+          placeholderTextColor={colors.textTertiary}
           value={searchQuery}
           onChangeText={handleSearch}
           returnKeyType="search"
@@ -467,21 +468,21 @@ const GRID_ROW_GAP = 12;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   headerActions: {
     flexDirection: "row",
@@ -492,17 +493,17 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
   addButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -514,7 +515,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     alignItems: "center",
@@ -527,23 +528,23 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   statLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 2,
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     marginHorizontal: 16,
     marginVertical: 8,
     borderRadius: 12,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
   searchIcon: {
     marginRight: 8,
@@ -552,7 +553,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   categoryScroll: {
     maxHeight: 44,
@@ -567,21 +568,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
   categoryTabActive: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   categoryTabText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   categoryTabTextActive: {
-    color: theme.colors.surface,
+    color: colors.surface,
     fontWeight: "600",
   },
   flatList: {
@@ -598,7 +599,7 @@ const styles = StyleSheet.create({
   },
   gridItem: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     overflow: "hidden",
     shadowColor: DesignTokens.colors.neutral.black,
@@ -611,7 +612,7 @@ const styles = StyleSheet.create({
     position: "relative",
     width: "100%",
     aspectRatio: 1,
-    backgroundColor: theme.colors.placeholderBg,
+    backgroundColor: colors.placeholderBg,
   },
   gridItemImage: {
     width: "100%",
@@ -621,7 +622,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.placeholderBg,
+    backgroundColor: colors.placeholderBg,
   },
   favoriteBadge: {
     position: "absolute",
@@ -630,21 +631,21 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: theme.colors.error,
+    backgroundColor: colors.error,
     alignItems: "center",
     justifyContent: "center",
   },
   gridItemName: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     paddingHorizontal: 8,
     paddingTop: 8,
     paddingBottom: 2,
   },
   gridItemCategory: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     paddingHorizontal: 8,
     paddingBottom: 8,
   },
@@ -656,7 +657,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 12,
   },
   loadingMoreContainer: {
@@ -672,18 +673,18 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: 16,
   },
   emptySubtext: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 8,
   },
   emptyAddButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 12,
     paddingHorizontal: 20,
     paddingVertical: 12,
@@ -693,7 +694,7 @@ const styles = StyleSheet.create({
   emptyAddButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   errorContainer: {
     flex: 1,
@@ -704,7 +705,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 12,
     textAlign: "center",
   },
@@ -713,12 +714,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   retryButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
 });
 

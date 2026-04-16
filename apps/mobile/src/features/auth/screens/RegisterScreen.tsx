@@ -14,13 +14,13 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { authApi } from '../services/api/auth.api';
-import { useTranslation } from '../i18n';
+import { authApi } from '../../../services/api/auth.api';
+import { useTranslation } from '../../../i18n';
 import { useAuthStore } from '../stores/index';
-import { apiClient } from '../services/api/client';
-import { theme } from '../design-system/theme';
-import { DesignTokens } from '../theme/tokens/design-tokens';
-import type { RootStackParamList } from '../types/navigation';
+import { apiClient } from '../../../services/api/client';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -154,7 +154,7 @@ export const RegisterScreen: React.FC = () => {
             disabled={isLoading}
             accessibilityLabel={t.common.back}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={styles.content}>
@@ -162,11 +162,11 @@ export const RegisterScreen: React.FC = () => {
           <Text style={styles.subtitle}>开始您的智能穿搭之旅</Text>
           <View style={styles.form}>
             <View style={styles.inputGroup}>
-              <Ionicons name="mail-outline" size={20} color={theme.colors.textTertiary} />
+              <Ionicons name="mail-outline" size={20} color={colors.textTertiary} />
               <TextInput
                 style={styles.input}
                 placeholder={t.auth.email}
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -179,12 +179,12 @@ export const RegisterScreen: React.FC = () => {
             </View>
 
             <View style={styles.inputGroup}>
-              <Ionicons name="person-outline" size={20} color={theme.colors.textTertiary} />
+              <Ionicons name="person-outline" size={20} color={colors.textTertiary} />
               <TextInput
                 ref={nicknameInputRef}
                 style={styles.input}
                 placeholder="昵称（选填）"
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={nickname}
                 onChangeText={setNickname}
                 autoCapitalize="none"
@@ -196,12 +196,12 @@ export const RegisterScreen: React.FC = () => {
             </View>
 
             <View style={styles.inputGroup}>
-              <Ionicons name="lock-closed-outline" size={20} color={theme.colors.textTertiary} />
+              <Ionicons name="lock-closed-outline" size={20} color={colors.textTertiary} />
               <TextInput
                 ref={passwordInputRef}
                 style={styles.input}
                 placeholder={t.auth.password}
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
@@ -221,18 +221,18 @@ export const RegisterScreen: React.FC = () => {
                 <Ionicons
                   name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={20}
-                  color={theme.colors.textTertiary}
+                  color={colors.textTertiary}
                 />
               </TouchableOpacity>
             </View>
 
             <View style={styles.inputGroup}>
-              <Ionicons name="lock-closed-outline" size={20} color={theme.colors.textTertiary} />
+              <Ionicons name="lock-closed-outline" size={20} color={colors.textTertiary} />
               <TextInput
                 ref={confirmPasswordInputRef}
                 style={styles.input}
                 placeholder="确认密码"
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry={!showConfirmPassword}
@@ -252,7 +252,7 @@ export const RegisterScreen: React.FC = () => {
                 <Ionicons
                   name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={20}
-                  color={theme.colors.textTertiary}
+                  color={colors.textTertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -267,7 +267,7 @@ export const RegisterScreen: React.FC = () => {
                 accessibilityLabel={agreedToTerms ? '取消同意' : '同意协议'}
               >
                 {agreedToTerms && (
-                  <Ionicons name="checkmark" size={14} color={theme.colors.surface} />
+                  <Ionicons name="checkmark" size={14} color={colors.surface} />
                 )}
               </TouchableOpacity>
               <Text style={styles.termsText}>我已阅读并同意</Text>
@@ -300,7 +300,7 @@ export const RegisterScreen: React.FC = () => {
               accessibilityState={{ disabled: isLoading || !agreedToTerms }}
             >
               {isLoading ? (
-                <ActivityIndicator size="small" color={theme.colors.surface} />
+                <ActivityIndicator size="small" color={colors.surface} />
               ) : (
                 <Text style={styles.registerButtonText}>{t.auth.register}</Text>
               )}
@@ -322,7 +322,7 @@ export const RegisterScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.surface },
+  container: { flex: 1, backgroundColor: colors.surface },
   header: { padding: 20 },
   backButton: {
     width: 40,
@@ -333,22 +333,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   content: { flex: 1, padding: 20 },
-  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: '700', color: theme.colors.text },
-  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 32 },
+  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: '700', color: colors.text },
+  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: 8, marginBottom: 32 },
   form: { gap: 16 },
   inputGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     gap: 12,
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: theme.colors.text },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
   eyeButton: { padding: 4 },
   registerButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
@@ -356,8 +356,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
     minHeight: 52,
   },
-  registerButtonDisabled: { backgroundColor: theme.colors.primaryLight },
-  registerButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: '600', color: theme.colors.surface },
+  registerButtonDisabled: { backgroundColor: colors.primaryLight },
+  registerButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: '600', color: colors.surface },
   termsRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -370,20 +370,20 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 1.5,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   checkboxChecked: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
-  termsText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
-  termsLink: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.primary, fontWeight: '500' },
+  termsText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
+  termsLink: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary, fontWeight: '500' },
   loginLink: { alignItems: 'center', marginTop: 16 },
-  loginText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary },
+  loginText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
 });
 
 export default RegisterScreen;

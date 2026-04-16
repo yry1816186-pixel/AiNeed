@@ -12,7 +12,7 @@ import {
   Modal,
 } from "react-native";
 import { communityApi } from "../../services/api/community.api";
-import { theme } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 
@@ -132,7 +132,7 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
           <Text style={styles.title}>收藏到灵感衣橱</Text>
 
           {loading ? (
-            <ActivityIndicator size="small" color={theme.colors.primary} style={styles.loader} />
+            <ActivityIndicator size="small" color={colors.primary} style={styles.loader} />
           ) : (
             <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
               {collections.map((col) => (
@@ -142,13 +142,13 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
                   onPress={() => handleBookmark(col.id)}
                 >
                   <View style={styles.collectionIcon}>
-                    <Ionicons name={col.icon as "folder"} size={20} color={theme.colors.primary} />
+                    <Ionicons name={col.icon as "folder"} size={20} color={colors.primary} />
                   </View>
                   <View style={styles.collectionInfo}>
                     <Text style={styles.collectionName}>{col.name}</Text>
                     <Text style={styles.collectionCount}>{col.itemCount} 个内容</Text>
                   </View>
-                  <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+                  <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -159,7 +159,7 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
               <TextInput
                 style={styles.newCollectionInput}
                 placeholder="输入分类名称"
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={newCollectionName}
                 onChangeText={setNewCollectionName}
                 autoFocus
@@ -175,7 +175,7 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
             </View>
           ) : (
             <TouchableOpacity style={styles.newBtn} onPress={() => setShowNewCollection(true)}>
-              <Ionicons name="add" size={18} color={theme.colors.primary} />
+              <Ionicons name="add" size={18} color={colors.primary} />
               <Text style={styles.newBtnText}>新建分类</Text>
             </TouchableOpacity>
           )}
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   loader: { paddingVertical: 24 },
@@ -224,20 +224,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   collectionIcon: {
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: "#F0EDFF", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.infoLight", // custom color
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
   },
   collectionInfo: { flex: 1 },
-  collectionName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.text },
-  collectionCount: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
+  collectionName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.text },
+  collectionCount: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
   newBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -246,30 +246,30 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     marginTop: 8,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.border,
   },
-  newBtnText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary, fontWeight: "500" },
+  newBtnText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary, fontWeight: "500" },
   newCollectionRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
     marginTop: 12,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.border,
     paddingTop: 12,
   },
   newCollectionInput: {
     flex: 1,
     height: 40,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     borderRadius: 8,
     paddingHorizontal: 12,
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   createBtn: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 10,

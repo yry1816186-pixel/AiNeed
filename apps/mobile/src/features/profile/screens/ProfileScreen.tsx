@@ -16,26 +16,26 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { useAuthStore } from "../stores/index";
-import { authApi, userApi } from "../services/api/auth.api";
-import { ProfileCompletenessBar } from "../components/profile/ProfileCompletenessBar";
-import { useProfileStore } from "../stores/profileStore";
-import type { UserStats, User } from "../types/user";
-import type { RootStackParamList } from "../types/navigation";
-import { theme } from '../design-system/theme';
+import { useAuthStore } from '../stores/index';
+import { authApi, userApi } from '../../../services/api/auth.api';
+import { ProfileCompletenessBar } from '../../../components/profile/ProfileCompletenessBar';
+import { useProfileStore } from '../stores/profileStore';
+import type { UserStats, User } from '../../../types/user';
+import type { RootStackParamList } from '../../../types/navigation';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 // 引入增强主题令牌
-import { colors } from "../theme/tokens/colors";
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { typography } from "../theme/tokens/typography";
-import { spacing } from "../theme/tokens/spacing";
-import { shadows } from "../theme/tokens/shadows";
-import { useTheme } from "../contexts/ThemeContext";
-import { seasonLabels, type ColorSeason } from "../theme/tokens/season-colors";
-import { useScreenTracking } from "../hooks/useAnalytics";
-import { useTranslation, useI18n } from "../i18n";
-import { withErrorBoundary } from "../shared/components/ErrorBoundary";
-import { BrandPattern, BrandDivider } from "../components/brand/BrandMotif";
+import { colors } from '../../../design-system/theme/tokens/colors';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { typography } from '../../../design-system/theme/tokens/typography';
+import { spacing } from '../../../design-system/theme/tokens/spacing';
+import { shadows } from '../../../design-system/theme/tokens/shadows';
+import { useTheme } from '../../../shared/contexts/ThemeContext';
+import { seasonLabels, type ColorSeason } from '../../../design-system/theme/tokens/season-colors';
+import { useScreenTracking } from '../../../hooks/useAnalytics';
+import { useTranslation, useI18n } from '../../../i18n';
+import { withErrorBoundary } from '../../../shared/components/ErrorBoundary';
+import { BrandPattern, BrandDivider } from '../../../components/brand/BrandMotif';
 
 type ProfileNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -99,91 +99,91 @@ export const ProfileScreenComponent: React.FC = () => {
       icon: "create-outline" as const,
       label: t.profile.editProfile,
       accessibilityLabel: t.profile.editProfile,
-      color: theme.colors.primary,
+      color: colors.primary,
       onPress: () => navigation.navigate("ProfileEdit" as never),
     },
     {
       icon: "body-outline" as const,
       label: "体型分析",
       accessibilityLabel: "体型分析",
-      color: theme.colors.textSecondary,
+      color: colors.textSecondary,
       onPress: () => navigation.navigate("BodyAnalysis" as never),
     },
     {
       icon: "color-palette-outline" as const,
       label: colorSeason ? `色彩分析 · ${seasonLabels[colorSeason]}` : "色彩分析",
       accessibilityLabel: "色彩分析",
-      color: colorSeason ? accentColor : theme.colors.textSecondary,
+      color: colorSeason ? accentColor : colors.textSecondary,
       onPress: () => navigation.navigate("ColorAnalysis" as never),
     },
     {
       icon: "sparkles-outline" as const,
       label: "风格测试",
       accessibilityLabel: "风格测试",
-      color: theme.colors.textSecondary,
+      color: colors.textSecondary,
       onPress: () => navigation.navigate("StyleQuiz" as never),
     },
     {
       icon: "share-outline" as const,
       label: "分享我的风格",
       accessibilityLabel: "分享我的风格",
-      color: theme.colors.textSecondary,
+      color: colors.textSecondary,
       onPress: () => navigation.navigate("SharePoster" as never),
     },
     {
       icon: "settings-outline" as const,
       label: t.profile.settings,
       accessibilityLabel: t.profile.settings,
-      color: theme.colors.textSecondary,
+      color: colors.textSecondary,
       onPress: () => navigation.navigate("Settings"),
     },
     {
       icon: "bag-outline" as const,
       label: t.profile.myOrders,
       accessibilityLabel: t.profile.myOrders,
-      color: theme.colors.textSecondary,
+      color: colors.textSecondary,
       onPress: () => navigation.navigate("Orders"),
     },
     {
       icon: "shirt-outline" as const,
       label: t.wardrobe.title,
       accessibilityLabel: t.wardrobe.title,
-      color: theme.colors.textSecondary,
+      color: colors.textSecondary,
       onPress: () => navigation.navigate("Wardrobe" as never),
     },
     {
       icon: "sparkles-outline" as const,
       label: "AI 造型师",
       accessibilityLabel: "AI 造型师",
-      color: theme.colors.textSecondary,
+      color: colors.textSecondary,
       onPress: () => navigation.navigate("AiStylist" as never),
     },
     {
       icon: "heart-outline" as const,
       label: t.profile.myFavorites,
       accessibilityLabel: t.profile.myFavorites,
-      color: theme.colors.textSecondary,
+      color: colors.textSecondary,
       onPress: () => navigation.navigate("Favorites" as never),
     },
     {
       icon: "color-wand-outline" as const,
       label: "私人定制",
       accessibilityLabel: "私人定制",
-      color: theme.colors.purple,
+      color: colors.purple,
       onPress: () => navigation.navigate("CustomDesign" as never),
     },
     {
       icon: "diamond-outline" as const,
       label: "会员订阅",
       accessibilityLabel: "会员订阅",
-      color: theme.colors.amber,
+      color: colors.amber,
       onPress: () => navigation.navigate("Subscription" as never),
     },
     {
       icon: "globe-outline" as const,
       label: t.profile.language,
       accessibilityLabel: t.profile.language,
-      color: theme.colors.textSecondary,
+      color: colors.textSecondary,
       onPress: () => {
         Alert.alert(
           t.profile.language,
@@ -199,7 +199,7 @@ export const ProfileScreenComponent: React.FC = () => {
       icon: "log-out-outline" as const,
       label: t.profile.logout,
       accessibilityLabel: t.profile.logout,
-      color: theme.colors.error,
+      color: colors.error,
       onPress: () => {
         Alert.alert(
           t.profile.logoutConfirm,
@@ -225,7 +225,7 @@ export const ProfileScreenComponent: React.FC = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={[theme.colors.primary]}
+            colors={[colors.primary]}
           />
         }
       >
@@ -293,7 +293,7 @@ export const ProfileScreenComponent: React.FC = () => {
             <View style={styles.seasonCardHeader}>
               <View style={[styles.seasonDot, { backgroundColor: accentColor }]} />
               <Text style={styles.seasonCardTitle}>我的色彩季型</Text>
-              <Ionicons name="chevron-forward-outline" size={16} color={theme.colors.textTertiary} />
+              <Ionicons name="chevron-forward-outline" size={16} color={colors.textTertiary} />
             </View>
             <View style={styles.seasonCardBody}>
               <Text style={[styles.seasonCardLabel, { color: accentColor }]}>
@@ -313,7 +313,7 @@ export const ProfileScreenComponent: React.FC = () => {
         {/* Stats Cards */}
         {loading ? (
           <View style={styles.statsLoading}>
-            <ActivityIndicator size="small" color={theme.colors.primary} />
+            <ActivityIndicator size="small" color={colors.primary} />
           </View>
         ) : (
           <View style={styles.statsRow}>
@@ -359,7 +359,7 @@ export const ProfileScreenComponent: React.FC = () => {
               <Ionicons
                 name="chevron-forward-outline"
                 size={18}
-                color={theme.colors.textTertiary}
+                color={colors.textTertiary}
               />
             </TouchableOpacity>
           ))}
@@ -367,7 +367,7 @@ export const ProfileScreenComponent: React.FC = () => {
 
         {/* Learning tip */}
         <View style={styles.learningTip}>
-          <Ionicons name="information-circle-outline" size={16} color={theme.colors.textTertiary} />
+          <Ionicons name="information-circle-outline" size={16} color={colors.textTertiary} />
           <Text style={styles.learningTipText}>你的画像会随使用越来越精准</Text>
         </View>
       </ScrollView>

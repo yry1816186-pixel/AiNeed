@@ -17,7 +17,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { orderApi, orderEnhancementApi, refundApi } from "../services/api/commerce.api";
 import type { Order } from "../types";
 import type { RootStackParamList } from "../types/navigation";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
@@ -30,14 +30,14 @@ interface TrackingStep {
 }
 
 const STATUS_META: Record<string, { label: string; color: string }> = {
-  pending: { label: "待支付", color: theme.colors.warning },
-  paid: { label: "待发货", color: theme.colors.primary },
-  confirmed: { label: "已确认", color: theme.colors.primary },
-  processing: { label: "处理中", color: "#6366F1" },
-  shipped: { label: "配送中", color: "#2563EB" },
-  delivered: { label: "已签收", color: theme.colors.success },
-  cancelled: { label: "已取消", color: theme.colors.error },
-  refunded: { label: "已退款", color: theme.colors.textTertiary },
+  pending: { label: "待支付", color: colors.warning },
+  paid: { label: "待发货", color: colors.primary },
+  confirmed: { label: "已确认", color: colors.primary },
+  processing: { label: "处理中", color: "DesignTokens.colors.semantic.info" },
+  shipped: { label: "配送中", color: "DesignTokens.colors.semantic.info" },
+  delivered: { label: "已签收", color: colors.success },
+  cancelled: { label: "已取消", color: colors.error },
+  refunded: { label: "已退款", color: colors.textTertiary },
 };
 
 function formatDate(dateString: string): string {
@@ -112,7 +112,7 @@ export const OrderDetailScreen: React.FC = () => {
     return (
       STATUS_META[order.status] ?? {
         label: order.status,
-        color: theme.colors.textSecondary,
+        color: colors.textSecondary,
       }
     );
   }, [order]);
@@ -141,7 +141,7 @@ export const OrderDetailScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           accessibilityLabel="返回"
         >
-          <Ionicons name="arrow-back" size={22} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>订单详情</Text>
         <TouchableOpacity
@@ -149,17 +149,17 @@ export const OrderDetailScreen: React.FC = () => {
           onPress={() => void loadOrder("refresh")}
           accessibilityLabel="刷新订单"
         >
-          <Ionicons name="refresh" size={20} color={theme.colors.textPrimary} />
+          <Ionicons name="refresh" size={20} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : !order ? (
         <View style={styles.center}>
-          <Ionicons name="receipt-outline" size={56} color={theme.colors.textTertiary} />
+          <Ionicons name="receipt-outline" size={56} color={colors.textTertiary} />
           <Text style={styles.emptyTitle}>订单不存在或已失效</Text>
           <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.goBack()}>
             <Text style={styles.primaryButtonText}>返回订单列表</Text>
@@ -172,7 +172,7 @@ export const OrderDetailScreen: React.FC = () => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => void loadOrder("refresh")}
-              colors={[theme.colors.primary]}
+              colors={[colors.primary]}
             />
           }
         >
@@ -198,7 +198,7 @@ export const OrderDetailScreen: React.FC = () => {
                   <Image source={{ uri: item.imageUri }} style={styles.itemImage} />
                 ) : (
                   <View style={styles.itemImageFallback}>
-                    <Ionicons name="shirt-outline" size={18} color={theme.colors.textTertiary} />
+                    <Ionicons name="shirt-outline" size={18} color={colors.textTertiary} />
                   </View>
                 )}
                 <View style={styles.itemContent}>
@@ -272,7 +272,7 @@ export const OrderDetailScreen: React.FC = () => {
               accessibilityLabel="取消订单"
             >
               {cancelling ? (
-                <ActivityIndicator size="small" color="#FF4D4F" />
+                <ActivityIndicator size="small" color="DesignTokens.colors.semantic.error" />
               ) : (
                 <Text style={styles.dangerButtonText}>取消订单</Text>
               )}
@@ -377,7 +377,7 @@ export const OrderDetailScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -385,9 +385,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   iconButton: {
     width: 40,
@@ -395,12 +395,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F1F3F4",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   center: {
     flex: 1,
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   scrollContent: {
     padding: 20,
@@ -422,20 +422,20 @@ const styles = StyleSheet.create({
   heroCard: {
     padding: 18,
     borderRadius: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   heroLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   heroValue: {
     marginTop: 6,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     maxWidth: 220,
   },
   statusBadge: {
@@ -450,12 +450,12 @@ const styles = StyleSheet.create({
   card: {
     padding: 16,
     borderRadius: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   cardTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   orderItemRow: {
@@ -464,13 +464,13 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#F1F3F4",
+    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   itemImage: {
     width: 60,
     height: 60,
     borderRadius: 16,
-    backgroundColor: "#F1F3F4",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   itemImageFallback: {
     width: 60,
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F1F3F4",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   itemContent: {
     flex: 1,
@@ -487,27 +487,27 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   itemMeta: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   itemPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   addressName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   addressText: {
     marginTop: 6,
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   summaryRow: {
     marginTop: 12,
@@ -517,16 +517,16 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   summaryValue: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   summaryTotal: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   timelineRow: {
     flexDirection: "row",
@@ -540,17 +540,17 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#CBD5E1",
+    backgroundColor: "DesignTokens.colors.neutral[300]",
     marginTop: 6,
   },
   timelineDotActive: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   timelineLine: {
     width: 2,
     flex: 1,
     marginTop: 6,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: "DesignTokens.colors.neutral[200]",
   },
   timelineContent: {
     flex: 1,
@@ -559,61 +559,61 @@ const styles = StyleSheet.create({
   timelineStatus: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   timelineDescription: {
     marginTop: 4,
     fontSize: DesignTokens.typography.sizes.sm,
     lineHeight: 20,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   timelineTime: {
     marginTop: 6,
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   timelineEmpty: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   primaryButton: {
     marginTop: 8,
     paddingHorizontal: 20,
     paddingVertical: 14,
     borderRadius: 14,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   primaryButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   secondaryButton: {
     paddingVertical: 16,
     borderRadius: 16,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    backgroundColor: theme.colors.surface,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
   secondaryButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   dangerButton: {
     paddingVertical: 16,
     borderRadius: 16,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#FF4D4F",
-    backgroundColor: theme.colors.surface,
+    borderColor: "DesignTokens.colors.semantic.error",
+    backgroundColor: colors.surface,
   },
   dangerButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: "#FF4D4F",
+    color: "DesignTokens.colors.semantic.error",
   },
   actionRow: {
     flexDirection: "row",
@@ -625,7 +625,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 16,
     alignItems: "center",
-    backgroundColor: "#FF4D4F",
+    backgroundColor: "DesignTokens.colors.semantic.error",
   },
   primaryFilledText: {
     fontSize: DesignTokens.typography.sizes.base,

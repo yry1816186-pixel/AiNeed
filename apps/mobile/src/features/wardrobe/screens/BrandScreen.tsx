@@ -15,13 +15,13 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { clothingApi } from "../services/api/clothing.api";
-import type { ClothingItem } from "../types/clothing";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { clothingApi } from '../../../services/api/clothing.api';
+import type { ClothingItem } from '../../types/clothing';
 
-import type { ProfileStackParamList } from "../navigation/types";
-import type { RootStackParamList } from "../types/navigation";
-import { DesignTokens } from "../design-system/theme";
+import type { ProfileStackParamList } from '../../../navigation/types';
+import type { RootStackParamList } from '../../../types/navigation';
+import { DesignTokens } from '../../../design-system/theme';
 
 type BrandRoute = RouteProp<ProfileStackParamList, "Brand">;
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
@@ -109,7 +109,7 @@ export const BrandScreen: React.FC = () => {
           <Image source={{ uri: item.imageUri }} style={s.productImage} resizeMode="cover" />
         ) : (
           <View style={s.productImagePlaceholder}>
-            <Ionicons name="image-outline" size={28} color={theme.colors.textTertiary} />
+            <Ionicons name="image-outline" size={28} color={colors.textTertiary} />
           </View>
         )}
         <View style={s.productInfo}>
@@ -135,34 +135,34 @@ export const BrandScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Brand</Text>
         <TouchableOpacity style={s.iconBtn} onPress={handleQRScan}>
-          <Ionicons name="qr-code-outline" size={22} color={theme.colors.textPrimary} />
+          <Ionicons name="qr-code-outline" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
       {/* QR import banner */}
       <TouchableOpacity style={s.qrBanner} onPress={handleQRScan} activeOpacity={0.8}>
         <View style={s.qrBannerIcon}>
-          <Ionicons name="scan-outline" size={20} color={theme.colors.primary} />
+          <Ionicons name="scan-outline" size={20} color={colors.primary} />
         </View>
         <View style={s.qrBannerText}>
           <Text style={s.qrBannerTitle}>Scan Brand QR Code</Text>
           <Text style={s.qrBannerDesc}>Quickly import products by scanning</Text>
         </View>
-        <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+        <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />
       </TouchableOpacity>
 
       {loading && items.length === 0 ? (
         <View style={s.centerContent}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={s.loadingText}>Loading products...</Text>
         </View>
       ) : error && items.length === 0 ? (
         <View style={s.centerContent}>
-          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.textTertiary} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textTertiary} />
           <Text style={s.errorText}>{error}</Text>
           <TouchableOpacity style={s.retryBtn} onPress={() => fetchItems(1, false)}>
             <Text style={s.retryBtnText}>Retry</Text>
@@ -177,7 +177,7 @@ export const BrandScreen: React.FC = () => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={handleRefresh}
-              tintColor={theme.colors.primary}
+              tintColor={colors.primary}
             />
           }
           onEndReached={handleLoadMore}
@@ -185,7 +185,7 @@ export const BrandScreen: React.FC = () => {
           contentContainerStyle={{ paddingBottom: 24 }}
           ListEmptyComponent={
             <View style={s.centerContent}>
-              <Ionicons name="shirt-outline" size={48} color={theme.colors.textTertiary} />
+              <Ionicons name="shirt-outline" size={48} color={colors.textTertiary} />
               <Text style={s.emptyTitle}>No products found</Text>
               <Text style={s.emptySubtitle}>This brand has not listed any products yet</Text>
             </View>
@@ -193,7 +193,7 @@ export const BrandScreen: React.FC = () => {
           ListFooterComponent={
             loading && items.length > 0 ? (
               <View style={s.loadingMore}>
-                <ActivityIndicator size="small" color={theme.colors.primary} />
+                <ActivityIndicator size="small" color={colors.primary} />
                 <Text style={s.loadingMoreText}>Loading more...</Text>
               </View>
             ) : null
@@ -205,25 +205,25 @@ export const BrandScreen: React.FC = () => {
 };
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
   iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   qrBanner: {
     flexDirection: "row",
     alignItems: "center",
     marginHorizontal: 16,
     marginVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 14,
     shadowColor: DesignTokens.colors.neutral.black,
@@ -236,60 +236,60 @@ const s = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
   },
   qrBannerText: { flex: 1, marginLeft: 12 },
-  qrBannerTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
-  qrBannerDesc: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
+  qrBannerTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  qrBannerDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 12 },
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.error, marginTop: 12 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: 12 },
   retryBtn: {
     marginTop: 16,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 20,
   },
-  retryBtnText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
+  retryBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: 16 },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: 8,
     textAlign: "center",
   },
   productCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
+    borderBottomColor: colors.divider,
   },
   productImage: {
     width: 72,
     height: 72,
     borderRadius: 10,
-    backgroundColor: theme.colors.placeholderBg,
+    backgroundColor: colors.placeholderBg,
   },
   productImagePlaceholder: {
     width: 72,
     height: 72,
     borderRadius: 10,
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
   },
   productInfo: { flex: 1, marginLeft: 14 },
-  productName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.textPrimary, lineHeight: 20 },
-  productBrand: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 3 },
+  productName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary, lineHeight: 20 },
+  productBrand: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 3 },
   priceRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 6 },
-  productPrice: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: theme.colors.primary },
-  productColors: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary },
+  productPrice: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: colors.primary },
+  productColors: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   loadingMore: {
     flexDirection: "row",
     alignItems: "center",
@@ -297,7 +297,7 @@ const s = StyleSheet.create({
     gap: 8,
     paddingVertical: 16,
   },
-  loadingMoreText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary },
+  loadingMoreText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
 });
 
 export default BrandScreen;

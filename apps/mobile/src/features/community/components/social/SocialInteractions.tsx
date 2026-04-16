@@ -256,8 +256,8 @@ export const ShareSheet: React.FC<ShareSheetProps> = ({
       color: "DesignTokens.colors.semantic.success",
     },
     { id: "moments", name: "朋友圈", icon: "camera-outline", color: "DesignTokens.colors.semantic.success" },
-    { id: "weibo", name: "微博", icon: "logo-twitter", color: "#E6162D" },
-    { id: "qq", name: "QQ", icon: "chatbubbles", color: "#12B7F5" },
+    { id: "weibo", name: "微博", icon: "logo-twitter", color: "DesignTokens.colors.semantic.error" },
+    { id: "qq", name: "QQ", icon: "chatbubbles", color: "DesignTokens.colors.semantic.info" },
     {
       id: "link",
       name: "复制链接",

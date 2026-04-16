@@ -11,7 +11,7 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
-import { theme } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { ClothingItem, ClothingCategory, Season, Occasion } from '../../../types/clothing';
@@ -136,6 +136,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = React.memo(function Filte
   setSelectedSizes,
   onClearFilters,
 }) {
+    const { colors } = useTheme();
   if (!showFilters) {
     return null;
   }
@@ -242,7 +243,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = React.memo(function Filte
 
       {hasActiveFilters ? (
         <TouchableOpacity style={styles.clearAllFilters} onPress={onClearFilters}>
-          <Ionicons name="close-circle-outline" size={16} color={theme.colors.textTertiary} />
+          <Ionicons name="close-circle-outline" size={16} color={colors.textTertiary} />
           <Text style={styles.clearAllFiltersText}>清除全部筛选</Text>
         </TouchableOpacity>
       ) : null}
@@ -280,13 +281,13 @@ export const ActiveFilterPills: React.FC<ActiveFilterPillsProps> = React.memo(
             onPress={() => setSelectedCategory(null)}
           >
             <Text style={styles.activeFilterPillText}>{CATEGORY_LABELS[selectedCategory]}</Text>
-            <Ionicons name="close" size={14} color={theme.colors.primary} />
+            <Ionicons name="close" size={14} color={colors.primary} />
           </TouchableOpacity>
         ) : null}
         {selectedSeason ? (
           <TouchableOpacity style={styles.activeFilterPill} onPress={() => setSelectedSeason(null)}>
             <Text style={styles.activeFilterPillText}>{SEASON_LABELS[selectedSeason]}</Text>
-            <Ionicons name="close" size={14} color={theme.colors.primary} />
+            <Ionicons name="close" size={14} color={colors.primary} />
           </TouchableOpacity>
         ) : null}
         {selectedOccasion ? (
@@ -295,7 +296,7 @@ export const ActiveFilterPills: React.FC<ActiveFilterPillsProps> = React.memo(
             onPress={() => setSelectedOccasion(null)}
           >
             <Text style={styles.activeFilterPillText}>{OCCASION_LABELS[selectedOccasion]}</Text>
-            <Ionicons name="close" size={14} color={theme.colors.primary} />
+            <Ionicons name="close" size={14} color={colors.primary} />
           </TouchableOpacity>
         ) : null}
       </ScrollView>
@@ -330,7 +331,7 @@ export const ResultCard: React.FC<ResultCardProps> = React.memo(function ResultC
         />
       ) : (
         <View style={styles.cardPlaceholder}>
-          <Ionicons name="shirt-outline" size={32} color={theme.colors.textTertiary} />
+          <Ionicons name="shirt-outline" size={32} color={colors.textTertiary} />
         </View>
       )}
       <View style={styles.cardInfo}>
@@ -373,7 +374,7 @@ export const EmptySearchState: React.FC<EmptySearchStateProps> = React.memo(
   function EmptySearchState({ query, hasActiveFilters, onClearFilters }) {
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="search-outline" size={64} color={theme.colors.border} />
+        <Ionicons name="search-outline" size={64} color={colors.border} />
         <Text style={styles.emptyTitle}>未找到结果</Text>
         <Text style={styles.emptySubtitle}>
           {query.trim() ? `没有找到与“${query.trim()}”相关的单品` : "试试调整筛选条件"}
@@ -398,7 +399,7 @@ function QuickBrowseGrid({ onCategorySelect }: QuickBrowseGridProps) {
       {CATEGORIES.slice(0, 8).map((cat) => (
         <TouchableOpacity key={cat} style={styles.quickItem} onPress={() => onCategorySelect(cat)}>
           <View style={styles.quickIcon}>
-            <Ionicons name={getCategoryIcon(cat)} size={24} color={theme.colors.primary} />
+            <Ionicons name={getCategoryIcon(cat)} size={24} color={colors.primary} />
           </View>
           <Text style={styles.quickLabel}>{CATEGORY_LABELS[cat]}</Text>
         </TouchableOpacity>
@@ -435,8 +436,8 @@ export const SearchSuggestions: React.FC<SearchSuggestionsProps> = React.memo(
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={onRefresh}
-            tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
           />
         }
       >
@@ -455,7 +456,7 @@ export const SearchSuggestions: React.FC<SearchSuggestionsProps> = React.memo(
                   style={styles.tag}
                   onPress={() => onTagPress(term)}
                 >
-                  <Ionicons name="time-outline" size={14} color={theme.colors.textSecondary} />
+                  <Ionicons name="time-outline" size={14} color={colors.textSecondary} />
                   <Text style={styles.tagText}>{term}</Text>
                 </TouchableOpacity>
               ))}
@@ -473,7 +474,7 @@ export const SearchSuggestions: React.FC<SearchSuggestionsProps> = React.memo(
                   style={styles.tag}
                   onPress={() => onTagPress(term)}
                 >
-                  <Ionicons name="trending-up-outline" size={14} color={theme.colors.primary} />
+                  <Ionicons name="trending-up-outline" size={14} color={colors.primary} />
                   <Text style={styles.tagText}>{term}</Text>
                 </TouchableOpacity>
               ))}
@@ -513,8 +514,8 @@ export const SearchResultList: React.FC<SearchResultListProps> = React.memo(
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={onRefresh}
-            tintColor={theme.colors.primary}
-            colors={[theme.colors.primary]}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -526,7 +527,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = React.memo(
 export const LoadingOverlay: React.FC = React.memo(function LoadingOverlay() {
   return (
     <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color={theme.colors.primary} />
+      <ActivityIndicator size="large" color={colors.primary} />
       <Text style={styles.loadingText}>搜索中...</Text>
     </View>
   );
@@ -534,11 +535,11 @@ export const LoadingOverlay: React.FC = React.memo(function LoadingOverlay() {
 
 const styles = StyleSheet.create({
   filterPanel: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     paddingHorizontal: 20,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   filterGroup: {
     marginTop: 12,
@@ -546,25 +547,25 @@ const styles = StyleSheet.create({
   filterGroupTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   filterChip: {
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 16,
-    backgroundColor: theme.colors.divider,
+    backgroundColor: colors.divider,
     marginRight: 8,
   },
   filterChipActive: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   filterChipText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   filterChipTextActive: {
-    color: theme.colors.surface,
+    color: colors.surface,
     fontWeight: "500",
   },
   clearAllFilters: {
@@ -577,7 +578,7 @@ const styles = StyleSheet.create({
   },
   clearAllFiltersText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   activeFilters: {
     flex: 1,
@@ -586,7 +587,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: theme.colors.cartLight,
+    backgroundColor: colors.cartLight,
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -594,7 +595,7 @@ const styles = StyleSheet.create({
   },
   activeFilterPillText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.primary,
+    color: colors.primary,
     fontWeight: "500",
   },
   suggestionContent: {
@@ -613,12 +614,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   clearText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   tags: {
     flexDirection: "row",
@@ -629,14 +630,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: theme.colors.cartLight,
+    backgroundColor: colors.cartLight,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   quickGrid: {
     flexDirection: "row",
@@ -658,7 +659,7 @@ const styles = StyleSheet.create({
   },
   quickLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
   },
   row: {
@@ -675,7 +676,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: CARD_WIDTH,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 20,
     overflow: "hidden",
     marginBottom: 16,
@@ -703,7 +704,7 @@ const styles = StyleSheet.create({
   cardName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   cardMeta: {
     flexDirection: "row",
@@ -713,11 +714,11 @@ const styles = StyleSheet.create({
   },
   cardCategory: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   cardBrand: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     flex: 1,
     textAlign: "right",
   },
@@ -737,7 +738,7 @@ const styles = StyleSheet.create({
   },
   cardColor: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   emptyContainer: {
     flex: 1,
@@ -749,13 +750,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: 16,
   },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     marginTop: 8,
   },
@@ -764,12 +765,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: theme.colors.cartLight,
+    backgroundColor: colors.cartLight,
   },
   clearFiltersText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   loadingContainer: {
     flex: 1,
@@ -779,6 +780,6 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
 });

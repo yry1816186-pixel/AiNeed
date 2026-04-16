@@ -2,7 +2,7 @@
 import { shallow } from "zustand/shallow";
 import { photosApi, type UserPhoto } from "../../../services/api/photos.api";
 import apiClient from "../../../services/api/client";
-import type { ApiResponse } from "../types";
+import type { ApiResponse } from '../../../types';
 
 interface QualityCheckResult {
   isAcceptable: boolean;

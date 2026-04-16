@@ -11,9 +11,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { useAiStylistStore, type ArchivedSession } from "../stores/aiStylistStore";
-import type { StylistStackParamList } from "../navigation/types";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useAiStylistStore, type ArchivedSession } from '../stores/aiStylistStore';
+import type { StylistStackParamList } from '../../../navigation/types';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 type StylistNavigation = NativeStackNavigationProp<StylistStackParamList>;
@@ -47,6 +47,7 @@ export const ChatHistoryScreen: React.FC = () => {
   );
 
   const formatDate = (dateStr: string) => {
+    const { colors } = useTheme();
     const d = new Date(dateStr);
     const now = new Date();
     const diff = now.getTime() - d.getTime();
@@ -79,7 +80,7 @@ export const ChatHistoryScreen: React.FC = () => {
           <Ionicons
             name={item.hasOutfitPlan ? "shirt" : "chatbubble-ellipses"}
             size={20}
-            color={theme.colors.primary}
+            color={colors.primary}
           />
         </View>
         <View style={s.sessionInfo}>
@@ -94,7 +95,7 @@ export const ChatHistoryScreen: React.FC = () => {
               <Text style={s.outfitBadgeText}>Outfit</Text>
             </View>
           )}
-          <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+          <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />
         </View>
       </TouchableOpacity>
     ),
@@ -104,7 +105,7 @@ export const ChatHistoryScreen: React.FC = () => {
   const renderEmpty = useCallback(
     () => (
       <View style={s.centerContent}>
-        <Ionicons name="chatbubbles-outline" size={48} color={theme.colors.textTertiary} />
+        <Ionicons name="chatbubbles-outline" size={48} color={colors.textTertiary} />
         <Text style={s.emptyTitle}>No conversations yet</Text>
         <Text style={s.emptySubtitle}>Your AI Stylist chat history will appear here</Text>
         <TouchableOpacity
@@ -122,14 +123,14 @@ export const ChatHistoryScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Chat History</Text>
         <TouchableOpacity
           style={s.backBtn}
           onPress={() => navigation.navigate("SessionCalendar")}
         >
-          <Ionicons name="calendar-outline" size={22} color={theme.colors.textPrimary} />
+          <Ionicons name="calendar-outline" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -142,7 +143,7 @@ export const ChatHistoryScreen: React.FC = () => {
             setSelectedDate(d.toISOString().split("T")[0]);
           }}
         >
-          <Ionicons name="chevron-back" size={20} color={theme.colors.primary} />
+          <Ionicons name="chevron-back" size={20} color={colors.primary} />
         </TouchableOpacity>
         <Text style={s.dateText}>{formatDate(selectedDate)}</Text>
         <TouchableOpacity
@@ -155,13 +156,13 @@ export const ChatHistoryScreen: React.FC = () => {
             }
           }}
         >
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
+          <Ionicons name="chevron-forward" size={20} color={colors.primary} />
         </TouchableOpacity>
       </View>
 
       {isLoading && archivedSessions.length === 0 ? (
         <View style={s.centerContent}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <FlatList
@@ -181,18 +182,18 @@ export const ChatHistoryScreen: React.FC = () => {
 };
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
   backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   dateRow: {
     flexDirection: "row",
@@ -200,55 +201,55 @@ const s = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 12,
     gap: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
+    borderBottomColor: colors.divider,
   },
-  dateText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
+  dateText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: 16 },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: 8,
     textAlign: "center",
   },
   startBtn: {
     marginTop: 20,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 20,
   },
-  startBtnText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  startBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   sessionCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
+    borderBottomColor: colors.divider,
   },
   sessionIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
   },
   sessionInfo: { flex: 1, marginLeft: 12 },
-  sessionGoal: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.text },
-  sessionTime: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
+  sessionGoal: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.text },
+  sessionTime: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
   sessionMeta: { flexDirection: "row", alignItems: "center", gap: 8 },
   outfitBadge: {
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 8,
   },
-  outfitBadgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: theme.colors.primary },
+  outfitBadgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: colors.primary },
 });
 
 export default ChatHistoryScreen;

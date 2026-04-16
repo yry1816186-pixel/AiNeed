@@ -186,7 +186,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "photo",
     label: "拍照分析",
     description: "分析身材和肤色",
-    gradient: [DesignTokens.colors.brand.slate, "#96A6B5"], // custom color
+    gradient: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"], // custom color
     onPress: () => {},
   },
   {
@@ -194,7 +194,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "recommend",
     label: "智能推荐",
     description: "个性化推荐",
-    gradient: [DesignTokens.colors.semantic.success, "#7BA896"], // custom color
+    gradient: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage"], // custom color
     onPress: () => {},
   },
   {
@@ -202,7 +202,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "wardrobe",
     label: "我的衣橱",
     description: "管理你的衣物",
-    gradient: [DesignTokens.colors.semantic.warning, "#E8B86D"], // custom color
+    gradient: [DesignTokens.colors.semantic.warning, "DesignTokens.colors.brand.camel"], // custom color
     onPress: () => {},
   },
 ];

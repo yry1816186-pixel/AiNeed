@@ -13,12 +13,12 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { smsApi } from "../services/api/sms.api";
-import { useTranslation } from "../i18n";
-import { useAuthStore } from "../stores/index";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { RootStackParamList } from "../types/navigation";
+import { smsApi } from '../../../services/api/sms.api';
+import { useTranslation } from '../../../i18n';
+import { useAuthStore } from '../stores/index';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type PhoneLoginNavigationProp = NavigationProp<RootStackParamList>;
 
@@ -186,13 +186,13 @@ export const PhoneLoginScreen: React.FC = () => {
             disabled={isLoading}
             accessibilityLabel="返回"
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={styles.content}>
           <View style={styles.brandSection}>
             <View style={styles.logoContainer}>
-              <Ionicons name="phone-portrait-outline" size={36} color={theme.colors.surface} />
+              <Ionicons name="phone-portrait-outline" size={36} color={colors.surface} />
             </View>
             <Text style={styles.brandName}>寻裳</Text>
           </View>
@@ -200,11 +200,11 @@ export const PhoneLoginScreen: React.FC = () => {
           <Text style={styles.subtitle}>{t.auth.welcomeBack}</Text>
           <View style={styles.form}>
             <View style={styles.inputGroup}>
-              <Ionicons name="phone-portrait-outline" size={20} color={theme.colors.textTertiary} />
+              <Ionicons name="phone-portrait-outline" size={20} color={colors.textTertiary} />
               <TextInput
                 style={styles.input}
                 placeholder={t.auth.phonePlaceholder}
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={phone}
                 onChangeText={setPhone}
                 keyboardType="phone-pad"
@@ -217,11 +217,11 @@ export const PhoneLoginScreen: React.FC = () => {
               />
             </View>
             <View style={styles.inputGroup}>
-              <Ionicons name="keypad-outline" size={20} color={theme.colors.textTertiary} />
+              <Ionicons name="keypad-outline" size={20} color={colors.textTertiary} />
               <TextInput
                 style={styles.codeInput}
                 placeholder={t.auth.codePlaceholder}
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={code}
                 onChangeText={setCode}
                 keyboardType="number-pad"
@@ -243,7 +243,7 @@ export const PhoneLoginScreen: React.FC = () => {
                 accessibilityLabel={countdown > 0 ? t.common.retry : t.common.confirm}
               >
                 {isSendingCode ? (
-                  <ActivityIndicator size="small" color={theme.colors.primary} />
+                  <ActivityIndicator size="small" color={colors.primary} />
                 ) : (
                   <Text
                     style={[styles.codeButtonText, countdown > 0 && styles.codeButtonTextDisabled]}
@@ -263,7 +263,7 @@ export const PhoneLoginScreen: React.FC = () => {
               accessibilityRole="button"
             >
               {isLoading ? (
-                <ActivityIndicator size="small" color={theme.colors.surface} />
+                <ActivityIndicator size="small" color={colors.surface} />
               ) : (
                 <Text style={styles.loginButtonText}>{t.auth.login}</Text>
               )}
@@ -294,7 +294,7 @@ export const PhoneLoginScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.surface },
+  container: { flex: 1, backgroundColor: colors.surface },
   header: { padding: 20 },
   backButton: {
     width: 40,
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: theme.BorderRadius.xl,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
@@ -321,47 +321,47 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: colors.primary,
     letterSpacing: 1.2,
   },
-  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: theme.colors.text },
-  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 32 },
+  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: colors.text },
+  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: 8, marginBottom: 32 },
   form: { gap: 16 },
   inputGroup: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: theme.BorderRadius.md,
     paddingHorizontal: 16,
     paddingVertical: 14,
     gap: 12,
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: theme.colors.text },
-  codeInput: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: theme.colors.text },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
+  codeInput: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
   codeButton: {
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: theme.BorderRadius.sm,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderWidth: 1,
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
     minWidth: 90,
     alignItems: "center",
     justifyContent: "center",
   },
   codeButtonDisabled: {
-    borderColor: theme.colors.textTertiary,
+    borderColor: colors.textTertiary,
   },
   codeButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   codeButtonTextDisabled: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   loginButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: theme.BorderRadius.md,
     paddingVertical: 16,
     alignItems: "center",
@@ -370,12 +370,12 @@ const styles = StyleSheet.create({
     minHeight: 52,
     ...theme.Shadows.brand,
   },
-  loginButtonDisabled: { backgroundColor: theme.colors.primaryLight },
-  loginButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.surface },
+  loginButtonDisabled: { backgroundColor: colors.primaryLight },
+  loginButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.surface },
   emailLoginLink: { alignItems: "center", marginTop: 16 },
-  emailLoginText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary },
+  emailLoginText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
   registerLink: { alignItems: "center", marginTop: 8 },
-  registerText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary },
+  registerText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
 });
 
 export default PhoneLoginScreen;

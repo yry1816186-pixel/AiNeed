@@ -15,19 +15,19 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay } from "react-native-reanimated";
-import { theme } from '../design-system/theme';
-import { useTranslation } from "../i18n";
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { useTheme } from "../contexts/ThemeContext";
-import { SpringConfigs, ListAnimations, Duration } from "../theme/tokens/animations";
-import { useReducedMotion } from "../hooks/useReducedMotion";
-import { AIThinkingAnimation } from "../components/aistylist/AIThinkingAnimation";
-import { TypewriterMessage } from "../components/aistylist/TypewriterMessage";
-import { useAiStylistStore } from "../stores/aiStylistStore";
-import { useAiStylistChatStore } from "../stores/aiStylistChatStore";
-import { useAnalytics, useScreenTracking, AnalyticsEvents } from "../hooks/useAnalytics";
-import type { ChatMessage } from "../stores/aiStylistChatStore";
-import type { StylistStackParamList } from "../navigation/types";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTranslation } from '../../../i18n';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { useTheme } from '../../../shared/contexts/ThemeContext';
+import { SpringConfigs, ListAnimations, Duration } from '../../../design-system/theme/tokens/animations';
+import { useReducedMotion } from '../../../hooks/useReducedMotion';
+import { AIThinkingAnimation } from '../../../components/aistylist/AIThinkingAnimation';
+import { TypewriterMessage } from '../../../components/aistylist/TypewriterMessage';
+import { useAiStylistStore } from '../stores/aiStylistStore';
+import { useAiStylistChatStore } from '../stores/aiStylistChatStore';
+import { useAnalytics, useScreenTracking, AnalyticsEvents } from '../../../hooks/useAnalytics';
+import type { ChatMessage } from '../stores/aiStylistChatStore';
+import type { StylistStackParamList } from '../../../navigation/types';
 
 type AiStylistChatRoute = RouteProp<StylistStackParamList, "AiStylistChat">;
 
@@ -69,7 +69,7 @@ export const AiStylistChatScreen: React.FC = () => {
   const t = useTranslation();
 
   // 季节强调色，回退到品牌色
-  const accentColor = seasonAccent?.accent ?? theme.colors.primary;
+  const accentColor = seasonAccent?.accent ?? colors.primary;
 
   const scrollViewRef = useRef<ScrollView>(null);
   const [inputText, setInputText] = useState("");
@@ -178,7 +178,7 @@ export const AiStylistChatScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} accessibilityLabel="返回" accessibilityRole="button">
-          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <View style={s.headerCenter}>
           <View style={s.onlineDot} />
@@ -190,7 +190,7 @@ export const AiStylistChatScreen: React.FC = () => {
           accessibilityLabel="聊天记录"
           accessibilityRole="button"
         >
-          <Ionicons name="time-outline" size={22} color={theme.colors.textPrimary} />
+          <Ionicons name="time-outline" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -225,7 +225,7 @@ export const AiStylistChatScreen: React.FC = () => {
           {isGenerating && (
             <View style={[s.messageBubble, s.assistantBubble]}>
               <View style={[s.aiAvatar, { backgroundColor: accentColor }]}>
-                <Ionicons name="sparkles" size={12} color={theme.colors.surface} />
+                <Ionicons name="sparkles" size={12} color={colors.surface} />
               </View>
               <AIThinkingAnimation />
             </View>
@@ -262,7 +262,7 @@ export const AiStylistChatScreen: React.FC = () => {
             <TextInput
               style={s.input}
               placeholder={t.stylist.askStyle}
-              placeholderTextColor={theme.colors.textTertiary}
+              placeholderTextColor={colors.textTertiary}
               value={inputText}
               onChangeText={setInputText}
               onSubmitEditing={handleSend}
@@ -286,7 +286,7 @@ export const AiStylistChatScreen: React.FC = () => {
               <Ionicons
                 name="send"
                 size={18}
-                color={inputText.trim() ? DesignTokens.colors.neutral.white : theme.colors.textTertiary}
+                color={inputText.trim() ? DesignTokens.colors.neutral.white : colors.textTertiary}
               />
             )}
           </TouchableOpacity>
@@ -297,7 +297,7 @@ export const AiStylistChatScreen: React.FC = () => {
 };
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   flex: { flex: 1 },
   header: {
     flexDirection: "row",
@@ -305,13 +305,13 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   headerCenter: { flexDirection: "row", alignItems: "center", gap: 6 },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
-  onlineDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: theme.colors.success },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
+  onlineDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.success },
   backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   messagesContainer: { padding: 16, paddingBottom: 8 },
   welcomeSection: { alignItems: "center", paddingVertical: 40 },
@@ -319,15 +319,15 @@ const s = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 16,
   },
-  welcomeTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.text },
+  welcomeTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
   welcomeSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 8,
     textAlign: "center",
     lineHeight: 20,
@@ -340,28 +340,28 @@ const s = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginRight: 8,
   },
   bubbleContent: { maxWidth: "75%", borderRadius: 16, paddingHorizontal: 14, paddingVertical: 10 },
-  userBubbleContent: { backgroundColor: theme.colors.primary, borderBottomRightRadius: 4 },
-  assistantBubbleContent: { backgroundColor: theme.colors.surface, borderBottomLeftRadius: 4 },
+  userBubbleContent: { backgroundColor: colors.primary, borderBottomRightRadius: 4 },
+  assistantBubbleContent: { backgroundColor: colors.surface, borderBottomLeftRadius: 4 },
   bubbleText: { fontSize: DesignTokens.typography.sizes.base, lineHeight: 20 },
-  userBubbleText: { color: theme.colors.surface },
-  assistantBubbleText: { color: theme.colors.text },
+  userBubbleText: { color: colors.surface },
+  assistantBubbleText: { color: colors.text },
   typingBubble: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderBottomLeftRadius: 4,
   },
-  typingText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  typingText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   errorBanner: {
     flexDirection: "row",
     alignItems: "center",
@@ -371,12 +371,12 @@ const s = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: DesignTokens.colors.semantic.errorLight,
   },
-  errorText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.error, flex: 1 },
-  errorDismiss: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.error, fontWeight: "600", marginLeft: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, flex: 1 },
+  errorDismiss: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, fontWeight: "600", marginLeft: 12 },
   sceneRow: {
     borderTopWidth: 1,
-    borderTopColor: theme.colors.divider,
-    backgroundColor: theme.colors.surface,
+    borderTopColor: colors.divider,
+    backgroundColor: colors.surface,
   },
   sceneScrollContent: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
   sceneButton: {
@@ -386,42 +386,42 @@ const s = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
   },
-  sceneLabel: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: theme.colors.primary },
+  sceneLabel: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: colors.primary },
   inputRow: {
     flexDirection: "row",
     alignItems: "flex-end",
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.border,
   },
   inputWrapper: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: 20,
     paddingHorizontal: 12,
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, maxHeight: 80, paddingVertical: 8 },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, maxHeight: 80, paddingVertical: 8 },
   sendButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 8,
   },
-  sendButtonDisabled: { backgroundColor: theme.colors.subtleBg },
+  sendButtonDisabled: { backgroundColor: colors.subtleBg },
 });
 
 /** Animated message bubble with staggered entrance and typewriter for AI */
 const AnimatedMessageBubble: React.FC<{ msg: ChatMessage; index: number }> = ({ msg, index }) => {
   const { reducedMotion } = useReducedMotion();
   const { seasonAccent } = useTheme();
-  const accentColor = seasonAccent?.accent ?? theme.colors.primary;
+  const accentColor = seasonAccent?.accent ?? colors.primary;
   const translateY = useSharedValue(reducedMotion ? 0 : 20);
   const opacity = useSharedValue(reducedMotion ? 1 : 0);
 
@@ -454,7 +454,7 @@ const AnimatedMessageBubble: React.FC<{ msg: ChatMessage; index: number }> = ({ 
       >
         {msg.role === "assistant" && (
           <View style={[s.aiAvatar, { backgroundColor: accentColor }]}>
-            <Ionicons name="sparkles" size={12} color={theme.colors.surface} />
+            <Ionicons name="sparkles" size={12} color={colors.surface} />
           </View>
         )}
         <View

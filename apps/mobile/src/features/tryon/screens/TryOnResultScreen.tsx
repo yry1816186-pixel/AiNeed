@@ -14,10 +14,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { tryOnApi, type TryOnResult } from "../services/api/tryon.api";
-import type { TryOnStackParamList } from "../navigation/types";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { tryOnApi, type TryOnResult } from '../../../services/api/tryon.api';
+import type { TryOnStackParamList } from '../../../navigation/types';
 
 type TryOnResultRoute = RouteProp<TryOnStackParamList, "TryOnResult">;
 
@@ -103,13 +103,13 @@ export const TryOnResultScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>试衣结果</Text>
           <View style={s.iconBtn} />
         </View>
         <View style={s.centerContent}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={s.loadingText}>加载结果中...</Text>
         </View>
       </SafeAreaView>
@@ -121,13 +121,13 @@ export const TryOnResultScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>试衣结果</Text>
           <View style={s.iconBtn} />
         </View>
         <View style={s.centerContent}>
-          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.textTertiary} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textTertiary} />
           <Text style={s.errorText}>{error}</Text>
           <TouchableOpacity style={s.actionBtn} onPress={fetchResult}>
             <Text style={s.actionBtnText}>重试</Text>
@@ -145,11 +145,11 @@ export const TryOnResultScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>试衣结果</Text>
         <TouchableOpacity style={s.iconBtn} onPress={handleShare}>
-          <Ionicons name="share-outline" size={22} color={theme.colors.textPrimary} />
+          <Ionicons name="share-outline" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -167,7 +167,7 @@ export const TryOnResultScreen: React.FC = () => {
             name={isComplete ? "checkmark-circle" : isFailed ? "close-circle" : "time"}
             size={16}
             color={
-              isComplete ? theme.colors.success : isFailed ? theme.colors.error : theme.colors.amber
+              isComplete ? colors.success : isFailed ? colors.error : colors.amber
             }
           />
           <Text
@@ -191,7 +191,7 @@ export const TryOnResultScreen: React.FC = () => {
                 />
               ) : (
                 <View style={s.imagePlaceholder}>
-                  <Ionicons name="person-outline" size={40} color={theme.colors.textTertiary} />
+                  <Ionicons name="person-outline" size={40} color={colors.textTertiary} />
                 </View>
               )}
             </View>
@@ -200,7 +200,7 @@ export const TryOnResultScreen: React.FC = () => {
           {/* Result image */}
           <View style={s.divider}>
             <View style={s.dividerLine} />
-            <Ionicons name="arrow-forward" size={20} color={theme.colors.primary} />
+            <Ionicons name="arrow-forward" size={20} color={colors.primary} />
             <View style={s.dividerLine} />
           </View>
 
@@ -215,16 +215,16 @@ export const TryOnResultScreen: React.FC = () => {
                 />
               ) : isProcessing ? (
                 <View style={s.imagePlaceholder}>
-                  <ActivityIndicator size="large" color={theme.colors.primary} />
+                  <ActivityIndicator size="large" color={colors.primary} />
                   <Text style={s.processingText}>AI 生成中...</Text>
                 </View>
               ) : isFailed ? (
                 <View style={s.imagePlaceholder}>
-                  <Ionicons name="refresh" size={40} color={theme.colors.error} />
+                  <Ionicons name="refresh" size={40} color={colors.error} />
                 </View>
               ) : (
                 <View style={s.imagePlaceholder}>
-                  <Ionicons name="image-outline" size={40} color={theme.colors.textTertiary} />
+                  <Ionicons name="image-outline" size={40} color={colors.textTertiary} />
                 </View>
               )}
             </View>
@@ -268,7 +268,7 @@ export const TryOnResultScreen: React.FC = () => {
           {isComplete && (
             <>
               <TouchableOpacity style={s.actionBtnOutline} onPress={handleSaveToWardrobe}>
-                <Ionicons name="download-outline" size={18} color={theme.colors.primary} />
+                <Ionicons name="download-outline" size={18} color={colors.primary} />
                 <Text style={s.actionBtnPrimaryText}>保存</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[s.actionBtn, s.shareActionBtn]} onPress={handleShare}>
@@ -278,7 +278,7 @@ export const TryOnResultScreen: React.FC = () => {
             </>
           )}
           <TouchableOpacity style={s.actionBtnOutline} onPress={() => navigation.goBack()}>
-            <Ionicons name="sparkles-outline" size={18} color={theme.colors.primary} />
+            <Ionicons name="sparkles-outline" size={18} color={colors.primary} />
             <Text style={s.actionBtnPrimaryText}>再次试衣</Text>
           </TouchableOpacity>
         </View>
@@ -288,30 +288,30 @@ export const TryOnResultScreen: React.FC = () => {
 };
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
   iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 12 },
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.error, marginTop: 12, textAlign: "center" },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: 12, textAlign: "center" },
   actionBtn: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 20,
     marginTop: 16,
   },
-  actionBtnText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  actionBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   scrollView: { flex: 1 },
   scrollContent: { padding: 16, paddingBottom: 40 },
   statusBadge: {
@@ -322,21 +322,21 @@ const s = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 20,
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     marginBottom: 20,
   },
   statusBadgeSuccess: { backgroundColor: DesignTokens.colors.semantic.successLight },
   statusBadgeError: { backgroundColor: DesignTokens.colors.semantic.errorLight },
   statusBadgeProcessing: { backgroundColor: DesignTokens.colors.semantic.warningLight },
-  statusText: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.textSecondary },
-  statusTextSuccess: { color: theme.colors.success },
-  statusTextError: { color: theme.colors.error },
+  statusText: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: colors.textSecondary },
+  statusTextSuccess: { color: colors.success },
+  statusTextError: { color: colors.error },
   comparisonContainer: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
   comparisonItem: { flex: 1 },
   comparisonLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 8,
     textAlign: "center",
   },
@@ -344,20 +344,20 @@ const s = StyleSheet.create({
     aspectRatio: 3 / 4,
     borderRadius: 16,
     overflow: "hidden",
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
   },
   comparisonImage: { width: "100%", height: "100%" },
   imagePlaceholder: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
   },
-  processingText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary, marginTop: 8 },
+  processingText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: 8 },
   divider: { paddingHorizontal: 8, alignItems: "center", gap: 4 },
-  dividerLine: { width: 1, height: 30, backgroundColor: theme.colors.border },
+  dividerLine: { width: 1, height: 30, backgroundColor: colors.border },
   itemCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 14,
     marginBottom: 20,
@@ -372,10 +372,10 @@ const s = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 8,
-    backgroundColor: theme.colors.placeholderBg,
+    backgroundColor: colors.placeholderBg,
   },
   itemDetails: { marginLeft: 12, flex: 1 },
-  itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.text },
+  itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.text },
   actionRow: { flexDirection: "row", gap: 10, justifyContent: "center", flexWrap: "wrap" },
   actionBtnOutline: {
     flexDirection: "row",
@@ -385,9 +385,9 @@ const s = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
   },
-  actionBtnPrimaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.primary },
+  actionBtnPrimaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
   actionBtnWhiteText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: DesignTokens.colors.neutral.white },
   retryActionBtn: {
     flexDirection: "row",
@@ -396,7 +396,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   shareActionBtn: {
     flexDirection: "row",

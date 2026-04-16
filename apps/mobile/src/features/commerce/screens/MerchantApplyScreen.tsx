@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { merchantApi } from "../services/api/commerce.api";
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { merchantApi } from '../../../services/api/commerce.api';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 type ScreenState = "form" | "pending" | "approved" | "rejected";
 

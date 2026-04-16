@@ -47,21 +47,21 @@ const styles = StyleSheet.create({
   },
   freeText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "#52C41A",
+    color: "DesignTokens.colors.semantic.success",
     fontWeight: "500",
     marginBottom: 4,
   },
   barBackground: {
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   barFill: {
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#52C41A",
+    backgroundColor: "DesignTokens.colors.semantic.success",
   },
   barFillComplete: {
-    backgroundColor: "#52C41A",
+    backgroundColor: "DesignTokens.colors.semantic.success",
   },
 });

@@ -35,11 +35,11 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#F8F6F3",
+    backgroundColor: "DesignTokens.colors.neutral[50]",
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#E8E2DC",
+    borderColor: "DesignTokens.colors.neutral[200]",
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,

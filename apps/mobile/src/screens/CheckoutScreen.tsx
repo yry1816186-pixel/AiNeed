@@ -23,7 +23,7 @@ import { addressApi, cartApi, orderApi, paymentApi } from "../services/api/comme
 import { useCartStore } from "../stores/index";
 import { useCouponStore } from "../stores/couponStore";
 import type { Address } from "../types";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { CouponSelector } from "../components/CouponSelector";
 import { PaymentWaitingScreen } from "../components/PaymentWaitingScreen";
@@ -260,7 +260,7 @@ export const CheckoutScreen: React.FC = () => {
               }}
               accessibilityLabel="返回"
             >
-              <Ionicons name="arrow-back" size={22} color={theme.colors.textPrimary} />
+              <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>{t.checkout.title}</Text>
             <View style={styles.headerPlaceholder} />
@@ -292,7 +292,7 @@ export const CheckoutScreen: React.FC = () => {
       >
         {loading ? (
           <View style={styles.center}>
-            <ActivityIndicator size="large" color={theme.colors.primary} />
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
         ) : (
           <ScrollView
@@ -401,14 +401,14 @@ export const CheckoutScreen: React.FC = () => {
                         value={draftAddress.name}
                         onChangeText={(value) => updateDraft("name", value)}
                         placeholder={t.checkout.recipientName}
-                        placeholderTextColor={theme.colors.textTertiary}
+                        placeholderTextColor={colors.textTertiary}
                       />
                       <TextInput
                         style={styles.input}
                         value={draftAddress.phone}
                         onChangeText={(value) => updateDraft("phone", value)}
                         placeholder={t.checkout.phoneNumber}
-                        placeholderTextColor={theme.colors.textTertiary}
+                        placeholderTextColor={colors.textTertiary}
                         keyboardType="phone-pad"
                       />
                       <TouchableOpacity
@@ -430,7 +430,7 @@ export const CheckoutScreen: React.FC = () => {
                         <Ionicons
                           name="chevron-forward"
                           size={18}
-                          color={theme.colors.textTertiary}
+                          color={colors.textTertiary}
                         />
                       </TouchableOpacity>
                       <TextInput
@@ -438,7 +438,7 @@ export const CheckoutScreen: React.FC = () => {
                         value={draftAddress.detail}
                         onChangeText={(value) => updateDraft("detail", value)}
                         placeholder={t.checkout.detailAddress}
-                        placeholderTextColor={theme.colors.textTertiary}
+                        placeholderTextColor={colors.textTertiary}
                         multiline
                       />
                       <TouchableOpacity
@@ -448,7 +448,7 @@ export const CheckoutScreen: React.FC = () => {
                         accessibilityLabel="保存地址"
                       >
                         {savingAddress ? (
-                          <ActivityIndicator size="small" color={theme.colors.surface} />
+                          <ActivityIndicator size="small" color={colors.surface} />
                         ) : (
                           <Text style={styles.primaryText}>{t.common.save}</Text>
                         )}
@@ -562,7 +562,7 @@ export const CheckoutScreen: React.FC = () => {
                   {couponStore.selectedCoupon && (
                     <View style={styles.spaceRow}>
                       <Text style={styles.muted}>优惠</Text>
-                      <Text style={[styles.value, { color: "#52C41A" /* custom color */ }]}>
+                      <Text style={[styles.value, { color: "DesignTokens.colors.semantic.success" /* custom color */ }]}>
                         -{"\u00A5"}
                         {couponStore.selectedCoupon.coupon.type === "PERCENTAGE"
                           ? ((itemsTotal * couponStore.selectedCoupon.coupon.value) / 100).toFixed(
@@ -628,7 +628,7 @@ export const CheckoutScreen: React.FC = () => {
 
             {step === "success" ? (
               <View style={styles.successCard}>
-                <Ionicons name="checkmark-circle" size={72} color={theme.colors.success} />
+                <Ionicons name="checkmark-circle" size={72} color={colors.success} />
                 <Text style={styles.successTitle}>{t.checkout.orderPlaced}</Text>
                 <Text style={styles.muted}>订单号：{orderId}</Text>
                 <TouchableOpacity
@@ -691,7 +691,7 @@ export const CheckoutScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   flex: { flex: 1 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   scrollContent: { paddingBottom: 28 },
@@ -701,9 +701,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   iconButton: {
     width: 40,
@@ -713,13 +713,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: DesignTokens.colors.neutral[100],
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
   headerPlaceholder: { width: 40 },
   progressRow: {
     flexDirection: "row",
     justifyContent: "space-around",
     paddingVertical: 14,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   progressItem: { alignItems: "center" },
   progressDot: {
@@ -729,17 +729,17 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral[300],
     marginBottom: 6,
   },
-  progressDotActive: { backgroundColor: theme.colors.primary },
-  progressText: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary },
-  progressTextActive: { color: theme.colors.primary, fontWeight: "600" },
+  progressDotActive: { backgroundColor: colors.primary },
+  progressText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
+  progressTextActive: { color: colors.primary, fontWeight: "600" },
   card: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     marginHorizontal: 20,
     marginTop: 16,
     borderRadius: 18,
     padding: 16,
   },
-  cardTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
+  cardTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: 12 },
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -755,44 +755,44 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 12,
   },
-  itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
-  muted: { fontSize: DesignTokens.typography.sizes.sm, lineHeight: 20, color: theme.colors.textSecondary },
-  price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: theme.colors.text },
-  value: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
+  itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  muted: { fontSize: DesignTokens.typography.sizes.sm, lineHeight: 20, color: colors.textSecondary },
+  price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: colors.text },
+  value: { fontSize: DesignTokens.typography.sizes.base, color: colors.text },
   totalRow: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: DesignTokens.colors.neutral[100] },
-  totalLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
-  totalValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.primary },
+  totalLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
+  totalValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
   primaryButton: {
     marginHorizontal: 20,
     marginTop: 16,
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: "center",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   primaryButtonInline: {
     marginTop: 4,
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: "center",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   primaryButtonFlex: {
     flex: 1,
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: "center",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
-  primaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.surface },
+  primaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.surface },
   secondaryButton: {
     paddingVertical: 16,
     paddingHorizontal: 22,
     borderRadius: 14,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    backgroundColor: theme.colors.surface,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
   secondaryButtonWide: {
     width: "100%",
@@ -801,12 +801,12 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    backgroundColor: theme.colors.surface,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
-  secondaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textSecondary },
+  secondaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textSecondary },
   actionRow: { flexDirection: "row", gap: 12, marginHorizontal: 20, marginTop: 16 },
-  link: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.primary },
+  link: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
   form: { gap: 10, marginBottom: 10 },
   areaRow: {
     flexDirection: "row",
@@ -814,27 +814,27 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     height: 48,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     borderRadius: 12,
     paddingHorizontal: 14,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   areaText: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   areaPlaceholder: {
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   input: {
     height: 48,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     borderRadius: 12,
     paddingHorizontal: 14,
-    backgroundColor: theme.colors.background,
-    color: theme.colors.textPrimary,
+    backgroundColor: colors.background,
+    color: colors.textPrimary,
   },
   multiline: { height: 84, textAlignVertical: "top", paddingTop: 12 },
   addressCard: {
@@ -842,10 +842,10 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    backgroundColor: theme.colors.surface,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
-  addressCardActive: { borderColor: theme.colors.primary, backgroundColor: "#F6F8FF" }, // custom color
+  addressCardActive: { borderColor: colors.primary, backgroundColor: "DesignTokens.colors.backgrounds.tertiary" }, // custom color
   paymentItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -853,20 +853,20 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     marginTop: 10,
   },
-  paymentLabel: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
+  paymentLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.text },
   successCard: {
     marginHorizontal: 20,
     marginTop: 32,
     padding: 24,
     borderRadius: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     alignItems: "center",
     gap: 10,
   },
-  successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: theme.colors.text },
+  successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.text },
   paymentButtonsRow: {
     flexDirection: "row",
     gap: 12,
@@ -878,14 +878,14 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: "center",
-    backgroundColor: "#1677FF", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.info", // custom color
   },
   wechatButton: {
     flex: 1,
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: "center",
-    backgroundColor: "#07C160", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.success", // custom color
   },
   paymentButtonText: {
     fontSize: DesignTokens.typography.sizes.base,

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { useAiStylistStore } from "../stores/aiStylistStore";
 import { DesignTokens } from "../theme/tokens/design-tokens";
 
@@ -101,11 +101,11 @@ export const SessionCalendarScreen: React.FC = () => {
       {/* Month navigation */}
       <View style={styles.monthNav}>
         <Pressable style={styles.navButton} onPress={handlePrevMonth}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </Pressable>
         <Text style={styles.monthLabel}>{`${year} / ${String(month).padStart(2, "0")}`}</Text>
         <Pressable style={styles.navButton} onPress={handleNextMonth}>
-          <Ionicons name="chevron-forward" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="chevron-forward" size={24} color={colors.textPrimary} />
         </Pressable>
       </View>
 
@@ -176,17 +176,17 @@ export const SessionCalendarScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     padding: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
   monthNav: {
     flexDirection: "row",
     alignItems: "center",
@@ -195,10 +195,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   navButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
-  monthLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
+  monthLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
   weekHeader: { flexDirection: "row", paddingHorizontal: 8, marginBottom: 4 },
   weekHeaderCell: { flex: 1, alignItems: "center", paddingVertical: 4 },
-  weekHeaderText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, fontWeight: "500" },
+  weekHeaderText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, fontWeight: "500" },
   calendarGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   dayCellSelected: { backgroundColor: DesignTokens.colors.brand.terracotta },
-  dayText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
+  dayText: { fontSize: DesignTokens.typography.sizes.base, color: colors.text },
   dayTextSelected: { color: DesignTokens.colors.neutral.white, fontWeight: "600" },
   dotMarker: {
     width: 4,
@@ -228,15 +228,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
   sessionCardInfo: { flex: 1 },
-  sessionGoal: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.textPrimary, marginBottom: 2 },
-  sessionTime: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary },
+  sessionGoal: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary, marginBottom: 2 },
+  sessionTime: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   planBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   },
   planBadgeText: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.brand.sageDark, fontWeight: "600" },
   emptyState: { alignItems: "center", paddingVertical: 24 },
-  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary },
+  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
 });
 
 export default SessionCalendarScreen;

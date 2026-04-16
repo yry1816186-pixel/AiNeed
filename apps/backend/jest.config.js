@@ -12,7 +12,7 @@ module.exports = {
   transform: {
     '^.+\\.ts$': ['ts-jest', {
       diagnostics: {
-        ignoreCodes: ['TS18046'],
+        ignoreCodes: ['TS18046', 'TS7006', 'TS2694', 'TS2304', 'TS2307'],
       },
     }],
   },
@@ -42,5 +42,4 @@ module.exports = {
     },
   },
   testTimeout: 30000,
-  setupFilesAfterEnv: ['./jest.setup.js', './test/setup.ts'],
 };

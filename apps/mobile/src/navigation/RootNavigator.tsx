@@ -14,7 +14,7 @@ import {
   ProfileStackNavigator,
 } from "./MainStackNavigator";
 import { useAuthStore, useCartStore } from "../stores/index";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { navigateAuth, navigateProfile, navigationRef } from "./navigationService";
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
@@ -24,6 +24,7 @@ import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export function MainTabNavigator() {
+    const { colors } = useTheme();
   const cartCount = useCartStore((state) => state.totalItems);
 
   return (
@@ -52,13 +53,13 @@ export function MainTabNavigator() {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.textTertiary,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textTertiary,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: theme.colors.surface,
+          backgroundColor: colors.surface,
           borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: theme.colors.border,
+          borderTopColor: colors.border,
           paddingTop: 6,
           paddingBottom: 6,
           height: 56,

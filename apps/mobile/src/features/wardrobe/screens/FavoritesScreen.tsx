@@ -13,14 +13,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { useTranslation } from "../i18n";
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { favoriteApi } from "../services/api/commerce.api";
-import { useAuthStore } from "../stores/index";
-import type { ClothingItem } from "../types/clothing";
-import type { RootStackParamList } from "../types/navigation";
-import { ImageWithPlaceholder } from "../shared/components/common/ImageWithPlaceholder";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTranslation } from '../../../i18n';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { favoriteApi } from '../../../services/api/commerce.api';
+import { useAuthStore } from '../stores/index';
+import type { ClothingItem } from '../../types/clothing';
+import type { RootStackParamList } from '../../../types/navigation';
+import { ImageWithPlaceholder } from '../../../shared/components/common/ImageWithPlaceholder';
 
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -38,13 +38,14 @@ interface FavoriteItemProps {
 }
 
 const FavoriteItem = memo(function FavoriteItem({ item, onPress, onRemove }: FavoriteItemProps) {
+    const { colors } = useTheme();
   return (
     <TouchableOpacity style={styles.card} onPress={() => onPress(item.id)} activeOpacity={0.7}>
       {item.imageUri ? (
         <ImageWithPlaceholder source={{ uri: item.imageUri }} style={styles.image} />
       ) : (
         <View style={styles.placeholder}>
-          <Ionicons name="shirt-outline" size={40} color={theme.colors.textTertiary} />
+          <Ionicons name="shirt-outline" size={40} color={colors.textTertiary} />
         </View>
       )}
       <View style={styles.info}>
@@ -62,7 +63,7 @@ const FavoriteItem = memo(function FavoriteItem({ item, onPress, onRemove }: Fav
           accessibilityLabel="删除"
           accessibilityRole="button"
         >
-          <Ionicons name="heart" size={20} color={theme.colors.error} />
+          <Ionicons name="heart" size={20} color={colors.error} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -149,7 +150,7 @@ export const FavoritesScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>{t.common.loading}</Text>
         </View>
       </SafeAreaView>
@@ -160,7 +161,7 @@ export const FavoritesScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t.profile.myFavorites}</Text>
         <View style={styles.backBtn} />
@@ -177,12 +178,12 @@ export const FavoritesScreen: React.FC = () => {
               setRefreshing(true);
               void fetchFavorites();
             }}
-            tintColor={theme.colors.primary}
+            tintColor={colors.primary}
           />
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="heart-outline" size={48} color={theme.colors.textTertiary} />
+            <Ionicons name="heart-outline" size={48} color={colors.textTertiary} />
             <Text style={styles.emptyText}>暂无收藏</Text>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Text style={styles.emptyAction}>去逛逛</Text>
@@ -201,22 +202,22 @@ export const FavoritesScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
   backBtn: { width: 32, height: 32, alignItems: "center", justifyContent: "center" },
   list: { padding: 16 },
   emptyList: { flex: 1 },
   card: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     marginBottom: 12,
     overflow: "hidden",
@@ -232,19 +233,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   info: { flex: 1, padding: 12, justifyContent: "center" },
-  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
-  brand: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.primary, marginTop: 2 },
-  price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: theme.colors.primary, marginTop: 4 },
+  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  brand: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary, marginTop: 2 },
+  price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: colors.primary, marginTop: 4 },
   actions: { justifyContent: "center", paddingRight: 12 },
   removeBtn: { padding: 8 },
   centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 8 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 8 },
   emptyContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 60,
   },
-  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary, marginTop: 8 },
-  emptyAction: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary, marginTop: 12 },
+  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: 8 },
+  emptyAction: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary, marginTop: 12 },
 });

@@ -12,7 +12,7 @@ import {
   FlatList,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { communityApi } from '../../../services/api/community.api';
 
@@ -245,7 +245,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
 
           {/* Item list with checkboxes */}
           {loading ? (
-            <ActivityIndicator size="small" color={theme.colors.primary} style={styles.loader} />
+            <ActivityIndicator size="small" color={colors.primary} style={styles.loader} />
           ) : items.length > 0 ? (
             <ScrollView style={styles.itemList} showsVerticalScrollIndicator={false}>
               {items.map((item) => (
@@ -258,7 +258,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
                     <Image source={{ uri: item.image }} style={styles.itemImage} />
                   ) : (
                     <View style={styles.itemImagePlaceholder}>
-                      <Ionicons name="shirt-outline" size={18} color={theme.colors.textTertiary} />
+                      <Ionicons name="shirt-outline" size={18} color={colors.textTertiary} />
                     </View>
                   )}
                   <Text style={styles.itemName} numberOfLines={1}>
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 14,
   },
-  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
+  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: 12 },
   sourceRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
   sourceChip: {
     flexDirection: "row",
@@ -336,16 +336,16 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 12,
   },
-  collectionLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  collectionLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   collectionChip: {
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 12,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     marginRight: 6,
   },
   collectionChipActive: { backgroundColor: "DesignTokens.colors.semantic.infoLight" }, // custom color
-  collectionChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  collectionChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   collectionChipTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "600" },
   loader: { paddingVertical: 24 },
   itemList: { maxHeight: 250 },
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 8,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   itemRowSelected: { backgroundColor: "#F8F7FF" }, // custom color
   itemImage: { width: 40, height: 40, borderRadius: 6 },
@@ -364,17 +364,17 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 6,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     alignItems: "center",
     justifyContent: "center",
   },
-  itemName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
+  itemName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.text },
   checkbox: {
     width: 20,
     height: 20,
     borderRadius: 4,
     borderWidth: 1.5,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
     borderColor: DesignTokens.colors.brand.slate,
   },
   emptyItems: { paddingVertical: 32, alignItems: "center" },
-  emptyItemsText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary },
+  emptyItemsText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
   importBtn: {
     backgroundColor: DesignTokens.colors.brand.slate,
     borderRadius: 12,

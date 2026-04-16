@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../design-system/theme';
+import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import {
   useQuizStore as useStyleQuizStore,

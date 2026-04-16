@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import type { DesignLayer } from "../../stores/customizationEditorStore";
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
@@ -58,7 +59,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
                     : "shapes-outline"
                 }
                 size={18}
-                color={isSelected ? theme.colors.primary : theme.colors.textSecondary}
+                color={isSelected ? colors.primary : colors.textSecondary}
               />
               <Text
                 style={[styles.layerContent, isSelected && styles.layerContentSelected]}
@@ -97,11 +98,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   layerCount: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   list: {
     paddingHorizontal: Spacing[2],
@@ -121,15 +122,15 @@ const styles = StyleSheet.create({
   layerContent: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   layerContentSelected: {
-    color: theme.colors.primary,
+    color: colors.primary,
     fontWeight: "500",
   },
   emptyText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textAlign: "center",
     paddingVertical: Spacing[3],
   },

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import type { UserCoupon } from "../services/api/commerce.api";
+import type { UserCoupon } from '../../../services/api/commerce.api';
 import { DesignTokens } from "../../../design-system/theme";
 
 interface CouponSelectorProps {
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.backgrounds.tertiary,
   },
-  couponRowSelected: { backgroundColor: "#FFF8F8" },
+  couponRowSelected: { backgroundColor: "DesignTokens.colors.neutral[50]" },
   couponLeft: {
     width: 80,
     alignItems: "center",

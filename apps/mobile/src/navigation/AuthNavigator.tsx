@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "./types";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
@@ -12,9 +12,10 @@ const RegisterScreen = lazy(() => import("../features/auth/screens/RegisterScree
 const OnboardingScreen = lazy(() => import("../features/onboarding/screens/OnboardingWizard"));
 
 function AuthLoader() {
+    const { colors } = useTheme();
   return (
     <View style={styles.loader}>
-      <ActivityIndicator size="large" color={theme.colors.primary} />
+      <ActivityIndicator size="large" color={colors.primary} />
     </View>
   );
 }
@@ -57,7 +58,7 @@ export function AuthNavigator() {
 const styles = StyleSheet.create({
   loader: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
   },

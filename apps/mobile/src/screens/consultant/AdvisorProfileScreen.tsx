@@ -48,7 +48,7 @@ export const AdvisorProfileScreen: React.FC = () => {
   if (isLoading || !currentConsultant) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#C67B5C" />
+        <ActivityIndicator size="large" color="DesignTokens.colors.brand.terracotta" />
       </View>
     );
   }
@@ -166,34 +166,34 @@ const styles = StyleSheet.create({
   },
   backBtn: { padding: 8 },
   backBtnText: { fontSize: DesignTokens.typography.sizes.xl, color: DesignTokens.colors.text.primary },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "#1A1A1A" },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "DesignTokens.colors.text.primary" },
   shareBtn: { padding: 8 },
-  shareBtnText: { fontSize: DesignTokens.typography.sizes.base, color: "#C67B5C" },
+  shareBtnText: { fontSize: DesignTokens.typography.sizes.base, color: "DesignTokens.colors.brand.terracotta" },
   profileHero: { alignItems: "center", paddingHorizontal: 24, paddingTop: 12, paddingBottom: 20 },
   avatar: { width: 80, height: 80, borderRadius: 40, marginBottom: 12 },
   avatarPlaceholder: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#C67B5C",
+    backgroundColor: "DesignTokens.colors.brand.terracotta",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
   },
   avatarPlaceholderText: { color: DesignTokens.colors.backgrounds.primary, fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "600" },
-  studioName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: "#1A1A1A", marginBottom: 8 },
+  studioName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: "DesignTokens.colors.text.primary", marginBottom: 8 },
   specialtyRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 12 },
   specialtyBadge: {
-    backgroundColor: "#FFF5F0",
+    backgroundColor: "DesignTokens.colors.neutral[50]",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#F0D5C8",
+    borderColor: "DesignTokens.colors.brand.terracottaLight",
   },
-  specialtyText: { fontSize: DesignTokens.typography.sizes.sm, color: "#C67B5C" },
+  specialtyText: { fontSize: DesignTokens.typography.sizes.sm, color: "DesignTokens.colors.brand.terracotta" },
   ratingRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  ratingValue: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "#C67B5C" },
+  ratingValue: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "DesignTokens.colors.brand.terracotta" },
   ratingLabel: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.secondary },
   reviewCount: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.secondary },
   infoRow: {
@@ -202,15 +202,15 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "#F0F0F0",
+    borderColor: "DesignTokens.colors.backgrounds.tertiary",
     marginHorizontal: 16,
   },
   infoItem: { alignItems: "center" },
   infoValue: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
   infoLabel: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary, marginTop: 4 },
-  infoDivider: { width: 1, backgroundColor: "#F0F0F0" },
+  infoDivider: { width: 1, backgroundColor: "DesignTokens.colors.backgrounds.tertiary" },
   section: { paddingHorizontal: 16, paddingTop: 20 },
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "#1A1A1A", marginBottom: 12 },
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "DesignTokens.colors.text.primary", marginBottom: 12 },
   bioText: { fontSize: DesignTokens.typography.sizes.base, color: "#555", lineHeight: 22 },
   casesList: { gap: 12 },
   bottomCta: {
@@ -218,11 +218,11 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingBottom: 32,
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
+    borderTopColor: "DesignTokens.colors.backgrounds.tertiary",
     backgroundColor: DesignTokens.colors.backgrounds.primary,
   },
   bookButton: {
-    backgroundColor: "#C67B5C",
+    backgroundColor: "DesignTokens.colors.brand.terracotta",
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",

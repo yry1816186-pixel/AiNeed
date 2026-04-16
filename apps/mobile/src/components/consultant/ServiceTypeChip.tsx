@@ -33,12 +33,12 @@ const styles = StyleSheet.create({
   chipDefault: {
     backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: "DesignTokens.colors.borders.default",
   },
   chipSelected: {
-    backgroundColor: "#C67B5C",
+    backgroundColor: "DesignTokens.colors.brand.terracotta",
     borderWidth: 1,
-    borderColor: "#C67B5C",
+    borderColor: "DesignTokens.colors.brand.terracotta",
   },
   text: {
     fontSize: DesignTokens.typography.sizes.base,

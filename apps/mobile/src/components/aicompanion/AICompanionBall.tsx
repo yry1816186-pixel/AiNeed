@@ -51,19 +51,19 @@ const STATE_CONFIG = {
     animation: "breathe",
   },
   listening: {
-    gradient: [DesignTokens.colors.brand.slate, "#96A6B5"] as [string, string], // custom color
+    gradient: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"] as [string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.08)"] as [string, string],
     glowColor: DesignTokens.colors.brand.slate,
     animation: "pulse",
   },
   thinking: {
-    gradient: [DesignTokens.colors.semantic.warning, "#E8B86D"] as [string, string], // custom color
+    gradient: [DesignTokens.colors.semantic.warning, "DesignTokens.colors.brand.camel"] as [string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.1)"] as [string, string],
     glowColor: DesignTokens.colors.semantic.warning,
     animation: "pulse",
   },
   responding: {
-    gradient: [DesignTokens.colors.semantic.success, "#7BA896"] as [string, string], // custom color
+    gradient: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage"] as [string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.28)", "rgba(255,255,255,0.06)"] as [string, string],
     glowColor: DesignTokens.colors.semantic.success,
     animation: "glow",

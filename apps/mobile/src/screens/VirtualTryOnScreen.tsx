@@ -2,7 +2,7 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { View, ActivityIndicator } from "react-native";
 
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { StyleSheet } from "react-native";
 import { withErrorBoundary } from "../shared/components/ErrorBoundary";
@@ -39,14 +39,14 @@ const TryOnScreenWrapper: React.FC<{ isV2TryOn: boolean }> = ({ isV2TryOn }) => 
   );
 
   return (
-    <React.Suspense fallback={<View style={{flex:1,justifyContent:'center',alignItems:'center'}}><ActivityIndicator size="large" color={theme?.colors?.primary || '#E8725C'} /></View>}>
+    <React.Suspense fallback={<View style={{flex:1,justifyContent:'center',alignItems:'center'}}><ActivityIndicator size="large" color={theme?.colors?.primary || 'DesignTokens.colors.brand.terracotta'} /></View>}>
       <LazyTryOn isV2={isV2TryOn} />
     </React.Suspense>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
 });
 
 const VirtualTryOnScreen = withErrorBoundary(VirtualTryOnScreenComponent, {

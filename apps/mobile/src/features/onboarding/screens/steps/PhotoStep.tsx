@@ -8,7 +8,8 @@ import {
 } from "react-native-image-picker";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Animated, { SlideInRight } from "react-native-reanimated";
-import { theme, Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius } from '../../../../design-system/theme';
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface PhotoStepProps {
@@ -27,6 +28,7 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
 
   const handleTakePhoto = () => {
+    const { colors } = useTheme();
     void launchCamera(IMAGE_PICKER_OPTIONS, (response) => {
       if (response.didCancel || response.errorCode) {
         return;
@@ -60,7 +62,7 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.privacyBox}>
-          <Ionicons name="lock-closed-outline" size={20} color={theme.colors.primary} />
+          <Ionicons name="lock-closed-outline" size={20} color={colors.primary} />
           <Text style={styles.privacyText}>
             你的照片仅用于体型分析和试衣效果生成，绝不会分享给第三方
           </Text>
@@ -75,7 +77,7 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
               onPress={handlePickFromLibrary}
               activeOpacity={0.7}
             >
-              <Ionicons name="camera-outline" size={48} color={theme.colors.textTertiary} />
+              <Ionicons name="camera-outline" size={48} color={colors.textTertiary} />
               <Text style={styles.photoPlaceholderText}>点击上传照片</Text>
             </TouchableOpacity>
           )}
@@ -87,7 +89,7 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
             onPress={handleTakePhoto}
             activeOpacity={0.7}
           >
-            <Ionicons name="camera-outline" size={20} color={theme.colors.surface} />
+            <Ionicons name="camera-outline" size={20} color={colors.surface} />
             <Text style={styles.cameraButtonText}>拍照</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -95,7 +97,7 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
             onPress={handlePickFromLibrary}
             activeOpacity={0.7}
           >
-            <Ionicons name="images-outline" size={20} color={theme.colors.textSecondary} />
+            <Ionicons name="images-outline" size={20} color={colors.textSecondary} />
             <Text style={styles.galleryButtonText}>从相册选择</Text>
           </TouchableOpacity>
         </View>
@@ -122,13 +124,13 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   stepSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
   },
@@ -150,7 +152,7 @@ const styles = StyleSheet.create({
   privacyText: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   photoContainer: {
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
   },
   photoPlaceholderText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   buttonGroup: {
     width: "100%",
@@ -186,7 +188,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     height: 52,
     gap: Spacing[2],
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
   cameraButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   galleryButton: {
     flexDirection: "row",
@@ -210,13 +212,13 @@ const styles = StyleSheet.create({
   galleryButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   skipLink: {
     marginTop: Spacing[2],
   },
   skipLinkText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
 });

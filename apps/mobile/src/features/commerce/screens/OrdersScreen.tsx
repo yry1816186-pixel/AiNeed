@@ -14,10 +14,10 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { orderApi, orderEnhancementApi } from "../services/api/commerce.api";
-import type { Order, OrderStatus } from "../types";
-import type { RootStackParamList } from "../types/navigation";
-import { theme } from '../design-system/theme';
+import { orderApi, orderEnhancementApi } from '../../../services/api/commerce.api';
+import type { Order, OrderStatus } from '../../../types';
+import type { RootStackParamList } from '../../../types/navigation';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 type OrdersNavigation = NativeStackNavigationProp<RootStackParamList>;
@@ -40,14 +40,14 @@ const TABS: TabConfig[] = [
 ];
 
 const STATUS_META: Record<string, { label: string; color: string }> = {
-  pending: { label: "待支付", color: theme.colors.warning },
-  paid: { label: "待发货", color: theme.colors.primary },
-  confirmed: { label: "已确认", color: theme.colors.primary },
+  pending: { label: "待支付", color: colors.warning },
+  paid: { label: "待发货", color: colors.primary },
+  confirmed: { label: "已确认", color: colors.primary },
   processing: { label: "处理中", color: "DesignTokens.colors.semantic.info" },
   shipped: { label: "配送中", color: "DesignTokens.colors.semantic.info" },
-  delivered: { label: "已签收", color: theme.colors.success },
-  cancelled: { label: "已取消", color: theme.colors.error },
-  refunded: { label: "已退款", color: theme.colors.textTertiary },
+  delivered: { label: "已签收", color: colors.success },
+  cancelled: { label: "已取消", color: colors.error },
+  refunded: { label: "已退款", color: colors.textTertiary },
 };
 
 function formatDate(dateString: string): string {
@@ -137,7 +137,7 @@ export const OrdersScreen: React.FC = () => {
     ({ item }: { item: Order }) => {
       const status = STATUS_META[item.status] ?? {
         label: item.status,
-        color: theme.colors.textSecondary,
+        color: colors.textSecondary,
       };
 
       return (
@@ -162,7 +162,7 @@ export const OrdersScreen: React.FC = () => {
                 />
               ) : (
                 <View key={orderItem.id} style={styles.itemThumbnailFallback}>
-                  <Ionicons name="shirt-outline" size={18} color={theme.colors.textTertiary} />
+                  <Ionicons name="shirt-outline" size={18} color={colors.textTertiary} />
                 </View>
               )
             )}
@@ -290,7 +290,7 @@ export const OrdersScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           accessibilityLabel="返回"
         >
-          <Ionicons name="arrow-back" size={22} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>我的订单</Text>
         <View style={styles.headerPlaceholder} />
@@ -313,7 +313,7 @@ export const OrdersScreen: React.FC = () => {
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : orders.length === 0 ? (
         <FlatList
@@ -321,7 +321,7 @@ export const OrdersScreen: React.FC = () => {
           renderItem={null}
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Ionicons name="bag-handle-outline" size={64} color={theme.colors.textTertiary} />
+              <Ionicons name="bag-handle-outline" size={64} color={colors.textTertiary} />
               <Text style={styles.emptyTitle}>还没有订单</Text>
               <Text style={styles.emptySubtitle}>先去看看推荐的穿搭和单品吧。</Text>
             </View>
@@ -330,7 +330,7 @@ export const OrdersScreen: React.FC = () => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => void loadOrders(1, "refresh")}
-              colors={[theme.colors.primary]}
+              colors={[colors.primary]}
             />
           }
         />
@@ -350,13 +350,13 @@ export const OrdersScreen: React.FC = () => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => void loadOrders(1, "refresh")}
-              colors={[theme.colors.primary]}
+              colors={[colors.primary]}
             />
           }
           ListFooterComponent={
             loadingMore ? (
               <View style={styles.footerLoading}>
-                <ActivityIndicator size="small" color={theme.colors.primary} />
+                <ActivityIndicator size="small" color={colors.primary} />
               </View>
             ) : !hasMore ? (
               <Text style={styles.footerText}>没有更多订单了</Text>
@@ -371,7 +371,7 @@ export const OrdersScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -379,9 +379,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   iconButton: {
     width: 40,
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   headerPlaceholder: {
     width: 40,
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 20,
     paddingVertical: 14,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   tabItem: {
     flex: 1,
@@ -412,19 +412,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 10,
     borderRadius: 14,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   tabItemActive: {
     backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
     borderWidth: 1,
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
   },
   tabText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   tabTextActive: {
-    color: theme.colors.primary,
+    color: colors.primary,
     fontWeight: "600",
   },
   listContent: {
@@ -447,20 +447,20 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   emptySubtitle: {
     marginTop: 8,
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     textAlign: "center",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   orderCard: {
     marginTop: 16,
     padding: 16,
     borderRadius: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   orderHeader: {
     flexDirection: "row",
@@ -469,13 +469,13 @@ const styles = StyleSheet.create({
   },
   orderIdLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   orderIdValue: {
     marginTop: 4,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -512,12 +512,12 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.border,
+    backgroundColor: colors.border,
   },
   moreItemsText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   orderFooter: {
     flexDirection: "row",
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
   },
   orderDate: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   orderSummary: {
     flexDirection: "row",
@@ -539,12 +539,12 @@ const styles = StyleSheet.create({
   },
   orderSummaryText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   orderTotal: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   actionRow: {
     flexDirection: "row",
@@ -557,23 +557,23 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
   secondaryButtonText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   primaryButton: {
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   primaryButtonText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   footerLoading: {
     paddingVertical: 20,
@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   dangerTextButton: {
     paddingHorizontal: 12,

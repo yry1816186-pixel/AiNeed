@@ -13,7 +13,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { launchImageLibrary } from "react-native-image-picker";
 import { useCustomizationEditorStore, type DesignLayer } from "../stores/customizationEditorStore";
@@ -139,7 +140,7 @@ export const CustomizationEditorScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>
           {store.selectedTemplate ? store.selectedTemplate.name : "选择模板"}
@@ -188,7 +189,7 @@ export const CustomizationEditorScreen: React.FC = () => {
           />
           {store.isLoading && (
             <View style={styles.loadingOverlay}>
-              <ActivityIndicator size="large" color={theme.colors.primary} />
+              <ActivityIndicator size="large" color={colors.primary} />
             </View>
           )}
         </View>
@@ -216,7 +217,7 @@ export const CustomizationEditorScreen: React.FC = () => {
           <Ionicons
             name={showLayers ? "chevron-down" : "chevron-up"}
             size={16}
-            color={theme.colors.textSecondary}
+            color={colors.textSecondary}
           />
           <Text style={styles.layerToggleText}>{showLayers ? "收起图层" : "展开图层"}</Text>
         </TouchableOpacity>
@@ -296,7 +297,7 @@ export const CustomizationEditorScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   topBar: {
     flexDirection: "row",
@@ -317,7 +318,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   topBarActions: {
     flexDirection: "row",
@@ -332,15 +333,15 @@ const styles = StyleSheet.create({
   topBarActionText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   previewButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   previewButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   templateSection: {
     flex: 1,
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     paddingHorizontal: Spacing[4],
     marginBottom: Spacing[3],
   },
@@ -376,7 +377,7 @@ const styles = StyleSheet.create({
   },
   layerToggleText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   modalOverlay: {
     flex: 1,
@@ -385,7 +386,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.xl,
     padding: Spacing[5],
     width: "90%",
@@ -394,7 +395,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[4],
   },
   textInput: {
@@ -404,7 +405,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[3],
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[3],
   },
   textSettings: {
@@ -420,7 +421,7 @@ const styles = StyleSheet.create({
   },
   textSettingLabel: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   textSettingInput: {
     borderWidth: 1,
@@ -430,7 +431,7 @@ const styles = StyleSheet.create({
     height: 36,
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   colorButton: {
     flexDirection: "row",
@@ -446,7 +447,7 @@ const styles = StyleSheet.create({
   },
   colorButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   modalActions: {
     flexDirection: "row",
@@ -462,18 +463,18 @@ const styles = StyleSheet.create({
   },
   modalCancelText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   modalConfirmButton: {
     paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[2],
     borderRadius: BorderRadius.md,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   modalConfirmText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
 });
 

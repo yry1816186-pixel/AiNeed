@@ -12,8 +12,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { stockNotificationApi, type StockNotification } from "../services/api/commerce.api";
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { stockNotificationApi, type StockNotification } from '../../../services/api/commerce.api';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   PENDING: { label: "等待中", color: DesignTokens.colors.semantic.warning },

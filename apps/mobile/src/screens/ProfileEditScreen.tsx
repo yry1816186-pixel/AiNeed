@@ -12,7 +12,8 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 import { Ionicons } from "../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { useProfileStore } from "../stores/profileStore";
 import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";
@@ -154,13 +155,14 @@ export const ProfileEditScreen: React.FC = () => {
   }, [nickname, gender, body, selectedStyles, updateProfile, navigation]);
 
   const renderBodyField = (field: keyof BodyFormState, label: string, unit: string) => (
+    const { colors } = useTheme();
     <View style={styles.inputField} key={field}>
       <Text style={styles.inputLabel}>{label}</Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.textInput}
           placeholder="0"
-          placeholderTextColor={theme.colors.textTertiary}
+          placeholderTextColor={colors.textTertiary}
           value={body[field]}
           onChangeText={(v) => handleBodyChange(field, v)}
           keyboardType="numeric"
@@ -183,7 +185,7 @@ export const ProfileEditScreen: React.FC = () => {
               accessibilityLabel="返回"
               accessibilityRole="button"
             >
-              <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+              <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
           }
           rightAction={
@@ -194,7 +196,7 @@ export const ProfileEditScreen: React.FC = () => {
               accessibilityRole="button"
             >
               {isLoading ? (
-                <ActivityIndicator size="small" color={theme.colors.primary} />
+                <ActivityIndicator size="small" color={colors.primary} />
               ) : (
                 <Text style={styles.saveButtonText}>保存</Text>
               )}
@@ -216,7 +218,7 @@ export const ProfileEditScreen: React.FC = () => {
               <TextInput
                 style={styles.textInput}
                 placeholder="输入昵称"
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={nickname}
                 onChangeText={setNickname}
                 accessibilityLabel="昵称"
@@ -333,7 +335,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[4],
   },
   formGroup: {
@@ -342,7 +344,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: Spacing[2],
   },
   inputContainer: {
@@ -358,12 +360,12 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     padding: 0,
   },
   unitText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginLeft: Spacing[2],
   },
   pillRow: {
@@ -380,13 +382,13 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   pillSelected: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   pillText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   pillTextSelected: {
     color: DesignTokens.colors.neutral.white,
@@ -395,7 +397,7 @@ const styles = StyleSheet.create({
   saveButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   bodyGrid: {
     flexDirection: "row",
@@ -420,15 +422,15 @@ const styles = StyleSheet.create({
   },
   tagSelected: {
     backgroundColor: "rgba(198, 123, 92, 0.1)",
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   tagTextSelected: {
-    color: theme.colors.primary,
+    color: colors.primary,
     fontWeight: "600",
   },
 });

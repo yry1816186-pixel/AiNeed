@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import type { PhotoQualityResult, PhotoQualityIssue } from "../../../stores/photoStore";
 import { DesignTokens } from "../../../design-system/theme";
 
@@ -38,7 +38,7 @@ function getIssueIcon(type: PhotoQualityIssue["type"]): keyof typeof Ionicons.gl
 function getSeverityColor(severity: PhotoQualityIssue["severity"]): string {
   const colors: Record<PhotoQualityIssue["severity"], string> = {
     low: DesignTokens.colors.semantic.warning,
-    medium: "#FF9800",
+    medium: "DesignTokens.colors.semantic.warning",
     high: DesignTokens.colors.semantic.error,
   };
   return colors[severity];
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   },
   scoreLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 2,
   },
   acceptableContainer: {
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   issuesTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 12,
   },
   issueItem: {
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   issueText: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 48,
     borderRadius: 12,
-    backgroundColor: theme.colors.textSecondary,
+    backgroundColor: colors.textSecondary,
     justifyContent: "center",
     alignItems: "center",
     gap: 6,
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 48,
     borderRadius: 12,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },

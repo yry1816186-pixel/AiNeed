@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-nati
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, { SlideInRight } from "react-native-reanimated";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows } from '../../../../design-system/theme';
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -40,7 +41,7 @@ export const StyleTestStep: React.FC<StyleTestStepProps> = ({ onNext, onSkip }) 
 
     <View style={styles.previewContainer}>
       <LinearGradient
-        colors={[theme.colors.primary, theme.colors.primaryLight, theme.colors.secondary]}
+        colors={[colors.primary, colors.primaryLight, colors.secondary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.previewCard}
@@ -55,7 +56,7 @@ export const StyleTestStep: React.FC<StyleTestStepProps> = ({ onNext, onSkip }) 
       {FEATURES.map((feature) => (
         <View key={feature.icon} style={styles.featureCard}>
           <View style={styles.featureIconContainer}>
-            <Ionicons name={feature.icon} size={22} color={theme.colors.primary} />
+            <Ionicons name={feature.icon} size={22} color={colors.primary} />
           </View>
           <Text style={styles.featureTitle}>{feature.title}</Text>
           <Text style={styles.featureDescription}>{feature.description}</Text>
@@ -89,13 +90,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   subtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
   },
@@ -146,12 +147,12 @@ const styles = StyleSheet.create({
   featureTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[1],
   },
   featureDescription: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 18,
   },
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     height: 52,
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[8],
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
 });
 

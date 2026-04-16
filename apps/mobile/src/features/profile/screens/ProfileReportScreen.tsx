@@ -30,7 +30,7 @@ import { BodyTypeCard } from "./components/BodyTypeCard";
 import { ColorSeasonCard } from "./components/ColorSeasonCard";
 import { StyleTagsCard } from "./components/StyleTagsCard";
 import { SharePosterPreview } from "./components/SharePosterPreview";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 type ProfileReportNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

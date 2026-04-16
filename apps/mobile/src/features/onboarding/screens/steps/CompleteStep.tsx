@@ -11,7 +11,8 @@ import Animated, {
   FadeIn,
   SlideInUp,
 } from "react-native-reanimated";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows } from '../../../../design-system/theme';
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -26,11 +27,11 @@ const PREVIEW_ITEMS = [
 ] as const;
 
 const DECORATIONS = [
-  { size: 8, color: theme.colors.primary, top: -8, right: 20, delay: 200 },
-  { size: 12, color: theme.colors.secondary, top: 10, right: -12, delay: 300 },
-  { size: 16, color: theme.colors.gold, bottom: -10, left: -8, delay: 400 },
-  { size: 8, color: theme.colors.primaryLight, bottom: 5, right: -16, delay: 500 },
-  { size: 12, color: theme.colors.secondaryLight, top: -14, left: 15, delay: 600 },
+  { size: 8, color: colors.primary, top: -8, right: 20, delay: 200 },
+  { size: 12, color: colors.secondary, top: 10, right: -12, delay: 300 },
+  { size: 16, color: colors.gold, bottom: -10, left: -8, delay: 400 },
+  { size: 8, color: colors.primaryLight, bottom: 5, right: -16, delay: 500 },
+  { size: 12, color: colors.secondaryLight, top: -14, left: 15, delay: 600 },
 ];
 
 export const CompleteStep: React.FC<CompleteStepProps> = ({ onComplete }) => {
@@ -92,7 +93,7 @@ export const CompleteStep: React.FC<CompleteStepProps> = ({ onComplete }) => {
         {PREVIEW_ITEMS.map((item) => (
           <View key={item.icon} style={styles.previewCard}>
             <View style={styles.previewIconContainer}>
-              <Ionicons name={item.icon} size={20} color={theme.colors.primary} />
+              <Ionicons name={item.icon} size={20} color={colors.primary} />
             </View>
             <Text style={styles.previewTitle}>{item.title}</Text>
           </View>
@@ -149,13 +150,13 @@ const styles = StyleSheet.create({
   mainTitle: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 36,
   },
   mainSubtitle: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     marginTop: Spacing[2],
     lineHeight: 24,
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
   previewTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   buttonContainer: {
     width: "100%",
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     height: 52,
     borderRadius: BorderRadius.xl,
     gap: Spacing[2],

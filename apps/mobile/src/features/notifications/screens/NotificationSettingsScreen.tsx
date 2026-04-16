@@ -4,10 +4,10 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useNotificationStore } from "../stores/notificationStore";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { RootStackParamList } from "../types/navigation";
+import { useNotificationStore } from '../stores/notificationStore';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -113,7 +113,7 @@ export const NotificationSettingsScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Notification Settings</Text>
         <View style={styles.placeholder} />
@@ -131,7 +131,7 @@ export const NotificationSettingsScreen: React.FC = () => {
               value={allEnabled}
               onValueChange={handleMasterToggle}
               accessibilityLabel="Push notifications master switch"
-              trackColor={{ false: DesignTokens.colors.neutral[200], true: theme.colors.primary }}
+              trackColor={{ false: DesignTokens.colors.neutral[200], true: colors.primary }}
               thumbColor={DesignTokens.colors.neutral.white}
             />
           </View>
@@ -148,11 +148,11 @@ export const NotificationSettingsScreen: React.FC = () => {
                 index < CATEGORY_TOGGLES.length - 1 && styles.settingItemBorder,
               ]}
             >
-              <View style={[styles.categoryIcon, { backgroundColor: theme.colors.primary + "15" }]}>
+              <View style={[styles.categoryIcon, { backgroundColor: colors.primary + "15" }]}>
                 <Ionicons
                   name={toggle.icon as "bag-outline"}
                   size={20}
-                  color={theme.colors.primary}
+                  color={colors.primary}
                 />
               </View>
               <View style={styles.settingInfo}>
@@ -163,7 +163,7 @@ export const NotificationSettingsScreen: React.FC = () => {
                 value={settings?.[toggle.key] ?? true}
                 onValueChange={(value) => handleToggle(toggle.key, value)}
                 accessibilityLabel={`${toggle.title} notifications`}
-                trackColor={{ false: DesignTokens.colors.neutral[200], true: theme.colors.primary }}
+                trackColor={{ false: DesignTokens.colors.neutral[200], true: colors.primary }}
                 thumbColor={DesignTokens.colors.neutral.white}
               />
             </View>
@@ -182,7 +182,7 @@ export const NotificationSettingsScreen: React.FC = () => {
               value={settings?.quietHoursEnabled ?? false}
               onValueChange={handleQuietHoursToggle}
               accessibilityLabel="Quiet hours toggle"
-              trackColor={{ false: DesignTokens.colors.neutral[200], true: theme.colors.primary }}
+              trackColor={{ false: DesignTokens.colors.neutral[200], true: colors.primary }}
               thumbColor={DesignTokens.colors.neutral.white}
             />
           </View>
@@ -194,14 +194,14 @@ export const NotificationSettingsScreen: React.FC = () => {
                   onPress={() => handleTimeAdjust("quietHoursStart", "up")}
                   accessibilityLabel="Increase start time"
                 >
-                  <Ionicons name="chevron-up" size={20} color={theme.colors.textSecondary} />
+                  <Ionicons name="chevron-up" size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
                 <Text style={styles.timeValue}>{settings.quietHoursStart}</Text>
                 <TouchableOpacity
                   onPress={() => handleTimeAdjust("quietHoursStart", "down")}
                   accessibilityLabel="Decrease start time"
                 >
-                  <Ionicons name="chevron-down" size={20} color={theme.colors.textSecondary} />
+                  <Ionicons name="chevron-down" size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
               </View>
               <Text style={styles.timeSeparator}>to</Text>
@@ -210,14 +210,14 @@ export const NotificationSettingsScreen: React.FC = () => {
                   onPress={() => handleTimeAdjust("quietHoursEnd", "up")}
                   accessibilityLabel="Increase end time"
                 >
-                  <Ionicons name="chevron-up" size={20} color={theme.colors.textSecondary} />
+                  <Ionicons name="chevron-up" size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
                 <Text style={styles.timeValue}>{settings.quietHoursEnd}</Text>
                 <TouchableOpacity
                   onPress={() => handleTimeAdjust("quietHoursEnd", "down")}
                   accessibilityLabel="Decrease end time"
                 >
-                  <Ionicons name="chevron-down" size={20} color={theme.colors.textSecondary} />
+                  <Ionicons name="chevron-down" size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -231,15 +231,15 @@ export const NotificationSettingsScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   backButton: {
     width: 40,
@@ -249,13 +249,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
   placeholder: { width: 40 },
   content: { flex: 1 },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
     paddingHorizontal: 20,
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   section: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     marginHorizontal: 20,
     borderRadius: 16,
     overflow: "hidden",
@@ -279,8 +279,8 @@ const styles = StyleSheet.create({
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
   settingInfo: { flex: 1 },
-  settingTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: theme.colors.text },
-  settingDesc: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary, marginTop: 2 },
+  settingTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.text },
+  settingDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: 2 },
   categoryIcon: {
     width: 36,
     height: 36,
@@ -302,11 +302,11 @@ const styles = StyleSheet.create({
   timeValue: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   timeSeparator: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
 });
 

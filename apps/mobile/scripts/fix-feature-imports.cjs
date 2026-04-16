@@ -1,7 +1,12 @@
 const fs = require('fs');
 const path = require('path');
-const featuresDir = path.join(__dirname, '..', 'src', 'features');
+const srcDir = path.join(__dirname, '..', 'src');
+const featuresDir = path.join(srcDir, 'features');
 let totalFixed = 0;
+
+function exists(p) {
+  return fs.existsSync(p + '.ts') || fs.existsSync(p + '.tsx') || fs.existsSync(p + path.sep + 'index.ts') || fs.existsSync(p + path.sep + 'index.tsx');
+}
 
 function fixImportsInDir(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -11,101 +16,119 @@ function fixImportsInDir(dir) {
       fixImportsInDir(fullPath);
     } else if (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx')) {
       let content = fs.readFileSync(fullPath, 'utf8');
-      let modified = false;
-      const parts = fullPath.split(path.sep);
+      const parts = fullPath.replace(/\\/g, '/').split('/');
       const featureIdx = parts.indexOf('features');
       const featureName = parts[featureIdx + 1];
+      const screensIdx = parts.indexOf('screens');
+      const depthFromScreens = parts.length - screensIdx - 2;
 
-      const replacements = [
-        [/\.\.\/\.\.\/stores\//g, (m, p1) => {
-          const storePath = p1;
-          const featureStorePath = path.join(featuresDir, featureName, 'stores', storePath);
-          const srcStorePath = path.join(__dirname, 'src', 'stores', storePath);
-          if (fs.existsSync(featureStorePath + '.ts') || fs.existsSync(featureStorePath + '.tsx') || fs.existsSync(featureStorePath + path.sep + 'index.ts')) {
-            return '../stores/' + storePath;
-          }
-          return '../../../stores/' + storePath;
-        }],
-      ];
+      // depthFromScreens: 0 = features/X/screens/file.tsx
+      //                   1 = features/X/screens/components/file.tsx
+      //                   2 = features/X/screens/steps/file.tsx
 
-      const simpleReplacements = [
-        [/from ['"]\.\.\/\.\.\/stores['"]/g, "from '../../../stores'"],
-        [/from ['"]\.\.\/\.\.\/theme\/([^'"]+)['"]/g, (m, p) => `from '../../../design-system/theme/${p}'`],
-        [/from ['"]\.\.\/\.\.\/shared\/([^'"]+)['"]/g, (m, p) => `from '../../../shared/${p}'`],
-        [/from ['"]\.\.\/\.\.\/contexts\/([^'"]+)['"]/g, (m, p) => {
-          const sharedCtx = path.join(__dirname, 'src', 'shared', 'contexts', p);
-          if (fs.existsSync(sharedCtx + '.ts') || fs.existsSync(sharedCtx + '.tsx')) {
-            return `from '../../../shared/contexts/${p}'`;
-          }
-          return `from '../../../contexts/${p}'`;
-        }],
-        [/from ['"]\.\.\/\.\.\/i18n['"]/g, "from '../../../i18n'"],
-        [/from ['"]\.\.\/\.\.\/i18n\/([^'"]+)['"]/g, (m, p) => `from '../../../i18n/${p}'`],
-        [/from ['"]\.\.\/\.\.\/constants\/([^'"]+)['"]/g, (m, p) => {
-          const sharedConst = path.join(__dirname, 'src', 'shared', 'constants', p);
-          if (fs.existsSync(sharedConst + '.ts') || fs.existsSync(sharedConst + '.tsx')) {
-            return `from '../../../shared/constants/${p}'`;
-          }
-          return `from '../../../constants/${p}'`;
-        }],
-        [/from ['"]\.\.\/\.\.\/types['"]/g, "from '../../../types'"],
-        [/from ['"]\.\.\/\.\.\/utils\/([^'"]+)['"]/g, (m, p) => `from '../../../utils/${p}'`],
-      ];
+      const upToFeature = '../'.repeat(depthFromScreens + 1); // ../ for depth 0, ../../ for depth 1
+      const upToSrc = '../'.repeat(depthFromScreens + 3);     // ../../../ for depth 0, ../../../../ for depth 1
 
-      for (const [regex, replacement] of simpleReplacements) {
-        const newContent = content.replace(regex, replacement);
-        if (newContent !== content) {
-          content = newContent;
-          modified = true;
-        }
-      }
+      // Fix relative imports that go UP from screens dir
 
-      // Fix ../../stores/X -> feature-local or src-level
-      content = content.replace(/from ['"]\.\.\/\.\.\/stores\/([^'"]+)['"]/g, (match, storePath) => {
+      // --- ../../stores/X (from depth 0) -> ../stores/X (feature-local) or ../../../stores/X (src-level) ---
+      // --- ../stores/X (from depth 1) -> ../../stores/X (feature-local) or ../../../../stores/X (src-level) ---
+
+      // Generic: any ../stores/ import -> feature-local if exists, otherwise src-level
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)stores\/([^'"]+)['"]/g, (match, prefix, storePath) => {
         const featureStorePath = path.join(featuresDir, featureName, 'stores', storePath);
-        if (fs.existsSync(featureStorePath + '.ts') || fs.existsSync(featureStorePath + '.tsx') || fs.existsSync(featureStorePath + path.sep + 'index.ts')) {
-          return `from '../stores/${storePath}'`;
-        }
-        return `from '../../../stores/${storePath}'`;
+        if (exists(featureStorePath)) return `from '${upToFeature}stores/${storePath}'`;
+        return `from '${upToSrc}stores/${storePath}'`;
       });
 
-      // Fix ../../components/X -> feature-local or src-level
-      content = content.replace(/from ['"]\.\.\/\.\.\/components\/([^'"]+)['"]/g, (match, compPath) => {
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)stores['"]/g, (match) => {
+        return `from '${upToSrc}stores'`;
+      });
+
+      // Generic: ../components/X -> feature-local or src-level
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)components\/([^'"]+)['"]/g, (match, prefix, compPath) => {
         const featureCompPath = path.join(featuresDir, featureName, 'components', compPath);
-        if (fs.existsSync(featureCompPath + '.ts') || fs.existsSync(featureCompPath + '.tsx') || fs.existsSync(featureCompPath + path.sep + 'index.ts')) {
-          return `from '../components/${compPath}'`;
-        }
-        return `from '../../../components/${compPath}'`;
+        if (exists(featureCompPath)) return `from '${upToFeature}components/${compPath}'`;
+        return `from '${upToSrc}components/${compPath}'`;
       });
 
-      // Fix ../../hooks/X -> feature-local or src-level
-      content = content.replace(/from ['"]\.\.\/\.\.\/hooks\/([^'"]+)['"]/g, (match, hookPath) => {
+      // Generic: ../hooks/X -> feature-local or src-level
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)hooks\/([^'"]+)['"]/g, (match, prefix, hookPath) => {
         const featureHookPath = path.join(featuresDir, featureName, 'hooks', hookPath);
-        if (fs.existsSync(featureHookPath + '.ts') || fs.existsSync(featureHookPath + '.tsx')) {
-          return `from '../hooks/${hookPath}'`;
-        }
-        return `from '../../../hooks/${hookPath}'`;
+        if (exists(featureHookPath)) return `from '${upToFeature}hooks/${hookPath}'`;
+        return `from '${upToSrc}hooks/${hookPath}'`;
       });
 
-      // Fix ../../services/X -> feature-local or src-level
-      content = content.replace(/from ['"]\.\.\/\.\.\/services\/([^'"]+)['"]/g, (match, svcPath) => {
+      // Generic: ../services/X -> feature-local or src-level
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)services\/([^'"]+)['"]/g, (match, prefix, svcPath) => {
         const featureSvcPath = path.join(featuresDir, featureName, 'services', svcPath);
-        if (fs.existsSync(featureSvcPath + '.ts') || fs.existsSync(featureSvcPath + '.tsx')) {
-          return `from '../services/${svcPath}'`;
-        }
-        return `from '../../../services/${svcPath}'`;
+        if (exists(featureSvcPath)) return `from '${upToFeature}services/${svcPath}'`;
+        return `from '${upToSrc}services/${svcPath}'`;
       });
 
-      // Fix ../../types/X -> feature-local or src-level
-      content = content.replace(/from ['"]\.\.\/\.\.\/types\/([^'"]+)['"]/g, (match, typePath) => {
+      // Generic: ../types/X -> feature-local or src-level
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)types\/([^'"]+)['"]/g, (match, prefix, typePath) => {
         const featureTypePath = path.join(featuresDir, featureName, 'types', typePath);
-        if (fs.existsSync(featureTypePath + '.ts') || fs.existsSync(featureTypePath + '.tsx')) {
-          return `from '../types/${typePath}'`;
-        }
-        return `from '../../../types/${typePath}'`;
+        if (exists(featureTypePath)) return `from '${upToFeature}types/${typePath}'`;
+        return `from '${upToSrc}types/${typePath}'`;
       });
 
-      // Check if content was actually modified by comparing
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)types['"]/g, (match) => {
+        return `from '${upToSrc}types'`;
+      });
+
+      // Generic: ../theme/X -> design-system/theme/X
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)theme\/([^'"]+)['"]/g, (match, prefix, p) => {
+        return `from '${upToSrc}design-system/theme/${p}'`;
+      });
+
+      // Generic: ../design-system/X -> src-level design-system
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)design-system\/([^'"]+)['"]/g, (match, prefix, p) => {
+        return `from '${upToSrc}design-system/${p}'`;
+      });
+
+      // Generic: ../shared/X -> src-level shared
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)shared\/([^'"]+)['"]/g, (match, prefix, p) => {
+        return `from '${upToSrc}shared/${p}'`;
+      });
+
+      // Generic: ../contexts/X -> src-level contexts
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)contexts\/([^'"]+)['"]/g, (match, prefix, p) => {
+        const sharedCtx = path.join(srcDir, 'shared', 'contexts', p);
+        if (exists(sharedCtx)) return `from '${upToSrc}shared/contexts/${p}'`;
+        return `from '${upToSrc}contexts/${p}'`;
+      });
+
+      // Generic: ../i18n -> src-level
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)i18n['"]/g, (match) => {
+        return `from '${upToSrc}i18n'`;
+      });
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)i18n\/([^'"]+)['"]/g, (match, prefix, p) => {
+        return `from '${upToSrc}i18n/${p}'`;
+      });
+
+      // Generic: ../constants/X -> src-level
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)constants\/([^'"]+)['"]/g, (match, prefix, p) => {
+        const sharedConst = path.join(srcDir, 'shared', 'constants', p);
+        if (exists(sharedConst)) return `from '${upToSrc}shared/constants/${p}'`;
+        return `from '${upToSrc}constants/${p}'`;
+      });
+
+      // Generic: ../utils/X -> src-level
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)utils\/([^'"]+)['"]/g, (match, prefix, p) => {
+        return `from '${upToSrc}utils/${p}'`;
+      });
+
+      // Generic: ../navigation/X -> src-level
+      content = content.replace(/from ['"](\.\/+(?:\.\.\/)*)navigation\/([^'"]+)['"]/g, (match, prefix, p) => {
+        return `from '${upToSrc}navigation/${p}'`;
+      });
+
+      // Fix ./community/CommunityHeader -> ./CommunityHeader (flat structure)
+      content = content.replace(/from ['"]\.\/community\/([^'"]+)['"]/g, (match, p) => {
+        return `from './${p}'`;
+      });
+
       const origContent = fs.readFileSync(fullPath, 'utf8');
       if (content !== origContent) {
         fs.writeFileSync(fullPath, content, 'utf8');

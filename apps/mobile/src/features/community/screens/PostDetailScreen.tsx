@@ -18,11 +18,11 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { SharedElement } from "react-navigation-shared-element";
-import { theme } from '../design-system/theme';
-import { communityApi, PostComment } from "../services/api/community.api";
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { BookmarkSheet } from "../components/community/BookmarkSheet";
-import type { RootStackParamList } from "../types/navigation";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { communityApi, PostComment } from '../../../services/api/community.api';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { BookmarkSheet } from '../../../components/community/BookmarkSheet';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type _PostDetailRoute = RouteProp<RootStackParamList, "Community">;
@@ -200,7 +200,7 @@ export const PostDetailScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -220,6 +220,7 @@ export const PostDetailScreen: React.FC = () => {
   }
 
   const renderComment = (comment: PostComment) => {
+    const { colors } = useTheme();
     const isExpanded = expandedReplies.has(comment.id);
     const hasReplies = comment.repliesCount > 0;
 
@@ -278,11 +279,11 @@ export const PostDetailScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>帖子详情</Text>
         <TouchableOpacity onPress={handleReport} style={styles.moreBtn}>
-          <Ionicons name="ellipsis-horizontal" size={22} color={theme.colors.textPrimary} />
+          <Ionicons name="ellipsis-horizontal" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -404,7 +405,7 @@ export const PostDetailScreen: React.FC = () => {
           <TextInput
             style={styles.commentInput}
             placeholder="写评论..."
-            placeholderTextColor={theme.colors.textTertiary}
+            placeholderTextColor={colors.textTertiary}
             value={commentText}
             onChangeText={setCommentText}
             maxLength={500}
@@ -420,7 +421,7 @@ export const PostDetailScreen: React.FC = () => {
               <Ionicons
                 name="send"
                 size={18}
-                color={commentText.trim() ? DesignTokens.colors.neutral.white : theme.colors.textTertiary}
+                color={commentText.trim() ? DesignTokens.colors.neutral.white : colors.textTertiary}
               />
             )}
           </TouchableOpacity>
@@ -430,25 +431,25 @@ export const PostDetailScreen: React.FC = () => {
             <Ionicons
               name={post.isLiked ? "heart" : "heart-outline"}
               size={22}
-              color={post.isLiked ? "DesignTokens.colors.semantic.error" : theme.colors.textSecondary} // custom color
+              color={post.isLiked ? "DesignTokens.colors.semantic.error" : colors.textSecondary} // custom color
             />
             <Text style={[styles.actionCount, post.isLiked && styles.actionCountLiked]}>
               {post.likesCount}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn}>
-            <Ionicons name="chatbubble-outline" size={20} color={theme.colors.textSecondary} />
+            <Ionicons name="chatbubble-outline" size={20} color={colors.textSecondary} />
             <Text style={styles.actionCount}>{post.commentsCount}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn} onPress={() => setShowBookmarkSheet(true)}>
             <Ionicons
               name={post.isBookmarked ? "bookmark" : "bookmark-outline"}
               size={22}
-              color={post.isBookmarked ? "DesignTokens.colors.semantic.warning" : theme.colors.textSecondary} // custom color
+              color={post.isBookmarked ? "DesignTokens.colors.semantic.warning" : colors.textSecondary} // custom color
             />
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
-            <Ionicons name="share-outline" size={22} color={theme.colors.textSecondary} />
+            <Ionicons name="share-outline" size={22} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
       </View>
@@ -466,21 +467,21 @@ export const PostDetailScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
-  errorText: { fontSize: DesignTokens.typography.sizes.md, color: theme.colors.textSecondary },
-  goBackText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary, marginTop: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary },
+  goBackText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary, marginTop: 12 },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
   backBtn: { width: 40, height: 40, justifyContent: "center" },
   moreBtn: { width: 40, height: 40, alignItems: "flex-end", justifyContent: "center" },
   content: { flex: 1 },
@@ -488,7 +489,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   authorAvatarWrapper: { position: "relative" },
   authorAvatar: { width: 44, height: 44, borderRadius: 22 },
@@ -496,7 +497,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -528,24 +529,24 @@ const styles = StyleSheet.create({
     borderColor: DesignTokens.colors.neutral.white,
   },
   authorInfo: { marginLeft: 12, flex: 1 },
-  authorName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
-  postTime: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
+  authorName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  postTime: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
   postTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     paddingHorizontal: 16,
     paddingTop: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   postContent: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     lineHeight: 22,
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   imageCarousel: {
     backgroundColor: DesignTokens.colors.neutral.black,
@@ -579,7 +580,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     marginTop: 8,
   },
   tagChip: {
@@ -602,22 +603,22 @@ const styles = StyleSheet.create({
   },
   purchaseBtnText: { color: DesignTokens.colors.neutral.white, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   commentsSection: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     marginTop: 8,
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
-  commentsTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
+  commentsTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary, marginBottom: 12 },
   noComments: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textAlign: "center",
     paddingVertical: 24,
   },
   commentItem: {
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   commentHeader: { flexDirection: "row", gap: 10 },
   commentAvatar: { width: 32, height: 32, borderRadius: 16 },
@@ -629,30 +630,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  commentAvatarText: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.textSecondary },
+  commentAvatarText: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: colors.textSecondary },
   commentBody: { flex: 1 },
-  commentAuthor: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.text },
-  commentContent: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, lineHeight: 20, marginTop: 4 },
+  commentAuthor: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: colors.text },
+  commentContent: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, lineHeight: 20, marginTop: 4 },
   commentMeta: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
     marginTop: 6,
   },
-  commentTime: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary },
-  replyLink: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.primary, fontWeight: "500" },
+  commentTime: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
+  replyLink: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary, fontWeight: "500" },
   repliesSection: {
     marginTop: 8,
     paddingLeft: 8,
     borderLeftWidth: 2,
-    borderLeftColor: theme.colors.border,
+    borderLeftColor: colors.border,
   },
-  showRepliesText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.primary, fontWeight: "500" },
-  repliesExpanded: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary },
+  showRepliesText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary, fontWeight: "500" },
+  repliesExpanded: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   bottomBar: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.border,
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
@@ -665,21 +666,21 @@ const styles = StyleSheet.create({
   commentInput: {
     flex: 1,
     height: 36,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: 18,
     paddingHorizontal: 14,
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   sendBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  sendBtnDisabled: { backgroundColor: theme.colors.background },
+  sendBtnDisabled: { backgroundColor: colors.background },
   actionButtons: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -691,7 +692,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 8,
   },
-  actionCount: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  actionCount: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   actionCountLiked: { color: "DesignTokens.colors.semantic.error" }, // custom color
 });
 

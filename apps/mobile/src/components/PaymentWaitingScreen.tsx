@@ -63,7 +63,7 @@ export const PaymentWaitingScreen: React.FC<PaymentWaitingScreenProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <ActivityIndicator size="large" color="#FF4D4F" />
+        <ActivityIndicator size="large" color="DesignTokens.colors.semantic.error" />
         <Text style={styles.pollingText}>正在查询支付结果...</Text>
       </View>
     </SafeAreaView>
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   timeoutIcon: {
     fontSize: DesignTokens.typography.sizes['5xl'],
     fontWeight: "700",
-    color: "#FF4D4F",
+    color: "DesignTokens.colors.semantic.error",
   },
   timeoutTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     marginTop: 24,
-    backgroundColor: "#FF4D4F",
+    backgroundColor: "DesignTokens.colors.semantic.error",
     paddingHorizontal: 32,
     paddingVertical: 12,
     borderRadius: 24,

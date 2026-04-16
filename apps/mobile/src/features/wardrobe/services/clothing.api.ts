@@ -10,7 +10,7 @@ import {
   ClothingStyle,
   Occasion,
   Season,
-} from '../types/clothing';
+} from '../../types/clothing';
 
 interface BackendBrand {
   id?: string;

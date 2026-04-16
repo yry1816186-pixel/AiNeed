@@ -15,7 +15,7 @@ import type {
   CreateCustomizationDto,
   UpdateCustomizationDto,
   CustomizationStatus,
-} from '../types/customization';
+} from '../../types/customization';
 
 export const customizationApi = {
   // ==================== Templates ====================

@@ -5,14 +5,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useScreenTracking } from "../hooks/useAnalytics";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { haptics } from "../utils/haptics";
-import { paymentApi, orderApi } from "../services/api/commerce.api";
-import type { Order } from "../types";
-import type { ProfileStackParamList } from "../navigation/types";
-import type { RootStackParamList } from "../types/navigation";
+import { useScreenTracking } from '../../../hooks/useAnalytics';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { haptics } from '../../../utils/haptics';
+import { paymentApi, orderApi } from '../../../services/api/commerce.api';
+import type { Order } from '../../../types';
+import type { ProfileStackParamList } from '../../../navigation/types';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type PaymentRoute = RouteProp<ProfileStackParamList, "Payment">;
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
@@ -142,13 +142,13 @@ export const PaymentScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>支付</Text>
           <View style={s.iconBtn} />
         </View>
         <View style={s.centerContent}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -158,7 +158,7 @@ export const PaymentScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>支付</Text>
         <View style={s.iconBtn} />
@@ -225,7 +225,7 @@ export const PaymentScreen: React.FC = () => {
 
         {polling && (
           <View style={s.pollingBanner}>
-            <ActivityIndicator size="small" color={theme.colors.primary} />
+            <ActivityIndicator size="small" color={colors.primary} />
             <Text style={s.pollingText}>等待支付确认中...</Text>
           </View>
         )}
@@ -254,23 +254,23 @@ export const PaymentScreen: React.FC = () => {
 };
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
   iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
   content: { flex: 1, padding: 16 },
   orderCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 16,
     marginBottom: 20,
@@ -280,25 +280,25 @@ const s = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: theme.colors.textPrimary, marginBottom: 14 },
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: colors.textPrimary, marginBottom: 14 },
   orderRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 6,
   },
-  orderLabel: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
-  orderValue: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, fontWeight: "500" },
+  orderLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
+  orderValue: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, fontWeight: "500" },
   totalRow: {
     borderTopWidth: 1,
-    borderTopColor: theme.colors.divider,
+    borderTopColor: colors.divider,
     marginTop: 8,
     paddingTop: 12,
   },
-  totalLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
-  totalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.primary },
+  totalLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  totalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
   paymentSection: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 16,
     shadowColor: DesignTokens.colors.neutral.black,
@@ -312,10 +312,10 @@ const s = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
+    borderBottomColor: colors.divider,
   },
   paymentOptionSelected: {
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     borderRadius: 10,
     marginHorizontal: -8,
     paddingHorizontal: 8,
@@ -329,19 +329,19 @@ const s = StyleSheet.create({
   },
   providerIconText: { color: DesignTokens.colors.neutral.white, fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700" },
   providerInfo: { flex: 1, marginLeft: 12 },
-  providerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
-  providerDesc: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
+  providerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  providerDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
   radio: {
     width: 22,
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     alignItems: "center",
     justifyContent: "center",
   },
-  radioSelected: { borderColor: theme.colors.primary },
-  radioInner: { width: 12, height: 12, borderRadius: 6, backgroundColor: theme.colors.primary },
+  radioSelected: { borderColor: colors.primary },
+  radioInner: { width: 12, height: 12, borderRadius: 6, backgroundColor: colors.primary },
   pollingBanner: {
     flexDirection: "row",
     alignItems: "center",
@@ -349,30 +349,30 @@ const s = StyleSheet.create({
     gap: 8,
     paddingVertical: 12,
     marginTop: 16,
-    backgroundColor: theme.colors.subtleBg,
+    backgroundColor: colors.subtleBg,
     borderRadius: 10,
   },
-  pollingText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  pollingText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   footer: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.border,
   },
   footerTotal: { flex: 1 },
-  footerTotalLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
-  footerTotalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.primary },
+  footerTotalLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
+  footerTotalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
   payButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 36,
     paddingVertical: 14,
     borderRadius: 24,
   },
   payButtonDisabled: { opacity: 0.6 },
-  payButtonText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.md, fontWeight: "700" },
+  payButtonText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.md, fontWeight: "700" },
 });
 
 export default PaymentScreen;

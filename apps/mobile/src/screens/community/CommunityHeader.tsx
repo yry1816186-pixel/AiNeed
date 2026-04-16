@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 const CATEGORIES = [
@@ -32,12 +32,13 @@ function CommunityHeaderInner({
   onCategoryChange,
   showCategories = true,
 }: CommunityHeaderProps) {
+    const { colors } = useTheme();
   return (
     <>
       <View style={s.header}>
         <Text style={s.headerTitle}>社区</Text>
         <TouchableOpacity style={s.searchBtn} accessibilityLabel="搜索" accessibilityRole="button">
-          <Ionicons name="search-outline" size={22} color={theme.colors.textPrimary} />
+          <Ionicons name="search-outline" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -92,23 +93,23 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 14,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
   searchBtn: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     alignItems: "center",
     justifyContent: "center",
   },
   mainTabRow: {
     flexDirection: "row",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   mainTab: {
     paddingVertical: 12,
@@ -117,11 +118,11 @@ const s = StyleSheet.create({
   },
   mainTabActive: {
     borderBottomWidth: 2,
-    borderBottomColor: theme.colors.primary,
+    borderBottomColor: colors.primary,
   },
-  mainTabText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, fontWeight: "500" },
-  mainTabTextActive: { color: theme.colors.primary, fontWeight: "700" },
-  categoryScroll: { backgroundColor: theme.colors.surface, maxHeight: 52 },
+  mainTabText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, fontWeight: "500" },
+  mainTabTextActive: { color: colors.primary, fontWeight: "700" },
+  categoryScroll: { backgroundColor: colors.surface, maxHeight: 52 },
   categoryScrollContent: {
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -132,9 +133,9 @@ const s = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 7,
     borderRadius: 20,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
-  categoryChipActive: { backgroundColor: theme.colors.primary },
-  categoryChipText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, fontWeight: "500" },
-  categoryChipTextActive: { color: theme.colors.surface, fontWeight: "600" },
+  categoryChipActive: { backgroundColor: colors.primary },
+  categoryChipText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, fontWeight: "500" },
+  categoryChipTextActive: { color: colors.surface, fontWeight: "600" },
 });

@@ -17,18 +17,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { clothingApi } from "../services/api/clothing.api";
-import { cartApi } from "../services/api/commerce.api";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { RootStackParamList } from "../types/navigation";
-import type { ClothingItem } from "../types/clothing";
+import { clothingApi } from '../../../services/api/clothing.api';
+import { cartApi } from '../../../services/api/commerce.api';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { RootStackParamList } from '../../../types/navigation';
+import type { ClothingItem } from '../../../types/clothing';
 import {
   CATEGORY_LABELS,
   OCCASION_LABELS,
   SEASON_LABELS,
   STYLE_LABELS,
-} from "../types/clothing";
+} from '../../../types/clothing';
 
 interface RecommendationDetail {
   id: string;
@@ -263,7 +263,7 @@ export const RecommendationDetailScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerState}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.stateText}>正在加载推荐详情...</Text>
         </View>
       </SafeAreaView>
@@ -274,7 +274,7 @@ export const RecommendationDetailScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerState}>
-          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.error} />
           <Text style={styles.stateText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
@@ -302,7 +302,7 @@ export const RecommendationDetailScreen: React.FC = () => {
           accessibilityLabel="返回上一页"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={22} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
 
         <Text style={styles.headerTitle}>推荐详情</Text>
@@ -316,7 +316,7 @@ export const RecommendationDetailScreen: React.FC = () => {
           <Ionicons
             name={recommendation.externalUrl ? "open-outline" : "shirt-outline"}
             size={20}
-            color={theme.colors.textPrimary}
+            color={colors.textPrimary}
           />
         </TouchableOpacity>
       </View>
@@ -331,14 +331,14 @@ export const RecommendationDetailScreen: React.FC = () => {
             />
           ) : (
             <View style={styles.heroPlaceholder}>
-              <Ionicons name="shirt-outline" size={80} color={theme.colors.textTertiary} />
+              <Ionicons name="shirt-outline" size={80} color={colors.textTertiary} />
             </View>
           )}
 
           {typeof recommendation.score === "number" && recommendation.score > 0 ? (
             <View style={styles.scoreOverlay}>
               <LinearGradient colors={[DesignTokens.colors.brand.slate, DesignTokens.colors.brand.slateDark]} style={styles.scoreBadge}>
-                <Ionicons name="sparkles" size={16} color={theme.colors.surface} />
+                <Ionicons name="sparkles" size={16} color={colors.surface} />
                 <Text style={styles.scoreText}>
                   匹配度 {Math.round(recommendation.score * 100)}%
                 </Text>
@@ -353,13 +353,13 @@ export const RecommendationDetailScreen: React.FC = () => {
           <View style={styles.metaRow}>
             {recommendation.brand ? (
               <View style={styles.metaChip}>
-                <Ionicons name="pricetag-outline" size={14} color={theme.colors.textSecondary} />
+                <Ionicons name="pricetag-outline" size={14} color={colors.textSecondary} />
                 <Text style={styles.metaChipText}>{recommendation.brand}</Text>
               </View>
             ) : null}
             {recommendation.category ? (
               <View style={styles.metaChip}>
-                <Ionicons name="layers-outline" size={14} color={theme.colors.textSecondary} />
+                <Ionicons name="layers-outline" size={14} color={colors.textSecondary} />
                 <Text style={styles.metaChipText}>
                   {CATEGORY_LABELS[recommendation.category as keyof typeof CATEGORY_LABELS] ??
                     recommendation.category}
@@ -464,7 +464,7 @@ export const RecommendationDetailScreen: React.FC = () => {
               accessibilityLabel="打开购买来源链接"
               accessibilityRole="button"
             >
-              <Ionicons name="open-outline" size={18} color={theme.colors.primary} />
+              <Ionicons name="open-outline" size={18} color={colors.primary} />
               <Text style={styles.linkButtonText}>打开购买来源</Text>
             </TouchableOpacity>
           ) : null}
@@ -494,9 +494,9 @@ export const RecommendationDetailScreen: React.FC = () => {
         >
           <LinearGradient colors={[DesignTokens.colors.brand.slate, DesignTokens.colors.brand.slateDark]} style={styles.primaryButtonGradient} />
           {isAddingToCart ? (
-            <ActivityIndicator size="small" color={theme.colors.surface} />
+            <ActivityIndicator size="small" color={colors.surface} />
           ) : (
-            <Ionicons name="cart-outline" size={18} color={theme.colors.surface} />
+            <Ionicons name="cart-outline" size={18} color={colors.surface} />
           )}
           <Text style={styles.primaryButtonText}>加入购物车</Text>
         </TouchableOpacity>
@@ -508,7 +508,7 @@ export const RecommendationDetailScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -516,9 +516,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   iconButton: {
     width: 40,
@@ -531,7 +531,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -567,17 +567,17 @@ const styles = StyleSheet.create({
   scoreText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   infoSection: {
     marginTop: 16,
     padding: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   title: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   metaRow: {
     flexDirection: "row",
@@ -597,18 +597,18 @@ const styles = StyleSheet.create({
   },
   metaChipText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   price: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: colors.primary,
     marginBottom: 12,
   },
   description: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   section: {
     marginTop: 20,
@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   reasonRow: {
@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 20,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   tagWrap: {
     flexDirection: "row",
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   linkButton: {
     flexDirection: "row",
@@ -655,7 +655,7 @@ const styles = StyleSheet.create({
   linkButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   centerState: {
     flex: 1,
@@ -667,7 +667,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: DesignTokens.typography.sizes.md,
     lineHeight: 24,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
   },
   retryButton: {
@@ -675,12 +675,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 10,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   retryButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   bottomSpacer: {
     height: 100,
@@ -693,9 +693,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     padding: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.border,
   },
   secondaryButton: {
     flex: 1,
@@ -704,12 +704,12 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
   secondaryButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "500",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   primaryButton: {
     flex: 1,
@@ -731,7 +731,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
 });
 

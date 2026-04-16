@@ -18,7 +18,8 @@ import {
 } from "react-native-svg";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme, Colors, BorderRadius, Shadows } from '../../design-system/theme';
+import { Colors, BorderRadius, Shadows } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { SpringConfigs } from "../../theme/tokens/animations";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
@@ -79,6 +80,7 @@ export const SwipeCard = memo(function SwipeCard({
   isFavorite = false,
   onFavorite,
 }: SwipeCardProps) {
+    const { colors } = useTheme();
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const _scale = useSharedValue(1);
@@ -537,7 +539,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: BorderRadius["3xl"],
     overflow: "hidden",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     ...Shadows.xl,
   },
   cardImage: {

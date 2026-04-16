@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 const CATEGORIES = [
@@ -19,6 +19,7 @@ interface CreatePostModalProps {
 }
 
 function CreatePostModalInner({ visible, onClose, onSubmit }: CreatePostModalProps) {
+    const { colors } = useTheme();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("outfit");
@@ -71,7 +72,7 @@ function CreatePostModalInner({ visible, onClose, onSubmit }: CreatePostModalPro
         <TextInput
           style={s.modalTitleInput}
           placeholder="标题"
-          placeholderTextColor={theme.colors.textTertiary}
+          placeholderTextColor={colors.textTertiary}
           value={title}
           onChangeText={setTitle}
           maxLength={50}
@@ -79,7 +80,7 @@ function CreatePostModalInner({ visible, onClose, onSubmit }: CreatePostModalPro
         <TextInput
           style={s.modalContentInput}
           placeholder="分享你的穿搭心得..."
-          placeholderTextColor={theme.colors.textTertiary}
+          placeholderTextColor={colors.textTertiary}
           value={content}
           onChangeText={setContent}
           multiline
@@ -88,11 +89,11 @@ function CreatePostModalInner({ visible, onClose, onSubmit }: CreatePostModalPro
         />
         <View style={s.modalToolbar}>
           <TouchableOpacity style={s.modalToolBtn}>
-            <Ionicons name="image-outline" size={20} color={theme.colors.primary} />
+            <Ionicons name="image-outline" size={20} color={colors.primary} />
             <Text style={s.modalToolText}>添加图片</Text>
           </TouchableOpacity>
           <TouchableOpacity style={s.modalToolBtn}>
-            <Ionicons name="pricetag-outline" size={20} color={theme.colors.primary} />
+            <Ionicons name="pricetag-outline" size={20} color={colors.primary} />
             <Text style={s.modalToolText}>添加标签</Text>
           </TouchableOpacity>
         </View>
@@ -104,7 +105,7 @@ function CreatePostModalInner({ visible, onClose, onSubmit }: CreatePostModalPro
 export const CreatePostModal = React.memo(CreatePostModalInner);
 
 const s = StyleSheet.create({
-  modalContainer: { flex: 1, backgroundColor: theme.colors.background },
+  modalContainer: { flex: 1, backgroundColor: colors.background },
   modalHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -112,43 +113,43 @@ const s = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  modalTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
-  modalCancelText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
-  modalSubmitText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.primary },
+  modalTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
+  modalCancelText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
+  modalSubmitText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
   modalCategoryRow: {
     flexDirection: "row",
     paddingHorizontal: 20,
     paddingVertical: 12,
     gap: 8,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   modalCategoryChip: {
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
-  modalCategoryChipActive: { backgroundColor: theme.colors.primary },
-  modalCategoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
-  modalCategoryChipTextActive: { color: theme.colors.surface, fontWeight: "600" },
+  modalCategoryChipActive: { backgroundColor: colors.primary },
+  modalCategoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
+  modalCategoryChipTextActive: { color: colors.surface, fontWeight: "600" },
   modalTitleInput: {
     paddingHorizontal: 20,
     paddingVertical: 14,
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   modalContentInput: {
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 14,
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     lineHeight: 22,
     minHeight: 150,
   },
@@ -157,9 +158,9 @@ const s = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.border,
     gap: 24,
   },
   modalToolBtn: { flexDirection: "row", alignItems: "center", gap: 6 },
-  modalToolText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  modalToolText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
 });

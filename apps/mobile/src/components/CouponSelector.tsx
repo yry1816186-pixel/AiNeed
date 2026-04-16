@@ -48,7 +48,7 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
             }}
           >
             <Text style={styles.noCouponText}>不使用优惠券</Text>
-            {selectedCouponId === null && <Ionicons name="checkmark" size={20} color="#FF4D4F" />}
+            {selectedCouponId === null && <Ionicons name="checkmark" size={20} color="DesignTokens.colors.semantic.error" />}
           </TouchableOpacity>
 
           <FlatList
@@ -78,7 +78,7 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
                     <Ionicons
                       name="checkmark-circle"
                       size={20}
-                      color="#FF4D4F"
+                      color="DesignTokens.colors.semantic.error"
                       style={styles.checkIcon}
                     />
                   )}
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
   close: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.tertiary },
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   noCouponText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary },
   couponRow: {
@@ -131,18 +131,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.backgrounds.tertiary,
   },
-  couponRowSelected: { backgroundColor: "#FFF8F8" },
+  couponRowSelected: { backgroundColor: "DesignTokens.colors.neutral[50]" },
   couponLeft: {
     width: 80,
     alignItems: "center",
     borderRightWidth: 1,
-    borderRightColor: "#F0F0F0",
+    borderRightColor: "DesignTokens.colors.backgrounds.tertiary",
     marginRight: 12,
   },
   couponDiscount: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: "#FF4D4F",
+    color: "DesignTokens.colors.semantic.error",
   },
   couponCondition: {
     fontSize: DesignTokens.typography.sizes.xs,

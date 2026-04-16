@@ -13,7 +13,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import brandQRApi, { type QRScanResult } from "../services/api/brand-qr.api";
 import type { RootStackParamList } from "../types/navigation";
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
@@ -90,7 +91,7 @@ export const BrandQRScanScreen: React.FC = () => {
         <TextInput
           style={styles.codeInput}
           placeholder="输入二维码编码..."
-          placeholderTextColor={theme.colors.textTertiary}
+          placeholderTextColor={colors.textTertiary}
           value={manualCode}
           onChangeText={setManualCode}
           autoCapitalize="none"
@@ -103,9 +104,9 @@ export const BrandQRScanScreen: React.FC = () => {
           activeOpacity={0.7}
         >
           {isScanning ? (
-            <ActivityIndicator size="small" color={theme.colors.surface} />
+            <ActivityIndicator size="small" color={colors.surface} />
           ) : (
-            <Ionicons name="scan-outline" size={24} color={theme.colors.surface} />
+            <Ionicons name="scan-outline" size={24} color={colors.surface} />
           )}
         </TouchableOpacity>
       </View>
@@ -113,6 +114,7 @@ export const BrandQRScanScreen: React.FC = () => {
   );
 
   const renderScanResult = () => {
+    const { colors } = useTheme();
     if (!scanResult) {
       return null;
     }
@@ -126,7 +128,7 @@ export const BrandQRScanScreen: React.FC = () => {
         {/* Brand Info */}
         <View style={styles.brandCard}>
           <View style={styles.brandLogo}>
-            <Ionicons name="business-outline" size={24} color={theme.colors.primary} />
+            <Ionicons name="business-outline" size={24} color={colors.primary} />
           </View>
           <View style={styles.brandInfo}>
             <Text style={styles.brandName}>{brand.name}</Text>
@@ -180,10 +182,10 @@ export const BrandQRScanScreen: React.FC = () => {
           activeOpacity={0.7}
         >
           {isImporting ? (
-            <ActivityIndicator size="small" color={theme.colors.surface} />
+            <ActivityIndicator size="small" color={colors.surface} />
           ) : (
             <>
-              <Ionicons name="add-circle-outline" size={20} color={theme.colors.surface} />
+              <Ionicons name="add-circle-outline" size={20} color={colors.surface} />
               <Text style={styles.importButtonText}>添加到我的衣橱</Text>
             </>
           )}
@@ -212,7 +214,7 @@ export const BrandQRScanScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>品牌扫码</Text>
         <View style={{ width: 40 }} />
@@ -238,7 +240,7 @@ export const BrandQRScanScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   topBar: {
     flexDirection: "row",
@@ -259,7 +261,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -286,12 +288,12 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[1],
   },
   inputHint: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: Spacing[3],
   },
   inputRow: {
@@ -305,7 +307,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[4],
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     borderWidth: 1,
     borderColor: Colors.neutral[200],
   },
@@ -313,7 +315,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius.lg,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -323,7 +325,7 @@ const styles = StyleSheet.create({
   resultTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[3],
   },
   brandCard: {
@@ -349,11 +351,11 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   brandSlug: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   productCard: {
     backgroundColor: Colors.neutral[50],
@@ -368,16 +370,16 @@ const styles = StyleSheet.create({
   },
   productLabel: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   productValue: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     fontWeight: "500",
   },
   importButton: {
     flexDirection: "row",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",
@@ -389,7 +391,7 @@ const styles = StyleSheet.create({
   importButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   resetButton: {
     alignItems: "center",
@@ -397,7 +399,7 @@ const styles = StyleSheet.create({
   },
   resetButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
 });
 

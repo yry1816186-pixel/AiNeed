@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import type { Template } from "../../stores/customizationEditorStore";
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
@@ -28,7 +29,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -73,7 +74,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                     : "cafe-outline"
                 }
                 size={28}
-                color={isSelected ? theme.colors.surface : theme.colors.primary}
+                color={isSelected ? colors.surface : colors.primary}
               />
             </View>
             <Text style={[styles.templateName, isSelected && styles.templateNameSelected]}>
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[2],
   },
   scrollContent: {
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   templateCardSelected: {
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
     backgroundColor: "rgba(198, 123, 92, 0.06)",
   },
   templateIconContainer: {
@@ -128,19 +129,19 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[2],
   },
   templateIconSelected: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   templateName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[1],
   },
   templateNameSelected: {
-    color: theme.colors.primary,
+    color: colors.primary,
   },
   templatePrice: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
 });

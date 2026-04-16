@@ -13,13 +13,13 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useNotificationStore } from "../stores/notificationStore";
-import { useTranslation } from "../i18n";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { RootStackParamList } from "../types/navigation";
-import type { NotificationItem } from "../services/api/notification.api";
-import { wsService } from "../services/websocket";
+import { useNotificationStore } from '../stores/notificationStore';
+import { useTranslation } from '../../../i18n';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { RootStackParamList } from '../../../types/navigation';
+import type { NotificationItem } from '../../../services/api/notification.api';
+import { wsService } from '../../../services/websocket';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -34,7 +34,7 @@ const CATEGORY_TABS: { key: NotificationCategory; label: string }[] = [
 ];
 
 const NOTIFICATION_ICONS: Record<string, { icon: string; color: string }> = {
-  order: { icon: "bag-outline", color: theme.colors.primary },
+  order: { icon: "bag-outline", color: colors.primary },
   recommendation: { icon: "sparkles-outline", color: DesignTokens.colors.semantic.warning },
   community: { icon: "people-outline", color: DesignTokens.colors.semantic.success },
   system: { icon: "information-circle-outline", color: DesignTokens.colors.brand.slate },
@@ -67,6 +67,7 @@ function getNotificationCategory(type: string): string {
 }
 
 function getIconConfig(type: string) {
+    const { colors } = useTheme();
   const category = getNotificationCategory(type);
   return NOTIFICATION_ICONS[category] || NOTIFICATION_ICONS.system;
 }
@@ -216,7 +217,7 @@ export const NotificationsScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
           {t.notifications.title}{unreadCount > 0 ? ` (${unreadCount})` : ""}
@@ -248,7 +249,7 @@ export const NotificationsScreen: React.FC = () => {
             style={styles.actionButton}
             accessibilityLabel="Mark all as read"
           >
-            <Ionicons name="checkmark-done-outline" size={18} color={theme.colors.primary} />
+            <Ionicons name="checkmark-done-outline" size={18} color={colors.primary} />
             <Text style={styles.actionText}>Read All</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -256,8 +257,8 @@ export const NotificationsScreen: React.FC = () => {
             style={styles.actionButton}
             accessibilityLabel="Clear all notifications"
           >
-            <Ionicons name="trash-outline" size={18} color={theme.colors.error} />
-            <Text style={[styles.actionText, { color: theme.colors.error }]}>Clear</Text>
+            <Ionicons name="trash-outline" size={18} color={colors.error} />
+            <Text style={[styles.actionText, { color: colors.error }]}>Clear</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -269,11 +270,11 @@ export const NotificationsScreen: React.FC = () => {
             <RefreshControl
               refreshing={loading}
               onRefresh={handleRefresh}
-              colors={[theme.colors.primary]}
+              colors={[colors.primary]}
             />
           }
         >
-          <Ionicons name="notifications-outline" size={64} color={theme.colors.textTertiary} />
+          <Ionicons name="notifications-outline" size={64} color={colors.textTertiary} />
           <Text style={styles.emptyText}>{t.notifications.noNotifications}</Text>
           <Text style={styles.emptySubtext}>Pull to refresh</Text>
         </ScrollView>
@@ -284,7 +285,7 @@ export const NotificationsScreen: React.FC = () => {
             <RefreshControl
               refreshing={loading}
               onRefresh={handleRefresh}
-              colors={[theme.colors.primary]}
+              colors={[colors.primary]}
             />
           }
           onScroll={({ nativeEvent }) => {
@@ -357,15 +358,15 @@ export const NotificationsScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   backButton: {
     width: 40,
@@ -375,34 +376,34 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
   placeholder: { width: 40 },
 
   // Tabs
   tabsContainer: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   tab: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     marginRight: 8,
   },
   tabActive: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   tabText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   tabTextActive: {
-    color: theme.colors.surface,
+    color: colors.surface,
   },
 
   // Action bar
@@ -411,7 +412,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   actionButton: {
     flexDirection: "row",
@@ -421,7 +422,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.primary,
+    color: colors.primary,
     fontWeight: "500",
   },
 
@@ -436,18 +437,18 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: 16,
   },
   emptySubtext: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 8,
   },
   endText: {
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     paddingVertical: 16,
   },
 
@@ -455,7 +456,7 @@ const styles = StyleSheet.create({
   notificationCard: {
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     marginHorizontal: 20,
     marginTop: 8,
     borderRadius: 16,
@@ -465,7 +466,7 @@ const styles = StyleSheet.create({
   notificationCardUnread: {
     backgroundColor: DesignTokens.colors.backgrounds.secondary,
     borderLeftWidth: 3,
-    borderLeftColor: theme.colors.primary,
+    borderLeftColor: colors.primary,
   },
   notificationIcon: {
     width: 44,
@@ -484,28 +485,28 @@ const styles = StyleSheet.create({
   notificationTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     flex: 1,
     marginRight: 8,
   },
   notificationTitleUnread: {
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     fontWeight: "600",
   },
   notificationTime: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   notificationBody: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   unreadDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     marginTop: 6,
   },
 });

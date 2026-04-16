@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from "react-native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
-import { theme, Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import type { OnboardingFormData } from "../../../stores/onboardingStore";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
@@ -39,6 +40,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
   const ageRangeError = validationAttempted && !formData.ageRange;
 
   const handleUpdate = (data: Partial<OnboardingFormData>) => {
+    const { colors } = useTheme();
     setValidationAttempted(true);
     updateFormData(data);
   };
@@ -73,7 +75,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
                   <Ionicons
                     name={option.icon}
                     size={24}
-                    color={isSelected ? theme.colors.surface : theme.colors.textSecondary}
+                    color={isSelected ? colors.surface : colors.textSecondary}
                   />
                   <Text style={[styles.genderLabel, isSelected && styles.genderLabelSelected]}>
                     {option.label}
@@ -125,7 +127,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
                 <TextInput
                   style={styles.textInput}
                   placeholder="170"
-                  placeholderTextColor={theme.colors.textTertiary}
+                  placeholderTextColor={colors.textTertiary}
                   value={formData.height}
                   onChangeText={(value) => handleUpdate({ height: value })}
                   keyboardType="numeric"
@@ -139,7 +141,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
                 <TextInput
                   style={styles.textInput}
                   placeholder="65"
-                  placeholderTextColor={theme.colors.textTertiary}
+                  placeholderTextColor={colors.textTertiary}
                   value={formData.weight}
                   onChangeText={(value) => handleUpdate({ weight: value })}
                   keyboardType="numeric"
@@ -167,13 +169,13 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   stepSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
   },
@@ -193,15 +195,15 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   requiredMark: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.error,
+    color: colors.error,
   },
   optionalMark: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginLeft: Spacing[1],
   },
   genderRow: {
@@ -218,15 +220,15 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   genderCardSelected: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   genderLabel: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   genderLabelSelected: {
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   ageScrollContent: {
     gap: Spacing[2],
@@ -239,19 +241,19 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   agePillSelected: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
   },
   agePillText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   agePillTextSelected: {
-    color: theme.colors.surface,
+    color: colors.surface,
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.error,
+    color: colors.error,
     marginTop: Spacing[2],
   },
   inputRow: {
@@ -275,11 +277,11 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     padding: 0,
   },
   inputUnit: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
 });

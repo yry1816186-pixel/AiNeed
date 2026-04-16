@@ -17,7 +17,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { outfitApi } from "../services/api/outfit.api";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import type { RootStackParamList } from "../types/navigation";
 import type { Outfit } from "../types/outfit";
@@ -110,7 +110,7 @@ export const OutfitDetailScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>加载中...</Text>
         </View>
       </SafeAreaView>
@@ -121,7 +121,7 @@ export const OutfitDetailScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.error} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.error} />
           <Text style={styles.errorText}>{error || "未找到搭配"}</Text>
           <TouchableOpacity
             style={styles.retryButton}
@@ -145,7 +145,7 @@ export const OutfitDetailScreen: React.FC = () => {
           accessibilityLabel="返回上一页"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>搭配详情</Text>
         <TouchableOpacity
@@ -157,7 +157,7 @@ export const OutfitDetailScreen: React.FC = () => {
           <Ionicons
             name={outfit.isFavorite ? "heart" : "heart-outline"}
             size={24}
-            color={outfit.isFavorite ? theme.colors.error : theme.colors.text}
+            color={outfit.isFavorite ? colors.error : colors.text}
           />
         </TouchableOpacity>
       </View>
@@ -171,7 +171,7 @@ export const OutfitDetailScreen: React.FC = () => {
             />
           ) : (
             <View style={styles.placeholderImage}>
-              <Ionicons name="layers-outline" size={80} color={theme.colors.textTertiary} />
+              <Ionicons name="layers-outline" size={80} color={colors.textTertiary} />
             </View>
           )}
         </View>
@@ -188,7 +188,7 @@ export const OutfitDetailScreen: React.FC = () => {
           accessibilityLabel="删除搭配"
           accessibilityRole="button"
         >
-          <Ionicons name="trash-outline" size={20} color={theme.colors.error} />
+          <Ionicons name="trash-outline" size={20} color={colors.error} />
           <Text style={styles.deleteButtonText}>删除</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -196,8 +196,8 @@ export const OutfitDetailScreen: React.FC = () => {
           accessibilityLabel="标记为今日穿着"
           accessibilityRole="button"
         >
-          <LinearGradient colors={["#4F46E5" /* custom color */, DesignTokens.colors.brand.slateDark]} style={styles.wearButtonGradient} />
-          <Ionicons name="checkmark-circle-outline" size={20} color={theme.colors.surface} />
+          <LinearGradient colors={["DesignTokens.colors.semantic.info" /* custom color */, DesignTokens.colors.brand.slateDark]} style={styles.wearButtonGradient} />
+          <Ionicons name="checkmark-circle-outline" size={20} color={colors.surface} />
           <Text style={styles.wearButtonText}>今日穿着</Text>
         </TouchableOpacity>
       </View>
@@ -206,16 +206,16 @@ export const OutfitDetailScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   backButton: {
     width: 40,
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
   actionButton: {
     width: 40,
     height: 40,
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   content: { flex: 1 },
-  imageSection: { backgroundColor: theme.colors.surface },
+  imageSection: { backgroundColor: colors.surface },
   mainImage: { width: SCREEN_WIDTH, height: SCREEN_WIDTH * 0.8, resizeMode: "cover" },
   placeholderImage: {
     width: SCREEN_WIDTH,
@@ -244,26 +244,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  infoSection: { backgroundColor: theme.colors.surface, marginTop: 16, padding: 20 },
-  outfitName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: theme.colors.textPrimary, marginBottom: 8 },
-  outfitDescription: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, lineHeight: 22 },
+  infoSection: { backgroundColor: colors.surface, marginTop: 16, padding: 20 },
+  outfitName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.textPrimary, marginBottom: 8 },
+  outfitDescription: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, lineHeight: 22 },
   loadingContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
-  loadingText: { fontSize: DesignTokens.typography.sizes.md, color: theme.colors.textSecondary, marginTop: 12 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: 12 },
   errorContainer: { flex: 1, alignItems: "center", justifyContent: "center", padding: 20 },
   errorText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 12,
     textAlign: "center",
   },
   retryButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
     marginTop: 16,
   },
-  retryButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: theme.colors.surface },
+  retryButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.surface },
   bottomSpacer: { height: 100 },
   footer: {
     position: "absolute",
@@ -273,9 +273,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     padding: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
+    borderTopColor: colors.border,
   },
   deleteButton: {
     flex: 1,
@@ -286,9 +286,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: theme.colors.error,
+    borderColor: colors.error,
   },
-  deleteButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: theme.colors.error },
+  deleteButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.error },
   wearButton: {
     flex: 1,
     flexDirection: "row",
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   wearButtonGradient: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
-  wearButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.surface },
+  wearButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.surface },
 });
 
 export default OutfitDetailScreen;

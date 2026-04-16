@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { BullModule } from '@nestjs/bullmq';
-import { Module, Logger, forwardRef } from '@nestjs/common';
+import { BullModule } from '@nestjs/bullmq';
+import { Module, Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { GatewayModule } from '../../../common/gateway/gateway.module';
 import { AIModule } from '../../ai-core/ai/ai.module';
-import { CommunityModule } from '../../../modules/community/community.module';
-import { TryOnModule } from '../../ai-core/try-on/try-on.module';
 
 import { QueueName } from './queue-config';
 import { QueueMonitorService } from './queue-monitor.service';
@@ -14,9 +12,7 @@ import { QueueController } from './queue.controller';
 import {
   QueueProcessor,
   StyleAnalysisProcessor,
-  VirtualTryOnProcessor,
   WardrobeMatchProcessor,
-  ContentModerationProcessor,
 } from './queue.processor';
 import { QueueService } from './queue.service';
 
@@ -28,8 +24,6 @@ const logger = new Logger('QueueModule');
     // Import GatewayModule to access NotificationService
     GatewayModule,
     AIModule,
-    forwardRef(() => CommunityModule),
-    forwardRef(() => TryOnModule),
     // Register BullMQ with Redis connection
     BullModule.forRootAsync({
       imports: [ConfigModule],
@@ -98,9 +92,7 @@ const logger = new Logger('QueueModule');
     QueueMonitorService,
     QueueProcessor,
     StyleAnalysisProcessor,
-    VirtualTryOnProcessor,
     WardrobeMatchProcessor,
-    ContentModerationProcessor,
   ],
   exports: [QueueService, QueueMonitorService],
 })

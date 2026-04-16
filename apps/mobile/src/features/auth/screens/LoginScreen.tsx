@@ -13,14 +13,14 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { authApi } from "../services/api/auth.api";
-import { useTranslation } from "../i18n";
+import { authApi } from '../../../services/api/auth.api';
+import { useTranslation } from '../../../i18n';
 
-import { wechatAuth } from "../services/auth/wechat";
-import { useAuthStore } from "../stores/index";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { RootStackParamList } from "../types/navigation";
+import { wechatAuth } from '../../../services/auth/wechat';
+import { useAuthStore } from '../stores/index';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type LoginNavigationProp = NavigationProp<RootStackParamList>;
 
@@ -213,13 +213,13 @@ export const LoginScreen: React.FC = () => {
             disabled={isLoading || wechatLoading}
             accessibilityLabel={t.common.back}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={styles.content}>
           <View style={styles.brandSection}>
             <View style={styles.logoContainer}>
-              <Ionicons name="shirt-outline" size={36} color={theme.colors.surface} />
+              <Ionicons name="shirt-outline" size={36} color={colors.surface} />
             </View>
             <Text style={styles.brandName}>寻裳</Text>
           </View>
@@ -227,11 +227,11 @@ export const LoginScreen: React.FC = () => {
           <Text style={styles.subtitle}>{t.auth.login}</Text>
           <View style={styles.form}>
             <View style={styles.inputGroup}>
-              <Ionicons name="mail-outline" size={20} color={theme.colors.textTertiary} />
+              <Ionicons name="mail-outline" size={20} color={colors.textTertiary} />
               <TextInput
                 style={styles.input}
                 placeholder={t.auth.email}
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -249,11 +249,11 @@ export const LoginScreen: React.FC = () => {
               />
             </View>
             <View style={styles.inputGroup}>
-              <Ionicons name="lock-closed-outline" size={20} color={theme.colors.textTertiary} />
+              <Ionicons name="lock-closed-outline" size={20} color={colors.textTertiary} />
               <TextInput
                 style={styles.input}
                 placeholder={t.auth.password}
-                placeholderTextColor={theme.colors.textTertiary}
+                placeholderTextColor={colors.textTertiary}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
@@ -274,7 +274,7 @@ export const LoginScreen: React.FC = () => {
                 <Ionicons
                   name={showPassword ? "eye-outline" : "eye-off-outline"}
                   size={20}
-                  color={theme.colors.textTertiary}
+                  color={colors.textTertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -297,7 +297,7 @@ export const LoginScreen: React.FC = () => {
               accessibilityRole="button"
             >
               {isLoading ? (
-                <ActivityIndicator size="small" color={theme.colors.surface} />
+                <ActivityIndicator size="small" color={colors.surface} />
               ) : (
                 <Text style={styles.loginButtonText}>{t.auth.login}</Text>
               )}
@@ -335,7 +335,7 @@ export const LoginScreen: React.FC = () => {
               accessibilityLabel="手机号登录"
               accessibilityRole="button"
             >
-              <Ionicons name="phone-portrait-outline" size={20} color={theme.colors.primary} />
+              <Ionicons name="phone-portrait-outline" size={20} color={colors.primary} />
               <Text style={styles.phoneLoginText}>手机号登录</Text>
             </TouchableOpacity>
 
@@ -356,7 +356,7 @@ export const LoginScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.surface },
+  container: { flex: 1, backgroundColor: colors.surface },
   header: { padding: 20 },
   backButton: {
     width: 40,
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: theme.BorderRadius.xl,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
@@ -383,27 +383,27 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: theme.colors.primary,
+    color: colors.primary,
     letterSpacing: 1.2,
   },
-  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: theme.colors.text },
-  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 32 },
+  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: colors.text },
+  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: 8, marginBottom: 32 },
   form: { gap: 16 },
   inputGroup: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: theme.BorderRadius.md,
     paddingHorizontal: 16,
     paddingVertical: 14,
     gap: 12,
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: theme.colors.text },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
   eyeButton: { padding: 4 },
   forgotPasswordLink: { alignItems: "flex-end" },
-  forgotPasswordText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary },
+  forgotPasswordText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
   loginButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: theme.BorderRadius.md,
     paddingVertical: 16,
     alignItems: "center",
@@ -412,8 +412,8 @@ const styles = StyleSheet.create({
     minHeight: 52,
     ...theme.Shadows.brand,
   },
-  loginButtonDisabled: { backgroundColor: theme.colors.primaryLight },
-  loginButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.surface },
+  loginButtonDisabled: { backgroundColor: colors.primaryLight },
+  loginButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.surface },
   divider: {
     flexDirection: "row",
     alignItems: "center",
@@ -422,12 +422,12 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: theme.colors.border || DesignTokens.colors.neutral[200],
+    backgroundColor: colors.border || DesignTokens.colors.neutral[200],
   },
   dividerText: {
     marginHorizontal: 16,
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   wechatButton: {
     backgroundColor: "DesignTokens.colors.semantic.success", // custom color
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
   },
   wechatButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.neutral.white },
   phoneLoginButton: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: theme.BorderRadius.md,
     paddingVertical: 14,
     alignItems: "center",
@@ -449,11 +449,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     borderWidth: 1,
-    borderColor: theme.colors.primary,
+    borderColor: colors.primary,
   },
-  phoneLoginText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: theme.colors.primary },
+  phoneLoginText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.primary },
   registerLink: { alignItems: "center", marginTop: 16 },
-  registerText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary },
+  registerText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
 });
 
 export default LoginScreen;

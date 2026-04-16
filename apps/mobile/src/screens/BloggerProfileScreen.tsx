@@ -15,7 +15,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { communityApi } from "../services/api/community.api";
 import { bloggerApi, BloggerProduct } from "../services/api/blogger.api";
@@ -48,6 +48,7 @@ interface BloggerInfo {
 }
 
 function BloggerBadge({ level }: { level: "blogger" | "big_v" }) {
+    const { colors } = useTheme();
   if (level === "big_v") {
     return (
       <View style={styles.bigVBadge}>
@@ -207,7 +208,7 @@ export const BloggerProfileScreen: React.FC = () => {
             <Image source={{ uri: item.image }} style={styles.postImage} resizeMode="cover" />
           ) : (
             <View style={styles.postImagePlaceholder}>
-              <Ionicons name="image-outline" size={24} color={theme.colors.textTertiary} />
+              <Ionicons name="image-outline" size={24} color={colors.textTertiary} />
             </View>
           )}
         </View>
@@ -215,7 +216,7 @@ export const BloggerProfileScreen: React.FC = () => {
           {item.title}
         </Text>
         <View style={styles.postFooter}>
-          <Ionicons name="heart-outline" size={12} color={theme.colors.textTertiary} />
+          <Ionicons name="heart-outline" size={12} color={colors.textTertiary} />
           <Text style={styles.postLikes}>{item.likesCount}</Text>
         </View>
       </TouchableOpacity>
@@ -234,7 +235,7 @@ export const BloggerProfileScreen: React.FC = () => {
           <Image source={{ uri: item.images[0] }} style={styles.productImage} resizeMode="cover" />
         ) : (
           <View style={styles.productImagePlaceholder}>
-            <Ionicons name="bag-outline" size={24} color={theme.colors.textTertiary} />
+            <Ionicons name="bag-outline" size={24} color={colors.textTertiary} />
           </View>
         )}
         <Text style={styles.productTitle} numberOfLines={2}>
@@ -250,7 +251,7 @@ export const BloggerProfileScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -260,7 +261,7 @@ export const BloggerProfileScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{blogger.nickname}</Text>
         <View style={styles.headerSpacer} />
@@ -349,7 +350,7 @@ export const BloggerProfileScreen: React.FC = () => {
               <View style={styles.levelInfo}>
                 <View style={styles.levelBadge}>
                   {blogger.bloggerLevel === "big_v" ? (
-                    <Ionicons name="shield-checkmark" size={16} color="#F1C40F" /> // custom color
+                    <Ionicons name="shield-checkmark" size={16} color="DesignTokens.colors.semantic.warning" /> // custom color
                   ) : (
                     <Ionicons name="checkmark-circle" size={16} color={DesignTokens.colors.brand.slate} />
                   )}
@@ -363,7 +364,7 @@ export const BloggerProfileScreen: React.FC = () => {
         )}
 
         {loadingMore && (
-          <ActivityIndicator size="small" color={theme.colors.primary} style={styles.loader} />
+          <ActivityIndicator size="small" color={colors.primary} style={styles.loader} />
         )}
         <View style={{ height: 40 }} />
       </ScrollView>
@@ -372,7 +373,7 @@ export const BloggerProfileScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
   header: {
     flexDirection: "row",
@@ -380,17 +381,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
   backBtn: { width: 40, height: 40, justifyContent: "center" },
   headerSpacer: { width: 40 },
   profileSection: {
     alignItems: "center",
     paddingVertical: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
   },
   avatarWrapper: { position: "relative", marginBottom: 12 },
@@ -399,7 +400,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -424,16 +425,16 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "#F1C40F", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.warning", // custom color
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
     borderColor: DesignTokens.colors.neutral.white,
   },
-  nickname: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.text },
+  nickname: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
   bio: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 6,
     textAlign: "center",
     lineHeight: 20,
@@ -445,15 +446,15 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   stat: { alignItems: "center" },
-  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
-  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary, marginTop: 2 },
-  statDivider: { width: 1, height: 20, backgroundColor: theme.colors.border },
+  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
+  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: 2 },
+  statDivider: { width: 1, height: 20, backgroundColor: colors.border },
   tabRow: {
     flexDirection: "row",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     marginTop: 8,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   tab: {
     flex: 1,
@@ -464,7 +465,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: DesignTokens.colors.brand.slate,
   },
-  tabText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, fontWeight: "500" },
+  tabText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, fontWeight: "500" },
   tabTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "700" },
   postsGrid: {
     flexDirection: "row",
@@ -476,13 +477,13 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   postCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 10,
     overflow: "hidden",
   },
   postImageContainer: {
     width: "100%",
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     overflow: "hidden",
   },
   postImage: { width: "100%", height: "100%" },
@@ -490,12 +491,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   postTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     padding: 8,
     lineHeight: 16,
   },
@@ -506,7 +507,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingBottom: 8,
   },
-  postLikes: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary },
+  postLikes: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
   productsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -517,26 +518,26 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   productCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 10,
     overflow: "hidden",
   },
   productImage: {
     width: "100%",
     height: 160,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   productImagePlaceholder: {
     width: "100%",
     height: 160,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     alignItems: "center",
     justifyContent: "center",
   },
   productTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     padding: 8,
     lineHeight: 18,
   },
@@ -548,18 +549,18 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   aboutSection: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     padding: 16,
     marginTop: 8,
   },
-  aboutTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 8 },
-  aboutText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, lineHeight: 22 },
+  aboutTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: 8 },
+  aboutText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, lineHeight: 22 },
   levelInfo: { marginTop: 16 },
   levelBadge: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#F0EDFF", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.infoLight", // custom color
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -568,7 +569,7 @@ const styles = StyleSheet.create({
   levelText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.brand.slate, fontWeight: "500" },
   emptyText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textAlign: "center",
     paddingVertical: 40,
     width: "100%",

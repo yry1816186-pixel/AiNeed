@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 24,
-    backgroundColor: "#FF4D4F",
+    backgroundColor: "DesignTokens.colors.semantic.error",
     paddingHorizontal: 32,
     paddingVertical: 12,
     borderRadius: 24,

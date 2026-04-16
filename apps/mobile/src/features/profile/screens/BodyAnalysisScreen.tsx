@@ -8,14 +8,15 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { LinearGradient } from "../polyfills/expo-linear-gradient";
-import { Ionicons } from "../polyfills/expo-vector-icons";
+import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
+import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { useProfileStore } from "../stores/profileStore";
-import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";
-import type { RootStackParamList } from "../types/navigation";
+import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { useProfileStore } from '../stores/profileStore';
+import { ScreenLayout, Header } from '../../../shared/components/layout/ScreenLayout';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type BodyAnalysisNavProp = NavigationProp<RootStackParamList>;
 
@@ -160,7 +161,7 @@ const RadarChart: React.FC<{
             textAnchor="middle"
             alignmentBaseline="middle"
             fontSize={12}
-            fill={theme.colors.textSecondary}
+            fill={colors.textSecondary}
           >
             {AXES[i]}
           </SvgText>
@@ -204,7 +205,7 @@ export const BodyAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+                <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -212,7 +213,7 @@ export const BodyAnalysisScreen: React.FC = () => {
         backgroundColor={Colors.neutral[50]}
       >
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>加载体型分析...</Text>
         </View>
       </ScreenLayout>
@@ -232,7 +233,7 @@ export const BodyAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+                <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -240,7 +241,7 @@ export const BodyAnalysisScreen: React.FC = () => {
         backgroundColor={Colors.neutral[50]}
       >
         <View style={styles.centerContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.textTertiary} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textTertiary} />
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
@@ -292,7 +293,7 @@ export const BodyAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+                <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -300,7 +301,7 @@ export const BodyAnalysisScreen: React.FC = () => {
         backgroundColor={Colors.neutral[50]}
       >
         <View style={styles.centerContainer}>
-          <Ionicons name="body-outline" size={64} color={theme.colors.textTertiary} />
+          <Ionicons name="body-outline" size={64} color={colors.textTertiary} />
           <Text style={styles.emptyTitle}>还没有体型数据</Text>
           <Text style={styles.emptySubtitle}>完善身体数据后，AI将为你生成专属体型分析和穿搭建议</Text>
           <TouchableOpacity
@@ -332,7 +333,7 @@ export const BodyAnalysisScreen: React.FC = () => {
               accessibilityLabel="返回"
               accessibilityRole="button"
             >
-              <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+              <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
           }
         />
@@ -415,17 +416,17 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: Spacing[3],
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[3],
     textAlign: "center",
   },
   retryButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[6],
     paddingVertical: Spacing[3],
@@ -474,7 +475,7 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[4],
     alignSelf: "flex-start",
   },
@@ -499,7 +500,7 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   adviceCard: {
     backgroundColor: DesignTokens.colors.backgrounds.primary,
@@ -511,7 +512,7 @@ const styles = StyleSheet.create({
   adviceTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[3],
   },
   adviceItem: {
@@ -524,33 +525,33 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     marginTop: 8,
   },
   adviceText: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 24,
   },
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: Spacing[4],
     marginBottom: Spacing[2],
   },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 22,
     paddingHorizontal: Spacing[4],
     marginBottom: Spacing[6],
   },
   emptyButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[6],
     paddingVertical: Spacing[3],

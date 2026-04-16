@@ -10,8 +10,9 @@ import Animated, {
   SlideInRight,
   SlideOutLeft,
 } from "react-native-reanimated";
-import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../design-system/theme';
+import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import type { OnboardingStep } from '../stores/onboardingStore';
 import { onboardingService } from '../services/onboardingService';
@@ -206,7 +207,7 @@ export const OnboardingWizard: React.FC = () => {
           </TouchableOpacity>
         ) : (
           <TouchableOpacity style={styles.backButton} onPress={handleBack} activeOpacity={0.7}>
-            <Ionicons name="arrow-back" size={20} color={theme.colors.textSecondary} />
+            <Ionicons name="arrow-back" size={20} color={colors.textSecondary} />
             <Text style={styles.backButtonText}>上一步</Text>
           </TouchableOpacity>
         )}
@@ -227,11 +228,11 @@ export const OnboardingWizard: React.FC = () => {
             activeOpacity={0.7}
           >
             {isLoading ? (
-              <ActivityIndicator size="small" color={theme.colors.surface} />
+              <ActivityIndicator size="small" color={colors.surface} />
             ) : (
               <>
                 <Text style={styles.nextButtonText}>下一步</Text>
-                <Ionicons name="arrow-forward" size={18} color={theme.colors.surface} />
+                <Ionicons name="arrow-forward" size={18} color={colors.surface} />
               </>
             )}
           </TouchableOpacity>
@@ -244,7 +245,7 @@ export const OnboardingWizard: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
   progressContainer: {
     flexDirection: "row",
@@ -262,13 +263,13 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: "100%",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.full,
   },
   stepCounter: {
     marginLeft: Spacing[3],
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     fontWeight: "500",
     minWidth: 36,
   },
@@ -280,7 +281,7 @@ const styles = StyleSheet.create({
   stepTitleText: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   footerSpacer: {
@@ -318,13 +319,13 @@ const styles = StyleSheet.create({
   },
   skipButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     fontWeight: "500",
   },
   nextButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     paddingHorizontal: Spacing[6],
@@ -338,7 +339,7 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.surface,
+    color: colors.surface,
   },
 });
 

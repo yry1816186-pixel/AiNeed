@@ -45,7 +45,7 @@ const s = StyleSheet.create({
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: "#F1C40F",
+    backgroundColor: "DesignTokens.colors.semantic.warning",
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,

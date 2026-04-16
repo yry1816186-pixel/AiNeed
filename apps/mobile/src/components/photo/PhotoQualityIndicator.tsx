@@ -18,12 +18,12 @@ interface PhotoQualityIndicatorProps {
 
 function getScoreColor(score: number): string {
   if (score >= 60) {
-    return "#5B8A72";
+    return "DesignTokens.colors.semantic.success";
   }
   if (score >= 40) {
-    return "#D9A441";
+    return "DesignTokens.colors.semantic.warning";
   }
-  return "#C44536";
+  return "DesignTokens.colors.semantic.error";
 }
 
 function getScoreLabel(score: number): string {
@@ -157,7 +157,7 @@ const metricStyles = StyleSheet.create({
   label: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "400",
-    color: "#52524D",
+    color: "DesignTokens.colors.text.secondary",
   },
   value: {
     fontSize: DesignTokens.typography.sizes.base,

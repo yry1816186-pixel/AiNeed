@@ -11,8 +11,8 @@ import type {
   RegisterData,
   UserPreferences,
   UserStats,
-} from "../types";
-import type { ApiResponse } from "../types";
+} from '../../../types';
+import type { ApiResponse } from '../../../types';
 
 interface StyleProfile {
   preferredStyles: string[];

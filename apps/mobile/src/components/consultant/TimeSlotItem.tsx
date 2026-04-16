@@ -62,16 +62,16 @@ const styles = StyleSheet.create({
   },
   available: {
     backgroundColor: DesignTokens.colors.backgrounds.primary,
-    borderColor: "#E0E0E0",
+    borderColor: "DesignTokens.colors.borders.default",
   },
   booked: {
     backgroundColor: DesignTokens.colors.backgrounds.tertiary,
-    borderColor: "#E8E8E8",
+    borderColor: "DesignTokens.colors.backgrounds.tertiary",
     opacity: 0.6,
   },
   selected: {
     backgroundColor: "#FFF8F5",
-    borderColor: "#C67B5C",
+    borderColor: "DesignTokens.colors.brand.terracotta",
     borderWidth: 2,
   },
   time: {
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.text.tertiary,
   },
   timeSelected: {
-    color: "#C67B5C",
+    color: "DesignTokens.colors.brand.terracotta",
   },
   bookedLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   selectedLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "#C67B5C",
+    color: "DesignTokens.colors.brand.terracotta",
     fontWeight: "500",
   },
   availableLabel: {

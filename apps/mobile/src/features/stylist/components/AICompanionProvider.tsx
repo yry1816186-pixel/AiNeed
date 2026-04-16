@@ -21,7 +21,7 @@ import {
   useSpeechRecognition,
   SpeechRecognitionResult,
 } from '../../../services/speech/speechRecognition';
-import { useAiStylistStore } from "../stores/aiStylistStore";
+import { useAiStylistStore } from '../stores/aiStylistStore';
 
 const POSITION_STORAGE_KEY = "@xuno_companion_position";
 const SESSION_STORAGE_KEY = "@xuno_stylist_session";

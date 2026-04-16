@@ -1,15 +1,16 @@
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Ionicons } from "../polyfills/expo-vector-icons";
-import { LinearGradient } from "../polyfills/expo-linear-gradient";
+import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
 import Share from "react-native-share";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { useProfileStore } from "../stores/profileStore";
-import { useAuthStore } from "../stores/index";
-import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";
-import type { RootStackParamList } from "../types/navigation";
+import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { useProfileStore } from '../stores/profileStore';
+import { useAuthStore } from '../stores/index';
+import { ScreenLayout, Header } from '../../../shared/components/layout/ScreenLayout';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type SharePosterNavProp = NavigationProp<RootStackParamList>;
 
@@ -85,7 +86,7 @@ export const SharePosterScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+                <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -93,7 +94,7 @@ export const SharePosterScreen: React.FC = () => {
         backgroundColor={Colors.neutral[50]}
       >
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>加载海报...</Text>
         </View>
       </ScreenLayout>
@@ -111,7 +112,7 @@ export const SharePosterScreen: React.FC = () => {
               accessibilityLabel="返回"
               accessibilityRole="button"
             >
-              <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+              <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
           }
         />
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: Spacing[3],
   },
   posterCard: {

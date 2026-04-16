@@ -9,7 +9,7 @@ import type {
   CommunityStackParamList,
   ProfileStackParamList,
 } from "./types";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { GuardedScreen } from "./RouteGuards";
 import { PageTransitions } from "../theme/tokens/animations";
 
@@ -32,7 +32,7 @@ const BrandScreenLazy = lazy(() => import("../features/wardrobe/screens/BrandScr
 const styles = StyleSheet.create({
   loader: {
     flex: 1,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
 
 const screenLoader = (
   <View style={styles.loader}>
-    <ActivityIndicator size="large" color={theme.colors.primary} />
+    <ActivityIndicator size="large" color={colors.primary} />
   </View>
 );
 
@@ -107,6 +107,7 @@ const BookingScreen = lazy(() => import("../features/consultant/screens/BookingS
 const ChatScreen = lazy(() => import("../features/consultant/screens/ChatScreen"));
 
 function SuspenseScreen({ children }: { children: React.ReactNode }) {
+    const { colors } = useTheme();
   return <Suspense fallback={screenLoader}>{children}</Suspense>;
 }
 

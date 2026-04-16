@@ -16,11 +16,11 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { communityApi } from "../services/api/community.api";
-import apiClient from "../services/api/client";
-import type { RootStackParamList } from "../types/navigation";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { communityApi } from '../../../services/api/community.api';
+import apiClient from '../../../services/api/client';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -292,7 +292,7 @@ export const CreatePostScreen: React.FC = () => {
           disabled={submitting}
         >
           {submitting ? (
-            <ActivityIndicator size="small" color={theme.colors.primary} />
+            <ActivityIndicator size="small" color={colors.primary} />
           ) : (
             <Text style={styles.publishText}>发布</Text>
           )}
@@ -303,7 +303,7 @@ export const CreatePostScreen: React.FC = () => {
         <TextInput
           style={styles.titleInput}
           placeholder="标题"
-          placeholderTextColor={theme.colors.textTertiary}
+          placeholderTextColor={colors.textTertiary}
           value={title}
           onChangeText={setTitle}
           maxLength={50}
@@ -312,7 +312,7 @@ export const CreatePostScreen: React.FC = () => {
         <TextInput
           style={styles.contentInput}
           placeholder="分享你的穿搭心得..."
-          placeholderTextColor={theme.colors.textTertiary}
+          placeholderTextColor={colors.textTertiary}
           value={content}
           onChangeText={setContent}
           multiline
@@ -334,7 +334,7 @@ export const CreatePostScreen: React.FC = () => {
             ))}
             {images.length < MAX_IMAGES && (
               <TouchableOpacity style={styles.imageAddCell} onPress={pickImage}>
-                <Ionicons name="add" size={28} color={theme.colors.textTertiary} />
+                <Ionicons name="add" size={28} color={colors.textTertiary} />
                 <Text style={styles.imageAddText}>
                   {images.length}/{MAX_IMAGES}
                 </Text>
@@ -343,7 +343,7 @@ export const CreatePostScreen: React.FC = () => {
           </View>
           {uploading && (
             <View style={styles.uploadIndicator}>
-              <ActivityIndicator size="small" color={theme.colors.primary} />
+              <ActivityIndicator size="small" color={colors.primary} />
               <Text style={styles.uploadText}>上传中...</Text>
             </View>
           )}
@@ -405,7 +405,7 @@ export const CreatePostScreen: React.FC = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionLabel}>单品标注</Text>
             <TouchableOpacity onPress={() => setShowItemSearch(true)}>
-              <Ionicons name="search-outline" size={18} color={theme.colors.primary} />
+              <Ionicons name="search-outline" size={18} color={colors.primary} />
             </TouchableOpacity>
           </View>
           {relatedItems.length > 0 && (
@@ -416,14 +416,14 @@ export const CreatePostScreen: React.FC = () => {
                     <Image source={{ uri: item.image }} style={styles.itemImage} />
                   ) : (
                     <View style={styles.itemImagePlaceholder}>
-                      <Ionicons name="shirt-outline" size={16} color={theme.colors.textTertiary} />
+                      <Ionicons name="shirt-outline" size={16} color={colors.textTertiary} />
                     </View>
                   )}
                   <Text style={styles.itemName} numberOfLines={1}>
                     {item.name}
                   </Text>
                   <TouchableOpacity style={styles.itemRemove} onPress={() => removeItem(item.id)}>
-                    <Ionicons name="close" size={14} color={theme.colors.textTertiary} />
+                    <Ionicons name="close" size={14} color={colors.textTertiary} />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -436,11 +436,11 @@ export const CreatePostScreen: React.FC = () => {
           <View style={styles.searchOverlay}>
             <View style={styles.searchBox}>
               <View style={styles.searchInputRow}>
-                <Ionicons name="search-outline" size={18} color={theme.colors.textTertiary} />
+                <Ionicons name="search-outline" size={18} color={colors.textTertiary} />
                 <TextInput
                   style={styles.searchInput}
                   placeholder="搜索平台商品..."
-                  placeholderTextColor={theme.colors.textTertiary}
+                  placeholderTextColor={colors.textTertiary}
                   value={itemSearchQuery}
                   onChangeText={(text) => {
                     setItemSearchQuery(text);
@@ -457,13 +457,13 @@ export const CreatePostScreen: React.FC = () => {
                     setItemSearchResults([]);
                   }}
                 >
-                  <Ionicons name="close" size={18} color={theme.colors.textTertiary} />
+                  <Ionicons name="close" size={18} color={colors.textTertiary} />
                 </TouchableOpacity>
               </View>
               {searching ? (
                 <ActivityIndicator
                   size="small"
-                  color={theme.colors.primary}
+                  color={colors.primary}
                   style={styles.searchLoader}
                 />
               ) : (
@@ -481,7 +481,7 @@ export const CreatePostScreen: React.FC = () => {
                     <Text style={styles.searchResultName} numberOfLines={1}>
                       {item.name}
                     </Text>
-                    <Ionicons name="add-circle-outline" size={20} color={theme.colors.primary} />
+                    <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
                   </TouchableOpacity>
                 ))
               )}
@@ -496,49 +496,49 @@ export const CreatePostScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   headerBtn: { paddingVertical: 4, paddingHorizontal: 8 },
   headerBtnDisabled: { opacity: 0.5 },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
-  cancelText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
-  publishText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.primary },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
+  cancelText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
+  publishText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
   body: { flex: 1 },
   titleInput: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-    backgroundColor: theme.colors.surface,
+    borderBottomColor: colors.border,
+    backgroundColor: colors.surface,
   },
   contentInput: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     paddingHorizontal: 16,
     paddingVertical: 14,
     minHeight: 120,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     lineHeight: 22,
   },
   imageSection: {
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     marginTop: 8,
   },
-  sectionLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 10 },
+  sectionLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary, marginBottom: 10 },
   imageGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -568,24 +568,24 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
     gap: 4,
   },
-  imageAddText: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary },
+  imageAddText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
   uploadIndicator: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     marginTop: 8,
   },
-  uploadText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  uploadText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   section: {
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     marginTop: 8,
   },
   sectionHeader: {
@@ -603,21 +603,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   tagChipActive: { backgroundColor: "DesignTokens.colors.semantic.infoLight" }, // custom color
-  tagChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  tagChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   tagChipTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "600" },
   categoryRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   categoryChip: {
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
-  categoryChipActive: { backgroundColor: theme.colors.primary },
-  categoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
-  categoryChipTextActive: { color: theme.colors.surface, fontWeight: "600" },
+  categoryChipActive: { backgroundColor: colors.primary },
+  categoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
+  categoryChipTextActive: { color: colors.surface, fontWeight: "600" },
   itemsList: { marginTop: 4 },
   itemCard: {
     width: 80,
@@ -630,11 +630,11 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 8,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     alignItems: "center",
     justifyContent: "center",
   },
-  itemName: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textSecondary, marginTop: 4, textAlign: "center" },
+  itemName: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textSecondary, marginTop: 4, textAlign: "center" },
   itemRemove: {
     position: "absolute",
     top: -4,
@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   searchBox: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     padding: 16,
@@ -666,13 +666,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginBottom: 8,
   },
-  searchInput: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, paddingVertical: 4 },
+  searchInput: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, paddingVertical: 4 },
   searchLoader: { paddingVertical: 20 },
   searchResultItem: {
     flexDirection: "row",
@@ -680,16 +680,16 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   searchResultImage: { width: 40, height: 40, borderRadius: 6 },
   searchResultImagePlaceholder: {
     width: 40,
     height: 40,
     borderRadius: 6,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
-  searchResultName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
+  searchResultName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.text },
 });
 
 export default CreatePostScreen;

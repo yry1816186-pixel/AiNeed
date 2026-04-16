@@ -8,8 +8,8 @@ import {
   Modal,
   ScrollView,
 } from "react-native";
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { refundApi } from "../services/api/commerce.api";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { refundApi } from '../../../services/api/commerce.api';
 
 interface RefundItem {
   id: string;

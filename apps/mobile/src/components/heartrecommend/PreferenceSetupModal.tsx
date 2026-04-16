@@ -20,7 +20,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme, Colors, BorderRadius, Shadows } from '../../design-system/theme';
+import { Colors, BorderRadius, Shadows } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { profileApi } from "../../services/api/profile.api";
 import { useAuthStore } from "../../stores";
@@ -71,7 +72,7 @@ const AnimatedPreferenceOptionCard: React.FC<AnimatedPreferenceOptionCardProps> 
       onPress={onPress}
       activeOpacity={0.9}
     >
-      <Ionicons name={option.icon} size={32} color={isSelected ? Colors.primary[600] : theme.colors.textSecondary} />
+      <Ionicons name={option.icon} size={32} color={isSelected ? Colors.primary[600] : colors.textSecondary} />
       <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
         {option.label}
       </Text>
@@ -174,6 +175,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
   ];
 
   const handleNext = () => {
+    const { colors } = useTheme();
     stepOpacity.value = withTiming(0, { duration: 150 });
     stepTranslateX.value = withTiming(-30, { duration: 150 });
 
@@ -371,7 +373,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
         <View style={styles.header}>
           {currentStep > 0 ? (
             <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-              <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+              <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
           ) : (
             <View style={styles.backButtonPlaceholder} />
@@ -428,7 +430,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -442,7 +444,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
     ...Shadows.sm,
@@ -470,7 +472,7 @@ const styles = StyleSheet.create({
   progressText: {
     marginTop: 8,
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   skipButton: {
@@ -479,7 +481,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   scrollView: {
@@ -495,12 +497,12 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   stepSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 24,
   },
   optionsGrid: {
@@ -511,7 +513,7 @@ const styles = StyleSheet.create({
   optionCard: {
     width: (SCREEN_WIDTH - 40 - 24) / 3,
     aspectRatio: 0.9,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.xl,
     padding: 12,
     alignItems: "center",
@@ -527,7 +529,7 @@ const styles = StyleSheet.create({
   optionLabel: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     textAlign: "center",
   },
   optionLabelSelected: {
@@ -535,7 +537,7 @@ const styles = StyleSheet.create({
   },
   optionDescription: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: 2,
     textAlign: "center",
   },

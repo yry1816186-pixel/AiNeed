@@ -1,7 +1,8 @@
 ﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing } from '../../../design-system/theme';
+import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Colors, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface DesignToolbarProps {
@@ -57,7 +58,7 @@ export const DesignToolbar: React.FC<DesignToolbarProps> = ({
           <Ionicons
             name={tool.icon}
             size={22}
-            color={tool.disabled ? Colors.neutral[300] : theme.colors.text}
+            color={tool.disabled ? Colors.neutral[300] : colors.text}
           />
           <Text style={[styles.toolLabel, tool.disabled && styles.toolLabelDisabled]}>
             {tool.label}
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   },
   toolLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 2,
   },
   toolLabelDisabled: {

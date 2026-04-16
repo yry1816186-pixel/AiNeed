@@ -5,7 +5,7 @@ import {
   SimilarItemResult,
   OutfitRecommendationResult,
 } from '../../../types';
-import { Outfit, OutfitInput, OutfitItem } from '../types/outfit';
+import { Outfit, OutfitInput, OutfitItem } from '../../types/outfit';
 
 export const outfitApi = {
   async getAll(params?: {

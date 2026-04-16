@@ -10,7 +10,8 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { LinearGradient } from "../polyfills/expo-linear-gradient";
 import { Ionicons } from "../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius, Shadows, Typography } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows, Typography } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { useProfileStore } from "../stores/profileStore";
 import { useTheme } from "../contexts/ThemeContext";
 import { normalizeColorSeason, seasonLabels, type ColorSeason } from "../theme/tokens/season-colors";
@@ -146,7 +147,7 @@ export const ColorAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+                <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -154,7 +155,7 @@ export const ColorAnalysisScreen: React.FC = () => {
         backgroundColor={Colors.neutral[50]}
       >
         <View style={styles.centerContainer}>
-          <Ionicons name="color-palette-outline" size={64} color={theme.colors.textTertiary} />
+          <Ionicons name="color-palette-outline" size={64} color={colors.textTertiary} />
           <Text style={styles.emptyTitle}>还没有色彩分析数据</Text>
           <Text style={styles.emptySubtitle}>上传照片或完善肤色信息后，AI将为你生成专属色彩季型分析</Text>
           <TouchableOpacity
@@ -187,7 +188,7 @@ export const ColorAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+                <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -195,7 +196,7 @@ export const ColorAnalysisScreen: React.FC = () => {
         backgroundColor={Colors.neutral[50]}
       >
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>加载色彩分析...</Text>
         </View>
       </ScreenLayout>
@@ -214,7 +215,7 @@ export const ColorAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+                <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -222,7 +223,7 @@ export const ColorAnalysisScreen: React.FC = () => {
         backgroundColor={Colors.neutral[50]}
       >
         <View style={styles.centerContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.textTertiary} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textTertiary} />
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
@@ -248,7 +249,7 @@ export const ColorAnalysisScreen: React.FC = () => {
               accessibilityLabel="返回"
               accessibilityRole="button"
             >
-              <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+              <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
           }
         />
@@ -348,7 +349,7 @@ export const ColorAnalysisScreen: React.FC = () => {
         )}
 
         <View style={styles.reasonCard}>
-          <Ionicons name="color-palette-outline" size={20} color={theme.colors.primary} />
+          <Ionicons name="color-palette-outline" size={20} color={colors.primary} />
           <Text style={styles.reasonText}>
             基于你的肤色分析，推荐以上色彩方向。适合的颜色能衬托气色，不适合的颜色可能让肤色显得暗沉。
           </Text>
@@ -372,17 +373,17 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body.md,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: Spacing[3],
   },
   errorText: {
     ...Typography.body.md,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[3],
     textAlign: "center",
   },
   retryButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[6],
     paddingVertical: Spacing[3],
@@ -456,7 +457,7 @@ const styles = StyleSheet.create({
   },
   paletteTitle: {
     ...Typography.styles.h4,
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[4],
   },
   paletteGrid: {
@@ -483,11 +484,11 @@ const styles = StyleSheet.create({
   },
   colorHex: {
     ...Typography.caption.xs,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
   },
   colorName: {
     ...Typography.caption.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
   },
   neutralRow: {
     flexDirection: "row",
@@ -533,26 +534,26 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body.md,
     fontWeight: "400",
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 24,
   },
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: Spacing[4],
     marginBottom: Spacing[2],
   },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 22,
     paddingHorizontal: Spacing[4],
     marginBottom: Spacing[6],
   },
   emptyButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[6],
     paddingVertical: Spacing[3],

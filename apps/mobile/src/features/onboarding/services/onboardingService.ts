@@ -1,7 +1,7 @@
 import apiClient from "./api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { ApiResponse } from "../types";
-import type { OnboardingFormData } from "../stores/onboardingStore";
+import type { ApiResponse } from '../../../types';
+import type { OnboardingFormData } from '../stores/onboardingStore';
 
 export const onboardingService = {
   saveOnboardingData: async (formData: OnboardingFormData): Promise<ApiResponse<unknown>> => {

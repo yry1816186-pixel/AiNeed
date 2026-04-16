@@ -1,6 +1,6 @@
 ﻿import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
-import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface QuizProgressProps {

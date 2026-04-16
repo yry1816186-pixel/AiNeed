@@ -12,11 +12,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { useBloggerStore } from "../stores/bloggerStore";
-import type { TrendMetric } from "../services/api/blogger.api";
-import type { RootStackParamList } from "../types/navigation";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { useBloggerStore } from '../stores/bloggerStore';
+import type { TrendMetric } from '../../../services/api/blogger.api';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -35,6 +35,7 @@ const METRIC_OPTIONS: { key: TrendMetric; label: string }[] = [
 ];
 
 function MetricCard({ label, value, change }: { label: string; value: number; change: number }) {
+    const { colors } = useTheme();
   const isPositive = change >= 0;
   return (
     <View style={styles.metricCard}>
@@ -134,7 +135,7 @@ export const BloggerDashboardScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>数据面板</Text>
         <View style={styles.headerSpacer} />
@@ -160,7 +161,7 @@ export const BloggerDashboardScreen: React.FC = () => {
 
         {/* Core metrics grid */}
         {isLoadingDashboard ? (
-          <ActivityIndicator size="large" color={theme.colors.primary} style={styles.loader} />
+          <ActivityIndicator size="large" color={colors.primary} style={styles.loader} />
         ) : dashboardData ? (
           <View style={styles.metricsGrid}>
             <MetricCard
@@ -236,7 +237,7 @@ export const BloggerDashboardScreen: React.FC = () => {
             ))}
           </View>
           {isLoadingTrend ? (
-            <ActivityIndicator size="small" color={theme.colors.primary} style={styles.loader} />
+            <ActivityIndicator size="small" color={colors.primary} style={styles.loader} />
           ) : (
             <TrendChart data={trendData} width={SCREEN_WIDTH} />
           )}
@@ -249,7 +250,7 @@ export const BloggerDashboardScreen: React.FC = () => {
         >
           <Ionicons name="bag-outline" size={18} color={DesignTokens.colors.brand.terracotta} />
           <Text style={styles.manageBtnText}>管理我的商品</Text>
-          <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+          <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
         </TouchableOpacity>
 
         {/* Non-blogger upgrade prompt */}
@@ -268,24 +269,24 @@ export const BloggerDashboardScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
   backBtn: { width: 40, height: 40, justifyContent: "center" },
   headerSpacer: { width: 40 },
   scrollContent: { paddingHorizontal: 16, paddingTop: 12 },
   periodRow: {
     flexDirection: "row",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 10,
     padding: 4,
     marginBottom: 16,
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   periodTabActive: { backgroundColor: DesignTokens.colors.brand.terracotta },
-  periodTabText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
+  periodTabText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
   periodTabTextActive: { color: DesignTokens.colors.backgrounds.primary, fontWeight: "600" },
   metricsGrid: {
     flexDirection: "row",
@@ -306,29 +307,29 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     width: (SCREEN_WIDTH - 42) / 2,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
   },
-  metricValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.text },
-  metricLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary, marginTop: 4 },
+  metricValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
+  metricLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: 4 },
   metricChange: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", marginTop: 4 },
   metricUp: { color: "DesignTokens.colors.semantic.success" },
   metricDown: { color: "DesignTokens.colors.semantic.error" },
   loader: { paddingVertical: 24 },
   noData: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     textAlign: "center",
     paddingVertical: 40,
   },
   enhancedSection: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginTop: 16,
   },
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 10 },
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: 10 },
   enhancedRow: { flexDirection: "row", gap: 10 },
   enhancedCard: {
     flex: 1,
@@ -338,9 +339,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   enhancedValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: DesignTokens.colors.brand.terracotta },
-  enhancedLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary, marginTop: 4 },
+  enhancedLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: 4 },
   chartSection: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginTop: 16,
@@ -354,10 +355,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 14,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
   metricChipActive: { backgroundColor: DesignTokens.colors.backgrounds.tertiary },
-  metricChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  metricChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   metricChipTextActive: { color: DesignTokens.colors.brand.terracotta, fontWeight: "600" },
   chartContainer: {
     position: "relative",
@@ -365,7 +366,7 @@ const styles = StyleSheet.create({
   },
   chartArea: {
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
   chartBar: {
     position: "absolute",
@@ -377,26 +378,26 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingTop: 6,
   },
-  chartXLabel: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary },
+  chartXLabel: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
   chartEmpty: {
     height: 120,
     alignItems: "center",
     justifyContent: "center",
   },
-  chartEmptyText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary },
+  chartEmptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
   manageBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginTop: 16,
   },
-  manageBtnText: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, fontWeight: "500" },
+  manageBtnText: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, fontWeight: "500" },
   upgradeSection: {
     alignItems: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 24,
     marginTop: 16,
@@ -404,12 +405,12 @@ const styles = StyleSheet.create({
   upgradeTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary,
+    color: colors.textPrimary,
     marginTop: 12,
   },
   upgradeDesc: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     marginTop: 6,
     textAlign: "center",
   },

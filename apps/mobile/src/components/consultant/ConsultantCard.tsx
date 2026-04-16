@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#F0F0F0",
+    borderColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   header: {
     flexDirection: "row",
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#C67B5C",
+    backgroundColor: "DesignTokens.colors.brand.terracotta",
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   studioName: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: "#1A1A1A",
+    color: "DesignTokens.colors.text.primary",
     marginBottom: 4,
   },
   specialtyRow: {
@@ -127,16 +127,16 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   specialtyBadge: {
-    backgroundColor: "#FFF5F0",
+    backgroundColor: "DesignTokens.colors.neutral[50]",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#F0D5C8",
+    borderColor: "DesignTokens.colors.brand.terracottaLight",
   },
   specialtyText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "#C67B5C",
+    color: "DesignTokens.colors.brand.terracotta",
   },
   footer: {
     marginBottom: 8,
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "#C67B5C",
+    color: "DesignTokens.colors.brand.terracotta",
     marginTop: 4,
   },
   cta: {
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   },
   ctaText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: "#C67B5C",
+    color: "DesignTokens.colors.brand.terracotta",
     fontWeight: "500",
   },
 });

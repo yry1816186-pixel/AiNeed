@@ -15,10 +15,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { communityApi } from "../services/api/community.api";
-import type { CommunityStackParamList } from "../navigation/types";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { communityApi } from '../../../services/api/community.api';
+import type { CommunityStackParamList } from '../../../navigation/types';
 
 type InspirationWardrobeRoute = RouteProp<CommunityStackParamList, "InspirationWardrobe">;
 
@@ -137,15 +137,15 @@ export const InspirationWardrobeScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Inspiration Wardrobe</Text>
           <TouchableOpacity style={s.iconBtn} onPress={handleCreateCollection}>
-            <Ionicons name="add" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="add" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={s.centerContent}>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -156,15 +156,15 @@ export const InspirationWardrobeScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Inspiration Wardrobe</Text>
           <TouchableOpacity style={s.iconBtn} onPress={handleCreateCollection}>
-            <Ionicons name="add" size={24} color={theme.colors.textPrimary} />
+            <Ionicons name="add" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={s.centerContent}>
-          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.textTertiary} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textTertiary} />
           <Text style={s.errorText}>{error}</Text>
           <TouchableOpacity style={s.retryBtn} onPress={fetchData}>
             <Text style={s.retryBtnText}>Retry</Text>
@@ -178,11 +178,11 @@ export const InspirationWardrobeScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Inspiration Wardrobe</Text>
         <TouchableOpacity style={s.iconBtn} onPress={handleCreateCollection}>
-          <Ionicons name="add" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="add" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -235,12 +235,12 @@ export const InspirationWardrobeScreen: React.FC = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor={theme.colors.primary}
+            tintColor={colors.primary}
           />
         }
         ListEmptyComponent={
           <View style={s.emptyContent}>
-            <Ionicons name="bookmarks-outline" size={48} color={theme.colors.textTertiary} />
+            <Ionicons name="bookmarks-outline" size={48} color={colors.textTertiary} />
             <Text style={s.emptyTitle}>No inspiration saved yet</Text>
             <Text style={s.emptySubtitle}>Browse the community and save posts you love</Text>
           </View>
@@ -251,33 +251,33 @@ export const InspirationWardrobeScreen: React.FC = () => {
 };
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
   iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.error, marginTop: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: 12 },
   retryBtn: {
     marginTop: 16,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 20,
   },
-  retryBtnText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  retryBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   collectionRow: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.divider,
+    borderBottomColor: colors.divider,
     maxHeight: 48,
   },
   collectionScroll: { paddingHorizontal: 16, paddingVertical: 8, gap: 8, alignItems: "center" },
@@ -285,18 +285,18 @@ const s = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
   },
-  collectionChipActive: { backgroundColor: theme.colors.primary },
-  collectionChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary, fontWeight: "500" },
-  collectionChipTextActive: { color: theme.colors.surface, fontWeight: "600" },
+  collectionChipActive: { backgroundColor: colors.primary },
+  collectionChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, fontWeight: "500" },
+  collectionChipTextActive: { color: colors.surface, fontWeight: "600" },
   gridItem: {
     flex: 1,
     borderRadius: 12,
     overflow: "hidden",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: colors.surface,
   },
-  gridImage: { width: "100%", aspectRatio: 3 / 4, backgroundColor: theme.colors.placeholderBg },
+  gridImage: { width: "100%", aspectRatio: 3 / 4, backgroundColor: colors.placeholderBg },
   gridOverlay: {
     position: "absolute",
     bottom: 0,
@@ -308,10 +308,10 @@ const s = StyleSheet.create({
   },
   gridTitle: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral.white, fontWeight: "500" },
   emptyContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingVertical: 60 },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: 16 },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.colors.textTertiary,
+    color: colors.textTertiary,
     marginTop: 8,
     textAlign: "center",
   },

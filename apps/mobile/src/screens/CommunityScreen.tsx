@@ -3,7 +3,7 @@ import { StyleSheet, Alert, useWindowDimensions } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useScreenTracking } from "../hooks/useAnalytics";
 import { useTranslation } from "../i18n";
-import { theme } from '../design-system/theme';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { communityApi } from "../services/api/community.api";
 import { TrendingCard } from "../components/community/TrendingCard";
 import { CreatePostModal } from "../components/community/CreatePostModal";
@@ -222,5 +222,5 @@ export const CommunityScreen: React.FC = () => {
   );
 };
 
-const s = StyleSheet.create({ root: { flex: 1, backgroundColor: theme.colors.background } });
+const s = StyleSheet.create({ root: { flex: 1, backgroundColor: colors.background } });
 export default CommunityScreen;
