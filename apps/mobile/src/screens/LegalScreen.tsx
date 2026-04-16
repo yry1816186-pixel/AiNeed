@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -284,7 +284,7 @@ export const LegalScreen: React.FC<LegalScreenProps> = ({ type }) => {
           accessibilityLabel="返回"
           accessibilityRole="button"
         >
-          <Ionicons name="chevron-back-outline" size={24} color={theme.colors.text} />
+          <Ionicons name="chevron-back-outline" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{title}</Text>
         <View style={styles.backButton} />
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -351,14 +351,14 @@ const styles = StyleSheet.create({
   heading1: {
     fontSize: 20,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: 24,
     marginBottom: 12,
   },
   heading2: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: 16,
     marginBottom: 8,
   },

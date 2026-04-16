@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -279,7 +279,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
 
       <Animated.View style={[styles.header, fadeStyle]}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>心动推荐</Text>
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
   statText: {
     fontSize: 13,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   cardsContainer: {
     flex: 1,

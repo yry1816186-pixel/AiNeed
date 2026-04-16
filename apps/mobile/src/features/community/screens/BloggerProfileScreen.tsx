@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -260,7 +260,7 @@ export const BloggerProfileScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{blogger.nickname}</Text>
         <View style={styles.headerSpacer} />
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   postTitle: {
     fontSize: 12,
     fontWeight: "500",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     padding: 8,
     lineHeight: 16,
   },
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
   productTitle: {
     fontSize: 13,
     fontWeight: "500",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     padding: 8,
     lineHeight: 18,
   },
@@ -552,7 +552,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 8,
   },
-  aboutTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text, marginBottom: 8 },
+  aboutTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 8 },
   aboutText: { fontSize: 14, color: theme.colors.textSecondary, lineHeight: 22 },
   levelInfo: { marginTop: 16 },
   levelBadge: {

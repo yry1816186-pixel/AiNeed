@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -145,7 +145,7 @@ export const OutfitDetailScreen: React.FC = () => {
           accessibilityLabel="返回上一页"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>搭配详情</Text>
         <TouchableOpacity
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   infoSection: { backgroundColor: theme.colors.surface, marginTop: 16, padding: 20 },
-  outfitName: { fontSize: 24, fontWeight: "700", color: theme.colors.text, marginBottom: 8 },
+  outfitName: { fontSize: 24, fontWeight: "700", color: theme.colors.textPrimary, marginBottom: 8 },
   outfitDescription: { fontSize: 14, color: theme.colors.textSecondary, lineHeight: 22 },
   loadingContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
   loadingText: { fontSize: 16, color: theme.colors.textSecondary, marginTop: 12 },

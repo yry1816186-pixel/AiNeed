@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -179,7 +179,7 @@ export const ClothingDetailScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>商品详情</Text>
         <TouchableOpacity onPress={handleToggleFavorite}>
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   },
   skuTriggerLabel: { fontSize: 14, color: theme.colors.textSecondary },
   infoSection: { paddingHorizontal: 16, paddingTop: 16 },
-  itemName: { fontSize: 18, fontWeight: "600", color: theme.colors.text, marginBottom: 4 },
+  itemName: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 4 },
   itemBrand: { fontSize: 14, color: theme.colors.textTertiary, marginBottom: 8 },
   relatedSection: { paddingHorizontal: 16, paddingTop: 8 },
   bottomBar: {

@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: Spacing[4],
   },
   subtitle: {
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
   },
   tagCloud: {
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   },
   occasionText: {
     fontSize: 15,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   confidenceContainer: {
     alignItems: "center",

@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -289,7 +289,7 @@ export const OrdersScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           accessibilityLabel="返回"
         >
-          <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>我的订单</Text>
         <View style={styles.headerPlaceholder} />
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   headerPlaceholder: {
     width: 40,
@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: 20,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   emptySubtitle: {
     marginTop: 8,
@@ -474,7 +474,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
   orderTotal: {
     fontSize: 16,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   actionRow: {
     flexDirection: "row",

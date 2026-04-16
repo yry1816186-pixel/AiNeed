@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { theme, Colors, Spacing, BorderRadius } from '../design-system/theme';
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 13,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   layerCount: {
     fontSize: 12,

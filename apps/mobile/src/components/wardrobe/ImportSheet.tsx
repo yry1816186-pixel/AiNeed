@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 14,
   },
-  title: { fontSize: 16, fontWeight: "600", color: theme.colors.text, marginBottom: 12 },
+  title: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
   sourceRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
   sourceChip: {
     flexDirection: "row",

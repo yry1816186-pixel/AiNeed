@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -140,7 +140,7 @@ export const OrderDetailScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           accessibilityLabel="返回"
         >
-          <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>订单详情</Text>
         <TouchableOpacity
@@ -148,7 +148,7 @@ export const OrderDetailScreen: React.FC = () => {
           onPress={() => void loadOrder("refresh")}
           accessibilityLabel="刷新订单"
         >
-          <Ionicons name="refresh" size={20} color={theme.colors.text} />
+          <Ionicons name="refresh" size={20} color={theme.colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   center: {
     flex: 1,
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   scrollContent: {
     padding: 20,
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     maxWidth: 220,
   },
   statusBadge: {
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: 12,
   },
   orderItemRow: {
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   itemMeta: {
     fontSize: 13,
@@ -495,12 +495,12 @@ const styles = StyleSheet.create({
   itemPrice: {
     fontSize: 15,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   addressName: {
     fontSize: 15,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   addressText: {
     marginTop: 6,
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     fontSize: 13,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   summaryTotal: {
     fontSize: 18,
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
   timelineStatus: {
     fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   timelineDescription: {
     marginTop: 4,

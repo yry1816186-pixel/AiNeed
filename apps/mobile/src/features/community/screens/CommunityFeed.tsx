@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -182,9 +182,9 @@ const s = StyleSheet.create({
     paddingHorizontal: 40,
   },
   loadingText: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 12 },
-  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text, marginTop: 16 },
+  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
   emptySubtext: { fontSize: 14, color: theme.colors.textTertiary, marginTop: 6 },
-  errorTitle: { fontSize: 16, color: theme.colors.text, marginTop: 16, textAlign: "center" },
+  errorTitle: { fontSize: 16, color: theme.colors.textPrimary, marginTop: 16, textAlign: "center" },
   retryBtn: {
     marginTop: 24,
     backgroundColor: theme.colors.primary,

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Animated, {
   useSharedValue,
@@ -166,7 +166,7 @@ const s = StyleSheet.create({
   },
   featuredText: { fontSize: 10, fontWeight: "700", color: theme.colors.surface },
   masonryInfo: { padding: 10 },
-  masonryTitle: { fontSize: 13, fontWeight: "600", color: theme.colors.text, lineHeight: 18 },
+  masonryTitle: { fontSize: 13, fontWeight: "600", color: theme.colors.textPrimary, lineHeight: 18 },
   masonryFooter: {
     flexDirection: "row",
     justifyContent: "space-between",

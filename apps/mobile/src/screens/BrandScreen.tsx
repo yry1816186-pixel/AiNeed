@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -134,11 +134,11 @@ export const BrandScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Brand</Text>
         <TouchableOpacity style={s.iconBtn} onPress={handleQRScan}>
-          <Ionicons name="qr-code-outline" size={22} color={theme.colors.text} />
+          <Ionicons name="qr-code-outline" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -253,7 +253,7 @@ const s = StyleSheet.create({
     borderRadius: 20,
   },
   retryBtnText: { color: theme.colors.surface, fontSize: 14, fontWeight: "600" },
-  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text, marginTop: 16 },
+  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
   emptySubtitle: {
     fontSize: 14,
     color: theme.colors.textTertiary,
@@ -284,7 +284,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   productInfo: { flex: 1, marginLeft: 14 },
-  productName: { fontSize: 15, fontWeight: "500", color: theme.colors.text, lineHeight: 20 },
+  productName: { fontSize: 15, fontWeight: "500", color: theme.colors.textPrimary, lineHeight: 20 },
   productBrand: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 3 },
   priceRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 6 },
   productPrice: { fontSize: 16, fontWeight: "700", color: theme.colors.primary },

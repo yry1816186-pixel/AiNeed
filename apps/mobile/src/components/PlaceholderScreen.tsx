@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { theme } from '../design-system/theme';
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: 12,
   },
   phaseBadge: {

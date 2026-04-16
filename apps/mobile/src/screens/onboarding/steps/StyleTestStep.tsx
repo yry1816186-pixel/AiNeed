@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   featureTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   featureDescription: {

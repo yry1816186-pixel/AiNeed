@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../design-system/theme';
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   issueText: {
     flex: 1,
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   buttonContainer: {
     flexDirection: "row",

@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../design-system/theme';
@@ -138,7 +138,7 @@ const s = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
@@ -147,7 +147,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14,
     fontSize: 15,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     lineHeight: 22,
     minHeight: 150,
   },

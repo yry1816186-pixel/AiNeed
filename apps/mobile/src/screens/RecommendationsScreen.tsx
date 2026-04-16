@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useEffect, memo } from "react";
+import React, { useState, useCallback, useEffect, memo } from "react";
 import {
   View,
   Text,
@@ -201,7 +201,7 @@ export const RecommendationsScreen: React.FC = () => {
             /* filter modal - v3 deferred */
           }}
         >
-          <Ionicons name="options-outline" size={20} color={theme.colors.text} />
+          <Ionicons name="options-outline" size={20} color={theme.colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   },
   matchText: { fontSize: 11, fontWeight: "700", color: DesignTokens.colors.neutral.white },
   cardInfo: { padding: 10 },
-  cardName: { fontSize: 13, fontWeight: "600", color: theme.colors.text, lineHeight: 18 },
+  cardName: { fontSize: 13, fontWeight: "600", color: theme.colors.textPrimary, lineHeight: 18 },
   cardBrand: { fontSize: 11, color: theme.colors.textSecondary, marginTop: 2 },
   cardPrice: { fontSize: 15, fontWeight: "700", color: theme.colors.primary, marginTop: 4 },
   centerContainer: {
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     paddingVertical: 60,
   },
-  emptyTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text, marginTop: 16 },
+  emptyTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
   emptySubtext: {
     fontSize: 14,
     color: theme.colors.textSecondary,

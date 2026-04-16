@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -204,7 +204,7 @@ export const BodyAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -232,7 +232,7 @@ export const BodyAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -292,7 +292,7 @@ export const BodyAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -332,7 +332,7 @@ export const BodyAnalysisScreen: React.FC = () => {
               accessibilityLabel="返回"
               accessibilityRole="button"
             >
-              <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+              <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
             </TouchableOpacity>
           }
         />
@@ -474,7 +474,7 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[4],
     alignSelf: "flex-start",
   },
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
   adviceTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
   },
   adviceItem: {
@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: Spacing[4],
     marginBottom: Spacing[2],
   },

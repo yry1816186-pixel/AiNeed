@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -662,7 +662,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: 16,
   },
   emptySubtext: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 8 },
@@ -770,7 +770,7 @@ const styles = StyleSheet.create({
   cardName: {
     fontSize: 14,
     fontWeight: "500",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     lineHeight: 20,
   },
   cardSpecs: { flexDirection: "row", marginTop: 6 },

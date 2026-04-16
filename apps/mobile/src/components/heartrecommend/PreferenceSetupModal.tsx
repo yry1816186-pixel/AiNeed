@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -371,7 +371,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
         <View style={styles.header}>
           {currentStep > 0 ? (
             <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-              <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+              <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
             </TouchableOpacity>
           ) : (
             <View style={styles.backButtonPlaceholder} />
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 28,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: 8,
   },
   stepSubtitle: {
@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
   optionLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     textAlign: "center",
   },
   optionLabelSelected: {

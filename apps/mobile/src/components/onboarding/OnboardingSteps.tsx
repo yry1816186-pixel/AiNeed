@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -449,7 +449,7 @@ export const stepStyles = StyleSheet.create({
   stepTitle: {
     fontSize: 26,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
@@ -496,7 +496,7 @@ export const stepStyles = StyleSheet.create({
   styleLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: 2,
   },
   styleLabelSelected: {
@@ -554,7 +554,7 @@ export const stepStyles = StyleSheet.create({
   colorLabel: {
     fontSize: 15,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   colorLabelSelected: {
@@ -606,7 +606,7 @@ export const stepStyles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 16,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     padding: 0,
   },
   sectionLabel: {
@@ -694,7 +694,7 @@ export const stepStyles = StyleSheet.create({
   featureTitle: {
     fontSize: 15,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   featureDescription: {

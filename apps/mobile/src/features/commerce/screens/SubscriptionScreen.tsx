@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -195,7 +195,7 @@ export const SubscriptionScreen: React.FC = () => {
         onPress={() => navigation.goBack()}
         activeOpacity={0.7}
       >
-        <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+        <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>会员订阅</Text>
       <View style={styles.headerSpacer} />
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   headerSpacer: {
     width: 40,
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
   currentPlanName: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   currentPlanExpiry: {
     fontSize: 13,
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
   introTitle: {
     fontSize: 22,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     letterSpacing: -0.3,
   },
   introSubtitle: {
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
   planName: {
     fontSize: 20,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   planNameSelected: {
     color: theme.colors.surface,
@@ -558,17 +558,17 @@ const styles = StyleSheet.create({
   priceFree: {
     fontSize: 24,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   priceSymbol: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   priceValue: {
     fontSize: 36,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     letterSpacing: -1,
   },
   priceUnit: {
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
   },
   featureName: {
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   featureNameDisabled: {
     color: Colors.neutral[300],

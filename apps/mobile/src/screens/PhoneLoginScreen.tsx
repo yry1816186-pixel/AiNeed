@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -186,7 +186,7 @@ export const PhoneLoginScreen: React.FC = () => {
             disabled={isLoading}
             accessibilityLabel="返回"
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={styles.content}>

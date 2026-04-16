@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -142,7 +142,7 @@ export const PaymentScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>支付</Text>
           <View style={s.iconBtn} />
@@ -158,7 +158,7 @@ export const PaymentScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>支付</Text>
         <View style={s.iconBtn} />
@@ -280,7 +280,7 @@ const s = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
-  sectionTitle: { fontSize: 16, fontWeight: "700", color: theme.colors.text, marginBottom: 14 },
+  sectionTitle: { fontSize: 16, fontWeight: "700", color: theme.colors.textPrimary, marginBottom: 14 },
   orderRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -288,7 +288,7 @@ const s = StyleSheet.create({
     paddingVertical: 6,
   },
   orderLabel: { fontSize: 14, color: theme.colors.textSecondary },
-  orderValue: { fontSize: 14, color: theme.colors.text, fontWeight: "500" },
+  orderValue: { fontSize: 14, color: theme.colors.textPrimary, fontWeight: "500" },
   totalRow: {
     borderTopWidth: 1,
     borderTopColor: theme.colors.divider,

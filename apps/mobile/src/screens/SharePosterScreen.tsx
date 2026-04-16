@@ -1,4 +1,4 @@
-﻿import React, { useRef, useCallback, useState, useEffect } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from "../polyfills/expo-vector-icons";
@@ -84,7 +84,7 @@ export const SharePosterScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -110,7 +110,7 @@ export const SharePosterScreen: React.FC = () => {
               accessibilityLabel="返回"
               accessibilityRole="button"
             >
-              <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+              <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
             </TouchableOpacity>
           }
         />

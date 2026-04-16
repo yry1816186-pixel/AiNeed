@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -136,11 +136,11 @@ export const InspirationWardrobeScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Inspiration Wardrobe</Text>
           <TouchableOpacity style={s.iconBtn} onPress={handleCreateCollection}>
-            <Ionicons name="add" size={24} color={theme.colors.text} />
+            <Ionicons name="add" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={s.centerContent}>
@@ -155,11 +155,11 @@ export const InspirationWardrobeScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Inspiration Wardrobe</Text>
           <TouchableOpacity style={s.iconBtn} onPress={handleCreateCollection}>
-            <Ionicons name="add" size={24} color={theme.colors.text} />
+            <Ionicons name="add" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={s.centerContent}>
@@ -177,11 +177,11 @@ export const InspirationWardrobeScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Inspiration Wardrobe</Text>
         <TouchableOpacity style={s.iconBtn} onPress={handleCreateCollection}>
-          <Ionicons name="add" size={24} color={theme.colors.text} />
+          <Ionicons name="add" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -307,7 +307,7 @@ const s = StyleSheet.create({
   },
   gridTitle: { fontSize: 12, color: DesignTokens.colors.neutral.white, fontWeight: "500" },
   emptyContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingVertical: 60 },
-  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text, marginTop: 16 },
+  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
   emptySubtitle: {
     fontSize: 14,
     color: theme.colors.textTertiary,

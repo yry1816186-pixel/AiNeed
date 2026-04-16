@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -302,7 +302,7 @@ export const RecommendationDetailScreen: React.FC = () => {
           accessibilityLabel="返回上一页"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
 
         <Text style={styles.headerTitle}>推荐详情</Text>
@@ -316,7 +316,7 @@ export const RecommendationDetailScreen: React.FC = () => {
           <Ionicons
             name={recommendation.externalUrl ? "open-outline" : "shirt-outline"}
             size={20}
-            color={theme.colors.text}
+            color={theme.colors.textPrimary}
           />
         </TouchableOpacity>
       </View>
@@ -531,7 +531,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -577,7 +577,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   metaRow: {
     flexDirection: "row",
@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: 12,
   },
   reasonRow: {

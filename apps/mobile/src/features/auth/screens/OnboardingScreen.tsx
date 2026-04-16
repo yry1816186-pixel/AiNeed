@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -502,7 +502,7 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 28,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
   quizPlaceholderTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   quizPlaceholderSubtitle: {
     fontSize: 16,

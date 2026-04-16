@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
   titleInput: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
   },
   contentInput: {
     fontSize: 15,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     paddingHorizontal: 16,
     paddingVertical: 14,
     minHeight: 120,
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     marginTop: 8,
   },
-  sectionLabel: { fontSize: 14, fontWeight: "600", color: theme.colors.text, marginBottom: 10 },
+  sectionLabel: { fontSize: 14, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 10 },
   imageGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginBottom: 8,
   },
-  searchInput: { flex: 1, fontSize: 14, color: theme.colors.text, paddingVertical: 4 },
+  searchInput: { flex: 1, fontSize: 14, color: theme.colors.textPrimary, paddingVertical: 4 },
   searchLoader: { paddingVertical: 20 },
   searchResultItem: {
     flexDirection: "row",

@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -211,7 +211,7 @@ export const BrandQRScanScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>品牌扫码</Text>
         <View style={{ width: 40 }} />
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 17,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   inputHint: {
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[4],
     fontSize: 15,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     borderWidth: 1,
     borderColor: Colors.neutral[200],
   },
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
   resultTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
   },
   brandCard: {
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   brandSlug: {
     fontSize: 12,
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   },
   productValue: {
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     fontWeight: "500",
   },
   importButton: {

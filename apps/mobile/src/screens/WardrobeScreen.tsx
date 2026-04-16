@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import {
   View,
   Text,
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   headerActions: {
     flexDirection: "row",
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     fontSize: 15,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   categoryScroll: {
     maxHeight: 44,
@@ -636,7 +636,7 @@ const styles = StyleSheet.create({
   gridItemName: {
     fontSize: 13,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     paddingHorizontal: 8,
     paddingTop: 8,
     paddingBottom: 2,
@@ -671,7 +671,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: 16,
   },
   emptySubtext: {

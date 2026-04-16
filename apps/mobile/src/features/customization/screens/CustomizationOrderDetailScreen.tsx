@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -200,7 +200,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>定制订单</Text>
         <View style={{ width: 40 }} />
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 17,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   loadingContainer: {
     flex: 1,
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   orderTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   orderDate: {
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
   },
   timeline: {
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   },
   trackingValue: {
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     fontWeight: "500",
     marginBottom: Spacing[1],
   },
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
   },
   packagingText: {
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   actions: {
     gap: Spacing[3],

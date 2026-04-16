@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -177,7 +177,7 @@ export const AddClothingScreen: React.FC = () => {
           accessibilityLabel="关闭添加服装"
           accessibilityRole="button"
         >
-          <Ionicons name="close" size={24} color={theme.colors.text} />
+          <Ionicons name="close" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>添加服装</Text>
         <TouchableOpacity
@@ -351,18 +351,18 @@ const styles = StyleSheet.create({
   },
   formSection: { backgroundColor: theme.colors.surface, marginTop: 16, padding: 20 },
   inputGroup: { marginBottom: 20 },
-  inputLabel: { fontSize: 14, fontWeight: "500", color: theme.colors.text, marginBottom: 8 },
+  inputLabel: { fontSize: 14, fontWeight: "500", color: theme.colors.textPrimary, marginBottom: 8 },
   textInput: {
     backgroundColor: theme.colors.background,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   rowInputs: { flexDirection: "row", gap: 12 },
   chipSection: { marginBottom: 20 },
-  chipTitle: { fontSize: 14, fontWeight: "500", color: theme.colors.text, marginBottom: 12 },
+  chipTitle: { fontSize: 14, fontWeight: "500", color: theme.colors.textPrimary, marginBottom: 12 },
   chipContainer: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   chip: {
     backgroundColor: DesignTokens.colors.neutral[100],

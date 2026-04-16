@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -115,7 +115,7 @@ export const BloggerProductScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>方案详情</Text>
         <View style={styles.headerSpacer} />
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 8,
   },
-  sectionTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text, marginBottom: 8 },
+  sectionTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 8 },
   descriptionText: { fontSize: 14, color: theme.colors.textSecondary, lineHeight: 22 },
   bloggerCard: {
     flexDirection: "row",
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 14,
   },
-  sheetTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text, marginBottom: 14 },
+  sheetTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 14 },
   sheetProductInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -459,9 +459,9 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 16,
   },
-  sheetProductName: { flex: 1, fontSize: 14, color: theme.colors.text, marginRight: 12 },
+  sheetProductName: { flex: 1, fontSize: 14, color: theme.colors.textPrimary, marginRight: 12 },
   sheetProductPrice: { fontSize: 18, fontWeight: "700", color: DesignTokens.colors.brand.terracotta },
-  paymentLabel: { fontSize: 14, fontWeight: "600", color: theme.colors.text, marginBottom: 10 },
+  paymentLabel: { fontSize: 14, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 10 },
   paymentOption: {
     flexDirection: "row",
     alignItems: "center",
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   },
   paymentRadioSelected: { borderColor: DesignTokens.colors.brand.terracotta },
   paymentRadioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: DesignTokens.colors.brand.terracotta },
-  paymentName: { fontSize: 14, color: theme.colors.text, flex: 1 },
+  paymentName: { fontSize: 14, color: theme.colors.textPrimary, flex: 1 },
   confirmPurchaseBtn: {
     backgroundColor: DesignTokens.colors.brand.terracotta,
     borderRadius: 12,
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 32,
   },
-  successTitle: { fontSize: 24, fontWeight: "700", color: theme.colors.text, marginTop: 16 },
+  successTitle: { fontSize: 24, fontWeight: "700", color: theme.colors.textPrimary, marginTop: 16 },
   successSubtitle: { fontSize: 15, color: theme.colors.textSecondary, marginTop: 6 },
   contentBox: {
     backgroundColor: theme.colors.surface,
@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.border,
   },
-  contentText: { fontSize: 14, color: theme.colors.text, lineHeight: 22 },
+  contentText: { fontSize: 14, color: theme.colors.textPrimary, lineHeight: 22 },
   viewSchemeBtn: {
     backgroundColor: theme.colors.primary,
     borderRadius: 12,

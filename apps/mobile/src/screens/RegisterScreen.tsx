@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -154,7 +154,7 @@ export const RegisterScreen: React.FC = () => {
             disabled={isLoading}
             accessibilityLabel={t.common.back}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={styles.content}>

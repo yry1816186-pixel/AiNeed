@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState, createContext, useContext } from "react";
+import React, { useEffect, useRef, useState, createContext, useContext } from "react";
 import {
   View,
   Text,
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   },
   toastMessage: {
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginLeft: 12,
     flex: 1,
   },

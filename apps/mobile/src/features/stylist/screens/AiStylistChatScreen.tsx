@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -178,7 +178,7 @@ export const AiStylistChatScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn} accessibilityLabel="返回" accessibilityRole="button">
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <View style={s.headerCenter}>
           <View style={s.onlineDot} />
@@ -190,7 +190,7 @@ export const AiStylistChatScreen: React.FC = () => {
           accessibilityLabel="聊天记录"
           accessibilityRole="button"
         >
-          <Ionicons name="time-outline" size={22} color={theme.colors.text} />
+          <Ionicons name="time-outline" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -404,7 +404,7 @@ const s = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 12,
   },
-  input: { flex: 1, fontSize: 14, color: theme.colors.text, maxHeight: 80, paddingVertical: 8 },
+  input: { flex: 1, fontSize: 14, color: theme.colors.textPrimary, maxHeight: 80, paddingVertical: 8 },
   sendButton: {
     width: 36,
     height: 36,

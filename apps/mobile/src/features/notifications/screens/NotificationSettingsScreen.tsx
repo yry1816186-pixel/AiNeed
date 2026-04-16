@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -113,7 +113,7 @@ export const NotificationSettingsScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Notification Settings</Text>
         <View style={styles.placeholder} />
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   timeValue: {
     fontSize: 24,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   timeSeparator: {
     fontSize: 16,

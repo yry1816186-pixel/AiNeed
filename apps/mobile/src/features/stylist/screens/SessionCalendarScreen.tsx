@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -101,11 +101,11 @@ export const SessionCalendarScreen: React.FC = () => {
       {/* Month navigation */}
       <View style={styles.monthNav}>
         <Pressable style={styles.navButton} onPress={handlePrevMonth}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
         </Pressable>
         <Text style={styles.monthLabel}>{`${year} / ${String(month).padStart(2, "0")}`}</Text>
         <Pressable style={styles.navButton} onPress={handleNextMonth}>
-          <Ionicons name="chevron-forward" size={24} color={theme.colors.text} />
+          <Ionicons name="chevron-forward" size={24} color={theme.colors.textPrimary} />
         </Pressable>
       </View>
 
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
   },
   sessionCardInfo: { flex: 1 },
-  sessionGoal: { fontSize: 14, fontWeight: "500", color: theme.colors.text, marginBottom: 2 },
+  sessionGoal: { fontSize: 14, fontWeight: "500", color: theme.colors.textPrimary, marginBottom: 2 },
   sessionTime: { fontSize: 12, color: theme.colors.textTertiary },
   planBadge: {
     paddingHorizontal: 10,

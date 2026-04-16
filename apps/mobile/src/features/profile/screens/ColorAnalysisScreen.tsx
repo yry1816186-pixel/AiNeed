@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback, useState, useRef } from "react";
+import React, { useEffect, useCallback, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -145,7 +145,7 @@ export const ColorAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -186,7 +186,7 @@ export const ColorAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -213,7 +213,7 @@ export const ColorAnalysisScreen: React.FC = () => {
                 accessibilityLabel="返回"
                 accessibilityRole="button"
               >
-                <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+                <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
               </TouchableOpacity>
             }
           />
@@ -247,7 +247,7 @@ export const ColorAnalysisScreen: React.FC = () => {
               accessibilityLabel="返回"
               accessibilityRole="button"
             >
-              <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+              <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
             </TouchableOpacity>
           }
         />
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
   },
   paletteTitle: {
     ...Typography.styles.h4,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[4],
   },
   paletteGrid: {
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: Spacing[4],
     marginBottom: Spacing[2],
   },

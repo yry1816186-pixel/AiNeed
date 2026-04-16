@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -213,7 +213,7 @@ export const LoginScreen: React.FC = () => {
             disabled={isLoading || wechatLoading}
             accessibilityLabel={t.common.back}
           >
-            <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+            <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={styles.content}>

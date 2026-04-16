@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -176,7 +176,7 @@ export const CustomizationScreen: React.FC = () => {
         onPress={() => navigation.goBack()}
         activeOpacity={0.7}
       >
-        <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+        <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>定制服务</Text>
       <View style={styles.headerSpacer} />
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   headerSpacer: {
     width: 40,
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textTertiary,
   },
   tabTextActive: {
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     fontWeight: "600",
   },
   content: {
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: Spacing[5],
     marginBottom: Spacing[3],
   },
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
   serviceLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   serviceLabelSelected: {
@@ -556,7 +556,7 @@ const styles = StyleSheet.create({
   },
   textArea: {
     fontSize: 15,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     lineHeight: 22,
     minHeight: 100,
     textAlignVertical: "top",
@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 15,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     padding: 0,
   },
   submitButton: {
@@ -627,7 +627,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: Spacing[4],
   },
   emptySubtitle: {
@@ -690,7 +690,7 @@ const styles = StyleSheet.create({
   },
   requestDescription: {
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     lineHeight: 22,
     marginBottom: Spacing[3],
   },
@@ -737,7 +737,7 @@ const styles = StyleSheet.create({
   quickActionTitle: {
     fontSize: 15,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   quickActionDesc: {

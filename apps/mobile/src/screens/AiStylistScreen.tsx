@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -208,7 +208,7 @@ export const AiStylistScreen: React.FC = () => {
             navigation.navigate("MainTabs", { screen: "Stylist", params: { screen: "SessionCalendar" } });
           }}
         >
-          <Ionicons name="calendar-outline" size={22} color={theme.colors.text} />
+          <Ionicons name="calendar-outline" size={22} color={theme.colors.textPrimary} />
         </Pressable>
       </View>
 
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
     paddingHorizontal: 32,
   },
-  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text, marginTop: 16 },
+  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
   emptySubtitle: {
     fontSize: 14,
     color: theme.colors.textSecondary,
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 12,
   },
-  input: { flex: 1, fontSize: 14, color: theme.colors.text, maxHeight: 80, paddingVertical: 8 },
+  input: { flex: 1, fontSize: 14, color: theme.colors.textPrimary, maxHeight: 80, paddingVertical: 8 },
   sendButton: {
     width: 36,
     height: 36,

@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useState, memo } from "react";
+import React, { useCallback, useState, memo } from "react";
 import {
   View,
   Text,
@@ -158,7 +158,7 @@ export const FavoritesScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t.profile.myFavorites}</Text>
         <View style={styles.backBtn} />

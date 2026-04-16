@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -139,7 +139,7 @@ export const CustomizationEditorScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>
           {store.selectedTemplate ? store.selectedTemplate.name : "选择模板"}
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 17,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   topBarActions: {
     flexDirection: "row",
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   topBarActionText: {
     fontSize: 14,
     fontWeight: "500",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   previewButton: {
     backgroundColor: theme.colors.primary,
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     paddingHorizontal: Spacing[4],
     marginBottom: Spacing[3],
   },
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[4],
   },
   textInput: {
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[3],
     fontSize: 16,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
   },
   textSettings: {
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     height: 36,
     textAlign: "center",
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   colorButton: {
     flexDirection: "row",

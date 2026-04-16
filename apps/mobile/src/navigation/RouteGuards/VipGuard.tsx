@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useAuthStore } from "../../stores/index";
 import { theme } from '../design-system/theme';
@@ -68,7 +68,7 @@ const s = StyleSheet.create({
   title: {
     fontSize: 17,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: 6,
   },
   subtitle: {

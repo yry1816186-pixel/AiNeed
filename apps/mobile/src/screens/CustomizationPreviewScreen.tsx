@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -153,7 +153,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>定制预览</Text>
         <View style={{ width: 40 }} />
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 17,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   scrollContent: {
     paddingHorizontal: Spacing[4],
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
   },
   packagingCard: {
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   },
   packagingText: {
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   sideOptions: {
     flexDirection: "row",
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   },
   quoteValue: {
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   quoteTotal: {
     borderTopWidth: 1,
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   quoteTotalLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   quoteTotalValue: {
     fontSize: 16,

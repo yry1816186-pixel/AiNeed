@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -183,7 +183,7 @@ export const ProfileEditScreen: React.FC = () => {
               accessibilityLabel="返回"
               accessibilityRole="button"
             >
-              <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+              <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
             </TouchableOpacity>
           }
           rightAction={
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[4],
   },
   formGroup: {
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: 16,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     padding: 0,
   },
   unitText: {

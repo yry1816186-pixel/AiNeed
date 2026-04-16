@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { theme, Spacing } from '../design-system/theme';
 
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: "500",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginBottom: Spacing[2],
   },
   row: {

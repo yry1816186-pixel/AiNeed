@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -134,7 +134,7 @@ export const BloggerDashboardScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>数据面板</Text>
         <View style={styles.headerSpacer} />
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     padding: 14,
     marginTop: 16,
   },
-  sectionTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text, marginBottom: 10 },
+  sectionTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 10 },
   enhancedRow: { flexDirection: "row", gap: 10 },
   enhancedCard: {
     flex: 1,
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 16,
   },
-  manageBtnText: { flex: 1, fontSize: 15, color: theme.colors.text, fontWeight: "500" },
+  manageBtnText: { flex: 1, fontSize: 15, color: theme.colors.textPrimary, fontWeight: "500" },
   upgradeSection: {
     alignItems: "center",
     backgroundColor: theme.colors.surface,
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   upgradeTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: 12,
   },
   upgradeDesc: {

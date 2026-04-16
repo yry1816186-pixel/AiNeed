@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../design-system/theme';
@@ -36,7 +36,7 @@ function CommunityHeaderInner({
       <View style={s.header}>
         <Text style={s.headerTitle}>社区</Text>
         <TouchableOpacity style={s.searchBtn} accessibilityLabel="搜索" accessibilityRole="button">
-          <Ionicons name="search-outline" size={22} color={theme.colors.text} />
+          <Ionicons name="search-outline" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
       </View>
 

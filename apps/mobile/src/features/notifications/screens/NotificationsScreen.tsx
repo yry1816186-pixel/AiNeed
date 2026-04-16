@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -216,7 +216,7 @@ export const NotificationsScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           accessibilityLabel="Go back"
         >
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
           {t.notifications.title}{unreadCount > 0 ? ` (${unreadCount})` : ""}
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: "600",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: 16,
   },
   emptySubtext: {
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   notificationTitleUnread: {
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     fontWeight: "600",
   },
   notificationTime: {

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -277,11 +277,11 @@ export const PostDetailScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>帖子详情</Text>
         <TouchableOpacity onPress={handleReport} style={styles.moreBtn}>
-          <Ionicons name="ellipsis-horizontal" size={22} color={theme.colors.text} />
+          <Ionicons name="ellipsis-horizontal" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -532,14 +532,14 @@ const styles = StyleSheet.create({
   postTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     paddingHorizontal: 16,
     paddingTop: 12,
     backgroundColor: theme.colors.surface,
   },
   postContent: {
     fontSize: 15,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     lineHeight: 22,
     paddingHorizontal: 16,
     paddingTop: 8,
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
-  commentsTitle: { fontSize: 15, fontWeight: "600", color: theme.colors.text, marginBottom: 12 },
+  commentsTitle: { fontSize: 15, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
   noComments: {
     fontSize: 14,
     color: theme.colors.textTertiary,
@@ -631,7 +631,7 @@ const styles = StyleSheet.create({
   commentAvatarText: { fontSize: 12, fontWeight: "600", color: theme.colors.textSecondary },
   commentBody: { flex: 1 },
   commentAuthor: { fontSize: 13, fontWeight: "600", color: theme.colors.text },
-  commentContent: { fontSize: 14, color: theme.colors.text, lineHeight: 20, marginTop: 4 },
+  commentContent: { fontSize: 14, color: theme.colors.textPrimary, lineHeight: 20, marginTop: 4 },
   commentMeta: {
     flexDirection: "row",
     alignItems: "center",
@@ -668,7 +668,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     paddingHorizontal: 14,
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   sendBtn: {
     width: 36,

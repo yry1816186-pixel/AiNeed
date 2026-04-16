@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -256,7 +256,7 @@ export const CheckoutScreen: React.FC = () => {
               }}
               accessibilityLabel="返回"
             >
-              <Ionicons name="arrow-back" size={22} color={theme.colors.text} />
+              <Ionicons name="arrow-back" size={22} color={theme.colors.textPrimary} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>{t.checkout.title}</Text>
             <View style={styles.headerPlaceholder} />
@@ -735,7 +735,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 16,
   },
-  cardTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text, marginBottom: 12 },
+  cardTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -818,7 +818,7 @@ const styles = StyleSheet.create({
   areaText: {
     flex: 1,
     fontSize: 14,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   areaPlaceholder: {
     color: theme.colors.textTertiary,
@@ -830,7 +830,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 14,
     backgroundColor: theme.colors.background,
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
   },
   multiline: { height: 84, textAlignVertical: "top", paddingTop: 12 },
   addressCard: {

@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -152,7 +152,7 @@ export const InfluencerProfileScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Profile</Text>
           <View style={s.iconBtn} />
@@ -169,7 +169,7 @@ export const InfluencerProfileScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Profile</Text>
           <View style={s.iconBtn} />
@@ -189,11 +189,11 @@ export const InfluencerProfileScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>{profile?.nickname ?? "Profile"}</Text>
         <TouchableOpacity style={s.iconBtn}>
-          <Ionicons name="ellipsis-horizontal" size={22} color={theme.colors.text} />
+          <Ionicons name="ellipsis-horizontal" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -352,7 +352,7 @@ const s = StyleSheet.create({
   statItem: { alignItems: "center" },
   statNumber: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
   statLabel: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 },
-  nickname: { fontSize: 18, fontWeight: "700", color: theme.colors.text, marginTop: 14 },
+  nickname: { fontSize: 18, fontWeight: "700", color: theme.colors.textPrimary, marginTop: 14 },
   badge: {
     flexDirection: "row",
     alignItems: "center",
@@ -405,7 +405,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   postInfo: { padding: 8 },
-  postTitle: { fontSize: 12, fontWeight: "500", color: theme.colors.text, lineHeight: 16 },
+  postTitle: { fontSize: 12, fontWeight: "500", color: theme.colors.textPrimary, lineHeight: 16 },
   postStats: { flexDirection: "row", alignItems: "center", gap: 3, marginTop: 4 },
   postStatText: { fontSize: 11, color: theme.colors.textTertiary },
   emptyPosts: { alignItems: "center", justifyContent: "center", paddingVertical: 60 },

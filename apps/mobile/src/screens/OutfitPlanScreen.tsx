@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -53,7 +53,7 @@ export const OutfitPlanScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Outfit Plan</Text>
           <View style={s.backBtn} />
@@ -71,7 +71,7 @@ export const OutfitPlanScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Outfit Plan</Text>
           <View style={s.backBtn} />
@@ -95,7 +95,7 @@ export const OutfitPlanScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Outfit Plan</Text>
           <View style={s.backBtn} />
@@ -115,11 +115,11 @@ export const OutfitPlanScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>Outfit Plan</Text>
         <TouchableOpacity style={s.backBtn}>
-          <Ionicons name="share-outline" size={22} color={theme.colors.text} />
+          <Ionicons name="share-outline" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -229,7 +229,7 @@ const s = StyleSheet.create({
     borderRadius: 20,
   },
   retryBtnText: { color: theme.colors.surface, fontSize: 14, fontWeight: "600" },
-  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text, marginTop: 16 },
+  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
   emptySubtitle: {
     fontSize: 14,
     color: theme.colors.textTertiary,
@@ -249,7 +249,7 @@ const s = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
-  summaryTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text, lineHeight: 24 },
+  summaryTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, lineHeight: 24 },
   reasonsContainer: { marginTop: 12, gap: 6 },
   reasonChip: { flexDirection: "row", alignItems: "center", gap: 6 },
   reasonText: { fontSize: 13, color: theme.colors.textSecondary, flex: 1 },
@@ -299,7 +299,7 @@ const s = StyleSheet.create({
   itemName: {
     fontSize: 12,
     fontWeight: "500",
-    color: theme.colors.text,
+    color: theme.colors.textPrimary,
     marginTop: 6,
     width: "100%",
   },
