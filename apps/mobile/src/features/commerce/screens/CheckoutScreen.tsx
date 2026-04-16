@@ -562,7 +562,7 @@ export const CheckoutScreen: React.FC = () => {
                   {couponStore.selectedCoupon && (
                     <View style={styles.spaceRow}>
                       <Text style={styles.muted}>优惠</Text>
-                      <Text style={[styles.value, { color: "#52C41A" /* custom color */ }]}>
+                      <Text style={[styles.value, { color: "DesignTokens.colors.semantic.success" /* custom color */ }]}>
                         -{"\u00A5"}
                         {couponStore.selectedCoupon.coupon.type === "PERCENTAGE"
                           ? ((itemsTotal * couponStore.selectedCoupon.coupon.value) / 100).toFixed(
@@ -845,7 +845,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     backgroundColor: theme.colors.surface,
   },
-  addressCardActive: { borderColor: theme.colors.primary, backgroundColor: "#F6F8FF" }, // custom color
+  addressCardActive: { borderColor: theme.colors.primary, backgroundColor: "DesignTokens.colors.backgrounds.tertiary" }, // custom color
   paymentItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -878,14 +878,14 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: "center",
-    backgroundColor: "#1677FF", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.info", // custom color
   },
   wechatButton: {
     flex: 1,
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: "center",
-    backgroundColor: "#07C160", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.success", // custom color
   },
   paymentButtonText: {
     fontSize: DesignTokens.typography.sizes.base,

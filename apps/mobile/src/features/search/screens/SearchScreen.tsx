@@ -34,8 +34,8 @@ import {
   requestCameraPermissionsAsync,
   requestMediaLibraryPermissionsAsync,
 } from "@/src/polyfills/expo-image-picker";
-import {
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import {
   FilterPanel,
   ActiveFilterPills,
   EmptySearchState,

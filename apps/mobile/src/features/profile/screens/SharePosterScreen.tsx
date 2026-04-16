@@ -13,7 +13,7 @@ import type { RootStackParamList } from "../types/navigation";
 
 type SharePosterNavProp = NavigationProp<RootStackParamList>;
 
-const PLACEHOLDER_PALETTE = [DesignTokens.colors.brand.terracotta, DesignTokens.colors.semantic.warning, DesignTokens.colors.brand.camel, DesignTokens.colors.brand.sage, "#E8B451"]; // custom color
+const PLACEHOLDER_PALETTE = [DesignTokens.colors.brand.terracotta, DesignTokens.colors.semantic.warning, DesignTokens.colors.brand.camel, DesignTokens.colors.brand.sage, "DesignTokens.colors.brand.camel"]; // custom color
 
 export const SharePosterScreen: React.FC = () => {
   const navigation = useNavigation<SharePosterNavProp>();

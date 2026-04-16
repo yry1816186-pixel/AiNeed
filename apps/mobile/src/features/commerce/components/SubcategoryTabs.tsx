@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: DesignTokens.colors.backgrounds.tertiary,
   },
-  chipSelected: { backgroundColor: "#FF4D4F" },
+  chipSelected: { backgroundColor: "DesignTokens.colors.semantic.error" },
   chipText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.secondary },
   chipTextSelected: { color: DesignTokens.colors.backgrounds.primary, fontWeight: "500" },
 });

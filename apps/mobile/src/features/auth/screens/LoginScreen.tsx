@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textTertiary,
   },
   wechatButton: {
-    backgroundColor: "#07C160", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.success", // custom color
     borderRadius: theme.BorderRadius.md,
     paddingVertical: 16,
     alignItems: "center",

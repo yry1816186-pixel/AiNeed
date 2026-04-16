@@ -15,10 +15,10 @@ import Animated, {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors } from '../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import { SpringConfigs, Duration, LoadingAnimations } from "../../theme/tokens/animations";
-import { useReducedMotion } from "../../hooks/useReducedMotion";
-import { useStaggeredAnimation } from "../../hooks/useAdvancedAnimations";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { SpringConfigs, Duration, LoadingAnimations } from '../../../design-system/theme/tokens/animations';
+import { useReducedMotion } from '../../../hooks/useReducedMotion';
+import { useStaggeredAnimation } from '../../../hooks/useAdvancedAnimations';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

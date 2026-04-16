@@ -1,6 +1,6 @@
 ﻿import apiClient from "./client";
-import type { ApiResponse, PaginatedResponse } from "../../types/api";
-import type { FormDataValue } from "../../types";
+import type { ApiResponse, PaginatedResponse } from '../../../types/api';
+import type { FormDataValue } from '../../../types';
 import type {
   CustomizationTemplate,
   CustomizationDesign,
@@ -15,7 +15,7 @@ import type {
   CreateCustomizationDto,
   UpdateCustomizationDto,
   CustomizationStatus,
-} from "../../types/customization";
+} from '../types/customization';
 
 export const customizationApi = {
   // ==================== Templates ====================

@@ -1,4 +1,4 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 import {
   aiStylistApi,
   type AiStylistSessionResponse,
@@ -253,8 +253,9 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
           isNewUser: (data.isNewUser as boolean) ?? false,
         });
       }
-    } catch {
+    } catch (error) {
       // silent fail
+      console.error('AI Stylist operation failed:', error);
     }
   },
 

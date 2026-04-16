@@ -1,6 +1,6 @@
 import apiClient from "./client";
-import { ApiResponse, PaginatedResponse, ClothingAnalysisResult } from "../../types";
-import { compressImage } from "../../utils/imageCompressor";
+import { ApiResponse, PaginatedResponse, ClothingAnalysisResult } from '../../../types';
+import { compressImage } from '../../../utils/imageCompressor';
 import {
   ClothingItem,
   ClothingFilter,
@@ -10,7 +10,7 @@ import {
   ClothingStyle,
   Occasion,
   Season,
-} from "../../types/clothing";
+} from '../types/clothing';
 
 interface BackendBrand {
   id?: string;

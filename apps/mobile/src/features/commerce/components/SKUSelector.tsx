@@ -44,8 +44,9 @@ export const SKUSelector: React.FC<SKUSelectorProps> = ({
   const handleSubscribeStock = async (targetSize: string) => {
     try {
       await stockNotificationApi.subscribe(itemId, color, targetSize);
-    } catch {
+    } catch (error) {
       // silent fail for now
+      console.error('SKU selection failed:', error);
     }
   };
 
@@ -186,9 +187,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  colorSwatchSelected: { borderColor: "#FF4D4F", borderWidth: 2 }, // custom color
+  colorSwatchSelected: { borderColor: "DesignTokens.colors.semantic.error", borderWidth: 2 }, // custom color
   colorText: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.text.secondary },
-  colorTextSelected: { color: "#FF4D4F", fontWeight: "600" }, // custom color
+  colorTextSelected: { color: "DesignTokens.colors.semantic.error", fontWeight: "600" }, // custom color
   sizeRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   sizeWrapper: { alignItems: "center", marginBottom: 4 },
   sizeButton: {
@@ -200,13 +201,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  sizeButtonSelected: { borderColor: "#FF4D4F", backgroundColor: "#FFF5F5" }, // custom color
+  sizeButtonSelected: { borderColor: "DesignTokens.colors.semantic.error", backgroundColor: "#FFF5F5" }, // custom color
   sizeButtonDisabled: { backgroundColor: DesignTokens.colors.neutral[100], borderColor: DesignTokens.colors.neutral[100] },
   sizeText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary },
-  sizeTextSelected: { color: "#FF4D4F", fontWeight: "600" }, // custom color
+  sizeTextSelected: { color: "DesignTokens.colors.semantic.error", fontWeight: "600" }, // custom color
   sizeTextDisabled: { color: DesignTokens.colors.neutral[300] },
-  recDot: { fontSize: 8, color: "#52C41A", fontWeight: "600" }, // custom color
-  notifyText: { fontSize: DesignTokens.typography.sizes.xs, color: "#FF4D4F", marginTop: 2 }, // custom color
+  recDot: { fontSize: 8, color: "DesignTokens.colors.semantic.success", fontWeight: "600" }, // custom color
+  notifyText: { fontSize: DesignTokens.typography.sizes.xs, color: "DesignTokens.colors.semantic.error", marginTop: 2 }, // custom color
   qtyRow: { flexDirection: "row", alignItems: "center", gap: 12 },
   qtyButton: {
     width: 44,
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
   },
   stockText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary },
   confirmButton: {
-    backgroundColor: "#FF4D4F", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.error", // custom color
     paddingVertical: 14,
     alignItems: "center",
   },

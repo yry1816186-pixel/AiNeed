@@ -20,12 +20,12 @@ import {
   interpolate,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import {
   AiStylistResolution,
   AiStylistOutfitPlan,
   AiStylistOutfitItem,
-} from "../../services/api/ai-stylist.api";
+} from '../../../services/api/ai-stylist.api';
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);

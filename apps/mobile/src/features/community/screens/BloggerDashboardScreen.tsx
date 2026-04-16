@@ -313,8 +313,8 @@ const styles = StyleSheet.create({
   metricValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.text },
   metricLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary, marginTop: 4 },
   metricChange: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", marginTop: 4 },
-  metricUp: { color: "#27AE60" },
-  metricDown: { color: "#E74C3C" },
+  metricUp: { color: "DesignTokens.colors.semantic.success" },
+  metricDown: { color: "DesignTokens.colors.semantic.error" },
   loader: { paddingVertical: 24 },
   noData: {
     fontSize: DesignTokens.typography.sizes.base,

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { theme, Colors, Spacing, BorderRadius } from '../../../design-system/theme';
-import type { Template } from "../../stores/customizationEditorStore";
+import type { Template } from '../stores/customizationEditorStore';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface TemplateSelectorProps {

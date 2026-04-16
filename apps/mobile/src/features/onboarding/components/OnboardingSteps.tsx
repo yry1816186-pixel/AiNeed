@@ -96,37 +96,37 @@ export const COLOR_PALETTES: ColorPaletteOption[] = [
   {
     id: "warm",
     label: "暖色调",
-    colors: ["#C67B5C", "#D9A441", "#E8B451", DesignTokens.colors.brand.camel],
+    colors: ["DesignTokens.colors.brand.terracotta", "DesignTokens.colors.semantic.warning", "DesignTokens.colors.brand.camel", DesignTokens.colors.brand.camel],
     description: "温暖阳光，亲切自然",
   },
   {
     id: "cool",
     label: "冷色调",
-    colors: ["#7B8FA2", "#5F6F7F", "#96A6B5", "#8B9A7D"],
+    colors: ["DesignTokens.colors.brand.slate", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.text.tertiary", "DesignTokens.colors.brand.sage"],
     description: "沉静理智，高级质感",
   },
   {
     id: "neutral",
     label: "中性色",
-    colors: [DesignTokens.colors.text.primary, "#52524D", "#D4D4D0", "#FAFAF8"],
+    colors: [DesignTokens.colors.text.primary, "DesignTokens.colors.text.secondary", "DesignTokens.colors.neutral[300]", "DesignTokens.colors.backgrounds.secondary"],
     description: "百搭经典，永不褪色",
   },
   {
     id: "earth",
     label: "大地色",
-    colors: ["#8B9A7D", DesignTokens.colors.brand.camel, "#A86548", "#6E7A62"],
+    colors: ["DesignTokens.colors.brand.sage", DesignTokens.colors.brand.camel, "DesignTokens.colors.brand.terracottaDark", "#6E7A62"],
     description: "自然沉稳，低调内敛",
   },
   {
     id: "morandi",
     label: "莫兰迪色",
-    colors: ["#C9B8A6", "#A3B096", "#96A6B5", "#D4917A"],
+    colors: ["DesignTokens.colors.brand.camel", "DesignTokens.colors.brand.sage", "DesignTokens.colors.text.tertiary", "DesignTokens.colors.brand.terracottaLight"],
     description: "低饱和度，温柔高级",
   },
   {
     id: "vivid",
     label: "高饱和",
-    colors: ["#C44536", DesignTokens.colors.semantic.warning, DesignTokens.colors.semantic.success, "#0EA5E9"],
+    colors: ["DesignTokens.colors.semantic.error", DesignTokens.colors.semantic.warning, DesignTokens.colors.semantic.success, "DesignTokens.colors.semantic.info"],
     description: "鲜明醒目，大胆出众",
   },
 ];

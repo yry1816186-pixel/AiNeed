@@ -12,8 +12,8 @@ import Animated, {
   Easing,
   cancelAnimation,
 } from "react-native-reanimated";
-import { type RecommendedItem } from "../../services/api/tryon.api";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { type RecommendedItem } from '../../../services/api/tryon.api';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -32,9 +32,9 @@ const AnimatedView = Animated.createAnimatedComponent(View);
 const OCCASION_TAGS = ["约会", "通勤", "运动", "休闲"] as const;
 const OCCASION_GRADIENTS: Record<string, [string, string]> = {
   约会: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.terracottaLight],
-  通勤: [DesignTokens.colors.brand.slate, "#96A6B5"], // custom color
-  运动: [DesignTokens.colors.semantic.success, "#7BA896"], // custom color
-  休闲: [DesignTokens.colors.brand.camel, "#C9B8A6"], // custom color
+  通勤: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"], // custom color
+  运动: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage"], // custom color
+  休闲: [DesignTokens.colors.brand.camel, "DesignTokens.colors.brand.camel"], // custom color
 };
 
 // --- Category config ---
@@ -49,19 +49,19 @@ const CATEGORIES = [
     key: "bottoms",
     label: "下装",
     icon: "remove-outline" as const,
-    gradient: [DesignTokens.colors.brand.slate, "#96A6B5"] as [string, string], // custom color
+    gradient: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"] as [string, string], // custom color
   },
   {
     key: "shoes",
     label: "鞋靴",
     icon: "footsteps-outline" as const,
-    gradient: [DesignTokens.colors.brand.camel, "#C9B8A6"] as [string, string], // custom color
+    gradient: [DesignTokens.colors.brand.camel, "DesignTokens.colors.brand.camel"] as [string, string], // custom color
   },
   {
     key: "accessories",
     label: "配饰",
     icon: "watch-outline" as const,
-    gradient: [DesignTokens.colors.brand.sage, "#A3B096"] as [string, string], // custom color
+    gradient: [DesignTokens.colors.brand.sage, "DesignTokens.colors.brand.sage"] as [string, string], // custom color
   },
 ] as const;
 

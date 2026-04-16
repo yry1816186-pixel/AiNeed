@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
-import { communityApi } from "../../services/api/community.api";
+import { communityApi } from '../../../services/api/community.api';
 import { theme } from '../../../../design-system/theme';
 import { DesignTokens } from "../../../../design-system/theme";
 

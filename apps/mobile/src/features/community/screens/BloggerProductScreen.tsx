@@ -95,7 +95,7 @@ export const BloggerProductScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.successContainer}>
-          <Ionicons name="checkmark-circle" size={64} color="#27AE60" />
+          <Ionicons name="checkmark-circle" size={64} color="DesignTokens.colors.semantic.success" />
           <Text style={styles.successTitle}>购买成功</Text>
           <Text style={styles.successSubtitle}>{product.title}</Text>
           {product.type === "digital" && product.content && (
@@ -263,7 +263,7 @@ export const BloggerProductScreen: React.FC = () => {
               >
                 {selectedPayment === "alipay" && <View style={styles.paymentRadioInner} />}
               </View>
-              <Ionicons name="wallet-outline" size={20} color="#1677FF" />
+              <Ionicons name="wallet-outline" size={20} color="DesignTokens.colors.semantic.info" />
               <Text style={styles.paymentName}>支付宝</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -281,7 +281,7 @@ export const BloggerProductScreen: React.FC = () => {
               >
                 {selectedPayment === "wechat" && <View style={styles.paymentRadioInner} />}
               </View>
-              <Ionicons name="chatbubble-ellipses-outline" size={20} color="#07C160" />
+              <Ionicons name="chatbubble-ellipses-outline" size={20} color="DesignTokens.colors.semantic.success" />
               <Text style={styles.paymentName}>微信支付</Text>
             </TouchableOpacity>
 
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: "#F1C40F",
+    backgroundColor: "DesignTokens.colors.semantic.warning",
     alignItems: "center",
     justifyContent: "center",
   },

@@ -21,7 +21,7 @@ export const MatchBadge: React.FC<MatchBadgeProps> = ({ percentage, size = "defa
 
 const styles = StyleSheet.create({
   badge: {
-    backgroundColor: "#C67B5C",
+    backgroundColor: "DesignTokens.colors.brand.terracotta",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 12,

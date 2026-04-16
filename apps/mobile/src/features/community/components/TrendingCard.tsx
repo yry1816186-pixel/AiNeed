@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { communityApi } from "../../services/api/community.api";
+import { communityApi } from '../../../services/api/community.api';
 import { DesignTokens } from "../../../design-system/theme";
 
 interface TrendingTag {
@@ -22,8 +22,8 @@ interface TrendingCardProps {
 }
 
 const DIRECTION_CONFIG = {
-  up: { icon: "arrow-up", color: "#27AE60" },
-  down: { icon: "arrow-down", color: "#E74C3C" },
+  up: { icon: "arrow-up", color: "DesignTokens.colors.semantic.success" },
+  down: { icon: "arrow-down", color: "DesignTokens.colors.semantic.error" },
   stable: { icon: "arrow-forward", color: DesignTokens.colors.text.tertiary },
 } as const;
 
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "#F0EDFF",
+    backgroundColor: "DesignTokens.colors.semantic.infoLight",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,

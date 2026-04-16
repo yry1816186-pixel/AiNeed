@@ -34,7 +34,7 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { Colors } from '../../../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -594,7 +594,7 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
   }));
 
   const typeConfig = {
-    tip: { icon: "bulb", color: DesignTokens.colors.semantic.warning, bgColor: "#FFFBEB" }, // custom color
+    tip: { icon: "bulb", color: DesignTokens.colors.semantic.warning, bgColor: "DesignTokens.colors.semantic.warningLight" }, // custom color
     observation: { icon: "eye", color: DesignTokens.colors.semantic.info, bgColor: "#EFF6FF" }, // custom color
     suggestion: { icon: "sparkles", color: DesignTokens.colors.brand.terracottaDark, bgColor: "#F5F3FF" }, // custom color
     warning: { icon: "alert", color: DesignTokens.colors.semantic.error, bgColor: "#FEF2F2" }, // custom color

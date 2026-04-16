@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
-  chipSelected: { backgroundColor: "#EEF2FF", borderWidth: 1, borderColor: theme.colors.primary }, // custom color
+  chipSelected: { backgroundColor: "DesignTokens.colors.semantic.infoLight", borderWidth: 1, borderColor: theme.colors.primary }, // custom color
   chipText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
   chipTextSelected: { color: theme.colors.primary, fontWeight: "500" },
   bottomSpacer: { height: 40 },

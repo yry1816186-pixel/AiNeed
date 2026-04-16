@@ -13,8 +13,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../../../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import { communityApi } from "../../services/api/community.api";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { communityApi } from '../../../services/api/community.api';
 
 type ImportSource = "community" | "ai_stylist" | "tryon";
 
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 14,
-    backgroundColor: "#F0EDFF", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.infoLight", // custom color
   },
   sourceChipActive: { backgroundColor: DesignTokens.colors.brand.slate },
   sourceChipText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.brand.slate, fontWeight: "500" },
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
     marginRight: 6,
   },
-  collectionChipActive: { backgroundColor: "#F0EDFF" }, // custom color
+  collectionChipActive: { backgroundColor: "DesignTokens.colors.semantic.infoLight" }, // custom color
   collectionChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   collectionChipTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "600" },
   loader: { paddingVertical: 24 },

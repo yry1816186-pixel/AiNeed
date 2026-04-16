@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Modal, Pressable, ScrollView } from "react-native";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import type { PresetQuestion } from "../../stores/aiStylistStore";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { PresetQuestion } from '../stores/aiStylistStore';
 
 interface PresetQuestionsModalProps {
   visible: boolean;

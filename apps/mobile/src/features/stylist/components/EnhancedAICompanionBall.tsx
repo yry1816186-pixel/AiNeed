@@ -18,7 +18,7 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -58,27 +58,27 @@ const STATE_CONFIG = {
     animation: "breathe",
   },
   listening: {
-    gradient: [DesignTokens.colors.brand.slate, "#96A6B5"] as [string, string],
-    gradientFlow: [DesignTokens.colors.brand.slate, "#96A6B5", "#B8C5D1", DesignTokens.colors.brand.slate] as [string, string, string, string], // custom color
+    gradient: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"] as [string, string],
+    gradientFlow: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary", "#B8C5D1", DesignTokens.colors.brand.slate] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.08)"] as [string, string],
     glowColor: DesignTokens.colors.brand.slate,
-    particleColor: "#96A6B5", // custom color
+    particleColor: "DesignTokens.colors.text.tertiary", // custom color
     animation: "pulse",
   },
   thinking: {
-    gradient: [DesignTokens.colors.semantic.warning, "#E8B86D"] as [string, string],
-    gradientFlow: [DesignTokens.colors.semantic.warning, "#E8B86D", "#F5D89A", DesignTokens.colors.semantic.warning] as [string, string, string, string], // custom color
+    gradient: [DesignTokens.colors.semantic.warning, "DesignTokens.colors.brand.camel"] as [string, string],
+    gradientFlow: [DesignTokens.colors.semantic.warning, "DesignTokens.colors.brand.camel", "#F5D89A", DesignTokens.colors.semantic.warning] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.4)", "rgba(255,255,255,0.1)"] as [string, string],
     glowColor: DesignTokens.colors.semantic.warning,
-    particleColor: "#E8B86D", // custom color
+    particleColor: "DesignTokens.colors.brand.camel", // custom color
     animation: "pulse",
   },
   responding: {
-    gradient: [DesignTokens.colors.semantic.success, "#7BA896"] as [string, string],
-    gradientFlow: [DesignTokens.colors.semantic.success, "#7BA896", "#9DC4B5", DesignTokens.colors.semantic.success] as [string, string, string, string], // custom color
+    gradient: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage"] as [string, string],
+    gradientFlow: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage", "#9DC4B5", DesignTokens.colors.semantic.success] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.32)", "rgba(255,255,255,0.06)"] as [string, string],
     glowColor: DesignTokens.colors.semantic.success,
-    particleColor: "#7BA896", // custom color
+    particleColor: "DesignTokens.colors.brand.sage", // custom color
     animation: "glow",
   },
   collapsed: {

@@ -1,5 +1,5 @@
 import apiClient from "./client";
-import type { ApiResponse } from "../../types/api";
+import type { ApiResponse } from '../../../types/api';
 
 export interface BodyType {
   type: "rectangle" | "triangle" | "inverted_triangle" | "hourglass" | "oval";

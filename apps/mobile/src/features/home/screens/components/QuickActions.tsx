@@ -47,7 +47,7 @@ const QuickActions = memo(
         title: "虚拟试衣",
         description: "一键试穿效果",
         icon: "shirt-outline",
-        gradient: ["#6EC1E4", "#5BCEA6"], // custom color
+        gradient: ["DesignTokens.colors.brand.slate", "DesignTokens.colors.brand.sage"], // custom color
         onPress: onVirtualTryOn,
         locked: false,
       },
@@ -56,7 +56,7 @@ const QuickActions = memo(
         title: "购物车",
         description: "查看购物车",
         icon: "cart-outline",
-        gradient: ["#E8A87C", DesignTokens.colors.brand.terracottaLight], // custom color
+        gradient: ["DesignTokens.colors.brand.camel", DesignTokens.colors.brand.terracottaLight], // custom color
         onPress: onCart,
         locked: false,
       },
@@ -65,7 +65,7 @@ const QuickActions = memo(
         title: "我的衣橱",
         description: "管理你的衣橱",
         icon: "grid-outline",
-        gradient: [DesignTokens.colors.brand.sage, "#A3B096"], // custom color
+        gradient: [DesignTokens.colors.brand.sage, "DesignTokens.colors.brand.sage"], // custom color
         onPress: onWardrobe,
         locked: false,
       },
@@ -74,7 +74,7 @@ const QuickActions = memo(
         title: "风格报告",
         description: "专属风格分析",
         icon: "document-text-outline",
-        gradient: [DesignTokens.colors.brand.slate, "#96A6B5"], // custom color
+        gradient: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"], // custom color
         onPress: onStyleReport,
         locked: !isStyleReportUnlocked,
       },

@@ -12,15 +12,15 @@ import {
   Alert,
 } from "react-native";
 import { useRoute, useNavigation, RouteProp, NavigationProp, ParamListBase } from "@react-navigation/native";
-import { useChatStore } from "../../stores/chatStore";
-import { useConsultantStore } from "../../stores/consultantStore";
-import type { ChatMessage, ChatTypingPayload } from "../../types/chat";
+import { useChatStore } from '../stores/chatStore';
+import { useConsultantStore } from '../stores/consultantStore';
+import type { ChatMessage, ChatTypingPayload } from '../types/chat';
 import { ChatBubble } from "../../design-system/ui/ChatBubble";
-import { TypingIndicator } from "../../components/consultant/TypingIndicator";
-import { ProposalCard } from "../../components/consultant/ProposalCard";
-import wsService from "../../services/websocket";
+import { TypingIndicator } from '../../../components/consultant/TypingIndicator';
+import { ProposalCard } from '../../../components/consultant/ProposalCard';
+import wsService from '../../../services/websocket';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 export const ChatScreen: React.FC = () => {
   const insets = useSafeAreaInsets();

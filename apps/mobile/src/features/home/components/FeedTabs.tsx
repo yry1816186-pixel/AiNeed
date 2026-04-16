@@ -8,8 +8,8 @@ import {
   type LayoutChangeEvent,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import type { FeedCategory } from "../../services/api/recommendation-feed.api";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { FeedCategory } from '../../../services/api/recommendation-feed.api';
 
 interface FeedTab {
   key: FeedCategory;

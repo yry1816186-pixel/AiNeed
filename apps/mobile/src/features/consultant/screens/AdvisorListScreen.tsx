@@ -10,10 +10,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useConsultantStore } from "../../stores/consultantStore";
-import { ConsultantCard } from "../../components/consultant/ConsultantCard";
-import { ServiceTypeChip } from "../../components/consultant/ServiceTypeChip";
-import type { ServiceType } from "../../types/consultant";
+import { useConsultantStore } from '../stores/consultantStore';
+import { ConsultantCard } from '../../../components/consultant/ConsultantCard';
+import { ServiceTypeChip } from '../../../components/consultant/ServiceTypeChip';
+import type { ServiceType } from '../types/consultant';
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamListBase } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -86,7 +86,7 @@ export const AdvisorListScreen: React.FC = () => {
   if (isLoading && displayData.length === 0) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#C67B5C" />
+        <ActivityIndicator size="large" color="DesignTokens.colors.brand.terracotta" />
         <Text style={styles.loadingText}>正在加载顾问列表...</Text>
       </View>
     );
@@ -184,7 +184,7 @@ export const AdvisorListScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FAFAF8" },
+  container: { flex: 1, backgroundColor: "DesignTokens.colors.backgrounds.secondary" },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -193,9 +193,9 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     backgroundColor: DesignTokens.colors.backgrounds.primary,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: "#1A1A1A" },
+  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: "DesignTokens.colors.text.primary" },
   matchButton: {
-    backgroundColor: "#C67B5C",
+    backgroundColor: "DesignTokens.colors.brand.terracotta",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   matchResultsBar: {
     flexDirection: "row",
@@ -214,9 +214,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "#FFF5F0",
+    backgroundColor: "DesignTokens.colors.neutral[50]",
   },
-  matchResultsText: { fontSize: DesignTokens.typography.sizes.sm, color: "#C67B5C" },
+  matchResultsText: { fontSize: DesignTokens.typography.sizes.sm, color: "DesignTokens.colors.brand.terracotta" },
   clearMatchText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary },
   listContent: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24 },
   emptyContainer: {
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: DesignTokens.colors.text.primary, marginBottom: 8 },
   emptySubtitle: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary, marginBottom: 24 },
   matchCta: {
-    backgroundColor: "#C67B5C",
+    backgroundColor: "DesignTokens.colors.brand.terracotta",
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 24,
@@ -251,11 +251,11 @@ const styles = StyleSheet.create({
     padding: 24,
     paddingBottom: 40,
   },
-  sheetTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "600", color: "#1A1A1A", marginBottom: 20 },
+  sheetTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "600", color: "DesignTokens.colors.text.primary", marginBottom: 20 },
   sheetLabel: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary, marginBottom: 8, marginTop: 12 },
   notesInput: {
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: "DesignTokens.colors.borders.default",
     borderRadius: 12,
     padding: 12,
     fontSize: DesignTokens.typography.sizes.base,
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
+    borderColor: "DesignTokens.colors.borders.default",
     alignItems: "center",
   },
   sheetCancelText: { fontSize: DesignTokens.typography.sizes.md, color: DesignTokens.colors.text.secondary },
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: "#C67B5C",
+    backgroundColor: "DesignTokens.colors.brand.terracotta",
     alignItems: "center",
   },
   sheetSubmitText: { fontSize: DesignTokens.typography.sizes.md, color: DesignTokens.colors.backgrounds.primary, fontWeight: "500" },

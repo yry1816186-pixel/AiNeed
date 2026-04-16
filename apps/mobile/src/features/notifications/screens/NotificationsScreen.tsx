@@ -42,11 +42,11 @@ const NOTIFICATION_ICONS: Record<string, { icon: string; color: string }> = {
 
 // Social notification type config for rendering
 const SOCIAL_NOTIFICATION_CONFIG: Record<string, { icon: string; color: string; label: string }> = {
-  like: { icon: "heart", color: "#FF4757", label: "赞了你的帖子" }, // custom color
+  like: { icon: "heart", color: "DesignTokens.colors.semantic.error", label: "赞了你的帖子" }, // custom color
   comment: { icon: "chatbubble", color: DesignTokens.colors.semantic.success, label: "评论了你的帖子" },
-  bookmark: { icon: "bookmark", color: "#F1C40F", label: "收藏了你的帖子" }, // custom color
+  bookmark: { icon: "bookmark", color: "DesignTokens.colors.semantic.warning", label: "收藏了你的帖子" }, // custom color
   new_follower: { icon: "person-add", color: DesignTokens.colors.brand.slate, label: "关注了你" },
-  reply_mention: { icon: "at", color: "#3498DB", label: "回复了你" }, // custom color
+  reply_mention: { icon: "at", color: "DesignTokens.colors.semantic.info", label: "回复了你" }, // custom color
 };
 
 function getNotificationCategory(type: string): string {

@@ -38,7 +38,7 @@ function getIssueIcon(type: PhotoQualityIssue["type"]): keyof typeof Ionicons.gl
 function getSeverityColor(severity: PhotoQualityIssue["severity"]): string {
   const colors: Record<PhotoQualityIssue["severity"], string> = {
     low: DesignTokens.colors.semantic.warning,
-    medium: "#FF9800",
+    medium: "DesignTokens.colors.semantic.warning",
     high: DesignTokens.colors.semantic.error,
   };
   return colors[severity];

@@ -605,7 +605,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: theme.colors.background,
   },
-  tagChipActive: { backgroundColor: "#F0EDFF" }, // custom color
+  tagChipActive: { backgroundColor: "DesignTokens.colors.semantic.infoLight" }, // custom color
   tagChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   tagChipTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "600" },
   categoryRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },

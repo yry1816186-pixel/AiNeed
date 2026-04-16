@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
-    borderColor: "#E8E8E8",
+    borderColor: "DesignTokens.colors.backgrounds.tertiary",
     width: 240,
   },
   imageRow: {
@@ -101,16 +101,16 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   typeBadge: {
-    backgroundColor: "#FFF5F0",
+    backgroundColor: "DesignTokens.colors.neutral[50]",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#F0D5C8",
+    borderColor: "DesignTokens.colors.brand.terracottaLight",
   },
   typeBadgeText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: "#C67B5C",
+    color: "DesignTokens.colors.brand.terracotta",
   },
   ratingText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "#C67B5C",
+    color: "DesignTokens.colors.brand.terracotta",
     fontWeight: "500",
   },
 });

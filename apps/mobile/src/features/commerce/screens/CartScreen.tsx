@@ -852,7 +852,7 @@ const styles = StyleSheet.create({
     minWidth: 110,
     alignItems: "center",
   },
-  checkoutButtonDisabled: { backgroundColor: "#C7D2FE" }, // custom color
+  checkoutButtonDisabled: { backgroundColor: "DesignTokens.colors.semantic.infoLight" }, // custom color
   checkoutButtonText: {
     color: theme.colors.surface,
     fontSize: DesignTokens.typography.sizes.md,
@@ -876,7 +876,7 @@ const styles = StyleSheet.create({
   },
   couponEntryText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: "#FF4D4F", // custom color
+    color: "DesignTokens.colors.semantic.error", // custom color
   },
   batchRow: {
     flexDirection: "row",

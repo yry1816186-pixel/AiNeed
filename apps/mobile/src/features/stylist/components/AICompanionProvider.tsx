@@ -16,11 +16,11 @@ import {
   AiStylistResolution,
   AiStylistProgress,
   AiStylistOutfitPlan,
-} from "../../services/api/ai-stylist.api";
+} from '../../../services/api/ai-stylist.api';
 import {
   useSpeechRecognition,
   SpeechRecognitionResult,
-} from "../../services/speech/speechRecognition";
+} from '../../../services/speech/speechRecognition';
 import { useAiStylistStore } from "../stores/aiStylistStore";
 
 const POSITION_STORAGE_KEY = "@xuno_companion_position";

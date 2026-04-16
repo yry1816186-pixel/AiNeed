@@ -43,8 +43,8 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: "待支付", color: theme.colors.warning },
   paid: { label: "待发货", color: theme.colors.primary },
   confirmed: { label: "已确认", color: theme.colors.primary },
-  processing: { label: "处理中", color: "#6366F1" },
-  shipped: { label: "配送中", color: "#2563EB" },
+  processing: { label: "处理中", color: "DesignTokens.colors.semantic.info" },
+  shipped: { label: "配送中", color: "DesignTokens.colors.semantic.info" },
   delivered: { label: "已签收", color: theme.colors.success },
   cancelled: { label: "已取消", color: theme.colors.error },
   refunded: { label: "已退款", color: theme.colors.textTertiary },
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F1F3F4",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   tabItemActive: {
-    backgroundColor: "#F6F8FF",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
     borderWidth: 1,
     borderColor: theme.colors.primary,
   },
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 14,
-    backgroundColor: "#F1F3F4",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   itemThumbnailFallback: {
     width: 54,
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F1F3F4",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   moreItemsBadge: {
     width: 54,
@@ -526,7 +526,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: "#F1F3F4",
+    borderTopColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   orderDate: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -590,7 +590,7 @@ const styles = StyleSheet.create({
   },
   dangerText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "#FF4D4F",
+    color: "DesignTokens.colors.semantic.error",
   },
 });
 

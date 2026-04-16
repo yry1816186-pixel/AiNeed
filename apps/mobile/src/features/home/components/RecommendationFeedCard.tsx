@@ -1,7 +1,7 @@
 import React, { memo, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable, type ViewStyle } from "react-native";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import type { FeedItem } from "../../services/api/recommendation-feed.api";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { FeedItem } from '../../../services/api/recommendation-feed.api';
 import { OptimizedImage } from "../common/OptimizedImage";
 
 interface RecommendationCardProps {

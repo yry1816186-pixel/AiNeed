@@ -7,11 +7,11 @@ import Animated, {
   withTiming,
   withDelay,
 } from "react-native-reanimated";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import { SpringConfigs, ListAnimations, Duration } from "../../theme/tokens/animations";
-import { useReducedMotion } from "../../hooks/useReducedMotion";
-import type { OutfitPlanDetail } from "../../stores/aiStylistStore";
-import type { AiStylistOutfitItem } from "../../services/api/ai-stylist.api";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { SpringConfigs, ListAnimations, Duration } from '../../../design-system/theme/tokens/animations';
+import { useReducedMotion } from '../../../hooks/useReducedMotion';
+import type { OutfitPlanDetail } from '../stores/aiStylistStore';
+import type { AiStylistOutfitItem } from '../../../services/api/ai-stylist.api';
 import { ReasoningCard } from "./ReasoningCard";
 import { WeatherBadge } from "./WeatherBadge";
 

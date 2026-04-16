@@ -33,8 +33,8 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: "待支付", color: theme.colors.warning },
   paid: { label: "待发货", color: theme.colors.primary },
   confirmed: { label: "已确认", color: theme.colors.primary },
-  processing: { label: "处理中", color: "#6366F1" },
-  shipped: { label: "配送中", color: "#2563EB" },
+  processing: { label: "处理中", color: "DesignTokens.colors.semantic.info" },
+  shipped: { label: "配送中", color: "DesignTokens.colors.semantic.info" },
   delivered: { label: "已签收", color: theme.colors.success },
   cancelled: { label: "已取消", color: theme.colors.error },
   refunded: { label: "已退款", color: theme.colors.textTertiary },
@@ -272,7 +272,7 @@ export const OrderDetailScreen: React.FC = () => {
               accessibilityLabel="取消订单"
             >
               {cancelling ? (
-                <ActivityIndicator size="small" color="#FF4D4F" />
+                <ActivityIndicator size="small" color="DesignTokens.colors.semantic.error" />
               ) : (
                 <Text style={styles.dangerButtonText}>取消订单</Text>
               )}
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F1F3F4",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -464,13 +464,13 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#F1F3F4",
+    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   itemImage: {
     width: 60,
     height: 60,
     borderRadius: 16,
-    backgroundColor: "#F1F3F4",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   itemImageFallback: {
     width: 60,
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#F1F3F4",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   itemContent: {
     flex: 1,
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#CBD5E1",
+    backgroundColor: "DesignTokens.colors.neutral[300]",
     marginTop: 6,
   },
   timelineDotActive: {
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
     width: 2,
     flex: 1,
     marginTop: 6,
-    backgroundColor: "#E2E8F0",
+    backgroundColor: "DesignTokens.colors.neutral[200]",
   },
   timelineContent: {
     flex: 1,
@@ -607,13 +607,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#FF4D4F",
+    borderColor: "DesignTokens.colors.semantic.error",
     backgroundColor: theme.colors.surface,
   },
   dangerButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: "#FF4D4F",
+    color: "DesignTokens.colors.semantic.error",
   },
   actionRow: {
     flexDirection: "row",
@@ -625,7 +625,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 16,
     alignItems: "center",
-    backgroundColor: "#FF4D4F",
+    backgroundColor: "DesignTokens.colors.semantic.error",
   },
   primaryFilledText: {
     fontSize: DesignTokens.typography.sizes.base,

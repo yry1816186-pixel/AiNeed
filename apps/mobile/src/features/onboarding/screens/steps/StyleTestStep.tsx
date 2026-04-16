@@ -26,7 +26,7 @@ const FEATURES = [
   },
   {
     icon: "sparkles-outline",
-    title: "个性推�?,
+    title: "个性推荐",
     description: "AI 生成个性化建议",
   },
 ] as const;
@@ -65,7 +65,7 @@ export const StyleTestStep: React.FC<StyleTestStepProps> = ({ onNext, onSkip }) 
 
     <View style={styles.actions}>
       <TouchableOpacity style={styles.startButton} onPress={onNext} activeOpacity={0.7}>
-        <Text style={styles.startButtonText}>开始测�?/Text>
+        <Text style={styles.startButtonText}>开始测试</Text>
         <Ionicons name="play-outline" size={20} color={DesignTokens.colors.backgrounds.primary} />
       </TouchableOpacity>
       {onSkip && (

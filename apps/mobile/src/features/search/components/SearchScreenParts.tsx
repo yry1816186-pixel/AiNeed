@@ -12,10 +12,10 @@ import {
   FlatList,
 } from "react-native";
 import { theme } from '../../../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import type { ClothingItem, ClothingCategory, Season, Occasion } from "../../types/clothing";
-import { CATEGORY_LABELS, SEASON_LABELS, OCCASION_LABELS } from "../../types/clothing";
+import type { ClothingItem, ClothingCategory, Season, Occasion } from '../../../types/clothing';
+import { CATEGORY_LABELS, SEASON_LABELS, OCCASION_LABELS } from '../../../types/clothing';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

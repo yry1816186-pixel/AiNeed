@@ -3,12 +3,12 @@ import { View, Text, StyleSheet, RefreshControl, ActivityIndicator, Pressable } 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FlashList } from "../../polyfills/flash-list";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { useRecommendationFeedStore } from "../../stores/recommendationFeedStore";
-import { FeedTabs } from "../../components/recommendations/FeedTabs";
-import { RecommendationCard } from "../../components/recommendations/RecommendationFeedCard";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import type { FeedItem, FeedCategory } from "../../services/api/recommendation-feed.api";
-import type { RootStackParamList } from "../../types/navigation";
+import { useRecommendationFeedStore } from '../stores/recommendationFeedStore';
+import { FeedTabs } from '../../../components/recommendations/FeedTabs';
+import { RecommendationCard } from '../../../components/recommendations/RecommendationFeedCard';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { FeedItem, FeedCategory } from '../../../services/api/recommendation-feed.api';
+import type { RootStackParamList } from '../../../types/navigation';
 
 const ESTIMATED_ITEM_SIZE = 280;
 

@@ -11,13 +11,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { useConsultantStore } from "../../stores/consultantStore";
-import { CalendarGrid } from "../../components/consultant/CalendarGrid";
-import { TimeSlotItem } from "../../components/consultant/TimeSlotItem";
-import { ServiceTypeChip } from "../../components/consultant/ServiceTypeChip";
-import type { ServiceType } from "../../types/consultant";
+import { useConsultantStore } from '../stores/consultantStore';
+import { CalendarGrid } from '../../../components/consultant/CalendarGrid';
+import { TimeSlotItem } from '../../../components/consultant/TimeSlotItem';
+import { ServiceTypeChip } from '../../../components/consultant/ServiceTypeChip';
+import type { ServiceType } from '../types/consultant';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 const SERVICE_TYPES = [
   { label: "整体形象改造", value: "styling_consultation" },

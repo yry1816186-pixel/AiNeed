@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   badge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#E8F3EE",
+    backgroundColor: "DesignTokens.colors.semantic.successLight",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
-    color: "#5B8A72",
+    color: "DesignTokens.colors.semantic.success",
   },
   badgeSize: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   detail: {
     marginTop: 4,
     padding: 8,
-    backgroundColor: "#F5F5F3",
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
     borderRadius: 8,
     gap: 4,
   },
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "#73736D",
+    color: "DesignTokens.colors.text.tertiary",
   },
   detailValue: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
   reasonText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: "#52524D",
+    color: "DesignTokens.colors.text.secondary",
   },
 });
 

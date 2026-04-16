@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
   },
   dotActive: {
-    backgroundColor: "#FF4D4F", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.error", // custom color
     width: 8,
     height: 8,
     borderRadius: 4,

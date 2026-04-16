@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 24,
   },
-  submitButtonDisabled: { backgroundColor: "#FFB0B0" }, // custom color
+  submitButtonDisabled: { backgroundColor: "DesignTokens.colors.semantic.errorLight" }, // custom color
   submitButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",

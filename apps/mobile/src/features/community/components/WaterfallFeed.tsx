@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

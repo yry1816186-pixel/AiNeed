@@ -11,9 +11,9 @@ import {
   TextInput,
   Modal,
 } from "react-native";
-import { communityApi } from "../../services/api/community.api";
+import { communityApi } from '../../../services/api/community.api';
 import { theme } from '../../../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 
 interface Collection {
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: "#F0EDFF", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.infoLight", // custom color
     alignItems: "center",
     justifyContent: "center",
     marginRight: 12,

@@ -21,9 +21,9 @@ import Animated, {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme, Colors, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import { profileApi } from "../../services/api/profile.api";
-import { useAuthStore } from "../../stores";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { profileApi } from '../../../services/api/profile.api';
+import { useAuthStore } from '../../../stores';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

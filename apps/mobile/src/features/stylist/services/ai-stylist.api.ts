@@ -1,6 +1,6 @@
 import apiClient from "./client";
-import type { ApiResponse } from "../../types/api";
-import { compressImage } from "../../utils/imageCompressor";
+import type { ApiResponse } from '../../../types/api';
+import { compressImage } from '../../../utils/imageCompressor';
 
 export type AiStylistActionType =
   | "ask_question"
@@ -277,7 +277,8 @@ export const aiStylistApi = {
 
           // 继续轮询
           setTimeout(poll, intervalMs);
-        } catch {
+        } catch (error) {
+          console.error('AI Stylist API request failed:', error);
           resolve({
             success: false,
             error: {

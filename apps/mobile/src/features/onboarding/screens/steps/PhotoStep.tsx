@@ -102,7 +102,7 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
 
         {onSkip && (
           <TouchableOpacity style={styles.skipLink} onPress={onSkip} activeOpacity={0.7}>
-            <Text style={styles.skipLinkText}>跳过，稍后上�?/Text>
+            <Text style={styles.skipLinkText}>跳过，稍后上传</Text>
           </TouchableOpacity>
         )}
       </ScrollView>

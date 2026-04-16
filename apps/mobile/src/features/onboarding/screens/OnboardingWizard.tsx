@@ -12,14 +12,14 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../design-system/theme';
-import { useOnboardingStore } from "../../stores/onboardingStore";
-import type { OnboardingStep } from "../../stores/onboardingStore";
-import { onboardingService } from "../../services/onboardingService";
+import { useOnboardingStore } from '../stores/onboardingStore';
+import type { OnboardingStep } from '../stores/onboardingStore';
+import { onboardingService } from '../services/onboardingService';
 import { BasicInfoStep } from "./steps/BasicInfoStep";
 import { PhotoStep } from "./steps/PhotoStep";
 import { StyleTestStep } from "./steps/StyleTestStep";
 import { CompleteStep } from "./steps/CompleteStep";
-import type { RootStackParamList } from "../../types/navigation";
+import type { RootStackParamList } from '../../../types/navigation';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 type NavigationPropType = NavigationProp<RootStackParamList>;

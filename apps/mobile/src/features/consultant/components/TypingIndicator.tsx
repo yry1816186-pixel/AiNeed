@@ -7,7 +7,7 @@ import Animated, {
   withTiming,
   withDelay,
 } from "react-native-reanimated";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 export const TypingIndicator: React.FC = () => {
   const dot1Y = useSharedValue(0);

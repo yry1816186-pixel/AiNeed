@@ -196,7 +196,7 @@ export const OutfitDetailScreen: React.FC = () => {
           accessibilityLabel="标记为今日穿着"
           accessibilityRole="button"
         >
-          <LinearGradient colors={["#4F46E5" /* custom color */, DesignTokens.colors.brand.slateDark]} style={styles.wearButtonGradient} />
+          <LinearGradient colors={["DesignTokens.colors.semantic.info" /* custom color */, DesignTokens.colors.brand.slateDark]} style={styles.wearButtonGradient} />
           <Ionicons name="checkmark-circle-outline" size={20} color={theme.colors.surface} />
           <Text style={styles.wearButtonText}>今日穿着</Text>
         </TouchableOpacity>

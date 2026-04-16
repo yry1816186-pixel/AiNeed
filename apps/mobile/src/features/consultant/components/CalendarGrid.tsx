@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   monthLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: "#1A1A1A",
+    color: "DesignTokens.colors.text.primary",
   },
   weekdayRow: {
     flexDirection: "row",
@@ -175,10 +175,10 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   cellSelected: {
-    backgroundColor: "#C67B5C",
+    backgroundColor: "DesignTokens.colors.brand.terracotta",
   },
   cellAvailable: {
-    backgroundColor: "#FFF5F0",
+    backgroundColor: "DesignTokens.colors.neutral[50]",
   },
   dayText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   dayTextAvailable: {
-    color: "#C67B5C",
+    color: "DesignTokens.colors.brand.terracotta",
     fontWeight: "500",
   },
 });

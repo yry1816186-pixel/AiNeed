@@ -230,8 +230,9 @@ export const useQuizStore = createWithEqualityFn<QuizState>()(
 
         try {
           await styleQuizApi.saveProgress(quizId, newQuestionIndex, newAnswers);
-        } catch {
+        } catch (error) {
           // Progress save failure is non-blocking
+          console.error('Quiz progress operation failed:', error);
         }
       },
 
@@ -269,8 +270,9 @@ export const useQuizStore = createWithEqualityFn<QuizState>()(
               },
             });
           }
-        } catch {
+        } catch (error) {
           // If progress load fails, keep existing local progress
+          console.error('Quiz progress operation failed:', error);
         }
       },
     }),

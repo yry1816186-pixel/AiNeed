@@ -178,12 +178,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   typeButtonActive: {
-    backgroundColor: "#FFF0F0", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.errorLight", // custom color
     borderWidth: 1,
-    borderColor: "#FF4D4F", // custom color
+    borderColor: "DesignTokens.colors.semantic.error", // custom color
   },
   typeText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary },
-  typeTextActive: { color: "#FF4D4F", fontWeight: "600" }, // custom color
+  typeTextActive: { color: "DesignTokens.colors.semantic.error", fontWeight: "600" }, // custom color
   reasonRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -199,12 +199,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  radioActive: { borderColor: "#FF4D4F" }, // custom color
+  radioActive: { borderColor: "DesignTokens.colors.semantic.error" }, // custom color
   radioInner: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#FF4D4F", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.error", // custom color
   },
   reasonText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary },
   textArea: {
@@ -225,10 +225,10 @@ const styles = StyleSheet.create({
   amountText: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: "#FF4D4F", // custom color
+    color: "DesignTokens.colors.semantic.error", // custom color
   },
   submitButton: {
-    backgroundColor: "#FF4D4F", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.error", // custom color
     paddingVertical: 16,
     alignItems: "center",
   },

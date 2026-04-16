@@ -430,7 +430,7 @@ export const PostDetailScreen: React.FC = () => {
             <Ionicons
               name={post.isLiked ? "heart" : "heart-outline"}
               size={22}
-              color={post.isLiked ? "#FF4757" : theme.colors.textSecondary} // custom color
+              color={post.isLiked ? "DesignTokens.colors.semantic.error" : theme.colors.textSecondary} // custom color
             />
             <Text style={[styles.actionCount, post.isLiked && styles.actionCountLiked]}>
               {post.likesCount}
@@ -444,7 +444,7 @@ export const PostDetailScreen: React.FC = () => {
             <Ionicons
               name={post.isBookmarked ? "bookmark" : "bookmark-outline"}
               size={22}
-              color={post.isBookmarked ? "#F1C40F" : theme.colors.textSecondary} // custom color
+              color={post.isBookmarked ? "DesignTokens.colors.semantic.warning" : theme.colors.textSecondary} // custom color
             />
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "#F1C40F", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.warning", // custom color
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
@@ -583,7 +583,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   tagChip: {
-    backgroundColor: "#F0EDFF", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.infoLight", // custom color
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -692,7 +692,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   actionCount: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
-  actionCountLiked: { color: "#FF4757" }, // custom color
+  actionCountLiked: { color: "DesignTokens.colors.semantic.error" }, // custom color
 });
 
 export default PostDetailScreen;

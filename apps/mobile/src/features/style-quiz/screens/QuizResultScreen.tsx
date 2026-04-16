@@ -4,9 +4,9 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { useQuizStore } from "../../stores/quizStore";
+import { useQuizStore } from '../stores/quizStore';
 import { theme, Colors, Spacing, BorderRadius } from '../../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 const TAG_COLORS = [
   Colors.primary[500],

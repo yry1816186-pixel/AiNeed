@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, Shadows } from '../../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import {
   useQuizStore as useStyleQuizStore,
   useStyleQuizCurrentQuiz,
@@ -19,9 +19,9 @@ import {
   useStyleQuizResult,
   useStyleQuizLoading,
   useStyleQuizError,
-} from "../../stores/index";
+} from '../stores/index';
 import { QuizProgress } from "./components/QuizProgress";
-import type { RootStackParamList } from "../../types/navigation";
+import type { RootStackParamList } from '../../../types/navigation';
 
 const QUIZ_ID = "default";
 

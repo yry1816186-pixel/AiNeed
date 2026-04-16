@@ -9,10 +9,10 @@ import Animated, {
   Easing,
   cancelAnimation,
 } from "react-native-reanimated";
-import { useReducedMotion } from "../../hooks/useReducedMotion";
-import { useTypewriter } from "../../hooks/useAdvancedAnimations";
-import { Duration } from "../../theme/tokens/animations";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { useReducedMotion } from '../../../hooks/useReducedMotion';
+import { useTypewriter } from '../../../hooks/useAdvancedAnimations';
+import { Duration } from '../../../design-system/theme/tokens/animations';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 /** Blinking cursor shown while typewriter is active */
 function TypingCursor() {

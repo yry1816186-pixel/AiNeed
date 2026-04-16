@@ -11,9 +11,9 @@ import {
 import { FlashList } from "../../polyfills/flash-list";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import { PostMasonryCard } from "../../components/community/PostMasonryCard";
-import type { PostCardData } from "../../components/community/PostMasonryCard";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { PostMasonryCard } from '../../../components/community/PostMasonryCard';
+import type { PostCardData } from '../../../components/community/PostMasonryCard';
 
 type PostCardDataInternal = PostCardData;
 
@@ -62,7 +62,7 @@ function CommunityFeedInner({
             <Ionicons
               name={item.feedType === "like" ? "heart" : "shirt-outline"}
               size={16}
-              color={item.feedType === "like" ? "#FF4757" : DesignTokens.colors.brand.slate} // custom color
+              color={item.feedType === "like" ? "DesignTokens.colors.semantic.error" : DesignTokens.colors.brand.slate} // custom color
             />
             <Text style={s.feedActivityText}>{item.title}</Text>
           </View>

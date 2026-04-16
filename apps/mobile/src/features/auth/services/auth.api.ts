@@ -1,5 +1,5 @@
 import apiClient from "./client";
-import { ApiResponse } from "../../types";
+import { ApiResponse } from '../../../types';
 import {
   User,
   UserPreferences,
@@ -9,7 +9,7 @@ import {
   AuthTokens,
   BodyAnalysis,
   ColorAnalysis,
-} from "../../types/user";
+} from '../types/user';
 
 interface AuthResponsePayload {
   user: User;

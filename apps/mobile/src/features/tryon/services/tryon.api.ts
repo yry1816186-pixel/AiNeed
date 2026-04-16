@@ -1,5 +1,5 @@
 import apiClient from "./client";
-import { ApiResponse } from "../../types";
+import { ApiResponse } from '../../../types';
 import { buildPhotoAssetUrl, buildTryOnResultAssetUrl, normalizeAssetUrl } from "./asset-url";
 
 export interface TryOnResult {

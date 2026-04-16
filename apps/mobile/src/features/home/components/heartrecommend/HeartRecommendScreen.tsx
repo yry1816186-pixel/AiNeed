@@ -17,9 +17,9 @@ import Animated, {
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
 import { theme, Colors, Shadows } from '../design-system/theme';
-import { recommendationsApi } from "../../services/api/tryon.api";
-import { cartApi } from "../../services/api/commerce.api";
-import { useAuthStore, useHeartRecommendStore } from "../../stores";
+import { recommendationsApi } from '../../../services/api/tryon.api';
+import { cartApi } from '../../../services/api/commerce.api';
+import { useAuthStore, useHeartRecommendStore } from '../../../stores';
 import PreferenceSetupModal from "./PreferenceSetupModal";
 import { SwipeCard, ProductItem } from "./SwipeCard";
 import { EmptyState } from "./ActionButtons";

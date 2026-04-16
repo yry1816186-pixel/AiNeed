@@ -349,7 +349,7 @@ export const BloggerProfileScreen: React.FC = () => {
               <View style={styles.levelInfo}>
                 <View style={styles.levelBadge}>
                   {blogger.bloggerLevel === "big_v" ? (
-                    <Ionicons name="shield-checkmark" size={16} color="#F1C40F" /> // custom color
+                    <Ionicons name="shield-checkmark" size={16} color="DesignTokens.colors.semantic.warning" /> // custom color
                   ) : (
                     <Ionicons name="checkmark-circle" size={16} color={DesignTokens.colors.brand.slate} />
                   )}
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "#F1C40F", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.warning", // custom color
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
@@ -559,7 +559,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#F0EDFF", // custom color
+    backgroundColor: "DesignTokens.colors.semantic.infoLight", // custom color
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,

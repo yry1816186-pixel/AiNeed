@@ -13,8 +13,8 @@ import {
   Easing as ReanimatedEasing,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import { AiStylistProgress } from "../../services/api/ai-stylist.api";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { AiStylistProgress } from '../../../services/api/ai-stylist.api';
 
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 

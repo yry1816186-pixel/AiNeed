@@ -193,7 +193,7 @@ export const PaymentScreen: React.FC = () => {
             onPress={() => setSelectedProvider("alipay")}
             activeOpacity={0.7}
           >
-            <View style={[s.providerIcon, { backgroundColor: "#1677FF" /* custom color */ }]}>
+            <View style={[s.providerIcon, { backgroundColor: "DesignTokens.colors.semantic.info" /* custom color */ }]}>
               <Text style={s.providerIconText}>A</Text>
             </View>
             <View style={s.providerInfo}>
@@ -210,7 +210,7 @@ export const PaymentScreen: React.FC = () => {
             onPress={() => setSelectedProvider("wechat")}
             activeOpacity={0.7}
           >
-            <View style={[s.providerIcon, { backgroundColor: "#07C160" /* custom color */ }]}>
+            <View style={[s.providerIcon, { backgroundColor: "DesignTokens.colors.semantic.success" /* custom color */ }]}>
               <Text style={s.providerIconText}>W</Text>
             </View>
             <View style={s.providerInfo}>

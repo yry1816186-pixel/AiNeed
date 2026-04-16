@@ -9,8 +9,8 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import type { AlternativeItem } from "../../stores/aiStylistStore";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { AlternativeItem } from '../stores/aiStylistStore';
 
 interface ItemReplacementModalProps {
   visible: boolean;

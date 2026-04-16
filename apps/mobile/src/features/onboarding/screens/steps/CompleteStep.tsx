@@ -101,7 +101,7 @@ export const CompleteStep: React.FC<CompleteStepProps> = ({ onComplete }) => {
 
       <Animated.View entering={FadeIn.duration(400).delay(800)} style={styles.buttonContainer}>
         <TouchableOpacity style={styles.exploreButton} onPress={onComplete} activeOpacity={0.7}>
-          <Text style={styles.exploreButtonText}>开始探�?/Text>
+          <Text style={styles.exploreButtonText}>开始探索</Text>
           <Ionicons name="arrow-forward-outline" size={20} color={DesignTokens.colors.neutral.white} />
         </TouchableOpacity>
       </Animated.View>

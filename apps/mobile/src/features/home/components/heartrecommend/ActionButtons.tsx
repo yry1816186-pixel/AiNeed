@@ -4,7 +4,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-na
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme, Colors, DesignTokens } from '../design-system/theme';
-import { haptics } from "../../utils/haptics";
+import { haptics } from '../../../utils/haptics';
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface ActionButtonsProps {

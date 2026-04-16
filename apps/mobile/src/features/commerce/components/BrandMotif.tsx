@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet, type ViewStyle } from "react-native";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 interface BrandPatternProps {
   variant: "weave" | "wave" | "leaf";

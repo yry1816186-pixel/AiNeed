@@ -13,10 +13,10 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
-import { useReducedMotion } from "../../hooks/useReducedMotion";
-import { useGlow } from "../../hooks/useAdvancedAnimations";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import { SpringConfigs, Duration } from "../../theme/tokens/animations";
+import { useReducedMotion } from '../../../hooks/useReducedMotion';
+import { useGlow } from '../../../hooks/useAdvancedAnimations';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { SpringConfigs, Duration } from '../../../design-system/theme/tokens/animations';
 import { theme } from '../../../design-system/theme';
 
 const TERRACOTTA = DesignTokens.colors.brand.terracotta; // #C67B5C

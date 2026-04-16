@@ -294,7 +294,7 @@ const collectionStyles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: "#F0EDFF",
+    backgroundColor: "DesignTokens.colors.semantic.infoLight",
     alignItems: "center",
     justifyContent: "center",
   },
