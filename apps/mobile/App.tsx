@@ -21,12 +21,12 @@ import {
   isNavigationReady as checkNavigationReady,
 } from './src/navigation/navigationService';
 import { theme } from './src/design-system/theme';
-import { ThemeProvider as UnifiedThemeProvider } from './src/contexts/ThemeContext';
+import { ThemeProvider as UnifiedThemeProvider } from './src/shared/contexts/ThemeContext';
 import { ThemeProvider as PaperThemeProvider } from './src/design-system/ui/PaperThemeProvider';
 import { useAuthStore } from './src/stores/index';
 import { OfflineBanner } from './src/shared/components/common/OfflineBanner';
 import { I18nProvider } from './src/i18n';
-import { FeatureFlagProvider } from './src/contexts/FeatureFlagContext';
+import { FeatureFlagProvider } from './src/shared/contexts/FeatureFlagContext';
 import { initSentry } from './src/services/sentry';
 import apiClient from './src/services/api/client';
 import { authApi } from './src/services/api/auth.api';

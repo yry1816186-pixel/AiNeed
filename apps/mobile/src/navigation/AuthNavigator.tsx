@@ -1,4 +1,4 @@
-﻿import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "./types";
@@ -6,10 +6,10 @@ import { theme } from '../design-system/theme';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-const LoginScreen = lazy(() => import("../screens/LoginScreen"));
-const PhoneLoginScreen = lazy(() => import("../screens/PhoneLoginScreen"));
-const RegisterScreen = lazy(() => import("../screens/RegisterScreen"));
-const OnboardingScreen = lazy(() => import("../screens/onboarding/OnboardingWizard"));
+const LoginScreen = lazy(() => import("../features/auth/screens/LoginScreen"));
+const PhoneLoginScreen = lazy(() => import("../features/auth/screens/PhoneLoginScreen"));
+const RegisterScreen = lazy(() => import("../features/auth/screens/RegisterScreen"));
+const OnboardingScreen = lazy(() => import("../features/onboarding/screens/OnboardingWizard"));
 
 function AuthLoader() {
   return (
