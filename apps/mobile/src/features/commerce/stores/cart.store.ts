@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { ClothingItem } from "./clothingStore";
+import type { ClothingItem } from "../../wardrobe/stores/clothingStore";
 
 interface CartItem {
   id: string;

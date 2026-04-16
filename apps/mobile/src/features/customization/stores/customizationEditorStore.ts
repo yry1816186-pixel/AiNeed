@@ -1,4 +1,4 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 
 import customizationApi from "../../../services/api/customization.api";
 import type {
@@ -39,6 +39,7 @@ interface EditorState {
   } | null;
   templates: Template[];
   isLoadingTemplates: boolean;
+  error: string | null;
 }
 
 interface EditorActions {
@@ -57,6 +58,8 @@ interface EditorActions {
   calculateQuote: (printSide: "front" | "back" | "both") => Promise<void>;
   generatePreview: () => Promise<void>;
   submitCustomization: (quoteId: string) => Promise<string | null>;
+  setError: (message: string) => void;
+  clearError: () => void;
   reset: () => void;
 }
 
@@ -79,20 +82,21 @@ const initialState: EditorState = {
   quote: null,
   templates: [],
   isLoadingTemplates: false,
+  error: null,
 };
 
 export const useCustomizationEditorStore = create<EditorState & EditorActions>((set, get) => ({
   ...initialState,
 
   loadTemplates: async (type?: ProductTemplateType) => {
-    set({ isLoadingTemplates: true });
+    set({ isLoadingTemplates: true, error: null });
     try {
       const response = await customizationApi.getTemplates(type);
       if (response.success && response.data) {
         set({ templates: response.data as Template[] });
       }
     } catch {
-      // silently handle
+      set({ error: '获取模板失败', isLoadingTemplates: false });
     } finally {
       set({ isLoadingTemplates: false });
     }
@@ -210,7 +214,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
       return;
     }
 
-    set({ isSaving: true });
+    set({ isSaving: true, error: null });
     try {
       const canvasData = {
         layers: state.designLayers,
@@ -233,7 +237,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
         }
       }
     } catch {
-      // handle error
+      set({ error: '保存设计失败', isSaving: false });
     } finally {
       set({ isSaving: false });
     }

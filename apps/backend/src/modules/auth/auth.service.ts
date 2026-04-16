@@ -122,7 +122,7 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(dto.password);
 
-    const [user] = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const [user] = await this.prisma.$transaction(async (tx: Omit<PrismaService, "\$connect" | "\$disconnect" | "\$on" | "\$transaction" | "\$use" | "\$extends">) => {
       const createdUser = await tx.user.create({
         data: {
           email: dto.email,
@@ -472,7 +472,7 @@ export class AuthService {
     });
 
     if (!user) {
-      const [createdUser] = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      const [createdUser] = await this.prisma.$transaction(async (tx: Omit<PrismaService, "\$connect" | "\$disconnect" | "\$on" | "\$transaction" | "\$use" | "\$extends">) => {
         const newUser = await tx.user.create({
           data: {
             email: `phone_${phone}@internal.placeholder`,
@@ -522,7 +522,7 @@ export class AuthService {
         openid,
       );
 
-      const [createdUser] = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      const [createdUser] = await this.prisma.$transaction(async (tx: Omit<PrismaService, "\$connect" | "\$disconnect" | "\$on" | "\$transaction" | "\$use" | "\$extends">) => {
         const newUser = await tx.user.create({
           data: {
             email: `wechat_${openid}@internal.placeholder`,
@@ -576,7 +576,7 @@ export class AuthService {
       throw new ConflictException("该手机号已注册");
     }
 
-    const [user] = await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const [user] = await this.prisma.$transaction(async (tx: Omit<PrismaService, "\$connect" | "\$disconnect" | "\$on" | "\$transaction" | "\$use" | "\$extends">) => {
       const placeholderEmail = `phone_${dto.phone}@internal.placeholder`;
       const createdUser = await tx.user.create({
         data: {

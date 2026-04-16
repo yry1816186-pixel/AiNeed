@@ -30,7 +30,7 @@ import { FeatureFlagService } from './feature-flag.service';
 @ApiTags('feature-flags')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('feature-flags')
+@Controller("feature-flags")
 export class FeatureFlagController {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
 

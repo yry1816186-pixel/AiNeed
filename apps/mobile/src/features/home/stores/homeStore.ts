@@ -99,7 +99,7 @@ export const useHomeStore = create<HomeState>()(
           return;
         }
 
-        set({ isLoadingWeather: true });
+        set({ isLoadingWeather: true, error: null });
         try {
           const info = await weatherService.getWeather(latitude, longitude);
           set({
@@ -110,12 +110,12 @@ export const useHomeStore = create<HomeState>()(
             isLoadingWeather: false,
           });
         } catch {
-          set({ isLoadingWeather: false });
+          set({ error: '获取天气信息失败', isLoadingWeather: false });
         }
       },
 
       fetchProfileCompletion: async () => {
-        set({ isLoadingProfile: true });
+        set({ isLoadingProfile: true, error: null });
         try {
           const response = await profileApi.getProfile();
           if (response.success && response.data) {
@@ -129,9 +129,12 @@ export const useHomeStore = create<HomeState>()(
             set({ isLoadingProfile: false });
           }
         } catch {
-          set({ isLoadingProfile: false });
+          set({ error: '获取画像完成度失败', isLoadingProfile: false });
         }
       },
+
+      setError: (message: string) => set({ error: message }),
+      clearError: () => set({ error: null }),
 
       resetBannerOnAppStart: () => set({ isBannerDismissed: false }),
     }),

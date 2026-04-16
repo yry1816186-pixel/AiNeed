@@ -110,7 +110,7 @@ class CreateRecommendationDto {
 
 @ApiTags('queue')
 @ApiBearerAuth()
-@Controller('queue')
+@Controller("queue")
 @UseGuards(JwtAuthGuard)
 export class QueueController {
   constructor(private readonly queueService: QueueService) {}

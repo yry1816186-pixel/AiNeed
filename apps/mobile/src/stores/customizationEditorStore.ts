@@ -2,7 +2,6 @@ import { create } from "zustand";
 
 import customizationApi from "../services/api/customization.api";
 import type {
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
   CustomizationTemplate as ApiTemplate,
   CustomizationDesign,
   CustomizationDesignLayer,
@@ -11,6 +10,7 @@ import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
   PreviewResponse,
   CreateFromDesignResponse,
 } from "../types/customization";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 export type { PrintableAreaBounds } from "../types/customization";
 export type DesignLayer = Omit<CustomizationDesignLayer, "designId">;

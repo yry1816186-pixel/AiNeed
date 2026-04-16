@@ -10,7 +10,7 @@ import { CsrfService } from './csrf.service';
 import { ExcludeCsrf } from './decorators/exclude-csrf.decorator';
 
 @ApiTags('csrf')
-@Controller('csrf')
+@Controller("csrf")
 export class CsrfController {
   constructor(private readonly csrfService: CsrfService) {}
 

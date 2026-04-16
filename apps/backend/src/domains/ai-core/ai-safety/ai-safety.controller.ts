@@ -1,4 +1,4 @@
-﻿/**
+/**
  * AI Safety Controller
  *
  * REST API endpoints for AI safety features
@@ -42,7 +42,7 @@ class QuickCheckRequestDto {
 
 @ApiTags("ai-safety")
 @ApiBearerAuth()
-@Controller('ai-safety')
+@Controller("ai-safety")
 @UseGuards(JwtAuthGuard)
 export class AISafetyController {
   constructor(private readonly aiSafetyService: AISafetyService) {}

@@ -14,7 +14,7 @@ import { ExcludeCsrf } from './decorators/exclude-csrf.decorator';
  * Example 1: Standard CRUD Controller with CSRF Protection
  * All routes are protected by default
  */
-@Controller('api/v1/example')
+@Controller("api/v1/example")
 @UseGuards(CsrfGuard)
 export class ExampleController {
   /**
@@ -58,7 +58,7 @@ export class ExampleController {
  * Example 2: Webhook Controller with CSRF Exclusion
  * Webhooks from external services should exclude CSRF protection
  */
-@Controller('api/v1/webhooks')
+@Controller("api/v1/webhooks")
 export class WebhookController {
   /**
    * Stripe webhook - excluded from CSRF protection
@@ -86,7 +86,7 @@ export class WebhookController {
  * Example 3: Public API Controller
  * Some public endpoints might need CSRF exclusion
  */
-@Controller('api/v1/public')
+@Controller("api/v1/public")
 export class PublicController {
   /**
    * Public search endpoint - excluded from CSRF
@@ -115,7 +115,7 @@ export class PublicController {
  * Example 4: Mixed Protection Controller
  * Some routes protected, some excluded
  */
-@Controller('api/v1/mixed')
+@Controller("api/v1/mixed")
 export class MixedController {
   /**
    * Public endpoint - no CSRF required
