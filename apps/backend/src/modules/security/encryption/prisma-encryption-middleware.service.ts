@@ -15,8 +15,8 @@ export class PrismaEncryptionMiddleware implements OnModuleInit {
 
   onModuleInit() {
     this.prisma.$use(async (params: Record<string, unknown>, next: (p: Record<string, unknown>) => Promise<unknown>) => {
-      const model = params.model;
-      const action = params.action;
+      const model = params.model as string;
+      const action = params.action as string;
 
       if (!model || !PII_FIELDS[model]) {
         return next(params);
@@ -25,14 +25,14 @@ export class PrismaEncryptionMiddleware implements OnModuleInit {
       const fields = PII_FIELDS[model];
 
       if (["create", "createMany", "update", "updateMany", "upsert"].includes(action)) {
-        const data = params.args?.data;
+        const data = (params.args as any)?.data;
         if (data) {
           if (Array.isArray(data)) {
             for (const item of data) {
-              await this.encryptFields(item, fields, model);
+              await this.encryptFields(item as Record<string, unknown>, fields, model);
             }
           } else {
-            await this.encryptFields(data, fields, model);
+            await this.encryptFields(data as Record<string, unknown>, fields, model);
           }
         }
       }
@@ -42,10 +42,10 @@ export class PrismaEncryptionMiddleware implements OnModuleInit {
       if (result && ["findUnique", "findFirst", "findMany", "findFirstOrThrow", "findUniqueOrThrow"].includes(action)) {
         if (Array.isArray(result)) {
           for (const item of result) {
-            await this.decryptFields(item, fields, model);
+            await this.decryptFields(item as Record<string, unknown>, fields, model);
           }
         } else {
-          await this.decryptFields(result, fields, model);
+          await this.decryptFields(result as Record<string, unknown>, fields, model);
         }
       }
 
