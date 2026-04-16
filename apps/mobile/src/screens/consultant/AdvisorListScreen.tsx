@@ -17,6 +17,7 @@ import type { ServiceType } from "../../types/consultant";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamListBase } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 const SERVICE_TYPES = [
   { label: "全部", value: "" },
@@ -216,15 +217,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF5F0",
   },
   matchResultsText: { fontSize: 13, color: "#C67B5C" },
-  clearMatchText: { fontSize: 13, color: "#999" },
+  clearMatchText: { fontSize: 13, color: DesignTokens.colors.text.tertiary },
   listContent: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24 },
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 80,
   },
-  emptyTitle: { fontSize: 18, fontWeight: "600", color: "#333", marginBottom: 8 },
-  emptySubtitle: { fontSize: 14, color: "#888", marginBottom: 24 },
+  emptyTitle: { fontSize: 18, fontWeight: "600", color: DesignTokens.colors.text.primary, marginBottom: 8 },
+  emptySubtitle: { fontSize: 14, color: DesignTokens.colors.text.secondary, marginBottom: 24 },
   matchCta: {
     backgroundColor: "#C67B5C",
     paddingHorizontal: 24,
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
   },
   matchCtaText: { color: "#FFFFFF", fontSize: 16, fontWeight: "500" },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { fontSize: 14, color: "#888", marginTop: 12 },
+  loadingText: { fontSize: 14, color: DesignTokens.colors.text.secondary, marginTop: 12 },
   overlay: {
     position: "absolute",
     top: 0,
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   sheetTitle: { fontSize: 20, fontWeight: "600", color: "#1A1A1A", marginBottom: 20 },
-  sheetLabel: { fontSize: 14, color: "#666", marginBottom: 8, marginTop: 12 },
+  sheetLabel: { fontSize: 14, color: DesignTokens.colors.text.secondary, marginBottom: 8, marginTop: 12 },
   notesInput: {
     borderWidth: 1,
     borderColor: "#E0E0E0",
@@ -270,7 +271,7 @@ const styles = StyleSheet.create({
     borderColor: "#E0E0E0",
     alignItems: "center",
   },
-  sheetCancelText: { fontSize: 16, color: "#666" },
+  sheetCancelText: { fontSize: 16, color: DesignTokens.colors.text.secondary },
   sheetSubmit: {
     flex: 1,
     paddingVertical: 14,

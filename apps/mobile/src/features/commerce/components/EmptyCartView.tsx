@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface EmptyCartViewProps {
   onGoShopping: () => void;
@@ -9,7 +10,7 @@ interface EmptyCartViewProps {
 export const EmptyCartView: React.FC<EmptyCartViewProps> = ({ onGoShopping }) => {
   return (
     <View style={styles.container}>
-      <Ionicons name="cart-off" size={64} color="#CCCCCC" />
+      <Ionicons name="cart-off" size={64} color={DesignTokens.colors.neutral[300]} />
       <Text style={styles.heading}>购物车空空如也</Text>
       <Text style={styles.body}>去发现喜欢的穿搭吧</Text>
       <TouchableOpacity style={styles.button} onPress={onGoShopping}>
@@ -29,12 +30,12 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#333333",
+    color: DesignTokens.colors.text.primary,
     marginTop: 16,
   },
   body: {
     fontSize: 14,
-    color: "#999999",
+    color: DesignTokens.colors.text.tertiary,
     marginTop: 8,
   },
   button: {

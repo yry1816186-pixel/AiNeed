@@ -1,4 +1,4 @@
-import { Test, TestingModule } from "@nestjs/testing";
+﻿import { Test, TestingModule } from "@nestjs/testing";
 import {
   BodyType,
   SkinTone,
@@ -6,7 +6,7 @@ import {
   ClothingCategory,
 } from "@prisma/client";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CacheService } from "../../../modules/cache/cache.service";
 
 import { RecommendationsService } from "./recommendations.service";

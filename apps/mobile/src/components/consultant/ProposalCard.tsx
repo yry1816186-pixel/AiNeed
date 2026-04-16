@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface ProposalCardProps {
   title: string;
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
   },
   summary: {
     fontSize: 14,
-    color: "#666",
+    color: DesignTokens.colors.text.secondary,
     lineHeight: 20,
     marginBottom: 12,
   },

@@ -1,8 +1,8 @@
-import { BullModule } from '@nestjs/bullmq';
+﻿import { BullModule } from '@nestjs/bullmq';
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from '../../../../common/prisma/prisma.module';
-import { RedisModule } from '../../../../common/redis/redis.module';
+import { PrismaModule } from '../../../common/prisma/prisma.module';
+import { RedisModule } from '../../../common/redis/redis.module';
 import { AuthModule } from '../../identity/auth/auth.module';
 
 import { FeatureFlagController } from './feature-flag.controller';

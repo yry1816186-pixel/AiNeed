@@ -47,7 +47,7 @@ const COLOR_MAP: Record<string, string> = {
   酒红色: "#722F37",
   正红色: "#FF0000",
   纯白色: "#FFFFFF",
-  黑色: "#000000",
+  黑色: DesignTokens.colors.neutral.black,
   宝蓝色: "#4169E1",
   翠绿色: "#50C878",
   深紫色: "#301934",
@@ -56,14 +56,14 @@ const COLOR_MAP: Record<string, string> = {
   棕褐色: "#D2B48C",
   奶油白: "#FFFDD0",
   柔和灰色: "#C0C0C0",
-  米白色: "#F5F5F5",
+  米白色: DesignTokens.colors.backgrounds.tertiary,
   淡粉色: "#FFB6C1",
   浅灰蓝色: "#B0C4DE",
   米色: "#F5F5DC",
   奶油色: "#FFFDD0",
   深棕色: "#654321",
   军绿色: "#4B5320",
-  纯黑色: "#000000",
+  纯黑色: DesignTokens.colors.neutral.black,
   冷灰色: "#A9A9A9",
   深紫红色: "#4A0028",
   冰蓝色: "#99FFFF",
@@ -142,7 +142,7 @@ function ColorPalette({
         const row = Math.floor(index / columns);
         const x = col * (blockSize + gap);
         const y = row * (blockSize + labelHeight + gap);
-        const hex = COLOR_MAP[name] || "#CCCCCC";
+        const hex = COLOR_MAP[name] || DesignTokens.colors.neutral[300];
         const isLight = isLightColor(hex);
 
         return (
@@ -189,7 +189,7 @@ function isLightColor(hex: string): boolean {
 }
 
 function SeasonGradientBand({ season }: { season: string }) {
-  const gradientColors = SEASON_GRADIENT[season] || ["#CCCCCC", "#999999"];
+  const gradientColors = SEASON_GRADIENT[season] || [DesignTokens.colors.neutral[300], DesignTokens.colors.text.tertiary];
   const width = 300;
   const height = 24;
 

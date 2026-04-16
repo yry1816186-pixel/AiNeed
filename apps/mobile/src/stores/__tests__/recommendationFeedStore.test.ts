@@ -1,6 +1,7 @@
 import { useRecommendationFeedStore } from "../recommendationFeedStore";
 import { recommendationFeedApi } from "../../services/api/recommendation-feed.api";
 import type { FeedItem, FeedResult } from "../../services/api/recommendation-feed.api";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 jest.mock("../../services/api/recommendation-feed.api", () => ({
   recommendationFeedApi: {
@@ -17,7 +18,7 @@ const mockFeedItems: FeedItem[] = [
     brand: { id: "brand-1", name: "Brand A" },
     price: 299,
     styleTags: ["casual", "minimalist"],
-    colorHarmony: { score: 0.9, colors: ["#000", "#fff"] },
+    colorHarmony: { score: 0.9, colors: [DesignTokens.colors.neutral.black, "#fff"] },
     matchReason: "Matches your style",
     category: "tops",
   },
@@ -28,7 +29,7 @@ const mockFeedItems: FeedItem[] = [
     price: 199,
     originalPrice: 299,
     styleTags: ["formal"],
-    colorHarmony: { score: 0.8, colors: ["#333"] },
+    colorHarmony: { score: 0.8, colors: [DesignTokens.colors.text.primary] },
     matchReason: "Great for work",
     category: "bottoms",
   },

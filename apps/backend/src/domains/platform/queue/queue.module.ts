@@ -1,8 +1,8 @@
-import { BullModule } from '@nestjs/bullmq';
+﻿import { BullModule } from '@nestjs/bullmq';
 import { Module, Logger, forwardRef } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { GatewayModule } from '../../../../common/gateway/gateway.module';
+import { GatewayModule } from '../../../common/gateway/gateway.module';
 import { AIModule } from '../../ai-core/ai/ai.module';
 import { CommunityModule } from '../../../modules/community/community.module';
 import { TryOnModule } from '../../ai-core/try-on/try-on.module';

@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Clipboard } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface TimelineEvent {
   status: string;
@@ -115,18 +116,18 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#333333",
+    color: DesignTokens.colors.text.primary,
   },
   statusTextCurrent: {
     fontWeight: "700",
     color: "#FF4D4F",
   },
   statusTextFuture: {
-    color: "#CCCCCC",
+    color: DesignTokens.colors.neutral[300],
   },
   timeText: {
     fontSize: 12,
-    color: "#999999",
+    color: DesignTokens.colors.text.tertiary,
     marginTop: 4,
   },
   trackingText: {

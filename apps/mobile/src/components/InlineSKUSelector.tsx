@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { cartEnhancementApi } from "../services/api/commerce.api";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 interface InlineSKUSelectorProps {
   visible: boolean;
@@ -100,13 +101,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
   },
-  title: { fontSize: 16, fontWeight: "600", color: "#333333" },
-  close: { fontSize: 16, color: "#999999" },
+  title: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  close: { fontSize: 16, color: DesignTokens.colors.text.tertiary },
   body: { padding: 16 },
   sectionTitle: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#333333",
+    color: DesignTokens.colors.text.primary,
     marginBottom: 8,
   },
   row: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
@@ -114,10 +115,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
   },
   chipSelected: { backgroundColor: "#FFF0F0", borderWidth: 1, borderColor: "#FF4D4F" },
-  chipText: { fontSize: 14, color: "#666666" },
+  chipText: { fontSize: 14, color: DesignTokens.colors.text.secondary },
   chipTextSelected: { color: "#FF4D4F", fontWeight: "500" },
   confirm: {
     backgroundColor: "#FF4D4F",

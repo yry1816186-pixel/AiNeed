@@ -312,13 +312,13 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#000",
+    backgroundColor: DesignTokens.colors.neutral.black,
     zIndex: 9998,
   },
   menuContainer: {
     position: "absolute",
     borderRadius: 20,
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.15,
     shadowRadius: 30,

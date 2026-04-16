@@ -4,6 +4,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import type { RootStackParamList } from "../types/navigation";
 import type { ClothingItem } from "../types/clothing";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface OutfitSet {
   id: string;
@@ -54,7 +55,7 @@ export const OutfitRecommendationCards: React.FC<OutfitRecommendationCardsProps>
 
 const styles = StyleSheet.create({
   container: { paddingVertical: 16 },
-  title: { fontSize: 16, fontWeight: "600", color: "#333333", marginBottom: 12 },
+  title: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.primary, marginBottom: 12 },
   card: {
     width: 200,
     backgroundColor: "#F9F9F9",
@@ -62,12 +63,12 @@ const styles = StyleSheet.create({
     padding: 12,
     marginRight: 12,
   },
-  cardTitle: { fontSize: 13, fontWeight: "500", color: "#666666", marginBottom: 8 },
+  cardTitle: { fontSize: 13, fontWeight: "500", color: DesignTokens.colors.text.secondary, marginBottom: 8 },
   itemsRow: { flexDirection: "row", gap: 6 },
   itemImage: {
     width: 50,
     height: 50,
     borderRadius: 6,
-    backgroundColor: "#EEEEEE",
+    backgroundColor: DesignTokens.colors.borders.light,
   },
 });

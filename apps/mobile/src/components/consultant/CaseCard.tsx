@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface CaseCardProps {
   serviceType: string;
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 100,
     borderRadius: 8,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
   },
   imagePlaceholder: {
     alignItems: "center",
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     fontSize: 12,
-    color: "#999",
+    color: DesignTokens.colors.text.tertiary,
   },
   badgeRow: {
     flexDirection: "row",
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: 12,
-    color: "#888",
+    color: DesignTokens.colors.text.secondary,
   },
   excerpt: {
     fontSize: 13,
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   },
   clientName: {
     fontSize: 12,
-    color: "#999",
+    color: DesignTokens.colors.text.tertiary,
   },
   price: {
     fontSize: 13,

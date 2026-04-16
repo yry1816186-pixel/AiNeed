@@ -17,6 +17,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../design-system/theme';
 import { useAiStylistStore, type OutfitPlanDetail } from "../stores/aiStylistStore";
 import type { StylistStackParamList } from "../navigation/types";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type OutfitPlanRoute = RouteProp<StylistStackParamList, "OutfitPlan">;
 
@@ -243,7 +244,7 @@ const s = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
@@ -260,7 +261,7 @@ const s = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,

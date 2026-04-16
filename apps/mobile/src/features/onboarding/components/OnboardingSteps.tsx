@@ -12,6 +12,7 @@ import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../polyfills/expo-linear-gradient";
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
 import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -107,7 +108,7 @@ export const COLOR_PALETTES: ColorPaletteOption[] = [
   {
     id: "neutral",
     label: "中性色",
-    colors: ["#1A1A18", "#52524D", "#D4D4D0", "#FAFAF8"],
+    colors: [DesignTokens.colors.text.primary, "#52524D", "#D4D4D0", "#FAFAF8"],
     description: "百搭经典，永不褪色",
   },
   {

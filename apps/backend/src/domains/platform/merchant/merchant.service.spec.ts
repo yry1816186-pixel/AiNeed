@@ -1,4 +1,4 @@
-import {
+﻿import {
   NotFoundException,
   ForbiddenException,
   BadRequestException,
@@ -6,13 +6,13 @@ import {
 import { Test, TestingModule } from "@nestjs/testing";
 import { ClothingCategory } from "@prisma/client";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import * as bcrypt from "../../../../common/security/bcrypt";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import * as bcrypt from "../../../common/security/bcrypt";
 
 
 import { MerchantService } from "./merchant.service";
 
-jest.mock("../../../../common/security/bcrypt", () => ({
+jest.mock("../../../common/security/bcrypt", () => ({
   hash: jest.fn().mockResolvedValue("hashed-password"),
   compare: jest.fn(),
 }));

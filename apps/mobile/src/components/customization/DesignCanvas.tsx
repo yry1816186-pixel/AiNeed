@@ -4,6 +4,7 @@ import { Svg, Rect, Image as SvgImage, Text as SvgText, G } from "react-native-s
 import { GestureHandlerRootView, GestureDetector, Gesture } from "react-native-gesture-handler";
 import { theme, Colors } from '../design-system/theme';
 import type { DesignLayer, PrintableAreaBounds } from "../../stores/customizationEditorStore";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface DesignCanvasProps {
   template: {
@@ -140,7 +141,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
           x={0}
           y={(layer.fontSize ?? 24) * layer.scale}
           fontSize={(layer.fontSize ?? 24) * layer.scale}
-          fill={layer.color ?? "#000000"}
+          fill={layer.color ?? DesignTokens.colors.neutral.black}
           opacity={layer.opacity}
         >
           {layer.content}
@@ -151,8 +152,8 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
           y={0}
           width={layer.width * layer.scale}
           height={layer.height * layer.scale}
-          fill={layer.fillColor ?? "#CCCCCC"}
-          stroke={layer.strokeColor ?? "#000000"}
+          fill={layer.fillColor ?? DesignTokens.colors.neutral[300]}
+          stroke={layer.strokeColor ?? DesignTokens.colors.neutral.black}
           strokeWidth={layer.strokeWidth ?? 1}
           opacity={layer.opacity}
         />
@@ -192,7 +193,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
             viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
           >
             {/* Background */}
-            <Rect x={0} y={0} width={canvasWidth} height={canvasHeight} fill="#F5F5F5" />
+            <Rect x={0} y={0} width={canvasWidth} height={canvasHeight} fill={DesignTokens.colors.backgrounds.tertiary} />
             {/* Printable area indicator */}
             {renderPrintableArea()}
             {/* Layers */}

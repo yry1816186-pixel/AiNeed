@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
     marginBottom: CARD_GAP,
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,

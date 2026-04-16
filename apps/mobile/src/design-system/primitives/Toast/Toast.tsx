@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
+        shadowColor: DesignTokens.colors.neutral.black,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 8,

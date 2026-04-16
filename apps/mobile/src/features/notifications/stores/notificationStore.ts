@@ -1,4 +1,4 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 
 import {
   notificationApi,
@@ -44,8 +44,8 @@ interface NotificationState {
   currentCategory: NotificationCategory;
   settings: PushNotificationSettings | null;
   settingsLoading: boolean;
+  error: string | null;
 
-  // Actions
   fetchNotifications: (reset?: boolean) => Promise<void>;
   markAsRead: (id: string) => Promise<void>;
   markAllAsRead: () => Promise<void>;
@@ -54,6 +54,8 @@ interface NotificationState {
   updateSettings: (settings: Partial<PushNotificationSettings>) => Promise<void>;
   setCurrentCategory: (category: NotificationCategory) => void;
   decrementUnread: () => void;
+  setError: (message: string) => void;
+  clearError: () => void;
   reset: () => void;
 }
 
@@ -207,6 +209,9 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     }));
   },
 
+  setError: (message: string) => set({ error: message }),
+  clearError: () => set({ error: null }),
+
   reset: () => {
     set({
       notifications: [],
@@ -216,6 +221,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       currentCategory: "all",
       settings: null,
       settingsLoading: false,
+      error: null,
     });
   },
 }));

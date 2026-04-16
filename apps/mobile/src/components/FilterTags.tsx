@@ -9,6 +9,7 @@ import {
   FlatList,
 } from "react-native";
 import type { FilterOptions } from "../services/api/commerce.api";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 interface FilterTagsProps {
   filterOptions: FilterOptions | null;
@@ -164,11 +165,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     gap: 4,
   },
   tagActive: { backgroundColor: "#FFF0F0" },
-  tagText: { fontSize: 13, color: "#666666" },
+  tagText: { fontSize: 13, color: DesignTokens.colors.text.secondary },
   tagTextActive: { color: "#FF4D4F" },
   badge: {
     backgroundColor: "#FF4D4F",
@@ -199,13 +200,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
   },
-  modalTitle: { fontSize: 16, fontWeight: "600", color: "#333333" },
-  modalClose: { fontSize: 14, color: "#999999" },
+  modalTitle: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  modalClose: { fontSize: 14, color: DesignTokens.colors.text.tertiary },
   optionRow: {
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#F5F5F5",
+    borderBottomColor: DesignTokens.colors.backgrounds.tertiary,
   },
-  optionText: { fontSize: 15, color: "#333333" },
+  optionText: { fontSize: 15, color: DesignTokens.colors.text.primary },
 });

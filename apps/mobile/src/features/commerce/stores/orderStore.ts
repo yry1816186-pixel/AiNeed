@@ -1,7 +1,7 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 
 import { orderEnhancementApi } from "../../../services/api/commerce.api";
-import type { Order } from "../types";
+import type { Order } from "../../../shared/types/api";
 
 interface OrderStore {
   ordersByTab: Record<string, Order[]>;
@@ -9,11 +9,14 @@ interface OrderStore {
   isLoading: boolean;
   totalByTab: Record<string, number>;
   hasMoreByTab: Record<string, boolean>;
+  error: string | null;
 
   fetchOrdersByTab: (tab: string, page?: number) => Promise<void>;
   setCurrentTab: (tab: string) => void;
   confirmReceipt: (orderId: string) => Promise<void>;
   softDeleteOrder: (orderId: string) => Promise<void>;
+  setError: (message: string) => void;
+  clearError: () => void;
 }
 
 const PAGE_SIZE = 10;
@@ -24,9 +27,10 @@ export const useOrderStore = create<OrderStore>((set) => ({
   isLoading: false,
   totalByTab: {},
   hasMoreByTab: {},
+  error: null,
 
   fetchOrdersByTab: async (tab: string, page?: number) => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const response = await orderEnhancementApi.getOrdersByTab(tab, page ?? 1, PAGE_SIZE);
       if (response.success && response.data) {
@@ -41,7 +45,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
         }));
       }
     } catch (error) {
-      console.error("Failed to fetch orders by tab:", error);
+      set({ error: '获取订单失败，请稍后重试', isLoading: false });
     } finally {
       set({ isLoading: false });
     }
@@ -52,6 +56,7 @@ export const useOrderStore = create<OrderStore>((set) => ({
   },
 
   confirmReceipt: async (orderId: string) => {
+    set({ error: null });
     try {
       const response = await orderEnhancementApi.confirmReceipt(orderId);
       if (response.success) {
@@ -66,11 +71,12 @@ export const useOrderStore = create<OrderStore>((set) => ({
         });
       }
     } catch (error) {
-      console.error("Failed to confirm receipt:", error);
+      set({ error: '确认收货失败，请稍后重试' });
     }
   },
 
   softDeleteOrder: async (orderId: string) => {
+    set({ error: null });
     try {
       const response = await orderEnhancementApi.softDeleteOrder(orderId);
       if (response.success) {
@@ -83,7 +89,10 @@ export const useOrderStore = create<OrderStore>((set) => ({
         });
       }
     } catch (error) {
-      console.error("Failed to soft delete order:", error);
+      set({ error: '删除订单失败，请稍后重试' });
     }
   },
+
+  setError: (message: string) => set({ error: message }),
+  clearError: () => set({ error: null }),
 }));

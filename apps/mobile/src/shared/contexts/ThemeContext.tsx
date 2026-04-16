@@ -4,7 +4,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DesignTokens, darkTokens } from "../../design-system/theme/tokens/design-tokens";
 import type { DesignTokensType, DarkTokensType } from "../../design-system/theme/tokens/design-tokens";
 import {
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
   seasonAccentColors,
   normalizeColorSeason,
   type ColorSeason,

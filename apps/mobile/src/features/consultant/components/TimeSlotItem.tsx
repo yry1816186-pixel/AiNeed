@@ -1,5 +1,6 @@
 import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface TimeSlotItemProps {
   startTime: string;
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     borderColor: "#E0E0E0",
   },
   booked: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     borderColor: "#E8E8E8",
     opacity: 0.6,
   },
@@ -75,18 +76,18 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 15,
-    color: "#333",
+    color: DesignTokens.colors.text.primary,
     fontWeight: "500",
   },
   timeBooked: {
-    color: "#999",
+    color: DesignTokens.colors.text.tertiary,
   },
   timeSelected: {
     color: "#C67B5C",
   },
   bookedLabel: {
     fontSize: 12,
-    color: "#999",
+    color: DesignTokens.colors.text.tertiary,
   },
   selectedLabel: {
     fontSize: 12,
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
   },
   availableLabel: {
     fontSize: 12,
-    color: "#4CAF50",
+    color: DesignTokens.colors.semantic.success,
   },
 });
 

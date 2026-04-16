@@ -1,5 +1,6 @@
 import React from "react";
 import { Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 interface Subcategory {
   name: string;
@@ -60,9 +61,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
   },
   chipSelected: { backgroundColor: "#FF4D4F" },
-  chipText: { fontSize: 13, color: "#666666" },
+  chipText: { fontSize: 13, color: DesignTokens.colors.text.secondary },
   chipTextSelected: { color: "#FFFFFF", fontWeight: "500" },
 });

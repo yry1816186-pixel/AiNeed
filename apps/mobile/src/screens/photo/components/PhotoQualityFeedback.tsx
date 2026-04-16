@@ -3,6 +3,7 @@ import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from "
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../design-system/theme';
 import type { PhotoQualityResult, PhotoQualityIssue } from "../../../stores/photoStore";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface PhotoQualityFeedbackProps {
   qualityResult: PhotoQualityResult | null;
@@ -15,12 +16,12 @@ const CIRCLE_SIZE = 100;
 
 function getScoreColor(score: number): string {
   if (score > 70) {
-    return "#4CAF50";
+    return DesignTokens.colors.semantic.success;
   }
   if (score >= 40) {
-    return "#FFC107";
+    return DesignTokens.colors.semantic.warning;
   }
-  return "#F44336";
+  return DesignTokens.colors.semantic.error;
 }
 
 function getIssueIcon(type: PhotoQualityIssue["type"]): keyof typeof Ionicons.glyphMap {
@@ -36,9 +37,9 @@ function getIssueIcon(type: PhotoQualityIssue["type"]): keyof typeof Ionicons.gl
 
 function getSeverityColor(severity: PhotoQualityIssue["severity"]): string {
   const colors: Record<PhotoQualityIssue["severity"], string> = {
-    low: "#FFC107",
+    low: DesignTokens.colors.semantic.warning,
     medium: "#FF9800",
-    high: "#F44336",
+    high: DesignTokens.colors.semantic.error,
   };
   return colors[severity];
 }
@@ -121,7 +122,7 @@ const PhotoQualityFeedback: React.FC<PhotoQualityFeedbackProps> = ({
 
         {qualityResult.isAcceptable ? (
           <View style={styles.acceptableContainer}>
-            <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+            <Ionicons name="checkmark-circle" size={24} color={DesignTokens.colors.semantic.success} />
             <Text style={styles.acceptableText}>照片质量很好</Text>
           </View>
         ) : (
@@ -195,7 +196,7 @@ const styles = StyleSheet.create({
   acceptableText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#4CAF50",
+    color: DesignTokens.colors.semantic.success,
   },
   issuesContainer: {
     width: "100%",

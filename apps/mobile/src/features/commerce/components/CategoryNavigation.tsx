@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 const CATEGORIES = [
   { key: "tops", icon: "tshirt-crew", label: "上装" },
@@ -72,13 +73,13 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 4,
   },
   iconCircleSelected: { backgroundColor: "#FFF0F0" },
-  iconEmoji: { fontSize: 16, fontWeight: "600", color: "#666666" },
-  label: { fontSize: 12, color: "#999999" },
+  iconEmoji: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.secondary },
+  label: { fontSize: 12, color: DesignTokens.colors.text.tertiary },
   labelSelected: { color: "#FF4D4F", fontWeight: "500" },
 });

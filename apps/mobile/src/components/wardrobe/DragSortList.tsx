@@ -229,7 +229,7 @@ export const CollectionDragList: React.FC<CollectionDragListProps> = ({
           <Ionicons name="reorder-three-outline" size={20} color={theme.colors.textTertiary} />
         </View>
         <View style={collectionStyles.iconContainer}>
-          <Ionicons name={item.icon as "folder"} size={22} color=DesignTokens.colors.brand.terracotta />
+          <Ionicons name={item.icon as "folder"} size={22} color={DesignTokens.colors.brand.terracotta} />
         </View>
         <View style={collectionStyles.info}>
           <Text style={collectionStyles.name}>{item.name}</Text>
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: 12,
     marginVertical: 4,
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 3,

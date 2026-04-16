@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 import customizationApi from "../services/api/customization.api";
 import type {
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
   CustomizationTemplate as ApiTemplate,
   CustomizationDesign,
   CustomizationDesignLayer,
@@ -131,7 +132,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
     });
   },
 
-  addTextLayer: (text: string, fontSize = 24, color = "#000000") => {
+  addTextLayer: (text: string, fontSize = 24, color = DesignTokens.colors.neutral.black) => {
     const state = get();
     const newLayer: DesignLayer = {
       id: generateLayerId(),

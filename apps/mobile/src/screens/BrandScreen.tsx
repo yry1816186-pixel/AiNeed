@@ -21,6 +21,7 @@ import type { ClothingItem } from "../types/clothing";
 
 import type { ProfileStackParamList } from "../navigation/types";
 import type { RootStackParamList } from "../types/navigation";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type BrandRoute = RouteProp<ProfileStackParamList, "Brand">;
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
@@ -225,7 +226,7 @@ const s = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: 14,
     padding: 14,
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,

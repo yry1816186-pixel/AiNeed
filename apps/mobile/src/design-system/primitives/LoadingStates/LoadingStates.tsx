@@ -19,6 +19,7 @@ import Animated, {
   interpolateColor,
 } from "react-native-reanimated";
 import { Colors, theme } from '../design-system/theme';
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
+        shadowColor: DesignTokens.colors.neutral.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,

@@ -1,9 +1,9 @@
-import { Injectable, Logger } from "@nestjs/common";
+﻿import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { RedisService } from "../../../../common/redis/redis.service";
-import { StorageService } from "../../../../common/storage/storage.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RedisService } from "../../../common/redis/redis.service";
+import { StorageService } from "../../../common/storage/storage.service";
 
 export interface HealthStatus {
   status: "healthy" | "unhealthy" | "degraded";

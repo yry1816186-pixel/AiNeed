@@ -7,6 +7,7 @@ import type {
   AlignmentLevel,
   OverallAlignment,
 } from "../../../hooks/useReferenceLines";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface ReferenceLineOverlayProps {
   referenceLines: ReferenceLines | null;
@@ -20,14 +21,14 @@ function getLineColor(level: AlignmentLevel | OverallAlignment): string {
     case "aligned":
     case "perfect":
     case "good":
-      return "#4CAF50";
+      return DesignTokens.colors.semantic.success;
     case "slight":
-      return "#FFC107";
+      return DesignTokens.colors.semantic.warning;
     case "off":
     case "adjust":
-      return "#F44336";
+      return DesignTokens.colors.semantic.error;
     default:
-      return "#FFC107";
+      return DesignTokens.colors.semantic.warning;
   }
 }
 

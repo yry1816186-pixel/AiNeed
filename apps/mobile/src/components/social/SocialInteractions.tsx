@@ -934,7 +934,7 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 16,
     padding: 12,
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,

@@ -1002,7 +1002,7 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral.white,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

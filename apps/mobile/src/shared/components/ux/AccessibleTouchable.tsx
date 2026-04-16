@@ -1,5 +1,6 @@
 import React, { memo } from "react";
 import {
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
   TouchableOpacity,
   TouchableWithoutFeedback,
   TouchableHighlight,
@@ -81,7 +82,7 @@ export const AccessibleTouchable = memo(function AccessibleTouchable({
         <TouchableHighlight
           {...commonProps}
           {...accessibilityProps}
-          underlayColor={underlayColor || "#DDDDDD"}
+          underlayColor={underlayColor || DesignTokens.colors.borders.default}
           activeOpacity={activeOpacity}
         >
           {children as React.ReactElement}

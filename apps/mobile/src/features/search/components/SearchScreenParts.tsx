@@ -679,7 +679,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOpacity: 0.06,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 6 },

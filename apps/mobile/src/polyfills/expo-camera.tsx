@@ -1,5 +1,6 @@
 ﻿import React from "react";
 import { View, ViewStyle, StyleSheet } from "react-native";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 export interface CameraRef {
   takePictureAsync: () => Promise<{ uri: string }>;
@@ -80,7 +81,7 @@ export function useCameraPermissions(): [
 const styles = StyleSheet.create({
   camera: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: DesignTokens.colors.neutral.black,
   },
 });
 

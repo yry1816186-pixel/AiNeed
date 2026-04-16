@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { PrismaModule } from "../../../../common/prisma/prisma.module";
+import { PrismaModule } from "../../../common/prisma/prisma.module";
 import { AnalyticsModule } from "../../platform/analytics/analytics.module";
 import { PhotosModule } from "../../ai-core/photos/photos.module";
 import { RecommendationsModule } from "../../platform/recommendations/recommendations.module";

@@ -1,4 +1,4 @@
-import { InjectQueue } from '@nestjs/bullmq';
+﻿import { InjectQueue } from '@nestjs/bullmq';
 import {
   Injectable,
   Logger,
@@ -8,8 +8,8 @@ import {
 import { Prisma } from '@prisma/client';
 import { Queue } from 'bullmq';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { RedisService, RedisKeyBuilder } from '../../../../common/redis/redis.service';
+import { PrismaService } from '../../../common/prisma/prisma.service';
+import { RedisService, RedisKeyBuilder } from '../../../common/redis/redis.service';
 
 import { CreateFeatureFlagDto } from './dto/create-flag.dto';
 import { UpdateFeatureFlagDto } from './dto/update-flag.dto';

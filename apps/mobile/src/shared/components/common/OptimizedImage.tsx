@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import { getOptimizedImageUrl, getPlaceholder } from "../../utils/imageOptimizer";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 export interface OptimizedImageProps extends AccessibilityProps {
   /** Source URI of the image */
@@ -68,7 +69,7 @@ export const OptimizedImage = memo(function OptimizedImage({
         {...accessibilityRest}
       >
         <View style={styles.errorContainer}>
-          <ActivityIndicator size="small" color="#999" />
+          <ActivityIndicator size="small" color={DesignTokens.colors.text.tertiary} />
         </View>
       </View>
     );
@@ -102,7 +103,7 @@ export const OptimizedImage = memo(function OptimizedImage({
       {/* Loading indicator while main image is fetching */}
       {!loaded && (
         <View style={styles.loaderContainer}>
-          <ActivityIndicator size="small" color="#666" />
+          <ActivityIndicator size="small" color={DesignTokens.colors.text.secondary} />
         </View>
       )}
     </View>
@@ -112,7 +113,7 @@ export const OptimizedImage = memo(function OptimizedImage({
 const styles = StyleSheet.create({
   container: {
     overflow: "hidden",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
   },
   loaderContainer: {
     ...StyleSheet.absoluteFillObject,

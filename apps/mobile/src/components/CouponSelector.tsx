@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { UserCoupon } from "../services/api/commerce.api";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 interface CouponSelectorProps {
   visible: boolean;
@@ -110,8 +111,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
   },
-  title: { fontSize: 16, fontWeight: "600", color: "#333333" },
-  close: { fontSize: 14, color: "#999999" },
+  title: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  close: { fontSize: 14, color: DesignTokens.colors.text.tertiary },
   noCouponRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -121,14 +122,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
   },
-  noCouponText: { fontSize: 14, color: "#666666" },
+  noCouponText: { fontSize: 14, color: DesignTokens.colors.text.secondary },
   couponRow: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#F5F5F5",
+    borderBottomColor: DesignTokens.colors.backgrounds.tertiary,
   },
   couponRowSelected: { backgroundColor: "#FFF8F8" },
   couponLeft: {
@@ -145,11 +146,11 @@ const styles = StyleSheet.create({
   },
   couponCondition: {
     fontSize: 11,
-    color: "#999999",
+    color: DesignTokens.colors.text.tertiary,
     marginTop: 2,
   },
   couponRight: { flex: 1 },
-  couponDesc: { fontSize: 14, color: "#333333" },
-  couponExpiry: { fontSize: 12, color: "#999999", marginTop: 4 },
+  couponDesc: { fontSize: 14, color: DesignTokens.colors.text.primary },
+  couponExpiry: { fontSize: 12, color: DesignTokens.colors.text.tertiary, marginTop: 4 },
   checkIcon: { marginLeft: 8 },
 });

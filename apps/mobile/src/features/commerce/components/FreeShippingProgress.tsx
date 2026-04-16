@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface FreeShippingProgressProps {
   currentAmount: number;
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 12,
-    color: "#999999",
+    color: DesignTokens.colors.text.tertiary,
     marginBottom: 4,
   },
   freeText: {

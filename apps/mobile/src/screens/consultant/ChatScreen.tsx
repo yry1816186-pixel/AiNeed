@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   headerName: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.primary },
   onlineIndicator: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 },
   onlineDot: { width: 8, height: 8, borderRadius: 4 },
-  dotOnline: { backgroundColor: "#4CAF50" }, // custom color
+  dotOnline: { backgroundColor: DesignTokens.colors.semantic.success }, // custom color
   dotOffline: { backgroundColor: DesignTokens.colors.neutral[300] },
   onlineText: { fontSize: 11, color: DesignTokens.colors.text.tertiary },
   headerAvatar: { width: 32, height: 32, borderRadius: 16 },

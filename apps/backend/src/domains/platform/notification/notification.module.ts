@@ -1,7 +1,7 @@
-import { Module, forwardRef } from "@nestjs/common";
+﻿import { Module, forwardRef } from "@nestjs/common";
 
-import { GatewayModule } from "../../../../common/gateway/gateway.module";
-import { PrismaModule } from "../../../../common/prisma/prisma.module";
+import { GatewayModule } from "../../../common/gateway/gateway.module";
+import { PrismaModule } from "../../../common/prisma/prisma.module";
 
 import { OrderEventNotificationListener } from "./listeners/order-event.listener";
 import { PaymentNotificationListener } from "./listeners/payment-event.listener";

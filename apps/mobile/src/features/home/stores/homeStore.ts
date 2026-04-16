@@ -1,4 +1,4 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { profileApi, type UserProfile } from "../../../services/api/profile.api";
@@ -22,11 +22,14 @@ interface HomeState {
   weatherData: WeatherData | null;
   isLoadingWeather: boolean;
   isLoadingProfile: boolean;
+  error: string | null;
   dismissBanner: () => void;
   setWeatherData: (data: WeatherData) => void;
   setLoadingWeather: (loading: boolean) => void;
   fetchWeather: (latitude: number, longitude: number) => Promise<void>;
   fetchProfileCompletion: () => Promise<void>;
+  setError: (message: string) => void;
+  clearError: () => void;
   resetBannerOnAppStart: () => void;
 }
 
@@ -81,6 +84,7 @@ export const useHomeStore = create<HomeState>()(
       weatherData: null,
       isLoadingWeather: false,
       isLoadingProfile: false,
+      error: null,
 
       dismissBanner: () => set({ isBannerDismissed: true }),
 

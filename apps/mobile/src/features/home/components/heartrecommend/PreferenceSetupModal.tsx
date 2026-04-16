@@ -406,7 +406,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
             disabled={!canProceed() || loading}
           >
             <LinearGradient
-              colors={canProceed() ? [DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark] : [DesignTokens.colors.neutral[300], "#aaa" /* custom color */]}
+              colors={canProceed() ? [DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark] : [DesignTokens.colors.neutral[300], DesignTokens.colors.text.tertiary /* custom color */]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.nextButtonGradient}

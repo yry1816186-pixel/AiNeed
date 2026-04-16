@@ -15,6 +15,7 @@ import { CaseCard } from "../../components/consultant/CaseCard";
 import { consultantApi } from "../../services/api/consultant.api";
 import type { ConsultantProfile } from "../../types/consultant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 export const AdvisorProfileScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   backBtn: { padding: 8 },
-  backBtnText: { fontSize: 20, color: "#333" },
+  backBtnText: { fontSize: 20, color: DesignTokens.colors.text.primary },
   headerTitle: { fontSize: 18, fontWeight: "600", color: "#1A1A1A" },
   shareBtn: { padding: 8 },
   shareBtnText: { fontSize: 14, color: "#C67B5C" },
@@ -193,8 +194,8 @@ const styles = StyleSheet.create({
   specialtyText: { fontSize: 13, color: "#C67B5C" },
   ratingRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   ratingValue: { fontSize: 18, fontWeight: "600", color: "#C67B5C" },
-  ratingLabel: { fontSize: 13, color: "#888" },
-  reviewCount: { fontSize: 13, color: "#888" },
+  ratingLabel: { fontSize: 13, color: DesignTokens.colors.text.secondary },
+  reviewCount: { fontSize: 13, color: DesignTokens.colors.text.secondary },
   infoRow: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -205,8 +206,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   infoItem: { alignItems: "center" },
-  infoValue: { fontSize: 16, fontWeight: "600", color: "#333" },
-  infoLabel: { fontSize: 12, color: "#999", marginTop: 4 },
+  infoValue: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  infoLabel: { fontSize: 12, color: DesignTokens.colors.text.tertiary, marginTop: 4 },
   infoDivider: { width: 1, backgroundColor: "#F0F0F0" },
   section: { paddingHorizontal: 16, paddingTop: 20 },
   sectionTitle: { fontSize: 18, fontWeight: "600", color: "#1A1A1A", marginBottom: 12 },

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { paymentApi } from "../services/api/commerce.api";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 interface PaymentWaitingScreenProps {
   orderId: string;
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
   },
   pollingText: {
     fontSize: 16,
-    color: "#666666",
+    color: DesignTokens.colors.text.secondary,
     marginTop: 16,
   },
   timeoutIcon: {
@@ -93,12 +94,12 @@ const styles = StyleSheet.create({
   timeoutTitle: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#333333",
+    color: DesignTokens.colors.text.primary,
     marginTop: 12,
   },
   timeoutMessage: {
     fontSize: 14,
-    color: "#999999",
+    color: DesignTokens.colors.text.tertiary,
     marginTop: 8,
     textAlign: "center",
   },

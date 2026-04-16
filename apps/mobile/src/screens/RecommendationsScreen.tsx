@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     overflow: "hidden",
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 4,

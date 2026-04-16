@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Recommendations Module - Refactored Architecture
  *
  * This module is organized into submodules by algorithm type:
@@ -18,8 +18,8 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
-import { PrismaModule } from "../../../../common/prisma/prisma.module";
-import { RedisModule } from "../../../../common/redis/redis.module";
+import { PrismaModule } from "../../../common/prisma/prisma.module";
+import { RedisModule } from "../../../common/redis/redis.module";
 import { AIModule } from "../../ai-core/ai/ai.module";
 import { CacheModule } from "../../../modules/cache/cache.module";
 

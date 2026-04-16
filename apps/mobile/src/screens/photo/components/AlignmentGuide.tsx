@@ -1,18 +1,19 @@
 import React, { useEffect, useRef, useMemo } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
 import type { AlignmentStatus } from "../../../hooks/useReferenceLines";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface AlignmentGuideProps {
   alignmentStatus: AlignmentStatus | null;
 }
 
 const STATUS_COLORS = {
-  aligned: "#4CAF50",
-  perfect: "#4CAF50",
-  good: "#4CAF50",
-  slight: "#FFC107",
-  off: "#F44336",
-  adjust: "#F44336",
+  aligned: DesignTokens.colors.semantic.success,
+  perfect: DesignTokens.colors.semantic.success,
+  good: DesignTokens.colors.semantic.success,
+  slight: DesignTokens.colors.semantic.warning,
+  off: DesignTokens.colors.semantic.error,
+  adjust: DesignTokens.colors.semantic.error,
 } as const;
 
 function getStatusMessage(status: AlignmentStatus): { message: string; color: string } | null {

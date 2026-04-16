@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface SortBarProps {
   activeSort: string;
@@ -41,6 +42,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#F0F0F0",
   },
   sortItem: { paddingHorizontal: 8, paddingVertical: 4 },
-  sortText: { fontSize: 14, color: "#999999" },
+  sortText: { fontSize: 14, color: DesignTokens.colors.text.tertiary },
   sortTextActive: { color: "#FF4D4F", fontWeight: "600" },
 });

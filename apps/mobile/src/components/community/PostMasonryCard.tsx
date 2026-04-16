@@ -11,6 +11,7 @@ import { SharedElement } from "react-navigation-shared-element";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../design-system/theme';
 import { BloggerBadge } from "./BloggerBadge";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 export interface PostCardData {
   id: string;
@@ -135,7 +136,7 @@ const s = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: 14,
     overflow: "hidden",
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 10,

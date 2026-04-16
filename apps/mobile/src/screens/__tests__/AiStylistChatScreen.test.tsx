@@ -1,6 +1,7 @@
 import React from "react";
 import { render, fireEvent, waitFor, act } from "@testing-library/react-native";
 import { AiStylistChatScreen } from "../../screens/AiStylistChatScreen";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
@@ -60,7 +61,7 @@ jest.mock("../../theme", () => ({
     },
   },
   Colors: {
-    neutral: { 200: "#E5E5E5", 500: "#A8A29E", 600: "#57534E", 900: "#171717" },
+    neutral: { 200: DesignTokens.colors.borders.light, 500: "#A8A29E", 600: "#57534E", 900: "#171717" },
     success: { 500: "#22C55E" },
     rose: { 400: "#FB7185", 500: "#F43F5E" },
     primary: { 500: "#C67B5C" },
@@ -68,7 +69,7 @@ jest.mock("../../theme", () => ({
   DesignTokens: {
     colors: {
       brand: { terracotta: "#C67B5C" },
-      neutral: { 200: "#E5E5E5" },
+      neutral: { 200: DesignTokens.colors.borders.light },
       text: { tertiary: "#A8A29E" },
       backgrounds: { primary: "#FFFFFF" },
       semantic: { errorLight: "#FEE2E2", success: "#22C55E" },
@@ -90,7 +91,7 @@ jest.mock("../../theme/tokens/design-tokens", () => ({
         sage: "#8B9A7D",
         slate: "#7B8FA2",
       },
-      neutral: { 200: "#E5E5E5", 900: "#171717" },
+      neutral: { 200: DesignTokens.colors.borders.light, 900: "#171717" },
       text: { primary: "#1C1917", secondary: "#57534E", tertiary: "#A8A29E", inverse: "#FFFFFF" },
       backgrounds: { primary: "#FFFFFF", secondary: "#FAFAF8", elevated: "#FFFFFF" },
       borders: { light: "#E7E5E4" },

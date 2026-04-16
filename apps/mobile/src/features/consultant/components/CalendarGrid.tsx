@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface CalendarGridProps {
   selectedDate: string | null;
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
   },
   navBtnText: {
     fontSize: 18,
-    color: "#333",
+    color: DesignTokens.colors.text.primary,
   },
   monthLabel: {
     fontSize: 16,
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "center",
     fontSize: 12,
-    color: "#999",
+    color: DesignTokens.colors.text.tertiary,
   },
   grid: {
     flexDirection: "row",
@@ -181,10 +182,10 @@ const styles = StyleSheet.create({
   },
   dayText: {
     fontSize: 14,
-    color: "#333",
+    color: DesignTokens.colors.text.primary,
   },
   dayTextDisabled: {
-    color: "#CCC",
+    color: DesignTokens.colors.neutral[300],
   },
   dayTextSelected: {
     color: "#FFFFFF",

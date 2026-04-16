@@ -1,16 +1,16 @@
-import { NotFoundException, BadRequestException } from "@nestjs/common";
+﻿import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { EncryptionService } from "../../../../common/encryption";
-import { PIIEncryptionService } from "../../../../common/encryption/pii-encryption.service";
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import * as bcrypt from "../../../../common/security/bcrypt";
+import { EncryptionService } from "../../../common/encryption";
+import { PIIEncryptionService } from "../../../common/encryption/pii-encryption.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import * as bcrypt from "../../../common/security/bcrypt";
 import { CacheService } from "../../../modules/cache/cache.service";
 
 import { UsersService } from "./users.service";
 
 
-jest.mock("../../../../common/security/bcrypt");
+jest.mock("../../../common/security/bcrypt");
 
 describe("UsersService", () => {
   let service: UsersService;

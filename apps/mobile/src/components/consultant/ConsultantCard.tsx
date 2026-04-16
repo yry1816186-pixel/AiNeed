@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { RatingBadge } from "../../design-system/ui/Rating";
 import { MatchBadge } from "./MatchBadge";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface ConsultantCardProps {
   id: string;
@@ -148,11 +149,11 @@ const styles = StyleSheet.create({
   },
   reviewCount: {
     fontSize: 13,
-    color: "#888",
+    color: DesignTokens.colors.text.secondary,
   },
   matchReasons: {
     fontSize: 13,
-    color: "#666",
+    color: DesignTokens.colors.text.secondary,
     lineHeight: 18,
   },
   price: {

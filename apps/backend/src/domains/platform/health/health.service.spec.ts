@@ -1,9 +1,9 @@
-import { ConfigService } from "@nestjs/config";
+﻿import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { RedisService } from "../../../../common/redis/redis.service";
-import { StorageService } from "../../../../common/storage/storage.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RedisService } from "../../../common/redis/redis.service";
+import { StorageService } from "../../../common/storage/storage.service";
 
 import { HealthService } from "./health.service";
 

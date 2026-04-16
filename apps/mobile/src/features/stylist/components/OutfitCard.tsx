@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     borderColor: DesignTokens.colors.neutral[200],
   },
   itemCardClickable: {
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,

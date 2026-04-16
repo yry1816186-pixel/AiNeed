@@ -24,6 +24,7 @@ import { outfitApi } from "../services/api/outfit.api";
 import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from "../types/clothing";
 import type { RootStackParamList } from "../types/navigation";
 import { ImportSheet } from "../components/wardrobe/ImportSheet";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -517,7 +518,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 3,
@@ -600,7 +601,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: 12,
     overflow: "hidden",
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 3,

@@ -24,7 +24,7 @@ interface TrendingCardProps {
 const DIRECTION_CONFIG = {
   up: { icon: "arrow-up", color: "#27AE60" },
   down: { icon: "arrow-down", color: "#E74C3C" },
-  stable: { icon: "arrow-forward", color: "#999" },
+  stable: { icon: "arrow-forward", color: DesignTokens.colors.text.tertiary },
 } as const;
 
 export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
@@ -63,7 +63,7 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="small" color=DesignTokens.colors.brand.terracotta />
+        <ActivityIndicator size="small" color={DesignTokens.colors.brand.terracotta} />
       </View>
     );
   }

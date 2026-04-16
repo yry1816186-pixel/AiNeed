@@ -1,10 +1,10 @@
-import { Processor, WorkerHost, OnWorkerEvent } from "@nestjs/bullmq";
+﻿import { Processor, WorkerHost, OnWorkerEvent } from "@nestjs/bullmq";
 import { Logger } from "@nestjs/common";
 import { Job } from "bullmq";
 
-import { NotificationService } from "../../../../common/gateway/notification.service";
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { StorageService } from "../../../../common/storage/storage.service";
+import { NotificationService } from "../../../common/gateway/notification.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { StorageService } from "../../../common/storage/storage.service";
 import { ContentModerationService } from "../../../modules/community/content-moderation.service";
 import { generateStableCacheKey } from "../../ai-core/try-on/services/ai-tryon-provider.interface";
 import { TryOnOrchestratorService } from "../../ai-core/try-on/services/tryon-orchestrator.service";

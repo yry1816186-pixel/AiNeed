@@ -1,9 +1,9 @@
-import { ConfigService } from "@nestjs/config";
+﻿import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { EmailService } from "../../../../common/email/email.service";
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { StorageService } from "../../../../common/storage/storage.service";
+import { EmailService } from "../../../common/email/email.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { StorageService } from "../../../common/storage/storage.service";
 
 import { PrivacyService } from "./privacy.service";
 

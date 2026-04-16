@@ -827,7 +827,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
     ...({
-      shadowColor: "#000",
+      shadowColor: DesignTokens.colors.neutral.black,
       shadowOffset: { width: 0, height: -2 },
       shadowOpacity: 0.06,
       shadowRadius: 8,

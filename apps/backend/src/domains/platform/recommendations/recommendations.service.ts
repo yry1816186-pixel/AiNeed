@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+﻿import { Injectable, Logger } from "@nestjs/common";
 import {
   BodyType,
   SkinTone,
@@ -8,7 +8,7 @@ import {
   Prisma,
 } from "@prisma/client";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CacheKeyBuilder, CACHE_TTL } from "../../../modules/cache/cache.constants";
 import { CacheService } from "../../../modules/cache/cache.service";
 

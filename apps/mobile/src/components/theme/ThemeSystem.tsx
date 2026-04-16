@@ -43,6 +43,7 @@ import {
   Shadows,
   gradients as themeGradients,
 } from '../design-system/theme';
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 import {
   ThemeProvider as UnifiedThemeProvider,
   useTheme as useUnifiedTheme,
@@ -451,7 +452,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
@@ -493,7 +494,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   colorCircleSelected: {
-    shadowColor: "#000",
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -505,7 +506,7 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#000",
+    backgroundColor: DesignTokens.colors.neutral.black,
   },
   sheet: {
     position: "absolute",

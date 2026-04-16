@@ -19,7 +19,7 @@ import { TokenBlacklistService } from "./services/token-blacklist.service";
 import { WechatService } from "./services/wechat.service";
 
 // Mock bcrypt
-jest.mock("../../../../common/security/bcrypt", () => ({
+jest.mock("../../../../../common/security/bcrypt", () => ({
   hash: jest.fn(),
   compare: jest.fn(),
 }));

@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
+        shadowColor: DesignTokens.colors.neutral.black,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.25,
         shadowRadius: 16,

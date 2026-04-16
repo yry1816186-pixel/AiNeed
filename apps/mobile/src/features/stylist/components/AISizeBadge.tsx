@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import type { SizeRecommendation } from "../services/api/commerce.api";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface AISizeBadgeProps {
   recommendation: SizeRecommendation;
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
   detailValue: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#1A1A18",
+    color: DesignTokens.colors.text.primary,
   },
   reasonText: {
     fontSize: 11,

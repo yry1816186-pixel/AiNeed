@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -18,7 +18,7 @@ import {
   ApiParam,
 } from "@nestjs/swagger";
 
-import { RequestWithUser } from "../../../../common/types/common.types";
+import { RequestWithUser } from "../../../common/types/common.types";
 import { AuthGuard } from "../../identity/auth/guards/auth.guard";
 
 import { RegisterDeviceTokenDto, DeregisterDeviceTokenDto } from "./dto/push-notification.dto";

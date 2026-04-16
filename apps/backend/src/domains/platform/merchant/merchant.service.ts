@@ -1,4 +1,4 @@
-import {
+﻿import {
   Injectable,
   NotFoundException,
   ForbiddenException,
@@ -7,8 +7,8 @@ import {
 } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import * as bcrypt from "../../../../common/security/bcrypt";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import * as bcrypt from "../../../common/security/bcrypt";
 
 
 import type {
