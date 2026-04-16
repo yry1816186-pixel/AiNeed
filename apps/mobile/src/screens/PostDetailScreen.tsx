@@ -97,8 +97,8 @@ export const PostDetailScreen: React.FC = () => {
       if (response.success && response.data) {
         setComments(response.data.items);
       }
-    } catch {
-      // Comments loading failure is non-critical
+    } catch (error) {
+      console.error('Failed to load comments:', error);
     }
   }, [postId]);
 
@@ -125,8 +125,8 @@ export const PostDetailScreen: React.FC = () => {
             : prev
         );
       }
-    } catch {
-      // Like toggle failure is non-critical
+    } catch (error) {
+      console.error('Failed to toggle like:', error);
     }
   }, [postId]);
 

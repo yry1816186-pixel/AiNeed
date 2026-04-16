@@ -41,8 +41,8 @@ export const CustomizationPreviewScreen: React.FC = () => {
       if (response.success && response.data) {
         setDesignData(response.data);
       }
-    } catch {
-      // handle
+    } catch (error) {
+      console.error('Failed to generate preview:', error);
     }
   };
 

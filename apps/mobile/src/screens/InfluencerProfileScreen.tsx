@@ -103,8 +103,8 @@ export const InfluencerProfileScreen: React.FC = () => {
             : prev
         );
       }
-    } catch {
-      // Silent follow failure
+    } catch (error) {
+      console.error('Follow operation failed:', error);
     } finally {
       setFollowLoading(false);
     }

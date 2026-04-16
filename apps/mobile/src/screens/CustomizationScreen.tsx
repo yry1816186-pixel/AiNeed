@@ -93,8 +93,8 @@ export const CustomizationScreen: React.FC = () => {
       if (response.success && response.data) {
         setRequests(response.data.items);
       }
-    } catch {
-      // silently handle
+    } catch (error) {
+      console.error('Customization operation failed:', error);
     } finally {
       setIsLoadingRequests(false);
     }

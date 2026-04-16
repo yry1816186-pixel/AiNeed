@@ -74,8 +74,8 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
       if (response.success && response.data) {
         setOrder(response.data as unknown as OrderDetail);
       }
-    } catch {
-      // handle
+    } catch (error) {
+      console.error('Failed to load order detail:', error);
     } finally {
       setIsLoading(false);
     }
