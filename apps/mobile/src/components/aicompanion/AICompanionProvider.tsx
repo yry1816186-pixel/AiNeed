@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
@@ -21,6 +21,7 @@ import {
   useSpeechRecognition,
   SpeechRecognitionResult,
 } from "../../services/speech/speechRecognition";
+import { useAiStylistStore } from "../../features/stylist/stores/aiStylistStore";
 
 const POSITION_STORAGE_KEY = "@xuno_companion_position";
 const SESSION_STORAGE_KEY = "@xuno_stylist_session";
@@ -377,6 +378,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
             }
           } catch (error) {
             console.error("Polling error:", error);
+            useAiStylistStore.getState().set({ error: 'AI 助手连接中断，正在重试...' });
           }
         }, POLL_INTERVAL);
       }
@@ -761,6 +763,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       await startListening();
     } catch (error) {
       console.error("Failed to start voice input:", error);
+      useAiStylistStore.getState().set({ error: '语音输入启动失败' });
     }
   }, [enableVoiceInput, isVoiceAvailable, requestVoicePermissions, startListening]);
 

@@ -87,6 +87,7 @@ export function VirtualTryOnProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error("Failed to load VTO history:", error);
+      dispatch({ type: "SET_ERROR", payload: "加载试衣历史失败" });
     }
   };
 
