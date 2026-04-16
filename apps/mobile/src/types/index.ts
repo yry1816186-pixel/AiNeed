@@ -1,47 +1,40 @@
-// Re-export shared types from @xuno/types (avoiding duplicates with local sub-modules)
 export type {
+  User,
   UserProfile,
+  BodyMeasurements,
+  StylePreference,
+  UserPhoto,
+  PhotoAnalysisResult,
+  ClothingAttributes,
+  VirtualTryOn,
+  StyleRecommendation,
+  RecommendedItem,
+  CustomizationRequest,
+  CustomizationQuote,
+  ApiResponse,
+  ApiError,
+  PaginatedResponse,
+} from "@xuno/types";
+
+export {
   Gender,
   BodyType,
   SkinTone,
   FaceShape,
   ColorSeason,
-  BodyMeasurements,
-  StylePreference,
   StyleCategory,
-  UserPhoto,
   PhotoType,
   PhotoStatus,
-  PhotoAnalysisResult,
-  ClothingItem as SharedClothingItem,
-  ClothingAttributes,
-  VirtualTryOn,
-  TryOnStatus,
-  StyleRecommendation,
-  RecommendationType,
-  RecommendedItem,
+  ClothingCategory,
+  ClothingItem,
   Brand,
   PriceRange,
+  TryOnStatus,
+  RecommendationType,
+  CustomizationType,
+  CustomizationStatus,
 } from "@xuno/types";
 
-export {
-  Gender as SharedGender,
-  BodyType as SharedBodyType,
-  SkinTone as SharedSkinTone,
-  FaceShape as SharedFaceShape,
-  ColorSeason as SharedColorSeason,
-  StyleCategory as SharedStyleCategory,
-  PhotoType as SharedPhotoType,
-  PhotoStatus as SharedPhotoStatus,
-  ClothingCategory as SharedClothingCategory,
-  TryOnStatus as SharedTryOnStatus,
-  RecommendationType as SharedRecommendationType,
-  CustomizationType as SharedCustomizationType,
-  CustomizationStatus as SharedCustomizationStatus,
-  PriceRange as SharedPriceRange,
-} from "@xuno/types";
-
-// Mobile-specific types (not in shared package)
 export * from "./clothing";
 export * from "./outfit";
 export * from "./user";
