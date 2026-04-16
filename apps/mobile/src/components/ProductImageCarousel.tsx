@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   placeholderText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[300],
   },
   dots: {
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   },
   zoomCloseText: {
     color: DesignTokens.colors.backgrounds.primary,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
   },
   zoomImage: {

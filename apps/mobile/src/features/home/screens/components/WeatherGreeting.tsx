@@ -92,19 +92,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   greeting: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "400",
     color: DesignTokens.colors.text.tertiary,
     marginBottom: 2,
   },
   userName: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
     color: DesignTokens.colors.text.primary,
     marginBottom: 4,
   },
   dateText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.text.tertiary,
     marginBottom: 10,
   },
@@ -115,10 +115,10 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   weatherText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
   },
   suggestionText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
     fontStyle: "italic",
   },

@@ -293,8 +293,8 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   const glowOpacity = useSharedValue(0);
 
   const sizeConfig = {
-    small: { circleSize: 80, strokeWidth: 6, fontSize: 24, labelSize: 10 },
-    medium: { circleSize: 120, strokeWidth: 8, fontSize: 32, labelSize: 12 },
+    small: { circleSize: 80, strokeWidth: 6, fontSize: DesignTokens.typography.sizes['2xl'], labelSize: 10 },
+    medium: { circleSize: 120, strokeWidth: 8, fontSize: DesignTokens.typography.sizes['3xl'], labelSize: 12 },
     large: { circleSize: 160, strokeWidth: 10, fontSize: 42, labelSize: 14 },
   };
 
@@ -994,11 +994,11 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   breakdownLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[600],
   },
   breakdownScore: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: Colors.neutral[700],
   },
@@ -1022,7 +1022,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   colorPaletteTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: Colors.neutral[800],
     marginBottom: 16,
@@ -1050,12 +1050,12 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   colorName: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[700],
     fontWeight: "500",
   },
   colorPercentage: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
   },
   colorBarTrack: {
@@ -1137,7 +1137,7 @@ const styles = StyleSheet.create({
   },
   bodyTypeText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   measurementsGrid: {
@@ -1149,17 +1149,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   measurementLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     marginBottom: 4,
   },
   measurementValue: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
     color: Colors.neutral[800],
   },
   measurementUnit: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[400],
   },
   recommendationsContainer: {
@@ -1168,7 +1168,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   recommendationsTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[700],
     marginBottom: 12,
@@ -1188,7 +1188,7 @@ const styles = StyleSheet.create({
   },
   recommendationText: {
     flex: 1,
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[600],
     lineHeight: 20,
   },
@@ -1218,7 +1218,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   itemPreviewName: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[600],
     textAlign: "center",
   },
@@ -1239,7 +1239,7 @@ const styles = StyleSheet.create({
   },
   analysisLabel: {
     width: 80,
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[600],
   },
   analysisBar: {
@@ -1256,7 +1256,7 @@ const styles = StyleSheet.create({
   },
   analysisValue: {
     width: 40,
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     textAlign: "right",
   },
@@ -1266,7 +1266,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   suggestionsTitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: Colors.warning[700],
     marginBottom: 8,
@@ -1278,7 +1278,7 @@ const styles = StyleSheet.create({
   },
   suggestionText: {
     flex: 1,
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.warning[800],
     marginLeft: 8,
     lineHeight: 18,
@@ -1303,16 +1303,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   trendValue: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
   },
   trendLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[600],
     marginTop: 2,
   },
   trendPeriod: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[400],
     marginTop: 2,
   },

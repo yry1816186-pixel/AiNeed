@@ -183,10 +183,10 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   };
 
   const sizeStyles = {
-    sm: { height: 36, paddingHorizontal: 16, fontSize: 13 },
-    md: { height: 44, paddingHorizontal: 20, fontSize: 14 },
-    lg: { height: 52, paddingHorizontal: 28, fontSize: 16 },
-    xl: { height: 60, paddingHorizontal: 36, fontSize: 18 },
+    sm: { height: 36, paddingHorizontal: 16, fontSize: DesignTokens.typography.sizes.sm },
+    md: { height: 44, paddingHorizontal: 20, fontSize: DesignTokens.typography.sizes.base },
+    lg: { height: 52, paddingHorizontal: 28, fontSize: DesignTokens.typography.sizes.md },
+    xl: { height: 60, paddingHorizontal: 36, fontSize: DesignTokens.typography.sizes.lg },
   };
 
   const sizeStyle = sizeStyles[size];

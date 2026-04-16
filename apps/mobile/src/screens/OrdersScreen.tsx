@@ -18,6 +18,7 @@ import { orderApi, orderEnhancementApi } from "../services/api/commerce.api";
 import type { Order, OrderStatus } from "../types";
 import type { RootStackParamList } from "../types/navigation";
 import { theme } from '../design-system/theme';
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type OrdersNavigation = NativeStackNavigationProp<RootStackParamList>;
 type TabKey = "all" | "pending" | "paid" | "shipped" | "delivered" | "refund";
@@ -391,7 +392,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F1F3F4",
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -419,7 +420,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
   },
   tabText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   tabTextActive: {
@@ -444,13 +445,13 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     marginTop: 16,
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: theme.colors.textPrimary,
   },
   emptySubtitle: {
     marginTop: 8,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     textAlign: "center",
     color: theme.colors.textSecondary,
@@ -467,12 +468,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   orderIdLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   orderIdValue: {
     marginTop: 4,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -482,7 +483,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   statusText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
   },
   itemsRow: {
@@ -514,7 +515,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.border,
   },
   moreItemsText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textSecondary,
   },
@@ -528,7 +529,7 @@ const styles = StyleSheet.create({
     borderTopColor: "#F1F3F4",
   },
   orderDate: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   orderSummary: {
@@ -537,11 +538,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   orderSummaryText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   orderTotal: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "700",
     color: theme.colors.textPrimary,
   },
@@ -559,7 +560,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
   },
   secondaryButtonText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: theme.colors.textSecondary,
   },
@@ -570,7 +571,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   primaryButtonText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -580,7 +581,7 @@ const styles = StyleSheet.create({
   footerText: {
     paddingVertical: 20,
     textAlign: "center",
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   dangerTextButton: {
@@ -588,7 +589,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   dangerText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "#FF4D4F",
   },
 });

@@ -67,13 +67,13 @@ const s = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    fontSize: 17,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: 6,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginBottom: 24,
   },
@@ -88,7 +88,7 @@ const s = StyleSheet.create({
   },
   upgradeText: {
     color: DesignTokens.colors.backgrounds.primary,
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
 });

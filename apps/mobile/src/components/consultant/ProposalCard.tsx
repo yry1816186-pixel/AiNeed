@@ -42,13 +42,13 @@ const styles = StyleSheet.create({
     borderColor: "#E8E2DC",
   },
   title: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: "#1A1A1A",
     marginBottom: 6,
   },
   summary: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.text.secondary,
     lineHeight: 20,
     marginBottom: 12,
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   },
   primaryBtnText: {
     color: DesignTokens.colors.backgrounds.primary,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },
   secondaryBtn: {
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   secondaryBtnText: {
     color: "#C67B5C",
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },
 });

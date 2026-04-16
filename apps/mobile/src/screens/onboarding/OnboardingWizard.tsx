@@ -20,6 +20,7 @@ import { PhotoStep } from "./steps/PhotoStep";
 import { StyleTestStep } from "./steps/StyleTestStep";
 import { CompleteStep } from "./steps/CompleteStep";
 import type { RootStackParamList } from "../../types/navigation";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 type NavigationPropType = NavigationProp<RootStackParamList>;
 
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
   },
   stepCounter: {
     marginLeft: Spacing[3],
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
     fontWeight: "500",
     minWidth: 36,
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[3],
   },
   stepTitleText: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -303,7 +304,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[2],
   },
   backButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     fontWeight: "500",
   },
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing[3],
   },
   skipButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     fontWeight: "500",
   },
@@ -335,7 +336,7 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   nextButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.surface,
   },

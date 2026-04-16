@@ -128,13 +128,13 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   title: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.primary,
     marginBottom: 4,
   },
   percentText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
   },
   progressTrack: {
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   ctaText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   completeGradient: {
@@ -183,13 +183,13 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   completeTitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.semantic.success,
     marginBottom: 2,
   },
   completeSubtitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
   },
 });

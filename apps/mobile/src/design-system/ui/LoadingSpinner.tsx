@@ -10,6 +10,7 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius, Shadows } from '../../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 export type SpinnerSize = "sm" | "md" | "lg";
 
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
   overlayText: {
     marginTop: Spacing.md,
     color: Colors.neutral[600],
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },
 });

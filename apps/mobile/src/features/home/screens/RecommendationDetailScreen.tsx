@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   scoreText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
   },
   title: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
     color: theme.colors.textPrimary,
   },
@@ -596,17 +596,17 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral[100],
   },
   metaChipText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   price: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
     color: theme.colors.primary,
     marginBottom: 12,
   },
   description: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: theme.colors.textSecondary,
   },
@@ -614,7 +614,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: 12,
@@ -627,7 +627,7 @@ const styles = StyleSheet.create({
   },
   reasonText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 20,
     color: theme.colors.textSecondary,
   },
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral[100],
   },
   tagText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   linkButton: {
@@ -653,7 +653,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   linkButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.primary,
   },
@@ -665,7 +665,7 @@ const styles = StyleSheet.create({
   },
   stateText: {
     marginTop: 12,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     lineHeight: 24,
     color: theme.colors.textSecondary,
     textAlign: "center",
@@ -678,7 +678,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   retryButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -707,7 +707,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
   },
   secondaryButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "500",
     color: theme.colors.textSecondary,
   },
@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   primaryButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.surface,
   },

@@ -320,10 +320,10 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
   iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
-  errorText: { fontSize: 14, color: theme.colors.error, marginTop: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.error, marginTop: 12 },
   retryBtn: {
     marginTop: 16,
     backgroundColor: theme.colors.primary,
@@ -331,7 +331,7 @@ const s = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
   },
-  retryBtnText: { color: theme.colors.surface, fontSize: 14, fontWeight: "600" },
+  retryBtnText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   scrollView: { flex: 1 },
   profileSection: {
     backgroundColor: theme.colors.surface,
@@ -351,9 +351,9 @@ const s = StyleSheet.create({
   },
   statsRow: { flex: 1, flexDirection: "row", justifyContent: "space-around", marginLeft: 20 },
   statItem: { alignItems: "center" },
-  statNumber: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
-  statLabel: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 },
-  nickname: { fontSize: 18, fontWeight: "700", color: theme.colors.textPrimary, marginTop: 14 },
+  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
+  nickname: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.textPrimary, marginTop: 14 },
   badge: {
     flexDirection: "row",
     alignItems: "center",
@@ -365,8 +365,8 @@ const s = StyleSheet.create({
     alignSelf: "flex-start",
     marginTop: 6,
   },
-  badgeText: { fontSize: 11, fontWeight: "600", color: DesignTokens.colors.neutral.white },
-  bio: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 8, lineHeight: 20 },
+  badgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: DesignTokens.colors.neutral.white },
+  bio: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 8, lineHeight: 20 },
   followBtn: {
     marginTop: 14,
     backgroundColor: theme.colors.primary,
@@ -375,7 +375,7 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   followingBtn: { backgroundColor: theme.colors.subtleBg },
-  followBtnText: { color: DesignTokens.colors.neutral.white, fontSize: 14, fontWeight: "600" },
+  followBtnText: { color: DesignTokens.colors.neutral.white, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   followingBtnText: { color: theme.colors.text },
   tabBar: {
     flexDirection: "row",
@@ -406,11 +406,11 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   postInfo: { padding: 8 },
-  postTitle: { fontSize: 12, fontWeight: "500", color: theme.colors.textPrimary, lineHeight: 16 },
+  postTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: theme.colors.textPrimary, lineHeight: 16 },
   postStats: { flexDirection: "row", alignItems: "center", gap: 3, marginTop: 4 },
-  postStatText: { fontSize: 11, color: theme.colors.textTertiary },
+  postStatText: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary },
   emptyPosts: { alignItems: "center", justifyContent: "center", paddingVertical: 60 },
-  emptyText: { fontSize: 14, color: theme.colors.textTertiary, marginTop: 8 },
+  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary, marginTop: 8 },
 });
 
 export default InfluencerProfileScreen;

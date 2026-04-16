@@ -1,6 +1,7 @@
 ﻿import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Colors, Spacing } from '../../design-system/theme';
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface ProfileCompletenessBarProps {
   percentage: number;
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[2],
   },
   percentageText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[900],
   },
@@ -101,13 +102,13 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   missingText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "400",
     color: Colors.neutral[600],
     marginTop: Spacing[2],
   },
   ctaText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: Colors.primary[500],
     marginTop: Spacing[1],

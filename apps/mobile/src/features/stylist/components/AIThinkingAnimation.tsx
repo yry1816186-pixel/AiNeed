@@ -86,7 +86,7 @@ const r = StyleSheet.create({
     flex: 1,
   },
   staticText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: TERRACOTTA,
     fontWeight: "500",
   },

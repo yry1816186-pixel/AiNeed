@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
   topBarTitle: {
     flex: 1,
     textAlign: "center",
-    fontSize: 17,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[100],
   },
   topBarActionText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: theme.colors.textPrimary,
   },
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   previewButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     paddingTop: Spacing[4],
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     paddingHorizontal: Spacing[4],
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[50],
   },
   layerToggleText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   modalOverlay: {
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     ...Shadows.lg,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[4],
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[3],
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
   },
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   textSettingLabel: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
   },
   textSettingInput: {
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 36,
     textAlign: "center",
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   colorButton: {
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.neutral[200],
   },
   colorButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
   },
   modalActions: {
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[100],
   },
   modalCancelText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
   },
   modalConfirmButton: {
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   modalConfirmText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.surface,
   },

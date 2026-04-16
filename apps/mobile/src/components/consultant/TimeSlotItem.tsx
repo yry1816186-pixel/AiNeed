@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   time: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.text.primary,
     fontWeight: "500",
   },
@@ -86,16 +86,16 @@ const styles = StyleSheet.create({
     color: "#C67B5C",
   },
   bookedLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
   },
   selectedLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "#C67B5C",
     fontWeight: "500",
   },
   availableLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.semantic.success,
   },
 });

@@ -18,6 +18,7 @@ import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";
 import { SeasonPalette } from "../shared/components/visualization/SeasonPalette";
 import Animated, { FadeIn, SlideInDown } from "react-native-reanimated";
 import type { RootStackParamList } from "../types/navigation";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type ColorAnalysisNavProp = NavigationProp<RootStackParamList>;
 
@@ -536,14 +537,14 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginTop: Spacing[4],
     marginBottom: Spacing[2],
   },
   emptySubtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     textAlign: "center",
     lineHeight: 22,
@@ -557,7 +558,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   emptyButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: Colors.neutral.white,
   },

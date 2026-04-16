@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable, Animated } from "react-native";
 import { Colors, Spacing, BorderRadius, Shadows } from '../../design-system/theme';
 import { ProgressiveImage } from "../../../shared/components/ux/ProgressiveImage";
 import type { QuizImage } from "../../../stores/quizStore";
+import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface QuizImageCardProps {
   image: QuizImage;
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
   },
   checkMark: {
     color: Colors.neutral.white,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
   },
   labelContainer: {
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[2],
   },
   label: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: Colors.neutral[700],
   },

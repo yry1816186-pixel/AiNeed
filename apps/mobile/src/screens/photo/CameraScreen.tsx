@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 17,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },
@@ -370,14 +370,14 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   permissionTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: theme.colors.textPrimary,
     marginTop: 24,
     marginBottom: 12,
   },
   permissionMessage: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     textAlign: "center",
     lineHeight: 22,
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
   },
   settingsButtonText: {
     color: DesignTokens.colors.neutral.white,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
   },
   laterButton: {
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   laterButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
   },
 });

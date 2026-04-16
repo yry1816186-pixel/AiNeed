@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   toastMessage: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
     marginLeft: 12,
     flex: 1,

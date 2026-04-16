@@ -211,14 +211,14 @@ const styles = StyleSheet.create({
     ...Shadows.md,
   },
   title: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     textAlign: "center",
     marginBottom: Spacing[2],
   },
   description: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     textAlign: "center",
     lineHeight: 22,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   actionLabel: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },

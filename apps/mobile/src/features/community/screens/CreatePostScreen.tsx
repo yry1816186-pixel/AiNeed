@@ -509,12 +509,12 @@ const styles = StyleSheet.create({
   },
   headerBtn: { paddingVertical: 4, paddingHorizontal: 8 },
   headerBtnDisabled: { opacity: 0.5 },
-  headerTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text },
-  cancelText: { fontSize: 15, color: theme.colors.textSecondary },
-  publishText: { fontSize: 15, fontWeight: "600", color: theme.colors.primary },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
+  cancelText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
+  publishText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.primary },
   body: { flex: 1 },
   titleInput: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     paddingHorizontal: 16,
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
   },
   contentInput: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     marginTop: 8,
   },
-  sectionLabel: { fontSize: 14, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 10 },
+  sectionLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 10 },
   imageGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -574,14 +574,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 4,
   },
-  imageAddText: { fontSize: 11, color: theme.colors.textTertiary },
+  imageAddText: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary },
   uploadIndicator: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     marginTop: 8,
   },
-  uploadText: { fontSize: 13, color: theme.colors.textSecondary },
+  uploadText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   section: {
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   tagChipActive: { backgroundColor: "#F0EDFF" }, // custom color
-  tagChipText: { fontSize: 13, color: theme.colors.textSecondary },
+  tagChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   tagChipTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "600" },
   categoryRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   categoryChip: {
@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   categoryChipActive: { backgroundColor: theme.colors.primary },
-  categoryChipText: { fontSize: 13, color: theme.colors.textSecondary },
+  categoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   categoryChipTextActive: { color: theme.colors.surface, fontWeight: "600" },
   itemsList: { marginTop: 4 },
   itemCard: {
@@ -634,7 +634,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  itemName: { fontSize: 11, color: theme.colors.textSecondary, marginTop: 4, textAlign: "center" },
+  itemName: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textSecondary, marginTop: 4, textAlign: "center" },
   itemRemove: {
     position: "absolute",
     top: -4,
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginBottom: 8,
   },
-  searchInput: { flex: 1, fontSize: 14, color: theme.colors.textPrimary, paddingVertical: 4 },
+  searchInput: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, paddingVertical: 4 },
   searchLoader: { paddingVertical: 20 },
   searchResultItem: {
     flexDirection: "row",
@@ -689,7 +689,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: theme.colors.background,
   },
-  searchResultName: { flex: 1, fontSize: 14, color: theme.colors.text },
+  searchResultName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
 });
 
 export default CreatePostScreen;

@@ -636,7 +636,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   backIcon: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     color: Colors.white,
   },
   progressContainer: {
@@ -655,7 +655,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.full,
   },
   stepIndicator: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: "rgba(255, 255, 255, 0.5)",
     fontWeight: "600",
   },
@@ -672,14 +672,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   stepTitle: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: Colors.white,
     textAlign: "center",
     marginBottom: Spacing[2],
   },
   stepSubtitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: "rgba(255, 255, 255, 0.5)",
     textAlign: "center",
     marginBottom: Spacing[10],
@@ -695,19 +695,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   welcomeLogoText: {
-    fontSize: 48,
+    fontSize: DesignTokens.typography.sizes['5xl'],
     fontWeight: "900",
     color: Colors.white,
   },
   welcomeTitle: {
-    fontSize: 32,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: Colors.white,
     textAlign: "center",
     marginBottom: Spacing[4],
   },
   welcomeSubtitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: "rgba(255, 255, 255, 0.5)",
     textAlign: "center",
     lineHeight: 24,
@@ -727,7 +727,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[4],
   },
   textInput: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     color: Colors.white,
     fontWeight: "600",
     textAlign: "center",
@@ -758,11 +758,11 @@ const styles = StyleSheet.create({
     padding: Spacing[3],
   },
   genderIcon: {
-    fontSize: 40,
+    fontSize: DesignTokens.typography.sizes['4xl'],
     marginBottom: Spacing[2],
   },
   genderLabel: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: "rgba(255, 255, 255, 0.6)",
     fontWeight: "600",
   },
@@ -774,7 +774,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   bodyInputLabel: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: "rgba(255, 255, 255, 0.5)",
     marginBottom: Spacing[2],
   },
@@ -784,12 +784,12 @@ const styles = StyleSheet.create({
   },
   bodyInput: {
     flex: 1,
-    fontSize: 36,
+    fontSize: DesignTokens.typography.sizes['4xl'],
     color: Colors.white,
     fontWeight: "700",
   },
   bodyInputUnit: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     color: "rgba(255, 255, 255, 0.4)",
     marginLeft: Spacing[2],
   },
@@ -815,11 +815,11 @@ const styles = StyleSheet.create({
     padding: Spacing[3],
   },
   styleIcon: {
-    fontSize: 32,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     marginBottom: Spacing[2],
   },
   styleName: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.white,
     fontWeight: "600",
   },
@@ -834,7 +834,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   styleCheckIcon: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.white,
     fontWeight: "700",
   },
@@ -851,16 +851,16 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[6],
   },
   completeIcon: {
-    fontSize: 48,
+    fontSize: DesignTokens.typography.sizes['5xl'],
   },
   completeTitle: {
-    fontSize: 32,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: Colors.white,
     marginBottom: Spacing[3],
   },
   completeSubtitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: "rgba(255, 255, 255, 0.5)",
     textAlign: "center",
     lineHeight: 24,

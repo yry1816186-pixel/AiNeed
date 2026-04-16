@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   pickerTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     marginBottom: 16,
   },
@@ -501,7 +501,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   colorLabel: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "500",
   },
   backdrop: {
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sheetTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     marginBottom: 20,
   },
@@ -552,7 +552,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   themeOptionLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
   },
   checkMark: {

@@ -319,13 +319,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   brandName: {
-    fontSize: 22,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: theme.colors.primary,
     letterSpacing: 1.2,
   },
-  title: { fontSize: 32, fontWeight: "700", color: theme.colors.text },
-  subtitle: { fontSize: 16, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 32 },
+  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: theme.colors.text },
+  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 32 },
   form: { gap: 16 },
   inputGroup: {
     flexDirection: "row",
@@ -336,8 +336,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     gap: 12,
   },
-  input: { flex: 1, fontSize: 16, color: theme.colors.text },
-  codeInput: { flex: 1, fontSize: 16, color: theme.colors.text },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: theme.colors.text },
+  codeInput: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: theme.colors.text },
   codeButton: {
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.textTertiary,
   },
   codeButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: theme.colors.primary,
   },
@@ -371,11 +371,11 @@ const styles = StyleSheet.create({
     ...theme.Shadows.brand,
   },
   loginButtonDisabled: { backgroundColor: theme.colors.primaryLight },
-  loginButtonText: { fontSize: 16, fontWeight: "600", color: theme.colors.surface },
+  loginButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.surface },
   emailLoginLink: { alignItems: "center", marginTop: 16 },
-  emailLoginText: { fontSize: 14, color: theme.colors.primary },
+  emailLoginText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary },
   registerLink: { alignItems: "center", marginTop: 8 },
-  registerText: { fontSize: 14, color: theme.colors.primary },
+  registerText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary },
 });
 
 export default PhoneLoginScreen;

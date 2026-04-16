@@ -16,6 +16,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
 import brandQRApi, { type QRScanResult } from "../services/api/brand-qr.api";
 import type { RootStackParamList } from "../types/navigation";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 type Navigation = NavigationProp<RootStackParamList>;
 
@@ -256,7 +257,7 @@ const styles = StyleSheet.create({
   topBarTitle: {
     flex: 1,
     textAlign: "center",
-    fontSize: 17,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -273,7 +274,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   cameraHint: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[400],
     textAlign: "center",
     marginTop: Spacing[3],
@@ -283,13 +284,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   inputLabel: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   inputHint: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     marginBottom: Spacing[3],
   },
@@ -303,7 +304,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[4],
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
     borderWidth: 1,
     borderColor: Colors.neutral[200],
@@ -320,7 +321,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   resultTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
@@ -346,12 +347,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   brandName: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
   brandSlug: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   productCard: {
@@ -366,11 +367,11 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[1],
   },
   productLabel: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
   },
   productValue: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
     fontWeight: "500",
   },
@@ -386,7 +387,7 @@ const styles = StyleSheet.create({
     ...Shadows.brand,
   },
   importButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -395,7 +396,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   resetButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
   },
 });

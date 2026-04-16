@@ -633,7 +633,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  headerTitle: { fontSize: 24, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: theme.colors.text },
   badge: {
     marginLeft: 10,
     backgroundColor: theme.colors.primary,
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  badgeText: { color: theme.colors.surface, fontSize: 11, fontWeight: "600" },
+  badgeText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600" },
   content: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
   loadingContainer: {
@@ -652,7 +652,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  loadingText: { marginTop: 12, fontSize: 14, color: theme.colors.textSecondary },
+  loadingText: { marginTop: 12, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
   emptyContainer: {
     flex: 1,
     alignItems: "center",
@@ -660,12 +660,12 @@ const styles = StyleSheet.create({
     paddingVertical: 64,
   },
   emptyText: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginTop: 16,
   },
-  emptySubtext: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 8 },
+  emptySubtext: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 8 },
   emptyButton: {
     marginTop: 24,
     backgroundColor: theme.colors.primary,
@@ -673,7 +673,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 24,
   },
-  emptyButtonText: { color: theme.colors.surface, fontSize: 15, fontWeight: "600" },
+  emptyButtonText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
 
   selectAllRow: {
     flexDirection: "row",
@@ -688,7 +688,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  selectAllText: { fontSize: 14, color: theme.colors.textSecondary, marginLeft: 8 },
+  selectAllText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginLeft: 8 },
 
   checkboxTouchable: {
     padding: 11,
@@ -743,7 +743,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  deleteText: { color: theme.colors.surface, fontSize: 12, marginTop: 4 },
+  deleteText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.sm, marginTop: 4 },
 
   cardImageWrap: {
     width: 80,
@@ -768,7 +768,7 @@ const styles = StyleSheet.create({
     minHeight: 80,
   },
   cardName: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: theme.colors.textPrimary,
     lineHeight: 20,
@@ -781,14 +781,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginRight: 6,
   },
-  specText: { fontSize: 12, color: theme.colors.textSecondary },
+  specText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   cardBottom: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginTop: 8,
   },
-  cardPrice: { fontSize: 15, fontWeight: "600", color: theme.colors.primary },
+  cardPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.primary },
 
   quantityControls: {
     flexDirection: "row",
@@ -815,7 +815,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderColor: theme.colors.placeholderBg,
   },
-  quantityText: { fontSize: 14, fontWeight: "500", color: theme.colors.text },
+  quantityText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.text },
 
   footer: {
     flexDirection: "row",
@@ -841,8 +841,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     marginRight: 12,
   },
-  totalLabel: { fontSize: 14, color: theme.colors.textSecondary },
-  totalPrice: { fontSize: 20, fontWeight: "700", color: theme.colors.primary },
+  totalLabel: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
+  totalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.primary },
 
   checkoutButton: {
     backgroundColor: theme.colors.primary,
@@ -855,11 +855,11 @@ const styles = StyleSheet.create({
   checkoutButtonDisabled: { backgroundColor: "#C7D2FE" }, // custom color
   checkoutButtonText: {
     color: theme.colors.surface,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
   },
   editToggleText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: theme.colors.primary,
     paddingHorizontal: 12,
@@ -875,7 +875,7 @@ const styles = StyleSheet.create({
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
   couponEntryText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: "#FF4D4F", // custom color
   },
   batchRow: {
@@ -892,7 +892,7 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral[100],
   },
   batchButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[700],
   },
   footerRow: {
@@ -907,7 +907,7 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
   },
   errorText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     marginTop: 12,
     marginBottom: 16,
@@ -920,7 +920,7 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     color: DesignTokens.colors.neutral.white,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
 });

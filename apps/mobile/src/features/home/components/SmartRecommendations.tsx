@@ -706,7 +706,7 @@ const styles = StyleSheet.create({
   },
   typeLabel: {
     marginLeft: 8,
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     fontWeight: "500",
   },
@@ -714,12 +714,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
     color: Colors.neutral[800],
   },
   cardSubtitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     marginTop: 2,
   },
@@ -728,7 +728,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   seeAllText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.primary[500],
     fontWeight: "500",
     marginRight: 4,
@@ -759,7 +759,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   matchText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.text.inverse,
     fontWeight: "600",
   },
@@ -772,12 +772,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   itemName: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[800],
   },
   itemBrand: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     marginTop: 2,
   },
@@ -787,18 +787,18 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   itemPrice: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
     color: Colors.primary[500],
   },
   originalPrice: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[400],
     textDecorationLine: "line-through",
     marginLeft: 6,
   },
   itemReason: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[500],
     marginTop: 4,
     fontStyle: "italic",
@@ -815,7 +815,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   itemTagText: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[600],
   },
   feedContainer: {
@@ -830,12 +830,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   feedGreeting: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "800",
     color: Colors.neutral[800],
   },
   feedSubGreeting: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     marginTop: 4,
   },
@@ -862,12 +862,12 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   reasonTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[800],
   },
   reasonDescription: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     marginTop: 2,
   },
@@ -876,7 +876,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   confidenceText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: Colors.primary[500],
     marginRight: 4,
@@ -902,14 +902,14 @@ const styles = StyleSheet.create({
   insightTitle: {
     flex: 1,
     marginLeft: 8,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   dismissButton: {
     padding: 4,
   },
   insightMessage: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[600],
     lineHeight: 20,
   },
@@ -924,7 +924,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   insightActionText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
   },
   evolutionContainer: {
@@ -937,12 +937,12 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   evolutionTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
     color: Colors.neutral[800],
   },
   evolutionSubtitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     marginTop: 4,
   },
@@ -983,7 +983,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   timelineDate: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[400],
     marginTop: 8,
   },
@@ -992,7 +992,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   timelineStyle: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[600],
     fontWeight: "500",
     marginTop: 2,

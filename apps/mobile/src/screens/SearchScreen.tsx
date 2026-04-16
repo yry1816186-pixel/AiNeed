@@ -35,6 +35,7 @@ import {
   requestMediaLibraryPermissionsAsync,
 } from "@/src/polyfills/expo-image-picker";
 import {
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
   FilterPanel,
   ActiveFilterPills,
   EmptySearchState,
@@ -582,7 +583,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textPrimary,
   },
   cameraButton: {
@@ -612,7 +613,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.cartLight,
   },
   filterToggleText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   filterToggleTextActive: {
@@ -629,7 +630,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   filterBadgeText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
     color: theme.colors.surface,
   },

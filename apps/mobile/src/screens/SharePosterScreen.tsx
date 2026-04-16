@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textTertiary,
     marginTop: Spacing[3],
   },
@@ -238,12 +238,12 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.5)",
   },
   posterAvatarText: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },
   posterName: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[6],
   },
   posterSectionTitle: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "400",
     color: "rgba(255, 255, 255, 0.7)",
     marginBottom: Spacing[2],
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   posterStyleType: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing[8],
   },
   posterBrandingText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "400",
     color: "rgba(255, 255, 255, 0.6)",
   },
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[4],
   },
   shareButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },

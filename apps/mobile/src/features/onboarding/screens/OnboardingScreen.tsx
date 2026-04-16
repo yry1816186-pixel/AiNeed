@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     marginLeft: Spacing[3],
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
     fontWeight: "400",
     minWidth: 40,
@@ -500,14 +500,14 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[4],
   },
   stepTitle: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "600",
     color: theme.colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   stepSubtitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 24,
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[6],
   },
   sectionLabel: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: theme.colors.textSecondary,
     marginBottom: Spacing[3],
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
   },
   genderPillText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: theme.colors.textSecondary,
   },
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
   },
   agePillText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: theme.colors.textSecondary,
   },
@@ -594,12 +594,12 @@ const styles = StyleSheet.create({
     gap: Spacing[3],
   },
   uploadLabel: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textSecondary,
   },
   uploadHint: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "400",
     color: theme.colors.textTertiary,
     marginTop: Spacing[1],
@@ -646,7 +646,7 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   captureButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   skipText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: theme.colors.textTertiary,
   },
@@ -668,12 +668,12 @@ const styles = StyleSheet.create({
     gap: Spacing[3],
   },
   quizPlaceholderTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
   quizPlaceholderSubtitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: theme.colors.textSecondary,
     textAlign: "center",
@@ -687,7 +687,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing[3],
   },
   quizStartButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },
@@ -706,7 +706,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[2],
   },
   backButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textSecondary,
     fontWeight: "400",
   },
@@ -728,7 +728,7 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   nextButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.surface,
   },

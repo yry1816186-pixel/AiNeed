@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   title: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: 12,
@@ -236,8 +236,8 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   collectionInfo: { flex: 1 },
-  collectionName: { fontSize: 14, fontWeight: "500", color: theme.colors.text },
-  collectionCount: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 },
+  collectionName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.text },
+  collectionCount: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
   newBtn: {
     flexDirection: "row",
     alignItems: "center",
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
   },
-  newBtnText: { fontSize: 14, color: theme.colors.primary, fontWeight: "500" },
+  newBtnText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary, fontWeight: "500" },
   newCollectionRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     borderRadius: 8,
     paddingHorizontal: 12,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   createBtn: {
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   createBtnDisabled: { opacity: 0.5 },
-  createBtnText: { color: DesignTokens.colors.text.inverse, fontSize: 14, fontWeight: "600" },
+  createBtnText: { color: DesignTokens.colors.text.inverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
 });
 
 export default BookmarkSheet;

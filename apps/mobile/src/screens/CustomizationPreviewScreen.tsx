@@ -16,6 +16,7 @@ import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/
 import { useCustomizationEditorStore } from "../stores/customizationEditorStore";
 import customizationApi from "../services/api/customization.api";
 import type { RootStackParamList } from "../types/navigation";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type Navigation = import("@react-navigation/native").NavigationProp<RootStackParamList>;
 type PreviewRoute = RouteProp<RootStackParamList, "CustomizationPreview">;
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
   topBarTitle: {
     flex: 1,
     textAlign: "center",
-    fontSize: 17,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -271,14 +272,14 @@ const styles = StyleSheet.create({
     borderColor: Colors.neutral[200],
   },
   previewUrlText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
   },
   previewPlaceholder: {
     alignItems: "center",
   },
   previewPlaceholderText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[400],
     marginTop: Spacing[2],
   },
@@ -286,7 +287,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
@@ -303,7 +304,7 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   packagingText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   sideOptions: {
@@ -324,7 +325,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(198, 123, 92, 0.06)",
   },
   sideOptionText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
   },
   sideOptionTextSelected: {
@@ -339,7 +340,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   calculateButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -354,11 +355,11 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[1],
   },
   quoteLabel: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
   },
   quoteValue: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   quoteTotal: {
@@ -368,17 +369,17 @@ const styles = StyleSheet.create({
     paddingTop: Spacing[2],
   },
   quoteTotalLabel: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
   quoteTotalValue: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.primary,
   },
   estimatedDays: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
     marginTop: Spacing[2],
   },
@@ -391,12 +392,12 @@ const styles = StyleSheet.create({
     ...Shadows.brand,
   },
   submitButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.surface,
   },
   disclaimer: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
     textAlign: "center",
   },

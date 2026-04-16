@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../../design-system/theme';
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 const CATEGORIES = [
   { key: "all", label: "全部" },
@@ -93,7 +94,7 @@ const s = StyleSheet.create({
     paddingVertical: 14,
     backgroundColor: theme.colors.surface,
   },
-  headerTitle: { fontSize: 22, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.text },
   searchBtn: {
     width: 38,
     height: 38,
@@ -118,7 +119,7 @@ const s = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: theme.colors.primary,
   },
-  mainTabText: { fontSize: 15, color: theme.colors.textSecondary, fontWeight: "500" },
+  mainTabText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, fontWeight: "500" },
   mainTabTextActive: { color: theme.colors.primary, fontWeight: "700" },
   categoryScroll: { backgroundColor: theme.colors.surface, maxHeight: 52 },
   categoryScrollContent: {
@@ -134,6 +135,6 @@ const s = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   categoryChipActive: { backgroundColor: theme.colors.primary },
-  categoryChipText: { fontSize: 14, color: theme.colors.textSecondary, fontWeight: "500" },
+  categoryChipText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, fontWeight: "500" },
   categoryChipTextActive: { color: theme.colors.surface, fontWeight: "600" },
 });

@@ -113,14 +113,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: "#18181b",
     marginBottom: 8,
     textAlign: "center",
   },
   description: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: "#71717a",
     textAlign: "center",
     marginBottom: 20,
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: DesignTokens.colors.backgrounds.primary,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
 });

@@ -144,11 +144,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   navBtnText: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     color: DesignTokens.colors.text.primary,
   },
   monthLabel: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: "#1A1A1A",
   },
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   weekdayText: {
     flex: 1,
     textAlign: "center",
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
   },
   grid: {
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF5F0",
   },
   dayText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.text.primary,
   },
   dayTextDisabled: {

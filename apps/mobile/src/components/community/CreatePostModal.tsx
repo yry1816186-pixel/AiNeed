@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, Alert } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../../design-system/theme';
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 const CATEGORIES = [
   { key: "all", label: "全部" },
@@ -113,9 +114,9 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  modalTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text },
-  modalCancelText: { fontSize: 15, color: theme.colors.textSecondary },
-  modalSubmitText: { fontSize: 15, fontWeight: "600", color: theme.colors.primary },
+  modalTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
+  modalCancelText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
+  modalSubmitText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.primary },
   modalCategoryRow: {
     flexDirection: "row",
     paddingHorizontal: 20,
@@ -131,12 +132,12 @@ const s = StyleSheet.create({
     backgroundColor: theme.colors.surface,
   },
   modalCategoryChipActive: { backgroundColor: theme.colors.primary },
-  modalCategoryChipText: { fontSize: 13, color: theme.colors.textSecondary },
+  modalCategoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   modalCategoryChipTextActive: { color: theme.colors.surface, fontWeight: "600" },
   modalTitleInput: {
     paddingHorizontal: 20,
     paddingVertical: 14,
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     borderBottomWidth: 1,
@@ -146,7 +147,7 @@ const s = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 14,
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
     lineHeight: 22,
     minHeight: 150,
@@ -160,5 +161,5 @@ const s = StyleSheet.create({
     gap: 24,
   },
   modalToolBtn: { flexDirection: "row", alignItems: "center", gap: 6 },
-  modalToolText: { fontSize: 13, color: theme.colors.textSecondary },
+  modalToolText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
 });

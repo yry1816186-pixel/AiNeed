@@ -18,6 +18,7 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { Colors, BorderRadius, Shadows } from "../../theme";
 import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "gradient" | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "xl";
@@ -54,25 +55,25 @@ const sizeConfig: Record<
   sm: {
     height: 36,
     paddingHorizontal: 16,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     borderRadius: BorderRadius.lg,
   },
   md: {
     height: 44,
     paddingHorizontal: 20,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     borderRadius: BorderRadius.xl,
   },
   lg: {
     height: 52,
     paddingHorizontal: 24,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     borderRadius: BorderRadius.xl,
   },
   xl: {
     height: 60,
     paddingHorizontal: 32,
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     borderRadius: BorderRadius["2xl"],
   },
 };

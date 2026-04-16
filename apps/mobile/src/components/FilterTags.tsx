@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   tagActive: { backgroundColor: "#FFF0F0" },
-  tagText: { fontSize: 13, color: DesignTokens.colors.text.secondary },
+  tagText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.secondary },
   tagTextActive: { color: "#FF4D4F" },
   badge: {
     backgroundColor: "#FF4D4F",
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 3,
   },
-  badgeText: { fontSize: 10, fontWeight: "600", color: DesignTokens.colors.backgrounds.primary },
+  badgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: DesignTokens.colors.backgrounds.primary },
   modalOverlay: {
     flex: 1,
     justifyContent: "flex-end",
@@ -200,13 +200,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
   },
-  modalTitle: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.primary },
-  modalClose: { fontSize: 14, color: DesignTokens.colors.text.tertiary },
+  modalTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  modalClose: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.tertiary },
   optionRow: {
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.backgrounds.tertiary,
   },
-  optionText: { fontSize: 15, color: DesignTokens.colors.text.primary },
+  optionText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary },
 });

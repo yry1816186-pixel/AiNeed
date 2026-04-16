@@ -82,23 +82,23 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   pollingText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: DesignTokens.colors.text.secondary,
     marginTop: 16,
   },
   timeoutIcon: {
-    fontSize: 48,
+    fontSize: DesignTokens.typography.sizes['5xl'],
     fontWeight: "700",
     color: "#FF4D4F",
   },
   timeoutTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: DesignTokens.colors.text.primary,
     marginTop: 12,
   },
   timeoutMessage: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.text.tertiary,
     marginTop: 8,
     textAlign: "center",
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     color: DesignTokens.colors.backgrounds.primary,
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
 });

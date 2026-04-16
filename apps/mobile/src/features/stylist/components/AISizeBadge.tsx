@@ -18,12 +18,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   badgeText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
     color: "#5B8A72",
   },
   badgeSize: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "700",
     color: "#3D5E4D",
   },
@@ -39,16 +39,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   detailLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "#73736D",
   },
   detailValue: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: DesignTokens.colors.text.primary,
   },
   reasonText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: "#52524D",
   },
 });

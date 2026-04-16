@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: 22, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.text },
   filterButton: { padding: 8 },
   tabBar: {
     flexDirection: "row",
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   tabActive: { backgroundColor: theme.colors.primary },
-  tabLabel: { fontSize: 14, fontWeight: "600", color: theme.colors.textSecondary },
+  tabLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textSecondary },
   tabLabelActive: { color: DesignTokens.colors.neutral.white },
   list: { paddingHorizontal: 6, paddingBottom: 20 },
   emptyList: { flexGrow: 1 },
@@ -307,11 +307,11 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 10,
   },
-  matchText: { fontSize: 11, fontWeight: "700", color: DesignTokens.colors.neutral.white },
+  matchText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "700", color: DesignTokens.colors.neutral.white },
   cardInfo: { padding: 10 },
-  cardName: { fontSize: 13, fontWeight: "600", color: theme.colors.textPrimary, lineHeight: 18 },
-  cardBrand: { fontSize: 11, color: theme.colors.textSecondary, marginTop: 2 },
-  cardPrice: { fontSize: 15, fontWeight: "700", color: theme.colors.primary, marginTop: 4 },
+  cardName: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.textPrimary, lineHeight: 18 },
+  cardBrand: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textSecondary, marginTop: 2 },
+  cardPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: theme.colors.primary, marginTop: 4 },
   centerContainer: {
     flex: 1,
     alignItems: "center",
@@ -319,14 +319,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     paddingVertical: 60,
   },
-  emptyTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
   emptySubtext: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: 8,
     textAlign: "center",
   },
-  loadingText: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 12 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 12 },
   retryButton: {
     marginTop: 16,
     paddingHorizontal: 20,
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: theme.colors.primary,
   },
-  retryText: { fontSize: 14, fontWeight: "600", color: DesignTokens.colors.neutral.white },
+  retryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: DesignTokens.colors.neutral.white },
 });
 
 export default RecommendationsScreen;

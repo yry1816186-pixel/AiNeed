@@ -166,9 +166,9 @@ const s = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 8,
   },
-  featuredText: { fontSize: 10, fontWeight: "700", color: theme.colors.surface },
+  featuredText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "700", color: theme.colors.surface },
   masonryInfo: { padding: 10 },
-  masonryTitle: { fontSize: 13, fontWeight: "600", color: theme.colors.textPrimary, lineHeight: 18 },
+  masonryTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.textPrimary, lineHeight: 18 },
   masonryFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -191,7 +191,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  masonryAuthorName: { fontSize: 11, color: theme.colors.textTertiary, flex: 1 },
+  masonryAuthorName: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary, flex: 1 },
   masonryLikes: { flexDirection: "row", alignItems: "center", gap: 3 },
-  masonryLikesCount: { fontSize: 11, color: theme.colors.textTertiary, fontWeight: "500" },
+  masonryLikesCount: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary, fontWeight: "500" },
 });

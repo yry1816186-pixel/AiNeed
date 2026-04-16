@@ -41,10 +41,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   textDefault: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
   },
   textSmall: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
   },
 });
 

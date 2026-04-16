@@ -2,6 +2,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { theme, Colors, Spacing } from '../../../design-system/theme';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface DesignToolbarProps {
   onAddImage: () => void;
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   toolLabel: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: theme.colors.textSecondary,
     marginTop: 2,
   },

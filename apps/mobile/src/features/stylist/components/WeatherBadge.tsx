@@ -64,25 +64,25 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   icon: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.brand.sage,
     fontWeight: "700",
   },
   temperature: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[700],
   },
   condition: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
   },
   location: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.neutral[400],
   },
   suggestion: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[600],
     marginTop: 4,
     lineHeight: 16,

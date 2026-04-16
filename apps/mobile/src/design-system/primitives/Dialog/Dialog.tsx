@@ -238,14 +238,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     textAlign: "center",
     marginBottom: 8,
   },
   message: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     textAlign: "center",
     lineHeight: 20,
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancelText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: theme.colors.neutral[600],
   },
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   confirmText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },

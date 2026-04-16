@@ -64,6 +64,6 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.backgrounds.tertiary,
   },
   chipSelected: { backgroundColor: "#FF4D4F" },
-  chipText: { fontSize: 13, color: DesignTokens.colors.text.secondary },
+  chipText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.secondary },
   chipTextSelected: { color: DesignTokens.colors.backgrounds.primary, fontWeight: "500" },
 });

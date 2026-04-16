@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     flex: 1,
     textAlign: "center",
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: Spacing[3],
   },
@@ -451,17 +451,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[2],
   },
   currentPlanLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: theme.colors.success,
   },
   currentPlanName: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
   currentPlanExpiry: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     marginTop: Spacing[1],
   },
@@ -470,13 +470,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   introTitle: {
-    fontSize: 22,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: theme.colors.textPrimary,
     letterSpacing: -0.3,
   },
   introSubtitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: BorderRadius.lg,
   },
   popularBadgeText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   planName: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: theme.colors.textPrimary,
   },
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
     color: theme.colors.surface,
   },
   planDescription: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     marginTop: Spacing[1],
   },
@@ -556,28 +556,28 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
   },
   priceFree: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
     color: theme.colors.textPrimary,
   },
   priceSymbol: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
   priceValue: {
-    fontSize: 36,
+    fontSize: DesignTokens.typography.sizes['4xl'],
     fontWeight: "700",
     color: theme.colors.textPrimary,
     letterSpacing: -1,
   },
   priceUnit: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginLeft: Spacing[1],
   },
   originalPrice: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     textDecorationLine: "line-through",
     marginLeft: Spacing[2],
@@ -592,7 +592,7 @@ const styles = StyleSheet.create({
     gap: Spacing[3],
   },
   featureName: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   featureNameDisabled: {
@@ -607,7 +607,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.neutral[200],
   },
   currentButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textSecondary,
   },
@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
     ...Shadows.brand,
   },
   subscribeButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.surface,
   },

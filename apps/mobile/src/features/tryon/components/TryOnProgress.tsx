@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     borderRadius: 1,
   },
   stepLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     marginTop: 8,
     textAlign: "center",
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   currentStepText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.primary[500],
     fontWeight: "500",
     marginTop: 12,

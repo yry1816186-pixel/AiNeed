@@ -28,13 +28,13 @@ const styles = StyleSheet.create({
     paddingVertical: 64,
   },
   heading: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: DesignTokens.colors.text.primary,
     marginTop: 16,
   },
   body: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.text.tertiary,
     marginTop: 8,
   },
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: DesignTokens.colors.backgrounds.primary,
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
 });

@@ -4,6 +4,7 @@ import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
 import { theme, Colors, Spacing, BorderRadius } from '../../../design-system/theme';
 import type { OnboardingFormData } from "../../../stores/onboardingStore";
+import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface BasicInfoStepProps {
   formData: OnboardingFormData;
@@ -164,14 +165,14 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[4],
   },
   stepTitle: {
-    fontSize: 26,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
     color: theme.colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   stepSubtitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
@@ -190,16 +191,16 @@ const styles = StyleSheet.create({
     gap: Spacing[1],
   },
   sectionLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: theme.colors.textSecondary,
   },
   requiredMark: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.error,
   },
   optionalMark: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
     marginLeft: Spacing[1],
   },
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   genderLabel: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: theme.colors.textSecondary,
   },
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   agePillText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: theme.colors.textSecondary,
   },
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
     color: theme.colors.surface,
   },
   errorText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.error,
     marginTop: Spacing[2],
   },
@@ -273,12 +274,12 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textPrimary,
     padding: 0,
   },
   inputUnit: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
   },
 });

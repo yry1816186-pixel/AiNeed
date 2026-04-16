@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
     color: DesignTokens.colors.neutral[900],
   },
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   stateText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
   },
   messagesContainer: {
@@ -579,19 +579,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   emptyIconText: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: DesignTokens.colors.text.inverse,
   },
   emptyTitle: {
-    fontSize: 22,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: DesignTokens.colors.neutral[900],
     marginBottom: 8,
     textAlign: "center",
   },
   emptySubtitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
@@ -612,7 +612,7 @@ const styles = StyleSheet.create({
     borderColor: DesignTokens.colors.neutral[200],
   },
   suggestionText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[700],
     fontWeight: "500",
   },
@@ -636,7 +636,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   assistantAvatarText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "700",
     color: DesignTokens.colors.text.inverse,
   },
@@ -658,7 +658,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4,
   },
   messageText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
   },
   userMessageText: {
@@ -673,7 +673,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[500],
   },
   photoPrompt: {
@@ -685,7 +685,7 @@ const styles = StyleSheet.create({
     borderColor: DesignTokens.colors.neutral[200],
   },
   photoPromptText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: DesignTokens.colors.neutral[800],
     textAlign: "center",
@@ -707,7 +707,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   photoButtonText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
     marginTop: 6,
@@ -718,7 +718,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   skipPhotoText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[500],
   },
   generatePrompt: {
@@ -731,7 +731,7 @@ const styles = StyleSheet.create({
     borderColor: DesignTokens.colors.neutral[200],
   },
   generatePromptText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[600],
     textAlign: "center",
     marginBottom: 16,
@@ -749,7 +749,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   generateButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },
@@ -780,7 +780,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: DesignTokens.colors.neutral[900],
     maxHeight: 100,
     paddingVertical: 8,
@@ -833,7 +833,7 @@ const styles = StyleSheet.create({
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
   photoOptionText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: DesignTokens.colors.neutral[700],
     fontWeight: "500",
   },
@@ -845,7 +845,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   photoOptionCancelText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: DesignTokens.colors.neutral[500],
     fontWeight: "600",
   },

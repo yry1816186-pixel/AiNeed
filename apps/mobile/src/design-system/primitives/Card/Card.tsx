@@ -22,6 +22,7 @@ import { BlurView } from "expo-blur";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { Colors, Spacing, BorderRadius, Shadows } from "../../theme";
 import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -311,7 +312,7 @@ const styles = StyleSheet.create({
   },
   discountText: {
     color: Colors.white,
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
   },
   favoriteButton: {
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   favoriteIcon: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     color: Colors.error[500],
   },
   productInfo: {
@@ -334,12 +335,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   brandText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[500],
     marginBottom: Spacing[1],
   },
   titleText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: Colors.neutral[900],
     marginBottom: Spacing[2],
@@ -351,12 +352,12 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   priceText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "700",
     color: Colors.neutral[900],
   },
   originalPriceText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[400],
     textDecorationLine: "line-through",
   },
@@ -367,11 +368,11 @@ const styles = StyleSheet.create({
     gap: Spacing[1],
   },
   ratingIcon: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.amber[500],
   },
   ratingText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[600],
   },
 });

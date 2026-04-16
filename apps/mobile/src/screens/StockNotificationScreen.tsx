@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     borderBottomColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
   },
-  headerTitle: { fontSize: 17, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   card: {
     flexDirection: "row",
@@ -180,12 +180,12 @@ const styles = StyleSheet.create({
   },
   cardInfo: { flex: 1 },
   itemName: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: DesignTokens.colors.text.primary,
   },
   itemSpec: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
     marginTop: 2,
   },
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   statusText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "500",
   },
   cancelButton: {
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   cancelText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.semantic.error,
   },
   emptyContainer: {
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     paddingVertical: 64,
   },
   emptyTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: DesignTokens.colors.text.primary,
     marginTop: 16,
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   },
   goButtonText: {
     color: DesignTokens.colors.neutral.white,
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
 });

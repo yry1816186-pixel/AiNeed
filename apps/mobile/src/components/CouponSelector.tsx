@@ -111,8 +111,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
   },
-  title: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.primary },
-  close: { fontSize: 14, color: DesignTokens.colors.text.tertiary },
+  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  close: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.tertiary },
   noCouponRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
   },
-  noCouponText: { fontSize: 14, color: DesignTokens.colors.text.secondary },
+  noCouponText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary },
   couponRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -140,17 +140,17 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   couponDiscount: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: "#FF4D4F",
   },
   couponCondition: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.text.tertiary,
     marginTop: 2,
   },
   couponRight: { flex: 1 },
-  couponDesc: { fontSize: 14, color: DesignTokens.colors.text.primary },
-  couponExpiry: { fontSize: 12, color: DesignTokens.colors.text.tertiary, marginTop: 4 },
+  couponDesc: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary },
+  couponExpiry: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary, marginTop: 4 },
   checkIcon: { marginLeft: 8 },
 });

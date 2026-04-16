@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   },
   discountText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "700",
   },
   harmonyBadge: {
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   harmonyText: {
     color: "#4ADE80", // custom color
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
   },
   infoContainer: {
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   brandName: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.text.secondary,
     fontWeight: "500",
   },
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   scoreLabel: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.brand.terracotta,
     fontWeight: "600",
   },
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.brand.terracotta,
   },
   matchReason: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.text.tertiary,
     fontWeight: "400",
   },
@@ -188,12 +188,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   price: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
     color: DesignTokens.colors.text.primary,
   },
   originalPrice: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.text.tertiary,
     textDecorationLine: "line-through",
   },

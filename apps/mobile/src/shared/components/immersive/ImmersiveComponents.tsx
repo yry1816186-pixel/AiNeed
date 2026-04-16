@@ -960,7 +960,7 @@ const styles = StyleSheet.create({
   },
   counterText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   imageContainer: {
@@ -986,7 +986,7 @@ const styles = StyleSheet.create({
   },
   captionText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     textAlign: "center",
   },
   thumbnailsContainer: {
@@ -1060,14 +1060,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary[500],
   },
   guideTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
     marginBottom: 8,
   },
   guideDescription: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[600],
     textAlign: "center",
     lineHeight: 20,
@@ -1083,7 +1083,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   skipText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     fontWeight: "500",
   },
@@ -1098,7 +1098,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   nextText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.text.inverse,
     fontWeight: "600",
   },
@@ -1114,7 +1114,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   tryOnTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },
@@ -1163,7 +1163,7 @@ const styles = StyleSheet.create({
   },
   processingText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     marginBottom: 12,
   },
   progressBar: {
@@ -1184,7 +1184,7 @@ const styles = StyleSheet.create({
   },
   captureText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },
   resultActions: {
@@ -1198,7 +1198,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
   },
   immersiveContainer: {
     flex: 1,
@@ -1221,7 +1221,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: Colors.neutral[800],
     textAlign: "center",
@@ -1250,19 +1250,19 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
   },
   productBrand: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     textTransform: "uppercase",
     letterSpacing: 1,
   },
   productName: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
     color: Colors.neutral[800],
     marginTop: 4,
   },
   productPrice: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: Colors.primary[500],
     marginTop: 8,
@@ -1271,7 +1271,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   optionLabel: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[700],
     marginBottom: 12,
@@ -1310,7 +1310,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary[500],
   },
   sizeText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: Colors.neutral[700],
   },
@@ -1321,13 +1321,13 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   descriptionTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: Colors.neutral[700],
     marginBottom: 8,
   },
   descriptionText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[600],
     lineHeight: 22,
   },
@@ -1355,7 +1355,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[100],
   },
   tryOnText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.primary[500],
   },
@@ -1370,7 +1370,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   addToCartText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },
@@ -1419,7 +1419,7 @@ const styles = StyleSheet.create({
   },
   storyUserName: {
     flex: 1,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },

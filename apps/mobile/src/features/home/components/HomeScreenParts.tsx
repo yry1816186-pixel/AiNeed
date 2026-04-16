@@ -358,7 +358,7 @@ const partStyles = StyleSheet.create({
     borderRadius: 8,
   },
   carouselTagText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
     letterSpacing: 0.5,
@@ -376,7 +376,7 @@ const partStyles = StyleSheet.create({
     borderRadius: 10,
   },
   carouselScoreText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
     color: DesignTokens.colors.semantic.warning,
   },
@@ -385,7 +385,7 @@ const partStyles = StyleSheet.create({
     paddingVertical: 12,
   },
   carouselItemName: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.primary,
   },
@@ -396,12 +396,12 @@ const partStyles = StyleSheet.create({
     marginTop: 5,
   },
   carouselBrand: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.text.tertiary,
     flex: 1,
   },
   carouselPrice: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
     color: DesignTokens.colors.brand.terracotta,
   },
@@ -420,7 +420,7 @@ const partStyles = StyleSheet.create({
     justifyContent: "center",
   },
   categoryLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: DesignTokens.colors.text.secondary,
   },
@@ -441,13 +441,13 @@ const partStyles = StyleSheet.create({
     marginBottom: 14,
   },
   communityEmptyTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.text.primary,
     marginBottom: 6,
   },
   communityEmptySubtitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
     textAlign: "center",
     lineHeight: 18,
@@ -461,7 +461,7 @@ const partStyles = StyleSheet.create({
   },
   communityEmptyButtonText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
 });

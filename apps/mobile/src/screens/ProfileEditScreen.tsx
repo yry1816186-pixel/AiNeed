@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[4],
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   inputLabel: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: theme.colors.textSecondary,
     marginBottom: Spacing[2],
@@ -357,12 +357,12 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textPrimary,
     padding: 0,
   },
   unitText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textTertiary,
     marginLeft: Spacing[2],
   },
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
   },
   pillText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: theme.colors.textSecondary,
   },
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   saveButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.primary,
   },
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
   },
   tagText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: theme.colors.textSecondary,
   },

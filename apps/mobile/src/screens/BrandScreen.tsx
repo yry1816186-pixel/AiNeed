@@ -216,7 +216,7 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
   iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   qrBanner: {
     flexDirection: "row",
@@ -241,11 +241,11 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   qrBannerText: { flex: 1, marginLeft: 12 },
-  qrBannerTitle: { fontSize: 14, fontWeight: "600", color: theme.colors.text },
-  qrBannerDesc: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 },
+  qrBannerTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
+  qrBannerDesc: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
-  loadingText: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 12 },
-  errorText: { fontSize: 14, color: theme.colors.error, marginTop: 12 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.error, marginTop: 12 },
   retryBtn: {
     marginTop: 16,
     backgroundColor: theme.colors.primary,
@@ -253,10 +253,10 @@ const s = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
   },
-  retryBtnText: { color: theme.colors.surface, fontSize: 14, fontWeight: "600" },
-  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
+  retryBtnText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
   emptySubtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     marginTop: 8,
     textAlign: "center",
@@ -285,11 +285,11 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   productInfo: { flex: 1, marginLeft: 14 },
-  productName: { fontSize: 15, fontWeight: "500", color: theme.colors.textPrimary, lineHeight: 20 },
-  productBrand: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 3 },
+  productName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.textPrimary, lineHeight: 20 },
+  productBrand: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 3 },
   priceRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 6 },
-  productPrice: { fontSize: 16, fontWeight: "700", color: theme.colors.primary },
-  productColors: { fontSize: 12, color: theme.colors.textTertiary },
+  productPrice: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: theme.colors.primary },
+  productColors: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary },
   loadingMore: {
     flexDirection: "row",
     alignItems: "center",
@@ -297,7 +297,7 @@ const s = StyleSheet.create({
     gap: 8,
     paddingVertical: 16,
   },
-  loadingMoreText: { fontSize: 13, color: theme.colors.textTertiary },
+  loadingMoreText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary },
 });
 
 export default BrandScreen;

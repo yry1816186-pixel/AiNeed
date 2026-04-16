@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   hintText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.inverse,
     fontWeight: "500",
   },

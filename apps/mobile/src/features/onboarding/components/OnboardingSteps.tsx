@@ -448,14 +448,14 @@ export const stepStyles = StyleSheet.create({
     paddingBottom: Spacing[4],
   },
   stepTitle: {
-    fontSize: 26,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
     color: theme.colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   stepSubtitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
@@ -495,7 +495,7 @@ export const stepStyles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   styleLabel: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: 2,
@@ -504,13 +504,13 @@ export const stepStyles = StyleSheet.create({
     color: theme.colors.primary,
   },
   styleEnLabel: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: theme.colors.textTertiary,
     marginBottom: Spacing[2],
     letterSpacing: 0.5,
   },
   styleDescription: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     lineHeight: 18,
   },
@@ -553,7 +553,7 @@ export const stepStyles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   colorLabel: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
@@ -562,7 +562,7 @@ export const stepStyles = StyleSheet.create({
     color: theme.colors.primary,
   },
   colorDescription: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     lineHeight: 18,
   },
@@ -571,7 +571,7 @@ export const stepStyles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   skipText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     textDecorationLine: "underline",
   },
@@ -588,7 +588,7 @@ export const stepStyles = StyleSheet.create({
     flex: 1,
   },
   inputLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: theme.colors.textSecondary,
     marginBottom: Spacing[2],
@@ -606,12 +606,12 @@ export const stepStyles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textPrimary,
     padding: 0,
   },
   sectionLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: theme.colors.textSecondary,
     marginBottom: Spacing[3],
@@ -637,7 +637,7 @@ export const stepStyles = StyleSheet.create({
     borderColor: theme.colors.primary,
   },
   bodyTypeLabel: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: theme.colors.textSecondary,
   },
@@ -693,13 +693,13 @@ export const stepStyles = StyleSheet.create({
     flex: 1,
   },
   featureTitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   featureDescription: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     lineHeight: 20,
   },

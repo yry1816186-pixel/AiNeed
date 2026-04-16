@@ -310,7 +310,7 @@ const s = StyleSheet.create({
     borderBottomColor: theme.colors.border,
   },
   headerCenter: { flexDirection: "row", alignItems: "center", gap: 6 },
-  headerTitle: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
   onlineDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: theme.colors.success },
   backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   messagesContainer: { padding: 16, paddingBottom: 8 },
@@ -324,9 +324,9 @@ const s = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 16,
   },
-  welcomeTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text },
+  welcomeTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.text },
   welcomeSubtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: 8,
     textAlign: "center",
@@ -348,7 +348,7 @@ const s = StyleSheet.create({
   bubbleContent: { maxWidth: "75%", borderRadius: 16, paddingHorizontal: 14, paddingVertical: 10 },
   userBubbleContent: { backgroundColor: theme.colors.primary, borderBottomRightRadius: 4 },
   assistantBubbleContent: { backgroundColor: theme.colors.surface, borderBottomLeftRadius: 4 },
-  bubbleText: { fontSize: 14, lineHeight: 20 },
+  bubbleText: { fontSize: DesignTokens.typography.sizes.base, lineHeight: 20 },
   userBubbleText: { color: theme.colors.surface },
   assistantBubbleText: { color: theme.colors.text },
   typingBubble: {
@@ -361,7 +361,7 @@ const s = StyleSheet.create({
     paddingVertical: 10,
     borderBottomLeftRadius: 4,
   },
-  typingText: { fontSize: 13, color: theme.colors.textSecondary },
+  typingText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   errorBanner: {
     flexDirection: "row",
     alignItems: "center",
@@ -371,8 +371,8 @@ const s = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: DesignTokens.colors.semantic.errorLight,
   },
-  errorText: { fontSize: 13, color: theme.colors.error, flex: 1 },
-  errorDismiss: { fontSize: 13, color: theme.colors.error, fontWeight: "600", marginLeft: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.error, flex: 1 },
+  errorDismiss: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.error, fontWeight: "600", marginLeft: 12 },
   sceneRow: {
     borderTopWidth: 1,
     borderTopColor: theme.colors.divider,
@@ -388,7 +388,7 @@ const s = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: theme.colors.subtleBg,
   },
-  sceneLabel: { fontSize: 12, fontWeight: "500", color: theme.colors.primary },
+  sceneLabel: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: theme.colors.primary },
   inputRow: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -404,7 +404,7 @@ const s = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 12,
   },
-  input: { flex: 1, fontSize: 14, color: theme.colors.textPrimary, maxHeight: 80, paddingVertical: 8 },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, maxHeight: 80, paddingVertical: 8 },
   sendButton: {
     width: 36,
     height: 36,

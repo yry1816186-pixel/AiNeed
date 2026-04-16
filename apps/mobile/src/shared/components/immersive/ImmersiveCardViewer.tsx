@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
   },
   progressContainer: {
     flexDirection: "row",
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   },
   headerButtonText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
   },
   cardsContainer: {
     flex: 1,
@@ -465,13 +465,13 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   cardTitle: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
     color: DesignTokens.colors.text.inverse,
     letterSpacing: 0.5,
   },
   cardDescription: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: "rgba(255,255,255,0.8)",
     lineHeight: 20,
   },
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.15)",
   },
   tagText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.inverse,
   },
   itemsPreview: {
@@ -521,11 +521,11 @@ const styles = StyleSheet.create({
   },
   moreItemsText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
   },
   priceText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.brand.terracottaLight,
     marginTop: 4,
@@ -544,7 +544,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   likeText: {
-    fontSize: 32,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: DesignTokens.colors.semantic.success,
   },
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   dislikeText: {
-    fontSize: 32,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: DesignTokens.colors.semantic.warning,
   },
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
   },
   likeButtonText: {

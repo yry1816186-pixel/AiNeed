@@ -146,13 +146,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   emptyTitle: {
-    fontSize: 22,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: theme.colors.textPrimary,
     marginBottom: 8,
   },
   emptySubtitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     textAlign: "center",
     marginBottom: 24,
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
   },
   refreshText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.backgrounds.primary,
   },

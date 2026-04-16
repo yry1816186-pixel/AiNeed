@@ -2,6 +2,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 export interface RatingProps {
   value?: number;
@@ -99,9 +100,9 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginLeft: Spacing[2],
   },
-  ratingValueCompact: { fontSize: 12 },
+  ratingValueCompact: { fontSize: DesignTokens.typography.sizes.sm },
   reviewCount: { ...Typography.styles.caption, color: Colors.neutral[500] },
-  reviewCountCompact: { fontSize: 10 },
+  reviewCountCompact: { fontSize: DesignTokens.typography.sizes.xs },
   badgeContainer: {
     flexDirection: "row",
     alignItems: "center",

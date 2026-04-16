@@ -15,6 +15,7 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
 import customizationApi from "../services/api/customization.api";
 import type { RootStackParamList } from "../types/navigation";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 type Navigation = import("@react-navigation/native").NavigationProp<RootStackParamList>;
 type OrderDetailRoute = RouteProp<RootStackParamList, "CustomizationOrderDetail">;
@@ -310,7 +311,7 @@ const styles = StyleSheet.create({
   topBarTitle: {
     flex: 1,
     textAlign: "center",
-    fontSize: 17,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -325,12 +326,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   errorText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textSecondary,
     marginTop: Spacing[3],
   },
   errorButton: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.primary,
     marginTop: Spacing[4],
   },
@@ -345,17 +346,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   orderTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   orderDate: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   templateName: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     marginTop: Spacing[1],
   },
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
@@ -394,7 +395,7 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
   timelineLabel: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[400],
     textAlign: "center",
   },
@@ -423,11 +424,11 @@ const styles = StyleSheet.create({
     gap: Spacing[1],
   },
   trackingLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   trackingValue: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
     fontWeight: "500",
     marginBottom: Spacing[1],
@@ -444,7 +445,7 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   packagingText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   actions: {
@@ -458,7 +459,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: theme.colors.textSecondary,
   },
@@ -470,7 +471,7 @@ const styles = StyleSheet.create({
     ...Shadows.brand,
   },
   confirmButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.surface,
   },

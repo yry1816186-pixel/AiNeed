@@ -159,11 +159,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
-  title: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.primary },
-  closeText: { fontSize: 14, color: DesignTokens.colors.text.tertiary },
+  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  closeText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.tertiary },
   body: { padding: 16 },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: DesignTokens.colors.text.primary,
     marginBottom: 8,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#FF4D4F", // custom color
   },
-  typeText: { fontSize: 14, color: DesignTokens.colors.text.secondary },
+  typeText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary },
   typeTextActive: { color: "#FF4D4F", fontWeight: "600" }, // custom color
   reasonRow: {
     flexDirection: "row",
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: "#FF4D4F", // custom color
   },
-  reasonText: { fontSize: 14, color: DesignTokens.colors.text.primary },
+  reasonText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary },
   textArea: {
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
@@ -217,13 +217,13 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.text.primary,
   },
   charCount: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
     textAlign: "right",
     marginTop: 4,
   },
   amountText: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: "#FF4D4F", // custom color
   },
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   submitText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },

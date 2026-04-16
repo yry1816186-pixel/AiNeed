@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     marginTop: 8,
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     fontWeight: "500",
   },
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   skipText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     fontWeight: "500",
   },
@@ -493,13 +493,13 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   stepTitle: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
     color: theme.colors.textPrimary,
     marginBottom: 8,
   },
   stepSubtitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginBottom: 24,
   },
@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary[50],
   },
   optionLabel: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     textAlign: "center",
@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
     color: Colors.primary[600],
   },
   optionDescription: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: theme.colors.textTertiary,
     marginTop: 2,
     textAlign: "center",
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   nextButtonText: {
-    fontSize: 17,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },

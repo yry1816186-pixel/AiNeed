@@ -264,13 +264,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   title: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
     marginBottom: 4,
   },
   subtitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
   },
   optionsContainer: {
@@ -293,11 +293,11 @@ const styles = StyleSheet.create({
     borderColor: DesignTokens.colors.brand.sage,
   },
   chipIcon: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     marginRight: 6,
   },
   chipText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: DesignTokens.colors.neutral[700],
   },
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   checkmarkText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.inverse,
     fontWeight: "700",
   },
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   skipText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[500],
     fontWeight: "500",
   },
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   confirmText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },

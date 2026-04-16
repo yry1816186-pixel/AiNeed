@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 14,
   },
-  title: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
+  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
   sourceRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
   sourceChip: {
     flexDirection: "row",
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0EDFF", // custom color
   },
   sourceChipActive: { backgroundColor: DesignTokens.colors.brand.slate },
-  sourceChipText: { fontSize: 12, color: DesignTokens.colors.brand.slate, fontWeight: "500" },
+  sourceChipText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.brand.slate, fontWeight: "500" },
   sourceChipTextActive: { color: DesignTokens.colors.text.inverse },
   collectionRow: {
     flexDirection: "row",
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 12,
   },
-  collectionLabel: { fontSize: 12, color: theme.colors.textSecondary },
+  collectionLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   collectionChip: {
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   collectionChipActive: { backgroundColor: "#F0EDFF" }, // custom color
-  collectionChipText: { fontSize: 12, color: theme.colors.textSecondary },
+  collectionChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   collectionChipTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "600" },
   loader: { paddingVertical: 24 },
   itemList: { maxHeight: 250 },
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  itemName: { flex: 1, fontSize: 14, color: theme.colors.text },
+  itemName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
   checkbox: {
     width: 20,
     height: 20,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
     borderColor: DesignTokens.colors.brand.slate,
   },
   emptyItems: { paddingVertical: 32, alignItems: "center" },
-  emptyItemsText: { fontSize: 14, color: theme.colors.textTertiary },
+  emptyItemsText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary },
   importBtn: {
     backgroundColor: DesignTokens.colors.brand.slate,
     borderRadius: 12,
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   importBtnDisabled: { opacity: 0.5 },
-  importBtnText: { color: DesignTokens.colors.text.inverse, fontSize: 15, fontWeight: "600" },
+  importBtnText: { color: DesignTokens.colors.text.inverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
 });
 
 export default ImportSheet;

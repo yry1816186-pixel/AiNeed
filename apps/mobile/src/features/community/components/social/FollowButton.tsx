@@ -94,11 +94,11 @@ const styles = StyleSheet.create({
   },
   followText: {
     color: DesignTokens.colors.backgrounds.primary,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   followTextSmall: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
   },
   followingBtn: {
     backgroundColor: theme.colors.background,
@@ -117,11 +117,11 @@ const styles = StyleSheet.create({
   },
   followingText: {
     color: theme.colors.textSecondary,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },
   followingTextSmall: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
   },
 });
 

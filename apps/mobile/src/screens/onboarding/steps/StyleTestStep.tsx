@@ -26,7 +26,7 @@ const FEATURES = [
   },
   {
     icon: "sparkles-outline",
-    title: "个性推�?,
+    title: "个性推荐",
     description: "AI 生成个性化建议",
   },
 ] as const;
@@ -65,7 +65,7 @@ export const StyleTestStep: React.FC<StyleTestStepProps> = ({ onNext, onSkip }) 
 
     <View style={styles.actions}>
       <TouchableOpacity style={styles.startButton} onPress={onNext} activeOpacity={0.7}>
-        <Text style={styles.startButtonText}>开始测�?/Text>
+        <Text style={styles.startButtonText}>开始测试</Text>
         <Ionicons name="play-outline" size={20} color={DesignTokens.colors.backgrounds.primary} />
       </TouchableOpacity>
       {onSkip && (
@@ -87,14 +87,14 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[4],
   },
   title: {
-    fontSize: 26,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
     color: theme.colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
@@ -112,13 +112,13 @@ const styles = StyleSheet.create({
     ...Shadows.brand,
   },
   previewTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: DesignTokens.colors.backgrounds.primary,
     marginTop: Spacing[4],
   },
   previewSubtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: "rgba(255, 255, 255, 0.7)",
     marginTop: Spacing[2],
   },
@@ -144,13 +144,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[2],
   },
   featureTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   featureDescription: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     textAlign: "center",
     lineHeight: 18,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   startButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.backgrounds.primary,
   },
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[2],
   },
   skipText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
   },
 });

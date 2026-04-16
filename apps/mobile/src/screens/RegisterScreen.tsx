@@ -333,8 +333,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   content: { flex: 1, padding: 20 },
-  title: { fontSize: 32, fontWeight: '700', color: theme.colors.text },
-  subtitle: { fontSize: 16, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 32 },
+  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: '700', color: theme.colors.text },
+  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: theme.colors.textSecondary, marginTop: 8, marginBottom: 32 },
   form: { gap: 16 },
   inputGroup: {
     flexDirection: 'row',
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     gap: 12,
   },
-  input: { flex: 1, fontSize: 16, color: theme.colors.text },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: theme.colors.text },
   eyeButton: { padding: 4 },
   registerButton: {
     backgroundColor: theme.colors.primary,
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     minHeight: 52,
   },
   registerButtonDisabled: { backgroundColor: theme.colors.primaryLight },
-  registerButtonText: { fontSize: 16, fontWeight: '600', color: theme.colors.surface },
+  registerButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: '600', color: theme.colors.surface },
   termsRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -380,10 +380,10 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     borderColor: theme.colors.primary,
   },
-  termsText: { fontSize: 13, color: theme.colors.textSecondary },
-  termsLink: { fontSize: 13, color: theme.colors.primary, fontWeight: '500' },
+  termsText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  termsLink: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.primary, fontWeight: '500' },
   loginLink: { alignItems: 'center', marginTop: 16 },
-  loginText: { fontSize: 14, color: theme.colors.primary },
+  loginText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary },
 });
 
 export default RegisterScreen;

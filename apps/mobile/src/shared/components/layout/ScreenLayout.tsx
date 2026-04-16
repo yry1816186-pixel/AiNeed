@@ -16,6 +16,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Colors, Spacing } from '../../../design-system/theme';
 import type { ScrollEvent } from "../../../types/events";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -388,12 +389,12 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: Colors.neutral[900],
   },
   headerSubtitle: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     marginTop: 2,
   },
@@ -418,17 +419,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[900],
   },
   sectionSubtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     marginTop: 2,
   },
   seeAllText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.primary[500],
     fontWeight: "500",
   },

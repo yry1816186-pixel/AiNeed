@@ -544,7 +544,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   filterGroupTitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: theme.colors.textSecondary,
     marginBottom: 8,
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   filterChipText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   filterChipTextActive: {
@@ -576,7 +576,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   clearAllFiltersText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   activeFilters: {
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   activeFilterPillText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.primary,
     fontWeight: "500",
   },
@@ -611,13 +611,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: 12,
   },
   clearText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
   },
   tags: {
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   tagText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.primary,
   },
   quickGrid: {
@@ -657,7 +657,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   quickLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     textAlign: "center",
   },
@@ -701,7 +701,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   cardName: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -712,11 +712,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   cardCategory: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.primary,
   },
   cardBrand: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     flex: 1,
     textAlign: "right",
@@ -736,7 +736,7 @@ const styles = StyleSheet.create({
     borderColor: DesignTokens.colors.neutral[400],
   },
   cardColor: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   emptyContainer: {
@@ -747,13 +747,13 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: theme.colors.textPrimary,
     marginTop: 16,
   },
   emptySubtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: theme.colors.textSecondary,
     textAlign: "center",
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.cartLight,
   },
   clearFiltersText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.primary,
   },
@@ -778,7 +778,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   loadingText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
   },
 });

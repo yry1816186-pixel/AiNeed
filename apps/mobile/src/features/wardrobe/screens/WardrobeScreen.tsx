@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.border,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
     color: theme.colors.textPrimary,
   },
@@ -525,12 +525,12 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   statNumber: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
     color: theme.colors.primary,
   },
   statLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     marginTop: 2,
   },
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: 40,
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   categoryScroll: {
@@ -576,7 +576,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.primary,
   },
   categoryTabText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: theme.colors.textSecondary,
   },
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   gridItemName: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     paddingHorizontal: 8,
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
   },
   gridItemCategory: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     paddingHorizontal: 8,
     paddingBottom: 8,
@@ -655,7 +655,7 @@ const styles = StyleSheet.create({
     paddingVertical: 64,
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: 12,
   },
@@ -670,13 +670,13 @@ const styles = StyleSheet.create({
     paddingVertical: 64,
   },
   emptyText: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginTop: 16,
   },
   emptySubtext: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: 8,
   },
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   emptyAddButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -703,7 +703,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   errorText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: 12,
     textAlign: "center",
@@ -716,7 +716,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   retryButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.surface,
   },

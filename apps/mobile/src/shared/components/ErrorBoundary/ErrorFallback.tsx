@@ -22,6 +22,7 @@ import {
   RecoveryStrategy,
 } from "../../utils/errorHandling";
 import type { ErrorInfo } from "react";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 // ============================================================================
 // 类型定义
@@ -373,7 +374,7 @@ const styles = StyleSheet.create({
   },
   errorStack: {
     ...Typography.caption,
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[600],
     fontFamily: "monospace",
     lineHeight: 16,

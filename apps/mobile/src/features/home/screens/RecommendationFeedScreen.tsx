@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   footerEndText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
   },
   errorContainer: {
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   errorText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.text.secondary,
     textAlign: "center",
   },
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   retryText: {
     color: DesignTokens.colors.neutral.white,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
 });

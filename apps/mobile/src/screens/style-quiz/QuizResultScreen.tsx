@@ -227,13 +227,13 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   title: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
     color: theme.colors.textPrimary,
     marginTop: Spacing[4],
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: Spacing[2],
   },
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[7],
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius["2xl"],
   },
   tagText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: DesignTokens.colors.neutral.white,
   },
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
   },
   colorHex: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: theme.colors.textTertiary,
   },
   occasionList: {
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
   },
   occasionText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   confidenceContainer: {
@@ -333,17 +333,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   confidenceValue: {
-    fontSize: 32,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
     color: theme.colors.primary,
   },
   confidenceUnit: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.primary,
   },
   confidenceLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   actionsSection: {
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   primaryButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
   },
   outlinedButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.primary,
   },
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   retakeText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     textDecorationLine: "underline",
   },

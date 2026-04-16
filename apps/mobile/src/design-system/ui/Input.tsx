@@ -31,6 +31,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
 import { SpringConfigs } from "../../theme/tokens/animations";
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 // Re-export from primitives for backward compatibility
 export {
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
   rightIconContainer: { paddingRight: Spacing.lg, justifyContent: "center" },
   disabled: { opacity: 0.5 },
   hintContainer: { marginTop: Spacing[1], paddingHorizontal: Spacing[1] },
-  hintText: { fontSize: 12, color: Colors.neutral[500] },
+  hintText: { fontSize: DesignTokens.typography.sizes.sm, color: Colors.neutral[500] },
   errorText: { color: Colors.semantic.error },
 });
 

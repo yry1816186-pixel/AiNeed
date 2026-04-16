@@ -249,11 +249,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.text },
   placeholder: { width: 40 },
   content: { flex: 1 },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: theme.colors.textTertiary,
     textTransform: "uppercase",
@@ -279,8 +279,8 @@ const styles = StyleSheet.create({
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
   settingInfo: { flex: 1 },
-  settingTitle: { fontSize: 16, fontWeight: "500", color: theme.colors.text },
-  settingDesc: { fontSize: 13, color: theme.colors.textSecondary, marginTop: 2 },
+  settingTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: theme.colors.text },
+  settingDesc: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary, marginTop: 2 },
   categoryIcon: {
     width: 36,
     height: 36,
@@ -300,12 +300,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   timeValue: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
   timeSeparator: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textSecondary,
   },
 });

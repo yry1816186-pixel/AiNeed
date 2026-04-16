@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
   title: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: DesignTokens.colors.text.primary,
   },
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.secondary,
     marginBottom: 12,
@@ -280,14 +280,14 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.brand.terracotta, // custom color
   },
   optionText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.text.primary,
   },
   optionTextSelected: {
     color: DesignTokens.colors.text.inverse,
   },
   count: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.secondary,
     marginLeft: 4,
   },
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   resetButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.secondary,
   },
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   applyButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },

@@ -170,11 +170,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
-  title: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.primary },
-  closeText: { fontSize: 16, color: DesignTokens.colors.text.tertiary },
+  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  closeText: { fontSize: DesignTokens.typography.sizes.md, color: DesignTokens.colors.text.tertiary },
   body: { padding: 16 },
   section: { marginBottom: 20 },
-  sectionTitle: { fontSize: 14, fontWeight: "500", color: DesignTokens.colors.text.primary, marginBottom: 8 },
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: DesignTokens.colors.text.primary, marginBottom: 8 },
   sizeHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 },
   colorRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   colorSwatch: {
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   colorSwatchSelected: { borderColor: "#FF4D4F", borderWidth: 2 }, // custom color
-  colorText: { fontSize: 10, color: DesignTokens.colors.text.secondary },
+  colorText: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.text.secondary },
   colorTextSelected: { color: "#FF4D4F", fontWeight: "600" }, // custom color
   sizeRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   sizeWrapper: { alignItems: "center", marginBottom: 4 },
@@ -202,11 +202,11 @@ const styles = StyleSheet.create({
   },
   sizeButtonSelected: { borderColor: "#FF4D4F", backgroundColor: "#FFF5F5" }, // custom color
   sizeButtonDisabled: { backgroundColor: DesignTokens.colors.neutral[100], borderColor: DesignTokens.colors.neutral[100] },
-  sizeText: { fontSize: 14, color: DesignTokens.colors.text.primary },
+  sizeText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary },
   sizeTextSelected: { color: "#FF4D4F", fontWeight: "600" }, // custom color
   sizeTextDisabled: { color: DesignTokens.colors.neutral[300] },
   recDot: { fontSize: 8, color: "#52C41A", fontWeight: "600" }, // custom color
-  notifyText: { fontSize: 10, color: "#FF4D4F", marginTop: 2 }, // custom color
+  notifyText: { fontSize: DesignTokens.typography.sizes.xs, color: "#FF4D4F", marginTop: 2 }, // custom color
   qtyRow: { flexDirection: "row", alignItems: "center", gap: 12 },
   qtyButton: {
     width: 44,
@@ -217,19 +217,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  qtyButtonText: { fontSize: 18, color: DesignTokens.colors.text.primary },
+  qtyButtonText: { fontSize: DesignTokens.typography.sizes.lg, color: DesignTokens.colors.text.primary },
   qtyValue: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.text.primary,
     minWidth: 30,
     textAlign: "center",
   },
-  stockText: { fontSize: 12, color: DesignTokens.colors.text.tertiary },
+  stockText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary },
   confirmButton: {
     backgroundColor: "#FF4D4F", // custom color
     paddingVertical: 14,
     alignItems: "center",
   },
-  confirmText: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.inverse },
+  confirmText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.inverse },
 });

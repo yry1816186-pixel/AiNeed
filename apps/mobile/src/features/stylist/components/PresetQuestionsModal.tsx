@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     maxHeight: "70%",
   },
   title: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
     marginBottom: 16,
@@ -75,11 +75,11 @@ const styles = StyleSheet.create({
     borderColor: DesignTokens.colors.neutral[200],
   },
   questionIcon: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     marginRight: 14,
   },
   questionText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: DesignTokens.colors.neutral[800],
     fontWeight: "500",
     flex: 1,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   skipButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[400],
   },
 });

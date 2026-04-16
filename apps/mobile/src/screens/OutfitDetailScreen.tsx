@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.text },
   actionButton: {
     width: 40,
     height: 40,
@@ -245,13 +245,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   infoSection: { backgroundColor: theme.colors.surface, marginTop: 16, padding: 20 },
-  outfitName: { fontSize: 24, fontWeight: "700", color: theme.colors.textPrimary, marginBottom: 8 },
-  outfitDescription: { fontSize: 14, color: theme.colors.textSecondary, lineHeight: 22 },
+  outfitName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: theme.colors.textPrimary, marginBottom: 8 },
+  outfitDescription: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, lineHeight: 22 },
   loadingContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
-  loadingText: { fontSize: 16, color: theme.colors.textSecondary, marginTop: 12 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.md, color: theme.colors.textSecondary, marginTop: 12 },
   errorContainer: { flex: 1, alignItems: "center", justifyContent: "center", padding: 20 },
   errorText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textSecondary,
     marginTop: 12,
     textAlign: "center",
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 16,
   },
-  retryButtonText: { fontSize: 16, fontWeight: "500", color: theme.colors.surface },
+  retryButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: theme.colors.surface },
   bottomSpacer: { height: 100 },
   footer: {
     position: "absolute",
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.error,
   },
-  deleteButtonText: { fontSize: 16, fontWeight: "500", color: theme.colors.error },
+  deleteButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: theme.colors.error },
   wearButton: {
     flex: 1,
     flexDirection: "row",
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   wearButtonGradient: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
-  wearButtonText: { fontSize: 16, fontWeight: "600", color: theme.colors.surface },
+  wearButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.surface },
 });
 
 export default OutfitDetailScreen;

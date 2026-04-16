@@ -179,11 +179,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   scoreNumber: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
   },
   scoreLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     marginTop: 2,
   },
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   acceptableText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.semantic.success,
   },
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   issuesTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textSecondary,
     marginBottom: 12,
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   },
   issueText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   buttonContainer: {
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   },
   retakeButtonText: {
     color: DesignTokens.colors.backgrounds.primary,
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   continueButton: {
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
   },
   continueButtonText: {
     color: DesignTokens.colors.backgrounds.primary,
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
 });

@@ -109,14 +109,14 @@ const styles = StyleSheet.create({
   },
   avatarPlaceholderText: {
     color: DesignTokens.colors.backgrounds.primary,
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
   },
   headerInfo: {
     flex: 1,
   },
   studioName: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: "#1A1A1A",
     marginBottom: 4,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     borderColor: "#F0D5C8",
   },
   specialtyText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "#C67B5C",
   },
   footer: {
@@ -148,16 +148,16 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   reviewCount: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.secondary,
   },
   matchReasons: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.secondary,
     lineHeight: 18,
   },
   price: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "#C67B5C",
     marginTop: 4,
   },
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   ctaText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: "#C67B5C",
     fontWeight: "500",
   },

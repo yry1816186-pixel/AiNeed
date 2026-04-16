@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
   backBtn: { width: 40, height: 40, justifyContent: "center" },
   headerSpacer: { width: 40 },
   carouselSection: { backgroundColor: DesignTokens.colors.neutral[50] },
@@ -331,10 +331,10 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 8,
   },
-  productTitle: { fontSize: 20, fontWeight: "700", color: theme.colors.text },
-  productPrice: { fontSize: 24, fontWeight: "700", color: DesignTokens.colors.brand.terracotta, marginTop: 8 },
+  productTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.text },
+  productPrice: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: DesignTokens.colors.brand.terracotta, marginTop: 8 },
   originalPrice: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     textDecorationLine: "line-through",
     marginTop: 4,
@@ -344,8 +344,8 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 8,
   },
-  sectionTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 8 },
-  descriptionText: { fontSize: 14, color: theme.colors.textSecondary, lineHeight: 22 },
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 8 },
+  descriptionText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, lineHeight: 22 },
   bloggerCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -363,10 +363,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  bloggerAvatarText: { fontSize: 18, fontWeight: "600", color: DesignTokens.colors.backgrounds.primary },
+  bloggerAvatarText: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: DesignTokens.colors.backgrounds.primary },
   bloggerInfo: { flex: 1 },
   bloggerNameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  bloggerName: { fontSize: 15, fontWeight: "600", color: theme.colors.text },
+  bloggerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
   bloggerBadgeSmall: {
     width: 14,
     height: 14,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  bloggerLabel: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 },
+  bloggerLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
   externalLink: {
     flexDirection: "row",
     alignItems: "center",
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
-  externalLinkText: { flex: 1, fontSize: 14, color: theme.colors.primary },
+  externalLinkText: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary },
   salesInfo: {
     flexDirection: "row",
     gap: 16,
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     marginTop: 8,
   },
-  salesText: { fontSize: 12, color: theme.colors.textTertiary },
+  salesText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary },
   purchaseBar: {
     position: "absolute",
     left: 0,
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 14,
   },
-  purchaseBtnText: { color: DesignTokens.colors.backgrounds.primary, fontSize: 16, fontWeight: "600" },
+  purchaseBtnText: { color: DesignTokens.colors.backgrounds.primary, fontSize: DesignTokens.typography.sizes.md, fontWeight: "600" },
   sheetOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "flex-end",
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 14,
   },
-  sheetTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 14 },
+  sheetTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 14 },
   sheetProductInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -459,9 +459,9 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 16,
   },
-  sheetProductName: { flex: 1, fontSize: 14, color: theme.colors.textPrimary, marginRight: 12 },
-  sheetProductPrice: { fontSize: 18, fontWeight: "700", color: DesignTokens.colors.brand.terracotta },
-  paymentLabel: { fontSize: 14, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 10 },
+  sheetProductName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, marginRight: 12 },
+  sheetProductPrice: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: DesignTokens.colors.brand.terracotta },
+  paymentLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 10 },
   paymentOption: {
     flexDirection: "row",
     alignItems: "center",
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   },
   paymentRadioSelected: { borderColor: DesignTokens.colors.brand.terracotta },
   paymentRadioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: DesignTokens.colors.brand.terracotta },
-  paymentName: { fontSize: 14, color: theme.colors.textPrimary, flex: 1 },
+  paymentName: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, flex: 1 },
   confirmPurchaseBtn: {
     backgroundColor: DesignTokens.colors.brand.terracotta,
     borderRadius: 12,
@@ -492,15 +492,15 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   confirmPurchaseBtnDisabled: { opacity: 0.5 },
-  confirmPurchaseBtnText: { color: DesignTokens.colors.backgrounds.primary, fontSize: 16, fontWeight: "600" },
+  confirmPurchaseBtnText: { color: DesignTokens.colors.backgrounds.primary, fontSize: DesignTokens.typography.sizes.md, fontWeight: "600" },
   successContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 32,
   },
-  successTitle: { fontSize: 24, fontWeight: "700", color: theme.colors.textPrimary, marginTop: 16 },
-  successSubtitle: { fontSize: 15, color: theme.colors.textSecondary, marginTop: 6 },
+  successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: theme.colors.textPrimary, marginTop: 16 },
+  successSubtitle: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 6 },
   contentBox: {
     backgroundColor: theme.colors.surface,
     borderRadius: 12,
@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.border,
   },
-  contentText: { fontSize: 14, color: theme.colors.textPrimary, lineHeight: 22 },
+  contentText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, lineHeight: 22 },
   viewSchemeBtn: {
     backgroundColor: theme.colors.primary,
     borderRadius: 12,
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     marginTop: 24,
   },
-  viewSchemeBtnText: { color: DesignTokens.colors.backgrounds.primary, fontSize: 16, fontWeight: "600" },
+  viewSchemeBtnText: { color: DesignTokens.colors.backgrounds.primary, fontSize: DesignTokens.typography.sizes.md, fontWeight: "600" },
 });
 
 export default BloggerProductScreen;

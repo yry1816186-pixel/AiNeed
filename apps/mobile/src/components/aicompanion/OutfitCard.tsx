@@ -261,13 +261,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   summaryTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
     marginLeft: 6,
   },
   summaryText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: DesignTokens.colors.neutral[800],
   },
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
   whyTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[700],
     marginBottom: 10,
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   },
   reasonText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 20,
     color: DesignTokens.colors.neutral[600],
   },
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     borderColor: DesignTokens.colors.brand.sage,
   },
   outfitTabText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: DesignTokens.colors.neutral[600],
   },
@@ -338,12 +338,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   outfitTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
     color: DesignTokens.colors.neutral[900],
   },
   totalPrice: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.brand.terracotta,
   },
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral[100],
   },
   styleTagText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[600],
   },
   itemCard: {
@@ -407,24 +407,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   itemCategory: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     textTransform: "uppercase",
     letterSpacing: 0.5,
     color: DesignTokens.colors.brand.sage,
     fontWeight: "600",
   },
   itemBrand: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.neutral[500],
   },
   itemName: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
     marginTop: 2,
   },
   itemReason: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
     marginTop: 2,
     lineHeight: 16,
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   itemPrice: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.brand.terracotta,
   },
@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   viewLinkText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.brand.terracotta,
     fontWeight: "500",
   },
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   scoreText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "700",
     color: DesignTokens.colors.text.inverse,
   },

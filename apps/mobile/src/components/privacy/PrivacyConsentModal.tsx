@@ -73,17 +73,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   icon: {
-    fontSize: 32,
+    fontSize: DesignTokens.typography.sizes['3xl'],
   },
   title: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: Colors.neutral[900],
     textAlign: "center",
     marginBottom: Spacing[3],
   },
   body: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     lineHeight: 24,
     color: Colors.neutral[600],
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   confirmText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.backgrounds.primary,
   },
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.neutral[200],
   },
   cancelText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: Colors.neutral[600],
   },

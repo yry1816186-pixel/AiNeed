@@ -567,7 +567,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(16, 185, 129, 0.1)",
   },
   likeText: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: Colors.success[500],
   },
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(244, 63, 94, 0.1)",
   },
   nopeText: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: Colors.rose[500],
   },
@@ -591,7 +591,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cartText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "700",
     color: Colors.success[500],
     marginTop: 4,
@@ -605,7 +605,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   skipText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "700",
     color: Colors.neutral[600],
     marginTop: 4,
@@ -619,14 +619,14 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   brandText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: "rgba(255,255,255,0.8)",
     marginBottom: 4,
     letterSpacing: 1,
   },
   productName: {
-    fontSize: 22,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: DesignTokens.colors.text.inverse,
     marginBottom: 8,
@@ -641,12 +641,12 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
   },
   priceText: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "800",
     color: DesignTokens.colors.text.inverse,
   },
   originalPriceText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: "rgba(255,255,255,0.6)",
     textDecorationLine: "line-through",
   },
@@ -663,7 +663,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   reasonText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.inverse,
     fontWeight: "500",
   },
@@ -680,7 +680,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.5)",
   },
   moreColors: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "rgba(255,255,255,0.8)",
     fontWeight: "500",
   },
@@ -696,7 +696,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   ratingLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: Colors.success[500],
     marginLeft: 6,
@@ -710,7 +710,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   reasonPillText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "500",
     color: "#F5D5C5", // custom color
   },

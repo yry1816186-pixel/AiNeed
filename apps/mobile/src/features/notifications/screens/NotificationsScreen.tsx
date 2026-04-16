@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.text },
   placeholder: { width: 40 },
 
   // Tabs
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   tabText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     fontWeight: "500",
   },
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   actionText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.primary,
     fontWeight: "500",
   },
@@ -434,19 +434,19 @@ const styles = StyleSheet.create({
     paddingVertical: 64,
   },
   emptyText: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginTop: 16,
   },
   emptySubtext: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: 8,
   },
   endText: {
     textAlign: "center",
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
     paddingVertical: 16,
   },
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   notificationTitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: theme.colors.textSecondary,
     flex: 1,
@@ -493,11 +493,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   notificationTime: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   notificationBody: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     lineHeight: 20,
   },

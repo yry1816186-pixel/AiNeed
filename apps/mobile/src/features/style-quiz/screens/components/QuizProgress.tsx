@@ -1,6 +1,7 @@
 ﻿import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface QuizProgressProps {
   currentStep: number;
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   stepText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[600],
   },

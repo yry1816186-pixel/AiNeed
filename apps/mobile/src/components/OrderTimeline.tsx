@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   },
   content: { flex: 1, paddingBottom: 20 },
   statusText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: DesignTokens.colors.text.primary,
   },
@@ -126,12 +126,12 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.neutral[300],
   },
   timeText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
     marginTop: 4,
   },
   trackingText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "#1677FF",
     marginTop: 4,
   },

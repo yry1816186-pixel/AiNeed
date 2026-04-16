@@ -41,12 +41,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   progressText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
     marginBottom: 4,
   },
   freeText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "#52C41A",
     fontWeight: "500",
     marginBottom: 4,

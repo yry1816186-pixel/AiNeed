@@ -144,12 +144,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(239, 68, 68, 0.15)",
   },
   likeText: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "800",
     color: DesignTokens.colors.semantic.success,
   },
   dislikeText: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "800",
     color: DesignTokens.colors.semantic.error,
   },
@@ -159,16 +159,16 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   brandName: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.secondary,
   },
   price: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "700",
     color: DesignTokens.colors.text.primary,
   },
   matchReason: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.brand.terracotta,
     fontWeight: "500",
   },
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   hintText: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.text.tertiary,
   },
 });

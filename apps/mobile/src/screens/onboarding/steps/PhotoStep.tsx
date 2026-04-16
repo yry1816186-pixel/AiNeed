@@ -9,6 +9,7 @@ import {
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Animated, { SlideInRight } from "react-native-reanimated";
 import { theme, Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface PhotoStepProps {
   onNext: () => void;
@@ -54,7 +55,7 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
       <View style={styles.stepHeader}>
         <Text style={styles.stepTitle}>上传照片解锁个性化分析</Text>
         <Text style={styles.stepSubtitle}>
-          上传一张全身照，帮助我们更好地分析体型和生成试衣效�?
+          上传一张全身照，帮助我们更好地分析体型和生成试衣效�?
         </Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -101,7 +102,7 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
 
         {onSkip && (
           <TouchableOpacity style={styles.skipLink} onPress={onSkip} activeOpacity={0.7}>
-            <Text style={styles.skipLinkText}>跳过，稍后上�?/Text>
+            <Text style={styles.skipLinkText}>跳过，稍后上传</Text>
           </TouchableOpacity>
         )}
       </ScrollView>
@@ -119,14 +120,14 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[4],
   },
   stepTitle: {
-    fontSize: 26,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
     color: theme.colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   stepSubtitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
   },
   privacyText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     lineHeight: 20,
   },
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     gap: Spacing[3],
   },
   photoPlaceholderText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textSecondary,
   },
   buttonGroup: {
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   cameraButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   galleryButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textSecondary,
   },
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing[2],
   },
   skipLinkText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
   },
 });

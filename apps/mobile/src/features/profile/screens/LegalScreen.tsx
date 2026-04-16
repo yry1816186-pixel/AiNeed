@@ -6,6 +6,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../design-system/theme';
 import type { RootStackParamList } from "../types/navigation";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 type LegalScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -330,7 +331,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -342,34 +343,34 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   lastUpdatedText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   documentContent: {
     paddingBottom: 40,
   },
   heading1: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: theme.colors.textPrimary,
     marginTop: 24,
     marginBottom: 12,
   },
   heading2: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginTop: 16,
     marginBottom: 8,
   },
   paragraph: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: theme.colors.textSecondary,
     marginBottom: 8,
   },
   bulletItem: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: theme.colors.textSecondary,
     marginLeft: 16,
@@ -386,7 +387,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   footerText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   linkText: {

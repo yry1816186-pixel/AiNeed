@@ -71,16 +71,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   headerTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[700],
   },
   expandIcon: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.brand.terracotta,
   },
   reasonText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     lineHeight: 18,
     color: DesignTokens.colors.neutral[600],
     marginBottom: 4,

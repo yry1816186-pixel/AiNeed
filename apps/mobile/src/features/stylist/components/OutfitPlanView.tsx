@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
-  title: { fontSize: 18, fontWeight: "600", color: DesignTokens.colors.neutral[900] },
+  title: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: DesignTokens.colors.neutral[900] },
   tabBar: { marginBottom: 12, maxHeight: 40 },
   tab: {
     paddingHorizontal: 16,
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   tabActive: { backgroundColor: DesignTokens.colors.brand.terracotta },
-  tabText: { fontSize: 14, color: DesignTokens.colors.neutral[600] },
+  tabText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.neutral[600] },
   tabTextActive: { color: DesignTokens.colors.neutral.white, fontWeight: "500" },
   itemsRow: { paddingVertical: 4, gap: 8 },
   itemCard: {
@@ -224,16 +224,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 8,
   },
-  itemImagePlaceholderText: { fontSize: 12, color: DesignTokens.colors.neutral[400] },
+  itemImagePlaceholderText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral[400] },
   itemName: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: DesignTokens.colors.neutral[800],
     marginBottom: 2,
   },
-  itemBrand: { fontSize: 11, color: DesignTokens.colors.neutral[500], marginBottom: 2 },
+  itemBrand: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.neutral[500], marginBottom: 2 },
   itemPrice: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.brand.terracotta,
     marginBottom: 6,
@@ -244,9 +244,9 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     alignItems: "center",
   },
-  replaceButtonText: { fontSize: 12, color: DesignTokens.colors.neutral[600] },
+  replaceButtonText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral[600] },
   totalPrice: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
     marginTop: 12,
@@ -261,6 +261,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   dislikeButton: { backgroundColor: DesignTokens.colors.neutral[100] },
-  feedbackButtonText: { fontSize: 14, fontWeight: "500", color: DesignTokens.colors.neutral.white },
+  feedbackButtonText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: DesignTokens.colors.neutral.white },
   dislikeButtonText: { color: DesignTokens.colors.neutral[600] },
 });

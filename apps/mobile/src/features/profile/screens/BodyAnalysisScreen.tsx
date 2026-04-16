@@ -414,12 +414,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[8],
   },
   loadingText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textTertiary,
     marginTop: Spacing[3],
   },
   errorText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textSecondary,
     marginTop: Spacing[3],
     textAlign: "center",
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing[4],
   },
   retryButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },
@@ -446,19 +446,19 @@ const styles = StyleSheet.create({
     padding: Spacing[6],
   },
   typeLabel: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: "rgba(255, 255, 255, 0.8)",
     marginBottom: Spacing[1],
   },
   typeName: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
     marginBottom: Spacing[2],
   },
   typeDescription: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: "rgba(255, 255, 255, 0.9)",
     lineHeight: 24,
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
   chartTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[4],
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   legendText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   adviceCard: {
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
   adviceTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[3],
@@ -529,20 +529,20 @@ const styles = StyleSheet.create({
   },
   adviceText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: theme.colors.textSecondary,
     lineHeight: 24,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginTop: Spacing[4],
     marginBottom: Spacing[2],
   },
   emptySubtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     textAlign: "center",
     lineHeight: 22,
@@ -556,7 +556,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   emptyButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },

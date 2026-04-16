@@ -928,7 +928,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   actionLabel: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.text.inverse,
     marginTop: 4,
     fontWeight: "500",
@@ -950,7 +950,7 @@ const styles = StyleSheet.create({
   },
   refreshText: {
     marginTop: 8,
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
   },
 });

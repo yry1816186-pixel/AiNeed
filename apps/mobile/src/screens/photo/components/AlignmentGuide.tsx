@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: DesignTokens.colors.backgrounds.primary,
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
 });

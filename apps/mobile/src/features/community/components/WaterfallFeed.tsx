@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     color: DesignTokens.colors.neutral[400],
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
   },
   multiImageBadge: {
     position: "absolute",
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   },
   multiImageText: {
     color: DesignTokens.colors.text.inverse,
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "500",
   },
   imageGradient: {
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   cardTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[800],
     lineHeight: 20,
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   tagText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.brand.terracotta,
     fontWeight: "500",
   },
@@ -365,12 +365,12 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   authorAvatarText: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },
   authorName: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
     flex: 1,
   },
@@ -380,11 +380,11 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   likeIcon: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.brand.terracotta,
   },
   likeCount: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
   },
   loadingFooter: {
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[400],
   },
 });

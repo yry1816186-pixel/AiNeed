@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   label: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[2],

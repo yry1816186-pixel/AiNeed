@@ -42,6 +42,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#F0F0F0",
   },
   sortItem: { paddingHorizontal: 8, paddingVertical: 4 },
-  sortText: { fontSize: 14, color: DesignTokens.colors.text.tertiary },
+  sortText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.tertiary },
   sortTextActive: { color: "#FF4D4F", fontWeight: "600" },
 });

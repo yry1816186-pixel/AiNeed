@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   text: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 20,
     color: DesignTokens.colors.text.primary,
   },
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   cursorText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.brand.terracotta,
   },

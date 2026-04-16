@@ -214,14 +214,14 @@ const styles = StyleSheet.create({
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
   backBtn: { padding: 8 },
-  backBtnText: { fontSize: 20, color: DesignTokens.colors.text.primary },
+  backBtnText: { fontSize: DesignTokens.typography.sizes.xl, color: DesignTokens.colors.text.primary },
   headerCenter: { flex: 1, alignItems: "center" },
-  headerName: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  headerName: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
   onlineIndicator: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 },
   onlineDot: { width: 8, height: 8, borderRadius: 4 },
   dotOnline: { backgroundColor: DesignTokens.colors.semantic.success }, // custom color
   dotOffline: { backgroundColor: DesignTokens.colors.neutral[300] },
-  onlineText: { fontSize: 11, color: DesignTokens.colors.text.tertiary },
+  onlineText: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.text.tertiary },
   headerAvatar: { width: 32, height: 32, borderRadius: 16 },
   headerAvatarPlaceholder: {
     width: 32,
@@ -231,11 +231,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerAvatarText: { color: DesignTokens.colors.text.inverse, fontSize: 14, fontWeight: "600" },
+  headerAvatarText: { color: DesignTokens.colors.text.inverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   messagesList: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 },
   proposalWrapper: { marginVertical: 8, maxWidth: "85%", alignSelf: "center" },
   systemMessage: { alignItems: "center", marginVertical: 8 },
-  systemMessageText: { fontSize: 12, color: DesignTokens.colors.text.tertiary },
+  systemMessageText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary },
   inputBar: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     maxHeight: 100,
   },
   sendButton: {
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
   },
-  sendButtonText: { color: DesignTokens.colors.text.inverse, fontSize: 14, fontWeight: "500" },
+  sendButtonText: { color: DesignTokens.colors.text.inverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "500" },
 });
 
 export default ChatScreen;

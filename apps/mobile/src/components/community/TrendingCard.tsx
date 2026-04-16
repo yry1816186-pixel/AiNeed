@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   tagText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.brand.terracotta,
     fontWeight: "500",
   },

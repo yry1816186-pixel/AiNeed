@@ -75,9 +75,9 @@ export const AnimatedLikeButton: React.FC<LikeButtonProps> = ({
   const particleY = useSharedValue(0);
 
   const sizeConfig = {
-    small: { iconSize: 20, fontSize: 12 },
-    medium: { iconSize: 28, fontSize: 14 },
-    large: { iconSize: 36, fontSize: 16 },
+    small: { iconSize: 20, fontSize: DesignTokens.typography.sizes.sm },
+    medium: { iconSize: 28, fontSize: DesignTokens.typography.sizes.base },
+    large: { iconSize: 36, fontSize: DesignTokens.typography.sizes.md },
   };
 
   const config = sizeConfig[size];
@@ -747,7 +747,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.neutral[100],
   },
   sheetTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: Colors.neutral[800],
   },
@@ -771,12 +771,12 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   productName: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[800],
   },
   productPrice: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.primary[500],
     marginTop: 4,
   },
@@ -798,7 +798,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   platformName: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[600],
   },
   actionsContainer: {
@@ -815,7 +815,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   actionText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[600],
     marginLeft: 8,
   },
@@ -831,7 +831,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[800],
     paddingVertical: 8,
     maxHeight: 100,
@@ -858,7 +858,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   characterCount: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[400],
   },
   commentSheet: {
@@ -894,17 +894,17 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   commentUserName: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[800],
   },
   commentTime: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[400],
     marginLeft: 8,
   },
   commentText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[700],
     lineHeight: 20,
   },
@@ -919,12 +919,12 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   commentLikes: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     marginLeft: 4,
   },
   replyText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.primary[500],
     fontWeight: "500",
   },
@@ -946,10 +946,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   reactionEmoji: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
   },
   reactionLabel: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[500],
     marginTop: 2,
   },

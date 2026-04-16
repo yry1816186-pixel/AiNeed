@@ -21,6 +21,7 @@ import type {
   CustomizationRequest,
 } from "../types/customization";
 import type { RootStackParamList } from "../types/navigation";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type Navigation = NavigationProp<RootStackParamList>;
 
@@ -455,7 +456,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     flex: 1,
     textAlign: "center",
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -481,7 +482,7 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
   tabText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: theme.colors.textTertiary,
   },
@@ -497,7 +498,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[8],
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginTop: Spacing[5],
@@ -533,7 +534,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   serviceLabel: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
@@ -542,7 +543,7 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
   },
   serviceDescription: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     lineHeight: 18,
   },
@@ -555,14 +556,14 @@ const styles = StyleSheet.create({
     minHeight: 140,
   },
   textArea: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
     lineHeight: 22,
     minHeight: 100,
     textAlignVertical: "top",
   },
   charCount: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
     textAlign: "right",
     marginTop: Spacing[2],
@@ -583,7 +584,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
     padding: 0,
   },
@@ -601,7 +602,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   submitButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -614,7 +615,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: Spacing[3],
   },
@@ -625,13 +626,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[8],
   },
   emptyTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginTop: Spacing[4],
   },
   emptySubtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     textAlign: "center",
     marginTop: Spacing[2],
@@ -645,7 +646,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   emptyButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -675,7 +676,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   requestTypeText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: theme.colors.primary,
   },
@@ -685,11 +686,11 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   statusText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
   },
   requestDescription: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
     lineHeight: 22,
     marginBottom: Spacing[3],
@@ -700,7 +701,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   requestDate: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   quoteInfo: {
@@ -709,7 +710,7 @@ const styles = StyleSheet.create({
     gap: Spacing[1],
   },
   quoteText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   quickActions: {
@@ -735,13 +736,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[2],
   },
   quickActionTitle: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
   },
   quickActionDesc: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     lineHeight: 18,
   },

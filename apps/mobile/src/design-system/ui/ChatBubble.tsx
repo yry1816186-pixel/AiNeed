@@ -5,14 +5,14 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
 
 // 引入主题令牌
-import {
 import { DesignTokens } from "../theme/tokens/design-tokens";
+import {
   Colors,
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
   Typography as ThemeTypography,
-} from '../../design-system/theme';
+} from '../theme';
 
 interface ChatBubbleProps {
   message: string;

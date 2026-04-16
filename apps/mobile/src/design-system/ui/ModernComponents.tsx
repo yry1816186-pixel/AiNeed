@@ -472,17 +472,17 @@ export const Badge: React.FC<BadgeProps> = ({ text, variant = "primary", size = 
     sm: {
       paddingHorizontal: Spacing[2],
       paddingVertical: Spacing[1],
-      fontSize: 10,
+      fontSize: DesignTokens.typography.sizes.xs,
     },
     md: {
       paddingHorizontal: Spacing[3],
       paddingVertical: Spacing[1.5],
-      fontSize: 12,
+      fontSize: DesignTokens.typography.sizes.sm,
     },
     lg: {
       paddingHorizontal: Spacing[4],
       paddingVertical: Spacing[2],
-      fontSize: 14,
+      fontSize: DesignTokens.typography.sizes.base,
     },
   };
 
@@ -589,7 +589,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   productImageEmoji: {
-    fontSize: 48,
+    fontSize: DesignTokens.typography.sizes['5xl'],
   },
   discountBadge: {
     position: "absolute",
@@ -602,7 +602,7 @@ const styles = StyleSheet.create({
   },
   discountText: {
     color: Colors.white,
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "700",
   },
   favoriteButton: {
@@ -617,19 +617,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   favoriteIcon: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
   },
   productInfo: {
     padding: Spacing[3],
   },
   productBrand: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[500],
     fontWeight: "500",
     marginBottom: Spacing[1],
   },
   productName: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[900],
     fontWeight: "600",
     marginBottom: Spacing[2],
@@ -641,16 +641,16 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[2],
   },
   ratingStar: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     marginRight: Spacing[1],
   },
   ratingText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[700],
     fontWeight: "600",
   },
   reviewCount: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[500],
     marginLeft: Spacing[1],
   },
@@ -659,12 +659,12 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
   },
   productPrice: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: DesignTokens.colors.brand.terracotta,
     fontWeight: "700",
   },
   originalPrice: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[400],
     textDecorationLine: "line-through",
     marginLeft: Spacing[2],
@@ -681,7 +681,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   tagText: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.primary[600],
     fontWeight: "500",
   },
@@ -705,17 +705,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[3],
   },
   featureIcon: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
   },
   featureTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.white,
     fontWeight: "700",
     marginBottom: Spacing[1],
     textAlign: "center",
   },
   featureDescription: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: "rgba(255, 255, 255, 0.8)",
     textAlign: "center",
     lineHeight: 16,
@@ -732,17 +732,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     color: Colors.neutral[900],
     fontWeight: "700",
   },
   sectionSubtitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     marginTop: Spacing[1],
   },
   sectionAction: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.primary[600],
     fontWeight: "600",
   },

@@ -25,6 +25,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { Colors, Spacing, BorderRadius } from "../../theme";
 import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 export type InputVariant = "outlined" | "filled" | "underline";
 export type InputSize = "sm" | "md" | "lg";
@@ -51,9 +52,9 @@ const sizeConfig: Record<
   InputSize,
   { height: number; fontSize: number; paddingHorizontal: number }
 > = {
-  sm: { height: 40, fontSize: 14, paddingHorizontal: Spacing[3] },
-  md: { height: 48, fontSize: 16, paddingHorizontal: Spacing[4] },
-  lg: { height: 56, fontSize: 16, paddingHorizontal: Spacing[5] },
+  sm: { height: 40, fontSize: DesignTokens.typography.sizes.base, paddingHorizontal: Spacing[3] },
+  md: { height: 48, fontSize: DesignTokens.typography.sizes.md, paddingHorizontal: Spacing[4] },
+  lg: { height: 56, fontSize: DesignTokens.typography.sizes.md, paddingHorizontal: Spacing[5] },
 };
 
 export const Input: React.FC<InputProps> = ({
@@ -327,7 +328,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[1],
   },
   hintText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
   },
   errorText: {

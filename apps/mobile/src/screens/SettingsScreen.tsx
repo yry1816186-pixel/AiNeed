@@ -24,6 +24,7 @@ import { theme } from '../design-system/theme';
 import { useTranslation } from '../i18n';
 import { useTheme } from '../contexts/ThemeContext';
 import type { RootStackParamList } from '../types/navigation';
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -464,11 +465,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerTitle: { fontSize: 18, fontWeight: '600', color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: '600', color: theme.colors.text },
   placeholder: { width: 40 },
   content: { flex: 1 },
   sectionTitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: '600',
     color: theme.colors.textSecondary,
     marginTop: 24,
@@ -493,14 +494,14 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.divider,
   },
   settingItemLast: { borderBottomWidth: 0 },
-  settingText: { flex: 1, fontSize: 16, color: theme.colors.text },
+  settingText: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: theme.colors.text },
   dangerButton: { borderBottomWidth: 0 },
   footer: {
     alignItems: 'center',
     paddingVertical: 32,
   },
   footerText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   modalOverlay: {
@@ -522,7 +523,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: '600',
     color: theme.colors.textPrimary,
   },
@@ -530,7 +531,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
     borderRadius: 12,
     padding: 16,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     marginBottom: 12,
     color: theme.colors.textPrimary,
   },
@@ -543,7 +544,7 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     color: theme.colors.surface,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: '600',
   },
 });

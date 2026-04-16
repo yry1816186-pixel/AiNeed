@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
   text: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: DesignTokens.colors.backgrounds.primary,
   },

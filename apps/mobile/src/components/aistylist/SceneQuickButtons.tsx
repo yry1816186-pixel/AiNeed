@@ -91,12 +91,12 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   iconText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
     color: DesignTokens.colors.brand.terracottaDark,
   },
   label: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[700],
     fontWeight: "500",
   },

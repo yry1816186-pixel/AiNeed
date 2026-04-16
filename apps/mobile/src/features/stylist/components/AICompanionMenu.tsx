@@ -337,13 +337,13 @@ const styles = StyleSheet.create({
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
   menuTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: DesignTokens.colors.neutral[900],
     marginBottom: 4,
   },
   menuSubtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[500],
   },
   actionsList: {
@@ -366,24 +366,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   actionIconText: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
   },
   actionContent: {
     flex: 1,
     marginLeft: 12,
   },
   actionLabel: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
     marginBottom: 2,
   },
   actionDescription: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
   },
   actionArrow: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     color: DesignTokens.colors.neutral[400],
     marginLeft: 8,
   },
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral[100],
   },
   closeButtonText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[600],
   },

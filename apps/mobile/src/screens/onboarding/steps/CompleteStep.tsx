@@ -101,7 +101,7 @@ export const CompleteStep: React.FC<CompleteStepProps> = ({ onComplete }) => {
 
       <Animated.View entering={FadeIn.duration(400).delay(800)} style={styles.buttonContainer}>
         <TouchableOpacity style={styles.exploreButton} onPress={onComplete} activeOpacity={0.7}>
-          <Text style={styles.exploreButtonText}>开始探�?/Text>
+          <Text style={styles.exploreButtonText}>开始探索</Text>
           <Ionicons name="arrow-forward-outline" size={20} color={DesignTokens.colors.neutral.white} />
         </TouchableOpacity>
       </Animated.View>
@@ -147,14 +147,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[8],
   },
   mainTitle: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
     color: theme.colors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 36,
   },
   mainSubtitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textSecondary,
     textAlign: "center",
     marginTop: Spacing[2],
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[2],
   },
   previewTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     ...Shadows.brand,
   },
   exploreButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },

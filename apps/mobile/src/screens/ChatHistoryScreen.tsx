@@ -14,6 +14,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../design-system/theme';
 import { useAiStylistStore, type ArchivedSession } from "../stores/aiStylistStore";
 import type { StylistStackParamList } from "../navigation/types";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type StylistNavigation = NativeStackNavigationProp<StylistStackParamList>;
 
@@ -191,7 +192,7 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
   backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   dateRow: {
     flexDirection: "row",
@@ -203,11 +204,11 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.divider,
   },
-  dateText: { fontSize: 15, fontWeight: "600", color: theme.colors.text },
+  dateText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
-  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
   emptySubtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     marginTop: 8,
     textAlign: "center",
@@ -219,7 +220,7 @@ const s = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
   },
-  startBtnText: { color: theme.colors.surface, fontSize: 14, fontWeight: "600" },
+  startBtnText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   sessionCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -238,8 +239,8 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   sessionInfo: { flex: 1, marginLeft: 12 },
-  sessionGoal: { fontSize: 15, fontWeight: "500", color: theme.colors.text },
-  sessionTime: { fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 },
+  sessionGoal: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.text },
+  sessionTime: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
   sessionMeta: { flexDirection: "row", alignItems: "center", gap: 8 },
   outfitBadge: {
     backgroundColor: theme.colors.subtleBg,
@@ -247,7 +248,7 @@ const s = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 8,
   },
-  outfitBadgeText: { fontSize: 11, fontWeight: "600", color: theme.colors.primary },
+  outfitBadgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: theme.colors.primary },
 });
 
 export default ChatHistoryScreen;

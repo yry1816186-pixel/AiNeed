@@ -13,6 +13,7 @@ import BottomSheet, {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
 import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 type _ViewStyle = import("react-native").ViewStyle;
 type _ViewProps = import("react-native").ViewProps;
@@ -388,7 +389,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing[4],
   },
   productImageEmoji: {
-    fontSize: 32,
+    fontSize: DesignTokens.typography.sizes['3xl'],
   },
   productInfo: {
     flex: 1,
@@ -601,7 +602,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[2],
   },
   shareIcon: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
   },
   shareName: {
     ...Typography.caption.md,

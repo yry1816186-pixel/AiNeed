@@ -23,6 +23,7 @@ import { useAuthStore, useHeartRecommendStore } from "../../stores";
 import PreferenceSetupModal from "./PreferenceSetupModal";
 import { SwipeCard, ProductItem } from "./SwipeCard";
 import { EmptyState } from "./ActionButtons";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const _CARD_WIDTH = SCREEN_WIDTH - 40;
@@ -304,7 +305,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
 
       {isUsingMockData && (
         <View style={{ backgroundColor: '#FFF3E0', padding: 8, paddingHorizontal: 16 }}>
-          <Text style={{ color: '#E65100', fontSize: 12 }}>
+          <Text style={{ color: '#E65100', fontSize: DesignTokens.typography.sizes.sm }}>
             当前为示例数据，推荐服务暂不可用
           </Text>
         </View>
@@ -362,12 +363,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: theme.colors.textPrimary,
   },
   headerSubtitle: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     marginTop: 2,
   },
@@ -385,7 +386,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   statText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -401,7 +402,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   loadingText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: theme.colors.textSecondary,
     fontWeight: "500",
   },

@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: DesignTokens.colors.neutral[100],
   },
-  headerTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.text },
   headerPlaceholder: { width: 40 },
   progressRow: {
     flexDirection: "row",
@@ -730,7 +730,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   progressDotActive: { backgroundColor: theme.colors.primary },
-  progressText: { fontSize: 11, color: theme.colors.textTertiary },
+  progressText: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary },
   progressTextActive: { color: theme.colors.primary, fontWeight: "600" },
   card: {
     backgroundColor: theme.colors.surface,
@@ -739,7 +739,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 16,
   },
-  cardTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
+  cardTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -755,13 +755,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 12,
   },
-  itemName: { fontSize: 14, fontWeight: "600", color: theme.colors.text },
-  muted: { fontSize: 13, lineHeight: 20, color: theme.colors.textSecondary },
-  price: { fontSize: 15, fontWeight: "700", color: theme.colors.text },
-  value: { fontSize: 14, color: theme.colors.text },
+  itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
+  muted: { fontSize: DesignTokens.typography.sizes.sm, lineHeight: 20, color: theme.colors.textSecondary },
+  price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: theme.colors.text },
+  value: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
   totalRow: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: DesignTokens.colors.neutral[100] },
-  totalLabel: { fontSize: 16, fontWeight: "600", color: theme.colors.text },
-  totalValue: { fontSize: 20, fontWeight: "700", color: theme.colors.primary },
+  totalLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
+  totalValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.primary },
   primaryButton: {
     marginHorizontal: 20,
     marginTop: 16,
@@ -784,7 +784,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: theme.colors.primary,
   },
-  primaryText: { fontSize: 15, fontWeight: "600", color: theme.colors.surface },
+  primaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.surface },
   secondaryButton: {
     paddingVertical: 16,
     paddingHorizontal: 22,
@@ -804,9 +804,9 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     backgroundColor: theme.colors.surface,
   },
-  secondaryText: { fontSize: 15, fontWeight: "600", color: theme.colors.textSecondary },
+  secondaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textSecondary },
   actionRow: { flexDirection: "row", gap: 12, marginHorizontal: 20, marginTop: 16 },
-  link: { fontSize: 14, fontWeight: "600", color: theme.colors.primary },
+  link: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.primary },
   form: { gap: 10, marginBottom: 10 },
   areaRow: {
     flexDirection: "row",
@@ -821,7 +821,7 @@ const styles = StyleSheet.create({
   },
   areaText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   areaPlaceholder: {
@@ -856,7 +856,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     marginTop: 10,
   },
-  paymentLabel: { fontSize: 15, color: theme.colors.text },
+  paymentLabel: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
   successCard: {
     marginHorizontal: 20,
     marginTop: 32,
@@ -866,7 +866,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
   },
-  successTitle: { fontSize: 24, fontWeight: "700", color: theme.colors.text },
+  successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: theme.colors.text },
   paymentButtonsRow: {
     flexDirection: "row",
     gap: 12,
@@ -888,7 +888,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#07C160", // custom color
   },
   paymentButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.neutral.white,
   },

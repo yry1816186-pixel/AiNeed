@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
   backBtn: { width: 40, height: 40, justifyContent: "center" },
   headerSpacer: { width: 40 },
   profileSection: {
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { fontSize: 32, fontWeight: "600", color: DesignTokens.colors.neutral.white },
+  avatarText: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "600", color: DesignTokens.colors.neutral.white },
   bloggerBadge: {
     position: "absolute",
     bottom: -2,
@@ -430,9 +430,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: DesignTokens.colors.neutral.white,
   },
-  nickname: { fontSize: 20, fontWeight: "700", color: theme.colors.text },
+  nickname: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.text },
   bio: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: 6,
     textAlign: "center",
@@ -445,8 +445,8 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   stat: { alignItems: "center" },
-  statNumber: { fontSize: 18, fontWeight: "700", color: theme.colors.text },
-  statLabel: { fontSize: 12, color: theme.colors.textSecondary, marginTop: 2 },
+  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary, marginTop: 2 },
   statDivider: { width: 1, height: 20, backgroundColor: theme.colors.border },
   tabRow: {
     flexDirection: "row",
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: DesignTokens.colors.brand.slate,
   },
-  tabText: { fontSize: 14, color: theme.colors.textSecondary, fontWeight: "500" },
+  tabText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, fontWeight: "500" },
   tabTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "700" },
   postsGrid: {
     flexDirection: "row",
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   postTitle: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: theme.colors.textPrimary,
     padding: 8,
@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingBottom: 8,
   },
-  postLikes: { fontSize: 11, color: theme.colors.textTertiary },
+  postLikes: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary },
   productsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -534,14 +534,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   productTitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: theme.colors.textPrimary,
     padding: 8,
     lineHeight: 18,
   },
   productPrice: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
     color: DesignTokens.colors.brand.slate,
     paddingHorizontal: 8,
@@ -552,8 +552,8 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 8,
   },
-  aboutTitle: { fontSize: 16, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 8 },
-  aboutText: { fontSize: 14, color: theme.colors.textSecondary, lineHeight: 22 },
+  aboutTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 8 },
+  aboutText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, lineHeight: 22 },
   levelInfo: { marginTop: 16 },
   levelBadge: {
     flexDirection: "row",
@@ -565,9 +565,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignSelf: "flex-start",
   },
-  levelText: { fontSize: 13, color: DesignTokens.colors.brand.slate, fontWeight: "500" },
+  levelText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.brand.slate, fontWeight: "500" },
   emptyText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     textAlign: "center",
     paddingVertical: 40,

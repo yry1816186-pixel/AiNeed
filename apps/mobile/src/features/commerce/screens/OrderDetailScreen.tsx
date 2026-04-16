@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F1F3F4",
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   emptyTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
     color: theme.colors.textPrimary,
   },
@@ -428,12 +428,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   heroLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   heroValue: {
     marginTop: 6,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     maxWidth: 220,
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
   },
   statusText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
   },
   card: {
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: 12,
@@ -485,27 +485,27 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   itemName: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
   itemMeta: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   itemPrice: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
     color: theme.colors.textPrimary,
   },
   addressName: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
   addressText: {
     marginTop: 6,
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: theme.colors.textSecondary,
   },
@@ -516,15 +516,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   summaryLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   summaryValue: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textPrimary,
   },
   summaryTotal: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
     color: theme.colors.primary,
   },
@@ -557,23 +557,23 @@ const styles = StyleSheet.create({
     paddingBottom: 18,
   },
   timelineStatus: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
   timelineDescription: {
     marginTop: 4,
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     lineHeight: 20,
     color: theme.colors.textSecondary,
   },
   timelineTime: {
     marginTop: 6,
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
   },
   timelineEmpty: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: theme.colors.textSecondary,
   },
@@ -585,7 +585,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   primaryButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.surface,
   },
@@ -598,7 +598,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
   },
   secondaryButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textSecondary,
   },
@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
   },
   dangerButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: "#FF4D4F",
   },
@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF4D4F",
   },
   primaryFilledText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.backgrounds.primary,
   },

@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { theme } from '../design-system/theme';
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 interface PlaceholderScreenProps {
   route: {
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   title: {
-    fontSize: 22,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: theme.colors.textPrimary,
     marginBottom: 12,
@@ -62,18 +63,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   phaseText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: theme.colors.surface,
   },
   comingSoon: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textSecondary,
     marginBottom: 8,
   },
   description: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     textAlign: "center",
   },

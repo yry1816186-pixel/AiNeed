@@ -26,6 +26,7 @@ import { useSizeRecommendationStore } from "../stores/sizeRecommendationStore";
 import { ProductImageCarousel } from "../components/ProductImageCarousel";
 import { SKUSelector } from "../components/SKUSelector";
 import { OutfitRecommendationCards } from "../components/OutfitRecommendationCards";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 type ClothingDetailRouteProp = RouteProp<RootStackParamList, "ClothingDetail">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -298,20 +299,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: 17, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
   loadingContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  loadingText: { fontSize: 14, color: theme.colors.textTertiary, marginTop: 8 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary, marginTop: 8 },
   errorContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
   },
-  errorText: { fontSize: 14, color: theme.colors.textTertiary, marginTop: 12, textAlign: "center" },
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary, marginTop: 12, textAlign: "center" },
   retryButton: {
     backgroundColor: theme.colors.error,
     paddingHorizontal: 24,
@@ -319,13 +320,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 16,
   },
-  retryButtonText: { fontSize: 14, fontWeight: "500", color: theme.colors.surface },
+  retryButtonText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.surface },
   content: { flex: 1 },
   priceSection: { paddingHorizontal: 16, paddingTop: 16 },
   priceRow: { flexDirection: "row", alignItems: "baseline", gap: 8 },
-  currentPrice: { fontSize: 20, fontWeight: "700", color: theme.colors.primary },
+  currentPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: theme.colors.primary },
   originalPrice: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     textDecorationLine: "line-through",
   },
@@ -335,7 +336,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
   },
-  discountText: { fontSize: 11, fontWeight: "600", color: theme.colors.surface },
+  discountText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: theme.colors.surface },
   skuTrigger: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -345,10 +346,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  skuTriggerLabel: { fontSize: 14, color: theme.colors.textSecondary },
+  skuTriggerLabel: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary },
   infoSection: { paddingHorizontal: 16, paddingTop: 16 },
-  itemName: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 4 },
-  itemBrand: { fontSize: 14, color: theme.colors.textTertiary, marginBottom: 8 },
+  itemName: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 4 },
+  itemBrand: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary, marginBottom: 8 },
   relatedSection: { paddingHorizontal: 16, paddingTop: 8 },
   bottomBar: {
     flexDirection: "row",
@@ -361,7 +362,7 @@ const styles = StyleSheet.create({
   },
   bottomLeft: { flexDirection: "row", gap: 16 },
   bottomIconButton: { alignItems: "center", gap: 2 },
-  bottomIconLabel: { fontSize: 10, color: theme.colors.textSecondary },
+  bottomIconLabel: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textSecondary },
   bottomRight: { flex: 1, flexDirection: "row", justifyContent: "flex-end", gap: 8 },
   addToCartButton: {
     paddingHorizontal: 16,
@@ -370,14 +371,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.primary,
   },
-  addToCartText: { fontSize: 14, fontWeight: "500", color: theme.colors.primary },
+  addToCartText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.primary },
   buyNowButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 20,
     backgroundColor: theme.colors.primary,
   },
-  buyNowText: { fontSize: 14, fontWeight: "600", color: theme.colors.surface },
+  buyNowText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.surface },
 });
 
 export default ClothingDetailScreen;

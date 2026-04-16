@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     color: Colors.white,
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "700",
   },
   content: {

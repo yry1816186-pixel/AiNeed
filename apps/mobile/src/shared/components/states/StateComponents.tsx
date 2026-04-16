@@ -670,14 +670,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
     marginBottom: 8,
   },
   emptyDescription: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
@@ -693,7 +693,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   emptyActionText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },
@@ -702,7 +702,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   emptySecondaryText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.primary[500],
     fontWeight: "500",
   },
@@ -748,14 +748,14 @@ const styles = StyleSheet.create({
     left: 30,
   },
   errorTitle: {
-    fontSize: 22,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
     marginBottom: 8,
   },
   errorMessage: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
@@ -771,12 +771,12 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   errorCodeLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     marginRight: 8,
   },
   errorCodeValue: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: Colors.neutral[700],
     fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
@@ -795,7 +795,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   retryText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },
@@ -809,7 +809,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   reportText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: Colors.neutral[600],
   },
@@ -864,14 +864,14 @@ const styles = StyleSheet.create({
     borderRadius: 12.5,
   },
   networkTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
     marginBottom: 8,
   },
   networkMessage: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
@@ -894,7 +894,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   networkRetryText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },
@@ -905,7 +905,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   networkSettingsText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[600],
     fontWeight: "500",
   },
@@ -933,14 +933,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   maintenanceTitle: {
-    fontSize: 22,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
     marginBottom: 8,
   },
   maintenanceMessage: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
@@ -957,7 +957,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   estimatedTimeText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[600],
   },
   maintenanceTips: {
@@ -967,13 +967,13 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   maintenanceTipsTitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[700],
     marginBottom: 8,
   },
   maintenanceTip: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     lineHeight: 20,
     marginBottom: 4,
@@ -1009,14 +1009,14 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   permissionTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
     marginBottom: 8,
   },
   permissionMessage: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
@@ -1035,7 +1035,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   permissionButtonText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.inverse,
   },
@@ -1055,14 +1055,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   successTitle: {
-    fontSize: 22,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
     marginBottom: 8,
   },
   successMessage: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
@@ -1072,7 +1072,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   successActionText: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.primary[500],
     fontWeight: "600",
   },
@@ -1104,7 +1104,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.warning[50],
   },
   offlineText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: Colors.warning[700],
     fontWeight: "500",
   },
@@ -1116,7 +1116,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   offlineRetryText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.inverse,
     fontWeight: "600",
   },

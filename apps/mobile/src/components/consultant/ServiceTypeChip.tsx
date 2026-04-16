@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     borderColor: "#C67B5C",
   },
   text: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
   },
   textDefault: {
     color: DesignTokens.colors.text.secondary,

@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.brand.terracotta,
   },
   tabLabel: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: DesignTokens.colors.text.secondary,
   },
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.brand.terracottaLight,
   },
   subTabLabel: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.secondary,
   },
   subTabLabelActive: {

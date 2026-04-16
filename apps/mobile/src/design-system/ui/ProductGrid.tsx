@@ -13,6 +13,7 @@ import { router } from "expo-router";
 import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../design-system/theme';
 import { Rating } from "./Rating";
 import { OptimizedImage } from "../common/OptimizedImage";
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = (SCREEN_WIDTH - Spacing[4] * 2 - Spacing[3]) / 2;
@@ -245,7 +246,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   discountText: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[0],
     fontWeight: "700",
   },

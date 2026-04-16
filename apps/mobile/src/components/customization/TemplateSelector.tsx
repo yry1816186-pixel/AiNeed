@@ -10,6 +10,7 @@ import {
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { theme, Colors, Spacing, BorderRadius } from '../../design-system/theme';
 import type { Template } from "../../stores/customizationEditorStore";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface TemplateSelectorProps {
   templates: Template[];
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     marginTop: Spacing[2],
   },
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
   },
   templateName: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     marginBottom: Spacing[1],
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
   },
   templatePrice: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
 });

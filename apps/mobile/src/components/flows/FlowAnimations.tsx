@@ -749,7 +749,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   splashLogoText: {
-    fontSize: 48,
+    fontSize: DesignTokens.typography.sizes['5xl'],
     fontWeight: "900",
     color: Colors.white,
   },
@@ -763,7 +763,7 @@ const styles = StyleSheet.create({
     letterSpacing: -2,
   },
   splashSubtitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: "rgba(255, 255, 255, 0.6)",
     marginTop: Spacing[2],
   },
@@ -786,7 +786,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.full,
   },
   progressText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "rgba(255, 255, 255, 0.5)",
     marginTop: Spacing[3],
   },
@@ -803,7 +803,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "ios" ? 60 : (StatusBar.currentHeight || 24) + 20,
   },
   skipText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: "rgba(255, 255, 255, 0.6)",
     fontWeight: "500",
   },
@@ -836,14 +836,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   slideTitle: {
-    fontSize: 32,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: Colors.white,
     textAlign: "center",
     letterSpacing: -1,
   },
   slideSubtitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: "rgba(255, 255, 255, 0.6)",
     textAlign: "center",
     lineHeight: 24,
@@ -885,11 +885,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   closeIcon: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     color: Colors.white,
   },
   cameraTitle: {
-    fontSize: 18,
+    fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
     color: Colors.white,
   },
@@ -956,7 +956,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   bodyGuideIcon: {
-    fontSize: 48,
+    fontSize: DesignTokens.typography.sizes['5xl'],
     opacity: 0.5,
   },
   guideText: {
@@ -964,12 +964,12 @@ const styles = StyleSheet.create({
     marginTop: Spacing[6],
   },
   guideTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.white,
   },
   guideSubtitle: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: "rgba(255, 255, 255, 0.5)",
     marginTop: Spacing[2],
   },
@@ -992,7 +992,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   captureIcon: {
-    fontSize: 32,
+    fontSize: DesignTokens.typography.sizes['3xl'],
   },
   analysisContainer: {
     flex: 1,
@@ -1014,10 +1014,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   analysisIcon: {
-    fontSize: 48,
+    fontSize: DesignTokens.typography.sizes['5xl'],
   },
   analysisTitle: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: Colors.white,
     marginBottom: Spacing[10],
@@ -1038,11 +1038,11 @@ const styles = StyleSheet.create({
     marginRight: Spacing[4],
   },
   stepText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     flex: 1,
   },
   stepCheck: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: Colors.emerald[400],
     fontWeight: "700",
   },
@@ -1088,16 +1088,16 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[6],
   },
   resultIcon: {
-    fontSize: 48,
+    fontSize: DesignTokens.typography.sizes['5xl'],
   },
   resultTitle: {
-    fontSize: 32,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: Colors.white,
     marginBottom: Spacing[2],
   },
   resultSubtitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: "rgba(255, 255, 255, 0.6)",
   },
   resultButtons: {
@@ -1110,7 +1110,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   retryText: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     color: "rgba(255, 255, 255, 0.6)",
     fontWeight: "500",
   },

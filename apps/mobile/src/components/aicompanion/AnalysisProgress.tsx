@@ -230,13 +230,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
     marginBottom: 4,
   },
   detail: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
     marginBottom: 12,
     lineHeight: 18,
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   etaText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
     marginTop: 6,
     textAlign: "right",
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.brand.sage,
   },
   stageLabel: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.neutral[400],
     textAlign: "center",
   },
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   hintText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
     marginLeft: 6,
   },

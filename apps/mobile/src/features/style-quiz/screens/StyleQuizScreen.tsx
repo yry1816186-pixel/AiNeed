@@ -338,17 +338,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[3],
   },
   skipTopRightText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: Colors.neutral[500],
   },
   loadingText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: Colors.neutral[500],
     marginTop: Spacing[3],
   },
   errorText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: Colors.error[500],
     textAlign: "center",
     marginTop: Spacing[3],
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
   },
   retryButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: Colors.neutral.white,
   },
@@ -376,13 +376,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[5],
   },
   questionTitle: {
-    fontSize: 20,
+    fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: Colors.neutral[900],
     marginBottom: Spacing[1],
   },
   questionSubtitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: Colors.neutral[500],
   },
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imageLabel: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: Colors.neutral[700],
     marginTop: Spacing[2],
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(198, 123, 92, 0.05)",
   },
   optionText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: Colors.neutral[700],
   },
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   submitButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: Colors.neutral.white,
   },
@@ -483,14 +483,14 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[8],
   },
   resultTitle: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "600",
     color: Colors.neutral[900],
     textAlign: "center",
     marginBottom: Spacing[2],
   },
   resultSubtitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: Colors.neutral[600],
     textAlign: "center",
@@ -501,7 +501,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[5],
   },
   resultSectionTitle: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: Colors.neutral[900],
     marginBottom: Spacing[3],
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[2],
   },
   tagText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: Colors.primary[500],
   },
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   confidenceValue: {
-    fontSize: 28,
+    fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "600",
     color: Colors.primary[500],
   },
@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   resultButtonText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: Colors.neutral.white,
   },

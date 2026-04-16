@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     marginBottom: DesignTokens.spacing[3],
   },
   title: {
-    fontSize: 15,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.text.primary,
     marginBottom: 2,

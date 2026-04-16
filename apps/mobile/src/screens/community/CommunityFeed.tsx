@@ -181,10 +181,10 @@ const s = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 40,
   },
-  loadingText: { fontSize: 14, color: theme.colors.textSecondary, marginTop: 12 },
-  emptyTitle: { fontSize: 18, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
-  emptySubtext: { fontSize: 14, color: theme.colors.textTertiary, marginTop: 6 },
-  errorTitle: { fontSize: 16, color: theme.colors.textPrimary, marginTop: 16, textAlign: "center" },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 12 },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: theme.colors.textPrimary, marginTop: 16 },
+  emptySubtext: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary, marginTop: 6 },
+  errorTitle: { fontSize: DesignTokens.typography.sizes.md, color: theme.colors.textPrimary, marginTop: 16, textAlign: "center" },
   retryBtn: {
     marginTop: 24,
     backgroundColor: theme.colors.primary,
@@ -192,7 +192,7 @@ const s = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 28,
   },
-  retryBtnText: { color: theme.colors.surface, fontSize: 15, fontWeight: "600" },
+  retryBtnText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   scrollContent: { paddingTop: 12, paddingBottom: 40 },
   masonryListContent: { paddingHorizontal: 12, paddingTop: 12, paddingBottom: 40 },
   loadingMore: {
@@ -202,7 +202,7 @@ const s = StyleSheet.create({
     gap: 8,
     paddingVertical: 16,
   },
-  loadingMoreText: { fontSize: 13, color: theme.colors.textTertiary },
+  loadingMoreText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary },
   feedActivityCard: {
     backgroundColor: theme.colors.surface,
     borderRadius: 12,
@@ -219,7 +219,7 @@ const s = StyleSheet.create({
     flex: 1,
   },
   feedActivityText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
     flex: 1,
   },

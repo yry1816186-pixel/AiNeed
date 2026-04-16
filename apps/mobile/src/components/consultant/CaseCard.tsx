@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   placeholderText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
   },
   badgeRow: {
@@ -109,15 +109,15 @@ const styles = StyleSheet.create({
     borderColor: "#F0D5C8",
   },
   typeBadgeText: {
-    fontSize: 11,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: "#C67B5C",
   },
   ratingText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.secondary,
   },
   excerpt: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "#444",
     lineHeight: 18,
     marginBottom: 4,
@@ -128,11 +128,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   clientName: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.text.tertiary,
   },
   price: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "#C67B5C",
     fontWeight: "500",
   },

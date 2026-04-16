@@ -16,6 +16,7 @@ import {
 import { useAuthStore, useCartStore } from "../stores/index";
 import { theme } from '../design-system/theme';
 import { navigateAuth, navigateProfile, navigationRef } from "./navigationService";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 // ============================================================
 // Main Tab Navigator (5 Tabs)
@@ -63,7 +64,7 @@ export function MainTabNavigator() {
           height: 56,
         },
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: DesignTokens.typography.sizes.xs,
           fontWeight: "600",
           letterSpacing: 0.3,
         },

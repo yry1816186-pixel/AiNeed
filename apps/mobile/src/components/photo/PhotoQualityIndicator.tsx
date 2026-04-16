@@ -115,11 +115,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   badgeScore: {
-    fontSize: 24,
+    fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "600",
   },
   badgeLabel: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "400",
     marginTop: Spacing[1],
   },
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   retakeText: {
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.backgrounds.primary,
   },
@@ -155,12 +155,12 @@ const metricStyles = StyleSheet.create({
     marginBottom: 4,
   },
   label: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "400",
     color: "#52524D",
   },
   value: {
-    fontSize: 14,
+    fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   track: {

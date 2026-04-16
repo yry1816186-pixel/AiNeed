@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-nati
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { theme, Colors, Spacing, BorderRadius } from '../../../design-system/theme';
 import type { DesignLayer } from "../../stores/customizationEditorStore";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface LayerPanelProps {
   layers: DesignLayer[];
@@ -94,12 +95,12 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[2],
   },
   headerTitle: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: theme.colors.textPrimary,
   },
   layerCount: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   list: {
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
   },
   layerContent: {
     flex: 1,
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
   },
   layerContentSelected: {
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   emptyText: {
-    fontSize: 13,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textTertiary,
     textAlign: "center",
     paddingVertical: Spacing[3],

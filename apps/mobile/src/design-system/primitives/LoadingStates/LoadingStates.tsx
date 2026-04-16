@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   },
   overlayMessage: {
     marginTop: 16,
-    fontSize: 16,
+    fontSize: DesignTokens.typography.sizes.md,
     color: DesignTokens.colors.backgrounds.primary,
     fontWeight: "500",
   },
