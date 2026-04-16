@@ -38,12 +38,12 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import {
+  DesignTokens,
   Spacing,
   BorderRadius,
   Shadows,
   gradients as themeGradients,
 } from '../../design-system/theme';
-import { DesignTokens, Spacing } from '../../../design-system/theme';
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

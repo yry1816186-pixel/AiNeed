@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Param, Query, Body, UseGuards, Request } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBearerAuth } from "@nestjs/swagger";
-import { ClothingCategory, PriceRange } from "@prisma/client";
+import { ClothingCategory, PriceRange } from "../../../types/prisma-enums";
 
 import { MerchantAuthGuard } from "../../../domains/platform/merchant/guards/merchant-auth.guard";
 

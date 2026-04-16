@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import {
@@ -60,7 +60,7 @@ const STATE_CONFIG = {
   },
   listening: {
     gradient: [colors.neutral[500], "colors.textTertiary"] as [string, string],
-    gradientFlow: [colors.neutral[500], "colors.textTertiary", "#B8C5D1", colors.neutral[500]] as [string, string, string, string], // custom color
+    gradientFlow: [colors.neutral[500], colors.textTertiary, "#B8C5D1", colors.neutral[500]] as [string, string, string, string], // custom gradient mid-tone
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.08)"] as [string, string],
     glowColor: colors.neutral[500],
     particleColor: "colors.textTertiary", // custom color
