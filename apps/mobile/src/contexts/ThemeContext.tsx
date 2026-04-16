@@ -1,3 +1,7 @@
+/**
+ * @deprecated Use ThemeProvider from shared/contexts/ThemeContext instead.
+ * This file will be removed in a future version.
+ */
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
 import { useColorScheme, Appearance, type ColorValue } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -10,7 +14,6 @@ import {
   type SeasonAccentColors,
 } from "../design-system/theme/tokens/season-colors";
 import type { FlatColors } from "../design-system/theme/FlatColors";
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
@@ -113,7 +116,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         if (savedSeason && (savedSeason === "spring" || savedSeason === "summer" || savedSeason === "autumn" || savedSeason === "winter")) {
           setColorSeasonState(savedSeason as ColorSeason);
         }
-      } catch {
+      } catch (e) {
+        console.error('Failed to load theme:', e);
       } finally {
         setIsReady(true);
       }
@@ -138,7 +142,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setModeState(newMode);
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, newMode);
-    } catch {
+    } catch (e) {
+      console.error('Failed to save theme:', e);
     }
   }, []);
 
@@ -155,7 +160,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       } else {
         await AsyncStorage.removeItem(SEASON_STORAGE_KEY);
       }
-    } catch {
+    } catch (e) {
+      console.error('Failed to reset theme:', e);
     }
   }, []);
 
@@ -202,5 +208,5 @@ export function useTheme(): ThemeContextType {
 
 export { ThemeContext };
 export type { DesignTokensType, DarkTokensType };
-export { normalizeColorSeason, seasonAccentColors, seasonLabels, seasonDescriptions } from "../design-system/theme/tokens/season-colors";
+export { normalizeColorSeason, seasonAccentColors, seasonLabels, seasonDescriptions } from "../design-system/theme";
 export type { ColorSeason, SeasonAccentColors };

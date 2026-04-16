@@ -1,65 +1,21 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
-import { useColorScheme, Appearance, type ColorValue } from "react-native";
+import { useColorScheme, Appearance, StyleSheet, type ColorValue } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DesignTokens, darkTokens } from "../../design-system/theme/tokens/design-tokens";
-import type { DesignTokensType, DarkTokensType } from "../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme";
+import type { DesignTokensType, DarkTokensType } from "../../design-system/theme";
 import {
   seasonAccentColors,
   normalizeColorSeason,
   type ColorSeason,
   type SeasonAccentColors,
-} from "../../design-system/theme/tokens/season-colors";
+} from "../../design-system/theme";
+import { FeatureFlagDefaults } from "../../constants/feature-flags";
+import type { FlatColors } from "../../design-system/theme/FlatColors";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
 
 type TokenSet = typeof DesignTokens;
-
-export interface FlatColors {
-  brand: TokenSet["colors"]["brand"];
-  neutral: TokenSet["colors"]["neutral"];
-  semantic: TokenSet["colors"]["semantic"];
-  backgrounds: TokenSet["colors"]["backgrounds"];
-  text: TokenSet["colors"]["text"];
-  borders: TokenSet["colors"]["borders"];
-  colorSeasons: TokenSet["colors"]["colorSeasons"];
-  surface: string;
-  surfaceSecondary: string;
-  surfaceTertiary: string;
-  surfaceElevated: string;
-  textPrimary: string;
-  textSecondary: string;
-  textTertiary: string;
-  textInverse: string;
-  textBrand: string;
-  border: string;
-  borderLight: string;
-  borderStrong: string;
-  borderBrand: string;
-  primary: string;
-  primaryLight: string;
-  primaryDark: string;
-  subtleBg: string;
-  gold: string;
-  placeholderBg: string;
-  overlay: string;
-  background: string;
-  backgroundSecondary: string;
-  backgroundTertiary: string;
-  error: string;
-  errorLight: string;
-  success: string;
-  successLight: string;
-  warning: string;
-  warningLight: string;
-  info: string;
-  infoLight: string;
-  divider: string;
-  cartLight: string;
-  purple: string;
-  amber: string;
-  secondary: string;
-}
 
 function buildFlatColors(base: TokenSet["colors"]): FlatColors {
   return {
@@ -155,7 +111,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         if (savedSeason && (savedSeason === "spring" || savedSeason === "summer" || savedSeason === "autumn" || savedSeason === "winter")) {
           setColorSeasonState(savedSeason as ColorSeason);
         }
-      } catch {
+      } catch (e) {
+        console.error('Failed to load theme:', e);
       } finally {
         setIsReady(true);
       }
@@ -170,7 +127,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return () => subscription.remove();
   }, []);
 
-  const isDark = mode === "dark" || (mode === "system" && systemColorScheme === "dark");
+  const isDark = FeatureFlagDefaults.dark_mode && (mode === "dark" || (mode === "system" && systemColorScheme === "dark"));
   const resolvedTheme: ResolvedTheme = isDark ? "dark" : "light";
 
   const tokens: TokenSet = (isDark ? darkTokens : DesignTokens) as TokenSet;
@@ -180,7 +137,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setModeState(newMode);
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, newMode);
-    } catch {
+    } catch (e) {
+      console.error('Failed to save theme:', e);
     }
   }, []);
 
@@ -197,7 +155,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       } else {
         await AsyncStorage.removeItem(SEASON_STORAGE_KEY);
       }
-    } catch {
+    } catch (e) {
+      console.error('Failed to reset theme:', e);
     }
   }, []);
 
@@ -242,7 +201,13 @@ export function useTheme(): ThemeContextType {
   return context;
 }
 
+export function createStyles<T extends StyleSheet.NamedStyles<T>>(
+  factory: (colors: FlatColors) => T
+): (colors: FlatColors) => T {
+  return (colors: FlatColors) => StyleSheet.create(factory(colors));
+}
+
 export { ThemeContext };
-export type { DesignTokensType, DarkTokensType };
-export { normalizeColorSeason, seasonAccentColors, seasonLabels, seasonDescriptions } from "../../design-system/theme/tokens/season-colors";
+export type { DesignTokensType, DarkTokensType, FlatColors };
+export { normalizeColorSeason, seasonAccentColors, seasonLabels, seasonDescriptions } from "../../design-system/theme";
 export type { ColorSeason, SeasonAccentColors };

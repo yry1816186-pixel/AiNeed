@@ -18,6 +18,6 @@ export const FeatureFlagDefaults: Record<FeatureFlagKey, boolean> = {
   virtual_try_on_v2: false,
   recommendation_feed: true,
   style_quiz: true,
-  dark_mode: false,
+  dark_mode: true,
   analytics_v2: false,
 };
