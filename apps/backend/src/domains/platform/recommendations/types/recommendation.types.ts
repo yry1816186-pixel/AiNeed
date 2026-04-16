@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @fileoverview 统一推荐引擎类型定义
  * @description 定义推荐系统中使用的所有类型接口，替代 any 类型以提高类型安全性

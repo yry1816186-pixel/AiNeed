@@ -18,7 +18,7 @@ const mockFeedItems: FeedItem[] = [
     brand: { id: "brand-1", name: "Brand A" },
     price: 299,
     styleTags: ["casual", "minimalist"],
-    colorHarmony: { score: 0.9, colors: [DesignTokens.colors.neutral.black, "#fff"] },
+    colorHarmony: { score: 0.9, colors: [DesignTokens.colors.neutral.black, DesignTokens.colors.backgrounds.primary] },
     matchReason: "Matches your style",
     category: "tops",
   },

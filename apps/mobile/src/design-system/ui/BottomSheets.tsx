@@ -12,7 +12,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
-import { Colors, Spacing, BorderRadius, Typography } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
 
 type _ViewStyle = import("react-native").ViewStyle;
 type _ViewProps = import("react-native").ViewProps;

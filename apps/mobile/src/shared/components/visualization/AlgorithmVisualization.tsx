@@ -331,15 +331,15 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
 
   const getScoreColor = (value: number) => {
     if (value >= 90) {
-      return "#10B981"; // custom color
+      return DesignTokens.colors.semantic.success; // custom color
     }
     if (value >= 75) {
       return DesignTokens.colors.brand.slateLight;
     }
     if (value >= 60) {
-      return "#F59E0B"; // custom color
+      return DesignTokens.colors.semantic.warning; // custom color
     }
-    return "#EF4444"; // custom color
+    return DesignTokens.colors.semantic.error; // custom color
   };
 
   const scoreColor = getScoreColor(score);
@@ -825,15 +825,15 @@ export const OutfitCompatibility: React.FC<OutfitCompatibilityProps> = ({
 
   const getScoreColor = (score: number) => {
     if (score >= 80) {
-      return "#10B981"; // custom color
+      return DesignTokens.colors.semantic.success; // custom color
     }
     if (score >= 60) {
       return DesignTokens.colors.brand.slateLight;
     }
     if (score >= 40) {
-      return "#F59E0B"; // custom color
+      return DesignTokens.colors.semantic.warning; // custom color
     }
-    return "#EF4444"; // custom color
+    return DesignTokens.colors.semantic.error; // custom color
   };
 
   return (
@@ -880,7 +880,7 @@ export const OutfitCompatibility: React.FC<OutfitCompatibilityProps> = ({
           <Text style={styles.suggestionsTitle}>优化建议</Text>
           {suggestions.map((suggestion, index) => (
             <View key={index} style={styles.suggestionItem}>
-              <Ionicons name="bulb" size={16} color="#F59E0B" /* custom color */ />
+              <Ionicons name="bulb" size={16} color={DesignTokens.colors.semantic.warning} /* custom color */ />
               <Text style={styles.suggestionText}>{suggestion}</Text>
             </View>
           ))}
@@ -932,8 +932,8 @@ export const TrendIndicator: React.FC<TrendIndicatorProps> = ({
   }));
 
   const trendColors = {
-    up: "#10B981", // custom color
-    down: "#EF4444", // custom color
+    up: DesignTokens.colors.semantic.success, // custom color
+    down: DesignTokens.colors.semantic.error, // custom color
     stable: Colors.neutral[500],
   };
 

@@ -14,7 +14,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Shadows, gradients, SpringConfigs } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows, gradients, SpringConfigs } from '../../design-system/theme';
 
 // Re-export from primitives for backward compatibility
 export {

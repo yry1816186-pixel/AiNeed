@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const CONSENT_TYPES = {
   DATA_PROCESSING: "data_processing",
   PHOTO_UPLOAD: "photo_upload",

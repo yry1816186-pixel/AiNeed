@@ -18,7 +18,7 @@ import {
 } from "react-native-svg";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme, Colors, BorderRadius, Shadows } from '../design-system/theme';
+import { theme, Colors, BorderRadius, Shadows } from '../../design-system/theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { SpringConfigs } from "../../theme/tokens/animations";
 import { useReducedMotion } from "../../hooks/useReducedMotion";

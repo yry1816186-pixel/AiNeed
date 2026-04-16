@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { cartEnhancementApi } from "../services/api/commerce.api";
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../design-system/theme";
 
 interface InlineSKUSelectorProps {
   visible: boolean;
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   sheet: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: "50%",
@@ -125,5 +125,5 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
   },
-  confirmText: { fontSize: 16, fontWeight: "600", color: "#FFFFFF" },
+  confirmText: { fontSize: 16, fontWeight: "600", color: DesignTokens.colors.backgrounds.primary },
 });

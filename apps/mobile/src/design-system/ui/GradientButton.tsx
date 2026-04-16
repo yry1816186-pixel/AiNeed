@@ -23,7 +23,7 @@ import {
   Shadows as ThemeShadows,
   DesignTokens,
   SpringConfigs,
-} from '../design-system/theme';
+} from '../../design-system/theme';
 import { useTheme } from "../../contexts/ThemeContext";
 
 interface GradientButtonProps {

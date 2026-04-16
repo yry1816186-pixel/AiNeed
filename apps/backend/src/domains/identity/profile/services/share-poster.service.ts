@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { createCanvas, Image, CanvasRenderingContext2D } from "canvas";
 import { v4 as uuidv4 } from "uuid";

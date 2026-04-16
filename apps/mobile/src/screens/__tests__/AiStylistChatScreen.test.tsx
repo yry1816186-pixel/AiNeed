@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent, waitFor, act } from "@testing-library/react-native";
 import { AiStylistChatScreen } from "../../screens/AiStylistChatScreen";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme";
 
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
@@ -48,14 +48,14 @@ jest.mock("../../theme", () => ({
   theme: {
     colors: {
       primary: "#C67B5C",
-      surface: "#FFFFFF",
+      surface: DesignTokens.colors.backgrounds.primary,
       background: "#FAFAF8",
       text: "#1C1917",
       textSecondary: "#57534E",
       textTertiary: "#A8A29E",
       border: "#E7E5E4",
       success: "#22C55E",
-      error: "#EF4444",
+      error: DesignTokens.colors.semantic.error,
       divider: "#F1F3F4",
       subtleBg: "#F1F3F4",
     },
@@ -71,8 +71,8 @@ jest.mock("../../theme", () => ({
       brand: { terracotta: "#C67B5C" },
       neutral: { 200: DesignTokens.colors.borders.light },
       text: { tertiary: "#A8A29E" },
-      backgrounds: { primary: "#FFFFFF" },
-      semantic: { errorLight: "#FEE2E2", success: "#22C55E" },
+      backgrounds: { primary: DesignTokens.colors.backgrounds.primary },
+      semantic: { errorLight: DesignTokens.colors.semantic.errorLight, success: "#22C55E" },
     },
     typography: { sizes: { sm: 12, md: 14 }, fontWeights: { medium: "500", semibold: "600" } },
     spacing: { 1: 4, 2: 8, 3: 12 },
@@ -87,20 +87,20 @@ jest.mock("../../theme/tokens/design-tokens", () => ({
       brand: {
         terracotta: "#C67B5C",
         terracottaLight: "#D4917A",
-        camel: "#B5A08C",
+        camel: DesignTokens.colors.brand.camel,
         sage: "#8B9A7D",
         slate: "#7B8FA2",
       },
       neutral: { 200: DesignTokens.colors.borders.light, 900: "#171717" },
-      text: { primary: "#1C1917", secondary: "#57534E", tertiary: "#A8A29E", inverse: "#FFFFFF" },
-      backgrounds: { primary: "#FFFFFF", secondary: "#FAFAF8", elevated: "#FFFFFF" },
+      text: { primary: "#1C1917", secondary: "#57534E", tertiary: "#A8A29E", inverse: DesignTokens.colors.backgrounds.primary },
+      backgrounds: { primary: DesignTokens.colors.backgrounds.primary, secondary: "#FAFAF8", elevated: DesignTokens.colors.backgrounds.primary },
       borders: { light: "#E7E5E4" },
       semantic: {
         success: "#22C55E",
         successLight: "#DCFCE7",
-        error: "#EF4444",
-        errorLight: "#FEE2E2",
-        warning: "#F59E0B",
+        error: DesignTokens.colors.semantic.error,
+        errorLight: DesignTokens.colors.semantic.errorLight,
+        warning: DesignTokens.colors.semantic.warning,
         info: "#0EA5E9",
       },
       primary: { 500: "#C67B5C" },
@@ -108,11 +108,11 @@ jest.mock("../../theme/tokens/design-tokens", () => ({
     gradients: {
       brand: ["#C67B5C", "#D4917A"],
       sage: ["#8B9A7D", "#A3B096"],
-      warm: ["#C67B5C", "#B5A08C"],
+      warm: ["#C67B5C", DesignTokens.colors.brand.camel],
       cool: ["#7B8FA2", "#96A6B5"],
       brandSoft: ["#D4917A", "#E8C4B8"],
       hero: ["#C67B5C", "#8B9A7D"],
-      card: ["#FFFFFF", "#FAFAF8"],
+      card: [DesignTokens.colors.backgrounds.primary, "#FAFAF8"],
     },
     typography: {
       sizes: {

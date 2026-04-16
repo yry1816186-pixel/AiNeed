@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
 import { BodyType, FaceShape, SkinTone, UserProfile } from "@prisma/client";
 

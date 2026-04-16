@@ -1,4 +1,5 @@
-import {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import {
   Controller,
   Get,
   Post,
@@ -17,7 +18,7 @@ import {
   ApiParam,
 } from "@nestjs/swagger";
 
-import { MerchantAuthGuard } from "../../../../modules/merchant/guards/merchant-auth.guard";
+import { MerchantAuthGuard } from "../../../../domains/platform/merchant/guards/merchant-auth.guard";
 import { BrandsService } from "../brands.service";
 import { GenerateQRCodeDto, BatchGenerateQRCodeDto } from "../dto/qr-code.dto";
 

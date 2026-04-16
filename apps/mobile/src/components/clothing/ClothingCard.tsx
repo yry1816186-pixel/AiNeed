@@ -2,8 +2,8 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../design-system/theme';
+import { DesignTokens } from "../../design-system/theme";
 
 interface ClothingCardProps {
   id: string;
@@ -107,7 +107,7 @@ export const ClothingCard = memo(function ClothingCard({
 const COLOR_MAP: Record<string, string> = {
   black: Colors.neutral[900],
   white: Colors.white,
-  red: "#EF4444", // custom color
+  red: DesignTokens.colors.semantic.error, // custom color
   blue: Colors.sky[500],
   green: Colors.emerald[500],
   yellow: "#EAB308", // custom color
@@ -116,7 +116,7 @@ const COLOR_MAP: Record<string, string> = {
   pink: DesignTokens.colors.brand.camel, // custom color
   brown: "#92400E", // custom color
   gray: Colors.neutral[500],
-  beige: "#FEF3C7", // custom color
+  beige: DesignTokens.colors.semantic.warningLight, // custom color
   navy: Colors.sky[900],
 };
 

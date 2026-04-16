@@ -34,7 +34,7 @@ import {
   useAnimatedRef,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors } from '../design-system/theme';
+import { Colors } from '../../design-system/theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
@@ -311,12 +311,12 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
     },
     similar: {
       icon: "copy-outline",
-      color: "#10B981", // custom color
+      color: DesignTokens.colors.semantic.success, // custom color
       label: "相似推荐",
     },
     trending: {
       icon: "trending-up-outline",
-      color: "#F59E0B", // custom color
+      color: DesignTokens.colors.semantic.warning, // custom color
       label: "热门趋势",
     },
     seasonal: {
@@ -509,7 +509,7 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
     },
     body_shape: {
       icon: "body-outline",
-      color: "#10B981", // custom color
+      color: DesignTokens.colors.semantic.success, // custom color
       bgColor: "rgba(16, 185, 129, 0.1)",
     },
     color_harmony: {
@@ -519,17 +519,17 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
     },
     trending: {
       icon: "trending-up",
-      color: "#F59E0B", // custom color
+      color: DesignTokens.colors.semantic.warning, // custom color
       bgColor: "rgba(245, 158, 11, 0.1)",
     },
     seasonal: {
       icon: "sunny",
-      color: "#3B82F6", // custom color
+      color: DesignTokens.colors.semantic.info, // custom color
       bgColor: "rgba(59, 130, 246, 0.1)",
     },
     price: {
       icon: "pricetag",
-      color: "#10B981", // custom color
+      color: DesignTokens.colors.semantic.success, // custom color
       bgColor: "rgba(16, 185, 129, 0.1)",
     },
     brand: {
@@ -595,10 +595,10 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
   }));
 
   const typeConfig = {
-    tip: { icon: "bulb", color: "#F59E0B", bgColor: "#FFFBEB" }, // custom color
-    observation: { icon: "eye", color: "#3B82F6", bgColor: "#EFF6FF" }, // custom color
+    tip: { icon: "bulb", color: DesignTokens.colors.semantic.warning, bgColor: "#FFFBEB" }, // custom color
+    observation: { icon: "eye", color: DesignTokens.colors.semantic.info, bgColor: "#EFF6FF" }, // custom color
     suggestion: { icon: "sparkles", color: DesignTokens.colors.brand.terracottaDark, bgColor: "#F5F3FF" }, // custom color
-    warning: { icon: "alert", color: "#EF4444", bgColor: "#FEF2F2" }, // custom color
+    warning: { icon: "alert", color: DesignTokens.colors.semantic.error, bgColor: "#FEF2F2" }, // custom color
   };
 
   const config = typeConfig[insight.type];

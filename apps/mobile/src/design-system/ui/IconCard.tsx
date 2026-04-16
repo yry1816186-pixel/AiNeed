@@ -1,7 +1,7 @@
 ﻿import React from "react";
 import { View, Text, TouchableOpacity, ViewStyle, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../design-system/theme';
 
 export interface IconCardProps {
   icon: keyof typeof Ionicons.glyphMap;

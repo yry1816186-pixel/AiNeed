@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../design-system/theme";
 
 interface FreeShippingProgressProps {
   currentAmount: number;

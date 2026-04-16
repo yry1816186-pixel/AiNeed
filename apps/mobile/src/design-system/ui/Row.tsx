@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import { View, ViewStyle } from "react-native";
-import { Spacing } from '../design-system/theme';
+import { Spacing } from '../../design-system/theme';
 
 export interface RowProps {
   children: React.ReactNode;

@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface MatchBadgeProps {
   percentage: number;
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     borderRadius: 11,
   },
   text: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     fontWeight: "600",
   },
   textDefault: {

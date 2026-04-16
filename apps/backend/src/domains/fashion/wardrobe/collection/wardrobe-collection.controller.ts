@@ -1,4 +1,5 @@
-import {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import {
   Controller,
   Get,
   Post,
@@ -19,7 +20,7 @@ import {
 } from "@nestjs/swagger";
 
 import { RequestWithUser } from "../../../../common/types/common.types";
-import { AuthGuard } from "../../../../modules/auth/guards/auth.guard";
+import { AuthGuard } from "../../../../domains/identity/auth/guards/auth.guard";
 
 import {
   CreateWardrobeCollectionDto,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Injectable,
   BadRequestException,
@@ -9,12 +10,12 @@ import { TryOnStatus, Prisma } from "@prisma/client";
 import axios from "axios";
 import Redis from "ioredis";
 
-import { NotificationService } from '../../../common/gateway/notification.service";
-import { StructuredLoggerService, ContextualLogger } from '../../../common/logging";
-import { PrismaService } from '../../../common/prisma/prisma.service";
-import { REDIS_CLIENT } from '../../../common/redis/redis.service";
-import { StorageService } from '../../../common/storage/storage.service";
-import { QueueService } from '../../platform/queue/queue.service';
+import { NotificationService } from "../../../common/gateway/notification.service";
+import { StructuredLoggerService, ContextualLogger } from "../../../common/logging";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { REDIS_CLIENT } from "../../../common/redis/redis.service";
+import { StorageService } from "../../../common/storage/storage.service";
+import { QueueService } from "../../platform/queue/queue.service";
 
 import { generateStableCacheKey } from "./services/ai-tryon-provider.interface";
 

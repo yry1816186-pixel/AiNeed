@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import Svg, { Ellipse, Path } from "react-native-svg";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface PhotoGuideOverlayProps {
   visible: boolean;
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
   hintText: {
     fontSize: 16,
     fontWeight: "400",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     textAlign: "center",
   },
 });

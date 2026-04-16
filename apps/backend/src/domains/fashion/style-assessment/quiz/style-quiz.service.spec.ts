@@ -1,8 +1,9 @@
-import { NotFoundException, BadRequestException } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { ProfileEventEmitter } from "../../../../modules/profile/services/profile-event-emitter.service";
+import { ProfileEventEmitter } from "../../../../domains/identity/profile/services/profile-event-emitter.service";
 
 import { ColorDerivationEngine } from "./services/color-derivation.service";
 import { ColorDeriverService } from "./services/color-deriver";

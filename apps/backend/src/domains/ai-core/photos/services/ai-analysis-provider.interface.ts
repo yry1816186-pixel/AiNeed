@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * AI 分析服务提供商接口
  * 支持多个 AI 模型的统一接口

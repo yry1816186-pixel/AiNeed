@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, Matches, MinLength, MaxLength } from "class-validator";
 

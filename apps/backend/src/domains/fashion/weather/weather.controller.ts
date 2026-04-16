@@ -1,7 +1,8 @@
-import { Controller, Get, Query, UseGuards } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import { Controller, Get, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiQuery } from "@nestjs/swagger";
 
-import { AuthGuard } from "../../../modules/auth/guards/auth.guard";
+import { AuthGuard } from "../../../domains/identity/auth/guards/auth.guard";
 
 import { WeatherService } from "./weather.service";
 

@@ -1,11 +1,12 @@
-﻿import { randomUUID } from "crypto";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { randomUUID } from "crypto";
 
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ClothingCategory } from "@prisma/client";
 
-import { PrismaService } from '../../../common/prisma/prisma.service";
-import { RedisService } from '../../../common/redis/redis.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RedisService } from "../../../common/redis/redis.service";
 
 // Import shared types
 import {

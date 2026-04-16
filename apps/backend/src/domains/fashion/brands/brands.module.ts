@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module, forwardRef } from "@nestjs/common";
 
 import { EncryptionModule } from "../../../common/encryption/encryption.module";

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useAuthStore } from "../../stores/index";
-import { theme } from '../design-system/theme';
+import { theme } from '../../design-system/theme';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface VipGuardProps {
   children: React.ReactNode;
@@ -38,7 +39,7 @@ export function VipGuard({ children, onNotVip, featureName = "该功能" }: VipG
         <Text style={s.title}>{featureName}为 VIP 专属</Text>
         <Text style={s.subtitle}>升级 VIP 尊享全部高级功能</Text>
         <TouchableOpacity style={s.upgradeBtn} onPress={onNotVip} activeOpacity={0.7}>
-          <Ionicons name="star" size={16} color="#fff" />
+          <Ionicons name="star" size={16} color={DesignTokens.colors.backgrounds.primary} />
           <Text style={s.upgradeText}>升级 VIP</Text>
         </TouchableOpacity>
       </View>
@@ -86,7 +87,7 @@ const s = StyleSheet.create({
     borderRadius: 24,
   },
   upgradeText: {
-    color: "#fff",
+    color: DesignTokens.colors.backgrounds.primary,
     fontSize: 15,
     fontWeight: "600",
   },

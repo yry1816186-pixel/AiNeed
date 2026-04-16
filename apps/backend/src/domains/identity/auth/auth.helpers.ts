@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createHash } from "crypto";
 
 import { Injectable, UnauthorizedException } from "@nestjs/common";

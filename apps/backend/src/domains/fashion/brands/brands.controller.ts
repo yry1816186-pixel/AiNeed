@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Patch, Param, Query, Body, UseGuards, Request } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import { Controller, Get, Post, Patch, Param, Query, Body, UseGuards, Request } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBearerAuth } from "@nestjs/swagger";
 import { ClothingCategory, PriceRange } from "@prisma/client";
 
-import { MerchantAuthGuard } from "../../../modules/merchant/guards/merchant-auth.guard";
+import { MerchantAuthGuard } from "../../../domains/platform/merchant/guards/merchant-auth.guard";
 
 import { BrandsService } from "./brands.service";
 import { GenerateQRCodeDto, BatchGenerateQRCodeDto } from "./dto/qr-code.dto";

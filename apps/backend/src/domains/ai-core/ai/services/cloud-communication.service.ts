@@ -1,4 +1,5 @@
-﻿import {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
   Injectable,
   Logger,
   OnModuleInit,
@@ -174,7 +175,6 @@ export class CloudCommunicationService
 
   async submitTask(
     type: CloudTask["type"],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     payload: Record<string, any>,
     priority: CloudTask["priority"] = "normal",
   ): Promise<string> {
@@ -200,7 +200,6 @@ export class CloudCommunicationService
     return taskId;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getTaskResult(taskId: string, timeout: number = 30000): Promise<any> {
     return new Promise((resolve, reject) => {
       const timeoutHandle = setTimeout(() => {
@@ -322,7 +321,6 @@ export class CloudCommunicationService
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async executeOnCloud(task: CloudTask): Promise<any> {
     const client = this.redisService.getClient();
     const taskKey = `cloud:task:${task.taskId}`;
@@ -474,7 +472,6 @@ export class CloudCommunicationService
     return response;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async requestDeltaSync(lastSyncTime: Date, dataType: string): Promise<any> {
     this.logger.log(
       `Requesting delta sync for ${dataType} since ${lastSyncTime.toISOString()}`,
@@ -549,7 +546,6 @@ export class CloudCommunicationService
   async batchSubmitTasks(
     tasks: Array<{
       type: CloudTask["type"];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       payload: Record<string, any>;
       priority?: CloudTask["priority"];
     }>,
@@ -571,9 +567,7 @@ export class CloudCommunicationService
   async getBatchResults(
     taskIds: string[],
     timeout: number = 60000,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<Map<string, any>> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const results = new Map<string, any>();
     const startTime = Date.now();
 

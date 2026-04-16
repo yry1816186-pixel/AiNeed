@@ -1,8 +1,9 @@
-import { Module, forwardRef } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import { Module, forwardRef } from "@nestjs/common";
 
 import { PrismaModule } from "../../../../common/prisma/prisma.module";
-import { OnboardingModule } from "../../../../modules/onboarding/onboarding.module";
-import { ProfileModule } from "../../../../modules/profile/profile.module";
+import { OnboardingModule } from "../../../../domains/identity/onboarding/onboarding.module";
+import { ProfileModule } from "../../../../domains/identity/profile/profile.module";
 
 import { ColorDerivationEngine } from "./services/color-derivation.service";
 import { ColorDeriverService } from "./services/color-deriver";

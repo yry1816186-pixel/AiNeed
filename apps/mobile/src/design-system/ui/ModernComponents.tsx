@@ -17,7 +17,7 @@ import Animated, {
   withSpring,
   withSequence,
 } from "react-native-reanimated";
-import { Colors, Typography, Spacing, BorderRadius, Shadows, SpringConfigs } from '../design-system/theme';
+import { Colors, Typography, Spacing, BorderRadius, Shadows, SpringConfigs } from '../../design-system/theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { Skeleton as SkeletonBase } from "../skeleton/Skeleton";
 

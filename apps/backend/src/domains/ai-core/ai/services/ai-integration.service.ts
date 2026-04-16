@@ -1,4 +1,5 @@
-﻿import {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
   Injectable,
   Logger,
   OnModuleInit,

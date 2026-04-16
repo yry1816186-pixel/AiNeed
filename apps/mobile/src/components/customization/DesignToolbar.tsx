@@ -1,7 +1,7 @@
 ﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing } from '../design-system/theme';
+import { theme, Colors, Spacing } from '../../design-system/theme';
 
 interface DesignToolbarProps {
   onAddImage: () => void;

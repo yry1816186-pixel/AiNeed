@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, Inject } from "@nestjs/common";
 
 import { RedisService } from "../../../../../../../common/redis/redis.service";

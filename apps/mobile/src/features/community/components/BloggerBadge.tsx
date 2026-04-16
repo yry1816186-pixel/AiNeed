@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 
 interface BloggerBadgeProps {
   level: "blogger" | "big_v";
@@ -11,13 +11,13 @@ function BloggerBadgeInner({ level }: BloggerBadgeProps) {
   if (level === "big_v") {
     return (
       <View style={s.bigVBadge}>
-        <Ionicons name="shield-checkmark" size={10} color="#FFFFFF" />
+        <Ionicons name="shield-checkmark" size={10} color={DesignTokens.colors.backgrounds.primary} />
       </View>
     );
   }
   return (
     <View style={s.bloggerBadge}>
-      <Ionicons name="checkmark" size={8} color="#FFFFFF" />
+      <Ionicons name="checkmark" size={8} color={DesignTokens.colors.backgrounds.primary} />
     </View>
   );
 }
@@ -36,7 +36,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#FFFFFF",
+    borderColor: DesignTokens.colors.backgrounds.primary,
   },
   bigVBadge: {
     position: "absolute",
@@ -49,6 +49,6 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#FFFFFF",
+    borderColor: DesignTokens.colors.backgrounds.primary,
   },
 });

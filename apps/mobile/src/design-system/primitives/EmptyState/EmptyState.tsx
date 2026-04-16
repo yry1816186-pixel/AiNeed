@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, theme, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { Colors, theme, Spacing, BorderRadius, Shadows } from '../theme';
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 
 interface EmptyStateProps {

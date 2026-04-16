@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SetMetadata } from '@nestjs/common';
 
 export const FEATURE_FLAG_KEY = 'featureFlag';

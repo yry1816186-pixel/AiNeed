@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Content-Based Filtering Submodule
  * Handles content-based recommendations:

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { randomInt, timingSafeEqual } from "crypto";
 
 import { Injectable, Inject, Logger, HttpException, HttpStatus } from "@nestjs/common";

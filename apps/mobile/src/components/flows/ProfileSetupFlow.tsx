@@ -28,8 +28,8 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { MagneticButton, GlowText, FloatingElement, ParticleEffect } from "../../design-system/ui/FluidAnimations";
-import { Colors, Spacing, BorderRadius } from '../design-system/theme';
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { DesignTokens } from "../../design-system/theme";
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);

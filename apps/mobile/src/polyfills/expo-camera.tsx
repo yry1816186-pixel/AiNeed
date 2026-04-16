@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import { View, ViewStyle, StyleSheet } from "react-native";
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../design-system/theme";
 
 export interface CameraRef {
   takePictureAsync: () => Promise<{ uri: string }>;

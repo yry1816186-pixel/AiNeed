@@ -10,8 +10,8 @@ import {
   PanResponderGestureState,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { theme } from '../../design-system/theme';
+import { DesignTokens } from "../../design-system/theme";
 
 interface DragSortItem {
   id: string;

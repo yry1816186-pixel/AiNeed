@@ -1,5 +1,6 @@
 import { Dimensions, Platform, StatusBar } from "react-native";
 import { DesignTokens, darkTokens } from "./tokens/design-tokens";
+import { DesignTokens } from "tokens/design-tokens";
 
 export { DesignTokens, darkTokens } from "./tokens/design-tokens";
 export type { DesignTokensType, DarkTokensType } from "./tokens/design-tokens";
@@ -125,11 +126,11 @@ export const Colors = {
 
   amber: {
     50: "#FFFBEB",
-    100: "#FEF3C7",
+    100: DesignTokens.colors.semantic.warningLight,
     200: "#FDE68A",
     300: "#FCD34D",
-    400: "#FBBF24",
-    500: "#F59E0B",
+    400: DesignTokens.colors.semantic.warningLight,
+    500: DesignTokens.colors.semantic.warning,
     600: "#D97706",
     700: "#B45309",
     800: "#92400E",
@@ -167,11 +168,11 @@ export const Colors = {
 
   emerald: {
     50: "#ECFDF5",
-    100: "#D1FAE5",
+    100: DesignTokens.colors.semantic.successLight,
     200: "#A7F3D0",
     300: "#6EE7B7",
-    400: "#34D399",
-    500: "#10B981",
+    400: DesignTokens.colors.semantic.successLight,
+    500: DesignTokens.colors.semantic.success,
     600: "#059669",
     700: "#047857",
     800: "#065F46",
@@ -475,7 +476,7 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
     divider: base.borders.light,
     cartLight: "#FFF5F0",
     purple: DesignTokens.colors.brand.terracottaDark,
-    amber: "#F59E0B",
+    amber: DesignTokens.colors.semantic.warning,
     secondary: base.brand.sage,
   };
 }

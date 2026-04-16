@@ -1,4 +1,4 @@
-import { ValidationPipe, VersioningType } from "@nestjs/common";
+﻿import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { SwaggerModule } from "@nestjs/swagger";
@@ -12,7 +12,7 @@ import { ErrorHandlerMiddleware } from "./common/middleware/error-handler.middle
 import { MetricsMiddleware } from "./common/middleware/metrics.middleware";
 import { XssSanitizationPipe } from "./common/pipes/xss-sanitization.pipe";
 import { createSwaggerConfig } from "./config/swagger.config";
-import { MetricsService } from "./modules/metrics/metrics.service";
+import { MetricsService } from "./domains/platform/metrics/metrics.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

@@ -103,7 +103,7 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     paddingVertical: 8,
   },
   scrollContent: {

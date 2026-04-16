@@ -12,7 +12,7 @@ import { Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Typography, gradients } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, gradients } from '../../design-system/theme';
 
 // Re-export from primitives for backward compatibility
 export {

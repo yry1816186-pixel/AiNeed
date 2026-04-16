@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import {
   TouchableOpacity,
   TouchableWithoutFeedback,

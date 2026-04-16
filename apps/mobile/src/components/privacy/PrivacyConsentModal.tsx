@@ -1,6 +1,7 @@
 ﻿import React from "react";
 import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
-import { Colors, Spacing, BorderRadius } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface PrivacyConsentModalProps {
   visible: boolean;
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
     padding: Spacing[5],
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: BorderRadius["2xl"],
     padding: Spacing[6],
     width: "100%",
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
   confirmText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
   },
   cancelButton: {
     backgroundColor: "transparent",

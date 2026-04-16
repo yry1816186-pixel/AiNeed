@@ -1,10 +1,11 @@
-﻿import { Injectable, Logger } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
 import sharp from "sharp";
 
-import { sanitizeImage } from '../../../../common/security/image-sanitizer";
-import { StorageService } from '../../../../common/storage/storage.service";
+import { sanitizeImage } from "../../../../common/security/image-sanitizer";
+import { StorageService } from "../../../../common/storage/storage.service";
 
 import {
   TryOnProvider,

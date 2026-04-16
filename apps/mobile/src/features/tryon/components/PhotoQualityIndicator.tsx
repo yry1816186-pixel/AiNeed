@@ -1,6 +1,7 @@
 ﻿import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Spacing, BorderRadius } from '../../../design-system/theme';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface PhotoQuality {
   clarity: number;
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   },
   retakeButton: {
     marginTop: Spacing[4],
-    backgroundColor: "#ef4444",
+    backgroundColor: DesignTokens.colors.semantic.error,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[3],
     paddingHorizontal: Spacing[6],
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
   retakeText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
   },
 });
 

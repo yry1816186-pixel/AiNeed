@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @fileoverview LLM Provider Service - Multi-provider abstraction layer.
  *

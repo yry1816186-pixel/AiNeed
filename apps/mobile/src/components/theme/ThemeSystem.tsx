@@ -42,8 +42,8 @@ import {
   BorderRadius,
   Shadows,
   gradients as themeGradients,
-} from '../design-system/theme';
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+} from '../../design-system/theme';
+import { DesignTokens } from "../../design-system/theme";
 import {
   ThemeProvider as UnifiedThemeProvider,
   useTheme as useUnifiedTheme,
@@ -212,11 +212,11 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
               <Ionicons
                 name="sunny"
                 size={14}
-                color={isDark ? "#fff" : colors.text.secondary}
+                color={isDark ? DesignTokens.colors.backgrounds.primary : colors.text.secondary}
               />
             </AnimatedView>
             <AnimatedView style={[StyleSheet.absoluteFill, styles.iconCenter, moonAnimatedStyle]}>
-              <Ionicons name="moon" size={14} color="#fff" />
+              <Ionicons name="moon" size={14} color={DesignTokens.colors.backgrounds.primary} />
             </AnimatedView>
           </View>
         </AnimatedView>
@@ -252,7 +252,7 @@ export const AccentColorPicker: React.FC<AccentColorPickerProps> = ({ style }) =
               styles.colorCircleSelected,
             ]}
           >
-            <Ionicons name="checkmark" size={16} color="#fff" />
+            <Ionicons name="checkmark" size={16} color={DesignTokens.colors.backgrounds.primary} />
           </View>
           <Text style={[styles.colorLabel, { color: colors.text.secondary }]}>
             Terracotta
@@ -346,7 +346,7 @@ export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({ visible,
                   <Ionicons
                     name={option.icon as ThemeIoniconsIconName}
                     size={20}
-                    color={effectiveDark ? "#fff" : colors.text.secondary}
+                    color={effectiveDark ? DesignTokens.colors.backgrounds.primary : colors.text.secondary}
                   />
                 </View>
                 <Text style={[styles.themeOptionLabel, { color: colors.text.primary }]}>
@@ -354,7 +354,7 @@ export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({ visible,
                 </Text>
                 {isSelected && (
                   <View style={[styles.checkMark, { backgroundColor: colors.brand.terracotta }]}>
-                    <Ionicons name="checkmark" size={12} color="#fff" />
+                    <Ionicons name="checkmark" size={12} color={DesignTokens.colors.backgrounds.primary} />
                   </View>
                 )}
               </TouchableOpacity>
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#fff",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: DesignTokens.colors.neutral.black,

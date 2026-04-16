@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Colors, Spacing } from '../design-system/theme';
+import { Colors, Spacing } from '../../design-system/theme';
 
 interface ProfileCompletenessBarProps {
   percentage: number;

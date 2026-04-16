@@ -11,8 +11,9 @@ import {
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
-} from '../design-system/theme';
+} from '../../design-system/theme';
 import { useTheme } from "../../contexts/ThemeContext";
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 interface OutfitCardProps {
   id: string;
@@ -85,7 +86,7 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
               <Ionicons
                 name={isFavorite ? "heart" : "heart-outline"}
                 size={20}
-                color={isFavorite ? accentColor : "#FFFFFF"}
+                color={isFavorite ? accentColor : DesignTokens.colors.backgrounds.primary}
               />
             </TouchableOpacity>
           )}
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: ThemeTypography.sizes.xs,
     fontWeight: ThemeTypography.fontWeights.bold,
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
   },
   favoriteButton: {
     position: "absolute",

@@ -20,8 +20,7 @@ import {
   navigateDeepLink,
   isNavigationReady as checkNavigationReady,
 } from './src/navigation/navigationService';
-import { theme } from './src/design-system/theme';
-import { ThemeProvider as UnifiedThemeProvider } from './src/shared/contexts/ThemeContext';
+import { ThemeProvider as UnifiedThemeProvider, useTheme, createStyles } from './src/shared/contexts/ThemeContext';
 import { ThemeProvider as PaperThemeProvider } from './src/design-system/ui/PaperThemeProvider';
 import { useAuthStore } from './src/stores/index';
 import { OfflineBanner } from './src/shared/components/common/OfflineBanner';
@@ -47,17 +46,54 @@ const DEV_TEST_ACCOUNT_CONFIG = {
   password: 'Test123456!',
 };
 
-function SplashScreen() {
+function ThemedStatusBar() {
+  const { isDark, colors } = useTheme();
   return (
-    <View style={styles.splashContainer}>
+    <StatusBar
+      barStyle={isDark ? "light-content" : "dark-content"}
+      backgroundColor={colors.surface}
+    />
+  );
+}
+
+const splashStyles = createStyles((colors) => ({
+  container: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoContainer: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  brandName: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.primary,
+    letterSpacing: 1.5,
+    marginBottom: 32,
+  },
+}));
+
+function SplashScreen() {
+  const { colors } = useTheme();
+  const styles = splashStyles(colors);
+  return (
+    <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Ionicons name="shirt-outline" size={48} color={theme.colors.surface} />
+        <Ionicons name="shirt-outline" size={48} color={colors.surface} />
       </View>
       <Text style={styles.brandName}>寻裳</Text>
       <ActivityIndicator
         size="large"
-        color={theme.colors.primary}
-        style={styles.loader}
+        color={colors.primary}
+        style={rootStyles.loader}
       />
     </View>
   );
@@ -200,10 +236,7 @@ export default function App() {
               <I18nProvider>
                 <FeatureFlagProvider>
                 <SafeAreaProvider>
-                  <StatusBar
-                    barStyle="dark-content"
-                    backgroundColor={theme.colors.surface}
-                  />
+                  <ThemedStatusBar />
                   <SplashScreen />
                 </SafeAreaProvider>
                 </FeatureFlagProvider>
@@ -252,10 +285,7 @@ export default function App() {
                       }
                     }}
                   >
-                    <StatusBar
-                      barStyle="dark-content"
-                      backgroundColor={theme.colors.surface}
-                    />
+                    <ThemedStatusBar />
                     <OfflineBanner />
                     <RootNavigator isAuthenticated={isAuthenticated} />
                   </NavigationContainer>
@@ -270,31 +300,9 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
+const rootStyles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  splashContainer: {
-    flex: 1,
-    backgroundColor: theme.colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoContainer: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: theme.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  brandName: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: theme.colors.primary,
-    letterSpacing: 1.5,
-    marginBottom: 32,
   },
   loader: {
     marginTop: 8,

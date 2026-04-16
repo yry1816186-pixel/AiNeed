@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import React from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -20,7 +20,7 @@ import Animated, {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows } from "../../theme";
 import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

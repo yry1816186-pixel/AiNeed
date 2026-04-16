@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { RatingBadge } from "../../design-system/ui/Rating";
 import { MatchBadge } from "./MatchBadge";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 
 interface ConsultantCardProps {
   id: string;
@@ -80,7 +80,7 @@ export const ConsultantCard: React.FC<ConsultantCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   avatarPlaceholderText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     fontSize: 20,
     fontWeight: "600",
   },

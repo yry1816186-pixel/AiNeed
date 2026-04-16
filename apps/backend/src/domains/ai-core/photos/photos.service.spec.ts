@@ -1,13 +1,14 @@
-﻿import { BadRequestException } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { BadRequestException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 import { PhotoType, AnalysisStatus } from "@prisma/client";
 
-import { PrismaService } from '../../../common/prisma/prisma.service";
-import { MalwareScannerService } from '../../../common/security/malware-scanner.service";
-import { StorageService } from '../../../common/storage/storage.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { MalwareScannerService } from "../../../common/security/malware-scanner.service";
+import { StorageService } from "../../../common/storage/storage.service";
 import { OnboardingService } from "../onboarding/onboarding.service";
-import { QueueService } from "../queue/queue.service";
+import { QueueService } from "../../platform/queue/queue.service";
 
 import { PhotosService } from "./photos.service";
 import { AiAnalysisService } from "./services/ai-analysis.service";

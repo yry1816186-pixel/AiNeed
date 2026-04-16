@@ -1,4 +1,4 @@
-import {
+﻿import {
   Injectable,
   NestInterceptor,
   ExecutionContext,
@@ -8,7 +8,7 @@ import {
 import { Request, Response } from "express";
 import { Observable, tap } from "rxjs";
 
-import { MetricsService } from "../../modules/metrics/metrics.service";
+import { MetricsService } from "../../domains/platform/metrics/metrics.service";
 
 const SLOW_REQUEST_THRESHOLD_MS = 500;
 

@@ -1,4 +1,5 @@
-/**
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/**
  * AI Safety Controller
  *
  * REST API endpoints for AI safety features
@@ -23,7 +24,7 @@ import {
  ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 
-import { JwtAuthGuard } from '../../../domains/identity/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../domains/identity/auth/guards/jwt-auth.guard';
 
 import { AISafetyService, ValidationContext } from './ai-safety.service';
 
@@ -42,7 +43,7 @@ class QuickCheckRequestDto {
 
 @ApiTags("ai-safety")
 @ApiBearerAuth()
-@Controller("ai-safety")
+@Controller('ai-safety')
 @UseGuards(JwtAuthGuard)
 export class AISafetyController {
   constructor(private readonly aiSafetyService: AISafetyService) {}

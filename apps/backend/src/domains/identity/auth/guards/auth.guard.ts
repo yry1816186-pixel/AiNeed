@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Auth Guard
  * 重新导出 JwtAuthGuard 以保持向后兼容

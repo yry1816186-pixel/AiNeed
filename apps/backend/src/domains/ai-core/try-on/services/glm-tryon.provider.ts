@@ -1,9 +1,10 @@
-﻿import { Injectable, Logger } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
 import Opossum from "opossum";
 
-import { StorageService } from '../../../../common/storage/storage.service";
+import { StorageService } from "../../../../common/storage/storage.service";
 
 import {
   TryOnProvider,

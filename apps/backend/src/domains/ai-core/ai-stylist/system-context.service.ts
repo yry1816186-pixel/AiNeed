@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 ﻿import { cpus } from "os";
 
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
-import { PrismaService } from '../../../common/prisma/prisma.service";
-import { RedisService } from '../../../common/redis/redis.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RedisService } from "../../../common/redis/redis.service";
 
 export interface GitInfo {
   branch: string;

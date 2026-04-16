@@ -1,4 +1,5 @@
-import { lookup } from "dns/promises";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import { lookup } from "dns/promises";
 import { isIP } from "net";
 
 import {
@@ -18,8 +19,8 @@ import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiResponse
 import { Throttle } from "@nestjs/throttler";
 import axios from "axios";
 
-import { JwtAuthGuard } from "../../../modules/auth/guards/jwt-auth.guard";
-import { OptionalAuthGuard } from "../../../modules/auth/guards/optional-auth.guard";
+import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
+import { OptionalAuthGuard } from "../../../domains/identity/auth/guards/optional-auth.guard";
 
 import { SearchService } from "./search.service";
 import { VisualSearchService } from "./services/visual-search.service";

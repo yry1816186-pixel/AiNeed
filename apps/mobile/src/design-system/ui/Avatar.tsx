@@ -1,7 +1,7 @@
 ﻿import React from "react";
 import { View, Text, StyleSheet, Image, ViewStyle } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, gradients } from '../design-system/theme';
+import { Colors, gradients } from '../../design-system/theme';
 
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 

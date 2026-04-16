@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 
 interface CaseCardProps {
   serviceType: string;
@@ -68,7 +68,7 @@ export const CaseCard: React.FC<CaseCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,

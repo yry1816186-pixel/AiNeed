@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Collaborative Filtering Submodule
  * Handles user behavior-based recommendations:

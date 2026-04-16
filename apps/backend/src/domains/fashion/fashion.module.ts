@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from "@nestjs/common";
 
 import { ClothingModule } from "./clothing/clothing.module";

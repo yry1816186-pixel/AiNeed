@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
@@ -120,7 +121,6 @@ export class StyleUnderstandingService {
   async getRecommendations(
     userInput: string,
     options?: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       userProfile?: Record<string, any>;
       occasion?: string;
       category?: string;
@@ -146,7 +146,6 @@ export class StyleUnderstandingService {
   async getOutfitRecommendation(
     userInput: string,
     options?: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       userProfile?: Record<string, any>;
       occasion?: string;
     },

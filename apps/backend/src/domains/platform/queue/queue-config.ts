@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueueOptions } from 'bullmq';
 
 export enum QueueName {

@@ -1,6 +1,7 @@
-﻿import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 
-import { PrismaService } from '../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 import type { StylistOutfitItem, StylistOutfitPlan } from "../types";
 
 import { AiStylistContextService } from "./context.service";

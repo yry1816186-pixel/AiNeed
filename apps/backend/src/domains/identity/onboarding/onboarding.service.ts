@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { OnboardingStep, Gender } from "@prisma/client";
 

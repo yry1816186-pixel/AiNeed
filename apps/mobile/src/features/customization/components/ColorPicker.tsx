@@ -1,11 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { theme, Spacing } from '../../../design-system/theme';
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 
 const PRESET_COLORS = [
   DesignTokens.colors.neutral.black,
-  "#FFFFFF",
+  DesignTokens.colors.backgrounds.primary,
   "#FF0000",
   "#FF6B00",
   "#FFD700",
@@ -14,11 +14,11 @@ const PRESET_COLORS = [
   "#7B1FA2",
   DesignTokens.colors.brand.terracotta,
   DesignTokens.colors.brand.camel,
-  "#F5F5DC",
+  DesignTokens.colors.backgrounds.tertiary,
   "#FFC0CB",
   "#87CEEB",
   "#98FB98",
-  "#DDA0DD",
+  DesignTokens.colors.brand.terracottaLight,
   "#C0C0C0",
   "#808080",
   "#4A4A4A",

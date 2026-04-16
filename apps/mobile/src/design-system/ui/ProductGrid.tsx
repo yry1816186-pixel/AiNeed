@@ -10,7 +10,7 @@ import {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../design-system/theme';
 import { Rating } from "./Rating";
 import { OptimizedImage } from "../common/OptimizedImage";
 

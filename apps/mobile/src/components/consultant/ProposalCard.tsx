@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme";
 
 interface ProposalCardProps {
   title: string;
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   primaryBtnText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     fontSize: 14,
     fontWeight: "500",
   },

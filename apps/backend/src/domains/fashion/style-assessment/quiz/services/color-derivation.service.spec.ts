@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ColorDerivationEngine, ColorPreferenceResult } from "./color-derivation.service";
 
 describe("ColorDerivationEngine", () => {

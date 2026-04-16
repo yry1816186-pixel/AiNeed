@@ -12,7 +12,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors } from '../design-system/theme';
+import { Colors } from '../../design-system/theme';
 import { SpringConfigs, Duration } from "../../theme/tokens/animations";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   BadRequestException,
   Body,
@@ -26,9 +27,9 @@ import {
 import { Throttle } from "@nestjs/throttler";
 import { PhotoType } from "@prisma/client";
 
-import { AuthenticatedRequest } from '../../../common/types/auth.types';
-import { AiQuotaGuard, SetQuotaType } from "../../../modules/security/rate-limit/ai-quota.guard";
-import { AiQuotaService } from "../../../modules/security/rate-limit/ai-quota.service";
+import { AuthenticatedRequest } from "../../../common/types/auth.types";
+import { AiQuotaGuard, SetQuotaType } from "../../../common/security/rate-limit/ai-quota.guard";
+import { AiQuotaService } from "../../../common/security/rate-limit/ai-quota.service";
 
 import { AiStylistService } from "./ai-stylist.service";
 import {

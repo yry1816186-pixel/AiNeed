@@ -57,7 +57,7 @@ export class PrismaService
     // 监听慢查询 (阈值通过 SLOW_QUERY_THRESHOLD_MS 环境变量配置，默认 500ms)
     const slowQueryThreshold = Number(process.env.SLOW_QUERY_THRESHOLD_MS) || 500;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (this as any).$on("query", (e: Prisma.QueryEvent) => {
+    (this as any).$on("query", (e: { duration: number; query: string }) => {
       if (e.duration > slowQueryThreshold) {
         this.logger.warn(
           `Slow Prisma query detected (${e.duration}ms): ${e.query.substring(0, 200)}...`,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ProfileCompletenessService, CompletenessResult } from "./profile-completeness.service";
 
 describe("ProfileCompletenessService", () => {

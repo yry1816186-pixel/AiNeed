@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PosterTemplate, baseTemplate } from "../base-template";
 
 export const summerTemplate: PosterTemplate = {

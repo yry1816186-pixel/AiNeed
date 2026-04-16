@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import Svg, { Rect, Text as SvgText, Path, G } from "react-native-svg";
 import { colors } from "../../theme/tokens/colors";
 import { typography } from "../../theme/tokens/typography";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 export interface ColorPaletteProps {
   colors: { name: string; hex: string; label?: string }[];

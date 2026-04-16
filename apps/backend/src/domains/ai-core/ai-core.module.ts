@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from '@nestjs/common';
 import { AiStylistModule } from './ai-stylist/ai-stylist.module';
 import { TryOnModule } from './try-on/try-on.module';

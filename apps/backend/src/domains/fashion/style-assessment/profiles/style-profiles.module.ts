@@ -1,6 +1,7 @@
-import { Module } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import { Module } from "@nestjs/common";
 
-import { AnalyticsModule } from "../../../../modules/analytics/analytics.module";
+import { AnalyticsModule } from "../../../../domains/platform/analytics/analytics.module";
 
 import { StyleProfilesController } from "./style-profiles.controller";
 import { StyleProfilesService } from "./style-profiles.service";

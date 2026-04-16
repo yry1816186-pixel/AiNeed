@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Clipboard } from "react-native";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 
 interface TimelineEvent {
   status: string;
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     borderWidth: 2,
     borderColor: "#E0E0E0",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   checkMark: {
     fontSize: 8,
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     fontWeight: "700",
   },
   line: {

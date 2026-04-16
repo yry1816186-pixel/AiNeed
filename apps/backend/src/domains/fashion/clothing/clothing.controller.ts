@@ -1,4 +1,5 @@
-import {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import {
   Controller,
   Get,
   Post,
@@ -22,8 +23,8 @@ import {
 } from "@nestjs/swagger";
 
 import { CacheKey, CacheTTL } from "../../../common/decorators/cache.decorators";
-import { JwtAuthGuard } from "../../../modules/auth/guards/jwt-auth.guard";
-import { Public } from "../../../modules/auth/decorators/public.decorator";
+import { JwtAuthGuard } from "../../../domains/identity/auth/guards/jwt-auth.guard";
+import { Public } from "../../../domains/identity/auth/decorators/public.decorator";
 import { RolesGuard } from "../../../common/guards/roles.guard";
 import { Roles } from "../../../common/decorators/roles.decorator";
 

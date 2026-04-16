@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Body,
   Controller,
@@ -23,9 +24,9 @@ import {
 } from "@nestjs/swagger";
 import type { Response } from "express";
 
-import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
-import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
-import { AiQuotaGuard, SetQuotaType } from "../../../modules/security/rate-limit/ai-quota.guard";
+import { CurrentUser } from "../../platform/auth/decorators/current-user.decorator";
+import { JwtAuthGuard } from "../../platform/auth/guards/jwt-auth.guard";
+import { AiQuotaGuard, SetQuotaType } from "../../../common/security/rate-limit/ai-quota.guard";
 
 import {
   CreateTryOnDto,

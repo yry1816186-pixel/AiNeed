@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 
 interface ServiceTypeChipProps {
   label: string;
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.text.secondary,
   },
   textSelected: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     fontWeight: "500",
   },
 });

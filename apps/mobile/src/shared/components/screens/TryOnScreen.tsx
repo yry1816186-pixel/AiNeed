@@ -29,7 +29,7 @@ import {
 } from "../../services/websocket";
 import type { ClothingItem } from "../../types/clothing";
 import { colors } from "../../theme/tokens/colors";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { typography } from "../../theme/tokens/typography";
 import { spacing } from "../../theme/tokens/spacing";
 import { shadows } from "../../theme/tokens/shadows";

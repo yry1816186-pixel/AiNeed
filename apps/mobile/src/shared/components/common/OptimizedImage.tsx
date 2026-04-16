@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 import { getOptimizedImageUrl, getPlaceholder } from "../../utils/imageOptimizer";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 
 export interface OptimizedImageProps extends AccessibilityProps {
   /** Source URI of the image */

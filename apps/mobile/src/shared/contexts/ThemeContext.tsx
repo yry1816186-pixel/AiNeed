@@ -60,7 +60,7 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     divider: base.borders.light,
     cartLight: "#FFF5F0",
     purple: DesignTokens.colors.brand.terracottaDark,
-    amber: "#F59E0B",
+    amber: DesignTokens.colors.semantic.warning,
     secondary: base.brand.sage,
   };
 }

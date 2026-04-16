@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Notification template definitions for 4 categories:
  * - order: Order status notifications

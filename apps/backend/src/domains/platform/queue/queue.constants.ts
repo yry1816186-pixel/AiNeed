@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @deprecated 此文件已废弃，请使用 queue-config.ts 作为唯一权威配置源。
  * - 队列名称请使用 QueueName 枚举（来自 queue-config.ts）

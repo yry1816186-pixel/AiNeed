@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { paymentApi } from "../services/api/commerce.api";
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../design-system/theme";
 
 interface PaymentWaitingScreenProps {
   orderId: string;
@@ -73,7 +73,7 @@ export const PaymentWaitingScreen: React.FC<PaymentWaitingScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
   },
   content: {
     flex: 1,
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   actionButtonText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     fontSize: 15,
     fontWeight: "600",
   },

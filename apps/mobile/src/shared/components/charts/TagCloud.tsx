@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { colors } from "../../theme/tokens/colors";
 
 import { spacing } from "../../theme/tokens/spacing";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 export interface TagCloudTag {
   label: string;
@@ -43,7 +44,7 @@ const getTagStyle = (weight: number, active: boolean) => {
     paddingVertical,
     paddingHorizontal,
     backgroundColor: active ? colors.brand.warmPrimary : colors.neutral[100],
-    color: active ? "#FFFFFF" : colors.neutral[600],
+    color: active ? DesignTokens.colors.backgrounds.primary : colors.neutral[600],
     borderColor: active ? colors.brand.warmPrimary : colors.neutral[200],
     borderWidth: 1,
   };

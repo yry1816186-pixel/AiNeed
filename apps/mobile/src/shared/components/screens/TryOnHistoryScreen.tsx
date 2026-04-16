@@ -14,7 +14,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { tryOnApi, type TryOnResult } from "../../services/api/tryon.api";
 import { colors } from "../../theme/tokens/colors";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { typography } from "../../theme/tokens/typography";
 import { spacing } from "../../theme/tokens/spacing";
 import { shadows } from "../../theme/tokens/shadows";

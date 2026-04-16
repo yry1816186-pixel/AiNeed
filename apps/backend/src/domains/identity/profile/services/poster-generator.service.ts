@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { ColorSeason } from "@prisma/client";
 import { createCanvas, Image, CanvasRenderingContext2D } from "canvas";

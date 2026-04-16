@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import Share, { ShareOptions } from "react-native-share";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../design-system/theme';
 
 interface ShareButtonProps {
   title?: string;

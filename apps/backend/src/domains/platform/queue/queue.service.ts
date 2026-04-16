@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { InjectQueue } from '@nestjs/bullmq';
 import {
   BadRequestException,

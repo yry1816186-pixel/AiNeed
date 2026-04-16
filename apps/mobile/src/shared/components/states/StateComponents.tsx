@@ -42,7 +42,7 @@ const springConfig = {
   mass: 0.5,
 };
 
-const confettiColors = [DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark, "#F59E0B", "#10B981", "#EF4444", DesignTokens.colors.brand.camel]; // custom color
+const confettiColors = [DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark, DesignTokens.colors.semantic.warning, DesignTokens.colors.semantic.success, DesignTokens.colors.semantic.error, DesignTokens.colors.brand.camel]; // custom color
 
 export interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap | "custom";
@@ -580,7 +580,7 @@ export const SuccessState: React.FC<SuccessStateProps> = ({
   return (
     <AnimatedView style={[styles.successContainer, containerAnimatedStyle, style]}>
       <AnimatedView style={[styles.successIconContainer, checkAnimatedStyle]}>
-        <LinearGradient colors={["#10B981", "#059669"]} style={styles.successIconGradient}>
+        <LinearGradient colors={[DesignTokens.colors.semantic.success, "#059669"]} style={styles.successIconGradient}>
           <Ionicons name={icon} size={48} color={DesignTokens.colors.text.inverse} />
         </LinearGradient>
       </AnimatedView>

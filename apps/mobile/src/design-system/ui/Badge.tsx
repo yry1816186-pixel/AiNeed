@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle, TextStyle } from "react-native";
-import { Colors, Spacing, BorderRadius, Typography } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
 
 export type BadgeVariant =
   | "primary"

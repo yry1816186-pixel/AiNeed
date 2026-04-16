@@ -3,6 +3,7 @@ import { Text, StyleSheet, Animated } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 import { Colors, Shadows } from '../../../design-system/theme';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 export const OfflineBanner: React.FC = () => {
   const { isConnected } = useNetworkStatus();
@@ -27,7 +28,7 @@ export const OfflineBanner: React.FC = () => {
       style={[styles.container, { transform: [{ translateY }] }]}
       pointerEvents={isOffline ? "auto" : "none"}
     >
-      <Ionicons name="cloud-offline" size={16} color="#fff" />
+      <Ionicons name="cloud-offline" size={16} color={DesignTokens.colors.backgrounds.primary} />
       <Text style={styles.text}>网络不可用，部分功能受限</Text>
     </Animated.View>
   );
@@ -45,12 +46,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 8,
     paddingVertical: 8,
-    backgroundColor: Colors.warning?.[500] || "#f59e0b",
+    backgroundColor: Colors.warning?.[500] || DesignTokens.colors.semantic.warning,
     ...Shadows.sm,
   },
   text: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#fff",
+    color: DesignTokens.colors.backgrounds.primary,
   },
 });

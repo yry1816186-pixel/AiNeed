@@ -20,7 +20,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme, Colors, BorderRadius, Shadows } from '../design-system/theme';
+import { theme, Colors, BorderRadius, Shadows } from '../../design-system/theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { profileApi } from "../../services/api/profile.api";
 import { useAuthStore } from "../../stores";

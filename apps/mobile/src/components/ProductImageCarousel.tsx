@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   zoomCloseText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     fontSize: 16,
     fontWeight: "600",
   },

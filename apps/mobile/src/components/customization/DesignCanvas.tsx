@@ -2,9 +2,9 @@
 import { StyleSheet, View } from "react-native";
 import { Svg, Rect, Image as SvgImage, Text as SvgText, G } from "react-native-svg";
 import { GestureHandlerRootView, GestureDetector, Gesture } from "react-native-gesture-handler";
-import { theme, Colors } from '../design-system/theme';
+import { theme, Colors } from '../../design-system/theme';
 import type { DesignLayer, PrintableAreaBounds } from "../../stores/customizationEditorStore";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme";
 
 interface DesignCanvasProps {
   template: {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * GLM-5 Function Calling Agent Tools Service
  *
@@ -12,13 +13,13 @@ import { ConfigService } from "@nestjs/config";
 import { Prisma } from "@prisma/client";
 import axios, { AxiosInstance } from "axios";
 
-import { PrismaService } from '../../../common/prisma/prisma.service";
-import { RedisService } from '../../../common/redis/redis.service";
-import { StyleUnderstandingService } from '../ai/services/style-understanding.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RedisService } from "../../../common/redis/redis.service";
+import { StyleUnderstandingService } from "../ai/services/style-understanding.service";
 import {
   RecommendationsService,
   type RecommendedItem,
-} from '../../platform/recommendations/recommendations.service";
+} from "../../platform/recommendations/recommendations.service";
 
 import { SystemContextService } from "./system-context.service";
 

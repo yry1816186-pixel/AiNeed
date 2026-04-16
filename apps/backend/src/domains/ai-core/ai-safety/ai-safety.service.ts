@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * AI Safety Service
  *
@@ -31,7 +32,6 @@ export interface DetectedIssue {
   confidence: number;
   location?: string;
   suggestion?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   details?: Record<string, any>;
 }
 
@@ -44,7 +44,6 @@ export interface ValidationContext {
   userId?: string;
   sessionId?: string;
   knowledgeContext?: string[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userPreferences?: Record<string, any>;
 }
 

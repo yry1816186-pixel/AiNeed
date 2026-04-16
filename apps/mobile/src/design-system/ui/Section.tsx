@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import { View, Text, TouchableOpacity, ViewStyle } from "react-native";
-import { Colors, Spacing, Typography } from '../design-system/theme';
+import { Colors, Spacing, Typography } from '../../design-system/theme';
 
 export interface SectionProps {
   title: string;

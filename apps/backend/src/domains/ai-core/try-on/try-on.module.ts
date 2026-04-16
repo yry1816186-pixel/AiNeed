@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module, forwardRef } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
-import { GatewayModule } from '../../../common/gateway/gateway.module";
-import { LoggingModule } from '../../../common/logging/logging.module";
-import { StorageModule } from '../../../common/storage/storage.module";
-import { QueueModule } from '../../platform/queue/queue.module';
+import { GatewayModule } from "../../../common/gateway/gateway.module";
+import { LoggingModule } from "../../../common/logging/logging.module";
+import { StorageModule } from "../../../common/storage/storage.module";
+import { QueueModule } from "../../platform/queue/queue.module";
 
 import { DoubaoSeedreamProvider } from "./services/doubao-seedream.provider";
 import { GlmTryOnProvider } from "./services/glm-tryon.provider";

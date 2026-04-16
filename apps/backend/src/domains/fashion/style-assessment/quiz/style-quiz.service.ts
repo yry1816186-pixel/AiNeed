@@ -1,4 +1,5 @@
-import { Injectable, Logger, NotFoundException, BadRequestException, Optional } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import { Injectable, Logger, NotFoundException, BadRequestException, Optional } from "@nestjs/common";
 import { Prisma, PriceRange } from "@prisma/client";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -7,8 +8,8 @@ import {
   createPaginatedResponse,
   normalizePaginationParams,
 } from "../../../../common/types/api-response.types";
-import { OnboardingService } from "../../../../modules/onboarding/onboarding.service";
-import { ProfileEventEmitter } from "../../../../modules/profile/services/profile-event-emitter.service";
+import { OnboardingService } from "../../../../domains/identity/onboarding/onboarding.service";
+import { ProfileEventEmitter } from "../../../../domains/identity/profile/services/profile-event-emitter.service";
 
 import {
   CreateStyleQuizDto,

@@ -9,7 +9,7 @@ import {
   FlatList,
 } from "react-native";
 import type { FilterOptions } from "../services/api/commerce.api";
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../design-system/theme";
 
 interface FilterTagsProps {
   filterOptions: FilterOptions | null;
@@ -157,7 +157,7 @@ export const FilterTags: React.FC<FilterTagsProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: { maxHeight: 40, backgroundColor: "#FFFFFF" },
+  container: { maxHeight: 40, backgroundColor: DesignTokens.colors.backgrounds.primary },
   content: { paddingHorizontal: 12, gap: 8 },
   tag: {
     flexDirection: "row",
@@ -180,14 +180,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 3,
   },
-  badgeText: { fontSize: 10, fontWeight: "600", color: "#FFFFFF" },
+  badgeText: { fontSize: 10, fontWeight: "600", color: DesignTokens.colors.backgrounds.primary },
   modalOverlay: {
     flex: 1,
     justifyContent: "flex-end",
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalSheet: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: "50%",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Queue Module Interfaces
  * Defines data structures for AI task jobs

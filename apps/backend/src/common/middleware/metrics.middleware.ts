@@ -1,11 +1,11 @@
-import {
+﻿import {
   Injectable,
   NestMiddleware,
   Logger,
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
-import { MetricsService } from '../../modules/metrics/metrics.service';
+import { MetricsService } from '../../domains/platform/metrics/metrics.service';
 
 @Injectable()
 export class MetricsMiddleware implements NestMiddleware {

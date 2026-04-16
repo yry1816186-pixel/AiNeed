@@ -3,7 +3,7 @@ import { resolve } from "path";
 import { Module, MiddlewareConsumer, RequestMethod, NestModule } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_INTERCEPTOR, APP_GUARD } from "@nestjs/core";
-import { JwtAuthGuard } from "./modules/auth/guards/jwt-auth.guard";
+import { JwtAuthGuard } from "./domains/identity/auth/guards/jwt-auth.guard";
 import { EventEmitterModule } from "@nestjs/event-emitter";
 import { MulterModule } from "@nestjs/platform-express";
 import { ScheduleModule } from "@nestjs/schedule";
@@ -22,51 +22,43 @@ import { RedisModule } from "./common/redis/redis.module";
 import { SentryModule } from "./common/sentry";
 import { SoftDeleteModule } from "./common/soft-delete";
 import { StorageModule } from "./common/storage/storage.module";
-import { AddressModule } from "./modules/address/address.module";
-import { AdminModule } from "./modules/admin/admin.module";
+import { AdminModule } from "./domains/platform/admin/admin.module";
 import { AIModule } from "./domains/ai-core/ai/ai.module";
 import { AISafetyModule } from "./domains/ai-core/ai-safety/ai-safety.module";
 import { AiStylistModule } from "./domains/ai-core/ai-stylist/ai-stylist.module";
-import { AnalyticsModule } from "./modules/analytics/analytics.module";
-import { AuthModule } from "./modules/auth/auth.module";
+import { AnalyticsModule } from "./domains/platform/analytics/analytics.module";
+import { AuthModule } from "./domains/identity/auth/auth.module";
 import { BrandsModule } from "./domains/fashion/brands/brands.module";
 import { BloggerModule } from "./modules/blogger/blogger.module";
 import { CacheModule } from "./modules/cache/cache.module";
 import { CacheService } from "./modules/cache/cache.service";
-import { CartModule } from "./modules/cart/cart.module";
 import { ChatModule } from "./modules/chat/chat.module";
 import { ClothingModule } from "./domains/fashion/clothing/clothing.module";
+import { CommerceModule } from "./domains/commerce/commerce.module";
 import { CommunityModule } from "./modules/community/community.module";
 import { ConsultantModule } from "./modules/consultant/consultant.module";
-import { CouponModule } from "./modules/coupon/coupon.module";
 import { CustomizationModule } from "./modules/customization/customization.module";
 import { DatabaseModule } from "./modules/database/database.module";
 import { WardrobeModule } from "./domains/fashion/wardrobe/wardrobe.module";
-import { FeatureFlagModule } from "./modules/feature-flags/feature-flag.module";
-import { HealthModule } from "./modules/health/health.module";
-import { MerchantModule } from "./modules/merchant/merchant.module";
-import { MetricsModule } from "./modules/metrics/metrics.module";
-import { MetricsService } from "./modules/metrics/metrics.service";
-import { NotificationModule } from "./modules/notification/notification.module";
-import { OnboardingModule } from "./modules/onboarding/onboarding.module";
-import { OrderModule } from "./modules/order/order.module";
-import { PaymentModule } from "./modules/payment/payment.module";
+import { FeatureFlagModule } from "./domains/platform/feature-flags/feature-flag.module";
+import { HealthModule } from "./domains/platform/health/health.module";
+import { MerchantModule } from "./domains/platform/merchant/merchant.module";
+import { MetricsModule } from "./domains/platform/metrics/metrics.module";
+import { MetricsService } from "./domains/platform/metrics/metrics.service";
+import { NotificationModule } from "./domains/platform/notification/notification.module";
+import { OnboardingModule } from "./domains/identity/onboarding/onboarding.module";
 import { PhotosModule } from "./domains/ai-core/photos/photos.module";
-import { PrivacyModule } from "./modules/privacy/privacy.module";
-import { ProfileModule } from "./modules/profile/profile.module";
-import { QueueModule } from "./modules/queue/queue.module";
+import { PrivacyModule } from "./domains/identity/privacy/privacy.module";
+import { ProfileModule } from "./domains/identity/profile/profile.module";
+import { QueueModule } from "./domains/platform/queue/queue.module";
 import { RecommendationsModule } from "./domains/platform/recommendations/recommendations.module";
-import { RefundRequestModule } from "./modules/refund-request/refund-request.module";
 import { SearchModule } from "./domains/fashion/search/search.module";
 import { SecurityModule } from "./modules/security/security.module";
 import { ShareTemplateModule } from "./modules/share-template/share-template.module";
-import { SizeRecommendationModule } from "./modules/size-recommendation/size-recommendation.module";
-import { StockNotificationModule } from "./modules/stock-notification/stock-notification.module";
 import { StyleAssessmentModule } from "./domains/fashion/style-assessment/style-assessment.module";
-import { SubscriptionModule } from "./modules/subscription/subscription.module";
 import { SystemReadinessService } from "./modules/system/system-readiness.service";
 import { TryOnModule } from "./domains/ai-core/try-on/try-on.module";
-import { UsersModule } from "./modules/users/users.module";
+import { UsersModule } from "./domains/identity/users/users.module";
 import { WeatherModule } from "./domains/fashion/weather/weather.module";
 import { WSModule } from "./modules/ws/ws.module";
 
@@ -122,17 +114,13 @@ import { WSModule } from "./modules/ws/ws.module";
     BrandsModule,
     BloggerModule,
     AnalyticsModule,
-    SubscriptionModule,
+    CommerceModule,
     NotificationModule,
     OnboardingModule,
     PrivacyModule,
     MerchantModule,
     AiStylistModule,
     HealthModule,
-    PaymentModule,
-    CartModule,
-    OrderModule,
-    AddressModule,
     AIModule,
     StyleAssessmentModule,
     WeatherModule,
@@ -144,10 +132,6 @@ import { WSModule } from "./modules/ws/ws.module";
     ConsultantModule,
     ChatModule,
     FeatureFlagModule,
-    CouponModule,
-    StockNotificationModule,
-    RefundRequestModule,
-    SizeRecommendationModule,
     AdminModule,
   ],
   providers: [

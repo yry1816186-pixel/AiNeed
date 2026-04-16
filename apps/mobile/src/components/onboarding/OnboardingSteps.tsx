@@ -11,8 +11,8 @@ import {
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../polyfills/expo-linear-gradient";
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../design-system/theme';
+import { DesignTokens } from "../../design-system/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -96,7 +96,7 @@ export const COLOR_PALETTES: ColorPaletteOption[] = [
   {
     id: "warm",
     label: "暖色调",
-    colors: ["#C67B5C", "#D9A441", "#E8B451", "#B5A08C"],
+    colors: ["#C67B5C", "#D9A441", "#E8B451", DesignTokens.colors.brand.camel],
     description: "温暖阳光，亲切自然",
   },
   {
@@ -114,7 +114,7 @@ export const COLOR_PALETTES: ColorPaletteOption[] = [
   {
     id: "earth",
     label: "大地色",
-    colors: ["#8B9A7D", "#B5A08C", "#A86548", "#6E7A62"],
+    colors: ["#8B9A7D", DesignTokens.colors.brand.camel, "#A86548", "#6E7A62"],
     description: "自然沉稳，低调内敛",
   },
   {
@@ -126,7 +126,7 @@ export const COLOR_PALETTES: ColorPaletteOption[] = [
   {
     id: "vivid",
     label: "高饱和",
-    colors: ["#C44536", "#F59E0B", "#10B981", "#0EA5E9"],
+    colors: ["#C44536", DesignTokens.colors.semantic.warning, DesignTokens.colors.semantic.success, "#0EA5E9"],
     description: "鲜明醒目，大胆出众",
   },
 ];

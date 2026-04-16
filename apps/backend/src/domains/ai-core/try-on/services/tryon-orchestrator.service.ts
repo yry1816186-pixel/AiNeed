@@ -1,8 +1,9 @@
-﻿import { Injectable, Logger, Inject } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Injectable, Logger, Inject } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import Redis from "ioredis";
 
-import { REDIS_CLIENT } from '../../../../common/redis/redis.service";
+import { REDIS_CLIENT } from "../../../../common/redis/redis.service";
 
 import {
   TryOnProvider,

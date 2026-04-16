@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, Get, Post, Body, Param, UseGuards, Request } from "@nestjs/common";
 import {
   ApiTags,

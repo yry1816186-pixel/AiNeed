@@ -1,8 +1,8 @@
 ﻿import React, { useState, useCallback } from "react";
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { communityApi } from "../../services/api/community.api";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { theme } from '../../design-system/theme';
+import { DesignTokens } from "../../design-system/theme";
 
 interface FollowButtonProps {
   userId: string;
@@ -70,7 +70,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
       accessibilityRole="button"
     >
       {loading ? (
-        <ActivityIndicator size="small" color="#FFFFFF" />
+        <ActivityIndicator size="small" color={DesignTokens.colors.backgrounds.primary} />
       ) : (
         <Text style={[styles.followText, isSmall && styles.followTextSmall]}>关注</Text>
       )}
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   followText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     fontSize: 14,
     fontWeight: "600",
   },

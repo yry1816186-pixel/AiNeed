@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme";
 
 interface CalendarGridProps {
   selectedDate: string | null;
@@ -128,7 +128,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 12,
     padding: 12,
   },
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.neutral[300],
   },
   dayTextSelected: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     fontWeight: "600",
   },
   dayTextAvailable: {

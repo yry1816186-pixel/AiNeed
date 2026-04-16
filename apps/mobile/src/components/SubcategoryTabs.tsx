@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../design-system/theme";
 
 interface Subcategory {
   name: string;
@@ -55,7 +55,7 @@ export const SubcategoryTabs: React.FC<SubcategoryTabsProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: { maxHeight: 44, backgroundColor: "#FFFFFF" },
+  container: { maxHeight: 44, backgroundColor: DesignTokens.colors.backgrounds.primary },
   content: { paddingHorizontal: 12, gap: 8 },
   chip: {
     paddingHorizontal: 14,
@@ -65,5 +65,5 @@ const styles = StyleSheet.create({
   },
   chipSelected: { backgroundColor: "#FF4D4F" },
   chipText: { fontSize: 13, color: DesignTokens.colors.text.secondary },
-  chipTextSelected: { color: "#FFFFFF", fontWeight: "500" },
+  chipTextSelected: { color: DesignTokens.colors.backgrounds.primary, fontWeight: "500" },
 });

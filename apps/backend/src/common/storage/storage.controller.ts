@@ -1,4 +1,4 @@
-import {
+﻿import {
   BadRequestException,
   Controller,
   Get,
@@ -12,7 +12,7 @@ import { ConfigService } from "@nestjs/config";
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
 import type { Response } from "express";
 
-import { OptionalAuthGuard } from "../../modules/auth/guards/optional-auth.guard";
+import { OptionalAuthGuard } from "../../domains/identity/auth/guards/optional-auth.guard";
 
 const LOCAL_STORAGE_HOSTS = new Set(["localhost", "127.0.0.1", "10.0.2.2"]);
 

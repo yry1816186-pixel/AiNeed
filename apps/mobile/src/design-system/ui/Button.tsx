@@ -22,7 +22,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Typography, Shadows, gradients } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows, gradients } from '../../design-system/theme';
 import { SpringConfigs } from "../../theme/tokens/animations";
 
 // Re-export from primitives for backward compatibility

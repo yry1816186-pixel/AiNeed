@@ -18,8 +18,8 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { ParticleEffect, FloatingElement, GlowText, MagneticButton } from "../../design-system/ui/FluidAnimations";
-import { Colors, Spacing, BorderRadius } from '../design-system/theme';
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { DesignTokens } from "../../design-system/theme";
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -138,14 +138,14 @@ const ONBOARDING_DATA = [
     title: "了解你的身型",
     subtitle: "智能体型分析，为你推荐最显瘦的穿搭方案",
     icon: "👤",
-    gradient: ["#3b82f6", "#60a5fa"],
+    gradient: [DesignTokens.colors.semantic.info, DesignTokens.colors.semantic.infoLight],
   },
   {
     id: "color",
     title: "找到你的色彩",
     subtitle: "肤色分析，发现让你更加光彩照人的颜色",
     icon: "🎨",
-    gradient: ["#10b981", "#34d399"],
+    gradient: [DesignTokens.colors.semantic.success, DesignTokens.colors.semantic.successLight],
   },
   {
     id: "tryon",
@@ -438,13 +438,13 @@ const ANALYSIS_CONFIG = {
     title: "体型分析中",
     steps: ["检测人体轮廓", "分析身体比例", "识别体型特征", "生成分析报告"],
     icon: "👤",
-    gradient: ["#3b82f6", "#60a5fa"],
+    gradient: [DesignTokens.colors.semantic.info, DesignTokens.colors.semantic.infoLight],
   },
   color: {
     title: "肤色分析中",
     steps: ["提取皮肤区域", "分析肤色色调", "匹配色彩季节", "生成配色建议"],
     icon: "🎨",
-    gradient: ["#10b981", "#34d399"],
+    gradient: [DesignTokens.colors.semantic.success, DesignTokens.colors.semantic.successLight],
   },
   style: {
     title: "风格分析中",

@@ -1,11 +1,12 @@
-﻿import * as crypto from "crypto";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import * as crypto from "crypto";
 import * as https from "https";
 
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
 
-import { sanitizeImage } from '../../../../common/security/image-sanitizer";
+import { sanitizeImage } from "../../../../common/security/image-sanitizer";
 
 interface AliyunBodyAnalysisResult {
   BodyType?: string;

@@ -1,4 +1,5 @@
-﻿import crypto from "crypto";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import crypto from "crypto";
 
 import {
   Injectable,
@@ -11,13 +12,13 @@ import { ConfigService } from "@nestjs/config";
 import { Cron } from "@nestjs/schedule";
 import { AnalysisStatus, PhotoType } from "@prisma/client";
 
-import { PrismaService } from '../../../common/prisma/prisma.service";
-import { stripExifFromBuffer } from '../../../common/security/image-sanitizer";
-import { MalwareScannerService } from '../../../common/security/malware-scanner.service";
-import { validateImageFile as sharedValidateImageFile } from '../../../common/security/upload-validator";
-import { StorageService } from '../../../common/storage/storage.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { stripExifFromBuffer } from "../../../common/security/image-sanitizer";
+import { MalwareScannerService } from "../../../common/security/malware-scanner.service";
+import { validateImageFile as sharedValidateImageFile } from "../../../common/security/upload-validator";
+import { StorageService } from "../../../common/storage/storage.service";
 import { OnboardingService } from "../onboarding/onboarding.service";
-import { QueueService } from "../queue/queue.service";
+import { QueueService } from "../../platform/queue/queue.service";
 
 import { AiAnalysisService } from "./services/ai-analysis.service";
 import "multer"; // 引入 Express.Multer.File 类型声明

@@ -1,4 +1,5 @@
-import {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import {
   Injectable,
   Logger,
   NotFoundException,
@@ -6,7 +7,7 @@ import {
 } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { BehaviorTrackerService } from "../../../../modules/analytics/services/behavior-tracker.service";
+import { BehaviorTrackerService } from "../../../../domains/platform/analytics/services/behavior-tracker.service";
 
 import { CreateStyleProfileDto, UpdateStyleProfileDto } from "./dto";
 

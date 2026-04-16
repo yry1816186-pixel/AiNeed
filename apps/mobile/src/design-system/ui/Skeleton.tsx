@@ -15,7 +15,7 @@ import Animated, {
   Easing,
   interpolate,
 } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
 
 // Re-export from canonical skeleton implementation
 export {

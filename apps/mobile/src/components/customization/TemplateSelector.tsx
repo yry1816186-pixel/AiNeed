@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius } from '../design-system/theme';
+import { theme, Colors, Spacing, BorderRadius } from '../../design-system/theme';
 import type { Template } from "../../stores/customizationEditorStore";
 
 interface TemplateSelectorProps {

@@ -1,4 +1,4 @@
-import { DesignTokens } from "design-tokens";
+import { DesignTokens } from "./design-tokens";
 import { Platform } from "react-native";
 
 export const ShadowPresets = {

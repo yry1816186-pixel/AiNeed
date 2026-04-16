@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Search Module Type Definitions
  * 搜索模块类型定义 - 消除 any 类型，提供类型安全

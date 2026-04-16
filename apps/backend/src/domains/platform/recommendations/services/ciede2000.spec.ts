@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ciede2000, rgbToLab, hexToRgb, findHarmoniousColors, colorSimilarity } from './ciede2000';
 
 describe('ciede2000', () => {

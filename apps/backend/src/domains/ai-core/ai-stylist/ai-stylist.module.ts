@@ -1,12 +1,13 @@
-﻿import { Module } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Module, forwardRef } from "@nestjs/common";
 
 import { CircuitBreakerModule } from "../../../common/circuit-breaker";
 import { PrismaModule } from "../../../common/prisma/prisma.module";
 import { RedisModule } from "../../../common/redis/redis.module";
-import { AIModule } from '../ai/ai.module";
-import { PhotosModule } from '../photos/photos.module";
+import { AIModule } from "../ai/ai.module";
+import { PhotosModule } from "../photos/photos.module";
 import { RecommendationsModule } from "../../platform/recommendations/recommendations.module";
-import { WeatherModule } from "../../fashion/weather/weather.module";
+import { WeatherModule } from "../../domains/fashion/weather/weather.module";
 
 import { AgentToolsService } from "./agent-tools.service";
 import { AiStylistController } from "./ai-stylist.controller";
@@ -27,7 +28,7 @@ import { WeatherIntegrationService } from "./services/weather-integration.servic
 import { SystemContextService } from "./system-context.service";
 
 @Module({
-  imports: [RecommendationsModule, PhotosModule, AIModule, RedisModule, CircuitBreakerModule, PrismaModule, WeatherModule],
+  imports: [forwardRef(() => RecommendationsModule), PhotosModule, AIModule, RedisModule, CircuitBreakerModule, PrismaModule, WeatherModule],
   controllers: [AiStylistController],
   providers: [
     AiStylistService,

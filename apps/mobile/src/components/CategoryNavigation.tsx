@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../design-system/theme";
 
 const CATEGORIES = [
   { key: "tops", icon: "tshirt-crew", label: "上装" },
@@ -65,7 +65,7 @@ export const CategoryNavigation: React.FC<CategoryNavigationProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: { maxHeight: 80, backgroundColor: "#FFFFFF" },
+  container: { maxHeight: 80, backgroundColor: DesignTokens.colors.backgrounds.primary },
   content: { paddingHorizontal: 12, paddingVertical: 8, gap: 4 },
   item: { alignItems: "center", width: 56, paddingVertical: 4 },
   itemSelected: {},

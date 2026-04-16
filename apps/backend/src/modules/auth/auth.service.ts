@@ -10,8 +10,10 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
-import { Gender, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import type { StringValue } from "ms";
+
+type Gender = "male" | "female" | "other";
 
 import { StructuredLoggerService, ContextualLogger } from "../../common/logging/structured-logger.service";
 import { PrismaService } from "../../common/prisma/prisma.service";

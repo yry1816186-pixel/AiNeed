@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme";
 
 interface TimeSlotItemProps {
   startTime: string;
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   available: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderColor: "#E0E0E0",
   },
   booked: {

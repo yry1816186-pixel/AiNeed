@@ -16,7 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, BorderRadius, Shadows } from '../design-system/theme';
+import { Colors, BorderRadius, Shadows } from "../../theme";
 import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "gradient" | "danger";

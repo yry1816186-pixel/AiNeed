@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { randomUUID, createHash, timingSafeEqual } from "crypto";
 
 import {

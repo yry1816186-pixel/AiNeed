@@ -28,7 +28,7 @@ import {
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import type { ScrollEvent } from "../../types/events";
 

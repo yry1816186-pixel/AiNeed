@@ -5,6 +5,7 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme, Colors, DesignTokens } from '../design-system/theme';
 import { haptics } from "../../utils/haptics";
+import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface ActionButtonsProps {
   onRefresh: () => void;
@@ -17,7 +18,7 @@ export const EmptyState: React.FC<ActionButtonsProps> = ({ onRefresh }) => (
     <Text style={styles.emptySubtitle}>我们正在为您寻找更多心仪好物</Text>
     <TouchableOpacity style={styles.refreshButton} onPress={onRefresh} accessibilityLabel="刷新推荐" accessibilityRole="button">
       <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.refreshGradient}>
-        <Ionicons name="refresh" size={20} color="#fff" />
+        <Ionicons name="refresh" size={20} color={DesignTokens.colors.backgrounds.primary} />
         <Text style={styles.refreshText}>刷新推荐</Text>
       </LinearGradient>
     </TouchableOpacity>
@@ -76,7 +77,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
             borderRadius: size / 2,
             borderWidth: 2,
             borderColor,
-            backgroundColor: "#FFFFFF",
+            backgroundColor: DesignTokens.colors.backgrounds.primary,
             alignItems: "center",
             justifyContent: "center",
           },
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
   refreshText: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#fff",
+    color: DesignTokens.colors.backgrounds.primary,
   },
   buttonsRow: {
     flexDirection: "row",

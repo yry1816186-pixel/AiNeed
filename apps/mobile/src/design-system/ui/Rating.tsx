@@ -1,7 +1,7 @@
 ﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
 
 export interface RatingProps {
   value?: number;

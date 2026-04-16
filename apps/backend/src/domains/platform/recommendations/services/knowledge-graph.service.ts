@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, Optional } from "@nestjs/common";
 
 import { PrismaService } from "../../../../../../../common/prisma/prisma.service";

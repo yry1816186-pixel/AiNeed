@@ -1,9 +1,10 @@
-﻿import { Module } from "@nestjs/common";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
-import { MalwareScannerService } from '../../../common/security/malware-scanner.service";
-import { OnboardingModule } from '../../../domains/identity/onboarding/onboarding.module";
-import { QueueModule } from '../../../domains/platform/queue/queue.module";
+import { MalwareScannerService } from "../../../common/security/malware-scanner.service";
+import { OnboardingModule } from "../onboarding/onboarding.module";
+import { QueueModule } from "../../platform/queue/queue.module";
 
 import { PhotoQualityController } from "./photo-quality.controller";
 import { PhotosController } from "./photos.controller";

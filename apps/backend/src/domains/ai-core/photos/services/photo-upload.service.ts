@@ -1,13 +1,14 @@
-﻿import { Injectable, Logger, BadRequestException } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
-import { stripExifFromBuffer } from '../../../../common/security/image-sanitizer';
-import { MalwareScannerService } from '../../../../common/security/malware-scanner.service';
-import { validateImageFile } from '../../../../common/security/upload-validator';
-import { ImageProcessingService, GeneratedImage } from '../../../../common/services/image-processing.service';
-import { StorageService } from '../../../../common/storage/storage.service';
-import { ImageSizeName, DEFAULT_SIZES, getStoragePath } from '../../../../common/utils/image-sizes';
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { stripExifFromBuffer } from "../../../../common/security/image-sanitizer";
+import { MalwareScannerService } from "../../../../common/security/malware-scanner.service";
+import { validateImageFile } from "../../../../common/security/upload-validator";
+import { ImageProcessingService, GeneratedImage } from "../../../../common/services/image-processing.service";
+import { StorageService } from "../../../../common/storage/storage.service";
+import { ImageSizeName, DEFAULT_SIZES, getStoragePath } from "../../../../common/utils/image-sizes";
 
 export interface MultiSizeUploadResult {
   id: string;

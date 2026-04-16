@@ -1,4 +1,5 @@
-import {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import {
   Controller,
   Get,
   Post,
@@ -9,8 +10,8 @@ import {
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from "@nestjs/swagger";
 
-import { CurrentUser } from "../../../../modules/auth/decorators/current-user.decorator";
-import { JwtAuthGuard } from "../../../../modules/auth/guards/jwt-auth.guard";
+import { CurrentUser } from "../../../../domains/identity/auth/decorators/current-user.decorator";
+import { JwtAuthGuard } from "../../../../domains/identity/auth/guards/jwt-auth.guard";
 
 import { FavoritesService } from "./favorites.service";
 

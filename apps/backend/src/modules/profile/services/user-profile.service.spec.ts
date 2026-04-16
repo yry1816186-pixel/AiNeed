@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 
 import { UserProfileService, UserBodyProfile, UpdateProfileDto } from "./user-profile.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { BodyImageAnalysisService } from "../../photos/services/body-image-analysis.service";
+import { BodyImageAnalysisService } from "../../../domains/ai-core/photos/services/body-image-analysis.service";
 import { SASRecService } from "../../recommendations/services/sasrec.service";
 import { BehaviorTrackerService } from "../../analytics/services/behavior-tracker.service";
 

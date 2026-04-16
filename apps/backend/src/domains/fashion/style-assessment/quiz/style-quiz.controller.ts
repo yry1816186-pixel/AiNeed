@@ -1,4 +1,5 @@
-import {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿import {
   Controller,
   Get,
   Post,
@@ -13,7 +14,7 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiParam } from "@nestjs/swagger";
 
 import { RequestWithUser } from "../../../../common/types/common.types";
-import { JwtAuthGuard } from "../../../../modules/auth/guards/jwt-auth.guard";
+import { JwtAuthGuard } from "../../../../domains/identity/auth/guards/jwt-auth.guard";
 
 import {
   CreateStyleQuizDto,

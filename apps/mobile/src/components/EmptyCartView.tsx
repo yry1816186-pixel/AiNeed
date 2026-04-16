@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../design-system/theme";
 
 interface EmptyCartViewProps {
   onGoShopping: () => void;
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     fontSize: 15,
     fontWeight: "600",
   },

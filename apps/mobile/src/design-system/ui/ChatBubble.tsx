@@ -6,12 +6,13 @@ import Animated, { FadeInUp } from "react-native-reanimated";
 
 // 引入主题令牌
 import {
+import { DesignTokens } from "../theme/tokens/design-tokens";
   Colors,
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
   Typography as ThemeTypography,
-} from '../design-system/theme';
+} from '../../design-system/theme';
 
 interface ChatBubbleProps {
   message: string;
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
   },
   userMessage: {
     fontSize: ThemeTypography.sizes.base,
-    color: "#FFFFFF",
+    color: DesignTokens.colors.backgrounds.primary,
     lineHeight: 22,
   },
   userTimestamp: {

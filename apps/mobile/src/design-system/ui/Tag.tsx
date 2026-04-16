@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Colors, Spacing, BorderRadius, Typography } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
 
 export interface TagProps {
   text: string;

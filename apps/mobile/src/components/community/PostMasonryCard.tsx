@@ -9,9 +9,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { SharedElement } from "react-navigation-shared-element";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
+import { theme } from '../../design-system/theme';
 import { BloggerBadge } from "./BloggerBadge";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme";
 
 export interface PostCardData {
   id: string;

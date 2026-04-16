@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, CanActivate, ExecutionContext, BadRequestException } from "@nestjs/common";
 
 import { RedisService } from "../../../../../../../common/redis/redis.service";

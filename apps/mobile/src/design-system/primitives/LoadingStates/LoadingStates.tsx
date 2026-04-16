@@ -18,7 +18,7 @@ import Animated, {
   interpolate,
   interpolateColor,
 } from "react-native-reanimated";
-import { Colors, theme } from '../design-system/theme';
+import { Colors, theme } from "../../theme";
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -48,7 +48,7 @@ export function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
   return (
     <View style={styles.overlay}>
       <View style={styles.overlayContent}>
-        <Spinner size="large" color="#fff" />
+        <Spinner size="large" color={DesignTokens.colors.backgrounds.primary} />
         {message && <Text style={styles.overlayMessage}>{message}</Text>}
       </View>
     </View>
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   overlayMessage: {
     marginTop: 16,
     fontSize: 16,
-    color: "#fff",
+    color: DesignTokens.colors.backgrounds.primary,
     fontWeight: "500",
   },
   skeleton: {
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   skeletonCard: {
-    backgroundColor: "#fff",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 12,
     overflow: "hidden",
     ...Platform.select({
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   },
   skeletonGridItem: {
     width: (SCREEN_WIDTH - 48) / 2,
-    backgroundColor: "#fff",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 12,
     overflow: "hidden",
   },

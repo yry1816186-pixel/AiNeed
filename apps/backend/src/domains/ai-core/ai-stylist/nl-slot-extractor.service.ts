@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @fileoverview NL Slot Extractor Service - LLM-powered slot extraction.
  *
