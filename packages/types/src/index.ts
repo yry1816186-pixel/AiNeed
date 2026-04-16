@@ -6,3 +6,7 @@ export * from "./tryon";
 export * from "./recommendation";
 export * from "./customization";
 export * from "./api";
+export * from "./commerce";
+export * from "./social";
+export * from "./ai-core";
+export * from "./events";
