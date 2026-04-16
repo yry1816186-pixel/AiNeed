@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral[100],
   },
   optionSelected: {
-    backgroundColor: "#a855f7", // custom color
+    backgroundColor: DesignTokens.colors.brand.terracotta, // custom color
   },
   optionText: {
     fontSize: 14,
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     flex: 2,
     paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: "#a855f7", // custom color
+    backgroundColor: DesignTokens.colors.brand.terracotta, // custom color
     alignItems: "center",
   },
   applyButtonText: {

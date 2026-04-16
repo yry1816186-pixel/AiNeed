@@ -51,6 +51,7 @@ describe("useDisclosure", () => {
 
     const { onOpen, onClose, onToggle } = result.current;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rerender({} as any);
 
     // Callbacks should be referentially stable (wrapped in useCallback)

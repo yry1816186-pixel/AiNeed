@@ -1,7 +1,7 @@
 import { Module, forwardRef } from "@nestjs/common";
 
 import { PrismaModule } from "../../../common/prisma/prisma.module";
-import { RecommendationsModule } from "../../../modules/recommendations/recommendations.module";
+import { RecommendationsModule } from "../../platform/recommendations/recommendations.module";
 
 import { SearchController } from "./search.controller";
 import { SearchService } from "./search.service";

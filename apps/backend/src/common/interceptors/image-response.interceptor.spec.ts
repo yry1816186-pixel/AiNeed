@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { ImageResponseInterceptor } from './image-response.interceptor';
 
 describe('ImageResponseInterceptor', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let interceptor: ImageResponseInterceptor<any>;
 
   beforeEach(() => {
@@ -15,9 +16,11 @@ describe('ImageResponseInterceptor', () => {
       switchToHttp: () => ({
         getRequest: () => ({ query, headers }),
       }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const createMockHandler = (data: any): CallHandler => {
     return { handle: () => of(data) };
   };

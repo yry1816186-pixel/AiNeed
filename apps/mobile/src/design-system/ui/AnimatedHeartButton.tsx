@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import Animated, {

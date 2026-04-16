@@ -1,4 +1,5 @@
-﻿import { AxiosError, AxiosHeaders } from "axios";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AxiosError, AxiosHeaders } from "axios";
 
 import { apiClient } from "../client";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../../../utils/secureStorage";
@@ -68,12 +69,14 @@ function _createAxiosError(
       method: "get",
       headers: new AxiosHeaders(),
     } as any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     null,
     {
       status,
       data,
       statusText: "Error",
       headers: {},
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       config: {} as any,
     }
   );

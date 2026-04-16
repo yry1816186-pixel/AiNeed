@@ -269,6 +269,7 @@ describe("orderApi", () => {
         data: { items: [backendOrder], total: 1, page: 1, pageSize: 10, hasMore: false },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await orderApi.getAll({ status: "paid" as any, page: 1, limit: 10 });
 
       expect(mockGet).toHaveBeenCalledWith("/orders", { status: "paid", page: 1, limit: 10 });

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook, act } from "@testing-library/react-native";
 import { useDebounce } from "../useDebounce";
 
@@ -18,6 +19,7 @@ describe("useDebounce", () => {
   it("should return new value after delay", () => {
     const { result, rerender } = renderHook(({ value, delay }: any) => useDebounce(value, delay), {
       initialProps: { value: "initial", delay: 500 },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     });
 
     rerender({ value: "updated", delay: 500 });
@@ -34,6 +36,7 @@ describe("useDebounce", () => {
 
   it("should only take the last value on rapid changes", () => {
     const { result, rerender } = renderHook(({ value, delay }: any) => useDebounce(value, delay), {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       initialProps: { value: "a", delay: 300 },
     });
 
@@ -62,6 +65,7 @@ describe("useDebounce", () => {
 
   it("should cancel timer on cleanup", () => {
     const { result, rerender, unmount } = renderHook(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ({ value, delay }: any) => useDebounce(value, delay),
       { initialProps: { value: "start", delay: 500 } }
     );

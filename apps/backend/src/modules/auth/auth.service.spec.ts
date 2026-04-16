@@ -64,6 +64,7 @@ describe("AuthService", () => {
   let configService: ConfigService;
   let redisService: RedisService;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mockPrismaService: Record<string, any> = {
     user: {
       findUnique: jest.fn(),
@@ -83,6 +84,7 @@ describe("AuthService", () => {
       delete: jest.fn(),
       deleteMany: jest.fn(),
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     $transaction: jest.fn((fn: any) => fn(mockPrismaService)),
   };
 

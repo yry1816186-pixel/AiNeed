@@ -68,6 +68,7 @@ describe('ApiVersionMiddleware', () => {
 
       expect(next).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(400);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect((res as any).json).toHaveBeenCalledWith({
         errors: [
           {

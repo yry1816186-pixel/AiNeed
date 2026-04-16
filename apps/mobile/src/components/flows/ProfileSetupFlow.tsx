@@ -29,6 +29,7 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { MagneticButton, GlowText, FloatingElement, ParticleEffect } from "../../design-system/ui/FluidAnimations";
 import { Colors, Spacing, BorderRadius } from '../design-system/theme';
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -135,10 +136,10 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
 
     return (
       <View style={styles.stepContent}>
-        <ParticleEffect count={30} color="rgba(168, 85, 247, 0.3)" size={3} />
+        <ParticleEffect count={30} color="rgba(198, 123, 92, 0.3)" size={3} />
 
         <AnimatedView style={[styles.welcomeLogo, logoAnimatedStyle]}>
-          <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.welcomeLogoGradient}>
+          <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.welcomeLogoGradient}>
             <Text style={styles.welcomeLogoText}>AI</Text>
           </LinearGradient>
         </AnimatedView>
@@ -527,10 +528,10 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
 
     return (
       <View style={styles.stepContent}>
-        <ParticleEffect count={50} color="rgba(168, 85, 247, 0.4)" size={4} />
+        <ParticleEffect count={50} color="rgba(198, 123, 92, 0.4)" size={4} />
 
         <AnimatedView style={[styles.completeContainer, animatedStyle]}>
-          <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.completeIconGradient}>
+          <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.completeIconGradient}>
             <Text style={styles.completeIcon}>🎉</Text>
           </LinearGradient>
 

@@ -553,6 +553,7 @@ export class BehaviorTrackerService {
    * 基于行为更新推荐权重
    */
   private async updatePreferenceWeightsBatch(events: EnrichedEvent[]): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userEventsMap = new Map<string, any[]>();
 
     // 按用户分组

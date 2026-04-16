@@ -1,6 +1,7 @@
 import { Dimensions, Platform, StatusBar } from "react-native";
 import { DesignTokens, darkTokens } from "./tokens/design-tokens";
 import type { FlatColors } from "./FlatColors";
+import { DesignTokens } from "tokens/design-tokens";
 
 export { DesignTokens, darkTokens } from "./tokens/design-tokens";
 export type { DesignTokensType, DarkTokensType } from "./tokens/design-tokens";
@@ -180,15 +181,15 @@ export const Colors = {
   // Brand Terracotta (#C67B5C) must be used for all primary actions and brand elements.
   accent: {
     50: "#F5F3FF",
-    100: "#EDE9FE",
-    200: "#DDD6FE",
-    300: "#C4B5FD",
-    400: "#A78BFA",
-    500: "#8B5CF6",
-    600: "#7C3AED",
-    700: "#6D28D9",
-    800: "#5B21B6",
-    900: "#4C1D95",
+    100: DesignTokens.colors.backgrounds.secondary,
+    200: DesignTokens.colors.brand.terracottaLight,
+    300: DesignTokens.colors.brand.terracotta,
+    400: DesignTokens.colors.brand.terracotta,
+    500: DesignTokens.colors.brand.terracottaDark,
+    600: DesignTokens.colors.brand.terracottaDark,
+    700: DesignTokens.colors.brand.terracottaDark,
+    800: DesignTokens.colors.brand.slateDark,
+    900: DesignTokens.colors.neutral[800],
     950: "#2E1065",
   },
 
@@ -470,7 +471,7 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
     cartLight: "#FFF5F0",
-    purple: "#8B5CF6",
+    purple: DesignTokens.colors.brand.terracottaDark,
     amber: "#F59E0B",
     secondary: base.brand.sage,
   };

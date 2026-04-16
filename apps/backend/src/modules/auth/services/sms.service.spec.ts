@@ -46,6 +46,7 @@ describe("AliyunSmsService", () => {
 
   it("should fallback to dev mode when not configured", async () => {
     mockConfigService.get.mockReturnValue(undefined);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const devService = new AliyunSmsService({ get: () => undefined } as any);
     await expect(devService.sendCode("13800138000", "123456")).resolves.not.toThrow();
   });

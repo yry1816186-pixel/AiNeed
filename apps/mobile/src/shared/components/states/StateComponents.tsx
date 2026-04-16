@@ -42,7 +42,7 @@ const springConfig = {
   mass: 0.5,
 };
 
-const confettiColors = [DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark, "#F59E0B", "#10B981", "#EF4444", "#EC4899"]; // custom color
+const confettiColors = [DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark, "#F59E0B", "#10B981", "#EF4444", DesignTokens.colors.brand.camel]; // custom color
 
 export interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap | "custom";

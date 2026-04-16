@@ -32,6 +32,7 @@ describe("AiQuotaGuard", () => {
       }),
       getHandler: () => jest.fn(),
       getClass: () => jest.fn(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
   };
 

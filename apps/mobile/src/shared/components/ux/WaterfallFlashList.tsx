@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, RefreshControl, ViewStyle } from "react-native";
 import { FlashList } from "@shopify/flash-list";

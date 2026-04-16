@@ -285,6 +285,37 @@
 
 ---
 
+### Phase 9: 深色模式可用化
+
+**Goal:** 将深色模式从"纸上谈兵"变为真正可用，组件响应主题切换
+
+**Depends on:** Phase 2 (设计系统统一完成), Phase 5 (移动端重组完成)
+
+**Plans:**
+1. 基础设施修复 — 开启 dark_mode feature flag + 统一 FlatColors + createStyles 工具
+2. 核心页面迁移 — App.tsx + Home + Profile + TryOn
+3. 重要页面迁移 — Stylist + Wardrobe + Commerce + Auth
+4. 次要页面迁移 — Community + Customization + Notifications + 旧版 screens/
+5. 组件与导航迁移 — 子组件 + elevation 修复 + 最终审计
+
+**Requirements:** DSGN-01, DSGN-02, DSGN-05
+
+**UAT Criteria:**
+- [ ] dark_mode feature flag 默认开启
+- [ ] ThemeContext 消费 dark_mode 标志
+- [ ] 所有屏幕使用 useTheme() 动态颜色
+- [ ] StatusBar barStyle 响应主题切换
+- [ ] 硬编码 #FFFFFF 背景数量 < 5
+- [ ] FlatColors 接口唯一定义
+- [ ] Paper elevation 深色模式有层级差异
+- [ ] 浅色模式视觉无回归
+
+**Risk:** 🟠 中 — ~100 文件迁移，需逐文件验证浅色/深色模式
+
+**Pitfall Mitigation:** 渐进式迁移，每迁移一个页面验证浅色/深色模式都正常
+
+---
+
 ## Phase Dependency Graph
 
 ```
@@ -305,6 +336,8 @@ Phase 5 (移动端)    Phase 6 (AI 服务)
       Phase 7 (质量提升)
             ↓
       Phase 8 (错误处理与 API 对接)
+            ↓
+      Phase 9 (深色模式可用化)
 ```
 
 ## Estimated Scope
@@ -320,7 +353,8 @@ Phase 5 (移动端)    Phase 6 (AI 服务)
 | 6 | 6 | 4 | 低 |
 | 7 | 6 | 4 | 🟡 中 |
 | 8 | 7 | 2 | 🟡 中 |
-| **Total** | **71** | **38** | — |
+| 9 | 5 | 3 | 🟠 中 |
+| **Total** | **76** | **41** | — |
 
 ---
 *Roadmap created: 2026-04-16*

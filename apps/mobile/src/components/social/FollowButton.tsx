@@ -2,6 +2,7 @@
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { communityApi } from "../../services/api/community.api";
 import { theme } from '../design-system/theme';
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface FollowButtonProps {
   userId: string;
@@ -79,7 +80,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
 
 const styles = StyleSheet.create({
   followBtn: {
-    backgroundColor: "#6C5CE7",
+    backgroundColor: DesignTokens.colors.brand.terracotta,
     borderRadius: 18,
     paddingHorizontal: 24,
     paddingVertical: 8,

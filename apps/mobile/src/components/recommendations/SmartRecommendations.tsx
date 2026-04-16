@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 ﻿import React, { useEffect } from "react";
 import {
   View,
@@ -320,12 +321,12 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
     },
     seasonal: {
       icon: "sunny-outline",
-      color: "#EC4899", // custom color
+      color: DesignTokens.colors.brand.camel, // custom color
       label: "当季推荐",
     },
     personalized: {
       icon: "person-outline",
-      color: "#8B5CF6", // custom color
+      color: DesignTokens.colors.brand.terracottaDark, // custom color
       label: "为你定制",
     },
   };
@@ -513,8 +514,8 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
     },
     color_harmony: {
       icon: "color-palette",
-      color: "#EC4899", // custom color
-      bgColor: "rgba(236, 72, 153, 0.1)",
+      color: DesignTokens.colors.brand.camel, // custom color
+      bgColor: "rgba(181, 160, 140, 0.1)",
     },
     trending: {
       icon: "trending-up",
@@ -533,8 +534,8 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
     },
     brand: {
       icon: "ribbon",
-      color: "#8B5CF6", // custom color
-      bgColor: "rgba(139, 92, 246, 0.1)",
+      color: DesignTokens.colors.brand.terracottaDark, // custom color
+      bgColor: "rgba(168, 101, 72, 0.1)",
     },
   };
 
@@ -596,7 +597,7 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
   const typeConfig = {
     tip: { icon: "bulb", color: "#F59E0B", bgColor: "#FFFBEB" }, // custom color
     observation: { icon: "eye", color: "#3B82F6", bgColor: "#EFF6FF" }, // custom color
-    suggestion: { icon: "sparkles", color: "#8B5CF6", bgColor: "#F5F3FF" }, // custom color
+    suggestion: { icon: "sparkles", color: DesignTokens.colors.brand.terracottaDark, bgColor: "#F5F3FF" }, // custom color
     warning: { icon: "alert", color: "#EF4444", bgColor: "#FEF2F2" }, // custom color
   };
 

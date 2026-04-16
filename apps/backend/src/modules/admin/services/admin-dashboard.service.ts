@@ -80,6 +80,7 @@ export class AdminDashboardService {
       }),
     ]);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const safeAmount = (agg: any): number =>
       Number(agg?._sum?.totalAmount ?? 0);
 

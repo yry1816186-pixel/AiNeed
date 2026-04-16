@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Feather } from "@/src/polyfills/expo-vector-icons";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface EmptyStateProps {
   icon?: keyof typeof Feather.glyphMap;
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: "#a855f7",
+    backgroundColor: DesignTokens.colors.brand.terracotta,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,

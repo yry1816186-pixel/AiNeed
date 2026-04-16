@@ -12,6 +12,7 @@ describe("PrivacyService", () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let prisma: PrismaService;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mockPrisma: any = {};
 
   Object.assign(mockPrisma, {
@@ -76,6 +77,7 @@ describe("PrivacyService", () => {
       findMany: jest.fn(),
     },
     $transaction: jest.fn(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (callbacks: any[] | ((tx: typeof mockPrisma) => unknown)) => {
       if (Array.isArray(callbacks)) {
         return Promise.all(callbacks);

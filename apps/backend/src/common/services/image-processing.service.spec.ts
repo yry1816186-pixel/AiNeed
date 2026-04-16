@@ -5,6 +5,7 @@ import { IMAGE_SIZES } from '../utils/image-sizes';
 import { ImageProcessingService } from './image-processing.service';
 
 jest.mock('sharp', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const allChains: any[] = [];
 
   const createChain = () => {
@@ -20,6 +21,7 @@ jest.mock('sharp', () => {
     return chain;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sharp = jest.fn().mockImplementation(() => createChain()) as any;
   sharp.strategy = { attention: 'attention' };
   sharp._getAllChains = () => allChains;
@@ -66,6 +68,7 @@ describe('ImageProcessingService', () => {
 
       const sharpMock = jest.requireMock('sharp').default;
       const chains = sharpMock._getAllChains();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const resizeChain = chains.find((c: any) => c.resize.mock.calls.length > 0);
       expect(resizeChain.resize).toHaveBeenCalledWith(
         IMAGE_SIZES.thumbnail.width,
@@ -80,6 +83,7 @@ describe('ImageProcessingService', () => {
 
       const sharpMock = jest.requireMock('sharp').default;
       const chains = sharpMock._getAllChains();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const resizeChain = chains.find((c: any) => c.resize.mock.calls.length > 0);
       expect(resizeChain.resize).toHaveBeenCalledWith(
         IMAGE_SIZES.small.width,
@@ -94,6 +98,7 @@ describe('ImageProcessingService', () => {
 
       const sharpMock = jest.requireMock('sharp').default;
       const chains = sharpMock._getAllChains();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const resizeChain = chains.find((c: any) => c.resize.mock.calls.length > 0);
       expect(resizeChain).toBeUndefined();
     });
@@ -114,6 +119,7 @@ describe('ImageProcessingService', () => {
 
       const sharpMock = jest.requireMock('sharp').default;
       const chains = sharpMock._getAllChains();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const webpChain = chains.find((c: any) => c.webp.mock.calls.length > 0);
       expect(webpChain).toBeDefined();
     });
@@ -124,6 +130,7 @@ describe('ImageProcessingService', () => {
 
       const sharpMock = jest.requireMock('sharp').default;
       const chains = sharpMock._getAllChains();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const jpegChain = chains.find((c: any) => c.jpeg.mock.calls.length > 0);
       expect(jpegChain).toBeDefined();
     });
@@ -134,6 +141,7 @@ describe('ImageProcessingService', () => {
 
       const sharpMock = jest.requireMock('sharp').default;
       const chains = sharpMock._getAllChains();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const resizeChain = chains.find((c: any) => c.resize.mock.calls.length > 0);
       expect(resizeChain.resize).toHaveBeenCalledWith(500, 500, expect.objectContaining({ fit: 'inside' }));
     });

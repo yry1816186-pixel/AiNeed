@@ -58,6 +58,7 @@ describe("TokenBlacklistService", () => {
     });
 
     it("should not blacklist when jti is undefined", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await service.blacklistToken(undefined as any, 900);
 
       expect(mockRedisService.setex).not.toHaveBeenCalled();
@@ -92,6 +93,7 @@ describe("TokenBlacklistService", () => {
     });
 
     it("should return false when jti is undefined", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await service.isBlacklisted(undefined as any);
 
       expect(result).toBe(false);

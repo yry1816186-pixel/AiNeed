@@ -196,6 +196,7 @@ export class CustomizationController {
       title?: string;
       description: string;
       referenceImages?: string[];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       preferences?: Record<string, any>;
     },
   ) {
@@ -253,6 +254,7 @@ export class CustomizationController {
       title?: string;
       description?: string;
       referenceImages?: string[];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       preferences?: Record<string, any>;
     },
   ) {

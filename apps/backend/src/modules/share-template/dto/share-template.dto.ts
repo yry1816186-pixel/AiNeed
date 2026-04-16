@@ -25,6 +25,7 @@ export class CreateShareTemplateDto {
 
   @ApiProperty({ description: "布局配置", example: { width: 750, height: 1334, elements: [] } })
   @IsObject()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   layoutConfig!: Record<string, any>;
 
   @ApiPropertyOptional({ description: "是否启用", example: true })
@@ -52,6 +53,7 @@ export class UpdateShareTemplateDto {
   @ApiPropertyOptional({ description: "布局配置", example: { width: 750, height: 1334, elements: [] } })
   @IsOptional()
   @IsObject()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   layoutConfig?: Record<string, any>;
 
   @ApiPropertyOptional({ description: "是否启用", example: true })

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import {
   View,
@@ -652,7 +653,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 16,
-    backgroundColor: "#F3F1FF", // custom color
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary, // custom color
     alignItems: "center",
     justifyContent: "center",
   },

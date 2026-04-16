@@ -14,7 +14,9 @@ const ACCEPT_SIZE_MAP: Record<string, ImageSizeName> = {
 };
 
 @Injectable()
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class ImageResponseInterceptor<T> implements NestInterceptor<T, any> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>();
     const requestedSize = this.resolveRequestedSize(request);

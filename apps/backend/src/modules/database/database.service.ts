@@ -18,6 +18,7 @@ export class DatabaseService implements OnModuleDestroy {
   /**
    * Execute a parameterized query
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async query<T = any>(options: QueryOptions): Promise<QueryResult<T>> {
     const start = Date.now();
     try {
@@ -70,6 +71,7 @@ export class DatabaseService implements OnModuleDestroy {
   /**
    * Run EXPLAIN ANALYZE on a query for debugging
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async explainQuery(options: QueryOptions): Promise<any[]> {
     const explainQuery = `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) ${options.text}`;
     const result = await this.pool.query(explainQuery, options.values);

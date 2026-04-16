@@ -10,10 +10,12 @@ import { HttpExceptionFilter } from './http-exception.filter';
 function createMockHost(requestId?: string, headerRequestId?: string) {
   const json = jest.fn();
   const status = jest.fn().mockReturnValue({ json });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const response = { status, json } as any;
   const request = {
     requestId,
     headers: headerRequestId ? { 'x-request-id': headerRequestId } : {},
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 
   return {
@@ -48,6 +50,7 @@ describe('HttpExceptionFilter', () => {
       ]);
       const host = createMockHost(undefined, 'req-1');
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       expect(host.response.status).toHaveBeenCalledWith(HttpStatus.UNPROCESSABLE_ENTITY);
@@ -85,6 +88,7 @@ describe('HttpExceptionFilter', () => {
       );
       const host = createMockHost(undefined, 'req-2');
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       expect(host.response.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
@@ -111,6 +115,7 @@ describe('HttpExceptionFilter', () => {
       const exception = new NotFoundException('User', 'user-123');
       const host = createMockHost(undefined, 'req-3');
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       expect(host.response.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
@@ -133,6 +138,7 @@ describe('HttpExceptionFilter', () => {
       const exception = new ForbiddenException('delete_user', 'user:delete');
       const host = createMockHost(undefined, 'req-4');
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       expect(host.response.status).toHaveBeenCalledWith(HttpStatus.FORBIDDEN);
@@ -155,6 +161,7 @@ describe('HttpExceptionFilter', () => {
       const exception = new HttpException('Not found', HttpStatus.NOT_FOUND);
       const host = createMockHost();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       expect(host.response.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
@@ -175,6 +182,7 @@ describe('HttpExceptionFilter', () => {
       const exception = new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR);
       const host = createMockHost();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       expect(host.json).toHaveBeenCalledWith({
@@ -194,6 +202,7 @@ describe('HttpExceptionFilter', () => {
       const exception = new HttpException('Custom', 418);
       const host = createMockHost();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       expect(host.json).toHaveBeenCalledWith({
@@ -218,6 +227,7 @@ describe('HttpExceptionFilter', () => {
       );
       const host = createMockHost();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       const call = host.json.mock.calls[0][0];
@@ -235,6 +245,7 @@ describe('HttpExceptionFilter', () => {
       );
       const host = createMockHost();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       const call = host.json.mock.calls[0][0];
@@ -253,6 +264,7 @@ describe('HttpExceptionFilter', () => {
       const exception = new HttpException('Error', HttpStatus.BAD_REQUEST);
       const host = createMockHost();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       const call = host.json.mock.calls[0][0];
@@ -265,6 +277,7 @@ describe('HttpExceptionFilter', () => {
       const exception = new HttpException('Error', HttpStatus.BAD_REQUEST);
       const host = createMockHost();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       const call = host.json.mock.calls[0][0];
@@ -277,6 +290,7 @@ describe('HttpExceptionFilter', () => {
       const exception = new HttpException('Error', HttpStatus.BAD_REQUEST);
       const host = createMockHost('direct-request-id');
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       const call = host.json.mock.calls[0][0];
@@ -287,6 +301,7 @@ describe('HttpExceptionFilter', () => {
       const exception = new HttpException('Error', HttpStatus.BAD_REQUEST);
       const host = createMockHost(undefined, 'header-request-id');
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       const call = host.json.mock.calls[0][0];
@@ -297,6 +312,7 @@ describe('HttpExceptionFilter', () => {
       const exception = new HttpException('Error', HttpStatus.BAD_REQUEST);
       const host = createMockHost();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       const call = host.json.mock.calls[0][0];
@@ -309,6 +325,7 @@ describe('HttpExceptionFilter', () => {
       const exception = new HttpException('Simple message', HttpStatus.BAD_REQUEST);
       const host = createMockHost();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       const call = host.json.mock.calls[0][0];
@@ -322,6 +339,7 @@ describe('HttpExceptionFilter', () => {
       );
       const host = createMockHost();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       const call = host.json.mock.calls[0][0];
@@ -335,6 +353,7 @@ describe('HttpExceptionFilter', () => {
       );
       const host = createMockHost();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filter.catch(exception, host as any);
 
       const call = host.json.mock.calls[0][0];

@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DesignTokens, darkTokens } from "../../design-system/theme/tokens/design-tokens";
 import type { DesignTokensType, DarkTokensType } from "../../design-system/theme/tokens/design-tokens";
 import {
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
   seasonAccentColors,
   normalizeColorSeason,
   type ColorSeason,
@@ -103,7 +104,7 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
     cartLight: "#FFF5F0",
-    purple: "#8B5CF6",
+    purple: DesignTokens.colors.brand.terracottaDark,
     amber: "#F59E0B",
     secondary: base.brand.sage,
   };

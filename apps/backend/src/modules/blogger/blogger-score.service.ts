@@ -25,6 +25,7 @@ export class BloggerScoreService implements OnModuleInit {
   }
 
   private registerPrismaMiddleware() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.prisma.$use(async (params: Prisma.MiddlewareParams, next: (params: Prisma.MiddlewareParams) => Promise<any>) => {
       if (params.model === "User" && params.action === "update") {
         if (!this.isInternalUpdate) {

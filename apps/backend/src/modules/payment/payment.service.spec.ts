@@ -476,6 +476,7 @@ describe("PaymentService", () => {
     });
 
     it("应该处理不支持的支付提供商", async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const invalidDto = { ...createPaymentDto, provider: "invalid" as any };
 
       await expect(service.createPayment(userId, invalidDto)).rejects.toThrow(

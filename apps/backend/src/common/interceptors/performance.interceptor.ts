@@ -18,6 +18,7 @@ export class PerformanceInterceptor implements NestInterceptor {
 
   constructor(private readonly metricsService: MetricsService) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>();
     const response = context.switchToHttp().getResponse<Response>();

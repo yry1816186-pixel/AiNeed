@@ -58,10 +58,12 @@ export class UsersService {
     private piiEncryptionService: PIIEncryptionService,
   ) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private encryptPii(data: Record<string, any>): Record<string, any> {
     return this.piiEncryptionService.encryptPII("User", data);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private decryptPii(data: Record<string, any>): UserWithDecrypted {
     return this.piiEncryptionService.decryptPII("User", data) as UserWithDecrypted;
   }

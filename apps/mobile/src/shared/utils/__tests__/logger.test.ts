@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 describe("logger", () => {
   let consoleLogSpy: jest.SpyInstance;
   let consoleWarnSpy: jest.SpyInstance;
@@ -27,6 +28,7 @@ describe("logger", () => {
     beforeEach(() => {
       (global as any).__DEV__ = true;
       jest.resetModules();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       logger = require("../logger").logger;
     });
 
@@ -66,11 +68,13 @@ describe("logger", () => {
 
     beforeEach(() => {
       (global as any).__DEV__ = false;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       jest.resetModules();
       logger = require("../logger").logger;
     });
 
     afterEach(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (global as any).__DEV__ = true;
     });
 

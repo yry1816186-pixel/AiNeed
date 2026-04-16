@@ -19,6 +19,7 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { ParticleEffect, FloatingElement, GlowText, MagneticButton } from "../../design-system/ui/FluidAnimations";
 import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -90,16 +91,16 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   return (
     <View style={styles.splashContainer}>
       <LinearGradient
-        colors={["#0f0a1a", "#1e1b4b", "#312e81", "#4c1d95"]}
+        colors={["#0f0a1a", "#1e1b4b", "#312e81", DesignTokens.colors.neutral[800]]}
         locations={[0, 0.3, 0.7, 1]}
         style={styles.splashGradient}
       >
         <AnimatedView style={[styles.particleContainer, { opacity: particleOpacity }]}>
-          <ParticleEffect count={40} color="rgba(168, 85, 247, 0.3)" size={3} />
+          <ParticleEffect count={40} color="rgba(198, 123, 92, 0.3)" size={3} />
         </AnimatedView>
 
         <AnimatedView style={[styles.splashLogoContainer, logoAnimatedStyle, glowAnimatedStyle]}>
-          <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.splashLogoGradient}>
+          <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.splashLogoGradient}>
             <Text style={styles.splashLogoText}>AI</Text>
           </LinearGradient>
         </AnimatedView>
@@ -130,7 +131,7 @@ const ONBOARDING_DATA = [
     title: "发现你的风格",
     subtitle: "AI分析你的穿搭偏好，找到最适合你的时尚风格",
     icon: "✨",
-    gradient: ["#a855f7", "#ec4899"],
+    gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel],
   },
   {
     id: "body",
@@ -352,7 +353,7 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
     return {
       transform: [{ scale: frameScale.value }],
       opacity: frameOpacity.value,
-      borderColor: borderColorValue > 0.5 ? "rgba(168, 85, 247, 0.8)" : "rgba(168, 85, 247, 0.3)",
+      borderColor: borderColorValue > 0.5 ? "rgba(198, 123, 92, 0.8)" : "rgba(198, 123, 92, 0.3)",
     };
   });
 
@@ -417,7 +418,7 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
             onPress={onCapture}
             style={styles.captureButtonInner}
           >
-            <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.captureButtonGradient}>
+            <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.captureButtonGradient}>
               <Text style={styles.captureIcon}>📷</Text>
             </LinearGradient>
           </Pressable>
@@ -449,7 +450,7 @@ const ANALYSIS_CONFIG = {
     title: "风格分析中",
     steps: ["识别服装元素", "分析穿搭风格", "匹配流行趋势", "生成风格报告"],
     icon: "✨",
-    gradient: ["#a855f7", "#ec4899"],
+    gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel],
   },
   tryon: {
     title: "虚拟试穿中",
@@ -904,7 +905,7 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH - 80,
     height: SCREEN_WIDTH * 1.4,
     borderWidth: 2,
-    borderColor: "rgba(168, 85, 247, 0.5)",
+    borderColor: "rgba(198, 123, 92, 0.5)",
     borderRadius: BorderRadius["3xl"],
     alignItems: "center",
     justifyContent: "center",
@@ -949,7 +950,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: BorderRadius["3xl"],
     borderWidth: 2,
-    borderColor: "rgba(168, 85, 247, 0.3)",
+    borderColor: "rgba(198, 123, 92, 0.3)",
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",

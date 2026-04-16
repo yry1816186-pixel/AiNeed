@@ -11,6 +11,7 @@ interface EvaluationJobData {
   userId: string | null;
   result: boolean;
   variant: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   attributes: Record<string, any> | null;
   evaluatedAt: string;
 }

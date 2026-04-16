@@ -10,6 +10,7 @@ import {
   type SeasonAccentColors,
 } from "../design-system/theme/tokens/season-colors";
 import type { FlatColors } from "../design-system/theme/FlatColors";
+import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
@@ -60,7 +61,7 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
     cartLight: "#FFF5F0",
-    purple: "#8B5CF6",
+    purple: DesignTokens.colors.brand.terracottaDark,
     amber: "#F59E0B",
     secondary: base.brand.sage,
   };

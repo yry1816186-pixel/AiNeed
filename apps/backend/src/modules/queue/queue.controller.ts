@@ -90,6 +90,7 @@ class CreateRecommendationDto {
   userInput!: string;
 
   @IsOptional()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userProfile?: Record<string, any>;
 
   @IsOptional()

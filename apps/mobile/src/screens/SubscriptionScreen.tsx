@@ -93,7 +93,7 @@ const DEFAULT_PLANS: MembershipPlan[] = [
 const TIER_GRADIENT: Record<PlanTier, [string, string]> = {
   basic: [Colors.neutral[100], Colors.neutral[50]],
   premium: [theme.colors.primary, theme.colors.primaryLight],
-  vip: ["#8B5CF6", "#A78BFA"], // custom color
+  vip: [DesignTokens.colors.brand.terracottaDark, DesignTokens.colors.brand.terracotta], // custom color
 };
 
 const TIER_ICON: Record<PlanTier, string> = {

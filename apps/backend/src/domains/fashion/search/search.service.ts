@@ -9,7 +9,7 @@ import axios from "axios";
 
 import { allowUnverifiedAiFallbacks } from "../../../common/config/runtime-flags";
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { QdrantService } from "../../../modules/recommendations/services/qdrant.service";
+import { QdrantService } from "../../platform/recommendations/services/qdrant.service";
 
 import {
   type ClothingItemWhereInput,

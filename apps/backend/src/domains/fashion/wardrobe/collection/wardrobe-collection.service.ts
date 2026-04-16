@@ -398,6 +398,7 @@ export class WardrobeCollectionService {
     ]);
 
     // 构建查找映射
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const detailMap = new Map<string, any>();
     for (const post of posts) {detailMap.set(post.id, post);}
     for (const outfit of outfits) {detailMap.set(outfit.id, outfit);}

@@ -108,6 +108,7 @@ describe('ChatGateway', () => {
       to: jest.fn().mockReturnValue({
         emit: jest.fn(),
       }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
   });
 

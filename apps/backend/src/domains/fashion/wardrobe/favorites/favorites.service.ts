@@ -57,6 +57,7 @@ export class FavoritesService {
       pageSize?: number;
       limit?: number;
     } = {},
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<PaginatedResponse<any>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(params);
 

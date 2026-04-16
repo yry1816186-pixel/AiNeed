@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface BloggerBadgeProps {
   level: "blogger" | "big_v";
@@ -31,7 +32,7 @@ const s = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: "#6C5CE7",
+    backgroundColor: DesignTokens.colors.brand.terracotta,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,

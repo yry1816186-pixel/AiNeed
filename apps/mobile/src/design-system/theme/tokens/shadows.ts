@@ -1,3 +1,4 @@
+import { DesignTokens } from "design-tokens";
 import { Platform } from "react-native";
 
 export const ShadowPresets = {
@@ -84,7 +85,7 @@ export const GlowPresets = {
   }),
   secondary: Platform.select({
     ios: {
-      shadowColor: "#EC4899",
+      shadowColor: DesignTokens.colors.brand.camel,
       shadowOffset: { width: 0, height: 0 },
       shadowOpacity: 0.4,
       shadowRadius: 20,

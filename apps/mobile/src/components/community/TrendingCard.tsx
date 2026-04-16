@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { communityApi } from "../../services/api/community.api";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface TrendingTag {
   name: string;
@@ -62,7 +63,7 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="small" color="#6C5CE7" />
+        <ActivityIndicator size="small" color=DesignTokens.colors.brand.terracotta />
       </View>
     );
   }
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
   },
   tagText: {
     fontSize: 13,
-    color: "#6C5CE7",
+    color: DesignTokens.colors.brand.terracotta,
     fontWeight: "500",
   },
   loadingContainer: {

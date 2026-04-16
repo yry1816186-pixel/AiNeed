@@ -348,6 +348,7 @@ export function validateEnvironment(env: EnvConfig = process.env): ValidationRes
  * NestJS factory function for environment validation
  * Use this in app.module.ts to validate on startup
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function envValidationFactory(config: Record<string, any>) {
   const result = validateEnvironment(config as EnvConfig);
 

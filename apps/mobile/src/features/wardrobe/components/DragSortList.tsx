@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../../../design-system/theme';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 interface DragSortItem {
   id: string;
@@ -228,7 +229,7 @@ export const CollectionDragList: React.FC<CollectionDragListProps> = ({
           <Ionicons name="reorder-three-outline" size={20} color={theme.colors.textTertiary} />
         </View>
         <View style={collectionStyles.iconContainer}>
-          <Ionicons name={item.icon as "folder"} size={22} color="#6C5CE7" />
+          <Ionicons name={item.icon as "folder"} size={22} color=DesignTokens.colors.brand.terracotta />
         </View>
         <View style={collectionStyles.info}>
           <Text style={collectionStyles.name}>{item.name}</Text>

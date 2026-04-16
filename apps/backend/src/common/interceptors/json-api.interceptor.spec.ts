@@ -26,6 +26,7 @@ function createMockExecutionContext(
   } as ExecutionContext;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function createMockCallHandler(data: any) {
   return { handle: () => of(data) } as CallHandler;
 }
@@ -44,6 +45,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ id: '1', name: 'shirt' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.type).toBe('clothing');
         done();
@@ -54,6 +56,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('AiStylistController');
       const handler = createMockCallHandler({ id: '1', name: 'session' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.type).toBe('aistylist');
         done();
@@ -64,13 +67,16 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ id: '1', name: 'shirt' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       jest.spyOn(reflector, 'getAllAndOverride').mockImplementation(((key: any) => {
         if (key === JSON_API_TYPE) {return 'products';}
         if (key === SKIP_JSON_API) {return false;}
         if (key === SKIP_RESPONSE_TRANSFORM) {return false;}
         return undefined;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       }) as any);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.type).toBe('products');
         done();
@@ -81,6 +87,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ProductRouter');
       const handler = createMockCallHandler({ id: '1', name: 'item' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.type).toBe('productrouter');
         done();
@@ -91,6 +98,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('OrderService');
       const handler = createMockCallHandler({ id: '1', total: 100 });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.type).toBe('order');
         done();
@@ -104,11 +112,14 @@ describe('JsonApiInterceptor', () => {
       const originalData = { id: '1', name: 'shirt' };
       const handler = createMockCallHandler(originalData);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       jest.spyOn(reflector, 'getAllAndOverride').mockImplementation(((key: any) => {
         if (key === SKIP_JSON_API) {return true;}
         return undefined;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       }) as any);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result).toBe(originalData);
         done();
@@ -120,11 +131,14 @@ describe('JsonApiInterceptor', () => {
       const originalData = { id: '1', name: 'shirt' };
       const handler = createMockCallHandler(originalData);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       jest.spyOn(reflector, 'getAllAndOverride').mockImplementation(((key: any) => {
         if (key === SKIP_RESPONSE_TRANSFORM) {return true;}
         return undefined;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       }) as any);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result).toBe(originalData);
         done();
@@ -137,6 +151,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ id: '42', name: 'jacket', color: 'blue' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.type).toBe('clothing');
         expect(result.data.id).toBe('42');
@@ -152,6 +167,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ _id: 'abc123', name: 'shirt' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.id).toBe('abc123');
         expect(result.data.attributes).toEqual({ name: 'shirt' });
@@ -163,6 +179,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ uuid: '550e8400-e29b-41d4-a716-446655440000', name: 'pants' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.id).toBe('550e8400-e29b-41d4-a716-446655440000');
         expect(result.data.attributes).toEqual({ name: 'pants' });
@@ -174,6 +191,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ name: 'scarf', color: 'red' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.id).toBe('');
         expect(result.data.attributes).toEqual({ name: 'scarf', color: 'red' });
@@ -185,6 +203,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ id: '1', _id: '2', uuid: '3', name: 'hat' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.id).toBe('1');
         expect(result.data.attributes).not.toHaveProperty('id');
@@ -203,6 +222,7 @@ describe('JsonApiInterceptor', () => {
         category: { id: '10', name: 'dresses' },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships.category).toBeDefined();
         expect(result.data.relationships.category.data).toEqual({ type: 'category', id: '10' });
@@ -223,6 +243,7 @@ describe('JsonApiInterceptor', () => {
         ],
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships.tags).toBeDefined();
         expect(result.data.relationships.tags.data).toEqual([
@@ -242,6 +263,7 @@ describe('JsonApiInterceptor', () => {
         category: { id: '10', name: 'dresses' },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.included).toBeDefined();
         expect(result.included).toHaveLength(1);
@@ -261,7 +283,9 @@ describe('JsonApiInterceptor', () => {
         subcategory: { id: '10', type: 'category', name: 'dresses' },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const categoryIncluded = result.included.filter((r: any) => r.type === 'category' && r.id === '10');
         expect(categoryIncluded).toHaveLength(1);
         done();
@@ -276,6 +300,7 @@ describe('JsonApiInterceptor', () => {
         owner: { id: 'u1', type: 'user', name: 'Alice' },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships.owner.data.type).toBe('user');
         expect(result.included[0].type).toBe('user');
@@ -287,6 +312,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ id: '1', type: 'premium-item', name: 'luxury' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.type).toBe('premium-item');
         done();
@@ -297,6 +323,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ id: '1', name: 'simple' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships).toBeUndefined();
         done();
@@ -307,6 +334,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ id: '1', name: 'simple' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.included).toBeUndefined();
         done();
@@ -322,6 +350,7 @@ describe('JsonApiInterceptor', () => {
         { id: '2', name: 'pants' },
       ]);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(Array.isArray(result.data)).toBe(true);
         expect(result.data).toHaveLength(2);
@@ -338,6 +367,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler([]);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data).toEqual([]);
         expect(result.meta.total).toBe(0);
@@ -354,6 +384,7 @@ describe('JsonApiInterceptor', () => {
         42,
       ]);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data).toHaveLength(1);
         expect(result.data[0].id).toBe('1');
@@ -369,6 +400,7 @@ describe('JsonApiInterceptor', () => {
         { id: '2', name: 'pants', category: { id: 'c2', name: 'bottoms' } },
       ]);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.included).toHaveLength(2);
         expect(result.included[0].type).toBe('category');
@@ -389,6 +421,7 @@ describe('JsonApiInterceptor', () => {
         meta: { nextCursor: 'cursor123', hasMore: true, total: 100 },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data).toHaveLength(2);
         expect(result.meta.total).toBe(100);
@@ -405,6 +438,7 @@ describe('JsonApiInterceptor', () => {
         meta: { nextCursor: 'abc', hasMore: true, total: 50 },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.links.next).toBe('/api/v1/clothing?cursor=abc');
         done();
@@ -418,6 +452,7 @@ describe('JsonApiInterceptor', () => {
         meta: { nextCursor: 'abc', hasMore: true, total: 50 },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.links.next).toBe('/api/v1/clothing?limit=10&cursor=abc');
         done();
@@ -431,6 +466,7 @@ describe('JsonApiInterceptor', () => {
         meta: { hasMore: false, total: 1 },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.links.next).toBeUndefined();
         done();
@@ -444,6 +480,7 @@ describe('JsonApiInterceptor', () => {
         meta: { hasMore: false },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.meta.total).toBe(2);
         done();
@@ -459,6 +496,7 @@ describe('JsonApiInterceptor', () => {
         meta: { total: 1 },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.included).toHaveLength(1);
         expect(result.included[0].type).toBe('category');
@@ -472,6 +510,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler(null);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data).toBeNull();
         expect(result.meta).toBeDefined();
@@ -484,6 +523,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler(undefined);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data).toBeNull();
         expect(result.meta).toBeDefined();
@@ -497,6 +537,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler('hello');
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data).toBeNull();
         expect(result.meta).toBeDefined();
@@ -508,6 +549,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler(42);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data).toBeNull();
         expect(result.meta).toBeDefined();
@@ -519,6 +561,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler(true);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data).toBeNull();
         expect(result.meta).toBeDefined();
@@ -537,6 +580,7 @@ describe('JsonApiInterceptor', () => {
       );
       const handler = createMockCallHandler({ id: '1', name: 'shirt' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.meta.requestId).toBe('req-123');
         done();
@@ -547,6 +591,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ id: '1', name: 'shirt' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.meta.timestamp).toBeDefined();
         expect(typeof result.meta.timestamp).toBe('string');
@@ -563,6 +608,7 @@ describe('JsonApiInterceptor', () => {
       );
       const handler = createMockCallHandler({ id: '1', name: 'shirt' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.links.self).toBe('/api/v1/clothing?page=1');
         done();
@@ -578,6 +624,7 @@ describe('JsonApiInterceptor', () => {
       );
       const handler = createMockCallHandler({ id: '1', name: 'shirt' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.meta.requestId).toBeUndefined();
         done();
@@ -594,6 +641,7 @@ describe('JsonApiInterceptor', () => {
         categories: [{ id: 'c1', name: 'tops' }],
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships.categories.data[0].type).toBe('category');
         expect(result.included[0].type).toBe('category');
@@ -609,6 +657,7 @@ describe('JsonApiInterceptor', () => {
         cartItems: [{ id: 'ci1', quantity: 2 }],
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships.cartItems.data[0].type).toBe('cart-item');
         done();
@@ -623,6 +672,7 @@ describe('JsonApiInterceptor', () => {
         reviews: [{ id: 'r1', text: 'good' }],
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships.reviews.data[0].type).toBe('review');
         done();
@@ -637,6 +687,7 @@ describe('JsonApiInterceptor', () => {
         brandDetail: { id: 'b1', label: 'Nike' },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships.brandDetail.data.type).toBe('brand-detail');
         done();
@@ -653,8 +704,10 @@ describe('JsonApiInterceptor', () => {
         category: { id: 'c1', name: 'tops', parent: { id: 'p1', name: 'all' } },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.included).toHaveLength(2);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const parentIncluded = result.included.find((r: any) => r.id === 'p1');
         expect(parentIncluded).toBeDefined();
         expect(parentIncluded.type).toBe('parent');
@@ -670,6 +723,7 @@ describe('JsonApiInterceptor', () => {
         owner: { _id: 'u1', name: 'Alice' },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships.owner.data.id).toBe('u1');
         done();
@@ -684,6 +738,7 @@ describe('JsonApiInterceptor', () => {
         owner: { uuid: 'uuid-123', name: 'Bob' },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships.owner.data.id).toBe('uuid-123');
         done();
@@ -698,6 +753,7 @@ describe('JsonApiInterceptor', () => {
         metadata: { key: 'value', count: 5 },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships).toBeUndefined();
         expect(result.data.attributes.metadata).toEqual({ key: 'value', count: 5 });
@@ -713,6 +769,7 @@ describe('JsonApiInterceptor', () => {
         tags: [],
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships).toBeUndefined();
         expect(result.data.attributes.tags).toEqual([]);
@@ -728,6 +785,7 @@ describe('JsonApiInterceptor', () => {
         sizes: ['S', 'M', 'L'],
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships).toBeUndefined();
         expect(result.data.attributes.sizes).toEqual(['S', 'M', 'L']);
@@ -744,6 +802,7 @@ describe('JsonApiInterceptor', () => {
         { id: '2', name: 'blouse', category: { id: 'c1', name: 'tops' } },
       ]);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.included).toHaveLength(1);
         expect(result.included[0].id).toBe('c1');
@@ -769,6 +828,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ id: 'from-id', _id: 'from-_id', uuid: 'from-uuid', name: 'test' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.id).toBe('from-id');
         done();
@@ -779,6 +839,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ _id: 'from-_id', uuid: 'from-uuid', name: 'test' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.id).toBe('from-_id');
         done();
@@ -789,6 +850,7 @@ describe('JsonApiInterceptor', () => {
       const context = createMockExecutionContext('ClothingController');
       const handler = createMockCallHandler({ id: 42, name: 'test' });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.id).toBe('42');
         done();
@@ -805,6 +867,7 @@ describe('JsonApiInterceptor', () => {
         owner: { id: null, name: 'unknown' },
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       interceptor.intercept(context, handler).subscribe((result: any) => {
         expect(result.data.relationships).toBeUndefined();
         expect(result.data.attributes.owner).toEqual({ id: null, name: 'unknown' });

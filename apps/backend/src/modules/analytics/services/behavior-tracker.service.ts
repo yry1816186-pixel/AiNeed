@@ -435,6 +435,7 @@ export class BehaviorTrackerService {
     let purchaseCount = 0;
 
     for (const event of events) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const meta = (event.metadata as any) || {};
       if (meta.implicitFeedback) {
         totalDwellTime += meta.implicitFeedback.dwellTime || 0;
@@ -553,6 +554,7 @@ export class BehaviorTrackerService {
    * 基于行为更新推荐权重
    */
   private async updatePreferenceWeightsBatch(events: EnrichedEvent[]): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userEventsMap = new Map<string, any[]>();
 
     // 按用户分组
@@ -640,6 +642,7 @@ export class BehaviorTrackerService {
           ),
           this.TIME_DECAY_CONFIG.maxWeight,
         );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         interactionCount = (existing as any).interactionCount || 1;
         interactionCount += 1;
 
