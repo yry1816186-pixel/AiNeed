@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Module, forwardRef } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 
 import { EncryptionModule } from "../../../common/encryption/encryption.module";
 import { PrismaModule } from "../../../common/prisma/prisma.module";
@@ -12,7 +12,7 @@ import { BrandsService } from "./brands.service";
   imports: [
     PrismaModule,
     EncryptionModule,
-    forwardRef(() => BrandPortalModule),
+    BrandPortalModule,
   ],
   controllers: [BrandsController],
   providers: [BrandsService],

@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import customizationApi from "../services/api/customization.api";
 import type { RootStackParamList } from "../types/navigation";
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
@@ -61,6 +61,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
   const route = useRoute<OrderDetailRoute>();
   const { requestId } = route.params;
+  const { colors } = useTheme();
 
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -121,8 +122,8 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
 
   const currentStepIndex = order ? STATUS_STEPS.findIndex((s) => s.key === order.status) : -1;
 
-  const renderStatusTimeline = () => (
-    const { colors } = useTheme();
+  const renderStatusTimeline = () => {
+    return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>订单状态</Text>
       <View style={styles.timeline}>
@@ -167,6 +168,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
       </View>
     </View>
   );
+  };
 
   if (isLoading) {
     return (

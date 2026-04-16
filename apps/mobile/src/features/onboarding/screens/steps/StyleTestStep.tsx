@@ -5,7 +5,7 @@ import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, { SlideInRight } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius, Shadows } from '../../../../design-system/theme';
 import { useTheme, createStyles } from 'undefined';
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

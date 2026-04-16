@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Module, forwardRef } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 
 import { PrismaModule } from "../../../../common/prisma/prisma.module";
-import { CommunityModule } from "../../../modules/community/community.module";
 
 import { AdminAuditController } from "./admin-audit.controller";
-import { AdminCommunityController } from "./admin-community.controller";
 import { AdminConfigController } from "./admin-config.controller";
 import { AdminContentReviewController } from "./admin-content-review.controller";
 import { AdminDashboardController } from "./admin-dashboard.controller";
@@ -16,9 +14,8 @@ import { AdminDashboardService } from "./services/admin-dashboard.service";
 import { ContentReviewService } from "./services/content-review.service";
 
 @Module({
-  imports: [PrismaModule, forwardRef(() => CommunityModule)],
+  imports: [PrismaModule],
   controllers: [
-    AdminCommunityController,
     AdminUsersController,
     AdminDashboardController,
     AdminConfigController,

@@ -68,6 +68,7 @@ const INITIAL_BODY: BodyFormState = {
 export const ProfileEditScreen: React.FC = () => {
   const navigation = useNavigation<ProfileEditNavigationProp>();
   const { profile, updateProfile, isLoading } = useProfileStore();
+  const { colors } = useTheme();
 
   const [gender, setGender] = useState<string | null>(profile?.gender ?? null);
   const [ageRange, setAgeRange] = useState<string | null>(null);
@@ -155,7 +156,6 @@ export const ProfileEditScreen: React.FC = () => {
   }, [nickname, gender, body, selectedStyles, updateProfile, navigation]);
 
   const renderBodyField = (field: keyof BodyFormState, label: string, unit: string) => (
-    const { colors } = useTheme();
     <View style={styles.inputField} key={field}>
       <Text style={styles.inputLabel}>{label}</Text>
       <View style={styles.inputContainer}>

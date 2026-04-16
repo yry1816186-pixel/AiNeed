@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from "react-native";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, {

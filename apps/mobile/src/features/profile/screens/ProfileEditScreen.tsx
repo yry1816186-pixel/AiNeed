@@ -173,6 +173,7 @@ export const ProfileEditScreen: React.FC = () => {
       </View>
     </View>
   );
+  };
 
   return (
     <ScreenLayout
