@@ -3,7 +3,7 @@ import { BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { PhotoType } from "@prisma/client";
 
-import { AiQuotaService } from "../../../common/security/rate-limit/ai-quota.service";
+import { AiQuotaService } from "../../../modules/security/rate-limit/ai-quota.service";
 
 import { AiStylistController } from "./ai-stylist.controller";
 import { AiStylistService } from "./ai-stylist.service";

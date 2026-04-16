@@ -3,12 +3,12 @@ import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { PrismaUpdateData } from "../../../../common/types/common.types";
-import { BehaviorTrackerService } from "../../../../platform/analytics/services/behavior-tracker.service";
+import { BehaviorTrackerService } from '../../../platform/analytics/services/behavior-tracker.service';
 import {
   BodyImageAnalysisService,
   BodyType,
-} from "../../../../../../../ai-core/photos/services/body-image-analysis.service";
-import { SASRecService } from "../../../../../../../platform/recommendations/services/sasrec.service";
+} from '../../../ai-core/photos/services/body-image-analysis.service';
+import { SASRecService } from '../../../platform/recommendations/services/sasrec.service';
 
 export interface UserBodyProfile {
   userId: string;

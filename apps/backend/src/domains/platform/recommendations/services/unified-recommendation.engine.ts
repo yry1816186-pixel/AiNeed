@@ -7,7 +7,7 @@ import {
 } from "@prisma/client";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { AIIntegrationService } from "../../../../../../../ai-core/ai/services/ai-integration.service";
+import { AIIntegrationService } from '../../../ai-core/ai/services/ai-integration.service';
 import {
   ClothingItemWithBrand,
   ClothingItemAttributes,

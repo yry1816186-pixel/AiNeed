@@ -2,7 +2,7 @@ import { NotFoundException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { BehaviorTrackerService } from "../../../../modules/analytics/services/behavior-tracker.service";
+import { BehaviorTrackerService } from "../../../../domains/platform/analytics/services/behavior-tracker.service";
 
 import { StyleProfilesService } from "./style-profiles.service";
 

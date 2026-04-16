@@ -9,7 +9,7 @@ import { Reflector } from "@nestjs/core";
 import { Request } from "express";
 import { Observable, of, tap } from "rxjs";
 
-import { CacheService } from "../../modules/cache/cache.service";
+import { CacheService } from "../cache/cache.service";
 import {
   CACHE_KEY_METADATA,
   CACHE_TTL_METADATA,

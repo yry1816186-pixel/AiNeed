@@ -15,8 +15,8 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ClothingCategory } from "@prisma/client";
 
-import { CacheKeyBuilder, CACHE_TTL } from "../../../../../modules/cache/cache.constants";
-import { CacheService } from "../../../../../modules/cache/cache.service";
+import { CacheKeyBuilder, CACHE_TTL } from "../../../../modules/cache/cache.constants";
+import { CacheService } from "../../../../modules/cache/cache.service";
 import { AdvancedRecommendationService } from "../services/advanced-recommendation.service";
 import { ColdStartService } from "../services/cold-start.service";
 import { CollaborativeFilteringService } from "../services/collaborative-filtering.service";

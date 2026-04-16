@@ -2,7 +2,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 
 import { RedisService } from "../../../../common/redis/redis.service";
-import { WeatherService, type WeatherData } from "../../../../../../../fashion/weather/weather.service";
+import { WeatherService, type WeatherData } from '../../../fashion/weather/weather.service';
 
 /**
  * 天气智能集成服务 — AIS-06

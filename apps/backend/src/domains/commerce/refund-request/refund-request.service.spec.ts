@@ -2,6 +2,13 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 
+jest.mock("@prisma/client", () => ({
+  ...jest.requireActual("@prisma/client"),
+  RefundType: { REFUND_ONLY: "REFUND_ONLY", RETURN_REFUND: "RETURN_REFUND" },
+  RefundRequestStatus: { PENDING: "PENDING", APPROVED: "APPROVED", PROCESSING: "PROCESSING", COMPLETED: "COMPLETED", REJECTED: "REJECTED", CANCELLED: "CANCELLED" },
+  OrderStatus: { pending: "pending", paid: "paid", shipped: "shipped", delivered: "delivered", cancelled: "cancelled", refunded: "refunded" },
+}));
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { PaymentService } from "../payment/payment.service";
 

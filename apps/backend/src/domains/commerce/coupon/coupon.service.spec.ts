@@ -1,6 +1,12 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 
+jest.mock("@prisma/client", () => ({
+  ...jest.requireActual("@prisma/client"),
+  CouponType: { PERCENTAGE: "PERCENTAGE", FIXED: "FIXED", SHIPPING: "SHIPPING" },
+  UserCouponStatus: { AVAILABLE: "AVAILABLE", USED: "USED", EXPIRED: "EXPIRED" },
+}));
+
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import { CouponService } from "./coupon.service";
