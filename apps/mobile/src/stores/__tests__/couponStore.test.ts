@@ -1,4 +1,4 @@
-import { useCouponStore } from "../couponStore";
+import { useCouponStore } from "../../features/commerce/stores/couponStore";
 import { couponApi, type UserCoupon, type Coupon } from "../../services/api/commerce.api";
 
 jest.mock("../../services/api/commerce.api", () => ({

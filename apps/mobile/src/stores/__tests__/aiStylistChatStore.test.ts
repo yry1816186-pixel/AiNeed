@@ -1,4 +1,4 @@
-import { useAiStylistChatStore, ChatMessage } from "../aiStylistChatStore";
+import { useAiStylistChatStore, ChatMessage } from "../../features/stylist/stores/aiStylistChatStore";
 
 // Mocks
 jest.mock("@react-native-async-storage/async-storage", () => ({

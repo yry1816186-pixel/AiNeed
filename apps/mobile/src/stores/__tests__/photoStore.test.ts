@@ -1,4 +1,4 @@
-import { usePhotoStore } from "../photoStore";
+import { usePhotoStore } from "../../features/tryon/stores/photoStore";
 import { photosApi } from "../../services/api/photos.api";
 import apiClient from "../../services/api/client";
 import type { UserPhoto } from "../../services/api/photos.api";

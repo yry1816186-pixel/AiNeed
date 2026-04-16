@@ -1,7 +1,7 @@
-import { useRecommendationFeedStore } from "../recommendationFeedStore";
+import { useRecommendationFeedStore } from "../../features/home/stores/recommendationFeedStore";
 import { recommendationFeedApi } from "../../services/api/recommendation-feed.api";
 import type { FeedItem, FeedResult } from "../../services/api/recommendation-feed.api";
-import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme";
 
 jest.mock("../../services/api/recommendation-feed.api", () => ({
   recommendationFeedApi: {

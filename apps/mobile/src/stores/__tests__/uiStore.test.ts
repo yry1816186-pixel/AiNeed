@@ -1,4 +1,4 @@
-import { useUIStore } from "../uiStore";
+import { useUIStore } from "../../shared/stores/uiStore";
 
 // Mocks
 jest.mock("@react-native-async-storage/async-storage", () => ({

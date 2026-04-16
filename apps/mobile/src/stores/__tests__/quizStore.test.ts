@@ -1,4 +1,4 @@
-import { useQuizStore } from "../quizStore";
+import { useQuizStore } from "../../features/style-quiz/stores/quizStore";
 import apiClient from "../../services/api/client";
 
 jest.mock("../../services/api/client", () => ({

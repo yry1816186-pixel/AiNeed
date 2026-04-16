@@ -1,4 +1,4 @@
-import { useOrderStore } from "../orderStore";
+import { useOrderStore } from "../../features/commerce/stores/orderStore";
 import { orderEnhancementApi } from "../../services/api/commerce.api";
 import type { Order } from "../../types";
 

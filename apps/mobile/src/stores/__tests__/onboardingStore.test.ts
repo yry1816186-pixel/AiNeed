@@ -1,4 +1,4 @@
-import { useOnboardingStore, OnboardingStep } from "../onboardingStore";
+import { useOnboardingStore, OnboardingStep } from "../../features/onboarding/stores/onboardingStore";
 
 // Mocks
 jest.mock("@react-native-async-storage/async-storage", () => ({
