@@ -14,7 +14,7 @@ export class PrismaEncryptionMiddleware implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.prisma.$use(async (params, next) => {
+    this.prisma.$use(async (params: Record<string, unknown>, next: (p: Record<string, unknown>) => Promise<unknown>) => {
       const model = params.model;
       const action = params.action;
 

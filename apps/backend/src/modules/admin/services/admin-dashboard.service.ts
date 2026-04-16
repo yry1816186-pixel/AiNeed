@@ -80,8 +80,7 @@ export class AdminDashboardService {
       }),
     ]);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const safeAmount = (agg: any): number =>
+    const safeAmount = (agg: Record<string, { _sum?: { totalAmount?: number } }>): number =>
       Number(agg?._sum?.totalAmount ?? 0);
 
     return {

@@ -31,8 +31,7 @@ export class ExampleController {
    * Frontend must include the token from previous GET request
    */
   @Post()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  create(@Body() _createDto: any) {
+  create(@Body() _createDto: unknown) {
     return { message: 'This POST request requires valid CSRF token' };
   }
 
@@ -40,8 +39,7 @@ export class ExampleController {
    * PUT request - requires CSRF token
    */
   @Put(':id')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  update(@Param('id') id: string, @Body() _updateDto: any) {
+  update(@Param('id') id: string, @Body() _updateDto: unknown) {
     return { message: `This PUT request for ID ${id} requires valid CSRF token` };
   }
 
@@ -66,8 +64,7 @@ export class WebhookController {
    */
   @Post('stripe')
   @ExcludeCsrf()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleStripeWebhook(@Body() _webhook: any) {
+  handleStripeWebhook(@Body() _webhook: unknown) {
     return { message: 'This webhook does not require CSRF token' };
   }
 
@@ -76,8 +73,7 @@ export class WebhookController {
    */
   @Post('payment-callback')
   @ExcludeCsrf()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handlePaymentCallback(@Body() _callback: any) {
+  handlePaymentCallback(@Body() _callback: unknown) {
     return { message: 'This callback does not require CSRF token' };
   }
 }
@@ -94,8 +90,7 @@ export class PublicController {
    */
   @Get('search')
   @ExcludeCsrf()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  search(@Body() _searchDto: any) {
+  search(@Body() _searchDto: unknown) {
     return { message: 'This search endpoint does not require CSRF token' };
   }
 
@@ -105,8 +100,7 @@ export class PublicController {
    */
   @Post('contact')
   @UseGuards(CsrfGuard)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  submitContactForm(@Body() _contactDto: any) {
+  submitContactForm(@Body() _contactDto: unknown) {
     return { message: 'This contact form requires valid CSRF token' };
   }
 }
@@ -131,8 +125,7 @@ export class MixedController {
    */
   @Post('subscribe')
   @UseGuards(CsrfGuard)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  subscribe(@Body() _subscribeDto: any) {
+  subscribe(@Body() _subscribeDto: unknown) {
     return { message: 'This subscription requires valid CSRF token' };
   }
 
@@ -141,8 +134,7 @@ export class MixedController {
    */
   @Put('admin/settings')
   @UseGuards(CsrfGuard)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateSettings(@Body() _settings: any) {
+  updateSettings(@Body() _settings: unknown) {
     return { message: 'This admin endpoint requires valid CSRF token' };
   }
 }

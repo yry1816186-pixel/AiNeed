@@ -24,7 +24,7 @@ export { useSizeRecommendationStore } from "../features/commerce/stores/sizeReco
 export { useCouponStore } from "../features/commerce/stores/couponStore";
 export { useOrderStore } from "../features/commerce/stores/orderStore";
 export { useAppStore } from "../shared/stores/app.store";
-export { useUiStore } from "../shared/stores/uiStore";
+export { useUIStore } from "../shared/stores/uiStore";
 
 export function clearAllStores() {
   const { useAuthStore: auth } = require("../features/auth/stores/authStore");
@@ -49,7 +49,7 @@ export function clearAllStores() {
   const { useCouponStore: coupon } = require("../features/commerce/stores/couponStore");
   const { useOrderStore: order } = require("../features/commerce/stores/orderStore");
   const { useAppStore: app } = require("../shared/stores/app.store");
-  const { useUiStore: ui } = require("../shared/stores/uiStore");
+  const { useUIStore: ui } = require("../shared/stores/uiStore");
 
   const stores = [
     quiz, clothing, home, cart, profile, notif, onboard, photo,

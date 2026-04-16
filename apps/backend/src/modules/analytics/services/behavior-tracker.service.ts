@@ -435,8 +435,7 @@ export class BehaviorTrackerService {
     let purchaseCount = 0;
 
     for (const event of events) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const meta = (event.metadata as any) || {};
+      const meta = (event.metadata as Record<string, unknown>) || {};
       if (meta.implicitFeedback) {
         totalDwellTime += meta.implicitFeedback.dwellTime || 0;
         totalScrollDepth += meta.implicitFeedback.scrollDepth || 0;
@@ -642,8 +641,7 @@ export class BehaviorTrackerService {
           ),
           this.TIME_DECAY_CONFIG.maxWeight,
         );
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        interactionCount = (existing as any).interactionCount || 1;
+        interactionCount = (existing as Record<string, unknown>).interactionCount as number || 1;
         interactionCount += 1;
 
         const weightChange = newWeight - decayedWeight;
