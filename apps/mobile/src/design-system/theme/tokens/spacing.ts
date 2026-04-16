@@ -59,9 +59,6 @@ export const BorderRadiusScale = {
   "2xl": 24,
   "3xl": 32,
   "4xl": 48,
-  "5xl": 32,
-  "6xl": 40,
-  "7xl": 48,
   full: 9999,
 } as const;
 

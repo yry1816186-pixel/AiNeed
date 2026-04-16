@@ -2,10 +2,21 @@ import { Dimensions, Platform, StatusBar } from "react-native";
 import { DesignTokens, darkTokens } from "./tokens/design-tokens";
 import type { FlatColors } from "./FlatColors";
 
+
 export { DesignTokens, darkTokens } from "./tokens/design-tokens";
 export type { DesignTokensType, DarkTokensType } from "./tokens/design-tokens";
 
-export * from "./tokens/colors";
+export {
+  WarmPrimaryColors,
+  BrandColors,
+  NeutralColors,
+  PrimaryColors,
+  SecondaryColors,
+  GradientPresets,
+  SemanticColors,
+  FashionColors,
+} from "./tokens/colors";
+export { default as tokenColors } from "./tokens/colors";
 export * from "./tokens/spacing";
 export * from "./tokens/typography";
 export * from "./tokens/shadows";
@@ -475,13 +486,14 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
     cartLight: "#FFF5F0",
-    purple: DesignTokens.colors.brand.terracottaDark,
+    terracottaDark: base.brand.terracottaDark,
     amber: DesignTokens.colors.semantic.warning,
     secondary: base.brand.sage,
   };
 }
 
-const flatColors = buildFlatThemeColors(DesignTokens.colors);
+export const flatColors = buildFlatThemeColors(DesignTokens.colors);
+export { flatColors as colors };
 
 export const themeColors = {
   brand: DesignTokens.colors.brand,
