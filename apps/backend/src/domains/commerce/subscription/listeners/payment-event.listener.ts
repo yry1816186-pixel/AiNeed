@@ -7,7 +7,7 @@ import {
   SubscriptionActivationPayload,
   PaymentSucceededPayload,
   PaymentRefundedPayload,
-} from "../../payment/events";
+} from '@xuno/types';
 import { SubscriptionService } from "../subscription.service";
 
 /**

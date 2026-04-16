@@ -159,7 +159,11 @@ export type SubscriptionEventType = (typeof SUBSCRIPTION_EVENTS)[keyof typeof SU
 
 export interface SubscriptionRenewalPayload {
   userId: string;
-  subscriptionId: string;
   planId: string;
+  planName: string;
+  amount: number;
+  currency: string;
+  paymentMethod: string;
+  subscriptionId: string;
   expiresAt: Date;
 }

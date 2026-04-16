@@ -2,6 +2,7 @@
 ﻿import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 
+import { SUBSCRIPTION_EVENTS, SubscriptionRenewalPayload } from '@xuno/types';
 import { CreatePaymentDto, PaymentProvider, PaymentMethod } from "../dto";
 import { PaymentService } from "../payment.service";
 
@@ -11,9 +12,9 @@ export class SubscriptionRenewalListener {
 
   constructor(private readonly paymentService: PaymentService) {}
 
-  @OnEvent("subscription.renewal.required")
+  @OnEvent(SUBSCRIPTION_EVENTS.RENEWAL_REQUIRED)
   async handleRenewalPayment(
-    payload: import("../../subscription/subscription.service").SubscriptionRenewalPayload,
+    payload: SubscriptionRenewalPayload,
   ): Promise<void> {
     this.logger.log(
       `Processing renewal payment for user ${payload.userId}, plan ${payload.planName}`,

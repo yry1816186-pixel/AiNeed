@@ -8,7 +8,7 @@ import {
   PaymentSucceededPayload,
   PaymentFailedPayload,
   PaymentRefundedPayload,
-} from '../../../commerce/payment/events';
+} from '@xuno/types';
 import { NotificationService } from "../services/notification.service";
 
 /**

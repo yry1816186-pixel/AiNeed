@@ -7,43 +7,14 @@ import { NotificationTemplateService } from "../services/notification-template.s
 import { NotificationService } from "../services/notification.service";
 import { PushNotificationService } from "../services/push-notification.service";
 
-/**
- * Order event payload interfaces
- */
-interface OrderPaymentEvent {
-  userId: string;
-  orderId: string;
-  orderNo: string;
-  amount: string;
-}
-
-interface OrderShippedEvent {
-  userId: string;
-  orderId: string;
-  orderNo: string;
-  trackingNo: string;
-}
-
-interface OrderDeliveredEvent {
-  userId: string;
-  orderId: string;
-  orderNo: string;
-}
-
-interface OrderCancelledEvent {
-  userId: string;
-  orderId: string;
-  orderNo: string;
-  reason?: string;
-}
-
-interface OrderRefundEvent {
-  userId: string;
-  orderId: string;
-  orderNo: string;
-  amount: string;
-  reason?: string;
-}
+import {
+  ORDER_EVENTS,
+  OrderPaymentEvent,
+  OrderShippedEvent,
+  OrderDeliveredEvent,
+  OrderCancelledEvent,
+  OrderRefundEvent,
+} from '@xuno/types';
 
 /**
  * Listener for order-related events.
@@ -59,7 +30,7 @@ export class OrderEventNotificationListener {
     private readonly pushService: PushNotificationService,
   ) {}
 
-  @OnEvent("order.payment.success")
+  @OnEvent(ORDER_EVENTS.ORDER_PAYMENT_SUCCESS)
   async handlePaymentSuccess(event: OrderPaymentEvent) {
     this.logger.log(`Order payment success: ${event.orderNo}`);
     await this.sendTemplatedNotification(event.userId, "order_payment_success", {
@@ -69,7 +40,7 @@ export class OrderEventNotificationListener {
     });
   }
 
-  @OnEvent("order.shipped")
+  @OnEvent(ORDER_EVENTS.ORDER_SHIPPED)
   async handleShipped(event: OrderShippedEvent) {
     this.logger.log(`Order shipped: ${event.orderNo}`);
     await this.sendTemplatedNotification(event.userId, "order_shipped", {
@@ -79,7 +50,7 @@ export class OrderEventNotificationListener {
     });
   }
 
-  @OnEvent("order.delivered")
+  @OnEvent(ORDER_EVENTS.ORDER_DELIVERED)
   async handleDelivered(event: OrderDeliveredEvent) {
     this.logger.log(`Order delivered: ${event.orderNo}`);
     await this.sendTemplatedNotification(event.userId, "order_delivered", {
@@ -88,7 +59,7 @@ export class OrderEventNotificationListener {
     });
   }
 
-  @OnEvent("order.cancelled")
+  @OnEvent(ORDER_EVENTS.ORDER_CANCELLED)
   async handleCancelled(event: OrderCancelledEvent) {
     this.logger.log(`Order cancelled: ${event.orderNo}`);
     await this.sendTemplatedNotification(event.userId, "order_cancelled", {
@@ -97,7 +68,7 @@ export class OrderEventNotificationListener {
     });
   }
 
-  @OnEvent("order.refund.approved")
+  @OnEvent(ORDER_EVENTS.ORDER_REFUND_APPROVED)
   async handleRefundApproved(event: OrderRefundEvent) {
     this.logger.log(`Order refund approved: ${event.orderNo}`);
     await this.sendTemplatedNotification(event.userId, "order_refund_approved", {
@@ -107,7 +78,7 @@ export class OrderEventNotificationListener {
     });
   }
 
-  @OnEvent("order.refund.rejected")
+  @OnEvent(ORDER_EVENTS.ORDER_REFUND_REJECTED)
   async handleRefundRejected(event: OrderRefundEvent) {
     this.logger.log(`Order refund rejected: ${event.orderNo}`);
     await this.sendTemplatedNotification(event.userId, "order_refund_rejected", {
