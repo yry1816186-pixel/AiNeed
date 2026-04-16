@@ -13,7 +13,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import customizationApi from '../../../services/api/customization.api';
 import type { RootStackParamList } from '../../../types/navigation';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
@@ -121,9 +120,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
 
   const currentStepIndex = order ? STATUS_STEPS.findIndex((s) => s.key === order.status) : -1;
 
-  const renderStatusTimeline = () => {
-    const { colors } = useTheme();
-    return (
+  const renderStatusTimeline = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>订单状态</Text>
       <View style={styles.timeline}>
@@ -142,7 +139,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
                 <Ionicons
                   name={step.icon}
                   size={14}
-                  color={isCompleted ? colors.surface : Colors.neutral[400]}
+                  color={isCompleted ? DesignTokens.colors.neutral.white : Colors.neutral[400]}
                 />
               </View>
               <Text
@@ -173,7 +170,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={DesignTokens.colors.brand.terracotta} />
         </View>
       </SafeAreaView>
     );
@@ -204,7 +201,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={DesignTokens.colors.text.primary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>定制订单</Text>
         <View style={{ width: 40 }} />
@@ -216,7 +213,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            tintColor={colors.primary}
+            tintColor={DesignTokens.colors.brand.terracotta}
           />
         }
         contentContainerStyle={styles.scrollContent}
@@ -256,11 +253,11 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>专属包装</Text>
           <View style={styles.packagingCard}>
             <View style={styles.packagingItem}>
-              <Ionicons name="gift-outline" size={18} color={colors.primary} />
+              <Ionicons name="gift-outline" size={18} color={DesignTokens.colors.brand.terracotta} />
               <Text style={styles.packagingText}>AiNeed 专属包装盒</Text>
             </View>
             <View style={styles.packagingItem}>
-              <Ionicons name="heart-outline" size={18} color={colors.primary} />
+              <Ionicons name="heart-outline" size={18} color={DesignTokens.colors.brand.terracotta} />
               <Text style={styles.packagingText}>感谢卡 + 品牌贴纸</Text>
             </View>
           </View>
@@ -295,7 +292,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
   },
   topBar: {
     flexDirection: "row",
@@ -316,7 +313,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: DesignTokens.colors.text.primary,
   },
   loadingContainer: {
     flex: 1,
@@ -330,12 +327,12 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
     marginTop: Spacing[3],
   },
   errorButton: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.primary,
+    color: DesignTokens.colors.brand.terracotta,
     marginTop: Spacing[4],
   },
   scrollContent: {
@@ -351,16 +348,16 @@ const styles = StyleSheet.create({
   orderTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: DesignTokens.colors.text.primary,
     marginBottom: Spacing[1],
   },
   orderDate: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
   },
   templateName: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
     marginTop: Spacing[1],
   },
   section: {
@@ -369,7 +366,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: DesignTokens.colors.text.primary,
     marginBottom: Spacing[3],
   },
   timeline: {
@@ -391,10 +388,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[1],
   },
   timelineDotCompleted: {
-    backgroundColor: colors.primary,
+    backgroundColor: DesignTokens.colors.brand.terracotta,
   },
   timelineDotCurrent: {
-    backgroundColor: colors.primary,
+    backgroundColor: DesignTokens.colors.brand.terracotta,
     ...Shadows.sm,
   },
   timelineLabel: {
@@ -403,10 +400,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   timelineLabelCompleted: {
-    color: colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
   },
   timelineLabelCurrent: {
-    color: colors.primary,
+    color: DesignTokens.colors.brand.terracotta,
     fontWeight: "600",
   },
   timelineLine: {
@@ -418,7 +415,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[200],
   },
   timelineLineCompleted: {
-    backgroundColor: colors.primary,
+    backgroundColor: DesignTokens.colors.brand.terracotta,
   },
   trackingCard: {
     backgroundColor: Colors.neutral[50],
@@ -428,11 +425,11 @@ const styles = StyleSheet.create({
   },
   trackingLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textTertiary,
+    color: DesignTokens.colors.text.tertiary,
   },
   trackingValue: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textPrimary,
+    color: DesignTokens.colors.text.primary,
     fontWeight: "500",
     marginBottom: Spacing[1],
   },
@@ -449,7 +446,7 @@ const styles = StyleSheet.create({
   },
   packagingText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textPrimary,
+    color: DesignTokens.colors.text.primary,
   },
   actions: {
     gap: Spacing[3],
@@ -464,10 +461,10 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
   },
   confirmButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: DesignTokens.colors.brand.terracotta,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",
@@ -476,7 +473,7 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.surface,
+    color: DesignTokens.colors.backgrounds.primary,
   },
 });
 
