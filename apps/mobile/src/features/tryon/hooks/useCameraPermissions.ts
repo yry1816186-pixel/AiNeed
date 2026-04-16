@@ -26,7 +26,8 @@ async function checkCameraPermission(): Promise<{
       return { status: "granted", canAskAgain: true };
     }
     return { status: "undetermined", canAskAgain: true };
-  } catch {
+  } catch (e) {
+    console.error('Camera permission check failed:', e);
     return { status: "undetermined", canAskAgain: true };
   }
 }
@@ -63,7 +64,8 @@ export function useCameraPermissions(): UseCameraPermissionsResult {
       setPermissionStatus(status);
       setCanAskAgain(askable);
       return status;
-    } catch {
+    } catch (e) {
+      console.error('Camera permission request failed:', e);
       setPermissionStatus("denied");
       setCanAskAgain(false);
       return "denied";
@@ -76,7 +78,9 @@ export function useCameraPermissions(): UseCameraPermissionsResult {
     } catch {
       try {
         await Linking.openURL("app-settings:");
-      } catch {}
+      } catch (e) {
+        console.error('Failed to open app settings:', e);
+      }
     }
   }, []);
 

@@ -41,6 +41,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
   const [showPreferenceSetup, setShowPreferenceSetup] = useState(false);
   const [stats, setStats] = useState({ liked: 0, skipped: 0, cartAdded: 0 });
   const [hasPreferences, setHasPreferences] = useState(false);
+  const [isUsingMockData, setIsUsingMockData] = useState(false);
 
   const fadeAnim = useSharedValue(0);
   const slideAnim = useSharedValue(50);
@@ -81,14 +82,18 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
 
       if (response.success && response.data) {
         setProducts(response.data as unknown as ProductItem[]);
+        setIsUsingMockData(false);
       } else if (response && Array.isArray(response)) {
         setProducts(response as unknown as ProductItem[]);
+        setIsUsingMockData(false);
       } else {
         setProducts(generateMockProducts());
+        setIsUsingMockData(true);
       }
     } catch (error) {
       console.error("Load recommendations error:", error);
       setProducts(generateMockProducts());
+      setIsUsingMockData(true);
     } finally {
       setLoading(false);
     }
@@ -296,6 +301,14 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
           </View>
         </View>
       </Animated.View>
+
+      {isUsingMockData && (
+        <View style={{ backgroundColor: '#FFF3E0', padding: 8, paddingHorizontal: 16 }}>
+          <Text style={{ color: '#E65100', fontSize: 12 }}>
+            当前为示例数据，推荐服务暂不可用
+          </Text>
+        </View>
+      )}
 
       <View style={styles.cardsContainer}>
         {products.length === 0 ? (

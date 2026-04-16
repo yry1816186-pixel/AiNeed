@@ -31,7 +31,6 @@ export { useBloggerStore } from "../features/community/stores/bloggerStore";
 export { useConsultantStore } from "../features/consultant/stores/consultantStore";
 export { useChatStore } from "../features/consultant/stores/chatStore";
 export { useCustomizationEditorStore } from "../features/customization/stores/customizationEditorStore";
-export { useUserStore } from "./user.store";
 
 export async function clearAllStores(): Promise<void> {
   const { useUIStore } = await import("../shared/stores/uiStore");
@@ -43,7 +42,7 @@ export async function clearAllStores(): Promise<void> {
 
   try {
     useAuthStore.getState().logout();
-  } catch {
-    // ignore errors during store clearing
+  } catch (e) {
+    console.error('Store initialization failed:', e);
   }
 }
