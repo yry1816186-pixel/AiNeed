@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 import customizationApi from "../../../services/api/customization.api";
-import type {
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import type {
   CustomizationTemplate as ApiTemplate,
   CustomizationDesign,
   CustomizationDesignLayer,
