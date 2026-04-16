@@ -87,7 +87,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ visible, onSubmit,
                 <Ionicons
                   name={star <= rating ? "star" : "star-outline"}
                   size={32}
-                  color={star <= rating ? "#FFB800" : DesignTokens.colors.neutral[300]}
+                  color={star <= rating ? DesignTokens.colors.semantic.warning : DesignTokens.colors.neutral[300]}
                 />
               </Pressable>
             ))}

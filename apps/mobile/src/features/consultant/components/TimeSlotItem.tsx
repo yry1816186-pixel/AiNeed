@@ -73,7 +73,7 @@ const useStyles = createStyles((colors) => ({
     opacity: 0.6,
   },
   selected: {
-    backgroundColor: "#FFF8F5",
+    backgroundColor: DesignTokens.colors.backgrounds.secondary, // warm-tinted bg,
     borderColor: "colors.primary",
     borderWidth: 2,
   },

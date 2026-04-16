@@ -162,6 +162,8 @@ class ImageCacheManager {
     }
 
     const downloadPromise = (async () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
       try {
         const cached = await this.getCachedImage(uri);
         if (cached) {

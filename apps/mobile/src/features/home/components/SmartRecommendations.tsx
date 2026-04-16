@@ -598,9 +598,9 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
 
   const typeConfig = {
     tip: { icon: "bulb", color: colors.warning, bgColor: "colors.warningLight" }, // custom color
-    observation: { icon: "eye", color: colors.info, bgColor: "#EFF6FF" }, // custom color
-    suggestion: { icon: "sparkles", color: colors.primaryDark, bgColor: "#F5F3FF" }, // custom color
-    warning: { icon: "alert", color: colors.error, bgColor: "#FEF2F2" }, // custom color
+    observation: { icon: "eye", color: colors.info, bgColor: DesignTokens.colors.backgrounds.secondary }, // info-tinted bg
+    suggestion: { icon: "sparkles", color: colors.primaryDark, bgColor: DesignTokens.colors.backgrounds.secondary }, // suggestion-tinted bg
+    warning: { icon: "alert", color: colors.error, bgColor: DesignTokens.colors.backgrounds.secondary }, // warning-tinted bg
   };
 
   const config = typeConfig[insight.type];

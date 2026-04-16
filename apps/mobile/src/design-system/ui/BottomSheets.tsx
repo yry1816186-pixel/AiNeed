@@ -14,7 +14,7 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
 import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
 import { DesignTokens } from "../theme/tokens/design-tokens";
-import { useTheme } from '../../design-system/theme';
+import { useTheme } from '../../shared/contexts/ThemeContext';
 
 type _ViewStyle = import("react-native").ViewStyle;
 type _ViewProps = import("react-native").ViewProps;

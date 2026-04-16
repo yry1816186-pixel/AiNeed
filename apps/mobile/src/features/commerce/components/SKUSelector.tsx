@@ -206,7 +206,7 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  sizeButtonSelected: { borderColor: "colors.error", backgroundColor: "#FFF5F5" }, // custom color
+  sizeButtonSelected: { borderColor: colors.error, backgroundColor: DesignTokens.colors.backgrounds.secondary }, // error-tinted bg
   sizeButtonDisabled: { backgroundColor: DesignTokens.colors.neutral[100], borderColor: DesignTokens.colors.neutral[100] },
   sizeText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
   sizeTextSelected: { color: "colors.error", fontWeight: "600" }, // custom color

@@ -14,7 +14,7 @@ import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../design
 import { Rating } from "./Rating";
 import { OptimizedImage } from "../common/OptimizedImage";
 import { DesignTokens } from "../theme/tokens/design-tokens";
-import { useTheme } from '../../design-system/theme';
+import { useTheme } from '../../shared/contexts/ThemeContext';
 import { flatColors as colors } from '../theme';
 
 

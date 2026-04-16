@@ -28,6 +28,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
   type = "neutral",
   accessibilityLabel,
 }) => {
+  const e_styles = use_styles(colors);
   const { colors } = useTheme();
   const _styles = use_styles(colors);
   const defaultA11yLabel =

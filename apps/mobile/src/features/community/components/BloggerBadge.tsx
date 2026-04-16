@@ -8,7 +8,9 @@ interface BloggerBadgeProps {
   level: "blogger" | "big_v";
 }
 
-function BloggerBadgeInner({ level }: BloggerBadgeProps) {
+function BloggerBadgeInner
+  const { colors } = useTheme();
+  const eS = useS(colors);({ level }: BloggerBadgeProps) {
   if (level === "big_v") {
     return (
       <View style={s.bigVBadge}>

@@ -328,7 +328,7 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: DesignTokens.spacing['2.5'],
     paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 14,
-    backgroundColor: "#F0EDFF", // custom color
+    backgroundColor: DesignTokens.colors.backgrounds.secondary, // lavender-tinted bg
   },
   sourceChipActive: { backgroundColor: colors.neutral[500] },
   sourceChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.neutral[500], fontWeight: "500" },
@@ -347,7 +347,7 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: theme.colors.background,
     marginRight: DesignTokens.spacing['1.5'],
   },
-  collectionChipActive: { backgroundColor: "#F0EDFF" }, // custom color
+  collectionChipActive: { backgroundColor: DesignTokens.colors.backgrounds.secondary }, // lavender-tinted bg
   collectionChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   collectionChipTextActive: { color: colors.neutral[500], fontWeight: "600" },
   loader: { paddingVertical: Spacing.lg},
@@ -361,7 +361,7 @@ const useStyles = createStyles((colors) => ({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  itemRowSelected: { backgroundColor: "#F8F7FF" }, // custom color
+  itemRowSelected: { backgroundColor: DesignTokens.colors.backgrounds.tertiary }, // selected row bg
   itemImage: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], borderRadius: 6 },
   itemImagePlaceholder: {
     width: DesignTokens.spacing[10],

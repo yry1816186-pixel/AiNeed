@@ -432,7 +432,7 @@ export const PostDetailScreen: React.FC = () => {
             <Ionicons
               name={post.isLiked ? "heart" : "heart-outline"}
               size={22}
-              color={post.isLiked ? "#FF4757" : theme.colors.textSecondary} // custom color
+              color={post.isLiked ? DesignTokens.colors.semantic.error : theme.colors.textSecondary}
             />
             <Text style={[styles.actionCount, post.isLiked && styles.actionCountLiked]}>
               {post.likesCount}
@@ -446,7 +446,7 @@ export const PostDetailScreen: React.FC = () => {
             <Ionicons
               name={post.isBookmarked ? "bookmark" : "bookmark-outline"}
               size={22}
-              color={post.isBookmarked ? "#F1C40F" : theme.colors.textSecondary} // custom color
+              color={post.isBookmarked ? DesignTokens.colors.semantic.warning : theme.colors.textSecondary}
             />
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
@@ -523,7 +523,7 @@ const useStyles = createStyles((colors) => ({
     width: DesignTokens.spacing[5],
     height: DesignTokens.spacing[5],
     borderRadius: 10,
-    backgroundColor: "#F1C40F", // custom color
+    backgroundColor: DesignTokens.colors.semantic.warning,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
@@ -585,7 +585,7 @@ const useStyles = createStyles((colors) => ({
     marginTop: Spacing.sm,
   },
   tagChip: {
-    backgroundColor: "#F0EDFF", // custom color
+    backgroundColor: DesignTokens.colors.backgrounds.secondary, // lavender-tinted bg
     paddingHorizontal: DesignTokens.spacing['2.5'],
     paddingVertical: Spacing.xs,
     borderRadius: 12,
@@ -694,7 +694,7 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: Spacing.sm,
   },
   actionCount: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
-  actionCountLiked: { color: "#FF4757" }, // custom color
+  actionCountLiked: { color: DesignTokens.colors.semantic.error },
 }))
 
 export default PostDetailScreen;

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -34,6 +34,8 @@ const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 
 const formatPrice = (price?: number | null) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   if (price === null || price === undefined) {
     return null;
   }

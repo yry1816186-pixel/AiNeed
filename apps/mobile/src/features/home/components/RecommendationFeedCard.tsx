@@ -15,7 +15,9 @@ interface RecommendationCardProps {
   compact?: boolean;
 }
 
-export const RecommendationCard = memo(function RecommendationCard({
+export const RecommendationCard = memo(function RecommendationCard
+  const { colors } = useTheme();
+  const styles = useStyles(colors);({
   item,
   onPress,
   onLike,
@@ -145,7 +147,7 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 4,
   },
   harmonyText: {
-    color: "#4ADE80", // custom color
+    color: DesignTokens.colors.semantic.success,
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
   },

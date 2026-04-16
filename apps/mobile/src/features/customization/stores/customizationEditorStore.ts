@@ -4,7 +4,6 @@ import customizationApi from "../../../services/api/customization.api";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from '../../../design-system/theme';
 import type {
-
   CustomizationTemplate as ApiTemplate,
   CustomizationDesign,
   CustomizationDesignLayer,
@@ -138,7 +137,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
     });
   },
 
-  addTextLayer: (text: string, fontSize = 24, color = DesignTokens.colors.neutral.black) => {
+  addTextLayer: (text: string, fontSize = 24, color = colors.neutral[900]) => {
     const state = get();
     const newLayer: DesignLayer = {
       id: generateLayerId(),

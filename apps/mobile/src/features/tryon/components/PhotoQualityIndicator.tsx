@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Spacing, BorderRadius } from '../../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
@@ -19,12 +19,12 @@ interface PhotoQualityIndicatorProps {
 
 function getScoreColor(score: number): string {
   if (score >= 60) {
-    return "colors.success";
+    return DesignTokens.colors.semantic.success;
   }
   if (score >= 40) {
-    return "colors.warning";
+    return DesignTokens.colors.semantic.warning;
   }
-  return "colors.error";
+  return DesignTokens.colors.semantic.error;
 }
 
 function getScoreLabel(score: number): string {
@@ -168,7 +168,7 @@ const metricStyles = StyleSheet.create({
   },
   track: {
     height: DesignTokens.spacing['1.5'],
-    backgroundColor: "#E5E5E0",
+    backgroundColor: DesignTokens.colors.neutral[200],
     borderRadius: 3,
     overflow: "hidden",
   },

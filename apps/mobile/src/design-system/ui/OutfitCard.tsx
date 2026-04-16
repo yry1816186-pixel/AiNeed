@@ -15,7 +15,7 @@ import {
 
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { Spacing } from '../theme';
-import { useTheme } from '../../design-system/theme';
+import { useTheme } from '../../shared/contexts/ThemeContext';
 
 
 interface OutfitCardProps {

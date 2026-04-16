@@ -233,7 +233,7 @@ const useStyles = createStyles((colors) => ({
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 10,
-    backgroundColor: "#F0EDFF", // custom color
+    backgroundColor: DesignTokens.colors.backgrounds.secondary, // lavender-tinted bg
     alignItems: "center",
     justifyContent: "center",
     marginRight: DesignTokens.spacing[3],

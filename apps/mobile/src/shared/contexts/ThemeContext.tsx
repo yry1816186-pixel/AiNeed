@@ -11,7 +11,7 @@ import {
 } from "../../design-system/theme";
 import { FeatureFlagDefaults } from "../../constants/feature-flags";
 import type { FlatColors } from "../../design-system/theme/FlatColors";
-import { useTheme } from '../../design-system/theme';
+
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
@@ -60,8 +60,8 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
     cartLight: "#FFF5F0",
-    terracottaDark: colors.primaryDark,
-    amber: colors.warning,
+    terracottaDark: base.brand.terracottaDark,
+    amber: base.semantic.warning,
     secondary: base.brand.sage,
   };
 }

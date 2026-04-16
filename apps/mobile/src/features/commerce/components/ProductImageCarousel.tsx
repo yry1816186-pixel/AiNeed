@@ -127,7 +127,7 @@ const useStyles = createStyles((colors) => ({
     marginHorizontal: 3,
   },
   dotActive: {
-    backgroundColor: "#FF4D4F", // custom color
+    backgroundColor: DesignTokens.colors.brand.terracotta, // brand accent for active indicator
     width: Spacing.sm,
     height: Spacing.sm,
     borderRadius: 4,
@@ -149,7 +149,7 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   zoomCloseText: {
-    color: "#FFFFFF",
+    color: DesignTokens.colors.text.inverse,
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
   },

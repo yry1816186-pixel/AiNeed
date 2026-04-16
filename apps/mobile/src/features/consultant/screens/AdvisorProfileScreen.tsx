@@ -214,7 +214,7 @@ const useStyles = createStyles((colors) => ({
   infoDivider: { width: 1, backgroundColor: "colors.backgroundTertiary" },
   section: { paddingHorizontal: Spacing.md, paddingTop: DesignTokens.spacing[5]},
   sectionTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "colors.textPrimary", marginBottom: DesignTokens.spacing[3]},
-  bioText: { fontSize: DesignTokens.typography.sizes.base, color: "#555", lineHeight: 22 },
+  bioText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary, lineHeight: 22 },
   casesList: { gap: DesignTokens.spacing[3]},
   bottomCta: {
     paddingHorizontal: Spacing.md,

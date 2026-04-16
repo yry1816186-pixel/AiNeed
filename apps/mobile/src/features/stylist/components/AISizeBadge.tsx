@@ -12,7 +12,7 @@ const useStyles = createStyles((colors) => ({
   badge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "colors.successLight",
+    backgroundColor: colors.successLight,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: 12,
@@ -21,17 +21,17 @@ const useStyles = createStyles((colors) => ({
   badgeText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
-    color: "colors.success",
+    color: colors.success,
   },
   badgeSize: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "700",
-    color: "#3D5E4D",
+    color: colors.success,
   },
   detail: {
     marginTop: Spacing.xs,
     padding: Spacing.sm,
-    backgroundColor: "colors.backgroundTertiary",
+    backgroundColor: colors.backgroundTertiary,
     borderRadius: 8,
     gap: Spacing.xs,
   },
@@ -41,7 +41,7 @@ const useStyles = createStyles((colors) => ({
   },
   detailLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "colors.textTertiary",
+    color: colors.textTertiary,
   },
   detailValue: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -50,7 +50,7 @@ const useStyles = createStyles((colors) => ({
   },
   reasonText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: "colors.textSecondary",
+    color: colors.textSecondary,
   },
 }))
 

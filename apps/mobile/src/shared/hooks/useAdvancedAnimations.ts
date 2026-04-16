@@ -21,7 +21,7 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { DesignTokens } from "../../design-system/theme";
-import { useTheme } from '../../design-system/theme';
+import { useTheme } from '../contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { createAnimatedComponent } = AnimatedReanimated;

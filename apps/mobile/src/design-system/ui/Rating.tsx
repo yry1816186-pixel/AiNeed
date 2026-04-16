@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-nativ
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
 import { DesignTokens } from "../theme/tokens/design-tokens";
+import { flatColors as colors } from '../theme';
+
 
 export interface RatingProps {
   value?: number;

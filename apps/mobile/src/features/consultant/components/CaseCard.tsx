@@ -121,7 +121,7 @@ const useStyles = createStyles((colors) => ({
   },
   excerpt: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "#444",
+    color: DesignTokens.colors.text.secondary,
     lineHeight: 18,
     marginBottom: Spacing.xs,
   },

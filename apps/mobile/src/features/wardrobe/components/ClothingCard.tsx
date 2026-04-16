@@ -26,7 +26,9 @@ interface ClothingCardProps {
  * 服装卡片组件 - 使用 React.memo 优化
  * 避免父组件状态变化时不必要的重渲染
  */
-export const ClothingCard = memo(function ClothingCard({
+export const ClothingCard = memo(function ClothingCard
+  const { colors } = useTheme();
+  const styles = useStyles(colors);({
   name,
   price,
   originalPrice,

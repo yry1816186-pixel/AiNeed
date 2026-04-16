@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ViewStyle, TextStyle } from "
 import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
 import { Spacing } from '../theme';
 import { DesignTokens } from '../theme/tokens/design-tokens';
-import { useTheme } from '../../design-system/theme';
+import { useTheme } from '../../shared/contexts/ThemeContext';
 
 
 

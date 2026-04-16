@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -6,11 +6,10 @@ import Animated, { FadeInUp } from "react-native-reanimated";
 
 // 引入主题令牌
 import { DesignTokens } from "../theme/tokens/design-tokens";
-import {
 import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
-import { Spacing } from '../../design-system/theme';
+import {
   Colors,
-  Spacing as ThemeSpacing,
+  Spacing,
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
   Typography as ThemeTypography,

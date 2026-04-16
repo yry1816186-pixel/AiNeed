@@ -54,6 +54,8 @@ const FALLBACK_LATITUDE = 35.8617;
 const FALLBACK_LONGITUDE = 104.1954;
 
 const HomeScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const user = useAuthStore((s) => s.user);
