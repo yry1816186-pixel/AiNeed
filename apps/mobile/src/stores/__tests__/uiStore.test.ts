@@ -18,7 +18,7 @@ describe("useUIStore", () => {
     notifications: [],
     isOnline: true,
     isScrolling: false,
-    activeTab: "home",
+    activeTab: "home" as const,
     searchQuery: "",
     isSearchFocused: false,
   };
