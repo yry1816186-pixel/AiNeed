@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
   postFooter: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 3,
+    gap: Spacing.xs,
     paddingHorizontal: Spacing.sm,
     paddingBottom: Spacing.sm,
   },

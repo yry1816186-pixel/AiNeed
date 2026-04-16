@@ -60,7 +60,7 @@ const STATE_CONFIG = {
   },
   listening: {
     gradient: [colors.neutral[500], colors.textTertiary] as [string, string],
-    gradientFlow: [colors.neutral[500], colors.textTertiary, "#B8C5D1", colors.neutral[500]] as [string, string, string, string], // custom gradient mid-tone
+    gradientFlow: [colors.neutral[500], colors.textTertiary, DesignTokens.colors.brand.slate, colors.neutral[500]] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.08)"] as [string, string],
     glowColor: colors.neutral[500],
     particleColor: colors.textTertiary,
@@ -68,18 +68,18 @@ const STATE_CONFIG = {
   },
   thinking: {
     gradient: [colors.warning, colors.primary] as [string, string],
-    gradientFlow: [colors.warning, colors.primary, "#F5D89A", colors.warning] as [string, string, string, string], // custom gradient mid-tone
+    gradientFlow: [colors.warning, colors.primary, DesignTokens.colors.semantic.warning, colors.warning] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.4)", "rgba(255,255,255,0.1)"] as [string, string],
     glowColor: colors.warning,
     particleColor: colors.primary,
     animation: "pulse",
   },
   responding: {
-    gradient: [colors.success, "colors.secondary"] as [string, string],
-    gradientFlow: [colors.success, "colors.secondary", "#9DC4B5", colors.success] as [string, string, string, string], // custom color
+    gradient: [colors.success, colors.secondary] as [string, string],
+    gradientFlow: [colors.success, colors.secondary, DesignTokens.colors.brand.sage, colors.success] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.32)", "rgba(255,255,255,0.06)"] as [string, string],
     glowColor: colors.success,
-    particleColor: "colors.secondary", // custom color
+    particleColor: colors.secondary,
     animation: "glow",
   },
   collapsed: {

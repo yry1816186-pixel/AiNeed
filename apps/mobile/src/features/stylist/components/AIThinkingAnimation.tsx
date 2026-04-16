@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import Animated, {
   useSharedValue,
@@ -97,7 +97,7 @@ const r = StyleSheet.create({
     flex: 1,
     height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
-    backgroundColor: "rgba(198, 123, 92, 0.15)",
+    backgroundColor: "rgba(198, 123, 92, 0.15)", // DesignTokens.colors.brand.terracotta with opacity
     overflow: "hidden",
   },
   gradientFill: {

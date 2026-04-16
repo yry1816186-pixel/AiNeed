@@ -171,7 +171,7 @@ export class RecommendationsService {
           limit * 3,
         );
 
-        const scoredItems = candidateItems.map((item) => {
+        const scoredItems = candidateItems.map((item: any) => {
           const { score, reasons } = this.computeRuleBasedScore(
             profile,
             interactions,
@@ -364,15 +364,15 @@ export class RecommendationsService {
       ]);
 
       // 收藏的商品ID集合
-      const favoriteItemIds = favorites.map((f) => f.itemId);
+      const favoriteItemIds = favorites.map((f: any) => f.itemId);
 
       // 浏览过的商品ID -> 用于协同过滤
       const viewedItemIds = behaviors
-        .filter((b) => b.itemId && b.type === "page_view")
-        .map((b) => b.itemId!);
+        .filter((b: any) => b.itemId && b.type === "page_view")
+        .map((b: any) => b.itemId!);
 
       // 购物车中的商品ID
-      const cartItemIds = cartItems.map((c) => c.itemId);
+      const cartItemIds = cartItems.map((c: any) => c.itemId);
 
       // 从收藏/浏览商品中提取偏好颜色
       const preferredColors = await this.extractPreferredColors([
@@ -393,7 +393,7 @@ export class RecommendationsService {
       }
 
       // 最近的行为类型（用于判断用户活跃度）
-      const recentBehaviorTypes = behaviors.slice(0, 20).map((b) => b.type);
+      const recentBehaviorTypes = behaviors.slice(0, 20).map((b: any) => b.type);
 
       return {
         favoriteItemIds,
@@ -444,7 +444,8 @@ export class RecommendationsService {
     filters: { category?: ClothingCategory; season?: string; occasion?: string },
     take: number,
   ) {
-    const where: Prisma.ClothingItemWhereInput = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = {
       isActive: true,
       isDeleted: false,
     };
@@ -500,9 +501,10 @@ export class RecommendationsService {
     profile: UserProfile,
     interactions: UserInteractionSummary,
     item: {
-      attributes?: Prisma.JsonValue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      attributes?: any;
       colors: string[];
-      price: Prisma.Decimal;
+      price: Decimal;
       category: ClothingCategory;
       viewCount: number;
       likeCount: number;
@@ -689,7 +691,7 @@ export class RecommendationsService {
 
       if (slotCandidates.length === 0) {continue;}
 
-      const scored = slotCandidates.map((item) => {
+      const scored = slotCandidates.map((item: any) => {
         const { score, reasons } = this.computeRuleBasedScore(
           profile || { stylePreferences: [], colorPreferences: [] },
           interactions,
@@ -699,7 +701,7 @@ export class RecommendationsService {
         return { item, score, matchReasons: reasons };
       });
 
-      scored.sort((a, b) => b.score - a.score);
+      scored.sort((a: any, b: any) => b.score - a.score);
       const best = scored[0];
 
       if (best) {
@@ -762,7 +764,7 @@ export class RecommendationsService {
       take: limit,
     });
 
-    return items.map((item) => ({
+    return items.map((item: any) => ({
       item: {
         id: item.id,
         name: item.name,

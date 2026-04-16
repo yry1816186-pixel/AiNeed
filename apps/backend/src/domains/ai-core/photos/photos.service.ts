@@ -441,7 +441,7 @@ export class PhotosService {
 
     await this.prisma.userPhoto.updateMany({
       where: {
-        id: { in: stuckPhotos.map((p) => p.id) },
+        id: { in: stuckPhotos.map((p: any) => p.id) },
       },
       data: {
         analysisStatus: AnalysisStatus.pending,

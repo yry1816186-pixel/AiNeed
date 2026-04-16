@@ -26,9 +26,7 @@ interface ClothingCardProps {
  * 服装卡片组件 - 使用 React.memo 优化
  * 避免父组件状态变化时不必要的重渲染
  */
-export const ClothingCard = memo(function ClothingCard
-  const { colors } = useTheme();
-  const styles = useStyles(colors);({
+export const ClothingCard = memo(function ClothingCard({
   name,
   price,
   originalPrice,
@@ -42,6 +40,8 @@ export const ClothingCard = memo(function ClothingCard
   onFavorite,
   isFavorite = false,
 }: ClothingCardProps) {
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9} accessibilityLabel={`${name}，${category}`} accessibilityRole="button">
       <View style={styles.imageContainer}>
@@ -110,16 +110,16 @@ export const ClothingCard = memo(function ClothingCard
 const COLOR_MAP: Record<string, string> = {
   black: Colors.neutral[900],
   white: Colors.white,
-  red: colors.error, // custom color
+  red: DesignTokens.colors.semantic.error,
   blue: Colors.sky[500],
-  green: Colors.emerald[500],
-  yellow: "#EAB308", // custom color
+  green: DesignTokens.colors.semantic.success,
+  yellow: DesignTokens.colors.semantic.warning,
   orange: Colors.amber[500],
   purple: Colors.primary[500],
-  pink: colors.primary, // custom color
-  brown: "#92400E", // custom color
+  pink: DesignTokens.colors.brand.terracottaLight,
+  brown: DesignTokens.colors.brand.terracottaDark,
   gray: Colors.neutral[500],
-  beige: colors.warningLight, // custom color
+  beige: colors.warningLight,
   navy: Colors.sky[900],
 };
 
@@ -150,7 +150,7 @@ const useStyles = createStyles((colors) => ({
     width: DesignTokens.spacing[9],
     height: DesignTokens.spacing[9],
     borderRadius: BorderRadius.full,
-    backgroundColor: "rgba(255,255,255,0.95)",
+    backgroundColor: "rgba(255,255,255,0.95)", // no exact DesignToken for semi-transparent white
     justifyContent: "center",
     alignItems: "center",
     ...Shadows.sm,

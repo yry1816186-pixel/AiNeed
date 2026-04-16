@@ -270,7 +270,8 @@ export class AgentToolsService {
   // Tool 2: Search Clothing
   async searchClothing(input: SearchClothingInput): Promise<ClothingSearchResult> {
     const { query, filters = {}, limit = 20, offset = 0 } = input;
-    const where: Prisma.ClothingItemWhereInput = { isActive: true };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = { isActive: true };
     if (filters.category) {where.category = filters.category;}
     if (filters.colors && filters.colors.length > 0) {where.colors = { hasSome: filters.colors };}
     if (filters.styles && filters.styles.length > 0) {where.tags = { hasSome: filters.styles };}
@@ -287,7 +288,7 @@ export class AgentToolsService {
     ]);
 
     // Transform Prisma result to ClothingItemBasic[]
-    const clothingItems: ClothingItemBasic[] = items.map((item) => ({
+    const clothingItems: ClothingItemBasic[] = items.map((item: any) => ({
       id: item.id,
       name: item.name,
       category: item.category,
@@ -398,7 +399,7 @@ export class AgentToolsService {
     }
 
     const tryOnId = randomUUID();
-    const { TryOnStatus } = await import("@prisma/client");
+    const { TryOnStatus } = await import("../../../types/prisma-enums");
     
     try {
       const response = await axios.post<TryOnServiceResponse>(

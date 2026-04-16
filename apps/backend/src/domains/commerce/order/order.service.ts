@@ -7,7 +7,9 @@
 } from "@nestjs/common";
 import { IsIn, IsString } from "class-validator";
 import { Cron } from "@nestjs/schedule";
-import { OrderStatus, Prisma , Order, OrderItem, OrderAddress } from "@prisma/client";
+import Decimal from "decimal.js";
+
+import { OrderStatus } from "../../../types/prisma-enums";
 
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -73,9 +75,43 @@ export interface OrderItemResponse {
 
 // FIX-CODE-005: 定义类型安全的Order类型 (修复时间: 2026-03-19)
 
-interface OrderWithRelations extends Order {
-  items: OrderItem[];
-  address: OrderAddress | null;
+interface OrderWithRelations {
+  id: string;
+  orderNo: string;
+  status: string;
+  totalAmount: Decimal;
+  shippingFee: Decimal;
+  discountAmount: Decimal;
+  finalAmount: Decimal;
+  paymentMethod: string | null;
+  paymentTime: Date | null;
+  paidAt: Date | null;
+  shipTime: Date | null;
+  receiveTime: Date | null;
+  expressCompany: string | null;
+  expressNo: string | null;
+  remark: string | null;
+  isDeleted: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  items: Array<{
+    id: string;
+    itemId: string | null;
+    itemName: string;
+    itemImage: string;
+    color: string;
+    size: string;
+    quantity: number;
+    price: Decimal;
+  }>;
+  address: {
+    name: string;
+    phone: string;
+    province: string;
+    city: string;
+    district: string;
+    address: string;
+  } | null;
 }
 
 export interface ShippingAddressResponse {
@@ -133,11 +169,13 @@ export class OrderService {
     });
 
     // 创建商品 ID 到商品的映射
-    const itemMap = new Map(clothingItems.map((item) => [item.id, item]));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const itemMap = new Map(clothingItems.map((item: any) => [item.id, item]));
 
     // 验证所有商品并检查库存
     const itemsWithDetails = dto.items.map((item) => {
-      const clothingItem = itemMap.get(item.itemId);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const clothingItem: any = itemMap.get(item.itemId);
 
       if (!clothingItem) {
         throw new NotFoundException(`商品 ${item.itemId} 不存在`);
@@ -179,7 +217,8 @@ export class OrderService {
 
     const orderNo = this.generateOrderNo();
 
-    const order = await this.prisma.$transaction(async (tx) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const order = await this.prisma.$transaction(async (tx: any) => {
       // FIX-BL-010: 扣减库存 (修复时间: 2026-03-19)
       for (const item of itemsWithDetails) {
         const updated = await tx.clothingItem.updateMany({
@@ -255,7 +294,8 @@ export class OrderService {
   ): Promise<{ items: OrderResponse[]; total: number }> {
     const { status, page = 1, limit = 10 } = options;
 
-    const where: Prisma.OrderWhereInput = { userId, isDeleted: false };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = { userId, isDeleted: false };
     if (status) {
       where.status = status as OrderStatus;
     }
@@ -275,7 +315,8 @@ export class OrderService {
     ]);
 
     return {
-      items: orders.map((order) => this.mapToOrderResponse(order)),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      items: orders.map((order: any) => this.mapToOrderResponse(order)),
       total,
     };
   }
@@ -393,7 +434,8 @@ export class OrderService {
 
     // Batch stock restoration in a single transaction (fixes N+1)
     await this.prisma.$transaction([
-      ...(orderWithItems?.items || []).map(item =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...(orderWithItems?.items || []).map((item: any) =>
         this.prisma.clothingItem.update({
           where: { id: item.itemId },
           data: { stock: { increment: item.quantity } },
@@ -463,7 +505,8 @@ export class OrderService {
     status: OrderStatus,
     extraData?: Record<string, unknown>,
   ): Promise<void> {
-    const updateData: Prisma.OrderUpdateInput = { status };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateData: any = { status };
 
     if (status === OrderStatus.paid) {
       updateData.paymentTime = new Date();
@@ -624,7 +667,8 @@ export class OrderService {
     page: number = 1,
     limit: number = 10,
   ) {
-    const where: Prisma.OrderWhereInput = { userId, isDeleted: false };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = { userId, isDeleted: false };
 
     switch (tab) {
       case "pending":
@@ -659,7 +703,8 @@ export class OrderService {
     ]);
 
     return {
-      items: orders.map((order) => this.mapToOrderResponse(order)),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      items: orders.map((order: any) => this.mapToOrderResponse(order)),
       total,
       page,
       limit,

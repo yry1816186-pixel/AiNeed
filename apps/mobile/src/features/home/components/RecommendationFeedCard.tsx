@@ -15,15 +15,15 @@ interface RecommendationCardProps {
   compact?: boolean;
 }
 
-export const RecommendationCard = memo(function RecommendationCard
-  const { colors } = useTheme();
-  const styles = useStyles(colors);({
+export const RecommendationCard = memo(function RecommendationCard({
   item,
   onPress,
   onLike,
   style,
   compact = false,
 }: RecommendationCardProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const handlePress = useCallback(() => onPress(item), [item, onPress]);
 
   const discount =

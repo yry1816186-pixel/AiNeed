@@ -172,7 +172,7 @@ export class AiStylistSessionService {
     });
 
     const sessions = records
-      .map((record) => {
+      .map((record: any) => {
         try {
           const session = record.payload as unknown as StylistSession;
           return {
@@ -289,7 +289,7 @@ export class AiStylistSessionService {
     expiresAt: Date,
   ): Promise<void> {
     try {
-      const sessionPayload = session as unknown as Prisma.InputJsonValue;
+      const sessionPayload = session as unknown as any;
 
       await this.prisma.aiStylistSession.upsert({
         where: { id: session.id },

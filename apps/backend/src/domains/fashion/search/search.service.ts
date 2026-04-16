@@ -4,7 +4,7 @@ import {
   ServiceUnavailableException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import type { ClothingCategory } from "@prisma/client";
+import type { ClothingCategory } from "../../../types/prisma-enums";
 import axios from "axios";
 
 import { allowUnverifiedAiFallbacks } from "../../../common/config/runtime-flags";
@@ -83,7 +83,7 @@ export class SearchService {
       take: candidateLimit,
     });
     const textRanks = new Map<string, number>();
-    textItems.forEach((item, idx) => {
+    textItems.forEach((item: { id: string }, idx: number) => {
       textRanks.set(item.id, idx + 1);
     });
 
@@ -136,7 +136,7 @@ export class SearchService {
 
     // Step 5: Compute RRF scores
     // Weight: text 40%, vector 40%, popularity 20%
-    const scored = candidates.map((item) => {
+    const scored = candidates.map((item: ClothingItemWithBrand) => {
       let rrfScore = 0;
 
       // Text contribution (40% weight)
@@ -170,7 +170,7 @@ export class SearchService {
     });
 
     // Sort by RRF score descending
-    scored.sort((a, b) => b.similarityScore - a.similarityScore);
+    scored.sort((a: ScoredSearchResult, b: ScoredSearchResult) => b.similarityScore - a.similarityScore);
 
     const total = scored.length;
     const paginated = scored.slice((page - 1) * limit, page * limit);
@@ -296,11 +296,11 @@ export class SearchService {
         },
       });
 
-      const itemMap = new Map(items.map((item) => [item.id, item]));
+      const itemMap = new Map(items.map((item: ClothingItemWithBrand) => [item.id, item]));
 
       return similarItems
-        .filter((sim) => itemMap.has(sim.id))
-        .map((sim) => {
+        .filter((sim: MLSimilarItemResult) => itemMap.has(sim.id))
+        .map((sim: MLSimilarItemResult) => {
           const item = itemMap.get(sim.id);
           if (!item) {
             throw new Error(`Item ${sim.id} not found in map`);

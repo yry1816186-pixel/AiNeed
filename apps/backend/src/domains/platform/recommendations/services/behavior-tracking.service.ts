@@ -3,7 +3,7 @@ import {
   Injectable,
   Logger,
 } from "@nestjs/common";
-import { BehaviorEventType } from "@prisma/client";
+import { BehaviorEventType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";

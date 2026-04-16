@@ -45,7 +45,8 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
     query: {
       $allModels: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        async $allOperations({ args, query, model, operation }: { args: OperationArgs; query: (args: OperationArgs) => Promise<unknown>; model: string; operation: string }) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        async $allOperations({ args, query, model, operation }: any) {
           // 需要软删除的模型列表
           const softDeleteModels = [
             'ClothingItem',

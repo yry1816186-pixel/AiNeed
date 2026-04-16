@@ -1,4 +1,4 @@
-﻿/**
+/**
  * EmptyState - UI layer re-export from primitives/EmptyState
  *
  * This file re-exports the canonical EmptyState from primitives/EmptyState
@@ -12,9 +12,7 @@ import { Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Typography, gradients } from '../../design-system/theme';
-import { Spacing } from '../theme';
-import { DesignTokens } from '../theme/tokens/design-tokens';
+import { Colors, DesignTokens, Spacing, BorderRadius, Typography, gradients } from '../../design-system/theme';
 
 
 

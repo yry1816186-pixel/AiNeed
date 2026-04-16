@@ -4,8 +4,6 @@
   NotFoundException,
   BadRequestException,
 } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { AddressData } from "../../../common/types/common.types";

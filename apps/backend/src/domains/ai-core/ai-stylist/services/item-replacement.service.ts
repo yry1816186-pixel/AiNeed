@@ -156,7 +156,7 @@ export class ItemReplacementService {
           matchScore: Math.min(matchScore, 100),
         };
       })
-      .sort((a, b) => b.matchScore - a.matchScore)
+      .sort((a: any, b: any) => b.matchScore - a.matchScore)
       .slice(0, limit);
 
     return scored;

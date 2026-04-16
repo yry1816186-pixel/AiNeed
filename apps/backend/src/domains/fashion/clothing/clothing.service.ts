@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { ClothingCategory, Prisma } from "@prisma/client";
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import {
@@ -9,6 +9,13 @@ import {
 } from "../../../common/types/api-response.types";
 import { CacheKeyBuilder, CACHE_TTL } from "../../../modules/cache/cache.constants";
 import { CacheService } from "../../../modules/cache/cache.service";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ClothingItemWhereInput = Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ClothingItemCreateInput = Record<string, any>;
+type PrismaDecimal = { toString(): string };
+interface DecimalFilter { gte?: number; lte?: number }
 
 export interface BrandSummary {
   id: string;
@@ -103,9 +110,8 @@ type ClothingItemDetailSelect = {
   updatedAt: true;
 };
 
-type ClothingItemWithBrandDetail = Prisma.ClothingItemGetPayload<{
-  select: ClothingItemDetailSelect & { brand: { select: BrandSelect } };
-}>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ClothingItemWithBrandDetail = any;
 
 // 列表查询轻量类型（不包含 description/images/tags 等大字段）
 type ClothingItemListItem = {
@@ -113,8 +119,8 @@ type ClothingItemListItem = {
   name: string;
   brandId: string | null;
   category: ClothingCategory;
-  price: Prisma.Decimal;
-  originalPrice: Prisma.Decimal | null;
+  price: PrismaDecimal;
+  originalPrice: PrismaDecimal | null;
   currency: string;
   mainImage: string | null;
   colors: string[];
@@ -294,7 +300,7 @@ export class ClothingService {
     this.logger.debug(`开始查询服装列表: page=${page}, pageSize=${pageSize}`);
 
     // 构建查询条件
-    const where: Prisma.ClothingItemWhereInput = { isActive: true, isDeleted: false };
+    const where: ClothingItemWhereInput = { isActive: true, isDeleted: false };
 
     if (category) { where.category = category; }
     if (brandId) { where.brandId = brandId; }
@@ -342,7 +348,7 @@ export class ClothingService {
    * 执行实际的数据库查询（包含批量 Brand 查询优化）
    */
   private async performDatabaseQuery(
-    where: Prisma.ClothingItemWhereInput,
+    where: ClothingItemWhereInput,
     skip: number,
     take: number,
     sortBy: "price" | "createdAt" | "viewCount" | "likeCount",
@@ -377,7 +383,7 @@ export class ClothingService {
     ]);
 
     // 批量获取 brand 信息（避免 N+1 查询）
-    const brandIds = [...new Set(items.map(item => item.brandId).filter(Boolean))] as string[];
+    const brandIds = [...new Set(items.map((item: { brandId: string | null }) => item.brandId).filter(Boolean))] as string[];
     const brandsMap = new Map<string, { id: string; name: string; logo: string | null }>();
 
     if (brandIds.length > 0) {
@@ -385,11 +391,11 @@ export class ClothingService {
         where: { id: { in: brandIds } },
         select: { id: true, name: true, logo: true }
       });
-      brands.forEach(brand => brandsMap.set(brand.id, brand));
+      brands.forEach((brand: { id: string; name: string; logo: string | null }) => brandsMap.set(brand.id, brand));
     }
 
     // 组装结果
-    const itemsWithBrand: ClothingItemListItem[] = items.map(item => ({
+    const itemsWithBrand: ClothingItemListItem[] = items.map((item: Record<string, unknown>) => ({
       ...item,
       brand: item.brandId ? (brandsMap.get(item.brandId) || null) : null
     }));
@@ -532,7 +538,7 @@ export class ClothingService {
     });
 
     // Single groupBy query instead of N+1 count() per subcategory
-    const whereForCount: Prisma.ClothingItemWhereInput = {
+    const whereForCount: ClothingItemWhereInput = {
       isActive: true,
       isDeleted: false,
       subcategory: { not: null },
@@ -637,7 +643,7 @@ export class ClothingService {
     tags?: string[];
     externalUrl?: string;
   }) {
-    const createData: Prisma.ClothingItemCreateInput = {
+    const createData: ClothingItemCreateInput = {
       name: data.name,
       category: data.category,
       price: data.price,
@@ -761,7 +767,7 @@ export class ClothingService {
     maxPrice?: number;
     sizes?: string[];
   }): Promise<ClothingItemResponse[]> {
-    const where: Prisma.ClothingItemWhereInput = {
+    const where: ClothingItemWhereInput = {
       isActive: true,
       isDeleted: false,
       OR: [
@@ -778,10 +784,10 @@ export class ClothingService {
     if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
       where.price = {};
       if (filters?.minPrice !== undefined) {
-        (where.price as Prisma.DecimalFilter).gte = filters.minPrice;
+        (where.price as DecimalFilter).gte = filters.minPrice;
       }
       if (filters?.maxPrice !== undefined) {
-        (where.price as Prisma.DecimalFilter).lte = filters.maxPrice;
+        (where.price as DecimalFilter).lte = filters.maxPrice;
       }
     }
 
@@ -843,13 +849,13 @@ export class ClothingService {
       }
     }
 
-    const mostWorn = allItems.slice(0, 5).map((item) => ({
+    const mostWorn = allItems.slice(0, 5).map((item: { id: string; name: string; viewCount: number }) => ({
       id: item.id,
       name: item.name,
       viewCount: item.viewCount,
     }));
 
-    const leastWorn = allItems.slice(-5).reverse().map((item) => ({
+    const leastWorn = allItems.slice(-5).reverse().map((item: { id: string; name: string; viewCount: number }) => ({
       id: item.id,
       name: item.name,
       viewCount: item.viewCount,

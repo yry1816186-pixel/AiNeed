@@ -226,7 +226,7 @@ export class UserProfileService {
       },
     });
 
-    const itemMap = new Map(items.map((item) => [item.id, item]));
+    const itemMap = new Map(items.map((item: any) => [item.id, item]));
 
     const recommendations: PersonalizedRecommendation[] = [];
 

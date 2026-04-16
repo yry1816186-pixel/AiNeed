@@ -192,9 +192,9 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  colorSwatchSelected: { borderColor: "colors.error", borderWidth: 2 }, // custom color
+  colorSwatchSelected: { borderColor: DesignTokens.colors.brand.terracotta, borderWidth: 2 },
   colorText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textSecondary },
-  colorTextSelected: { color: "colors.error", fontWeight: "600" }, // custom color
+  colorTextSelected: { color: DesignTokens.colors.brand.terracotta, fontWeight: "600" },
   sizeRow: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm},
   sizeWrapper: { alignItems: "center", marginBottom: Spacing.xs},
   sizeButton: {
@@ -209,10 +209,10 @@ const useStyles = createStyles((colors) => ({
   sizeButtonSelected: { borderColor: colors.error, backgroundColor: DesignTokens.colors.backgrounds.secondary }, // error-tinted bg
   sizeButtonDisabled: { backgroundColor: DesignTokens.colors.neutral[100], borderColor: DesignTokens.colors.neutral[100] },
   sizeText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
-  sizeTextSelected: { color: "colors.error", fontWeight: "600" }, // custom color
+  sizeTextSelected: { color: DesignTokens.colors.brand.terracotta, fontWeight: "600" },
   sizeTextDisabled: { color: DesignTokens.colors.neutral[300] },
-  recDot: { fontSize: DesignTokens.typography.sizes.xs, color: "colors.success", fontWeight: "600" }, // custom color
-  notifyText: { fontSize: DesignTokens.typography.sizes.xs, color: "colors.error", marginTop: DesignTokens.spacing['0.5']}, // custom color
+  recDot: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.semantic.success, fontWeight: "600" },
+  notifyText: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.brand.terracotta, marginTop: DesignTokens.spacing['0.5']},
   qtyRow: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing[3]},
   qtyButton: {
     width: DesignTokens.spacing[11],
@@ -233,7 +233,7 @@ const useStyles = createStyles((colors) => ({
   },
   stockText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   confirmButton: {
-    backgroundColor: "colors.error", // custom color
+    backgroundColor: DesignTokens.colors.brand.terracotta,
     paddingVertical: DesignTokens.spacing['3.5'],
     alignItems: "center",
   },

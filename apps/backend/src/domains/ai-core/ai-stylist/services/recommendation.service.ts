@@ -358,7 +358,7 @@ export class AiStylistRecommendationService {
         outfit.items.length > 0 &&
         outfits.findIndex(
           (candidate) =>
-            candidate.items.map((item) => item.itemId).join(",") ===
+            candidate.items.map((item: any) => item.itemId).join(",") ===
             outfit.items.map((item) => item.itemId).join(","),
         ) === index,
     );

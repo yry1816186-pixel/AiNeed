@@ -30,6 +30,8 @@ import {
   Optional,
 } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/library") as any;
 import { Request, Response } from "express";
 
 import {
@@ -193,7 +195,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     // 处理数据库错误
-    if (exception instanceof Prisma.PrismaClientKnownRequestError) {
+    if (exception instanceof PrismaClientKnownRequestError) {
       return this.handleDatabaseError(exception, timestamp, path, requestId);
     }
 
@@ -326,7 +328,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
    * 处理数据库错误 (Prisma)
    */
   private handleDatabaseError(
-    exception: Prisma.PrismaClientKnownRequestError,
+    exception: PrismaClientKnownRequestError,
     timestamp: string,
     path: string,
     requestId: string | undefined,
@@ -665,7 +667,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const statusCode = this.getStatusCode(exception);
 
-    if (statusCode < 500 && !(exception instanceof Prisma.PrismaClientKnownRequestError)) {
+    if (statusCode < 500 && !(exception instanceof PrismaClientKnownRequestError)) {
       return;
     }
 

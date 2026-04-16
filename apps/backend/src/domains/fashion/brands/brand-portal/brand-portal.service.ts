@@ -127,8 +127,8 @@ export class BrandPortalService {
 
     return {
       totalScans,
-      uniqueUsers: uniqueUsers.filter((u) => u.userId !== null).length,
-      dailyTrend: scansByDate.map((s) => ({
+      uniqueUsers: uniqueUsers.filter((u: { userId: string | null }) => u.userId !== null).length,
+      dailyTrend: scansByDate.map((s: { scannedAt: Date; _count: number }) => ({
         date: s.scannedAt,
         count: s._count,
       })),
@@ -147,8 +147,8 @@ export class BrandPortalService {
     });
 
     const userIds = scannedUserIds
-      .map((s) => s.userId)
-      .filter((id): id is string => id !== null);
+      .map((s: { userId: string | null }) => s.userId)
+      .filter((id: string | null): id is string => id !== null);
 
     if (userIds.length === 0) {
       return {
@@ -169,7 +169,7 @@ export class BrandPortalService {
     return {
       totalScannedUsers: userIds.length,
       genderDistribution: genderDist.reduce(
-        (acc, g) => ({ ...acc, [g.gender || "unknown"]: g._count }),
+        (acc: Record<string, number>, g: { gender: string | null; _count: number }) => ({ ...acc, [g.gender || "unknown"]: g._count }),
         {} as Record<string, number>,
       ),
       stylePreferences: [],

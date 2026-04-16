@@ -88,21 +88,21 @@ const useStyles = createStyles((colors) => ({
     height: DesignTokens.spacing['3.5'],
     borderRadius: 7,
     borderWidth: 2,
-    borderColor: "colors.border",
+    borderColor: DesignTokens.colors.borders.default,
     backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
   },
   dotCurrent: {
-    backgroundColor: "colors.error",
-    borderColor: "colors.error",
+    backgroundColor: DesignTokens.colors.brand.terracotta,
+    borderColor: DesignTokens.colors.brand.terracotta,
   },
   dotPast: {
-    backgroundColor: "colors.success",
-    borderColor: "colors.success",
+    backgroundColor: DesignTokens.colors.semantic.success,
+    borderColor: DesignTokens.colors.semantic.success,
   },
   dotFuture: {
-    borderColor: "colors.border",
+    borderColor: DesignTokens.colors.borders.default,
   },
   checkMark: {
     fontSize: DesignTokens.typography.sizes.xs,
@@ -112,7 +112,7 @@ const useStyles = createStyles((colors) => ({
   line: {
     width: DesignTokens.spacing['0.5'],
     flex: 1,
-    backgroundColor: "colors.border",
+    backgroundColor: DesignTokens.colors.borders.default,
     marginVertical: Spacing.xs,
   },
   content: { flex: 1, paddingBottom: DesignTokens.spacing[5]},
@@ -123,7 +123,7 @@ const useStyles = createStyles((colors) => ({
   },
   statusTextCurrent: {
     fontWeight: "700",
-    color: "colors.error",
+    color: DesignTokens.colors.brand.terracotta,
   },
   statusTextFuture: {
     color: DesignTokens.colors.neutral[300],
@@ -135,7 +135,7 @@ const useStyles = createStyles((colors) => ({
   },
   trackingText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "colors.info",
+    color: DesignTokens.colors.semantic.info,
     marginTop: Spacing.xs,
   },
 }))

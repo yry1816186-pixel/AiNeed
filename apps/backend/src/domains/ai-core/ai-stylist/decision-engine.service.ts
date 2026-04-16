@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ClothingCategory } from "@prisma/client";
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
@@ -330,7 +330,7 @@ export class DecisionEngineService {
 
     // Sort by composite score and return top options
     return scoredOptions
-      .sort((a, b) => b.compositeScore - a.compositeScore)
+      .sort((a: any, b: any) => b.compositeScore - a.compositeScore)
       .slice(0, 4);
   }
 
@@ -833,7 +833,7 @@ export class DecisionEngineService {
     currentNodeType: DecisionNodeType,
     tree: DecisionTree,
   ): DecisionNodeType | null {
-    const decisionTypes = tree.decisions.map((d) => d.nodeType);
+    const decisionTypes = tree.decisions.map((d: any) => d.nodeType);
     const currentIndex = DECISION_NODE_TYPES.indexOf(currentNodeType);
 
     // Check if all node types have been covered
@@ -1198,7 +1198,7 @@ export class DecisionEngineService {
     }
 
     // Build behavior history
-    const behaviorHistory: BehaviorRecord[] = behaviors.map((b) => ({
+    const behaviorHistory: BehaviorRecord[] = behaviors.map((b: any) => ({
       type: b.action,
       category: b.category,
       value: b.targetId || undefined,

@@ -27,7 +27,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
-import { PhotoType } from "@prisma/client";
+import { PhotoType } from "../../../types/prisma-enums";
 import type { Response } from "express";
 
 import { SensitiveDataInterceptor } from "../../../common/interceptors/sensitive-data.interceptor";

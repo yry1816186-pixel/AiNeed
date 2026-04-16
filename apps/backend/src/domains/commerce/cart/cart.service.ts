@@ -4,7 +4,10 @@ import {
   BadRequestException,
   Logger,
 } from "@nestjs/common";
-import { ClothingCategory, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import Decimal from "decimal.js";
+
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CouponService } from "../coupon/coupon.service";
@@ -57,8 +60,8 @@ interface CartItemWithRelations {
     category: ClothingCategory;
     colors: string[];
     sizes: string[];
-    price: Prisma.Decimal;
-    originalPrice: Prisma.Decimal | null;
+    price: Decimal;
+    originalPrice: Decimal | null;
     currency: string;
     images: string[];
     tags: string[];
@@ -100,7 +103,8 @@ export class CartService {
       orderBy: { createdAt: "desc" },
     });
 
-    return items.map((item) => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return items.map((item: any) => ({
       id: item.id,
       itemId: item.itemId,
       color: item.color,
@@ -464,7 +468,8 @@ export class CartService {
    * Move cart items to favorites.
    */
   async moveToFavorites(userId: string, cartItemIds: string[]) {
-    return this.prisma.$transaction(async (tx) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return this.prisma.$transaction(async (tx: any) => {
       const cartItems = await tx.cartItem.findMany({
         where: { id: { in: cartItemIds }, userId },
         select: { itemId: true },
@@ -532,7 +537,8 @@ export class CartService {
 
     if (existing) {
       // Merge quantities
-      return this.prisma.$transaction(async (tx) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return this.prisma.$transaction(async (tx: any) => {
         await tx.cartItem.update({
           where: { id: existing.id },
           data: { quantity: { increment: cartItem.quantity } },

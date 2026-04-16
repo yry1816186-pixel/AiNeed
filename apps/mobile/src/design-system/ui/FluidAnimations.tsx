@@ -1,4 +1,4 @@
-﻿import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import {
   Text,
   StyleSheet,
@@ -28,10 +28,8 @@ import {
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { Colors, DesignTokens, Spacing, BorderRadius } from '../../design-system/theme';
 import type { ScrollEvent } from "../../types/events";
-import { Spacing } from '../theme';
 import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 
 

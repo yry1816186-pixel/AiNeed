@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { PhotoType } from "@prisma/client";
+import { PhotoType } from "../../../types/prisma-enums";
 
 import { AiStylistChatService } from "./services/chat.service";
 import { AiStylistContextService } from "./services/context.service";

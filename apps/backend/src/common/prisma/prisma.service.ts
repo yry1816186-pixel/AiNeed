@@ -154,7 +154,7 @@ export class PrismaService
     }
 
     // 使用 TRUNCATE CASCADE 一次性清理所有表，自动处理外键依赖
-    const tables = tablenames.map((row) => `"${row.tablename}"`).join(", ");
+    const tables = tablenames.map((row: { tablename: string }) => `"${row.tablename}"`).join(", ");
     await this.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
 
     // 重置所有序列（自增 ID）

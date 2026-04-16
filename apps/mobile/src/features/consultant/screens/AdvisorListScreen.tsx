@@ -217,7 +217,7 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    backgroundColor: "DesignTokens.colors.neutral[50]",
+    backgroundColor: DesignTokens.colors.neutral[50],
   },
   matchResultsText: { fontSize: DesignTokens.typography.sizes.sm, color: "colors.primary" },
   clearMatchText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },

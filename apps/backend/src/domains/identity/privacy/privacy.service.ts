@@ -204,7 +204,7 @@ export class PrivacyService {
         where: { userId },
       });
       const deleteResults = await Promise.allSettled(
-        photos.map((photo) => this.storage.delete(photo.url)),
+        photos.map((photo: any) => this.storage.delete(photo.url)),
       );
 
       // Log any failed deletions for GDPR compliance tracking

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
-import { PhotoType } from "@prisma/client";
+import { PhotoType } from "../../../../types/prisma-enums";
 
 import { PhotosService } from '../../photos/photos.service';
 import { LlmProviderService } from "../llm-provider.service";

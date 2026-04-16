@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
-import { PhotoType } from "@prisma/client";
+import { PhotoType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import type {

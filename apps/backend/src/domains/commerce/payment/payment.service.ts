@@ -8,7 +8,9 @@
 import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Cron } from "@nestjs/schedule";
-import { PrismaClient, OrderStatus } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+
+import { OrderStatus } from "../../../types/prisma-enums";
 
 import { StructuredLoggerService, ContextualLogger } from "../../../common/logging";
 import { PrismaService } from "../../../common/prisma/prisma.service";

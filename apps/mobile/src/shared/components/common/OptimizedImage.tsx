@@ -36,9 +36,7 @@ export interface OptimizedImageProps extends AccessibilityProps {
  * - Memoized with React.memo for render performance
  * - Shows ActivityIndicator while loading
  */
-export const OptimizedImage = memo(function OptimizedImage
-  const { colors } = useTheme();
-  const styles = useStyles(colors);({
+export const OptimizedImage = memo(function OptimizedImage({
   source,
   style,
   width,
@@ -48,6 +46,8 @@ export const OptimizedImage = memo(function OptimizedImage
   accessibilityLabel,
   ...accessibilityRest
 }: OptimizedImageProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
 

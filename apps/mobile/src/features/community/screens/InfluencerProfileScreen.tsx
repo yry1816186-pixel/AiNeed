@@ -410,7 +410,7 @@ const s = StyleSheet.create({
   },
   postInfo: { padding: Spacing.sm},
   postTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: colors.textPrimary, lineHeight: 16 },
-  postStats: { flexDirection: "row", alignItems: "center", gap: 3, marginTop: Spacing.xs},
+  postStats: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, marginTop: Spacing.xs},
   postStatText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
   emptyPosts: { alignItems: "center", justifyContent: "center", paddingVertical: 60 },
   emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: Spacing.sm},

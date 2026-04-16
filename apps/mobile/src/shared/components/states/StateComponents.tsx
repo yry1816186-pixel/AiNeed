@@ -583,7 +583,7 @@ export const SuccessState: React.FC<SuccessStateProps> = ({
   return (
     <AnimatedView style={[styles.successContainer, containerAnimatedStyle, style]}>
       <AnimatedView style={[styles.successIconContainer, checkAnimatedStyle]}>
-        <LinearGradient colors={[colors.success, "#059669"]} style={styles.successIconGradient}>
+        <LinearGradient colors={[colors.success, DesignTokens.colors.semantic.success]} style={styles.successIconGradient}>
           <Ionicons name={icon} size={48} color={colors.textInverse} />
         </LinearGradient>
       </AnimatedView>

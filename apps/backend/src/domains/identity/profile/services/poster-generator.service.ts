@@ -159,7 +159,7 @@ export class PosterGeneratorService {
     ctx.fillText("我的风格画像", template.width / 2, header.y + header.height * 0.4);
 
     const seasonName = colorSeason
-      ? COLOR_SEASON_DISPLAY_NAMES[colorSeason]
+      ? (COLOR_SEASON_DISPLAY_NAMES[colorSeason] ?? "春季型")
       : "春季型";
     ctx.fillStyle = header.subtitleColor;
     ctx.font = `${header.subtitleFontSize}px ${FONT_FAMILY}`;

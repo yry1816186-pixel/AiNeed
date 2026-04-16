@@ -104,16 +104,16 @@ const useStyles = createStyles((colors) => ({
     marginBottom: Spacing.xs,
   },
   typeBadge: {
-    backgroundColor: "DesignTokens.colors.neutral[50]",
+    backgroundColor: DesignTokens.colors.neutral[100],
     paddingHorizontal: Spacing.sm,
     paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "colors.primaryLight",
+    borderColor: DesignTokens.colors.brand.terracottaLight,
   },
   typeBadgeText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: "colors.primary",
+    color: DesignTokens.colors.brand.terracotta,
   },
   ratingText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -136,7 +136,7 @@ const useStyles = createStyles((colors) => ({
   },
   price: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "colors.primary",
+    color: DesignTokens.colors.brand.terracotta,
     fontWeight: "500",
   },
 }))

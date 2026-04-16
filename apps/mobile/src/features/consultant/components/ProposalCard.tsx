@@ -38,11 +38,11 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
 
 const useStyles = createStyles((colors) => ({
   card: {
-    backgroundColor: "DesignTokens.colors.neutral[50]",
+    backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 12,
     padding: Spacing.md,
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.neutral[200]",
+    borderColor: DesignTokens.colors.neutral[200],
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,

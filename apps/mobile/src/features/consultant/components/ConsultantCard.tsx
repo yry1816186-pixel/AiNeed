@@ -130,7 +130,7 @@ const useStyles = createStyles((colors) => ({
     gap: Spacing.xs,
   },
   specialtyBadge: {
-    backgroundColor: "DesignTokens.colors.neutral[50]",
+    backgroundColor: DesignTokens.colors.neutral[50],
     paddingHorizontal: Spacing.sm,
     paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 10,

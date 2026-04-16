@@ -7,6 +7,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const { PrismaClientKnownRequestError } = require('@prisma/client/runtime/library') as any;
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -150,12 +152,12 @@ export class ErrorInterceptor implements NestInterceptor {
       ];
     }
 
-    if (exception instanceof Prisma.PrismaClientKnownRequestError) {
+    if (exception instanceof PrismaClientKnownRequestError) {
       const { status, title, detail } = this.mapPrismaError(exception);
       const meta: Record<string, unknown> = { ...baseMeta };
       if (!this.isProduction) {
-        meta.prismaCode = exception.code;
-        meta.meta = exception.meta;
+        meta.prismaCode = (exception as { code: string }).code;
+        meta.meta = (exception as { meta: unknown }).meta;
         const prismaEx = exception as ExceptionWithStack;
         if (prismaEx.stack) {
           meta.stack = prismaEx.stack;
@@ -167,7 +169,7 @@ export class ErrorInterceptor implements NestInterceptor {
           status: String(status),
           code: String(status * 100 + 1),
           title,
-          detail: this.isProduction ? detail : exception.message,
+          detail: this.isProduction ? detail : (exception as { message: string }).message,
           meta,
         } as JsonApiError,
       ];
@@ -239,7 +241,7 @@ export class ErrorInterceptor implements NestInterceptor {
 
     if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
-    } else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
+    } else if (exception instanceof PrismaClientKnownRequestError) {
       statusCode = this.getPrismaStatusCode(exception);
     }
 
@@ -250,7 +252,7 @@ export class ErrorInterceptor implements NestInterceptor {
     return new HttpException(response, statusCode);
   }
 
-  private mapPrismaError(exception: Prisma.PrismaClientKnownRequestError): {
+  private mapPrismaError(exception: PrismaClientKnownRequestError): {
     status: number;
     title: string;
     detail: string;
@@ -289,7 +291,7 @@ export class ErrorInterceptor implements NestInterceptor {
     }
   }
 
-  private getPrismaStatusCode(exception: Prisma.PrismaClientKnownRequestError): number {
+  private getPrismaStatusCode(exception: PrismaClientKnownRequestError): number {
     const codeMap: Record<string, number> = {
       P2002: HttpStatus.CONFLICT,
       P2025: HttpStatus.NOT_FOUND,

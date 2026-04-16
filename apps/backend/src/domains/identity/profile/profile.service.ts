@@ -119,7 +119,8 @@ export class ProfileService {
     }
 
     // 更新用户基本信息
-    const userUpdateData: Prisma.UserUpdateInput = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const userUpdateData: any = {};
     if (dto.nickname !== undefined) {userUpdateData.nickname = dto.nickname;}
     if (dto.avatar !== undefined) {userUpdateData.avatar = dto.avatar;}
     if (dto.gender !== undefined) {userUpdateData.gender = dto.gender;}
@@ -179,10 +180,10 @@ export class ProfileService {
           skinTone: profileData.skinTone,
           faceShape: profileData.faceShape,
           colorSeason: profileData.colorSeason,
-          stylePreferences: (profileData.stylePreferences ?? []) as unknown as Prisma.InputJsonValue,
+          stylePreferences: (profileData.stylePreferences ?? []) as any,
           colorPreferences: profileData.colorPreferences ?? [],
         },
-        update: profileData as Prisma.UserProfileUpdateInput,
+        update: profileData as any,
       });
     }
 
@@ -349,6 +350,7 @@ export class ProfileService {
     return {
       bodyType: profile.bodyType,
       ...guide,
+      bodyTypeName: guide?.bodyTypeName ?? '',
     };
   }
 
@@ -436,7 +438,7 @@ export class ProfileService {
       },
     };
 
-    return colorGuides[profile.colorSeason];
+    return colorGuides[profile.colorSeason] ?? colorGuides[ColorSeason.spring_warm]!;
   }
 
   async getStyleRecommendations(userId: string) {

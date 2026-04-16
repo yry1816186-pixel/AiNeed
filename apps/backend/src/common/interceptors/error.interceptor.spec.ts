@@ -169,7 +169,7 @@ describe('ErrorInterceptor', () => {
 
   describe('Prisma errors', () => {
     it('should map P2002 to 409 Conflict', (done) => {
-      const exception = new Prisma.PrismaClientKnownRequestError(
+      const exception = new PrismaClientKnownRequestError(
         'Unique constraint failed',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { code: 'P2002', clientVersion: '5.0.0', meta: { target: ['email'] } } as any,
@@ -189,7 +189,7 @@ describe('ErrorInterceptor', () => {
     });
 
     it('should map P2025 to 404 Not Found', (done) => {
-      const exception = new Prisma.PrismaClientKnownRequestError(
+      const exception = new PrismaClientKnownRequestError(
         'Record not found',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { code: 'P2025', clientVersion: '5.0.0' } as any,
@@ -208,7 +208,7 @@ describe('ErrorInterceptor', () => {
     });
 
     it('should map P2003 to 404 Not Found', (done) => {
-      const exception = new Prisma.PrismaClientKnownRequestError(
+      const exception = new PrismaClientKnownRequestError(
         'Foreign key constraint failed',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { code: 'P2003', clientVersion: '5.0.0' } as any,
@@ -225,7 +225,7 @@ describe('ErrorInterceptor', () => {
     });
 
     it('should map P2011 to 422 Unprocessable Entity', (done) => {
-      const exception = new Prisma.PrismaClientKnownRequestError(
+      const exception = new PrismaClientKnownRequestError(
         'Null constraint violation',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { code: 'P2011', clientVersion: '5.0.0' } as any,
@@ -242,7 +242,7 @@ describe('ErrorInterceptor', () => {
     });
 
     it('should map unknown Prisma error to 500', (done) => {
-      const exception = new Prisma.PrismaClientKnownRequestError(
+      const exception = new PrismaClientKnownRequestError(
         'Unknown error',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { code: 'P9999', clientVersion: '5.0.0' } as any,
@@ -259,7 +259,7 @@ describe('ErrorInterceptor', () => {
     });
 
     it('should include prismaCode and meta in non-production', (done) => {
-      const exception = new Prisma.PrismaClientKnownRequestError(
+      const exception = new PrismaClientKnownRequestError(
         'Unique constraint failed',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { code: 'P2002', clientVersion: '5.0.0', meta: { target: ['email'] } } as any,
@@ -357,7 +357,7 @@ describe('ErrorInterceptor', () => {
     });
 
     it('should sanitize Prisma error messages', (done) => {
-      const exception = new Prisma.PrismaClientKnownRequestError(
+      const exception = new PrismaClientKnownRequestError(
         'Raw database error message',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { code: 'P2002', clientVersion: '5.0.0' } as any,

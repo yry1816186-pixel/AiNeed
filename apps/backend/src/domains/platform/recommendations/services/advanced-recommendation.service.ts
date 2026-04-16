@@ -5,13 +5,8 @@ import {
   SkinTone,
   ColorSeason,
   ClothingCategory,
-  ClothingItem,
-  UserProfile as PrismaUserProfile,
-  UserBehavior,
-  VirtualTryOn,
-  Favorite,
-  Prisma,
-} from "@prisma/client";
+} from "../../../../types/prisma-enums";
+import Decimal from "decimal.js";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
@@ -22,7 +17,7 @@ import { MultimodalFusionService } from "./multimodal-fusion.service";
 /**
  * 将 Prisma Decimal 类型转换为 number
  */
-function toNumber(value: Prisma.Decimal | number | null | undefined): number {
+function toNumber(value: Decimal | number | null | undefined): number {
   if (value === null || value === undefined) {
     return 0;
   }
@@ -164,7 +159,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
     const candidates = await this.getCandidateItems(limit * 4);
 
     const scoredItems = await Promise.all(
-      candidates.map(async (item) => {
+      candidates.map(async (item: any) => {
         const scores = await this.calculateAllScores(
           profile,
           item,
@@ -196,7 +191,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
       }),
     );
 
-    scoredItems.sort((a, b) => b.score - a.score);
+    scoredItems.sort((a: any, b: any) => b.score - a.score);
 
     const diverseItems = this.optimizeDiversity(scoredItems, limit);
 
@@ -407,8 +402,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
       take: limit * 3,
     });
 
-    const scoredItems = items.map((item) => {
-      const attrs = item.attributes as ItemAttributes | null;
+    const scoredItems = items.map((item: any) => {
 
       let score = 50;
 
@@ -450,7 +444,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
       };
     });
 
-    scoredItems.sort((a, b) => b.score - a.score);
+    scoredItems.sort((a: any, b: any) => b.score - a.score);
 
     return scoredItems.slice(0, limit);
   }
@@ -521,7 +515,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
         }),
       );
 
-      scored.sort((a, b) => b.score - a.score);
+      scored.sort((a: any, b: any) => b.score - a.score);
       results[key] = scored.slice(0, 5);
 
       const firstScored = scored[0];
@@ -601,8 +595,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
       take: limit * 2,
     });
 
-    const scoredItems = items.map((item) => {
-      const viewScore = Math.min(item.viewCount / 50, 30);
+    const scoredItems = items.map((item: any) => {
       const likeScore = Math.min(item.likeCount / 25, 30);
       const recencyScore = 20;
       const featuredScore = item.isFeatured ? 20 : 0;
@@ -623,7 +616,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
       };
     });
 
-    scoredItems.sort((a, b) => b.score - a.score);
+    scoredItems.sort((a: any, b: any) => b.score - a.score);
 
     return scoredItems.slice(0, limit);
   }

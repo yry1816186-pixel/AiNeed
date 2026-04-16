@@ -175,7 +175,7 @@ export class BrandsService {
       return null;
     }
 
-    const where: Prisma.ClothingItemWhereInput = { brandId: brand.id, isActive: true };
+    const where: ClothingItemWhereInput = { brandId: brand.id, isActive: true };
     if (category) {where.category = category;}
     if (minPrice !== undefined || maxPrice !== undefined) {
       where.price = {};
@@ -224,7 +224,7 @@ export class BrandsService {
       take: limit,
     });
 
-    return brands.map((brand) => ({
+    return brands.map((brand: { _count: { products: number }; [key: string]: unknown }) => ({
       id: brand.id,
       name: brand.name,
       slug: brand.slug,
@@ -256,7 +256,7 @@ export class BrandsService {
       where: { isActive: true },
     });
 
-    return stats.map((s) => ({
+    return stats.map((s: { priceRange: PriceRange; _count: { id: number } }) => ({
       priceRange: s.priceRange,
       count: s._count.id,
       label: this.getPriceRangeLabel(s.priceRange),
@@ -281,7 +281,7 @@ export class BrandsService {
    * @returns Created brand with decrypted PII fields
    */
   async createBrand(dto: CreateBrandDto): Promise<BrandWithPII> {
-    const data: Prisma.BrandCreateInput = {
+    const data: BrandCreateInput = {
       name: dto.name,
       slug: dto.slug,
       logo: dto.logo,
@@ -318,7 +318,7 @@ export class BrandsService {
    * @returns Updated brand with decrypted PII fields
    */
   async updateBrand(brandId: string, dto: UpdateBrandDto): Promise<BrandWithPII> {
-    const data: Prisma.BrandUpdateInput = { ...dto };
+    const data: BrandUpdateInput = { ...dto };
 
     // Encrypt PII fields before storage
     if (dto.contactEmail !== undefined) {
@@ -467,7 +467,7 @@ export class BrandsService {
         brandId,
         productId,
         code,
-        payload: payload as unknown as Prisma.JsonValue,
+        payload: payload as unknown as JsonValue,
       },
     });
   }

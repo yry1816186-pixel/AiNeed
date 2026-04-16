@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { PhotoType } from "@prisma/client";
+import { PhotoType } from "../../../../types/prisma-enums";
 import { Type } from "class-transformer";
 import {
   IsEnum,

@@ -343,7 +343,7 @@ export class AIIntegrationService implements OnModuleInit {
   async batchEnrichItems(limit: number = 100): Promise<number> {
     const items = await this.prisma.clothingItem.findMany({
       where: {
-        OR: [{ attributes: { equals: {} } }, { attributes: { equals: Prisma.DbNull } }],
+        OR: [{ attributes: { equals: {} } }, { attributes: { equals: Prisma.DbNull as any } }],
       },
       take: limit,
     });

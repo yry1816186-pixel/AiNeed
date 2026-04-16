@@ -542,7 +542,7 @@ const styles = StyleSheet.create({
     width: DesignTokens.spacing['2.5'],
     height: DesignTokens.spacing['2.5'],
     borderRadius: 5,
-    backgroundColor: "DesignTokens.colors.neutral[300]",
+    backgroundColor: DesignTokens.colors.neutral[300],
     marginTop: DesignTokens.spacing['1.5'],
   },
   timelineDotActive: {
@@ -552,7 +552,7 @@ const styles = StyleSheet.create({
     width: DesignTokens.spacing['0.5'],
     flex: 1,
     marginTop: DesignTokens.spacing['1.5'],
-    backgroundColor: "DesignTokens.colors.neutral[200]",
+    backgroundColor: DesignTokens.colors.neutral[200],
   },
   timelineContent: {
     flex: 1,

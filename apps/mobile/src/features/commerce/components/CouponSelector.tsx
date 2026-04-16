@@ -134,7 +134,7 @@ const useStyles = createStyles((colors) => ({
     borderBottomWidth: 1,
     borderBottomColor: colors.backgroundTertiary,
   },
-  couponRowSelected: { backgroundColor: "DesignTokens.colors.neutral[50]" },
+  couponRowSelected: { backgroundColor: DesignTokens.colors.neutral[50] },
   couponLeft: {
     width: Spacing['4xl'],
     alignItems: "center",

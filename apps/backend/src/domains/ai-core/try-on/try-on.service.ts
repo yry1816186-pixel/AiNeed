@@ -382,7 +382,7 @@ export class TryOnService {
     dateTo?: string,
   ) {
     const skip = (page - 1) * limit;
-    const where: Prisma.VirtualTryOnWhereInput = { userId };
+    const where: any = { userId };
     if (status) {
       where.status = status;
     }
@@ -395,10 +395,10 @@ export class TryOnService {
     if (dateFrom || dateTo) {
       where.createdAt = {};
       if (dateFrom) {
-        (where.createdAt as Prisma.DateTimeFilter).gte = new Date(dateFrom);
+        (where.createdAt as any).gte = new Date(dateFrom);
       }
       if (dateTo) {
-        (where.createdAt as Prisma.DateTimeFilter).lte = new Date(dateTo);
+        (where.createdAt as any).lte = new Date(dateTo);
       }
     }
 
@@ -426,7 +426,7 @@ export class TryOnService {
     ]);
 
     const itemsWithDataUri = await Promise.all(
-      items.map((item) => this.attachResultDataUri(item)),
+      items.map((item: any) => this.attachResultDataUri(item)),
     );
 
     return {

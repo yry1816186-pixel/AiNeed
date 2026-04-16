@@ -97,37 +97,37 @@ export const COLOR_PALETTES: ColorPaletteOption[] = [
   {
     id: "warm",
     label: "暖色调",
-    colors: ["colors.primary", "colors.warning", "colors.primary", colors.primary],
+    colors: [colors.primary, colors.warning, colors.primary, colors.primary],
     description: "温暖阳光，亲切自然",
   },
   {
     id: "cool",
     label: "冷色调",
-    colors: ["colors.neutral[500]", "colors.neutral[700]", "colors.textTertiary", "colors.secondary"],
+    colors: [colors.neutral[500], colors.neutral[700], colors.textTertiary, colors.secondary],
     description: "沉静理智，高级质感",
   },
   {
     id: "neutral",
     label: "中性色",
-    colors: [colors.textPrimary, "colors.textSecondary", "DesignTokens.colors.neutral[300]", "colors.backgroundSecondary"],
+    colors: [colors.textPrimary, colors.textSecondary, DesignTokens.colors.neutral[300], colors.backgroundSecondary],
     description: "百搭经典，永不褪色",
   },
   {
     id: "earth",
     label: "大地色",
-    colors: ["colors.secondary", colors.primary, "colors.primaryDark", DesignTokens.colors.brand.sage],
+    colors: [colors.secondary, colors.primary, colors.primaryDark, DesignTokens.colors.brand.sage],
     description: "自然沉稳，低调内敛",
   },
   {
     id: "morandi",
     label: "莫兰迪色",
-    colors: ["colors.primary", "colors.secondary", "colors.textTertiary", "colors.primaryLight"],
+    colors: [colors.primary, colors.secondary, colors.textTertiary, colors.primaryLight],
     description: "低饱和度，温柔高级",
   },
   {
     id: "vivid",
     label: "高饱和",
-    colors: ["colors.error", colors.warning, colors.success, "colors.info"],
+    colors: [colors.error, colors.warning, colors.success, colors.info],
     description: "鲜明醒目，大胆出众",
   },
 ];

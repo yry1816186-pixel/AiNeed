@@ -19,9 +19,9 @@ const STATUS_COLORS = {
   adjust: colors.error,
 } as const;
 
-function getStatusMessage
+function getStatusMessage(status: AlignmentStatus): { message: string; color: string } | null {
   const { colors } = useTheme();
-  const styles = useStyles(colors);(status: AlignmentStatus): { message: string; color: string } | null {
+  const styles = useStyles(colors);
   if (status.overall === "perfect") {
     return { message: "完美！", color: STATUS_COLORS.perfect };
   }

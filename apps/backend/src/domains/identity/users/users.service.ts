@@ -42,6 +42,9 @@ export interface UserResponse {
   updatedAt: Date;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type User = Awaited<ReturnType<PrismaService['user']['findUnique']>> & Record<string, any>;
+
 type UserWithDecrypted = Omit<User, 'phone'> & {
   phone: string | null;
   nickname: string | null;

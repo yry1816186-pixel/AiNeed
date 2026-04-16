@@ -372,7 +372,7 @@ const usePartStyles = createStyles((colors) => ({
     right: DesignTokens.spacing[3],
     flexDirection: "row",
     alignItems: "center",
-    gap: 3,
+    gap: Spacing.xs,
     backgroundColor: "rgba(255,255,255,0.9)",
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,

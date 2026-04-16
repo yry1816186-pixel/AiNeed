@@ -187,7 +187,7 @@ const useStyles = createStyles((colors) => ({
   studioName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: "colors.textPrimary", marginBottom: Spacing.sm},
   specialtyRow: { flexDirection: "row", flexWrap: "wrap", gap: DesignTokens.spacing['1.5'], marginBottom: DesignTokens.spacing[3]},
   specialtyBadge: {
-    backgroundColor: "DesignTokens.colors.neutral[50]",
+    backgroundColor: DesignTokens.colors.neutral[50],
     paddingHorizontal: DesignTokens.spacing['2.5'],
     paddingVertical: Spacing.xs,
     borderRadius: 12,

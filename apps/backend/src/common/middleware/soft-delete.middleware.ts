@@ -43,7 +43,7 @@ export class SoftDeleteMiddleware implements NestMiddleware {
 
       if (shouldSoftDelete) {
         // 设置软删除标志
-        (req as Record<string, unknown>).softDelete = true;
+        (req as unknown as Record<string, unknown>).softDelete = true;
 
         this.logger.debug(
           `Soft delete detected for ${method} ${originalUrl}`,
@@ -58,6 +58,6 @@ export class SoftDeleteMiddleware implements NestMiddleware {
    * 检查请求是否应该执行软删除
    */
   isSoftDeleteRequest(req: Request): boolean {
-    return (req as Record<string, unknown>).softDelete === true;
+    return (req as unknown as Record<string, unknown>).softDelete === true;
   }
 }

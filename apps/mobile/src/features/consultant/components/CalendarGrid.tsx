@@ -181,7 +181,7 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: "colors.primary",
   },
   cellAvailable: {
-    backgroundColor: "DesignTokens.colors.neutral[50]",
+    backgroundColor: DesignTokens.colors.neutral[50],
   },
   dayText: {
     fontSize: DesignTokens.typography.sizes.base,

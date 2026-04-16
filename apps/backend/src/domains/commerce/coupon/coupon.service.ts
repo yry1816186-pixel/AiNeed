@@ -5,11 +5,13 @@
   NotFoundException,
   BadRequestException,
 } from "@nestjs/common";
-import { CouponType, UserCouponStatus, Prisma } from "@prisma/client";
+import Decimal from "decimal.js";
+
+import { CouponType, UserCouponStatus } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
-type Decimal = Prisma.Decimal;
+
 import { CreateCouponDto } from "./dto";
 
 export interface CouponValidationResult {
@@ -212,7 +214,8 @@ export class CouponService {
    * Uses atomic operation for usedCount increment to prevent overselling.
    */
   async useCoupon(userCouponId: string, orderId: string): Promise<void> {
-    await this.prisma.$transaction(async (tx) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await this.prisma.$transaction(async (tx: any) => {
       const userCoupon = await tx.userCoupon.findUnique({
         where: { id: userCouponId },
       });
