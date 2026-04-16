@@ -1,8 +1,19 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma, PriceRange, ClothingCategory } from "@prisma/client";
+import { PriceRange, ClothingCategory } from "../../../types/prisma-enums";
 
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type BrandWhereInput = Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ClothingItemWhereInput = Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type BrandCreateInput = Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type BrandUpdateInput = Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type JsonValue = any;
 
 export interface CreateBrandDto {
   name: string;
@@ -75,7 +86,7 @@ export class BrandsService {
     const { category, priceRange, page = 1, limit = 20 } = options;
     const skip = (page - 1) * limit;
 
-    const where: Prisma.BrandWhereInput = { isActive: true };
+    const where: BrandWhereInput = { isActive: true };
     if (priceRange) {where.priceRange = priceRange;}
     if (category) {where.categories = { has: category };}
 
@@ -95,7 +106,7 @@ export class BrandsService {
     ]);
 
     return {
-      items: brands.map((brand) => ({
+      items: brands.map((brand: { _count: { products: number }; [key: string]: unknown }) => ({
         ...brand,
         productCount: brand._count.products,
         _count: undefined,

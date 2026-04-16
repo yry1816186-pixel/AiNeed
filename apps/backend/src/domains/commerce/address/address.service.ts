@@ -64,7 +64,7 @@ export class AddressService {
       orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }],
     });
 
-    return addresses.map((addr) => this.mapToResponse(addr));
+    return addresses.map((addr: AddressData) => this.mapToResponse(addr));
   }
 
   /**
@@ -164,7 +164,7 @@ export class AddressService {
     }
 
     // Prepare update data with encrypted PII fields
-    const updateData: Prisma.UserAddressUpdateInput = { ...dto };
+    const updateData: Record<string, unknown> = { ...dto };
     if (dto.phone !== undefined) {
       updateData.phone = dto.phone ? this.encryptionService.encrypt(dto.phone) : undefined;
     }

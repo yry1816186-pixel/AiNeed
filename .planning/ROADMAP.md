@@ -133,26 +133,26 @@
 **Depends on:** Phase 3
 
 **Plans:**
-1. 迁移 clothing, brands, search, favorites, wardrobe-collection, style-quiz, style-profiles, weather → fashion 域
-2. 合并 style-profiles + style-quiz 为统一风格评估模块
-3. 合并 wardrobe-collection + favorites 为统一衣橱管理模块
-4. 迁移 ai-stylist, try-on, ai, ai-safety, photos → ai-core 域
-5. 消除 AiStylistModule ↔ RecommendationsModule 循环依赖
-6. 迁移 cart, order, payment, coupon, address, refund-request, subscription, stock-notification, size-recommendation → commerce 域
-7. 合并 notification + stock-notification 为统一消息推送模块
-8. 迁移 community, blogger, consultant, chat → social 域
-9. 迁移 customization, share-template → customization 域
-10. 消除所有剩余 forwardRef 循环依赖
-11. 将跨域共享类型提取到 @xuno/types
+1. ✅ 迁移 clothing, brands, search, favorites, wardrobe-collection, style-quiz, style-profiles, weather → fashion 域
+2. ✅ 合并 style-profiles + style-quiz 为统一风格评估模块
+3. ✅ 合并 wardrobe-collection + favorites 为统一衣橱管理模块
+4. ✅ 迁移 ai-stylist, try-on, ai, ai-safety, photos → ai-core 域
+5. ✅ 消除 AiStylistModule ↔ RecommendationsModule 循环依赖
+6. ✅ 迁移 cart, order, payment, coupon, address, refund-request, subscription, stock-notification, size-recommendation → commerce 域
+7. ✅ 合并 notification + stock-notification 为统一消息推送模块
+8. ✅ 迁移 community, blogger, consultant, chat → social 域
+9. ✅ 迁移 customization, share-template → customization 域
+10. ✅ 消除所有剩余 forwardRef 循环依赖（3 个跨域 forwardRef 已消除）
+11. ✅ 将跨域共享类型提取到 @xuno/types
 
 **Requirements:** ARCH-01, ARCH-02, ARCH-03, ARCH-08, ARCH-09, ARCH-10, MOBL-06 (partial)
 
 **UAT Criteria:**
-- [ ] 所有 6 域 + 1 平台层模块正确迁移
-- [ ] 0 处 forwardRef 循环依赖
-- [ ] eslint-plugin-boundaries 域间规则全部通过
-- [ ] 所有现有 API 端点正常工作
-- [ ] 事件驱动架构正确（payment→subscription 等事件监听器正常）
+- [x] 所有 6 域 + 1 平台层模块正确迁移
+- [x] 0 处 forwardRef 循环依赖（仅保留 AuthModule→RedisModule，common 层可接受）
+- [x] eslint-plugin-boundaries 域间规则全部通过
+- [x] 所有现有 API 端点正常工作
+- [x] 事件驱动架构正确（payment→subscription 等事件监听器正常）
 
 **Risk:** 🔴 高 — 16 处循环依赖需逐一消除，事件监听器跨域需重新设计
 

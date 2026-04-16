@@ -5,9 +5,8 @@ import {
   SkinTone,
   ColorSeason,
   ClothingCategory,
-  ClothingItem,
-  Prisma,
-} from "@prisma/client";
+} from "../../../types/prisma-enums";
+import Decimal from "decimal.js";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CacheKeyBuilder, CACHE_TTL } from "../../../modules/cache/cache.constants";
@@ -36,12 +35,13 @@ export interface RecommendedItem {
     id: string;
     name: string;
     category: ClothingCategory;
-    price: Prisma.Decimal;
-    originalPrice: Prisma.Decimal | null;
+    price: Decimal;
+    originalPrice: Decimal | null;
     mainImage: string | null;
     images: string[];
     colors: string[];
-    attributes: Prisma.JsonValue;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    attributes: any;
     viewCount: number;
     likeCount: number;
     brand: {
