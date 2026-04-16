@@ -16,6 +16,7 @@ export type ModalType =
   | "confirm"
   | "imagePicker"
   | "sizeGuide";
+export type ActiveTab = "home" | "explore" | "heart" | "cart" | "wardrobe" | "profile";
 
 interface Notification {
   id: string;
@@ -39,7 +40,7 @@ interface UIState {
   notifications: Notification[];
   isOnline: boolean;
   isScrolling: boolean;
-  activeTab: string;
+  activeTab: ActiveTab;
   searchQuery: string;
   isSearchFocused: boolean;
 
@@ -53,24 +54,29 @@ interface UIState {
   clearNotifications: () => void;
   setOnline: (online: boolean) => void;
   setScrolling: (scrolling: boolean) => void;
-  setActiveTab: (tab: string) => void;
+  setActiveTab: (tab: ActiveTab) => void;
   setSearchQuery: (query: string) => void;
   setSearchFocused: (focused: boolean) => void;
+  reset: () => void;
 }
+
+const uiInitialState = {
+  theme: "light" as ThemeMode,
+  activeModal: "none" as ModalType,
+  modalData: {} as Record<string, unknown>,
+  isLoading: {} as LoadingState,
+  notifications: [] as Notification[],
+  isOnline: true,
+  isScrolling: false,
+  activeTab: "home" as ActiveTab,
+  searchQuery: "",
+  isSearchFocused: false,
+};
 
 export const useUIStore = create<UIState>()(
   persist(
     (set, get) => ({
-      theme: "light",
-      activeModal: "none",
-      modalData: {},
-      isLoading: {},
-      notifications: [],
-      isOnline: true,
-      isScrolling: false,
-      activeTab: "home",
-      searchQuery: "",
-      isSearchFocused: false,
+      ...uiInitialState,
 
       setTheme: (theme) => set({ theme }),
 
@@ -84,7 +90,7 @@ export const useUIStore = create<UIState>()(
         })),
 
       addNotification: (notification) => {
-        const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const id = `notif_${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         const newNotification: Notification = {
           ...notification,
           id,
@@ -118,11 +124,13 @@ export const useUIStore = create<UIState>()(
       setSearchQuery: (searchQuery) => set({ searchQuery }),
 
       setSearchFocused: (isSearchFocused) => set({ isSearchFocused }),
+
+      reset: () => set(uiInitialState),
     }),
     {
       name: "ui-storage",
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({ theme: state.theme }),
+      partialize: (state) => ({ theme: state.theme, activeTab: state.activeTab }),
     }
   )
 );
