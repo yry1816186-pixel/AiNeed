@@ -136,4 +136,33 @@ apps/backend/prisma/compiled/
 
 # --- Misc ---
 SKILL.md
-mobilesrcservicesapi"*
+mobilesrcservicesapi*
+
+# --- Tool Output Files ---
+eslint-current*.json
+eslint-output*
+eslint-result*.txt
+eslint-full.txt
+eslint-stdout.txt
+tsc-output*.txt
+tsc_full.txt
+tsc-errors*.txt
+tmp_*.txt
+jest-output.txt
+mobile-test-output.txt
+test-results*.json
+
+# --- One-off Scripts ---
+fix-unused-vars.js
+fix-n*.js
+
+# --- Memory Management Scripts (root only) ---
+/limit-node-memory.bat
+/optimize-memory-v2.bat
+/node-memory-watchdog.bat
+
+# --- Non-project Files ---
+read_pdf.py
+
+# --- Node.js Cache ---
+0/
