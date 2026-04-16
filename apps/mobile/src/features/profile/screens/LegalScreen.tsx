@@ -4,8 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import type { RootStackParamList } from "../types/navigation";
+import { theme } from '../../../design-system/theme';
+import type { RootStackParamList } from '../../../types/navigation";
 
 type LegalScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

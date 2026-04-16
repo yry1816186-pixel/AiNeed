@@ -14,10 +14,10 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { orderApi, orderEnhancementApi } from "../services/api/commerce.api";
+import { orderApi, orderEnhancementApi } from '../../../services/api/commerce.api";
 import type { Order, OrderStatus } from "../types";
-import type { RootStackParamList } from "../types/navigation";
-import { theme } from '../design-system/theme';
+import type { RootStackParamList } from '../../../types/navigation";
+import { theme } from '../../../design-system/theme';
 
 type OrdersNavigation = NativeStackNavigationProp<RootStackParamList>;
 type TabKey = "all" | "pending" | "paid" | "shipped" | "delivered" | "refund";

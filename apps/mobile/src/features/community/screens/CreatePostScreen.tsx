@@ -16,11 +16,11 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { communityApi } from "../services/api/community.api";
-import apiClient from "../services/api/client";
-import type { RootStackParamList } from "../types/navigation";
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import { communityApi } from '../../../services/api/community.api";
+import apiClient from '../../../services/api/client";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 

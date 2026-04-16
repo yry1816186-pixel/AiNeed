@@ -17,18 +17,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { clothingApi } from "../services/api/clothing.api";
-import { cartApi } from "../services/api/commerce.api";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { RootStackParamList } from "../types/navigation";
-import type { ClothingItem } from "../types/clothing";
+import { clothingApi } from '../../../services/api/clothing.api";
+import { cartApi } from '../../../services/api/commerce.api";
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import type { RootStackParamList } from '../../../types/navigation";
+import type { ClothingItem } from '../../../types/clothing";
 import {
   CATEGORY_LABELS,
   OCCASION_LABELS,
   SEASON_LABELS,
   STYLE_LABELS,
-} from "../types/clothing";
+} from '../../../types/clothing";
 
 interface RecommendationDetail {
   id: string;

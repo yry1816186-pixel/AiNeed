@@ -12,11 +12,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
 import { useBloggerStore } from "../stores/bloggerStore";
-import type { TrendMetric } from "../services/api/blogger.api";
-import type { RootStackParamList } from "../types/navigation";
+import type { TrendMetric } from '../../../services/api/blogger.api";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 

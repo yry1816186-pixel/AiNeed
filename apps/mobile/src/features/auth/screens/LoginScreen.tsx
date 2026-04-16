@@ -13,14 +13,14 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { authApi } from "../services/api/auth.api";
-import { useTranslation } from "../i18n";
+import { authApi } from '../../../services/api/auth.api";
+import { useTranslation } from '../../../i18n';
 
-import { wechatAuth } from "../services/auth/wechat";
-import { useAuthStore } from "../stores/index";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { RootStackParamList } from "../types/navigation";
+import { wechatAuth } from '../../../services/auth/wechat";
+import { useAuthStore } from '../stores';
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type LoginNavigationProp = NavigationProp<RootStackParamList>;
 

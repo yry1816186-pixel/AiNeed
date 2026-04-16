@@ -15,10 +15,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { bloggerApi, BloggerProduct } from "../services/api/blogger.api";
-import type { RootStackParamList } from "../types/navigation";
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import { bloggerApi, BloggerProduct } from '../../../services/api/blogger.api";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type BloggerProductRoute = RouteProp<RootStackParamList, "BloggerProduct">;

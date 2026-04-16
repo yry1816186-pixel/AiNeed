@@ -14,10 +14,10 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { orderApi, orderEnhancementApi, refundApi } from "../services/api/commerce.api";
+import { orderApi, orderEnhancementApi, refundApi } from '../../../services/api/commerce.api";
 import type { Order } from "../types";
-import type { RootStackParamList } from "../types/navigation";
-import { theme } from '../design-system/theme';
+import type { RootStackParamList } from '../../../types/navigation";
+import { theme } from '../../../design-system/theme';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, "OrderDetail">;

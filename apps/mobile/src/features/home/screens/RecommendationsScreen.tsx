@@ -12,11 +12,11 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { recommendationsApi, type RecommendedItem } from "../services/api/tryon.api";
-import { useAuthStore } from "../stores/index";
-import { theme } from '../design-system/theme';
-import { useTranslation } from "../i18n";
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { recommendationsApi, type RecommendedItem } from '../../../services/api/tryon.api";
+import { useAuthStore } from '../../../stores';
+import { theme } from '../../../design-system/theme';
+import { useTranslation } from '../../../i18n';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
 
 import { ImageWithPlaceholder } from "../shared/components/common/ImageWithPlaceholder";
 

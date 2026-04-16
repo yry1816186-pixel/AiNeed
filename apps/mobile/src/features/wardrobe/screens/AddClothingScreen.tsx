@@ -17,13 +17,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { pickImageSecurely, ImageValidationError } from "../utils/imagePicker";
-import { clothingApi } from "../services/api/clothing.api";
-import { useTranslation } from "../i18n";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { ClothingCategory, ClothingStyle, Season, Occasion } from "../types/clothing";
-import { CATEGORY_LABELS } from "../types/clothing";
+import { pickImageSecurely, ImageValidationError } from '../../../utils/imagePicker";
+import { clothingApi } from '../../../services/api/clothing.api";
+import { useTranslation } from '../../../i18n';
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import type { ClothingCategory, ClothingStyle, Season, Occasion } from '../../../types/clothing";
+import { CATEGORY_LABELS } from '../../../types/clothing";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 

@@ -3,30 +3,30 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "reac
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { RootStackParamList } from "../types/navigation";
-import { theme } from '../design-system/theme';
+import type { RootStackParamList } from '../../../types/navigation";
+import { theme } from '../../../design-system/theme';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { clothingApi } from "../services/api/clothing.api";
-import { useScreenTracking } from "../hooks/useAnalytics";
-import { useTranslation } from "../i18n";
+import { clothingApi } from '../../../services/api/clothing.api";
+import { useScreenTracking } from '../../../hooks/useAnalytics";
+import { useTranslation } from '../../../i18n';
 import {
   searchApi,
   searchEnhancementApi,
   clothingEnhancementApi,
   type FilterOptions as FilterOptionsType,
   type Subcategory,
-} from "../services/api/commerce.api";
+} from '../../../services/api/commerce.api";
 import type {
   ClothingItem,
   ClothingFilter,
   ClothingCategory,
   Season,
   Occasion,
-} from "../types/clothing";
-import { CategoryNavigation } from "../components/CategoryNavigation";
-import { SubcategoryTabs } from "../components/SubcategoryTabs";
-import { FilterTags } from "../components/FilterTags";
-import { SortBar } from "../components/SortBar";
+} from '../../../types/clothing";
+import { CategoryNavigation } from '../../../components/CategoryNavigation";
+import { SubcategoryTabs } from '../../../components/SubcategoryTabs";
+import { FilterTags } from '../../../components/FilterTags";
+import { SortBar } from '../../../components/SortBar";
 import {
   launchImageLibraryAsync,
   launchCameraAsync,
@@ -42,7 +42,7 @@ import {
   SearchResultList,
   LoadingOverlay,
   PRICERANGES,
-} from "../components/search/SearchScreenParts";
+} from '../../../components/search/SearchScreenParts";
 
 const DEBOUNCE_MS = 300;
 

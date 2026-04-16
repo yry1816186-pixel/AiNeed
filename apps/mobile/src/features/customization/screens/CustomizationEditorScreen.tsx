@@ -13,16 +13,16 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
 import { launchImageLibrary } from "react-native-image-picker";
 import { useCustomizationEditorStore, type DesignLayer } from "../stores/customizationEditorStore";
-import { TemplateSelector } from "../components/customization/TemplateSelector";
-import { DesignToolbar } from "../components/customization/DesignToolbar";
-import { LayerPanel } from "../components/customization/LayerPanel";
-import { DesignCanvas } from "../components/customization/DesignCanvas";
-import { ColorPicker } from "../components/customization/ColorPicker";
-import type { RootStackParamList } from "../types/navigation";
+import { TemplateSelector } from '../../../components/customization/TemplateSelector";
+import { DesignToolbar } from '../../../components/customization/DesignToolbar";
+import { LayerPanel } from '../../../components/customization/LayerPanel";
+import { DesignCanvas } from '../../../components/customization/DesignCanvas";
+import { ColorPicker } from '../../../components/customization/ColorPicker";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type Navigation = NavigationProp<RootStackParamList>;
 

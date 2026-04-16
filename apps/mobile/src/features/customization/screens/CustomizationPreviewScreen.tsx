@@ -11,10 +11,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
 import { useCustomizationEditorStore } from "../stores/customizationEditorStore";
-import customizationApi from "../services/api/customization.api";
-import type { RootStackParamList } from "../types/navigation";
+import customizationApi from '../../../services/api/customization.api";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type Navigation = import("@react-navigation/native").NavigationProp<RootStackParamList>;
 type PreviewRoute = RouteProp<RootStackParamList, "CustomizationPreview">;

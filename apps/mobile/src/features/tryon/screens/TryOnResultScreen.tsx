@@ -14,9 +14,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { tryOnApi, type TryOnResult } from "../services/api/tryon.api";
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import { tryOnApi, type TryOnResult } from '../../../services/api/tryon.api";
 import type { TryOnStackParamList } from "../navigation/types";
 
 type TryOnResultRoute = RouteProp<TryOnStackParamList, "TryOnResult">;

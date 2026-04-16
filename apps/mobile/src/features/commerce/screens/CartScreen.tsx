@@ -17,21 +17,21 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { cartApi, cartEnhancementApi } from "../services/api/commerce.api";
-import { useCartStore } from "../stores/index";
+import { cartApi, cartEnhancementApi } from '../../../services/api/commerce.api";
+import { useCartStore } from '../../../stores';
 import { useCouponStore } from "../stores/couponStore";
 
-import { useScreenTracking } from "../hooks/useAnalytics";
-import { useTranslation } from "../i18n";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { haptics } from "../utils/haptics";
+import { useScreenTracking } from '../../../hooks/useAnalytics";
+import { useTranslation } from '../../../i18n';
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import { haptics } from '../../../utils/haptics";
 import { withErrorBoundary } from "../shared/components/ErrorBoundary";
-import { EmptyCartView } from "../components/EmptyCartView";
-import { FreeShippingProgress } from "../components/FreeShippingProgress";
-import { CouponSelector } from "../components/CouponSelector";
-import type { RootStackParamList } from "../types/navigation";
-import type { ClothingItem } from "../types/clothing";
+import { EmptyCartView } from '../../../components/EmptyCartView";
+import { FreeShippingProgress } from '../../../components/FreeShippingProgress";
+import { CouponSelector } from '../../../components/CouponSelector";
+import type { RootStackParamList } from '../../../types/navigation";
+import type { ClothingItem } from '../../../types/clothing";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 

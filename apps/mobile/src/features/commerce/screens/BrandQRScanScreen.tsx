@@ -13,9 +13,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import brandQRApi, { type QRScanResult } from "../services/api/brand-qr.api";
-import type { RootStackParamList } from "../types/navigation";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import brandQRApi, { type QRScanResult } from '../../../services/api/brand-qr.api";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type Navigation = NavigationProp<RootStackParamList>;
 

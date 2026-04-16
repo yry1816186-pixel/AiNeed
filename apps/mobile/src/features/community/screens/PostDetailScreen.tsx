@@ -18,11 +18,11 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { SharedElement } from "react-navigation-shared-element";
-import { theme } from '../design-system/theme';
-import { communityApi, PostComment } from "../services/api/community.api";
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { BookmarkSheet } from "../components/community/BookmarkSheet";
-import type { RootStackParamList } from "../types/navigation";
+import { theme } from '../../../design-system/theme';
+import { communityApi, PostComment } from '../../../services/api/community.api";
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import { BookmarkSheet } from '../../../components/community/BookmarkSheet";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type _PostDetailRoute = RouteProp<RootStackParamList, "Community">;

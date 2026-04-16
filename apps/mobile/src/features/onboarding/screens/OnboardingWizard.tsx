@@ -11,7 +11,7 @@ import Animated, {
   SlideOutLeft,
 } from "react-native-reanimated";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
 import { useOnboardingStore } from "../../stores/onboardingStore";
 import type { OnboardingStep } from "../../stores/onboardingStore";
 import { onboardingService } from "../../services/onboardingService";

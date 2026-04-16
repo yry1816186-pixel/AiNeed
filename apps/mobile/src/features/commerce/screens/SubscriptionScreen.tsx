@@ -12,18 +12,18 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 
-import { useScreenTracking } from "../hooks/useAnalytics";
-import { useTranslation } from "../i18n";
+import { useScreenTracking } from '../../../hooks/useAnalytics";
+import { useTranslation } from '../../../i18n';
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
 import {
   subscriptionApi,
   type MembershipPlan,
   type UserSubscription,
   type PlanTier,
-} from "../services/api/subscription.api";
-import type { RootStackParamList } from "../types/navigation";
+} from '../../../services/api/subscription.api";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type Navigation = NavigationProp<RootStackParamList>;
 

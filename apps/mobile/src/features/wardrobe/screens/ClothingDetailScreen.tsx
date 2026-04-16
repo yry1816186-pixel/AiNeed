@@ -12,20 +12,20 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import type { RootStackParamList } from "../types/navigation";
-import type { ClothingItem } from "../types/clothing";
-import { clothingApi } from "../services/api/clothing.api";
-import { theme } from '../design-system/theme';
+import type { RootStackParamList } from '../../../types/navigation";
+import type { ClothingItem } from '../../../types/clothing";
+import { clothingApi } from '../../../services/api/clothing.api";
+import { theme } from '../../../design-system/theme';
 import {
   cartApi,
   favoriteApi,
   clothingEnhancementApi,
   type SizeRecommendation,
-} from "../services/api/commerce.api";
+} from '../../../services/api/commerce.api";
 import { useSizeRecommendationStore } from "../stores/sizeRecommendationStore";
-import { ProductImageCarousel } from "../components/ProductImageCarousel";
-import { SKUSelector } from "../components/SKUSelector";
-import { OutfitRecommendationCards } from "../components/OutfitRecommendationCards";
+import { ProductImageCarousel } from '../../../components/ProductImageCarousel";
+import { SKUSelector } from '../../../components/SKUSelector";
+import { OutfitRecommendationCards } from '../../../components/OutfitRecommendationCards";
 
 type ClothingDetailRouteProp = RouteProp<RootStackParamList, "ClothingDetail">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

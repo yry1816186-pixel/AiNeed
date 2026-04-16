@@ -15,12 +15,12 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { clothingApi } from "../services/api/clothing.api";
-import type { ClothingItem } from "../types/clothing";
+import { theme } from '../../../design-system/theme';
+import { clothingApi } from '../../../services/api/clothing.api";
+import type { ClothingItem } from '../../../types/clothing";
 
 import type { ProfileStackParamList } from "../navigation/types";
-import type { RootStackParamList } from "../types/navigation";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type BrandRoute = RouteProp<ProfileStackParamList, "Brand">;
 type Navigation = NativeStackNavigationProp<RootStackParamList>;

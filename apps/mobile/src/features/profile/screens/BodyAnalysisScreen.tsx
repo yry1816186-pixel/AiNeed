@@ -11,12 +11,12 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { LinearGradient } from "../polyfills/expo-linear-gradient";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
 import { useProfileStore } from "../stores/profileStore";
-import { useTranslation } from "../i18n";
+import { useTranslation } from '../../../i18n';
 import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";
-import type { RootStackParamList } from "../types/navigation";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type BodyAnalysisNavProp = NavigationProp<RootStackParamList>;
 

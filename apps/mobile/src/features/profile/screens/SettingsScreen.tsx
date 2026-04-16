@@ -17,13 +17,13 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { useAuthStore } from '../stores/index';
-import { authApi } from '../services/api/auth.api';
-import { apiClient } from '../services/api/client';
-import { theme } from '../design-system/theme';
-import { useTranslation } from '../i18n';
-import { useTheme } from '../contexts/ThemeContext';
-import type { RootStackParamList } from '../types/navigation';
+import { useAuthStore } from '../../../stores';
+import { authApi } from '../../../services/api/auth.api';
+import { apiClient } from '../../../services/api/client';
+import { theme } from '../../../design-system/theme';
+import { useTranslation } from '../../../i18n';
+import { useTheme } from '../../../contexts/ThemeContext';
+import type { RootStackParamList } from '../../../types/navigation';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 

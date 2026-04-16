@@ -13,14 +13,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { customizationApi } from "../services/api/customization.api";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { customizationApi } from '../../../services/api/customization.api";
 import type {
   CustomizationType,
   CustomizationStatus,
   CustomizationRequest,
-} from "../types/customization";
-import type { RootStackParamList } from "../types/navigation";
+} from '../../../types/customization";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type Navigation = NavigationProp<RootStackParamList>;
 

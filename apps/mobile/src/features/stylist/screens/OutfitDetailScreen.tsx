@@ -16,11 +16,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { outfitApi } from "../services/api/outfit.api";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { RootStackParamList } from "../types/navigation";
-import type { Outfit } from "../types/outfit";
+import { outfitApi } from '../../../services/api/outfit.api";
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import type { RootStackParamList } from '../../../types/navigation";
+import type { Outfit } from '../../../types/outfit";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

@@ -4,12 +4,12 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { LinearGradient } from "../polyfills/expo-linear-gradient";
 import Share from "react-native-share";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
 import { useProfileStore } from "../stores/profileStore";
-import { useAuthStore } from "../stores/index";
+import { useAuthStore } from '../../../stores';
 import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";
-import type { RootStackParamList } from "../types/navigation";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type SharePosterNavProp = NavigationProp<RootStackParamList>;
 

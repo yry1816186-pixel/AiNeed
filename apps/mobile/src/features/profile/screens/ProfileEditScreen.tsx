@@ -12,12 +12,12 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 import { Ionicons } from "../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
 import { useProfileStore } from "../stores/profileStore";
 import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";
-import type { RootStackParamList } from "../types/navigation";
-import type { UpdateProfileDto } from "../services/api/profile.api";
+import type { RootStackParamList } from '../../../types/navigation";
+import type { UpdateProfileDto } from '../../../services/api/profile.api";
 
 type ProfileEditNavigationProp = NavigationProp<RootStackParamList>;
 

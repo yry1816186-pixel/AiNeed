@@ -16,14 +16,14 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useScreenTracking } from "../hooks/useAnalytics";
-import { useTranslation } from "../i18n";
-import { theme } from '../design-system/theme';
-import { clothingApi } from "../services/api/clothing.api";
-import { outfitApi } from "../services/api/outfit.api";
-import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from "../types/clothing";
-import type { RootStackParamList } from "../types/navigation";
-import { ImportSheet } from "../components/wardrobe/ImportSheet";
+import { useScreenTracking } from '../../../hooks/useAnalytics";
+import { useTranslation } from '../../../i18n';
+import { theme } from '../../../design-system/theme';
+import { clothingApi } from '../../../services/api/clothing.api";
+import { outfitApi } from '../../../services/api/outfit.api";
+import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from '../../../types/clothing";
+import type { RootStackParamList } from '../../../types/navigation";
+import { ImportSheet } from '../../../components/wardrobe/ImportSheet";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 

@@ -14,11 +14,11 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useNotificationStore } from "../stores/notificationStore";
-import { useTranslation } from "../i18n";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { RootStackParamList } from "../types/navigation";
-import type { NotificationItem } from "../services/api/notification.api";
+import { useTranslation } from '../../../i18n';
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import type { RootStackParamList } from '../../../types/navigation";
+import type { NotificationItem } from '../../../services/api/notification.api";
 import { wsService } from "../services/websocket";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;

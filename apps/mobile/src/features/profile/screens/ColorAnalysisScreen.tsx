@@ -10,14 +10,14 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { LinearGradient } from "../polyfills/expo-linear-gradient";
 import { Ionicons } from "../polyfills/expo-vector-icons";
-import { theme, Colors, Spacing, BorderRadius, Shadows, Typography } from '../design-system/theme';
+import { theme, Colors, Spacing, BorderRadius, Shadows, Typography } from '../../../design-system/theme';
 import { useProfileStore } from "../stores/profileStore";
-import { useTheme } from "../contexts/ThemeContext";
-import { normalizeColorSeason, seasonLabels, type ColorSeason } from "../theme/tokens/season-colors";
+import { useTheme } from '../../../contexts/ThemeContext";
+import { normalizeColorSeason, seasonLabels, type ColorSeason } from '../../../theme/tokens/season-colors";
 import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";
 import { SeasonPalette } from "../shared/components/visualization/SeasonPalette";
 import Animated, { FadeIn, SlideInDown } from "react-native-reanimated";
-import type { RootStackParamList } from "../types/navigation";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type ColorAnalysisNavProp = NavigationProp<RootStackParamList>;
 

@@ -1,6 +1,6 @@
-﻿import { HeartRecommendScreen } from "../components/heartrecommend/HeartRecommendScreen";
+﻿import { HeartRecommendScreen } from '../../../components/heartrecommend/HeartRecommendScreen";
 import { withErrorBoundary } from "../shared/components/ErrorBoundary";
-import { logger } from "../utils/logger";
+import { logger } from '../../../utils/logger";
 
 const HeartScreenWithErrorBoundary = withErrorBoundary(HeartRecommendScreen, {
   screenName: "HeartScreen",

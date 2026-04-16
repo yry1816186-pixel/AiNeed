@@ -16,26 +16,26 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { useAuthStore } from "../stores/index";
-import { authApi, userApi } from "../services/api/auth.api";
-import { ProfileCompletenessBar } from "../components/profile/ProfileCompletenessBar";
+import { useAuthStore } from '../../../stores';
+import { authApi, userApi } from '../../../services/api/auth.api";
+import { ProfileCompletenessBar } from '../../../components/profile/ProfileCompletenessBar";
 import { useProfileStore } from "../stores/profileStore";
-import type { UserStats, User } from "../types/user";
-import type { RootStackParamList } from "../types/navigation";
-import { theme } from '../design-system/theme';
+import type { UserStats, User } from '../../../types/user";
+import type { RootStackParamList } from '../../../types/navigation";
+import { theme } from '../../../design-system/theme';
 
 // 引入增强主题令牌
-import { colors } from "../theme/tokens/colors";
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { typography } from "../theme/tokens/typography";
-import { spacing } from "../theme/tokens/spacing";
-import { shadows } from "../theme/tokens/shadows";
-import { useTheme } from "../contexts/ThemeContext";
-import { seasonLabels, type ColorSeason } from "../theme/tokens/season-colors";
-import { useScreenTracking } from "../hooks/useAnalytics";
-import { useTranslation, useI18n } from "../i18n";
+import { colors } from '../../../theme/tokens/colors";
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import { typography } from '../../../theme/tokens/typography";
+import { spacing } from '../../../theme/tokens/spacing";
+import { shadows } from '../../../theme/tokens/shadows";
+import { useTheme } from '../../../contexts/ThemeContext";
+import { seasonLabels, type ColorSeason } from '../../../theme/tokens/season-colors";
+import { useScreenTracking } from '../../../hooks/useAnalytics";
+import { useTranslation, useI18n } from '../../../i18n';
 import { withErrorBoundary } from "../shared/components/ErrorBoundary";
-import { BrandPattern, BrandDivider } from "../components/brand/BrandMotif";
+import { BrandPattern, BrandDivider } from '../../../components/brand/BrandMotif";
 
 type ProfileNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

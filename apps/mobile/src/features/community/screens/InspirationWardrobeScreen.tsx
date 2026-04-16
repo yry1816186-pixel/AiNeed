@@ -15,9 +15,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { communityApi } from "../services/api/community.api";
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import { communityApi } from '../../../services/api/community.api";
 import type { CommunityStackParamList } from "../navigation/types";
 
 type InspirationWardrobeRoute = RouteProp<CommunityStackParamList, "InspirationWardrobe">;

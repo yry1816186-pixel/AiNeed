@@ -2,15 +2,15 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { View, ActivityIndicator } from "react-native";
 
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
 import { StyleSheet } from "react-native";
 import { withErrorBoundary } from "../shared/components/ErrorBoundary";
-import { logger } from "../utils/logger";
-import { useScreenTracking } from "../hooks/useAnalytics";
-import { useFeatureFlags } from "../contexts/FeatureFlagContext";
+import { logger } from '../../../utils/logger";
+import { useScreenTracking } from '../../../hooks/useAnalytics";
+import { useFeatureFlags } from '../../../contexts/FeatureFlagContext";
 import { FeatureFlagKeys } from "../constants/feature-flags";
-import { useTranslation } from "../i18n";
+import { useTranslation } from '../../../i18n';
 
 // Wrapper that provides navigation-based back action
 // instead of expo-router's router.back()

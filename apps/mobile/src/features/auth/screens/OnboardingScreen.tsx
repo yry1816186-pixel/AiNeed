@@ -22,14 +22,14 @@ import Animated, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp as NavProp } from "@react-navigation/native";
-import { useTranslation } from "../i18n";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { profileApi, type UpdateProfileDto } from "../services/api/profile.api";
-import { pickImageSecurely, ImageValidationError } from "../utils/imagePicker";
-import { PhotoGuideOverlay } from "../components/photo/PhotoGuideOverlay";
-import { PrivacyConsentModal } from "../components/privacy/PrivacyConsentModal";
-import type { RootStackParamList } from "../types/navigation";
+import { useTranslation } from '../../../i18n';
+import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import { profileApi, type UpdateProfileDto } from '../../../services/api/profile.api";
+import { pickImageSecurely, ImageValidationError } from '../../../utils/imagePicker";
+import { PhotoGuideOverlay } from '../../../components/photo/PhotoGuideOverlay";
+import { PrivacyConsentModal } from '../../../components/privacy/PrivacyConsentModal";
+import type { RootStackParamList } from '../../../types/navigation";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 const ONBOARDING_COMPLETE_KEY = "@aineed:onboarding_complete";

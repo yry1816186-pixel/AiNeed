@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
+import { theme } from '../../../design-system/theme';
 
 const CATEGORIES = [
   { key: "all", label: "全部" },

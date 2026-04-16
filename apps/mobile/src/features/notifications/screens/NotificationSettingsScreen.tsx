@@ -5,9 +5,9 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useNotificationStore } from "../stores/notificationStore";
-import { theme } from '../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import type { RootStackParamList } from "../types/navigation";
+import { theme } from '../../../design-system/theme';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import type { RootStackParamList } from '../../../types/navigation";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 

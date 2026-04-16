@@ -13,20 +13,20 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../design-system/theme';
-import { useTranslation } from "../i18n";
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { useAuthStore } from "../stores/index";
+import { theme } from '../../../design-system/theme';
+import { useTranslation } from '../../../i18n';
+import { DesignTokens } from '../../../theme/tokens/design-tokens";
+import { useAuthStore } from '../../../stores';
 import { useAiStylistStore } from "../stores/aiStylistStore";
 import type { PresetQuestion } from "../stores/aiStylistStore";
-import type { RootStackParamList } from "../types/navigation";
+import type { RootStackParamList } from '../../../types/navigation";
 import {
   OutfitPlanView,
   ItemReplacementModal,
   FeedbackModal,
   SceneQuickButtons,
   PresetQuestionsModal,
-} from "../components/aistylist";
+} from '../../../components/aistylist";
 
 export const AiStylistScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
