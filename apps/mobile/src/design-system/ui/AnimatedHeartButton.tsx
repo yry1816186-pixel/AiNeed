@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import Animated, {
   useSharedValue,
@@ -105,7 +105,7 @@ export const AnimatedHeartButton: React.FC<AnimatedHeartButtonProps> = ({
       style={[styles.container, style]}
     >
       <Animated.View style={heartStyle}>
-        <Ionicons name={iconName as any} size={size} color={iconColor} />
+        <Ionicons name={iconName as keyof typeof Ionicons.glyphMap} size={size} color={iconColor} />
       </Animated.View>
 
       {/* +1 popup */}

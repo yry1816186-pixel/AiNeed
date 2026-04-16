@@ -228,7 +228,7 @@ export const WardrobeScreen: React.FC = () => {
   // 固定高度的网格项，使用 getItemLayout 优化 FlatList 性能
   // 避免每次渲染时计算高度，提升滚动性能
   const getItemLayout = useCallback(
-    (_data: any, index: number) => ({
+    (_data: unknown, index: number) => ({
       length: GRID_ITEM_HEIGHT,
       offset: GRID_ITEM_HEIGHT * Math.floor(index / 2) + GRID_ROW_GAP * Math.floor(index / 2),
       index,

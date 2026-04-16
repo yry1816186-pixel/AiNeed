@@ -186,7 +186,7 @@ export const AiStylistChatScreen: React.FC = () => {
         </View>
         <TouchableOpacity
           style={s.backBtn}
-          onPress={() => (navigation as any).navigate("ChatHistory")}
+          onPress={() => navigation.navigate("ChatHistory")}
           accessibilityLabel="聊天记录"
           accessibilityRole="button"
         >

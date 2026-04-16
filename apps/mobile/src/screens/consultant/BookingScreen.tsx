@@ -27,7 +27,7 @@ const SERVICE_TYPES = [
 
 export const BookingScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
-  const route = useRoute<any>();
+  const route = useRoute();
   const navigation = useNavigation<any>();
   const { availableSlots, fetchAvailableSlots, createBooking, isLoading } = useConsultantStore();
 
@@ -79,7 +79,7 @@ export const BookingScreen: React.FC = () => {
       Alert.alert("预约成功", "请支付定金以确认预约", [
         { text: "确定", onPress: () => navigation.goBack() },
       ]);
-    } catch (e: any) {
+    } catch (e: unknown) {
       Alert.alert("预约失败", e.message || "请稍后重试");
     }
   };

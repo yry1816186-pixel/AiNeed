@@ -43,7 +43,7 @@ export const MerchantApplyScreen: React.FC = () => {
           setScreenState("approved");
         } else if (status === "rejected" || status === "REJECTED") {
           setScreenState("rejected");
-          setRejectReason((response.data as any).reason ?? "未通过审核");
+          setRejectReason((response.data as Record<string, unknown>).reason ?? "未通过审核");
         }
       }
     } catch {

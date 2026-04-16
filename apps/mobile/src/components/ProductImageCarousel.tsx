@@ -23,7 +23,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({ imag
   const [_zoomIndex, setZoomIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const handleScroll = (event: any) => {
+  const handleScroll = (event: { nativeEvent: { contentOffset: { x: number } } }) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX / SCREEN_WIDTH);
     if (index !== activeIndex) {

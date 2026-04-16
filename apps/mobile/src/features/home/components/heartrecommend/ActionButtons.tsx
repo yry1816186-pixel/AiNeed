@@ -83,7 +83,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
           animatedStyle,
         ]}
       >
-        <Ionicons name={icon as any} size={Math.round(size * 0.4)} color={color} />
+        <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={Math.round(size * 0.4)} color={color} />
       </Animated.View>
     </Pressable>
   );

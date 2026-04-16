@@ -40,8 +40,8 @@ export const FontFamilies = {
 
   // 混合字体（中英文混排场景）
   mixed: Platform.select({
-    ios: "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'SF Pro Display', sans-serif',
-    android: "'Noto Sans SC', Roboto, sans-serif',
+    ios: "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'SF Pro Display', sans-serif",
+    android: "'Noto Sans SC', Roboto, sans-serif",
     default: "system-ui, -apple-system, sans-serif",
   }),
 } as const;

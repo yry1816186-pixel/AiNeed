@@ -33,8 +33,8 @@ const DEFAULT_COMMENTS: PostComment[] = [];
 
 export const PostDetailScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
-  const route = useRoute<any>();
-  const postId = (route.params as any)?.postId ?? "";
+  const route = useRoute();
+  const postId = (route.params as Record<string, unknown>)?.postId ?? "";
 
   const [post, setPost] = useState<{
     id: string;

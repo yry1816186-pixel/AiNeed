@@ -128,7 +128,7 @@ export const RecommendationsScreen: React.FC = () => {
 
   const handleItemPress = useCallback(
     (item: RecommendedItem) => {
-      (navigation as any).navigate("RecommendationDetail", {
+      navigation.navigate("RecommendationDetail", {
         id: item.id,
         recommendation: item,
       });
@@ -145,7 +145,7 @@ export const RecommendationsScreen: React.FC = () => {
 
   // 固定高度的卡片，使用 getItemLayout 优化 FlatList 性能
   const getItemLayout = useCallback(
-    (_data: any, index: number) => ({
+    (_data: unknown, index: number) => ({
       length: CARD_HEIGHT,
       offset: CARD_HEIGHT * Math.floor(index / 2) + 12 * Math.floor(index / 2),
       index,

@@ -36,7 +36,7 @@ export function RecommendationFeedScreen() {
 
   const handleItemPress = useCallback(
     (item: FeedItem) => {
-      (navigation.navigate as any)("ClothingDetail", { id: item.id });
+      navigation.navigate("ClothingDetail", { id: item.id });
     },
     [navigation]
   );

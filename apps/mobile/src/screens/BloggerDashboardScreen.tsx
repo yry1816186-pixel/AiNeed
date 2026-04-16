@@ -245,7 +245,7 @@ export const BloggerDashboardScreen: React.FC = () => {
         {/* Manage products entry */}
         <TouchableOpacity
           style={styles.manageBtn}
-          onPress={() => (navigation.navigate as any)("BloggerProfile", {})}
+          onPress={() => navigation.navigate("BloggerProfile", {})}
         >
           <Ionicons name="bag-outline" size={18} color={DesignTokens.colors.brand.terracotta} />
           <Text style={styles.manageBtnText}>管理我的商品</Text>

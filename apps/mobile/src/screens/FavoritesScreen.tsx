@@ -136,7 +136,7 @@ export const FavoritesScreen: React.FC = () => {
 
   // 使用 getItemLayout 优化 FlatList 性能
   const getItemLayout = useCallback(
-    (_data: any, index: number) => ({
+    (_data: unknown, index: number) => ({
       length: LIST_ITEM_HEIGHT,
       offset: LIST_ITEM_HEIGHT * index + 12 * index, // 12 是 marginBottom
       index,

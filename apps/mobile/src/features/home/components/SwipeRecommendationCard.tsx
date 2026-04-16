@@ -1,4 +1,4 @@
-﻿import React, { useRef } from "react";
+import React, { useRef } from "react";
 import {
   View,
   Text,
@@ -81,7 +81,7 @@ export function SwipeRecommendationCard({
       ]}
       {...panResponder.panHandlers}
     >
-      <Image source={{ uri: item.mainImage }} style={styles.image as any} resizeMode="cover" />
+      <Image source={{ uri: item.mainImage }} style={styles.image as ViewStyle} resizeMode="cover" />
 
       <Animated.View style={[styles.overlay, styles.likeOverlay, { opacity: likeOpacity }]}>
         <Text style={styles.likeText}>♥ 喜欢</Text>

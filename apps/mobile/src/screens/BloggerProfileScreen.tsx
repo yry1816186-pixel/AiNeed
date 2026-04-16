@@ -227,7 +227,7 @@ export const BloggerProfileScreen: React.FC = () => {
     ({ item }: { item: BloggerProduct }) => (
       <TouchableOpacity
         style={styles.productCard}
-        onPress={() => (navigation.navigate as any)("BloggerProduct", { productId: item.id })}
+        onPress={() => navigation.navigate("BloggerProduct", { productId: item.id })}
         activeOpacity={0.8}
       >
         {item.images[0] ? (

@@ -1,4 +1,4 @@
-﻿import React, { memo, useCallback } from "react";
+import React, { memo, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable, type ViewStyle } from "react-native";
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import type { FeedItem } from "../../services/api/recommendation-feed.api";
@@ -36,7 +36,7 @@ export const RecommendationCard = memo(function RecommendationCard({
       <View style={styles.imageContainer}>
         <OptimizedImage
           source={item.mainImage}
-          style={styles.image as any}
+          style={styles.image as ViewStyle}
           resizeMode="cover"
         />
         {discount > 0 && (
