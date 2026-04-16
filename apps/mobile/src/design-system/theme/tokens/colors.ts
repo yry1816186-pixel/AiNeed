@@ -137,7 +137,7 @@ export const GradientPresets = {
 
   // Auxiliary luxury gradients - for decorative/categorical use only
   luxuryGold: ["#FFD700", "#FFA500"] as [string, string], // 奢华金 (auxiliary)
-  elegantPurple: ["#9C27B0", "#673AB7"] as [string, string], // 优雅紫 (auxiliary)
+  elegantPurple: [DesignTokens.colors.brand.terracottaDark, DesignTokens.colors.brand.slateDark] as [string, string],
   romanticPink: ["#FF6B9D", "#FFB6C1"] as [string, string], // 浪漫粉 (auxiliary)
 } as const;
 

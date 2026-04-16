@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 import {
   useSharedValue,
@@ -138,7 +139,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
         <ParticleEffect count={30} color="rgba(168, 85, 247, 0.3)" size={3} />
 
         <AnimatedView style={[styles.welcomeLogo, logoAnimatedStyle]}>
-          <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.welcomeLogoGradient}>
+          <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.welcomeLogoGradient}>
             <Text style={styles.welcomeLogoText}>AI</Text>
           </LinearGradient>
         </AnimatedView>
@@ -530,7 +531,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
         <ParticleEffect count={50} color="rgba(168, 85, 247, 0.4)" size={4} />
 
         <AnimatedView style={[styles.completeContainer, animatedStyle]}>
-          <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.completeIconGradient}>
+          <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.completeIconGradient}>
             <Text style={styles.completeIcon}>🎉</Text>
           </LinearGradient>
 
