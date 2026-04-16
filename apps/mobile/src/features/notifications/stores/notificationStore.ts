@@ -79,6 +79,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   currentCategory: "all",
   settings: null,
   settingsLoading: false,
+  error: null,
 
   fetchNotifications: async (reset = false) => {
     const state = get();
@@ -86,7 +87,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       return;
     }
 
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       const offset = reset ? 0 : state.notifications.length;
       const response = await notificationApi.getNotifications({
@@ -108,13 +109,11 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         loading: false,
       });
     } catch (error) {
-      console.error("Failed to fetch notifications:", error);
-      set({ loading: false });
+      set({ error: '获取通知失败', loading: false });
     }
   },
 
   markAsRead: async (id: string) => {
-    // Optimistic update
     set((state) => ({
       notifications: state.notifications.map((n) =>
         n.id === id ? { ...n, isRead: true, readAt: new Date().toISOString() } : n
@@ -125,7 +124,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationApi.markAsRead(id);
     } catch (error) {
-      console.error("Failed to mark as read:", error);
+      set({ error: '标记已读失败' });
     }
   },
 
@@ -142,12 +141,11 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationApi.markAllAsRead();
     } catch (error) {
-      console.error("Failed to mark all as read:", error);
+      set({ error: '全部标记已读失败' });
     }
   },
 
   deleteNotification: async (id: string) => {
-    // Optimistic update
     set((state) => {
       const notification = state.notifications.find((n) => n.id === id);
       return {
@@ -162,12 +160,12 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     try {
       await notificationApi.deleteNotification(id);
     } catch (error) {
-      console.error("Failed to delete notification:", error);
+      set({ error: '删除通知失败' });
     }
   },
 
   fetchSettings: async () => {
-    set({ settingsLoading: true });
+    set({ settingsLoading: true, error: null });
     try {
       const response = await notificationApi.getNotificationSettings();
       if (response) {
@@ -176,8 +174,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
         set({ settings: { ...DEFAULT_SETTINGS }, settingsLoading: false });
       }
     } catch (error) {
-      console.error("Failed to fetch notification settings:", error);
-      set({ settings: { ...DEFAULT_SETTINGS }, settingsLoading: false });
+      set({ error: '获取通知设置失败', settings: { ...DEFAULT_SETTINGS }, settingsLoading: false });
     }
   },
 
@@ -185,15 +182,12 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     const currentSettings = get().settings || DEFAULT_SETTINGS;
     const newSettings = { ...currentSettings, ...settings };
 
-    // Optimistic update
     set({ settings: newSettings });
 
     try {
       await notificationApi.updateNotificationSettings(settings);
     } catch (error) {
-      console.error("Failed to update notification settings:", error);
-      // Revert on failure
-      set({ settings: currentSettings });
+      set({ error: '更新通知设置失败', settings: currentSettings });
     }
   },
 
