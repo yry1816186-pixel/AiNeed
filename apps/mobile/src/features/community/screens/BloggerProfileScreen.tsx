@@ -21,7 +21,7 @@ import { communityApi } from '../../../services/api/community.api';
 import { bloggerApi, BloggerProduct } from '../../../services/api/blogger.api';
 import { FollowButton } from '../components/social/FollowButton';
 import type { RootStackParamList } from '../../../types/navigation';
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;

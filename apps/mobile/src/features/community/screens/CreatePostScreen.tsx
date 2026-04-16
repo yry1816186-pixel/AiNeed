@@ -10,18 +10,18 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors, Spacing } from '../../../design-system/theme';
 import { communityApi } from '../../../services/api/community.api';
 import apiClient from '../../../services/api/client';
 import type { RootStackParamList } from '../../../types/navigation';
-import { Spacing } from '../../../design-system/theme';
 
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;

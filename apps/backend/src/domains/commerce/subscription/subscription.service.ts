@@ -7,7 +7,8 @@
 } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Cron } from "@nestjs/schedule";
-import { Prisma, MembershipPlan, UserSubscription, BehaviorEventType } from "@prisma/client";
+
+import { MembershipPlan, UserSubscription, BehaviorEventType } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import {
@@ -560,7 +561,7 @@ export class SubscriptionService {
           displayName: plan.displayName,
           price: plan.price,
           currency: plan.currency,
-          features: plan.features as Prisma.InputJsonValue,
+          features: plan.features as Record<string, unknown>,
           isActive: plan.isActive,
           sortOrder: plan.sortOrder,
         },

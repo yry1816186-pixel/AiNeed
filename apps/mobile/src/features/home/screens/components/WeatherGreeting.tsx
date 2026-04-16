@@ -4,7 +4,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import type { WeatherData } from "../../../stores/homeStore";
 import { Spacing, flatColors as colors } from '../../../../design-system/theme';
-import { useTheme } from '../../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 
 
 interface WeatherGreetingProps {

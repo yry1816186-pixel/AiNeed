@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { ClothingCategory } from "../../../../../types/prisma-enums";
+import { ClothingCategory } from '../../../../types/prisma-enums';
 import { Type } from "class-transformer";
 import {
   IsArray,

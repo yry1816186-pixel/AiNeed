@@ -7,7 +7,7 @@ import {
 import { Prisma } from "@prisma/client";
 import Decimal from "decimal.js";
 
-import { ClothingCategory } from "../../../types/prisma-enums";
+import { ClothingCategory } from '../../../types/prisma-enums';
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CouponService } from "../coupon/coupon.service";

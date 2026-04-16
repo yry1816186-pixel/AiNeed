@@ -689,7 +689,7 @@ export const ImmersiveProductView: React.FC<ImmersiveProductViewProps> = ({
                         <Ionicons
                           name="checkmark"
                           size={16}
-                          color={color === "#fff" ? DesignTokens.colors.neutral[900] : colors.textInverse}
+                          color={color === "#fff" ? DesignTokens.colors.neutral[800] : colors.textInverse}
                         />
                       )}
                     </TouchableOpacity>

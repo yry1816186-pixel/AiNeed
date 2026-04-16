@@ -23,7 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp as NavProp } from "@react-navigation/native";
 import { useTranslation } from '../../../i18n';
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { profileApi, type UpdateProfileDto } from '../../../services/api/profile.api';

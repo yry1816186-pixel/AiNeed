@@ -12,7 +12,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Prisma } from "@prisma/client";
-import { Gender } from "../../../types/prisma-enums";
+import { Gender } from '../../../types/prisma-enums';
 import type { StringValue } from "ms";
 
 import { StructuredLoggerService, ContextualLogger } from "../../../common/logging/structured-logger.service";

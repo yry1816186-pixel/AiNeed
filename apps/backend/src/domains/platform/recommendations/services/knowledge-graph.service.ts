@@ -200,8 +200,7 @@ export class KnowledgeGraphService {
       take: 1000,
     });
 
-    items.forEach((item) => {
-      const nodeId = `item_${item.id}`;
+    items.forEach((item: any) => {
       this.graph.nodes.set(nodeId, {
         id: nodeId,
         type: "item",
@@ -267,7 +266,7 @@ export class KnowledgeGraphService {
 
     const cooccurrence: Map<string, Map<string, number>> = new Map();
     const ordersMap = new Map<string, string[]>();
-    orderItems.forEach((oi) => {
+    orderItems.forEach((oi: any) => {
       if (!ordersMap.has(oi.orderId)) {
         ordersMap.set(oi.orderId, []);
       }

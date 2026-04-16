@@ -12,7 +12,7 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useProfileStore } from '../stores/profileStore';

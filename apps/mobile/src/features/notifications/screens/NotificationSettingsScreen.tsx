@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from "react-native";
-import { Snackbar } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import { Snackbar } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { useNotificationStore } from '../stores/notificationStore';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors, Spacing } from '../../../design-system/theme';
 import type { RootStackParamList } from '../../../types/navigation';
-import { Spacing } from '../../../design-system/theme';
 
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;

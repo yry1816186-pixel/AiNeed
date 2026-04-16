@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { OrderStatus } from "@prisma/client";
+import { OrderStatus } from "../../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
@@ -80,7 +80,8 @@ export class AdminDashboardService {
       }),
     ]);
 
-    const safeAmount = (agg: Record<string, { _sum?: { totalAmount?: number } }>): number =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const safeAmount = (agg: any): number =>
       Number(agg?._sum?.totalAmount ?? 0);
 
     return {

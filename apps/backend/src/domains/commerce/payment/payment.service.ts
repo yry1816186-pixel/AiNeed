@@ -10,7 +10,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Cron } from "@nestjs/schedule";
 import { PrismaClient } from "@prisma/client";
 
-import { OrderStatus } from "../../../types/prisma-enums";
+import { OrderStatus } from '../../../types/prisma-enums';
 
 import { StructuredLoggerService, ContextualLogger } from "../../../common/logging";
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -331,7 +331,8 @@ export class PaymentService {
       }
 
       // 使用事务更新状态
-      await this.prisma.$transaction(async (tx) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await this.prisma.$transaction(async (tx: any) => {
         // 更新支付记录
         await tx.paymentRecord.update({
           where: { id: record.id },
@@ -544,7 +545,8 @@ export class PaymentService {
     ]);
 
     return {
-      items: records.map((record) => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      items: records.map((record: any) => ({
         id: record.id,
         orderId: record.orderId,
         userId: record.userId,
@@ -730,7 +732,8 @@ export class PaymentService {
 
         if (orderWithItems && orderWithItems.items.length > 0) {
           await this.prisma.$transaction(
-            orderWithItems.items.map((item) =>
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            orderWithItems.items.map((item: any) =>
               this.prisma.clothingItem.update({
                 where: { id: item.itemId },
                 data: { stock: { increment: item.quantity } },

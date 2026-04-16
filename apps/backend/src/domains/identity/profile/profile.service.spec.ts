@@ -7,7 +7,7 @@ import {
   FaceShape,
   ColorSeason,
   Gender,
-} from "../../../../../types/prisma-enums";
+} from '../../../types/prisma-enums';
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 

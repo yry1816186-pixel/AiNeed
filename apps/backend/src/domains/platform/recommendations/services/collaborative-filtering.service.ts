@@ -48,8 +48,7 @@ export class CollaborativeFilteringService {
         ORDER BY similarity DESC
         LIMIT ${topK}
       `;
-      return results.map((r) => ({
-        similarUserId: r.similar_user_id,
+      return results.map((r: any) => ({
         similarity: Number(r.similarity),
       }));
     } catch (error) {
@@ -70,7 +69,7 @@ export class CollaborativeFilteringService {
     >`
       SELECT "itemId" FROM "UserBehavior" WHERE "userId" = ${userId} AND "itemId" IS NOT NULL
     `;
-    const excludeItemIds = userItems.map((r) => r.itemId);
+    const excludeItemIds = userItems.map((r: any) => r.itemId);
 
     if (excludeItemIds.length === 0) {
       const candidates = await this.prisma.$queryRaw<
@@ -85,8 +84,7 @@ export class CollaborativeFilteringService {
         ORDER BY score DESC
         LIMIT ${topK}
       `;
-      return candidates.map((c) => ({
-        itemId: c.itemId,
+      return candidates.map((c: any) => ({
         score: Number(c.score),
       }));
     }
@@ -104,7 +102,7 @@ export class CollaborativeFilteringService {
       ORDER BY score DESC
       LIMIT ${topK}
     `;
-    return candidates.map((c) => ({ itemId: c.itemId, score: Number(c.score) }));
+    return candidates.map((c: any) => ({ itemId: c.itemId, score: Number(c.score) }));
   }
 
   async getSimilarItems(
@@ -121,8 +119,7 @@ export class CollaborativeFilteringService {
         ORDER BY co_count DESC
         LIMIT ${topK}
       `;
-      return results.map((r) => ({
-        itemId: r.co_item_id,
+      return results.map((r: any) => ({
         score: Number(r.co_count),
       }));
     } catch (error) {
@@ -244,8 +241,7 @@ export class CollaborativeFilteringService {
       select: { id: true },
     });
 
-    return popularItems.map((item) => ({
-      itemId: item.id,
+    return popularItems.map((item: any) => ({
       score: 50,
       reasons: ["热门推荐"],
       confidence: 0.3,

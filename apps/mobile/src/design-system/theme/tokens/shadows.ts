@@ -1,6 +1,5 @@
 import { DesignTokens } from "./design-tokens";
 import { Platform } from "react-native";
-import { useTheme } from '../../../shared/contexts/ThemeContext';
 
 export const ShadowPresets = {
   none: {},

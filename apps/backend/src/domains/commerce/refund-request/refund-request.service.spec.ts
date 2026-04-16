@@ -2,6 +2,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 
+import { RefundTypeDto } from "./dto";
+
 jest.mock("@prisma/client", () => ({
   ...jest.requireActual("@prisma/client"),
   RefundType: { REFUND_ONLY: "REFUND_ONLY", RETURN_REFUND: "RETURN_REFUND" },
@@ -70,7 +72,7 @@ describe("RefundRequestService", () => {
     const userId = "user-1";
     const dto = {
       orderId: "order-1",
-      type: "REFUND_ONLY",
+      type: RefundTypeDto.REFUND_ONLY,
       reason: "Item defective",
     };
 

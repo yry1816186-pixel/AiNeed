@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
-import { OnboardingStep, Gender } from "../../../types/prisma-enums";
+import { OnboardingStep, Gender } from '../../../types/prisma-enums';
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 

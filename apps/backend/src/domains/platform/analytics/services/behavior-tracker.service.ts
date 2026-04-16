@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
-import { BehaviorEventType } from "@prisma/client";
+import { BehaviorEventType } from "../../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";
@@ -381,7 +381,7 @@ export class BehaviorTrackerService {
       ]);
 
     // Map Prisma results to include default trend field
-    const preferences: UserPreferenceWeightItem[] = preferencesRaw.map((p) => ({
+    const preferences: UserPreferenceWeightItem[] = preferencesRaw.map((p: any) => ({
       category: p.category,
       key: p.key,
       weight: Number(p.weight),

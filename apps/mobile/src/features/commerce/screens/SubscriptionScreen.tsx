@@ -15,7 +15,7 @@ import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTranslation } from '../../../i18n';
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import {

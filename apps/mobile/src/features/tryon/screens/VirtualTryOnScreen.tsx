@@ -1,10 +1,10 @@
 ﻿import React from "react";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { View, ActivityIndicator } from "react-native";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
-import { StyleSheet } from "react-native";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors } from '../../../design-system/theme';
 import { withErrorBoundary } from '../../../shared/components/ErrorBoundary';
 import { logger } from '../../../utils/logger';
 import { useScreenTracking } from '../../../hooks/useAnalytics';

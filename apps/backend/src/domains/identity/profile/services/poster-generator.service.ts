@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { ColorSeason } from "../../../../../types/prisma-enums";
+import { ColorSeason } from '../../../../types/prisma-enums';
 import { createCanvas, Image, CanvasRenderingContext2D } from "canvas";
 import * as QRCode from "qrcode";
 import { v4 as uuidv4 } from "uuid";

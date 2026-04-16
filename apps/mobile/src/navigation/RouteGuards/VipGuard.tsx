@@ -4,7 +4,7 @@ import { useAuthStore } from "../../stores/index";
 import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
-import { Spacing } from '../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../design-system/theme';
 
 
 interface VipGuardProps {

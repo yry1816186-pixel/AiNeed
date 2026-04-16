@@ -1,6 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Clipboard } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Clipboard } from 'react-native';
 import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 

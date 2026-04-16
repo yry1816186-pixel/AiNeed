@@ -44,6 +44,8 @@ import {
   Shadows,
   gradients as themeGradients,
 } from '../../design-system/theme';
+import { createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme as useUnifiedTheme } from '../../../shared/contexts/ThemeContext';
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

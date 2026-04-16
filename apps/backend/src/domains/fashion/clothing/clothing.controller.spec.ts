@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from "@nestjs/testing";
-import { ClothingCategory } from "../../../types/prisma-enums";
+import { ClothingCategory } from '../../../types/prisma-enums';
 
 import { ClothingController } from "./clothing.controller";
 import { ClothingService } from "./clothing.service";

@@ -3,7 +3,7 @@ import {
   Injectable,
   Logger,
 } from "@nestjs/common";
-import { BehaviorEventType } from "../../../../types/prisma-enums";
+import { BehaviorEventType } from '../../../../types/prisma-enums';
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";
@@ -119,7 +119,7 @@ export class BehaviorTrackingService {
       take: 200,
     });
 
-    const itemIds = [...new Set(behaviors.map((b) => b.itemId).filter(Boolean) as string[])];
+    const itemIds = [...new Set(behaviors.map((b: any) => b.itemId).filter(Boolean) as string[])];
 
     const items = await this.prisma.clothingItem.findMany({
       where: { id: { in: itemIds } },
@@ -131,7 +131,7 @@ export class BehaviorTrackingService {
       },
     });
 
-    const itemMap = new Map(items.map((i) => [i.id, i]));
+    const itemMap = new Map(items.map((i: any) => [i.id, i]));
 
     const categoryPrefs: Record<string, number> = {};
     const stylePrefs: Record<string, number> = {};
@@ -143,7 +143,7 @@ export class BehaviorTrackingService {
       const itemId = b.itemId;
       if (!itemId) {continue;}
 
-      const item = itemMap.get(itemId);
+      const item = itemMap.get(itemId) as any;
       if (item) {
         const cat = item.category as string;
         categoryPrefs[cat] = (categoryPrefs[cat] || 0) + weight;
@@ -263,7 +263,7 @@ export class BehaviorTrackingService {
       take: limit,
     });
 
-    return events.map((event) => ({
+    return events.map((event: any) => ({
       itemId: event.targetId || "",
       action: event.action || "view",
       value: ((event.metadata as Record<string, number> | null)?.value ?? 1) * this.calculateTimeDecay(event.createdAt),

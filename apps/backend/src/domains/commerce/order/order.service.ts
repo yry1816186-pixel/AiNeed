@@ -9,7 +9,7 @@ import { IsIn, IsString } from "class-validator";
 import { Cron } from "@nestjs/schedule";
 import Decimal from "decimal.js";
 
-import { OrderStatus } from "../../../types/prisma-enums";
+import { OrderStatus } from '../../../types/prisma-enums';
 
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";

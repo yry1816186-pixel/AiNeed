@@ -38,7 +38,7 @@ export class AdminAuditService {
           action: params.action,
           resource: params.resource,
           resourceId: params.resourceId ?? null,
-          details: params.details ? (params.details as Prisma.InputJsonValue) : undefined,
+          details: params.details ? (params.details as any) : undefined,
           ipAddress: params.ipAddress ?? null,
           userAgent: params.userAgent ?? null,
         },

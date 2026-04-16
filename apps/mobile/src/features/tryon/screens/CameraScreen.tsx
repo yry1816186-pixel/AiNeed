@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import {
   launchCameraAsync,
@@ -14,11 +14,11 @@ import { useCameraPermissions } from '../../hooks/useCameraPermissions';
 import { useReferenceLines } from '../../../hooks/useReferenceLines';
 import { usePhotoStore } from '../stores/photoStore';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors, Spacing } from '../../../design-system/theme';
 import { ReferenceLineOverlay } from '../../../components/ReferenceLineOverlay';
 import AlignmentGuide from '../../../components/AlignmentGuide';
 import PhotoQualityFeedback from '../../../components/PhotoQualityFeedback';
-import { Spacing } from '../../../design-system/theme';
 
 
 const CAPTURE_BUTTON_SIZE = 72;

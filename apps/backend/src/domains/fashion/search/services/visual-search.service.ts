@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { Prisma, ClothingCategory } from "@prisma/client";
+import type { ClothingCategory } from '../../../../types/prisma-enums';
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import {
@@ -98,7 +98,7 @@ export class VisualSearchService {
     );
 
     // 按相似度排序并返回 top N
-    scoredItems.sort((a, b) => b.similarityScore - a.similarityScore);
+    scoredItems.sort((a: VisualSearchResult, b: VisualSearchResult) => b.similarityScore - a.similarityScore);
 
     return scoredItems.slice(0, limit).map((item) => ({
       id: item.id,
@@ -375,7 +375,7 @@ export class VisualSearchService {
     });
 
     // 计算相似度
-    const scoredItems = similarItems.map((similar) => {
+    const scoredItems = similarItems.map((similar: ClothingItemCandidate) => {
       let score = 50;
 
       // 同品牌加成
@@ -385,8 +385,8 @@ export class VisualSearchService {
 
       // 颜色匹配
       if (item.colors && similar.colors) {
-        const commonColors = item.colors.filter((c) =>
-          similar.colors.some((sc) =>
+        const commonColors = item.colors.filter((c: string) =>
+          similar.colors.some((sc: string) =>
             sc.toLowerCase().includes(c.toLowerCase()),
           ),
         );
@@ -423,34 +423,16 @@ export class VisualSearchService {
       };
     });
 
-    scoredItems.sort((a, b) => b.similarityScore - a.similarityScore);
+    scoredItems.sort((a: VisualSearchResult, b: VisualSearchResult) => b.similarityScore - a.similarityScore);
 
     return scoredItems.slice(0, limit);
   }
 
   private generateSimilarItemReasons(
-    original: Prisma.ClothingItemGetPayload<{
-      include: {
-        brand: {
-          select: {
-            id: true;
-            name: true;
-            logo: true;
-          };
-        };
-      };
-    }>,
-    similar: Prisma.ClothingItemGetPayload<{
-      include: {
-        brand: {
-          select: {
-            id: true;
-            name: true;
-            logo: true;
-          };
-        };
-      };
-    }>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    original: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    similar: any,
   ): string[] {
     const reasons: string[] = ["相似款式"];
 
@@ -459,8 +441,8 @@ export class VisualSearchService {
     }
 
     if (original.colors && similar.colors) {
-      const commonColors = original.colors.filter((c) =>
-        similar.colors.some((sc) =>
+      const commonColors = original.colors.filter((c: string) =>
+        similar.colors.some((sc: string) =>
           sc.toLowerCase().includes(c.toLowerCase()),
         ),
       );

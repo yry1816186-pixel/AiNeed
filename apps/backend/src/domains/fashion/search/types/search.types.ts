@@ -4,7 +4,7 @@
  * 搜索模块类型定义 - 消除 any 类型，提供类型安全
  */
 
-import type { ClothingCategory } from "../../../../types/prisma-enums";
+import type { ClothingCategory } from '../../../../types/prisma-enums';
 
 // ============================================================================
 // Prisma Where 条件类型（本地定义，替代 Prisma namespace 中缺失的类型）

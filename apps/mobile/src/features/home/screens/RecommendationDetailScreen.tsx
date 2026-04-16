@@ -12,18 +12,18 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { NavigationProp, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { clothingApi } from '../../../services/api/clothing.api';
 import { cartApi } from '../../../services/api/commerce.api';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors, Spacing } from '../../../design-system/theme';
 import type { RootStackParamList } from '../../../types/navigation';
 import type { ClothingItem } from '../../../types/clothing';
-import { Spacing } from '../../../design-system/theme';
 
 import {
   CATEGORY_LABELS,

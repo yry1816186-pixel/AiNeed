@@ -21,7 +21,7 @@ import { useAuthStore } from '../stores/index';
 import type { ClothingItem } from '../../types/clothing';
 import type { RootStackParamList } from '../../../types/navigation';
 import { ImageWithPlaceholder } from '../../../shared/components/common/ImageWithPlaceholder';
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 
 
 type NavProp = NativeStackNavigationProp<RootStackParamList>;

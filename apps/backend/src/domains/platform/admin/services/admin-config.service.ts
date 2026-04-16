@@ -49,13 +49,13 @@ export class AdminConfigService {
     const result = await this.prisma.systemConfig.upsert({
       where: { key },
       update: {
-        value: value as Prisma.InputJsonValue,
+        value: value as any,
         description: description ?? undefined,
         updatedBy: userId,
       },
       create: {
         key,
-        value: value as Prisma.InputJsonValue,
+        value: value as any,
         description: description ?? undefined,
         updatedBy: userId,
       },

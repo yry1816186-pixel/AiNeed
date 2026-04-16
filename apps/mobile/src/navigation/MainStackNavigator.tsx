@@ -12,6 +12,7 @@ import type {
 import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { GuardedScreen } from "./RouteGuards";
 import { PageTransitions } from "../theme/tokens/animations";
+import { flatColors as colors } from '../design-system/theme';
 
 const OutfitPlanScreenLazy = lazy(() => import("../features/stylist/screens/OutfitPlanScreen"));
 const ChatHistoryScreenLazy = lazy(() => import("../features/stylist/screens/ChatHistoryScreen"));

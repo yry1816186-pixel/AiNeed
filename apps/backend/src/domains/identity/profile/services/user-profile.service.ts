@@ -236,7 +236,7 @@ export class UserProfileService {
       if (!item) {continue;}
 
       const { bodyTypeMatch, styleMatch, priceMatch, reasons } = this.evaluateItemMatch(
-        item,
+        item as any,
         bodyProfile,
       );
 
@@ -259,9 +259,12 @@ export class UserProfileService {
       id: string;
       category: string;
       tags: string[];
-      attributes: Prisma.JsonValue | null;
-      price: Prisma.Decimal;
-      originalPrice: Prisma.Decimal | null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      attributes: any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      price: any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      originalPrice: any;
     },
     bodyProfile: UserBodyProfile | null,
   ): { bodyTypeMatch: boolean; styleMatch: boolean; priceMatch: boolean; reasons: string[] } {
@@ -391,9 +394,9 @@ export class UserProfileService {
     });
 
     const behaviorStats = {
-      totalViews: behaviors.find((b) => b.type === "page_view")?._count || 0,
-      totalLikes: behaviors.find((b) => b.type === "post_like")?._count || 0,
-      totalPurchases: behaviors.find((b) => b.type === "purchase")?._count || 0,
+      totalViews: behaviors.find((b: any) => b.type === "page_view")?._count || 0,
+      totalLikes: behaviors.find((b: any) => b.type === "post_like")?._count || 0,
+      totalPurchases: behaviors.find((b: any) => b.type === "purchase")?._count || 0,
       preferredCategories: [],
       preferredBrands: [],
     };
@@ -513,7 +516,8 @@ export class UserProfileService {
     userId: string,
     dto: UpdateProfileDto,
   ): Promise<UserBodyProfile | null> {
-    const updateData: Prisma.UserProfileUpdateInput = { updatedAt: new Date() };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateData: any = { updatedAt: new Date() };
 
     if (dto.stylePreferences !== undefined) {
       updateData.stylePreferences = dto.stylePreferences;

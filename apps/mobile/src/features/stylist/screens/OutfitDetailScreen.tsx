@@ -11,17 +11,17 @@ import {
   Dimensions,
   Platform,
 } from "react-native";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { outfitApi } from '../../../services/api/outfit.api';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors, Spacing } from '../../../design-system/theme';
 import type { RootStackParamList } from '../../../types/navigation';
 import type { Outfit } from '../../types/outfit';
-import { Spacing } from '../../../design-system/theme';
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

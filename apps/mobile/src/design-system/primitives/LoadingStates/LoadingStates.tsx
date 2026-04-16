@@ -53,7 +53,7 @@ export function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
   return (
     <View style={styles.overlay}>
       <View style={styles.overlayContent}>
-        <Spinner size="large" color="#fff" />
+        <Spinner size="large" color={DesignTokens.colors.text.inverse} />
         {message && <Text style={styles.overlayMessage}>{message}</Text>}
       </View>
     </View>
@@ -175,7 +175,7 @@ const useStyles = createStyles((colors) => ({
   overlayMessage: {
     marginTop: Spacing.md,
     fontSize: DesignTokens.typography.sizes.md,
-    color: "#fff",
+    color: DesignTokens.colors.text.inverse,
     fontWeight: "500",
   },
   skeleton: {
@@ -185,7 +185,7 @@ const useStyles = createStyles((colors) => ({
     padding: Spacing.md,
   },
   skeletonCard: {
-    backgroundColor: "#fff",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 12,
     overflow: "hidden",
     ...Platform.select({
@@ -223,7 +223,7 @@ const useStyles = createStyles((colors) => ({
   },
   skeletonGridItem: {
     width: (SCREEN_WIDTH - 48) / 2,
-    backgroundColor: "#fff",
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 12,
     overflow: "hidden",
   },

@@ -6,7 +6,7 @@ import {
   FaceShape,
   ColorSeason,
   Gender,
-} from "../../../../../types/prisma-enums";
+} from '../../../../types/prisma-enums';
 import { Type } from "class-transformer";
 import {
   IsOptional,

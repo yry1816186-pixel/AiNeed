@@ -7,7 +7,7 @@
 } from "@nestjs/common";
 import Decimal from "decimal.js";
 
-import { CouponType, UserCouponStatus } from "../../../types/prisma-enums";
+import { CouponType, UserCouponStatus } from '../../../types/prisma-enums';
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 

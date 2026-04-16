@@ -16,7 +16,7 @@ import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens'
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { ClothingItem, ClothingCategory, Season, Occasion } from '../../../types/clothing';
 import { CATEGORY_LABELS, SEASON_LABELS, OCCASION_LABELS } from '../../../types/clothing';
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

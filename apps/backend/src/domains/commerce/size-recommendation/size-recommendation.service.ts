@@ -393,7 +393,8 @@ export class SizeRecommendationService {
 
     if (refundRequests.length === 0) {return { size: null };}
 
-    const sizes = refundRequests.flatMap((r) => r.order.items.map((i) => i.size));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sizes = refundRequests.flatMap((r: any) => r.order.items.map((i: any) => i.size));
     if (sizes.length === 0) {return { size: null };}
 
     return { size: sizes[0] ?? null };

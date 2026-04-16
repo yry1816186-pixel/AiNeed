@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ColorSeason } from "../../../../../types/prisma-enums";
+import { ColorSeason } from '../../../../types/prisma-enums';
 
 import { PosterTemplate } from "./base-template";
 import { autumnTemplate, autumnColorHexes, autumnColorNames } from "./color-season/autumn";
@@ -60,7 +60,7 @@ const seasonConfigs: Record<ColorSeason, ColorSeasonConfig> = {
 
 export function getTemplateByColorSeason(season: ColorSeason | null): ColorSeasonConfig {
   if (season && seasonConfigs[season]) {
-    return seasonConfigs[season];
+    return seasonConfigs[season]!;
   }
-  return seasonConfigs[ColorSeason.spring_warm];
+  return seasonConfigs[ColorSeason.spring_warm]!;
 }

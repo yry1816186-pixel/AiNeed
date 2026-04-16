@@ -507,37 +507,37 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
     style_match: {
       icon: "checkmark-circle",
       color: colors.neutral[300],
-      bgColor: "rgba(102, 126, 234, 0.1)",
+      bgColor: "rgba(102, 126, 234, 0.1)", // no exact DesignToken for semi-transparent
     },
     body_shape: {
       icon: "body-outline",
-      color: colors.success, // custom color
-      bgColor: "rgba(16, 185, 129, 0.1)",
+      color: colors.success,
+      bgColor: "rgba(16, 185, 129, 0.1)", // DesignTokens.colors.semantic.success with opacity
     },
     color_harmony: {
       icon: "color-palette",
-      color: colors.primary, // custom color
-      bgColor: "rgba(181, 160, 140, 0.1)",
+      color: colors.primary,
+      bgColor: "rgba(181, 160, 140, 0.1)", // DesignTokens.colors.brand.camel with opacity
     },
     trending: {
       icon: "trending-up",
-      color: colors.warning, // custom color
-      bgColor: "rgba(245, 158, 11, 0.1)",
+      color: colors.warning,
+      bgColor: "rgba(245, 158, 11, 0.1)", // DesignTokens.colors.semantic.warning with opacity
     },
     seasonal: {
       icon: "sunny",
-      color: colors.info, // custom color
-      bgColor: "rgba(59, 130, 246, 0.1)",
+      color: colors.info,
+      bgColor: "rgba(59, 130, 246, 0.1)", // DesignTokens.colors.semantic.info with opacity
     },
     price: {
       icon: "pricetag",
-      color: colors.success, // custom color
-      bgColor: "rgba(16, 185, 129, 0.1)",
+      color: colors.success,
+      bgColor: "rgba(16, 185, 129, 0.1)", // DesignTokens.colors.semantic.success with opacity
     },
     brand: {
       icon: "ribbon",
-      color: colors.primaryDark, // custom color
-      bgColor: "rgba(168, 101, 72, 0.1)",
+      color: colors.primaryDark,
+      bgColor: "rgba(168, 101, 72, 0.1)", // DesignTokens.colors.brand.terracottaDark with opacity
     },
   };
 
@@ -597,7 +597,7 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
   }));
 
   const typeConfig = {
-    tip: { icon: "bulb", color: colors.warning, bgColor: "colors.warningLight" }, // custom color
+    tip: { icon: "bulb", color: colors.warning, bgColor: colors.warningLight },
     observation: { icon: "eye", color: colors.info, bgColor: DesignTokens.colors.backgrounds.secondary }, // info-tinted bg
     suggestion: { icon: "sparkles", color: colors.primaryDark, bgColor: DesignTokens.colors.backgrounds.secondary }, // suggestion-tinted bg
     warning: { icon: "alert", color: colors.error, bgColor: DesignTokens.colors.backgrounds.secondary }, // warning-tinted bg
@@ -756,7 +756,7 @@ const useStyles = createStyles((colors) => ({
     position: "absolute",
     top: Spacing.sm,
     right: Spacing.sm,
-    backgroundColor: "rgba(102, 126, 234, 0.9)",
+    backgroundColor: "rgba(102, 126, 234, 0.9)", // no exact DesignToken for semi-transparent
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: 10,

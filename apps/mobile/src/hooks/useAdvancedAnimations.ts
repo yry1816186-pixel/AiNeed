@@ -21,6 +21,7 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+import { useTheme } from '../shared/contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { createAnimatedComponent } = AnimatedReanimated;
@@ -107,6 +108,7 @@ export const useLiquidGlass = (
 };
 
 export const use3DCard = () => {
+  const { colors } = useTheme();
   const rotateX = useSharedValue(0);
   const rotateY = useSharedValue(0);
   const scale = useSharedValue(1);

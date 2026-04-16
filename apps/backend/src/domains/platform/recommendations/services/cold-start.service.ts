@@ -105,8 +105,7 @@ export class ColdStartService {
       orderBy: { createdAt: "desc" },
     });
 
-    const scored = items.map((item) => ({
-      itemId: item.id,
+    const scored = items.map((item: any) => ({
       score: 50 + this.deterministicOffset(userId, item.id, 30),
       reason: reasons.join("，") || "为你精选推荐",
     }));
@@ -160,7 +159,7 @@ export class ColdStartService {
       select: { id: true },
     });
 
-    return items.map((item) => ({
+    return items.map((item: any) => ({
       itemId: item.id,
       score: 50,
       reason: "热门推荐",
@@ -322,7 +321,7 @@ export class ColdStartService {
     const maxViews = popularItems[0]?.viewCount || 1;
 
     const recommendations: ColdStartRecommendation[] = popularItems.map(
-      (item) => ({
+      (item: any) => ({
         itemId: item.id,
         score:
           50 +
@@ -669,7 +668,7 @@ export class ColdStartService {
       take: limit,
     });
 
-    return items.map((item) => ({
+    return items.map((item: any) => ({
       itemId: item.id,
       score: 55 + this.deterministicOffset(userId, item.id, 25),
       reason: `适合${profile.bodyType}体型的穿搭`,

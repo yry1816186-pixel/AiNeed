@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { ClothingCategory } from "../../../types/prisma-enums";
+import { ClothingCategory } from '../../../types/prisma-enums';
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import {

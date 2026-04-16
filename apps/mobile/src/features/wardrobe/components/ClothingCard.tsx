@@ -1,9 +1,8 @@
 ﻿import React, { memo } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import FastImage from "react-native-fast-image";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography, Shadows, flatColors as colors } from '../../../design-system/theme';
-import { DesignTokens } from "../../../design-system/theme";
+import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import { Colors, Spacing, BorderRadius, Typography, Shadows, flatColors as colors, DesignTokens } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface ClothingCardProps {

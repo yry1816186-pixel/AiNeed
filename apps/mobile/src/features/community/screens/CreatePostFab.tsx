@@ -2,7 +2,7 @@
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 

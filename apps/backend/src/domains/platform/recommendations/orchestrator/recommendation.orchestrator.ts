@@ -13,7 +13,7 @@
  */
 
 import { Injectable, Logger } from "@nestjs/common";
-import { ClothingCategory } from "../../../../types/prisma-enums";
+import { ClothingCategory } from '../../../../types/prisma-enums';
 
 import { CacheKeyBuilder, CACHE_TTL } from "../../../../modules/cache/cache.constants";
 import { CacheService } from "../../../../modules/cache/cache.service";

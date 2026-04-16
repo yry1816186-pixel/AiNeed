@@ -12,18 +12,18 @@ import {
   Platform,
   Dimensions,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { pickImageSecurely, ImageValidationError } from '../../../utils/imagePicker';
 import { clothingApi } from '../../../services/api/clothing.api';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors, Spacing } from '../../../design-system/theme';
 import type { ClothingCategory, ClothingStyle, Season, Occasion } from '../../types/clothing';
 import { CATEGORY_LABELS } from '../../types/clothing';
-import { Spacing } from '../../../design-system/theme';
 
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");

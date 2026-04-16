@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from "react-native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius } from '../../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, flatColors as colors } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import type { OnboardingFormData } from "../../../stores/onboardingStore";
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";

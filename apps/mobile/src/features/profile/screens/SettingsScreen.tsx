@@ -24,8 +24,8 @@ import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useTranslation } from '../../../i18n';
 
 import type { RootStackParamList } from '../../../types/navigation';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors, Spacing } from '../../../design-system/theme';
 
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;

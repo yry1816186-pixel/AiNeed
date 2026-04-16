@@ -11,10 +11,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTranslation } from '../../../i18n';
 import { useFeatureFlags } from '../../../shared/contexts/FeatureFlagContext';
@@ -24,12 +24,12 @@ import { useCartStore } from '../stores/index';
 import { useCouponStore } from '../stores/couponStore';
 import type { Address } from '../../../types';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors, Spacing } from '../../../design-system/theme';
 import { CouponSelector } from '../components/CouponSelector';
 import { PaymentWaitingScreen } from '../components/PaymentWaitingScreen';
 import { AreaCascadingPicker } from '../../../components/address/AreaCascadingPicker';
 import type { RootStackParamList } from '../../../types/navigation';
-import { Spacing } from '../../../design-system/theme';
 
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;

@@ -18,7 +18,7 @@ import { useGlow } from '../../../hooks/useAdvancedAnimations';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { SpringConfigs, Duration } from '../../../design-system/theme/tokens/animations';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 
 
 const TERRACOTTA = colors.primary; // #C67B5C
@@ -304,7 +304,7 @@ const s = StyleSheet.create({
   lineTrack: {
     height: Spacing.xs,
     borderRadius: 2,
-    backgroundColor: "rgba(198, 123, 92, 0.1)",
+    backgroundColor: "rgba(198, 123, 92, 0.1)", // DesignTokens.colors.brand.terracotta with opacity
     overflow: "hidden",
   },
   gradientLine: {

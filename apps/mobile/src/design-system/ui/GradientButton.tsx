@@ -10,7 +10,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Spacing } from '../theme';
 import { DesignTokens } from '../theme/tokens/design-tokens';
-import { useTheme } from '../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import {
   Colors,
   Typography as ThemeTypography,

@@ -48,7 +48,7 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     primaryLight: base.brand.terracottaLight,
     primaryDark: base.brand.terracottaDark,
     subtleBg: base.backgrounds.tertiary,
-    gold: "#D4A853",
+    gold: DesignTokens.colors.brand.camel,
     placeholderBg: base.neutral[200],
     overlay: base.backgrounds.overlay,
     background: base.backgrounds.primary,
@@ -63,7 +63,7 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     info: base.semantic.info,
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
-    cartLight: "#FFF5F0",
+    cartLight: DesignTokens.colors.brand.terracottaLight, // warm light background for cart
     terracottaDark: base.brand.terracottaDark,
     amber: colors.warning,
     secondary: base.brand.sage,

@@ -24,7 +24,7 @@ import { outfitApi } from '../../../services/api/outfit.api';
 import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from '../../types/clothing';
 import type { RootStackParamList } from '../../../types/navigation';
 import { ImportSheet } from '../../../components/wardrobe/ImportSheet';
-import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 

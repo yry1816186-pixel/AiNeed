@@ -10,14 +10,15 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from "@react-navigation/native";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay } from "react-native-reanimated";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useTranslation } from '../../../i18n';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors, Spacing } from '../../../design-system/theme';
 
 import { SpringConfigs, ListAnimations, Duration } from '../../../design-system/theme/tokens/animations';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
@@ -28,7 +29,6 @@ import { useAiStylistChatStore } from '../stores/aiStylistChatStore';
 import { useAnalytics, useScreenTracking, AnalyticsEvents } from '../../../hooks/useAnalytics';
 import type { ChatMessage } from '../stores/aiStylistChatStore';
 import type { StylistStackParamList } from '../../../navigation/types';
-import { Spacing } from '../../../design-system/theme';
 
 
 type AiStylistChatRoute = RouteProp<StylistStackParamList, "AiStylistChat">;

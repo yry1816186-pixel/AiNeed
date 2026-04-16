@@ -10,18 +10,18 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { authApi } from '../../../services/api/auth.api';
 import { useTranslation } from '../../../i18n';
 
 import { wechatAuth } from '../../../services/auth/wechat';
 import { useAuthStore } from '../stores/index';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors, Spacing } from '../../../design-system/theme';
 import type { RootStackParamList } from '../../../types/navigation';
-import { Spacing } from '../../../design-system/theme';
 
 
 type LoginNavigationProp = NavigationProp<RootStackParamList>;

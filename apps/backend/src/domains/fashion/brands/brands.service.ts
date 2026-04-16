@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PriceRange, ClothingCategory } from "../../../types/prisma-enums";
+import { PriceRange, ClothingCategory } from '../../../types/prisma-enums';
 
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";

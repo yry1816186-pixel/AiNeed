@@ -12,7 +12,8 @@
   ForbiddenException,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
-import { Prisma, UserRole } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { UserRole } from '../../../types/prisma-enums';
 
 import { AdminGuard } from "../../../common/guards/admin.guard";
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -52,7 +53,8 @@ export class AdminUsersController {
       sortOrder = "desc",
     } = query;
 
-    const where: Prisma.UserWhereInput = { isDeleted: false };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = { isDeleted: false };
 
     if (search) {
       where.OR = [
@@ -114,13 +116,15 @@ export class AdminUsersController {
   @ApiResponse({ status: 200, description: "成功" })
   @ApiResponse({ status: 401, description: "未授权" })
   async exportUsers(@Query() query: AdminUserExportDto) {
-    const where: Prisma.UserWhereInput = { isDeleted: false };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = { isDeleted: false };
 
     if (query.role) {
       where.role = query.role as UserRole;
     }
     if (query.startDate || query.endDate) {
-      const createdAt: Prisma.DateTimeFilter = {};
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const createdAt: any = {};
       if (query.startDate) {createdAt.gte = new Date(query.startDate);}
       if (query.endDate) {createdAt.lte = new Date(query.endDate);}
       where.createdAt = createdAt;

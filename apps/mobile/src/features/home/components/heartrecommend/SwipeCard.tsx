@@ -18,7 +18,7 @@ import {
 } from "react-native-svg";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, BorderRadius, Shadows , Spacing } from '../../../../design-system/theme'
+import { Colors, BorderRadius, Shadows , Spacing, flatColors as colors } from '../../../../design-system/theme'
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { SpringConfigs } from '../../../design-system/theme/tokens/animations';

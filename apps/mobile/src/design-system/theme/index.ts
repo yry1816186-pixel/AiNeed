@@ -1,6 +1,7 @@
 import { Dimensions, Platform, StatusBar } from "react-native";
 import { DesignTokens, darkTokens } from "./tokens/design-tokens";
 import type { FlatColors } from "./FlatColors";
+import { useTheme } from '../../shared/contexts/ThemeContext';
 
 
 export { DesignTokens, darkTokens } from "./tokens/design-tokens";
@@ -61,6 +62,7 @@ const gradientPalettes = {
 } as const;
 
 export const Colors = {
+  const { colors } = useTheme();
   brand: DesignTokens.colors.brand,
   neutral: neutralPalette,
   semantic: DesignTokens.colors.semantic,

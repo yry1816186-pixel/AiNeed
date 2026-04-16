@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 
 
 const CATEGORIES = [

@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException, BadRequestException, Optional } from "@nestjs/common";
-import { Prisma, PriceRange } from "@prisma/client";
+import { PriceRange } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import {
@@ -9,6 +9,17 @@ import {
 } from "../../../../common/types/api-response.types";
 import { OnboardingService } from "../../../../domains/identity/onboarding/onboarding.service";
 import { ProfileEventEmitter } from "../../../../domains/identity/profile/services/profile-event-emitter.service";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type StyleQuizWhereInput = Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type QuizQuestionWhereInput = Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type StyleQuizResultWhereInput = Record<string, any>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type StyleQuizGetPayload<T> = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type StyleQuizResultGetPayload<T> = any;
 
 import {
   CreateStyleQuizDto,
@@ -55,10 +66,10 @@ export class StyleQuizService {
     });
   }
 
-  async getQuizzes(query: StyleQuizQueryDto): Promise<PaginatedResponse<Prisma.StyleQuizGetPayload<{ include: { _count: { select: { questions: true; results: true } } } }>>> {
+  async getQuizzes(query: StyleQuizQueryDto): Promise<PaginatedResponse<StyleQuizGetPayload<{ include: { _count: { select: { questions: true; results: true } } } }>>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(query);
 
-    const where: Prisma.StyleQuizWhereInput = {};
+    const where: StyleQuizWhereInput = {};
     if (query.isActive !== undefined) {
       where.isActive = query.isActive;
     }
@@ -156,7 +167,7 @@ export class StyleQuizService {
   }
 
   async getQuestions(quizId: string, query: QuizQuestionQueryDto) {
-    const where: Prisma.QuizQuestionWhereInput = { quizId };
+    const where: QuizQuestionWhereInput = { quizId };
 
     if (query.dimension) {
       where.dimension = query.dimension;
@@ -245,7 +256,7 @@ export class StyleQuizService {
       throw new NotFoundException("问卷不存在");
     }
 
-    const questionIds = new Set(quiz.questions.map((q) => q.id));
+    const questionIds = new Set(quiz.questions.map((q: { id: string }) => q.id));
 
     // 校验所有答案对应的题目都属于该问卷
     for (const answer of dto.answers) {
@@ -309,10 +320,10 @@ export class StyleQuizService {
 
   // ==================== 测试结果 ====================
 
-  async getQuizResults(userId: string, query: QuizResultQueryDto): Promise<PaginatedResponse<Prisma.StyleQuizResultGetPayload<{ include: { quiz: { select: { id: true; title: true } } } }>>> {
+  async getQuizResults(userId: string, query: QuizResultQueryDto): Promise<PaginatedResponse<StyleQuizResultGetPayload<{ include: { quiz: { select: { id: true; title: true } } } }>>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(query);
 
-    const where: Prisma.StyleQuizResultWhereInput = { userId };
+    const where: StyleQuizResultWhereInput = { userId };
 
     if (query.quizId) {
       where.quizId = query.quizId;
@@ -367,7 +378,7 @@ export class StyleQuizService {
       confidenceScore: number;
     },
   ) {
-    return this.prisma.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx: { styleQuizResult: { updateMany: (args: Record<string, unknown>) => Promise<unknown>; create: (args: Record<string, unknown>) => Promise<unknown> } }) => {
       // 将之前的结果标记为非最新
       await tx.styleQuizResult.updateMany({
         where: { userId, isLatest: true },
@@ -485,7 +496,7 @@ export class StyleQuizService {
       throw new NotFoundException("问卷不存在");
     }
 
-    const questionIds = quiz.questions.map((q) => q.id);
+    const questionIds = quiz.questions.map((q: { id: string }) => q.id);
 
     const answers = await this.prisma.quizAnswer.findMany({
       where: { userId, questionId: { in: questionIds } },
@@ -498,7 +509,7 @@ export class StyleQuizService {
     const selectedImages: SelectedImageWithMeta[] = [];
 
     for (const answer of answers) {
-      const question = quiz.questions.find((q) => q.id === answer.questionId);
+      const question = quiz.questions.find((q: { id: string }) => q.id === answer.questionId);
       if (!question || answer.selectedImageIndex === null || answer.selectedImageIndex === undefined) {continue;}
 
       const imageMetas = QUESTION_IMAGE_META_MAP?.[question.id];
@@ -527,7 +538,7 @@ export class StyleQuizService {
       const priceScores: Record<string, number> = {};
 
       for (const answer of answers) {
-        const question = quiz.questions.find((q) => q.id === answer.questionId);
+        const question = quiz.questions.find((q: { id: string; dimension: string }) => q.id === answer.questionId);
         if (!question) {continue;}
 
         const dim = question.dimension;

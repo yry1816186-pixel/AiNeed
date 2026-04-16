@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ClothingCategory } from "../../../types/prisma-enums";
+import { ClothingCategory } from '../../../types/prisma-enums';
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CacheService } from "../../../modules/cache/cache.service";

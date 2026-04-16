@@ -1,8 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import { Spacing , flatColors as colors } from '../../../design-system/theme';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { Spacing, flatColors as colors, DesignTokens } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from "../../../design-system/theme";
 
 const PRESET_COLORS = [
   colors.neutral[900],

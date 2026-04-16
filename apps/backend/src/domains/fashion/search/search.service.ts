@@ -4,7 +4,7 @@ import {
   ServiceUnavailableException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import type { ClothingCategory } from "../../../types/prisma-enums";
+import type { ClothingCategory } from '../../../types/prisma-enums';
 import axios from "axios";
 
 import { allowUnverifiedAiFallbacks } from "../../../common/config/runtime-flags";
@@ -335,11 +335,11 @@ export class SearchService {
       take: limit,
     });
 
-    return items.map((item) => ({
+    return items.map((item: ClothingItemWithBrand) => ({
       ...item,
       similarityScore: 0,
       matchReasons: ["热门推荐"],
-    }));
+    })) as ScoredSearchResult[];
   }
 
   private async attributeBasedSearch(
@@ -370,21 +370,21 @@ export class SearchService {
         take: limit * 3,
       });
 
-      const scoredItems = candidates.map((item) => {
+      const scoredItems = candidates.map((item: ClothingItemWithBrand) => {
         let score = 30;
 
         const attrs = getClothingAttributes(item.attributes);
         if (style && attrs?.style) {
-          const styleMatch = attrs.style.filter((s) =>
-            style.some((qs) => s.toLowerCase() === qs.toLowerCase()),
+          const styleMatch = attrs.style.filter((s: string) =>
+            style.some((qs: string) => s.toLowerCase() === qs.toLowerCase()),
           );
           score += styleMatch.length * 15;
         }
 
         if (colors && item.colors) {
-          const colorMatch = item.colors.filter((c) =>
+          const colorMatch = item.colors.filter((c: string) =>
             colors.some(
-              (qc) =>
+              (qc: string) =>
                 c.toLowerCase().includes(qc.toLowerCase()) ||
                 qc.toLowerCase().includes(c.toLowerCase()),
             ),
@@ -402,7 +402,7 @@ export class SearchService {
         };
       });
 
-      scoredItems.sort((a, b) => b.similarityScore - a.similarityScore);
+      scoredItems.sort((a: ScoredSearchResult, b: ScoredSearchResult) => b.similarityScore - a.similarityScore);
 
       return scoredItems.slice(0, limit);
     } catch (error: unknown) {
@@ -469,8 +469,8 @@ export class SearchService {
     `;
 
     return {
-      itemNames: items.map((i) => i.name),
-      tags: tags.map((t) => t.tag),
+      itemNames: items.map((i: { name: string }) => i.name),
+      tags: tags.map((t: { tag: string }) => t.tag),
     };
   }
 
@@ -549,14 +549,14 @@ export class SearchService {
 
       // Sort by total purchases descending
       const sorted = items
-        .map((item) => ({
+        .map((item: ClothingItemWithBrand) => ({
           ...item,
           totalPurchases: (item as Record<string, unknown>).salesStats
             ? ((item as Record<string, unknown>).salesStats as Array<{ purchases: number }>)
                 .reduce((sum: number, s: { purchases: number }) => sum + s.purchases, 0)
             : 0,
         }))
-        .sort((a, b) => b.totalPurchases - a.totalPurchases);
+        .sort((a: ClothingItemWithBrand & { totalPurchases: number }, b: ClothingItemWithBrand & { totalPurchases: number }) => b.totalPurchases - a.totalPurchases);
 
       return { items: sorted, page, limit, total, totalPages: Math.ceil(total / limit), query };
     }
@@ -628,13 +628,13 @@ export class SearchService {
     }
 
     return {
-      brands: brands.map((b) => ({ id: b.id, name: b.name, count: b._count.products })),
+      brands: brands.map((b: { id: string; name: string; _count: { products: number } }) => ({ id: b.id, name: b.name, count: b._count.products })),
       colors: Object.entries(colorCounts)
         .map(([value, count]) => ({ value, count }))
-        .sort((a, b) => b.count - a.count),
+        .sort((a: { count: number }, b: { count: number }) => b.count - a.count),
       sizes: Object.entries(sizeCounts)
         .map(([value, count]) => ({ value, count }))
-        .sort((a, b) => b.count - a.count),
+        .sort((a: { count: number }, b: { count: number }) => b.count - a.count),
       priceRange: {
         min: priceAgg._min.price ? Number(priceAgg._min.price) : 0,
         max: priceAgg._max.price ? Number(priceAgg._max.price) : 0,

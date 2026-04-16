@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Spacing, BorderRadius } from '../../../design-system/theme';
+import { Spacing, BorderRadius, flatColors as colors } from '../../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 

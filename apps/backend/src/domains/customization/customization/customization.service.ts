@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+
 import {
   CustomizationType,
   CustomizationStatus,
   ProductTemplateType,
   DesignLayerType,
-  Prisma,
-} from "@prisma/client";
+} from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
@@ -61,7 +62,7 @@ export class CustomizationService {
       data: {
         userId,
         templateId,
-        canvasData: canvasData as Prisma.InputJsonValue,
+        canvasData: canvasData as Record<string, unknown>,
       },
     });
   }
@@ -131,7 +132,7 @@ export class CustomizationService {
     return this.prisma.customizationDesign.update({
       where: { id: designId },
       data: {
-        canvasData: canvasData as Prisma.InputJsonValue,
+        canvasData: canvasData as Record<string, unknown>,
       },
       include: { layers: { orderBy: { zIndex: "asc" } } },
     });
@@ -167,8 +168,10 @@ export class CustomizationService {
     }
 
     const layerCount = design.layers.length;
-    const hasTextLayers = design.layers.some((l) => l.type === "text");
-    const imageCount = design.layers.filter((l) => l.type === "image").length;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const hasTextLayers = design.layers.some((l: any) => l.type === "text");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const imageCount = design.layers.filter((l: any) => l.type === "image").length;
 
     const pricing = pricingEngine.calculatePrice({
       templateType: design.template.type,
@@ -287,7 +290,7 @@ export class CustomizationService {
         title: data.title,
         description: data.description,
         referenceImages: data.referenceImages || [],
-        preferences: data.preferences ? (data.preferences as Prisma.InputJsonValue) : {},
+        preferences: data.preferences ? (data.preferences as Record<string, unknown>) : {},
         status: CustomizationStatus.draft,
       },
     });

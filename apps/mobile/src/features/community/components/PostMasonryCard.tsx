@@ -10,7 +10,7 @@ import { SharedElement } from "react-navigation-shared-element";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { BloggerBadge } from "./BloggerBadge";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
 
 export interface PostCardData {
   id: string;

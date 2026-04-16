@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
 import { useColorScheme, Appearance, StyleSheet, type ColorValue } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DesignTokens, darkTokens } from "../../design-system/theme";
+import { DesignTokens, darkTokens } from '../../design-system/theme';
 import type { DesignTokensType, DarkTokensType } from "../../design-system/theme";
 import {
   seasonAccentColors,
@@ -44,7 +44,7 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     primaryLight: base.brand.terracottaLight,
     primaryDark: base.brand.terracottaDark,
     subtleBg: base.backgrounds.tertiary,
-    gold: "#D4A853",
+    gold: DesignTokens.colors.brand.camel,
     placeholderBg: base.neutral[200],
     overlay: base.backgrounds.overlay,
     background: base.backgrounds.primary,
@@ -59,7 +59,7 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     info: base.semantic.info,
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
-    cartLight: "#FFF5F0",
+    cartLight: DesignTokens.colors.brand.terracottaLight, // warm light background for cart
     terracottaDark: base.brand.terracottaDark,
     amber: base.semantic.warning,
     secondary: base.brand.sage,
@@ -94,6 +94,7 @@ const SEASON_STORAGE_KEY = "@xuno_color_season";
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
+  const { colors } = useTheme();
   const systemColorScheme = useColorScheme();
   const [mode, setModeState] = useState<ThemeMode>("system");
   const [colorSeason, setColorSeasonState] = useState<ColorSeason | null>(null);

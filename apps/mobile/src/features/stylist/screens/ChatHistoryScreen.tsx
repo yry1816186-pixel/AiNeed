@@ -15,7 +15,7 @@ import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useAiStylistStore, type ArchivedSession } from '../stores/aiStylistStore';
 import type { StylistStackParamList } from '../../../navigation/types';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 
 
 type StylistNavigation = NativeStackNavigationProp<StylistStackParamList>;

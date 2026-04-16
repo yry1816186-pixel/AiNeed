@@ -34,13 +34,15 @@ export class ContentReviewService {
       endDate,
     } = filters;
 
-    const where: Prisma.CommunityPostWhereInput = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = {
       isDeleted: false,
       moderationStatus: { in: ["pending", "flagged"] },
     };
 
     if (startDate || endDate) {
-      const createdAt: Prisma.DateTimeFilter = {};
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const createdAt: any = {};
       if (startDate) {createdAt.gte = startDate;}
       if (endDate) {createdAt.lte = endDate;}
       where.createdAt = createdAt;
@@ -50,7 +52,8 @@ export class ContentReviewService {
       where.reportCount = { gt: 0 };
     }
 
-    const orderBy: Prisma.CommunityPostOrderByWithRelationInput = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const orderBy: any = {
       reportCount: "desc" as const,
     };
 

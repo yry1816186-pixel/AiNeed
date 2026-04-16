@@ -10,15 +10,15 @@ import {
   Alert,
   Dimensions,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from "@react-navigation/native";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { flatColors as colors, Spacing } from '../../../design-system/theme';
 import { tryOnApi, type TryOnResult } from '../../../services/api/tryon.api';
 import type { TryOnStackParamList } from '../../../navigation/types';
-import { Spacing } from '../../../design-system/theme';
 
 
 type TryOnResultRoute = RouteProp<TryOnStackParamList, "TryOnResult">;

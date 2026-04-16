@@ -19,7 +19,7 @@ import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { communityApi, type CommunityPost } from '../../../services/api/community.api';
 import type { CommunityStackParamList } from '../../../navigation/types';
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 
 
 type InfluencerProfileRoute = RouteProp<CommunityStackParamList, "InfluencerProfile">;

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
-import { BodyType, SkinTone, ColorSeason } from "@prisma/client";
+import { BodyType, SkinTone, ColorSeason } from "../../../../types/prisma-enums";
 
 interface ColorHarmony {
   type: string;
@@ -450,11 +450,11 @@ export class MatchingTheoryService {
   }
 
   getBodyTypeRecommendation(bodyType: BodyType): BodyTypeRecommendation {
-    return this.bodyTypeRecommendations[bodyType];
+    return this.bodyTypeRecommendations[bodyType]!;
   }
 
   getColorSeasonProfile(colorSeason: ColorSeason): ColorSeasonProfile {
-    return this.colorSeasonProfiles[colorSeason];
+    return this.colorSeasonProfiles[colorSeason]!;
   }
 
   getFlatteringColors(skinTone: SkinTone): string[] {

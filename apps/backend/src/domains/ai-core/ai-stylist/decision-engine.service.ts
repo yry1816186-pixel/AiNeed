@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ClothingCategory } from "../../../types/prisma-enums";
+import { ClothingCategory } from '../../../types/prisma-enums';
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";

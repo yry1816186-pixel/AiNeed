@@ -24,7 +24,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
-import { PhotoType } from "../../../types/prisma-enums";
+import { PhotoType } from '../../../types/prisma-enums';
 
 import { AuthenticatedRequest } from "../../../common/types/auth.types";
 import { AiQuotaGuard, SetQuotaType } from "../../../modules/security/rate-limit/ai-quota.guard";

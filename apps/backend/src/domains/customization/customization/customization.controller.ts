@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiParam, ApiQuery, ApiBody } from "@nestjs/swagger";
-import { CustomizationType, CustomizationStatus, ProductTemplateType } from "@prisma/client";
+import { CustomizationType, CustomizationStatus, ProductTemplateType } from "../../../types/prisma-enums";
 
 import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
