@@ -3,9 +3,10 @@ from __future__ import annotations
 import logging
 from typing import Literal, Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
+from ml.api.middleware.error_handler import InferenceError
 from ml.services.tryon.virtual_tryon_service import virtual_tryon_service
 
 logger = logging.getLogger(__name__)
@@ -49,10 +50,13 @@ async def generate_tryon(request: GenerateTryOnRequest) -> GenerateTryOnResponse
             category=request.category,
             prompt=request.prompt,
         )
+        logger.info("virtual try-on completed", extra={"service": "tryon", "endpoint": "generate", "category": request.category})
         return GenerateTryOnResponse(**result)
+    except InferenceError:
+        raise
     except Exception as e:
-        logger.error("Virtual try-on generation failed: %s", str(e), exc_info=True)
-        raise HTTPException(status_code=500, detail="Image generation failed. Please try again.")
+        logger.error("virtual try-on failed", extra={"service": "tryon", "endpoint": "generate", "error": str(e)})
+        raise InferenceError(message="Image generation failed. Please try again.")
 
 
 @router.get("/health", response_model=HealthResponse)

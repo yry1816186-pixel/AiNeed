@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import base64
 import io
@@ -7,10 +7,11 @@ import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, File, HTTPException, Query, UploadFile
+from fastapi import APIRouter, File, Query, UploadFile
 from PIL import Image
 import numpy as np
 
+from ml.api.middleware.error_handler import ModelNotLoadedError, InferenceError, ValidationError
 from ml.api.schemas.analysis import (
     BodyAnalysisRequest,
     BodyAnalysisResponse,
@@ -160,7 +161,7 @@ async def analyze_body(
     request: Optional[BodyAnalysisRequest] = None,
 ):
     if not _body_available or _body_service is None:
-        raise HTTPException(status_code=503, detail="Body analysis service unavailable")
+        raise ModelNotLoadedError(model_name="Body analysis service unavailable")
 
     image: Optional[Image.Image] = None
 
@@ -169,24 +170,24 @@ async def analyze_body(
         try:
             image = Image.open(io.BytesIO(contents)).convert("RGB")
         except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Invalid image file: {e}")
+            raise ValidationError(message=f"Invalid image file: {e}")
     elif request is not None:
         if request.image_base64:
             try:
                 image_data = base64.b64decode(request.image_base64)
                 image = Image.open(io.BytesIO(image_data)).convert("RGB")
             except Exception as e:
-                raise HTTPException(status_code=400, detail=f"Invalid base64 image: {e}")
+                raise ValidationError(message=f"Invalid base64 image: {e}")
         elif request.image_path:
             path = Path(request.image_path)
             if not path.exists():
-                raise HTTPException(status_code=400, detail=f"Image file not found: {request.image_path}")
+                raise ValidationError(message=f"Image file not found: {request.image_path}")
             try:
                 image = Image.open(str(path)).convert("RGB")
             except Exception as e:
-                raise HTTPException(status_code=400, detail=f"Cannot open image: {e}")
+                raise ValidationError(message=f"Cannot open image: {e}")
     else:
-        raise HTTPException(status_code=400, detail="No image provided. Use file upload or JSON body.")
+        raise ValidationError(message="No image provided. Use file upload or JSON body.")
 
     try:
         result = _body_service.analyze_user_photo(image)
@@ -234,7 +235,7 @@ async def analyze_body(
 @router.post("/body/recommendations")
 async def get_body_type_recommendations(request: BodyTypeQueryRequest):
     if not _body_available or _body_service is None:
-        raise HTTPException(status_code=503, detail="Body analysis service unavailable")
+        raise ModelNotLoadedError(model_name="Body analysis service unavailable")
 
     try:
         result = _body_service.get_recommendations_for_body_type(
@@ -244,13 +245,13 @@ async def get_body_type_recommendations(request: BodyTypeQueryRequest):
         return {"success": True, "data": result}
     except Exception as e:
         logger.error("body recommendations failed", extra={"service": "analysis", "endpoint": "body/recommendations", "error": str(e)})
-        raise HTTPException(status_code=500, detail=str(e))
+        raise InferenceError(message=str(e))
 
 
 @router.post("/body/fit-score", response_model=ItemFitResponse)
 async def calculate_fit_score(request: ItemFitRequest):
     if not _body_available or _body_service is None:
-        raise HTTPException(status_code=503, detail="Body analysis service unavailable")
+        raise ModelNotLoadedError(model_name="Body analysis service unavailable")
 
     try:
         ranked = _body_service.rank_items_by_fit(
@@ -271,7 +272,7 @@ async def calculate_fit_score(request: ItemFitRequest):
         return ItemFitResponse(results=results)
     except Exception as e:
         logger.error("fit score calculation failed", extra={"service": "analysis", "endpoint": "body/fit-score", "error": str(e)})
-        raise HTTPException(status_code=500, detail=str(e))
+        raise InferenceError(message=str(e))
 
 
 # ---- Style Analysis ----
@@ -279,7 +280,7 @@ async def calculate_fit_score(request: ItemFitRequest):
 @router.post("/style/analyze", response_model=StyleAnalysisResponse)
 async def analyze_style(request: StyleAnalysisRequest):
     if not _style_available or _style_api is None:
-        raise HTTPException(status_code=503, detail="Style analysis service unavailable")
+        raise ModelNotLoadedError(model_name="Style analysis service unavailable")
 
     try:
         result = await _style_api.analyze(
@@ -288,19 +289,19 @@ async def analyze_style(request: StyleAnalysisRequest):
         )
         return StyleAnalysisResponse(**result)
     except StyleUnderstandingUnavailableError as exc:
-        raise HTTPException(
-            status_code=exc.status_code,
-            detail={"message": exc.message, "backend": exc.backend, "reason": exc.reason},
+        raise InferenceError(
+            message=exc.message,
+            details={"backend": exc.backend, "reason": exc.reason},
         )
     except Exception as e:
         logger.error("style analysis failed", extra={"service": "analysis", "endpoint": "style/analyze", "error": str(e)})
-        raise HTTPException(status_code=500, detail=str(e))
+        raise InferenceError(message=str(e))
 
 
 @router.post("/style/suggestions", response_model=StyleSuggestionsResponse)
 async def get_style_suggestions(request: StyleSuggestionsRequest):
     if not _style_available or _style_api is None:
-        raise HTTPException(status_code=503, detail="Style analysis service unavailable")
+        raise ModelNotLoadedError(model_name="Style analysis service unavailable")
 
     try:
         result = await _style_api.get_suggestions(
@@ -319,26 +320,26 @@ async def get_style_suggestions(request: StyleSuggestionsRequest):
             style_weights=result.get("style_weights", {}),
         )
     except StyleUnderstandingUnavailableError as exc:
-        raise HTTPException(
-            status_code=exc.status_code,
-            detail={"message": exc.message, "backend": exc.backend, "reason": exc.reason},
+        raise InferenceError(
+            message=exc.message,
+            details={"backend": exc.backend, "reason": exc.reason},
         )
     except Exception as e:
         logger.error("style suggestions failed", extra={"service": "analysis", "endpoint": "style/suggestions", "error": str(e)})
-        raise HTTPException(status_code=500, detail=str(e))
+        raise InferenceError(message=str(e))
 
 
 @router.get("/style/quick-match")
 async def quick_match_style(user_input: str = Query(..., description="User input text")):
     if not _style_available or _style_api is None:
-        raise HTTPException(status_code=503, detail="Style analysis service unavailable")
+        raise ModelNotLoadedError(model_name="Style analysis service unavailable")
 
     try:
         style_name, confidence = _style_api.quick_match_style(user_input)
         return {"style_name": style_name, "confidence": confidence}
     except Exception as e:
         logger.error("style quick match failed", extra={"service": "analysis", "endpoint": "style/quick-match", "error": str(e)})
-        raise HTTPException(status_code=500, detail=str(e))
+        raise InferenceError(message=str(e))
 
 
 # ---- Photo Quality ----
@@ -354,13 +355,13 @@ async def analyze_photo_quality(
         try:
             contents = await file.read()
             if len(contents) > 10 * 1024 * 1024:
-                raise HTTPException(status_code=400, detail="文件大小超过10MB限制")
+                raise ValidationError(message="文件大小超过10MB限制")
             image = Image.open(io.BytesIO(contents)).convert("RGB")
             image_array = np.array(image)
-        except HTTPException:
+        except (ModelNotLoadedError, InferenceError, ValidationError):
             raise
         except Exception as e:
-            raise HTTPException(status_code=400, detail=f"图片解析失败: {e}")
+            raise ValidationError(message=f"图片解析失败: {e}")
     elif request is not None:
         if request.image_base64:
             try:
@@ -368,15 +369,15 @@ async def analyze_photo_quality(
                 image = Image.open(io.BytesIO(image_data)).convert("RGB")
                 image_array = np.array(image)
             except Exception as e:
-                raise HTTPException(status_code=400, detail=f"图片解码失败: {e}")
+                raise ValidationError(message=f"图片解码失败: {e}")
         elif request.image_path:
             try:
                 image = Image.open(request.image_path).convert("RGB")
                 image_array = np.array(image)
             except Exception as e:
-                raise HTTPException(status_code=400, detail=f"无法打开图片: {e}")
+                raise ValidationError(message=f"无法打开图片: {e}")
     else:
-        raise HTTPException(status_code=400, detail="需要提供 file、image_base64 或 image_path")
+        raise ValidationError(message="需要提供 file、image_base64 或 image_path")
 
     try:
         if _photo_available and _photo_analyzer is not None:
@@ -385,11 +386,11 @@ async def analyze_photo_quality(
         else:
             result = _analyze_quality_fallback(image_array)
             return {"success": True, "data": result, "fallback": True}
-    except HTTPException:
+    except (ModelNotLoadedError, InferenceError, ValidationError):
         raise
     except Exception as e:
         logger.error("photo quality analysis failed", extra={"service": "analysis", "endpoint": "photo/analyze", "error": str(e)})
-        raise HTTPException(status_code=500, detail=str(e))
+        raise InferenceError(message=str(e))
 
 
 @router.post("/photo/enhance")
@@ -403,19 +404,19 @@ async def enhance_photo(
         try:
             contents = await file.read()
             if len(contents) > 10 * 1024 * 1024:
-                raise HTTPException(status_code=400, detail="File size exceeds 10MB limit")
+                raise ValidationError(message="File size exceeds 10MB limit")
             image = Image.open(io.BytesIO(contents)).convert("RGB")
-        except HTTPException:
+        except (ModelNotLoadedError, InferenceError, ValidationError):
             raise
         except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Image parsing failed: {e}")
+            raise ValidationError(message=f"Image parsing failed: {e}")
     elif request is not None:
         if request.image_base64:
             try:
                 image_data = base64.b64decode(request.image_base64)
                 image = Image.open(io.BytesIO(image_data)).convert("RGB")
             except Exception as e:
-                raise HTTPException(status_code=400, detail=f"Image decode failed: {e}")
+                raise ValidationError(message=f"Image decode failed: {e}")
         elif request.image_url:
             try:
                 import requests as http_requests
@@ -423,9 +424,9 @@ async def enhance_photo(
                 resp.raise_for_status()
                 image = Image.open(io.BytesIO(resp.content)).convert("RGB")
             except Exception as e:
-                raise HTTPException(status_code=400, detail=f"Image download failed: {e}")
+                raise ValidationError(message=f"Image download failed: {e}")
     else:
-        raise HTTPException(status_code=400, detail="Provide file, image_base64, or image_url")
+        raise ValidationError(message="Provide file, image_base64, or image_url")
 
     try:
         enhanced = _enhance_image(image)
@@ -445,7 +446,7 @@ async def enhance_photo(
         }
     except Exception as e:
         logger.error("photo enhancement failed", extra={"service": "analysis", "endpoint": "photo/enhance", "error": str(e)})
-        raise HTTPException(status_code=500, detail=str(e))
+        raise InferenceError(message=str(e))
 
 
 @router.get("/photo/health")
