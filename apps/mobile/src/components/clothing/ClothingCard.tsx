@@ -1,9 +1,8 @@
-﻿import React, { memo } from "react";
+﻿﻿﻿﻿import React, { memo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../design-system/theme';
-import { DesignTokens } from "../../design-system/theme";
+import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../theme";
 
 interface ClothingCardProps {
   id: string;
@@ -32,7 +31,7 @@ export const ClothingCard = memo(function ClothingCard({
   image,
   category,
   colors,
-  styleTags,
+  _styleTags,
   score,
   reasons,
   onPress,
@@ -40,17 +39,15 @@ export const ClothingCard = memo(function ClothingCard({
   isFavorite = false,
 }: ClothingCardProps) {
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9} accessibilityLabel={`${name}，${category}`} accessibilityRole="button">
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9}>
       <View style={styles.imageContainer}>
         <FastImage
           source={{ uri: image, priority: FastImage.priority.normal }}
           style={styles.image}
           resizeMode={FastImage.resizeMode.cover}
-          accessibilityLabel={`${name}图片`}
-          accessibilityRole="image"
         />
         {onFavorite && (
-          <TouchableOpacity style={styles.favoriteButton} onPress={onFavorite} activeOpacity={0.7} accessibilityLabel={isFavorite ? "取消收藏" : "收藏"} accessibilityRole="button">
+          <TouchableOpacity style={styles.favoriteButton} onPress={onFavorite} activeOpacity={0.7}>
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
               size={18}
@@ -107,16 +104,16 @@ export const ClothingCard = memo(function ClothingCard({
 const COLOR_MAP: Record<string, string> = {
   black: Colors.neutral[900],
   white: Colors.white,
-  red: DesignTokens.colors.semantic.error, // custom color
+  red: "#EF4444", // custom color
   blue: Colors.sky[500],
   green: Colors.emerald[500],
   yellow: "#EAB308", // custom color
   orange: Colors.amber[500],
   purple: Colors.primary[500],
-  pink: DesignTokens.colors.brand.camel, // custom color
+  pink: "#EC4899", // custom color
   brown: "#92400E", // custom color
   gray: Colors.neutral[500],
-  beige: DesignTokens.colors.semantic.warningLight, // custom color
+  beige: "#FEF3C7", // custom color
   navy: Colors.sky[900],
 };
 

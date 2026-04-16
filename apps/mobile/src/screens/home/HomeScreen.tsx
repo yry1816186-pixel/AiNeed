@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useRef, useState } from "react";
+﻿﻿﻿﻿import { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -17,11 +17,8 @@ import { useHomeStore } from "../../stores/homeStore";
 import { useAuthStore } from "../../stores/index";
 import { useRecommendationFeedStore } from "../../stores/recommendationFeedStore";
 import { DesignTokens } from "../../theme/tokens/design-tokens";
-import { withErrorBoundary } from "../../shared/components/ErrorBoundary";
+import { withErrorBoundary } from "../../components/ErrorBoundary";
 import { useScreenTracking } from "../../hooks/useAnalytics";
-import { useTranslation } from "../../i18n";
-import { useFeatureFlags } from "../../contexts/FeatureFlagContext";
-import { FeatureFlagKeys } from "../../constants/feature-flags";
 import { WeatherGreeting } from "./components/WeatherGreeting";
 import { ProfileCompletionBanner } from "./components/ProfileCompletionBanner";
 import QuickActions from "./components/QuickActions";
@@ -55,9 +52,6 @@ const HomeScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const user = useAuthStore((s) => s.user);
   useScreenTracking("Home");
-  const t = useTranslation();
-  const { isEnabled } = useFeatureFlags();
-  const isRecommendationFeed = isEnabled(FeatureFlagKeys.RECOMMENDATION_FEED);
 
   // 季节强调色，回退到品牌色
   const accentColor = DesignTokens.colors.brand.terracotta;
@@ -215,39 +209,23 @@ const HomeScreen: React.FC = () => {
               style={styles.searchBar}
               onPress={handleSearchPress}
               activeOpacity={0.7}
-              accessibilityLabel="搜索"
-              accessibilityRole="button"
             >
               <Ionicons name="search-outline" size={20} color={DesignTokens.colors.text.tertiary} />
-              <Text style={styles.searchText}>{t.search.placeholder}</Text>
+              <Text style={styles.searchText}>搜索穿搭、单品、风格...</Text>
               <Ionicons name="mic-outline" size={20} color={DesignTokens.colors.text.tertiary} />
             </TouchableOpacity>
           );
 
         case "recommendationHeader":
-          if (!isRecommendationFeed) {
-            return (
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>热门推荐</Text>
-                <TouchableOpacity
-                  onPress={() => {}}
-                  accessibilityLabel="查看全部推荐"
-                  accessibilityRole="button"
-                >
-                  <Text style={[styles.sectionMore, { color: accentColor }]}>查看全部</Text>
-                </TouchableOpacity>
-              </View>
-            );
-          }
           return (
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{t.home.forYou}</Text>
+              <Text style={styles.sectionTitle}>为你推荐</Text>
               <TouchableOpacity
-                onPress={() => {}}
-                accessibilityLabel="查看全部推荐"
-                accessibilityRole="button"
+                onPress={() => {
+                  // Already on Home tab; no-op or scroll to top
+                }}
               >
-                <Text style={[styles.sectionMore, { color: accentColor }]}>{t.home.seeAll}</Text>
+                <Text style={[styles.sectionMore, { color: accentColor }]}>查看全部</Text>
               </TouchableOpacity>
             </View>
           );
@@ -279,8 +257,6 @@ const HomeScreen: React.FC = () => {
       handleWardrobePress,
       handleStyleReportPress,
       handleCartPress,
-      isRecommendationFeed,
-      accentColor,
     ]
   );
 

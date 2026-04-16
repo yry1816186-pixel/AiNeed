@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useRef, useEffect, useCallback, useState } from "react";
 import {
   View,
@@ -687,7 +686,7 @@ export const ImmersiveProductView: React.FC<ImmersiveProductViewProps> = ({
                         <Ionicons
                           name="checkmark"
                           size={16}
-                          color={color === DesignTokens.colors.backgrounds.primary ? DesignTokens.colors.neutral[900] : DesignTokens.colors.text.inverse}
+                          color={color === "#fff" ? DesignTokens.colors.neutral[900] : DesignTokens.colors.text.inverse}
                         />
                       )}
                     </TouchableOpacity>
@@ -774,7 +773,7 @@ export interface StoryViewerProps {
 interface StoryProgressBarProps {
   index: number;
   currentItemIndex: number;
-  progress: any;
+  progress: number;
 }
 
 const StoryProgressBar: React.FC<StoryProgressBarProps> = ({

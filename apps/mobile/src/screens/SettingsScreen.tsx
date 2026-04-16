@@ -20,11 +20,10 @@ import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { useAuthStore } from '../stores/index';
 import { authApi } from '../services/api/auth.api';
 import { apiClient } from '../services/api/client';
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { theme } from '../design-system/theme';
 import { useTranslation } from '../i18n';
-
+import { useTheme } from '../contexts/ThemeContext';
 import type { RootStackParamList } from '../types/navigation';
-import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -211,7 +210,7 @@ export const SettingsScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()} accessibilityLabel="返回">
-          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>设置</Text>
         <View style={styles.placeholder} />
@@ -221,13 +220,13 @@ export const SettingsScreen: React.FC = () => {
         <Text style={styles.sectionTitle}>外观</Text>
         <View style={styles.section}>
           <View style={styles.settingItem}>
-            <Ionicons name="moon-outline" size={22} color={colors.textSecondary} />
+            <Ionicons name="moon-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.settingText}>深色模式</Text>
             <Switch
               value={isDark}
               onValueChange={handleDarkModeToggle}
-              trackColor={{ false: colors.placeholderBg, true: colors.primary }}
-              thumbColor={colors.surface}
+              trackColor={{ false: theme.colors.placeholderBg, true: theme.colors.primary }}
+              thumbColor={theme.colors.surface}
               accessibilityLabel="深色模式"
             />
           </View>
@@ -237,38 +236,38 @@ export const SettingsScreen: React.FC = () => {
         <Text style={styles.sectionTitle}>通知</Text>
         <View style={styles.section}>
           <View style={styles.settingItem}>
-            <Ionicons name="time-outline" size={22} color={colors.textSecondary} />
+            <Ionicons name="time-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.settingText}>穿搭提醒</Text>
             <Switch
               value={outfitReminders}
               onValueChange={(v) => handleNotificationToggle('outfitReminders', v)}
               disabled={updatingPrefs}
-              trackColor={{ false: colors.placeholderBg, true: colors.primary }}
-              thumbColor={colors.surface}
+              trackColor={{ false: theme.colors.placeholderBg, true: theme.colors.primary }}
+              thumbColor={theme.colors.surface}
               accessibilityLabel="穿搭提醒"
             />
           </View>
           <View style={styles.settingItem}>
-            <Ionicons name="pricetag-outline" size={22} color={colors.textSecondary} />
+            <Ionicons name="pricetag-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.settingText}>新品上架</Text>
             <Switch
               value={newArrivals}
               onValueChange={(v) => handleNotificationToggle('newArrivals', v)}
               disabled={updatingPrefs}
-              trackColor={{ false: colors.placeholderBg, true: colors.primary }}
-              thumbColor={colors.surface}
+              trackColor={{ false: theme.colors.placeholderBg, true: theme.colors.primary }}
+              thumbColor={theme.colors.surface}
               accessibilityLabel="新品上架通知"
             />
           </View>
           <View style={[styles.settingItem, styles.settingItemLast]}>
-            <Ionicons name="sale-outline" size={22} color={colors.textSecondary} />
+            <Ionicons name="sale-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.settingText}>促销活动</Text>
             <Switch
               value={sales}
               onValueChange={(v) => handleNotificationToggle('sales', v)}
               disabled={updatingPrefs}
-              trackColor={{ false: colors.placeholderBg, true: colors.primary }}
-              thumbColor={colors.surface}
+              trackColor={{ false: theme.colors.placeholderBg, true: theme.colors.primary }}
+              thumbColor={theme.colors.surface}
               accessibilityLabel="促销活动通知"
             />
           </View>
@@ -282,18 +281,18 @@ export const SettingsScreen: React.FC = () => {
             onPress={() => navigation.navigate('Legal', { type: 'terms' })}
             accessibilityLabel="用户服务协议"
           >
-            <Ionicons name="document-text-outline" size={22} color={colors.textSecondary} />
+            <Ionicons name="document-text-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.settingText}>用户服务协议</Text>
-            <Ionicons name="chevron-forward-outline" size={18} color={colors.textTertiary} />
+            <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.settingItem, styles.settingItemLast]}
             onPress={() => navigation.navigate('Legal', { type: 'privacy' })}
             accessibilityLabel="隐私政策"
           >
-            <Ionicons name="shield-checkmark-outline" size={22} color={colors.textSecondary} />
+            <Ionicons name="shield-checkmark-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.settingText}>隐私政策</Text>
-            <Ionicons name="chevron-forward-outline" size={18} color={colors.textTertiary} />
+            <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
         </View>
 
@@ -308,21 +307,21 @@ export const SettingsScreen: React.FC = () => {
             accessibilityState={{ disabled: exporting }}
           >
             {exporting ? (
-              <ActivityIndicator size="small" color={colors.textSecondary} />
+              <ActivityIndicator size="small" color={theme.colors.textSecondary} />
             ) : (
-              <Ionicons name="download-outline" size={22} color={colors.textSecondary} />
+              <Ionicons name="download-outline" size={22} color={theme.colors.textSecondary} />
             )}
             <Text style={styles.settingText}>{exporting ? 'Exporting...' : 'Export My Data'}</Text>
-            <Ionicons name="chevron-forward-outline" size={18} color={colors.textTertiary} />
+            <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.settingItem}
             onPress={() => navigation.navigate('NotificationSettings')}
             accessibilityLabel="Notification settings"
           >
-            <Ionicons name="notifications-outline" size={22} color={colors.textSecondary} />
+            <Ionicons name="notifications-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.settingText}>Notification Settings</Text>
-            <Ionicons name="chevron-forward-outline" size={18} color={colors.textTertiary} />
+            <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.settingItem, styles.settingItemLast]}
@@ -332,11 +331,11 @@ export const SettingsScreen: React.FC = () => {
             accessibilityState={{ disabled: deleting }}
           >
             {deleting ? (
-              <ActivityIndicator size="small" color={colors.error} />
+              <ActivityIndicator size="small" color={theme.colors.error} />
             ) : (
-              <Ionicons name="trash-outline" size={22} color={colors.error} />
+              <Ionicons name="trash-outline" size={22} color={theme.colors.error} />
             )}
-            <Text style={[styles.settingText, { color: colors.error }]}>
+            <Text style={[styles.settingText, { color: theme.colors.error }]}>
               {deleting ? 'Deleting...' : 'Delete My Account'}
             </Text>
           </TouchableOpacity>
@@ -350,14 +349,14 @@ export const SettingsScreen: React.FC = () => {
             onPress={() => setPasswordModalVisible(true)}
             accessibilityLabel="Change password"
           >
-            <Ionicons name="lock-closed-outline" size={22} color={colors.textSecondary} />
+            <Ionicons name="lock-closed-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.settingText}>Change Password</Text>
-            <Ionicons name="chevron-forward-outline" size={18} color={colors.textTertiary} />
+            <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
           <TouchableOpacity style={[styles.settingItem, styles.settingItemLast]} accessibilityLabel="About">
-            <Ionicons name="help-circle-outline" size={22} color={colors.textSecondary} />
+            <Ionicons name="help-circle-outline" size={22} color={theme.colors.textSecondary} />
             <Text style={styles.settingText}>About</Text>
-            <Ionicons name="chevron-forward-outline" size={18} color={colors.textTertiary} />
+            <Ionicons name="chevron-forward-outline" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
         </View>
 
@@ -368,8 +367,8 @@ export const SettingsScreen: React.FC = () => {
             onPress={handleLogout}
             accessibilityLabel="Log out"
           >
-            <Ionicons name="log-out-outline" size={22} color={colors.error} />
-            <Text style={[styles.settingText, { color: colors.error }]}>Log Out</Text>
+            <Ionicons name="log-out-outline" size={22} color={theme.colors.error} />
+            <Text style={[styles.settingText, { color: theme.colors.error }]}>Log Out</Text>
           </TouchableOpacity>
         </View>
 
@@ -393,13 +392,13 @@ export const SettingsScreen: React.FC = () => {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>修改密码</Text>
               <TouchableOpacity onPress={() => setPasswordModalVisible(false)} accessibilityLabel="关闭">
-                <Ionicons name="close" size={24} color={colors.textSecondary} />
+                <Ionicons name="close" size={24} color={theme.colors.textSecondary} />
               </TouchableOpacity>
             </View>
             <TextInput
               style={styles.input}
               placeholder="当前密码"
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor={theme.colors.textTertiary}
               secureTextEntry
               value={oldPassword}
               onChangeText={setOldPassword}
@@ -409,7 +408,7 @@ export const SettingsScreen: React.FC = () => {
             <TextInput
               style={styles.input}
               placeholder="新密码 (至少6位)"
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor={theme.colors.textTertiary}
               secureTextEntry
               value={newPassword}
               onChangeText={setNewPassword}
@@ -419,7 +418,7 @@ export const SettingsScreen: React.FC = () => {
             <TextInput
               style={styles.input}
               placeholder="确认新密码"
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor={theme.colors.textTertiary}
               secureTextEntry
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -434,7 +433,7 @@ export const SettingsScreen: React.FC = () => {
               accessibilityState={{ disabled: changingPassword }}
             >
               {changingPassword ? (
-                <ActivityIndicator size="small" color={colors.surface} />
+                <ActivityIndicator size="small" color={theme.colors.surface} />
               ) : (
                 <Text style={styles.submitButtonText}>确认修改</Text>
               )}
@@ -447,31 +446,31 @@ export const SettingsScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+  container: { flex: 1, backgroundColor: theme.colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 20,
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: theme.colors.border,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.divider,
+    backgroundColor: theme.colors.divider,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: '600', color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: '600', color: theme.colors.text },
   placeholder: { width: 40 },
   content: { flex: 1 },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: '600',
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginTop: 24,
     marginBottom: 8,
     marginHorizontal: 20,
@@ -479,7 +478,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   section: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     marginHorizontal: 20,
     borderRadius: 16,
     overflow: 'hidden',
@@ -491,10 +490,10 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
+    borderBottomColor: theme.colors.divider,
   },
   settingItemLast: { borderBottomWidth: 0 },
-  settingText: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
+  settingText: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: theme.colors.text },
   dangerButton: { borderBottomWidth: 0 },
   footer: {
     alignItems: 'center',
@@ -502,7 +501,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textTertiary,
+    color: theme.colors.textTertiary,
   },
   modalOverlay: {
     flex: 1,
@@ -510,7 +509,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   modalContent: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -525,25 +524,25 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: '600',
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
   },
   input: {
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
     borderRadius: 12,
     padding: 16,
     fontSize: DesignTokens.typography.sizes.md,
     marginBottom: 12,
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
   },
   submitButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
     marginTop: 8,
   },
   submitButtonText: {
-    color: colors.surface,
+    color: theme.colors.surface,
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: '600',
   },

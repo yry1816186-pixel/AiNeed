@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated, ViewStyle } from "react-native";
 import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
 
 const SkeletonBlock: React.FC<{
   width?: number | string;
   height?: number;
   borderRadius?: number;
-  style?: any;
+  style?: ViewStyle;
 }> = ({ width = "100%", height = 20, borderRadius = BorderRadius.sm, style }) => {
   const animatedValue = useRef(new Animated.Value(0)).current;
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
-import { communityApi } from '../../../services/api/community.api';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import { communityApi } from "../../services/api/community.api";
+import { theme } from '../../../../design-system/theme';
 import { DesignTokens } from "../../../../design-system/theme";
 
 interface FollowButtonProps {
@@ -52,7 +52,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
         accessibilityRole="button"
       >
         {loading ? (
-          <ActivityIndicator size="small" color={colors.textSecondary} />
+          <ActivityIndicator size="small" color={theme.colors.textSecondary} />
         ) : (
           <Text style={[styles.followingText, isSmall && styles.followingTextSmall]}>已关注</Text>
         )}
@@ -70,7 +70,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
       accessibilityRole="button"
     >
       {loading ? (
-        <ActivityIndicator size="small" color={DesignTokens.colors.backgrounds.primary} />
+        <ActivityIndicator size="small" color="#FFFFFF" />
       ) : (
         <Text style={[styles.followText, isSmall && styles.followTextSmall]}>关注</Text>
       )}
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   followText: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: "#FFFFFF",
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
@@ -101,14 +101,14 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.sm,
   },
   followingBtn: {
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
     borderRadius: 18,
     paddingHorizontal: 24,
     paddingVertical: 8,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: theme.colors.border,
   },
   followingBtnSmall: {
     paddingHorizontal: 16,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   followingText: {
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },

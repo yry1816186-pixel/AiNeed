@@ -5,4 +5,5 @@
  * 新代码请直接从 @/src/components/skeleton 导入。
  */
 export { LoadingShimmer, Shimmer } from "../skeleton/Skeleton";
+import { LoadingShimmer } from "../skeleton/Skeleton";
 export default LoadingShimmer;

@@ -2,6 +2,7 @@ import { useMemo, memo, type ComponentProps } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { useTheme } from "../../../contexts/ThemeContext";
 import type { WeatherData } from "../../../stores/homeStore";
 
 interface WeatherGreetingProps {

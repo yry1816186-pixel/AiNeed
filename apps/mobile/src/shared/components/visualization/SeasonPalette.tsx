@@ -12,7 +12,7 @@ import {
 } from "react-native-svg";
 import { Colors, Spacing, BorderRadius, Typography } from '../../../design-system/theme';
 
-interface SeasonPaletteProps {
+export interface SeasonPaletteProps {
   season: string;
   bestColors: string[];
   avoidColors?: string[];

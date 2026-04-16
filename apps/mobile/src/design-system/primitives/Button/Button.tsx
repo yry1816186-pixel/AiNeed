@@ -16,9 +16,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, BorderRadius, Shadows } from "../../theme";
+import { Colors, BorderRadius, Shadows } from '../theme';
 import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "gradient" | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "xl";

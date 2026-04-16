@@ -295,7 +295,7 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   const sizeConfig = {
     small: { circleSize: 80, strokeWidth: 6, fontSize: DesignTokens.typography.sizes['2xl'], labelSize: 10 },
     medium: { circleSize: 120, strokeWidth: 8, fontSize: DesignTokens.typography.sizes['3xl'], labelSize: 12 },
-    large: { circleSize: 160, strokeWidth: 10, fontSize: 42, labelSize: 14 },
+    large: { circleSize: 160, strokeWidth: 10, fontSize: DesignTokens.typography.sizes['5xl'], labelSize: 14 },
   };
 
   const config = sizeConfig[size];
@@ -1086,7 +1086,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   colorSwatchHex: {
-    fontSize: 8,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.text.inverse,
     fontWeight: "600",
     textShadowColor: "rgba(0,0,0,0.5)",

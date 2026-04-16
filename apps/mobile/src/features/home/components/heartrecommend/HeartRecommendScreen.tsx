@@ -16,15 +16,13 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
-import { Colors, Shadows } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-import { recommendationsApi } from '../../../services/api/tryon.api';
-import { cartApi } from '../../../services/api/commerce.api';
-import { useAuthStore, useHeartRecommendStore } from '../../../stores';
+import { theme, Colors, Shadows } from '../design-system/theme';
+import { recommendationsApi } from "../../services/api/tryon.api";
+import { cartApi } from "../../services/api/commerce.api";
+import { useAuthStore, useHeartRecommendStore } from "../../stores";
 import PreferenceSetupModal from "./PreferenceSetupModal";
 import { SwipeCard, ProductItem } from "./SwipeCard";
 import { EmptyState } from "./ActionButtons";
-import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const _CARD_WIDTH = SCREEN_WIDTH - 40;
@@ -151,7 +149,6 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
   };
 
   const handleSwipeLeft = () => {
-    const { colors, isDark } = useTheme();
     const currentProduct = products[currentIndex];
     if (currentProduct) {
       heartRecommendStore.addSwipeAction({
@@ -273,7 +270,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <Ionicons name="sparkles-outline" size={48} color={colors.primary} />
+        <Ionicons name="sparkles-outline" size={48} color={theme.colors.primary} />
         <Text style={styles.loadingText}>正在为您精选好物...</Text>
       </View>
     );
@@ -283,11 +280,11 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
+      <StatusBar barStyle="dark-content" />
 
       <Animated.View style={[styles.header, fadeStyle]}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>心动推荐</Text>
@@ -342,7 +339,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
   },
   header: {
     flexDirection: "row",
@@ -356,7 +353,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     alignItems: "center",
     justifyContent: "center",
     ...Shadows.sm,
@@ -367,11 +364,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
   },
   headerSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     marginTop: 2,
   },
   statsContainer: {
@@ -382,7 +379,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 12,
@@ -390,7 +387,7 @@ const styles = StyleSheet.create({
   statText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: theme.colors.textPrimary,
   },
   cardsContainer: {
     flex: 1,
@@ -401,11 +398,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: colors.textSecondary,
+    color: theme.colors.textSecondary,
     fontWeight: "500",
   },
 });

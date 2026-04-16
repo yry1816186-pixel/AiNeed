@@ -1,4 +1,4 @@
-﻿import React, { Suspense, lazy } from "react";
+﻿﻿import React, { Suspense, lazy } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";

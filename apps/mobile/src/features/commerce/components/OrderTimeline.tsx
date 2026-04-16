@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     borderColor: "DesignTokens.colors.borders.default",
   },
   checkMark: {
-    fontSize: 8,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.backgrounds.primary,
     fontWeight: "700",
   },

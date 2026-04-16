@@ -31,10 +31,10 @@ export const FontFamilies = {
     default: "monospace",
   }),
 
-  /** @deprecated PlayfairDisplay font not available - use system serif fallback */
+  // 展示字体（大标题/品牌）- Playfair Display 衬线体
   display: Platform.select({
-    ios: "Georgia",
-    android: "serif",
+    ios: "PlayfairDisplay-Bold",
+    android: "PlayfairDisplay-Bold",
     default: "serif",
   }),
 

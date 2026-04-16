@@ -1,4 +1,4 @@
-﻿﻿import { createWithEqualityFn } from "zustand/traditional";
+﻿﻿﻿﻿﻿import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
 import {
   profileApi,
@@ -63,9 +63,8 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
         if (response.success && response.data) {
           set({ completeness: response.data });
         }
-      } catch (error) {
+      } catch {
         // Non-blocking completeness load
-        console.error('Style quiz operation failed:', error);
       }
     },
 
@@ -75,9 +74,8 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
         if (response.success && response.data) {
           set({ bodyAnalysis: response.data });
         }
-      } catch (error) {
+      } catch {
         // Non-blocking analysis load
-        console.error('Style quiz operation failed:', error);
       }
     },
 
@@ -87,9 +85,8 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
         if (response.success && response.data) {
           set({ colorAnalysis: response.data });
         }
-      } catch (error) {
+      } catch {
         // Non-blocking analysis load
-        console.error('Style quiz operation failed:', error);
       }
     },
 

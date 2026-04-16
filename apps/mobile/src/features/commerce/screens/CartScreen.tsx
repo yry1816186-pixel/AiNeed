@@ -452,6 +452,15 @@ export const CartScreenComponent: React.FC = () => {
         onSelect={(coupon) => couponStore.selectCoupon(coupon)}
         onClose={() => setShowCouponSelector(false)}
       />
+
+      <Snackbar
+        visible={!!couponError}
+        onDismiss={clearCouponError}
+        duration={3000}
+        action={{ label: '关闭', onPress: clearCouponError }}
+      >
+        {couponError}
+      </Snackbar>
     </SafeAreaView>
   );
 };

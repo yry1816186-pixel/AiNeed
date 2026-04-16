@@ -9,7 +9,7 @@ import {
   type QuizResult as StyleQuizResult,
   type QuizProgress,
 } from "../../../services/api/style-quiz.api";
-import type { ApiResponse } from '../../../types';
+import type { ApiResponse } from "../types";
 
 interface QuizOption {
   id: string;

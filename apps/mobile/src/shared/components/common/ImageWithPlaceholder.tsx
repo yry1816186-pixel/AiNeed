@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Text,
   Dimensions,
+  type DimensionValue,
   ImageStyle,
   StyleProp,
 } from "react-native";

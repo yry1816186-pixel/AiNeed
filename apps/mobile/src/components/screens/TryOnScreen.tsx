@@ -58,7 +58,7 @@ const STYLE_TIPS = [
 type TryOnPhase = "idle" | "uploading" | "queued" | "processing" | "completed" | "failed";
 
 export const TryOnScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const _navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
   const routeParams = route.params as { clothingId?: string } | undefined;
@@ -258,23 +258,14 @@ export const TryOnScreen: React.FC = () => {
       setProgress(25);
 
       const itemId = clothingItem?.id;
-      if (!itemId && !clothingImage) {
+      if (!itemId) {
         throw new Error("缺少服装信息，请重新选择服装");
       }
 
       setPhase("queued");
       setProgress(35);
 
-      let createResponse;
-      if (itemId) {
-        createResponse = await tryOnApi.create(photoId, itemId);
-      } else {
-        const clothingUploadResponse = await photosApi.upload(clothingImage!, "front");
-        if (!clothingUploadResponse.success || !clothingUploadResponse.data) {
-          throw new Error(clothingUploadResponse.error?.message || "服装图片上传失败");
-        }
-        createResponse = await tryOnApi.createWithClothingImage(photoId, clothingUploadResponse.data.id);
-      }
+      const createResponse = await tryOnApi.create(photoId, itemId);
 
       if (!createResponse.success || !createResponse.data) {
         throw new Error(createResponse.error?.message || "创建试衣请求失败");
@@ -362,14 +353,6 @@ export const TryOnScreen: React.FC = () => {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navBackButton} onPress={() => navigation.goBack()} activeOpacity={0.7}>
-          <Ionicons name="arrow-back" size={24} color={colors.neutral[700]} />
-        </TouchableOpacity>
-        <Text style={styles.navTitle}>AI 虚拟试衣</Text>
-        <View style={styles.navPlaceholder} />
-      </View>
-
       {/* ========== Hero Header ========== */}
       <Animated.View entering={FadeInUp.duration(600).springify()}>
         <View style={styles.headerSection}>
@@ -603,30 +586,6 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.layout.screenPadding,
     paddingBottom: 40,
-  },
-
-  navBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: spacing.layout.sectionGap,
-    paddingVertical: 4,
-  },
-  navBackButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.neutral[100],
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  navTitle: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
-    color: colors.neutral[900],
-  },
-  navPlaceholder: {
-    width: 40,
   },
 
   headerSection: {

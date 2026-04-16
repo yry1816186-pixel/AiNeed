@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar, Pressable } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
@@ -757,7 +757,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   splashTitle: {
-    fontSize: 42,
+    fontSize: DesignTokens.typography.sizes['5xl'],
     fontWeight: "900",
     color: Colors.white,
     letterSpacing: -2,
@@ -829,7 +829,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   slideIcon: {
-    fontSize: 64,
+    fontSize: DesignTokens.typography.sizes['6xl'],
   },
   slideTextContainer: {
     alignItems: "center",

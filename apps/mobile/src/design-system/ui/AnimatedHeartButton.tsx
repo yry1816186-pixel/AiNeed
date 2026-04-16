@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, ViewStyle } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -12,10 +11,9 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors } from '../../design-system/theme';
+import { Colors } from '../design-system/theme';
 import { SpringConfigs, Duration } from "../../theme/tokens/animations";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
-import { DesignTokens } from "../theme/tokens/design-tokens";
 
 export interface AnimatedHeartButtonProps {
   /** Whether the item is currently favorited */
@@ -27,7 +25,7 @@ export interface AnimatedHeartButtonProps {
   /** Size of the heart icon */
   size?: number;
   /** Additional style */
-  style?: any;
+  style?: ViewStyle;
 }
 
 /**
@@ -107,7 +105,7 @@ export const AnimatedHeartButton: React.FC<AnimatedHeartButtonProps> = ({
       style={[styles.container, style]}
     >
       <Animated.View style={heartStyle}>
-        <Ionicons name={iconName as keyof typeof Ionicons.glyphMap} size={size} color={iconColor} />
+        <Ionicons name={iconName as any} size={size} color={iconColor} />
       </Animated.View>
 
       {/* +1 popup */}
@@ -136,12 +134,12 @@ const styles = StyleSheet.create({
     right: -16,
   },
   plusOneText: {
-    fontSize: DesignTokens.typography.sizes.sm,
+    fontSize: 12,
     fontWeight: "700",
     color: Colors.rose[500],
   },
   countText: {
-    fontSize: DesignTokens.typography.sizes.xs,
+    fontSize: 10,
     color: Colors.neutral[500],
     marginTop: 2,
   },

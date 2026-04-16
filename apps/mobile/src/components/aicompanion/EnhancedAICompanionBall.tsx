@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback, useState } from "react";
+﻿﻿﻿﻿﻿﻿import React, { useEffect, useCallback, useState } from "react";
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import {
@@ -36,6 +36,8 @@ export interface EnhancedAICompanionBallProps {
   showHint?: boolean;
   hintMessage?: string;
   enableVoiceInput?: boolean;
+  /** @internal Alias for enableVoiceInput - used in destructuring */
+  _enableVoiceInput?: boolean;
   onVoiceStart?: () => void;
   onVoiceEnd?: () => void;
   onVoiceResult?: (text: string) => void;
@@ -58,27 +60,27 @@ const STATE_CONFIG = {
     animation: "breathe",
   },
   listening: {
-    gradient: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"] as [string, string],
-    gradientFlow: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary", "#B8C5D1", DesignTokens.colors.brand.slate] as [string, string, string, string], // custom color
+    gradient: [DesignTokens.colors.brand.slate, "#96A6B5"] as [string, string],
+    gradientFlow: [DesignTokens.colors.brand.slate, "#96A6B5", "#B8C5D1", DesignTokens.colors.brand.slate] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.08)"] as [string, string],
     glowColor: DesignTokens.colors.brand.slate,
-    particleColor: "DesignTokens.colors.text.tertiary", // custom color
+    particleColor: "#96A6B5", // custom color
     animation: "pulse",
   },
   thinking: {
-    gradient: [DesignTokens.colors.semantic.warning, "DesignTokens.colors.brand.camel"] as [string, string],
-    gradientFlow: [DesignTokens.colors.semantic.warning, "DesignTokens.colors.brand.camel", "#F5D89A", DesignTokens.colors.semantic.warning] as [string, string, string, string], // custom color
+    gradient: [DesignTokens.colors.semantic.warning, "#E8B86D"] as [string, string],
+    gradientFlow: [DesignTokens.colors.semantic.warning, "#E8B86D", "#F5D89A", DesignTokens.colors.semantic.warning] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.4)", "rgba(255,255,255,0.1)"] as [string, string],
     glowColor: DesignTokens.colors.semantic.warning,
-    particleColor: "DesignTokens.colors.brand.camel", // custom color
+    particleColor: "#E8B86D", // custom color
     animation: "pulse",
   },
   responding: {
-    gradient: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage"] as [string, string],
-    gradientFlow: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage", "#9DC4B5", DesignTokens.colors.semantic.success] as [string, string, string, string], // custom color
+    gradient: [DesignTokens.colors.semantic.success, "#7BA896"] as [string, string],
+    gradientFlow: [DesignTokens.colors.semantic.success, "#7BA896", "#9DC4B5", DesignTokens.colors.semantic.success] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.32)", "rgba(255,255,255,0.06)"] as [string, string],
     glowColor: DesignTokens.colors.semantic.success,
-    particleColor: "DesignTokens.colors.brand.sage", // custom color
+    particleColor: "#7BA896", // custom color
     animation: "glow",
   },
   collapsed: {
@@ -653,7 +655,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 14,
-    shadowColor: DesignTokens.colors.neutral.black,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.18,
     shadowRadius: 10,

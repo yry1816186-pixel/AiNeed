@@ -1,5 +1,4 @@
 import React, { memo } from "react";
-import { DesignTokens } from "../../../design-system/theme";
 import {
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -9,6 +8,7 @@ import {
   GestureResponderEvent,
   AccessibilityRole,
 } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 type TouchableType = "opacity" | "highlight" | "without-feedback" | "pressable";
 

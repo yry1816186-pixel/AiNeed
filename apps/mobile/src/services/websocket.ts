@@ -1,4 +1,4 @@
-﻿import { io, Socket } from "socket.io-client";
+﻿﻿﻿﻿﻿import { io, Socket } from "socket.io-client";
 import { mobileRuntimeConfig } from "../config/runtime";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../utils/secureStorage";
 import type { ChatMessage, ChatTypingPayload, ChatReadPayload } from "../types/chat";
@@ -41,8 +41,7 @@ class WebSocketService {
     let token: string | null = null;
     try {
       token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
-    } catch (error) {
-      console.error('WebSocket operation failed:', error);
+    } catch {
       return;
     }
 
@@ -132,8 +131,7 @@ class WebSocketService {
     let token: string | null = null;
     try {
       token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
-    } catch (error) {
-      console.error('WebSocket operation failed:', error);
+    } catch {
       return;
     }
     if (!token) {
@@ -211,8 +209,7 @@ class WebSocketService {
     if (!this.chatMessageListeners.has(roomId)) {
       this.chatMessageListeners.set(roomId, new Set());
     }
-    const listeners = this.chatMessageListeners.get(roomId);
-    if (listeners) listeners.add(listener);
+    this.chatMessageListeners.get(roomId)!.add(listener);
     return () => {
       const listeners = this.chatMessageListeners.get(roomId);
       if (listeners) {
@@ -228,8 +225,7 @@ class WebSocketService {
     if (!this.chatTypingListeners.has(roomId)) {
       this.chatTypingListeners.set(roomId, new Set());
     }
-    const listeners = this.chatTypingListeners.get(roomId);
-    if (listeners) listeners.add(listener);
+    this.chatTypingListeners.get(roomId)!.add(listener);
     return () => {
       const listeners = this.chatTypingListeners.get(roomId);
       if (listeners) {
@@ -245,8 +241,7 @@ class WebSocketService {
     if (!this.chatReadListeners.has(roomId)) {
       this.chatReadListeners.set(roomId, new Set());
     }
-    const listeners = this.chatReadListeners.get(roomId);
-    if (listeners) listeners.add(listener);
+    this.chatReadListeners.get(roomId)!.add(listener);
     return () => {
       const listeners = this.chatReadListeners.get(roomId);
       if (listeners) {
@@ -266,8 +261,7 @@ class WebSocketService {
     if (!this.tryOnListeners.has(tryOnId)) {
       this.tryOnListeners.set(tryOnId, new Set());
     }
-    const listeners = this.tryOnListeners.get(tryOnId);
-    if (listeners) listeners.add(listener);
+    this.tryOnListeners.get(tryOnId)!.add(listener);
 
     return () => {
       const listeners = this.tryOnListeners.get(tryOnId);
@@ -284,8 +278,7 @@ class WebSocketService {
     if (!this.progressListeners.has(tryOnId)) {
       this.progressListeners.set(tryOnId, new Set());
     }
-    const listeners = this.progressListeners.get(tryOnId);
-    if (listeners) listeners.add(listener);
+    this.progressListeners.get(tryOnId)!.add(listener);
 
     return () => {
       const listeners = this.progressListeners.get(tryOnId);

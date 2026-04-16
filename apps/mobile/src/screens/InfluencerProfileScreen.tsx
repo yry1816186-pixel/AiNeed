@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { theme } from '../design-system/theme';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { communityApi, type CommunityPost } from "../services/api/community.api";
 import type { CommunityStackParamList } from "../navigation/types";
@@ -111,7 +111,6 @@ export const InfluencerProfileScreen: React.FC = () => {
   }, [profile, followLoading]);
 
   const formatCount = (count: number) => {
-    const { colors } = useTheme();
     if (count >= 10000) {
       return `${(count / 10000).toFixed(1)}w`;
     }
@@ -132,7 +131,7 @@ export const InfluencerProfileScreen: React.FC = () => {
           <Image source={{ uri: item.images[0] }} style={s.postImage} resizeMode="cover" />
         ) : (
           <View style={s.postImagePlaceholder}>
-            <Ionicons name="image-outline" size={24} color={colors.textTertiary} />
+            <Ionicons name="image-outline" size={24} color={theme.colors.textTertiary} />
           </View>
         )}
         <View style={s.postInfo}>
@@ -140,7 +139,7 @@ export const InfluencerProfileScreen: React.FC = () => {
             {item.title}
           </Text>
           <View style={s.postStats}>
-            <Ionicons name="heart-outline" size={12} color={colors.textTertiary} />
+            <Ionicons name="heart-outline" size={12} color={theme.colors.textTertiary} />
             <Text style={s.postStatText}>{formatCount(item.likesCount)}</Text>
           </View>
         </View>
@@ -154,13 +153,13 @@ export const InfluencerProfileScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Profile</Text>
           <View style={s.iconBtn} />
         </View>
         <View style={s.centerContent}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -171,13 +170,13 @@ export const InfluencerProfileScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Profile</Text>
           <View style={s.iconBtn} />
         </View>
         <View style={s.centerContent}>
-          <Ionicons name="alert-circle-outline" size={48} color={colors.textTertiary} />
+          <Ionicons name="alert-circle-outline" size={48} color={theme.colors.textTertiary} />
           <Text style={s.errorText}>{error}</Text>
           <TouchableOpacity style={s.retryBtn} onPress={fetchData}>
             <Text style={s.retryBtnText}>Retry</Text>
@@ -191,11 +190,11 @@ export const InfluencerProfileScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>{profile?.nickname ?? "Profile"}</Text>
         <TouchableOpacity style={s.iconBtn}>
-          <Ionicons name="ellipsis-horizontal" size={22} color={colors.textPrimary} />
+          <Ionicons name="ellipsis-horizontal" size={22} color={theme.colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -205,7 +204,7 @@ export const InfluencerProfileScreen: React.FC = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor={colors.primary}
+            tintColor={theme.colors.primary}
           />
         }
       >
@@ -216,7 +215,7 @@ export const InfluencerProfileScreen: React.FC = () => {
               <Image source={{ uri: profile.avatar }} style={s.avatar} />
             ) : (
               <View style={s.avatarPlaceholder}>
-                <Ionicons name="person" size={28} color={colors.surface} />
+                <Ionicons name="person" size={28} color={theme.colors.surface} />
               </View>
             )}
             <View style={s.statsRow}>
@@ -254,7 +253,7 @@ export const InfluencerProfileScreen: React.FC = () => {
             {followLoading ? (
               <ActivityIndicator
                 size="small"
-                color={profile?.isFollowing ? colors.text : DesignTokens.colors.neutral.white}
+                color={profile?.isFollowing ? theme.colors.text : DesignTokens.colors.neutral.white}
               />
             ) : (
               <Text style={[s.followBtnText, profile?.isFollowing && s.followingBtnText]}>
@@ -273,7 +272,7 @@ export const InfluencerProfileScreen: React.FC = () => {
             <Ionicons
               name="grid-outline"
               size={20}
-              color={activeTab === "posts" ? colors.primary : colors.textTertiary}
+              color={activeTab === "posts" ? theme.colors.primary : theme.colors.textTertiary}
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -283,7 +282,7 @@ export const InfluencerProfileScreen: React.FC = () => {
             <Ionicons
               name="shirt-outline"
               size={20}
-              color={activeTab === "outfits" ? colors.primary : colors.textTertiary}
+              color={activeTab === "outfits" ? theme.colors.primary : theme.colors.textTertiary}
             />
           </TouchableOpacity>
         </View>
@@ -299,7 +298,7 @@ export const InfluencerProfileScreen: React.FC = () => {
           contentContainerStyle={{ gap: CARD_GAP, paddingBottom: 24 }}
           ListEmptyComponent={
             <View style={s.emptyPosts}>
-              <Ionicons name="images-outline" size={36} color={colors.textTertiary} />
+              <Ionicons name="images-outline" size={36} color={theme.colors.textTertiary} />
               <Text style={s.emptyText}>No posts yet</Text>
             </View>
           }
@@ -310,51 +309,51 @@ export const InfluencerProfileScreen: React.FC = () => {
 };
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+  container: { flex: 1, backgroundColor: theme.colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
   iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.error, marginTop: 12 },
   retryBtn: {
     marginTop: 16,
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 20,
   },
-  retryBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  retryBtnText: { color: theme.colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   scrollView: { flex: 1 },
   profileSection: {
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
+    borderBottomColor: theme.colors.divider,
   },
   avatarRow: { flexDirection: "row", alignItems: "center" },
-  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.placeholderBg },
+  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: theme.colors.placeholderBg },
   avatarPlaceholder: {
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   statsRow: { flex: 1, flexDirection: "row", justifyContent: "space-around", marginLeft: 20 },
   statItem: { alignItems: "center" },
-  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
-  nickname: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary, marginTop: 14 },
+  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.text },
+  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
+  nickname: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: theme.colors.textPrimary, marginTop: 14 },
   badge: {
     flexDirection: "row",
     alignItems: "center",
@@ -367,22 +366,22 @@ const s = StyleSheet.create({
     marginTop: 6,
   },
   badgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: DesignTokens.colors.neutral.white },
-  bio: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 8, lineHeight: 20 },
+  bio: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textSecondary, marginTop: 8, lineHeight: 20 },
   followBtn: {
     marginTop: 14,
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
     paddingVertical: 10,
     borderRadius: 20,
     alignItems: "center",
   },
-  followingBtn: { backgroundColor: colors.subtleBg },
+  followingBtn: { backgroundColor: theme.colors.subtleBg },
   followBtnText: { color: DesignTokens.colors.neutral.white, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-  followingBtnText: { color: colors.text },
+  followingBtnText: { color: theme.colors.text },
   tabBar: {
     flexDirection: "row",
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
+    borderBottomColor: theme.colors.divider,
   },
   tab: {
     flex: 1,
@@ -391,27 +390,27 @@ const s = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "transparent",
   },
-  tabActive: { borderBottomColor: colors.primary },
+  tabActive: { borderBottomColor: theme.colors.primary },
   postCard: {
     width: CARD_WIDTH,
-    backgroundColor: colors.surface,
+    backgroundColor: theme.colors.surface,
     borderRadius: 10,
     overflow: "hidden",
   },
-  postImage: { width: "100%", height: CARD_WIDTH, backgroundColor: colors.placeholderBg },
+  postImage: { width: "100%", height: CARD_WIDTH, backgroundColor: theme.colors.placeholderBg },
   postImagePlaceholder: {
     width: "100%",
     height: CARD_WIDTH,
-    backgroundColor: colors.subtleBg,
+    backgroundColor: theme.colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
   },
   postInfo: { padding: 8 },
-  postTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: colors.textPrimary, lineHeight: 16 },
+  postTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: theme.colors.textPrimary, lineHeight: 16 },
   postStats: { flexDirection: "row", alignItems: "center", gap: 3, marginTop: 4 },
-  postStatText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
+  postStatText: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary },
   emptyPosts: { alignItems: "center", justifyContent: "center", paddingVertical: 60 },
-  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: 8 },
+  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary, marginTop: 8 },
 });
 
 export default InfluencerProfileScreen;

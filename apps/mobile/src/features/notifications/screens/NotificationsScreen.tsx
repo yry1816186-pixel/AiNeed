@@ -9,6 +9,7 @@ import {
   Alert,
   Image,
 } from "react-native";
+import { Snackbar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -110,6 +111,8 @@ export const NotificationsScreen: React.FC = () => {
     deleteNotification,
     setCurrentCategory,
   } = useNotificationStore();
+  const error = useNotificationStore(state => state.error);
+  const clearError = useNotificationStore(state => state.clearError);
 
   useEffect(() => {
     void fetchNotifications(true);
@@ -353,6 +356,15 @@ export const NotificationsScreen: React.FC = () => {
           <View style={{ height: 20 }} />
         </ScrollView>
       )}
+
+      <Snackbar
+        visible={!!error}
+        onDismiss={clearError}
+        duration={3000}
+        action={{ label: '关闭', onPress: clearError }}
+      >
+        {error}
+      </Snackbar>
     </SafeAreaView>
   );
 };

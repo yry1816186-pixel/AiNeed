@@ -41,21 +41,21 @@ export {
   PriceRange as SharedPriceRange,
 } from "@xuno/types";
 
-// Mobile-specific types (not in shared package)
-export * from "./clothing";
-export * from "./outfit";
-export * from "./user";
-export * from "./api";
-export * from "./events";
-export * from "./navigation";
-export * from "./components";
-export * from "./animations";
-export * from "./social";
-export * from "./ai";
-export * from "./consultant";
-export * from "./chat";
-export * from "./customization";
-export * from "./form-data";
+// Mobile-specific types (re-export from src/types)
+export * from "../../types/clothing";
+export * from "../../types/outfit";
+export * from "../../types/user";
+export * from "../../types/api";
+export * from "../../types/events";
+export * from "../../types/navigation";
+export * from "../../types/components";
+export * from "../../types/animations";
+export * from "../../types/social";
+export * from "../../types/ai";
+export * from "../../types/consultant";
+export * from "../../types/chat";
+export * from "../../types/customization";
+export * from "../../types/form-data";
 
 export type Nullable<T> = T | null;
 export type Optional<T> = T | undefined;

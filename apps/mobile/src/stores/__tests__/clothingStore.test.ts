@@ -1,4 +1,4 @@
-import { useClothingStore, ClothingItem, ClothingFilter } from "../clothingStore";
+import { useClothingStore, ClothingItem, ClothingFilter } from "../../features/wardrobe/stores/clothingStore";
 
 // Mocks
 jest.mock("@react-native-async-storage/async-storage", () => ({

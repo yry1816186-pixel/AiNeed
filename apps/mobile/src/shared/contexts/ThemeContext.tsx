@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
 import { useColorScheme, Appearance, StyleSheet, type ColorValue } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DesignTokens } from "../../design-system/theme";
+import { DesignTokens, darkTokens } from "../../design-system/theme";
 import type { DesignTokensType, DarkTokensType } from "../../design-system/theme";
 import {
   seasonAccentColors,
@@ -58,8 +58,8 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     info: base.semantic.info,
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
-    cartLight: "DesignTokens.colors.neutral[50]",
-    purple: DesignTokens.colors.brand.terracottaDark,
+    cartLight: "#FFF5F0",
+    terracottaDark: DesignTokens.colors.brand.terracottaDark,
     amber: DesignTokens.colors.semantic.warning,
     secondary: base.brand.sage,
   };

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import {
   View,
@@ -8,6 +7,7 @@ import {
   Dimensions,
   ViewStyle,
   Platform,
+  GestureResponderEvent,
 } from "react-native";
 import Animated, {
   useSharedValue,
@@ -20,9 +20,8 @@ import Animated, {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius, Shadows } from "../../theme";
+import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
 import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -69,7 +68,7 @@ export const Card: React.FC<CardProps> = ({
   const shadowAnim = useSharedValue(variant === "elevated" ? 1 : 0);
 
   const handlePressIn = React.useCallback(
-    (event: any) => {
+    (event: GestureResponderEvent) => {
       if (!interactive) {
         return;
       }

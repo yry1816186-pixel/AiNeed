@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   tagText: {
-    fontSize: 9,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: DesignTokens.colors.text.secondary,
   },
 });

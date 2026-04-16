@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback, useState, useRef } from "react";
+﻿﻿﻿﻿import React, { useEffect, useCallback, useState, useRef } from "react";
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
@@ -38,6 +38,8 @@ export interface AICompanionBallProps {
   showHint?: boolean;
   hintMessage?: string;
   enableVoiceInput?: boolean;
+  /** @internal Alias for enableVoiceInput - used in destructuring */
+  _enableVoiceInput?: boolean;
   onVoiceStart?: () => void;
   onVoiceEnd?: () => void;
   onVoiceResult?: (text: string) => void;
@@ -51,19 +53,19 @@ const STATE_CONFIG = {
     animation: "breathe",
   },
   listening: {
-    gradient: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"] as [string, string], // custom color
+    gradient: [DesignTokens.colors.brand.slate, "#96A6B5"] as [string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.08)"] as [string, string],
     glowColor: DesignTokens.colors.brand.slate,
     animation: "pulse",
   },
   thinking: {
-    gradient: [DesignTokens.colors.semantic.warning, "DesignTokens.colors.brand.camel"] as [string, string], // custom color
+    gradient: [DesignTokens.colors.semantic.warning, "#E8B86D"] as [string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.1)"] as [string, string],
     glowColor: DesignTokens.colors.semantic.warning,
     animation: "pulse",
   },
   responding: {
-    gradient: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage"] as [string, string], // custom color
+    gradient: [DesignTokens.colors.semantic.success, "#7BA896"] as [string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.28)", "rgba(255,255,255,0.06)"] as [string, string],
     glowColor: DesignTokens.colors.semantic.success,
     animation: "glow",
@@ -402,7 +404,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 12,
-    shadowColor: DesignTokens.colors.neutral.black,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 8,

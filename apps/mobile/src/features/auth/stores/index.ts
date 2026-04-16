@@ -1,4 +1,4 @@
-﻿﻿import { create } from "zustand";
+﻿﻿﻿﻿﻿import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../../../utils/secureStorage";
@@ -260,9 +260,8 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         try {
           await apiClient.clearAuth();
-        } catch (error) {
+        } catch {
           // ignore clear errors during logout
-          console.error('Auth cleanup failed:', error);
         }
         // Dynamic import to avoid circular dependency at module load time
         const { clearAllStores } = await import("../../../stores/index");

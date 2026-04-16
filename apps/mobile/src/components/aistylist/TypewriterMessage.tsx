@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { View, Text, StyleSheet, ViewStyle, TextStyle } from "react-native";
+import { View, Text, StyleSheet, ViewStyle } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -51,7 +51,7 @@ interface TypewriterMessageProps {
   speed?: number;
   onComplete?: () => void;
   style?: ViewStyle;
-  textStyle?: TextStyle;
+  textStyle?: ViewStyle;
 }
 
 /**

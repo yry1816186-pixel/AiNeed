@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { merchantApi } from '../../../services/api/commerce.api';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from '../../../theme/tokens/design-tokens';
 
 type ScreenState = "form" | "pending" | "approved" | "rejected";
 
@@ -43,7 +43,7 @@ export const MerchantApplyScreen: React.FC = () => {
           setScreenState("approved");
         } else if (status === "rejected" || status === "REJECTED") {
           setScreenState("rejected");
-          setRejectReason((response.data as Record<string, unknown>).reason ?? "未通过审核");
+          setRejectReason((response.data as { reason?: string }).reason ?? "未通过审核");
         }
       }
     } catch {
@@ -79,7 +79,7 @@ export const MerchantApplyScreen: React.FC = () => {
       if (response.success) {
         setScreenState("pending");
       } else {
-        Alert.alert("提交失败", response.error?.message ?? "请稍后重试");
+        Alert.alert("提交失败", response.error?.message ?? "请稍后重�?);
       }
     } catch {
       Alert.alert("提交失败", "网络错误，请稍后重试");
@@ -124,12 +124,12 @@ export const MerchantApplyScreen: React.FC = () => {
               setBrandName(text);
               setBrandNameError("");
             }}
-            placeholder="请输入品牌名称"
+            placeholder="请输入品牌名�?
             placeholderTextColor={DesignTokens.colors.neutral[300]}
           />
           {brandNameError ? <Text style={styles.errorText}>{brandNameError}</Text> : null}
 
-          <Text style={styles.fieldLabel}>营业执照号</Text>
+          <Text style={styles.fieldLabel}>营业执照�?/Text>
           <View style={styles.inputRow}>
             <TextInput
               style={[styles.input, styles.inputWithIcon]}
@@ -149,7 +149,7 @@ export const MerchantApplyScreen: React.FC = () => {
             )}
           </View>
 
-          <Text style={styles.fieldLabel}>联系人</Text>
+          <Text style={styles.fieldLabel}>联系�?/Text>
           <TextInput
             style={styles.input}
             value={contactName}
@@ -158,7 +158,7 @@ export const MerchantApplyScreen: React.FC = () => {
             placeholderTextColor={DesignTokens.colors.neutral[300]}
           />
 
-          <Text style={styles.fieldLabel}>手机号</Text>
+          <Text style={styles.fieldLabel}>手机�?/Text>
           <View style={styles.inputRow}>
             <TextInput
               style={[styles.input, styles.inputWithIcon]}
@@ -179,12 +179,12 @@ export const MerchantApplyScreen: React.FC = () => {
             )}
           </View>
 
-          <Text style={styles.fieldLabel}>品牌简介</Text>
+          <Text style={styles.fieldLabel}>品牌简�?/Text>
           <TextInput
             style={[styles.input, styles.textArea]}
             value={description}
             onChangeText={setDescription}
-            placeholder="请简要介绍品牌（选填）"
+            placeholder="请简要介绍品牌（选填�?
             placeholderTextColor={DesignTokens.colors.neutral[300]}
             multiline
             maxLength={500}
@@ -208,8 +208,8 @@ export const MerchantApplyScreen: React.FC = () => {
       {screenState === "pending" ? (
         <View style={styles.statusContainer}>
           <ActivityIndicator size="large" color={DesignTokens.colors.semantic.error} />
-          <Text style={styles.statusTitle}>申请审核中</Text>
-          <Text style={styles.statusMessage}>申请已提交，我们将在1-3个工作日内完成审核</Text>
+          <Text style={styles.statusTitle}>申请审核�?/Text>
+          <Text style={styles.statusMessage}>申请已提交，我们将在1-3个工作日内完成审�?/Text>
         </View>
       ) : null}
 
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 24,
   },
-  submitButtonDisabled: { backgroundColor: "DesignTokens.colors.semantic.errorLight" }, // custom color
+  submitButtonDisabled: { backgroundColor: "#FFB0B0" }, // custom color
   submitButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",

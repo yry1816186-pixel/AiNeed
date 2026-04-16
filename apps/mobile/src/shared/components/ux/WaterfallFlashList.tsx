@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, RefreshControl, ViewStyle } from "react-native";
 import { FlashList } from "@shopify/flash-list";
@@ -11,7 +10,7 @@ import { EmptyState } from "./EmptyState";
 export interface WaterfallItem {
   id: string;
   height?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface WaterfallFlashListProps<T extends WaterfallItem> {

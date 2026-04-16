@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { AISizeBadge } from "./AISizeBadge";
-import type { SizeRecommendation } from '../../../services/api/commerce.api';
-import { stockNotificationApi } from '../../../services/api/commerce.api';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import type { SizeRecommendation } from "../services/api/commerce.api";
+import { stockNotificationApi } from "../services/api/commerce.api";
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 interface SKUSelectorProps {
   visible: boolean;
@@ -201,12 +201,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  sizeButtonSelected: { borderColor: "DesignTokens.colors.semantic.error", backgroundColor: "DesignTokens.colors.neutral[50]" }, // custom color
+  sizeButtonSelected: { borderColor: "DesignTokens.colors.semantic.error", backgroundColor: "#FFF5F5" }, // custom color
   sizeButtonDisabled: { backgroundColor: DesignTokens.colors.neutral[100], borderColor: DesignTokens.colors.neutral[100] },
   sizeText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary },
   sizeTextSelected: { color: "DesignTokens.colors.semantic.error", fontWeight: "600" }, // custom color
   sizeTextDisabled: { color: DesignTokens.colors.neutral[300] },
-  recDot: { fontSize: 8, color: "DesignTokens.colors.semantic.success", fontWeight: "600" }, // custom color
+  recDot: { fontSize: DesignTokens.typography.sizes.xs, color: "DesignTokens.colors.semantic.success", fontWeight: "600" }, // custom color
   notifyText: { fontSize: DesignTokens.typography.sizes.xs, color: "DesignTokens.colors.semantic.error", marginTop: 2 }, // custom color
   qtyRow: { flexDirection: "row", alignItems: "center", gap: 12 },
   qtyButton: {

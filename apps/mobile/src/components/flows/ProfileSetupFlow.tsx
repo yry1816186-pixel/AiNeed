@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+﻿﻿﻿import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -27,9 +27,8 @@ import {
   runOnJS,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { MagneticButton, GlowText, FloatingElement, ParticleEffect } from "../../design-system/ui/FluidAnimations";
-import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
-import { DesignTokens } from "../../design-system/theme";
+import { MagneticButton, GlowText, FloatingElement, ParticleEffect } from "../ui/FluidAnimations";
+import { Colors, Spacing, BorderRadius } from "../../theme";
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -136,10 +135,10 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
 
     return (
       <View style={styles.stepContent}>
-        <ParticleEffect count={30} color="rgba(198, 123, 92, 0.3)" size={3} />
+        <ParticleEffect count={30} color="rgba(168, 85, 247, 0.3)" size={3} />
 
         <AnimatedView style={[styles.welcomeLogo, logoAnimatedStyle]}>
-          <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.welcomeLogoGradient}>
+          <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.welcomeLogoGradient}>
             <Text style={styles.welcomeLogoText}>AI</Text>
           </LinearGradient>
         </AnimatedView>
@@ -528,10 +527,10 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
 
     return (
       <View style={styles.stepContent}>
-        <ParticleEffect count={50} color="rgba(198, 123, 92, 0.4)" size={4} />
+        <ParticleEffect count={50} color="rgba(168, 85, 247, 0.4)" size={4} />
 
         <AnimatedView style={[styles.completeContainer, animatedStyle]}>
-          <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.completeIconGradient}>
+          <LinearGradient colors={["#a855f7", "#ec4899"]} style={styles.completeIconGradient}>
             <Text style={styles.completeIcon}>🎉</Text>
           </LinearGradient>
 
@@ -579,7 +578,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      <LinearGradient colors={["DesignTokens.colors.text.primary", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.brand.slateDark"]} style={styles.gradient}>
+      <LinearGradient colors={["#0f0a1a", "#1e1b4b", "#312e81"]} style={styles.gradient}>
         {currentStep > 0 && currentStep < 5 && (
           <View style={styles.header}>
             <Pressable onPress={goToPrev} style={styles.backButton}>

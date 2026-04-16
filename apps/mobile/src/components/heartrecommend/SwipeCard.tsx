@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback, memo, useMemo } from "react";
+﻿﻿import React, { useEffect, useCallback, memo, useMemo } from "react";
 import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {

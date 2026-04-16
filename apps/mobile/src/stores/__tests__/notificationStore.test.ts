@@ -1,4 +1,4 @@
-import { useNotificationStore } from "../notificationStore";
+import { useNotificationStore } from "../../features/notifications/stores/notificationStore";
 import {
   notificationApi,
   type NotificationItem,

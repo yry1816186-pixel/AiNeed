@@ -9,7 +9,7 @@ import {
   Modal,
   Dimensions,
 } from "react-native";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -23,7 +23,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({ imag
   const [_zoomIndex, setZoomIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const handleScroll = (event: any) => {
+  const handleScroll = (event: { nativeEvent: { contentOffset: { x: number } } }) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX / SCREEN_WIDTH);
     if (index !== activeIndex) {
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
   },
   dotActive: {
-    backgroundColor: "DesignTokens.colors.semantic.error", // custom color
+    backgroundColor: "#FF4D4F", // custom color
     width: 8,
     height: 8,
     borderRadius: 4,
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   zoomCloseText: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: "#FFFFFF",
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
   },

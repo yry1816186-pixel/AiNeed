@@ -20,7 +20,6 @@ import {
   Easing,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { DesignTokens } from "../design-system/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { createAnimatedComponent } = AnimatedReanimated;
@@ -268,7 +267,7 @@ export const useFloating = () => {
   return animatedStyle;
 };
 
-export const useGlow = (color: string = DesignTokens.colors.brand.terracotta) => {
+export const useGlow = (color: string = "#a855f7") => {
   const glowValue = useSharedValue(0);
 
   useEffect(() => {
