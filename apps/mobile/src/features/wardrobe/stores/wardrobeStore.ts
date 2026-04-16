@@ -65,6 +65,7 @@ interface WardrobeState {
   sortBy: "newest" | "oldest" | "mostWorn" | "leastWorn" | "name";
   searchQuery: string;
   isLoading: boolean;
+  error: string | null;
 
   setItems: (items: UserClothing[]) => void;
   addItem: (item: UserClothing) => void;
@@ -83,8 +84,12 @@ interface WardrobeState {
   setSortBy: (sortBy: WardrobeState["sortBy"]) => void;
   setSearchQuery: (query: string) => void;
   setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  clearError: () => void;
   incrementWearCount: (id: string, type: "item" | "outfit") => void;
   recalculateStats: () => void;
+  fetchUserClothing: () => Promise<void>;
+  fetchOutfits: () => Promise<void>;
 }
 
 const defaultStats: WardrobeStats = {
@@ -111,6 +116,7 @@ export const useWardrobeStore = create<WardrobeState>()(
       sortBy: "newest",
       searchQuery: "",
       isLoading: false,
+      error: null,
 
       setItems: (items) => {
         set({ items });
@@ -188,6 +194,10 @@ export const useWardrobeStore = create<WardrobeState>()(
 
       setLoading: (isLoading) => set({ isLoading }),
 
+      setError: (error) => set({ error }),
+
+      clearError: () => set({ error: null }),
+
       incrementWearCount: (id, type) => {
         const now = new Date().toISOString();
         if (type === "item") {
@@ -253,6 +263,26 @@ export const useWardrobeStore = create<WardrobeState>()(
             totalValue,
           },
         });
+      },
+
+      fetchUserClothing: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          // TODO: 连接后端 GET /wardrobe/items API 后替换
+          set({ error: '功能开发中，敬请期待', isLoading: false });
+        } catch {
+          set({ error: '获取衣橱列表失败，请稍后重试', isLoading: false });
+        }
+      },
+
+      fetchOutfits: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          // TODO: 连接后端 GET /wardrobe/outfits API 后替换
+          set({ error: '功能开发中，敬请期待', isLoading: false });
+        } catch {
+          set({ error: '获取穿搭方案失败，请稍后重试', isLoading: false });
+        }
       },
     }),
     {

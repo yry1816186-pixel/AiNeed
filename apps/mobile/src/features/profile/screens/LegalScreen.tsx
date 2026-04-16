@@ -90,7 +90,7 @@ export const LegalScreen: React.FC<LegalScreenProps> = ({ type }) => {
 
 如对本协议有任何疑问，请通过以下方式联系我们：
 - 邮箱：support@xuno.app
-- 客服电话：400-XXX-XXXX
+- 客服电话：暂未提供
 `;
 
   const privacyContent = `

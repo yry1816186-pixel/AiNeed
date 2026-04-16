@@ -49,6 +49,8 @@ const CATEGORY_TOGGLES: CategoryToggle[] = [
 export const NotificationSettingsScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
   const { settings, settingsLoading, fetchSettings, updateSettings } = useNotificationStore();
+  const error = useNotificationStore(state => state.error);
+  const clearError = useNotificationStore(state => state.clearError);
 
   useEffect(() => {
     void fetchSettings();
@@ -227,6 +229,15 @@ export const NotificationSettingsScreen: React.FC = () => {
 
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      <Snackbar
+        visible={!!error}
+        onDismiss={clearError}
+        duration={3000}
+        action={{ label: '关闭', onPress: clearError }}
+      >
+        {error}
+      </Snackbar>
     </SafeAreaView>
   );
 };

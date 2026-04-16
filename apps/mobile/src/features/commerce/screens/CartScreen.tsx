@@ -77,7 +77,7 @@ export const CartScreenComponent: React.FC = () => {
         setSelectedIds(selected);
       }
     } catch {
-      setError("Failed to load cart");
+      setError("加载购物车失败，请稍后重试");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -460,6 +460,15 @@ export const CartScreenComponent: React.FC = () => {
         action={{ label: '关闭', onPress: clearCouponError }}
       >
         {couponError}
+      </Snackbar>
+
+      <Snackbar
+        visible={!!error}
+        onDismiss={() => setError(null)}
+        duration={3000}
+        action={{ label: '关闭', onPress: () => setError(null) }}
+      >
+        {error}
       </Snackbar>
     </SafeAreaView>
   );

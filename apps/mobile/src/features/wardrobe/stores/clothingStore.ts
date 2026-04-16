@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { clothingApi } from "../../../services/api/clothing.api";
 
 export interface ClothingItem {
   id: string;
@@ -77,6 +78,10 @@ interface ClothingState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clear: () => void;
+  fetchClothing: (page?: number, limit?: number) => Promise<void>;
+  fetchFeatured: (limit?: number) => Promise<void>;
+  fetchTrending: () => Promise<void>;
+  fetchNewArrivals: () => Promise<void>;
 }
 
 const defaultFilters: ClothingFilter = {
@@ -170,6 +175,63 @@ export const useClothingStore = create<ClothingState>()(
           pagination: defaultPagination,
           error: null,
         }),
+
+      fetchClothing: async (page = 1, limit = 20) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await clothingApi.getAll({ page, limit });
+          if (response.success && response.data) {
+            set({
+              items: response.data.items,
+              pagination: {
+                page: response.data.page,
+                pageSize: response.data.pageSize,
+                hasMore: response.data.hasMore,
+                total: response.data.total,
+              },
+              isLoading: false,
+            });
+          } else {
+            set({ error: '获取服装列表失败，请稍后重试', isLoading: false });
+          }
+        } catch {
+          set({ error: '获取服装列表失败，请稍后重试', isLoading: false });
+        }
+      },
+
+      fetchFeatured: async (limit = 10) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await clothingApi.getAll({ page: 1, limit });
+          if (response.success && response.data) {
+            set({ featuredItems: response.data.items, isLoading: false });
+          } else {
+            set({ error: '获取精选商品失败，请稍后重试', isLoading: false });
+          }
+        } catch {
+          set({ error: '获取精选商品失败，请稍后重试', isLoading: false });
+        }
+      },
+
+      fetchTrending: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          // TODO: 连接后端 GET /clothing?filter=trending API 后替换
+          set({ error: '功能开发中，敬请期待', isLoading: false });
+        } catch {
+          set({ error: '获取趋势商品失败，请稍后重试', isLoading: false });
+        }
+      },
+
+      fetchNewArrivals: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          // TODO: 连接后端 GET /clothing?filter=new API 后替换
+          set({ error: '功能开发中，敬请期待', isLoading: false });
+        } catch {
+          set({ error: '获取新品失败，请稍后重试', isLoading: false });
+        }
+      },
     }),
     {
       name: "clothing-storage",

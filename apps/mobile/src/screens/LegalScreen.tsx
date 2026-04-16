@@ -7,6 +7,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import type { RootStackParamList } from "../types/navigation";
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+import { colors } from '../theme';
 
 type LegalScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -90,7 +91,7 @@ export const LegalScreen: React.FC<LegalScreenProps> = ({ type }) => {
 
 如对本协议有任何疑问，请通过以下方式联系我们：
 - 邮箱：support@xuno.app
-- 客服电话：400-XXX-XXXX
+- 客服电话：暂未提供
 `;
 
   const privacyContent = `

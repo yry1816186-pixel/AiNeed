@@ -2,5 +2,9 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": []
+  "include": [
+    "apps/backend/src/**/*",
+    "apps/mobile/src/**/*",
+    "packages/**/*"
+  ]
 }
