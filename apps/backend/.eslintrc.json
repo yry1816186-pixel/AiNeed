@@ -19,14 +19,61 @@
     "sourceType": "module",
     "project": "./tsconfig.eslint.json"
   },
-  "plugins": ["@typescript-eslint", "import"],
+  "plugins": ["@typescript-eslint", "import", "boundaries"],
   "settings": {
     "import/resolver": {
       "typescript": {
         "alwaysTryTypes": true,
         "project": "./tsconfig.eslint.json"
       }
-    }
+    },
+    "boundaries/elements": [
+      {
+        "type": "identity",
+        "pattern": "src/domains/identity/*",
+        "mode": "folder"
+      },
+      {
+        "type": "platform",
+        "pattern": "src/domains/platform/*",
+        "mode": "folder"
+      },
+      {
+        "type": "ai-core",
+        "pattern": "src/domains/ai-core/*",
+        "mode": "folder"
+      },
+      {
+        "type": "commerce",
+        "pattern": "src/domains/commerce/*",
+        "mode": "folder"
+      },
+      {
+        "type": "fashion",
+        "pattern": "src/domains/fashion/*",
+        "mode": "folder"
+      },
+      {
+        "type": "social",
+        "pattern": "src/domains/social/*",
+        "mode": "folder"
+      },
+      {
+        "type": "customization",
+        "pattern": "src/domains/customization/*",
+        "mode": "folder"
+      },
+      {
+        "type": "common",
+        "pattern": "src/common/*",
+        "mode": "folder"
+      },
+      {
+        "type": "modules",
+        "pattern": "src/modules/*",
+        "mode": "folder"
+      }
+    ]
   },
   "rules": {
     "@typescript-eslint/no-explicit-any": "error",
@@ -90,7 +137,27 @@
     "prefer-const": "error",
     "no-var": "error",
     "eqeqeq": ["error", "always"],
-    "curly": ["error", "all"]
+    "curly": ["error", "all"],
+    "boundaries/element-types": [2, {
+      "default": "allow",
+      "rules": [
+        {
+          "from": ["identity"],
+          "disallow": ["modules"],
+          "message": "Identity domain must not depend on unmigrated modules. Move the dependency to a domain first."
+        },
+        {
+          "from": ["platform"],
+          "disallow": ["identity"],
+          "message": "Platform layer must not depend on identity domain. Use events or interfaces instead."
+        },
+        {
+          "from": ["common"],
+          "disallow": ["identity", "platform", "modules"],
+          "message": "Common layer must not depend on any domain module."
+        }
+      ]
+    }]
   },
   "ignorePatterns": [
     "node_modules",
