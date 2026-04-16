@@ -1,7 +1,7 @@
 {
-  "apps/backend/**/*.{ts,tsx}": ["eslint --fix"],
-  "apps/mobile/**/*.{ts,tsx}": ["eslint --fix"],
-  "apps/admin/**/*.{ts,tsx}": ["eslint --fix"],
-  "packages/**/*.{ts,tsx}": ["eslint --fix"],
+  "apps/backend/**/*.{ts,tsx}": ["cd apps/backend && eslint --fix"],
+  "apps/mobile/**/*.{ts,tsx}": ["cd apps/mobile && eslint --fix"],
+  "apps/admin/**/*.{ts,tsx}": ["cd apps/admin && eslint --fix"],
+  "packages/**/*.{ts,tsx}": ["cd packages && eslint --fix"],
   "**/*.{ts,tsx,js,jsx,json,md,css,scss}": ["prettier --write"]
 }
