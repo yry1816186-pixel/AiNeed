@@ -167,14 +167,14 @@
 **Depends on:** Phase 2 (设计系统统一完成)
 
 **Plans:**
-1. 创建 feature-based 目录结构（src/features/*, src/shared/*, src/design-system/*）
-2. 迁移设计系统相关文件 → src/design-system/
-3. 迁移共享组件/工具 → src/shared/
-4. 按功能域迁移页面和组件 → src/features/auth/, src/features/stylist/, etc.
+1. ✅ 创建 feature-based 目录结构（src/features/*, src/shared/*, src/design-system/*）
+2. ✅ 迁移设计系统相关文件 → src/design-system/
+3. ✅ 迁移共享组件/工具 → src/shared/
+4. ✅ 按功能域迁移页面和组件 → src/features/auth/, src/features/stylist/, etc.
 5. 合并 auth.store + user.store → 统一 authStore
 6. 合并 quizStore + styleQuizStore → 统一 quizStore
 7. 合并 clothingStore + homeStore → 统一 clothingStore
-8. 提取 stores/index.ts 内联 store 为独立文件
+8. ✅ 提取 stores/index.ts 内联 store 为独立文件
 9. 更新导航配置适配新目录结构
 10. 激活 @xuno/types 和 @xuno/shared 的实际使用
 

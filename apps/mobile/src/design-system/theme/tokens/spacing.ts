@@ -48,16 +48,17 @@ export const SpacingAliases = {
   "5xl": 96,
 } as const;
 
+// BorderRadiusScale aligned with DesignTokens.borderRadius (DesignTokens is source of truth)
 export const BorderRadiusScale = {
   none: 0,
   xs: 2,
   sm: 4,
   md: 6,
-  lg: 8,
-  xl: 12,
-  "2xl": 16,
-  "3xl": 20,
-  "4xl": 24,
+  lg: 10,
+  xl: 16,
+  "2xl": 24,
+  "3xl": 32,
+  "4xl": 48,
   "5xl": 32,
   "6xl": 40,
   "7xl": 48,

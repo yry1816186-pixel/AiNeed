@@ -107,9 +107,9 @@ export const DesignTokens = {
   typography: {
     fontFamily: {
       heading: {
-        ios: "PlayfairDisplay-Bold",
-        android: "PlayfairDisplay-Bold",
-        web: "'Playfair Display', 'Noto Serif SC', serif",
+        ios: "Georgia",
+        android: "serif",
+        web: "Georgia, 'Noto Serif SC', serif",
       },
       body: {
         ios: "System",

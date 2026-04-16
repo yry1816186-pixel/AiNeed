@@ -1,7 +1,5 @@
 import { Dimensions, Platform, StatusBar } from "react-native";
 import { DesignTokens, darkTokens } from "./tokens/design-tokens";
-import type { FlatColors } from "./FlatColors";
-import { DesignTokens } from "tokens/design-tokens";
 
 export { DesignTokens, darkTokens } from "./tokens/design-tokens";
 export type { DesignTokensType, DarkTokensType } from "./tokens/design-tokens";
@@ -11,6 +9,11 @@ export * from "./tokens/spacing";
 export * from "./tokens/typography";
 export * from "./tokens/shadows";
 export * from "./tokens/animations";
+export * from "./tokens/season-colors";
+export type { FlatColors } from "./FlatColors";
+
+type TokenSet = typeof DesignTokens;
+
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const isIOS = Platform.OS === "ios";
@@ -369,7 +372,7 @@ export const BorderRadius = {
   "2xl": DesignTokens.borderRadius["2xl"],
   "3xl": DesignTokens.borderRadius["3xl"],
   full: DesignTokens.borderRadius.full,
-  "4xl": 32,
+  "4xl": 48,
   "5xl": 40,
 };
 
@@ -431,13 +434,13 @@ export const ZIndex = {
 
 function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
   return {
-    brand: base.brand,
-    neutral: base.neutral,
-    semantic: base.semantic,
-    backgrounds: base.backgrounds,
-    text: base.text,
-    borders: base.borders,
-    colorSeasons: base.colorSeasons,
+    brand: base.brand.terracotta,
+    neutral: base.neutral[600],
+    semantic: base.semantic.info,
+    backgrounds: base.backgrounds.primary,
+    text: base.text.primary,
+    borders: base.borders.default,
+    colorSeasons: base.colorSeasons.spring.bg,
     surface: base.backgrounds.primary,
     surfaceSecondary: base.backgrounds.secondary,
     surfaceTertiary: base.backgrounds.tertiary,
@@ -479,6 +482,16 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
 
 const flatColors = buildFlatThemeColors(DesignTokens.colors);
 
+export const themeColors = {
+  brand: DesignTokens.colors.brand,
+  neutral: DesignTokens.colors.neutral,
+  semantic: DesignTokens.colors.semantic,
+  backgrounds: DesignTokens.colors.backgrounds,
+  text: DesignTokens.colors.text,
+  borders: DesignTokens.colors.borders,
+  colorSeasons: DesignTokens.colors.colorSeasons,
+};
+
 export const theme = {
   colors: flatColors,
   spacing: DesignTokens.spacing,
@@ -492,6 +505,7 @@ export const theme = {
   Animation,
   ZIndex,
   gradients,
+  themeColors,
 };
 
 export default theme;
