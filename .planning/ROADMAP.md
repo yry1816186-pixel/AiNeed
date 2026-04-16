@@ -228,12 +228,14 @@
 **Depends on:** Phase 4, Phase 5
 
 **Plans:**
-1. 使用 ts-morph codemod 批量修复后端 any 类型（优先 common 层和域接口）
-2. 使用 ts-morph codemod 批量修复移动端 any 类型（优先 API 服务层和 Store）
-3. 为后端关键路径补充集成测试（auth, try-on, payment, order）
-4. 为移动端关键页面补充组件测试（Home, StylistChat, Cart, Profile）
-5. 后端测试覆盖率 → 50%+
-6. 移动端测试覆盖率 → 30%+
+1. 手动修复后端生产代码 any 类型（简单模式：request: any → Request, status as any → JobStatus 等）
+2. 手动修复后端中等 any 模式 + Prisma 层 eslint-disable 豁免
+3. 修复后端测试文件 any 模式（mock 对象类型化）
+4. 手动修复移动端组件 props/事件 any 模式（style?: any → ViewStyle 等）
+5. 手动修复移动端导航/API any 模式（类型安全导航 + API 响应类型）
+6. 为后端 10 个无测试模块补充测试（coupon, refund-request, feature-flags 等）
+7. 为移动端 Store/API/组件补充测试（cartStore, stylistStore 等）
+8. ESLint no-explicit-any 升级为 error（后端 + 移动端）
 
 **Requirements:** QUAL-02, QUAL-03, QUAL-04, QUAL-05
 
