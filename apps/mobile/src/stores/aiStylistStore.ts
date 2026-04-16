@@ -198,7 +198,8 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
       } else {
         set({ isAlternativesLoading: false });
       }
-    } catch {
+    } catch (error) {
+      console.error('AI Stylist operation failed:', error);
       set({ isAlternativesLoading: false });
     }
   },
@@ -216,7 +217,8 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
         return true;
       }
       return false;
-    } catch {
+    } catch (error) {
+      console.error('AI Stylist operation failed:', error);
       return false;
     }
   },
@@ -238,7 +240,8 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
         dislikeReason,
       });
       return response.success;
-    } catch {
+    } catch (error) {
+      console.error('AI Stylist operation failed:', error);
       return false;
     }
   },
@@ -253,8 +256,9 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
           isNewUser: (data.isNewUser as boolean) ?? false,
         });
       }
-    } catch {
+    } catch (error) {
       // silent fail
+      console.error('AI Stylist operation failed:', error);
     }
   },
 

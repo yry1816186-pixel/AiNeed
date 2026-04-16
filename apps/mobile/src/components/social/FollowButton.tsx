@@ -1,7 +1,7 @@
-﻿import React, { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { communityApi } from "../../services/api/community.api";
-import { theme } from '../../design-system/theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../design-system/theme";
 
 interface FollowButtonProps {
@@ -32,8 +32,8 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
         setFollowing(newFollowing);
         onFollowChange?.(newFollowing);
       }
-    } catch {
-      // Silently fail - follow state unchanged
+    } catch (error) {
+      console.error('Follow operation failed:', error);
     } finally {
       setLoading(false);
     }
@@ -52,7 +52,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
         accessibilityRole="button"
       >
         {loading ? (
-          <ActivityIndicator size="small" color={theme.colors.textSecondary} />
+          <ActivityIndicator size="small" color={colors.textSecondary} />
         ) : (
           <Text style={[styles.followingText, isSmall && styles.followingTextSmall]}>已关注</Text>
         )}
@@ -101,14 +101,14 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.sm,
   },
   followingBtn: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: colors.background,
     borderRadius: 18,
     paddingHorizontal: 24,
     paddingVertical: 8,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: colors.border,
   },
   followingBtnSmall: {
     paddingHorizontal: 16,
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   followingText: {
-    color: theme.colors.textSecondary,
+    color: colors.textSecondary,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },
