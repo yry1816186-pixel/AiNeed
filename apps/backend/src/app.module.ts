@@ -35,7 +35,7 @@ import { CacheService } from "./modules/cache/cache.service";
 import { ChatModule } from "./modules/chat/chat.module";
 import { ClothingModule } from "./domains/fashion/clothing/clothing.module";
 import { CommerceModule } from "./domains/commerce/commerce.module";
-import { CommunityModule } from "./modules/community/community.module";
+import { CommunityModule } from "./domains/social/community/community.module";
 import { ConsultantModule } from "./modules/consultant/consultant.module";
 import { CustomizationModule } from "./modules/customization/customization.module";
 import { DatabaseModule } from "./modules/database/database.module";

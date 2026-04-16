@@ -17,7 +17,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { outfitApi } from "../services/api/outfit.api";
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import type { RootStackParamList } from "../types/navigation";
 import type { Outfit } from "../types/outfit";

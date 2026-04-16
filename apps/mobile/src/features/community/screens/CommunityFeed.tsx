@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { FlashList } from "../../polyfills/flash-list";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { PostMasonryCard } from '../../../components/community/PostMasonryCard';
 import type { PostCardData } from '../../../components/community/PostMasonryCard';

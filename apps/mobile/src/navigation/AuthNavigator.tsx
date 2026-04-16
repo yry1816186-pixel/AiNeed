@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { AuthStackParamList } from "./types";
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 

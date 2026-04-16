@@ -13,6 +13,7 @@ import {
   PanResponder,
   type ViewStyle,
 } from "react-native";
+import { Snackbar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -23,7 +24,7 @@ import { useCouponStore } from '../stores/couponStore';
 
 import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTranslation } from '../../../i18n';
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { haptics } from '../../../utils/haptics';
 import { withErrorBoundary } from '../../../shared/components/ErrorBoundary';
@@ -49,6 +50,8 @@ export const CartScreenComponent: React.FC = () => {
   const [showCouponSelector, setShowCouponSelector] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const couponStore = useCouponStore();
+  const couponError = useCouponStore(state => state.error);
+  const clearCouponError = useCouponStore(state => state.clearError);
 
   const { items, setItems, removeItem, updateItem, totalItems } = useCartStore();
 

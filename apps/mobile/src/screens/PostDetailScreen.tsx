@@ -18,7 +18,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { SharedElement } from "react-navigation-shared-element";
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { communityApi, PostComment } from "../services/api/community.api";
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { BookmarkSheet } from "../components/community/BookmarkSheet";

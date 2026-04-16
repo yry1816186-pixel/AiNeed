@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import type { OnboardingStep } from '../stores/onboardingStore';
 import { onboardingService } from '../services/onboardingService';

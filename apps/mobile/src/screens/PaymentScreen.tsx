@@ -6,7 +6,7 @@ import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useScreenTracking } from "../hooks/useAnalytics";
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { haptics } from "../utils/haptics";
 import { paymentApi, orderApi } from "../services/api/commerce.api";

@@ -230,7 +230,7 @@ export default function App() {
           console.error('[App:Loading] Error:', structuredError);
         }}
       >
-        <GestureHandlerRootView style={styles.root}>
+        <GestureHandlerRootView style={rootStyles.root}>
           <UnifiedThemeProvider>
             <PaperThemeProvider>
               <I18nProvider>
@@ -260,7 +260,7 @@ export default function App() {
         console.log('[App:Root] Error boundary reset');
       }}
     >
-      <GestureHandlerRootView style={styles.root}>
+      <GestureHandlerRootView style={rootStyles.root}>
         <UnifiedThemeProvider>
           <PaperThemeProvider>
             <I18nProvider>

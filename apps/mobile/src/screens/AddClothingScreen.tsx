@@ -19,7 +19,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { pickImageSecurely, ImageValidationError } from "../utils/imagePicker";
 import { clothingApi } from "../services/api/clothing.api";
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import type { ClothingCategory, ClothingStyle, Season, Occasion } from "../types/clothing";
 import { CATEGORY_LABELS } from "../types/clothing";

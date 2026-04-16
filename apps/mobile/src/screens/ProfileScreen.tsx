@@ -22,7 +22,7 @@ import { ProfileCompletenessBar } from "../components/profile/ProfileCompletenes
 import { useProfileStore } from "../stores/profileStore";
 import type { UserStats, User } from "../types/user";
 import type { RootStackParamList } from "../types/navigation";
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 
 // 引入增强主题令牌
 import { colors } from "../theme/tokens/colors";

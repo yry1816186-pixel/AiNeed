@@ -3,7 +3,7 @@ import { StyleSheet, Alert, useWindowDimensions } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useScreenTracking } from "../hooks/useAnalytics";
 import { useTranslation } from "../i18n";
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { communityApi } from "../services/api/community.api";
 import { TrendingCard } from "../components/community/TrendingCard";
 import { CreatePostModal } from "../components/community/CreatePostModal";

@@ -13,7 +13,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useProfileStore } from '../stores/profileStore';
 import { ScreenLayout, Header } from '../../../shared/components/layout/ScreenLayout';
@@ -68,6 +68,7 @@ const INITIAL_BODY: BodyFormState = {
 export const ProfileEditScreen: React.FC = () => {
   const navigation = useNavigation<ProfileEditNavigationProp>();
   const { profile, updateProfile, isLoading } = useProfileStore();
+  const { colors } = useTheme();
 
   const [gender, setGender] = useState<string | null>(profile?.gender ?? null);
   const [ageRange, setAgeRange] = useState<string | null>(null);

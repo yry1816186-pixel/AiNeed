@@ -175,7 +175,7 @@
 6. 合并 quizStore + styleQuizStore → 统一 quizStore
 7. 合并 clothingStore + homeStore → 统一 clothingStore
 8. ✅ 提取 stores/index.ts 内联 store 为独立文件
-9. 更新导航配置适配新目录结构
+9. ✅ 更新导航配置适配新目录结构
 10. 激活 @xuno/types 和 @xuno/shared 的实际使用
 
 **Requirements:** MOBL-01, MOBL-02, MOBL-03, MOBL-04, MOBL-05, MOBL-06

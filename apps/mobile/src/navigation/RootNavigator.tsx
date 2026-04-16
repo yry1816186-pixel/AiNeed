@@ -14,7 +14,7 @@ import {
   ProfileStackNavigator,
 } from "./MainStackNavigator";
 import { useAuthStore, useCartStore } from "../stores/index";
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { navigateAuth, navigateProfile, navigationRef } from "./navigationService";
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 

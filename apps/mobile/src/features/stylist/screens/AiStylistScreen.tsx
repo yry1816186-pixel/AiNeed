@@ -13,7 +13,7 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useTranslation } from '../../../i18n';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useAuthStore } from '../stores/index';

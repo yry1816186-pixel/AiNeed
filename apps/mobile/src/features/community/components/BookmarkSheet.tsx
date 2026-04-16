@@ -12,7 +12,7 @@ import {
   Modal,
 } from "react-native";
 import { communityApi } from '../../../services/api/community.api';
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 

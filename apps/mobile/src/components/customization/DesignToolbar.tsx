@@ -2,7 +2,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { Colors, Spacing } from '../../design-system/theme';
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 
 interface DesignToolbarProps {

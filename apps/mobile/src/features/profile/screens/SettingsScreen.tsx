@@ -20,7 +20,7 @@ import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { useAuthStore } from '../stores/index';
 import { authApi } from '../../../services/api/auth.api';
 import { apiClient } from '../../../services/api/client';
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useTranslation } from '../../../i18n';
 
 import type { RootStackParamList } from '../../../types/navigation';

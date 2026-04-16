@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import type { DesignLayer } from '../stores/customizationEditorStore';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 

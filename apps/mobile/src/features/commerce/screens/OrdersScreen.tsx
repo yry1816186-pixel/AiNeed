@@ -10,14 +10,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Snackbar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { orderApi, orderEnhancementApi } from '../../../services/api/commerce.api';
+import { useOrderStore } from '../stores/orderStore';
 import type { Order, OrderStatus } from '../../../types';
 import type { RootStackParamList } from '../../../types/navigation';
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 type OrdersNavigation = NativeStackNavigationProp<RootStackParamList>;
@@ -61,6 +63,8 @@ function formatDate(dateString: string): string {
 
 export const OrdersScreen: React.FC = () => {
   const navigation = useNavigation<OrdersNavigation>();
+  const orderError = useOrderStore(state => state.error);
+  const clearOrderError = useOrderStore(state => state.clearError);
   const [activeTab, setActiveTab] = useState<TabKey>("all");
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -364,6 +368,15 @@ export const OrdersScreen: React.FC = () => {
           }
         />
       )}
+
+      <Snackbar
+        visible={!!orderError}
+        onDismiss={clearOrderError}
+        duration={3000}
+        action={{ label: '关闭', onPress: clearOrderError }}
+      >
+        {orderError}
+      </Snackbar>
     </SafeAreaView>
   );
 };

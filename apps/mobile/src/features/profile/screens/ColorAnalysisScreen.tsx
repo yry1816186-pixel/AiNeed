@@ -11,7 +11,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '../../../design-system/theme';
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useProfileStore } from '../stores/profileStore';
 
 import { normalizeColorSeason, seasonLabels, type ColorSeason } from '../../../design-system/theme/tokens/season-colors';

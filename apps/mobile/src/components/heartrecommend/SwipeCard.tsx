@@ -19,7 +19,7 @@ import {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, BorderRadius, Shadows } from '../../design-system/theme';
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { SpringConfigs } from "../../theme/tokens/animations";
 import { useReducedMotion } from "../../hooks/useReducedMotion";

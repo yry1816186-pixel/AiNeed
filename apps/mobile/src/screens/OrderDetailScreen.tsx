@@ -17,7 +17,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { orderApi, orderEnhancementApi, refundApi } from "../services/api/commerce.api";
 import type { Order } from "../types";
 import type { RootStackParamList } from "../types/navigation";
-import { useTheme, createStyles } from 'undefined';
+import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
