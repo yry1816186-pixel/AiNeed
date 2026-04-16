@@ -1,0 +1,7 @@
+{
+  "apps/backend/**/*.{ts,tsx}": ["eslint --fix"],
+  "apps/mobile/**/*.{ts,tsx}": ["eslint --fix"],
+  "apps/admin/**/*.{ts,tsx}": ["eslint --fix"],
+  "packages/**/*.{ts,tsx}": ["eslint --fix"],
+  "**/*.{ts,tsx,js,jsx,json,md,css,scss}": ["prettier --write"]
+}

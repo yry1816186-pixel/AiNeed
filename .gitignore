@@ -128,6 +128,9 @@ _template/
 # --- Prisma compiled output ---
 apps/backend/prisma/compiled/
 
+# --- Husky ---
+.husky/_
+
 # --- Misc ---
 SKILL.md
 mobilesrcservicesapi"*

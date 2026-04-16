@@ -4,6 +4,7 @@
   "private": true,
   "description": "寻裳 - 智能私人形象定制与服装设计助手平台 (移动端)",
   "scripts": {
+    "prepare": "husky",
     "dev": "pnpm --filter @xuno/backend dev",
     "dev:backend": "pnpm --filter @xuno/backend dev",
     "dev:mobile": "pnpm --filter @xuno/mobile dev",
@@ -18,9 +19,13 @@
     "postinstall": "node -e \"try{require('@prisma/client')}catch(e){process.exit(1)}\" && pnpm --filter @xuno/backend db:generate || echo 'Skipping prisma generate'"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
     "@react-native/codegen": "^0.84.1",
     "concurrently": "^9.2.1",
     "expo-modules-autolinking": "~55.0.11",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
     "typescript": "^5.7.3"
   },
   "pnpm": {
