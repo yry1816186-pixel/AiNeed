@@ -17,7 +17,7 @@ import { stripExifFromBuffer } from "../../../common/security/image-sanitizer";
 import { MalwareScannerService } from "../../../common/security/malware-scanner.service";
 import { validateImageFile as sharedValidateImageFile } from "../../../common/security/upload-validator";
 import { StorageService } from "../../../common/storage/storage.service";
-import { OnboardingService } from "../onboarding/onboarding.service";
+import { OnboardingService } from "../../identity/onboarding/onboarding.service";
 import { QueueService } from "../../platform/queue/queue.service";
 
 import { AiAnalysisService } from "./services/ai-analysis.service";

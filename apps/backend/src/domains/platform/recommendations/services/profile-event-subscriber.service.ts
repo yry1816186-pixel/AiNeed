@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 
-import { RedisService } from "../../../../../../../common/redis/redis.service";
+import { RedisService } from "../../../../common/redis/redis.service";
 
 /**
  * ProfileEventSubscriberService subscribes to Redis Pub/Sub channels

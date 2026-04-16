@@ -8,7 +8,7 @@ import {
 import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { NotificationService } from "../../../platform/notification/services/notification.service";
+import { NotificationService } from "../../platform/notification/services/notification.service";
 
 import type {
   CreateBloggerProductDto,

@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { StyleUnderstandingService } from "../../ai/services/style-understanding.service";
+import { StyleUnderstandingService } from '../../../ai/services/style-understanding.service';
 import {
   RecommendationsService,
   type RecommendedItem,
-} from "../../../../platform/recommendations/recommendations.service";
+} from "../../../../../../../platform/recommendations/recommendations.service";
 import { DecisionEngineService } from "../decision-engine.service";
 import { LlmProviderService } from "../llm-provider.service";
 import type {

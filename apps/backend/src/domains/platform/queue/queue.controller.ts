@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Controller,
   Get,
@@ -23,8 +22,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { CurrentUser } from '../../identity/auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from '../../identity/auth/guards/jwt-auth.guard';
+import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
+import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 
 import { QueueService } from './queue.service';
 

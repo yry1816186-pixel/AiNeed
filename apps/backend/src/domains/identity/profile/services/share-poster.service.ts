@@ -3,8 +3,8 @@ import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { createCanvas, Image, CanvasRenderingContext2D } from "canvas";
 import { v4 as uuidv4 } from "uuid";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
-import { StorageService } from "../../../../../../../common/storage/storage.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { StorageService } from "../../../../common/storage/storage.service";
 
 export interface UserProfileSummary {
   nickname: string;

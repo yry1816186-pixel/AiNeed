@@ -8,7 +8,7 @@ import {
 import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { PaymentService } from "../../../commerce/payment/payment.service";
+import { PaymentService } from "../../commerce/payment/payment.service";
 
 import {
   CreateConsultantProfileDto,

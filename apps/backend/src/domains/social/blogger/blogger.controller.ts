@@ -19,7 +19,7 @@ import {
   ApiParam,
 } from "@nestjs/swagger";
 
-import { OptionalAuthGuard } from "../../../identity/auth/guards/optional-auth.guard";
+import { OptionalAuthGuard } from "../../identity/auth/guards/optional-auth.guard";
 
 import { BloggerDashboardService } from "./blogger-dashboard.service";
 import { BloggerProductService } from "./blogger-product.service";

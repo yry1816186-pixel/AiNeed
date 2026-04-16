@@ -2,8 +2,8 @@
 import { NotFoundException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
-import { StorageService } from "../../../../../../../common/storage/storage.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { StorageService } from "../../../../common/storage/storage.service";
 
 import { SharePosterService, UserProfileSummary } from "./share-poster.service";
 

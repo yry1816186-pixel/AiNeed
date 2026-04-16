@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from '@nestjs/common';
 import { CartModule } from './cart/cart.module';
 import { CouponModule } from './coupon/coupon.module';

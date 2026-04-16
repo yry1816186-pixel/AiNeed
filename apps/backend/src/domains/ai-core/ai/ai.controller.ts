@@ -16,8 +16,8 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam, ApiQuery, 
 import { Throttle } from "@nestjs/throttler";
 import { ClothingCategory } from "@prisma/client";
 
-import { Public } from "../../platform/auth/decorators/public.decorator";
-import { JwtAuthGuard } from "../../platform/auth/guards/jwt-auth.guard";
+import { Public } from "../../identity/auth/decorators/public.decorator";
+import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 
 import { AIIntegrationService } from "./services/ai-integration.service";
 

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { NotificationService as WebSocketNotificationService } from "../../../../../../../common/gateway/notification.service";
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { NotificationService as WebSocketNotificationService } from "../../../../common/gateway/notification.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 import { NotificationTemplateService } from "./notification-template.service";
 import {

@@ -3,7 +3,7 @@ import { HttpException, HttpStatus } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { RedisService } from "../../../../../../../common/redis/redis.service";
+import { RedisService } from "../../../../common/redis/redis.service";
 
 import { AliyunSmsService, MockSmsService, SmsService } from "./sms.service";
 

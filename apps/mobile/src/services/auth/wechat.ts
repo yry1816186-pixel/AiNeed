@@ -136,7 +136,7 @@ async function shareToWechat(options: {
     return false;
   }
 
-  console.log("Share to WeChat:", options);
+  console.error("Share to WeChat failed:", options);
   return true;
 }
 

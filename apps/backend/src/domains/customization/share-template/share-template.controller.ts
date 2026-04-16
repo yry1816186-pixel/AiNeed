@@ -11,7 +11,7 @@ import {
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiParam } from "@nestjs/swagger";
 
-import { JwtAuthGuard } from "../../../identity/auth/guards/jwt-auth.guard";
+import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 
 import {
   CreateShareTemplateDto,

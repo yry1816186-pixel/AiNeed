@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { ClothingCategory, Prisma } from "@prisma/client";
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 import { PhotoType } from "@prisma/client";
@@ -6,8 +5,8 @@ import { PhotoType } from "@prisma/client";
 import { CircuitBreakerService } from "../../../common/circuit-breaker";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
-import { StyleUnderstandingService } from "../ai/services/style-understanding.service";
-import { PhotosService } from "../photos/photos.service";
+import { StyleUnderstandingService } from '../ai/services/style-understanding.service';
+import { PhotosService } from '../photos/photos.service';
 import { RecommendationsService } from "../../platform/recommendations/recommendations.service";
 
 import { AiStylistService } from "./ai-stylist.service";

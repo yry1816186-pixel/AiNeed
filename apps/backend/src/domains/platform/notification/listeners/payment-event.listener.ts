@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NotificationType } from "@prisma/client";
 
 import { Injectable, Logger } from "@nestjs/common";
@@ -9,7 +8,7 @@ import {
   PaymentSucceededPayload,
   PaymentFailedPayload,
   PaymentRefundedPayload,
-} from "../../../commerce/payment/events";
+} from "../../../../commerce/payment/events";
 import { NotificationService } from "../services/notification.service";
 
 /**

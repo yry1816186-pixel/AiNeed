@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -10,7 +9,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useRoute, useNavigation, NavigationProp } from "@react-navigation/native";
 import { useConsultantStore } from '../../stores/consultantStore';
 import { CalendarGrid } from '../../../components/consultant/CalendarGrid';
 import { TimeSlotItem } from '../../../components/consultant/TimeSlotItem';
@@ -18,6 +17,8 @@ import { ServiceTypeChip } from '../../../components/consultant/ServiceTypeChip'
 import type { ServiceType } from '../../../types/consultant';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+
+type TimeSlot = { startTime: string; endTime: string };
 
 const SERVICE_TYPES = [
   { label: "整体形象改造", value: "styling_consultation" },
@@ -29,7 +30,7 @@ const SERVICE_TYPES = [
 export const BookingScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const route = useRoute();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp<Record<string, unknown>>>();
   const { availableSlots, fetchAvailableSlots, createBooking, isLoading } = useConsultantStore();
 
   const { consultantId, consultant } = route.params || {};
@@ -37,7 +38,7 @@ export const BookingScreen: React.FC = () => {
   const [selectedServiceType, setSelectedServiceType] =
     useState<ServiceType>("styling_consultation");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedSlot, setSelectedSlot] = useState<any>(null);
+  const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [notes, setNotes] = useState("");
 
   const price = consultant?.basePrice || 299;
@@ -126,7 +127,7 @@ export const BookingScreen: React.FC = () => {
             ) : availableSlots.length === 0 ? (
               <Text style={styles.noSlotsText}>该日期暂无可用时段</Text>
             ) : (
-              availableSlots.map((slot: any, _idx: number) => (
+              availableSlots.map((slot: TimeSlot, _idx: number) => (
                 <TimeSlotItem
                   key={`${slot.startTime}-${slot.endTime}`}
                   startTime={slot.startTime}

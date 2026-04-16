@@ -29,7 +29,7 @@ import { Throttle } from "@nestjs/throttler";
 import { Request } from "express";
 
 import { RequestWithUser } from "../../../common/types/common.types";
-import { AuthGuard } from "../../../identity/auth/guards/auth.guard";
+import { AuthGuard } from "../../identity/auth/guards/auth.guard";
 
 import { CommunityService } from "./community.service";
 import {

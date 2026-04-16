@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Injectable, Logger, NotFoundException, BadRequestException, Optional } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException, BadRequestException, Optional } from "@nestjs/common";
 import { Prisma, PriceRange } from "@prisma/client";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";

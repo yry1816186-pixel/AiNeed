@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from "@nestjs/common";
 
-import { PrismaModule } from "../../../../common/prisma/prisma.module";
+import { PrismaModule } from "../../../common/prisma/prisma.module";
 
 import { OnboardingController } from "./onboarding.controller";
 import { OnboardingService } from "./onboarding.service";

@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { OnboardingStep, Gender } from "@prisma/client";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
 
 const STEP_ORDER: OnboardingStep[] = [
   OnboardingStep.BASIC_INFO,

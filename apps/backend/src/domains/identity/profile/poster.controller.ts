@@ -2,7 +2,7 @@
 import { Controller, Get, Post, Param, UseGuards, UseInterceptors, Request } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
-import { SensitiveDataInterceptor } from "../../../../common/interceptors/sensitive-data.interceptor";
+import { SensitiveDataInterceptor } from "../../../common/interceptors/sensitive-data.interceptor";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 import { GeneratePosterResponseDto } from "./dto/poster.dto";

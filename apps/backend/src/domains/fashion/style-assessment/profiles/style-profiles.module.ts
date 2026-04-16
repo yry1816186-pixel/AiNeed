@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 
 import { AnalyticsModule } from "../../../../domains/platform/analytics/analytics.module";
 

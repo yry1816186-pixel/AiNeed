@@ -5,8 +5,8 @@ import {
 } from "@nestjs/common";
 import { BehaviorEventType } from "@prisma/client";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
-import { RedisService } from "../../../../../../../common/redis/redis.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { RedisService } from "../../../../common/redis/redis.service";
 
 import { RecommendationCacheService } from "./recommendation-cache.service";
 

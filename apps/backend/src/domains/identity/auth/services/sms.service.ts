@@ -4,7 +4,7 @@ import { randomInt, timingSafeEqual } from "crypto";
 import { Injectable, Inject, Logger, HttpException, HttpStatus } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
-import { RedisService } from "../../../../../../../common/redis/redis.service";
+import { RedisService } from "../../../../common/redis/redis.service";
 
 export interface ISmsService {
   sendCode(phone: string, code: string): Promise<void>;

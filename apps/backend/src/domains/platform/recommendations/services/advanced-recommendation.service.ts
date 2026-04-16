@@ -13,7 +13,7 @@ import {
   Prisma,
 } from "@prisma/client";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 import { KnowledgeGraphService } from "./knowledge-graph.service";
 import { MatchingTheoryService } from "./matching-theory.service";

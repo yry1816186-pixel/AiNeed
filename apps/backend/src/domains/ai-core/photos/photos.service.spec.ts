@@ -7,7 +7,7 @@ import { PhotoType, AnalysisStatus } from "@prisma/client";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { MalwareScannerService } from "../../../common/security/malware-scanner.service";
 import { StorageService } from "../../../common/storage/storage.service";
-import { OnboardingService } from "../onboarding/onboarding.service";
+import { OnboardingService } from "../../identity/onboarding/onboarding.service";
 import { QueueService } from "../../platform/queue/queue.service";
 
 import { PhotosService } from "./photos.service";

@@ -17,8 +17,8 @@ import {
   ApiBody,
 } from "@nestjs/swagger";
 
-import { RequestWithUser } from "../../../../../../../common/types/common.types";
-import { OptionalAuthGuard } from "../../../../identity/auth/guards/optional-auth.guard";
+import { RequestWithUser } from "../../../../common/types/common.types";
+import { OptionalAuthGuard } from "../../../../../../../identity/auth/guards/optional-auth.guard";
 import { TrackEventDto } from "../dto/track-event.dto";
 import { BehaviorTrackerService } from "../services/behavior-tracker.service";
 

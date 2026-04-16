@@ -372,10 +372,12 @@ export function useThrottledCallback<T extends (...args: unknown[]) => unknown>(
 export function logPerformanceMetrics(metrics: FrameTiming, label?: string) {
   const prefix = label ? `[${label}]` : "[Performance]";
 
-  console.log(
-    `${prefix} FPS: ${metrics.averageFPS.toFixed(1)} ` +
-      `(min: ${metrics.minFPS.toFixed(1)}, max: ${metrics.maxFPS.toFixed(1)})`
-  );
+  if (__DEV__) {
+    console.log(
+      `${prefix} FPS: ${metrics.averageFPS.toFixed(1)} ` +
+        `(min: ${metrics.minFPS.toFixed(1)}, max: ${metrics.maxFPS.toFixed(1)})`
+    );
+  }
 
   if (metrics.droppedFrames > 0) {
     console.warn(

@@ -9,7 +9,7 @@ import {
   Gender,
 } from "@prisma/client";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import { ProfileService } from "./profile.service";
 import { ProfileEventEmitter } from "./services/profile-event-emitter.service";

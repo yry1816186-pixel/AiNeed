@@ -607,7 +607,7 @@ const ProfileScreen = withErrorBoundary(ProfileScreenComponent, {
     console.error("[ProfileScreen] Error:", structuredError);
   },
   onReset: () => {
-    console.log("[ProfileScreen] Error boundary reset");
+    console.error("[ProfileScreen] Error boundary reset");
   },
 });
 

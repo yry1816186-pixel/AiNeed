@@ -14,11 +14,11 @@ import { JwtService } from "@nestjs/jwt";
 import { Gender, Prisma } from "@prisma/client";
 import type { StringValue } from "ms";
 
-import { StructuredLoggerService, ContextualLogger } from "../../../../common/logging/structured-logger.service";
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { RedisService } from "../../../../common/redis/redis.service";
-import * as bcrypt from "../../../../common/security/bcrypt";
-import { EmailService } from "../../../../common/email/email.service";
+import { StructuredLoggerService, ContextualLogger } from "../../../common/logging/structured-logger.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RedisService } from "../../../common/redis/redis.service";
+import * as bcrypt from "../../../common/security/bcrypt";
+import { EmailService } from "../../../common/email/email.service";
 import { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION } from "../privacy/privacy-version";
 
 import { AuthHelpersService } from "./auth.helpers";

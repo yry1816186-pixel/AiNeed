@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { OrderStatus } from "@prisma/client";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 const REVENUE_STATUSES: OrderStatus[] = ["delivered" as OrderStatus];
 

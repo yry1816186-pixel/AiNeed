@@ -6,7 +6,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { ClothingCategory } from "@prisma/client";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 import { QdrantService } from "./qdrant.service";
 

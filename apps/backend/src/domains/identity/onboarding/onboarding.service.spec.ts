@@ -3,7 +3,7 @@ import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { OnboardingStep, Gender } from "@prisma/client";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import { OnboardingService } from "./onboarding.service";
 

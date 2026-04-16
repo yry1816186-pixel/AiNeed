@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, Optional } from "@nestjs/common";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 import { Neo4jService } from "./neo4j.service";
 

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 import { ColdStartService } from "./cold-start.service";
 import { ColorMatchingService } from "./color-matching.service";

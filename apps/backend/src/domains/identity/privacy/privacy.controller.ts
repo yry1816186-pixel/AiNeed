@@ -18,7 +18,7 @@ import {
   ApiParam,
 } from "@nestjs/swagger";
 
-import { RequestWithUser } from "../../../../common/types/common.types";
+import { RequestWithUser } from "../../../common/types/common.types";
 import { AuthGuard } from "../auth/guards/auth.guard";
 
 import { RecordConsentDto, ExportDataDto, DeleteAccountDto } from "./dto";

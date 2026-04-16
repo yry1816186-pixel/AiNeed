@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿/**
+/**
  * Recommendations Module - Refactored Architecture
  *
  * This module is organized into submodules by algorithm type:

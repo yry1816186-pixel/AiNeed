@@ -12,8 +12,8 @@ import {
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 
-import { AdminGuard } from "../../../../common/guards/admin.guard";
-import { RequestWithUser } from "../../../../common/types/common.types";
+import { AdminGuard } from "../../../common/guards/admin.guard";
+import { RequestWithUser } from "../../../common/types/common.types";
 import { AuthGuard } from "../../identity/auth/guards/auth.guard";
 
 import { SystemConfigDto, SystemConfigQueryDto } from "./dto/admin-config.dto";

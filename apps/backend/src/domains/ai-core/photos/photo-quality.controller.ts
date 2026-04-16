@@ -19,8 +19,8 @@ import {
 } from "@nestjs/swagger";
 
 import { SensitiveDataInterceptor } from "../../../common/interceptors/sensitive-data.interceptor";
-import { CurrentUser } from "../../platform/auth/decorators/current-user.decorator";
-import { JwtAuthGuard } from "../../platform/auth/guards/jwt-auth.guard";
+import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
+import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 
 import { EnhanceRequestDto } from "./dto/quality-report.dto";
 import { PhotoQualityService } from "./services/photo-quality.service";

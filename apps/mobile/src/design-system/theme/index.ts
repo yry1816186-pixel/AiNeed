@@ -435,13 +435,13 @@ export const ZIndex = {
 
 function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
   return {
-    brand: base.brand.terracotta,
-    neutral: base.neutral[600],
-    semantic: base.semantic.info,
-    backgrounds: base.backgrounds.primary,
-    text: base.text.primary,
-    borders: base.borders.default,
-    colorSeasons: base.colorSeasons.spring.bg,
+    brand: base.brand,
+    neutral: base.neutral,
+    semantic: base.semantic,
+    backgrounds: base.backgrounds,
+    text: base.text,
+    borders: base.borders,
+    colorSeasons: base.colorSeasons,
     surface: base.backgrounds.primary,
     surfaceSecondary: base.backgrounds.secondary,
     surfaceTertiary: base.backgrounds.tertiary,

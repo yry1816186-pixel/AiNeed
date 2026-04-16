@@ -3,7 +3,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Queue, Job } from 'bullmq';
 
-import { RedisService , REDIS_KEY_PREFIX, REDIS_KEY_SEPARATOR } from '../../../../common/redis/redis.service';
+import { RedisService , REDIS_KEY_PREFIX, REDIS_KEY_SEPARATOR } from "../../../common/redis/redis.service";
 
 
 import { QueueName } from './queue-config';

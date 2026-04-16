@@ -4,7 +4,7 @@ import { Queue, Job } from 'bullmq';
 
 import { NotificationService as GatewayNotificationService } from "../../../common/gateway/notification.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { AISafetyService } from "../../../ai-core/ai-safety/ai-safety.service";
+import { AISafetyService } from "../../ai-core/ai-safety/ai-safety.service";
 
 export const CONTENT_MODERATION_QUEUE = 'content_moderation';
 

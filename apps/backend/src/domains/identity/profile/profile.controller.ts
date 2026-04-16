@@ -11,7 +11,7 @@ import {
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 
-import { SensitiveDataInterceptor } from "../../../../common/interceptors/sensitive-data.interceptor";
+import { SensitiveDataInterceptor } from "../../../common/interceptors/sensitive-data.interceptor";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 import {

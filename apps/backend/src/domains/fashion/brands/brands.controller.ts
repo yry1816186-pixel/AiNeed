@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Controller, Get, Post, Patch, Param, Query, Body, UseGuards, Request } from "@nestjs/common";
+import { Controller, Get, Post, Patch, Param, Query, Body, UseGuards, Request } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBearerAuth } from "@nestjs/swagger";
 import { ClothingCategory, PriceRange } from "@prisma/client";
 

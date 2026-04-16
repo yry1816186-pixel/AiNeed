@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TryOnStatus } from "@prisma/client";
 
-import { AiQuotaGuard } from "../../../common/security/rate-limit/ai-quota.guard";
+import { AiQuotaGuard } from "../../../modules/security/rate-limit/ai-quota.guard";
 
 import { TryOnController } from "./try-on.controller";
 import { TryOnService } from "./try-on.service";

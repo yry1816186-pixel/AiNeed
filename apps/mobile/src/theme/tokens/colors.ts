@@ -1,1 +1,2 @@
-export * from "../../design-system/theme/tokens/colors";
+export { flatColors as colors } from "../../design-system/theme";
+export type { FlatColors } from "../../design-system/theme/FlatColors";

@@ -3,7 +3,7 @@
 import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 
-import { PrismaService } from '../../../common/prisma/prisma.service';
+import { PrismaService } from "../../../common/prisma/prisma.service";
 
 const FEATURE_FLAG_QUEUE = 'feature_flag_evaluations';
 

@@ -17,7 +17,16 @@ jest.mock("../../common/redis/redis.service", () => ({
 
 describe("FeatureFlagService", () => {
   let service: FeatureFlagService;
-  let prisma: Record<string, jest.Mock>;
+  let prisma: {
+    featureFlag: {
+      findMany: jest.Mock;
+      findUnique: jest.Mock;
+      create: jest.Mock;
+      update: jest.Mock;
+      delete: jest.Mock;
+      count: jest.Mock;
+    };
+  };
   let redisService: { get: jest.Mock; setex: jest.Mock; del: jest.Mock };
   let evaluationQueue: { add: jest.Mock };
 
@@ -114,9 +123,7 @@ describe("FeatureFlagService", () => {
     it("should throw NotFoundException when flag not found", async () => {
       prisma.featureFlag.findUnique.mockResolvedValueOnce(null);
 
-      await expect(service.findOne("non-existent-id")).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.findOne("non-existent-id")).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -148,13 +155,8 @@ describe("FeatureFlagService", () => {
           rules: createDto.rules,
         },
       });
-      expect(RedisKeyBuilder.cache).toHaveBeenCalledWith(
-        "feature-flag",
-        "new_ui_design",
-      );
-      expect(redisService.del).toHaveBeenCalledWith(
-        "xuno:cache:feature-flag:new_ui_design",
-      );
+      expect(RedisKeyBuilder.cache).toHaveBeenCalledWith("feature-flag", "new_ui_design");
+      expect(redisService.del).toHaveBeenCalledWith("xuno:cache:feature-flag:new_ui_design");
     });
   });
 
@@ -165,10 +167,7 @@ describe("FeatureFlagService", () => {
 
       const result = await service.evaluate("non_existent_key");
 
-      expect(result).toEqual({
-        enabled: false,
-        reason: "flag_not_found",
-      });
+      expect(result).toEqual({ enabled: false, reason: "flag_not_found" });
     });
 
     it("should return flag_disabled when flag is disabled", async () => {
@@ -178,10 +177,7 @@ describe("FeatureFlagService", () => {
 
       const result = await service.evaluate("new_ui_design", "user-1");
 
-      expect(result).toEqual({
-        enabled: false,
-        reason: "flag_disabled",
-      });
+      expect(result).toEqual({ enabled: false, reason: "flag_disabled" });
     });
 
     it("should evaluate boolean type flag correctly", async () => {
@@ -191,10 +187,7 @@ describe("FeatureFlagService", () => {
 
       const result = await service.evaluate("new_ui_design", "user-1");
 
-      expect(result).toEqual({
-        enabled: true,
-        reason: "boolean_toggle",
-      });
+      expect(result).toEqual({ enabled: true, reason: "boolean_toggle" });
     });
 
     it("should evaluate boolean type flag with enabled false", async () => {
@@ -204,10 +197,7 @@ describe("FeatureFlagService", () => {
 
       const result = await service.evaluate("new_ui_design", "user-1");
 
-      expect(result).toEqual({
-        enabled: false,
-        reason: "boolean_toggle",
-      });
+      expect(result).toEqual({ enabled: false, reason: "boolean_toggle" });
     });
   });
 
@@ -215,13 +205,8 @@ describe("FeatureFlagService", () => {
     it("should clear redis and local cache for a specific key", async () => {
       await service.refreshCache("new_ui_design");
 
-      expect(RedisKeyBuilder.cache).toHaveBeenCalledWith(
-        "feature-flag",
-        "new_ui_design",
-      );
-      expect(redisService.del).toHaveBeenCalledWith(
-        "xuno:cache:feature-flag:new_ui_design",
-      );
+      expect(RedisKeyBuilder.cache).toHaveBeenCalledWith("feature-flag", "new_ui_design");
+      expect(redisService.del).toHaveBeenCalledWith("xuno:cache:feature-flag:new_ui_design");
     });
 
     it("should clear only local cache when no key provided", async () => {

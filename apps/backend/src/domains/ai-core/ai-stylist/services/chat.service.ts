@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
 import { PhotoType } from "@prisma/client";
 
-import { PhotosService } from "../../photos/photos.service";
+import { PhotosService } from "../../../photos/photos.service";
 import { LlmProviderService } from "../llm-provider.service";
 import {
   STYLIST_SYSTEM_PROMPT,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from "@nestjs/common";
 
 import { StyleProfilesModule } from "./profiles/style-profiles.module";

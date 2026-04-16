@@ -7,8 +7,8 @@ import {
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosInstance } from "axios";
 
-import { allowUnverifiedAiFallbacks } from "../../../../../../../common/config/runtime-flags";
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { allowUnverifiedAiFallbacks } from "../../../../common/config/runtime-flags";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 interface MultimodalFeatures {
   visual: number[];

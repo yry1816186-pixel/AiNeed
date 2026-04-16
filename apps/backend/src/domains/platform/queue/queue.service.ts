@@ -10,7 +10,7 @@ import {
 import { Queue, Job } from 'bullmq';
 import { v4 as uuidv4 } from 'uuid';
 
-import { PrismaService } from '../../../../common/prisma/prisma.service';
+import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import {
   JOB_STATUS,

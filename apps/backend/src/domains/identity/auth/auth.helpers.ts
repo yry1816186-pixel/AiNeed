@@ -3,9 +3,9 @@ import { createHash } from "crypto";
 
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { RedisService } from "../../../../common/redis/redis.service";
-import * as bcrypt from "../../../../common/security/bcrypt";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RedisService } from "../../../common/redis/redis.service";
+import * as bcrypt from "../../../common/security/bcrypt";
 
 export interface ValidatedUserForAuth {
   id: string;

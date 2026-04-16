@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Controller,
   Get,
@@ -20,8 +19,8 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 
-import { Public } from '../../identity/auth/decorators/public.decorator';
-import { JwtAuthGuard } from '../../identity/auth/guards/jwt-auth.guard';
+import { Public } from "../../identity/auth/decorators/public.decorator";
+import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 
 import { CreateFeatureFlagDto } from './dto/create-flag.dto';
 import { EvaluateFlagDto } from './dto/evaluate-flag.dto';

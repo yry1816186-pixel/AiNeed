@@ -9,6 +9,7 @@
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { logger } from "../utils/logger";
 import type { ClothingItem } from "../types/clothing";
 import type { User } from "../types/user";
 import type { PostCardData } from "../types/social";
@@ -84,16 +85,16 @@ class OfflineCacheService {
    */
   async initialize(): Promise<void> {
     try {
-      console.log("[OfflineCache] 正在初始化离线缓存...");
+      logger.info("[OfflineCache] 正在初始化离线缓存...");
       const keys = await AsyncStorage.getAllKeys();
       const demoKeys = keys.filter((key) => key.startsWith(OFFLINE_CACHE_PREFIX));
 
       if (demoKeys.length > 0) {
-        console.log(`[OfflineCache] 发现 ${demoKeys.length} 个缓存项`);
+        logger.info(`[OfflineCache] 发现 ${demoKeys.length} 个缓存项`);
         // 预加载关键数据到内存
         await this.loadKeyToMemory(CACHE_KEYS.FULL_DEMO_DATA);
       }
-      console.log("[OfflineCache] 初始化完成");
+      logger.info("[OfflineCache] 初始化完成");
     } catch (error) {
       console.error("[OfflineCache] 初始化失败:", error);
     }
@@ -134,7 +135,7 @@ class OfflineCacheService {
       AsyncStorage.setItem(CACHE_KEYS.LAST_SYNC_TIME, new Date().toISOString()),
     ]);
 
-    console.log(`[OfflineCache] Demo 数据已保存 (${JSON.stringify(data).length / 1024} KB)`);
+    logger.info(`[OfflineCache] Demo 数据已保存 (${JSON.stringify(data).length / 1024} KB)`);
   }
 
   /**
@@ -195,7 +196,7 @@ class OfflineCacheService {
    */
   async setDemoMode(enabled: boolean): Promise<void> {
     await AsyncStorage.setItem(CACHE_KEYS.DEMO_MODE_ENABLED, JSON.stringify(enabled));
-    console.log(`[OfflineCache] Demo 模式已${enabled ? "启用" : "禁用"}`);
+    logger.info(`[OfflineCache] Demo 模式已${enabled ? "启用" : "禁用"}`);
   }
 
   /**
@@ -254,7 +255,7 @@ class OfflineCacheService {
     await AsyncStorage.multiRemove(demoKeys);
     this.memoryCache.clear();
 
-    console.log(`[OfflineCache] 已清除 ${demoKeys.length} 个缓存项`);
+    logger.info(`[OfflineCache] 已清除 ${demoKeys.length} 个缓存项`);
   }
 
   /**

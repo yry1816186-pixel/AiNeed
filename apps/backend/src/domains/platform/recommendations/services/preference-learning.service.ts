@@ -2,8 +2,8 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { BehaviorEventType, Prisma } from "@prisma/client";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
-import { RedisService } from "../../../../../../../common/redis/redis.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { RedisService } from "../../../../common/redis/redis.service";
 
 export interface UserPreference {
   category: string;

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BadRequestException } from "@nestjs/common";
 
-import { RedisService } from "../../../../../../../common/redis/redis.service";
+import { RedisService } from "../../../../common/redis/redis.service";
 
 import { SmsThrottleGuard } from "./sms-throttle.guard";
 

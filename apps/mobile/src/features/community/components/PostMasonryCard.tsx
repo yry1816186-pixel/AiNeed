@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, LayoutChangeEvent } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -61,7 +61,7 @@ function PostMasonryCardInner({
   }));
 
   const handleLayout = useCallback(
-    (e: any) => {
+    (e: LayoutChangeEvent) => {
       const h = e.nativeEvent.layout.height;
       if (onHeightMeasured && (measuredHeight === null || Math.abs(measuredHeight - h) > 5)) {
         setMeasuredHeight(h);

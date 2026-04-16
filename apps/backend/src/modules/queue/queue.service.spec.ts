@@ -26,7 +26,10 @@ function createMockQueue() {
 
 describe("QueueService", () => {
   let service: QueueService;
-  let prisma: Record<string, jest.Mock>;
+  let prisma: {
+    userPhoto: { findFirst: jest.Mock };
+    clothingItem: { findUnique: jest.Mock };
+  };
   let aiTasksQueue: ReturnType<typeof createMockQueue>;
   let styleAnalysisQueue: ReturnType<typeof createMockQueue>;
   let virtualTryOnQueue: ReturnType<typeof createMockQueue>;

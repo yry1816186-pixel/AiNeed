@@ -3,8 +3,8 @@ import { BullModule } from '@nestjs/bullmq';
 import { Module, Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { GatewayModule } from '../../../common/gateway/gateway.module';
-import { AIModule } from '../../ai-core/ai/ai.module';
+import { GatewayModule } from "../../../common/gateway/gateway.module";
+import { AIModule } from "../../ai-core/ai/ai.module";
 
 import { QueueName } from './queue-config';
 import { QueueMonitorService } from './queue-monitor.service';

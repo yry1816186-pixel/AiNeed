@@ -5,8 +5,8 @@ import { JwtModule } from "@nestjs/jwt";
 import type { JwtModuleOptions, JwtSignOptions } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 
-import { EmailModule } from "../../../../common/email/email.module";
-import { RedisModule } from "../../../../common/redis/redis.module";
+import { EmailModule } from "../../../common/email/email.module";
+import { RedisModule } from "../../../common/redis/redis.module";
 
 import { AuthController } from "./auth.controller";
 import { AuthHelpersService } from "./auth.helpers";

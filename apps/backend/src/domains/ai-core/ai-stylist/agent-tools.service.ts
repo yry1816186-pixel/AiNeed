@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * GLM-5 Function Calling Agent Tools Service
  *
@@ -15,7 +14,7 @@ import axios, { AxiosInstance } from "axios";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
-import { StyleUnderstandingService } from "../ai/services/style-understanding.service";
+import { StyleUnderstandingService } from '../ai/services/style-understanding.service';
 import {
   RecommendationsService,
   type RecommendedItem,

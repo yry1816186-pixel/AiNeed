@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import {
   BodyType,
@@ -7,8 +6,8 @@ import {
   ClothingCategory,
 } from "@prisma/client";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
-import { AIIntegrationService } from "../../../../ai-core/ai/services/ai-integration.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { AIIntegrationService } from "../../../../../../../ai-core/ai/services/ai-integration.service";
 import {
   ClothingItemWithBrand,
   ClothingItemAttributes,

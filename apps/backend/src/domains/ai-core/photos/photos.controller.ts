@@ -31,8 +31,8 @@ import { PhotoType } from "@prisma/client";
 import type { Response } from "express";
 
 import { SensitiveDataInterceptor } from "../../../common/interceptors/sensitive-data.interceptor";
-import { CurrentUser } from "../../platform/auth/decorators/current-user.decorator";
-import { JwtAuthGuard } from "../../platform/auth/guards/jwt-auth.guard";
+import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
+import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 
 import {
   PhotoUploadResultDto,

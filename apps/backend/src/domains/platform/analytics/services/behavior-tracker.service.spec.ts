@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
-import { RedisService } from "../../../../../../../common/redis/redis.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { RedisService } from "../../../../common/redis/redis.service";
 import { TrackEventDto } from "../dto/track-event.dto";
 
 import {

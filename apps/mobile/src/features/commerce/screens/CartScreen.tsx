@@ -953,7 +953,7 @@ const CartScreen = withErrorBoundary(CartScreenComponent, {
     console.error("[CartScreen] Error:", structuredError);
   },
   onReset: () => {
-    console.log("[CartScreen] Error boundary reset");
+    console.error("[CartScreen] Error boundary reset");
   },
 });
 

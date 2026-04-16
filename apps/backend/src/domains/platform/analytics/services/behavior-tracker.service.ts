@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import { BehaviorEventType } from "@prisma/client";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
-import { RedisService } from "../../../../../../../common/redis/redis.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { RedisService } from "../../../../common/redis/redis.service";
 import { TrackEventDto } from "../dto/track-event.dto";
 
 export interface RecentBehaviorEvent {
@@ -554,7 +553,6 @@ export class BehaviorTrackerService {
    * 基于行为更新推荐权重
    */
   private async updatePreferenceWeightsBatch(events: EnrichedEvent[]): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userEventsMap = new Map<string, any[]>();
 
     // 按用户分组

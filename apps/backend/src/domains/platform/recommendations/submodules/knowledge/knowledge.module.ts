@@ -12,7 +12,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
-import { PrismaModule } from "../../../../../../common/prisma/prisma.module";
+import { PrismaModule } from "../../../../../common/prisma/prisma.module";
 import { GNNCompatibilityService } from "../../services/gnn-compatibility.service";
 import { KnowledgeGraphService } from "../../services/knowledge-graph.service";
 import { LearningToRankService } from "../../services/learning-to-rank.service";

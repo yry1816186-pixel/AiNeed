@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { NotFoundException, BadRequestException } from "@nestjs/common";
+import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";

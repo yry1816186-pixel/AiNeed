@@ -3,7 +3,7 @@ import { Injectable, ExecutionContext, Logger } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import type { Request } from "express";
 
-import { JwtUserPayload } from "../../../../../../../common/types";
+import { JwtUserPayload } from "../../../../common/types";
 
 const logger = new Logger("OptionalAuthGuard");
 

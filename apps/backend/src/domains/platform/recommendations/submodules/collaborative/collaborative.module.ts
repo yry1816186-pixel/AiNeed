@@ -10,7 +10,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
-import { PrismaModule } from "../../../../../../common/prisma/prisma.module";
+import { PrismaModule } from "../../../../../common/prisma/prisma.module";
 import { ColdStartService } from "../../services/cold-start.service";
 import { CollaborativeFilteringService } from "../../services/collaborative-filtering.service";
 import { PreferenceLearningService } from "../../services/preference-learning.service";

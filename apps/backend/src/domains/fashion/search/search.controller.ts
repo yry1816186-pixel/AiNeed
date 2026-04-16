@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { lookup } from "dns/promises";
+import { lookup } from "dns/promises";
 import { isIP } from "net";
 
 import {

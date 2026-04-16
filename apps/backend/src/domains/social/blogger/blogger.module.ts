@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 
 import { PrismaModule } from "../../../common/prisma/prisma.module";
 import { RedisModule } from "../../../common/redis/redis.module";
-import { NotificationModule } from "../../../platform/notification/notification.module";
+import { NotificationModule } from "../../platform/notification/notification.module";
 
 import { BloggerDashboardService } from "./blogger-dashboard.service";
 import { BloggerProductService } from "./blogger-product.service";

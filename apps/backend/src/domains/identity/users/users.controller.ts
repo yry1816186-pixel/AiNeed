@@ -24,7 +24,7 @@ import {
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 
-import { StorageService } from "../../../../common/storage/storage.service";
+import { StorageService } from "../../../common/storage/storage.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 import {

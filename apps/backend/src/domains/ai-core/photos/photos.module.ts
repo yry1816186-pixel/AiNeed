@@ -3,7 +3,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
 import { MalwareScannerService } from "../../../common/security/malware-scanner.service";
-import { OnboardingModule } from "../onboarding/onboarding.module";
+import { OnboardingModule } from "../../identity/onboarding/onboarding.module";
 import { QueueModule } from "../../platform/queue/queue.module";
 
 import { PhotoQualityController } from "./photo-quality.controller";

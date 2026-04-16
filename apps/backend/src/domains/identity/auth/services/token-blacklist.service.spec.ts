@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { RedisService } from "../../../../../../../common/redis/redis.service";
+import { RedisService } from "../../../../common/redis/redis.service";
 
 import { TokenBlacklistService } from "./token-blacklist.service";
 

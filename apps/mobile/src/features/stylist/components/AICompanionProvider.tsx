@@ -468,7 +468,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           setState("idle");
         }, 1000);
       } catch (error) {
-        console.log("AI companion sendMessage failed:", error);
+        console.error("AI companion sendMessage failed:", error);
 
         const errorMessage: ExtendedChatMessage = {
           id: `error-${Date.now()}`,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   UnauthorizedException,
   ConflictException,
@@ -8,10 +7,10 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Test, TestingModule } from "@nestjs/testing";
 
-import { StructuredLoggerService } from "../../../../common/logging/structured-logger.service";
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { RedisService } from "../../../../common/redis/redis.service";
-import * as bcrypt from "../../../../common/security/bcrypt";
+import { StructuredLoggerService } from "../../../common/logging/structured-logger.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RedisService } from "../../../common/redis/redis.service";
+import * as bcrypt from "../../../common/security/bcrypt";
 
 import { AuthHelpersService } from "./auth.helpers";
 import { AuthService } from "./auth.service";
@@ -20,7 +19,7 @@ import { TokenBlacklistService } from "./services/token-blacklist.service";
 import { WechatService } from "./services/wechat.service";
 
 // Mock bcrypt
-jest.mock("../../../../../common/security/bcrypt", () => ({
+jest.mock("../../../../common/security/bcrypt", () => ({
   hash: jest.fn(),
   compare: jest.fn(),
 }));

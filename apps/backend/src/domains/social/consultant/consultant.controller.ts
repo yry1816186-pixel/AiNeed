@@ -18,7 +18,7 @@ import {
 } from "@nestjs/swagger";
 
 import { RequestWithUser } from "../../../common/types/common.types";
-import { AuthGuard } from "../../../identity/auth/guards/auth.guard";
+import { AuthGuard } from "../../identity/auth/guards/auth.guard";
 
 import { ConsultantAvailabilityService } from "./consultant-availability.service";
 import { ConsultantMatchingService } from "./consultant-matching.service";

@@ -1,6 +1,6 @@
 {
   "root": true,
-  "extends": ["../../.eslintrc.json", "expo", "plugin:react/recommended"],
+  "extends": ["../../.eslintrc.json", "expo", "plugin:react/recommended", "plugin:@typescript-eslint/recommended-requiring-type-checking"],
   "plugins": ["@typescript-eslint", "react"],
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -12,7 +12,38 @@
     "react/prop-types": "off",
     "import/export": "off",
     "import/namespace": "off",
-    "import/no-duplicates": "off"
+    "import/no-duplicates": "off",
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Property[key.name='color'] > Literal[value=/^#[0-9a-fA-F]/]",
+        "message": "Hardcoded hex color not allowed. Use DesignTokens.colors.* or useTheme()"
+      },
+      {
+        "selector": "Property[key.name='backgroundColor'] > Literal[value=/^#[0-9a-fA-F]/]",
+        "message": "Hardcoded hex color not allowed. Use DesignTokens.colors.* or useTheme()"
+      },
+      {
+        "selector": "Property[key.name='borderColor'] > Literal[value=/^#[0-9a-fA-F]/]",
+        "message": "Hardcoded hex color not allowed. Use DesignTokens.colors.* or useTheme()"
+      },
+      {
+        "selector": "Property[key.name='tintColor'] > Literal[value=/^#[0-9a-fA-F]/]",
+        "message": "Hardcoded hex color not allowed. Use DesignTokens.colors.* or useTheme()"
+      },
+      {
+        "selector": "Property[key.name='placeholderTextColor'] > Literal[value=/^#[0-9a-fA-F]/]",
+        "message": "Hardcoded hex color not allowed. Use DesignTokens.colors.* or useTheme()"
+      },
+      {
+        "selector": "Property[key.name='shadowColor'] > Literal[value=/^#[0-9a-fA-F]/]",
+        "message": "Hardcoded hex color not allowed. Use DesignTokens.colors.* or useTheme()"
+      },
+      {
+        "selector": "Property[key.name='fontSize'] > Literal",
+        "message": "Hardcoded fontSize not allowed. Use DesignTokens.typography.*"
+      }
+    ]
   },
   "ignorePatterns": [
     "node_modules",

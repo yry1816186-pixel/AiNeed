@@ -2,7 +2,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Gender } from "@prisma/client";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 export interface AdvancedBodyMetrics {
   basicMetrics: {

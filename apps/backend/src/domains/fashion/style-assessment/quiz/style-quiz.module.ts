@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Module, forwardRef } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 
 import { PrismaModule } from "../../../../common/prisma/prisma.module";
 import { OnboardingModule } from "../../../../domains/identity/onboarding/onboarding.module";

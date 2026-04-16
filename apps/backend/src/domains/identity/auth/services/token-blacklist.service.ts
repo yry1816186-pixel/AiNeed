@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 
-import { RedisService } from "../../../../../../../common/redis/redis.service";
+import { RedisService } from "../../../../common/redis/redis.service";
 
 const BLACKLIST_KEY_PREFIX = "token:blacklist:";
 const USER_TOKENS_KEY_PREFIX = "user:tokens:";

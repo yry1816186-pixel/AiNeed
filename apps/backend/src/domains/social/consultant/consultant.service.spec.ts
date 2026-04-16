@@ -2,7 +2,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { PaymentService } from "../../../commerce/payment/payment.service";
+import { PaymentService } from "../../commerce/payment/payment.service";
 
 import { ConsultantService } from "./consultant.service";
 import {

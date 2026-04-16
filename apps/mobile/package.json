@@ -10,7 +10,11 @@
     "lint": "node ../../node_modules/eslint/bin/eslint.js .",
     "lint:fix": "node ../../node_modules/eslint/bin/eslint.js . --fix",
     "typecheck": "tsc --noEmit",
-    "build": "echo 'Mobile build handled by Metro bundler'"
+    "build": "echo 'Mobile build handled by Metro bundler'",
+    "audit:colors": "npx tsx scripts/audit-hardcoded-colors.ts",
+    "audit:typography": "npx tsx scripts/audit-hardcoded-typography.ts",
+    "audit:spacing": "npx tsx scripts/audit-hardcoded-spacing.ts",
+    "audit:all": "npx tsx scripts/audit-hardcoded-colors.ts && npx tsx scripts/audit-hardcoded-typography.ts && npx tsx scripts/audit-hardcoded-spacing.ts"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.0.0",

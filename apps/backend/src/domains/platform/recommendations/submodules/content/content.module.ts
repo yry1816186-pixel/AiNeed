@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Content-Based Filtering Submodule
  * Handles content-based recommendations:
@@ -12,8 +11,8 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
-import { PrismaModule } from "../../../../../../common/prisma/prisma.module";
-import { AIModule } from "../../../../../ai-core/ai/ai.module";
+import { PrismaModule } from "../../../../../common/prisma/prisma.module";
+import { AIModule } from "../../../../../../../../../../../../ai-core/ai/ai.module";
 import { ColorMatchingService } from "../../services/color-matching.service";
 import { MultimodalFusionService } from "../../services/multimodal-fusion.service";
 import { SASRecService } from "../../services/sasrec.service";

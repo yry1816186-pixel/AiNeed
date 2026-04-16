@@ -8,8 +8,8 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
-import { JwtUserPayload } from "../../../../../../../common/types/common.types";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { JwtUserPayload } from "../../../../common/types/common.types";
 
 interface MerchantJwtPayload extends JwtUserPayload {
   merchantId?: string;

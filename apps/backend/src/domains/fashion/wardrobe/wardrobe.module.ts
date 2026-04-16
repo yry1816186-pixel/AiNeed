@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from "@nestjs/common";
 
 import { WardrobeCollectionModule } from "./collection/wardrobe-collection.module";

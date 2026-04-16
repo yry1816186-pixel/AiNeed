@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 ﻿import { Injectable, Logger } from "@nestjs/common";
 
-import { EmailService } from "../../../../common/email/email.service";
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { StorageService } from "../../../../common/storage/storage.service";
+import { EmailService } from "../../../common/email/email.service";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { StorageService } from "../../../common/storage/storage.service";
 
 @Injectable()
 export class PrivacyService {
