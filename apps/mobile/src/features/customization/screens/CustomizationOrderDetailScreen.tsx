@@ -121,8 +121,9 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
 
   const currentStepIndex = order ? STATUS_STEPS.findIndex((s) => s.key === order.status) : -1;
 
-  const renderStatusTimeline = () => (
+  const renderStatusTimeline = () => {
     const { colors } = useTheme();
+    return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>订单状态</Text>
       <View style={styles.timeline}>

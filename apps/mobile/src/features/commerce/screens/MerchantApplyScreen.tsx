@@ -43,7 +43,7 @@ export const MerchantApplyScreen: React.FC = () => {
           setScreenState("approved");
         } else if (status === "rejected" || status === "REJECTED") {
           setScreenState("rejected");
-          setRejectReason((response.data as { reason?: string }).reason ?? "未通过审核");
+          setRejectReason((response.data as { reason?: string }).reason ?? "\u672A\u901A\u8FC7\u5BA1\u6838");
         }
       }
     } catch {
@@ -79,10 +79,10 @@ export const MerchantApplyScreen: React.FC = () => {
       if (response.success) {
         setScreenState("pending");
       } else {
-        Alert.alert("提交失败", response.error?.message ?? "请稍后重�?);
+        Alert.alert("\u63D0\u4EA4\u5931\u8D25", response.error?.message ?? "\u8BF7\u7A0D\u540E\u91CD\u8BD5");
       }
     } catch {
-      Alert.alert("提交失败", "网络错误，请稍后重试");
+      Alert.alert("\u63D0\u4EA4\u5931\u8D25", "\u7F51\u7EDC\u9519\u8BEF\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5");
     } finally {
       setSubmitting(false);
     }
@@ -111,12 +111,12 @@ export const MerchantApplyScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>商家入驻</Text>
+        <Text style={styles.headerTitle}>{"\u5546\u5BB6\u5165\u9A7B"}</Text>
       </View>
 
       {screenState === "form" ? (
         <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.fieldLabel}>品牌名称</Text>
+          <Text style={styles.fieldLabel}>{"\u54C1\u724C\u540D\u79F0"}</Text>
           <TextInput
             style={styles.input}
             value={brandName}
@@ -124,18 +124,18 @@ export const MerchantApplyScreen: React.FC = () => {
               setBrandName(text);
               setBrandNameError("");
             }}
-            placeholder="请输入品牌名�?
+            placeholder={"\u8BF7\u8F93\u5165\u54C1\u724C\u540D\u79F0"}
             placeholderTextColor={DesignTokens.colors.neutral[300]}
           />
           {brandNameError ? <Text style={styles.errorText}>{brandNameError}</Text> : null}
 
-          <Text style={styles.fieldLabel}>营业执照�?/Text>
+          <Text style={styles.fieldLabel}>{"\u8425\u4E1A\u6267\u7167\u53F7"}</Text>
           <View style={styles.inputRow}>
             <TextInput
               style={[styles.input, styles.inputWithIcon]}
               value={businessLicense}
               onChangeText={setBusinessLicense}
-              placeholder="18位统一社会信用代码"
+              placeholder="18\u4F4D\u7EDF\u4E00\u793E\u4F1A\u4FE1\u7528\u4EE3\u7801"
               placeholderTextColor={DesignTokens.colors.neutral[300]}
               maxLength={18}
             />
@@ -149,22 +149,22 @@ export const MerchantApplyScreen: React.FC = () => {
             )}
           </View>
 
-          <Text style={styles.fieldLabel}>联系�?/Text>
+          <Text style={styles.fieldLabel}>{"\u8054\u7CFB\u4EBA"}</Text>
           <TextInput
             style={styles.input}
             value={contactName}
             onChangeText={setContactName}
-            placeholder="请输入联系人姓名"
+            placeholder={"\u8BF7\u8F93\u5165\u8054\u7CFB\u4EBA\u59D3\u540D"}
             placeholderTextColor={DesignTokens.colors.neutral[300]}
           />
 
-          <Text style={styles.fieldLabel}>手机�?/Text>
+          <Text style={styles.fieldLabel}>{"\u624B\u673A\u53F7"}</Text>
           <View style={styles.inputRow}>
             <TextInput
               style={[styles.input, styles.inputWithIcon]}
               value={phone}
               onChangeText={setPhone}
-              placeholder="请输入手机号"
+              placeholder={"\u8BF7\u8F93\u5165\u624B\u673A\u53F7"}
               placeholderTextColor={DesignTokens.colors.neutral[300]}
               keyboardType="phone-pad"
               maxLength={11}
@@ -179,12 +179,12 @@ export const MerchantApplyScreen: React.FC = () => {
             )}
           </View>
 
-          <Text style={styles.fieldLabel}>品牌简�?/Text>
+          <Text style={styles.fieldLabel}>{"\u54C1\u724C\u7B80\u4ECB"}</Text>
           <TextInput
             style={[styles.input, styles.textArea]}
             value={description}
             onChangeText={setDescription}
-            placeholder="请简要介绍品牌（选填�?
+            placeholder={"\u8BF7\u7B80\u8981\u4ECB\u7ECD\u54C1\u724C\uFF08\u9009\u586B\uFF09"}
             placeholderTextColor={DesignTokens.colors.neutral[300]}
             multiline
             maxLength={500}
@@ -199,7 +199,7 @@ export const MerchantApplyScreen: React.FC = () => {
             {submitting ? (
               <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
             ) : (
-              <Text style={styles.submitButtonText}>提交申请</Text>
+              <Text style={styles.submitButtonText}>{"\u63D0\u4EA4\u7533\u8BF7"}</Text>
             )}
           </TouchableOpacity>
         </ScrollView>
@@ -208,17 +208,17 @@ export const MerchantApplyScreen: React.FC = () => {
       {screenState === "pending" ? (
         <View style={styles.statusContainer}>
           <ActivityIndicator size="large" color={DesignTokens.colors.semantic.error} />
-          <Text style={styles.statusTitle}>申请审核�?/Text>
-          <Text style={styles.statusMessage}>申请已提交，我们将在1-3个工作日内完成审�?/Text>
+          <Text style={styles.statusTitle}>{"\u7533\u8BF7\u5BA1\u6838\u4E2D"}</Text>
+          <Text style={styles.statusMessage}>{"\u7533\u8BF7\u5DF2\u63D0\u4EA4\uFF0C\u6211\u4EEC\u5C06\u57281-3\u4E2A\u5DE5\u4F5C\u65E5\u5185\u5B8C\u6210\u5BA1\u6838"}</Text>
         </View>
       ) : null}
 
       {screenState === "approved" ? (
         <View style={styles.statusContainer}>
           <Ionicons name="checkmark-circle" size={64} color={DesignTokens.colors.semantic.success} />
-          <Text style={styles.statusTitle}>恭喜！您的商家申请已通过</Text>
+          <Text style={styles.statusTitle}>{"\u606D\u559C\uFF01\u60A8\u7684\u5546\u5BB6\u7533\u8BF7\u5DF2\u901A\u8FC7"}</Text>
           <TouchableOpacity style={styles.submitButton}>
-            <Text style={styles.submitButtonText}>进入商家后台</Text>
+            <Text style={styles.submitButtonText}>{"\u8FDB\u5165\u5546\u5BB6\u540E\u53F0"}</Text>
           </TouchableOpacity>
         </View>
       ) : null}
@@ -226,10 +226,10 @@ export const MerchantApplyScreen: React.FC = () => {
       {screenState === "rejected" ? (
         <View style={styles.statusContainer}>
           <Ionicons name="close-circle" size={64} color={DesignTokens.colors.semantic.error} />
-          <Text style={styles.statusTitle}>很抱歉，您的申请未通过</Text>
-          <Text style={styles.statusMessage}>原因：{rejectReason}</Text>
+          <Text style={styles.statusTitle}>{"\u5F88\u62B1\u6B49\uFF0C\u60A8\u7684\u7533\u8BF7\u672A\u901A\u8FC7"}</Text>
+          <Text style={styles.statusMessage}>{"\u539F\u56E0\uFF1A"}{rejectReason}</Text>
           <TouchableOpacity style={styles.submitButton} onPress={handleRetry}>
-            <Text style={styles.submitButtonText}>重新申请</Text>
+            <Text style={styles.submitButtonText}>{"\u91CD\u65B0\u7533\u8BF7"}</Text>
           </TouchableOpacity>
         </View>
       ) : null}
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 24,
   },
-  submitButtonDisabled: { backgroundColor: "#FFB0B0" }, // custom color
+  submitButtonDisabled: { backgroundColor: "#FFB0B0" },
   submitButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",

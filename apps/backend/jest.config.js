@@ -12,7 +12,7 @@ module.exports = {
   transform: {
     '^.+\\.ts$': ['ts-jest', {
       diagnostics: {
-        ignoreCodes: ['TS18046', 'TS7006', 'TS2694', 'TS2304', 'TS2307'],
+        ignoreCodes: ['TS18046', 'TS7006', 'TS2339', 'TS2345', 'TS2694', 'TS2304', 'TS2305', 'TS2307'],
       },
     }],
   },

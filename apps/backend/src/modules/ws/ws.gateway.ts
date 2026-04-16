@@ -22,7 +22,7 @@ import Redis from 'ioredis';
 import { Server, Socket } from 'socket.io';
 
 import { REDIS_CLIENT } from '../../common/redis/redis.service';
-import { TokenBlacklistService } from '../auth/services/token-blacklist.service';
+import { TokenBlacklistService } from '../../domains/identity/auth/services/token-blacklist.service';
 
 export type AITaskEventType = 'task_created' | 'task_progress' | 'task_completed' | 'task_failed' | 'task_cancelled';
 
