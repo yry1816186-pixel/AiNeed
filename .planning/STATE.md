@@ -8,8 +8,8 @@ progress:
   total_phases: 11
   completed_phases: 0
   total_plans: 47
-  completed_plans: 15
-  percent: 32
+  completed_plans: 17
+  percent: 36
 ---
 
 # State: 寻裳代码规整
@@ -25,6 +25,7 @@ progress:
 ## Completed Phases
 
 1. **Phase 1: 清理与基础修复** — All 5 plans executed across 3 waves
+5. **Phase 5: 移动端页面重组** — All 8 plans executed (stores deduped, screens migrated, barrels converted)
 
 ## Key Decisions Log
 
