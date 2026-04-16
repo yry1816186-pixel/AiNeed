@@ -9,7 +9,7 @@ import type {
   CommunityStackParamList,
   ProfileStackParamList,
 } from "./types";
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { GuardedScreen } from "./RouteGuards";
 import { PageTransitions } from "../theme/tokens/animations";
 

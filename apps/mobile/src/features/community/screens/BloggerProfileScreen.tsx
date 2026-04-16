@@ -15,7 +15,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { communityApi } from '../../../services/api/community.api';
 import { bloggerApi, BloggerProduct } from '../../../services/api/blogger.api';

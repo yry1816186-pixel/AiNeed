@@ -18,7 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTranslation } from '../../../i18n';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { clothingApi } from '../../../services/api/clothing.api';
 import { outfitApi } from '../../../services/api/outfit.api';
 import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from '../../types/clothing';

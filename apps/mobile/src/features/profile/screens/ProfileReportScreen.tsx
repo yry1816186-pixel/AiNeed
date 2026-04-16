@@ -26,10 +26,10 @@ import { typography } from "@/src/theme/tokens/typography";
 import { spacing } from "@/src/theme/tokens/spacing";
 import { shadows } from "@/src/theme/tokens/shadows";
 import { withErrorBoundary } from "@/src/shared/components/ErrorBoundary";
-import { BodyTypeCard } from "./components/BodyTypeCard";
-import { ColorSeasonCard } from "./components/ColorSeasonCard";
-import { StyleTagsCard } from "./components/StyleTagsCard";
-import { SharePosterPreview } from "./components/SharePosterPreview";
+import { BodyTypeCard } from '../../../components/BodyTypeCard';
+import { ColorSeasonCard } from '../../../components/ColorSeasonCard';
+import { StyleTagsCard } from '../../../components/StyleTagsCard';
+import { SharePosterPreview } from '../../../components/SharePosterPreview';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 type ProfileReportNavigationProp = NativeStackNavigationProp<RootStackParamList>;

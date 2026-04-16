@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Svg, Rect, Image as SvgImage, Text as SvgText, G } from "react-native-svg";
 import { GestureHandlerRootView, GestureDetector, Gesture } from "react-native-gesture-handler";
 import { Colors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import type { DesignLayer, PrintableAreaBounds } from '../stores/customizationEditorStore';
 import { DesignTokens } from "../../../design-system/theme";
 

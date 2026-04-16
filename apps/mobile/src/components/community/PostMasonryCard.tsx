@@ -9,7 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { SharedElement } from "react-navigation-shared-element";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { BloggerBadge } from "./BloggerBadge";
 import { DesignTokens } from "../../design-system/theme";
 

@@ -17,7 +17,7 @@ import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { useGlow } from "../../hooks/useAdvancedAnimations";
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { SpringConfigs, Duration } from "../../theme/tokens/animations";
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 
 const TERRACOTTA = DesignTokens.colors.brand.terracotta; // #C67B5C
 const CAMEL = DesignTokens.colors.brand.camel; // #B5A08C

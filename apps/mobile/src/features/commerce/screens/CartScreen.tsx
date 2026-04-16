@@ -23,7 +23,7 @@ import { useCouponStore } from '../stores/couponStore';
 
 import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTranslation } from '../../../i18n';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { haptics } from '../../../utils/haptics';
 import { withErrorBoundary } from '../../../shared/components/ErrorBoundary';

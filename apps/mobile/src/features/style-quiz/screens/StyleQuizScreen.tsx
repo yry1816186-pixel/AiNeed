@@ -20,7 +20,7 @@ import {
   useStyleQuizLoading,
   useStyleQuizError,
 } from '../stores/index';
-import { QuizProgress } from "./components/QuizProgress";
+import { QuizProgress } from '../../../components/QuizProgress';
 import type { RootStackParamList } from '../../../types/navigation';
 
 const QUIZ_ID = "default";

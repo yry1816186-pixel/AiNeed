@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { launchImageLibrary } from "react-native-image-picker";
 import { useCustomizationEditorStore, type DesignLayer } from '../stores/customizationEditorStore';

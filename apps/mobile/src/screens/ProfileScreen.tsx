@@ -22,7 +22,7 @@ import { ProfileCompletenessBar } from "../components/profile/ProfileCompletenes
 import { useProfileStore } from "../stores/profileStore";
 import type { UserStats, User } from "../types/user";
 import type { RootStackParamList } from "../types/navigation";
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 
 // 引入增强主题令牌
 import { colors } from "../theme/tokens/colors";
@@ -30,7 +30,7 @@ import { DesignTokens } from "../theme/tokens/design-tokens";
 import { typography } from "../theme/tokens/typography";
 import { spacing } from "../theme/tokens/spacing";
 import { shadows } from "../theme/tokens/shadows";
-import { useTheme } from "../contexts/ThemeContext";
+
 import { seasonLabels, type ColorSeason } from "../theme/tokens/season-colors";
 import { useScreenTracking } from "../hooks/useAnalytics";
 import { useTranslation, useI18n } from "../i18n";

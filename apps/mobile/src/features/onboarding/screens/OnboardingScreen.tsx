@@ -24,7 +24,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp as NavProp } from "@react-navigation/native";
 import { useTranslation } from '../../../i18n';
 import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { profileApi, type UpdateProfileDto } from '../../../services/api/profile.api';
 import { pickImageSecurely, ImageValidationError } from '../../../utils/imagePicker';

@@ -9,7 +9,7 @@ import {
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Animated, { SlideInRight } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface PhotoStepProps {

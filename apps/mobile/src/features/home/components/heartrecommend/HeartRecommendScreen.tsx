@@ -17,7 +17,7 @@ import Animated, {
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
 import { Colors, Shadows } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { recommendationsApi } from '../../../services/api/tryon.api';
 import { cartApi } from '../../../services/api/commerce.api';
 import { useAuthStore, useHeartRecommendStore } from '../../../stores';

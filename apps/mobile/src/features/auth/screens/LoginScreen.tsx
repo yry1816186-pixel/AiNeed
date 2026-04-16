@@ -18,7 +18,7 @@ import { useTranslation } from '../../../i18n';
 
 import { wechatAuth } from '../../../services/auth/wechat';
 import { useAuthStore } from '../stores/index';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import type { RootStackParamList } from '../../../types/navigation';
 

@@ -12,7 +12,7 @@ import { LinearGradient } from "../polyfills/expo-linear-gradient";
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
 import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { useProfileStore } from "../stores/profileStore";
 import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";

@@ -19,7 +19,7 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { clothingApi } from "../services/api/clothing.api";
 import { cartApi } from "../services/api/commerce.api";
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import type { RootStackParamList } from "../types/navigation";
 import type { ClothingItem } from "../types/clothing";

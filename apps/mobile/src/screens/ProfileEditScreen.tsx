@@ -13,7 +13,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 import { Ionicons } from "../polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { useProfileStore } from "../stores/profileStore";
 import { ScreenLayout, Header } from "../shared/components/layout/ScreenLayout";

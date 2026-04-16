@@ -11,9 +11,9 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { useProfileStore } from '../stores/profileStore';
-import { useTheme } from '../../../shared/contexts/ThemeContext';
+
 import { normalizeColorSeason, seasonLabels, type ColorSeason } from '../../../design-system/theme/tokens/season-colors';
 import { ScreenLayout, Header } from '../../../shared/components/layout/ScreenLayout';
 import { SeasonPalette } from '../../../shared/components/visualization/SeasonPalette';

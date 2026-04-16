@@ -93,7 +93,6 @@ const SEASON_STORAGE_KEY = "@xuno_color_season";
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const { colors, isDark } = useTheme();
   const systemColorScheme = useColorScheme();
   const [mode, setModeState] = useState<ThemeMode>("system");
   const [colorSeason, setColorSeasonState] = useState<ColorSeason | null>(null);

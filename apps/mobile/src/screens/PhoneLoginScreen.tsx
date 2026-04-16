@@ -16,7 +16,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { smsApi } from "../services/api/sms.api";
 import { useTranslation } from "../i18n";
 import { useAuthStore } from "../stores/index";
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import type { RootStackParamList } from "../types/navigation";
 

@@ -11,7 +11,7 @@ import {
   Dimensions,
   FlatList,
 } from "react-native";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { ClothingItem, ClothingCategory, Season, Occasion } from '../../../types/clothing';

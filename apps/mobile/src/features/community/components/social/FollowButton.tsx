@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { communityApi } from '../../../services/api/community.api';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from "../../../../design-system/theme";
 
 interface FollowButtonProps {

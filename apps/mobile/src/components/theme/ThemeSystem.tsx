@@ -44,12 +44,7 @@ import {
   gradients as themeGradients,
 } from '../../design-system/theme';
 import { DesignTokens } from "../../design-system/theme";
-import {
-  ThemeProvider as UnifiedThemeProvider,
-  useTheme as useUnifiedTheme,
-  type ThemeMode,
-  type ThemeContextType,
-} from "../../contexts/ThemeContext";
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -57,13 +52,13 @@ const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 // ─── Re-export unified ThemeProvider ──────────────────────────────────────
 
 /**
- * @deprecated 使用 `import { ThemeProvider } from '../contexts/ThemeContext'` 代替。
+ * @deprecated 使用 `` 代替。
  * 此 re-export 保持向后兼容，实际指向统一的 ThemeProvider。
  */
 export const ThemeProvider = UnifiedThemeProvider;
 
 /**
- * @deprecated 使用 `import { useTheme } from '../contexts/ThemeContext'` 代替。
+ * @deprecated 使用 `` 代替。
  * 此 re-export 保持向后兼容，实际指向统一的 useTheme。
  */
 export const useTheme = useUnifiedTheme;

@@ -13,7 +13,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useProfileStore } from '../stores/profileStore';
 import { ScreenLayout, Header } from '../../../shared/components/layout/ScreenLayout';
@@ -154,8 +154,8 @@ export const ProfileEditScreen: React.FC = () => {
     }
   }, [nickname, gender, body, selectedStyles, updateProfile, navigation]);
 
-  const renderBodyField = (field: keyof BodyFormState, label: string, unit: string) => (
-    const { colors } = useTheme();
+  const renderBodyField = (field: keyof BodyFormState, label: string, unit: string) => {
+    return (
     <View style={styles.inputField} key={field}>
       <Text style={styles.inputLabel}>{label}</Text>
       <View style={styles.inputContainer}>

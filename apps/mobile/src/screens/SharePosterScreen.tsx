@@ -5,7 +5,7 @@ import { Ionicons } from "../polyfills/expo-vector-icons";
 import { LinearGradient } from "../polyfills/expo-linear-gradient";
 import Share from "react-native-share";
 import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { useProfileStore } from "../stores/profileStore";
 import { useAuthStore } from "../stores/index";

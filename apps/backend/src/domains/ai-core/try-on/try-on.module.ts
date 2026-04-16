@@ -6,6 +6,7 @@ import { ConfigModule } from "@nestjs/config";
 import { GatewayModule } from "../../../common/gateway/gateway.module";
 import { LoggingModule } from "../../../common/logging/logging.module";
 import { StorageModule } from "../../../common/storage/storage.module";
+import { QueueModule } from "../../platform/queue/queue.module";
 import { QueueName } from "../../platform/queue/queue-config";
 
 import { DoubaoSeedreamProvider } from "./services/doubao-seedream.provider";
@@ -22,6 +23,7 @@ import { VirtualTryOnProcessor } from "./virtual-tryon.processor";
     StorageModule,
     LoggingModule,
     GatewayModule,
+    QueueModule,
     BullModule.registerQueue({ name: QueueName.VIRTUAL_TRYON }),
   ],
   controllers: [TryOnController],

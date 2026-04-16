@@ -20,9 +20,9 @@ import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import { useAuthStore } from '../stores/index';
 import { authApi } from '../services/api/auth.api';
 import { apiClient } from '../services/api/client';
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { useTranslation } from '../i18n';
-import { useTheme } from '../contexts/ThemeContext';
+
 import type { RootStackParamList } from '../types/navigation';
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 

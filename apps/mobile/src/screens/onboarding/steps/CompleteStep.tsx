@@ -12,7 +12,7 @@ import Animated, {
   SlideInUp,
 } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 

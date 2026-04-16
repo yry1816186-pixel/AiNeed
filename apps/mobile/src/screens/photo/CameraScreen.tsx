@@ -13,7 +13,7 @@ import { pickImageSecurely } from "../../utils/imagePicker";
 import { useCameraPermissions } from "../../hooks/useCameraPermissions";
 import { useReferenceLines } from "../../hooks/useReferenceLines";
 import { usePhotoStore } from "../../stores/photoStore";
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { ReferenceLineOverlay } from "./components/ReferenceLineOverlay";
 import AlignmentGuide from "./components/AlignmentGuide";

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Injectable, Logger, Inject, forwardRef } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { NotificationType, Prisma } from "@prisma/client";
 
-import { NotificationService as WebSocketNotificationService } from "../../../../../../../common/gateway/notification.service";
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { NotificationService as WebSocketNotificationService } from "../../../../../common/gateway/notification.service";
+import { PrismaService } from "../../../../../common/prisma/prisma.service";
 
 import { NotificationTemplateService } from "./notification-template.service";
 import type { PushPayload } from "./push-notification.service";
@@ -87,7 +87,6 @@ export class NotificationService {
 
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(forwardRef(() => WebSocketNotificationService))
     private readonly wsNotificationService: WebSocketNotificationService,
     private readonly pushNotificationService: PushNotificationService,
     private readonly templateService: NotificationTemplateService,

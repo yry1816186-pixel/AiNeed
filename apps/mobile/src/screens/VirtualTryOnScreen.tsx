@@ -2,7 +2,7 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { View, ActivityIndicator } from "react-native";
 
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import { StyleSheet } from "react-native";
 import { withErrorBoundary } from "../shared/components/ErrorBoundary";

@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { useAiStylistStore, type OutfitPlanDetail } from '../stores/aiStylistStore';
 import type { StylistStackParamList } from '../../../navigation/types';
 import { DesignTokens } from '../../../design-system/theme';

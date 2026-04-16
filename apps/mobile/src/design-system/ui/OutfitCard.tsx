@@ -12,7 +12,7 @@ import {
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
 } from '../../design-system/theme';
-import { useTheme } from "../../contexts/ThemeContext";
+
 import { DesignTokens } from "../theme/tokens/design-tokens";
 
 interface OutfitCardProps {

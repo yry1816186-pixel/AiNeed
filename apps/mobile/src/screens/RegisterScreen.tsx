@@ -18,7 +18,7 @@ import { authApi } from '../services/api/auth.api';
 import { useTranslation } from '../i18n';
 import { useAuthStore } from '../stores/index';
 import { apiClient } from '../services/api/client';
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { DesignTokens } from '../theme/tokens/design-tokens';
 import type { RootStackParamList } from '../types/navigation';
 

@@ -15,10 +15,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay } from "react-native-reanimated";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { useTranslation } from '../../../i18n';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { useTheme } from '../../../shared/contexts/ThemeContext';
+
 import { SpringConfigs, ListAnimations, Duration } from '../../../design-system/theme/tokens/animations';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { AIThinkingAnimation } from '../../../components/aistylist/AIThinkingAnimation';

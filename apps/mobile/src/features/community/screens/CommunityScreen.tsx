@@ -3,14 +3,14 @@ import { StyleSheet, Alert, useWindowDimensions } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTranslation } from '../../../i18n';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { communityApi } from '../../../services/api/community.api';
 import { TrendingCard } from '../../../components/community/TrendingCard';
 import { CreatePostModal } from '../../../components/community/CreatePostModal';
 import type { PostCardData } from '../../../components/community/PostMasonryCard';
-import { CommunityHeader } from "./community/CommunityHeader";
-import { CommunityFeed } from "./community/CommunityFeed";
-import { CreatePostFab } from "./community/CreatePostFab";
+import { CommunityHeader } from './CommunityHeader';
+import { CommunityFeed } from './CommunityFeed';
+import { CreatePostFab } from './CreatePostFab';
 
 const TEXT_AREA_HEIGHT = 68;
 

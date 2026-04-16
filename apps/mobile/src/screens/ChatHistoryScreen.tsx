@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from 'undefined';
 import { useAiStylistStore, type ArchivedSession } from "../stores/aiStylistStore";
 import type { StylistStackParamList } from "../navigation/types";
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
