@@ -370,7 +370,7 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
   };
 
   return (
-    <AnimatedView style={[styles.container, cardOpacity as any, style]}>
+    <AnimatedView style={[styles.container, cardOpacity as Animated.AnimatedStyle<ViewStyle>, style]}>
       {renderHeader()}
       <ScrollView
         horizontal
