@@ -40,17 +40,19 @@ export const FontFamilies = {
 
   // 混合字体（中英文混排场景）
   mixed: Platform.select({
-    ios: "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'SF Pro Display', sans-serif",
-    android: "'Noto Sans SC', Roboto, sans-serif",
+    ios: "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'SF Pro Display', sans-serif',
+    android: "'Noto Sans SC', Roboto, sans-serif',
     default: "system-ui, -apple-system, sans-serif",
   }),
 } as const;
 
+// FontSizes aligned with DesignTokens.typography.sizes (DesignTokens is source of truth)
 export const FontSizes = {
   "2xs": 10,
-  xs: 12,
-  sm: 14,
-  base: 16,
+  xs: 11,
+  sm: 12,
+  base: 14,
+  md: 16,
   lg: 18,
   xl: 20,
   "2xl": 24,

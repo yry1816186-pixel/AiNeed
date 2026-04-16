@@ -149,6 +149,18 @@ class ServiceName:
 
 ## General Conventions
 
+### AI Agent 协作规范
+
+遇到问题经评估后，在保证安全的前提下，优先使用高等级模型进行高并发子 Agent 并行协作，加速开发进程：
+
+- **评估优先**：先评估任务复杂度、影响范围和安全风险
+- **安全底线**：数据库迁移、支付逻辑、用户数据、生产环境等高风险操作必须串行执行并人工确认
+- **高并发并行**：无安全风险的独立任务，尽可能启动多个子 Agent 并行处理（上限 5 个）
+- **高等级模型**：复杂推理、架构设计、代码审计等任务，优先使用高等级模型（chief-architect、backend-architect、security-auditor）
+- **结果合并**：所有子 Agent 完成后，统一检查冲突和一致性
+- **回滚保障**：每个子 Agent 的修改必须可独立回滚
+- **验证门禁**：并行修改后必须运行全量 lint + typecheck + 测试
+
 ### Git
 
 - Branch naming: feature/fix/chore prefix

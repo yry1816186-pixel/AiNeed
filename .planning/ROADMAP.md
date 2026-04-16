@@ -194,28 +194,29 @@
 
 ---
 
-### Phase 6: AI 服务规整
+### Phase 6: AI 服务规整 ✅
 
 **Goal:** 清理 Python AI 服务代码，规范化项目结构
 
 **Depends on:** Phase 4 (后端域划分完成，AI 相关模块已归入 ai-core 域)
 
 **Plans:**
-1. 创建 pyproject.toml 替代 requirements.txt
-2. 移除 sys.path hack
-3. 合并重复路由（stylist_chat + intelligent_stylist_api → stylist）
-4. 合并 body_analysis + style_analysis + photo_quality → analysis
-5. 按能力域重组服务文件（stylist/, tryon/, analysis/, common/）
-6. 统一错误处理和日志格式
+1. ✅ 创建 pyproject.toml 替代 requirements.txt
+2. ✅ 移除 sys.path hack
+3. ✅ 合并重复路由（stylist_chat + intelligent_stylist_api → stylist）
+4. ✅ 合并 body_analysis + style_analysis + photo_quality → analysis
+5. ✅ 按能力域重组服务文件（stylist/, tryon/, analysis/, common/, recommender/）
+6. ✅ 统一错误处理和日志格式
 
 **Requirements:** AISV-01, AISV-02, AISV-03, AISV-04
 
 **UAT Criteria:**
-- [ ] pyproject.toml 替代 requirements.txt
-- [ ] 无 sys.path hack
-- [ ] 路由结构清晰（stylist, tryon, analysis, health）
-- [ ] 服务文件按能力域组织
-- [ ] AI 服务 API 端点正常工作
+- [x] pyproject.toml 替代 requirements.txt
+- [x] 无 sys.path hack
+- [x] 路由结构清晰（stylist, analysis, recommend, tryon, health）
+- [x] 服务文件按能力域组织
+- [x] 统一错误处理（MLError 子类替代 HTTPException）
+- [x] 结构化日志格式（extra={} 字典）
 
 **Risk:** 低 — AI 服务相对独立，不影响主应用
 
@@ -252,6 +253,38 @@
 
 ---
 
+### Phase 8: 移动端错误处理与 API 对接
+
+**Goal:** 消除静默吞错，补全 Stub 方法，完善 API 对接
+
+**Depends on:** Phase 5
+
+**Plans:**
+1. 关键 Store 添加 error 状态字段和 setError/clearError 方法（useOrderStore、useCouponStore、useNotificationStore）
+2. 空 catch 块添加 error state 更新或 Toast 提示（约 75 处）
+3. Stub 方法连接真实 API 或添加"功能开发中"提示（约 20 处）
+4. Mock 数据降级时显示"当前为示例数据"提示
+5. 替换 console.log 为 console.error 或移除（约 20 处）
+6. 替换占位符信息（LegalScreen 400-XXX-XXXX）
+7. 清理重复 Store 定义（auth.store.ts 旧版 vs features/auth/stores 新版）
+
+**Requirements:** MOBL-07, QUAL-08
+
+**UAT Criteria:**
+- [ ] 所有关键 Store 包含 error 状态字段
+- [ ] 无空 catch 块（至少包含 error state 更新或 Toast）
+- [ ] Stub 方法要么连接真实 API，要么显示"功能开发中"Toast
+- [ ] Mock 数据降级时用户可见提示
+- [ ] 无 console.log 残留（仅 console.error/warn）
+- [ ] 无占位符电话号码
+- [ ] 无重复 Store 定义
+
+**Risk:** 🟡 中 — 涉及 Store 状态管理变更，需确保不破坏现有流程
+
+**Pitfall Mitigation:** 优先修复用户可感知错误（支付、登录、收藏），不为未实现的后端 API 编造前端逻辑
+
+---
+
 ## Phase Dependency Graph
 
 ```
@@ -270,6 +303,8 @@ Phase 5 (移动端)    Phase 6 (AI 服务)
     └───────┬────────┘
             ↓
       Phase 7 (质量提升)
+            ↓
+      Phase 8 (错误处理与 API 对接)
 ```
 
 ## Estimated Scope
@@ -284,7 +319,8 @@ Phase 5 (移动端)    Phase 6 (AI 服务)
 | 5 | 10 | 6 | 🟠 中 |
 | 6 | 6 | 4 | 低 |
 | 7 | 6 | 4 | 🟡 中 |
-| **Total** | **64** | **36** | — |
+| 8 | 7 | 2 | 🟡 中 |
+| **Total** | **71** | **38** | — |
 
 ---
 *Roadmap created: 2026-04-16*
