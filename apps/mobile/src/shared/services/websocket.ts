@@ -41,7 +41,8 @@ class WebSocketService {
     let token: string | null = null;
     try {
       token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
-    } catch {
+    } catch (error) {
+      console.error('WebSocket operation failed:', error);
       return;
     }
 
@@ -131,7 +132,8 @@ class WebSocketService {
     let token: string | null = null;
     try {
       token = await secureStorage.getItem(SECURE_STORAGE_KEYS.AUTH_TOKEN);
-    } catch {
+    } catch (error) {
+      console.error('WebSocket operation failed:', error);
       return;
     }
     if (!token) {

@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  sizeButtonSelected: { borderColor: "DesignTokens.colors.semantic.error", backgroundColor: "#FFF5F5" }, // custom color
+  sizeButtonSelected: { borderColor: "DesignTokens.colors.semantic.error", backgroundColor: "DesignTokens.colors.neutral[50]" }, // custom color
   sizeButtonDisabled: { backgroundColor: DesignTokens.colors.neutral[100], borderColor: DesignTokens.colors.neutral[100] },
   sizeText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary },
   sizeTextSelected: { color: "DesignTokens.colors.semantic.error", fontWeight: "600" }, // custom color

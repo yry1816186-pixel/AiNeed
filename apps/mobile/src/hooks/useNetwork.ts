@@ -51,7 +51,8 @@ async function checkNetworkConnection(): Promise<NetworkState> {
       type: "wifi",
       isConnectionExpensive: false,
     };
-  } catch {
+  } catch (error) {
+    console.error('Network status check failed:', error);
     return {
       isConnected: false,
       isInternetReachable: false,

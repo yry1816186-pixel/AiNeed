@@ -19,7 +19,8 @@ function decodeJwtPayload(token: string): TokenPayload | null {
     const padded = payload + "=".repeat((4 - (payload.length % 4)) % 4);
     const decoded = atob(padded);
     return JSON.parse(decoded) as TokenPayload;
-  } catch {
+  } catch (error) {
+    console.error('Token operation failed:', error);
     return null;
   }
 }

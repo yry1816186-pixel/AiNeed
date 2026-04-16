@@ -101,7 +101,8 @@ async function checkIOSJailbreak(): Promise<{ detected: boolean; checks: string[
         details: { check: "native_jailbreak_module" },
       });
     }
-  } catch {
+  } catch (error) {
+    console.error('Device integrity check failed:', error);
     checks.push("filesystem_check_mock");
 
     // Mock: In production, a native module would use NSFileManager.fileExistsAtPath
@@ -139,7 +140,8 @@ async function checkAndroidRoot(): Promise<{ detected: boolean; checks: string[]
         details: { check: "native_root_module" },
       });
     }
-  } catch {
+  } catch (error) {
+    console.error('Device integrity check failed:', error);
     checks.push("su_binary_check_mock");
 
     // Mock: In production, a native module would check for su binary existence
@@ -187,7 +189,8 @@ async function checkAppTampered(): Promise<{ detected: boolean; checks: string[]
         details: { check: "native_tamper_module" },
       });
     }
-  } catch {
+  } catch (error) {
+    console.error('Device integrity check failed:', error);
     checks.push("signature_check_mock");
 
     // Mock: In production, a native module would verify the APK/IPA signature
