@@ -102,13 +102,13 @@
 **Depends on:** Phase 2
 
 **Plans:**
-1. 创建域目录结构（src/domains/identity/, src/domains/platform/）
-2. 迁移 auth, users, profile, onboarding, privacy → identity 域
-3. 迁移 recommendations, admin, merchant, analytics, notification, feature-flags, health, queue, metrics → platform 域
-4. 将 Recommendations 降级为 platform 层共享服务
-5. 消除 identity ↔ platform 间的循环依赖
-6. 配置 eslint-plugin-boundaries 域间依赖规则
-7. 配置 dependency-cruiser 可视化
+1. ✅ 创建域目录结构（src/domains/identity/, src/domains/platform/）
+2. ✅ 迁移 auth, users, profile, onboarding, privacy → identity 域
+3. ✅ 迁移 recommendations, admin, merchant, analytics, notification, feature-flags, health, queue, metrics → platform 域
+4. ✅ 将 Recommendations 降级为 platform 层共享服务
+5. ✅ 消除 identity ↔ platform 间的循环依赖
+6. ✅ 配置 eslint-plugin-boundaries 域间依赖规则
+7. ✅ 配置 dependency-cruiser 可视化
 
 **Requirements:** ARCH-01 (partial), ARCH-04, ARCH-05, ARCH-11
 
