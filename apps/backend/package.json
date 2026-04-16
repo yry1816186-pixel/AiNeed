@@ -13,6 +13,7 @@
     "test:e2e": "node ../../node_modules/jest/bin/jest.js --config ./test/jest-e2e.json",
     "test:e2e:cov": "node ../../node_modules/jest/bin/jest.js --config ./test/jest-e2e.json --coverage",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
+    "typecheck": "tsc --noEmit",
     "db:generate": "prisma generate && node ../../scripts/fix-prisma-client-link.mjs",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
