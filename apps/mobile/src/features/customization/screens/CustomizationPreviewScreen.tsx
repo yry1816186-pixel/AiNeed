@@ -157,7 +157,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={theme.Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>定制预览</Text>
-        <View style={{ width: 40 }} />
+        <View style={{ width: DesignTokens.spacing[10] }} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -242,8 +242,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[2],
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",

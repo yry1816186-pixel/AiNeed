@@ -2,10 +2,13 @@ import React, { useEffect, useRef } from "react";
 import { Text, StyleSheet, Animated } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
-import { Colors, Shadows } from '../../../design-system/theme';
+import { Colors, Shadows, Spacing } from '../../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 export const OfflineBanner: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { isConnected } = useNetworkStatus();
   const translateY = useRef(new Animated.Value(-60)).current;
   const isOffline = isConnected === false;
@@ -28,13 +31,13 @@ export const OfflineBanner: React.FC = () => {
       style={[styles.container, { transform: [{ translateY }] }]}
       pointerEvents={isOffline ? "auto" : "none"}
     >
-      <Ionicons name="cloud-offline" size={16} color={DesignTokens.colors.backgrounds.primary} />
+      <Ionicons name="cloud-offline" size={16} color={colors.surface} />
       <Text style={styles.text}>网络不可用，部分功能受限</Text>
     </Animated.View>
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     position: "absolute",
     top: 0,
@@ -44,14 +47,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    paddingVertical: 8,
-    backgroundColor: Colors.warning?.[500] || DesignTokens.colors.semantic.warning,
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm,
+    backgroundColor: Colors.warning?.[500] || colors.warning,
     ...Shadows.sm,
   },
   text: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
-});
+}))

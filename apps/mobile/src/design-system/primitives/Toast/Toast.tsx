@@ -12,6 +12,9 @@ import {
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from '../theme';
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { Spacing } from '../../theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -35,6 +38,8 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function useToast() {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const context = useContext(ToastContext);
   if (!context) {
     throw new Error("useToast must be used within a ToastProvider");
@@ -165,14 +170,14 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
         <Ionicons name={getIcon()} size={22} color={getColor()} />
         <Text style={styles.toastMessage}>{toast.message}</Text>
       </View>
-      <TouchableOpacity onPress={onDismiss} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+      <TouchableOpacity onPress={onDismiss} hitSlop={{ top: DesignTokens.spacing['2.5'], bottom: DesignTokens.spacing['2.5'], left: DesignTokens.spacing['2.5'], right: DesignTokens.spacing['2.5']}}>
         <Ionicons name="close" size={18} color={theme.colors.neutral[400]} />
       </TouchableOpacity>
     </Animated.View>
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     position: "absolute",
     top: 0,
@@ -180,22 +185,22 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 9999,
     paddingTop: Platform.OS === "ios" ? 60 : 40,
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
   },
   toast: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     borderLeftWidth: 4,
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     ...Platform.select({
       ios: {
-        shadowColor: DesignTokens.colors.neutral.black,
-        shadowOffset: { width: 0, height: 4 },
+        shadowColor: colors.neutral[900],
+        shadowOffset: { width: 0, height: Spacing.xs },
         shadowOpacity: 0.15,
         shadowRadius: 8,
       },
@@ -212,7 +217,7 @@ const styles = StyleSheet.create({
   toastMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
-    marginLeft: 12,
+    marginLeft: DesignTokens.spacing[3],
     flex: 1,
   },
-});
+}))

@@ -9,6 +9,9 @@ import {
   AccessibilityRole,
 } from "react-native";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme } from '../../contexts/ThemeContext';
+import { flatColors as colors } from '../../../design-system/theme';
+
 
 type TouchableType = "opacity" | "highlight" | "without-feedback" | "pressable";
 
@@ -82,7 +85,7 @@ export const AccessibleTouchable = memo(function AccessibleTouchable({
         <TouchableHighlight
           {...commonProps}
           {...accessibilityProps}
-          underlayColor={underlayColor || DesignTokens.colors.borders.default}
+          underlayColor={underlayColor || colors.border}
           activeOpacity={activeOpacity}
         >
           {children as React.ReactElement}

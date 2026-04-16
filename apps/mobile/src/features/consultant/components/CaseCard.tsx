@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface CaseCardProps {
   serviceType: string;
@@ -21,6 +22,8 @@ export const CaseCard: React.FC<CaseCardProps> = ({
   clientName,
   price,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const beforeArr = Array.isArray(beforeImages) ? beforeImages : [];
   const afterArr = Array.isArray(afterImages) ? afterImages : [];
   const beforeUrl = beforeArr[0] as string | undefined;
@@ -66,25 +69,25 @@ export const CaseCard: React.FC<CaseCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   card: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: 12,
+    padding: DesignTokens.spacing[3],
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderColor: "colors.backgroundTertiary",
     width: 240,
   },
   imageRow: {
     flexDirection: "row",
-    gap: 8,
-    marginBottom: 8,
+    gap: Spacing.sm,
+    marginBottom: Spacing.sm,
   },
   image: {
     flex: 1,
     height: 100,
     borderRadius: 8,
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
+    backgroundColor: colors.backgroundTertiary,
   },
   imagePlaceholder: {
     alignItems: "center",
@@ -92,35 +95,35 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
   },
   badgeRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginBottom: 4,
+    gap: Spacing.sm,
+    marginBottom: Spacing.xs,
   },
   typeBadge: {
     backgroundColor: "DesignTokens.colors.neutral[50]",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.brand.terracottaLight",
+    borderColor: "colors.primaryLight",
   },
   typeBadgeText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: "DesignTokens.colors.brand.terracotta",
+    color: "colors.primary",
   },
   ratingText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
   },
   excerpt: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: "#444",
     lineHeight: 18,
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   footer: {
     flexDirection: "row",
@@ -129,13 +132,13 @@ const styles = StyleSheet.create({
   },
   clientName: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
   },
   price: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "DesignTokens.colors.brand.terracotta",
+    color: "colors.primary",
     fontWeight: "500",
   },
-});
+}))
 
 export default CaseCard;

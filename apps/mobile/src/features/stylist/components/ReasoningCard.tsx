@@ -3,6 +3,9 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 
@@ -15,6 +18,8 @@ export const ReasoningCard: React.FC<ReasoningCardProps> = ({
   reasons,
   defaultExpanded = false,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [expanded, setExpanded] = useState(defaultExpanded);
   const heightValue = useSharedValue(defaultExpanded ? 1 : 0);
 
@@ -57,18 +62,18 @@ export const ReasoningCard: React.FC<ReasoningCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 12,
-    padding: 12,
-    marginTop: 8,
+    padding: DesignTokens.spacing[3],
+    marginTop: Spacing.sm,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -77,18 +82,18 @@ const styles = StyleSheet.create({
   },
   expandIcon: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
   },
   reasonText: {
     fontSize: DesignTokens.typography.sizes.sm,
     lineHeight: 18,
     color: DesignTokens.colors.neutral[600],
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   extraReason: {
-    marginTop: 4,
+    marginTop: Spacing.xs,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[200],
-    paddingTop: 6,
+    paddingTop: DesignTokens.spacing['1.5'],
   },
-});
+}))

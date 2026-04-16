@@ -1,6 +1,11 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle, TextStyle } from "react-native";
 import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
+import { Spacing } from '../theme';
+import { DesignTokens } from '../theme/tokens/design-tokens';
+import { useTheme } from '../../design-system/theme';
+
+
 
 export type BadgeVariant =
   | "primary"
@@ -34,9 +39,9 @@ export interface SeasonBadgeProps {
 const variantStyles: Record<BadgeVariant, { bg: string; text: string }> = {
   primary: { bg: Colors.primary[100], text: Colors.primary[700] },
   secondary: { bg: Colors.sage[100], text: Colors.sage[700] },
-  success: { bg: Colors.semantic.successLight, text: "#1B7A3D" },
-  warning: { bg: Colors.semantic.warningLight, text: "#8B6914" },
-  error: { bg: Colors.semantic.errorLight, text: "#A12525" },
+  success: { bg: Colors.semantic.successLight, text: DesignTokens.colors.semantic.success },
+  warning: { bg: Colors.semantic.warningLight, text: DesignTokens.colors.semantic.warning },
+  error: { bg: Colors.semantic.errorLight, text: DesignTokens.colors.semantic.error },
   neutral: { bg: Colors.neutral[100], text: Colors.neutral[700] },
   gold: { bg: Colors.amber[100], text: Colors.amber[700] },
   season: { bg: Colors.neutral[50], text: Colors.primary[500] },
@@ -75,6 +80,7 @@ export const Badge: React.FC<BadgeProps> = ({
   style,
   textStyle,
 }) => {
+  const { colors } = useTheme();
   const vStyle = variantStyles[variant];
   const sStyle = sizeStyles[size];
 
@@ -145,7 +151,7 @@ const styles = StyleSheet.create({
   iconContainer: { marginRight: Spacing[1] },
   seasonBadge: { flexDirection: "row", alignItems: "center", alignSelf: "flex-start" },
   seasonDots: { flexDirection: "row", marginRight: Spacing[2] },
-  seasonDot: { width: 8, height: 8, borderRadius: 4, marginRight: 2 },
+  seasonDot: { width: Spacing.sm, height: Spacing.sm, borderRadius: 4, marginRight: DesignTokens.spacing['0.5']},
 });
 
 export default Badge;

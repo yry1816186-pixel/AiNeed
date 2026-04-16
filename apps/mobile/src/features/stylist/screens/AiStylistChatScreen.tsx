@@ -17,7 +17,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay } from "react-native-reanimated";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useTranslation } from '../../../i18n';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 
 import { SpringConfigs, ListAnimations, Duration } from '../../../design-system/theme/tokens/animations';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
@@ -28,6 +28,8 @@ import { useAiStylistChatStore } from '../stores/aiStylistChatStore';
 import { useAnalytics, useScreenTracking, AnalyticsEvents } from '../../../hooks/useAnalytics';
 import type { ChatMessage } from '../stores/aiStylistChatStore';
 import type { StylistStackParamList } from '../../../navigation/types';
+import { Spacing } from '../../../design-system/theme';
+
 
 type AiStylistChatRoute = RouteProp<StylistStackParamList, "AiStylistChat">;
 
@@ -281,12 +283,12 @@ export const AiStylistChatScreen: React.FC = () => {
             accessibilityState={{ disabled: !inputText.trim() || isGenerating }}
           >
             {isGenerating ? (
-              <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+              <ActivityIndicator size="small" color={colors.surface} />
             ) : (
               <Ionicons
                 name="send"
                 size={18}
-                color={inputText.trim() ? DesignTokens.colors.neutral.white : colors.textTertiary}
+                color={inputText.trim() ? colors.surface : colors.textTertiary}
               />
             )}
           </TouchableOpacity>
@@ -303,49 +305,49 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerCenter: { flexDirection: "row", alignItems: "center", gap: 6 },
+  headerCenter: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5']},
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  onlineDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.success },
-  backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
-  messagesContainer: { padding: 16, paddingBottom: 8 },
-  welcomeSection: { alignItems: "center", paddingVertical: 40 },
+  onlineDot: { width: Spacing.sm, height: Spacing.sm, borderRadius: 4, backgroundColor: colors.success },
+  backBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
+  messagesContainer: { padding: Spacing.md, paddingBottom: Spacing.sm},
+  welcomeSection: { alignItems: "center", paddingVertical: DesignTokens.spacing[10]},
   welcomeIcon: {
-    width: 64,
-    height: 64,
+    width: Spacing['3xl'],
+    height: Spacing['3xl'],
     borderRadius: 32,
     backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   welcomeTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
   welcomeSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
-    marginTop: 8,
+    marginTop: Spacing.sm,
     textAlign: "center",
     lineHeight: 20,
-    paddingHorizontal: 32,
+    paddingHorizontal: Spacing.xl,
   },
-  messageBubble: { flexDirection: "row", marginBottom: 12, alignItems: "flex-end" },
+  messageBubble: { flexDirection: "row", marginBottom: DesignTokens.spacing[3], alignItems: "flex-end" },
   userBubble: { justifyContent: "flex-end" },
   assistantBubble: { justifyContent: "flex-start" },
   aiAvatar: {
-    width: 28,
-    height: 28,
+    width: DesignTokens.spacing[7],
+    height: DesignTokens.spacing[7],
     borderRadius: 14,
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
-  bubbleContent: { maxWidth: "75%", borderRadius: 16, paddingHorizontal: 14, paddingVertical: 10 },
+  bubbleContent: { maxWidth: "75%", borderRadius: 16, paddingHorizontal: DesignTokens.spacing['3.5'], paddingVertical: DesignTokens.spacing['2.5']},
   userBubbleContent: { backgroundColor: colors.primary, borderBottomRightRadius: 4 },
   assistantBubbleContent: { backgroundColor: colors.surface, borderBottomLeftRadius: 4 },
   bubbleText: { fontSize: DesignTokens.typography.sizes.base, lineHeight: 20 },
@@ -354,11 +356,11 @@ const s = StyleSheet.create({
   typingBubble: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     backgroundColor: colors.surface,
     borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderBottomLeftRadius: 4,
   },
   typingText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
@@ -366,25 +368,25 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 12,
-    padding: 10,
+    marginBottom: DesignTokens.spacing[3],
+    padding: DesignTokens.spacing['2.5'],
     borderRadius: 10,
-    backgroundColor: DesignTokens.colors.semantic.errorLight,
+    backgroundColor: colors.errorLight,
   },
   errorText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, flex: 1 },
-  errorDismiss: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, fontWeight: "600", marginLeft: 12 },
+  errorDismiss: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, fontWeight: "600", marginLeft: DesignTokens.spacing[3]},
   sceneRow: {
     borderTopWidth: 1,
     borderTopColor: colors.divider,
     backgroundColor: colors.surface,
   },
-  sceneScrollContent: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
+  sceneScrollContent: { paddingHorizontal: DesignTokens.spacing[3], paddingVertical: Spacing.sm, gap: Spacing.sm},
   sceneButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    gap: Spacing.xs,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
     backgroundColor: colors.subtleBg,
   },
@@ -392,8 +394,8 @@ const s = StyleSheet.create({
   inputRow: {
     flexDirection: "row",
     alignItems: "flex-end",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
@@ -402,17 +404,17 @@ const s = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     borderRadius: 20,
-    paddingHorizontal: 12,
+    paddingHorizontal: DesignTokens.spacing[3],
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, maxHeight: 80, paddingVertical: 8 },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, maxHeight: Spacing['4xl'], paddingVertical: Spacing.sm},
   sendButton: {
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: 18,
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 8,
+    marginLeft: Spacing.sm,
   },
   sendButtonDisabled: { backgroundColor: colors.subtleBg },
 });

@@ -38,9 +38,10 @@ import {
   useAnimatedRef,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors } from '../../../design-system/theme';
+import { Colors, Spacing } from '../../../design-system/theme';
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -121,6 +122,8 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   enableHaptic = true,
   hapticStyle = "light",
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [ripples, setRipples] = useState<Ripple[]>([]);
   const counterRef = useRef(0);
   const containerRef = useAnimatedRef<View>();
@@ -516,7 +519,7 @@ export const SwipeAction: React.FC<SwipeActionProps> = ({
                 style={[styles.actionButton, { backgroundColor: action.color }]}
                 onPress={action.onPress}
               >
-                <Ionicons name={action.icon} size={24} color={DesignTokens.colors.text.inverse} />
+                <Ionicons name={action.icon} size={24} color={colors.textInverse} />
                 <Text style={styles.actionLabel}>{action.label}</Text>
               </TouchableOpacity>
             ))}
@@ -530,7 +533,7 @@ export const SwipeAction: React.FC<SwipeActionProps> = ({
                 style={[styles.actionButton, { backgroundColor: action.color }]}
                 onPress={action.onPress}
               >
-                <Ionicons name={action.icon} size={24} color={DesignTokens.colors.text.inverse} />
+                <Ionicons name={action.icon} size={24} color={colors.textInverse} />
                 <Text style={styles.actionLabel}>{action.label}</Text>
               </TouchableOpacity>
             ))}
@@ -887,7 +890,7 @@ export const useHapticFeedback = () => {
   return { impact, notification, selection };
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   rippleContainer: {
     overflow: "hidden",
   },
@@ -929,8 +932,8 @@ const styles = StyleSheet.create({
   },
   actionLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.colors.text.inverse,
-    marginTop: 4,
+    color: colors.textInverse,
+    marginTop: Spacing.xs,
     fontWeight: "500",
   },
   pullContainer: {
@@ -949,11 +952,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   refreshText: {
-    marginTop: 8,
+    marginTop: Spacing.sm,
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
   },
-});
+}))
 
 export default {
   RippleEffect,

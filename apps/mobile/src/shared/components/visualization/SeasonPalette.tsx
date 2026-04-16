@@ -10,7 +10,7 @@ import {
   Stop,
   Text as SvgText,
 } from "react-native-svg";
-import { Colors, Spacing, BorderRadius, Typography } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography , DesignTokens } from '../../../design-system/theme'
 
 export interface SeasonPaletteProps {
   season: string;
@@ -301,8 +301,8 @@ const styles = StyleSheet.create({
     gap: Spacing[1],
   },
   legendDot: {
-    width: 10,
-    height: 10,
+    width: DesignTokens.spacing['2.5'],
+    height: DesignTokens.spacing['2.5'],
     borderRadius: 5,
   },
   legendText: {

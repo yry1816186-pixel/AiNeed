@@ -70,8 +70,8 @@ const sizeConfig: Record<
   InputSize,
   { height: number; fontSize: number; paddingHorizontal: number }
 > = {
-  sm: { height: 40, fontSize: Typography.sizes.sm, paddingHorizontal: Spacing.md },
-  md: { height: 48, fontSize: Typography.sizes.base, paddingHorizontal: Spacing.lg },
+  sm: { height: DesignTokens.spacing[10], fontSize: Typography.sizes.sm, paddingHorizontal: Spacing.md },
+  md: { height: Spacing['2xl'], fontSize: Typography.sizes.base, paddingHorizontal: Spacing.lg },
   lg: { height: 56, fontSize: Typography.sizes.base, paddingHorizontal: Spacing.xl },
 };
 

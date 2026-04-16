@@ -25,7 +25,7 @@ import { useCouponStore } from '../stores/couponStore';
 import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTranslation } from '../../../i18n';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import { haptics } from '../../../utils/haptics';
 import { withErrorBoundary } from '../../../shared/components/ErrorBoundary';
 import { EmptyCartView } from '../components/EmptyCartView';
@@ -33,6 +33,8 @@ import { FreeShippingProgress } from '../components/FreeShippingProgress';
 import { CouponSelector } from '../components/CouponSelector';
 import type { RootStackParamList } from '../../../types/navigation';
 import type { ClothingItem } from '../../../types/clothing';
+import { Spacing } from '../../../design-system/theme';
+
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -248,11 +250,11 @@ export const CartScreenComponent: React.FC = () => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{t.cart.title}</Text>
         {totalItems > 0 && (
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: Spacing.sm}}>
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{totalItems > 99 ? "99+" : totalItems}</Text>
             </View>
-            <TouchableOpacity onPress={() => setEditMode((prev) => !prev)} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
+            <TouchableOpacity onPress={() => setEditMode((prev) => !prev)} hitSlop={{ top: DesignTokens.spacing[3], bottom: DesignTokens.spacing[3], left: DesignTokens.spacing[3], right: DesignTokens.spacing[3]}}>
               <Text style={styles.editToggleText}>{editMode ? t.common.done : t.common.edit}</Text>
             </TouchableOpacity>
           </View>
@@ -645,9 +647,9 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 16,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
@@ -656,12 +658,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.text },
   badge: {
-    marginLeft: 10,
+    marginLeft: DesignTokens.spacing['2.5'],
     backgroundColor: colors.primary,
     borderRadius: 10,
-    minWidth: 20,
-    height: 20,
-    paddingHorizontal: 6,
+    minWidth: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
+    paddingHorizontal: DesignTokens.spacing['1.5'],
     alignItems: "center",
     justifyContent: "center",
   },
@@ -673,25 +675,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  loadingText: { marginTop: 12, fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
+  loadingText: { marginTop: DesignTokens.spacing[3], fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
   emptyContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 64,
+    paddingVertical: Spacing['3xl'],
   },
   emptyText: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginTop: 16,
+    marginTop: Spacing.md,
   },
-  emptySubtext: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 8 },
+  emptySubtext: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: Spacing.sm},
   emptyButton: {
-    marginTop: 24,
+    marginTop: Spacing.lg,
     backgroundColor: colors.primary,
-    paddingHorizontal: 32,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
   },
   emptyButtonText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
@@ -699,8 +701,8 @@ const styles = StyleSheet.create({
   selectAllRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
@@ -709,7 +711,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  selectAllText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginLeft: 8 },
+  selectAllText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginLeft: Spacing.sm},
 
   checkboxTouchable: {
     padding: 11,
@@ -737,14 +739,14 @@ const styles = StyleSheet.create({
 
   cardOuter: {
     overflow: "hidden",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   cardSwipeable: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
-    paddingHorizontal: 12,
-    paddingVertical: 14,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
@@ -764,14 +766,14 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  deleteText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.sm, marginTop: 4 },
+  deleteText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.sm, marginTop: Spacing.xs},
 
   cardImageWrap: {
-    width: 80,
-    height: 80,
+    width: Spacing['4xl'],
+    height: Spacing['4xl'],
     borderRadius: 10,
     overflow: "hidden",
-    marginLeft: 4,
+    marginLeft: Spacing.xs,
     backgroundColor: colors.placeholderBg,
   },
   cardImage: { width: "100%", height: "100%" },
@@ -784,9 +786,9 @@ const styles = StyleSheet.create({
   },
   cardInfo: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: DesignTokens.spacing[3],
     justifyContent: "space-between",
-    minHeight: 80,
+    minHeight: Spacing['4xl'],
   },
   cardName: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -794,20 +796,20 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     lineHeight: 20,
   },
-  cardSpecs: { flexDirection: "row", marginTop: 6 },
+  cardSpecs: { flexDirection: "row", marginTop: DesignTokens.spacing['1.5']},
   specChip: {
     backgroundColor: colors.placeholderBg,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 4,
-    marginRight: 6,
+    marginRight: DesignTokens.spacing['1.5'],
   },
   specText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   cardBottom: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   cardPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
 
@@ -820,15 +822,15 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   quantityButton: {
-    minWidth: 44,
-    minHeight: 44,
+    minWidth: DesignTokens.spacing[11],
+    minHeight: DesignTokens.spacing[11],
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: DesignTokens.colors.neutral[50],
   },
   quantityDisplay: {
-    width: 36,
-    height: 28,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[7],
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.surface,
@@ -841,14 +843,14 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 12,
+    paddingHorizontal: Spacing.md,
+    paddingTop: DesignTokens.spacing[3],
+    paddingBottom: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
     ...({
-      shadowColor: DesignTokens.colors.neutral.black,
+      shadowColor: colors.neutral[900],
       shadowOffset: { width: 0, height: -2 },
       shadowOpacity: 0.06,
       shadowRadius: 8,
@@ -860,20 +862,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    marginRight: 12,
+    marginRight: DesignTokens.spacing[3],
   },
   totalLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
   totalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
 
   checkoutButton: {
     backgroundColor: colors.primary,
-    paddingHorizontal: 28,
-    paddingVertical: 12,
+    paddingHorizontal: DesignTokens.spacing[7],
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
     minWidth: 110,
     alignItems: "center",
   },
-  checkoutButtonDisabled: { backgroundColor: "DesignTokens.colors.semantic.infoLight" }, // custom color
+  checkoutButtonDisabled: { backgroundColor: "colors.infoLight" }, // custom color
   checkoutButtonText: {
     color: colors.surface,
     fontSize: DesignTokens.typography.sizes.md,
@@ -883,32 +885,32 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: colors.primary,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
   },
   couponEntry: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
   couponEntryText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: "DesignTokens.colors.semantic.error", // custom color
+    color: "colors.error", // custom color
   },
   batchRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
   },
   batchButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderRadius: 16,
     backgroundColor: DesignTokens.colors.neutral[100],
   },
@@ -919,8 +921,8 @@ const styles = StyleSheet.create({
   footerRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
   },
   errorContainer: {
     alignItems: "center",
@@ -930,17 +932,17 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
-    marginTop: 12,
-    marginBottom: 16,
+    marginTop: DesignTokens.spacing[3],
+    marginBottom: Spacing.md,
   },
   retryButton: {
     backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
   },
   retryButtonText: {
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },

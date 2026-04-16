@@ -4,6 +4,8 @@ import { useAuthStore } from "../../stores/index";
 import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { Spacing } from '../../design-system/theme';
+
 
 interface VipGuardProps {
   children: React.ReactNode;
@@ -40,7 +42,7 @@ export function VipGuard({ children, onNotVip, featureName = "该功能" }: VipG
         <Text style={s.title}>{featureName}为 VIP 专属</Text>
         <Text style={s.subtitle}>升级 VIP 尊享全部高级功能</Text>
         <TouchableOpacity style={s.upgradeBtn} onPress={onNotVip} activeOpacity={0.7}>
-          <Ionicons name="star" size={16} color={DesignTokens.colors.backgrounds.primary} />
+          <Ionicons name="star" size={16} color={colors.surface} />
           <Text style={s.upgradeText}>升级 VIP</Text>
         </TouchableOpacity>
       </View>
@@ -55,40 +57,40 @@ const s = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 32,
+    padding: Spacing.xl,
     backgroundColor: colors.background,
   },
   iconCircle: {
-    width: 64,
-    height: 64,
+    width: Spacing['3xl'],
+    height: Spacing['3xl'],
     borderRadius: 32,
     backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: 6,
+    marginBottom: DesignTokens.spacing['1.5'],
   },
   subtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   upgradeBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: DesignTokens.spacing['1.5'],
     backgroundColor: colors.primary,
-    paddingHorizontal: 28,
-    paddingVertical: 12,
+    paddingHorizontal: DesignTokens.spacing[7],
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
   },
   upgradeText: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },

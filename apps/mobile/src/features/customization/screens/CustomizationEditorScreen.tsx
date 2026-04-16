@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { launchImageLibrary } from "react-native-image-picker";
@@ -36,7 +36,7 @@ export const CustomizationEditorScreen: React.FC = () => {
   const [showTextModal, setShowTextModal] = useState(false);
   const [textContent, setTextContent] = useState("");
   const [textFontSize, setTextFontSize] = useState("24");
-  const [textColor, setTextColor] = useState(DesignTokens.colors.neutral.black);
+  const [textColor, setTextColor] = useState(colors.neutral[900]);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showLayers, setShowLayers] = useState(false);
 
@@ -306,8 +306,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[2],
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.neutral[200],
     borderRadius: BorderRadius.md,
     width: 60,
-    height: 36,
+    height: DesignTokens.spacing[9],
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textPrimary,
@@ -439,8 +439,8 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   colorPreview: {
-    width: 24,
-    height: 24,
+    width: Spacing.lg,
+    height: Spacing.lg,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: Colors.neutral[200],

@@ -3,7 +3,9 @@ import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from "
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import type { PhotoQualityResult, PhotoQualityIssue } from "../../../stores/photoStore";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../../design-system/theme';
+
 
 interface PhotoQualityFeedbackProps {
   qualityResult: PhotoQualityResult | null;
@@ -16,12 +18,12 @@ const CIRCLE_SIZE = 100;
 
 function getScoreColor(score: number): string {
   if (score > 70) {
-    return DesignTokens.colors.semantic.success;
+    return colors.success;
   }
   if (score >= 40) {
-    return DesignTokens.colors.semantic.warning;
+    return colors.warning;
   }
-  return DesignTokens.colors.semantic.error;
+  return colors.error;
 }
 
 function getIssueIcon(type: PhotoQualityIssue["type"]): keyof typeof Ionicons.glyphMap {
@@ -37,9 +39,9 @@ function getIssueIcon(type: PhotoQualityIssue["type"]): keyof typeof Ionicons.gl
 
 function getSeverityColor(severity: PhotoQualityIssue["severity"]): string {
   const colors: Record<PhotoQualityIssue["severity"], string> = {
-    low: DesignTokens.colors.semantic.warning,
-    medium: "DesignTokens.colors.semantic.warning",
-    high: DesignTokens.colors.semantic.error,
+    low: colors.warning,
+    medium: "colors.warning",
+    high: colors.error,
   };
   return colors[severity];
 }
@@ -122,7 +124,7 @@ const PhotoQualityFeedback: React.FC<PhotoQualityFeedbackProps> = ({
 
         {qualityResult.isAcceptable ? (
           <View style={styles.acceptableContainer}>
-            <Ionicons name="checkmark-circle" size={24} color={DesignTokens.colors.semantic.success} />
+            <Ionicons name="checkmark-circle" size={24} color={colors.success} />
             <Text style={styles.acceptableText}>照片质量很好</Text>
           </View>
         ) : (
@@ -137,7 +139,7 @@ const PhotoQualityFeedback: React.FC<PhotoQualityFeedbackProps> = ({
         <View style={styles.buttonContainer}>
           {!qualityResult.isAcceptable && (
             <TouchableOpacity style={styles.retakeButton} onPress={onRetake}>
-              <Ionicons name="camera-outline" size={20} color={DesignTokens.colors.backgrounds.primary} />
+              <Ionicons name="camera-outline" size={20} color={colors.surface} />
               <Text style={styles.retakeButtonText}>重拍</Text>
             </TouchableOpacity>
           )}
@@ -164,9 +166,9 @@ const styles = StyleSheet.create({
   },
   card: {
     width: SCREEN_WIDTH - 64,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 20,
-    padding: 24,
+    padding: Spacing.lg,
     alignItems: "center",
   },
   scoreCircle: {
@@ -176,7 +178,7 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   scoreNumber: {
     fontSize: DesignTokens.typography.sizes['3xl'],
@@ -185,38 +187,38 @@ const styles = StyleSheet.create({
   scoreLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textSecondary,
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   acceptableContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginBottom: 20,
+    gap: Spacing.sm,
+    marginBottom: DesignTokens.spacing[5],
   },
   acceptableText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.semantic.success,
+    color: colors.success,
   },
   issuesContainer: {
     width: "100%",
-    marginBottom: 20,
+    marginBottom: DesignTokens.spacing[5],
   },
   issuesTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.textSecondary,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   issueItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
-    gap: 10,
+    marginBottom: DesignTokens.spacing['2.5'],
+    gap: DesignTokens.spacing['2.5'],
   },
   issueIconContainer: {
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
@@ -229,26 +231,26 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     width: "100%",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   retakeButton: {
     flex: 1,
     flexDirection: "row",
-    height: 48,
+    height: Spacing['2xl'],
     borderRadius: 12,
     backgroundColor: colors.textSecondary,
     justifyContent: "center",
     alignItems: "center",
-    gap: 6,
+    gap: DesignTokens.spacing['1.5'],
   },
   retakeButtonText: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   continueButton: {
     flex: 1,
-    height: 48,
+    height: Spacing['2xl'],
     borderRadius: 12,
     backgroundColor: colors.primary,
     justifyContent: "center",
@@ -258,7 +260,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   continueButtonText: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },

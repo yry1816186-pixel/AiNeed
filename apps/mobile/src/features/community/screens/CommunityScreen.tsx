@@ -11,6 +11,7 @@ import type { PostCardData } from '../../../components/community/PostMasonryCard
 import { CommunityHeader } from './CommunityHeader';
 import { CommunityFeed } from './CommunityFeed';
 import { CreatePostFab } from './CreatePostFab';
+import { flatColors as colors } from '../../../design-system/theme';
 
 const TEXT_AREA_HEIGHT = 68;
 

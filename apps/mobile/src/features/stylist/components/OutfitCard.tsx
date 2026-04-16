@@ -21,6 +21,8 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import {
   AiStylistResolution,
   AiStylistOutfitPlan,
@@ -71,10 +73,10 @@ export const OutfitCard = React.memo(function OutfitCard({ result, onItemPress }
     <AnimatedView style={[styles.container, containerStyle]}>
       <View style={styles.summarySection}>
         <LinearGradient
-          colors={[DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel]}
+          colors={[colors.secondary, colors.primary]}
           style={styles.summaryGradient}
         >
-          <Ionicons name="sparkles" size={20} color={DesignTokens.colors.text.inverse} />
+          <Ionicons name="sparkles" size={20} color={colors.textInverse} />
           <Text style={styles.summaryTitle}>穿搭方案</Text>
         </LinearGradient>
         <Text style={styles.summaryText}>{result.lookSummary}</Text>
@@ -210,7 +212,7 @@ const OutfitItemCard = React.memo(function OutfitItemCard({ item, index, onPress
               <Ionicons
                 name="open-outline"
                 size={14}
-                color={DesignTokens.colors.brand.terracotta}
+                color={colors.primary}
               />
             </View>
           )}
@@ -239,32 +241,32 @@ const getCategoryIcon = (category: string): keyof typeof Ionicons.glyphMap => {
   return iconMap[category.toLowerCase()] || "cube-outline";
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 20,
     overflow: "hidden",
-    marginVertical: 8,
+    marginVertical: Spacing.sm,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
   summarySection: {
-    padding: 16,
+    padding: Spacing.md,
   },
   summaryGradient: {
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "flex-start",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   summaryTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
-    marginLeft: 6,
+    color: colors.textInverse,
+    marginLeft: DesignTokens.spacing['1.5'],
   },
   summaryText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -272,8 +274,8 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.neutral[800],
   },
   whySection: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
@@ -281,20 +283,20 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[700],
-    marginBottom: 10,
+    marginBottom: DesignTokens.spacing['2.5'],
   },
   reasonItem: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 6,
+    marginBottom: DesignTokens.spacing['1.5'],
   },
   reasonDot: {
-    width: 6,
-    height: 6,
+    width: DesignTokens.spacing['1.5'],
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
-    backgroundColor: DesignTokens.colors.brand.sage,
+    backgroundColor: colors.secondary,
     marginTop: 7,
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
   reasonText: {
     flex: 1,
@@ -303,21 +305,21 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.neutral[600],
   },
   outfitTabs: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
+    gap: Spacing.sm,
   },
   outfitTab: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderRadius: 16,
     backgroundColor: DesignTokens.colors.neutral[100],
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
   outfitTabActive: {
-    backgroundColor: DesignTokens.colors.brand.sage + "20",
-    borderColor: DesignTokens.colors.brand.sage,
+    backgroundColor: colors.secondary + "20",
+    borderColor: colors.secondary,
   },
   outfitTabText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -325,17 +327,17 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.neutral[600],
   },
   outfitTabTextActive: {
-    color: DesignTokens.colors.brand.sage,
+    color: colors.secondary,
     fontWeight: "600",
   },
   outfitSection: {
-    padding: 16,
+    padding: Spacing.md,
   },
   outfitHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   outfitTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -345,17 +347,17 @@ const styles = StyleSheet.create({
   totalPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
   },
   styleTags: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 6,
-    marginBottom: 16,
+    gap: DesignTokens.spacing['1.5'],
+    marginBottom: Spacing.md,
   },
   styleTag: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: Spacing.xs,
     borderRadius: 12,
     backgroundColor: DesignTokens.colors.neutral[100],
   },
@@ -365,23 +367,23 @@ const styles = StyleSheet.create({
   },
   itemCard: {
     flexDirection: "row",
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 10,
+    padding: DesignTokens.spacing[3],
+    marginBottom: DesignTokens.spacing['2.5'],
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
   itemCardClickable: {
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 2,
   },
   itemImageContainer: {
-    width: 80,
-    height: 80,
+    width: Spacing['4xl'],
+    height: Spacing['4xl'],
     borderRadius: 8,
     overflow: "hidden",
     backgroundColor: DesignTokens.colors.neutral[100],
@@ -398,7 +400,7 @@ const styles = StyleSheet.create({
   },
   itemContent: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: DesignTokens.spacing[3],
     justifyContent: "space-between",
   },
   itemHeader: {
@@ -410,7 +412,7 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.xs,
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    color: DesignTokens.colors.brand.sage,
+    color: colors.secondary,
     fontWeight: "600",
   },
   itemBrand: {
@@ -421,47 +423,90 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   itemReason: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
     lineHeight: 16,
   },
   itemFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   itemPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
   },
   viewLink: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
   },
   viewLinkText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
     fontWeight: "500",
   },
   scoreBadge: {
     position: "absolute",
-    top: 8,
-    right: 8,
-    backgroundColor: DesignTokens.colors.brand.sage,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    top: Spacing.sm,
+    right: Spacing.sm,
+    backgroundColor: colors.secondary,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
     borderRadius: 10,
   },
   scoreText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "700",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
+}))
+
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  summarySection: { flex: 1 },
+  summaryGradient: { flex: 1 },
+  summaryTitle: { flex: 1 },
+  summaryText: { flex: 1 },
+  whySection: { flex: 1 },
+  whyTitle: { flex: 1 },
+  reasonItem: { flex: 1 },
+  reasonDot: { flex: 1 },
+  reasonText: { flex: 1 },
+  outfitTabs: { flex: 1 },
+  outfitTab: { flex: 1 },
+  outfitTabActive: { flex: 1 },
+  outfitTabText: { flex: 1 },
+  outfitTabTextActive: { flex: 1 },
+  outfitSection: { flex: 1 },
+  outfitHeader: { flex: 1 },
+  outfitTitle: { flex: 1 },
+  totalPrice: { flex: 1 },
+  styleTags: { flex: 1 },
+  styleTag: { flex: 1 },
+  styleTagText: { flex: 1 },
+  itemCard: { flex: 1 },
+  itemCardClickable: { flex: 1 },
+  itemImageContainer: { flex: 1 },
+  itemImage: { flex: 1 },
+  itemImagePlaceholder: { flex: 1 },
+  itemContent: { flex: 1 },
+  itemHeader: { flex: 1 },
+  itemCategory: { flex: 1 },
+  itemBrand: { flex: 1 },
+  itemName: { flex: 1 },
+  itemReason: { flex: 1 },
+  itemFooter: { flex: 1 },
+  itemPrice: { flex: 1 },
+  viewLink: { flex: 1 },
+  viewLinkText: { flex: 1 },
+  scoreBadge: { flex: 1 },
+  scoreText: { flex: 1 },
 });

@@ -2,6 +2,7 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Spacing, BorderRadius } from '../../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface PhotoQuality {
   clarity: number;
@@ -18,12 +19,12 @@ interface PhotoQualityIndicatorProps {
 
 function getScoreColor(score: number): string {
   if (score >= 60) {
-    return "DesignTokens.colors.semantic.success";
+    return "colors.success";
   }
   if (score >= 40) {
-    return "DesignTokens.colors.semantic.warning";
+    return "colors.warning";
   }
-  return "DesignTokens.colors.semantic.error";
+  return "colors.error";
 }
 
 function getScoreLabel(score: number): string {
@@ -40,6 +41,8 @@ export const PhotoQualityIndicator: React.FC<PhotoQualityIndicatorProps> = ({
   quality,
   onRetake,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const overallColor = getScoreColor(quality.overall);
   const overallInt = Math.round(quality.overall);
 
@@ -97,7 +100,7 @@ const MetricBar: React.FC<MetricBarProps> = ({ label, value }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     padding: Spacing[4],
     alignItems: "center",
@@ -107,8 +110,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   badge: {
-    width: 64,
-    height: 64,
+    width: Spacing['3xl'],
+    height: Spacing['3xl'],
     borderRadius: 32,
     borderWidth: 4,
     justifyContent: "center",
@@ -129,20 +132,20 @@ const styles = StyleSheet.create({
   },
   retakeButton: {
     marginTop: Spacing[4],
-    backgroundColor: DesignTokens.colors.semantic.error,
+    backgroundColor: colors.error,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[3],
     paddingHorizontal: Spacing[6],
-    minHeight: 44,
+    minHeight: DesignTokens.spacing[11],
     justifyContent: "center",
     alignItems: "center",
   },
   retakeText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
-});
+}))
 
 const metricStyles = StyleSheet.create({
   container: {
@@ -152,25 +155,25 @@ const metricStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   label: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "400",
-    color: "DesignTokens.colors.text.secondary",
+    color: "colors.textSecondary",
   },
   value: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   track: {
-    height: 6,
+    height: DesignTokens.spacing['1.5'],
     backgroundColor: "#E5E5E0",
     borderRadius: 3,
     overflow: "hidden",
   },
   fill: {
-    height: 6,
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
   },
 });

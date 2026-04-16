@@ -17,6 +17,7 @@ import {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as FileSystem from "@/src/polyfills/expo-file-system";
 import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { useTheme, createStyles } from '../contexts/ThemeContext';
 
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
@@ -246,6 +247,7 @@ export const CachedImage = ({
   onError,
   ...props
 }: CachedImageProps) => {
+  const { colors } = useTheme();
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -358,7 +360,7 @@ export const CachedImage = ({
       />
       {showProgress && isLoading && (
         <View style={styles.progressContainer}>
-          <ActivityIndicator size="small" color={DesignTokens.colors.brand.terracotta} />
+          <ActivityIndicator size="small" color={colors.primary} />
         </View>
       )}
     </View>
@@ -423,7 +425,7 @@ export function useLazyLoading<T>(
   return { visibleItems, loadMore, hasMore };
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   image: {
     width: "100%",
     height: "100%",
@@ -450,6 +452,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
   },
-});
+}))
 
 export { cacheManager };
+
+
+const styles = StyleSheet.create({
+  placeholder: { flex: 1 },
+  placeholderGradient: { flex: 1 },
+  progressContainer: { flex: 1 },
+  errorContainer: { flex: 1 },
+  image: { flex: 1 },
+});

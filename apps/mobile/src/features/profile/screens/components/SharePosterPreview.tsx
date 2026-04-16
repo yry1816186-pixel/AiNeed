@@ -23,6 +23,9 @@ import { typography } from "@/src/theme/tokens/typography";
 import { spacing } from "@/src/theme/tokens/spacing";
 import { shadows } from "@/src/theme/tokens/shadows";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { Spacing } from '../../../../design-system/theme';
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+
 
 interface SharePosterPreviewProps {
   nickname: string;
@@ -51,6 +54,8 @@ export const SharePosterPreview: React.FC<SharePosterPreviewProps> = ({
   styleTags,
   personalityLine,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
   const translateY = useSharedValue(400);
 
@@ -146,7 +151,7 @@ export const SharePosterPreview: React.FC<SharePosterPreviewProps> = ({
           end={{ x: 1, y: 0 }}
           style={styles.generateButtonGradient}
         >
-          <Ionicons name="share-outline" size={18} color={DesignTokens.colors.backgrounds.primary} />
+          <Ionicons name="share-outline" size={18} color={colors.surface} />
           <Text style={styles.generateButtonText}>生成海报</Text>
         </LinearGradient>
       </TouchableOpacity>
@@ -189,7 +194,7 @@ export const SharePosterPreview: React.FC<SharePosterPreviewProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     alignItems: "center",
     marginHorizontal: spacing.layout.screenPadding,
@@ -212,8 +217,8 @@ const styles = StyleSheet.create({
     paddingTop: spacing.aliases.xl,
   },
   avatarCircle: {
-    width: 64,
-    height: 64,
+    width: Spacing['3xl'],
+    height: Spacing['3xl'],
     borderRadius: 32,
     backgroundColor: "rgba(255,255,255,0.3)",
     alignItems: "center",
@@ -223,19 +228,19 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   avatarImage: {
-    width: 64,
-    height: 64,
+    width: Spacing['3xl'],
+    height: Spacing['3xl'],
     borderRadius: 32,
   },
   avatarInitial: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
   nickname: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     marginTop: spacing.aliases.sm,
   },
   personalityLine: {
@@ -256,7 +261,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.aliases.sm,
     paddingVertical: spacing.scale[1],
     borderRadius: spacing.borderRadius.full,
-    gap: 4,
+    gap: Spacing.xs,
   },
   infoChipText: {
     fontSize: typography.fontSize.xs,
@@ -276,7 +281,7 @@ const styles = StyleSheet.create({
   },
   posterTagText: {
     fontSize: typography.fontSize.xs,
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontWeight: typography.fontWeight.medium,
   },
   watermark: {
@@ -303,7 +308,7 @@ const styles = StyleSheet.create({
   generateButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
   overlay: {
     flex: 1,
@@ -332,7 +337,7 @@ const styles = StyleSheet.create({
     color: colors.neutral[700],
   },
   actionDivider: {
-    height: 8,
+    height: Spacing.sm,
     backgroundColor: colors.neutral[100],
   },
   actionCancel: {
@@ -344,6 +349,6 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[400],
   },
-});
+}))
 
 export default SharePosterPreview;

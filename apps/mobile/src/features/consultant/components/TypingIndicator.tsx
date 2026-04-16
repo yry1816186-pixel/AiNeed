@@ -8,8 +8,13 @@ import Animated, {
   withDelay,
 } from "react-native-reanimated";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 export const TypingIndicator: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const dot1Y = useSharedValue(0);
   const dot2Y = useSharedValue(0);
   const dot3Y = useSharedValue(0);
@@ -36,20 +41,20 @@ export const TypingIndicator: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    gap: Spacing.xs,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
   },
   dot: {
-    width: 8,
-    height: 8,
+    width: Spacing.sm,
+    height: Spacing.sm,
     borderRadius: 4,
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
   },
-});
+}))
 
 export default TypingIndicator;

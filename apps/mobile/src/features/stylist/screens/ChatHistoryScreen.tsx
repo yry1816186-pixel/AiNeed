@@ -15,6 +15,8 @@ import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useAiStylistStore, type ArchivedSession } from '../stores/aiStylistStore';
 import type { StylistStackParamList } from '../../../navigation/types';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { Spacing } from '../../../design-system/theme';
+
 
 type StylistNavigation = NativeStackNavigationProp<StylistStackParamList>;
 
@@ -173,7 +175,7 @@ export const ChatHistoryScreen: React.FC = () => {
           refreshing={refreshing}
           onRefresh={handleRefresh}
           contentContainerStyle={
-            archivedSessions.length === 0 ? { flex: 1 } : { paddingBottom: 24 }
+            archivedSessions.length === 0 ? { flex: 1 } : { paddingBottom: Spacing.lg}
           }
         />
       )}
@@ -187,38 +189,38 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
+  backBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
   dateRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
-    gap: 16,
+    paddingVertical: DesignTokens.spacing[3],
+    gap: Spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
   dateText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
-  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: 16 },
+  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing.xl},
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: Spacing.md},
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
-    marginTop: 8,
+    marginTop: Spacing.sm,
     textAlign: "center",
   },
   startBtn: {
-    marginTop: 20,
+    marginTop: DesignTokens.spacing[5],
     backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
   },
   startBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
@@ -226,26 +228,26 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
   sessionIcon: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
   },
-  sessionInfo: { flex: 1, marginLeft: 12 },
+  sessionInfo: { flex: 1, marginLeft: DesignTokens.spacing[3]},
   sessionGoal: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.text },
-  sessionTime: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
-  sessionMeta: { flexDirection: "row", alignItems: "center", gap: 8 },
+  sessionTime: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
+  sessionMeta: { flexDirection: "row", alignItems: "center", gap: Spacing.sm},
   outfitBadge: {
     backgroundColor: colors.subtleBg,
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: 8,
   },

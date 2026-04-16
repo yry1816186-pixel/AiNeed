@@ -14,6 +14,9 @@ import {
 } from '../../design-system/theme';
 
 import { DesignTokens } from "../theme/tokens/design-tokens";
+import { Spacing } from '../theme';
+import { useTheme } from '../../design-system/theme';
+
 
 interface OutfitCardProps {
   id: string;
@@ -51,6 +54,8 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
   onFavorite,
   isFavorite = false,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { seasonAccent } = useTheme();
 
   // 季节强调色优先，回退到品牌色
@@ -86,7 +91,7 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
               <Ionicons
                 name={isFavorite ? "heart" : "heart-outline"}
                 size={20}
-                color={isFavorite ? accentColor : DesignTokens.colors.backgrounds.primary}
+                color={isFavorite ? accentColor : colors.surface}
               />
             </TouchableOpacity>
           )}
@@ -113,10 +118,10 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   card: {
     width: 140,
-    marginRight: 16,
+    marginRight: Spacing.md,
     backgroundColor: Colors.neutral.white,
     borderRadius: ThemeBorderRadius["2xl"],
     overflow: "hidden",
@@ -133,49 +138,49 @@ const styles = StyleSheet.create({
   },
   tag: {
     position: "absolute",
-    top: 10,
-    left: 10,
-    paddingHorizontal: 12,
+    top: DesignTokens.spacing['2.5'],
+    left: DesignTokens.spacing['2.5'],
+    paddingHorizontal: DesignTokens.spacing[3],
     paddingVertical: 5,
     borderRadius: ThemeBorderRadius.xl,
   },
   tagText: {
     fontSize: ThemeTypography.sizes.xs,
     fontWeight: ThemeTypography.fontWeights.bold,
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
   favoriteButton: {
     position: "absolute",
-    top: 10,
-    right: 10,
-    width: 32,
-    height: 32,
+    top: DesignTokens.spacing['2.5'],
+    right: DesignTokens.spacing['2.5'],
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
     backgroundColor: "rgba(0,0,0,0.35)",
     alignItems: "center",
     justifyContent: "center",
   },
   infoContainer: {
-    padding: 12,
+    padding: DesignTokens.spacing[3],
   },
   title: {
     fontSize: ThemeTypography.sizes.base,
     fontWeight: ThemeTypography.fontWeights.semibold,
     color: Colors.neutral[900],
     textAlign: "center",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   subtitle: {
     fontSize: ThemeTypography.sizes.xs,
     color: Colors.neutral[500],
     textAlign: "center",
-    marginBottom: 6,
+    marginBottom: DesignTokens.spacing['1.5'],
   },
   price: {
     fontSize: ThemeTypography.sizes.sm,
     fontWeight: ThemeTypography.fontWeights.bold,
     textAlign: "center",
   },
-});
+}))
 
 export default OutfitCard;

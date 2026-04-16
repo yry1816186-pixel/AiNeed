@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[1],
     borderRadius: BorderRadius.sm,
   },
-  badgeValue: { ...Typography.styles.caption, color: "#1B7A3D", fontWeight: "700" },
+  badgeValue: { ...Typography.styles.caption, color: DesignTokens.colors.semantic.success, fontWeight: "700" },
   badgeCount: { ...Typography.styles.caption, color: Colors.neutral[500] },
 });
 

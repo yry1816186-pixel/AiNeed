@@ -15,6 +15,9 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -23,7 +26,7 @@ const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 const ICON_SIZE = 24;
 
 const Icons = {
-  stylist: ({ color = DesignTokens.colors.text.inverse }) => (
+  stylist: ({ color = colors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2Z"
@@ -40,7 +43,7 @@ const Icons = {
       />
     </Svg>
   ),
-  photo: ({ color = DesignTokens.colors.text.inverse }) => (
+  photo: ({ color = colors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4Z"
@@ -62,7 +65,7 @@ const Icons = {
       />
     </Svg>
   ),
-  recommend: ({ color = DesignTokens.colors.text.inverse }) => (
+  recommend: ({ color = colors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
@@ -73,7 +76,7 @@ const Icons = {
       />
     </Svg>
   ),
-  wardrobe: ({ color = DesignTokens.colors.text.inverse }) => (
+  wardrobe: ({ color = colors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3Z"
@@ -125,7 +128,7 @@ const ActionItemComponent: React.FC<ActionItemProps> = ({ action, index, visible
   }));
 
   const renderIcon = () => {
-    const iconColor = DesignTokens.colors.text.inverse;
+    const iconColor = colors.textInverse;
     switch (action.id) {
       case "stylist":
         return <Icons.stylist color={iconColor} />;
@@ -146,8 +149,8 @@ const ActionItemComponent: React.FC<ActionItemProps> = ({ action, index, visible
         <LinearGradient
           colors={
             action.gradient || [
-              DesignTokens.colors.brand.terracotta,
-              DesignTokens.colors.brand.camel,
+              colors.primary,
+              colors.primary,
             ]
           }
           style={styles.actionIcon}
@@ -178,7 +181,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "stylist",
     label: "AI 造型师",
     description: "获取穿搭建议",
-    gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel],
+    gradient: [colors.primary, colors.primary],
     onPress: () => {},
   },
   {
@@ -186,7 +189,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "photo",
     label: "拍照分析",
     description: "分析身材和肤色",
-    gradient: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"], // custom color
+    gradient: [colors.neutral[500], "colors.textTertiary"], // custom color
     onPress: () => {},
   },
   {
@@ -194,7 +197,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "recommend",
     label: "智能推荐",
     description: "个性化推荐",
-    gradient: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage"], // custom color
+    gradient: [colors.success, "colors.secondary"], // custom color
     onPress: () => {},
   },
   {
@@ -202,7 +205,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "wardrobe",
     label: "我的衣橱",
     description: "管理你的衣物",
-    gradient: [DesignTokens.colors.semantic.warning, "DesignTokens.colors.brand.camel"], // custom color
+    gradient: [colors.warning, "colors.primary"], // custom color
     onPress: () => {},
   },
 ];
@@ -214,6 +217,8 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
   onClose,
   actions = DEFAULT_ACTIONS,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
 
   const backdropOpacity = useSharedValue(0);
@@ -280,7 +285,7 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
           menuStyle,
         ]}
       >
-        <LinearGradient colors={[DesignTokens.colors.backgrounds.primary, DesignTokens.colors.backgrounds.secondary]} style={styles.menuGradient}>
+        <LinearGradient colors={[colors.surface, colors.backgroundSecondary]} style={styles.menuGradient}>
           <View style={styles.menuHeader}>
             <Text style={styles.menuTitle}>AI 助手</Text>
             <Text style={styles.menuSubtitle}>选择你需要的服务</Text>
@@ -309,17 +314,17 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: DesignTokens.colors.neutral.black,
+    backgroundColor: colors.neutral[900],
     zIndex: 9998,
   },
   menuContainer: {
     position: "absolute",
     borderRadius: 20,
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 10 },
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: DesignTokens.spacing['2.5'] },
     shadowOpacity: 0.15,
     shadowRadius: 30,
     elevation: 10,
@@ -328,11 +333,11 @@ const styles = StyleSheet.create({
   },
   menuGradient: {
     flex: 1,
-    padding: 16,
+    padding: Spacing.md,
   },
   menuHeader: {
-    marginBottom: 16,
-    paddingBottom: 12,
+    marginBottom: Spacing.md,
+    paddingBottom: DesignTokens.spacing[3],
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
@@ -340,7 +345,7 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   menuSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -352,15 +357,15 @@ const styles = StyleSheet.create({
   actionItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: DesignTokens.spacing[3],
     borderRadius: 12,
     backgroundColor: DesignTokens.colors.neutral[50],
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   actionIcon: {
-    width: 48,
-    height: 48,
+    width: Spacing['2xl'],
+    height: Spacing['2xl'],
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -370,13 +375,13 @@ const styles = StyleSheet.create({
   },
   actionContent: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: DesignTokens.spacing[3],
   },
   actionLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: 2,
+    marginBottom: DesignTokens.spacing['0.5'],
   },
   actionDescription: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -385,17 +390,17 @@ const styles = StyleSheet.create({
   actionArrow: {
     fontSize: DesignTokens.typography.sizes.lg,
     color: DesignTokens.colors.neutral[400],
-    marginLeft: 8,
+    marginLeft: Spacing.sm,
   },
   menuFooter: {
-    marginTop: 12,
-    paddingTop: 12,
+    marginTop: DesignTokens.spacing[3],
+    paddingTop: DesignTokens.spacing[3],
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[200],
   },
   closeButton: {
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 10,
     backgroundColor: DesignTokens.colors.neutral[100],
   },
@@ -404,4 +409,4 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: DesignTokens.colors.neutral[600],
   },
-});
+}))

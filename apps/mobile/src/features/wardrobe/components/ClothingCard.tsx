@@ -2,8 +2,9 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows, flatColors as colors } from '../../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface ClothingCardProps {
   id: string;
@@ -107,16 +108,16 @@ export const ClothingCard = memo(function ClothingCard({
 const COLOR_MAP: Record<string, string> = {
   black: Colors.neutral[900],
   white: Colors.white,
-  red: DesignTokens.colors.semantic.error, // custom color
+  red: colors.error, // custom color
   blue: Colors.sky[500],
   green: Colors.emerald[500],
   yellow: "#EAB308", // custom color
   orange: Colors.amber[500],
   purple: Colors.primary[500],
-  pink: DesignTokens.colors.brand.camel, // custom color
+  pink: colors.primary, // custom color
   brown: "#92400E", // custom color
   gray: Colors.neutral[500],
-  beige: DesignTokens.colors.semantic.warningLight, // custom color
+  beige: colors.warningLight, // custom color
   navy: Colors.sky[900],
 };
 
@@ -124,7 +125,7 @@ function getColorCode(colorName: string): string {
   return COLOR_MAP[colorName.toLowerCase()] || Colors.neutral[300];
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   card: {
     backgroundColor: Colors.white,
     borderRadius: BorderRadius.xl,
@@ -144,8 +145,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing.sm,
     right: Spacing.sm,
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: BorderRadius.full,
     backgroundColor: "rgba(255,255,255,0.95)",
     justifyContent: "center",
@@ -204,8 +205,8 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   colorDot: {
-    width: 14,
-    height: 14,
+    width: DesignTokens.spacing['3.5'],
+    height: DesignTokens.spacing['3.5'],
     borderRadius: BorderRadius.full,
     borderWidth: 1.5,
     borderColor: Colors.neutral[200],
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
     color: Colors.primary[600],
     fontWeight: "500",
   },
-});
+}))
 
 interface ClothingGridProps {
   items: ClothingCardProps[];
@@ -263,4 +264,25 @@ export const ClothingGrid = memo(function ClothingGrid({
       ))}
     </View>
   );
+});
+
+
+const styles = StyleSheet.create({
+  card: { flex: 1 },
+  imageContainer: { flex: 1 },
+  image: { flex: 1 },
+  favoriteButton: { flex: 1 },
+  scoreBadge: { flex: 1 },
+  scoreText: { flex: 1 },
+  content: { flex: 1 },
+  category: { flex: 1 },
+  name: { flex: 1 },
+  priceRow: { flex: 1 },
+  price: { flex: 1 },
+  originalPrice: { flex: 1 },
+  colorRow: { flex: 1 },
+  colorDot: { flex: 1 },
+  reasonsContainer: { flex: 1 },
+  reasonIconContainer: { flex: 1 },
+  reasonText: { flex: 1 },
 });

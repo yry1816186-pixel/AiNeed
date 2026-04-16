@@ -21,8 +21,13 @@ import { ProposalCard } from '../../../components/consultant/ProposalCard';
 import wsService from '../../../services/websocket';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 export const ChatScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp<ParamListBase>>();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -202,68 +207,68 @@ export const ChatScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: DesignTokens.colors.backgrounds.secondary },
+const useStyles = createStyles((colors) => ({
+  container: { flex: 1, backgroundColor: colors.backgroundSecondary },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingBottom: 12,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingBottom: DesignTokens.spacing[3],
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
-  backBtn: { padding: 8 },
-  backBtnText: { fontSize: DesignTokens.typography.sizes.xl, color: DesignTokens.colors.text.primary },
+  backBtn: { padding: Spacing.sm},
+  backBtnText: { fontSize: DesignTokens.typography.sizes.xl, color: colors.textPrimary },
   headerCenter: { flex: 1, alignItems: "center" },
-  headerName: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
-  onlineIndicator: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 },
-  onlineDot: { width: 8, height: 8, borderRadius: 4 },
-  dotOnline: { backgroundColor: DesignTokens.colors.semantic.success }, // custom color
+  headerName: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  onlineIndicator: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, marginTop: DesignTokens.spacing['0.5']},
+  onlineDot: { width: Spacing.sm, height: Spacing.sm, borderRadius: 4 },
+  dotOnline: { backgroundColor: colors.success }, // custom color
   dotOffline: { backgroundColor: DesignTokens.colors.neutral[300] },
-  onlineText: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.text.tertiary },
-  headerAvatar: { width: 32, height: 32, borderRadius: 16 },
+  onlineText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
+  headerAvatar: { width: Spacing.xl, height: Spacing.xl, borderRadius: 16 },
   headerAvatarPlaceholder: {
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  headerAvatarText: { color: DesignTokens.colors.text.inverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-  messagesList: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 },
-  proposalWrapper: { marginVertical: 8, maxWidth: "85%", alignSelf: "center" },
-  systemMessage: { alignItems: "center", marginVertical: 8 },
-  systemMessageText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary },
+  headerAvatarText: { color: colors.textInverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  messagesList: { paddingHorizontal: Spacing.md, paddingTop: DesignTokens.spacing[3], paddingBottom: DesignTokens.spacing[3]},
+  proposalWrapper: { marginVertical: Spacing.sm, maxWidth: "85%", alignSelf: "center" },
+  systemMessage: { alignItems: "center", marginVertical: Spacing.sm},
+  systemMessageText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   inputBar: {
     flexDirection: "row",
     alignItems: "flex-end",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    paddingBottom: 28,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingBottom: DesignTokens.spacing[7],
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[100],
-    gap: 8,
+    gap: Spacing.sm,
   },
   textInput: {
     flex: 1,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     fontSize: DesignTokens.typography.sizes.base,
     maxHeight: 100,
   },
   sendButton: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    backgroundColor: colors.primary,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
   },
-  sendButtonText: { color: DesignTokens.colors.text.inverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "500" },
-});
+  sendButtonText: { color: colors.textInverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "500" },
+}))
 
 export default ChatScreen;

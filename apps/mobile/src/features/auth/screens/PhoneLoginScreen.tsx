@@ -17,8 +17,10 @@ import { smsApi } from '../../../services/api/sms.api';
 import { useTranslation } from '../../../i18n';
 import { useAuthStore } from '../stores/index';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+
 
 type PhoneLoginNavigationProp = NavigationProp<RootStackParamList>;
 
@@ -295,19 +297,19 @@ export const PhoneLoginScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.surface },
-  header: { padding: 20 },
+  header: { padding: DesignTokens.spacing[5]},
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
-  content: { flex: 1, padding: 20 },
+  content: { flex: 1, padding: DesignTokens.spacing[5]},
   brandSection: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   logoContainer: {
     width: 72,
@@ -316,7 +318,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   brandName: {
     fontSize: DesignTokens.typography.sizes.xl,
@@ -325,22 +327,22 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
   },
   title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: colors.text },
-  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: 8, marginBottom: 32 },
-  form: { gap: 16 },
+  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: Spacing.sm, marginBottom: Spacing.xl},
+  form: { gap: Spacing.md},
   inputGroup: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.background,
     borderRadius: theme.BorderRadius.md,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
+    gap: DesignTokens.spacing[3],
   },
   input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
   codeInput: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
   codeButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
     borderRadius: theme.BorderRadius.sm,
     backgroundColor: colors.background,
     borderWidth: 1,
@@ -363,18 +365,18 @@ const styles = StyleSheet.create({
   loginButton: {
     backgroundColor: colors.primary,
     borderRadius: theme.BorderRadius.md,
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 8,
+    marginTop: Spacing.sm,
     minHeight: 52,
     ...theme.Shadows.brand,
   },
   loginButtonDisabled: { backgroundColor: colors.primaryLight },
   loginButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.surface },
-  emailLoginLink: { alignItems: "center", marginTop: 16 },
+  emailLoginLink: { alignItems: "center", marginTop: Spacing.md},
   emailLoginText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
-  registerLink: { alignItems: "center", marginTop: 8 },
+  registerLink: { alignItems: "center", marginTop: Spacing.sm},
   registerText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
 });
 

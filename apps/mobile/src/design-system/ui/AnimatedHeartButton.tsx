@@ -14,6 +14,8 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors } from '../design-system/theme';
 import { SpringConfigs, Duration } from "../../theme/tokens/animations";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
+import { DesignTokens } from '../theme/tokens/design-tokens';
+
 
 export interface AnimatedHeartButtonProps {
   /** Whether the item is currently favorited */
@@ -134,13 +136,13 @@ const styles = StyleSheet.create({
     right: -16,
   },
   plusOneText: {
-    fontSize: 12,
+    fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "700",
     color: Colors.rose[500],
   },
   countText: {
-    fontSize: 10,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[500],
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
 });

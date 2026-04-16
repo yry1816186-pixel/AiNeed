@@ -30,6 +30,7 @@ import AnimatedReanimated from "react-native-reanimated";
 import { MagneticButton, GlowText, FloatingElement, ParticleEffect } from "../../design-system/ui/FluidAnimations";
 import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme";
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -67,6 +68,8 @@ const STEP_CONFIG = [
 ];
 
 export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComplete }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [currentStep, setCurrentStep] = useState(0);
   const [profileData, setProfileData] = useState<Partial<ProfileData>>({});
   const [nickname, setNickname] = useState("");
@@ -139,7 +142,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
         <ParticleEffect count={30} color="rgba(198, 123, 92, 0.3)" size={3} />
 
         <AnimatedView style={[styles.welcomeLogo, logoAnimatedStyle]}>
-          <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.welcomeLogoGradient}>
+          <LinearGradient colors={[colors.primary, colors.primary]} style={styles.welcomeLogoGradient}>
             <Text style={styles.welcomeLogoText}>AI</Text>
           </LinearGradient>
         </AnimatedView>
@@ -531,7 +534,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
         <ParticleEffect count={50} color="rgba(198, 123, 92, 0.4)" size={4} />
 
         <AnimatedView style={[styles.completeContainer, animatedStyle]}>
-          <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.completeIconGradient}>
+          <LinearGradient colors={[colors.primary, colors.primary]} style={styles.completeIconGradient}>
             <Text style={styles.completeIcon}>🎉</Text>
           </LinearGradient>
 
@@ -579,7 +582,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      <LinearGradient colors={["DesignTokens.colors.text.primary", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.brand.slateDark"]} style={styles.gradient}>
+      <LinearGradient colors={["colors.textPrimary", "colors.neutral[700]", "colors.neutral[700]"]} style={styles.gradient}>
         {currentStep > 0 && currentStep < 5 && (
           <View style={styles.header}>
             <Pressable onPress={goToPrev} style={styles.backButton}>
@@ -613,7 +616,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
   },
@@ -628,8 +631,8 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[4],
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: BorderRadius.full,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     alignItems: "center",
@@ -644,7 +647,7 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing[4],
   },
   progressBackground: {
-    height: 4,
+    height: Spacing.xs,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: BorderRadius.full,
     overflow: "hidden",
@@ -827,8 +830,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing[2],
     right: Spacing[2],
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: BorderRadius.full,
     alignItems: "center",
     justifyContent: "center",
@@ -872,4 +875,4 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
   },
-});
+}))

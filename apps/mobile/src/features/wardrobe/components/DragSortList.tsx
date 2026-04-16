@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing , flatColors as colors } from '../../../design-system/theme';
 
 interface DragSortItem {
   id: string;
@@ -229,7 +229,7 @@ export const CollectionDragList: React.FC<CollectionDragListProps> = ({
           <Ionicons name="reorder-three-outline" size={20} color={colors.textTertiary} />
         </View>
         <View style={collectionStyles.iconContainer}>
-          <Ionicons name={item.icon as "folder"} size={22} color={DesignTokens.colors.brand.terracotta} />
+          <Ionicons name={item.icon as "folder"} size={22} color={colors.primary} />
         </View>
         <View style={collectionStyles.info}>
           <Text style={collectionStyles.name}>{item.name}</Text>
@@ -271,8 +271,8 @@ const styles = StyleSheet.create({
     position: "relative",
     backgroundColor: colors.surface,
     borderRadius: 12,
-    marginVertical: 4,
-    shadowColor: DesignTokens.colors.neutral.black,
+    marginVertical: Spacing.xs,
+    shadowColor: colors.neutral[900],
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 3,
@@ -284,25 +284,25 @@ const collectionStyles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    gap: 10,
+    paddingHorizontal: DesignTokens.spacing[3],
+    gap: DesignTokens.spacing['2.5'],
   },
   dragHandle: {
-    padding: 4,
+    padding: Spacing.xs,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 10,
-    backgroundColor: "DesignTokens.colors.semantic.infoLight",
+    backgroundColor: "colors.infoLight",
     alignItems: "center",
     justifyContent: "center",
   },
   info: { flex: 1 },
   name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
-  count: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
-  actions: { flexDirection: "row", gap: 4 },
-  actionBtn: { padding: 8 },
+  count: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
+  actions: { flexDirection: "row", gap: Spacing.xs},
+  actionBtn: { padding: Spacing.sm},
 });
 
 export default DragSortList;

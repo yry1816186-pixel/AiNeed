@@ -14,6 +14,9 @@ import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../design
 import { Rating } from "./Rating";
 import { OptimizedImage } from "../common/OptimizedImage";
 import { DesignTokens } from "../theme/tokens/design-tokens";
+import { useTheme } from '../../design-system/theme';
+import { flatColors as colors } from '../theme';
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = (SCREEN_WIDTH - Spacing[4] * 2 - Spacing[3]) / 2;
@@ -59,7 +62,7 @@ const ProductCard = memo(function ProductCard({
         {item.image ? (
           <OptimizedImage source={item.image} style={styles.image} resizeMode="cover" />
         ) : (
-          <LinearGradient colors={["#f3e8ff", "#fae8ff", "#fce7f3"]} style={styles.image}>
+          <LinearGradient colors={[DesignTokens.colors.backgrounds.tertiary, DesignTokens.colors.neutral[200], DesignTokens.colors.neutral[100]]} style={styles.image}>
             <Ionicons name="shirt-outline" size={48} color={Colors.neutral[300]} />
           </LinearGradient>
         )}
@@ -172,7 +175,7 @@ export const HorizontalProductList = memo(function HorizontalProductList({ produ
             <OptimizedImage source={item.image} style={styles.horizontalImage} resizeMode="cover" />
           ) : (
             <LinearGradient
-              colors={["#f3e8ff", "#fae8ff", "#fce7f3"]}
+              colors={[DesignTokens.colors.backgrounds.tertiary, DesignTokens.colors.neutral[200], DesignTokens.colors.neutral[100]]}
               style={styles.horizontalImage}
             >
               <Ionicons name="shirt-outline" size={40} color={Colors.neutral[300]} />
@@ -228,8 +231,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing[2],
     right: Spacing[2],
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     justifyContent: "center",
@@ -263,7 +266,7 @@ const styles = StyleSheet.create({
     ...Typography.body.sm,
     color: Colors.neutral[800],
     fontWeight: "600",
-    height: 40,
+    height: DesignTokens.spacing[10],
     lineHeight: 20,
   },
   ratingRow: {
@@ -296,8 +299,8 @@ const styles = StyleSheet.create({
     marginTop: Spacing[1],
   },
   colorDot: {
-    width: 12,
-    height: 12,
+    width: DesignTokens.spacing[3],
+    height: DesignTokens.spacing[3],
     borderRadius: 6,
     borderWidth: 1,
     borderColor: Colors.neutral[200],

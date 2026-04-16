@@ -1,13 +1,16 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface EmptyCartViewProps {
   onGoShopping: () => void;
 }
 
 export const EmptyCartView: React.FC<EmptyCartViewProps> = ({ onGoShopping }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={styles.container}>
       <Ionicons name="cart-off" size={64} color={DesignTokens.colors.neutral[300]} />
@@ -20,34 +23,34 @@ export const EmptyCartView: React.FC<EmptyCartViewProps> = ({ onGoShopping }) =>
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 64,
+    paddingVertical: Spacing['3xl'],
   },
   heading: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
-    marginTop: 16,
+    color: colors.textPrimary,
+    marginTop: Spacing.md,
   },
   body: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.tertiary,
-    marginTop: 8,
+    color: colors.textTertiary,
+    marginTop: Spacing.sm,
   },
   button: {
-    marginTop: 24,
-    backgroundColor: "DesignTokens.colors.semantic.error",
-    paddingHorizontal: 32,
-    paddingVertical: 12,
+    marginTop: Spacing.lg,
+    backgroundColor: "colors.error",
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
   },
   buttonText: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-});
+}))

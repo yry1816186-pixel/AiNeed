@@ -16,9 +16,11 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import { communityApi } from '../../../services/api/community.api';
 import type { CommunityStackParamList } from '../../../navigation/types';
+import { Spacing } from '../../../design-system/theme';
+
 
 type InspirationWardrobeRoute = RouteProp<CommunityStackParamList, "InspirationWardrobe">;
 
@@ -229,8 +231,8 @@ export const InspirationWardrobeScreen: React.FC = () => {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         numColumns={NUM_COLUMNS}
-        columnWrapperStyle={{ gap: 10 }}
-        contentContainerStyle={{ gap: 10, padding: 16, paddingBottom: 40 }}
+        columnWrapperStyle={{ gap: DesignTokens.spacing['2.5']}}
+        contentContainerStyle={{ gap: DesignTokens.spacing['2.5'], padding: Spacing.md, paddingBottom: DesignTokens.spacing[10]}}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -256,21 +258,21 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
-  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: 12 },
+  iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
+  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing.xl},
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: DesignTokens.spacing[3]},
   retryBtn: {
-    marginTop: 16,
+    marginTop: Spacing.md,
     backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
   },
   retryBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
@@ -278,12 +280,12 @@ const s = StyleSheet.create({
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
-    maxHeight: 48,
+    maxHeight: Spacing['2xl'],
   },
-  collectionScroll: { paddingHorizontal: 16, paddingVertical: 8, gap: 8, alignItems: "center" },
+  collectionScroll: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, gap: Spacing.sm, alignItems: "center" },
   collectionChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
     backgroundColor: colors.background,
   },
@@ -303,16 +305,16 @@ const s = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: "rgba(0,0,0,0.5)",
-    paddingHorizontal: 8,
-    paddingVertical: 6,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: DesignTokens.spacing['1.5'],
   },
-  gridTitle: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral.white, fontWeight: "500" },
+  gridTitle: { fontSize: DesignTokens.typography.sizes.sm, color: colors.surface, fontWeight: "500" },
   emptyContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingVertical: 60 },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: 16 },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: Spacing.md},
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
-    marginTop: 8,
+    marginTop: Spacing.sm,
     textAlign: "center",
   },
 });

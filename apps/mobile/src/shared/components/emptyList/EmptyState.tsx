@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Feather } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 interface EmptyStateProps {
   icon?: keyof typeof Feather.glyphMap;
@@ -18,10 +19,12 @@ export function EmptyState({
   actionLabel,
   onAction,
 }: EmptyStateProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <Feather name={icon} size={64} color="#a1a1aa" />
+        <Feather name={icon} size={64} color={DesignTokens.colors.text.tertiary} />
       </View>
       <Text style={styles.title}>{title}</Text>
       {description && <Text style={styles.description}>{description}</Text>}
@@ -102,40 +105,40 @@ export function ErrorState({ message, onRetry }: { message?: string; onRetry?: (
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 40,
+    padding: DesignTokens.spacing[10],
   },
   iconContainer: {
-    marginBottom: 20,
+    marginBottom: DesignTokens.spacing[5],
   },
   title: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: "#18181b",
-    marginBottom: 8,
+    color: DesignTokens.colors.text.primary,
+    marginBottom: Spacing.sm,
     textAlign: "center",
   },
   description: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: "#71717a",
+    color: DesignTokens.colors.text.secondary,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: DesignTokens.spacing[5],
   },
   button: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    backgroundColor: colors.primary,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 8,
   },
   buttonText: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-});
+}))
 
 export default EmptyState;

@@ -2,18 +2,21 @@ import React, { useEffect, useRef, useMemo } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
 import type { AlignmentStatus } from "../../../hooks/useReferenceLines";
 import { DesignTokens } from "../../../design-system/theme";
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import { flatColors as colors } from '../../../../design-system/theme';
+
 
 interface AlignmentGuideProps {
   alignmentStatus: AlignmentStatus | null;
 }
 
 const STATUS_COLORS = {
-  aligned: DesignTokens.colors.semantic.success,
-  perfect: DesignTokens.colors.semantic.success,
-  good: DesignTokens.colors.semantic.success,
-  slight: DesignTokens.colors.semantic.warning,
-  off: DesignTokens.colors.semantic.error,
-  adjust: DesignTokens.colors.semantic.error,
+  aligned: colors.success,
+  perfect: colors.success,
+  good: colors.success,
+  slight: colors.warning,
+  off: colors.error,
+  adjust: colors.error,
 } as const;
 
 function getStatusMessage(status: AlignmentStatus): { message: string; color: string } | null {
@@ -98,7 +101,7 @@ const AlignmentGuide: React.FC<AlignmentGuideProps> = ({ alignmentStatus }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     position: "absolute",
     bottom: 120,
@@ -107,15 +110,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   badge: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
   },
   text: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-});
+}))
 
 export default AlignmentGuide;
+
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  badge: { flex: 1 },
+  text: { flex: 1 },
+});

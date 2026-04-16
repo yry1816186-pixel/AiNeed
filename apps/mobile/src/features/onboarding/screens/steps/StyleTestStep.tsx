@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-nati
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, { SlideInRight } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
@@ -46,7 +46,7 @@ export const StyleTestStep: React.FC<StyleTestStepProps> = ({ onNext, onSkip }) 
         end={{ x: 1, y: 1 }}
         style={styles.previewCard}
       >
-        <Ionicons name="sparkle-outline" size={64} color={DesignTokens.colors.backgrounds.primary} />
+        <Ionicons name="sparkle-outline" size={64} color={colors.surface} />
         <Text style={styles.previewTitle}>风格测试预览</Text>
         <Text style={styles.previewSubtitle}>8 道精选题�?· 3 分钟完成</Text>
       </LinearGradient>
@@ -67,7 +67,7 @@ export const StyleTestStep: React.FC<StyleTestStepProps> = ({ onNext, onSkip }) 
     <View style={styles.actions}>
       <TouchableOpacity style={styles.startButton} onPress={onNext} activeOpacity={0.7}>
         <Text style={styles.startButtonText}>开始测试</Text>
-        <Ionicons name="play-outline" size={20} color={DesignTokens.colors.backgrounds.primary} />
+        <Ionicons name="play-outline" size={20} color={colors.surface} />
       </TouchableOpacity>
       {onSkip && (
         <TouchableOpacity style={styles.skipButton} onPress={onSkip} activeOpacity={0.7}>
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   previewTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     marginTop: Spacing[4],
   },
   previewSubtitle: {
@@ -136,8 +136,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   featureIconContainer: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: "rgba(198, 123, 92, 0.1)",
     alignItems: "center",
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   startButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
   skipButton: {
     marginTop: Spacing[4],

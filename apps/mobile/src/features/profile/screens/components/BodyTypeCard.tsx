@@ -7,6 +7,7 @@ import { typography } from "@/src/theme/tokens/typography";
 import { spacing } from "@/src/theme/tokens/spacing";
 import { shadows } from "@/src/theme/tokens/shadows";
 import type { BodyAnalysisReport } from "@/src/services/api/profile.api";
+import { DesignTokens , flatColors as colors } from '../../../../design-system/theme';
 
 interface BodyTypeCardProps {
   bodyAnalysis: BodyAnalysisReport | null;
@@ -388,8 +389,8 @@ const styles = StyleSheet.create({
     gap: spacing.scale[2],
   },
   recommendationDot: {
-    width: 6,
-    height: 6,
+    width: DesignTokens.spacing['1.5'],
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
     backgroundColor: colors.brand.warmPrimary,
     marginTop: 7,

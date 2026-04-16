@@ -18,11 +18,12 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { SharedElement } from "react-navigation-shared-element";
-import { theme } from '../../../design-system/theme';
+import { theme , Spacing } from '../../../design-system/theme'
 import { communityApi, PostComment } from '../../../services/api/community.api';
 import { DesignTokens } from '../../../theme/tokens/design-tokens';
 import { BookmarkSheet } from '../../../components/community/BookmarkSheet';
 import type { RootStackParamList } from '../../../types/navigation';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type _PostDetailRoute = RouteProp<RootStackParamList, "Community">;
@@ -32,6 +33,8 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const DEFAULT_COMMENTS: PostComment[] = [];
 
 export const PostDetailScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const navigation = useNavigation<Navigation>();
   const route = useRoute();
   const postId = (route.params as { postId?: string })?.postId ?? '';
@@ -293,12 +296,12 @@ export const PostDetailScreen: React.FC = () => {
               <Image source={{ uri: post.author.avatar }} style={styles.authorAvatar} />
               {post.bloggerLevel === "blogger" && (
                 <View style={styles.authorBadge}>
-                  <Ionicons name="checkmark" size={8} color={DesignTokens.colors.neutral.white} />
+                  <Ionicons name="checkmark" size={8} color={colors.surface} />
                 </View>
               )}
               {post.bloggerLevel === "big_v" && (
                 <View style={styles.authorBigVBadge}>
-                  <Ionicons name="shield-checkmark" size={10} color={DesignTokens.colors.neutral.white} />
+                  <Ionicons name="shield-checkmark" size={10} color={colors.surface} />
                 </View>
               )}
             </View>
@@ -379,7 +382,7 @@ export const PostDetailScreen: React.FC = () => {
         {/* Purchase button for blogger posts */}
         {post.bloggerLevel && (
           <TouchableOpacity style={styles.purchaseBtn}>
-            <Ionicons name="bag-outline" size={18} color={DesignTokens.colors.neutral.white} />
+            <Ionicons name="bag-outline" size={18} color={colors.surface} />
             <Text style={styles.purchaseBtnText}>购买此方案</Text>
           </TouchableOpacity>
         )}
@@ -394,7 +397,7 @@ export const PostDetailScreen: React.FC = () => {
           )}
         </View>
 
-        <View style={{ height: 80 }} />
+        <View style={{ height: Spacing['4xl'] }} />
       </ScrollView>
 
       {/* Bottom action bar */}
@@ -414,12 +417,12 @@ export const PostDetailScreen: React.FC = () => {
             disabled={!commentText.trim() || submittingComment}
           >
             {submittingComment ? (
-              <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+              <ActivityIndicator size="small" color={colors.surface} />
             ) : (
               <Ionicons
                 name="send"
                 size={18}
-                color={commentText.trim() ? DesignTokens.colors.neutral.white : theme.colors.textTertiary}
+                color={commentText.trim() ? colors.surface : theme.colors.textTertiary}
               />
             )}
           </TouchableOpacity>
@@ -464,90 +467,90 @@ export const PostDetailScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: { flex: 1, backgroundColor: theme.colors.background },
   centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
   errorText: { fontSize: DesignTokens.typography.sizes.md, color: theme.colors.textSecondary },
-  goBackText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary, marginTop: 12 },
+  goBackText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary, marginTop: DesignTokens.spacing[3]},
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
-  backBtn: { width: 40, height: 40, justifyContent: "center" },
-  moreBtn: { width: 40, height: 40, alignItems: "flex-end", justifyContent: "center" },
+  backBtn: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], justifyContent: "center" },
+  moreBtn: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], alignItems: "flex-end", justifyContent: "center" },
   content: { flex: 1 },
   authorSection: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    padding: Spacing.md,
     backgroundColor: theme.colors.surface,
   },
   authorAvatarWrapper: { position: "relative" },
-  authorAvatar: { width: 44, height: 44, borderRadius: 22 },
+  authorAvatar: { width: DesignTokens.spacing[11], height: DesignTokens.spacing[11], borderRadius: 22 },
   authorAvatarPlaceholder: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  authorAvatarText: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: DesignTokens.colors.neutral.white },
+  authorAvatarText: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.surface },
   authorBadge: {
     position: "absolute",
     bottom: -2,
     right: -2,
-    width: 16,
-    height: 16,
+    width: Spacing.md,
+    height: Spacing.md,
     borderRadius: 8,
-    backgroundColor: DesignTokens.colors.brand.slate,
+    backgroundColor: colors.neutral[500],
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: DesignTokens.colors.neutral.white,
+    borderColor: colors.surface,
   },
   authorBigVBadge: {
     position: "absolute",
     bottom: -3,
     right: -3,
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 10,
     backgroundColor: "#F1C40F", // custom color
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: DesignTokens.colors.neutral.white,
+    borderColor: colors.surface,
   },
-  authorInfo: { marginLeft: 12, flex: 1 },
+  authorInfo: { marginLeft: DesignTokens.spacing[3], flex: 1 },
   authorName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
-  postTime: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
+  postTime: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
   postTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: theme.colors.textPrimary,
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingHorizontal: Spacing.md,
+    paddingTop: DesignTokens.spacing[3],
     backgroundColor: theme.colors.surface,
   },
   postContent: {
     fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
     lineHeight: 22,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 16,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.md,
     backgroundColor: theme.colors.surface,
   },
   imageCarousel: {
-    backgroundColor: DesignTokens.colors.neutral.black,
+    backgroundColor: colors.neutral[900],
   },
   carouselImage: {
     width: SCREEN_WIDTH,
@@ -557,72 +560,72 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 10,
-    gap: 6,
+    paddingVertical: DesignTokens.spacing['2.5'],
+    gap: DesignTokens.spacing['1.5'],
   },
   dot: {
-    width: 6,
-    height: 6,
+    width: DesignTokens.spacing['1.5'],
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
     backgroundColor: "rgba(255,255,255,0.4)",
   },
   dotActive: {
-    backgroundColor: DesignTokens.colors.neutral.white,
-    width: 8,
-    height: 8,
+    backgroundColor: colors.surface,
+    width: Spacing.sm,
+    height: Spacing.sm,
     borderRadius: 4,
   },
   tagsRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: theme.colors.surface,
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   tagChip: {
     backgroundColor: "#F0EDFF", // custom color
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: Spacing.xs,
     borderRadius: 12,
   },
-  tagText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.brand.slate, fontWeight: "500" },
+  tagText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.neutral[500], fontWeight: "500" },
   purchaseBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    backgroundColor: DesignTokens.colors.brand.slate,
-    marginHorizontal: 16,
-    marginVertical: 12,
-    paddingVertical: 12,
+    gap: Spacing.sm,
+    backgroundColor: colors.neutral[500],
+    marginHorizontal: Spacing.md,
+    marginVertical: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 12,
   },
-  purchaseBtnText: { color: DesignTokens.colors.neutral.white, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  purchaseBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   commentsSection: {
     backgroundColor: theme.colors.surface,
-    marginTop: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    marginTop: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
   },
-  commentsTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
+  commentsTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: DesignTokens.spacing[3]},
   noComments: {
     fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textTertiary,
     textAlign: "center",
-    paddingVertical: 24,
+    paddingVertical: Spacing.lg,
   },
   commentItem: {
-    paddingVertical: 12,
+    paddingVertical: DesignTokens.spacing[3],
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  commentHeader: { flexDirection: "row", gap: 10 },
-  commentAvatar: { width: 32, height: 32, borderRadius: 16 },
+  commentHeader: { flexDirection: "row", gap: DesignTokens.spacing['2.5']},
+  commentAvatar: { width: Spacing.xl, height: Spacing.xl, borderRadius: 16 },
   commentAvatarPlaceholder: {
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
     backgroundColor: DesignTokens.colors.neutral[200],
     alignItems: "center",
@@ -631,18 +634,18 @@ const styles = StyleSheet.create({
   commentAvatarText: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.textSecondary },
   commentBody: { flex: 1 },
   commentAuthor: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.text },
-  commentContent: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, lineHeight: 20, marginTop: 4 },
+  commentContent: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, lineHeight: 20, marginTop: Spacing.xs},
   commentMeta: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    marginTop: 6,
+    gap: DesignTokens.spacing[3],
+    marginTop: DesignTokens.spacing['1.5'],
   },
   commentTime: { fontSize: DesignTokens.typography.sizes.xs, color: theme.colors.textTertiary },
   replyLink: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.primary, fontWeight: "500" },
   repliesSection: {
-    marginTop: 8,
-    paddingLeft: 8,
+    marginTop: Spacing.sm,
+    paddingLeft: Spacing.sm,
     borderLeftWidth: 2,
     borderLeftColor: theme.colors.border,
   },
@@ -652,27 +655,27 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
   },
   commentInputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginBottom: 8,
+    gap: Spacing.sm,
+    marginBottom: Spacing.sm,
   },
   commentInput: {
     flex: 1,
-    height: 36,
+    height: DesignTokens.spacing[9],
     backgroundColor: theme.colors.background,
     borderRadius: 18,
-    paddingHorizontal: 14,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
     fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   sendBtn: {
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: 18,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
@@ -686,12 +689,12 @@ const styles = StyleSheet.create({
   actionBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    gap: Spacing.xs,
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
   },
   actionCount: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   actionCountLiked: { color: "#FF4757" }, // custom color
-});
+}))
 
 export default PostDetailScreen;

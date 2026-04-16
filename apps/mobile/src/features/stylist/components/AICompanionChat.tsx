@@ -34,6 +34,9 @@ import {
 import { PreferenceSelector } from "./PreferenceSelector";
 import { OutfitCard } from "./OutfitCard";
 import { AnalysisProgress } from "./AnalysisProgress";
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const { width: _SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -92,6 +95,8 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
   onStopVoice,
   isVoiceAvailable = false,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
   const [inputText, setInputText] = useState("");
@@ -177,21 +182,21 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
       case "listening":
         return (
           <View style={styles.stateIndicator}>
-            <View style={[styles.stateDot, { backgroundColor: DesignTokens.colors.brand.slate }]} />
+            <View style={[styles.stateDot, { backgroundColor: colors.neutral[500] }]} />
             <Text style={styles.stateText}>正在聆听...</Text>
           </View>
         );
       case "thinking":
         return (
           <View style={styles.stateIndicator}>
-            <ActivityIndicator size="small" color={DesignTokens.colors.semantic.warning} />
+            <ActivityIndicator size="small" color={colors.warning} />
             <Text style={styles.stateText}>思考中...</Text>
           </View>
         );
       case "responding":
         return (
           <View style={styles.stateIndicator}>
-            <View style={[styles.stateDot, { backgroundColor: DesignTokens.colors.semantic.success }]} />
+            <View style={[styles.stateDot, { backgroundColor: colors.success }]} />
             <Text style={styles.stateText}>回复中...</Text>
           </View>
         );
@@ -204,7 +209,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
     if (message.isLoading) {
       return (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color={DesignTokens.colors.brand.sage} />
+          <ActivityIndicator size="small" color={colors.secondary} />
           <Text style={styles.loadingText}>AI 正在思考...</Text>
         </View>
       );
@@ -253,16 +258,16 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
             <View style={styles.photoButtons}>
               <Pressable style={styles.photoButton} onPress={() => onUploadPhoto?.("camera")}>
                 <LinearGradient
-                  colors={[DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel]}
+                  colors={[colors.secondary, colors.primary]}
                   style={styles.photoButtonGradient}
                 >
-                  <Ionicons name="camera" size={24} color={DesignTokens.colors.text.inverse} />
+                  <Ionicons name="camera" size={24} color={colors.textInverse} />
                   <Text style={styles.photoButtonText}>拍照</Text>
                 </LinearGradient>
               </Pressable>
               <Pressable style={styles.photoButton} onPress={() => onUploadPhoto?.("library")}>
-                <LinearGradient colors={[DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"]} style={styles.photoButtonGradient}>
-                  <Ionicons name="images" size={24} color={DesignTokens.colors.text.inverse} />
+                <LinearGradient colors={[colors.neutral[500], "colors.textTertiary"]} style={styles.photoButtonGradient}>
+                  <Ionicons name="images" size={24} color={colors.textInverse} />
                   <Text style={styles.photoButtonText}>相册</Text>
                 </LinearGradient>
               </Pressable>
@@ -283,10 +288,10 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
             </Text>
             <Pressable style={styles.generateButton} onPress={onGenerateOutfit}>
               <LinearGradient
-                colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
+                colors={[colors.primary, colors.primary]}
                 style={styles.generateButtonGradient}
               >
-                <Ionicons name="sparkles" size={18} color={DesignTokens.colors.text.inverse} />
+                <Ionicons name="sparkles" size={18} color={colors.textInverse} />
                 <Text style={styles.generateButtonText}>生成穿搭方案</Text>
               </LinearGradient>
             </Pressable>
@@ -307,7 +312,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
 
   return (
     <AnimatedView style={[styles.container, panelStyle]}>
-      <LinearGradient colors={[DesignTokens.colors.backgrounds.primary, DesignTokens.colors.backgrounds.secondary]} style={styles.gradient}>
+      <LinearGradient colors={[colors.surface, colors.backgroundSecondary]} style={styles.gradient}>
         <AnimatedView style={[styles.header, headerStyle]}>
           <View style={styles.headerLeft}>
             <Pressable onPress={onClose} style={styles.closeButton}>
@@ -330,7 +335,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
           {messages.length === 0 && (
             <View style={styles.emptyState}>
               <LinearGradient
-                colors={[DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel]}
+                colors={[colors.secondary, colors.primary]}
                 style={styles.emptyIcon}
               >
                 <Text style={styles.emptyIconText}>AI</Text>
@@ -375,7 +380,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
                 !message.progress &&
                 !message.outfitResult && (
                   <LinearGradient
-                    colors={[DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel]}
+                    colors={[colors.secondary, colors.primary]}
                     style={styles.assistantAvatar}
                   >
                     <Text style={styles.assistantAvatarText}>AI</Text>
@@ -432,7 +437,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
                   size={22}
                   color={
                     state === "listening"
-                      ? DesignTokens.colors.brand.terracotta
+                      ? colors.primary
                       : DesignTokens.colors.neutral[500]
                   }
                 />
@@ -447,12 +452,12 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
               <LinearGradient
                 colors={
                   inputText.trim() && state !== "thinking"
-                    ? [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]
+                    ? [colors.primary, colors.primary]
                     : [DesignTokens.colors.neutral[300], DesignTokens.colors.neutral[400]]
                 }
                 style={styles.sendButtonGradient}
               >
-                <Ionicons name="send" size={18} color={DesignTokens.colors.text.inverse} />
+                <Ionicons name="send" size={18} color={colors.textInverse} />
               </LinearGradient>
             </Pressable>
           </View>
@@ -499,7 +504,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     position: "absolute",
     top: 0,
@@ -514,18 +519,18 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
     paddingTop: Platform.OS === "ios" ? 60 : 40,
-    paddingBottom: 16,
+    paddingBottom: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
   headerLeft: {
-    width: 44,
+    width: DesignTokens.spacing[11],
   },
   closeButton: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
@@ -541,18 +546,18 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.neutral[900],
   },
   headerRight: {
-    width: 44,
+    width: DesignTokens.spacing[11],
   },
   stateIndicator: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   stateDot: {
-    width: 8,
-    height: 8,
+    width: Spacing.sm,
+    height: Spacing.sm,
     borderRadius: 4,
-    marginRight: 6,
+    marginRight: DesignTokens.spacing['1.5'],
   },
   stateText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -562,32 +567,32 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messagesContent: {
-    padding: 16,
-    paddingBottom: 24,
+    padding: Spacing.md,
+    paddingBottom: Spacing.lg,
   },
   emptyState: {
     alignItems: "center",
     paddingTop: 60,
-    paddingHorizontal: 32,
+    paddingHorizontal: Spacing.xl,
   },
   emptyIcon: {
-    width: 80,
-    height: 80,
+    width: Spacing['4xl'],
+    height: Spacing['4xl'],
     borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
+    marginBottom: DesignTokens.spacing[5],
   },
   emptyIconText: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
     textAlign: "center",
   },
   emptySubtitle: {
@@ -595,17 +600,17 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: 32,
+    marginBottom: Spacing.xl,
   },
   suggestions: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   suggestionChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     borderWidth: 1,
@@ -618,7 +623,7 @@ const styles = StyleSheet.create({
   },
   messageWrapper: {
     flexDirection: "row",
-    marginBottom: 16,
+    marginBottom: Spacing.md,
     alignItems: "flex-end",
   },
   userMessageWrapper: {
@@ -628,29 +633,29 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   assistantAvatar: {
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
   assistantAvatarText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "700",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   messageBubble: {
     maxWidth: "75%",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 18,
   },
   wideBubble: {
     maxWidth: "90%",
   },
   userBubble: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     borderBottomRightRadius: 4,
   },
   assistantBubble: {
@@ -662,7 +667,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   userMessageText: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   assistantMessageText: {
     color: DesignTokens.colors.neutral[800],
@@ -670,7 +675,7 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -679,8 +684,8 @@ const styles = StyleSheet.create({
   photoPrompt: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 16,
-    padding: 16,
-    marginVertical: 8,
+    padding: Spacing.md,
+    marginVertical: Spacing.sm,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
@@ -689,12 +694,12 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: DesignTokens.colors.neutral[800],
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   photoButtons: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 16,
+    gap: Spacing.md,
   },
   photoButton: {
     borderRadius: 12,
@@ -702,20 +707,20 @@ const styles = StyleSheet.create({
   },
   photoButtonGradient: {
     width: 100,
-    height: 80,
+    height: Spacing['4xl'],
     alignItems: "center",
     justifyContent: "center",
   },
   photoButtonText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
-    marginTop: 6,
+    color: colors.textInverse,
+    marginTop: DesignTokens.spacing['1.5'],
   },
   skipPhotoButton: {
-    marginTop: 12,
+    marginTop: DesignTokens.spacing[3],
     alignItems: "center",
-    paddingVertical: 8,
+    paddingVertical: Spacing.sm,
   },
   skipPhotoText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -724,8 +729,8 @@ const styles = StyleSheet.create({
   generatePrompt: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 16,
-    padding: 16,
-    marginVertical: 8,
+    padding: Spacing.md,
+    marginVertical: Spacing.sm,
     alignItems: "center",
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
@@ -734,7 +739,7 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[600],
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: Spacing.md,
     lineHeight: 20,
   },
   generateButton: {
@@ -744,36 +749,36 @@ const styles = StyleSheet.create({
   generateButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 24,
-    paddingVertical: 14,
-    gap: 8,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing['3.5'],
+    gap: Spacing.sm,
   },
   generateButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   inputContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingHorizontal: Spacing.md,
+    paddingTop: DesignTokens.spacing[3],
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[200],
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
   },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "flex-end",
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 24,
-    paddingLeft: 8,
-    paddingRight: 4,
-    paddingVertical: 4,
+    paddingLeft: Spacing.sm,
+    paddingRight: Spacing.xs,
+    paddingVertical: Spacing.xs,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
   attachButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -783,28 +788,28 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.md,
     color: DesignTokens.colors.neutral[900],
     maxHeight: 100,
-    paddingVertical: 8,
-    paddingHorizontal: 8,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
   },
   voiceButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
   },
   voiceButtonActive: {
-    backgroundColor: DesignTokens.colors.brand.terracotta + "20",
+    backgroundColor: colors.primary + "20",
   },
   sendButton: {
-    marginLeft: 4,
+    marginLeft: Spacing.xs,
   },
   sendButtonDisabled: {
     opacity: 0.5,
   },
   sendButtonGradient: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -818,7 +823,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.3)",
   },
   photoOptionsSheet: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingBottom: 34,
@@ -827,8 +832,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
-    paddingVertical: 18,
+    gap: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing[4],
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
@@ -839,9 +844,9 @@ const styles = StyleSheet.create({
   },
   photoOptionCancel: {
     borderBottomWidth: 0,
-    marginTop: 8,
+    marginTop: Spacing.sm,
     backgroundColor: DesignTokens.colors.neutral[100],
-    marginHorizontal: 16,
+    marginHorizontal: Spacing.md,
     borderRadius: 12,
   },
   photoOptionCancelText: {
@@ -849,4 +854,4 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.neutral[500],
     fontWeight: "600",
   },
-});
+}))

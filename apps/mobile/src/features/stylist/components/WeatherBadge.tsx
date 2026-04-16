@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 interface WeatherBadgeProps {
   temperature: number;
@@ -32,6 +35,8 @@ export const WeatherBadge: React.FC<WeatherBadgeProps> = ({
   location,
   suggestion,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [showSuggestion, setShowSuggestion] = useState(false);
 
   const icon = getWeatherIcon(condition);
@@ -49,23 +54,23 @@ export const WeatherBadge: React.FC<WeatherBadgeProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
   badgeContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
   },
   icon: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.brand.sage,
+    color: colors.secondary,
     fontWeight: "700",
   },
   temperature: {
@@ -84,7 +89,7 @@ const styles = StyleSheet.create({
   suggestion: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[600],
-    marginTop: 4,
+    marginTop: Spacing.xs,
     lineHeight: 16,
   },
-});
+}))

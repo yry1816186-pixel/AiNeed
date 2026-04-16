@@ -4,6 +4,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Colors, theme, Spacing, BorderRadius, Shadows } from '../theme';
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap;
@@ -25,7 +26,9 @@ export function EmptyState({
   style,
   iconGradient,
 }: EmptyStateProps) {
-  const gradient = iconGradient ?? [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel];
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
+  const gradient = iconGradient ?? [colors.primary, colors.primary];
 
   return (
     <View style={[styles.container, style]}>
@@ -35,7 +38,7 @@ export function EmptyState({
         end={{ x: 1, y: 1 }}
         style={styles.iconContainer}
       >
-        <Ionicons name={icon} size={40} color={DesignTokens.colors.neutral.white} />
+        <Ionicons name={icon} size={40} color={colors.surface} />
       </LinearGradient>
       <Text style={styles.title}>{title}</Text>
       {description && <Text style={styles.description}>{description}</Text>}
@@ -47,7 +50,7 @@ export function EmptyState({
           accessibilityRole="button"
         >
           <LinearGradient
-            colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
+            colors={[colors.primary, colors.primary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.actionGradient}
@@ -69,7 +72,7 @@ export function EmptyWardrobe({ onAdd }: { onAdd?: () => void }) {
       description="开始添加你的第一件衣服，让AI造型师为你推荐穿搭"
       actionLabel="拍照添加"
       onAction={onAdd}
-      iconGradient={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
+      iconGradient={[colors.primary, colors.primary]}
     />
   );
 }
@@ -189,12 +192,12 @@ export function EmptyGeneric({
       description={description ?? "精彩即将到来，敬请期待"}
       actionLabel={actionLabel}
       onAction={onAction}
-      iconGradient={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
+      iconGradient={[colors.primary, colors.primary]}
     />
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     alignItems: "center",
@@ -202,8 +205,8 @@ const styles = StyleSheet.create({
     padding: Spacing[8],
   },
   iconContainer: {
-    width: 96,
-    height: 96,
+    width: Spacing['5xl'],
+    height: Spacing['5xl'],
     borderRadius: 48,
     alignItems: "center",
     justifyContent: "center",
@@ -239,6 +242,6 @@ const styles = StyleSheet.create({
   actionLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
-});
+}))

@@ -43,7 +43,7 @@ import {
   Shadows,
   gradients as themeGradients,
 } from '../../design-system/theme';
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -84,6 +84,8 @@ export const ThemedView: React.FC<ThemedViewProps> = ({
   style,
   variant = "background",
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { colors } = useUnifiedTheme();
 
   const backgroundColor = {
@@ -207,11 +209,11 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
               <Ionicons
                 name="sunny"
                 size={14}
-                color={isDark ? DesignTokens.colors.backgrounds.primary : colors.text.secondary}
+                color={isDark ? colors.surface : colors.text.secondary}
               />
             </AnimatedView>
             <AnimatedView style={[StyleSheet.absoluteFill, styles.iconCenter, moonAnimatedStyle]}>
-              <Ionicons name="moon" size={14} color={DesignTokens.colors.backgrounds.primary} />
+              <Ionicons name="moon" size={14} color={colors.surface} />
             </AnimatedView>
           </View>
         </AnimatedView>
@@ -247,7 +249,7 @@ export const AccentColorPicker: React.FC<AccentColorPickerProps> = ({ style }) =
               styles.colorCircleSelected,
             ]}
           >
-            <Ionicons name="checkmark" size={16} color={DesignTokens.colors.backgrounds.primary} />
+            <Ionicons name="checkmark" size={16} color={colors.surface} />
           </View>
           <Text style={[styles.colorLabel, { color: colors.text.secondary }]}>
             Terracotta
@@ -341,7 +343,7 @@ export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({ visible,
                   <Ionicons
                     name={option.icon as ThemeIoniconsIconName}
                     size={20}
-                    color={effectiveDark ? DesignTokens.colors.backgrounds.primary : colors.text.secondary}
+                    color={effectiveDark ? colors.surface : colors.text.secondary}
                   />
                 </View>
                 <Text style={[styles.themeOptionLabel, { color: colors.text.primary }]}>
@@ -349,7 +351,7 @@ export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({ visible,
                 </Text>
                 {isSelected && (
                   <View style={[styles.checkMark, { backgroundColor: colors.brand.terracotta }]}>
-                    <Ionicons name="checkmark" size={12} color={DesignTokens.colors.backgrounds.primary} />
+                    <Ionicons name="checkmark" size={12} color={colors.surface} />
                   </View>
                 )}
               </TouchableOpacity>
@@ -430,32 +432,32 @@ export const GlassCard: React.FC<GlassCardProps> = ({ children, style, intensity
 
 // ─── Styles ───────────────────────────────────────────────────────────────
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   themeSwitch: {
-    padding: 4,
+    padding: Spacing.xs,
   },
   switchTrack: {
-    width: 48,
-    height: 28,
+    width: Spacing['2xl'],
+    height: DesignTokens.spacing[7],
     borderRadius: 14,
-    padding: 2,
+    padding: DesignTokens.spacing['0.5'],
   },
   switchThumb: {
-    width: 24,
-    height: 24,
+    width: Spacing.lg,
+    height: Spacing.lg,
     borderRadius: 12,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
   },
   iconContainer: {
-    width: 24,
-    height: 24,
+    width: Spacing.lg,
+    height: Spacing.lg,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -464,33 +466,33 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   accentPicker: {
-    marginTop: 24,
+    marginTop: Spacing.lg,
   },
   pickerTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   colorOptions: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 16,
+    gap: Spacing.md,
   },
   colorOption: {
     alignItems: "center",
     width: 60,
   },
   colorCircle: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   colorCircleSelected: {
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 4 },
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: Spacing.xs },
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 6,
@@ -501,7 +503,7 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: DesignTokens.colors.neutral.black,
+    backgroundColor: colors.neutral[900],
   },
   sheet: {
     position: "absolute",
@@ -510,41 +512,41 @@ const styles = StyleSheet.create({
     right: 0,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingHorizontal: 20,
-    paddingTop: 12,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingTop: DesignTokens.spacing[3],
     paddingBottom: Platform.OS === "ios" ? 40 : 20,
   },
   sheetHandle: {
-    width: 36,
+    width: DesignTokens.spacing[9],
     height: 5,
-    backgroundColor: "#E4E4E7",
+    backgroundColor: DesignTokens.colors.neutral[200],
     borderRadius: 2.5,
     alignSelf: "center",
-    marginBottom: 20,
+    marginBottom: DesignTokens.spacing[5],
   },
   sheetTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    marginBottom: 20,
+    marginBottom: DesignTokens.spacing[5],
   },
   themeOptions: {
     flexDirection: "row",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   themeOption: {
     flex: 1,
     alignItems: "center",
-    padding: 16,
+    padding: Spacing.md,
     borderRadius: 16,
     position: "relative",
   },
   themeOptionIcon: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   themeOptionLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -552,8 +554,8 @@ const styles = StyleSheet.create({
   },
   checkMark: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: Spacing.sm,
+    right: Spacing.sm,
     width: 18,
     height: 18,
     borderRadius: 9,
@@ -561,13 +563,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   accentSection: {
-    marginTop: 24,
+    marginTop: Spacing.lg,
   },
   glassCard: {
     borderRadius: 20,
     overflow: "hidden",
   },
-});
+}))
 
 const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 

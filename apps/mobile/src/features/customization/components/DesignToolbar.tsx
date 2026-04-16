@@ -1,7 +1,7 @@
 ﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing } from '../../../design-system/theme';
+import { Colors, Spacing , flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   toolLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: colors.textSecondary,
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   toolLabelDisabled: {
     color: Colors.neutral[300],

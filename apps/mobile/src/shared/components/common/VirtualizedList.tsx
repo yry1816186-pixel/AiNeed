@@ -11,6 +11,10 @@ import {
 } from "react-native";
 
 import { useLazyLoad } from "../../hooks/useLazyLoad";
+import { Spacing } from '../../../design-system/theme';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+
+
 
 /**
  * Generic virtualized list component wrapping FlatList with
@@ -146,13 +150,13 @@ export function VirtualizedList<T>(props: VirtualizedListProps<T>): React.ReactE
 
 const styles = StyleSheet.create({
   gridContent: {
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
   },
   rowWrapper: {
-    gap: 12,
-    paddingHorizontal: 4,
+    gap: DesignTokens.spacing[3],
+    paddingHorizontal: Spacing.xs,
   },
   loadingFooter: {
-    height: 40,
+    height: DesignTokens.spacing[10],
   },
 });

@@ -15,9 +15,11 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import { tryOnApi, type TryOnResult } from '../../../services/api/tryon.api';
 import type { TryOnStackParamList } from '../../../navigation/types';
+import { Spacing } from '../../../design-system/theme';
+
 
 type TryOnResultRoute = RouteProp<TryOnStackParamList, "TryOnResult">;
 
@@ -258,9 +260,9 @@ export const TryOnResultScreen: React.FC = () => {
               disabled={retrying}
             >
               {retrying ? (
-                <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+                <ActivityIndicator size="small" color={colors.surface} />
               ) : (
-                <Ionicons name="refresh" size={18} color={DesignTokens.colors.neutral.white} />
+                <Ionicons name="refresh" size={18} color={colors.surface} />
               )}
               <Text style={s.actionBtnWhiteText}>重试</Text>
             </TouchableOpacity>
@@ -272,7 +274,7 @@ export const TryOnResultScreen: React.FC = () => {
                 <Text style={s.actionBtnPrimaryText}>保存</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[s.actionBtn, s.shareActionBtn]} onPress={handleShare}>
-                <Ionicons name="share-outline" size={18} color={DesignTokens.colors.neutral.white} />
+                <Ionicons name="share-outline" size={18} color={colors.surface} />
                 <Text style={s.actionBtnWhiteText}>分享</Text>
               </TouchableOpacity>
             </>
@@ -293,51 +295,51 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
-  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 12 },
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: 12, textAlign: "center" },
+  iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
+  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing.xl},
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: DesignTokens.spacing[3], textAlign: "center" },
   actionBtn: {
     backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
-    marginTop: 16,
+    marginTop: Spacing.md,
   },
   actionBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   scrollView: { flex: 1 },
-  scrollContent: { padding: 16, paddingBottom: 40 },
+  scrollContent: { padding: Spacing.md, paddingBottom: DesignTokens.spacing[10]},
   statusBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: DesignTokens.spacing['1.5'],
     alignSelf: "center",
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 20,
     backgroundColor: colors.subtleBg,
-    marginBottom: 20,
+    marginBottom: DesignTokens.spacing[5],
   },
-  statusBadgeSuccess: { backgroundColor: DesignTokens.colors.semantic.successLight },
-  statusBadgeError: { backgroundColor: DesignTokens.colors.semantic.errorLight },
-  statusBadgeProcessing: { backgroundColor: DesignTokens.colors.semantic.warningLight },
+  statusBadgeSuccess: { backgroundColor: colors.successLight },
+  statusBadgeError: { backgroundColor: colors.errorLight },
+  statusBadgeProcessing: { backgroundColor: colors.warningLight },
   statusText: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: colors.textSecondary },
   statusTextSuccess: { color: colors.success },
   statusTextError: { color: colors.error },
-  comparisonContainer: { flexDirection: "row", alignItems: "center", marginBottom: 20 },
+  comparisonContainer: { flexDirection: "row", alignItems: "center", marginBottom: DesignTokens.spacing[5]},
   comparisonItem: { flex: 1 },
   comparisonLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: colors.textSecondary,
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
     textAlign: "center",
   },
   imageBox: {
@@ -353,57 +355,57 @@ const s = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.subtleBg,
   },
-  processingText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: 8 },
-  divider: { paddingHorizontal: 8, alignItems: "center", gap: 4 },
+  processingText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: Spacing.sm},
+  divider: { paddingHorizontal: Spacing.sm, alignItems: "center", gap: Spacing.xs},
   dividerLine: { width: 1, height: 30, backgroundColor: colors.border },
   itemCard: {
     backgroundColor: colors.surface,
     borderRadius: 14,
-    padding: 14,
-    marginBottom: 20,
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
+    padding: DesignTokens.spacing['3.5'],
+    marginBottom: DesignTokens.spacing[5],
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
   },
   itemInfo: { flexDirection: "row", alignItems: "center" },
   itemThumb: {
-    width: 48,
-    height: 48,
+    width: Spacing['2xl'],
+    height: Spacing['2xl'],
     borderRadius: 8,
     backgroundColor: colors.placeholderBg,
   },
-  itemDetails: { marginLeft: 12, flex: 1 },
+  itemDetails: { marginLeft: DesignTokens.spacing[3], flex: 1 },
   itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.text },
-  actionRow: { flexDirection: "row", gap: 10, justifyContent: "center", flexWrap: "wrap" },
+  actionRow: { flexDirection: "row", gap: DesignTokens.spacing['2.5'], justifyContent: "center", flexWrap: "wrap" },
   actionBtnOutline: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
+    gap: DesignTokens.spacing['1.5'],
+    paddingHorizontal: DesignTokens.spacing[4],
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.primary,
   },
   actionBtnPrimaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
-  actionBtnWhiteText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: DesignTokens.colors.neutral.white },
+  actionBtnWhiteText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.surface },
   retryActionBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+    gap: DesignTokens.spacing['1.5'],
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
     backgroundColor: colors.primary,
   },
   shareActionBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+    gap: DesignTokens.spacing['1.5'],
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
   },
 });

@@ -19,8 +19,10 @@ import { useTranslation } from '../../../i18n';
 import { wechatAuth } from '../../../services/auth/wechat';
 import { useAuthStore } from '../stores/index';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+
 
 type LoginNavigationProp = NavigationProp<RootStackParamList>;
 
@@ -267,7 +269,7 @@ export const LoginScreen: React.FC = () => {
               <TouchableOpacity
                 onPress={() => setShowPassword((prev) => !prev)}
                 style={styles.eyeButton}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.sm, right: Spacing.sm}}
                 disabled={isLoading || wechatLoading}
                 accessibilityLabel={showPassword ? t.common.cancel : t.auth.password}
               >
@@ -318,10 +320,10 @@ export const LoginScreen: React.FC = () => {
               accessibilityRole="button"
             >
               {wechatLoading ? (
-                <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+                <ActivityIndicator size="small" color={colors.surface} />
               ) : (
                 <>
-                  <Ionicons name="logo-wechat" size={22} color={DesignTokens.colors.neutral.white} />
+                  <Ionicons name="logo-wechat" size={22} color={colors.surface} />
                   <Text style={styles.wechatButtonText}>微信一键登录</Text>
                 </>
               )}
@@ -357,19 +359,19 @@ export const LoginScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.surface },
-  header: { padding: 20 },
+  header: { padding: DesignTokens.spacing[5]},
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
-  content: { flex: 1, padding: 20 },
+  content: { flex: 1, padding: DesignTokens.spacing[5]},
   brandSection: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   logoContainer: {
     width: 72,
@@ -378,7 +380,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   brandName: {
     fontSize: DesignTokens.typography.sizes.xl,
@@ -387,28 +389,28 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
   },
   title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: colors.text },
-  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: 8, marginBottom: 32 },
-  form: { gap: 16 },
+  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: Spacing.sm, marginBottom: Spacing.xl},
+  form: { gap: Spacing.md},
   inputGroup: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.background,
     borderRadius: theme.BorderRadius.md,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
+    gap: DesignTokens.spacing[3],
   },
   input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
-  eyeButton: { padding: 4 },
+  eyeButton: { padding: Spacing.xs},
   forgotPasswordLink: { alignItems: "flex-end" },
   forgotPasswordText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
   loginButton: {
     backgroundColor: colors.primary,
     borderRadius: theme.BorderRadius.md,
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 8,
+    marginTop: Spacing.sm,
     minHeight: 52,
     ...theme.Shadows.brand,
   },
@@ -417,7 +419,7 @@ const styles = StyleSheet.create({
   divider: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 8,
+    marginVertical: Spacing.sm,
   },
   dividerLine: {
     flex: 1,
@@ -425,34 +427,34 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border || DesignTokens.colors.neutral[200],
   },
   dividerText: {
-    marginHorizontal: 16,
+    marginHorizontal: Spacing.md,
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
   },
   wechatButton: {
-    backgroundColor: "DesignTokens.colors.semantic.success", // custom color
+    backgroundColor: "colors.success", // custom color
     borderRadius: theme.BorderRadius.md,
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    gap: 8,
+    gap: Spacing.sm,
     minHeight: 52,
   },
-  wechatButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.neutral.white },
+  wechatButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.surface },
   phoneLoginButton: {
     backgroundColor: colors.background,
     borderRadius: theme.BorderRadius.md,
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    gap: 8,
+    gap: Spacing.sm,
     borderWidth: 1,
     borderColor: colors.primary,
   },
   phoneLoginText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.primary },
-  registerLink: { alignItems: "center", marginTop: 16 },
+  registerLink: { alignItems: "center", marginTop: Spacing.md},
   registerText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
 });
 

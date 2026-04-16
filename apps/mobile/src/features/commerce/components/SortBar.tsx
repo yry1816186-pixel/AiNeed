@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface SortBarProps {
   activeSort: string;
@@ -15,6 +16,8 @@ const SORT_OPTIONS = [
 ];
 
 export const SortBar: React.FC<SortBarProps> = ({ activeSort, onSortChange }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={styles.container}>
       {SORT_OPTIONS.map((opt) => (
@@ -32,16 +35,16 @@ export const SortBar: React.FC<SortBarProps> = ({ activeSort, onSortChange }) =>
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingVertical: 10,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    paddingVertical: DesignTokens.spacing['2.5'],
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderBottomColor: "colors.backgroundTertiary",
   },
-  sortItem: { paddingHorizontal: 8, paddingVertical: 4 },
-  sortText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.tertiary },
-  sortTextActive: { color: "DesignTokens.colors.semantic.error", fontWeight: "600" },
-});
+  sortItem: { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs},
+  sortText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
+  sortTextActive: { color: "colors.error", fontWeight: "600" },
+}))

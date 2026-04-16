@@ -10,6 +10,9 @@ import {
 } from "react-native";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { refundApi } from '../../../services/api/commerce.api';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 interface RefundItem {
   id: string;
@@ -37,6 +40,8 @@ export const RefundRequestForm: React.FC<RefundRequestFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [refundType, setRefundType] = useState<"REFUND_ONLY" | "RETURN_REFUND">("REFUND_ONLY");
   const [reason, setReason] = useState(REFUND_REASONS[0]);
   const [description, setDescription] = useState("");
@@ -139,14 +144,14 @@ export const RefundRequestForm: React.FC<RefundRequestFormProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   sheet: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: "80%",
@@ -155,40 +160,40 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    padding: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
-  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
-  closeText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.tertiary },
-  body: { padding: 16 },
+  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  closeText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
+  body: { padding: Spacing.md},
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: DesignTokens.colors.text.primary,
-    marginBottom: 8,
-    marginTop: 12,
+    color: colors.textPrimary,
+    marginBottom: Spacing.sm,
+    marginTop: DesignTokens.spacing[3],
   },
-  typeRow: { flexDirection: "row", gap: 12 },
+  typeRow: { flexDirection: "row", gap: DesignTokens.spacing[3]},
   typeButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 10,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
   },
   typeButtonActive: {
-    backgroundColor: "DesignTokens.colors.semantic.errorLight", // custom color
+    backgroundColor: "colors.errorLight", // custom color
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.semantic.error", // custom color
+    borderColor: "colors.error", // custom color
   },
-  typeText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary },
-  typeTextActive: { color: "DesignTokens.colors.semantic.error", fontWeight: "600" }, // custom color
+  typeText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
+  typeTextActive: { color: "colors.error", fontWeight: "600" }, // custom color
   reasonRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    paddingVertical: 8,
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm,
   },
   radioOuter: {
     width: 18,
@@ -199,42 +204,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  radioActive: { borderColor: "DesignTokens.colors.semantic.error" }, // custom color
+  radioActive: { borderColor: "colors.error" }, // custom color
   radioInner: {
-    width: 8,
-    height: 8,
+    width: Spacing.sm,
+    height: Spacing.sm,
     borderRadius: 4,
-    backgroundColor: "DesignTokens.colors.semantic.error", // custom color
+    backgroundColor: "colors.error", // custom color
   },
-  reasonText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary },
+  reasonText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
   textArea: {
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     borderRadius: 8,
-    padding: 12,
-    height: 80,
+    padding: DesignTokens.spacing[3],
+    height: Spacing['4xl'],
     textAlignVertical: "top",
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   charCount: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
     textAlign: "right",
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   amountText: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: "DesignTokens.colors.semantic.error", // custom color
+    color: "colors.error", // custom color
   },
   submitButton: {
-    backgroundColor: "DesignTokens.colors.semantic.error", // custom color
-    paddingVertical: 16,
+    backgroundColor: "colors.error", // custom color
+    paddingVertical: Spacing.md,
     alignItems: "center",
   },
   submitText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
-});
+}))

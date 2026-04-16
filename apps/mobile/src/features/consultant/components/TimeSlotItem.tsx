@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface TimeSlotItemProps {
   startTime: string;
@@ -17,6 +18,8 @@ export const TimeSlotItem: React.FC<TimeSlotItemProps> = ({
   isSelected,
   onSelect,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const variantStyle = !isAvailable
     ? styles.booked
     : isSelected
@@ -49,55 +52,55 @@ export const TimeSlotItem: React.FC<TimeSlotItemProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 12,
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
     borderWidth: 1,
   },
   available: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
-    borderColor: "DesignTokens.colors.borders.default",
+    backgroundColor: colors.surface,
+    borderColor: "colors.border",
   },
   booked: {
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
-    borderColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: colors.backgroundTertiary,
+    borderColor: "colors.backgroundTertiary",
     opacity: 0.6,
   },
   selected: {
     backgroundColor: "#FFF8F5",
-    borderColor: "DesignTokens.colors.brand.terracotta",
+    borderColor: "colors.primary",
     borderWidth: 2,
   },
   time: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
     fontWeight: "500",
   },
   timeBooked: {
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
   },
   timeSelected: {
-    color: "DesignTokens.colors.brand.terracotta",
+    color: "colors.primary",
   },
   bookedLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
   },
   selectedLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "DesignTokens.colors.brand.terracotta",
+    color: "colors.primary",
     fontWeight: "500",
   },
   availableLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.semantic.success,
+    color: colors.success,
   },
-});
+}))
 
 export default TimeSlotItem;

@@ -64,8 +64,8 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
     cartLight: "#FFF5F0",
-    purple: DesignTokens.colors.brand.terracottaDark,
-    amber: DesignTokens.colors.semantic.warning,
+    terracottaDark: base.brand.terracottaDark,
+    amber: colors.warning,
     secondary: base.brand.sage,
   };
 }
@@ -98,6 +98,7 @@ const SEASON_STORAGE_KEY = "@xuno_color_season";
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
+  const { colors } = useTheme();
   const systemColorScheme = useColorScheme();
   const [mode, setModeState] = useState<ThemeMode>("system");
   const [colorSeason, setColorSeasonState] = useState<ColorSeason | null>(null);

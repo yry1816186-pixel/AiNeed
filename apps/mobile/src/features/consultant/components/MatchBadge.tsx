@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface MatchBadgeProps {
   percentage: number;
@@ -8,6 +9,8 @@ interface MatchBadgeProps {
 }
 
 export const MatchBadge: React.FC<MatchBadgeProps> = ({ percentage, size = "default" }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const clampedPercentage = Math.min(Math.max(percentage, 0), 99);
 
   return (
@@ -19,16 +22,16 @@ export const MatchBadge: React.FC<MatchBadgeProps> = ({ percentage, size = "defa
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   badge: {
-    backgroundColor: "DesignTokens.colors.brand.terracotta",
+    backgroundColor: "colors.primary",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 12,
   },
   badgeDefault: {
-    width: 44,
-    height: 28,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[7],
     borderRadius: 14,
   },
   badgeSmall: {
@@ -37,7 +40,7 @@ const styles = StyleSheet.create({
     borderRadius: 11,
   },
   text: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontWeight: "600",
   },
   textDefault: {
@@ -46,6 +49,6 @@ const styles = StyleSheet.create({
   textSmall: {
     fontSize: DesignTokens.typography.sizes.xs,
   },
-});
+}))
 
 export default MatchBadge;

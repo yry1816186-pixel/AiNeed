@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet, type ViewStyle } from "react-native";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+
 
 interface BrandPatternProps {
   variant: "weave" | "wave" | "leaf";
@@ -221,16 +223,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
-    gap: 8,
+    paddingVertical: DesignTokens.spacing[3],
+    gap: Spacing.sm,
   },
   dividerLine: {
     flex: 1,
     height: StyleSheet.hairlineWidth,
   },
   dividerOrnament: {
-    width: 8,
-    height: 8,
+    width: Spacing.sm,
+    height: Spacing.sm,
     borderRadius: 2,
     borderWidth: 1.5,
     transform: [{ rotate: "45deg" }],

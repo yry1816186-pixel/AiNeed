@@ -12,9 +12,10 @@ import {
   Modal,
 } from "react-native";
 import { communityApi } from "../../services/api/community.api";
-import { theme } from '../../../design-system/theme';
+import { theme , Spacing } from '../../../design-system/theme'
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface Collection {
   id: string;
@@ -36,6 +37,8 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
   onClose,
   onBookmarked,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(false);
   const [showNewCollection, setShowNewCollection] = useState(false);
@@ -185,7 +188,7 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
@@ -195,56 +198,56 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.4)",
   },
   sheet: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
     paddingBottom: 34,
     maxHeight: 500,
   },
   handle: {
-    width: 40,
-    height: 4,
+    width: DesignTokens.spacing[10],
+    height: Spacing.xs,
     borderRadius: 2,
     backgroundColor: DesignTokens.colors.neutral[200],
     alignSelf: "center",
-    marginTop: 10,
-    marginBottom: 14,
+    marginTop: DesignTokens.spacing['2.5'],
+    marginBottom: DesignTokens.spacing['3.5'],
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
-  loader: { paddingVertical: 24 },
+  loader: { paddingVertical: Spacing.lg},
   list: { maxHeight: 300 },
   collectionItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: DesignTokens.spacing[3],
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
   collectionIcon: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 10,
     backgroundColor: "#F0EDFF", // custom color
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12,
+    marginRight: DesignTokens.spacing[3],
   },
   collectionInfo: { flex: 1 },
   collectionName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.text },
-  collectionCount: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: 2 },
+  collectionCount: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
   newBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 6,
-    paddingVertical: 14,
-    marginTop: 8,
+    gap: DesignTokens.spacing['1.5'],
+    paddingVertical: DesignTokens.spacing['3.5'],
+    marginTop: Spacing.sm,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
   },
@@ -252,30 +255,30 @@ const styles = StyleSheet.create({
   newCollectionRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginTop: 12,
+    gap: Spacing.sm,
+    marginTop: DesignTokens.spacing[3],
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
-    paddingTop: 12,
+    paddingTop: DesignTokens.spacing[3],
   },
   newCollectionInput: {
     flex: 1,
-    height: 40,
+    height: DesignTokens.spacing[10],
     borderWidth: 1,
     borderColor: theme.colors.border,
     borderRadius: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: DesignTokens.spacing[3],
     fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   createBtn: {
     backgroundColor: theme.colors.primary,
     borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
   },
   createBtnDisabled: { opacity: 0.5 },
-  createBtnText: { color: DesignTokens.colors.text.inverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-});
+  createBtnText: { color: colors.textInverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+}))
 
 export default BookmarkSheet;

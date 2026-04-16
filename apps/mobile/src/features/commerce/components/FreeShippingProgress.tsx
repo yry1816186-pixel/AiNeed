@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface FreeShippingProgressProps {
   currentAmount: number;
@@ -11,6 +12,8 @@ export const FreeShippingProgress: React.FC<FreeShippingProgressProps> = ({
   currentAmount,
   threshold = 99,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const isFree = currentAmount >= threshold;
   const progress = Math.min(currentAmount / threshold, 1);
   const remaining = threshold - currentAmount;
@@ -35,33 +38,33 @@ export const FreeShippingProgress: React.FC<FreeShippingProgressProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
   },
   progressText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
-    marginBottom: 4,
+    color: colors.textTertiary,
+    marginBottom: Spacing.xs,
   },
   freeText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "DesignTokens.colors.semantic.success",
+    color: "colors.success",
     fontWeight: "500",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   barBackground: {
-    height: 4,
+    height: Spacing.xs,
     borderRadius: 2,
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: "colors.backgroundTertiary",
   },
   barFill: {
-    height: 4,
+    height: Spacing.xs,
     borderRadius: 2,
-    backgroundColor: "DesignTokens.colors.semantic.success",
+    backgroundColor: "colors.success",
   },
   barFillComplete: {
-    backgroundColor: "DesignTokens.colors.semantic.success",
+    backgroundColor: "colors.success",
   },
-});
+}))

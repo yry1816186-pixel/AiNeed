@@ -4,7 +4,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
 import Share from "react-native-share";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useProfileStore } from '../stores/profileStore';
@@ -14,7 +14,7 @@ import type { RootStackParamList } from '../../../types/navigation';
 
 type SharePosterNavProp = NavigationProp<RootStackParamList>;
 
-const PLACEHOLDER_PALETTE = [DesignTokens.colors.brand.terracotta, DesignTokens.colors.semantic.warning, DesignTokens.colors.brand.camel, DesignTokens.colors.brand.sage, "DesignTokens.colors.brand.camel"]; // custom color
+const PLACEHOLDER_PALETTE = [colors.primary, colors.warning, colors.primary, colors.secondary, "colors.primary"]; // custom color
 
 export const SharePosterScreen: React.FC = () => {
   const navigation = useNavigation<SharePosterNavProp>();
@@ -129,16 +129,16 @@ export const SharePosterScreen: React.FC = () => {
             accessibilityRole="button"
           >
             <LinearGradient
-              colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
+              colors={[colors.primary, colors.primary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.shareGradient}
             >
               {isSharing ? (
-                <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+                <ActivityIndicator size="small" color={colors.surface} />
               ) : (
                 <>
-                  <Ionicons name="share-outline" size={20} color={DesignTokens.colors.neutral.white} />
+                  <Ionicons name="share-outline" size={20} color={colors.surface} />
                   <Text style={styles.shareButtonText}>分享我的风格</Text>
                 </>
               )}
@@ -151,7 +151,7 @@ export const SharePosterScreen: React.FC = () => {
         {/* Poster preview card */}
         <View ref={viewShotRef} style={styles.posterCard} collapsable={false}>
           <LinearGradient
-            colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
+            colors={[colors.primary, colors.primary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0.5, y: 1 }}
             style={styles.posterGradient}
@@ -229,8 +229,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[6],
   },
   posterAvatar: {
-    width: 48,
-    height: 48,
+    width: Spacing['2xl'],
+    height: Spacing['2xl'],
     borderRadius: 24,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
     alignItems: "center",
@@ -241,12 +241,12 @@ const styles = StyleSheet.create({
   posterAvatarText: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
   posterName: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
   posterSection: {
     marginBottom: Spacing[6],
@@ -262,15 +262,15 @@ const styles = StyleSheet.create({
   posterStyleType: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
   posterPalette: {
     flexDirection: "row",
     gap: Spacing[3],
   },
   posterColorDot: {
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: 18,
     borderWidth: 2,
     borderColor: "rgba(255, 255, 255, 0.3)",
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
   shareButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
 });
 

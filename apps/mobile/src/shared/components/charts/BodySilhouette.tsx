@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import Svg, { Circle, Path, Line, Text as SvgText, G } from "react-native-svg";
 import { colors } from "../../theme/tokens/colors";
+import { useTheme } from '../../../shared/contexts/ThemeContext';
 
 export type BodyType = "rectangle" | "triangle" | "inverted_triangle" | "hourglass" | "oval";
 
@@ -36,6 +37,7 @@ export const BodySilhouette: React.FC<BodySilhouetteProps> = ({
   showLabels = true,
   accessibilityLabel,
 }) => {
+  const { colors } = useTheme();
   const defaultA11yLabel =
     accessibilityLabel ||
     `体型轮廓: ${bodyType}, 肩部比例${shoulderRatio}, 腰部比例${waistRatio}, 臀部比例${hipRatio}`;

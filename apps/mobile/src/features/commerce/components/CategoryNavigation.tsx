@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 const CATEGORIES = [
   { key: "tops", icon: "tshirt-crew", label: "上装" },
@@ -22,6 +23,8 @@ export const CategoryNavigation: React.FC<CategoryNavigationProps> = ({
   selectedCategory,
   onSelectCategory,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <ScrollView
       horizontal
@@ -64,22 +67,22 @@ export const CategoryNavigation: React.FC<CategoryNavigationProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: { maxHeight: 80, backgroundColor: DesignTokens.colors.backgrounds.primary },
-  content: { paddingHorizontal: 12, paddingVertical: 8, gap: 4 },
-  item: { alignItems: "center", width: 56, paddingVertical: 4 },
+const useStyles = createStyles((colors) => ({
+  container: { maxHeight: Spacing['4xl'], backgroundColor: colors.surface },
+  content: { paddingHorizontal: DesignTokens.spacing[3], paddingVertical: Spacing.sm, gap: Spacing.xs},
+  item: { alignItems: "center", width: 56, paddingVertical: Spacing.xs},
   itemSelected: {},
   iconCircle: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
+    backgroundColor: colors.backgroundTertiary,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
-  iconCircleSelected: { backgroundColor: "DesignTokens.colors.semantic.errorLight" },
-  iconEmoji: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.secondary },
-  label: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary },
-  labelSelected: { color: "DesignTokens.colors.semantic.error", fontWeight: "500" },
-});
+  iconCircleSelected: { backgroundColor: "colors.errorLight" },
+  iconEmoji: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textSecondary },
+  label: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
+  labelSelected: { color: "colors.error", fontWeight: "500" },
+}))

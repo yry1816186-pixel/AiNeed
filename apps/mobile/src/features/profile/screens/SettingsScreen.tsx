@@ -24,7 +24,9 @@ import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useTranslation } from '../../../i18n';
 
 import type { RootStackParamList } from '../../../types/navigation';
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -452,44 +454,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 20,
+    padding: DesignTokens.spacing[5],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: colors.divider,
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: '600', color: colors.text },
-  placeholder: { width: 40 },
+  placeholder: { width: DesignTokens.spacing[10] },
   content: { flex: 1 },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: '600',
     color: colors.textSecondary,
-    marginTop: 24,
-    marginBottom: 8,
-    marginHorizontal: 20,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.sm,
+    marginHorizontal: DesignTokens.spacing[5],
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   section: {
     backgroundColor: colors.surface,
-    marginHorizontal: 20,
+    marginHorizontal: DesignTokens.spacing[5],
     borderRadius: 16,
     overflow: 'hidden',
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    gap: 12,
+    padding: Spacing.md,
+    gap: DesignTokens.spacing[3],
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
@@ -498,7 +500,7 @@ const styles = StyleSheet.create({
   dangerButton: { borderBottomWidth: 0 },
   footer: {
     alignItems: 'center',
-    paddingVertical: 32,
+    paddingVertical: Spacing.xl,
   },
   footerText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -513,14 +515,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    padding: 24,
-    paddingBottom: 40,
+    padding: Spacing.lg,
+    paddingBottom: DesignTokens.spacing[10],
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   modalTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -530,17 +532,17 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: colors.background,
     borderRadius: 12,
-    padding: 16,
+    padding: Spacing.md,
     fontSize: DesignTokens.typography.sizes.md,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
     color: colors.textPrimary,
   },
   submitButton: {
     backgroundColor: colors.primary,
     borderRadius: 12,
-    padding: 16,
+    padding: Spacing.md,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   submitButtonText: {
     color: colors.surface,

@@ -10,7 +10,7 @@ import { SharedElement } from "react-navigation-shared-element";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { BloggerBadge } from "./BloggerBadge";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
 
 export interface PostCardData {
   id: string;
@@ -136,8 +136,8 @@ const s = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: 14,
     overflow: "hidden",
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.06,
     shadowRadius: 10,
     elevation: 3,
@@ -156,36 +156,36 @@ const s = StyleSheet.create({
   },
   featuredBadge: {
     position: "absolute",
-    top: 8,
-    left: 8,
+    top: Spacing.sm,
+    left: Spacing.sm,
     flexDirection: "row",
     alignItems: "center",
     gap: 3,
     backgroundColor: "rgba(255,184,0,0.9)",
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: 8,
   },
   featuredText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "700", color: colors.surface },
-  masonryInfo: { padding: 10 },
+  masonryInfo: { padding: DesignTokens.spacing['2.5']},
   masonryTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: colors.textPrimary, lineHeight: 18 },
   masonryFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   masonryAuthor: { flexDirection: "row", alignItems: "center", gap: 5, flex: 1 },
   avatarWrapper: { position: "relative" },
   masonryAvatar: {
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 10,
     backgroundColor: colors.subtleBg,
   },
   masonryAvatarPlaceholder: {
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 10,
     backgroundColor: colors.primary,
     alignItems: "center",

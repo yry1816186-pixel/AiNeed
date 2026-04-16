@@ -2,6 +2,8 @@
 import { View, StyleSheet, Dimensions } from "react-native";
 import { Skeleton } from "../../design-system/ui/Skeleton";
 import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_GAP = 12;
@@ -32,18 +34,18 @@ export const WardrobeSkeleton: React.FC = () => {
       <View style={styles.statsRow}>
         <View style={styles.statCard}>
           <Skeleton width={50} height={28} borderRadius={BorderRadius.sm} />
-          <Skeleton width={40} height={12} borderRadius={BorderRadius.sm} style={{ marginTop: 4 }} />
+          <Skeleton width={40} height={12} borderRadius={BorderRadius.sm} style={{ marginTop: Spacing.xs}} />
         </View>
         <View style={styles.statCard}>
           <Skeleton width={50} height={28} borderRadius={BorderRadius.sm} />
-          <Skeleton width={40} height={12} borderRadius={BorderRadius.sm} style={{ marginTop: 4 }} />
+          <Skeleton width={40} height={12} borderRadius={BorderRadius.sm} style={{ marginTop: Spacing.xs}} />
         </View>
       </View>
 
       {/* Search bar */}
       <View style={styles.searchContainer}>
         <Skeleton width={18} height={18} borderRadius={9} />
-        <Skeleton width="80%" height={16} borderRadius={BorderRadius.sm} style={{ marginLeft: 8 }} />
+        <Skeleton width="80%" height={16} borderRadius={BorderRadius.sm} style={{ marginLeft: Spacing.sm}} />
       </View>
 
       {/* Category tabs */}
@@ -63,8 +65,8 @@ export const WardrobeSkeleton: React.FC = () => {
         {Array.from({ length: 6 }).map((_, i) => (
           <View key={i} style={styles.gridItem}>
             <Skeleton width={CARD_WIDTH} height={CARD_WIDTH} borderRadius={BorderRadius.lg} />
-            <Skeleton width="70%" height={13} borderRadius={BorderRadius.sm} style={{ marginTop: 8, paddingHorizontal: 8 }} />
-            <Skeleton width="50%" height={11} borderRadius={BorderRadius.sm} style={{ marginTop: 4, paddingHorizontal: 8, paddingBottom: 8 }} />
+            <Skeleton width="70%" height={13} borderRadius={BorderRadius.sm} style={{ marginTop: Spacing.sm, paddingHorizontal: Spacing.sm}} />
+            <Skeleton width="50%" height={11} borderRadius={BorderRadius.sm} style={{ marginTop: Spacing.xs, paddingHorizontal: Spacing.sm, paddingBottom: Spacing.sm}} />
           </View>
         ))}
       </View>
@@ -81,51 +83,51 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 20,
+    padding: DesignTokens.spacing[5],
     backgroundColor: Colors.neutral.white,
     borderBottomWidth: 1,
     borderBottomColor: Colors.neutral[200],
   },
   headerActions: {
     flexDirection: "row",
-    gap: 8,
+    gap: Spacing.sm,
   },
   statsRow: {
     flexDirection: "row",
-    gap: 12,
-    padding: 16,
-    paddingBottom: 8,
+    gap: DesignTokens.spacing[3],
+    padding: Spacing.md,
+    paddingBottom: Spacing.sm,
   },
   statCard: {
     flex: 1,
     backgroundColor: Colors.neutral.white,
     borderRadius: 16,
-    padding: 16,
+    padding: Spacing.md,
     alignItems: "center",
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.neutral.white,
-    marginHorizontal: 16,
-    marginVertical: 8,
+    marginHorizontal: Spacing.md,
+    marginVertical: Spacing.sm,
     borderRadius: 12,
-    paddingHorizontal: 12,
-    height: 40,
+    paddingHorizontal: DesignTokens.spacing[3],
+    height: DesignTokens.spacing[10],
     borderWidth: 1,
     borderColor: Colors.neutral[200],
   },
   categoryRow: {
     flexDirection: "row",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
   },
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     paddingHorizontal: HORIZONTAL_PADDING,
-    paddingTop: 8,
+    paddingTop: Spacing.sm,
     gap: CARD_GAP,
   },
   gridItem: {

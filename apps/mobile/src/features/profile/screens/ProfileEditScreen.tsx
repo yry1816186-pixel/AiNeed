@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[8],
   },
   sectionCard: {
-    backgroundColor: DesignTokens.colors.neutral.white,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     marginBottom: Spacing[4],
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[3],
-    height: 48,
+    height: Spacing['2xl'],
     borderWidth: 1,
     borderColor: Colors.neutral[200],
   },
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   pillTextSelected: {
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
     fontWeight: "600",
   },
   saveButtonText: {

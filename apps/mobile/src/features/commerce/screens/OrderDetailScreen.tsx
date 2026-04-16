@@ -18,7 +18,9 @@ import { orderApi, orderEnhancementApi, refundApi } from '../../../services/api/
 import type { Order } from '../../../types';
 import type { RootStackParamList } from '../../../types/navigation';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type ScreenRoute = RouteProp<RootStackParamList, "OrderDetail">;
@@ -33,8 +35,8 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: "待支付", color: colors.warning },
   paid: { label: "待发货", color: colors.primary },
   confirmed: { label: "已确认", color: colors.primary },
-  processing: { label: "处理中", color: "DesignTokens.colors.semantic.info" },
-  shipped: { label: "配送中", color: "DesignTokens.colors.semantic.info" },
+  processing: { label: "处理中", color: "colors.info" },
+  shipped: { label: "配送中", color: "colors.info" },
   delivered: { label: "已签收", color: colors.success },
   cancelled: { label: "已取消", color: colors.error },
   refunded: { label: "已退款", color: colors.textTertiary },
@@ -272,7 +274,7 @@ export const OrderDetailScreen: React.FC = () => {
               accessibilityLabel="取消订单"
             >
               {cancelling ? (
-                <ActivityIndicator size="small" color="DesignTokens.colors.semantic.error" />
+                <ActivityIndicator size="small" color="colors.error" />
               ) : (
                 <Text style={styles.dangerButtonText}>取消订单</Text>
               )}
@@ -383,19 +385,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: Spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   iconButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: "colors.backgroundTertiary",
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -406,8 +408,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 32,
-    gap: 12,
+    paddingHorizontal: Spacing.xl,
+    gap: DesignTokens.spacing[3],
   },
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -415,12 +417,12 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   scrollContent: {
-    padding: 20,
-    paddingBottom: 28,
-    gap: 16,
+    padding: DesignTokens.spacing[5],
+    paddingBottom: DesignTokens.spacing[7],
+    gap: Spacing.md,
   },
   heroCard: {
-    padding: 18,
+    padding: DesignTokens.spacing[4],
     borderRadius: 20,
     backgroundColor: colors.surface,
     flexDirection: "row",
@@ -432,15 +434,15 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
   },
   heroValue: {
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.textPrimary,
     maxWidth: 220,
   },
   statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 999,
   },
   statusText: {
@@ -448,7 +450,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   card: {
-    padding: 16,
+    padding: Spacing.md,
     borderRadius: 20,
     backgroundColor: colors.surface,
   },
@@ -456,21 +458,21 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   orderItemRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    paddingVertical: 10,
+    gap: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderBottomWidth: 1,
-    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderBottomColor: "colors.backgroundTertiary",
   },
   itemImage: {
     width: 60,
     height: 60,
     borderRadius: 16,
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: "colors.backgroundTertiary",
   },
   itemImageFallback: {
     width: 60,
@@ -478,11 +480,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: "colors.backgroundTertiary",
   },
   itemContent: {
     flex: 1,
-    gap: 4,
+    gap: Spacing.xs,
   },
   itemName: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -504,13 +506,13 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   addressText: {
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: colors.textSecondary,
   },
   summaryRow: {
-    marginTop: 12,
+    marginTop: DesignTokens.spacing[3],
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -530,31 +532,31 @@ const styles = StyleSheet.create({
   },
   timelineRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   timelineLeft: {
     alignItems: "center",
     width: 18,
   },
   timelineDot: {
-    width: 10,
-    height: 10,
+    width: DesignTokens.spacing['2.5'],
+    height: DesignTokens.spacing['2.5'],
     borderRadius: 5,
     backgroundColor: "DesignTokens.colors.neutral[300]",
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
   },
   timelineDotActive: {
     backgroundColor: colors.primary,
   },
   timelineLine: {
-    width: 2,
+    width: DesignTokens.spacing['0.5'],
     flex: 1,
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
     backgroundColor: "DesignTokens.colors.neutral[200]",
   },
   timelineContent: {
     flex: 1,
-    paddingBottom: 18,
+    paddingBottom: DesignTokens.spacing[4],
   },
   timelineStatus: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -562,13 +564,13 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   timelineDescription: {
-    marginTop: 4,
+    marginTop: Spacing.xs,
     fontSize: DesignTokens.typography.sizes.sm,
     lineHeight: 20,
     color: colors.textSecondary,
   },
   timelineTime: {
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
   },
@@ -578,9 +580,9 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   primaryButton: {
-    marginTop: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
+    marginTop: Spacing.sm,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 14,
     backgroundColor: colors.primary,
   },
@@ -590,7 +592,7 @@ const styles = StyleSheet.create({
     color: colors.surface,
   },
   secondaryButton: {
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     borderRadius: 16,
     alignItems: "center",
     borderWidth: 1,
@@ -603,34 +605,34 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   dangerButton: {
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     borderRadius: 16,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.semantic.error",
+    borderColor: "colors.error",
     backgroundColor: colors.surface,
   },
   dangerButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: "DesignTokens.colors.semantic.error",
+    color: "colors.error",
   },
   actionRow: {
     flexDirection: "row",
-    gap: 12,
-    marginTop: 8,
+    gap: DesignTokens.spacing[3],
+    marginTop: Spacing.sm,
   },
   primaryButtonFilled: {
     flex: 1,
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     borderRadius: 16,
     alignItems: "center",
-    backgroundColor: "DesignTokens.colors.semantic.error",
+    backgroundColor: "colors.error",
   },
   primaryFilledText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
 });
 

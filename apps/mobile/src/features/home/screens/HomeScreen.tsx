@@ -29,6 +29,9 @@ import { RecommendationCard } from '../../../components/recommendations/Recommen
 import { BrandRefreshIndicator } from '../../../components/loading/BrandRefreshIndicator';
 import type { RootStackParamList } from '../../../types/navigation';
 import type { FeedItem } from '../../../services/api/recommendation-feed.api';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const HORIZONTAL_PADDING = 20;
 
@@ -60,7 +63,7 @@ const HomeScreen: React.FC = () => {
   const isRecommendationFeed = isEnabled(FeatureFlagKeys.RECOMMENDATION_FEED);
 
   // 季节强调色，回退到品牌色
-  const accentColor = DesignTokens.colors.brand.terracotta;
+  const accentColor = colors.primary;
   const {
     profileCompletionPercent,
     isProfileComplete,
@@ -218,9 +221,9 @@ const HomeScreen: React.FC = () => {
               accessibilityLabel="搜索"
               accessibilityRole="button"
             >
-              <Ionicons name="search-outline" size={20} color={DesignTokens.colors.text.tertiary} />
+              <Ionicons name="search-outline" size={20} color={colors.textTertiary} />
               <Text style={styles.searchText}>{t.search.placeholder}</Text>
-              <Ionicons name="mic-outline" size={20} color={DesignTokens.colors.text.tertiary} />
+              <Ionicons name="mic-outline" size={20} color={colors.textTertiary} />
             </TouchableOpacity>
           );
 
@@ -304,7 +307,7 @@ const HomeScreen: React.FC = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor={DesignTokens.colors.brand.terracotta}
+            tintColor={colors.primary}
           />
         }
       />
@@ -312,10 +315,10 @@ const HomeScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
-    backgroundColor: DesignTokens.colors.backgrounds.secondary,
+    backgroundColor: colors.backgroundSecondary,
   },
   listContent: {
     paddingBottom: 120,
@@ -324,40 +327,51 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 20,
-    paddingHorizontal: 18,
-    paddingVertical: 14,
-    marginVertical: 16,
+    paddingHorizontal: DesignTokens.spacing[4],
+    paddingVertical: DesignTokens.spacing['3.5'],
+    marginVertical: Spacing.md,
     ...DesignTokens.shadows.sm,
   },
   searchText: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.md,
-    color: DesignTokens.colors.text.tertiary,
-    marginHorizontal: 10,
+    color: colors.textTertiary,
+    marginHorizontal: DesignTokens.spacing['2.5'],
     fontWeight: DesignTokens.typography.fontWeights.regular as TextStyle["fontWeight"],
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 20,
-    marginBottom: 12,
+    marginTop: DesignTokens.spacing[5],
+    marginBottom: DesignTokens.spacing[3],
   },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: DesignTokens.typography.fontWeights.semibold as TextStyle["fontWeight"],
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   sectionMore: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
     fontWeight: DesignTokens.typography.fontWeights.medium as TextStyle["fontWeight"],
   },
-});
+}))
 
 export default withErrorBoundary(HomeScreen, {
   screenName: "HomeScreen",
   maxRetries: 3,
+});
+
+
+const styles = StyleSheet.create({
+  searchBar: { flex: 1 },
+  searchText: { flex: 1 },
+  sectionHeader: { flex: 1 },
+  sectionTitle: { flex: 1 },
+  sectionMore: { flex: 1 },
+  container: { flex: 1 },
+  listContent: { flex: 1 },
 });

@@ -16,6 +16,7 @@ import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/t
 import customizationApi from '../../../services/api/customization.api';
 import type { RootStackParamList } from '../../../types/navigation';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 type Navigation = import("@react-navigation/native").NavigationProp<RootStackParamList>;
 type OrderDetailRoute = RouteProp<RootStackParamList, "CustomizationOrderDetail">;
@@ -57,6 +58,8 @@ const STATUS_STEPS = [
 ];
 
 export const CustomizationOrderDetailScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const navigation = useNavigation<Navigation>();
   const route = useRoute<OrderDetailRoute>();
   const { requestId } = route.params;
@@ -139,7 +142,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
                 <Ionicons
                   name={step.icon}
                   size={14}
-                  color={isCompleted ? DesignTokens.colors.neutral.white : Colors.neutral[400]}
+                  color={isCompleted ? colors.surface : Colors.neutral[400]}
                 />
               </View>
               <Text
@@ -170,7 +173,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={DesignTokens.colors.brand.terracotta} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -201,10 +204,10 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color={DesignTokens.colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>定制订单</Text>
-        <View style={{ width: 40 }} />
+        <View style={{ width: DesignTokens.spacing[10] }} />
       </View>
 
       <ScrollView
@@ -213,7 +216,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            tintColor={DesignTokens.colors.brand.terracotta}
+            tintColor={colors.primary}
           />
         }
         contentContainerStyle={styles.scrollContent}
@@ -253,11 +256,11 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>专属包装</Text>
           <View style={styles.packagingCard}>
             <View style={styles.packagingItem}>
-              <Ionicons name="gift-outline" size={18} color={DesignTokens.colors.brand.terracotta} />
+              <Ionicons name="gift-outline" size={18} color={colors.primary} />
               <Text style={styles.packagingText}>AiNeed 专属包装盒</Text>
             </View>
             <View style={styles.packagingItem}>
-              <Ionicons name="heart-outline" size={18} color={DesignTokens.colors.brand.terracotta} />
+              <Ionicons name="heart-outline" size={18} color={colors.primary} />
               <Text style={styles.packagingText}>感谢卡 + 品牌贴纸</Text>
             </View>
           </View>
@@ -289,10 +292,10 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
   },
   topBar: {
     flexDirection: "row",
@@ -301,8 +304,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[2],
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
@@ -313,7 +316,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   loadingContainer: {
     flex: 1,
@@ -327,12 +330,12 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
     marginTop: Spacing[3],
   },
   errorButton: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
     marginTop: Spacing[4],
   },
   scrollContent: {
@@ -348,16 +351,16 @@ const styles = StyleSheet.create({
   orderTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
     marginBottom: Spacing[1],
   },
   orderDate: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
   },
   templateName: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
     marginTop: Spacing[1],
   },
   section: {
@@ -366,7 +369,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
     marginBottom: Spacing[3],
   },
   timeline: {
@@ -379,8 +382,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   timelineDot: {
-    width: 28,
-    height: 28,
+    width: DesignTokens.spacing[7],
+    height: DesignTokens.spacing[7],
     borderRadius: 14,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
@@ -388,10 +391,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[1],
   },
   timelineDotCompleted: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
   },
   timelineDotCurrent: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     ...Shadows.sm,
   },
   timelineLabel: {
@@ -400,22 +403,22 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   timelineLabelCompleted: {
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
   },
   timelineLabelCurrent: {
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
     fontWeight: "600",
   },
   timelineLine: {
     position: "absolute",
-    top: 14,
+    top: DesignTokens.spacing['3.5'],
     left: "50%",
     right: "-50%",
     height: 1,
     backgroundColor: Colors.neutral[200],
   },
   timelineLineCompleted: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
   },
   trackingCard: {
     backgroundColor: Colors.neutral[50],
@@ -425,11 +428,11 @@ const styles = StyleSheet.create({
   },
   trackingLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
   },
   trackingValue: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
     fontWeight: "500",
     marginBottom: Spacing[1],
   },
@@ -446,7 +449,7 @@ const styles = StyleSheet.create({
   },
   packagingText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   actions: {
     gap: Spacing[3],
@@ -461,10 +464,10 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
   },
   confirmButton: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",
@@ -473,8 +476,8 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
-});
+}))
 
 export default CustomizationOrderDetailScreen;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Module, forwardRef } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 
 import { CircuitBreakerModule } from "../../../common/circuit-breaker";
 import { PrismaModule } from "../../../common/prisma/prisma.module";
@@ -28,7 +28,7 @@ import { WeatherIntegrationService } from "./services/weather-integration.servic
 import { SystemContextService } from "./system-context.service";
 
 @Module({
-  imports: [forwardRef(() => RecommendationsModule), PhotosModule, AIModule, RedisModule, CircuitBreakerModule, PrismaModule, WeatherModule],
+  imports: [RecommendationsModule, PhotosModule, AIModule, RedisModule, CircuitBreakerModule, PrismaModule, WeatherModule],
   controllers: [AiStylistController],
   providers: [
     AiStylistService,

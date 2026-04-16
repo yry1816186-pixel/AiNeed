@@ -14,6 +14,7 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
 import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
 import { DesignTokens } from "../theme/tokens/design-tokens";
+import { useTheme } from '../../design-system/theme';
 
 type _ViewStyle = import("react-native").ViewStyle;
 type _ViewProps = import("react-native").ViewProps;
@@ -62,6 +63,7 @@ export function ProductBottomSheet({
   onAddToCart,
   onBuyNow,
 }: ProductBottomSheetProps) {
+  const { colors } = useTheme();
   const snapPoints = useMemo(() => ["60%", "80%"], []);
 
   const renderBackdrop = useCallback(
@@ -368,8 +370,8 @@ const styles = StyleSheet.create({
   },
   handleIndicator: {
     backgroundColor: Colors.neutral[300],
-    width: 40,
-    height: 4,
+    width: DesignTokens.spacing[10],
+    height: Spacing.xs,
   },
   content: {
     flex: 1,
@@ -380,8 +382,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[5],
   },
   productImage: {
-    width: 80,
-    height: 80,
+    width: Spacing['4xl'],
+    height: Spacing['4xl'],
     borderRadius: BorderRadius.xl,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
@@ -421,8 +423,8 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   sizeOption: {
-    minWidth: 48,
-    height: 40,
+    minWidth: Spacing['2xl'],
+    height: DesignTokens.spacing[10],
     paddingHorizontal: Spacing[3],
     alignItems: "center",
     justifyContent: "center",
@@ -454,7 +456,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: Spacing[3],
-    height: 36,
+    height: DesignTokens.spacing[9],
     borderRadius: BorderRadius.full,
     borderWidth: 1,
     borderColor: Colors.neutral[200],
@@ -465,8 +467,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary[50],
   },
   colorDot: {
-    width: 16,
-    height: 16,
+    width: Spacing.md,
+    height: Spacing.md,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.neutral[200],
@@ -487,7 +489,7 @@ const styles = StyleSheet.create({
   },
   addToCartButton: {
     flex: 1,
-    height: 48,
+    height: Spacing['2xl'],
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.primary[100],
@@ -500,7 +502,7 @@ const styles = StyleSheet.create({
   },
   buyNowButton: {
     flex: 1,
-    height: 48,
+    height: Spacing['2xl'],
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
   },
@@ -544,7 +546,7 @@ const styles = StyleSheet.create({
   },
   resetButton: {
     flex: 1,
-    height: 48,
+    height: Spacing['2xl'],
     alignItems: "center",
     justifyContent: "center",
     borderRadius: BorderRadius.xl,
@@ -558,7 +560,7 @@ const styles = StyleSheet.create({
   },
   applyButton: {
     flex: 1,
-    height: 48,
+    height: Spacing['2xl'],
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
   },
@@ -609,7 +611,7 @@ const styles = StyleSheet.create({
     color: Colors.neutral[600],
   },
   cancelButton: {
-    height: 48,
+    height: Spacing['2xl'],
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.neutral[100],

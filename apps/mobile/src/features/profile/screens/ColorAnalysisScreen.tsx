@@ -10,7 +10,7 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing, BorderRadius, Shadows, Typography } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows, Typography , flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useProfileStore } from '../stores/profileStore';
 
@@ -398,9 +398,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    gap: Spacing.sm,
+    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.xl,
     marginBottom: Spacing[4],
   },
@@ -436,11 +436,11 @@ const styles = StyleSheet.create({
   seasonActiveBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
     marginTop: Spacing[3],
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: Spacing.xs,
     borderRadius: 12,
     alignSelf: "flex-start",
   },
@@ -471,8 +471,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[2],
   },
   colorCircle: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
@@ -499,8 +499,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   neutralCircle: {
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
     marginBottom: Spacing[1],
   },
@@ -513,8 +513,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   avoidCircle: {
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",

@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface Subcategory {
   name: string;
@@ -18,6 +19,8 @@ export const SubcategoryTabs: React.FC<SubcategoryTabsProps> = ({
   selectedSubcategory,
   onSelectSubcategory,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   if (!subcategories || subcategories.length === 0) {
     return null;
   }
@@ -54,16 +57,16 @@ export const SubcategoryTabs: React.FC<SubcategoryTabsProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: { maxHeight: 44, backgroundColor: DesignTokens.colors.backgrounds.primary },
-  content: { paddingHorizontal: 12, gap: 8 },
+const useStyles = createStyles((colors) => ({
+  container: { maxHeight: DesignTokens.spacing[11], backgroundColor: colors.surface },
+  content: { paddingHorizontal: DesignTokens.spacing[3], gap: Spacing.sm},
   chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
+    backgroundColor: colors.backgroundTertiary,
   },
-  chipSelected: { backgroundColor: "DesignTokens.colors.semantic.error" },
-  chipText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.secondary },
-  chipTextSelected: { color: DesignTokens.colors.backgrounds.primary, fontWeight: "500" },
-});
+  chipSelected: { backgroundColor: "colors.error" },
+  chipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
+  chipTextSelected: { color: colors.surface, fontWeight: "500" },
+}))

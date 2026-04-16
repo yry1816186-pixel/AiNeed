@@ -17,10 +17,12 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useNotificationStore } from '../stores/notificationStore';
 import { useTranslation } from '../../../i18n';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import type { RootStackParamList } from '../../../types/navigation';
 import type { NotificationItem } from '../../../services/api/notification.api';
 import { wsService } from '../../../services/websocket';
+import { Spacing } from '../../../design-system/theme';
+
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -36,18 +38,18 @@ const CATEGORY_TABS: { key: NotificationCategory; label: string }[] = [
 
 const NOTIFICATION_ICONS: Record<string, { icon: string; color: string }> = {
   order: { icon: "bag-outline", color: DesignTokens.colors.brand.primary },
-  recommendation: { icon: "sparkles-outline", color: DesignTokens.colors.semantic.warning },
-  community: { icon: "people-outline", color: DesignTokens.colors.semantic.success },
-  system: { icon: "information-circle-outline", color: DesignTokens.colors.brand.slate },
+  recommendation: { icon: "sparkles-outline", color: colors.warning },
+  community: { icon: "people-outline", color: colors.success },
+  system: { icon: "information-circle-outline", color: colors.neutral[500] },
 };
 
 // Social notification type config for rendering
 const SOCIAL_NOTIFICATION_CONFIG: Record<string, { icon: string; color: string; label: string }> = {
-  like: { icon: "heart", color: DesignTokens.colors.semantic.error, label: "赞了你的帖子" },
-  comment: { icon: "chatbubble", color: DesignTokens.colors.semantic.success, label: "评论了你的帖子" },
-  bookmark: { icon: "bookmark", color: DesignTokens.colors.semantic.warning, label: "收藏了你的帖子" },
-  new_follower: { icon: "person-add", color: DesignTokens.colors.brand.slate, label: "关注了你" },
-  reply_mention: { icon: "at", color: DesignTokens.colors.semantic.info, label: "回复了你" },
+  like: { icon: "heart", color: colors.error, label: "赞了你的帖子" },
+  comment: { icon: "chatbubble", color: colors.success, label: "评论了你的帖子" },
+  bookmark: { icon: "bookmark", color: colors.warning, label: "收藏了你的帖子" },
+  new_follower: { icon: "person-add", color: colors.neutral[500], label: "关注了你" },
+  reply_mention: { icon: "at", color: colors.info, label: "回复了你" },
 };
 
 function getNotificationCategory(type: string): string {
@@ -352,7 +354,7 @@ export const NotificationsScreen: React.FC = () => {
           {!hasMore && notifications.length > 0 && (
             <Text style={styles.endText}>No more notifications</Text>
           )}
-          <View style={{ height: 20 }} />
+          <View style={{ height: DesignTokens.spacing[5] }} />
         </ScrollView>
       )}
 
@@ -374,36 +376,36 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 20,
+    padding: DesignTokens.spacing[5],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
-  placeholder: { width: 40 },
+  placeholder: { width: DesignTokens.spacing[10] },
 
   // Tabs
   tabsContainer: {
     backgroundColor: colors.surface,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   tab: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderRadius: 20,
     backgroundColor: colors.background,
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
   tabActive: {
     backgroundColor: colors.primary,
@@ -421,15 +423,15 @@ const styles = StyleSheet.create({
   actionBar: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing['2.5'],
     backgroundColor: colors.surface,
   },
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    paddingVertical: 4,
+    gap: Spacing.xs,
+    paddingVertical: Spacing.xs,
   },
   actionText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -443,24 +445,24 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 64,
+    paddingVertical: Spacing['3xl'],
   },
   emptyText: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginTop: 16,
+    marginTop: Spacing.md,
   },
   emptySubtext: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   endText: {
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
   },
 
   // Notification card
@@ -468,20 +470,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     backgroundColor: colors.surface,
-    marginHorizontal: 20,
-    marginTop: 8,
+    marginHorizontal: DesignTokens.spacing[5],
+    marginTop: Spacing.sm,
     borderRadius: 16,
-    padding: 16,
-    gap: 12,
+    padding: Spacing.md,
+    gap: DesignTokens.spacing[3],
   },
   notificationCardUnread: {
-    backgroundColor: DesignTokens.colors.backgrounds.secondary,
+    backgroundColor: colors.backgroundSecondary,
     borderLeftWidth: 3,
     borderLeftColor: colors.primary,
   },
   notificationIcon: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
@@ -491,14 +493,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   notificationTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: colors.textSecondary,
     flex: 1,
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
   notificationTitleUnread: {
     color: colors.textPrimary,
@@ -514,11 +516,11 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   unreadDot: {
-    width: 8,
-    height: 8,
+    width: Spacing.sm,
+    height: Spacing.sm,
     borderRadius: 4,
     backgroundColor: colors.primary,
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
   },
 });
 

@@ -20,6 +20,7 @@ import Animated, {
 import { Colors, Typography, Spacing, BorderRadius, Shadows, SpringConfigs } from '../../design-system/theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { Skeleton as SkeletonBase } from "../skeleton/Skeleton";
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -44,6 +45,8 @@ export const GradientCard: React.FC<GradientCardProps> = ({
   borderRadius = BorderRadius["2xl"],
   padding = Spacing[6],
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const gradientColors = Colors.gradient[gradient] as unknown as GradientColors;
 
   return (
@@ -126,8 +129,8 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   };
 
   const sizeStyles = {
-    sm: { height: 36, paddingHorizontal: Spacing[4] },
-    md: { height: 44, paddingHorizontal: Spacing[5] },
+    sm: { height: DesignTokens.spacing[9], paddingHorizontal: Spacing[4] },
+    md: { height: DesignTokens.spacing[11], paddingHorizontal: Spacing[5] },
     lg: { height: 52, paddingHorizontal: Spacing[6] },
     xl: { height: 60, paddingHorizontal: Spacing[8] },
   };
@@ -462,9 +465,9 @@ export interface BadgeProps {
 export const Badge: React.FC<BadgeProps> = ({ text, variant = "primary", size = "md" }) => {
   const variantStyles: Record<string, { bg: string; text: string }> = {
     primary: { bg: Colors.primary[100], text: Colors.primary[700] },
-    success: { bg: DesignTokens.colors.semantic.successLight, text: DesignTokens.colors.semantic.success },
-    warning: { bg: DesignTokens.colors.semantic.warningLight, text: DesignTokens.colors.semantic.warning },
-    error: { bg: DesignTokens.colors.semantic.errorLight, text: DesignTokens.colors.semantic.error },
+    success: { bg: colors.successLight, text: colors.success },
+    warning: { bg: colors.warningLight, text: colors.warning },
+    error: { bg: colors.errorLight, text: colors.error },
     neutral: { bg: Colors.neutral[100], text: Colors.neutral[700] },
   };
 
@@ -528,7 +531,7 @@ export const Avatar: React.FC<AvatarProps> = ({ name, size = "md", online }) => 
           style={[
             styles.onlineIndicator,
             {
-              backgroundColor: online ? DesignTokens.colors.semantic.success : Colors.neutral[400],
+              backgroundColor: online ? colors.success : Colors.neutral[400],
               width: avatarSize * 0.25,
               height: avatarSize * 0.25,
               borderRadius: avatarSize * 0.125,
@@ -540,7 +543,7 @@ export const Avatar: React.FC<AvatarProps> = ({ name, size = "md", online }) => 
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   gradientCard: {
     overflow: "hidden",
   },
@@ -595,7 +598,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing[2],
     left: Spacing[2],
-    backgroundColor: DesignTokens.colors.semantic.error,
+    backgroundColor: colors.error,
     paddingHorizontal: Spacing[2],
     paddingVertical: Spacing[1],
     borderRadius: BorderRadius.sm,
@@ -609,8 +612,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing[2],
     right: Spacing[2],
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: BorderRadius.full,
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     alignItems: "center",
@@ -660,7 +663,7 @@ const styles = StyleSheet.create({
   },
   productPrice: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
     fontWeight: "700",
   },
   originalPrice: {
@@ -696,8 +699,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   featureIconContainer: {
-    width: 48,
-    height: 48,
+    width: Spacing['2xl'],
+    height: Spacing['2xl'],
     borderRadius: BorderRadius.xl,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     alignItems: "center",
@@ -774,4 +777,4 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: Colors.white,
   },
-});
+}))

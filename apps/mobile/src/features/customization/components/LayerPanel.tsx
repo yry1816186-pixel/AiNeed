@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius , flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import type { DesignLayer } from '../stores/customizationEditorStore';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
@@ -69,7 +69,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
               </Text>
               <TouchableOpacity
                 onPress={() => onDeleteLayer(layer.id)}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.sm, right: Spacing.sm}}
               >
                 <Ionicons name="close-circle-outline" size={18} color={Colors.neutral[400]} />
               </TouchableOpacity>

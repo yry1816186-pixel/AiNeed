@@ -312,8 +312,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[50],
   },
   iconCircle: {
-    width: 96,
-    height: 96,
+    width: Spacing['5xl'],
+    height: Spacing['5xl'],
     borderRadius: 48,
     justifyContent: "center",
     alignItems: "center",

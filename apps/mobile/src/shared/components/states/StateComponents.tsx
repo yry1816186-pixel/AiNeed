@@ -28,9 +28,10 @@ import {
   runOnJS,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors } from '../../../design-system/theme';
+import { Colors , Spacing } from '../../../design-system/theme'
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -42,7 +43,7 @@ const springConfig = {
   mass: 0.5,
 };
 
-const confettiColors = [DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark, DesignTokens.colors.semantic.warning, DesignTokens.colors.semantic.success, DesignTokens.colors.semantic.error, DesignTokens.colors.brand.camel]; // custom color
+const confettiColors = [colors.neutral[300], colors.neutral[700], colors.warning, colors.success, colors.error, colors.primary]; // custom color
 
 export interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap | "custom";
@@ -79,6 +80,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   style,
   animated = true,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.8);
   const opacity = useSharedValue(0);
   const floatY = useSharedValue(0);
@@ -169,7 +172,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
       {actionLabel && onAction && (
         <TouchableOpacity style={styles.emptyAction} onPress={onAction}>
-          <LinearGradient colors={[DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark]} style={styles.emptyActionGradient}>
+          <LinearGradient colors={[colors.neutral[300], colors.neutral[700]]} style={styles.emptyActionGradient}>
             <Text style={styles.emptyActionText}>{actionLabel}</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -257,7 +260,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
       <View style={styles.errorActions}>
         {onRetry && (
           <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
-            <Ionicons name="refresh" size={18} color={DesignTokens.colors.text.inverse} />
+            <Ionicons name="refresh" size={18} color={colors.textInverse} />
             <Text style={styles.retryText}>重试</Text>
           </TouchableOpacity>
         )}
@@ -318,8 +321,8 @@ export const NetworkError: React.FC<NetworkErrorProps> = ({ onRetry, onSettings,
       <View style={styles.networkActions}>
         {onRetry && (
           <TouchableOpacity style={styles.networkRetryButton} onPress={onRetry}>
-            <LinearGradient colors={[DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark]} style={styles.networkRetryGradient}>
-              <Ionicons name="refresh" size={18} color={DesignTokens.colors.text.inverse} />
+            <LinearGradient colors={[colors.neutral[300], colors.neutral[700]]} style={styles.networkRetryGradient}>
+              <Ionicons name="refresh" size={18} color={colors.textInverse} />
               <Text style={styles.networkRetryText}>重试</Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -459,8 +462,8 @@ export const PermissionDenied: React.FC<PermissionDeniedProps> = ({
 
       {onOpenSettings && (
         <TouchableOpacity style={styles.permissionButton} onPress={onOpenSettings}>
-          <LinearGradient colors={[DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark]} style={styles.permissionButtonGradient}>
-            <Ionicons name="settings-outline" size={18} color={DesignTokens.colors.text.inverse} />
+          <LinearGradient colors={[colors.neutral[300], colors.neutral[700]]} style={styles.permissionButtonGradient}>
+            <Ionicons name="settings-outline" size={18} color={colors.textInverse} />
             <Text style={styles.permissionButtonText}>打开设置</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -580,8 +583,8 @@ export const SuccessState: React.FC<SuccessStateProps> = ({
   return (
     <AnimatedView style={[styles.successContainer, containerAnimatedStyle, style]}>
       <AnimatedView style={[styles.successIconContainer, checkAnimatedStyle]}>
-        <LinearGradient colors={[DesignTokens.colors.semantic.success, "#059669"]} style={styles.successIconGradient}>
-          <Ionicons name={icon} size={48} color={DesignTokens.colors.text.inverse} />
+        <LinearGradient colors={[colors.success, "#059669"]} style={styles.successIconGradient}>
+          <Ionicons name={icon} size={48} color={colors.textInverse} />
         </LinearGradient>
       </AnimatedView>
 
@@ -653,14 +656,14 @@ export const OfflineBanner: React.FC<OfflineBannerProps> = ({ visible, onRetry, 
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 40,
+    padding: DesignTokens.spacing[10],
   },
   emptyIconContainer: {
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   emptyIconCircle: {
     width: 120,
@@ -674,32 +677,32 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   emptyDescription: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   emptyAction: {
     borderRadius: 24,
     overflow: "hidden",
   },
   emptyActionGradient: {
-    paddingHorizontal: 32,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 24,
   },
   emptyActionText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   emptySecondaryAction: {
-    marginTop: 12,
-    paddingVertical: 10,
+    marginTop: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['2.5'],
   },
   emptySecondaryText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -709,10 +712,10 @@ const styles = StyleSheet.create({
   errorContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 40,
+    padding: DesignTokens.spacing[10],
   },
   errorIllustration: {
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
     alignItems: "center",
   },
   errorIconContainer: {
@@ -730,21 +733,21 @@ const styles = StyleSheet.create({
   },
   errorDot: {
     position: "absolute",
-    width: 8,
-    height: 8,
+    width: Spacing.sm,
+    height: Spacing.sm,
     borderRadius: 4,
     backgroundColor: Colors.error[300],
   },
   errorDot1: {
-    top: 10,
-    left: 20,
+    top: DesignTokens.spacing['2.5'],
+    left: DesignTokens.spacing[5],
   },
   errorDot2: {
     top: 30,
     right: 15,
   },
   errorDot3: {
-    bottom: 20,
+    bottom: DesignTokens.spacing[5],
     left: 30,
   },
   errorTitle: {
@@ -752,28 +755,28 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   errorMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   errorCodeContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.neutral[100],
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderRadius: 8,
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   errorCodeLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
   errorCodeValue: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -783,29 +786,29 @@ const styles = StyleSheet.create({
   },
   errorActions: {
     flexDirection: "row",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   retryButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     backgroundColor: Colors.primary[500],
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
   },
   retryText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   reportButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     backgroundColor: Colors.neutral[100],
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
   },
   reportText: {
@@ -816,10 +819,10 @@ const styles = StyleSheet.create({
   networkContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 40,
+    padding: DesignTokens.spacing[10],
   },
   networkIconContainer: {
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -838,8 +841,8 @@ const styles = StyleSheet.create({
   },
   networkWave: {
     position: "absolute",
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     borderWidth: 2,
     borderColor: Colors.neutral[300],
@@ -850,8 +853,8 @@ const styles = StyleSheet.create({
     right: 0,
   },
   networkWave2: {
-    bottom: 20,
-    left: 10,
+    bottom: DesignTokens.spacing[5],
+    left: DesignTokens.spacing['2.5'],
     width: 30,
     height: 30,
     borderRadius: 15,
@@ -868,18 +871,18 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   networkMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   networkActions: {
     alignItems: "center",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   networkRetryButton: {
     borderRadius: 24,
@@ -888,21 +891,21 @@ const styles = StyleSheet.create({
   networkRetryGradient: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
   },
   networkRetryText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   networkSettingsButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    paddingVertical: 10,
+    gap: Spacing.sm,
+    paddingVertical: DesignTokens.spacing['2.5'],
   },
   networkSettingsText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -912,21 +915,21 @@ const styles = StyleSheet.create({
   maintenanceContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 40,
+    padding: DesignTokens.spacing[10],
   },
   maintenanceIconContainer: {
     width: 100,
     height: 100,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   maintenanceTools: {
     position: "absolute",
     bottom: 0,
     right: 0,
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: 18,
     backgroundColor: `${Colors.warning[500]}20`,
     alignItems: "center",
@@ -937,24 +940,24 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   maintenanceMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   estimatedTimeContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     backgroundColor: Colors.neutral[100],
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 12,
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   estimatedTimeText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -962,7 +965,7 @@ const styles = StyleSheet.create({
   },
   maintenanceTips: {
     backgroundColor: Colors.neutral[50],
-    padding: 16,
+    padding: Spacing.md,
     borderRadius: 12,
     width: "100%",
   },
@@ -970,18 +973,18 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[700],
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   maintenanceTip: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     lineHeight: 20,
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   permissionContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 40,
+    padding: DesignTokens.spacing[10],
   },
   permissionIconContainer: {
     width: 100,
@@ -990,20 +993,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   permissionLock: {
     position: "absolute",
     bottom: 0,
     right: 0,
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
-    backgroundColor: DesignTokens.colors.neutral.white,
+    backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
@@ -1013,14 +1016,14 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   permissionMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   permissionButton: {
     borderRadius: 24,
@@ -1029,27 +1032,27 @@ const styles = StyleSheet.create({
   permissionButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
   },
   permissionButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   successContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 40,
+    padding: DesignTokens.spacing[10],
   },
   successIconContainer: {
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   successIconGradient: {
-    width: 80,
-    height: 80,
+    width: Spacing['4xl'],
+    height: Spacing['4xl'],
     borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
@@ -1059,17 +1062,17 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   successMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   successAction: {
-    paddingVertical: 12,
+    paddingVertical: DesignTokens.spacing[3],
   },
   successActionText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -1082,8 +1085,8 @@ const styles = StyleSheet.create({
   },
   confetti: {
     position: "absolute",
-    width: 10,
-    height: 10,
+    width: DesignTokens.spacing['2.5'],
+    height: DesignTokens.spacing['2.5'],
     borderRadius: 2,
     top: -20,
   },
@@ -1099,8 +1102,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    paddingVertical: 10,
+    gap: Spacing.sm,
+    paddingVertical: DesignTokens.spacing['2.5'],
     backgroundColor: Colors.warning[50],
   },
   offlineText: {
@@ -1109,18 +1112,18 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   offlineRetry: {
-    marginLeft: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    marginLeft: Spacing.sm,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.xs,
     backgroundColor: Colors.warning[500],
     borderRadius: 12,
   },
   offlineRetryText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontWeight: "600",
   },
-});
+}))
 
 export default {
   EmptyState,

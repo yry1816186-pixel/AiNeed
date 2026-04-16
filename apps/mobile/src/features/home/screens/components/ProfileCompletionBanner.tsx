@@ -3,6 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from "react
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { Spacing, flatColors as colors } from '../../../../design-system/theme';
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+
 
 interface ProfileCompletionBannerProps {
   completionPercent: number;
@@ -30,8 +33,8 @@ const ProfileCompletionBanner = memo(
         <View style={styles.container}>
           <LinearGradient
             colors={[
-              DesignTokens.colors.semantic.successLight,
-              DesignTokens.colors.backgrounds.elevated,
+              colors.successLight,
+              colors.surfaceElevated,
             ]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -42,7 +45,7 @@ const ProfileCompletionBanner = memo(
                 <Ionicons
                   name="checkmark-circle"
                   size={24}
-                  color={DesignTokens.colors.semantic.success}
+                  color={colors.success}
                 />
               </View>
               <View style={styles.textArea}>
@@ -52,11 +55,11 @@ const ProfileCompletionBanner = memo(
             </View>
             <TouchableOpacity
               onPress={handleDismiss}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.sm, right: Spacing.sm}}
               accessibilityLabel="关闭"
               accessibilityRole="button"
             >
-              <Ionicons name="close" size={18} color={DesignTokens.colors.text.tertiary} />
+              <Ionicons name="close" size={18} color={colors.textTertiary} />
             </TouchableOpacity>
           </LinearGradient>
         </View>
@@ -75,16 +78,16 @@ const ProfileCompletionBanner = memo(
             </View>
             <TouchableOpacity
               onPress={handleDismiss}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.sm, right: Spacing.sm}}
               accessibilityLabel="关闭"
               accessibilityRole="button"
             >
-              <Ionicons name="close" size={18} color={DesignTokens.colors.text.tertiary} />
+              <Ionicons name="close" size={18} color={colors.textTertiary} />
             </TouchableOpacity>
           </View>
           <View style={styles.progressTrack}>
             <LinearGradient
-              colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
+              colors={[colors.primary, colors.primary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={[styles.progressFill, { width: `${clampedPercent}%` }]}
@@ -107,62 +110,62 @@ const ProfileCompletionBanner = memo(
 
 ProfileCompletionBanner.displayName = "ProfileCompletionBanner";
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   card: {
-    backgroundColor: DesignTokens.colors.backgrounds.elevated,
+    backgroundColor: colors.surfaceElevated,
     borderRadius: 16,
-    padding: 16,
+    padding: Spacing.md,
     ...DesignTokens.shadows.sm,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   textArea: {
     flex: 1,
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
-    marginBottom: 4,
+    color: colors.textPrimary,
+    marginBottom: Spacing.xs,
   },
   percentText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
   },
   progressTrack: {
-    height: 6,
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
     backgroundColor: DesignTokens.colors.neutral[200],
-    marginBottom: 14,
+    marginBottom: DesignTokens.spacing['3.5'],
     overflow: "hidden",
   },
   progressFill: {
-    height: 6,
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
   },
   ctaButton: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: DesignTokens.spacing[5],
     alignSelf: "flex-start",
   },
   ctaText: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   completeGradient: {
     borderRadius: 16,
-    padding: 16,
+    padding: Spacing.md,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -174,25 +177,44 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   completeIconCircle: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
-    backgroundColor: DesignTokens.colors.semantic.successLight,
+    backgroundColor: colors.successLight,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12,
+    marginRight: DesignTokens.spacing[3],
   },
   completeTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.semantic.success,
-    marginBottom: 2,
+    color: colors.success,
+    marginBottom: DesignTokens.spacing['0.5'],
   },
   completeSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
   },
-});
+}))
 
 export { ProfileCompletionBanner };
 export type { ProfileCompletionBannerProps };
+
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  completeGradient: { flex: 1 },
+  completeContent: { flex: 1 },
+  completeIconCircle: { flex: 1 },
+  textArea: { flex: 1 },
+  completeTitle: { flex: 1 },
+  completeSubtitle: { flex: 1 },
+  card: { flex: 1 },
+  header: { flex: 1 },
+  title: { flex: 1 },
+  percentText: { flex: 1 },
+  progressTrack: { flex: 1 },
+  progressFill: { flex: 1 },
+  ctaButton: { flex: 1 },
+  ctaText: { flex: 1 },
+});

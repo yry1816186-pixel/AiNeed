@@ -7,6 +7,7 @@ import { spacing } from "@/src/theme/tokens/spacing";
 import { shadows } from "@/src/theme/tokens/shadows";
 import { TagCloud } from "../../../components/charts/TagCloud";
 import { PercentageBar } from "../../../components/charts/PercentageBar";
+import { flatColors as colors } from '../../../../design-system/theme';
 
 interface StylePreferences {
   preferredStyles: string[];

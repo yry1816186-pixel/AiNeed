@@ -22,10 +22,13 @@ import {
 } from '../stores/index';
 import { QuizProgress } from '../../../components/QuizProgress';
 import type { RootStackParamList } from '../../../types/navigation';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 const QUIZ_ID = "default";
 
 export const StyleQuizScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
 
@@ -262,7 +265,7 @@ export const StyleQuizScreen: React.FC = () => {
                   </View>
                   {selectedOption === image.id && (
                     <View style={styles.checkBadge}>
-                      <Ionicons name="checkmark" size={14} color={DesignTokens.colors.neutral.white} />
+                      <Ionicons name="checkmark" size={14} color={colors.surface} />
                     </View>
                   )}
                 </TouchableOpacity>
@@ -318,7 +321,7 @@ export const StyleQuizScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     backgroundColor: Colors.neutral[50],
@@ -423,8 +426,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing[2],
     right: Spacing[2],
-    width: 24,
-    height: 24,
+    width: Spacing.lg,
+    height: Spacing.lg,
     borderRadius: 12,
     backgroundColor: Colors.primary[500],
     justifyContent: "center",
@@ -465,7 +468,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     flex: 1,
-    height: 48,
+    height: Spacing['2xl'],
     borderRadius: BorderRadius.lg,
     backgroundColor: Colors.primary[500],
     justifyContent: "center",
@@ -528,8 +531,8 @@ const styles = StyleSheet.create({
     gap: Spacing[3],
   },
   colorDot: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
   },
   confidenceValue: {
@@ -551,6 +554,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: Colors.neutral.white,
   },
-});
+}))
 
 export default StyleQuizScreen;

@@ -19,6 +19,7 @@ import AnimatedReanimated from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -45,56 +46,56 @@ export interface EnhancedAICompanionBallProps {
 
 const STATE_CONFIG = {
   idle: {
-    gradient: [DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel] as [string, string],
+    gradient: [colors.secondary, colors.primary] as [string, string],
     gradientFlow: [
-      DesignTokens.colors.brand.sage,
-      DesignTokens.colors.brand.camel,
-      DesignTokens.colors.brand.terracottaLight,
-      DesignTokens.colors.brand.sage,
+      colors.secondary,
+      colors.primary,
+      colors.primaryLight,
+      colors.secondary,
     ] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.05)"] as [string, string],
-    glowColor: DesignTokens.colors.brand.sage,
-    particleColor: DesignTokens.colors.brand.sage,
+    glowColor: colors.secondary,
+    particleColor: colors.secondary,
     animation: "breathe",
   },
   listening: {
-    gradient: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"] as [string, string],
-    gradientFlow: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary", "#B8C5D1", DesignTokens.colors.brand.slate] as [string, string, string, string], // custom color
+    gradient: [colors.neutral[500], "colors.textTertiary"] as [string, string],
+    gradientFlow: [colors.neutral[500], "colors.textTertiary", "#B8C5D1", colors.neutral[500]] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.08)"] as [string, string],
-    glowColor: DesignTokens.colors.brand.slate,
-    particleColor: "DesignTokens.colors.text.tertiary", // custom color
+    glowColor: colors.neutral[500],
+    particleColor: "colors.textTertiary", // custom color
     animation: "pulse",
   },
   thinking: {
-    gradient: [DesignTokens.colors.semantic.warning, "DesignTokens.colors.brand.camel"] as [string, string],
-    gradientFlow: [DesignTokens.colors.semantic.warning, "DesignTokens.colors.brand.camel", "#F5D89A", DesignTokens.colors.semantic.warning] as [string, string, string, string], // custom color
+    gradient: [colors.warning, "colors.primary"] as [string, string],
+    gradientFlow: [colors.warning, "colors.primary", "#F5D89A", colors.warning] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.4)", "rgba(255,255,255,0.1)"] as [string, string],
-    glowColor: DesignTokens.colors.semantic.warning,
-    particleColor: "DesignTokens.colors.brand.camel", // custom color
+    glowColor: colors.warning,
+    particleColor: "colors.primary", // custom color
     animation: "pulse",
   },
   responding: {
-    gradient: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage"] as [string, string],
-    gradientFlow: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage", "#9DC4B5", DesignTokens.colors.semantic.success] as [string, string, string, string], // custom color
+    gradient: [colors.success, "colors.secondary"] as [string, string],
+    gradientFlow: [colors.success, "colors.secondary", "#9DC4B5", colors.success] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.32)", "rgba(255,255,255,0.06)"] as [string, string],
-    glowColor: DesignTokens.colors.semantic.success,
-    particleColor: "DesignTokens.colors.brand.sage", // custom color
+    glowColor: colors.success,
+    particleColor: "colors.secondary", // custom color
     animation: "glow",
   },
   collapsed: {
-    gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel] as [
+    gradient: [colors.primary, colors.primary] as [
       string,
       string
     ],
     gradientFlow: [
-      DesignTokens.colors.brand.terracotta,
-      DesignTokens.colors.brand.camel,
-      DesignTokens.colors.brand.terracottaLight,
-      DesignTokens.colors.brand.terracotta,
+      colors.primary,
+      colors.primary,
+      colors.primaryLight,
+      colors.primary,
     ] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.25)", "rgba(255,255,255,0.03)"] as [string, string],
-    glowColor: DesignTokens.colors.brand.terracotta,
-    particleColor: DesignTokens.colors.brand.camel,
+    glowColor: colors.primary,
+    particleColor: colors.primary,
     animation: "none",
   },
 };
@@ -205,8 +206,8 @@ const Particle: React.FC<ParticleProps> = ({ index, color, ballSize, isActive })
       style={[
         styles.particle,
         {
-          width: 6,
-          height: 6,
+          width: DesignTokens.spacing['1.5'],
+          height: DesignTokens.spacing['1.5'],
           borderRadius: 3,
           backgroundColor: color,
         },
@@ -232,6 +233,8 @@ export const EnhancedAICompanionBall: React.FC<EnhancedAICompanionBallProps> = (
   enableParticleEffect = true,
   enableColorFlow = true,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const [isDragging, setIsDragging] = useState(false);
   const [_isVoiceMode, _setIsVoiceMode] = useState(false);
@@ -575,7 +578,7 @@ export const EnhancedAICompanionBall: React.FC<EnhancedAICompanionBallProps> = (
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     position: "absolute",
     zIndex: 9999,
@@ -593,7 +596,7 @@ const styles = StyleSheet.create({
   },
   particle: {
     position: "absolute",
-    shadowColor: DesignTokens.colors.neutral.white,
+    shadowColor: colors.surface,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 4,
@@ -606,18 +609,18 @@ const styles = StyleSheet.create({
   },
   innerGlow: {
     position: "absolute",
-    top: 6,
-    left: 6,
-    right: 6,
-    bottom: 6,
+    top: DesignTokens.spacing['1.5'],
+    left: DesignTokens.spacing['1.5'],
+    right: DesignTokens.spacing['1.5'],
+    bottom: DesignTokens.spacing['1.5'],
   },
   innerGlowGradient: {
     flex: 1,
   },
   highlight: {
     position: "absolute",
-    top: 10,
-    left: 14,
+    top: DesignTokens.spacing['2.5'],
+    left: DesignTokens.spacing['3.5'],
     width: 18,
     height: 9,
     borderRadius: 9,
@@ -650,10 +653,10 @@ const styles = StyleSheet.create({
   },
   hintBubble: {
     backgroundColor: DesignTokens.colors.neutral[800],
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 14,
-    shadowColor: DesignTokens.colors.neutral.black,
+    shadowColor: colors.neutral[900],
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.18,
     shadowRadius: 10,
@@ -661,15 +664,15 @@ const styles = StyleSheet.create({
   },
   hintText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontWeight: "500",
     letterSpacing: 0.3,
   },
   hintArrow: {
     position: "absolute",
-    width: 12,
-    height: 12,
+    width: DesignTokens.spacing[3],
+    height: DesignTokens.spacing[3],
     backgroundColor: DesignTokens.colors.neutral[800],
     transform: [{ rotate: "45deg" }],
   },
-});
+}))

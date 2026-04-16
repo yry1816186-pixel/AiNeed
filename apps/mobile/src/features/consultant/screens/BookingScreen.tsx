@@ -17,6 +17,9 @@ import { ServiceTypeChip } from '../../../components/consultant/ServiceTypeChip'
 import type { ServiceType } from '../../../types/consultant';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 type TimeSlot = { startTime: string; endTime: string };
 
@@ -28,6 +31,8 @@ const SERVICE_TYPES = [
 ];
 
 export const BookingScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const route = useRoute();
   const navigation = useNavigation<NavigationProp<Record<string, unknown>>>();
@@ -93,7 +98,7 @@ export const BookingScreen: React.FC = () => {
           <Text style={styles.backBtnText}>{"<"}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>预约服务</Text>
-        <View style={{ width: 44 }} />
+        <View style={{ width: DesignTokens.spacing[11] }} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
@@ -123,7 +128,7 @@ export const BookingScreen: React.FC = () => {
           <>
             <Text style={styles.sectionLabel}>选择时段</Text>
             {isLoading ? (
-              <ActivityIndicator size="small" color={DesignTokens.colors.brand.terracotta} />
+              <ActivityIndicator size="small" color={colors.primary} />
             ) : availableSlots.length === 0 ? (
               <Text style={styles.noSlotsText}>该日期暂无可用时段</Text>
             ) : (
@@ -185,66 +190,66 @@ export const BookingScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: DesignTokens.colors.backgrounds.primary },
+const useStyles = createStyles((colors) => ({
+  container: { flex: 1, backgroundColor: colors.surface },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 8,
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.sm,
   },
-  backBtn: { padding: 8 },
-  backBtnText: { fontSize: DesignTokens.typography.sizes.xl, color: DesignTokens.colors.text.primary },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: DesignTokens.colors.text.primary },
-  content: { paddingHorizontal: 16, paddingBottom: 100 },
+  backBtn: { padding: Spacing.sm},
+  backBtnText: { fontSize: DesignTokens.typography.sizes.xl, color: colors.textPrimary },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
+  content: { paddingHorizontal: Spacing.md, paddingBottom: 100 },
   sectionLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
-    marginTop: 20,
-    marginBottom: 10,
+    color: colors.textPrimary,
+    marginTop: DesignTokens.spacing[5],
+    marginBottom: DesignTokens.spacing['2.5'],
   },
   chipRow: { flexDirection: "row", flexWrap: "wrap" },
-  noSlotsText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.tertiary, paddingVertical: 12 },
+  noSlotsText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, paddingVertical: DesignTokens.spacing[3]},
   notesInput: {
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     borderRadius: 12,
-    padding: 12,
+    padding: DesignTokens.spacing[3],
     fontSize: DesignTokens.typography.sizes.base,
     minHeight: 60,
     textAlignVertical: "top",
   },
   priceSummary: {
-    marginTop: 24,
-    padding: 16,
-    backgroundColor: DesignTokens.colors.backgrounds.secondary,
+    marginTop: Spacing.lg,
+    padding: Spacing.md,
+    backgroundColor: colors.backgroundSecondary,
     borderRadius: 12,
   },
   priceRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 6,
+    paddingVertical: DesignTokens.spacing['1.5'],
   },
-  priceLabel: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary },
-  priceValue: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary, fontWeight: "500" },
+  priceLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
+  priceValue: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, fontWeight: "500" },
   bottomCta: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingBottom: 32,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    paddingBottom: Spacing.xl,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[100],
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
   },
   payButton: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
-    paddingVertical: 16,
+    backgroundColor: colors.primary,
+    paddingVertical: Spacing.md,
     borderRadius: 12,
     alignItems: "center",
   },
-  payButtonDisabled: { backgroundColor: DesignTokens.colors.brand.terracottaLight },
-  payButtonText: { color: DesignTokens.colors.text.inverse, fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600" },
-});
+  payButtonDisabled: { backgroundColor: colors.primaryLight },
+  payButtonText: { color: colors.textInverse, fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600" },
+}))
 
 export default BookingScreen;

@@ -15,6 +15,9 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { AiStylistProgress } from '../../../services/api/ai-stylist.api';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 
@@ -42,6 +45,8 @@ const AnimatedDot: React.FC<AnimatedDotProps> = ({ dotValue }) => {
 };
 
 export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({ progress }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const pulseValue = useSharedValue(0);
   const dotValues = [useSharedValue(0), useSharedValue(0), useSharedValue(0)];
   const progressValue = useSharedValue(0);
@@ -114,10 +119,10 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({ progress }) 
       <View style={styles.iconContainer}>
         <AnimatedView style={[styles.iconGlow, pulseStyle]}>
           <LinearGradient
-            colors={[DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel]}
+            colors={[colors.secondary, colors.primary]}
             style={styles.iconGradient}
           >
-            <Ionicons name="analytics" size={28} color={DesignTokens.colors.text.inverse} />
+            <Ionicons name="analytics" size={28} color={colors.textInverse} />
           </LinearGradient>
         </AnimatedView>
       </View>
@@ -150,13 +155,13 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({ progress }) 
                   ]}
                 >
                   {isCompleted ? (
-                    <Ionicons name="checkmark" size={12} color={DesignTokens.colors.text.inverse} />
+                    <Ionicons name="checkmark" size={12} color={colors.textInverse} />
                   ) : (
                     <Ionicons
                       name={stage.icon}
                       size={12}
                       color={
-                        isActive ? DesignTokens.colors.brand.sage : DesignTokens.colors.neutral[400]
+                        isActive ? colors.secondary : DesignTokens.colors.neutral[400]
                       }
                     />
                   )}
@@ -199,18 +204,18 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({ progress }) 
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 16,
-    padding: 16,
-    marginVertical: 8,
+    padding: Spacing.md,
+    marginVertical: Spacing.sm,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     flexDirection: "row",
   },
   iconContainer: {
-    marginRight: 16,
+    marginRight: Spacing.md,
   },
   iconGlow: {
     width: 56,
@@ -233,59 +238,59 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   detail: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
     lineHeight: 18,
   },
   progressContainer: {
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   progressTrack: {
-    height: 6,
+    height: DesignTokens.spacing['1.5'],
     backgroundColor: DesignTokens.colors.neutral[200],
     borderRadius: 3,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: DesignTokens.colors.brand.sage,
+    backgroundColor: colors.secondary,
     borderRadius: 3,
   },
   etaText: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
     textAlign: "right",
   },
   stagesContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   stageItem: {
     alignItems: "center",
     flex: 1,
   },
   stageDot: {
-    width: 24,
-    height: 24,
+    width: Spacing.lg,
+    height: Spacing.lg,
     borderRadius: 12,
     backgroundColor: DesignTokens.colors.neutral[200],
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   stageDotActive: {
-    backgroundColor: DesignTokens.colors.brand.sage + "30",
+    backgroundColor: colors.secondary + "30",
     borderWidth: 2,
-    borderColor: DesignTokens.colors.brand.sage,
+    borderColor: colors.secondary,
   },
   stageDotCompleted: {
-    backgroundColor: DesignTokens.colors.brand.sage,
+    backgroundColor: colors.secondary,
   },
   stageLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
@@ -293,47 +298,47 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   stageLabelActive: {
-    color: DesignTokens.colors.brand.sage,
+    color: colors.secondary,
     fontWeight: "600",
   },
   stageLabelCompleted: {
-    color: DesignTokens.colors.brand.sage,
+    color: colors.secondary,
   },
   stageLine: {
     position: "absolute",
-    top: 12,
+    top: DesignTokens.spacing[3],
     left: "60%",
     right: "-40%",
-    height: 2,
+    height: DesignTokens.spacing['0.5'],
     backgroundColor: DesignTokens.colors.neutral[200],
     zIndex: -1,
   },
   stageLineCompleted: {
-    backgroundColor: DesignTokens.colors.brand.sage,
+    backgroundColor: colors.secondary,
   },
   hintContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: DesignTokens.colors.neutral[100],
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
     borderRadius: 8,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   hintText: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
-    marginLeft: 6,
+    marginLeft: DesignTokens.spacing['1.5'],
   },
   loadingDots: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 6,
+    gap: DesignTokens.spacing['1.5'],
   },
   dot: {
-    width: 8,
-    height: 8,
+    width: Spacing.sm,
+    height: Spacing.sm,
     borderRadius: 4,
-    backgroundColor: DesignTokens.colors.brand.sage,
+    backgroundColor: colors.secondary,
   },
-});
+}))

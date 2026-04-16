@@ -448,8 +448,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   headerBack: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   headerSpacer: {
-    width: 40,
+    width: DesignTokens.spacing[10],
   },
   tabs: {
     flexDirection: "row",
@@ -524,8 +524,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(198, 123, 92, 0.06)",
   },
   serviceIconContainer: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
@@ -579,7 +579,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[4],
-    height: 48,
+    height: Spacing['2xl'],
     borderWidth: 1,
     borderColor: Colors.neutral[200],
     gap: Spacing[2],
@@ -729,8 +729,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.neutral[200],
   },
   quickActionIcon: {
-    width: 48,
-    height: 48,
+    width: Spacing['2xl'],
+    height: Spacing['2xl'],
     borderRadius: 24,
     backgroundColor: "rgba(198, 123, 92, 0.1)",
     alignItems: "center",

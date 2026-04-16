@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[3],
-    height: 48,
+    height: Spacing['2xl'],
     borderWidth: 1,
     borderColor: Colors.neutral[200],
     gap: Spacing[2],

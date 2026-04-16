@@ -7,6 +7,8 @@ import Animated, { FadeInUp } from "react-native-reanimated";
 // 引入主题令牌
 import { DesignTokens } from "../theme/tokens/design-tokens";
 import {
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { Spacing } from '../../design-system/theme';
   Colors,
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
@@ -37,6 +39,8 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   timestamp,
   showAvatar = true,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <Animated.View entering={FadeInUp.duration(300).springify()}>
       <View style={[styles.container, !isUser && styles.aiContainer]}>
@@ -79,25 +83,25 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
     maxWidth: "80%",
     alignSelf: "flex-end",
     flexDirection: "row",
     alignItems: "flex-end",
-    gap: 8,
+    gap: Spacing.sm,
   },
   aiContainer: {
     alignSelf: "flex-start",
   },
   avatar: {
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
 
   // 气泡样式
@@ -118,19 +122,19 @@ const styles = StyleSheet.create({
 
   // 用户消息样式
   userGradient: {
-    padding: 14,
+    padding: DesignTokens.spacing['3.5'],
     borderRadius: ThemeBorderRadius["2xl"],
     borderBottomRightRadius: 4,
   },
   userMessage: {
     fontSize: ThemeTypography.sizes.base,
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     lineHeight: 22,
   },
   userTimestamp: {
     fontSize: ThemeTypography.sizes.xs,
     color: "rgba(255,255,255,0.7)",
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
     textAlign: "right",
   },
 
@@ -139,14 +143,14 @@ const styles = StyleSheet.create({
     fontSize: ThemeTypography.sizes.base,
     color: Colors.neutral[900],
     lineHeight: 22,
-    padding: 14,
+    padding: DesignTokens.spacing['3.5'],
   },
   aiTimestamp: {
     fontSize: ThemeTypography.sizes.xs,
     color: Colors.neutral[400],
-    marginTop: 6,
-    paddingHorizontal: 14,
-    paddingBottom: 10,
+    marginTop: DesignTokens.spacing['1.5'],
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingBottom: DesignTokens.spacing['2.5'],
   },
   triangle: {
     position: "absolute",
@@ -162,6 +166,6 @@ const styles = StyleSheet.create({
     borderLeftColor: "transparent",
     borderBottomColor: "transparent",
   },
-});
+}))
 
 export default ChatBubble;

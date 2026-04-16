@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { Spacing } from '../../../design-system/theme';
+
 
 const CATEGORIES = [
   { key: "all", label: "全部" },
@@ -91,8 +93,8 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 14,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing['3.5'],
     backgroundColor: colors.surface,
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
@@ -107,14 +109,14 @@ const s = StyleSheet.create({
   mainTabRow: {
     flexDirection: "row",
     backgroundColor: colors.surface,
-    paddingHorizontal: 20,
+    paddingHorizontal: DesignTokens.spacing[5],
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   mainTab: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    marginRight: 8,
+    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: DesignTokens.spacing[5],
+    marginRight: Spacing.sm,
   },
   mainTabActive: {
     borderBottomWidth: 2,
@@ -124,13 +126,13 @@ const s = StyleSheet.create({
   mainTabTextActive: { color: colors.primary, fontWeight: "700" },
   categoryScroll: { backgroundColor: colors.surface, maxHeight: 52 },
   categoryScrollContent: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    gap: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    gap: Spacing.sm,
     alignItems: "center",
   },
   categoryChip: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
     paddingVertical: 7,
     borderRadius: 20,
     backgroundColor: colors.background,

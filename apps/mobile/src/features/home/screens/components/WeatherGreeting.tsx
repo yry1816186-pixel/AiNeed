@@ -3,6 +3,9 @@ import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import type { WeatherData } from "../../../stores/homeStore";
+import { Spacing, flatColors as colors } from '../../../../design-system/theme';
+import { useTheme } from '../../../../design-system/theme';
+
 
 interface WeatherGreetingProps {
   userName: string;
@@ -49,7 +52,7 @@ const WeatherGreeting = memo(({ userName, weatherData, isLoading }: WeatherGreet
 
   // 季节强调色，回退到品牌色
   const { seasonAccent } = useTheme();
-  const accentColor = seasonAccent?.accent ?? DesignTokens.colors.brand.terracotta;
+  const accentColor = seasonAccent?.accent ?? colors.primary;
 
   if (isLoading) {
     return (
@@ -86,69 +89,84 @@ const WeatherGreeting = memo(({ userName, weatherData, isLoading }: WeatherGreet
 
 WeatherGreeting.displayName = "WeatherGreeting";
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
-    marginBottom: 20,
+    marginBottom: DesignTokens.spacing[5],
   },
   greeting: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "400",
-    color: DesignTokens.colors.text.tertiary,
-    marginBottom: 2,
+    color: colors.textTertiary,
+    marginBottom: DesignTokens.spacing['0.5'],
   },
   userName: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
-    color: DesignTokens.colors.text.primary,
-    marginBottom: 4,
+    color: colors.textPrimary,
+    marginBottom: Spacing.xs,
   },
   dateText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.tertiary,
-    marginBottom: 10,
+    color: colors.textTertiary,
+    marginBottom: DesignTokens.spacing['2.5'],
   },
   weatherRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginBottom: 6,
+    gap: DesignTokens.spacing['1.5'],
+    marginBottom: DesignTokens.spacing['1.5'],
   },
   weatherText: {
     fontSize: DesignTokens.typography.sizes.base,
   },
   suggestionText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
     fontStyle: "italic",
   },
   skeletonLine1: {
     width: 60,
-    height: 14,
+    height: DesignTokens.spacing['3.5'],
     borderRadius: 4,
     backgroundColor: DesignTokens.colors.neutral[200],
-    marginBottom: 6,
+    marginBottom: DesignTokens.spacing['1.5'],
   },
   skeletonLine2: {
     width: 140,
-    height: 28,
+    height: DesignTokens.spacing[7],
     borderRadius: 6,
     backgroundColor: DesignTokens.colors.neutral[200],
-    marginBottom: 6,
+    marginBottom: DesignTokens.spacing['1.5'],
   },
   skeletonLine3: {
     width: 100,
-    height: 14,
+    height: DesignTokens.spacing['3.5'],
     borderRadius: 4,
     backgroundColor: DesignTokens.colors.neutral[200],
-    marginBottom: 10,
+    marginBottom: DesignTokens.spacing['2.5'],
   },
   skeletonLine4: {
     width: 180,
-    height: 14,
+    height: DesignTokens.spacing['3.5'],
     borderRadius: 4,
     backgroundColor: DesignTokens.colors.neutral[200],
   },
-});
+}))
 
 export { WeatherGreeting };
 export type { WeatherGreetingProps };
+
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  skeletonLine1: { flex: 1 },
+  skeletonLine2: { flex: 1 },
+  skeletonLine3: { flex: 1 },
+  skeletonLine4: { flex: 1 },
+  greeting: { flex: 1 },
+  userName: { flex: 1 },
+  dateText: { flex: 1 },
+  weatherRow: { flex: 1 },
+  weatherText: { flex: 1 },
+  suggestionText: { flex: 1 },
+});

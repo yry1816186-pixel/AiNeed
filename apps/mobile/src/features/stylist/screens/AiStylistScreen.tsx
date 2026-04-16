@@ -15,11 +15,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useTranslation } from '../../../i18n';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import { useAuthStore } from '../stores/index';
 import { useAiStylistStore } from '../stores/aiStylistStore';
 import type { PresetQuestion } from '../stores/aiStylistStore';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+
 import {
   OutfitPlanView,
   ItemReplacementModal,
@@ -276,12 +278,12 @@ export const AiStylistScreen: React.FC = () => {
               disabled={!inputText.trim() || isGenerating}
             >
               {isGenerating ? (
-                <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+                <ActivityIndicator size="small" color={colors.surface} />
               ) : (
                 <Ionicons
                   name="send"
                   size={20}
-                  color={inputText.trim() ? DesignTokens.colors.neutral.white : colors.textTertiary}
+                  color={inputText.trim() ? colors.surface : colors.textTertiary}
                 />
               )}
             </Pressable>
@@ -322,28 +324,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
+    padding: Spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerLeft: { flexDirection: "row", alignItems: "center", gap: 6 },
+  headerLeft: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5']},
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  historyButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
-  scrollContent: { paddingBottom: 8 },
+  historyButton: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
+  scrollContent: { paddingBottom: Spacing.sm},
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
   emptyState: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 60,
-    paddingHorizontal: 32,
+    paddingHorizontal: Spacing.xl,
   },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: 16 },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: Spacing.md},
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
-    marginTop: 8,
+    marginTop: Spacing.sm,
     textAlign: "center",
     lineHeight: 20,
   },
@@ -353,19 +355,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 60,
   },
-  generatingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 12 },
+  generatingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
   errorBanner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginHorizontal: 16,
-    marginVertical: 8,
-    padding: 10,
+    marginHorizontal: Spacing.md,
+    marginVertical: Spacing.sm,
+    padding: DesignTokens.spacing['2.5'],
     borderRadius: 10,
-    backgroundColor: DesignTokens.colors.semantic.errorLight,
+    backgroundColor: colors.errorLight,
   },
   errorText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, flex: 1 },
-  errorDismiss: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, fontWeight: "600", marginLeft: 12 },
+  errorDismiss: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, fontWeight: "600", marginLeft: DesignTokens.spacing[3]},
   bottomArea: {
     borderTopWidth: 1,
     borderTopColor: colors.border,
@@ -374,8 +376,8 @@ const styles = StyleSheet.create({
   inputRow: {
     flexDirection: "row",
     alignItems: "flex-end",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
   },
   inputWrapper: {
     flex: 1,
@@ -383,17 +385,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.background,
     borderRadius: 20,
-    paddingHorizontal: 12,
+    paddingHorizontal: DesignTokens.spacing[3],
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, maxHeight: 80, paddingVertical: 8 },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, maxHeight: Spacing['4xl'], paddingVertical: Spacing.sm},
   sendButton: {
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: 18,
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 8,
+    marginLeft: Spacing.sm,
   },
   sendButtonDisabled: { backgroundColor: colors.surface },
 });

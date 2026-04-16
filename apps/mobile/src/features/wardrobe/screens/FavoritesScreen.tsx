@@ -21,6 +21,8 @@ import { useAuthStore } from '../stores/index';
 import type { ClothingItem } from '../../types/clothing';
 import type { RootStackParamList } from '../../../types/navigation';
 import { ImageWithPlaceholder } from '../../../shared/components/common/ImageWithPlaceholder';
+import { Spacing } from '../../../design-system/theme';
+
 
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -207,19 +209,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
+    padding: Spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  backBtn: { width: 32, height: 32, alignItems: "center", justifyContent: "center" },
-  list: { padding: 16 },
+  backBtn: { width: Spacing.xl, height: Spacing.xl, alignItems: "center", justifyContent: "center" },
+  list: { padding: Spacing.md},
   emptyList: { flex: 1 },
   card: {
     backgroundColor: colors.surface,
     borderRadius: 12,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
     overflow: "hidden",
     flexDirection: "row",
     elevation: 2,
@@ -232,20 +234,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  info: { flex: 1, padding: 12, justifyContent: "center" },
+  info: { flex: 1, padding: DesignTokens.spacing[3], justifyContent: "center" },
   name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
-  brand: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary, marginTop: 2 },
-  price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: colors.primary, marginTop: 4 },
-  actions: { justifyContent: "center", paddingRight: 12 },
-  removeBtn: { padding: 8 },
+  brand: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary, marginTop: DesignTokens.spacing['0.5']},
+  price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: colors.primary, marginTop: Spacing.xs},
+  actions: { justifyContent: "center", paddingRight: DesignTokens.spacing[3]},
+  removeBtn: { padding: Spacing.sm},
   centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 8 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: Spacing.sm},
   emptyContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 60,
   },
-  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: 8 },
-  emptyAction: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary, marginTop: 12 },
+  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: Spacing.sm},
+  emptyAction: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary, marginTop: DesignTokens.spacing[3]},
 });

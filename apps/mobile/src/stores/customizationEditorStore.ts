@@ -11,6 +11,9 @@ import type {
   CreateFromDesignResponse,
 } from "../types/customization";
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
+import { useTheme } from '../design-system/theme/tokens/design-tokens';
+import { flatColors as colors } from '../design-system/theme';
+
 
 export type { PrintableAreaBounds } from "../types/customization";
 export type DesignLayer = Omit<CustomizationDesignLayer, "designId">;

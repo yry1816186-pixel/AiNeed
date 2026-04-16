@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { communityApi } from "../../services/api/community.api";
-import { theme } from '../../../../design-system/theme';
+import { theme, Spacing } from '../../../../design-system/theme';
 import { DesignTokens } from "../../../../design-system/theme";
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 
 interface FollowButtonProps {
   userId: string;
@@ -17,6 +18,8 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
   size = "medium",
   onFollowChange,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [following, setFollowing] = useState(initialFollowing);
   const [loading, setLoading] = useState(false);
 
@@ -70,7 +73,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
       accessibilityRole="button"
     >
       {loading ? (
-        <ActivityIndicator size="small" color="#FFFFFF" />
+        <ActivityIndicator size="small" color={colors.textInverse} />
       ) : (
         <Text style={[styles.followText, isSmall && styles.followTextSmall]}>关注</Text>
       )}
@@ -78,22 +81,22 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   followBtn: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     borderRadius: 18,
-    paddingHorizontal: 24,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
     alignItems: "center",
     justifyContent: "center",
   },
   followBtnSmall: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
     paddingVertical: 5,
     borderRadius: 14,
   },
   followText: {
-    color: "#FFFFFF",
+    color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
@@ -103,15 +106,15 @@ const styles = StyleSheet.create({
   followingBtn: {
     backgroundColor: theme.colors.background,
     borderRadius: 18,
-    paddingHorizontal: 24,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
     borderColor: theme.colors.border,
   },
   followingBtnSmall: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
     paddingVertical: 5,
     borderRadius: 14,
   },
@@ -123,6 +126,6 @@ const styles = StyleSheet.create({
   followingTextSmall: {
     fontSize: DesignTokens.typography.sizes.sm,
   },
-});
+}))
 
 export default FollowButton;

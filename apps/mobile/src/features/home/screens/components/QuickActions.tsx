@@ -3,6 +3,9 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import { flatColors as colors } from '../../../../design-system/theme';
+
 
 interface QuickActionsProps {
   onAiStylist: () => void;
@@ -38,7 +41,7 @@ const QuickActions = memo(
         title: "AI 造型师",
         description: "智能穿搭建议",
         icon: "sparkles",
-        gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.terracottaLight],
+        gradient: [colors.primary, colors.primaryLight],
         onPress: onAiStylist,
         locked: false,
       },
@@ -47,7 +50,7 @@ const QuickActions = memo(
         title: "虚拟试衣",
         description: "一键试穿效果",
         icon: "shirt-outline",
-        gradient: ["DesignTokens.colors.brand.slate", "DesignTokens.colors.brand.sage"], // custom color
+        gradient: ["colors.neutral[500]", "colors.secondary"], // custom color
         onPress: onVirtualTryOn,
         locked: false,
       },
@@ -56,7 +59,7 @@ const QuickActions = memo(
         title: "购物车",
         description: "查看购物车",
         icon: "cart-outline",
-        gradient: ["DesignTokens.colors.brand.camel", DesignTokens.colors.brand.terracottaLight], // custom color
+        gradient: ["colors.primary", colors.primaryLight], // custom color
         onPress: onCart,
         locked: false,
       },
@@ -65,7 +68,7 @@ const QuickActions = memo(
         title: "我的衣橱",
         description: "管理你的衣橱",
         icon: "grid-outline",
-        gradient: [DesignTokens.colors.brand.sage, "DesignTokens.colors.brand.sage"], // custom color
+        gradient: [colors.secondary, "colors.secondary"], // custom color
         onPress: onWardrobe,
         locked: false,
       },
@@ -74,7 +77,7 @@ const QuickActions = memo(
         title: "风格报告",
         description: "专属风格分析",
         icon: "document-text-outline",
-        gradient: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"], // custom color
+        gradient: [colors.neutral[500], "colors.textTertiary"], // custom color
         onPress: onStyleReport,
         locked: !isStyleReportUnlocked,
       },
@@ -102,14 +105,14 @@ const QuickActions = memo(
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Ionicons name={action.icon} size={22} color={DesignTokens.colors.text.inverse} />
+                <Ionicons name={action.icon} size={22} color={colors.textInverse} />
               </LinearGradient>
               <Text style={styles.title}>{action.title}</Text>
               <Text style={styles.description}>{action.description}</Text>
             </View>
             {action.locked && (
               <View style={styles.lockBadge}>
-                <Ionicons name="lock-closed" size={12} color={DesignTokens.colors.text.tertiary} />
+                <Ionicons name="lock-closed" size={12} color={colors.textTertiary} />
               </View>
             )}
           </Pressable>
@@ -121,7 +124,7 @@ const QuickActions = memo(
 
 QuickActions.displayName = "QuickActions";
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -129,22 +132,22 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "33.33%",
-    paddingHorizontal: 6,
-    marginBottom: 12,
+    paddingHorizontal: DesignTokens.spacing['1.5'],
+    marginBottom: DesignTokens.spacing[3],
   },
   cardLocked: {
     opacity: 0.5,
   },
   cardContent: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: DesignTokens.borderRadius.xl,
     padding: DesignTokens.spacing[4],
     borderWidth: 1,
-    borderColor: DesignTokens.colors.borders.light,
+    borderColor: colors.borderLight,
   },
   iconContainer: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: DesignTokens.borderRadius.full,
     justifyContent: "center",
     alignItems: "center",
@@ -153,18 +156,30 @@ const styles = StyleSheet.create({
   title: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
-    marginBottom: 2,
+    color: colors.textPrimary,
+    marginBottom: DesignTokens.spacing['0.5'],
   },
   description: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
   },
   lockBadge: {
     position: "absolute",
-    top: 10,
-    right: 14,
+    top: DesignTokens.spacing['2.5'],
+    right: DesignTokens.spacing['3.5'],
   },
-});
+}))
 
 export default QuickActions;
+
+
+const styles = StyleSheet.create({
+  grid: { flex: 1 },
+  card: { flex: 1 },
+  cardLocked: { flex: 1 },
+  cardContent: { flex: 1 },
+  iconContainer: { flex: 1 },
+  title: { flex: 1 },
+  description: { flex: 1 },
+  lockBadge: { flex: 1 },
+});

@@ -4,7 +4,8 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import type { RootStackParamList } from '../../../types/navigation';
 import type { ClothingItem } from '../../../types/clothing';
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface OutfitSet {
   id: string;
@@ -19,6 +20,8 @@ interface OutfitRecommendationCardsProps {
 export const OutfitRecommendationCards: React.FC<OutfitRecommendationCardsProps> = ({
   outfits,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   if (!outfits || outfits.length === 0) {
@@ -53,22 +56,22 @@ export const OutfitRecommendationCards: React.FC<OutfitRecommendationCardsProps>
   );
 };
 
-const styles = StyleSheet.create({
-  container: { paddingVertical: 16 },
-  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary, marginBottom: 12 },
+const useStyles = createStyles((colors) => ({
+  container: { paddingVertical: Spacing.md},
+  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing[3]},
   card: {
     width: 200,
-    backgroundColor: "DesignTokens.colors.backgrounds.secondary",
+    backgroundColor: "colors.backgroundSecondary",
     borderRadius: 12,
-    padding: 12,
-    marginRight: 12,
+    padding: DesignTokens.spacing[3],
+    marginRight: DesignTokens.spacing[3],
   },
-  cardTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: DesignTokens.colors.text.secondary, marginBottom: 8 },
-  itemsRow: { flexDirection: "row", gap: 6 },
+  cardTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: colors.textSecondary, marginBottom: Spacing.sm},
+  itemsRow: { flexDirection: "row", gap: DesignTokens.spacing['1.5']},
   itemImage: {
     width: 50,
     height: 50,
     borderRadius: 6,
-    backgroundColor: DesignTokens.colors.borders.light,
+    backgroundColor: colors.borderLight,
   },
-});
+}))

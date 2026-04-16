@@ -34,6 +34,9 @@ import { typography } from "../../theme/tokens/typography";
 import { spacing } from "../../theme/tokens/spacing";
 import { shadows } from "../../theme/tokens/shadows";
 import { TryOnProgress } from "../loading/TryOnProgress";
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
+
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -58,6 +61,8 @@ const STYLE_TIPS = [
 type TryOnPhase = "idle" | "uploading" | "queued" | "processing" | "completed" | "failed";
 
 export const TryOnScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
@@ -383,7 +388,7 @@ export const TryOnScreen: React.FC = () => {
               <Text style={styles.headerTitle}>AI 虚拟试衣</Text>
               <Text style={styles.headerSubtitle}>上传照片即可体验黑科技试衣效果</Text>
               <View style={styles.headerBadge}>
-                <Ionicons name="flash" size={14} color={DesignTokens.colors.text.inverse} />
+                <Ionicons name="flash" size={14} color={colors.textInverse} />
                 <Text style={styles.headerBadgeText}>AI 驱动</Text>
               </View>
             </View>
@@ -412,7 +417,7 @@ export const TryOnScreen: React.FC = () => {
               <>
                 <Image source={{ uri: personImage }} style={styles.previewImage} />
                 <TouchableOpacity style={styles.changeButton} disabled={isProcessing}>
-                  <Ionicons name="camera-outline" size={16} color={DesignTokens.colors.text.inverse} />
+                  <Ionicons name="camera-outline" size={16} color={colors.textInverse} />
                   <Text style={styles.changeButtonText}>更换</Text>
                 </TouchableOpacity>
               </>
@@ -450,7 +455,7 @@ export const TryOnScreen: React.FC = () => {
               <>
                 <Image source={{ uri: clothingImage }} style={styles.previewImage} />
                 <TouchableOpacity style={styles.changeButton} disabled={isProcessing}>
-                  <Ionicons name="images-outline" size={16} color={DesignTokens.colors.text.inverse} />
+                  <Ionicons name="images-outline" size={16} color={colors.textInverse} />
                   <Text style={styles.changeButtonText}>更换</Text>
                 </TouchableOpacity>
               </>
@@ -471,7 +476,7 @@ export const TryOnScreen: React.FC = () => {
       <Animated.View entering={FadeInUp.delay(400).springify()}>
         {phase === "failed" ? (
           <TouchableOpacity style={styles.retryButton} onPress={handleRetry} activeOpacity={0.8}>
-            <Ionicons name="refresh" size={20} color={DesignTokens.colors.text.inverse} />
+            <Ionicons name="refresh" size={20} color={colors.textInverse} />
             <Text style={styles.buttonText}>重试</Text>
           </TouchableOpacity>
         ) : (
@@ -483,16 +488,16 @@ export const TryOnScreen: React.FC = () => {
           >
             {isProcessing ? (
               <View style={styles.processingContent}>
-                <ActivityIndicator size="small" color={DesignTokens.colors.text.inverse} />
+                <ActivityIndicator size="small" color={colors.textInverse} />
                 <Text style={styles.buttonText}>
                   {phaseLabel[phase]} {progress > 0 ? `${Math.round(progress)}%` : ""}
                 </Text>
               </View>
             ) : (
               <>
-                <Ionicons name="sparkles" size={20} color={DesignTokens.colors.text.inverse} />
+                <Ionicons name="sparkles" size={20} color={colors.textInverse} />
                 <Text style={styles.buttonText}>开始 AI 试衣</Text>
-                <Ionicons name="arrow-forward" size={18} color={DesignTokens.colors.text.inverse} />
+                <Ionicons name="arrow-forward" size={18} color={colors.textInverse} />
               </>
             )}
           </TouchableOpacity>
@@ -556,8 +561,8 @@ export const TryOnScreen: React.FC = () => {
 
               <View style={[styles.comparisonCard, styles.comparisonCardAfter]}>
                 <View style={[styles.comparisonLabel, styles.comparisonLabelAfter]}>
-                  <Ionicons name="sparkles" size={12} color={DesignTokens.colors.text.inverse} />
-                  <Text style={[styles.comparisonLabelText, { color: DesignTokens.colors.text.inverse }]}>
+                  <Ionicons name="sparkles" size={12} color={colors.textInverse} />
+                  <Text style={[styles.comparisonLabelText, { color: colors.textInverse }]}>
                     AI 试衣效果
                   </Text>
                 </View>
@@ -580,7 +585,7 @@ export const TryOnScreen: React.FC = () => {
                 <Text style={styles.actionButtonTextSecondary}>分享结果</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionButtonPrimary} onPress={handleSaveToAlbum}>
-                <Ionicons name="download-outline" size={20} color={DesignTokens.colors.text.inverse} />
+                <Ionicons name="download-outline" size={20} color={colors.textInverse} />
                 <Text style={styles.actionButtonTextPrimary}>保存到相册</Text>
               </TouchableOpacity>
             </View>
@@ -595,14 +600,14 @@ export const TryOnScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     backgroundColor: colors.neutral[50],
   },
   content: {
     padding: spacing.layout.screenPadding,
-    paddingBottom: 40,
+    paddingBottom: DesignTokens.spacing[10],
   },
 
   navBar: {
@@ -610,11 +615,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: spacing.layout.sectionGap,
-    paddingVertical: 4,
+    paddingVertical: Spacing.xs,
   },
   navBackButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: colors.neutral[100],
     alignItems: "center",
@@ -626,7 +631,7 @@ const styles = StyleSheet.create({
     color: colors.neutral[900],
   },
   navPlaceholder: {
-    width: 40,
+    width: DesignTokens.spacing[10],
   },
 
   headerSection: {
@@ -647,29 +652,29 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.text.inverse,
-    marginBottom: 8,
+    color: colors.textInverse,
+    marginBottom: Spacing.sm,
   },
   headerSubtitle: {
     fontSize: typography.fontSize.base,
     color: "rgba(255,255,255,0.9)",
     lineHeight: 22,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   headerBadge: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.25)",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
     alignSelf: "flex-start",
   },
   headerBadgeText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.text.inverse,
-    marginLeft: 6,
+    color: colors.textInverse,
+    marginLeft: DesignTokens.spacing['1.5'],
   },
 
   section: {
@@ -678,12 +683,12 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    marginBottom: 12,
+    gap: DesignTokens.spacing['2.5'],
+    marginBottom: DesignTokens.spacing[3],
   },
   stepNumber: {
-    width: 28,
-    height: 28,
+    width: DesignTokens.spacing[7],
+    height: DesignTokens.spacing[7],
     borderRadius: 14,
     backgroundColor: colors.brand.warmPrimary,
     alignItems: "center",
@@ -692,7 +697,7 @@ const styles = StyleSheet.create({
   stepNumberText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   sectionTitle: {
     fontSize: typography.fontSize.lg,
@@ -722,7 +727,7 @@ const styles = StyleSheet.create({
     height: 220,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    padding: DesignTokens.spacing[5],
   },
   placeholderIconContainer: {
     width: 72,
@@ -731,18 +736,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   placeholderTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[700],
-    marginTop: 10,
+    marginTop: DesignTokens.spacing['2.5'],
   },
   placeholderSubtitle: {
     fontSize: typography.fontSize.sm,
     color: colors.neutral[500],
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
     textAlign: "center",
   },
   previewImage: {
@@ -752,20 +757,20 @@ const styles = StyleSheet.create({
   },
   changeButton: {
     position: "absolute",
-    bottom: 12,
-    right: 12,
+    bottom: DesignTokens.spacing[3],
+    right: DesignTokens.spacing[3],
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.6)",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
     borderRadius: 16,
-    gap: 6,
+    gap: DesignTokens.spacing['1.5'],
   },
   changeButtonText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semibold,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
 
   button: {
@@ -774,10 +779,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.brand.warmPrimary,
     borderRadius: spacing.borderRadius.xl,
-    paddingVertical: 16,
-    gap: 10,
+    paddingVertical: Spacing.md,
+    gap: DesignTokens.spacing['2.5'],
     ...shadows.presets.lg,
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   buttonDisabled: {
     backgroundColor: colors.neutral[300],
@@ -785,12 +790,12 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   processingContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: DesignTokens.spacing['2.5'],
   },
   retryButton: {
     flexDirection: "row",
@@ -798,21 +803,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.semantic.error.main,
     borderRadius: spacing.borderRadius.xl,
-    paddingVertical: 16,
-    gap: 10,
+    paddingVertical: Spacing.md,
+    gap: DesignTokens.spacing['2.5'],
     ...shadows.presets.lg,
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
 
   progressContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    marginBottom: 20,
+    gap: DesignTokens.spacing[3],
+    marginBottom: DesignTokens.spacing[5],
   },
   progressBarBg: {
     flex: 1,
-    height: 8,
+    height: Spacing.sm,
     backgroundColor: colors.neutral[200],
     borderRadius: 4,
     overflow: "hidden",
@@ -831,12 +836,12 @@ const styles = StyleSheet.create({
   tipContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     backgroundColor: colors.warmPrimary.coral[50],
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: spacing.borderRadius.lg,
-    marginTop: 12,
+    marginTop: DesignTokens.spacing[3],
   },
   tipText: {
     flex: 1,
@@ -847,12 +852,12 @@ const styles = StyleSheet.create({
   timeoutWarning: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     backgroundColor: colors.warmPrimary.ocean[50],
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: spacing.borderRadius.lg,
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   timeoutWarningText: {
     flex: 1,
@@ -863,11 +868,11 @@ const styles = StyleSheet.create({
   errorSection: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: DesignTokens.spacing['2.5'],
     backgroundColor: colors.semantic.error.light,
-    padding: 16,
+    padding: Spacing.md,
     borderRadius: spacing.borderRadius.lg,
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   errorText: {
     flex: 1,
@@ -884,8 +889,8 @@ const styles = StyleSheet.create({
   resultHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginBottom: 20,
+    gap: Spacing.sm,
+    marginBottom: DesignTokens.spacing[5],
   },
   resultTitle: {
     fontSize: typography.fontSize.xl,
@@ -896,8 +901,8 @@ const styles = StyleSheet.create({
   comparisonContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    marginBottom: 20,
+    gap: DesignTokens.spacing[3],
+    marginBottom: DesignTokens.spacing[5],
   },
   comparisonCard: {
     flex: 1,
@@ -911,11 +916,11 @@ const styles = StyleSheet.create({
   },
   comparisonLabel: {
     backgroundColor: colors.neutral[200],
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
   },
   comparisonLabelAfter: {
     backgroundColor: colors.warmPrimary.mint[500],
@@ -931,8 +936,8 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   arrowContainer: {
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
     backgroundColor: colors.warmPrimary.coral[50],
     alignItems: "center",
@@ -941,14 +946,14 @@ const styles = StyleSheet.create({
 
   actionButtons: {
     flexDirection: "row",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   actionButtonSecondary: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: Spacing.sm,
     paddingVertical: 13,
     borderRadius: spacing.borderRadius.xl,
     backgroundColor: colors.warmPrimary.ocean[50],
@@ -965,7 +970,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: Spacing.sm,
     paddingVertical: 13,
     borderRadius: spacing.borderRadius.xl,
     backgroundColor: colors.warmPrimary.mint[500],
@@ -974,17 +979,17 @@ const styles = StyleSheet.create({
   actionButtonTextPrimary: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   tryMoreButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: Spacing.sm,
     paddingVertical: 13,
     borderRadius: spacing.borderRadius.xl,
     backgroundColor: colors.neutral[100],
-    marginTop: 12,
+    marginTop: DesignTokens.spacing[3],
     borderWidth: 1.5,
     borderColor: colors.neutral[300],
   },
@@ -993,6 +998,6 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
     color: colors.brand.warmPrimary,
   },
-});
+}))
 
 export default TryOnScreen;

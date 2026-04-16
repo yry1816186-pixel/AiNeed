@@ -17,7 +17,8 @@ import type { ServiceType } from '../../../types/consultant';
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamListBase } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from '../../../design-system/theme';
+import { DesignTokens , Spacing } from '../../../design-system/theme'
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 const SERVICE_TYPES = [
   { label: "全部", value: "" },
@@ -28,6 +29,8 @@ const SERVICE_TYPES = [
 ];
 
 export const AdvisorListScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const { consultants, matchResults, isLoading, fetchConsultants, matchConsultants } =
@@ -86,7 +89,7 @@ export const AdvisorListScreen: React.FC = () => {
   if (isLoading && displayData.length === 0) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="DesignTokens.colors.brand.terracotta" />
+        <ActivityIndicator size="large" color="colors.primary" />
         <Text style={styles.loadingText}>正在加载顾问列表...</Text>
       </View>
     );
@@ -183,58 +186,58 @@ export const AdvisorListScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "DesignTokens.colors.backgrounds.secondary" },
+const useStyles = createStyles((colors) => ({
+  container: { flex: 1, backgroundColor: "colors.backgroundSecondary" },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    paddingHorizontal: Spacing.md,
+    paddingBottom: DesignTokens.spacing[3],
+    backgroundColor: colors.surface,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: "DesignTokens.colors.text.primary" },
+  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: "colors.textPrimary" },
   matchButton: {
-    backgroundColor: "DesignTokens.colors.brand.terracotta",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    backgroundColor: "colors.primary",
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderRadius: 20,
   },
-  matchButtonText: { color: DesignTokens.colors.backgrounds.primary, fontSize: DesignTokens.typography.sizes.base, fontWeight: "500" },
+  matchButtonText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "500" },
   filterBar: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderBottomColor: "colors.backgroundTertiary",
   },
   matchResultsBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     backgroundColor: "DesignTokens.colors.neutral[50]",
   },
-  matchResultsText: { fontSize: DesignTokens.typography.sizes.sm, color: "DesignTokens.colors.brand.terracotta" },
-  clearMatchText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary },
-  listContent: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24 },
+  matchResultsText: { fontSize: DesignTokens.typography.sizes.sm, color: "colors.primary" },
+  clearMatchText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
+  listContent: { paddingHorizontal: Spacing.md, paddingTop: DesignTokens.spacing[3], paddingBottom: Spacing.lg},
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 80,
+    paddingTop: Spacing['4xl'],
   },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: DesignTokens.colors.text.primary, marginBottom: 8 },
-  emptySubtitle: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary, marginBottom: 24 },
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginBottom: Spacing.sm},
+  emptySubtitle: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginBottom: Spacing.lg},
   matchCta: {
-    backgroundColor: "DesignTokens.colors.brand.terracotta",
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    backgroundColor: "colors.primary",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
   },
-  matchCtaText: { color: DesignTokens.colors.backgrounds.primary, fontSize: DesignTokens.typography.sizes.md, fontWeight: "500" },
+  matchCtaText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.md, fontWeight: "500" },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary, marginTop: 12 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
   overlay: {
     position: "absolute",
     top: 0,
@@ -245,41 +248,41 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   bottomSheet: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 24,
-    paddingBottom: 40,
+    padding: Spacing.lg,
+    paddingBottom: DesignTokens.spacing[10],
   },
-  sheetTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "600", color: "DesignTokens.colors.text.primary", marginBottom: 20 },
-  sheetLabel: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary, marginBottom: 8, marginTop: 12 },
+  sheetTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "600", color: "colors.textPrimary", marginBottom: DesignTokens.spacing[5]},
+  sheetLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginBottom: Spacing.sm, marginTop: DesignTokens.spacing[3]},
   notesInput: {
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.borders.default",
+    borderColor: "colors.border",
     borderRadius: 12,
-    padding: 12,
+    padding: DesignTokens.spacing[3],
     fontSize: DesignTokens.typography.sizes.base,
-    minHeight: 80,
+    minHeight: Spacing['4xl'],
     textAlignVertical: "top",
   },
-  sheetActions: { flexDirection: "row", gap: 12, marginTop: 24 },
+  sheetActions: { flexDirection: "row", gap: DesignTokens.spacing[3], marginTop: Spacing.lg},
   sheetCancel: {
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.borders.default",
+    borderColor: "colors.border",
     alignItems: "center",
   },
-  sheetCancelText: { fontSize: DesignTokens.typography.sizes.md, color: DesignTokens.colors.text.secondary },
+  sheetCancelText: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary },
   sheetSubmit: {
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 12,
-    backgroundColor: "DesignTokens.colors.brand.terracotta",
+    backgroundColor: "colors.primary",
     alignItems: "center",
   },
-  sheetSubmitText: { fontSize: DesignTokens.typography.sizes.md, color: DesignTokens.colors.backgrounds.primary, fontWeight: "500" },
-});
+  sheetSubmitText: { fontSize: DesignTokens.typography.sizes.md, color: colors.surface, fontWeight: "500" },
+}))
 
 export default AdvisorListScreen;

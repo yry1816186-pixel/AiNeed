@@ -74,7 +74,7 @@ export const ProfileCompletenessBar: React.FC<ProfileCompletenessBarProps> = ({
 
 const styles = StyleSheet.create({
   pressable: {
-    minHeight: 44,
+    minHeight: DesignTokens.spacing[11],
   },
   container: {
     paddingVertical: Spacing[3],
@@ -91,13 +91,13 @@ const styles = StyleSheet.create({
     color: Colors.neutral[900],
   },
   track: {
-    height: 8,
+    height: Spacing.sm,
     backgroundColor: Colors.neutral[200],
     borderRadius: 12,
     overflow: "hidden",
   },
   fill: {
-    height: 8,
+    height: Spacing.sm,
     backgroundColor: Colors.primary[500],
     borderRadius: 12,
   },

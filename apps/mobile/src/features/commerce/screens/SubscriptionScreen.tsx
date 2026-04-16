@@ -94,7 +94,7 @@ const DEFAULT_PLANS: MembershipPlan[] = [
 const TIER_GRADIENT: Record<PlanTier, [string, string]> = {
   basic: [Colors.neutral[100], Colors.neutral[50]],
   premium: [colors.primary, colors.primaryLight],
-  vip: [DesignTokens.colors.brand.terracottaDark, DesignTokens.colors.brand.terracotta], // custom color
+  vip: [colors.primaryDark, colors.primary], // custom color
 };
 
 const TIER_ICON: Record<PlanTier, string> = {
@@ -409,8 +409,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   headerBack: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   headerSpacer: {
-    width: 40,
+    width: DesignTokens.spacing[10],
   },
   loadingContainer: {
     flex: 1,
@@ -523,8 +523,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[4],
   },
   planIconContainer: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",

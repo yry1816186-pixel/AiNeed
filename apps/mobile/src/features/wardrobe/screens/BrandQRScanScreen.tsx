@@ -217,7 +217,7 @@ export const BrandQRScanScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>品牌扫码</Text>
-        <View style={{ width: 40 }} />
+        <View style={{ width: DesignTokens.spacing[10] }} />
       </View>
 
       <KeyboardAvoidingView
@@ -249,8 +249,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[2],
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   },
   codeInput: {
     flex: 1,
-    height: 48,
+    height: Spacing['2xl'],
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[4],
@@ -312,8 +312,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.neutral[200],
   },
   scanButton: {
-    width: 48,
-    height: 48,
+    width: Spacing['2xl'],
+    height: Spacing['2xl'],
     borderRadius: BorderRadius.lg,
     backgroundColor: colors.primary,
     alignItems: "center",
@@ -338,8 +338,8 @@ const styles = StyleSheet.create({
     gap: Spacing[3],
   },
   brandLogo: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     backgroundColor: "rgba(198, 123, 92, 0.1)",
     alignItems: "center",

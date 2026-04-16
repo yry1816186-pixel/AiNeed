@@ -8,22 +8,23 @@ import {
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
-
-// 引入主题令牌
+import { Spacing } from '../theme';
+import { DesignTokens } from '../theme/tokens/design-tokens';
+import { useTheme } from '../../design-system/theme';
 import {
   Colors,
   Typography as ThemeTypography,
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
-  DesignTokens,
   SpringConfigs,
 } from '../../design-system/theme';
+
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from "react-native-reanimated";
 
 
 interface GradientButtonProps {
@@ -60,6 +61,8 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
   fullWidth = true,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { seasonAccent } = useTheme();
 
   // 动画值
@@ -77,20 +80,20 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
   // 尺寸配置
   const sizeConfig = {
     small: {
-      paddingVertical: 10,
-      paddingHorizontal: 16,
+      paddingVertical: DesignTokens.spacing['2.5'],
+      paddingHorizontal: Spacing.md,
       fontSize: ThemeTypography.sizes.sm,
       borderRadius: ThemeBorderRadius.lg,
     },
     medium: {
-      paddingVertical: 14,
-      paddingHorizontal: 20,
+      paddingVertical: DesignTokens.spacing['3.5'],
+      paddingHorizontal: DesignTokens.spacing[5],
       fontSize: ThemeTypography.sizes.base,
       borderRadius: ThemeBorderRadius.xl,
     },
     large: {
-      paddingVertical: 16,
-      paddingHorizontal: 24,
+      paddingVertical: Spacing.md,
+      paddingHorizontal: Spacing.lg,
       fontSize: ThemeTypography.sizes.lg,
       borderRadius: ThemeBorderRadius.xl,
     },
@@ -131,10 +134,10 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
           style={styles.gradient}
         >
           {loading ? (
-            <ActivityIndicator size="small" color={DesignTokens.colors.text.inverse} />
+            <ActivityIndicator size="small" color={colors.textInverse} />
           ) : (
             <>
-              {icon && <Ionicons name={icon} size={size === "small" ? 18 : 20} color={DesignTokens.colors.text.inverse} />}
+              {icon && <Ionicons name={icon} size={size === "small" ? 18 : 20} color={colors.textInverse} />}
               <Text style={[styles.title, { fontSize: sizeConfig[size].fontSize }]}>{title}</Text>
             </>
           )}
@@ -144,7 +147,7 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   button: {
     overflow: "hidden",
     ...ThemeShadows.md,
@@ -153,11 +156,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   title: {
     fontWeight: ThemeTypography.fontWeights.bold,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   fullWidth: {
     width: "100%",
@@ -165,6 +168,6 @@ const styles = StyleSheet.create({
   disabled: {
     opacity: 0.5,
   },
-});
+}))
 
 export default GradientButton;

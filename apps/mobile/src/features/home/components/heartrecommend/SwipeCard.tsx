@@ -18,7 +18,7 @@ import {
 } from "react-native-svg";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, BorderRadius, Shadows } from '../../../../design-system/theme';
+import { Colors, BorderRadius, Shadows , Spacing } from '../../../../design-system/theme'
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { SpringConfigs } from '../../../design-system/theme/tokens/animations';
@@ -431,7 +431,7 @@ function ColorHarmonyArc({ score }: { score: number }) {
         d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${
           size - strokeWidth / 2
         } ${size / 2}`}
-        stroke={DesignTokens.colors.brand.terracotta}
+        stroke={colors.primary}
         strokeWidth={strokeWidth}
         fill="none"
         strokeLinecap="round"
@@ -444,7 +444,7 @@ function ColorHarmonyArc({ score }: { score: number }) {
         textAnchor="middle"
         fontSize={9}
         fontWeight="600"
-        fill={DesignTokens.colors.text.inverse}
+        fill={colors.textInverse}
       >
         {Math.round(score * 100)}%
       </SvgText>
@@ -487,7 +487,7 @@ function CIEDE2000Arc({ score, colors: itemColors }: { score: number; colors: st
         cx={center}
         cy={center}
         r={radius}
-        stroke={DesignTokens.colors.brand.terracotta}
+        stroke={colors.primary}
         strokeWidth={strokeWidth}
         fill="none"
         strokeDasharray={`${fillLength} ${circumference}`}
@@ -556,7 +556,7 @@ const styles = StyleSheet.create({
   },
   indicator: {
     position: "absolute",
-    padding: 10,
+    padding: DesignTokens.spacing['2.5'],
     borderRadius: 10,
     borderWidth: 3,
     alignItems: "center",
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
   },
   likeIndicator: {
     top: 50,
-    left: 20,
+    left: DesignTokens.spacing[5],
     borderColor: Colors.success[500],
     backgroundColor: "rgba(16, 185, 129, 0.1)",
   },
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
   },
   nopeIndicator: {
     top: 50,
-    right: 20,
+    right: DesignTokens.spacing[5],
     borderColor: Colors.rose[500],
     backgroundColor: "rgba(244, 63, 94, 0.1)",
   },
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
     top: 100,
     alignSelf: "center",
     backgroundColor: "rgba(16, 185, 129, 0.2)",
-    padding: 16,
+    padding: Spacing.md,
     borderRadius: 20,
     alignItems: "center",
   },
@@ -596,13 +596,13 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "700",
     color: Colors.success[500],
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   skipIndicator: {
     top: 100,
     alignSelf: "center",
     backgroundColor: "rgba(161, 161, 170, 0.2)",
-    padding: 16,
+    padding: Spacing.md,
     borderRadius: 20,
     alignItems: "center",
   },
@@ -610,34 +610,34 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "700",
     color: Colors.neutral[600],
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   cardInfo: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 20,
-    paddingBottom: 24,
+    padding: DesignTokens.spacing[5],
+    paddingBottom: Spacing.lg,
   },
   brandText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: "rgba(255,255,255,0.8)",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
     letterSpacing: 1,
   },
   productName: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: DesignTokens.colors.text.inverse,
-    marginBottom: 8,
+    color: colors.textInverse,
+    marginBottom: Spacing.sm,
   },
   priceRow: {
     flexDirection: "row",
     alignItems: "baseline",
-    gap: 10,
-    marginBottom: 12,
+    gap: DesignTokens.spacing['2.5'],
+    marginBottom: DesignTokens.spacing[3],
   },
   heartButton: {
     marginLeft: "auto",
@@ -645,7 +645,7 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "800",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   originalPriceText: {
     fontSize: DesignTokens.typography.sizes.md,
@@ -655,28 +655,28 @@ const styles = StyleSheet.create({
   matchReasons: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 12,
+    gap: Spacing.sm,
+    marginBottom: DesignTokens.spacing[3],
   },
   reasonTag: {
     backgroundColor: "rgba(255,255,255,0.2)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: Spacing.xs,
     borderRadius: 12,
   },
   reasonText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontWeight: "500",
   },
   colorOptions: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   colorDot: {
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 10,
     borderWidth: 2,
     borderColor: "rgba(255,255,255,0.5)",
@@ -689,26 +689,26 @@ const styles = StyleSheet.create({
   ratingBar: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    marginBottom: 10,
+    gap: Spacing.xs,
+    marginBottom: DesignTokens.spacing['2.5'],
   },
   ratingDot: {
-    width: 8,
-    height: 8,
+    width: Spacing.sm,
+    height: Spacing.sm,
     borderRadius: 4,
   },
   ratingLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: Colors.success[500],
-    marginLeft: 6,
+    marginLeft: DesignTokens.spacing['1.5'],
   },
   reasonPill: {
     backgroundColor: "rgba(198,123,92,0.25)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: Spacing.xs,
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: DesignTokens.spacing['2.5'],
     alignSelf: "flex-start",
   },
   reasonPillText: {
@@ -717,12 +717,12 @@ const styles = StyleSheet.create({
     color: "#F5D5C5", // custom color
   },
   harmonyArcContainer: {
-    marginLeft: 8,
+    marginLeft: Spacing.sm,
     justifyContent: "center",
     alignItems: "center",
   },
   ciedeArcContainer: {
-    marginLeft: 4,
+    marginLeft: Spacing.xs,
     justifyContent: "center",
     alignItems: "center",
   },

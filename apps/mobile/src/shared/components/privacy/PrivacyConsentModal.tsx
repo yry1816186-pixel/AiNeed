@@ -2,6 +2,7 @@
 import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
 import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 interface PrivacyConsentModalProps {
   visible: boolean;
@@ -14,6 +15,8 @@ export const PrivacyConsentModal: React.FC<PrivacyConsentModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
       <View style={styles.overlay}>
@@ -53,7 +56,7 @@ export const PrivacyConsentModal: React.FC<PrivacyConsentModalProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -62,7 +65,7 @@ const styles = StyleSheet.create({
     padding: Spacing[5],
   },
   card: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius["2xl"],
     padding: Spacing[6],
     width: "100%",
@@ -97,20 +100,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary[500],
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[3],
-    minHeight: 48,
+    minHeight: Spacing['2xl'],
     justifyContent: "center",
     alignItems: "center",
   },
   confirmText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
   cancelButton: {
     backgroundColor: "transparent",
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[3],
-    minHeight: 48,
+    minHeight: Spacing['2xl'],
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
@@ -121,6 +124,6 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: Colors.neutral[600],
   },
-});
+}))
 
 export default PrivacyConsentModal;

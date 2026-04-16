@@ -4,6 +4,7 @@ import { colors } from "../../theme/tokens/colors";
 
 import { spacing } from "../../theme/tokens/spacing";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 export interface TagCloudTag {
   label: string;
@@ -44,13 +45,15 @@ const getTagStyle = (weight: number, active: boolean) => {
     paddingVertical,
     paddingHorizontal,
     backgroundColor: active ? colors.brand.warmPrimary : colors.neutral[100],
-    color: active ? DesignTokens.colors.backgrounds.primary : colors.neutral[600],
+    color: active ? colors.surface : colors.neutral[600],
     borderColor: active ? colors.brand.warmPrimary : colors.neutral[200],
     borderWidth: 1,
   };
 };
 
 export const TagCloud: React.FC<TagCloudProps> = ({ tags, accessibilityLabel }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const defaultA11yLabel = accessibilityLabel || `标签云: ${tags.map((t) => t.label).join(", ")}`;
 
   return (
@@ -98,7 +101,7 @@ export const TagCloud: React.FC<TagCloudProps> = ({ tags, accessibilityLabel }) 
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -111,6 +114,6 @@ const styles = StyleSheet.create({
   tagText: {
     fontWeight: "500" as const,
   },
-});
+}))
 
 export default TagCloud;

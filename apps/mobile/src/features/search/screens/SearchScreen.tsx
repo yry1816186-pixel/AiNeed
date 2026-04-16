@@ -35,6 +35,8 @@ import {
   requestMediaLibraryPermissionsAsync,
 } from "@/src/polyfills/expo-image-picker";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { Spacing } from '../../../design-system/theme';
+
 import {
   FilterPanel,
   ActiveFilterPills,
@@ -429,7 +431,7 @@ export const SearchScreen: React.FC = () => {
             {query.length > 0 ? (
               <TouchableOpacity
                 onPress={handleClearSearch}
-                hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+                hitSlop={{ top: DesignTokens.spacing['2.5'], right: DesignTokens.spacing['2.5'], bottom: DesignTokens.spacing['2.5'], left: DesignTokens.spacing['2.5']}}
               >
                 <Ionicons name="close-circle" size={18} color={colors.textTertiary} />
               </TouchableOpacity>
@@ -563,14 +565,14 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: colors.surface,
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingTop: Spacing.md,
+    paddingBottom: DesignTokens.spacing[3],
   },
   searchRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   searchBar: {
     flex: 1,
@@ -578,9 +580,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.divider,
     borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
+    gap: DesignTokens.spacing['2.5'],
   },
   searchInput: {
     flex: 1,
@@ -598,15 +600,15 @@ const styles = StyleSheet.create({
   filterRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 12,
-    gap: 8,
+    marginTop: DesignTokens.spacing[3],
+    gap: Spacing.sm,
   },
   filterToggle: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    gap: Spacing.xs,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
     backgroundColor: colors.divider,
   },
@@ -628,7 +630,7 @@ const styles = StyleSheet.create({
     height: 18,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 4,
+    paddingHorizontal: Spacing.xs,
   },
   filterBadgeText: {
     fontSize: DesignTokens.typography.sizes.xs,

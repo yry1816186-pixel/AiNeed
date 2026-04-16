@@ -192,7 +192,7 @@ export interface ImageWithPlaceholderProps
  * // 圆形头像
  * <ImageWithPlaceholder
  *   source={{ uri: avatarUrl }}
- *   style={{ width: 80, height: 80 }}
+ *   style={{ width: Spacing['4xl'], height: Spacing['4xl'] }}
  *   isCircular
  * />
  *

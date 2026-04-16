@@ -3,7 +3,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { View, ActivityIndicator } from "react-native";
 
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import { StyleSheet } from "react-native";
 import { withErrorBoundary } from '../../../shared/components/ErrorBoundary';
 import { logger } from '../../../utils/logger';
@@ -39,7 +39,7 @@ const TryOnScreenWrapper: React.FC<{ isV2TryOn: boolean }> = ({ isV2TryOn }) => 
   );
 
   return (
-    <React.Suspense fallback={<View style={{flex:1,justifyContent:'center',alignItems:'center'}}><ActivityIndicator size="large" color={theme?.colors?.primary || 'DesignTokens.colors.brand.terracotta'} /></View>}>
+    <React.Suspense fallback={<View style={{flex:1,justifyContent:'center',alignItems:'center'}}><ActivityIndicator size="large" color={theme?.colors?.primary || 'colors.primary'} /></View>}>
       <LazyTryOn isV2={isV2TryOn} />
     </React.Suspense>
   );

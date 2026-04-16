@@ -2,6 +2,8 @@
 import { View, StyleSheet, Dimensions } from "react-native";
 import { Skeleton } from "../../design-system/ui/Skeleton";
 import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const COLUMN_GAP = 8;
@@ -87,15 +89,15 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: "row",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
   },
   trendingRow: {
     flexDirection: "row",
-    gap: 8,
-    paddingHorizontal: 16,
-    marginBottom: 12,
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    marginBottom: DesignTokens.spacing[3],
   },
   masonryContainer: {
     flexDirection: "row",
@@ -112,12 +114,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   cardTextContent: {
-    padding: 8,
+    padding: Spacing.sm,
   },
   cardAuthorRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    marginTop: 6,
+    gap: Spacing.xs,
+    marginTop: DesignTokens.spacing['1.5'],
   },
 });

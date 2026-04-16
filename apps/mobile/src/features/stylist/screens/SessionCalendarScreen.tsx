@@ -4,7 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useAiStylistStore } from '../stores/aiStylistStore';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -181,7 +183,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    padding: 16,
+    padding: Spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
@@ -191,18 +193,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
   },
-  navButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
+  navButton: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
   monthLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
-  weekHeader: { flexDirection: "row", paddingHorizontal: 8, marginBottom: 4 },
-  weekHeaderCell: { flex: 1, alignItems: "center", paddingVertical: 4 },
+  weekHeader: { flexDirection: "row", paddingHorizontal: Spacing.sm, marginBottom: Spacing.xs},
+  weekHeaderCell: { flex: 1, alignItems: "center", paddingVertical: Spacing.xs},
   weekHeaderText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, fontWeight: "500" },
   calendarGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
   },
   dayCell: {
     width: `${100 / 7}%` as unknown as number,
@@ -210,41 +212,41 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 8,
-    marginBottom: 2,
+    marginBottom: DesignTokens.spacing['0.5'],
   },
-  dayCellSelected: { backgroundColor: DesignTokens.colors.brand.terracotta },
+  dayCellSelected: { backgroundColor: colors.primary },
   dayText: { fontSize: DesignTokens.typography.sizes.base, color: colors.text },
-  dayTextSelected: { color: DesignTokens.colors.neutral.white, fontWeight: "600" },
+  dayTextSelected: { color: colors.surface, fontWeight: "600" },
   dotMarker: {
-    width: 4,
-    height: 4,
+    width: Spacing.xs,
+    height: Spacing.xs,
     borderRadius: 2,
-    backgroundColor: DesignTokens.colors.brand.terracotta,
-    marginTop: 2,
+    backgroundColor: colors.primary,
+    marginTop: DesignTokens.spacing['0.5'],
   },
-  sessionList: { flex: 1, paddingHorizontal: 16, marginTop: 8 },
-  sessionListContent: { paddingBottom: 24, gap: 8 },
+  sessionList: { flex: 1, paddingHorizontal: Spacing.md, marginTop: Spacing.sm},
+  sessionListContent: { paddingBottom: Spacing.lg, gap: Spacing.sm},
   sessionCard: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: 14,
+    padding: DesignTokens.spacing['3.5'],
     borderWidth: 1,
     borderColor: colors.border,
   },
   sessionCardInfo: { flex: 1 },
-  sessionGoal: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary, marginBottom: 2 },
+  sessionGoal: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary, marginBottom: DesignTokens.spacing['0.5']},
   sessionTime: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   planBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: Spacing.xs,
     borderRadius: 12,
-    backgroundColor: DesignTokens.colors.brand.sageLight,
+    backgroundColor: colors.secondaryLight,
   },
-  planBadgeText: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.brand.sageDark, fontWeight: "600" },
-  emptyState: { alignItems: "center", paddingVertical: 24 },
+  planBadgeText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.secondaryDark, fontWeight: "600" },
+  emptyState: { alignItems: "center", paddingVertical: Spacing.lg},
   emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
 });
 

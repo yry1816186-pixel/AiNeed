@@ -20,6 +20,7 @@ import AnimatedReanimated from "react-native-reanimated";
 import { ParticleEffect, FloatingElement, GlowText, MagneticButton } from "../../design-system/ui/FluidAnimations";
 import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme";
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -30,6 +31,8 @@ export interface SplashScreenProps {
 }
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const logoScale = useSharedValue(0);
   const logoOpacity = useSharedValue(0);
   const logoRotate = useSharedValue(-180);
@@ -91,7 +94,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   return (
     <View style={styles.splashContainer}>
       <LinearGradient
-        colors={["DesignTokens.colors.text.primary", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.brand.slateDark", DesignTokens.colors.neutral[800]]}
+        colors={["colors.textPrimary", "colors.neutral[700]", "colors.neutral[700]", DesignTokens.colors.neutral[800]]}
         locations={[0, 0.3, 0.7, 1]}
         style={styles.splashGradient}
       >
@@ -100,7 +103,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
         </AnimatedView>
 
         <AnimatedView style={[styles.splashLogoContainer, logoAnimatedStyle, glowAnimatedStyle]}>
-          <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.splashLogoGradient}>
+          <LinearGradient colors={[colors.primary, colors.primary]} style={styles.splashLogoGradient}>
             <Text style={styles.splashLogoText}>AI</Text>
           </LinearGradient>
         </AnimatedView>
@@ -131,28 +134,28 @@ const ONBOARDING_DATA = [
     title: "发现你的风格",
     subtitle: "AI分析你的穿搭偏好，找到最适合你的时尚风格",
     icon: "✨",
-    gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel],
+    gradient: [colors.primary, colors.primary],
   },
   {
     id: "body",
     title: "了解你的身型",
     subtitle: "智能体型分析，为你推荐最显瘦的穿搭方案",
     icon: "👤",
-    gradient: [DesignTokens.colors.semantic.info, DesignTokens.colors.semantic.infoLight],
+    gradient: [colors.info, colors.infoLight],
   },
   {
     id: "color",
     title: "找到你的色彩",
     subtitle: "肤色分析，发现让你更加光彩照人的颜色",
     icon: "🎨",
-    gradient: [DesignTokens.colors.semantic.success, DesignTokens.colors.semantic.successLight],
+    gradient: [colors.success, colors.successLight],
   },
   {
     id: "tryon",
     title: "虚拟试穿",
     subtitle: "AI虚拟试穿，足不出户体验万千穿搭",
     icon: "👗",
-    gradient: ["DesignTokens.colors.semantic.warning", "DesignTokens.colors.semantic.warning"],
+    gradient: ["colors.warning", "colors.warning"],
   },
 ];
 
@@ -208,7 +211,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 
   return (
     <View style={styles.onboardingContainer}>
-      <LinearGradient colors={["DesignTokens.colors.text.primary", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.brand.slateDark"]} style={styles.onboardingGradient}>
+      <LinearGradient colors={["colors.textPrimary", "colors.neutral[700]", "colors.neutral[700]"]} style={styles.onboardingGradient}>
         <View style={styles.onboardingHeader}>
           <Pressable onPress={skip}>
             <Text style={styles.skipText}>跳过</Text>
@@ -418,7 +421,7 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
             onPress={onCapture}
             style={styles.captureButtonInner}
           >
-            <LinearGradient colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]} style={styles.captureButtonGradient}>
+            <LinearGradient colors={[colors.primary, colors.primary]} style={styles.captureButtonGradient}>
               <Text style={styles.captureIcon}>📷</Text>
             </LinearGradient>
           </Pressable>
@@ -438,25 +441,25 @@ const ANALYSIS_CONFIG = {
     title: "体型分析中",
     steps: ["检测人体轮廓", "分析身体比例", "识别体型特征", "生成分析报告"],
     icon: "👤",
-    gradient: [DesignTokens.colors.semantic.info, DesignTokens.colors.semantic.infoLight],
+    gradient: [colors.info, colors.infoLight],
   },
   color: {
     title: "肤色分析中",
     steps: ["提取皮肤区域", "分析肤色色调", "匹配色彩季节", "生成配色建议"],
     icon: "🎨",
-    gradient: [DesignTokens.colors.semantic.success, DesignTokens.colors.semantic.successLight],
+    gradient: [colors.success, colors.successLight],
   },
   style: {
     title: "风格分析中",
     steps: ["识别服装元素", "分析穿搭风格", "匹配流行趋势", "生成风格报告"],
     icon: "✨",
-    gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel],
+    gradient: [colors.primary, colors.primary],
   },
   tryon: {
     title: "虚拟试穿中",
     steps: ["处理人物图像", "分析服装属性", "生成试穿效果", "优化细节"],
     icon: "👗",
-    gradient: ["DesignTokens.colors.semantic.warning", "DesignTokens.colors.semantic.warning"],
+    gradient: ["colors.warning", "colors.warning"],
   },
 };
 
@@ -597,7 +600,7 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({ type, onCo
 
   return (
     <View style={styles.analysisContainer}>
-      <LinearGradient colors={["DesignTokens.colors.text.primary", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.brand.slateDark"]} style={styles.analysisGradient}>
+      <LinearGradient colors={["colors.textPrimary", "colors.neutral[700]", "colors.neutral[700]"]} style={styles.analysisGradient}>
         <AnimatedView style={[styles.particleContainer, { opacity: particleOpacity }]}>
           <ParticleEffect count={30} color={`${config.gradient[0]}50`} size={3} />
         </AnimatedView>
@@ -692,7 +695,7 @@ export const ResultAnimation: React.FC<ResultAnimationProps> = ({
 
   return (
     <View style={styles.resultContainer}>
-      <LinearGradient colors={["DesignTokens.colors.text.primary", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.brand.slateDark"]} style={styles.resultGradient}>
+      <LinearGradient colors={["colors.textPrimary", "colors.neutral[700]", "colors.neutral[700]"]} style={styles.resultGradient}>
         <AnimatedView style={[styles.celebrationContainer, celebrationAnimatedStyle]}>
           <ParticleEffect count={50} color={config.gradient[0]} size={4} />
         </AnimatedView>
@@ -722,7 +725,7 @@ export const ResultAnimation: React.FC<ResultAnimationProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   splashContainer: {
     flex: 1,
   },
@@ -769,13 +772,13 @@ const styles = StyleSheet.create({
   },
   progressContainer: {
     position: "absolute",
-    bottom: 80,
+    bottom: Spacing['4xl'],
     width: SCREEN_WIDTH - 80,
     alignItems: "center",
   },
   progressBackground: {
     width: "100%",
-    height: 4,
+    height: Spacing.xs,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: BorderRadius.full,
     overflow: "hidden",
@@ -860,13 +863,13 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   dot: {
-    width: 8,
-    height: 8,
+    width: Spacing.sm,
+    height: Spacing.sm,
     borderRadius: BorderRadius.full,
   },
   cameraGuideContainer: {
     flex: 1,
-    backgroundColor: "DesignTokens.colors.text.primary", // custom color
+    backgroundColor: "colors.textPrimary", // custom color
   },
   cameraHeader: {
     flexDirection: "row",
@@ -877,8 +880,8 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[4],
   },
   closeButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: BorderRadius.full,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     alignItems: "center",
@@ -894,7 +897,7 @@ const styles = StyleSheet.create({
     color: Colors.white,
   },
   placeholder: {
-    width: 40,
+    width: DesignTokens.spacing[10],
   },
   cameraPreview: {
     flex: 1,
@@ -978,8 +981,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[8],
   },
   captureButton: {
-    width: 80,
-    height: 80,
+    width: Spacing['4xl'],
+    height: Spacing['4xl'],
     borderRadius: BorderRadius.full,
     overflow: "hidden",
   },
@@ -1032,8 +1035,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   stepDot: {
-    width: 10,
-    height: 10,
+    width: DesignTokens.spacing['2.5'],
+    height: DesignTokens.spacing['2.5'],
     borderRadius: BorderRadius.full,
     marginRight: Spacing[4],
   },
@@ -1051,7 +1054,7 @@ const styles = StyleSheet.create({
   },
   progressBarBackground: {
     width: "100%",
-    height: 4,
+    height: Spacing.xs,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: BorderRadius.full,
     overflow: "hidden",
@@ -1114,4 +1117,4 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 0.6)",
     fontWeight: "500",
   },
-});
+}))

@@ -15,9 +15,12 @@ import { CaseCard } from '../../../components/consultant/CaseCard';
 import { consultantApi } from '../../../services/api/consultant.api';
 import type { ConsultantProfile } from '../../../types/consultant';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from '../../../design-system/theme';
+import { DesignTokens , Spacing } from '../../../design-system/theme'
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 export const AdvisorProfileScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp<ParamListBase>>();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -48,7 +51,7 @@ export const AdvisorProfileScreen: React.FC = () => {
   if (isLoading || !currentConsultant) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="DesignTokens.colors.brand.terracotta" />
+        <ActivityIndicator size="large" color="colors.primary" />
       </View>
     );
   }
@@ -154,80 +157,80 @@ export const AdvisorProfileScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: DesignTokens.colors.backgrounds.primary },
+const useStyles = createStyles((colors) => ({
+  container: { flex: 1, backgroundColor: colors.surface },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 8,
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.sm,
   },
-  backBtn: { padding: 8 },
-  backBtnText: { fontSize: DesignTokens.typography.sizes.xl, color: DesignTokens.colors.text.primary },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "DesignTokens.colors.text.primary" },
-  shareBtn: { padding: 8 },
-  shareBtnText: { fontSize: DesignTokens.typography.sizes.base, color: "DesignTokens.colors.brand.terracotta" },
-  profileHero: { alignItems: "center", paddingHorizontal: 24, paddingTop: 12, paddingBottom: 20 },
-  avatar: { width: 80, height: 80, borderRadius: 40, marginBottom: 12 },
+  backBtn: { padding: Spacing.sm},
+  backBtnText: { fontSize: DesignTokens.typography.sizes.xl, color: colors.textPrimary },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "colors.textPrimary" },
+  shareBtn: { padding: Spacing.sm},
+  shareBtnText: { fontSize: DesignTokens.typography.sizes.base, color: "colors.primary" },
+  profileHero: { alignItems: "center", paddingHorizontal: Spacing.lg, paddingTop: DesignTokens.spacing[3], paddingBottom: DesignTokens.spacing[5]},
+  avatar: { width: Spacing['4xl'], height: Spacing['4xl'], borderRadius: 40, marginBottom: DesignTokens.spacing[3]},
   avatarPlaceholder: {
-    width: 80,
-    height: 80,
+    width: Spacing['4xl'],
+    height: Spacing['4xl'],
     borderRadius: 40,
-    backgroundColor: "DesignTokens.colors.brand.terracotta",
+    backgroundColor: "colors.primary",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
-  avatarPlaceholderText: { color: DesignTokens.colors.backgrounds.primary, fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "600" },
-  studioName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: "DesignTokens.colors.text.primary", marginBottom: 8 },
-  specialtyRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginBottom: 12 },
+  avatarPlaceholderText: { color: colors.surface, fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "600" },
+  studioName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: "colors.textPrimary", marginBottom: Spacing.sm},
+  specialtyRow: { flexDirection: "row", flexWrap: "wrap", gap: DesignTokens.spacing['1.5'], marginBottom: DesignTokens.spacing[3]},
   specialtyBadge: {
     backgroundColor: "DesignTokens.colors.neutral[50]",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: Spacing.xs,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.brand.terracottaLight",
+    borderColor: "colors.primaryLight",
   },
-  specialtyText: { fontSize: DesignTokens.typography.sizes.sm, color: "DesignTokens.colors.brand.terracotta" },
-  ratingRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  ratingValue: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "DesignTokens.colors.brand.terracotta" },
-  ratingLabel: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.secondary },
-  reviewCount: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.secondary },
+  specialtyText: { fontSize: DesignTokens.typography.sizes.sm, color: "colors.primary" },
+  ratingRow: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5']},
+  ratingValue: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "colors.primary" },
+  ratingLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
+  reviewCount: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   infoRow: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "DesignTokens.colors.backgrounds.tertiary",
-    marginHorizontal: 16,
+    borderColor: "colors.backgroundTertiary",
+    marginHorizontal: Spacing.md,
   },
   infoItem: { alignItems: "center" },
-  infoValue: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
-  infoLabel: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary, marginTop: 4 },
-  infoDivider: { width: 1, backgroundColor: "DesignTokens.colors.backgrounds.tertiary" },
-  section: { paddingHorizontal: 16, paddingTop: 20 },
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "DesignTokens.colors.text.primary", marginBottom: 12 },
+  infoValue: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  infoLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: Spacing.xs},
+  infoDivider: { width: 1, backgroundColor: "colors.backgroundTertiary" },
+  section: { paddingHorizontal: Spacing.md, paddingTop: DesignTokens.spacing[5]},
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "colors.textPrimary", marginBottom: DesignTokens.spacing[3]},
   bioText: { fontSize: DesignTokens.typography.sizes.base, color: "#555", lineHeight: 22 },
-  casesList: { gap: 12 },
+  casesList: { gap: DesignTokens.spacing[3]},
   bottomCta: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingBottom: 32,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.md,
+    paddingBottom: Spacing.xl,
     borderTopWidth: 1,
-    borderTopColor: "DesignTokens.colors.backgrounds.tertiary",
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    borderTopColor: "colors.backgroundTertiary",
+    backgroundColor: colors.surface,
   },
   bookButton: {
-    backgroundColor: "DesignTokens.colors.brand.terracotta",
-    paddingVertical: 16,
+    backgroundColor: "colors.primary",
+    paddingVertical: Spacing.md,
     borderRadius: 12,
     alignItems: "center",
   },
-  bookButtonText: { color: DesignTokens.colors.backgrounds.primary, fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600" },
-});
+  bookButtonText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600" },
+}))
 
 export default AdvisorProfileScreen;

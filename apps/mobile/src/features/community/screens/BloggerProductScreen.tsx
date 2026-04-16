@@ -16,9 +16,11 @@ import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import { bloggerApi, BloggerProduct } from '../../../services/api/blogger.api';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type BloggerProductRoute = RouteProp<RootStackParamList, "BloggerProduct">;
@@ -95,7 +97,7 @@ export const BloggerProductScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.successContainer}>
-          <Ionicons name="checkmark-circle" size={64} color="DesignTokens.colors.semantic.success" />
+          <Ionicons name="checkmark-circle" size={64} color="colors.success" />
           <Text style={styles.successTitle}>购买成功</Text>
           <Text style={styles.successSubtitle}>{product.title}</Text>
           {product.type === "digital" && product.content && (
@@ -183,12 +185,12 @@ export const BloggerProductScreen: React.FC = () => {
                 <Text style={styles.bloggerName}>{product.blogger.nickname}</Text>
                 {product.blogger.badge === "blogger" && (
                   <View style={styles.bloggerBadgeSmall}>
-                    <Ionicons name="checkmark" size={8} color={DesignTokens.colors.backgrounds.primary} />
+                    <Ionicons name="checkmark" size={8} color={colors.surface} />
                   </View>
                 )}
                 {product.blogger.badge === "big_v" && (
                   <View style={styles.bigVBadgeSmall}>
-                    <Ionicons name="shield-checkmark" size={8} color={DesignTokens.colors.backgrounds.primary} />
+                    <Ionicons name="shield-checkmark" size={8} color={colors.surface} />
                   </View>
                 )}
               </View>
@@ -224,7 +226,7 @@ export const BloggerProductScreen: React.FC = () => {
           onPress={() => setShowPurchaseSheet(true)}
           activeOpacity={0.8}
         >
-          <Ionicons name="bag-outline" size={18} color={DesignTokens.colors.backgrounds.primary} />
+          <Ionicons name="bag-outline" size={18} color={colors.surface} />
           <Text style={styles.purchaseBtnText}>购买此方案</Text>
         </TouchableOpacity>
       </View>
@@ -263,7 +265,7 @@ export const BloggerProductScreen: React.FC = () => {
               >
                 {selectedPayment === "alipay" && <View style={styles.paymentRadioInner} />}
               </View>
-              <Ionicons name="wallet-outline" size={20} color="DesignTokens.colors.semantic.info" />
+              <Ionicons name="wallet-outline" size={20} color="colors.info" />
               <Text style={styles.paymentName}>支付宝</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -281,7 +283,7 @@ export const BloggerProductScreen: React.FC = () => {
               >
                 {selectedPayment === "wechat" && <View style={styles.paymentRadioInner} />}
               </View>
-              <Ionicons name="chatbubble-ellipses-outline" size={20} color="DesignTokens.colors.semantic.success" />
+              <Ionicons name="chatbubble-ellipses-outline" size={20} color="colors.success" />
               <Text style={styles.paymentName}>微信支付</Text>
             </TouchableOpacity>
 
@@ -291,7 +293,7 @@ export const BloggerProductScreen: React.FC = () => {
               disabled={purchasing}
             >
               {purchasing ? (
-                <ActivityIndicator size="small" color={DesignTokens.colors.backgrounds.primary} />
+                <ActivityIndicator size="small" color={colors.surface} />
               ) : (
                 <Text style={styles.confirmPurchaseBtnText}>
                   确认支付 ¥{product.price.toFixed(2)}
@@ -312,95 +314,95 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
-  backBtn: { width: 40, height: 40, justifyContent: "center" },
-  headerSpacer: { width: 40 },
+  backBtn: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], justifyContent: "center" },
+  headerSpacer: { width: DesignTokens.spacing[10] },
   carouselSection: { backgroundColor: DesignTokens.colors.neutral[50] },
   carouselImage: { width: SCREEN_WIDTH, height: SCREEN_WIDTH * 0.8 },
-  dots: { flexDirection: "row", justifyContent: "center", paddingVertical: 10, gap: 6 },
-  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "rgba(0,0,0,0.2)" },
-  dotActive: { backgroundColor: DesignTokens.colors.brand.terracotta, width: 8, height: 8, borderRadius: 4 },
+  dots: { flexDirection: "row", justifyContent: "center", paddingVertical: DesignTokens.spacing['2.5'], gap: DesignTokens.spacing['1.5']},
+  dot: { width: DesignTokens.spacing['1.5'], height: DesignTokens.spacing['1.5'], borderRadius: 3, backgroundColor: "rgba(0,0,0,0.2)" },
+  dotActive: { backgroundColor: colors.primary, width: Spacing.sm, height: Spacing.sm, borderRadius: 4 },
   infoSection: {
     backgroundColor: colors.surface,
-    padding: 16,
-    marginTop: 8,
+    padding: Spacing.md,
+    marginTop: Spacing.sm,
   },
   productTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
-  productPrice: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: DesignTokens.colors.brand.terracotta, marginTop: 8 },
+  productPrice: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.primary, marginTop: Spacing.sm},
   originalPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
     textDecorationLine: "line-through",
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   descriptionSection: {
     backgroundColor: colors.surface,
-    padding: 16,
-    marginTop: 8,
+    padding: Spacing.md,
+    marginTop: Spacing.sm,
   },
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: 8 },
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: Spacing.sm},
   descriptionText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, lineHeight: 22 },
   bloggerCard: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
-    padding: 16,
-    marginTop: 8,
-    gap: 12,
+    padding: Spacing.md,
+    marginTop: Spacing.sm,
+    gap: DesignTokens.spacing[3],
   },
-  bloggerAvatar: { width: 44, height: 44, borderRadius: 22 },
+  bloggerAvatar: { width: DesignTokens.spacing[11], height: DesignTokens.spacing[11], borderRadius: 22 },
   bloggerAvatarPlaceholder: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  bloggerAvatarText: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: DesignTokens.colors.backgrounds.primary },
+  bloggerAvatarText: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.surface },
   bloggerInfo: { flex: 1 },
-  bloggerNameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  bloggerNameRow: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5']},
   bloggerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
   bloggerBadgeSmall: {
-    width: 14,
-    height: 14,
+    width: DesignTokens.spacing['3.5'],
+    height: DesignTokens.spacing['3.5'],
     borderRadius: 7,
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   bigVBadgeSmall: {
-    width: 14,
-    height: 14,
+    width: DesignTokens.spacing['3.5'],
+    height: DesignTokens.spacing['3.5'],
     borderRadius: 7,
-    backgroundColor: "DesignTokens.colors.semantic.warning",
+    backgroundColor: "colors.warning",
     alignItems: "center",
     justifyContent: "center",
   },
-  bloggerLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
+  bloggerLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
   externalLink: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     backgroundColor: colors.surface,
-    marginTop: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    marginTop: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
   },
   externalLinkText: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
   salesInfo: {
     flexDirection: "row",
-    gap: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    gap: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   salesText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   purchaseBar: {
@@ -411,20 +413,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    paddingBottom: 20,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
+    paddingBottom: DesignTokens.spacing[5],
   },
   purchaseBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    gap: Spacing.sm,
+    backgroundColor: colors.primary,
     borderRadius: 12,
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
   },
-  purchaseBtnText: { color: DesignTokens.colors.backgrounds.primary, fontSize: DesignTokens.typography.sizes.md, fontWeight: "600" },
+  purchaseBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.md, fontWeight: "600" },
   sheetOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "flex-end",
@@ -434,78 +436,78 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.4)",
   },
   sheet: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
     paddingBottom: 34,
   },
   sheetHandle: {
-    width: 40,
-    height: 4,
+    width: DesignTokens.spacing[10],
+    height: Spacing.xs,
     borderRadius: 2,
     backgroundColor: DesignTokens.colors.neutral[200],
     alignSelf: "center",
-    marginTop: 10,
-    marginBottom: 14,
+    marginTop: DesignTokens.spacing['2.5'],
+    marginBottom: DesignTokens.spacing['3.5'],
   },
-  sheetTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginBottom: 14 },
+  sheetTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing['3.5']},
   sheetProductInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: colors.background,
     borderRadius: 10,
-    padding: 12,
-    marginBottom: 16,
+    padding: DesignTokens.spacing[3],
+    marginBottom: Spacing.md,
   },
-  sheetProductName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, marginRight: 12 },
-  sheetProductPrice: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: DesignTokens.colors.brand.terracotta },
-  paymentLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary, marginBottom: 10 },
+  sheetProductName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, marginRight: DesignTokens.spacing[3]},
+  sheetProductPrice: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.primary },
+  paymentLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing['2.5']},
   paymentOption: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    paddingVertical: 14,
-    paddingHorizontal: 12,
+    gap: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: DesignTokens.spacing[3],
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  paymentOptionSelected: { backgroundColor: DesignTokens.colors.backgrounds.tertiary },
+  paymentOptionSelected: { backgroundColor: colors.backgroundTertiary },
   paymentRadio: {
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 10,
     borderWidth: 2,
     borderColor: colors.border,
     alignItems: "center",
     justifyContent: "center",
   },
-  paymentRadioSelected: { borderColor: DesignTokens.colors.brand.terracotta },
-  paymentRadioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: DesignTokens.colors.brand.terracotta },
+  paymentRadioSelected: { borderColor: colors.primary },
+  paymentRadioInner: { width: DesignTokens.spacing['2.5'], height: DesignTokens.spacing['2.5'], borderRadius: 5, backgroundColor: colors.primary },
   paymentName: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, flex: 1 },
   confirmPurchaseBtn: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     borderRadius: 12,
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
     alignItems: "center",
-    marginTop: 20,
+    marginTop: DesignTokens.spacing[5],
   },
   confirmPurchaseBtnDisabled: { opacity: 0.5 },
-  confirmPurchaseBtnText: { color: DesignTokens.colors.backgrounds.primary, fontSize: DesignTokens.typography.sizes.md, fontWeight: "600" },
+  confirmPurchaseBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.md, fontWeight: "600" },
   successContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 32,
+    paddingHorizontal: Spacing.xl,
   },
-  successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.textPrimary, marginTop: 16 },
-  successSubtitle: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 6 },
+  successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.textPrimary, marginTop: Spacing.md},
+  successSubtitle: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing['1.5']},
   contentBox: {
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: 16,
-    marginTop: 20,
+    padding: Spacing.md,
+    marginTop: DesignTokens.spacing[5],
     width: "100%",
     borderWidth: 1,
     borderColor: colors.border,
@@ -514,11 +516,11 @@ const styles = StyleSheet.create({
   viewSchemeBtn: {
     backgroundColor: colors.primary,
     borderRadius: 12,
-    paddingHorizontal: 32,
-    paddingVertical: 14,
-    marginTop: 24,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: DesignTokens.spacing['3.5'],
+    marginTop: Spacing.lg,
   },
-  viewSchemeBtnText: { color: DesignTokens.colors.backgrounds.primary, fontSize: DesignTokens.typography.sizes.md, fontWeight: "600" },
+  viewSchemeBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.md, fontWeight: "600" },
 });
 
 export default BloggerProductScreen;

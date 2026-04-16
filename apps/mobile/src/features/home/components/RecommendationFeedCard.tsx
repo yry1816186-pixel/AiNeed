@@ -3,6 +3,9 @@ import { View, Text, StyleSheet, Pressable, type ViewStyle } from "react-native"
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import type { FeedItem } from '../../../services/api/recommendation-feed.api';
 import { OptimizedImage } from "../common/OptimizedImage";
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 interface RecommendationCardProps {
   item: FeedItem;
@@ -98,10 +101,10 @@ const COLUMN_COUNT = 2;
 const { width: SCREEN_WIDTH } = require("react-native").Dimensions.get("window");
 const CARD_WIDTH = (SCREEN_WIDTH - CARD_PADDING * 2 - CARD_GAP) / COLUMN_COUNT;
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   card: {
     width: CARD_WIDTH,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: DesignTokens.borderRadius.md,
     overflow: "hidden",
     marginBottom: CARD_GAP,
@@ -120,25 +123,25 @@ const styles = StyleSheet.create({
   },
   discountBadge: {
     position: "absolute",
-    top: 6,
-    left: 6,
-    backgroundColor: DesignTokens.colors.semantic.error,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    top: DesignTokens.spacing['1.5'],
+    left: DesignTokens.spacing['1.5'],
+    backgroundColor: colors.error,
+    paddingHorizontal: DesignTokens.spacing['1.5'],
+    paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 4,
   },
   discountText: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "700",
   },
   harmonyBadge: {
     position: "absolute",
-    top: 6,
-    right: 6,
+    top: DesignTokens.spacing['1.5'],
+    right: DesignTokens.spacing['1.5'],
     backgroundColor: "rgba(0,0,0,0.6)",
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: DesignTokens.spacing['1.5'],
+    paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 4,
   },
   harmonyText: {
@@ -147,69 +150,94 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   infoContainer: {
-    padding: 8,
-    gap: 4,
+    padding: Spacing.sm,
+    gap: Spacing.xs,
   },
   brandName: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   scoreRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: DesignTokens.spacing['1.5'],
   },
   scoreLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
     fontWeight: "600",
   },
   scoreTrack: {
     flex: 1,
     height: 3,
     borderRadius: 2,
-    backgroundColor: DesignTokens.colors.backgrounds.secondary,
+    backgroundColor: colors.backgroundSecondary,
     overflow: "hidden",
   },
   scoreFill: {
     height: "100%",
     borderRadius: 2,
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
   },
   matchReason: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
     fontWeight: "400",
   },
   priceRow: {
     flexDirection: "row",
     alignItems: "baseline",
-    gap: 4,
+    gap: Spacing.xs,
   },
   price: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   originalPrice: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
     textDecorationLine: "line-through",
   },
   tagsRow: {
     flexDirection: "row",
-    gap: 4,
+    gap: Spacing.xs,
     flexWrap: "wrap",
   },
   tag: {
-    backgroundColor: DesignTokens.colors.backgrounds.secondary,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    backgroundColor: colors.backgroundSecondary,
+    paddingHorizontal: DesignTokens.spacing['1.5'],
+    paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 4,
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
   },
+}))
+
+
+const styles = StyleSheet.create({
+  card: { flex: 1 },
+  cardCompact: { flex: 1 },
+  imageContainer: { flex: 1 },
+  image: { flex: 1 },
+  discountBadge: { flex: 1 },
+  discountText: { flex: 1 },
+  harmonyBadge: { flex: 1 },
+  harmonyText: { flex: 1 },
+  infoContainer: { flex: 1 },
+  brandName: { flex: 1 },
+  scoreRow: { flex: 1 },
+  scoreLabel: { flex: 1 },
+  scoreTrack: { flex: 1 },
+  scoreFill: { flex: 1 },
+  matchReason: { flex: 1 },
+  priceRow: { flex: 1 },
+  price: { flex: 1 },
+  originalPrice: { flex: 1 },
+  tagsRow: { flex: 1 },
+  tag: { flex: 1 },
+  tagText: { flex: 1 },
 });

@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { RatingBadge } from "../../design-system/ui/Rating";
 import { MatchBadge } from "./MatchBadge";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface ConsultantCardProps {
   id: string;
@@ -31,6 +32,8 @@ export const ConsultantCard: React.FC<ConsultantCardProps> = ({
   onPress,
   index = 0,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <Animated.View entering={FadeInUp.duration(300).delay(index * 50)}>
       <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
@@ -78,37 +81,37 @@ export const ConsultantCard: React.FC<ConsultantCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   card: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
+    padding: Spacing.md,
+    marginBottom: DesignTokens.spacing[3],
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderColor: "colors.backgroundTertiary",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   avatar: {
-    width: 48,
-    height: 48,
+    width: Spacing['2xl'],
+    height: Spacing['2xl'],
     borderRadius: 24,
-    marginRight: 12,
+    marginRight: DesignTokens.spacing[3],
   },
   avatarPlaceholder: {
-    width: 48,
-    height: 48,
+    width: Spacing['2xl'],
+    height: Spacing['2xl'],
     borderRadius: 24,
-    backgroundColor: "DesignTokens.colors.brand.terracotta",
+    backgroundColor: "colors.primary",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12,
+    marginRight: DesignTokens.spacing[3],
   },
   avatarPlaceholderText: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
   },
@@ -118,57 +121,57 @@ const styles = StyleSheet.create({
   studioName: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: "DesignTokens.colors.text.primary",
-    marginBottom: 4,
+    color: "colors.textPrimary",
+    marginBottom: Spacing.xs,
   },
   specialtyRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 4,
+    gap: Spacing.xs,
   },
   specialtyBadge: {
     backgroundColor: "DesignTokens.colors.neutral[50]",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.brand.terracottaLight",
+    borderColor: "colors.primaryLight",
   },
   specialtyText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "DesignTokens.colors.brand.terracotta",
+    color: "colors.primary",
   },
   footer: {
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   ratingRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginBottom: 4,
+    gap: Spacing.sm,
+    marginBottom: Spacing.xs,
   },
   reviewCount: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
   },
   matchReasons: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
     lineHeight: 18,
   },
   price: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "DesignTokens.colors.brand.terracotta",
-    marginTop: 4,
+    color: "colors.primary",
+    marginTop: Spacing.xs,
   },
   cta: {
     alignSelf: "flex-end",
   },
   ctaText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: "DesignTokens.colors.brand.terracotta",
+    color: "colors.primary",
     fontWeight: "500",
   },
-});
+}))
 
 export default ConsultantCard;

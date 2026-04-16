@@ -17,10 +17,12 @@ import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import { communityApi } from '../../../services/api/community.api';
 import apiClient from '../../../services/api/client';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -328,7 +330,7 @@ export const CreatePostScreen: React.FC = () => {
               <View key={uri} style={styles.imageCell}>
                 <Image source={{ uri }} style={styles.imageThumb} />
                 <TouchableOpacity style={styles.imageRemove} onPress={() => removeImage(index)}>
-                  <Ionicons name="close-circle" size={18} color={DesignTokens.colors.neutral.white} />
+                  <Ionicons name="close-circle" size={18} color={colors.surface} />
                 </TouchableOpacity>
               </View>
             ))}
@@ -489,7 +491,7 @@ export const CreatePostScreen: React.FC = () => {
           </View>
         )}
 
-        <View style={{ height: 40 }} />
+        <View style={{ height: DesignTokens.spacing[10] }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -501,13 +503,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerBtn: { paddingVertical: 4, paddingHorizontal: 8 },
+  headerBtn: { paddingVertical: Spacing.xs, paddingHorizontal: Spacing.sm},
   headerBtnDisabled: { opacity: 0.5 },
   headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
   cancelText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
@@ -517,8 +519,8 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: colors.textPrimary,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
     backgroundColor: colors.surface,
@@ -526,23 +528,23 @@ const styles = StyleSheet.create({
   contentInput: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textPrimary,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     minHeight: 120,
     backgroundColor: colors.surface,
     lineHeight: 22,
   },
   imageSection: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     backgroundColor: colors.surface,
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
-  sectionLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary, marginBottom: 10 },
+  sectionLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing['2.5']},
   imageGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: Spacing.sm,
   },
   imageCell: {
     width: 100,
@@ -554,8 +556,8 @@ const styles = StyleSheet.create({
   imageThumb: { width: "100%", height: "100%" },
   imageRemove: {
     position: "absolute",
-    top: 4,
-    right: 4,
+    top: Spacing.xs,
+    right: Spacing.xs,
     width: 22,
     height: 22,
     borderRadius: 11,
@@ -572,56 +574,56 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
-    gap: 4,
+    gap: Spacing.xs,
   },
   imageAddText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
   uploadIndicator: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginTop: 8,
+    gap: DesignTokens.spacing['1.5'],
+    marginTop: Spacing.sm,
   },
   uploadText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   section: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     backgroundColor: colors.surface,
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: DesignTokens.spacing['2.5'],
   },
   tagsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: Spacing.sm,
   },
   tagChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
     backgroundColor: colors.background,
   },
-  tagChipActive: { backgroundColor: "DesignTokens.colors.semantic.infoLight" }, // custom color
+  tagChipActive: { backgroundColor: "colors.infoLight" }, // custom color
   tagChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
-  tagChipTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "600" },
-  categoryRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  tagChipTextActive: { color: colors.neutral[500], fontWeight: "600" },
+  categoryRow: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm},
   categoryChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
     backgroundColor: colors.background,
   },
   categoryChipActive: { backgroundColor: colors.primary },
   categoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   categoryChipTextActive: { color: colors.surface, fontWeight: "600" },
-  itemsList: { marginTop: 4 },
+  itemsList: { marginTop: Spacing.xs},
   itemCard: {
-    width: 80,
-    marginRight: 8,
+    width: Spacing['4xl'],
+    marginRight: Spacing.sm,
     alignItems: "center",
     position: "relative",
   },
@@ -634,11 +636,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  itemName: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textSecondary, marginTop: 4, textAlign: "center" },
+  itemName: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textSecondary, marginTop: Spacing.xs, textAlign: "center" },
   itemRemove: {
     position: "absolute",
     top: -4,
-    right: 6,
+    right: DesignTokens.spacing['1.5'],
     width: 18,
     height: 18,
     borderRadius: 9,
@@ -659,33 +661,33 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    padding: 16,
+    padding: Spacing.md,
     maxHeight: 400,
   },
   searchInputRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     backgroundColor: colors.background,
     borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
+    marginBottom: Spacing.sm,
   },
-  searchInput: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, paddingVertical: 4 },
-  searchLoader: { paddingVertical: 20 },
+  searchInput: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, paddingVertical: Spacing.xs},
+  searchLoader: { paddingVertical: DesignTokens.spacing[5]},
   searchResultItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    paddingVertical: 10,
+    gap: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  searchResultImage: { width: 40, height: 40, borderRadius: 6 },
+  searchResultImage: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], borderRadius: 6 },
   searchResultImagePlaceholder: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 6,
     backgroundColor: colors.background,
   },

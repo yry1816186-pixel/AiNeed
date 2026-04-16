@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface ProposalCardProps {
   title: string;
@@ -15,6 +16,8 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
   onViewProposal,
   onSaveToWardrobe,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
@@ -33,53 +36,53 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   card: {
     backgroundColor: "DesignTokens.colors.neutral[50]",
     borderRadius: 12,
-    padding: 16,
+    padding: Spacing.md,
     borderWidth: 1,
     borderColor: "DesignTokens.colors.neutral[200]",
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: "DesignTokens.colors.text.primary",
-    marginBottom: 6,
+    color: "colors.textPrimary",
+    marginBottom: DesignTokens.spacing['1.5'],
   },
   summary: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
     lineHeight: 20,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   actions: {
     flexDirection: "row",
-    gap: 8,
+    gap: Spacing.sm,
   },
   primaryBtn: {
-    backgroundColor: "DesignTokens.colors.brand.terracotta",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    backgroundColor: "colors.primary",
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderRadius: 8,
   },
   primaryBtnText: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },
   secondaryBtn: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.brand.terracotta",
+    borderColor: "colors.primary",
   },
   secondaryBtnText: {
-    color: "DesignTokens.colors.brand.terracotta",
+    color: "colors.primary",
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },
-});
+}))
 
 export default ProposalCard;

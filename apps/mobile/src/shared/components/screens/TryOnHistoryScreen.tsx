@@ -18,10 +18,15 @@ import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens"
 import { typography } from "../../theme/tokens/typography";
 import { spacing } from "../../theme/tokens/spacing";
 import { shadows } from "../../theme/tokens/shadows";
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
+
 
 type FilterTab = "all" | "completed" | "failed";
 
 export const TryOnHistoryScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const navigation = useNavigation();
   const [items, setItems] = useState<TryOnResult[]>([]);
   const [_total, setTotal] = useState(0);
@@ -188,7 +193,7 @@ export const TryOnHistoryScreen: React.FC = () => {
           style={styles.emptyButton}
           onPress={() => navigation.navigate("VirtualTryOn" as never)}
         >
-          <Ionicons name="sparkles" size={18} color={DesignTokens.colors.text.inverse} />
+          <Ionicons name="sparkles" size={18} color={colors.textInverse} />
           <Text style={styles.emptyButtonText}>开始试衣</Text>
         </TouchableOpacity>
       </View>
@@ -227,7 +232,7 @@ export const TryOnHistoryScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     backgroundColor: colors.neutral[50],
@@ -235,12 +240,12 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: "row",
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingVertical: 12,
-    gap: 8,
+    paddingVertical: DesignTokens.spacing[3],
+    gap: Spacing.sm,
   },
   tab: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderRadius: 20,
     backgroundColor: colors.neutral[100],
   },
@@ -253,23 +258,23 @@ const styles = StyleSheet.create({
     color: colors.neutral[600],
   },
   tabTextActive: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontWeight: typography.fontWeight.bold,
   },
   listContent: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingBottom: 40,
+    paddingBottom: DesignTokens.spacing[10],
   },
   card: {
     flexDirection: "row",
     backgroundColor: colors.neutral.white,
     borderRadius: spacing.borderRadius.xl,
-    padding: 12,
-    marginBottom: 12,
+    padding: DesignTokens.spacing[3],
+    marginBottom: DesignTokens.spacing[3],
     ...shadows.presets.md,
   },
   cardImage: {
-    width: 80,
+    width: Spacing['4xl'],
     height: 100,
     borderRadius: spacing.borderRadius.lg,
     resizeMode: "cover",
@@ -277,46 +282,46 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: DesignTokens.spacing[3],
     justifyContent: "center",
   },
   cardTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[900],
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   cardDate: {
     fontSize: typography.fontSize.xs,
     color: colors.neutral[500],
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   statusBadge: {
     alignSelf: "flex-start",
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: 10,
   },
   statusText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   cardActions: {
     justifyContent: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   retryButton: {
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: 18,
     backgroundColor: colors.warmPrimary.ocean[50],
     alignItems: "center",
     justifyContent: "center",
   },
   deleteButton: {
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: 18,
     backgroundColor: colors.semantic.error.light,
     alignItems: "center",
@@ -325,35 +330,35 @@ const styles = StyleSheet.create({
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 80,
+    paddingTop: Spacing['4xl'],
   },
   emptyTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[700],
-    marginTop: 16,
+    marginTop: Spacing.md,
   },
   emptySubtitle: {
     fontSize: typography.fontSize.base,
     color: colors.neutral[500],
-    marginTop: 6,
-    marginBottom: 24,
+    marginTop: DesignTokens.spacing['1.5'],
+    marginBottom: Spacing.lg,
   },
   emptyButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     backgroundColor: colors.brand.warmPrimary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: spacing.borderRadius.xl,
     ...shadows.presets.md,
   },
   emptyButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
-});
+}))
 
 export default TryOnHistoryScreen;

@@ -21,6 +21,9 @@ import AnimatedReanimated from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -45,36 +48,36 @@ export interface AICompanionBallProps {
 
 const STATE_CONFIG = {
   idle: {
-    gradient: [DesignTokens.colors.brand.sage, DesignTokens.colors.brand.camel] as [string, string],
+    gradient: [colors.secondary, colors.primary] as [string, string],
     innerGradient: ["rgba(255,255,255,0.25)", "rgba(255,255,255,0.05)"] as [string, string],
-    glowColor: DesignTokens.colors.brand.sage,
+    glowColor: colors.secondary,
     animation: "breathe",
   },
   listening: {
-    gradient: [DesignTokens.colors.brand.slate, "DesignTokens.colors.text.tertiary"] as [string, string], // custom color
+    gradient: [colors.neutral[500], "colors.textTertiary"] as [string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.08)"] as [string, string],
-    glowColor: DesignTokens.colors.brand.slate,
+    glowColor: colors.neutral[500],
     animation: "pulse",
   },
   thinking: {
-    gradient: [DesignTokens.colors.semantic.warning, "DesignTokens.colors.brand.camel"] as [string, string], // custom color
+    gradient: [colors.warning, "colors.primary"] as [string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.1)"] as [string, string],
-    glowColor: DesignTokens.colors.semantic.warning,
+    glowColor: colors.warning,
     animation: "pulse",
   },
   responding: {
-    gradient: [DesignTokens.colors.semantic.success, "DesignTokens.colors.brand.sage"] as [string, string], // custom color
+    gradient: [colors.success, "colors.secondary"] as [string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.28)", "rgba(255,255,255,0.06)"] as [string, string],
-    glowColor: DesignTokens.colors.semantic.success,
+    glowColor: colors.success,
     animation: "glow",
   },
   collapsed: {
-    gradient: [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel] as [
+    gradient: [colors.primary, colors.primary] as [
       string,
       string
     ],
     innerGradient: ["rgba(255,255,255,0.2)", "rgba(255,255,255,0.03)"] as [string, string],
-    glowColor: DesignTokens.colors.brand.terracotta,
+    glowColor: colors.primary,
     animation: "none",
   },
 };
@@ -95,6 +98,8 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
   onVoiceEnd,
   onVoiceResult,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const [isDragging, setIsDragging] = useState(false);
   const [_isVoiceMode, _setIsVoiceMode] = useState(false);
@@ -354,7 +359,7 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     position: "absolute",
     zIndex: 9999,
@@ -367,20 +372,20 @@ const styles = StyleSheet.create({
   },
   innerGlow: {
     position: "absolute",
-    top: 4,
-    left: 4,
-    right: 4,
-    bottom: 4,
+    top: Spacing.xs,
+    left: Spacing.xs,
+    right: Spacing.xs,
+    bottom: Spacing.xs,
   },
   innerGlowGradient: {
     flex: 1,
   },
   highlight: {
     position: "absolute",
-    top: 8,
-    left: 12,
-    width: 16,
-    height: 8,
+    top: Spacing.sm,
+    left: DesignTokens.spacing[3],
+    width: Spacing.md,
+    height: Spacing.sm,
     borderRadius: 8,
     backgroundColor: "rgba(255, 255, 255, 0.4)",
     transform: [{ rotate: "-30deg" }],
@@ -399,25 +404,25 @@ const styles = StyleSheet.create({
   },
   hintBubble: {
     backgroundColor: DesignTokens.colors.neutral[800],
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
     borderRadius: 12,
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 4,
   },
   hintText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontWeight: "500",
   },
   hintArrow: {
     position: "absolute",
-    width: 12,
-    height: 12,
+    width: DesignTokens.spacing[3],
+    height: DesignTokens.spacing[3],
     backgroundColor: DesignTokens.colors.neutral[800],
     transform: [{ rotate: "45deg" }],
   },
-});
+}))

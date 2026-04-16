@@ -9,7 +9,8 @@ import {
   FlatList,
 } from "react-native";
 import type { FilterOptions } from '../../../services/api/commerce.api';
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface FilterTagsProps {
   filterOptions: FilterOptions | null;
@@ -45,6 +46,8 @@ export const FilterTags: React.FC<FilterTagsProps> = ({
   activeFilters,
   onApplyFilter,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [modalVisible, setModalVisible] = useState(false);
   const [activeDimension, setActiveDimension] = useState<string | null>(null);
 
@@ -156,38 +159,38 @@ export const FilterTags: React.FC<FilterTagsProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: { maxHeight: 40, backgroundColor: DesignTokens.colors.backgrounds.primary },
-  content: { paddingHorizontal: 12, gap: 8 },
+const useStyles = createStyles((colors) => ({
+  container: { maxHeight: DesignTokens.spacing[10], backgroundColor: colors.surface },
+  content: { paddingHorizontal: DesignTokens.spacing[3], gap: Spacing.sm},
   tag: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
-    gap: 4,
+    backgroundColor: colors.backgroundTertiary,
+    gap: Spacing.xs,
   },
-  tagActive: { backgroundColor: "DesignTokens.colors.semantic.errorLight" },
-  tagText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.secondary },
-  tagTextActive: { color: "DesignTokens.colors.semantic.error" },
+  tagActive: { backgroundColor: "colors.errorLight" },
+  tagText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
+  tagTextActive: { color: "colors.error" },
   badge: {
-    backgroundColor: "DesignTokens.colors.semantic.error",
+    backgroundColor: "colors.error",
     borderRadius: 8,
-    minWidth: 16,
-    height: 16,
+    minWidth: Spacing.md,
+    height: Spacing.md,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 3,
   },
-  badgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: DesignTokens.colors.backgrounds.primary },
+  badgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: colors.surface },
   modalOverlay: {
     flex: 1,
     justifyContent: "flex-end",
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalSheet: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: "50%",
@@ -196,17 +199,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    padding: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderBottomColor: "colors.backgroundTertiary",
   },
-  modalTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
-  modalClose: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.tertiary },
+  modalTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  modalClose: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
   optionRow: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderBottomWidth: 1,
-    borderBottomColor: DesignTokens.colors.backgrounds.tertiary,
+    borderBottomColor: colors.backgroundTertiary,
   },
-  optionText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary },
-});
+  optionText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
+}))

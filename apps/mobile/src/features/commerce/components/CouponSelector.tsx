@@ -2,7 +2,8 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { UserCoupon } from '../../../services/api/commerce.api';
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface CouponSelectorProps {
   visible: boolean;
@@ -19,6 +20,8 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
   onSelect,
   onClose,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const formatDiscount = (coupon: UserCoupon["coupon"]): string => {
     if (coupon.type === "PERCENTAGE") {
       return `${coupon.value}%`;
@@ -48,7 +51,7 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
             }}
           >
             <Text style={styles.noCouponText}>不使用优惠券</Text>
-            {selectedCouponId === null && <Ionicons name="checkmark" size={20} color="DesignTokens.colors.semantic.error" />}
+            {selectedCouponId === null && <Ionicons name="checkmark" size={20} color="colors.error" />}
           </TouchableOpacity>
 
           <FlatList
@@ -78,7 +81,7 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
                     <Ionicons
                       name="checkmark-circle"
                       size={20}
-                      color="DesignTokens.colors.semantic.error"
+                      color="colors.error"
                       style={styles.checkIcon}
                     />
                   )}
@@ -92,14 +95,14 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   sheet: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: "70%",
@@ -107,50 +110,50 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 16,
+    padding: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderBottomColor: "colors.backgroundTertiary",
   },
-  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
-  close: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.tertiary },
+  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  close: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
   noCouponRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderBottomWidth: 1,
-    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderBottomColor: "colors.backgroundTertiary",
   },
-  noCouponText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary },
+  noCouponText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
   couponRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderBottomWidth: 1,
-    borderBottomColor: DesignTokens.colors.backgrounds.tertiary,
+    borderBottomColor: colors.backgroundTertiary,
   },
   couponRowSelected: { backgroundColor: "DesignTokens.colors.neutral[50]" },
   couponLeft: {
-    width: 80,
+    width: Spacing['4xl'],
     alignItems: "center",
     borderRightWidth: 1,
-    borderRightColor: "DesignTokens.colors.backgrounds.tertiary",
-    marginRight: 12,
+    borderRightColor: "colors.backgroundTertiary",
+    marginRight: DesignTokens.spacing[3],
   },
   couponDiscount: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: "DesignTokens.colors.semantic.error",
+    color: "colors.error",
   },
   couponCondition: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.colors.text.tertiary,
-    marginTop: 2,
+    color: colors.textTertiary,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   couponRight: { flex: 1 },
-  couponDesc: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.primary },
-  couponExpiry: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.text.tertiary, marginTop: 4 },
-  checkIcon: { marginLeft: 8 },
-});
+  couponDesc: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
+  couponExpiry: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: Spacing.xs},
+  checkIcon: { marginLeft: Spacing.sm},
+}))

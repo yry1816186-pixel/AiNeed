@@ -7,8 +7,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useNotificationStore } from '../stores/notificationStore';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -135,7 +137,7 @@ export const NotificationSettingsScreen: React.FC = () => {
               onValueChange={handleMasterToggle}
               accessibilityLabel="Push notifications master switch"
               trackColor={{ false: DesignTokens.colors.neutral[200], true: colors.primary }}
-              thumbColor={DesignTokens.colors.neutral.white}
+              thumbColor={colors.surface}
             />
           </View>
         </View>
@@ -167,7 +169,7 @@ export const NotificationSettingsScreen: React.FC = () => {
                 onValueChange={(value) => handleToggle(toggle.key, value)}
                 accessibilityLabel={`${toggle.title} notifications`}
                 trackColor={{ false: DesignTokens.colors.neutral[200], true: colors.primary }}
-                thumbColor={DesignTokens.colors.neutral.white}
+                thumbColor={colors.surface}
               />
             </View>
           ))}
@@ -186,7 +188,7 @@ export const NotificationSettingsScreen: React.FC = () => {
               onValueChange={handleQuietHoursToggle}
               accessibilityLabel="Quiet hours toggle"
               trackColor={{ false: DesignTokens.colors.neutral[200], true: colors.primary }}
-              thumbColor={DesignTokens.colors.neutral.white}
+              thumbColor={colors.surface}
             />
           </View>
 
@@ -227,7 +229,7 @@ export const NotificationSettingsScreen: React.FC = () => {
           )}
         </View>
 
-        <View style={{ height: 40 }} />
+        <View style={{ height: DesignTokens.spacing[10] }} />
       </ScrollView>
 
       <Snackbar
@@ -248,21 +250,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 20,
+    padding: DesignTokens.spacing[5],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
-  placeholder: { width: 40 },
+  placeholder: { width: DesignTokens.spacing[10] },
   content: { flex: 1 },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -270,21 +272,21 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 8,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingTop: DesignTokens.spacing[5],
+    paddingBottom: Spacing.sm,
   },
   section: {
     backgroundColor: colors.surface,
-    marginHorizontal: 20,
+    marginHorizontal: DesignTokens.spacing[5],
     borderRadius: 16,
     overflow: "hidden",
   },
   settingItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    gap: 12,
+    padding: Spacing.md,
+    gap: DesignTokens.spacing[3],
   },
   settingItemBorder: {
     borderBottomWidth: 1,
@@ -292,10 +294,10 @@ const styles = StyleSheet.create({
   },
   settingInfo: { flex: 1 },
   settingTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.text },
-  settingDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: 2 },
+  settingDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: DesignTokens.spacing['0.5']},
   categoryIcon: {
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
@@ -304,12 +306,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 16,
-    gap: 20,
+    paddingVertical: Spacing.md,
+    gap: DesignTokens.spacing[5],
   },
   timePicker: {
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
   },
   timeValue: {
     fontSize: DesignTokens.typography.sizes['2xl'],

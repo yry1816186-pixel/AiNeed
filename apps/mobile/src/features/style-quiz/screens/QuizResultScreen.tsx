@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { useQuizStore } from '../stores/quizStore';
-import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius , flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     top: -Spacing[4],
     left: 0,
     right: 0,
-    height: 80,
+    height: Spacing['4xl'],
   },
   confettiDot: {
     position: "absolute",
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
   colorRow: {
     flexDirection: "row",
@@ -272,8 +272,8 @@ const styles = StyleSheet.create({
     gap: Spacing[1],
   },
   colorSwatch: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: BorderRadius.full,
     borderWidth: 1,
     borderColor: colors.border,
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
   outlinedButton: {
     flexDirection: "row",

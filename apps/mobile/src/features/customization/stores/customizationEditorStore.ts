@@ -2,7 +2,9 @@ import { create } from "zustand";
 
 import customizationApi from "../../../services/api/customization.api";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from '../../../design-system/theme';
 import type {
+
   CustomizationTemplate as ApiTemplate,
   CustomizationDesign,
   CustomizationDesignLayer,

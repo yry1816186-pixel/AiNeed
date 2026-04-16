@@ -30,10 +30,11 @@ import {
   runOnJS,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors } from '../../../../design-system/theme';
+import { Colors , Spacing } from '../../../../design-system/theme'
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 
 const { width: _SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -68,6 +69,8 @@ export const AnimatedLikeButton: React.FC<LikeButtonProps> = ({
   size = "medium",
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(1);
   const heartScale = useSharedValue(1);
   const particleScale = useSharedValue(0);
@@ -126,11 +129,11 @@ export const AnimatedLikeButton: React.FC<LikeButtonProps> = ({
         <Ionicons
           name={isLiked ? "heart" : "heart-outline"}
           size={config.iconSize}
-          color={isLiked ? "DesignTokens.colors.semantic.error" : Colors.neutral[400]}
+          color={isLiked ? "colors.error" : Colors.neutral[400]}
         />
         {isLiked && (
           <AnimatedView style={[StyleSheet.absoluteFill, heartAnimatedStyle]}>
-            <Ionicons name="heart" size={config.iconSize} color="DesignTokens.colors.semantic.error" />
+            <Ionicons name="heart" size={config.iconSize} color="colors.error" />
           </AnimatedView>
         )}
       </AnimatedView>
@@ -253,11 +256,11 @@ export const ShareSheet: React.FC<ShareSheetProps> = ({
       id: "wechat",
       name: "微信",
       icon: "chatbubble-ellipses",
-      color: "DesignTokens.colors.semantic.success",
+      color: "colors.success",
     },
-    { id: "moments", name: "朋友圈", icon: "camera-outline", color: "DesignTokens.colors.semantic.success" },
-    { id: "weibo", name: "微博", icon: "logo-twitter", color: "DesignTokens.colors.semantic.error" },
-    { id: "qq", name: "QQ", icon: "chatbubbles", color: "DesignTokens.colors.semantic.info" },
+    { id: "moments", name: "朋友圈", icon: "camera-outline", color: "colors.success" },
+    { id: "weibo", name: "微博", icon: "logo-twitter", color: "colors.error" },
+    { id: "qq", name: "QQ", icon: "chatbubbles", color: "colors.info" },
     {
       id: "link",
       name: "复制链接",
@@ -473,7 +476,7 @@ const _AnimatedCommentItem: React.FC<AnimatedCommentItemProps> = ({
             <Ionicons
               name={item.isLiked ? "heart" : "heart-outline"}
               size={16}
-              color={item.isLiked ? "DesignTokens.colors.semantic.error" : Colors.neutral[400]}
+              color={item.isLiked ? "colors.error" : Colors.neutral[400]}
             />
             <Text style={styles.commentLikes}>{item.likes}</Text>
           </TouchableOpacity>
@@ -543,7 +546,7 @@ export const CommentSheet: React.FC<CommentSheetProps> = ({
               <Ionicons
                 name={item.isLiked ? "heart" : "heart-outline"}
                 size={16}
-                color={item.isLiked ? "DesignTokens.colors.semantic.error" : Colors.neutral[400]}
+                color={item.isLiked ? "colors.error" : Colors.neutral[400]}
               />
               <Text style={styles.commentLikes}>{item.likes}</Text>
             </TouchableOpacity>
@@ -694,14 +697,14 @@ export const ReactionPicker: React.FC<ReactionPickerProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   likeButton: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 8,
+    padding: Spacing.sm,
   },
   likeCount: {
-    marginLeft: 4,
+    marginLeft: Spacing.xs,
     color: Colors.neutral[600],
   },
   particlesContainer: {
@@ -719,10 +722,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   particleDot: {
-    width: 6,
-    height: 6,
+    width: DesignTokens.spacing['1.5'],
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
-    backgroundColor: "DesignTokens.colors.semantic.error", // custom color
+    backgroundColor: "colors.error", // custom color
   },
   backdrop: {
     flex: 1,
@@ -733,7 +736,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingBottom: Platform.OS === "ios" ? 34 : 16,
@@ -742,7 +745,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
+    padding: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: Colors.neutral[100],
   },
@@ -752,12 +755,12 @@ const styles = StyleSheet.create({
     color: Colors.neutral[800],
   },
   closeButton: {
-    padding: 4,
+    padding: Spacing.xs,
   },
   productPreview: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    padding: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: Colors.neutral[100],
   },
@@ -768,7 +771,7 @@ const styles = StyleSheet.create({
   },
   productInfo: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: DesignTokens.spacing[3],
   },
   productName: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -778,16 +781,16 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.primary[500],
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   platformsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    padding: 20,
+    padding: DesignTokens.spacing[5],
   },
   platformItem: {
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
   },
   platformIcon: {
     width: 56,
@@ -795,7 +798,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   platformName: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -804,25 +807,25 @@ const styles = StyleSheet.create({
   actionsContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    padding: 16,
+    padding: Spacing.md,
     borderTopWidth: 1,
     borderTopColor: Colors.neutral[100],
   },
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 12,
-    gap: 8,
+    padding: DesignTokens.spacing[3],
+    gap: Spacing.sm,
   },
   actionText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[600],
-    marginLeft: 8,
+    marginLeft: Spacing.sm,
   },
   commentContainer: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 24,
-    padding: 12,
+    padding: DesignTokens.spacing[3],
     borderWidth: 1,
   },
   inputContainer: {
@@ -833,16 +836,16 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[800],
-    paddingVertical: 8,
+    paddingVertical: Spacing.sm,
     maxHeight: 100,
   },
   sendButton: {
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 8,
+    marginLeft: Spacing.sm,
   },
   sendButtonActive: {
     backgroundColor: Colors.primary[50],
@@ -851,11 +854,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 8,
-    paddingHorizontal: 4,
+    marginTop: Spacing.sm,
+    paddingHorizontal: Spacing.xs,
   },
   actionIcon: {
-    padding: 8,
+    padding: Spacing.sm,
   },
   characterCount: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -866,24 +869,24 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     maxHeight: SCREEN_HEIGHT * 0.8,
   },
   commentsList: {
-    padding: 16,
+    padding: Spacing.md,
     paddingBottom: 100,
   },
   commentItem: {
     flexDirection: "row",
-    paddingVertical: 12,
+    paddingVertical: DesignTokens.spacing[3],
   },
   commentAvatar: {
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: 18,
-    marginRight: 12,
+    marginRight: DesignTokens.spacing[3],
   },
   commentContent: {
     flex: 1,
@@ -891,7 +894,7 @@ const styles = StyleSheet.create({
   commentHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   commentUserName: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -901,7 +904,7 @@ const styles = StyleSheet.create({
   commentTime: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[400],
-    marginLeft: 8,
+    marginLeft: Spacing.sm,
   },
   commentText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -911,17 +914,17 @@ const styles = StyleSheet.create({
   commentActions: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   commentAction: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 16,
+    marginRight: Spacing.md,
   },
   commentLikes: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
-    marginLeft: 4,
+    marginLeft: Spacing.xs,
   },
   replyText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -931,19 +934,19 @@ const styles = StyleSheet.create({
   reactionPicker: {
     position: "absolute",
     width: 200,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: 12,
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 4 },
+    padding: DesignTokens.spacing[3],
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: Spacing.xs },
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 8,
   },
   reactionItem: {
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
   },
   reactionEmoji: {
     fontSize: DesignTokens.typography.sizes['2xl'],
@@ -951,9 +954,9 @@ const styles = StyleSheet.create({
   reactionLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[500],
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
-});
+}))
 
 export default {
   AnimatedLikeButton,

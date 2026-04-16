@@ -2,6 +2,10 @@
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { Spacing } from '../../../design-system/theme';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+
+
 
 interface CreatePostFabProps {
   onPress: () => void;
@@ -26,8 +30,8 @@ export const CreatePostFab = React.memo(CreatePostFabInner);
 const s = StyleSheet.create({
   fab: {
     position: "absolute",
-    right: 20,
-    bottom: 24,
+    right: DesignTokens.spacing[5],
+    bottom: Spacing.lg,
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -35,7 +39,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: Spacing.xs },
     shadowOpacity: 0.3,
     shadowRadius: 12,
     elevation: 8,

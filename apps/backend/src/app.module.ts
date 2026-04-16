@@ -90,6 +90,7 @@ import { WSModule } from "./modules/ws/ws.module";
     }),
     LoggingModule.forRoot(),
     SentryModule.forRoot(),
+    // Common Infrastructure
     PrismaModule,
     RedisModule,
     StorageModule,
@@ -100,39 +101,53 @@ import { WSModule } from "./modules/ws/ws.module";
     EmailModule,
     DatabaseModule,
     CacheModule,
+
+    // Identity Domain
     AuthModule,
     UsersModule,
     ProfileModule,
+    OnboardingModule,
+    PrivacyModule,
+
+    // AI Core Domain
     PhotosModule,
-    ClothingModule,
-    CommunityModule,
     TryOnModule,
-    RecommendationsModule,
-    CustomizationModule,
+    AiStylistModule,
+    AIModule,
+    AISafetyModule,
+
+    // Fashion Domain
+    ClothingModule,
     SearchModule,
     WardrobeModule,
     BrandsModule,
-    BloggerModule,
-    AnalyticsModule,
-    CommerceModule,
-    NotificationModule,
-    OnboardingModule,
-    PrivacyModule,
-    MerchantModule,
-    AiStylistModule,
-    HealthModule,
-    AIModule,
     StyleAssessmentModule,
     WeatherModule,
-    MetricsModule,
-    QueueModule,
-    WSModule,
-    AISafetyModule,
+
+    // Commerce Domain
+    CommerceModule,
+    CustomizationModule,
     ShareTemplateModule,
+
+    // Social Domain
+    CommunityModule,
+    BloggerModule,
     ConsultantModule,
     ChatModule,
+
+    // Platform Layer
+    RecommendationsModule,
+    AnalyticsModule,
+    NotificationModule,
+    MerchantModule,
+    HealthModule,
+    MetricsModule,
+    QueueModule,
     FeatureFlagModule,
     AdminModule,
+
+    // Unmigrated Modules
+    WSModule,
   ],
   providers: [
     SystemReadinessService,

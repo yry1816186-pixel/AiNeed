@@ -143,7 +143,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
           x={0}
           y={(layer.fontSize ?? 24) * layer.scale}
           fontSize={(layer.fontSize ?? 24) * layer.scale}
-          fill={layer.color ?? DesignTokens.colors.neutral.black}
+          fill={layer.color ?? colors.neutral[900]}
           opacity={layer.opacity}
         >
           {layer.content}
@@ -155,7 +155,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
           width={layer.width * layer.scale}
           height={layer.height * layer.scale}
           fill={layer.fillColor ?? DesignTokens.colors.neutral[300]}
-          stroke={layer.strokeColor ?? DesignTokens.colors.neutral.black}
+          stroke={layer.strokeColor ?? colors.neutral[900]}
           strokeWidth={layer.strokeWidth ?? 1}
           opacity={layer.opacity}
         />
@@ -195,7 +195,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
             viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
           >
             {/* Background */}
-            <Rect x={0} y={0} width={canvasWidth} height={canvasHeight} fill={DesignTokens.colors.backgrounds.tertiary} />
+            <Rect x={0} y={0} width={canvasWidth} height={canvasHeight} fill={colors.backgroundTertiary} />
             {/* Printable area indicator */}
             {renderPrintableArea()}
             {/* Layers */}

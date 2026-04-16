@@ -33,8 +33,9 @@ import {
   useAnimatedRef,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors } from '../../../design-system/theme';
+import { Colors , Spacing } from '../../../design-system/theme'
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -295,6 +296,8 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
   onSeeAll,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scrollX = useSharedValue(0);
   const cardOpacity = useSharedValue(0);
 
@@ -305,27 +308,27 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
   const typeConfig = {
     style: {
       icon: "palette-outline",
-      color: DesignTokens.colors.brand.slateLight,
+      color: colors.neutral[300],
       label: "风格匹配",
     },
     similar: {
       icon: "copy-outline",
-      color: DesignTokens.colors.semantic.success, // custom color
+      color: colors.success, // custom color
       label: "相似推荐",
     },
     trending: {
       icon: "trending-up-outline",
-      color: DesignTokens.colors.semantic.warning, // custom color
+      color: colors.warning, // custom color
       label: "热门趋势",
     },
     seasonal: {
       icon: "sunny-outline",
-      color: DesignTokens.colors.brand.camel, // custom color
+      color: colors.primary, // custom color
       label: "当季推荐",
     },
     personalized: {
       icon: "person-outline",
-      color: DesignTokens.colors.brand.terracottaDark, // custom color
+      color: colors.primaryDark, // custom color
       label: "为你定制",
     },
   };
@@ -379,7 +382,7 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
         onScroll={scrollHandler}
       >
         {items.map((item, index) => renderItem(item, index))}
-        <View style={{ width: 20 }} />
+        <View style={{ width: DesignTokens.spacing[5] }} />
       </ScrollView>
     </AnimatedView>
   );
@@ -503,37 +506,37 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
   const typeConfig = {
     style_match: {
       icon: "checkmark-circle",
-      color: DesignTokens.colors.brand.slateLight,
+      color: colors.neutral[300],
       bgColor: "rgba(102, 126, 234, 0.1)",
     },
     body_shape: {
       icon: "body-outline",
-      color: DesignTokens.colors.semantic.success, // custom color
+      color: colors.success, // custom color
       bgColor: "rgba(16, 185, 129, 0.1)",
     },
     color_harmony: {
       icon: "color-palette",
-      color: DesignTokens.colors.brand.camel, // custom color
+      color: colors.primary, // custom color
       bgColor: "rgba(181, 160, 140, 0.1)",
     },
     trending: {
       icon: "trending-up",
-      color: DesignTokens.colors.semantic.warning, // custom color
+      color: colors.warning, // custom color
       bgColor: "rgba(245, 158, 11, 0.1)",
     },
     seasonal: {
       icon: "sunny",
-      color: DesignTokens.colors.semantic.info, // custom color
+      color: colors.info, // custom color
       bgColor: "rgba(59, 130, 246, 0.1)",
     },
     price: {
       icon: "pricetag",
-      color: DesignTokens.colors.semantic.success, // custom color
+      color: colors.success, // custom color
       bgColor: "rgba(16, 185, 129, 0.1)",
     },
     brand: {
       icon: "ribbon",
-      color: DesignTokens.colors.brand.terracottaDark, // custom color
+      color: colors.primaryDark, // custom color
       bgColor: "rgba(168, 101, 72, 0.1)",
     },
   };
@@ -594,10 +597,10 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
   }));
 
   const typeConfig = {
-    tip: { icon: "bulb", color: DesignTokens.colors.semantic.warning, bgColor: "DesignTokens.colors.semantic.warningLight" }, // custom color
-    observation: { icon: "eye", color: DesignTokens.colors.semantic.info, bgColor: "#EFF6FF" }, // custom color
-    suggestion: { icon: "sparkles", color: DesignTokens.colors.brand.terracottaDark, bgColor: "#F5F3FF" }, // custom color
-    warning: { icon: "alert", color: DesignTokens.colors.semantic.error, bgColor: "#FEF2F2" }, // custom color
+    tip: { icon: "bulb", color: colors.warning, bgColor: "colors.warningLight" }, // custom color
+    observation: { icon: "eye", color: colors.info, bgColor: "#EFF6FF" }, // custom color
+    suggestion: { icon: "sparkles", color: colors.primaryDark, bgColor: "#F5F3FF" }, // custom color
+    warning: { icon: "alert", color: colors.error, bgColor: "#FEF2F2" }, // custom color
   };
 
   const config = typeConfig[insight.type];
@@ -680,32 +683,32 @@ export const StyleEvolution: React.FC<StyleEvolutionProps> = ({ history, current
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 20,
-    padding: 16,
-    marginBottom: 16,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
   },
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   typeIndicator: {
     flexDirection: "row",
     alignItems: "center",
   },
   typeIcon: {
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
   },
   typeLabel: {
-    marginLeft: 8,
+    marginLeft: Spacing.sm,
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     fontWeight: "500",
@@ -721,7 +724,7 @@ const styles = StyleSheet.create({
   cardSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   seeAllButton: {
     flexDirection: "row",
@@ -731,14 +734,14 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.primary[500],
     fontWeight: "500",
-    marginRight: 4,
+    marginRight: Spacing.xs,
   },
   itemsContainer: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
   },
   recommendationItem: {
     width: 140,
-    marginRight: 12,
+    marginRight: DesignTokens.spacing[3],
   },
   itemTouchable: {
     borderRadius: 16,
@@ -751,25 +754,25 @@ const styles = StyleSheet.create({
   },
   matchBadge: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: Spacing.sm,
+    right: Spacing.sm,
     backgroundColor: "rgba(102, 126, 234, 0.9)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
     borderRadius: 10,
   },
   matchText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontWeight: "600",
   },
   itemInfo: {
-    padding: 12,
+    padding: DesignTokens.spacing[3],
   },
   priceRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   itemName: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -779,12 +782,12 @@ const styles = StyleSheet.create({
   itemBrand: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   price: {
     flexDirection: "row",
     alignItems: "baseline",
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   itemPrice: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -795,23 +798,23 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[400],
     textDecorationLine: "line-through",
-    marginLeft: 6,
+    marginLeft: DesignTokens.spacing['1.5'],
   },
   itemReason: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[500],
-    marginTop: 4,
+    marginTop: Spacing.xs,
     fontStyle: "italic",
   },
   itemTags: {
     flexDirection: "row",
-    marginTop: 6,
-    gap: 4,
+    marginTop: DesignTokens.spacing['1.5'],
+    gap: Spacing.xs,
   },
   itemTag: {
     backgroundColor: Colors.neutral[100],
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: DesignTokens.spacing['1.5'],
+    paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 4,
   },
   itemTagText: {
@@ -823,8 +826,8 @@ const styles = StyleSheet.create({
   },
   feedHeader: {
     paddingTop: Platform.OS === "ios" ? 60 : 40,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingBottom: DesignTokens.spacing[5],
   },
   feedHeaderContent: {
     alignItems: "center",
@@ -837,29 +840,29 @@ const styles = StyleSheet.create({
   feedSubGreeting: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   feedSection: {
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   reasonContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
+    padding: Spacing.md,
+    marginBottom: DesignTokens.spacing[3],
   },
   reasonIcon: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
   },
   reasonContent: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: DesignTokens.spacing[3],
   },
   reasonTitle: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -869,7 +872,7 @@ const styles = StyleSheet.create({
   reasonDescription: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   confidenceContainer: {
     flexDirection: "row",
@@ -879,34 +882,34 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: Colors.primary[500],
-    marginRight: 4,
+    marginRight: Spacing.xs,
   },
   checkIcon: {},
   insightCard: {
     borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
+    padding: Spacing.md,
+    marginBottom: DesignTokens.spacing[3],
   },
   insightHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   insightIcon: {
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
   },
   insightTitle: {
     flex: 1,
-    marginLeft: 8,
+    marginLeft: Spacing.sm,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   dismissButton: {
-    padding: 4,
+    padding: Spacing.xs,
   },
   insightMessage: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -917,24 +920,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 12,
-    paddingVertical: 10,
+    marginTop: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderWidth: 1,
     borderRadius: 12,
-    gap: 4,
+    gap: Spacing.xs,
   },
   insightActionText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
   },
   evolutionContainer: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 20,
-    padding: 20,
-    marginBottom: 16,
+    padding: DesignTokens.spacing[5],
+    marginBottom: Spacing.md,
   },
   evolutionHeader: {
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   evolutionTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -944,7 +947,7 @@ const styles = StyleSheet.create({
   evolutionSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   timelineContainer: {
     height: 120,
@@ -954,7 +957,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
-    top: 20,
+    top: DesignTokens.spacing[5],
     height: 3,
     backgroundColor: Colors.neutral[200],
     borderRadius: 1.5,
@@ -969,23 +972,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   timelineDot: {
-    width: 12,
-    height: 12,
+    width: DesignTokens.spacing[3],
+    height: DesignTokens.spacing[3],
     borderRadius: 6,
     backgroundColor: Colors.neutral[300],
-    marginTop: 14,
+    marginTop: DesignTokens.spacing['3.5'],
   },
   timelineDotActive: {
     backgroundColor: Colors.primary[500],
-    width: 16,
-    height: 16,
+    width: Spacing.md,
+    height: Spacing.md,
     borderRadius: 8,
-    marginTop: 12,
+    marginTop: DesignTokens.spacing[3],
   },
   timelineDate: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[400],
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   timelineDateActive: {
     color: Colors.primary[500],
@@ -995,19 +998,19 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[600],
     fontWeight: "500",
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   timelineStyleActive: {
     color: Colors.primary[600],
     fontWeight: "600",
   },
   timelineImage: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 8,
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
-});
+}))
 
 export default {
   SmartRecommendationCard,

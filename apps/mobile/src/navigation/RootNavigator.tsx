@@ -60,8 +60,8 @@ export function MainTabNavigator() {
           backgroundColor: colors.surface,
           borderTopWidth: StyleSheet.hairlineWidth,
           borderTopColor: colors.border,
-          paddingTop: 6,
-          paddingBottom: 6,
+          paddingTop: DesignTokens.spacing['1.5'],
+          paddingBottom: DesignTokens.spacing['1.5'],
           height: 56,
         },
         tabBarLabelStyle: {

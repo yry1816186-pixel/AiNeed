@@ -2,6 +2,9 @@ import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import Svg, { Ellipse, Path } from "react-native-svg";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 interface PhotoGuideOverlayProps {
   visible: boolean;
@@ -13,6 +16,8 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const DEFAULT_HEIGHT = Math.round(SCREEN_WIDTH * 0.7);
 
 export const PhotoGuideOverlay: React.FC<PhotoGuideOverlayProps> = ({ visible, dimensions }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   if (!visible) {
     return null;
   }
@@ -73,7 +78,7 @@ export const PhotoGuideOverlay: React.FC<PhotoGuideOverlayProps> = ({ visible, d
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   overlay: {
     position: "absolute",
     top: 0,
@@ -89,7 +94,7 @@ const styles = StyleSheet.create({
   },
   hintContainer: {
     position: "absolute",
-    bottom: 32,
+    bottom: Spacing.xl,
     left: 0,
     right: 0,
     alignItems: "center",
@@ -97,9 +102,9 @@ const styles = StyleSheet.create({
   hintText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     textAlign: "center",
   },
-});
+}))
 
 export default PhotoGuideOverlay;

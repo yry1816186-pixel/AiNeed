@@ -1,5 +1,6 @@
 import { theme } from "../../design-system/theme";
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
+import { useTheme } from '../../design-system/theme';
 
 describe("LegacyThemeCompat", () => {
   it("theme.colors.text returns string", () => {

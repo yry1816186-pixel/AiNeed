@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 const REGION_DATA: Record<string, Record<string, string[]>> = {
   "北京市": {
@@ -68,6 +69,8 @@ export const AreaCascadingPicker: React.FC<AreaCascadingPickerProps> = ({
   onSelect,
   initialValue,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [selectedProvince, setSelectedProvince] = useState(
     initialValue?.province ?? PROVINCES[0]
   );
@@ -178,7 +181,7 @@ export const AreaCascadingPicker: React.FC<AreaCascadingPickerProps> = ({
             <Ionicons
               name="close"
               size={24}
-              color={DesignTokens.colors.text.primary}
+              color={colors.textPrimary}
             />
           </TouchableOpacity>
           <Text style={styles.modalTitle}>选择地区</Text>
@@ -255,10 +258,10 @@ export const AreaCascadingPicker: React.FC<AreaCascadingPickerProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   modalContainer: {
     flex: 1,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
   },
   modalHeader: {
     flexDirection: "row",
@@ -267,11 +270,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: DesignTokens.spacing[4],
     paddingVertical: DesignTokens.spacing[3],
     borderBottomWidth: 1,
-    borderBottomColor: DesignTokens.colors.borders.light,
+    borderBottomColor: colors.borderLight,
   },
   closeButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -280,10 +283,10 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: DesignTokens.typography.fontWeights.semibold,
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   headerSpacer: {
-    width: 40,
+    width: DesignTokens.spacing[10],
   },
   columnsContainer: {
     flex: 1,
@@ -294,15 +297,15 @@ const styles = StyleSheet.create({
   },
   columnSeparator: {
     width: 1,
-    backgroundColor: DesignTokens.colors.borders.light,
+    backgroundColor: colors.borderLight,
   },
   columnTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: DesignTokens.typography.fontWeights.semibold,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
     textAlign: "center",
     paddingVertical: DesignTokens.spacing[2],
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
+    backgroundColor: colors.backgroundTertiary,
   },
   columnListContent: {
     paddingVertical: DesignTokens.spacing[1],
@@ -310,22 +313,22 @@ const styles = StyleSheet.create({
   columnItem: {
     paddingVertical: DesignTokens.spacing[3],
     paddingHorizontal: DesignTokens.spacing[3],
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
   },
   columnItemActive: {
     backgroundColor: DesignTokens.colors.neutral[50],
   },
   columnItemText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
   },
   columnItemTextActive: {
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
     fontWeight: DesignTokens.typography.fontWeights.semibold,
   },
   emptyHint: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
     textAlign: "center",
     marginTop: DesignTokens.spacing[6],
   },
@@ -334,12 +337,12 @@ const styles = StyleSheet.create({
     marginVertical: DesignTokens.spacing[4],
     paddingVertical: DesignTokens.spacing[4],
     borderRadius: DesignTokens.borderRadius.xl,
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     alignItems: "center",
   },
   confirmButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: DesignTokens.typography.fontWeights.semibold,
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
-});
+}))

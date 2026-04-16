@@ -14,10 +14,12 @@ import { useCameraPermissions } from '../../hooks/useCameraPermissions';
 import { useReferenceLines } from '../../../hooks/useReferenceLines';
 import { usePhotoStore } from '../stores/photoStore';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import { ReferenceLineOverlay } from '../../../components/ReferenceLineOverlay';
 import AlignmentGuide from '../../../components/AlignmentGuide';
 import PhotoQualityFeedback from '../../../components/PhotoQualityFeedback';
+import { Spacing } from '../../../design-system/theme';
+
 
 const CAPTURE_BUTTON_SIZE = 72;
 const CAPTURE_BUTTON_INNER = 60;
@@ -215,15 +217,15 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={navigation.goBack} style={styles.backButton}>
-          <Ionicons name="close" size={28} color={DesignTokens.colors.neutral.white} />
+          <Ionicons name="close" size={28} color={colors.surface} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: DesignTokens.colors.neutral.white }]}>拍照</Text>
+        <Text style={[styles.title, { color: colors.surface }]}>拍照</Text>
         <View style={styles.headerSpacer} />
       </View>
 
       <View style={styles.previewContainer} onLayout={handleLayout}>
         <View style={styles.previewPlaceholder}>
-          {linesLoading && <ActivityIndicator color={DesignTokens.colors.neutral.white} size="small" />}
+          {linesLoading && <ActivityIndicator color={colors.surface} size="small" />}
         </View>
         <ReferenceLineOverlay
           referenceLines={referenceLines}
@@ -237,7 +239,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       <View style={styles.controls}>
         <View style={styles.controlsRow}>
           <TouchableOpacity style={styles.galleryButton} onPress={handlePickImage}>
-            <Ionicons name="images-outline" size={28} color={DesignTokens.colors.neutral.white} />
+            <Ionicons name="images-outline" size={28} color={colors.surface} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -262,7 +264,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
               toggleCameraType();
             }}
           >
-            <Ionicons name="camera-reverse-outline" size={28} color={DesignTokens.colors.neutral.white} />
+            <Ionicons name="camera-reverse-outline" size={28} color={colors.surface} />
           </TouchableOpacity>
         </View>
       </View>
@@ -281,28 +283,28 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: DesignTokens.colors.neutral.black,
+    backgroundColor: colors.neutral[900],
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     justifyContent: "center",
     alignItems: "center",
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
   headerSpacer: {
-    width: 40,
+    width: DesignTokens.spacing[10],
   },
   previewContainer: {
     flex: 1,
@@ -316,18 +318,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   controls: {
-    paddingBottom: 20,
-    paddingTop: 16,
+    paddingBottom: DesignTokens.spacing[5],
+    paddingTop: Spacing.md,
   },
   controlsRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-evenly",
-    paddingHorizontal: 40,
+    paddingHorizontal: DesignTokens.spacing[10],
   },
   galleryButton: {
-    width: 48,
-    height: 48,
+    width: Spacing['2xl'],
+    height: Spacing['2xl'],
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 24,
@@ -344,7 +346,7 @@ const styles = StyleSheet.create({
     height: CAPTURE_BUTTON_SIZE,
     borderRadius: CAPTURE_BUTTON_SIZE / 2,
     borderWidth: 4,
-    borderColor: DesignTokens.colors.neutral.white,
+    borderColor: colors.surface,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -352,11 +354,11 @@ const styles = StyleSheet.create({
     width: CAPTURE_BUTTON_INNER,
     height: CAPTURE_BUTTON_INNER,
     borderRadius: CAPTURE_BUTTON_INNER / 2,
-    backgroundColor: DesignTokens.colors.neutral.white,
+    backgroundColor: colors.surface,
   },
   flipButton: {
-    width: 48,
-    height: 48,
+    width: Spacing['2xl'],
+    height: Spacing['2xl'],
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 24,
@@ -366,22 +368,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 40,
+    paddingHorizontal: DesignTokens.spacing[10],
     backgroundColor: colors.background,
   },
   permissionTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: colors.textPrimary,
-    marginTop: 24,
-    marginBottom: 12,
+    marginTop: Spacing.lg,
+    marginBottom: DesignTokens.spacing[3],
   },
   permissionMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: 32,
+    marginBottom: Spacing.xl,
   },
   settingsButton: {
     width: "100%",
@@ -394,13 +396,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   settingsButtonText: {
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
   },
   laterButton: {
-    marginTop: 16,
-    paddingVertical: 12,
+    marginTop: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
   },
   laterButtonText: {
     fontSize: DesignTokens.typography.sizes.base,

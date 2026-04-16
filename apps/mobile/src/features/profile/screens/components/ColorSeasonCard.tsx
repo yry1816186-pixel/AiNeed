@@ -16,6 +16,7 @@ import { typography } from "@/src/theme/tokens/typography";
 import { spacing } from "@/src/theme/tokens/spacing";
 import { shadows } from "@/src/theme/tokens/shadows";
 import type { ColorAnalysisReport } from "@/src/services/api/profile.api";
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 
 interface ColorSeasonCardProps {
   colorAnalysis: ColorAnalysisReport | null;
@@ -24,57 +25,57 @@ interface ColorSeasonCardProps {
 }
 
 const COLOR_MAP: Record<string, string> = {
-  珊瑚色: "DesignTokens.colors.semantic.errorLight",
-  桃色: "DesignTokens.colors.semantic.errorLight",
-  杏色: "DesignTokens.colors.brand.terracottaLight",
-  暖黄色: "DesignTokens.colors.semantic.warning",
-  草绿色: "DesignTokens.colors.semantic.success",
-  天蓝色: "DesignTokens.colors.semantic.infoLight",
-  象牙白: "DesignTokens.colors.backgrounds.primary",
-  粉色: "DesignTokens.colors.semantic.errorLight",
-  薰衣草色: DesignTokens.colors.backgrounds.tertiary,
-  浅蓝色: "DesignTokens.colors.semantic.infoLight",
-  玫瑰色: "DesignTokens.colors.brand.terracotta",
-  薄荷绿: "DesignTokens.colors.semantic.successLight",
-  淡紫色: DesignTokens.colors.brand.terracottaLight,
-  雾蓝色: DesignTokens.colors.brand.slate,
+  珊瑚色: "colors.errorLight",
+  桃色: "colors.errorLight",
+  杏色: "colors.primaryLight",
+  暖黄色: "colors.warning",
+  草绿色: "colors.success",
+  天蓝色: "colors.infoLight",
+  象牙白: "colors.surface",
+  粉色: "colors.errorLight",
+  薰衣草色: colors.backgroundTertiary,
+  浅蓝色: "colors.infoLight",
+  玫瑰色: "colors.primary",
+  薄荷绿: "colors.successLight",
+  淡紫色: colors.primaryLight,
+  雾蓝色: colors.neutral[500],
   驼色: "#C19A6B",
-  棕色: DesignTokens.colors.brand.terracottaDark,
+  棕色: colors.primaryDark,
   橄榄绿: "#808000",
   铁锈红: "#B7410E",
   芥末黄: "#FFDB58",
   南瓜色: "#FF7518",
   酒红色: "#722F37",
-  正红色: "DesignTokens.colors.semantic.error",
-  纯白色: DesignTokens.colors.backgrounds.primary,
-  黑色: DesignTokens.colors.neutral.black,
+  正红色: "colors.error",
+  纯白色: colors.surface,
+  黑色: colors.neutral[900],
   宝蓝色: "#4169E1",
   翠绿色: "#50C878",
   深紫色: "#301934",
-  玫红色: "DesignTokens.colors.brand.terracotta",
-  暖米色: DesignTokens.colors.backgrounds.tertiary,
-  棕褐色: "DesignTokens.colors.brand.camel",
-  奶油白: "DesignTokens.colors.backgrounds.tertiary",
+  玫红色: "colors.primary",
+  暖米色: colors.backgroundTertiary,
+  棕褐色: "colors.primary",
+  奶油白: "colors.backgroundTertiary",
   柔和灰色: "DesignTokens.colors.neutral[400]",
-  米白色: DesignTokens.colors.backgrounds.tertiary,
+  米白色: colors.backgroundTertiary,
   淡粉色: "#FFB6C1",
-  浅灰蓝色: DesignTokens.colors.brand.slate,
-  米色: DesignTokens.colors.backgrounds.tertiary,
-  奶油色: "DesignTokens.colors.backgrounds.tertiary",
+  浅灰蓝色: colors.neutral[500],
+  米色: colors.backgroundTertiary,
+  奶油色: "colors.backgroundTertiary",
   深棕色: "#654321",
   军绿色: "#4B5320",
-  纯黑色: DesignTokens.colors.neutral.black,
-  冷灰色: "DesignTokens.colors.text.tertiary",
+  纯黑色: colors.neutral[900],
+  冷灰色: "colors.textTertiary",
   深紫红色: "#4A0028",
   冰蓝色: "#99FFFF",
-  橙色: "DesignTokens.colors.semantic.warning",
-  深黄色: "DesignTokens.colors.semantic.warning",
-  鲜艳的红色: "DesignTokens.colors.semantic.error",
-  暖棕色: DesignTokens.colors.brand.terracottaDark,
+  橙色: "colors.warning",
+  深黄色: "colors.warning",
+  鲜艳的红色: "colors.error",
+  暖棕色: colors.primaryDark,
   冷蓝色: "#6495ED",
-  亮粉色: DesignTokens.colors.brand.terracottaLight,
+  亮粉色: colors.primaryLight,
   荧光色: "#CCFF00",
-  深灰色: "DesignTokens.colors.text.secondary",
+  深灰色: "colors.textSecondary",
   藏青色: "#000080",
 };
 
@@ -189,7 +190,7 @@ function isLightColor(hex: string): boolean {
 }
 
 function SeasonGradientBand({ season }: { season: string }) {
-  const gradientColors = SEASON_GRADIENT[season] || [DesignTokens.colors.neutral[300], DesignTokens.colors.text.tertiary];
+  const gradientColors = SEASON_GRADIENT[season] || [DesignTokens.colors.neutral[300], colors.textTertiary];
   const width = 300;
   const height = 24;
 
@@ -211,6 +212,8 @@ export const ColorSeasonCard: React.FC<ColorSeasonCardProps> = ({
   collapsed,
   onToggle,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const season = colorAnalysis?.colorSeason?.type || "";
   const seasonName = colorAnalysis?.colorSeason?.label || SEASON_LABELS[season] || "未知";
   const seasonTags = SEASON_TAGS[season];
@@ -289,7 +292,7 @@ export const ColorSeasonCard: React.FC<ColorSeasonCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   card: {
     backgroundColor: colors.neutral.white,
     borderRadius: spacing.borderRadius.xl,
@@ -384,4 +387,4 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[800],
   },
-});
+}))

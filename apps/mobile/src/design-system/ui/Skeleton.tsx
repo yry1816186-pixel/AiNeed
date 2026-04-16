@@ -15,7 +15,7 @@ import Animated, {
   Easing,
   interpolate,
 } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius , DesignTokens } from '../../design-system/theme'
 
 // Re-export from canonical skeleton implementation
 export {
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   cardImage: { width: "100%", height: 180 },
   cardContent: { padding: Spacing.md, gap: Spacing[2] },
-  line: { height: 14, borderRadius: BorderRadius.sm },
+  line: { height: DesignTokens.spacing['3.5'], borderRadius: BorderRadius.sm },
 });
 
 export default Skeleton;

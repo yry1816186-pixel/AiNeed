@@ -16,6 +16,8 @@ import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens'
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { ClothingItem, ClothingCategory, Season, Occasion } from '../../../types/clothing';
 import { CATEGORY_LABELS, SEASON_LABELS, OCCASION_LABELS } from '../../../types/clothing';
+import { Spacing } from '../../../design-system/theme';
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -536,26 +538,26 @@ export const LoadingOverlay: React.FC = React.memo(function LoadingOverlay() {
 const styles = StyleSheet.create({
   filterPanel: {
     backgroundColor: colors.surface,
-    paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingBottom: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   filterGroup: {
-    marginTop: 12,
+    marginTop: DesignTokens.spacing[3],
   },
   filterGroupTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: colors.textSecondary,
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   filterChip: {
-    paddingHorizontal: 14,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
     paddingVertical: 7,
     borderRadius: 16,
     backgroundColor: colors.divider,
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
   filterChipActive: {
     backgroundColor: colors.primary,
@@ -572,9 +574,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 4,
-    marginTop: 12,
-    paddingVertical: 8,
+    gap: Spacing.xs,
+    marginTop: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
   },
   clearAllFiltersText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -586,12 +588,12 @@ const styles = StyleSheet.create({
   activeFilterPill: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
     backgroundColor: colors.cartLight,
     borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    marginRight: 6,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: Spacing.xs,
+    marginRight: DesignTokens.spacing['1.5'],
   },
   activeFilterPillText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -600,22 +602,22 @@ const styles = StyleSheet.create({
   },
   suggestionContent: {
     flex: 1,
-    padding: 20,
+    padding: DesignTokens.spacing[5],
   },
   section: {
-    marginBottom: 28,
+    marginBottom: DesignTokens.spacing[7],
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   clearText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -624,16 +626,16 @@ const styles = StyleSheet.create({
   tags: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: Spacing.sm,
   },
   tag: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
     backgroundColor: colors.cartLight,
     borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: Spacing.sm,
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -642,18 +644,18 @@ const styles = StyleSheet.create({
   quickGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 14,
+    gap: DesignTokens.spacing['3.5'],
   },
   quickItem: {
     width: (SCREEN_WIDTH - 68) / 4,
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   quickIcon: {
     width: 52,
     height: 52,
     borderRadius: 16,
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary, // custom color
+    backgroundColor: colors.backgroundTertiary, // custom color
     alignItems: "center",
     justifyContent: "center",
   },
@@ -664,12 +666,12 @@ const styles = StyleSheet.create({
   },
   row: {
     justifyContent: "space-between",
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
   },
   resultList: {
-    paddingTop: 16,
-    paddingBottom: 32,
-    gap: 16,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.xl,
+    gap: Spacing.md,
   },
   emptyList: {
     flexGrow: 1,
@@ -679,11 +681,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: 20,
     overflow: "hidden",
-    marginBottom: 16,
-    shadowColor: DesignTokens.colors.neutral.black,
+    marginBottom: Spacing.md,
+    shadowColor: colors.neutral[900],
     shadowOpacity: 0.06,
     shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: { width: 0, height: DesignTokens.spacing['1.5'] },
     elevation: 3,
   },
   cardImage: {
@@ -698,8 +700,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cardInfo: {
-    padding: 12,
-    gap: 4,
+    padding: DesignTokens.spacing[3],
+    gap: Spacing.xs,
   },
   cardName: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -710,7 +712,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   cardCategory: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -725,12 +727,12 @@ const styles = StyleSheet.create({
   colorRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginTop: 2,
+    gap: DesignTokens.spacing['1.5'],
+    marginTop: DesignTokens.spacing['0.5'],
   },
   colorDot: {
-    width: 10,
-    height: 10,
+    width: DesignTokens.spacing['2.5'],
+    height: DesignTokens.spacing['2.5'],
     borderRadius: 5,
     backgroundColor: DesignTokens.colors.neutral[300],
     borderWidth: StyleSheet.hairlineWidth,
@@ -744,26 +746,26 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 32,
-    paddingBottom: 80,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing['4xl'],
   },
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: colors.textPrimary,
-    marginTop: 16,
+    marginTop: Spacing.md,
   },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: colors.textSecondary,
     textAlign: "center",
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   clearFiltersButton: {
-    marginTop: 18,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
+    marginTop: DesignTokens.spacing[4],
+    paddingHorizontal: DesignTokens.spacing[4],
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
     backgroundColor: colors.cartLight,
   },
@@ -776,7 +778,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,

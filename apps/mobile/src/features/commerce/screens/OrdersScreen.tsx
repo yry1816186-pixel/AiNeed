@@ -20,7 +20,9 @@ import { useOrderStore } from '../stores/orderStore';
 import type { Order, OrderStatus } from '../../../types';
 import type { RootStackParamList } from '../../../types/navigation';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+
 
 type OrdersNavigation = NativeStackNavigationProp<RootStackParamList>;
 type TabKey = "all" | "pending" | "paid" | "shipped" | "delivered" | "refund";
@@ -45,8 +47,8 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: "待支付", color: colors.warning },
   paid: { label: "待发货", color: colors.primary },
   confirmed: { label: "已确认", color: colors.primary },
-  processing: { label: "处理中", color: "DesignTokens.colors.semantic.info" },
-  shipped: { label: "配送中", color: "DesignTokens.colors.semantic.info" },
+  processing: { label: "处理中", color: "colors.info" },
+  shipped: { label: "配送中", color: "colors.info" },
   delivered: { label: "已签收", color: colors.success },
   cancelled: { label: "已取消", color: colors.error },
   refunded: { label: "已退款", color: colors.textTertiary },
@@ -390,19 +392,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: Spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   iconButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: "colors.backgroundTertiary",
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -410,25 +412,25 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   headerPlaceholder: {
-    width: 40,
+    width: DesignTokens.spacing[10],
   },
   tabBar: {
     flexDirection: "row",
-    gap: 8,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
+    gap: Spacing.sm,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing['3.5'],
     backgroundColor: colors.surface,
   },
   tabItem: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 10,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 14,
     backgroundColor: colors.background,
   },
   tabItemActive: {
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: "colors.backgroundTertiary",
     borderWidth: 1,
     borderColor: colors.primary,
   },
@@ -441,8 +443,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   listContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 28,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingBottom: DesignTokens.spacing[7],
   },
   center: {
     flex: 1,
@@ -454,24 +456,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 120,
-    paddingHorizontal: 32,
+    paddingHorizontal: Spacing.xl,
   },
   emptyTitle: {
-    marginTop: 16,
+    marginTop: Spacing.md,
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: colors.textPrimary,
   },
   emptySubtitle: {
-    marginTop: 8,
+    marginTop: Spacing.sm,
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     textAlign: "center",
     color: colors.textSecondary,
   },
   orderCard: {
-    marginTop: 16,
-    padding: 16,
+    marginTop: Spacing.md,
+    padding: Spacing.md,
     borderRadius: 20,
     backgroundColor: colors.surface,
   },
@@ -485,14 +487,14 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
   },
   orderIdValue: {
-    marginTop: 4,
+    marginTop: Spacing.xs,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.textPrimary,
   },
   statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 999,
   },
   statusText: {
@@ -502,14 +504,14 @@ const styles = StyleSheet.create({
   itemsRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    marginTop: 16,
+    gap: DesignTokens.spacing['2.5'],
+    marginTop: Spacing.md,
   },
   itemThumbnail: {
     width: 54,
     height: 54,
     borderRadius: 14,
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: "colors.backgroundTertiary",
   },
   itemThumbnailFallback: {
     width: 54,
@@ -517,7 +519,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: "colors.backgroundTertiary",
   },
   moreItemsBadge: {
     width: 54,
@@ -536,10 +538,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 16,
-    paddingTop: 14,
+    marginTop: Spacing.md,
+    paddingTop: DesignTokens.spacing['3.5'],
     borderTopWidth: 1,
-    borderTopColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderTopColor: "colors.backgroundTertiary",
   },
   orderDate: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -548,7 +550,7 @@ const styles = StyleSheet.create({
   orderSummary: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   orderSummaryText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -562,12 +564,12 @@ const styles = StyleSheet.create({
   actionRow: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    gap: 10,
-    marginTop: 16,
+    gap: DesignTokens.spacing['2.5'],
+    marginTop: Spacing.md,
   },
   secondaryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
@@ -578,8 +580,8 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   primaryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 12,
     backgroundColor: colors.primary,
   },
@@ -589,21 +591,21 @@ const styles = StyleSheet.create({
     color: colors.surface,
   },
   footerLoading: {
-    paddingVertical: 20,
+    paddingVertical: DesignTokens.spacing[5],
   },
   footerText: {
-    paddingVertical: 20,
+    paddingVertical: DesignTokens.spacing[5],
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
   },
   dangerTextButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['2.5'],
   },
   dangerText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "DesignTokens.colors.semantic.error",
+    color: "colors.error",
   },
 });
 

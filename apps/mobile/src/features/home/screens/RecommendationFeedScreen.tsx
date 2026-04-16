@@ -9,10 +9,15 @@ import { RecommendationCard } from '../../../components/recommendations/Recommen
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import type { FeedItem, FeedCategory } from '../../../services/api/recommendation-feed.api';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const ESTIMATED_ITEM_SIZE = 280;
 
 export function RecommendationFeedScreen() {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const {
@@ -66,7 +71,7 @@ export function RecommendationFeedScreen() {
     if (isLoading && !isRefreshing && items.length > 0) {
       return (
         <View style={styles.footerLoader}>
-          <ActivityIndicator size="small" color={DesignTokens.colors.brand.terracotta} />
+          <ActivityIndicator size="small" color={colors.primary} />
         </View>
       );
     }
@@ -125,7 +130,7 @@ export function RecommendationFeedScreen() {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={refresh}
-            tintColor={DesignTokens.colors.brand.terracotta}
+            tintColor={colors.primary}
           />
         }
       />
@@ -133,49 +138,49 @@ export function RecommendationFeedScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
   },
   listContent: {
-    paddingHorizontal: 12,
-    paddingTop: 8,
-    paddingBottom: 20,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingTop: Spacing.sm,
+    paddingBottom: DesignTokens.spacing[5],
   },
   footerLoader: {
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     alignItems: "center",
   },
   footerEnd: {
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     alignItems: "center",
   },
   footerEndText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
   },
   errorContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 40,
-    gap: 12,
+    paddingHorizontal: DesignTokens.spacing[10],
+    gap: DesignTokens.spacing[3],
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
     textAlign: "center",
   },
   retryButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing['2.5'],
+    backgroundColor: colors.primary,
     borderRadius: 8,
   },
   retryText: {
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-});
+}))

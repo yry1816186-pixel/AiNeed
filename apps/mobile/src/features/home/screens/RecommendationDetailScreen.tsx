@@ -20,9 +20,11 @@ import * as Haptics from "@/src/polyfills/expo-haptics";
 import { clothingApi } from '../../../services/api/clothing.api';
 import { cartApi } from '../../../services/api/commerce.api';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import type { RootStackParamList } from '../../../types/navigation';
 import type { ClothingItem } from '../../../types/clothing';
+import { Spacing } from '../../../design-system/theme';
+
 import {
   CATEGORY_LABELS,
   OCCASION_LABELS,
@@ -337,7 +339,7 @@ export const RecommendationDetailScreen: React.FC = () => {
 
           {typeof recommendation.score === "number" && recommendation.score > 0 ? (
             <View style={styles.scoreOverlay}>
-              <LinearGradient colors={[DesignTokens.colors.brand.slate, DesignTokens.colors.brand.slateDark]} style={styles.scoreBadge}>
+              <LinearGradient colors={[colors.neutral[500], colors.neutral[700]]} style={styles.scoreBadge}>
                 <Ionicons name="sparkles" size={16} color={colors.surface} />
                 <Text style={styles.scoreText}>
                   匹配度 {Math.round(recommendation.score * 100)}%
@@ -380,7 +382,7 @@ export const RecommendationDetailScreen: React.FC = () => {
             <Text style={styles.sectionTitle}>推荐理由</Text>
             {recommendation.matchReasons.map((reason, index) => (
               <View key={`${reason}-${index}`} style={styles.reasonRow}>
-                <Ionicons name="checkmark-circle" size={18} color={DesignTokens.colors.semantic.success} />
+                <Ionicons name="checkmark-circle" size={18} color={colors.success} />
                 <Text style={styles.reasonText}>{reason}</Text>
               </View>
             ))}
@@ -492,7 +494,7 @@ export const RecommendationDetailScreen: React.FC = () => {
           accessibilityRole="button"
           disabled={isAddingToCart}
         >
-          <LinearGradient colors={[DesignTokens.colors.brand.slate, DesignTokens.colors.brand.slateDark]} style={styles.primaryButtonGradient} />
+          <LinearGradient colors={[colors.neutral[500], colors.neutral[700]]} style={styles.primaryButtonGradient} />
           {isAddingToCart ? (
             <ActivityIndicator size="small" color={colors.surface} />
           ) : (
@@ -514,15 +516,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: Spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   iconButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
@@ -553,15 +555,15 @@ const styles = StyleSheet.create({
   },
   scoreOverlay: {
     position: "absolute",
-    left: 20,
-    bottom: 20,
+    left: DesignTokens.spacing[5],
+    bottom: DesignTokens.spacing[5],
   },
   scoreBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 999,
   },
   scoreText: {
@@ -570,8 +572,8 @@ const styles = StyleSheet.create({
     color: colors.surface,
   },
   infoSection: {
-    marginTop: 16,
-    padding: 20,
+    marginTop: Spacing.md,
+    padding: DesignTokens.spacing[5],
     backgroundColor: colors.surface,
   },
   title: {
@@ -582,16 +584,16 @@ const styles = StyleSheet.create({
   metaRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
-    marginTop: 12,
-    marginBottom: 12,
+    gap: Spacing.sm,
+    marginTop: DesignTokens.spacing[3],
+    marginBottom: DesignTokens.spacing[3],
   },
   metaChip: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    gap: DesignTokens.spacing['1.5'],
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 999,
     backgroundColor: DesignTokens.colors.neutral[100],
   },
@@ -603,7 +605,7 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
     color: colors.primary,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   description: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -611,19 +613,19 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   section: {
-    marginTop: 20,
+    marginTop: DesignTokens.spacing[5],
   },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   reasonRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 10,
-    marginBottom: 10,
+    gap: DesignTokens.spacing['2.5'],
+    marginBottom: DesignTokens.spacing['2.5'],
   },
   reasonText: {
     flex: 1,
@@ -634,11 +636,11 @@ const styles = StyleSheet.create({
   tagWrap: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: Spacing.sm,
   },
   tag: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
     borderRadius: 999,
     backgroundColor: DesignTokens.colors.neutral[100],
   },
@@ -649,8 +651,8 @@ const styles = StyleSheet.create({
   linkButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginTop: 24,
+    gap: Spacing.sm,
+    marginTop: Spacing.lg,
   },
   linkButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -661,19 +663,19 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing.lg,
   },
   stateText: {
-    marginTop: 12,
+    marginTop: DesignTokens.spacing[3],
     fontSize: DesignTokens.typography.sizes.md,
     lineHeight: 24,
     color: colors.textSecondary,
     textAlign: "center",
   },
   retryButton: {
-    marginTop: 16,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    marginTop: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 10,
     backgroundColor: colors.primary,
   },
@@ -691,8 +693,8 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     flexDirection: "row",
-    gap: 12,
-    padding: 20,
+    gap: DesignTokens.spacing[3],
+    padding: DesignTokens.spacing[5],
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
@@ -701,7 +703,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
@@ -716,8 +718,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    paddingVertical: 14,
+    gap: Spacing.sm,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 12,
     overflow: "hidden",
   },

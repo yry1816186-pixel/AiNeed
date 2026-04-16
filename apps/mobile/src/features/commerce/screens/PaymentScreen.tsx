@@ -7,12 +7,14 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import { haptics } from '../../../utils/haptics';
 import { paymentApi, orderApi } from '../../../services/api/commerce.api';
 import type { Order } from '../../../types';
 import type { ProfileStackParamList } from '../../../navigation/types';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+
 
 type PaymentRoute = RouteProp<ProfileStackParamList, "Payment">;
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
@@ -193,7 +195,7 @@ export const PaymentScreen: React.FC = () => {
             onPress={() => setSelectedProvider("alipay")}
             activeOpacity={0.7}
           >
-            <View style={[s.providerIcon, { backgroundColor: "DesignTokens.colors.semantic.info" /* custom color */ }]}>
+            <View style={[s.providerIcon, { backgroundColor: "colors.info" /* custom color */ }]}>
               <Text style={s.providerIconText}>A</Text>
             </View>
             <View style={s.providerInfo}>
@@ -210,7 +212,7 @@ export const PaymentScreen: React.FC = () => {
             onPress={() => setSelectedProvider("wechat")}
             activeOpacity={0.7}
           >
-            <View style={[s.providerIcon, { backgroundColor: "DesignTokens.colors.semantic.success" /* custom color */ }]}>
+            <View style={[s.providerIcon, { backgroundColor: "colors.success" /* custom color */ }]}>
               <Text style={s.providerIconText}>W</Text>
             </View>
             <View style={s.providerInfo}>
@@ -243,7 +245,7 @@ export const PaymentScreen: React.FC = () => {
           disabled={paying || polling}
         >
           {paying ? (
-            <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+            <ActivityIndicator size="small" color={colors.surface} />
           ) : (
             <Text style={s.payButtonText}>立即支付</Text>
           )}
@@ -259,50 +261,50 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
+  iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
-  content: { flex: 1, padding: 16 },
+  content: { flex: 1, padding: Spacing.md},
   orderCard: {
     backgroundColor: colors.surface,
     borderRadius: 14,
-    padding: 16,
-    marginBottom: 20,
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
+    padding: Spacing.md,
+    marginBottom: DesignTokens.spacing[5],
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
   },
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: colors.textPrimary, marginBottom: 14 },
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: colors.textPrimary, marginBottom: DesignTokens.spacing['3.5']},
   orderRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 6,
+    paddingVertical: DesignTokens.spacing['1.5'],
   },
   orderLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
   orderValue: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, fontWeight: "500" },
   totalRow: {
     borderTopWidth: 1,
     borderTopColor: colors.divider,
-    marginTop: 8,
-    paddingTop: 12,
+    marginTop: Spacing.sm,
+    paddingTop: DesignTokens.spacing[3],
   },
   totalLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
   totalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
   paymentSection: {
     backgroundColor: colors.surface,
     borderRadius: 14,
-    padding: 16,
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
+    padding: Spacing.md,
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
@@ -310,7 +312,7 @@ const s = StyleSheet.create({
   paymentOption: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
@@ -318,19 +320,19 @@ const s = StyleSheet.create({
     backgroundColor: colors.subtleBg,
     borderRadius: 10,
     marginHorizontal: -8,
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.sm,
   },
   providerIcon: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
-  providerIconText: { color: DesignTokens.colors.neutral.white, fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700" },
-  providerInfo: { flex: 1, marginLeft: 12 },
+  providerIconText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700" },
+  providerInfo: { flex: 1, marginLeft: DesignTokens.spacing[3]},
   providerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
-  providerDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
+  providerDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
   radio: {
     width: 22,
     height: 22,
@@ -341,14 +343,14 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   radioSelected: { borderColor: colors.primary },
-  radioInner: { width: 12, height: 12, borderRadius: 6, backgroundColor: colors.primary },
+  radioInner: { width: DesignTokens.spacing[3], height: DesignTokens.spacing[3], borderRadius: 6, backgroundColor: colors.primary },
   pollingBanner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    paddingVertical: 12,
-    marginTop: 16,
+    gap: Spacing.sm,
+    paddingVertical: DesignTokens.spacing[3],
+    marginTop: Spacing.md,
     backgroundColor: colors.subtleBg,
     borderRadius: 10,
   },
@@ -356,8 +358,8 @@ const s = StyleSheet.create({
   footer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
@@ -367,8 +369,8 @@ const s = StyleSheet.create({
   footerTotalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
   payButton: {
     backgroundColor: colors.primary,
-    paddingHorizontal: 36,
-    paddingVertical: 14,
+    paddingHorizontal: DesignTokens.spacing[9],
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 24,
   },
   payButtonDisabled: { opacity: 0.6 },

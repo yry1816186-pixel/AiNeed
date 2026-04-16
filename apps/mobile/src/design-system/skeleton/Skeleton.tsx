@@ -12,6 +12,10 @@ import AnimatedReanimated from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
 import { useReducedMotion } from "../../hooks/useReducedMotion";
+import { Spacing } from '../theme';
+import { DesignTokens } from '../theme/tokens/design-tokens';
+
+
 
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 
@@ -157,8 +161,8 @@ export function SkeletonCard({ style }: { style?: ViewStyle }) {
     <View style={[styles.card, style]}>
       <Skeleton width="100%" height={150} borderRadius={8} />
       <View style={styles.cardContent}>
-        <Skeleton width="80%" height={16} style={{ marginBottom: 8 }} />
-        <Skeleton width="50%" height={14} style={{ marginBottom: 8 }} />
+        <Skeleton width="80%" height={16} style={{ marginBottom: Spacing.sm}} />
+        <Skeleton width="50%" height={14} style={{ marginBottom: Spacing.sm}} />
         <Skeleton width="30%" height={18} />
       </View>
     </View>
@@ -237,8 +241,8 @@ export const LoadingShimmer: React.FC<{
           <Shimmer width={140} height={180} borderRadius={BorderRadius["2xl"]} />
           <View style={styles.cardText}>
             <Shimmer width={120} height={16} />
-            <Shimmer width={80} height={12} style={{ marginTop: 8 }} />
-            <Shimmer width={60} height={14} style={{ marginTop: 8 }} />
+            <Shimmer width={80} height={12} style={{ marginTop: Spacing.sm}} />
+            <Shimmer width={60} height={14} style={{ marginTop: Spacing.sm}} />
           </View>
         </View>
       );
@@ -249,7 +253,7 @@ export const LoadingShimmer: React.FC<{
           <Shimmer width={60} height={60} borderRadius={30} />
           <View style={styles.listText}>
             <Shimmer width={150} height={16} />
-            <Shimmer width={200} height={12} style={{ marginTop: 8 }} />
+            <Shimmer width={200} height={12} style={{ marginTop: Spacing.sm}} />
           </View>
         </View>
       );
@@ -258,10 +262,10 @@ export const LoadingShimmer: React.FC<{
       return (
         <View style={styles.detailTemplate}>
           <Shimmer width="100%" height={300} borderRadius={0} />
-          <View style={{ padding: 20 }}>
+          <View style={{ padding: DesignTokens.spacing[5]}}>
             <Shimmer width={200} height={28} />
-            <Shimmer width={150} height={16} style={{ marginTop: 12 }} />
-            <View style={{ flexDirection: "row", gap: 8, marginTop: 20 }}>
+            <Shimmer width={150} height={16} style={{ marginTop: DesignTokens.spacing[3]}} />
+            <View style={{ flexDirection: "row", gap: Spacing.sm, marginTop: DesignTokens.spacing[5]}}>
               <Shimmer width={80} height={24} borderRadius={12} />
               <Shimmer width={80} height={24} borderRadius={12} />
               <Shimmer width={80} height={24} borderRadius={12} />
@@ -274,7 +278,7 @@ export const LoadingShimmer: React.FC<{
       return (
         <View style={styles.profileTemplate}>
           <Shimmer width="100%" height={160} borderRadius={BorderRadius["2xl"]} />
-          <View style={{ flexDirection: "row", gap: 12, marginTop: 20 }}>
+          <View style={{ flexDirection: "row", gap: DesignTokens.spacing[3], marginTop: DesignTokens.spacing[5]}}>
             {[1, 2, 3].map((i) => (
               <View key={i} style={{ flex: 1 }}>
                 <Shimmer width="100%" height={80} borderRadius={BorderRadius.xl} />
@@ -314,10 +318,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   cardContent: {
-    padding: 12,
+    padding: DesignTokens.spacing[3],
   },
   listItem: {
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   grid: {
     flex: 1,
@@ -328,22 +332,22 @@ const styles = StyleSheet.create({
   },
   gridItem: {
     flex: 1,
-    marginHorizontal: 4,
+    marginHorizontal: Spacing.xs,
   },
   // LoadingShimmer 模板样式
   cardTemplate: {
     alignItems: "center",
-    marginRight: 16,
+    marginRight: Spacing.md,
   },
   cardText: {
-    marginTop: 10,
+    marginTop: DesignTokens.spacing['2.5'],
     alignItems: "center",
   },
   listTemplate: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
-    gap: 12,
+    padding: Spacing.md,
+    gap: DesignTokens.spacing[3],
   },
   listText: {
     flex: 1,
@@ -354,7 +358,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   profileTemplate: {
-    marginHorizontal: 20,
+    marginHorizontal: DesignTokens.spacing[5],
   },
 });
 

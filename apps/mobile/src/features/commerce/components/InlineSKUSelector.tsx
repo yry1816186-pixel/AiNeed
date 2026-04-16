@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { cartEnhancementApi } from '../../../services/api/commerce.api';
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface InlineSKUSelectorProps {
   visible: boolean;
@@ -24,6 +25,8 @@ export const InlineSKUSelector: React.FC<InlineSKUSelectorProps> = ({
   onChange,
   onClose,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [color, setColor] = useState(currentColor);
   const [size, setSize] = useState(currentSize);
 
@@ -82,14 +85,14 @@ export const InlineSKUSelector: React.FC<InlineSKUSelectorProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   sheet: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: "50%",
@@ -97,33 +100,33 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 16,
+    padding: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderBottomColor: "colors.backgroundTertiary",
   },
-  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
-  close: { fontSize: DesignTokens.typography.sizes.md, color: DesignTokens.colors.text.tertiary },
-  body: { padding: 16 },
+  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  close: { fontSize: DesignTokens.typography.sizes.md, color: colors.textTertiary },
+  body: { padding: Spacing.md},
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: DesignTokens.colors.text.primary,
-    marginBottom: 8,
+    color: colors.textPrimary,
+    marginBottom: Spacing.sm,
   },
-  row: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
+  row: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm, marginBottom: Spacing.md},
   chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: Spacing.sm,
     borderRadius: 8,
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
+    backgroundColor: colors.backgroundTertiary,
   },
-  chipSelected: { backgroundColor: "DesignTokens.colors.semantic.errorLight", borderWidth: 1, borderColor: "DesignTokens.colors.semantic.error" },
-  chipText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary },
-  chipTextSelected: { color: "DesignTokens.colors.semantic.error", fontWeight: "500" },
+  chipSelected: { backgroundColor: "colors.errorLight", borderWidth: 1, borderColor: "colors.error" },
+  chipText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
+  chipTextSelected: { color: "colors.error", fontWeight: "500" },
   confirm: {
-    backgroundColor: "DesignTokens.colors.semantic.error",
-    paddingVertical: 14,
+    backgroundColor: "colors.error",
+    paddingVertical: DesignTokens.spacing['3.5'],
     alignItems: "center",
   },
-  confirmText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.backgrounds.primary },
-});
+  confirmText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.surface },
+}))

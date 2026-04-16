@@ -12,9 +12,10 @@ import {
   FlatList,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../../../design-system/theme';
+import { theme , Spacing } from '../../../design-system/theme'
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { communityApi } from "../../services/api/community.api";
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 type ImportSource = "community" | "ai_stylist" | "tryon";
 
@@ -64,6 +65,8 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
   onClose,
   onImported,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [activeSource, setActiveSource] = useState<ImportSource>(source ?? "community");
   const [items, setItems] = useState<ImportItem[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -200,7 +203,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
                   <Ionicons
                     name={SOURCE_ICONS[key] as "people-outline"}
                     size={14}
-                    color={activeSource === key ? DesignTokens.colors.text.inverse : DesignTokens.colors.brand.slate}
+                    color={activeSource === key ? colors.textInverse : colors.neutral[500]}
                   />
                   <Text
                     style={[
@@ -265,7 +268,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
                     {item.name}
                   </Text>
                   <View style={[styles.checkbox, item.selected && styles.checkboxChecked]}>
-                    {item.selected && <Ionicons name="checkmark" size={12} color={DesignTokens.colors.text.inverse} />}
+                    {item.selected && <Ionicons name="checkmark" size={12} color={colors.textInverse} />}
                   </View>
                 </TouchableOpacity>
               ))}
@@ -283,7 +286,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
             disabled={importing}
           >
             {importing ? (
-              <ActivityIndicator size="small" color={DesignTokens.colors.text.inverse} />
+              <ActivityIndicator size="small" color={colors.textInverse} />
             ) : (
               <Text style={styles.importBtnText}>
                 导入选中项 ({items.filter((i) => i.selected).length})
@@ -296,73 +299,73 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   overlay: { flex: 1, justifyContent: "flex-end" },
   backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.4)" },
   sheet: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
     paddingBottom: 34,
     maxHeight: 500,
   },
   handle: {
-    width: 40,
-    height: 4,
+    width: DesignTokens.spacing[10],
+    height: Spacing.xs,
     borderRadius: 2,
     backgroundColor: DesignTokens.colors.neutral[200],
     alignSelf: "center",
-    marginTop: 10,
-    marginBottom: 14,
+    marginTop: DesignTokens.spacing['2.5'],
+    marginBottom: DesignTokens.spacing['3.5'],
   },
-  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: 12 },
-  sourceRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
+  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: DesignTokens.spacing[3]},
+  sourceRow: { flexDirection: "row", gap: Spacing.sm, marginBottom: DesignTokens.spacing[3]},
   sourceChip: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    gap: Spacing.xs,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 14,
     backgroundColor: "#F0EDFF", // custom color
   },
-  sourceChipActive: { backgroundColor: DesignTokens.colors.brand.slate },
-  sourceChipText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.brand.slate, fontWeight: "500" },
-  sourceChipTextActive: { color: DesignTokens.colors.text.inverse },
+  sourceChipActive: { backgroundColor: colors.neutral[500] },
+  sourceChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.neutral[500], fontWeight: "500" },
+  sourceChipTextActive: { color: colors.textInverse },
   collectionRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginBottom: 12,
+    gap: Spacing.sm,
+    marginBottom: DesignTokens.spacing[3],
   },
   collectionLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
   collectionChip: {
-    paddingHorizontal: 10,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
     paddingVertical: 5,
     borderRadius: 12,
     backgroundColor: theme.colors.background,
-    marginRight: 6,
+    marginRight: DesignTokens.spacing['1.5'],
   },
   collectionChipActive: { backgroundColor: "#F0EDFF" }, // custom color
   collectionChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
-  collectionChipTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "600" },
-  loader: { paddingVertical: 24 },
+  collectionChipTextActive: { color: colors.neutral[500], fontWeight: "600" },
+  loader: { paddingVertical: Spacing.lg},
   itemList: { maxHeight: 250 },
   itemRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    gap: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: Spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
   itemRowSelected: { backgroundColor: "#F8F7FF" }, // custom color
-  itemImage: { width: 40, height: 40, borderRadius: 6 },
+  itemImage: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], borderRadius: 6 },
   itemImagePlaceholder: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 6,
     backgroundColor: theme.colors.background,
     alignItems: "center",
@@ -370,8 +373,8 @@ const styles = StyleSheet.create({
   },
   itemName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
   checkbox: {
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 4,
     borderWidth: 1.5,
     borderColor: theme.colors.border,
@@ -379,20 +382,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   checkboxChecked: {
-    backgroundColor: DesignTokens.colors.brand.slate,
-    borderColor: DesignTokens.colors.brand.slate,
+    backgroundColor: colors.neutral[500],
+    borderColor: colors.neutral[500],
   },
-  emptyItems: { paddingVertical: 32, alignItems: "center" },
+  emptyItems: { paddingVertical: Spacing.xl, alignItems: "center" },
   emptyItemsText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary },
   importBtn: {
-    backgroundColor: DesignTokens.colors.brand.slate,
+    backgroundColor: colors.neutral[500],
     borderRadius: 12,
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
     alignItems: "center",
-    marginTop: 12,
+    marginTop: DesignTokens.spacing[3],
   },
   importBtnDisabled: { opacity: 0.5 },
-  importBtnText: { color: DesignTokens.colors.text.inverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-});
+  importBtnText: { color: colors.textInverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+}))
 
 export default ImportSheet;

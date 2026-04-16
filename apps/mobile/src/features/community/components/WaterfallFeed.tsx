@@ -12,6 +12,9 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_GAP = 8;
@@ -181,6 +184,8 @@ export const WaterfallFeed: React.FC<WaterfallFeedProps> = ({
   refreshing = false,
   onRefresh,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
 
   const leftColumn = useMemo(() => posts.filter((_, i) => i % 2 === 0), [posts]);
@@ -216,7 +221,7 @@ export const WaterfallFeed: React.FC<WaterfallFeedProps> = ({
     }
     return (
       <View style={styles.loadingFooter}>
-        <ActivityIndicator color={DesignTokens.colors.brand.terracotta} />
+        <ActivityIndicator color={colors.primary} />
         <Text style={styles.loadingText}>加载中...</Text>
       </View>
     );
@@ -242,14 +247,14 @@ export const WaterfallFeed: React.FC<WaterfallFeedProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     backgroundColor: DesignTokens.colors.neutral[50],
   },
   listContent: {
     paddingHorizontal: CARD_PADDING,
-    paddingTop: 12,
+    paddingTop: DesignTokens.spacing[3],
     paddingBottom: 100,
   },
   columnsWrapper: {
@@ -259,12 +264,12 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
   },
   card: {
-    backgroundColor: DesignTokens.colors.neutral.white,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     overflow: "hidden",
     marginBottom: CARD_GAP,
-    shadowColor: DesignTokens.colors.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: colors.neutral[900],
+    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 2,
@@ -289,15 +294,15 @@ const styles = StyleSheet.create({
   },
   multiImageBadge: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: Spacing.sm,
+    right: Spacing.sm,
     backgroundColor: "rgba(0,0,0,0.5)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
     borderRadius: 8,
   },
   multiImageText: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "500",
   },
@@ -306,11 +311,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 40,
+    height: DesignTokens.spacing[10],
   },
   cardContent: {
-    padding: 10,
-    gap: 6,
+    padding: DesignTokens.spacing['2.5'],
+    gap: DesignTokens.spacing['1.5'],
   },
   cardTitle: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -320,26 +325,26 @@ const styles = StyleSheet.create({
   },
   tagsRow: {
     flexDirection: "row",
-    gap: 6,
+    gap: DesignTokens.spacing['1.5'],
     flexWrap: "wrap",
   },
   tag: {
-    backgroundColor: DesignTokens.colors.brand.terracottaLight + "20",
-    paddingHorizontal: 8,
+    backgroundColor: colors.primaryLight + "20",
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: 10,
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
     fontWeight: "500",
   },
   cardFooter: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 4,
-    paddingTop: 8,
+    marginTop: Spacing.xs,
+    paddingTop: Spacing.sm,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[100],
   },
@@ -347,27 +352,27 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
   authorAvatar: {
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 10,
-    marginRight: 6,
+    marginRight: DesignTokens.spacing['1.5'],
   },
   authorAvatarPlaceholder: {
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 10,
-    backgroundColor: DesignTokens.colors.brand.sage,
+    backgroundColor: colors.secondary,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 6,
+    marginRight: DesignTokens.spacing['1.5'],
   },
   authorAvatarText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   authorName: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -377,11 +382,11 @@ const styles = StyleSheet.create({
   likeButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
   },
   likeIcon: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
   },
   likeCount: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -391,11 +396,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 20,
-    gap: 8,
+    paddingVertical: DesignTokens.spacing[5],
+    gap: Spacing.sm,
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[400],
   },
-});
+}))

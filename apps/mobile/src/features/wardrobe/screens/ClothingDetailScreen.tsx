@@ -26,7 +26,9 @@ import { useSizeRecommendationStore } from '../../../stores/sizeRecommendationSt
 import { ProductImageCarousel } from '../../../components/ProductImageCarousel';
 import { SKUSelector } from '../../../components/SKUSelector';
 import { OutfitRecommendationCards } from '../../../components/OutfitRecommendationCards';
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+
 
 type ClothingDetailRouteProp = RouteProp<RootStackParamList, "ClothingDetail">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -234,7 +236,7 @@ export const ClothingDetailScreen: React.FC = () => {
           </View>
         )}
 
-        <View style={{ height: 80 }} />
+        <View style={{ height: Spacing['4xl'] }} />
       </ScrollView>
 
       <View style={styles.bottomBar}>
@@ -288,14 +290,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   backButton: {
-    width: 36,
-    height: 36,
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
     alignItems: "center",
     justifyContent: "center",
   },
@@ -305,25 +307,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: 8 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: Spacing.sm},
   errorContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    padding: DesignTokens.spacing[5],
   },
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: 12, textAlign: "center" },
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: DesignTokens.spacing[3], textAlign: "center" },
   retryButton: {
     backgroundColor: colors.error,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 8,
-    marginTop: 16,
+    marginTop: Spacing.md,
   },
   retryButtonText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.surface },
   content: { flex: 1 },
-  priceSection: { paddingHorizontal: 16, paddingTop: 16 },
-  priceRow: { flexDirection: "row", alignItems: "baseline", gap: 8 },
+  priceSection: { paddingHorizontal: Spacing.md, paddingTop: Spacing.md},
+  priceRow: { flexDirection: "row", alignItems: "baseline", gap: Spacing.sm},
   currentPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
   originalPrice: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -332,8 +334,8 @@ const styles = StyleSheet.create({
   },
   discountBadge: {
     backgroundColor: colors.primary,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: DesignTokens.spacing['1.5'],
+    paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 4,
   },
   discountText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: colors.surface },
@@ -341,40 +343,40 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   skuTriggerLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  infoSection: { paddingHorizontal: 16, paddingTop: 16 },
-  itemName: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginBottom: 4 },
-  itemBrand: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginBottom: 8 },
-  relatedSection: { paddingHorizontal: 16, paddingTop: 8 },
+  infoSection: { paddingHorizontal: Spacing.md, paddingTop: Spacing.md},
+  itemName: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginBottom: Spacing.xs},
+  itemBrand: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginBottom: Spacing.sm},
+  relatedSection: { paddingHorizontal: Spacing.md, paddingTop: Spacing.sm},
   bottomBar: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderTopWidth: 1,
     borderTopColor: colors.border,
     backgroundColor: colors.surface,
   },
-  bottomLeft: { flexDirection: "row", gap: 16 },
-  bottomIconButton: { alignItems: "center", gap: 2 },
+  bottomLeft: { flexDirection: "row", gap: Spacing.md},
+  bottomIconButton: { alignItems: "center", gap: DesignTokens.spacing['0.5']},
   bottomIconLabel: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textSecondary },
-  bottomRight: { flex: 1, flexDirection: "row", justifyContent: "flex-end", gap: 8 },
+  bottomRight: { flex: 1, flexDirection: "row", justifyContent: "flex-end", gap: Spacing.sm},
   addToCartButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.primary,
   },
   addToCartText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.primary },
   buyNowButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
     backgroundColor: colors.primary,
   },

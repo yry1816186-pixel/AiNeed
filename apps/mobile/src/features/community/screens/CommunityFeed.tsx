@@ -14,6 +14,8 @@ import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { PostMasonryCard } from '../../../components/community/PostMasonryCard';
 import type { PostCardData } from '../../../components/community/PostMasonryCard';
+import { Spacing } from '../../../design-system/theme';
+
 
 type PostCardDataInternal = PostCardData;
 
@@ -63,7 +65,7 @@ function CommunityFeedInner({
             <Ionicons
               name={item.feedType === "like" ? "heart" : "shirt-outline"}
               size={16}
-              color={item.feedType === "like" ? "DesignTokens.colors.semantic.error" : DesignTokens.colors.brand.slate} // custom color
+              color={item.feedType === "like" ? "colors.error" : colors.neutral[500]} // custom color
             />
             <Text style={s.feedActivityText}>{item.title}</Text>
           </View>
@@ -130,7 +132,7 @@ function CommunityFeedInner({
         contentContainerStyle={s.scrollContent}
       >
         {followingFeed.map((item, idx) => renderFollowingFeedItem(item, idx))}
-        <View style={{ height: 80 }} />
+        <View style={{ height: Spacing['4xl'] }} />
       </ScrollView>
     );
   }
@@ -180,43 +182,43 @@ const s = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 40,
+    paddingHorizontal: DesignTokens.spacing[10],
   },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 12 },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: 16 },
-  emptySubtext: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: 6 },
-  errorTitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary, marginTop: 16, textAlign: "center" },
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: Spacing.md},
+  emptySubtext: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: DesignTokens.spacing['1.5']},
+  errorTitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary, marginTop: Spacing.md, textAlign: "center" },
   retryBtn: {
-    marginTop: 24,
+    marginTop: Spacing.lg,
     backgroundColor: colors.primary,
-    paddingHorizontal: 32,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 28,
   },
   retryBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-  scrollContent: { paddingTop: 12, paddingBottom: 40 },
-  masonryListContent: { paddingHorizontal: 12, paddingTop: 12, paddingBottom: 40 },
+  scrollContent: { paddingTop: DesignTokens.spacing[3], paddingBottom: DesignTokens.spacing[10]},
+  masonryListContent: { paddingHorizontal: DesignTokens.spacing[3], paddingTop: DesignTokens.spacing[3], paddingBottom: DesignTokens.spacing[10]},
   loadingMore: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    paddingVertical: 16,
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
   },
   loadingMoreText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   feedActivityCard: {
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: 14,
-    marginHorizontal: 12,
-    marginBottom: 8,
+    padding: DesignTokens.spacing['3.5'],
+    marginHorizontal: DesignTokens.spacing[3],
+    marginBottom: Spacing.sm,
     flexDirection: "row",
     alignItems: "center",
   },
   feedActivityContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     flex: 1,
   },
   feedActivityText: {

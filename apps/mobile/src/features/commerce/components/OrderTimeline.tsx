@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Clipboard } from "react-native";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface TimelineEvent {
   status: string;
@@ -18,6 +19,8 @@ interface OrderTimelineProps {
 const _STATUS_ORDER = ["pending", "paid", "shipped", "delivered"];
 
 export const OrderTimeline: React.FC<OrderTimelineProps> = ({ events }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   if (!events || events.length === 0) {
     return null;
   }
@@ -76,63 +79,63 @@ export const OrderTimeline: React.FC<OrderTimelineProps> = ({ events }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { paddingLeft: 8 },
-  row: { flexDirection: "row", gap: 12 },
-  left: { alignItems: "center", width: 20 },
+const useStyles = createStyles((colors) => ({
+  container: { paddingLeft: Spacing.sm},
+  row: { flexDirection: "row", gap: DesignTokens.spacing[3]},
+  left: { alignItems: "center", width: DesignTokens.spacing[5] },
   dot: {
-    width: 14,
-    height: 14,
+    width: DesignTokens.spacing['3.5'],
+    height: DesignTokens.spacing['3.5'],
     borderRadius: 7,
     borderWidth: 2,
-    borderColor: "DesignTokens.colors.borders.default",
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    borderColor: "colors.border",
+    backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
   },
   dotCurrent: {
-    backgroundColor: "DesignTokens.colors.semantic.error",
-    borderColor: "DesignTokens.colors.semantic.error",
+    backgroundColor: "colors.error",
+    borderColor: "colors.error",
   },
   dotPast: {
-    backgroundColor: "DesignTokens.colors.semantic.success",
-    borderColor: "DesignTokens.colors.semantic.success",
+    backgroundColor: "colors.success",
+    borderColor: "colors.success",
   },
   dotFuture: {
-    borderColor: "DesignTokens.colors.borders.default",
+    borderColor: "colors.border",
   },
   checkMark: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontWeight: "700",
   },
   line: {
-    width: 2,
+    width: DesignTokens.spacing['0.5'],
     flex: 1,
-    backgroundColor: "DesignTokens.colors.borders.default",
-    marginVertical: 4,
+    backgroundColor: "colors.border",
+    marginVertical: Spacing.xs,
   },
-  content: { flex: 1, paddingBottom: 20 },
+  content: { flex: 1, paddingBottom: DesignTokens.spacing[5]},
   statusText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   statusTextCurrent: {
     fontWeight: "700",
-    color: "DesignTokens.colors.semantic.error",
+    color: "colors.error",
   },
   statusTextFuture: {
     color: DesignTokens.colors.neutral[300],
   },
   timeText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
-    marginTop: 4,
+    color: colors.textTertiary,
+    marginTop: Spacing.xs,
   },
   trackingText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "DesignTokens.colors.semantic.info",
-    marginTop: 4,
+    color: "colors.info",
+    marginTop: Spacing.xs,
   },
-});
+}))

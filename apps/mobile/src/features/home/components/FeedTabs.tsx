@@ -10,6 +10,9 @@ import {
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import type { FeedCategory } from '../../../services/api/recommendation-feed.api';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 interface FeedTab {
   key: FeedCategory;
@@ -46,6 +49,8 @@ export function FeedTabs({
   onCategoryChange,
   onSubCategoryChange,
 }: FeedTabsProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const handleCategoryPress = useCallback(
     (category: FeedCategory) => {
       if (category !== activeCategory) {
@@ -81,7 +86,7 @@ export function FeedTabs({
             <Ionicons
               name={tab.icon}
               size={14}
-              color={activeCategory === tab.key ? DesignTokens.colors.text.inverse : DesignTokens.colors.text.secondary}
+              color={activeCategory === tab.key ? colors.textInverse : colors.textSecondary}
             />
             <Text style={[styles.tabLabel, activeCategory === tab.key && styles.tabLabelActive]}>
               {tab.label}
@@ -121,57 +126,57 @@ export function FeedTabs({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: DesignTokens.colors.borders.default,
+    borderBottomColor: colors.border,
   },
   tabsContainer: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    gap: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
+    gap: DesignTokens.spacing['1.5'],
   },
   tab: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: Spacing.sm,
     borderRadius: 20,
-    backgroundColor: DesignTokens.colors.backgrounds.secondary,
-    gap: 4,
+    backgroundColor: colors.backgroundSecondary,
+    gap: Spacing.xs,
   },
   tabActive: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
   },
   tabLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
   },
   tabLabelActive: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   subTabsContainer: {
-    paddingHorizontal: 12,
-    paddingBottom: 8,
-    gap: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingBottom: Spacing.sm,
+    gap: DesignTokens.spacing['1.5'],
   },
   subTab: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
-    backgroundColor: DesignTokens.colors.backgrounds.secondary,
+    backgroundColor: colors.backgroundSecondary,
   },
   subTabActive: {
-    backgroundColor: DesignTokens.colors.brand.terracottaLight,
+    backgroundColor: colors.primaryLight,
   },
   subTabLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
   },
   subTabLabelActive: {
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
     fontWeight: "600",
   },
-});
+}))

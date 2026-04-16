@@ -14,7 +14,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors } from '../../../design-system/theme';
+import { Colors , Spacing } from '../../../design-system/theme'
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { SpringConfigs, Duration, LoadingAnimations } from '../../../design-system/theme/tokens/animations';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
@@ -291,14 +291,14 @@ export const TryOnProgress: React.FC<TryOnProgressProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: DesignTokens.spacing[5],
   },
   stepsRow: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginBottom: DesignTokens.spacing[5],
   },
   stepWrapper: {
     alignItems: "center",
@@ -310,8 +310,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   stepIconCircle: {
-    width: 48,
-    height: 48,
+    width: Spacing['2xl'],
+    height: Spacing['2xl'],
     borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
@@ -319,19 +319,19 @@ const styles = StyleSheet.create({
   },
   scanLine: {
     position: "absolute",
-    left: 4,
-    right: 4,
-    height: 2,
+    left: Spacing.xs,
+    right: Spacing.xs,
+    height: DesignTokens.spacing['0.5'],
   },
   scanLineInner: {
     flex: 1,
-    height: 2,
+    height: DesignTokens.spacing['0.5'],
     borderRadius: 1,
   },
   stepLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
-    marginTop: 8,
+    marginTop: Spacing.sm,
     textAlign: "center",
   },
   stepLabelActive: {
@@ -344,17 +344,17 @@ const styles = StyleSheet.create({
   },
   connector: {
     position: "absolute",
-    top: 24,
+    top: Spacing.lg,
     right: -20,
-    width: 40,
-    height: 2,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing['0.5'],
     backgroundColor: Colors.neutral[200],
   },
   connectorComplete: {
     backgroundColor: Colors.primary[400],
   },
   progressBarTrack: {
-    height: 6,
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
     backgroundColor: Colors.neutral[200],
     overflow: "hidden",
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.primary[500],
     fontWeight: "500",
-    marginTop: 12,
+    marginTop: DesignTokens.spacing[3],
     textAlign: "center",
   },
 });

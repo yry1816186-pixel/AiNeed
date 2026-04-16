@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from "react-native";
-import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens , flatColors as colors } from '../../../../design-system/theme/tokens/design-tokens';
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, {
@@ -27,8 +27,8 @@ const PREVIEW_ITEMS = [
 ] as const;
 
 const DECORATIONS = [
-  { size: 8, color: colors.primary, top: -8, right: 20, delay: 200 },
-  { size: 12, color: colors.secondary, top: 10, right: -12, delay: 300 },
+  { size: 8, color: colors.primary, top: -8, right: DesignTokens.spacing[5], delay: 200 },
+  { size: 12, color: colors.secondary, top: DesignTokens.spacing['2.5'], right: -12, delay: 300 },
   { size: 16, color: colors.gold, bottom: -10, left: -8, delay: 400 },
   { size: 8, color: colors.primaryLight, bottom: 5, right: -16, delay: 500 },
   { size: 12, color: colors.secondaryLight, top: -14, left: 15, delay: 600 },
@@ -54,12 +54,12 @@ export const CompleteStep: React.FC<CompleteStepProps> = ({ onComplete }) => {
         <View style={styles.iconWrapper}>
           <Animated.View style={[styles.iconOuter, iconAnimatedStyle]}>
             <LinearGradient
-              colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
+              colors={[colors.primary, colors.primary]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.iconGradient}
             >
-              <Ionicons name="checkmark-circle" size={48} color={DesignTokens.colors.neutral.white} />
+              <Ionicons name="checkmark-circle" size={48} color={colors.surface} />
             </LinearGradient>
           </Animated.View>
           {DECORATIONS.map((deco, index) => (
@@ -103,7 +103,7 @@ export const CompleteStep: React.FC<CompleteStepProps> = ({ onComplete }) => {
       <Animated.View entering={FadeIn.duration(400).delay(800)} style={styles.buttonContainer}>
         <TouchableOpacity style={styles.exploreButton} onPress={onComplete} activeOpacity={0.7}>
           <Text style={styles.exploreButtonText}>开始探索</Text>
-          <Ionicons name="arrow-forward-outline" size={20} color={DesignTokens.colors.neutral.white} />
+          <Ionicons name="arrow-forward-outline" size={20} color={colors.surface} />
         </TouchableOpacity>
       </Animated.View>
     </ScrollView>
@@ -175,8 +175,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   previewIconContainer: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: "rgba(198, 123, 92, 0.1)",
     alignItems: "center",
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   exploreButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
 });
 

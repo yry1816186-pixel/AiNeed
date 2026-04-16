@@ -8,6 +8,7 @@ import type {
   OverallAlignment,
 } from "../../../hooks/useReferenceLines";
 import { DesignTokens } from "../../../design-system/theme";
+import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 
 interface ReferenceLineOverlayProps {
   referenceLines: ReferenceLines | null;
@@ -21,14 +22,14 @@ function getLineColor(level: AlignmentLevel | OverallAlignment): string {
     case "aligned":
     case "perfect":
     case "good":
-      return DesignTokens.colors.semantic.success;
+      return colors.success;
     case "slight":
-      return DesignTokens.colors.semantic.warning;
+      return colors.warning;
     case "off":
     case "adjust":
-      return DesignTokens.colors.semantic.error;
+      return colors.error;
     default:
-      return DesignTokens.colors.semantic.warning;
+      return colors.warning;
   }
 }
 
@@ -42,6 +43,8 @@ export const ReferenceLineOverlay: React.FC<ReferenceLineOverlayProps> = ({
   width,
   height,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -114,7 +117,7 @@ export const ReferenceLineOverlay: React.FC<ReferenceLineOverlayProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     ...StyleSheet.absoluteFillObject,
   },
@@ -123,4 +126,4 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
   },
-});
+}))

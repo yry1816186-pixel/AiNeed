@@ -1,6 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 interface SceneQuickButtonsProps {
   onSceneSelect: (scene: string, message: string) => void;
@@ -44,6 +47,8 @@ export const SceneQuickButtons: React.FC<SceneQuickButtonsProps> = ({
   onSceneSelect,
   disabled = false,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <ScrollView
       horizontal
@@ -67,37 +72,37 @@ export const SceneQuickButtons: React.FC<SceneQuickButtonsProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: { paddingVertical: 8, paddingHorizontal: 4, gap: 8 },
+const useStyles = createStyles((colors) => ({
+  container: { paddingVertical: Spacing.sm, paddingHorizontal: Spacing.xs, gap: Spacing.sm},
   containerDisabled: { opacity: 0.5 },
   button: {
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 24,
     backgroundColor: DesignTokens.colors.neutral[50],
     borderWidth: 1,
-    borderColor: DesignTokens.colors.brand.terracotta,
-    marginRight: 8,
+    borderColor: colors.primary,
+    marginRight: Spacing.sm,
     minWidth: 72,
   },
   iconContainer: {
-    width: 28,
-    height: 28,
+    width: DesignTokens.spacing[7],
+    height: DesignTokens.spacing[7],
     borderRadius: 14,
-    backgroundColor: DesignTokens.colors.brand.terracottaLight,
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   iconText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
-    color: DesignTokens.colors.brand.terracottaDark,
+    color: colors.primaryDark,
   },
   label: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[700],
     fontWeight: "500",
   },
-});
+}))

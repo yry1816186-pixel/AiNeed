@@ -11,7 +11,7 @@ import {
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme";
 
@@ -97,37 +97,37 @@ export const COLOR_PALETTES: ColorPaletteOption[] = [
   {
     id: "warm",
     label: "暖色调",
-    colors: ["DesignTokens.colors.brand.terracotta", "DesignTokens.colors.semantic.warning", "DesignTokens.colors.brand.camel", DesignTokens.colors.brand.camel],
+    colors: ["colors.primary", "colors.warning", "colors.primary", colors.primary],
     description: "温暖阳光，亲切自然",
   },
   {
     id: "cool",
     label: "冷色调",
-    colors: ["DesignTokens.colors.brand.slate", "DesignTokens.colors.brand.slateDark", "DesignTokens.colors.text.tertiary", "DesignTokens.colors.brand.sage"],
+    colors: ["colors.neutral[500]", "colors.neutral[700]", "colors.textTertiary", "colors.secondary"],
     description: "沉静理智，高级质感",
   },
   {
     id: "neutral",
     label: "中性色",
-    colors: [DesignTokens.colors.text.primary, "DesignTokens.colors.text.secondary", "DesignTokens.colors.neutral[300]", "DesignTokens.colors.backgrounds.secondary"],
+    colors: [colors.textPrimary, "colors.textSecondary", "DesignTokens.colors.neutral[300]", "colors.backgroundSecondary"],
     description: "百搭经典，永不褪色",
   },
   {
     id: "earth",
     label: "大地色",
-    colors: ["DesignTokens.colors.brand.sage", DesignTokens.colors.brand.camel, "DesignTokens.colors.brand.terracottaDark", "#6E7A62"],
+    colors: ["colors.secondary", colors.primary, "colors.primaryDark", "#6E7A62"],
     description: "自然沉稳，低调内敛",
   },
   {
     id: "morandi",
     label: "莫兰迪色",
-    colors: ["DesignTokens.colors.brand.camel", "DesignTokens.colors.brand.sage", "DesignTokens.colors.text.tertiary", "DesignTokens.colors.brand.terracottaLight"],
+    colors: ["colors.primary", "colors.secondary", "colors.textTertiary", "colors.primaryLight"],
     description: "低饱和度，温柔高级",
   },
   {
     id: "vivid",
     label: "高饱和",
-    colors: ["DesignTokens.colors.semantic.error", DesignTokens.colors.semantic.warning, DesignTokens.colors.semantic.success, "DesignTokens.colors.semantic.info"],
+    colors: ["colors.error", colors.warning, colors.success, "colors.info"],
     description: "鲜明醒目，大胆出众",
   },
 ];
@@ -484,8 +484,8 @@ export const stepStyles = StyleSheet.create({
     borderColor: colors.primary,
   },
   styleIconContainer: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
@@ -499,7 +499,7 @@ export const stepStyles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: 2,
+    marginBottom: DesignTokens.spacing['0.5'],
   },
   styleLabelSelected: {
     color: colors.primary,
@@ -549,8 +549,8 @@ export const stepStyles = StyleSheet.create({
     marginBottom: Spacing[3],
   },
   colorSwatch: {
-    width: 28,
-    height: 28,
+    width: DesignTokens.spacing[7],
+    height: DesignTokens.spacing[7],
     borderRadius: BorderRadius.md,
   },
   colorLabel: {
@@ -600,7 +600,7 @@ export const stepStyles = StyleSheet.create({
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[3],
-    height: 48,
+    height: Spacing['2xl'],
     borderWidth: 1,
     borderColor: Colors.neutral[200],
     gap: Spacing[2],
@@ -683,8 +683,8 @@ export const stepStyles = StyleSheet.create({
     gap: Spacing[3],
   },
   featureIconContainer: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: "rgba(198, 123, 92, 0.1)",
     alignItems: "center",

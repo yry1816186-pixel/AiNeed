@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { colors } from "@/src/theme/tokens/colors";
 import { typography } from "@/src/theme/tokens/typography";
 import { spacing } from "@/src/theme/tokens/spacing";
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme';
 
 interface PercentageBarProps {
   label: string;
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     color: colors.neutral[500],
   },
   track: {
-    height: 6,
+    height: DesignTokens.spacing['1.5'],
     borderRadius: spacing.borderRadius.full,
     backgroundColor: colors.neutral[200],
     overflow: "hidden",

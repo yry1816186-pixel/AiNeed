@@ -19,8 +19,10 @@ import { useTranslation } from '../../../i18n';
 import { useAuthStore } from '../stores/index';
 import { apiClient } from '../../../services/api/client';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -214,7 +216,7 @@ export const RegisterScreen: React.FC = () => {
               <TouchableOpacity
                 onPress={() => setShowPassword((prev) => !prev)}
                 style={styles.eyeButton}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.sm, right: Spacing.sm}}
                 disabled={isLoading}
                 accessibilityLabel={showPassword ? '隐藏密码' : '显示密码'}
               >
@@ -245,7 +247,7 @@ export const RegisterScreen: React.FC = () => {
               <TouchableOpacity
                 onPress={() => setShowConfirmPassword((prev) => !prev)}
                 style={styles.eyeButton}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.sm, right: Spacing.sm}}
                 disabled={isLoading}
                 accessibilityLabel={showConfirmPassword ? '隐藏确认密码' : '显示确认密码'}
               >
@@ -263,7 +265,7 @@ export const RegisterScreen: React.FC = () => {
                 onPress={() => setAgreedToTerms((prev) => !prev)}
                 activeOpacity={0.7}
                 disabled={isLoading}
-                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                hitSlop={{ top: DesignTokens.spacing[3], bottom: DesignTokens.spacing[3], left: DesignTokens.spacing[3], right: DesignTokens.spacing[3]}}
                 accessibilityLabel={agreedToTerms ? '取消同意' : '同意协议'}
               >
                 {agreedToTerms && (
@@ -274,7 +276,7 @@ export const RegisterScreen: React.FC = () => {
               <TouchableOpacity
                 onPress={() => navigation.navigate('Legal', { type: 'terms' })}
                 disabled={isLoading}
-                hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
+                hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.xs, right: Spacing.xs}}
               >
                 <Text style={styles.termsLink}>《用户服务协议》</Text>
               </TouchableOpacity>
@@ -282,7 +284,7 @@ export const RegisterScreen: React.FC = () => {
               <TouchableOpacity
                 onPress={() => navigation.navigate('Legal', { type: 'privacy' })}
                 disabled={isLoading}
-                hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
+                hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.xs, right: Spacing.xs}}
               >
                 <Text style={styles.termsLink}>《隐私政策》</Text>
               </TouchableOpacity>
@@ -323,37 +325,37 @@ export const RegisterScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.surface },
-  header: { padding: 20 },
+  header: { padding: DesignTokens.spacing[5]},
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: 'center',
     justifyContent: 'center',
   },
-  content: { flex: 1, padding: 20 },
+  content: { flex: 1, padding: DesignTokens.spacing[5]},
   title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: '700', color: colors.text },
-  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: 8, marginBottom: 32 },
-  form: { gap: 16 },
+  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: Spacing.sm, marginBottom: Spacing.xl},
+  form: { gap: Spacing.md},
   inputGroup: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.background,
     borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
+    gap: DesignTokens.spacing[3],
   },
   input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
-  eyeButton: { padding: 4 },
+  eyeButton: { padding: Spacing.xs},
   registerButton: {
     backgroundColor: colors.primary,
     borderRadius: 12,
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 8,
+    marginTop: Spacing.sm,
     minHeight: 52,
   },
   registerButtonDisabled: { backgroundColor: colors.primaryLight },
@@ -362,18 +364,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    marginTop: 4,
-    marginBottom: 8,
+    marginTop: Spacing.xs,
+    marginBottom: Spacing.sm,
   },
   checkbox: {
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 10,
     borderWidth: 1.5,
     borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 8,
+    marginRight: Spacing.sm,
     backgroundColor: colors.surface,
   },
   checkboxChecked: {
@@ -382,7 +384,7 @@ const styles = StyleSheet.create({
   },
   termsText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   termsLink: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary, fontWeight: '500' },
-  loginLink: { alignItems: 'center', marginTop: 16 },
+  loginLink: { alignItems: 'center', marginTop: Spacing.md},
   loginText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
 });
 

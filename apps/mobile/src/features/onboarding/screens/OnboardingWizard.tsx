@@ -11,7 +11,7 @@ import Animated, {
   SlideOutLeft,
 } from "react-native-reanimated";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import type { OnboardingStep } from '../stores/onboardingStore';
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
     fontWeight: "500",
-    minWidth: 36,
+    minWidth: DesignTokens.spacing[9],
   },
   stepHeader: {
     paddingHorizontal: Spacing[5],

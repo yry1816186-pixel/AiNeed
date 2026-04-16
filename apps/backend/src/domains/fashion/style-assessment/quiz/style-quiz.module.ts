@@ -1,4 +1,4 @@
-import { Module, forwardRef } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 
 import { PrismaModule } from "../../../../common/prisma/prisma.module";
 import { OnboardingModule } from "../../../../domains/identity/onboarding/onboarding.module";
@@ -13,7 +13,7 @@ import { StyleQuizController } from "./style-quiz.controller";
 import { StyleQuizService } from "./style-quiz.service";
 
 @Module({
-  imports: [PrismaModule, OnboardingModule, forwardRef(() => ProfileModule)],
+  imports: [PrismaModule, OnboardingModule, ProfileModule],
   controllers: [StyleQuizController],
   providers: [
     StyleQuizService,

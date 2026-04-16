@@ -21,6 +21,8 @@ import { communityApi } from '../../../services/api/community.api';
 import { bloggerApi, BloggerProduct } from '../../../services/api/blogger.api';
 import { FollowButton } from '../components/social/FollowButton';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type BloggerProfileRoute = RouteProp<RootStackParamList, "BloggerProfile">;
@@ -52,13 +54,13 @@ function BloggerBadge({ level }: { level: "blogger" | "big_v" }) {
   if (level === "big_v") {
     return (
       <View style={styles.bigVBadge}>
-        <Ionicons name="shield-checkmark" size={12} color={DesignTokens.colors.neutral.white} />
+        <Ionicons name="shield-checkmark" size={12} color={colors.surface} />
       </View>
     );
   }
   return (
     <View style={styles.bloggerBadge}>
-      <Ionicons name="checkmark" size={10} color={DesignTokens.colors.neutral.white} />
+      <Ionicons name="checkmark" size={10} color={colors.surface} />
     </View>
   );
 }
@@ -350,9 +352,9 @@ export const BloggerProfileScreen: React.FC = () => {
               <View style={styles.levelInfo}>
                 <View style={styles.levelBadge}>
                   {blogger.bloggerLevel === "big_v" ? (
-                    <Ionicons name="shield-checkmark" size={16} color="DesignTokens.colors.semantic.warning" /> // custom color
+                    <Ionicons name="shield-checkmark" size={16} color="colors.warning" /> // custom color
                   ) : (
-                    <Ionicons name="checkmark-circle" size={16} color={DesignTokens.colors.brand.slate} />
+                    <Ionicons name="checkmark-circle" size={16} color={colors.neutral[500]} />
                   )}
                   <Text style={styles.levelText}>
                     {blogger.bloggerLevel === "big_v" ? "大V认证" : "博主认证"}
@@ -366,7 +368,7 @@ export const BloggerProfileScreen: React.FC = () => {
         {loadingMore && (
           <ActivityIndicator size="small" color={colors.primary} style={styles.loader} />
         )}
-        <View style={{ height: 40 }} />
+        <View style={{ height: DesignTokens.spacing[10] }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -379,102 +381,102 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
-  backBtn: { width: 40, height: 40, justifyContent: "center" },
-  headerSpacer: { width: 40 },
+  backBtn: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], justifyContent: "center" },
+  headerSpacer: { width: DesignTokens.spacing[10] },
   profileSection: {
     alignItems: "center",
-    paddingVertical: 20,
+    paddingVertical: DesignTokens.spacing[5],
     backgroundColor: colors.surface,
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.md,
   },
-  avatarWrapper: { position: "relative", marginBottom: 12 },
-  avatar: { width: 80, height: 80, borderRadius: 40 },
+  avatarWrapper: { position: "relative", marginBottom: DesignTokens.spacing[3]},
+  avatar: { width: Spacing['4xl'], height: Spacing['4xl'], borderRadius: 40 },
   avatarPlaceholder: {
-    width: 80,
-    height: 80,
+    width: Spacing['4xl'],
+    height: Spacing['4xl'],
     borderRadius: 40,
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "600", color: DesignTokens.colors.neutral.white },
+  avatarText: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "600", color: colors.surface },
   bloggerBadge: {
     position: "absolute",
     bottom: -2,
     right: -2,
-    width: 16,
-    height: 16,
+    width: Spacing.md,
+    height: Spacing.md,
     borderRadius: 8,
-    backgroundColor: DesignTokens.colors.brand.slate,
+    backgroundColor: colors.neutral[500],
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: DesignTokens.colors.neutral.white,
+    borderColor: colors.surface,
   },
   bigVBadge: {
     position: "absolute",
     bottom: -3,
     right: -3,
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 10,
-    backgroundColor: "DesignTokens.colors.semantic.warning", // custom color
+    backgroundColor: "colors.warning", // custom color
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: DesignTokens.colors.neutral.white,
+    borderColor: colors.surface,
   },
   nickname: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
   bio: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
     textAlign: "center",
     lineHeight: 20,
   },
   statsRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 16,
-    gap: 24,
+    marginTop: Spacing.md,
+    gap: Spacing.lg,
   },
   stat: { alignItems: "center" },
   statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: 2 },
-  statDivider: { width: 1, height: 20, backgroundColor: colors.border },
+  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: DesignTokens.spacing['0.5']},
+  statDivider: { width: 1, height: DesignTokens.spacing[5], backgroundColor: colors.border },
   tabRow: {
     flexDirection: "row",
     backgroundColor: colors.surface,
-    marginTop: 8,
+    marginTop: Spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   tab: {
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
     alignItems: "center",
   },
   tabActive: {
     borderBottomWidth: 2,
-    borderBottomColor: DesignTokens.colors.brand.slate,
+    borderBottomColor: colors.neutral[500],
   },
   tabText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, fontWeight: "500" },
-  tabTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "700" },
+  tabTextActive: { color: colors.neutral[500], fontWeight: "700" },
   postsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    padding: 6,
+    padding: DesignTokens.spacing['1.5'],
   },
   postGridItem: {
     width: (SCREEN_WIDTH - 24) / 2,
-    padding: 6,
+    padding: DesignTokens.spacing['1.5'],
   },
   postCard: {
     backgroundColor: colors.surface,
@@ -497,25 +499,25 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: colors.textPrimary,
-    padding: 8,
+    padding: Spacing.sm,
     lineHeight: 16,
   },
   postFooter: {
     flexDirection: "row",
     alignItems: "center",
     gap: 3,
-    paddingHorizontal: 8,
-    paddingBottom: 8,
+    paddingHorizontal: Spacing.sm,
+    paddingBottom: Spacing.sm,
   },
   postLikes: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
   productsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    padding: 6,
+    padding: DesignTokens.spacing['1.5'],
   },
   productGridItem: {
     width: (SCREEN_WIDTH - 24) / 2,
-    padding: 6,
+    padding: DesignTokens.spacing['1.5'],
   },
   productCard: {
     backgroundColor: colors.surface,
@@ -538,43 +540,43 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: colors.textPrimary,
-    padding: 8,
+    padding: Spacing.sm,
     lineHeight: 18,
   },
   productPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
-    color: DesignTokens.colors.brand.slate,
-    paddingHorizontal: 8,
-    paddingBottom: 8,
+    color: colors.neutral[500],
+    paddingHorizontal: Spacing.sm,
+    paddingBottom: Spacing.sm,
   },
   aboutSection: {
     backgroundColor: colors.surface,
-    padding: 16,
-    marginTop: 8,
+    padding: Spacing.md,
+    marginTop: Spacing.sm,
   },
-  aboutTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: 8 },
+  aboutTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: Spacing.sm},
   aboutText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, lineHeight: 22 },
-  levelInfo: { marginTop: 16 },
+  levelInfo: { marginTop: Spacing.md},
   levelBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    backgroundColor: "DesignTokens.colors.semantic.infoLight", // custom color
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    gap: DesignTokens.spacing['1.5'],
+    backgroundColor: "colors.infoLight", // custom color
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
     borderRadius: 8,
     alignSelf: "flex-start",
   },
-  levelText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.brand.slate, fontWeight: "500" },
+  levelText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.neutral[500], fontWeight: "500" },
   emptyText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
     textAlign: "center",
-    paddingVertical: 40,
+    paddingVertical: DesignTokens.spacing[10],
     width: "100%",
   },
-  loader: { paddingVertical: 16 },
+  loader: { paddingVertical: Spacing.md},
 });
 
 export default BloggerProfileScreen;

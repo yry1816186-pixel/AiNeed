@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   footerContainer: {
     borderTopWidth: 0,
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
   sectionSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   seeAllText: {
     fontSize: DesignTokens.typography.sizes.base,

@@ -244,7 +244,7 @@ export const OnboardingScreen: React.FC = () => {
                   <Ionicons
                     name={option.icon}
                     size={20}
-                    color={isSelected ? DesignTokens.colors.neutral.white : colors.textSecondary}
+                    color={isSelected ? colors.surface : colors.textSecondary}
                   />
                   <Text
                     style={[styles.genderPillText, isSelected && styles.genderPillTextSelected]}
@@ -334,7 +334,7 @@ export const OnboardingScreen: React.FC = () => {
               accessibilityLabel="拍照"
               accessibilityRole="button"
             >
-              <Ionicons name="camera" size={24} color={DesignTokens.colors.neutral.white} />
+              <Ionicons name="camera" size={24} color={colors.surface} />
               <Text style={styles.captureButtonText}>拍照</Text>
             </TouchableOpacity>
           </View>
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
     fontWeight: "400",
-    minWidth: 40,
+    minWidth: DesignTokens.spacing[10],
   },
   content: {
     flex: 1,
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[3],
   },
   requiredAsterisk: {
-    color: DesignTokens.colors.semantic.error,
+    color: colors.error,
   },
   genderRow: {
     flexDirection: "row",
@@ -557,7 +557,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   genderPillTextSelected: {
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
     fontWeight: "600",
   },
   ageRow: {
@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   agePillTextSelected: {
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
     fontWeight: "600",
   },
   uploadArea: {
@@ -621,8 +621,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing[2],
     right: Spacing[2],
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: 16,
     backgroundColor: "rgba(0,0,0,0.5)",
     alignItems: "center",
@@ -633,7 +633,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
     marginTop: Spacing[4],
-    backgroundColor: DesignTokens.colors.neutral.black,
+    backgroundColor: colors.neutral[900],
     alignItems: "center",
     justifyContent: "flex-end",
     paddingBottom: Spacing[4],
@@ -650,7 +650,7 @@ const styles = StyleSheet.create({
   captureButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
   skipButton: {
     paddingHorizontal: Spacing[5],
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
   quizStartButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
   footer: {
     flexDirection: "row",

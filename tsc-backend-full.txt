@@ -1,0 +1,655 @@
+apps/backend/src/common/filters/all-exceptions.filter.ts(196,37): error TS2339: Property 'PrismaClientKnownRequestError' does not exist on type 'typeof Prisma'.
+apps/backend/src/common/filters/all-exceptions.filter.ts(329,23): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'PrismaClientKnownRequestError'.
+apps/backend/src/common/filters/all-exceptions.filter.ts(668,59): error TS2339: Property 'PrismaClientKnownRequestError' does not exist on type 'typeof Prisma'.
+apps/backend/src/common/interceptors/error.interceptor.spec.ts(172,36): error TS2339: Property 'PrismaClientKnownRequestError' does not exist on type 'typeof Prisma'.
+apps/backend/src/common/interceptors/error.interceptor.spec.ts(192,36): error TS2339: Property 'PrismaClientKnownRequestError' does not exist on type 'typeof Prisma'.
+apps/backend/src/common/interceptors/error.interceptor.spec.ts(211,36): error TS2339: Property 'PrismaClientKnownRequestError' does not exist on type 'typeof Prisma'.
+apps/backend/src/common/interceptors/error.interceptor.spec.ts(228,36): error TS2339: Property 'PrismaClientKnownRequestError' does not exist on type 'typeof Prisma'.
+apps/backend/src/common/interceptors/error.interceptor.spec.ts(245,36): error TS2339: Property 'PrismaClientKnownRequestError' does not exist on type 'typeof Prisma'.
+apps/backend/src/common/interceptors/error.interceptor.spec.ts(262,36): error TS2339: Property 'PrismaClientKnownRequestError' does not exist on type 'typeof Prisma'.
+apps/backend/src/common/interceptors/error.interceptor.spec.ts(360,36): error TS2339: Property 'PrismaClientKnownRequestError' does not exist on type 'typeof Prisma'.
+apps/backend/src/common/interceptors/error.interceptor.ts(153,37): error TS2339: Property 'PrismaClientKnownRequestError' does not exist on type 'typeof Prisma'.
+apps/backend/src/common/interceptors/error.interceptor.ts(157,27): error TS18046: 'exception' is of type 'unknown'.
+apps/backend/src/common/interceptors/error.interceptor.ts(158,21): error TS18046: 'exception' is of type 'unknown'.
+apps/backend/src/common/interceptors/error.interceptor.ts(170,48): error TS18046: 'exception' is of type 'unknown'.
+apps/backend/src/common/interceptors/error.interceptor.ts(242,44): error TS2339: Property 'PrismaClientKnownRequestError' does not exist on type 'typeof Prisma'.
+apps/backend/src/common/interceptors/error.interceptor.ts(253,44): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'PrismaClientKnownRequestError'.
+apps/backend/src/common/interceptors/error.interceptor.ts(292,49): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'PrismaClientKnownRequestError'.
+apps/backend/src/common/middleware/soft-delete.middleware.ts(46,10): error TS2352: Conversion of type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' to type 'Record<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Index signature for type 'string' is missing in type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+apps/backend/src/common/middleware/soft-delete.middleware.ts(61,13): error TS2352: Conversion of type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' to type 'Record<string, unknown>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Index signature for type 'string' is missing in type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+apps/backend/src/common/prisma/prisma.service.ts(157,36): error TS7006: Parameter 'row' implicitly has an 'any' type.
+apps/backend/src/common/prisma/prisma.service.ts(167,15): error TS7006: Parameter 'row' implicitly has an 'any' type.
+apps/backend/src/common/prisma/soft-delete.extension.ts(48,15): error TS2322: Type '({ args, query, model, operation }: { args: OperationArgs; query: (args: OperationArgs) => Promise<unknown>; model: string; operation: string; }) => Promise<unknown>' is not assignable to type 'ModelQueryOptionsCb'.
+  Types of parameters '__0' and 'args' are incompatible.
+    Type 'ModelQueryOptionsCbArgs' is not assignable to type '{ args: OperationArgs; query: (args: OperationArgs) => Promise<unknown>; model: string; operation: string; }'.
+      Types of property 'query' are incompatible.
+        Type '(args: JsArgs) => Promise<unknown>' is not assignable to type '(args: OperationArgs) => Promise<unknown>'.
+          Types of parameters 'args' and 'args' are incompatible.
+            Type 'OperationArgs' is not assignable to type 'JsArgs'.
+              'string' index signatures are incompatible.
+                Type 'unknown' is not assignable to type 'JsInputValue'.
+apps/backend/src/domains/ai-core/ai-core.module.ts(4,10): error TS2724: '"./ai/ai.module"' has no exported member named 'AiModule'. Did you mean 'AIModule'?
+apps/backend/src/domains/ai-core/ai-core.module.ts(5,10): error TS2724: '"./ai-safety/ai-safety.module"' has no exported member named 'AiSafetyModule'. Did you mean 'AISafetyModule'?
+apps/backend/src/domains/ai-core/ai-stylist/agent-tools.service.ts(273,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemWhereInput'.
+apps/backend/src/domains/ai-core/ai-stylist/agent-tools.service.ts(290,59): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/agent-tools.service.ts(401,13): error TS2339: Property 'TryOnStatus' does not exist on type '{ default: typeof import("C:/AiNeed/node_modules/@prisma/client/default"); PrismaClient: any; PrismaClientExtends: typeof PrismaClientExtends; dmmf: any; Prisma: typeof Prisma; }'.
+apps/backend/src/domains/ai-core/ai-stylist/ai-stylist.controller.spec.ts(4,10): error TS2305: Module '"@prisma/client"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/ai-stylist/ai-stylist.controller.ts(27,10): error TS2305: Module '"@prisma/client"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/ai-stylist/ai-stylist.service.spec.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/ai-stylist/ai-stylist.service.ts(4,10): error TS2305: Module '"@prisma/client"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/ai-stylist/decision-engine.service.ts(6,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/ai-core/ai-stylist/decision-engine.service.ts(1188,52): error TS7006: Parameter 'w' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/decision-engine.service.ts(1190,29): error TS7006: Parameter 'a' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/decision-engine.service.ts(1190,32): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/decision-engine.service.ts(1190,80): error TS7006: Parameter 'w' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/decision-engine.service.ts(1201,62): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/decision-engine.service.ts(1248,27): error TS7006: Parameter 'd' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/dto/ai-stylist.dto.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/ai-stylist/services/chat.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/ai-stylist/services/context.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/ai-stylist/services/item-replacement.service.ts(124,16): error TS7006: Parameter 'c' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/services/item-replacement.service.ts(125,13): error TS7006: Parameter 'candidate' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/services/item-replacement.service.ts(135,40): error TS7006: Parameter 't' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/services/item-replacement.service.ts(142,43): error TS7006: Parameter 't' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/services/item-replacement.service.ts(159,14): error TS7006: Parameter 'a' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/services/item-replacement.service.ts(159,17): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/services/recommendation.service.ts(552,46): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/services/recommendation.service.ts(559,31): error TS2339: Property 'category' does not exist on type '{}'.
+apps/backend/src/domains/ai-core/ai-stylist/services/recommendation.service.ts(560,27): error TS2339: Property 'name' does not exist on type '{}'.
+apps/backend/src/domains/ai-core/ai-stylist/services/recommendation.service.ts(562,31): error TS2339: Property 'mainImage' does not exist on type '{}'.
+apps/backend/src/domains/ai-core/ai-stylist/services/recommendation.service.ts(562,52): error TS2339: Property 'images' does not exist on type '{}'.
+apps/backend/src/domains/ai-core/ai-stylist/services/recommendation.service.ts(563,34): error TS2339: Property 'externalUrl' does not exist on type '{}'.
+apps/backend/src/domains/ai-core/ai-stylist/services/recommendation.service.ts(565,30): error TS2339: Property 'price' does not exist on type '{}'.
+apps/backend/src/domains/ai-core/ai-stylist/services/recommendation.service.ts(566,26): error TS2339: Property 'price' does not exist on type '{}'.
+apps/backend/src/domains/ai-core/ai-stylist/services/recommendation.service.ts(570,28): error TS2339: Property 'brand' does not exist on type '{}'.
+apps/backend/src/domains/ai-core/ai-stylist/services/session-archive.service.ts(115,26): error TS7006: Parameter 's' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/services/session.service.ts(175,13): error TS7006: Parameter 'record' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/services/session.service.ts(192,16): error TS7006: Parameter 's' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/ai-stylist/services/session.service.ts(292,59): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/ai-core/ai-stylist/types/index.ts(78,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/ai-core/ai-stylist/types/index.ts(78,29): error TS2305: Module '"@prisma/client"' has no exported member 'TryOnStatus'.
+apps/backend/src/domains/ai-core/ai-stylist/types/index.ts(78,43): error TS2305: Module '"@prisma/client"' has no exported member 'BodyType'.
+apps/backend/src/domains/ai-core/ai-stylist/types/index.ts(78,53): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/ai-core/ai-stylist/types/index.ts(78,63): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/ai-core/ai-stylist/types/index.ts(352,40): error TS2694: Namespace '"C:/AiNeed/node_modules/@prisma/client/default"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/ai/ai.controller.ts(17,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/ai-core/ai/services/ai-integration.service.ts(9,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/ai-core/ai/services/ai-integration.service.ts(346,77): error TS2339: Property 'DbNull' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/ai-core/photos/dto/photos.dto.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'AnalysisStatus'.
+apps/backend/src/domains/ai-core/photos/dto/photos.dto.ts(3,26): error TS2305: Module '"@prisma/client"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/photos/photos.controller.ts(30,10): error TS2305: Module '"@prisma/client"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/photos/photos.service.spec.ts(5,10): error TS2305: Module '"@prisma/client"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/photos/photos.service.spec.ts(5,21): error TS2305: Module '"@prisma/client"' has no exported member 'AnalysisStatus'.
+apps/backend/src/domains/ai-core/photos/photos.service.ts(13,10): error TS2305: Module '"@prisma/client"' has no exported member 'AnalysisStatus'.
+apps/backend/src/domains/ai-core/photos/photos.service.ts(13,26): error TS2305: Module '"@prisma/client"' has no exported member 'PhotoType'.
+apps/backend/src/domains/ai-core/photos/photos.service.ts(133,25): error TS7006: Parameter 'photo' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/photos/photos.service.ts(444,36): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/ai-core/photos/services/accessory-recommendation.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'BodyType'.
+apps/backend/src/domains/ai-core/photos/services/accessory-recommendation.service.ts(3,20): error TS2305: Module '"@prisma/client"' has no exported member 'FaceShape'.
+apps/backend/src/domains/ai-core/photos/services/accessory-recommendation.service.ts(3,31): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/ai-core/photos/services/accessory-recommendation.service.ts(3,41): error TS2305: Module '"@prisma/client"' has no exported member 'UserProfile'.
+apps/backend/src/domains/ai-core/photos/services/accessory-recommendation.service.ts(69,5): error TS2322: Type 'string[] | undefined' is not assignable to type 'string[]'.
+  Type 'undefined' is not assignable to type 'string[]'.
+apps/backend/src/domains/ai-core/photos/services/accessory-recommendation.service.ts(106,5): error TS2322: Type 'string[] | undefined' is not assignable to type 'string[]'.
+  Type 'undefined' is not assignable to type 'string[]'.
+apps/backend/src/domains/ai-core/photos/services/accessory-recommendation.service.ts(127,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+apps/backend/src/domains/ai-core/photos/services/accessory-recommendation.service.ts(138,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+apps/backend/src/domains/ai-core/photos/services/accessory-recommendation.service.ts(150,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+apps/backend/src/domains/ai-core/photos/services/hair-analysis.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'FaceShape'.
+apps/backend/src/domains/ai-core/photos/services/hair-analysis.service.ts(3,21): error TS2305: Module '"@prisma/client"' has no exported member 'Gender'.
+apps/backend/src/domains/ai-core/photos/services/hair-analysis.service.ts(123,5): error TS2322: Type 'HairRecommendation[] | undefined' is not assignable to type 'HairRecommendation[]'.
+  Type 'undefined' is not assignable to type 'HairRecommendation[]'.
+apps/backend/src/domains/ai-core/photos/services/makeup-analysis.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/ai-core/photos/services/makeup-analysis.service.ts(3,20): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/ai-core/photos/services/makeup-analysis.service.ts(72,5): error TS2322: Type 'MakeupRecommendation | undefined' is not assignable to type 'MakeupRecommendation'.
+  Type 'undefined' is not assignable to type 'MakeupRecommendation'.
+apps/backend/src/domains/ai-core/photos/services/makeup-analysis.service.ts(90,5): error TS2322: Type 'string[] | undefined' is not assignable to type 'string[]'.
+  Type 'undefined' is not assignable to type 'string[]'.
+apps/backend/src/domains/ai-core/try-on/dto/try-on.dto.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'TryOnStatus'.
+apps/backend/src/domains/ai-core/try-on/try-on.controller.spec.ts(4,10): error TS2305: Module '"@prisma/client"' has no exported member 'TryOnStatus'.
+apps/backend/src/domains/ai-core/try-on/try-on.service.spec.ts(7,10): error TS2305: Module '"@prisma/client"' has no exported member 'TryOnStatus'.
+apps/backend/src/domains/ai-core/try-on/try-on.service.ts(8,10): error TS2305: Module '"@prisma/client"' has no exported member 'TryOnStatus'.
+apps/backend/src/domains/ai-core/try-on/try-on.service.ts(385,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'VirtualTryOnWhereInput'.
+apps/backend/src/domains/ai-core/try-on/try-on.service.ts(398,36): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'DateTimeFilter'.
+apps/backend/src/domains/ai-core/try-on/try-on.service.ts(401,36): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'DateTimeFilter'.
+apps/backend/src/domains/ai-core/try-on/try-on.service.ts(429,18): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/address/address.service.ts(67,27): error TS7006: Parameter 'addr' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/address/address.service.ts(167,30): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'UserAddressUpdateInput'.
+apps/backend/src/domains/commerce/cart/cart.service.ts(7,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/commerce/cart/cart.service.ts(60,19): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/commerce/cart/cart.service.ts(61,27): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/commerce/cart/cart.service.ts(103,23): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/cart/cart.service.ts(467,44): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/cart/cart.service.ts(535,46): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/coupon/coupon.service.ts(8,10): error TS2305: Module '"@prisma/client"' has no exported member 'CouponType'.
+apps/backend/src/domains/commerce/coupon/coupon.service.ts(8,22): error TS2305: Module '"@prisma/client"' has no exported member 'UserCouponStatus'.
+apps/backend/src/domains/commerce/coupon/coupon.service.ts(12,23): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/commerce/coupon/coupon.service.ts(215,43): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/order/order.service.ts(10,10): error TS2305: Module '"@prisma/client"' has no exported member 'OrderStatus'.
+apps/backend/src/domains/commerce/order/order.service.ts(10,32): error TS2305: Module '"@prisma/client"' has no exported member 'Order'.
+apps/backend/src/domains/commerce/order/order.service.ts(10,39): error TS2305: Module '"@prisma/client"' has no exported member 'OrderItem'.
+apps/backend/src/domains/commerce/order/order.service.ts(10,50): error TS2305: Module '"@prisma/client"' has no exported member 'OrderAddress'.
+apps/backend/src/domains/commerce/order/order.service.ts(136,48): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/order/order.service.ts(146,25): error TS2339: Property 'isActive' does not exist on type '{}'.
+apps/backend/src/domains/commerce/order/order.service.ts(147,58): error TS2339: Property 'name' does not exist on type '{}'.
+apps/backend/src/domains/commerce/order/order.service.ts(151,24): error TS2339: Property 'stock' does not exist on type '{}'.
+apps/backend/src/domains/commerce/order/order.service.ts(153,30): error TS2339: Property 'name' does not exist on type '{}'.
+apps/backend/src/domains/commerce/order/order.service.ts(153,62): error TS2339: Property 'stock' does not exist on type '{}'.
+apps/backend/src/domains/commerce/order/order.service.ts(165,47): error TS2339: Property 'price' does not exist on type '{}'.
+apps/backend/src/domains/commerce/order/order.service.ts(168,37): error TS2339: Property 'name' does not exist on type '{}'.
+apps/backend/src/domains/commerce/order/order.service.ts(169,38): error TS2339: Property 'images' does not exist on type '{}'.
+apps/backend/src/domains/commerce/order/order.service.ts(173,41): error TS2339: Property 'price' does not exist on type '{}'.
+apps/backend/src/domains/commerce/order/order.service.ts(182,57): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/order/order.service.ts(198,37): error TS2339: Property 'name' does not exist on type '{}'.
+apps/backend/src/domains/commerce/order/order.service.ts(258,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'OrderWhereInput'.
+apps/backend/src/domains/commerce/order/order.service.ts(278,26): error TS7006: Parameter 'order' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/order/order.service.ts(396,44): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/order/order.service.ts(466,30): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'OrderUpdateInput'.
+apps/backend/src/domains/commerce/order/order.service.ts(503,17): error TS2339: Property 'id' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(504,22): error TS2339: Property 'orderNo' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(505,21): error TS2339: Property 'status' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(516,33): error TS2339: Property 'totalAmount' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(517,33): error TS2339: Property 'shippingFee' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(518,36): error TS2339: Property 'discountAmount' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(519,33): error TS2339: Property 'finalAmount' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(537,28): error TS2339: Property 'paymentMethod' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(538,26): error TS2339: Property 'paymentTime' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(539,23): error TS2339: Property 'shipTime' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(540,26): error TS2339: Property 'receiveTime' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(541,29): error TS2339: Property 'expressCompany' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(542,24): error TS2339: Property 'expressNo' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(543,21): error TS2339: Property 'remark' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(544,24): error TS2339: Property 'createdAt' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(545,24): error TS2339: Property 'updatedAt' does not exist on type 'OrderWithRelations'.
+apps/backend/src/domains/commerce/order/order.service.ts(627,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'OrderWhereInput'.
+apps/backend/src/domains/commerce/order/order.service.ts(662,26): error TS7006: Parameter 'order' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/payment/payment.service.ts(11,24): error TS2305: Module '"@prisma/client"' has no exported member 'OrderStatus'.
+apps/backend/src/domains/commerce/payment/payment.service.ts(332,45): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/payment/payment.service.ts(545,27): error TS7006: Parameter 'record' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/payment/payment.service.ts(731,39): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.spec.ts(99,51): error TS2345: Argument of type '{ orderId: string; type: string; reason: string; }' is not assignable to parameter of type 'CreateRefundRequestDto'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type 'RefundTypeDto'.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.spec.ts(109,43): error TS2345: Argument of type '{ orderId: string; type: string; reason: string; }' is not assignable to parameter of type 'CreateRefundRequestDto'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type 'RefundTypeDto'.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.spec.ts(118,43): error TS2345: Argument of type '{ orderId: string; type: string; reason: string; }' is not assignable to parameter of type 'CreateRefundRequestDto'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type 'RefundTypeDto'.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.spec.ts(127,43): error TS2345: Argument of type '{ orderId: string; type: string; reason: string; }' is not assignable to parameter of type 'CreateRefundRequestDto'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type 'RefundTypeDto'.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.spec.ts(137,43): error TS2345: Argument of type '{ orderId: string; type: string; reason: string; }' is not assignable to parameter of type 'CreateRefundRequestDto'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type 'RefundTypeDto'.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.spec.ts(148,43): error TS2345: Argument of type '{ orderId: string; type: string; reason: string; }' is not assignable to parameter of type 'CreateRefundRequestDto'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type 'RefundTypeDto'.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.spec.ts(158,43): error TS2345: Argument of type '{ orderId: string; type: string; reason: string; }' is not assignable to parameter of type 'CreateRefundRequestDto'.
+  Types of property 'type' are incompatible.
+    Type 'string' is not assignable to type 'RefundTypeDto'.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.ts(9,10): error TS2305: Module '"@prisma/client"' has no exported member 'RefundType'.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.ts(9,22): error TS2305: Module '"@prisma/client"' has no exported member 'RefundRequestStatus'.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.ts(9,43): error TS2305: Module '"@prisma/client"' has no exported member 'OrderStatus'.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.ts(76,51): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.ts(76,56): error TS7006: Parameter 'r' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/refund-request/refund-request.service.ts(219,35): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/size-recommendation/size-recommendation.service.ts(396,43): error TS7006: Parameter 'r' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/size-recommendation/size-recommendation.service.ts(396,68): error TS7006: Parameter 'i' implicitly has an 'any' type.
+apps/backend/src/domains/commerce/subscription/subscription.service.ts(10,18): error TS2305: Module '"@prisma/client"' has no exported member 'MembershipPlan'.
+apps/backend/src/domains/commerce/subscription/subscription.service.ts(10,34): error TS2305: Module '"@prisma/client"' has no exported member 'UserSubscription'.
+apps/backend/src/domains/commerce/subscription/subscription.service.ts(10,52): error TS2305: Module '"@prisma/client"' has no exported member 'BehaviorEventType'.
+apps/backend/src/domains/commerce/subscription/subscription.service.ts(563,45): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/customization/customization/customization.controller.ts(12,10): error TS2305: Module '"@prisma/client"' has no exported member 'CustomizationType'.
+apps/backend/src/domains/customization/customization/customization.controller.ts(12,29): error TS2305: Module '"@prisma/client"' has no exported member 'CustomizationStatus'.
+apps/backend/src/domains/customization/customization/customization.controller.ts(12,50): error TS2305: Module '"@prisma/client"' has no exported member 'ProductTemplateType'.
+apps/backend/src/domains/customization/customization/customization.service.spec.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'CustomizationType'.
+apps/backend/src/domains/customization/customization/customization.service.spec.ts(3,29): error TS2305: Module '"@prisma/client"' has no exported member 'CustomizationStatus'.
+apps/backend/src/domains/customization/customization/customization.service.spec.ts(3,50): error TS2305: Module '"@prisma/client"' has no exported member 'ProductTemplateType'.
+apps/backend/src/domains/customization/customization/customization.service.ts(3,3): error TS2305: Module '"@prisma/client"' has no exported member 'CustomizationType'.
+apps/backend/src/domains/customization/customization/customization.service.ts(4,3): error TS2305: Module '"@prisma/client"' has no exported member 'CustomizationStatus'.
+apps/backend/src/domains/customization/customization/customization.service.ts(5,3): error TS2305: Module '"@prisma/client"' has no exported member 'ProductTemplateType'.
+apps/backend/src/domains/customization/customization/customization.service.ts(6,3): error TS2305: Module '"@prisma/client"' has no exported member 'DesignLayerType'.
+apps/backend/src/domains/customization/customization/customization.service.ts(64,42): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/customization/customization/customization.service.ts(134,42): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/customization/customization/customization.service.ts(170,47): error TS7006: Parameter 'l' implicitly has an 'any' type.
+apps/backend/src/domains/customization/customization/customization.service.ts(171,46): error TS7006: Parameter 'l' implicitly has an 'any' type.
+apps/backend/src/domains/customization/customization/customization.service.ts(290,69): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/customization/customization/customization.service.ts(317,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'CustomizationRequestWhereInput'.
+apps/backend/src/domains/customization/customization/customization.service.ts(395,89): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/customization/customization/dto/customization-editor.dto.ts(2,10): error TS2305: Module '"@prisma/client"' has no exported member 'ProductTemplateType'.
+apps/backend/src/domains/customization/customization/pod/pod-service.ts(2,10): error TS2305: Module '"@prisma/client"' has no exported member 'CustomizationStatus'.
+apps/backend/src/domains/customization/customization/pricing/pricing-engine.ts(1,10): error TS2305: Module '"@prisma/client"' has no exported member 'ProductTemplateType'.
+apps/backend/src/domains/customization/customization/templates/customization-templates.ts(1,10): error TS2305: Module '"@prisma/client"' has no exported member 'ProductTemplateType'.
+apps/backend/src/domains/customization/share-template/share-template.service.ts(41,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ShareTemplateWhereInput'.
+apps/backend/src/domains/fashion/brands/brand-portal/brand-portal.service.ts(130,40): error TS7006: Parameter 'u' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/brands/brand-portal/brand-portal.service.ts(131,36): error TS7006: Parameter 's' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/brands/brand-portal/brand-portal.service.ts(150,13): error TS7006: Parameter 's' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/brands/brand-portal/brand-portal.service.ts(151,16): error TS7006: Parameter 'id' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/brands/brand-portal/brand-portal.service.ts(172,10): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/brands/brand-portal/brand-portal.service.ts(172,15): error TS7006: Parameter 'g' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/brands/brands.controller.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/fashion/brands/brands.controller.ts(3,28): error TS2305: Module '"@prisma/client"' has no exported member 'PriceRange'.
+apps/backend/src/domains/fashion/brands/brands.service.spec.ts(2,10): error TS2305: Module '"@prisma/client"' has no exported member 'PriceRange'.
+apps/backend/src/domains/fashion/brands/brands.service.spec.ts(2,22): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/fashion/brands/brands.service.ts(2,18): error TS2305: Module '"@prisma/client"' has no exported member 'PriceRange'.
+apps/backend/src/domains/fashion/brands/brands.service.ts(2,30): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/fashion/brands/brands.service.ts(78,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'BrandWhereInput'.
+apps/backend/src/domains/fashion/brands/brands.service.ts(98,26): error TS7006: Parameter 'brand' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/brands/brands.service.ts(167,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemWhereInput'.
+apps/backend/src/domains/fashion/brands/brands.service.ts(216,24): error TS7006: Parameter 'brand' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/brands/brands.service.ts(248,23): error TS7006: Parameter 's' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/brands/brands.service.ts(273,24): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'BrandCreateInput'.
+apps/backend/src/domains/fashion/brands/brands.service.ts(310,24): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'BrandUpdateInput'.
+apps/backend/src/domains/fashion/brands/brands.service.ts(459,47): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'JsonValue'.
+apps/backend/src/domains/fashion/clothing/clothing.controller.spec.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/fashion/clothing/clothing.service.spec.ts(2,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(2,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(106,43): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemGetPayload'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(116,17): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(117,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(297,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemWhereInput'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(345,19): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemWhereInput'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(380,44): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(388,22): error TS7006: Parameter 'brand' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(392,62): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(535,33): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemWhereInput'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(640,30): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemCreateInput'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(764,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemWhereInput'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(781,32): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'DecimalFilter'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(784,32): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'DecimalFilter'.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(846,48): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/clothing/clothing.service.ts(852,57): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/clothing/dto/clothing.dto.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/fashion/search/search.service.ts(7,15): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/fashion/search/search.service.ts(86,24): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(86,30): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(139,36): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(173,18): error TS7006: Parameter 'a' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(173,21): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(299,42): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(301,7): error TS2322: Type '{ similarityScore: number; matchReasons: string[]; }[]' is not assignable to type 'ScoredSearchResult[]'.
+  Type '{ similarityScore: number; matchReasons: string[]; }' is missing the following properties from type 'ScoredSearchResult': id, name, description, category, and 17 more.
+apps/backend/src/domains/fashion/search/search.service.ts(338,23): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(373,43): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(385,50): error TS7006: Parameter 'c' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(405,25): error TS7006: Parameter 'a' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(405,28): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(472,29): error TS7006: Parameter 'i' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(473,23): error TS7006: Parameter 't' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(552,15): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(559,16): error TS7006: Parameter 'a' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(559,19): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/search.service.ts(631,27): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/services/visual-search.service.ts(2,23): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/fashion/search/services/visual-search.service.ts(378,43): error TS7006: Parameter 'similar' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/services/visual-search.service.ts(388,50): error TS7006: Parameter 'c' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/services/visual-search.service.ts(389,32): error TS7006: Parameter 'sc' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/services/visual-search.service.ts(426,23): error TS7006: Parameter 'a' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/services/visual-search.service.ts(426,26): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/services/visual-search.service.ts(432,22): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemGetPayload'.
+apps/backend/src/domains/fashion/search/services/visual-search.service.ts(443,21): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemGetPayload'.
+apps/backend/src/domains/fashion/search/services/visual-search.service.ts(462,52): error TS7006: Parameter 'c' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/services/visual-search.service.ts(463,30): error TS7006: Parameter 'sc' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/search/types/search.types.ts(7,23): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/fashion/search/types/search.types.ts(17,45): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemWhereInput'.
+apps/backend/src/domains/fashion/search/types/search.types.ts(45,10): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemOrderByWithRelationInput'.
+apps/backend/src/domains/fashion/search/types/search.types.ts(147,17): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/fashion/search/types/search.types.ts(148,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/fashion/search/types/search.types.ts(152,22): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'JsonValue'.
+apps/backend/src/domains/fashion/search/types/search.types.ts(312,22): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'JsonValue'.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(2,18): error TS2305: Module '"@prisma/client"' has no exported member 'PriceRange'.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(58,80): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'StyleQuizGetPayload'.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(61,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'StyleQuizWhereInput'.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(159,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'QuizQuestionWhereInput'.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(248,53): error TS7006: Parameter 'q' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(312,101): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'StyleQuizResultGetPayload'.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(315,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'StyleQuizResultWhereInput'.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(370,44): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(488,45): error TS7006: Parameter 'q' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(501,45): error TS7006: Parameter 'q' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(530,47): error TS7006: Parameter 'q' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/style-assessment/quiz/style-quiz.service.ts(593,45): error TS7006: Parameter 'q' implicitly has an 'any' type.
+apps/backend/src/domains/fashion/wardrobe/collection/wardrobe-collection.service.ts(201,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'WardrobeCollectionItemWhereInput'.
+apps/backend/src/domains/fashion/wardrobe/favorites/favorites.service.ts(101,16): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/identity/auth/auth.service.ts(14,10): error TS2305: Module '"@prisma/client"' has no exported member 'Gender'.
+apps/backend/src/domains/identity/auth/auth.service.ts(126,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/identity/auth/auth.service.ts(476,67): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/identity/auth/auth.service.ts(516,21): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'UserWhereInput'.
+apps/backend/src/domains/identity/auth/auth.service.ts(526,67): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/identity/auth/auth.service.ts(580,58): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/identity/onboarding/onboarding.service.spec.ts(4,10): error TS2305: Module '"@prisma/client"' has no exported member 'OnboardingStep'.
+apps/backend/src/domains/identity/onboarding/onboarding.service.spec.ts(4,26): error TS2305: Module '"@prisma/client"' has no exported member 'Gender'.
+apps/backend/src/domains/identity/onboarding/onboarding.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'OnboardingStep'.
+apps/backend/src/domains/identity/onboarding/onboarding.service.ts(3,26): error TS2305: Module '"@prisma/client"' has no exported member 'Gender'.
+apps/backend/src/domains/identity/privacy/privacy.service.ts(207,21): error TS7006: Parameter 'photo' implicitly has an 'any' type.
+apps/backend/src/domains/identity/profile/dto/profile.dto.ts(4,3): error TS2305: Module '"@prisma/client"' has no exported member 'BodyType'.
+apps/backend/src/domains/identity/profile/dto/profile.dto.ts(5,3): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/identity/profile/dto/profile.dto.ts(6,3): error TS2305: Module '"@prisma/client"' has no exported member 'FaceShape'.
+apps/backend/src/domains/identity/profile/dto/profile.dto.ts(7,3): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/identity/profile/dto/profile.dto.ts(8,3): error TS2305: Module '"@prisma/client"' has no exported member 'Gender'.
+apps/backend/src/domains/identity/profile/profile.service.spec.ts(5,3): error TS2305: Module '"@prisma/client"' has no exported member 'BodyType'.
+apps/backend/src/domains/identity/profile/profile.service.spec.ts(6,3): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/identity/profile/profile.service.spec.ts(7,3): error TS2305: Module '"@prisma/client"' has no exported member 'FaceShape'.
+apps/backend/src/domains/identity/profile/profile.service.spec.ts(8,3): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/identity/profile/profile.service.spec.ts(9,3): error TS2305: Module '"@prisma/client"' has no exported member 'Gender'.
+apps/backend/src/domains/identity/profile/profile.service.ts(4,3): error TS2305: Module '"@prisma/client"' has no exported member 'BodyType'.
+apps/backend/src/domains/identity/profile/profile.service.ts(5,3): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/identity/profile/profile.service.ts(6,3): error TS2305: Module '"@prisma/client"' has no exported member 'FaceShape'.
+apps/backend/src/domains/identity/profile/profile.service.ts(7,3): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/identity/profile/profile.service.ts(8,3): error TS2305: Module '"@prisma/client"' has no exported member 'Gender'.
+apps/backend/src/domains/identity/profile/profile.service.ts(122,34): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'UserUpdateInput'.
+apps/backend/src/domains/identity/profile/profile.service.ts(182,87): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/identity/profile/profile.service.ts(185,39): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'UserProfileUpdateInput'.
+apps/backend/src/domains/identity/profile/profile.service.ts(349,5): error TS2322: Type '{ description?: string | undefined; recommendations?: BodyRecommendation[] | undefined; bodyTypeName?: string | undefined; idealStyles?: string[] | undefined; avoidStyles?: string[] | undefined; bodyType: any; }' is not assignable to type 'BodyAnalysisResult'.
+  Types of property 'bodyTypeName' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+apps/backend/src/domains/identity/profile/profile.service.ts(439,5): error TS2322: Type 'ColorAnalysisResult | undefined' is not assignable to type 'ColorAnalysisResult'.
+  Type 'undefined' is not assignable to type 'ColorAnalysisResult'.
+apps/backend/src/domains/identity/profile/services/body-metrics.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'Gender'.
+apps/backend/src/domains/identity/profile/services/poster-generator.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/identity/profile/services/poster-generator.service.ts(166,18): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+apps/backend/src/domains/identity/profile/services/user-profile.service.ts(229,40): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/identity/profile/services/user-profile.service.ts(239,9): error TS2345: Argument of type '{}' is not assignable to parameter of type '{ id: string; category: string; tags: string[]; attributes: any; price: Prisma.Decimal; originalPrice: any; }'.
+  Type '{}' is missing the following properties from type '{ id: string; category: string; tags: string[]; attributes: any; price: Prisma.Decimal; originalPrice: any; }': id, category, tags, attributes, and 2 more.
+apps/backend/src/domains/identity/profile/services/user-profile.service.ts(262,26): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'JsonValue'.
+apps/backend/src/domains/identity/profile/services/user-profile.service.ts(263,21): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/identity/profile/services/user-profile.service.ts(264,29): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/identity/profile/services/user-profile.service.ts(394,35): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/identity/profile/services/user-profile.service.ts(395,35): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/identity/profile/services/user-profile.service.ts(396,39): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/identity/profile/services/user-profile.service.ts(516,30): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'UserProfileUpdateInput'.
+apps/backend/src/domains/identity/profile/templates/index.ts(2,10): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/identity/profile/templates/index.ts(65,3): error TS2322: Type 'ColorSeasonConfig | undefined' is not assignable to type 'ColorSeasonConfig'.
+  Type 'undefined' is not assignable to type 'ColorSeasonConfig'.
+apps/backend/src/domains/identity/users/dto/users.dto.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'Gender'.
+apps/backend/src/domains/identity/users/users.service.ts(8,10): error TS2305: Module '"@prisma/client"' has no exported member 'User'.
+apps/backend/src/domains/identity/users/users.service.ts(8,16): error TS2305: Module '"@prisma/client"' has no exported member 'Gender'.
+apps/backend/src/domains/platform/admin/admin-community.controller.ts(47,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'CommunityPostWhereInput'.
+apps/backend/src/domains/platform/admin/admin-community.controller.ts(173,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ContentReportWhereInput'.
+apps/backend/src/domains/platform/admin/admin-users.controller.ts(15,18): error TS2305: Module '"@prisma/client"' has no exported member 'UserRole'.
+apps/backend/src/domains/platform/admin/admin-users.controller.ts(55,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'UserWhereInput'.
+apps/backend/src/domains/platform/admin/admin-users.controller.ts(117,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'UserWhereInput'.
+apps/backend/src/domains/platform/admin/admin-users.controller.ts(123,31): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'DateTimeFilter'.
+apps/backend/src/domains/platform/admin/services/admin-audit.service.ts(41,63): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/platform/admin/services/admin-config.service.ts(52,32): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/platform/admin/services/admin-config.service.ts(58,32): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/platform/admin/services/admin-dashboard.service.ts(2,10): error TS2305: Module '"@prisma/client"' has no exported member 'OrderStatus'.
+apps/backend/src/domains/platform/admin/services/admin-dashboard.service.ts(84,25): error TS2339: Property 'totalAmount' does not exist on type '{ _sum?: { totalAmount?: number | undefined; } | undefined; }'.
+apps/backend/src/domains/platform/admin/services/content-review.service.ts(37,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'CommunityPostWhereInput'.
+apps/backend/src/domains/platform/admin/services/content-review.service.ts(43,31): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'DateTimeFilter'.
+apps/backend/src/domains/platform/admin/services/content-review.service.ts(53,27): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'CommunityPostOrderByWithRelationInput'.
+apps/backend/src/domains/platform/analytics/services/behavior-tracker.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'BehaviorEventType'.
+apps/backend/src/domains/platform/analytics/services/behavior-tracker.service.ts(384,73): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/platform/analytics/services/behavior-tracker.service.ts(440,49): error TS2339: Property 'dwellTime' does not exist on type '{}'.
+apps/backend/src/domains/platform/analytics/services/behavior-tracker.service.ts(441,51): error TS2339: Property 'scrollDepth' does not exist on type '{}'.
+apps/backend/src/domains/platform/analytics/services/behavior-tracker.service.ts(608,26): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/platform/analytics/services/behavior-tracker.service.ts(633,27): error TS2339: Property 'weight' does not exist on type '{}'.
+apps/backend/src/domains/platform/analytics/services/behavior-tracker.service.ts(634,20): error TS2339: Property 'updatedAt' does not exist on type '{}'.
+apps/backend/src/domains/platform/analytics/services/behavior-tracker.service.ts(836,24): error TS7006: Parameter 'event' implicitly has an 'any' type.
+apps/backend/src/domains/platform/feature-flags/feature-flag.controller.ts(11,3): error TS2300: Duplicate identifier 'Request'.
+apps/backend/src/domains/platform/feature-flags/feature-flag.controller.ts(13,10): error TS2300: Duplicate identifier 'Request'.
+apps/backend/src/domains/platform/feature-flags/feature-flag.controller.ts(100,38): error TS2339: Property 'user' does not exist on type 'Request'.
+apps/backend/src/domains/platform/feature-flags/feature-flag.service.ts(46,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'FeatureFlagWhereInput'.
+apps/backend/src/domains/platform/feature-flags/feature-flag.service.ts(91,30): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'FeatureFlagUpdateInput'.
+apps/backend/src/domains/platform/feature-flags/feature-flag.service.ts(96,76): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonObject'.
+apps/backend/src/domains/platform/feature-flags/feature-flag.service.ts(98,76): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonObject'.
+apps/backend/src/domains/platform/feature-flags/feature-flag.service.ts(134,20): error TS2322: Type '{}' is not assignable to type 'boolean'.
+apps/backend/src/domains/platform/feature-flags/feature-flag.service.ts(187,23): error TS7006: Parameter 'f' implicitly has an 'any' type.
+apps/backend/src/domains/platform/feature-flags/strategies/ab-test.strategy.ts(2,15): error TS2305: Module '"@prisma/client"' has no exported member 'FeatureFlag'.
+apps/backend/src/domains/platform/feature-flags/strategies/percentage.strategy.ts(2,15): error TS2305: Module '"@prisma/client"' has no exported member 'FeatureFlag'.
+apps/backend/src/domains/platform/feature-flags/strategies/user-segment.strategy.ts(2,15): error TS2305: Module '"@prisma/client"' has no exported member 'FeatureFlag'.
+apps/backend/src/domains/platform/merchant/guards/merchant-auth.guard.ts(59,5): error TS2322: Type 'string | undefined' is not assignable to type 'string | null'.
+  Type 'undefined' is not assignable to type 'string | null'.
+apps/backend/src/domains/platform/merchant/merchant.service.spec.ts(8,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(54,60): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(157,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemWhereInput'.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(335,8): error TS7006: Parameter 'acc' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(335,13): error TS7006: Parameter 'event' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(367,38): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(373,36): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(373,41): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(375,40): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(375,45): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(397,38): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(406,24): error TS7006: Parameter 't' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(409,26): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(423,38): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(462,35): error TS7006: Parameter 's' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(467,37): error TS7006: Parameter 't' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(483,12): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(496,13): error TS7006: Parameter 'i' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(519,23): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/platform/merchant/merchant.service.ts(700,8): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/notification/listeners/order-event.listener.ts(4,10): error TS2305: Module '"@prisma/client"' has no exported member 'NotificationType'.
+apps/backend/src/domains/platform/notification/listeners/payment-event.listener.ts(1,10): error TS2305: Module '"@prisma/client"' has no exported member 'NotificationType'.
+apps/backend/src/domains/platform/notification/services/notification.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'NotificationType'.
+apps/backend/src/domains/platform/notification/services/notification.service.ts(370,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'NotificationWhereInput'.
+apps/backend/src/domains/platform/notification/services/notification.service.ts(476,52): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/platform/notification/services/notification.service.ts(477,50): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/platform/notification/services/notification.service.ts(478,52): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/platform/notification/services/notification.service.ts(482,98): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/platform/notification/services/notification.service.ts(483,84): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/platform/notification/services/notification.service.ts(484,71): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/platform/notification/services/push-notification.service.ts(378,25): error TS7006: Parameter 'd' implicitly has an 'any' type.
+apps/backend/src/domains/platform/notification/stock/stock-notification.service.spec.ts(4,10): error TS2305: Module '"@prisma/client"' has no exported member 'StockNotificationStatus'.
+apps/backend/src/domains/platform/notification/stock/stock-notification.service.ts(9,10): error TS2305: Module '"@prisma/client"' has no exported member 'StockNotificationStatus'.
+apps/backend/src/domains/platform/notification/stock/stock-notification.service.ts(150,43): error TS7006: Parameter 's' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/dto/recommendations.dto.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/platform/recommendations/orchestrator/recommendation.orchestrator.ts(16,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/platform/recommendations/recommendations.controller.spec.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/platform/recommendations/recommendations.controller.ts(5,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.spec.ts(4,3): error TS2305: Module '"@prisma/client"' has no exported member 'BodyType'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.spec.ts(5,3): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.spec.ts(6,3): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.spec.ts(7,3): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(4,3): error TS2305: Module '"@prisma/client"' has no exported member 'BodyType'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(5,3): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(6,3): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(7,3): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(8,3): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingItem'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(39,19): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(40,27): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(44,24): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'JsonValue'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(174,49): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(367,46): error TS7006: Parameter 'f' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(371,18): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(372,15): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(375,42): error TS7006: Parameter 'c' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(396,63): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(447,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ClothingItemWhereInput'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(503,27): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'JsonValue'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(505,21): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(692,42): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(702,20): error TS7006: Parameter 'a' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(702,23): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/recommendations.service.ts(765,23): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(4,3): error TS2305: Module '"@prisma/client"' has no exported member 'BodyType'.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(5,3): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(6,3): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(7,3): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(8,3): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingItem'.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(9,3): error TS2305: Module '"@prisma/client"' has no exported member 'UserProfile'.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(10,3): error TS2305: Module '"@prisma/client"' has no exported member 'UserBehavior'.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(11,3): error TS2305: Module '"@prisma/client"' has no exported member 'VirtualTryOn'.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(12,3): error TS2305: Module '"@prisma/client"' has no exported member 'Favorite'.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(25,33): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'Decimal'.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(167,29): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(410,36): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(453,23): error TS7006: Parameter 'a' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(453,26): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(498,31): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(604,36): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(626,23): error TS7006: Parameter 'a' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/advanced-recommendation.service.ts(626,26): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/behavior-tracking.service.ts(6,10): error TS2305: Module '"@prisma/client"' has no exported member 'BehaviorEventType'.
+apps/backend/src/domains/platform/recommendations/services/behavior-tracking.service.ts(122,48): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/behavior-tracking.service.ts(134,40): error TS7006: Parameter 'i' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/behavior-tracking.service.ts(148,26): error TS2339: Property 'category' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/behavior-tracking.service.ts(151,18): error TS2339: Property 'tags' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/behavior-tracking.service.ts(151,45): error TS2339: Property 'tags' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/behavior-tracking.service.ts(152,34): error TS2339: Property 'tags' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/behavior-tracking.service.ts(157,18): error TS2339: Property 'colors' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/behavior-tracking.service.ts(157,47): error TS2339: Property 'colors' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/behavior-tracking.service.ts(158,32): error TS2339: Property 'colors' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/behavior-tracking.service.ts(266,24): error TS7006: Parameter 'event' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/cold-start.service.ts(108,31): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/cold-start.service.ts(163,23): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/cold-start.service.ts(325,8): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/cold-start.service.ts(672,23): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/collaborative-filtering.service.ts(51,27): error TS7006: Parameter 'r' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/collaborative-filtering.service.ts(73,43): error TS7006: Parameter 'r' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/collaborative-filtering.service.ts(88,30): error TS7006: Parameter 'c' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/collaborative-filtering.service.ts(107,28): error TS7006: Parameter 'c' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/collaborative-filtering.service.ts(124,27): error TS7006: Parameter 'r' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/collaborative-filtering.service.ts(247,30): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/knowledge-graph.service.ts(203,20): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/knowledge-graph.service.ts(270,25): error TS7006: Parameter 'oi' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'BodyType'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(3,20): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(3,30): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(453,5): error TS2322: Type 'BodyTypeRecommendation | undefined' is not assignable to type 'BodyTypeRecommendation'.
+  Type 'undefined' is not assignable to type 'BodyTypeRecommendation'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(457,5): error TS2322: Type 'ColorSeasonProfile | undefined' is not assignable to type 'ColorSeasonProfile'.
+  Type 'undefined' is not assignable to type 'ColorSeasonProfile'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(484,23): error TS18048: 'profile' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(487,23): error TS18048: 'profile' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(498,24): error TS18048: 'profile' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(501,24): error TS18048: 'profile' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(537,9): error TS18048: 'rec' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(540,9): error TS18048: 'rec' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(549,35): error TS18048: 'rec' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(569,9): error TS18048: 'profile' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(579,20): error TS18048: 'profile' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(587,9): error TS18048: 'flattering' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(616,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(699,9): error TS18048: 'rec' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(705,9): error TS18048: 'rec' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/matching-theory.service.ts(719,9): error TS18048: 'profile' is possibly 'undefined'.
+apps/backend/src/domains/platform/recommendations/services/outfit-completion.service.ts(7,10): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/platform/recommendations/services/outfit-completion.service.ts(117,50): error TS7006: Parameter 't' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/outfit-completion.service.ts(184,33): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/preference-learning.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'BehaviorEventType'.
+apps/backend/src/domains/platform/recommendations/services/preference-learning.service.ts(63,44): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/platform/recommendations/services/preference-learning.service.ts(258,25): error TS7006: Parameter 'w' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/recommendation-cache.service.ts(75,47): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'JsonValue'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-cache.service.ts(83,47): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'JsonValue'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(130,48): error TS7006: Parameter 'i' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(140,26): error TS2339: Property 'attributes' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(151,24): error TS2339: Property 'id' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(158,18): error TS2339: Property 'id' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(159,25): error TS2339: Property 'mainImage' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(160,21): error TS2339: Property 'brand' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(160,40): error TS2339: Property 'brand' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(160,61): error TS2339: Property 'brand' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(161,28): error TS2339: Property 'price' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(162,29): error TS2339: Property 'originalPrice' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(162,57): error TS2339: Property 'originalPrice' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/recommendation-feed.service.ts(166,24): error TS2339: Property 'category' does not exist on type '{}'.
+apps/backend/src/domains/platform/recommendations/services/sasrec.service.ts(693,42): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/sasrec.service.ts(693,48): error TS7006: Parameter 'index' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/unified-recommendation.engine.ts(3,3): error TS2305: Module '"@prisma/client"' has no exported member 'BodyType'.
+apps/backend/src/domains/platform/recommendations/services/unified-recommendation.engine.ts(4,3): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/platform/recommendations/services/unified-recommendation.engine.ts(5,3): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/platform/recommendations/services/unified-recommendation.engine.ts(6,3): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/platform/recommendations/services/unified-recommendation.engine.ts(251,8): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/unified-recommendation.engine.ts(477,22): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/services/unified-recommendation.engine.ts(1257,31): error TS7006: Parameter 'item' implicitly has an 'any' type.
+apps/backend/src/domains/platform/recommendations/types/recommendation.types.ts(9,3): error TS2305: Module '"@prisma/client"' has no exported member 'BodyType'.
+apps/backend/src/domains/platform/recommendations/types/recommendation.types.ts(10,3): error TS2305: Module '"@prisma/client"' has no exported member 'SkinTone'.
+apps/backend/src/domains/platform/recommendations/types/recommendation.types.ts(11,3): error TS2305: Module '"@prisma/client"' has no exported member 'ColorSeason'.
+apps/backend/src/domains/platform/recommendations/types/recommendation.types.ts(12,3): error TS2305: Module '"@prisma/client"' has no exported member 'ClothingCategory'.
+apps/backend/src/domains/social/blogger/blogger-dashboard.service.ts(187,43): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+apps/backend/src/domains/social/blogger/blogger-dashboard.service.ts(187,48): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/social/blogger/blogger-product.service.ts(81,30): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'BloggerProductUpdateInput'.
+apps/backend/src/domains/social/blogger/blogger-product.service.ts(114,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'BloggerProductWhereInput'.
+apps/backend/src/domains/social/blogger/blogger-score.service.ts(29,44): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'MiddlewareParams'.
+apps/backend/src/domains/social/blogger/blogger-score.service.ts(29,84): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'MiddlewareParams'.
+apps/backend/src/domains/social/chat/chat.gateway.ts(78,113): error TS2345: Argument of type 'EventEnvelope' is not assignable to parameter of type '{ payload: ChatMessageCreatedPayload; }'.
+  Types of property 'payload' are incompatible.
+    Type 'Record<string, unknown>' is missing the following properties from type 'ChatMessageCreatedPayload': roomId, messageId, senderId, senderType, and 2 more.
+apps/backend/src/domains/social/chat/chat.gateway.ts(79,107): error TS2345: Argument of type 'EventEnvelope' is not assignable to parameter of type '{ payload: ChatMessageReadPayload; }'.
+  Types of property 'payload' are incompatible.
+    Type 'Record<string, unknown>' is missing the following properties from type 'ChatMessageReadPayload': roomId, readerId
+apps/backend/src/domains/social/chat/chat.service.ts(88,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ChatRoomWhereInput'.
+apps/backend/src/domains/social/chat/chat.service.ts(130,24): error TS7006: Parameter 'room' implicitly has an 'any' type.
+apps/backend/src/domains/social/chat/chat.service.ts(185,24): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ChatRoomUpdateInput'.
+apps/backend/src/domains/social/chat/chat.service.ts(239,44): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/social/chat/chat.service.ts(284,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ChatMessageWhereInput'.
+apps/backend/src/domains/social/chat/chat.service.ts(336,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ChatMessageWhereInput'.
+apps/backend/src/domains/social/community/community.controller.ts(16,10): error TS2300: Duplicate identifier 'Request'.
+apps/backend/src/domains/social/community/community.controller.ts(29,10): error TS2300: Duplicate identifier 'Request'.
+apps/backend/src/domains/social/community/community.controller.ts(86,49): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(107,6): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(123,6): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(139,6): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(155,47): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(171,6): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(187,21): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(199,19): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(212,6): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(228,6): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(245,6): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(275,6): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(289,21): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.controller.ts(298,54): error TS2348: Value of type '{ new (input: URL | RequestInfo, init?: RequestInit | undefined): Request; prototype: Request; }' is not callable. Did you mean to include 'new'?
+apps/backend/src/domains/social/community/community.service.ts(108,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'CommunityPostWhereInput'.
+apps/backend/src/domains/social/community/community.service.ts(126,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'CommunityPostOrderByWithRelationInput'.
+apps/backend/src/domains/social/community/community.service.ts(126,72): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'CommunityPostOrderByWithRelationInput'.
+apps/backend/src/domains/social/community/community.service.ts(173,40): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(182,24): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(188,55): error TS7006: Parameter 'ri' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(241,32): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(248,16): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(252,24): error TS7006: Parameter 'post' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(254,46): error TS7006: Parameter 'ri' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(408,44): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(652,17): error TS7006: Parameter 'err' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(759,46): error TS7006: Parameter 'f' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(848,16): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(849,13): error TS7006: Parameter 'p' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(851,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'CommunityPostWhereInput'.
+apps/backend/src/domains/social/community/community.service.ts(916,45): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(944,45): error TS7006: Parameter 'tx' implicitly has an 'any' type.
+apps/backend/src/domains/social/community/community.service.ts(1098,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'CommunityPostWhereInput'.
+apps/backend/src/domains/social/community/community.service.ts(1152,32): error TS7006: Parameter 'post' implicitly has an 'any' type.
+apps/backend/src/domains/social/consultant/consultant-matching.service.ts(60,37): error TS7006: Parameter 'consultant' implicitly has an 'any' type.
+apps/backend/src/domains/social/consultant/consultant-matching.service.ts(89,18): error TS7006: Parameter 'a' implicitly has an 'any' type.
+apps/backend/src/domains/social/consultant/consultant-matching.service.ts(89,21): error TS7006: Parameter 'b' implicitly has an 'any' type.
+apps/backend/src/domains/social/consultant/consultant-review.service.ts(14,41): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/social/consultant/consultant-review.service.ts(14,75): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/social/consultant/consultant-review.service.ts(69,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ConsultantReviewWhereInput'.
+apps/backend/src/domains/social/consultant/consultant-review.service.ts(72,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ConsultantReviewOrderByWithRelationInput'.
+apps/backend/src/domains/social/consultant/consultant-review.service.ts(105,36): error TS7006: Parameter 'review' implicitly has an 'any' type.
+apps/backend/src/domains/social/consultant/consultant-review.service.ts(165,28): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(25,41): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(25,75): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'InputJsonValue'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(75,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ConsultantProfileWhereInput'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(87,79): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ConsultantProfileWhereInput'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(90,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ConsultantProfileOrderByWithRelationInput'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(208,24): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ConsultantProfileUpdateInput'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(264,38): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(267,43): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(282,35): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(283,40): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(284,33): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(285,38): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(308,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ServiceBookingWhereInput'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(394,24): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ServiceBookingUpdateInput'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(512,25): error TS2694: Namespace '"C:/AiNeed/node_modules/.prisma/client/default".Prisma' has no exported member 'ServiceBookingWhereInput'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(640,33): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(641,38): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(652,33): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(653,31): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(750,28): error TS2339: Property 'Decimal' does not exist on type 'typeof Prisma'.
+apps/backend/src/domains/social/consultant/consultant.service.ts(833,16): error TS7006: Parameter 'booking' implicitly has an 'any' type.
+apps/backend/src/domains/social/consultant/consultant.service.ts(834,13): error TS7006: Parameter 'booking' implicitly has an 'any' type.
+

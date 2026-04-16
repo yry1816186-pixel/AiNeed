@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import Share, { ShareOptions } from "react-native-share";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows , DesignTokens } from '../../design-system/theme'
 
 interface ShareButtonProps {
   title?: string;
@@ -216,8 +216,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   iconButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     alignItems: "center",

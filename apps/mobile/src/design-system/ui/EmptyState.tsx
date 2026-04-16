@@ -13,6 +13,10 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius, Typography, gradients } from '../../design-system/theme';
+import { Spacing } from '../theme';
+import { DesignTokens } from '../theme/tokens/design-tokens';
+
+
 
 // Re-export from primitives for backward compatibility
 export {
@@ -114,8 +118,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   actionGradient: {
-    paddingVertical: 14,
-    paddingHorizontal: 32,
+    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: Spacing.xl,
   },
   actionLabel: {
     ...Typography.styles.button,

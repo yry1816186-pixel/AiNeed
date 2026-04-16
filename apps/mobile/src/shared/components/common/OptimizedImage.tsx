@@ -10,7 +10,8 @@ import {
 } from "react-native";
 
 import { getOptimizedImageUrl, getPlaceholder } from "../../utils/imageOptimizer";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, flatColors as colors } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 export interface OptimizedImageProps extends AccessibilityProps {
   /** Source URI of the image */
@@ -69,7 +70,7 @@ export const OptimizedImage = memo(function OptimizedImage({
         {...accessibilityRest}
       >
         <View style={styles.errorContainer}>
-          <ActivityIndicator size="small" color={DesignTokens.colors.text.tertiary} />
+          <ActivityIndicator size="small" color={colors.textTertiary} />
         </View>
       </View>
     );
@@ -103,17 +104,17 @@ export const OptimizedImage = memo(function OptimizedImage({
       {/* Loading indicator while main image is fetching */}
       {!loaded && (
         <View style={styles.loaderContainer}>
-          <ActivityIndicator size="small" color={DesignTokens.colors.text.secondary} />
+          <ActivityIndicator size="small" color={colors.textSecondary} />
         </View>
       )}
     </View>
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     overflow: "hidden",
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
+    backgroundColor: colors.backgroundTertiary,
   },
   loaderContainer: {
     ...StyleSheet.absoluteFillObject,
@@ -124,6 +125,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: "colors.backgroundTertiary",
   },
+}))
+
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  errorContainer: { flex: 1 },
+  loaderContainer: { flex: 1 },
 });

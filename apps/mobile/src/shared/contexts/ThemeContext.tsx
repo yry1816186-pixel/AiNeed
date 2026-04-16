@@ -11,6 +11,7 @@ import {
 } from "../../design-system/theme";
 import { FeatureFlagDefaults } from "../../constants/feature-flags";
 import type { FlatColors } from "../../design-system/theme/FlatColors";
+import { useTheme } from '../../design-system/theme';
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
@@ -43,7 +44,7 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     primaryLight: base.brand.terracottaLight,
     primaryDark: base.brand.terracottaDark,
     subtleBg: base.backgrounds.tertiary,
-    gold: "DesignTokens.colors.semantic.warning",
+    gold: "#D4A853",
     placeholderBg: base.neutral[200],
     overlay: base.backgrounds.overlay,
     background: base.backgrounds.primary,
@@ -59,8 +60,8 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
     cartLight: "#FFF5F0",
-    terracottaDark: DesignTokens.colors.brand.terracottaDark,
-    amber: DesignTokens.colors.semantic.warning,
+    terracottaDark: colors.primaryDark,
+    amber: colors.warning,
     secondary: base.brand.sage,
   };
 }
@@ -93,6 +94,7 @@ const SEASON_STORAGE_KEY = "@xuno_color_season";
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
+  const { colors } = useTheme();
   const systemColorScheme = useColorScheme();
   const [mode, setModeState] = useState<ThemeMode>("system");
   const [colorSeason, setColorSeasonState] = useState<ColorSeason | null>(null);

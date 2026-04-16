@@ -12,6 +12,9 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { AiStylistAction } from '../../../services/api/ai-stylist.api';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
@@ -114,6 +117,8 @@ export const PreferenceSelector: React.FC<PreferenceSelectorProps> = ({
   onSelect,
   onSkip,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const containerOpacity = useSharedValue(0);
   const containerTranslateY = useSharedValue(20);
@@ -200,7 +205,7 @@ export const PreferenceSelector: React.FC<PreferenceSelectorProps> = ({
             <LinearGradient
               colors={
                 selectedValues.length > 0
-                  ? [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]
+                  ? [colors.primary, colors.primary]
                   : [DesignTokens.colors.neutral[300], DesignTokens.colors.neutral[400]]
               }
               style={styles.confirmGradient}
@@ -251,50 +256,50 @@ const OptionChip: React.FC<OptionChipProps> = ({ option, isSelected, index, onPr
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 16,
-    padding: 16,
-    marginVertical: 8,
+    padding: Spacing.md,
+    marginVertical: Spacing.sm,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
   header: {
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   subtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
   },
   optionsContainer: {
-    paddingVertical: 4,
-    gap: 8,
+    paddingVertical: Spacing.xs,
+    gap: Spacing.sm,
   },
   chip: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     borderWidth: 1.5,
     borderColor: DesignTokens.colors.neutral[200],
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
   chipSelected: {
-    backgroundColor: DesignTokens.colors.brand.sage + "20",
-    borderColor: DesignTokens.colors.brand.sage,
+    backgroundColor: colors.secondary + "20",
+    borderColor: colors.secondary,
   },
   chipIcon: {
     fontSize: DesignTokens.typography.sizes.md,
-    marginRight: 6,
+    marginRight: DesignTokens.spacing['1.5'],
   },
   chipText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -302,33 +307,33 @@ const styles = StyleSheet.create({
     color: DesignTokens.colors.neutral[700],
   },
   chipTextSelected: {
-    color: DesignTokens.colors.brand.sage,
+    color: colors.secondary,
     fontWeight: "600",
   },
   checkmark: {
     width: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: DesignTokens.colors.brand.sage,
+    backgroundColor: colors.secondary,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: 6,
+    marginLeft: DesignTokens.spacing['1.5'],
   },
   checkmarkText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontWeight: "700",
   },
   footer: {
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
-    marginTop: 16,
-    gap: 12,
+    marginTop: Spacing.md,
+    gap: DesignTokens.spacing[3],
   },
   skipButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
   },
   skipText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -343,14 +348,14 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   confirmGradient: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     alignItems: "center",
     justifyContent: "center",
   },
   confirmText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
-});
+}))

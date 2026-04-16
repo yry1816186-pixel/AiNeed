@@ -18,6 +18,10 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { Colors, BorderRadius, Shadows } from '../theme';
 import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
+import { Spacing } from '../../theme';
+import { DesignTokens } from '../../theme/tokens/design-tokens';
+
+
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "gradient" | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "xl";
@@ -52,26 +56,26 @@ const sizeConfig: Record<
   }
 > = {
   sm: {
-    height: 36,
-    paddingHorizontal: 16,
+    height: DesignTokens.spacing[9],
+    paddingHorizontal: Spacing.md,
     fontSize: DesignTokens.typography.sizes.base,
     borderRadius: BorderRadius.lg,
   },
   md: {
-    height: 44,
-    paddingHorizontal: 20,
+    height: DesignTokens.spacing[11],
+    paddingHorizontal: DesignTokens.spacing[5],
     fontSize: DesignTokens.typography.sizes.md,
     borderRadius: BorderRadius.xl,
   },
   lg: {
     height: 52,
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing.lg,
     fontSize: DesignTokens.typography.sizes.md,
     borderRadius: BorderRadius.xl,
   },
   xl: {
     height: 60,
-    paddingHorizontal: 32,
+    paddingHorizontal: Spacing.xl,
     fontSize: DesignTokens.typography.sizes.lg,
     borderRadius: BorderRadius["2xl"],
   },
@@ -227,7 +231,7 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         <>
           {icon && iconPosition === "left" && <>{icon}</>}
-          <Text style={[textStyleMerged, icon ? { marginHorizontal: 8 } : {}]}>{children}</Text>
+          <Text style={[textStyleMerged, icon ? { marginHorizontal: Spacing.sm} : {}]}>{children}</Text>
           {icon && iconPosition === "right" && <>{icon}</>}
         </>
       )}

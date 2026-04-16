@@ -18,9 +18,11 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { outfitApi } from '../../../services/api/outfit.api';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import type { RootStackParamList } from '../../../types/navigation';
 import type { Outfit } from '../../types/outfit';
+import { Spacing } from '../../../design-system/theme';
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -196,7 +198,7 @@ export const OutfitDetailScreen: React.FC = () => {
           accessibilityLabel="标记为今日穿着"
           accessibilityRole="button"
         >
-          <LinearGradient colors={["DesignTokens.colors.semantic.info" /* custom color */, DesignTokens.colors.brand.slateDark]} style={styles.wearButtonGradient} />
+          <LinearGradient colors={["colors.info" /* custom color */, colors.neutral[700]]} style={styles.wearButtonGradient} />
           <Ionicons name="checkmark-circle-outline" size={20} color={colors.surface} />
           <Text style={styles.wearButtonText}>今日穿着</Text>
         </TouchableOpacity>
@@ -211,15 +213,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: Spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
@@ -227,8 +229,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
   actionButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
@@ -244,24 +246,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  infoSection: { backgroundColor: colors.surface, marginTop: 16, padding: 20 },
-  outfitName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.textPrimary, marginBottom: 8 },
+  infoSection: { backgroundColor: colors.surface, marginTop: Spacing.md, padding: DesignTokens.spacing[5]},
+  outfitName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.textPrimary, marginBottom: Spacing.sm},
   outfitDescription: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, lineHeight: 22 },
   loadingContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
-  loadingText: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: 12 },
-  errorContainer: { flex: 1, alignItems: "center", justifyContent: "center", padding: 20 },
+  loadingText: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
+  errorContainer: { flex: 1, alignItems: "center", justifyContent: "center", padding: DesignTokens.spacing[5]},
   errorText: {
     fontSize: DesignTokens.typography.sizes.md,
     color: colors.textSecondary,
-    marginTop: 12,
+    marginTop: DesignTokens.spacing[3],
     textAlign: "center",
   },
   retryButton: {
     backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 8,
-    marginTop: 16,
+    marginTop: Spacing.md,
   },
   retryButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.surface },
   bottomSpacer: { height: 100 },
@@ -271,8 +273,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     flexDirection: "row",
-    gap: 12,
-    padding: 20,
+    gap: DesignTokens.spacing[3],
+    padding: DesignTokens.spacing[5],
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
@@ -282,8 +284,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    paddingVertical: 14,
+    gap: Spacing.sm,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.error,
@@ -294,8 +296,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    paddingVertical: 14,
+    gap: Spacing.sm,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 12,
     overflow: "hidden",
   },

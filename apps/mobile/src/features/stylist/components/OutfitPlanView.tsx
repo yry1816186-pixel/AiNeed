@@ -14,6 +14,9 @@ import type { OutfitPlanDetail } from '../stores/aiStylistStore';
 import type { AiStylistOutfitItem } from '../../../services/api/ai-stylist.api';
 import { ReasoningCard } from "./ReasoningCard";
 import { WeatherBadge } from "./WeatherBadge";
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -100,6 +103,8 @@ export const OutfitPlanView: React.FC<OutfitPlanViewProps> = ({
   onItemPress,
   onFeedback,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [activeOutfitIndex, setActiveOutfitIndex] = useState(0);
   const activeOutfit = plan.outfits[activeOutfitIndex];
 
@@ -186,35 +191,35 @@ export const OutfitPlanView: React.FC<OutfitPlanViewProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: { paddingVertical: 12 },
+const useStyles = createStyles((colors) => ({
+  container: { paddingVertical: DesignTokens.spacing[3]},
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: DesignTokens.spacing[3],
   },
   title: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: DesignTokens.colors.neutral[900] },
-  tabBar: { marginBottom: 12, maxHeight: 40 },
+  tabBar: { marginBottom: DesignTokens.spacing[3], maxHeight: DesignTokens.spacing[10] },
   tab: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
-    marginRight: 8,
+    marginRight: Spacing.sm,
   },
-  tabActive: { backgroundColor: DesignTokens.colors.brand.terracotta },
+  tabActive: { backgroundColor: colors.primary },
   tabText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.neutral[600] },
-  tabTextActive: { color: DesignTokens.colors.neutral.white, fontWeight: "500" },
-  itemsRow: { paddingVertical: 4, gap: 8 },
+  tabTextActive: { color: colors.surface, fontWeight: "500" },
+  itemsRow: { paddingVertical: Spacing.xs, gap: Spacing.sm},
   itemCard: {
-    backgroundColor: DesignTokens.colors.backgrounds.elevated,
+    backgroundColor: colors.surfaceElevated,
     borderRadius: 12,
-    padding: 8,
+    padding: Spacing.sm,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
-  itemImage: { width: "100%", height: 120, borderRadius: 8, marginBottom: 8 },
+  itemImage: { width: "100%", height: 120, borderRadius: 8, marginBottom: Spacing.sm},
   itemImagePlaceholder: {
     width: "100%",
     height: 120,
@@ -222,26 +227,26 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral[100],
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   itemImagePlaceholderText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral[400] },
   itemName: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: DesignTokens.colors.neutral[800],
-    marginBottom: 2,
+    marginBottom: DesignTokens.spacing['0.5'],
   },
-  itemBrand: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.neutral[500], marginBottom: 2 },
+  itemBrand: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.neutral[500], marginBottom: DesignTokens.spacing['0.5']},
   itemPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.brand.terracotta,
-    marginBottom: 6,
+    color: colors.primary,
+    marginBottom: DesignTokens.spacing['1.5'],
   },
   replaceButton: {
     backgroundColor: DesignTokens.colors.neutral[100],
     borderRadius: 6,
-    paddingVertical: 4,
+    paddingVertical: Spacing.xs,
     alignItems: "center",
   },
   replaceButtonText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral[600] },
@@ -249,18 +254,18 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginTop: 12,
-    marginBottom: 8,
+    marginTop: DesignTokens.spacing[3],
+    marginBottom: Spacing.sm,
   },
-  feedbackRow: { flexDirection: "row", gap: 12, marginTop: 8 },
+  feedbackRow: { flexDirection: "row", gap: DesignTokens.spacing[3], marginTop: Spacing.sm},
   feedbackButton: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 8,
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     alignItems: "center",
   },
   dislikeButton: { backgroundColor: DesignTokens.colors.neutral[100] },
-  feedbackButtonText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: DesignTokens.colors.neutral.white },
+  feedbackButtonText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.surface },
   dislikeButtonText: { color: DesignTokens.colors.neutral[600] },
-});
+}))

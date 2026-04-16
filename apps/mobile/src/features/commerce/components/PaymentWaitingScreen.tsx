@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { paymentApi } from '../../../services/api/commerce.api';
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface PaymentWaitingScreenProps {
   orderId: string;
@@ -18,6 +19,8 @@ export const PaymentWaitingScreen: React.FC<PaymentWaitingScreenProps> = ({
   onSuccess,
   onTimeout,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [timedOut, setTimedOut] = useState(false);
   const pollCountRef = useRef(0);
 
@@ -63,56 +66,56 @@ export const PaymentWaitingScreen: React.FC<PaymentWaitingScreenProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <ActivityIndicator size="large" color="DesignTokens.colors.semantic.error" />
+        <ActivityIndicator size="large" color="colors.error" />
         <Text style={styles.pollingText}>正在查询支付结果...</Text>
       </View>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
   },
   content: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    padding: DesignTokens.spacing[5],
   },
   pollingText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: DesignTokens.colors.text.secondary,
-    marginTop: 16,
+    color: colors.textSecondary,
+    marginTop: Spacing.md,
   },
   timeoutIcon: {
     fontSize: DesignTokens.typography.sizes['5xl'],
     fontWeight: "700",
-    color: "DesignTokens.colors.semantic.error",
+    color: "colors.error",
   },
   timeoutTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
-    marginTop: 12,
+    color: colors.textPrimary,
+    marginTop: DesignTokens.spacing[3],
   },
   timeoutMessage: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.tertiary,
-    marginTop: 8,
+    color: colors.textTertiary,
+    marginTop: Spacing.sm,
     textAlign: "center",
   },
   actionButton: {
-    marginTop: 24,
-    backgroundColor: "DesignTokens.colors.semantic.error",
-    paddingHorizontal: 32,
-    paddingVertical: 12,
+    marginTop: Spacing.lg,
+    backgroundColor: "colors.error",
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
   },
   actionButtonText: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-});
+}))

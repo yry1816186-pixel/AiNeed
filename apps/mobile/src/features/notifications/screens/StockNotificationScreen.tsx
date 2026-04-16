@@ -14,14 +14,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { stockNotificationApi, type StockNotification } from '../../../services/api/commerce.api';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  PENDING: { label: "等待中", color: DesignTokens.colors.semantic.warning },
-  NOTIFIED: { label: "已通知", color: DesignTokens.colors.semantic.success },
+  PENDING: { label: "等待中", color: colors.warning },
+  NOTIFIED: { label: "已通知", color: colors.success },
   CANCELLED: { label: "已取消", color: DesignTokens.colors.neutral[300] },
 };
 
 export const StockNotificationScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [notifications, setNotifications] = useState<StockNotification[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -76,7 +81,7 @@ export const StockNotificationScreen: React.FC = () => {
   const renderItem = ({ item }: { item: StockNotification }) => {
     const statusCfg = STATUS_CONFIG[item.status] ?? {
       label: item.status,
-      color: DesignTokens.colors.text.tertiary,
+      color: colors.textTertiary,
     };
 
     return (
@@ -117,7 +122,7 @@ export const StockNotificationScreen: React.FC = () => {
           <Text style={styles.headerTitle}>到货通知</Text>
         </View>
         <View style={styles.center}>
-          <ActivityIndicator size="large" color={DesignTokens.colors.semantic.error} />
+          <ActivityIndicator size="large" color={colors.error} />
         </View>
       </SafeAreaView>
     );
@@ -135,33 +140,33 @@ export const StockNotificationScreen: React.FC = () => {
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[DesignTokens.colors.semantic.error]} />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[colors.error]} />
         }
-        contentContainerStyle={notifications.length === 0 ? { flex: 1 } : { paddingBottom: 20 }}
+        contentContainerStyle={notifications.length === 0 ? { flex: 1 } : { paddingBottom: DesignTokens.spacing[5]}}
       />
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: DesignTokens.colors.backgrounds.primary },
+const useStyles = createStyles((colors) => ({
+  container: { flex: 1, backgroundColor: colors.surface },
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   card: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   cardLeft: {},
   itemImage: {
@@ -182,56 +187,56 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   itemSpec: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
-    marginTop: 2,
+    color: colors.textTertiary,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   statusBadge: {
     alignSelf: "flex-start",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 4,
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   statusText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "500",
   },
   cancelButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
   },
   cancelText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.semantic.error,
+    color: colors.error,
   },
   emptyContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 64,
+    paddingVertical: Spacing['3xl'],
   },
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
-    marginTop: 16,
+    color: colors.textPrimary,
+    marginTop: Spacing.md,
   },
   goButton: {
-    marginTop: 24,
-    backgroundColor: DesignTokens.colors.semantic.error,
-    paddingHorizontal: 32,
-    paddingVertical: 12,
+    marginTop: Spacing.lg,
+    backgroundColor: colors.error,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
   },
   goButtonText: {
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-});
+}))
 
 export default StockNotificationScreen;

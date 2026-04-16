@@ -22,6 +22,8 @@ import { BlurView } from "expo-blur";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
 import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
+import { DesignTokens } from '../../theme/tokens/design-tokens';
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -318,8 +320,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing[2],
     right: Spacing[2],
-    width: 32,
-    height: 32,
+    width: Spacing.xl,
+    height: Spacing.xl,
     borderRadius: BorderRadius.full,
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     alignItems: "center",

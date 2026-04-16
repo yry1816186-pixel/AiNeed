@@ -26,6 +26,9 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
+
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -238,6 +241,8 @@ export const ImmersiveCardViewer: React.FC<ImmersiveCardViewerProps> = ({
   onBack,
   trackViewDuration = true,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const translateY = useSharedValue(0);
@@ -379,7 +384,7 @@ export const ImmersiveCardViewer: React.FC<ImmersiveCardViewerProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     backgroundColor: DesignTokens.colors.neutral[900],
@@ -388,47 +393,47 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: "rgba(255,255,255,0.1)",
     alignItems: "center",
     justifyContent: "center",
   },
   backButtonText: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.xl,
   },
   progressContainer: {
     flexDirection: "row",
-    gap: 6,
+    gap: DesignTokens.spacing['1.5'],
   },
   progressDot: {
-    width: 6,
-    height: 6,
+    width: DesignTokens.spacing['1.5'],
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
     backgroundColor: "rgba(255,255,255,0.3)",
   },
   progressDotActive: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
-    width: 20,
+    backgroundColor: colors.primary,
+    width: DesignTokens.spacing[5],
   },
   headerActions: {
     flexDirection: "row",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   headerButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
     borderRadius: 16,
     backgroundColor: "rgba(255,255,255,0.1)",
   },
   headerButtonText: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.base,
   },
   cardsContainer: {
@@ -442,7 +447,7 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flex: 1,
-    marginHorizontal: 8,
+    marginHorizontal: Spacing.sm,
     borderRadius: 24,
     overflow: "hidden",
     backgroundColor: DesignTokens.colors.neutral[800],
@@ -458,16 +463,16 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingTop: 100,
-    paddingHorizontal: 20,
+    paddingHorizontal: DesignTokens.spacing[5],
     paddingBottom: 30,
   },
   cardInfo: {
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   cardTitle: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     letterSpacing: 0.5,
   },
   cardDescription: {
@@ -477,30 +482,30 @@ const styles = StyleSheet.create({
   },
   tagsContainer: {
     flexDirection: "row",
-    gap: 8,
+    gap: Spacing.sm,
     flexWrap: "wrap",
   },
   tag: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
     backgroundColor: "rgba(255,255,255,0.15)",
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   itemsPreview: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   itemThumbnail: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     borderWidth: 2,
-    borderColor: DesignTokens.colors.neutral.white,
+    borderColor: colors.surface,
     marginLeft: -12,
     overflow: "hidden",
   },
@@ -509,26 +514,26 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   moreItems: {
-    width: 44,
-    height: 44,
+    width: DesignTokens.spacing[11],
+    height: DesignTokens.spacing[11],
     borderRadius: 22,
     borderWidth: 2,
-    borderColor: DesignTokens.colors.neutral.white,
+    borderColor: colors.surface,
     marginLeft: -12,
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   moreItemsText: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
   },
   priceText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.brand.terracottaLight,
-    marginTop: 4,
+    color: colors.primaryLight,
+    marginTop: Spacing.xs,
   },
   likeOverlay: {
     position: "absolute",
@@ -536,17 +541,17 @@ const styles = StyleSheet.create({
     left: 30,
   },
   likeBadge: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 12,
     borderWidth: 4,
-    borderColor: DesignTokens.colors.semantic.success,
+    borderColor: colors.success,
     backgroundColor: "transparent",
   },
   likeText: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
-    color: DesignTokens.colors.semantic.success,
+    color: colors.success,
   },
   dislikeOverlay: {
     position: "absolute",
@@ -554,42 +559,42 @@ const styles = StyleSheet.create({
     right: 30,
   },
   dislikeBadge: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 12,
     borderWidth: 4,
-    borderColor: DesignTokens.colors.semantic.warning,
+    borderColor: colors.warning,
     backgroundColor: "transparent",
   },
   dislikeText: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
-    color: DesignTokens.colors.semantic.warning,
+    color: colors.warning,
   },
   footer: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 16,
-    paddingHorizontal: 20,
-    paddingTop: 16,
+    gap: Spacing.md,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingTop: Spacing.md,
   },
   actionButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 24,
     backgroundColor: "rgba(255,255,255,0.1)",
-    minWidth: 80,
+    minWidth: Spacing['4xl'],
     alignItems: "center",
   },
   likeButton: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
   },
   actionButtonText: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
   },
   likeButtonText: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
-});
+}))

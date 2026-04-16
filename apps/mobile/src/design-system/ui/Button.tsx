@@ -22,7 +22,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Typography, Shadows, gradients } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows, gradients , DesignTokens } from '../../design-system/theme'
 import { SpringConfigs } from "../../theme/tokens/animations";
 
 // Re-export from primitives for backward compatibility
@@ -71,13 +71,13 @@ const sizeConfig: Record<
   { height: number; paddingHorizontal: number; fontSize: number; borderRadius: number }
 > = {
   sm: {
-    height: 44,
+    height: DesignTokens.spacing[11],
     paddingHorizontal: Spacing.md,
     fontSize: Typography.sizes.sm,
     borderRadius: BorderRadius.lg,
   },
   md: {
-    height: 44,
+    height: DesignTokens.spacing[11],
     paddingHorizontal: Spacing.lg,
     fontSize: Typography.sizes.base,
     borderRadius: BorderRadius.xl,
@@ -250,3 +250,8 @@ export const Button: React.FC<ButtonProps> = ({
 };
 
 export default Button;
+
+
+const styles = StyleSheet.create({
+  button: { flex: 1 },
+});

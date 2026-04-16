@@ -18,11 +18,13 @@ import { useGlow } from '../../../hooks/useAdvancedAnimations';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { SpringConfigs, Duration } from '../../../design-system/theme/tokens/animations';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { Spacing } from '../../../design-system/theme';
 
-const TERRACOTTA = DesignTokens.colors.brand.terracotta; // #C67B5C
-const CAMEL = DesignTokens.colors.brand.camel; // #B5A08C
-const SAGE = DesignTokens.colors.brand.sage; // #8B9A7D
-const _TERRACOTTA_LIGHT = DesignTokens.colors.brand.terracottaLight; // #D4917A
+
+const TERRACOTTA = colors.primary; // #C67B5C
+const CAMEL = colors.primary; // #B5A08C
+const SAGE = colors.secondary; // #8B9A7D
+const _TERRACOTTA_LIGHT = colors.primaryLight; // #D4917A
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const BUBBLE_WIDTH = SCREEN_WIDTH * 0.6;
@@ -75,15 +77,15 @@ const r = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.surface,
     borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing[3],
     borderBottomLeftRadius: 4,
     maxWidth: BUBBLE_WIDTH,
   },
   contentRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     flex: 1,
   },
   staticText: {
@@ -93,7 +95,7 @@ const r = StyleSheet.create({
   },
   gradientBar: {
     flex: 1,
-    height: 6,
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
     backgroundColor: "rgba(198, 123, 92, 0.15)",
     overflow: "hidden",
@@ -288,19 +290,19 @@ const s = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.surface,
     borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing[3],
     borderBottomLeftRadius: 4,
     maxWidth: BUBBLE_WIDTH,
-    minHeight: 44,
+    minHeight: DesignTokens.spacing[11],
   },
   linesContainer: {
     width: "100%",
-    gap: 6,
-    paddingVertical: 4,
+    gap: DesignTokens.spacing['1.5'],
+    paddingVertical: Spacing.xs,
   },
   lineTrack: {
-    height: 4,
+    height: Spacing.xs,
     borderRadius: 2,
     backgroundColor: "rgba(198, 123, 92, 0.1)",
     overflow: "hidden",
@@ -319,11 +321,11 @@ const s = StyleSheet.create({
   silhouetteContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 4,
+    paddingVertical: Spacing.xs,
   },
   outfitContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 4,
+    paddingVertical: Spacing.xs,
   },
 });

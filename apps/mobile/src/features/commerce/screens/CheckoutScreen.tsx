@@ -24,11 +24,13 @@ import { useCartStore } from '../stores/index';
 import { useCouponStore } from '../stores/couponStore';
 import type { Address } from '../../../types';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens , flatColors as colors } from '../../../design-system/theme/tokens/design-tokens';
 import { CouponSelector } from '../components/CouponSelector';
 import { PaymentWaitingScreen } from '../components/PaymentWaitingScreen';
 import { AreaCascadingPicker } from '../../../components/address/AreaCascadingPicker';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -562,7 +564,7 @@ export const CheckoutScreen: React.FC = () => {
                   {couponStore.selectedCoupon && (
                     <View style={styles.spaceRow}>
                       <Text style={styles.muted}>优惠</Text>
-                      <Text style={[styles.value, { color: "DesignTokens.colors.semantic.success" /* custom color */ }]}>
+                      <Text style={[styles.value, { color: "colors.success" /* custom color */ }]}>
                         -{"\u00A5"}
                         {couponStore.selectedCoupon.coupon.type === "PERCENTAGE"
                           ? ((itemsTotal * couponStore.selectedCoupon.coupon.value) / 100).toFixed(
@@ -597,7 +599,7 @@ export const CheckoutScreen: React.FC = () => {
                     disabled={submitting}
                   >
                     {submitting ? (
-                      <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+                      <ActivityIndicator size="small" color={colors.surface} />
                     ) : (
                       <Text style={styles.paymentButtonText}>支付宝支付</Text>
                     )}
@@ -617,7 +619,7 @@ export const CheckoutScreen: React.FC = () => {
                     disabled={submitting}
                   >
                     {submitting ? (
-                      <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+                      <ActivityIndicator size="small" color={colors.surface} />
                     ) : (
                       <Text style={styles.paymentButtonText}>微信支付</Text>
                     )}
@@ -694,100 +696,100 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   flex: { flex: 1 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
-  scrollContent: { paddingBottom: 28 },
+  scrollContent: { paddingBottom: DesignTokens.spacing[7]},
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: Spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   iconButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: DesignTokens.colors.neutral[100],
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
-  headerPlaceholder: { width: 40 },
+  headerPlaceholder: { width: DesignTokens.spacing[10] },
   progressRow: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
     backgroundColor: colors.surface,
   },
   progressItem: { alignItems: "center" },
   progressDot: {
-    width: 10,
-    height: 10,
+    width: DesignTokens.spacing['2.5'],
+    height: DesignTokens.spacing['2.5'],
     borderRadius: 5,
     backgroundColor: DesignTokens.colors.neutral[300],
-    marginBottom: 6,
+    marginBottom: DesignTokens.spacing['1.5'],
   },
   progressDotActive: { backgroundColor: colors.primary },
   progressText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
   progressTextActive: { color: colors.primary, fontWeight: "600" },
   card: {
     backgroundColor: colors.surface,
-    marginHorizontal: 20,
-    marginTop: 16,
+    marginHorizontal: DesignTokens.spacing[5],
+    marginTop: Spacing.md,
     borderRadius: 18,
-    padding: 16,
+    padding: Spacing.md,
   },
-  cardTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: 12 },
+  cardTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing[3]},
   row: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 10,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   spaceRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
   muted: { fontSize: DesignTokens.typography.sizes.sm, lineHeight: 20, color: colors.textSecondary },
   price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: colors.text },
   value: { fontSize: DesignTokens.typography.sizes.base, color: colors.text },
-  totalRow: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: DesignTokens.colors.neutral[100] },
+  totalRow: { marginTop: DesignTokens.spacing[3], paddingTop: DesignTokens.spacing[3], borderTopWidth: 1, borderTopColor: DesignTokens.colors.neutral[100] },
   totalLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
   totalValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
   primaryButton: {
-    marginHorizontal: 20,
-    marginTop: 16,
-    paddingVertical: 16,
+    marginHorizontal: DesignTokens.spacing[5],
+    marginTop: Spacing.md,
+    paddingVertical: Spacing.md,
     borderRadius: 14,
     alignItems: "center",
     backgroundColor: colors.primary,
   },
   primaryButtonInline: {
-    marginTop: 4,
-    paddingVertical: 14,
+    marginTop: Spacing.xs,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 12,
     alignItems: "center",
     backgroundColor: colors.primary,
   },
   primaryButtonFlex: {
     flex: 1,
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     borderRadius: 14,
     alignItems: "center",
     backgroundColor: colors.primary,
   },
   primaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.surface },
   secondaryButton: {
-    paddingVertical: 16,
-    paddingHorizontal: 22,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: DesignTokens.spacing[5],
     borderRadius: 14,
     alignItems: "center",
     borderWidth: 1,
@@ -796,8 +798,8 @@ const styles = StyleSheet.create({
   },
   secondaryButtonWide: {
     width: "100%",
-    marginTop: 12,
-    paddingVertical: 16,
+    marginTop: DesignTokens.spacing[3],
+    paddingVertical: Spacing.md,
     borderRadius: 14,
     alignItems: "center",
     borderWidth: 1,
@@ -805,18 +807,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   secondaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textSecondary },
-  actionRow: { flexDirection: "row", gap: 12, marginHorizontal: 20, marginTop: 16 },
+  actionRow: { flexDirection: "row", gap: DesignTokens.spacing[3], marginHorizontal: DesignTokens.spacing[5], marginTop: Spacing.md},
   link: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
-  form: { gap: 10, marginBottom: 10 },
+  form: { gap: DesignTokens.spacing['2.5'], marginBottom: DesignTokens.spacing['2.5']},
   areaRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    height: 48,
+    height: Spacing['2xl'],
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 12,
-    paddingHorizontal: 14,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
     backgroundColor: colors.background,
   },
   areaText: {
@@ -828,69 +830,69 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
   },
   input: {
-    height: 48,
+    height: Spacing['2xl'],
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 12,
-    paddingHorizontal: 14,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
     backgroundColor: colors.background,
     color: colors.textPrimary,
   },
-  multiline: { height: 84, textAlignVertical: "top", paddingTop: 12 },
+  multiline: { height: 84, textAlignVertical: "top", paddingTop: DesignTokens.spacing[3]},
   addressCard: {
-    marginTop: 10,
-    padding: 14,
+    marginTop: DesignTokens.spacing['2.5'],
+    padding: DesignTokens.spacing['3.5'],
     borderRadius: 14,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.surface,
   },
-  addressCardActive: { borderColor: colors.primary, backgroundColor: "DesignTokens.colors.backgrounds.tertiary" }, // custom color
+  addressCardActive: { borderColor: colors.primary, backgroundColor: "colors.backgroundTertiary" }, // custom color
   paymentItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    padding: 14,
+    gap: DesignTokens.spacing[3],
+    padding: DesignTokens.spacing['3.5'],
     borderRadius: 14,
     borderWidth: 1,
     borderColor: colors.border,
-    marginTop: 10,
+    marginTop: DesignTokens.spacing['2.5'],
   },
   paymentLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.text },
   successCard: {
-    marginHorizontal: 20,
-    marginTop: 32,
-    padding: 24,
+    marginHorizontal: DesignTokens.spacing[5],
+    marginTop: Spacing.xl,
+    padding: Spacing.lg,
     borderRadius: 20,
     backgroundColor: colors.surface,
     alignItems: "center",
-    gap: 10,
+    gap: DesignTokens.spacing['2.5'],
   },
   successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.text },
   paymentButtonsRow: {
     flexDirection: "row",
-    gap: 12,
-    marginHorizontal: 20,
-    marginTop: 16,
+    gap: DesignTokens.spacing[3],
+    marginHorizontal: DesignTokens.spacing[5],
+    marginTop: Spacing.md,
   },
   alipayButton: {
     flex: 1,
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     borderRadius: 14,
     alignItems: "center",
-    backgroundColor: "DesignTokens.colors.semantic.info", // custom color
+    backgroundColor: "colors.info", // custom color
   },
   wechatButton: {
     flex: 1,
-    paddingVertical: 16,
+    paddingVertical: Spacing.md,
     borderRadius: 14,
     alignItems: "center",
-    backgroundColor: "DesignTokens.colors.semantic.success", // custom color
+    backgroundColor: "colors.success", // custom color
   },
   paymentButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
 });
 

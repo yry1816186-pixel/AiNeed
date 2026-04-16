@@ -31,6 +31,8 @@ import { ColorSeasonCard } from '../../../components/ColorSeasonCard';
 import { StyleTagsCard } from '../../../components/StyleTagsCard';
 import { SharePosterPreview } from '../../../components/SharePosterPreview';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { Spacing } from '../../../design-system/theme';
 
 type ProfileReportNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -97,6 +99,8 @@ function getProfileCompletion(profile: UserProfile): number {
 }
 
 export const ProfileReportScreenComponent: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const navigation = useNavigation<ProfileReportNavigationProp>();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [bodyAnalysis, setBodyAnalysis] = useState<BodyAnalysisReport | null>(null);
@@ -321,7 +325,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
             end={{ x: 1, y: 1 }}
             style={styles.shareButtonGradient}
           >
-            <Ionicons name="share-social-outline" size={20} color={DesignTokens.colors.backgrounds.primary} />
+            <Ionicons name="share-social-outline" size={20} color={colors.surface} />
             <Text style={styles.shareButtonText}>分享我的风格画像</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -330,7 +334,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     backgroundColor: colors.neutral[50],
@@ -352,7 +356,7 @@ const styles = StyleSheet.create({
     color: colors.neutral[900],
   },
   headerRight: {
-    width: 24,
+    width: Spacing.lg,
   },
   scrollView: {
     flex: 1,
@@ -402,7 +406,7 @@ const styles = StyleSheet.create({
   emptyButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
   summaryCard: {
     borderRadius: spacing.borderRadius["2xl"],
@@ -419,8 +423,8 @@ const styles = StyleSheet.create({
     marginRight: spacing.scale[4],
   },
   avatar: {
-    width: 64,
-    height: 64,
+    width: Spacing['3xl'],
+    height: Spacing['3xl'],
     borderRadius: 32,
     backgroundColor: "rgba(255,255,255,0.3)",
     alignItems: "center",
@@ -431,11 +435,11 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
   avatarImage: {
-    width: 64,
-    height: 64,
+    width: Spacing['3xl'],
+    height: Spacing['3xl'],
     borderRadius: 32,
     borderWidth: 2,
     borderColor: "rgba(255,255,255,0.5)",
@@ -446,7 +450,7 @@ const styles = StyleSheet.create({
   summaryName: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     marginBottom: spacing.scale[1],
   },
   summaryPersonality: {
@@ -458,7 +462,7 @@ const styles = StyleSheet.create({
     gap: spacing.scale[2],
   },
   progressTrack: {
-    height: 6,
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
     backgroundColor: "rgba(255,255,255,0.3)",
     overflow: "hidden",
@@ -466,7 +470,7 @@ const styles = StyleSheet.create({
   progressFill: {
     height: "100%",
     borderRadius: 3,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
   },
   progressText: {
     fontSize: typography.fontSize.xs,
@@ -474,7 +478,7 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.medium,
   },
   bottomSpacer: {
-    height: 80,
+    height: Spacing['4xl'],
   },
   bottomBar: {
     position: "absolute",
@@ -502,9 +506,9 @@ const styles = StyleSheet.create({
   shareButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
   },
-});
+}))
 
 const ProfileReportScreen = withErrorBoundary(ProfileReportScreenComponent, {
   screenName: "ProfileReportScreen",

@@ -16,13 +16,17 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
-import { theme, Colors, Shadows } from '../design-system/theme';
+import { theme, Colors, Shadows , flatColors as colors } from '../design-system/theme';
 import { recommendationsApi } from "../../services/api/tryon.api";
 import { cartApi } from "../../services/api/commerce.api";
 import { useAuthStore, useHeartRecommendStore } from "../../stores";
 import PreferenceSetupModal from "./PreferenceSetupModal";
 import { SwipeCard, ProductItem } from "./SwipeCard";
 import { EmptyState } from "./ActionButtons";
+import { Spacing } from '../../../../design-system/theme';
+import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
+
+
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const _CARD_WIDTH = SCREEN_WIDTH - 40;
@@ -303,7 +307,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
       </Animated.View>
 
       {isUsingMockData && (
-        <View style={{ backgroundColor: '#FFF3E0', padding: 8, paddingHorizontal: 16 }}>
+        <View style={{ backgroundColor: '#FFF3E0', padding: Spacing.sm, paddingHorizontal: Spacing.md}}>
           <Text style={{ color: '#E65100', fontSize: DesignTokens.typography.sizes.sm }}>
             当前为示例数据，推荐服务暂不可用
           </Text>
@@ -346,12 +350,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: Platform.OS === "ios" ? 60 : 40,
-    paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingBottom: Spacing.md,
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: theme.colors.surface,
     alignItems: "center",
@@ -369,19 +373,19 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   statsContainer: {
     flexDirection: "row",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   statItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
     backgroundColor: theme.colors.surface,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 12,
   },
   statText: {

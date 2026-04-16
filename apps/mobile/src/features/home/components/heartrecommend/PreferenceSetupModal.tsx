@@ -20,7 +20,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, BorderRadius, Shadows } from '../../../../design-system/theme';
+import { Colors, BorderRadius, Shadows, Spacing } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { profileApi } from '../../../services/api/profile.api';
@@ -79,7 +79,7 @@ const AnimatedPreferenceOptionCard: React.FC<AnimatedPreferenceOptionCardProps> 
       {option.description && <Text style={styles.optionDescription}>{option.description}</Text>}
       {isSelected && (
         <View style={styles.checkMark}>
-          <Ionicons name="checkmark" size={14} color={DesignTokens.colors.text.inverse} />
+          <Ionicons name="checkmark" size={14} color={colors.textInverse} />
         </View>
       )}
     </AnimatedTouchable>
@@ -408,7 +408,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
             disabled={!canProceed() || loading}
           >
             <LinearGradient
-              colors={canProceed() ? [DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark] : [DesignTokens.colors.neutral[300], DesignTokens.colors.text.tertiary /* custom color */]}
+              colors={canProceed() ? [colors.neutral[300], colors.neutral[700]] : [DesignTokens.colors.neutral[300], colors.textTertiary /* custom color */]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.nextButtonGradient}
@@ -417,7 +417,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
                 {currentStep === totalSteps - 1 ? "开始探索" : "下一步"}
               </Text>
               {currentStep < totalSteps - 1 && (
-                <Ionicons name="arrow-forward" size={20} color={DesignTokens.colors.text.inverse} />
+                <Ionicons name="arrow-forward" size={20} color={colors.textInverse} />
               )}
             </LinearGradient>
           </TouchableOpacity>
@@ -437,12 +437,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: Platform.OS === "ios" ? 60 : 40,
-    paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingBottom: Spacing.md,
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: colors.surface,
     alignItems: "center",
@@ -450,16 +450,16 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
   backButtonPlaceholder: {
-    width: 40,
+    width: DesignTokens.spacing[10],
   },
   progressContainer: {
     flex: 1,
-    marginHorizontal: 16,
+    marginHorizontal: Spacing.md,
     alignItems: "center",
   },
   progressBar: {
     width: "100%",
-    height: 6,
+    height: DesignTokens.spacing['1.5'],
     backgroundColor: Colors.neutral[200],
     borderRadius: 3,
     overflow: "hidden",
@@ -470,14 +470,14 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   progressText: {
-    marginTop: 8,
+    marginTop: Spacing.sm,
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textSecondary,
     fontWeight: "500",
   },
   skipButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
   },
   skipText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -488,34 +488,34 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingBottom: DesignTokens.spacing[10],
   },
   stepContainer: {
-    paddingTop: 20,
+    paddingTop: DesignTokens.spacing[5],
   },
   stepTitle: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
     color: colors.textPrimary,
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   stepSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
-    marginBottom: 24,
+    marginBottom: Spacing.lg,
   },
   optionsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   optionCard: {
     width: (SCREEN_WIDTH - 40 - 24) / 3,
     aspectRatio: 0.9,
     backgroundColor: colors.surface,
     borderRadius: BorderRadius.xl,
-    padding: 12,
+    padding: DesignTokens.spacing[3],
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
@@ -538,24 +538,24 @@ const styles = StyleSheet.create({
   optionDescription: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: colors.textTertiary,
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
     textAlign: "center",
   },
   checkMark: {
     position: "absolute",
-    top: 8,
-    right: 8,
-    width: 20,
-    height: 20,
+    top: Spacing.sm,
+    right: Spacing.sm,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 10,
     backgroundColor: Colors.primary[500],
     alignItems: "center",
     justifyContent: "center",
   },
   footer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: DesignTokens.spacing[5],
     paddingBottom: Platform.OS === "ios" ? 40 : 24,
-    paddingTop: 16,
+    paddingTop: Spacing.md,
   },
   nextButton: {
     borderRadius: 28,
@@ -569,13 +569,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    paddingVertical: 16,
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
   },
   nextButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
 });
 

@@ -4,6 +4,7 @@ import Svg, { Rect, Text as SvgText, Path, G } from "react-native-svg";
 import { colors } from "../../theme/tokens/colors";
 import { typography } from "../../theme/tokens/typography";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 export interface ColorPaletteProps {
   colors: { name: string; hex: string; label?: string }[];
@@ -27,6 +28,8 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
   type = "neutral",
   accessibilityLabel,
 }) => {
+  const { colors } = useTheme();
+  const _styles = use_styles(colors);
   const defaultA11yLabel =
     accessibilityLabel ||
     `${type === "best" ? "推荐" : type === "avoid" ? "避免" : ""}色彩 ${paletteColors
@@ -55,7 +58,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
             x={x + blockSize - indicatorSize - 2}
             y={y + 2}
             fill="none"
-            stroke={DesignTokens.colors.neutral.white}
+            stroke={colors.surface}
             strokeWidth={1.5}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -80,7 +83,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
             x={x + blockSize - indicatorSize - 2}
             y={y + 2}
             fill="none"
-            stroke={DesignTokens.colors.neutral.white}
+            stroke={colors.surface}
             strokeWidth={1.5}
             strokeLinecap="round"
           />
@@ -136,6 +139,6 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
   );
 };
 
-const _styles = StyleSheet.create({});
+const use_styles = createStyles((colors) => ({}))
 
 export default ColorPalette;

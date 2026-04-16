@@ -7,6 +7,8 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import type { RootStackParamList } from '../../../types/navigation';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { Spacing } from '../../../design-system/theme';
+
 
 type LegalScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -320,14 +322,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
+    padding: Spacing.md,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: DesignTokens.spacing[10],
+    height: DesignTokens.spacing[10],
     alignItems: "center",
     justifyContent: "center",
   },
@@ -338,50 +340,50 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
+    padding: DesignTokens.spacing[5],
   },
   lastUpdated: {
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   lastUpdatedText: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
   },
   documentContent: {
-    paddingBottom: 40,
+    paddingBottom: DesignTokens.spacing[10],
   },
   heading1: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: colors.textPrimary,
-    marginTop: 24,
-    marginBottom: 12,
+    marginTop: Spacing.lg,
+    marginBottom: DesignTokens.spacing[3],
   },
   heading2: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   paragraph: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: colors.textSecondary,
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   bulletItem: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: colors.textSecondary,
-    marginLeft: 16,
-    marginBottom: 4,
+    marginLeft: Spacing.md,
+    marginBottom: Spacing.xs,
   },
   spacer: {
-    height: 8,
+    height: Spacing.sm,
   },
   footer: {
-    padding: 16,
+    padding: Spacing.md,
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,

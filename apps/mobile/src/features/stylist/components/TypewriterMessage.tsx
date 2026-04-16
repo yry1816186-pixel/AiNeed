@@ -13,6 +13,7 @@ import { useReducedMotion } from '../../../hooks/useReducedMotion';
 import { useTypewriter } from '../../../hooks/useAdvancedAnimations';
 import { Duration } from '../../../design-system/theme/tokens/animations';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 /** Blinking cursor shown while typewriter is active */
 function TypingCursor() {
@@ -66,6 +67,8 @@ export const TypewriterMessage: React.FC<TypewriterMessageProps> = ({
   style,
   textStyle,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { reducedMotion } = useReducedMotion();
   const displayText = useTypewriter(text, reducedMotion ? 0 : speed);
   const [isComplete, setIsComplete] = useState(false);
@@ -93,7 +96,7 @@ export const TypewriterMessage: React.FC<TypewriterMessageProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -102,15 +105,15 @@ const styles = StyleSheet.create({
   text: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 20,
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   cursor: {
-    marginLeft: 1,
-    marginBottom: 2,
+    marginLeft: DesignTokens.spacing.px,
+    marginBottom: DesignTokens.spacing['0.5'],
   },
   cursorText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
   },
-});
+}))

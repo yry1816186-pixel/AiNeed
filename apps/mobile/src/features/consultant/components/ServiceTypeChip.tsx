@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface ServiceTypeChipProps {
   label: string;
@@ -9,6 +10,8 @@ interface ServiceTypeChipProps {
 }
 
 export const ServiceTypeChip: React.FC<ServiceTypeChipProps> = ({ label, selected, onPress }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <TouchableOpacity
       style={[styles.chip, selected ? styles.chipSelected : styles.chipDefault]}
@@ -22,34 +25,34 @@ export const ServiceTypeChip: React.FC<ServiceTypeChipProps> = ({ label, selecte
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: Spacing.sm,
     borderRadius: 20,
-    marginRight: 8,
-    marginBottom: 8,
+    marginRight: Spacing.sm,
+    marginBottom: Spacing.sm,
   },
   chipDefault: {
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
+    backgroundColor: colors.backgroundTertiary,
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.borders.default",
+    borderColor: "colors.border",
   },
   chipSelected: {
-    backgroundColor: "DesignTokens.colors.brand.terracotta",
+    backgroundColor: "colors.primary",
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.brand.terracotta",
+    borderColor: "colors.primary",
   },
   text: {
     fontSize: DesignTokens.typography.sizes.base,
   },
   textDefault: {
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
   },
   textSelected: {
-    color: DesignTokens.colors.backgrounds.primary,
+    color: colors.surface,
     fontWeight: "500",
   },
-});
+}))
 
 export default ServiceTypeChip;

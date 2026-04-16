@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
     gap: Spacing[1],
   },
   dot: {
-    width: 8,
-    height: 8,
+    width: Spacing.sm,
+    height: Spacing.sm,
     borderRadius: 4,
     backgroundColor: Colors.neutral[300],
   },
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
   },
   dotCurrent: {
     backgroundColor: Colors.primary[500],
-    width: 10,
-    height: 10,
+    width: DesignTokens.spacing['2.5'],
+    height: DesignTokens.spacing['2.5'],
     borderRadius: 5,
   },
   stepText: {
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     color: Colors.neutral[600],
   },
   barBackground: {
-    height: 4,
+    height: Spacing.xs,
     borderRadius: BorderRadius.full,
     backgroundColor: Colors.neutral[200],
     overflow: "hidden",

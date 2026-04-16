@@ -17,6 +17,8 @@ import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens'
 import { useBloggerStore } from '../stores/bloggerStore';
 import type { TrendMetric } from '../../../services/api/blogger.api';
 import type { RootStackParamList } from '../../../types/navigation';
+import { Spacing } from '../../../design-system/theme';
+
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -80,7 +82,7 @@ function TrendChart({ data, width }: { data: { date: string; value: number }[]; 
                   height: Math.max(barHeight, 2),
                   width: Math.max(barWidth - 4, 4),
                   left: chartPadding + index * barWidth + 2,
-                  bottom: 10,
+                  bottom: DesignTokens.spacing['2.5'],
                 },
               ]}
             />
@@ -248,7 +250,7 @@ export const BloggerDashboardScreen: React.FC = () => {
           style={styles.manageBtn}
           onPress={() => navigation.navigate("BloggerProfile", {})}
         >
-          <Ionicons name="bag-outline" size={18} color={DesignTokens.colors.brand.terracotta} />
+          <Ionicons name="bag-outline" size={18} color={colors.primary} />
           <Text style={styles.manageBtnText}>管理我的商品</Text>
           <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
         </TouchableOpacity>
@@ -256,13 +258,13 @@ export const BloggerDashboardScreen: React.FC = () => {
         {/* Non-blogger upgrade prompt */}
         {!isBlogger && (
           <View style={styles.upgradeSection}>
-            <Ionicons name="rocket-outline" size={32} color={DesignTokens.colors.brand.terracotta} />
+            <Ionicons name="rocket-outline" size={32} color={colors.primary} />
             <Text style={styles.upgradeTitle}>成为博主解锁更多数据</Text>
             <Text style={styles.upgradeDesc}>综合分≥60 且 粉丝≥500 即可自动升级为博主</Text>
           </View>
         )}
 
-        <View style={{ height: 40 }} />
+        <View style={{ height: DesignTokens.spacing[10] }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -274,95 +276,95 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
-  backBtn: { width: 40, height: 40, justifyContent: "center" },
-  headerSpacer: { width: 40 },
-  scrollContent: { paddingHorizontal: 16, paddingTop: 12 },
+  backBtn: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], justifyContent: "center" },
+  headerSpacer: { width: DesignTokens.spacing[10] },
+  scrollContent: { paddingHorizontal: Spacing.md, paddingTop: DesignTokens.spacing[3]},
   periodRow: {
     flexDirection: "row",
     backgroundColor: colors.surface,
     borderRadius: 10,
-    padding: 4,
-    marginBottom: 16,
+    padding: Spacing.xs,
+    marginBottom: Spacing.md,
   },
   periodTab: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: Spacing.sm,
     alignItems: "center",
     borderRadius: 8,
   },
-  periodTabActive: { backgroundColor: DesignTokens.colors.brand.terracotta },
+  periodTabActive: { backgroundColor: colors.primary },
   periodTabText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  periodTabTextActive: { color: DesignTokens.colors.backgrounds.primary, fontWeight: "600" },
+  periodTabTextActive: { color: colors.surface, fontWeight: "600" },
   metricsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
+    gap: DesignTokens.spacing['2.5'],
   },
   metricCard: {
     width: (SCREEN_WIDTH - 42) / 2,
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: 14,
+    padding: DesignTokens.spacing['3.5'],
   },
   metricValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
-  metricLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: 4 },
-  metricChange: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", marginTop: 4 },
-  metricUp: { color: "DesignTokens.colors.semantic.success" },
-  metricDown: { color: "DesignTokens.colors.semantic.error" },
-  loader: { paddingVertical: 24 },
+  metricLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: Spacing.xs},
+  metricChange: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", marginTop: Spacing.xs},
+  metricUp: { color: "colors.success" },
+  metricDown: { color: "colors.error" },
+  loader: { paddingVertical: Spacing.lg},
   noData: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
     textAlign: "center",
-    paddingVertical: 40,
+    paddingVertical: DesignTokens.spacing[10],
   },
   enhancedSection: {
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: 14,
-    marginTop: 16,
+    padding: DesignTokens.spacing['3.5'],
+    marginTop: Spacing.md,
   },
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: 10 },
-  enhancedRow: { flexDirection: "row", gap: 10 },
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing['2.5']},
+  enhancedRow: { flexDirection: "row", gap: DesignTokens.spacing['2.5']},
   enhancedCard: {
     flex: 1,
-    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
+    backgroundColor: colors.backgroundTertiary,
     borderRadius: 10,
-    padding: 14,
+    padding: DesignTokens.spacing['3.5'],
     alignItems: "center",
   },
-  enhancedValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: DesignTokens.colors.brand.terracotta },
-  enhancedLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: 4 },
+  enhancedValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
+  enhancedLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: Spacing.xs},
   chartSection: {
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: 14,
-    marginTop: 16,
+    padding: DesignTokens.spacing['3.5'],
+    marginTop: Spacing.md,
   },
   metricSelector: {
     flexDirection: "row",
-    gap: 6,
-    marginBottom: 12,
+    gap: DesignTokens.spacing['1.5'],
+    marginBottom: DesignTokens.spacing[3],
   },
   metricChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 14,
     backgroundColor: colors.background,
   },
-  metricChipActive: { backgroundColor: DesignTokens.colors.backgrounds.tertiary },
+  metricChipActive: { backgroundColor: colors.backgroundTertiary },
   metricChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
-  metricChipTextActive: { color: DesignTokens.colors.brand.terracotta, fontWeight: "600" },
+  metricChipTextActive: { color: colors.primary, fontWeight: "600" },
   chartContainer: {
     position: "relative",
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   chartArea: {
     borderBottomWidth: 1,
@@ -370,13 +372,13 @@ const styles = StyleSheet.create({
   },
   chartBar: {
     position: "absolute",
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     borderRadius: 3,
   },
   chartXAxis: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingTop: 6,
+    paddingTop: DesignTokens.spacing['1.5'],
   },
   chartXLabel: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
   chartEmpty: {
@@ -388,30 +390,30 @@ const styles = StyleSheet.create({
   manageBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
+    padding: Spacing.md,
+    marginTop: Spacing.md,
   },
   manageBtnText: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, fontWeight: "500" },
   upgradeSection: {
     alignItems: "center",
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: 24,
-    marginTop: 16,
+    padding: Spacing.lg,
+    marginTop: Spacing.md,
   },
   upgradeTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginTop: 12,
+    marginTop: DesignTokens.spacing[3],
   },
   upgradeDesc: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textSecondary,
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
     textAlign: "center",
   },
 });

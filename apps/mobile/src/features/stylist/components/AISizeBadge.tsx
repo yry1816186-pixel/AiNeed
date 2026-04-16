@@ -1,26 +1,27 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import type { SizeRecommendation } from '../../../services/api/commerce.api';
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface AISizeBadgeProps {
   recommendation: SizeRecommendation;
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   badge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "DesignTokens.colors.semantic.successLight",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    backgroundColor: "colors.successLight",
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
     borderRadius: 12,
-    gap: 4,
+    gap: Spacing.xs,
   },
   badgeText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
-    color: "DesignTokens.colors.semantic.success",
+    color: "colors.success",
   },
   badgeSize: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -28,11 +29,11 @@ const styles = StyleSheet.create({
     color: "#3D5E4D",
   },
   detail: {
-    marginTop: 4,
-    padding: 8,
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    marginTop: Spacing.xs,
+    padding: Spacing.sm,
+    backgroundColor: "colors.backgroundTertiary",
     borderRadius: 8,
-    gap: 4,
+    gap: Spacing.xs,
   },
   detailRow: {
     flexDirection: "row",
@@ -40,20 +41,22 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "DesignTokens.colors.text.tertiary",
+    color: "colors.textTertiary",
   },
   detailValue: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   reasonText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: "DesignTokens.colors.text.secondary",
+    color: "colors.textSecondary",
   },
-});
+}))
 
 export const AISizeBadge: React.FC<AISizeBadgeProps> = ({ recommendation }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [expanded, setExpanded] = useState(false);
 
   return (

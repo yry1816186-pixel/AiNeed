@@ -2,6 +2,8 @@ import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
 import { Text } from "react-native";
 import { Card } from "../Card";
+import { DesignTokens } from '../../../theme/tokens/design-tokens';
+
 
 jest.mock("@/src/polyfills/expo-linear-gradient", () => {
   const { View } = require("react-native");
@@ -45,7 +47,7 @@ describe("Card", () => {
 
   it("applies custom styles", () => {
     const { getByText } = render(
-      <Card style={{ marginTop: 10 }}>
+      <Card style={{ marginTop: DesignTokens.spacing['2.5']}}>
         <T>Styled Card</T>
       </Card>
     );

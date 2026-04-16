@@ -4,6 +4,9 @@ import { Feather } from "@/src/polyfills/expo-vector-icons";
 import { ClothingCategory, CATEGORY_LABELS } from "../../../types/clothing";
 import { haptics } from "../../utils/haptics";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
+
 
 interface FilterOption {
   label: string;
@@ -86,6 +89,8 @@ export function FilterPanel({
   occasions,
   initialFilters,
 }: FilterPanelProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [selectedCategories, setSelectedCategories] = useState<ClothingCategory[]>(
     initialFilters?.categories || []
   );
@@ -144,7 +149,7 @@ export function FilterPanel({
         <View style={styles.header}>
           <Text style={styles.title}>筛选</Text>
           <TouchableOpacity onPress={onClose}>
-            <Feather name="x" size={24} color={DesignTokens.colors.text.primary} />
+            <Feather name="x" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
         </View>
 
@@ -226,14 +231,14 @@ export function FilterPanel({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "flex-end",
   },
   panel: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "80%",
@@ -242,68 +247,68 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    padding: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
   title: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   content: {
-    padding: 16,
+    padding: Spacing.md,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: DesignTokens.spacing[5],
   },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.secondary,
-    marginBottom: 12,
+    color: colors.textSecondary,
+    marginBottom: DesignTokens.spacing[3],
   },
   options: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: Spacing.sm,
   },
   option: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: Spacing.sm,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
   },
   optionSelected: {
-    backgroundColor: DesignTokens.colors.brand.terracotta, // custom color
+    backgroundColor: colors.primary, // custom color
   },
   optionText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   optionTextSelected: {
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
   count: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary,
-    marginLeft: 4,
+    color: colors.textSecondary,
+    marginLeft: Spacing.xs,
   },
   countSelected: {
     color: "rgba(255, 255, 255, 0.8)",
   },
   footer: {
     flexDirection: "row",
-    padding: 16,
+    padding: Spacing.md,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[200],
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   resetButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 8,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
@@ -312,20 +317,20 @@ const styles = StyleSheet.create({
   resetButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.secondary,
+    color: colors.textSecondary,
   },
   applyButton: {
     flex: 2,
-    paddingVertical: 12,
+    paddingVertical: DesignTokens.spacing[3],
     borderRadius: 8,
-    backgroundColor: DesignTokens.colors.brand.terracotta, // custom color
+    backgroundColor: colors.primary, // custom color
     alignItems: "center",
   },
   applyButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
   },
-});
+}))
 
 export default FilterPanel;

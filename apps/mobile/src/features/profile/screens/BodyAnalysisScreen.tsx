@@ -11,7 +11,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useProfileStore } from '../stores/profileStore';
@@ -136,13 +136,13 @@ const RadarChart: React.FC<{
       <Polygon
         points={actualPath}
         fill="rgba(198, 123, 92, 0.2)"
-        stroke={DesignTokens.colors.brand.terracotta}
+        stroke={colors.primary}
         strokeWidth={2}
       />
 
       {/* Actual points */}
       {actualPoints.map((point, i) => (
-        <Circle key={`actual-${i}`} cx={point.x} cy={point.y} r={4} fill={DesignTokens.colors.brand.terracotta} />
+        <Circle key={`actual-${i}`} cx={point.x} cy={point.y} r={4} fill={colors.primary} />
       ))}
 
       {/* Axis labels */}
@@ -345,7 +345,7 @@ export const BodyAnalysisScreen: React.FC = () => {
         {/* Body type card with gradient */}
         <View style={styles.typeCard}>
           <LinearGradient
-            colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
+            colors={[colors.primary, colors.primary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.typeGradient}
@@ -367,7 +367,7 @@ export const BodyAnalysisScreen: React.FC = () => {
             </View>
             <View style={styles.legendRow}>
               <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: DesignTokens.colors.brand.terracotta }]} />
+                <View style={[styles.legendDot, { backgroundColor: colors.primary }]} />
                 <Text style={styles.legendText}>实际比例</Text>
               </View>
               <View style={styles.legendItem}>
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
   typeCard: {
     borderRadius: BorderRadius["2xl"],
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
   typeName: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
     marginBottom: Spacing[2],
   },
   typeDescription: {
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   chartCard: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.xl,
     padding: Spacing[5],
     marginBottom: Spacing[4],
@@ -494,8 +494,8 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   legendDot: {
-    width: 12,
-    height: 12,
+    width: DesignTokens.spacing[3],
+    height: DesignTokens.spacing[3],
     borderRadius: 6,
   },
   legendText: {
@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   adviceCard: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.xl,
     padding: Spacing[5],
     marginBottom: Spacing[4],
@@ -522,11 +522,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[3],
   },
   adviceBullet: {
-    width: 6,
-    height: 6,
+    width: DesignTokens.spacing['1.5'],
+    height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
     backgroundColor: colors.primary,
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   adviceText: {
     flex: 1,
@@ -559,7 +559,7 @@ const styles = StyleSheet.create({
   emptyButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
 });
 

@@ -13,6 +13,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { merchantApi } from '../../../services/api/commerce.api';
 import { DesignTokens } from '../../../theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 type ScreenState = "form" | "pending" | "approved" | "rejected";
 
@@ -20,6 +23,8 @@ const BUSINESS_LICENSE_REGEX = /^[0-9A-HJ-NP-RTUW-Y]{2}\d{6}[0-9A-HJ-NP-RTUW-Y]{
 const PHONE_REGEX = /^1[3-9]\d{9}$/;
 
 export const MerchantApplyScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [screenState, setScreenState] = useState<ScreenState>("form");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -102,7 +107,7 @@ export const MerchantApplyScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.center}>
-          <ActivityIndicator size="large" color={DesignTokens.colors.semantic.error} />
+          <ActivityIndicator size="large" color={colors.error} />
         </View>
       </SafeAreaView>
     );
@@ -143,7 +148,7 @@ export const MerchantApplyScreen: React.FC = () => {
               <Ionicons
                 name={isLicenseValid ? "checkmark-circle" : "close-circle"}
                 size={20}
-                color={isLicenseValid ? DesignTokens.colors.semantic.success : DesignTokens.colors.semantic.error}
+                color={isLicenseValid ? colors.success : colors.error}
                 style={styles.validationIcon}
               />
             )}
@@ -173,7 +178,7 @@ export const MerchantApplyScreen: React.FC = () => {
               <Ionicons
                 name={isPhoneValid ? "checkmark-circle" : "close-circle"}
                 size={20}
-                color={isPhoneValid ? DesignTokens.colors.semantic.success : DesignTokens.colors.semantic.error}
+                color={isPhoneValid ? colors.success : colors.error}
                 style={styles.validationIcon}
               />
             )}
@@ -197,7 +202,7 @@ export const MerchantApplyScreen: React.FC = () => {
             disabled={!isFormValid || submitting}
           >
             {submitting ? (
-              <ActivityIndicator size="small" color={DesignTokens.colors.neutral.white} />
+              <ActivityIndicator size="small" color={colors.surface} />
             ) : (
               <Text style={styles.submitButtonText}>{"\u63D0\u4EA4\u7533\u8BF7"}</Text>
             )}
@@ -207,7 +212,7 @@ export const MerchantApplyScreen: React.FC = () => {
 
       {screenState === "pending" ? (
         <View style={styles.statusContainer}>
-          <ActivityIndicator size="large" color={DesignTokens.colors.semantic.error} />
+          <ActivityIndicator size="large" color={colors.error} />
           <Text style={styles.statusTitle}>{"\u7533\u8BF7\u5BA1\u6838\u4E2D"}</Text>
           <Text style={styles.statusMessage}>{"\u7533\u8BF7\u5DF2\u63D0\u4EA4\uFF0C\u6211\u4EEC\u5C06\u57281-3\u4E2A\u5DE5\u4F5C\u65E5\u5185\u5B8C\u6210\u5BA1\u6838"}</Text>
         </View>
@@ -215,7 +220,7 @@ export const MerchantApplyScreen: React.FC = () => {
 
       {screenState === "approved" ? (
         <View style={styles.statusContainer}>
-          <Ionicons name="checkmark-circle" size={64} color={DesignTokens.colors.semantic.success} />
+          <Ionicons name="checkmark-circle" size={64} color={colors.success} />
           <Text style={styles.statusTitle}>{"\u606D\u559C\uFF01\u60A8\u7684\u5546\u5BB6\u7533\u8BF7\u5DF2\u901A\u8FC7"}</Text>
           <TouchableOpacity style={styles.submitButton}>
             <Text style={styles.submitButtonText}>{"\u8FDB\u5165\u5546\u5BB6\u540E\u53F0"}</Text>
@@ -225,7 +230,7 @@ export const MerchantApplyScreen: React.FC = () => {
 
       {screenState === "rejected" ? (
         <View style={styles.statusContainer}>
-          <Ionicons name="close-circle" size={64} color={DesignTokens.colors.semantic.error} />
+          <Ionicons name="close-circle" size={64} color={colors.error} />
           <Text style={styles.statusTitle}>{"\u5F88\u62B1\u6B49\uFF0C\u60A8\u7684\u7533\u8BF7\u672A\u901A\u8FC7"}</Text>
           <Text style={styles.statusMessage}>{"\u539F\u56E0\uFF1A"}{rejectReason}</Text>
           <TouchableOpacity style={styles.submitButton} onPress={handleRetry}>
@@ -237,78 +242,78 @@ export const MerchantApplyScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: DesignTokens.colors.backgrounds.primary },
+const useStyles = createStyles((colors) => ({
+  container: { flex: 1, backgroundColor: colors.surface },
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.text.primary },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
-  content: { flex: 1, padding: 16 },
+  content: { flex: 1, padding: Spacing.md},
   fieldLabel: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: DesignTokens.colors.text.primary,
-    marginBottom: 6,
-    marginTop: 12,
+    color: colors.textPrimary,
+    marginBottom: DesignTokens.spacing['1.5'],
+    marginTop: DesignTokens.spacing[3],
   },
   input: {
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['2.5'],
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.primary,
+    color: colors.textPrimary,
   },
   inputRow: { position: "relative" },
-  inputWithIcon: { paddingRight: 40 },
-  validationIcon: { position: "absolute", right: 12, top: 12 },
-  errorText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.semantic.error, marginTop: 4 },
-  textArea: { height: 80, textAlignVertical: "top" },
+  inputWithIcon: { paddingRight: DesignTokens.spacing[10]},
+  validationIcon: { position: "absolute", right: DesignTokens.spacing[3], top: DesignTokens.spacing[3]},
+  errorText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, marginTop: Spacing.xs},
+  textArea: { height: Spacing['4xl'], textAlignVertical: "top" },
   charCount: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.tertiary,
+    color: colors.textTertiary,
     textAlign: "right",
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   submitButton: {
-    backgroundColor: DesignTokens.colors.semantic.error,
-    paddingVertical: 14,
+    backgroundColor: colors.error,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 24,
+    marginTop: Spacing.lg,
   },
   submitButtonDisabled: { backgroundColor: "#FFB0B0" },
   submitButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
   statusContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 32,
+    padding: Spacing.xl,
   },
   statusTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: DesignTokens.colors.text.primary,
-    marginTop: 16,
+    color: colors.textPrimary,
+    marginTop: Spacing.md,
     textAlign: "center",
   },
   statusMessage: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.tertiary,
-    marginTop: 8,
+    color: colors.textTertiary,
+    marginTop: Spacing.sm,
     textAlign: "center",
     lineHeight: 22,
   },
-});
+}))
 
 export default MerchantApplyScreen;

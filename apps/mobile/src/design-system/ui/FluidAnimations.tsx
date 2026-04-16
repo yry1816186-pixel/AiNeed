@@ -31,6 +31,9 @@ import AnimatedReanimated from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import type { ScrollEvent } from "../../types/events";
+import { Spacing } from '../theme';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -55,6 +58,8 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
   enableGlow = true,
   glowColor = Colors.primary[500],
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(1);
   const rotateX = useSharedValue(0);
   const rotateY = useSharedValue(0);
@@ -183,10 +188,10 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   };
 
   const sizeStyles = {
-    sm: { height: 36, paddingHorizontal: 16, fontSize: DesignTokens.typography.sizes.sm },
-    md: { height: 44, paddingHorizontal: 20, fontSize: DesignTokens.typography.sizes.base },
-    lg: { height: 52, paddingHorizontal: 28, fontSize: DesignTokens.typography.sizes.md },
-    xl: { height: 60, paddingHorizontal: 36, fontSize: DesignTokens.typography.sizes.lg },
+    sm: { height: DesignTokens.spacing[9], paddingHorizontal: Spacing.md, fontSize: DesignTokens.typography.sizes.sm },
+    md: { height: DesignTokens.spacing[11], paddingHorizontal: DesignTokens.spacing[5], fontSize: DesignTokens.typography.sizes.base },
+    lg: { height: 52, paddingHorizontal: DesignTokens.spacing[7], fontSize: DesignTokens.typography.sizes.md },
+    xl: { height: 60, paddingHorizontal: DesignTokens.spacing[9], fontSize: DesignTokens.typography.sizes.lg },
   };
 
   const sizeStyle = sizeStyles[size];
@@ -201,7 +206,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
             onPress={disabled ? undefined : onPress}
           >
             <LinearGradient
-              colors={disabled ? [DesignTokens.colors.neutral[300], DesignTokens.colors.neutral[300]] : [DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.terracottaDark]}
+              colors={disabled ? [DesignTokens.colors.neutral[300], DesignTokens.colors.neutral[300]] : [colors.primary, colors.primaryDark]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={[
@@ -587,7 +592,7 @@ export const StaggeredList: React.FC<StaggeredListProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   liquidGlassCard: {
     borderRadius: BorderRadius["3xl"],
     overflow: "hidden",
@@ -694,4 +699,4 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "rgba(255, 255, 255, 0.5)",
   },
-});
+}))

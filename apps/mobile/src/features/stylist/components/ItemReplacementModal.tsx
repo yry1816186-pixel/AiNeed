@@ -11,6 +11,9 @@ import {
 } from "react-native";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import type { AlternativeItem } from '../stores/aiStylistStore';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 interface ItemReplacementModalProps {
   visible: boolean;
@@ -37,6 +40,8 @@ export const ItemReplacementModal: React.FC<ItemReplacementModalProps> = ({
   onSelect,
   onClose,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const renderItem = ({ item }: { item: AlternativeItem }) => (
     <Pressable style={styles.card} onPress={() => onSelect(item.id)}>
       {item.imageUrl ? (
@@ -98,17 +103,17 @@ export const ItemReplacementModal: React.FC<ItemReplacementModalProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   overlay: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.4)" },
   modalContent: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "80%",
-    paddingBottom: 20,
+    paddingBottom: DesignTokens.spacing[5],
   },
   header: {
-    padding: 16,
+    padding: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
@@ -116,17 +121,17 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   subtitle: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.neutral[500] },
-  closeButton: { position: "absolute", right: 16, top: 16, padding: 4 },
-  closeButtonText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.brand.terracotta },
-  listContent: { padding: 16, gap: 12 },
+  closeButton: { position: "absolute", right: Spacing.md, top: Spacing.md, padding: Spacing.xs},
+  closeButtonText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
+  listContent: { padding: Spacing.md, gap: DesignTokens.spacing[3]},
   card: {
     flexDirection: "row",
-    backgroundColor: DesignTokens.colors.backgrounds.elevated,
+    backgroundColor: colors.surfaceElevated,
     borderRadius: 12,
-    padding: 12,
+    padding: DesignTokens.spacing[3],
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     alignItems: "center",
@@ -141,17 +146,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   placeholderText: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.neutral[400] },
-  itemInfo: { flex: 1, marginLeft: 12 },
+  itemInfo: { flex: 1, marginLeft: DesignTokens.spacing[3]},
   itemName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: DesignTokens.colors.neutral[800],
-    marginBottom: 2,
+    marginBottom: DesignTokens.spacing['0.5'],
   },
-  itemBrand: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral[500], marginBottom: 2 },
-  itemPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: DesignTokens.colors.brand.terracotta },
-  scoreContainer: { alignItems: "center", paddingHorizontal: 8 },
-  scoreText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: DesignTokens.colors.brand.sage },
+  itemBrand: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral[500], marginBottom: DesignTokens.spacing['0.5']},
+  itemPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
+  scoreContainer: { alignItems: "center", paddingHorizontal: Spacing.sm},
+  scoreText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: colors.secondary },
   scoreLabel: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.neutral[400] },
   skeletonCard: { opacity: 0.5 },
   skeletonImage: {
@@ -161,12 +166,12 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral[200],
   },
   skeletonText: {
-    height: 14,
+    height: DesignTokens.spacing['3.5'],
     borderRadius: 4,
     backgroundColor: DesignTokens.colors.neutral[200],
-    marginBottom: 6,
+    marginBottom: DesignTokens.spacing['1.5'],
     width: "80%",
   },
-  emptyState: { padding: 40, alignItems: "center" },
+  emptyState: { padding: DesignTokens.spacing[10], alignItems: "center" },
   emptyText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.neutral[400] },
-});
+}))

@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { communityApi } from "../../services/api/community.api";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface TrendingTag {
   name: string;
@@ -22,12 +23,14 @@ interface TrendingCardProps {
 }
 
 const DIRECTION_CONFIG = {
-  up: { icon: "arrow-up", color: "#27AE60" },
-  down: { icon: "arrow-down", color: "#E74C3C" },
-  stable: { icon: "arrow-forward", color: DesignTokens.colors.text.tertiary },
+  up: { icon: "arrow-up", color: colors.success },
+  down: { icon: "arrow-down", color: colors.error },
+  stable: { icon: "arrow-forward", color: colors.textTertiary },
 } as const;
 
 export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [tags, setTags] = useState<TrendingTag[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -64,7 +67,7 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="small" color={DesignTokens.colors.brand.terracotta} />
+        <ActivityIndicator size="small" color={colors.primary} />
       </View>
     );
   }
@@ -101,34 +104,34 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
-    backgroundColor: "#FFFFFF",
-    paddingVertical: 8,
+    backgroundColor: colors.surface,
+    paddingVertical: Spacing.sm,
   },
   scrollContent: {
-    paddingHorizontal: 12,
-    gap: 8,
+    paddingHorizontal: DesignTokens.spacing[3],
+    gap: Spacing.sm,
     alignItems: "center",
   },
   tagChip: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    backgroundColor: "#F0EDFF",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    gap: Spacing.xs,
+    backgroundColor: colors.backgroundTertiary,
+    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.brand.terracotta,
+    color: colors.primary,
     fontWeight: "500",
   },
   loadingContainer: {
-    paddingVertical: 12,
+    paddingVertical: DesignTokens.spacing[3],
     alignItems: "center",
   },
-});
+}))
 
 export default TrendingCard;

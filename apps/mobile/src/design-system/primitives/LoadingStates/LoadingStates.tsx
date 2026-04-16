@@ -20,6 +20,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { Colors, theme } from '../theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { Spacing } from '../../theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -31,6 +34,8 @@ interface SpinnerProps {
 }
 
 export function Spinner({ size = "large", color, style }: SpinnerProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return <ActivityIndicator size={size} color={color || Colors.primary[500]} style={style} />;
 }
 
@@ -117,8 +122,8 @@ export function SkeletonCard() {
       <Skeleton width="100%" height={120} borderRadius={12} />
       <View style={styles.skeletonCardContent}>
         <Skeleton width="70%" height={16} />
-        <Skeleton width="40%" height={12} style={{ marginTop: 8 }} />
-        <Skeleton width="50%" height={14} style={{ marginTop: 8 }} />
+        <Skeleton width="40%" height={12} style={{ marginTop: Spacing.sm}} />
+        <Skeleton width="50%" height={14} style={{ marginTop: Spacing.sm}} />
       </View>
     </View>
   );
@@ -132,7 +137,7 @@ export function SkeletonList({ count = 4 }: { count?: number }) {
           <Skeleton width={48} height={48} borderRadius={24} />
           <View style={styles.skeletonListItemText}>
             <Skeleton width="70%" height={14} />
-            <Skeleton width="50%" height={12} style={{ marginTop: 6 }} />
+            <Skeleton width="50%" height={12} style={{ marginTop: DesignTokens.spacing['1.5']}} />
           </View>
         </View>
       ))}
@@ -147,8 +152,8 @@ export function SkeletonProductGrid() {
         <View key={index} style={styles.skeletonGridItem}>
           <Skeleton width="100%" height={(SCREEN_WIDTH - 48) / 2} borderRadius={12} />
           <View style={styles.skeletonGridContent}>
-            <Skeleton width="80%" height={14} style={{ marginTop: 8 }} />
-            <Skeleton width="50%" height={12} style={{ marginTop: 4 }} />
+            <Skeleton width="80%" height={14} style={{ marginTop: Spacing.sm}} />
+            <Skeleton width="50%" height={12} style={{ marginTop: Spacing.xs}} />
           </View>
         </View>
       ))}
@@ -156,7 +161,7 @@ export function SkeletonProductGrid() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -168,7 +173,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   overlayMessage: {
-    marginTop: 16,
+    marginTop: Spacing.md,
     fontSize: DesignTokens.typography.sizes.md,
     color: "#fff",
     fontWeight: "500",
@@ -177,7 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.neutral[200],
   },
   skeletonTextContainer: {
-    padding: 16,
+    padding: Spacing.md,
   },
   skeletonCard: {
     backgroundColor: "#fff",
@@ -185,8 +190,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     ...Platform.select({
       ios: {
-        shadowColor: DesignTokens.colors.neutral.black,
-        shadowOffset: { width: 0, height: 2 },
+        shadowColor: colors.neutral[900],
+        shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
         shadowOpacity: 0.1,
         shadowRadius: 4,
       },
@@ -196,25 +201,25 @@ const styles = StyleSheet.create({
     }),
   },
   skeletonCardContent: {
-    padding: 12,
+    padding: DesignTokens.spacing[3],
   },
   skeletonList: {
-    padding: 16,
+    padding: Spacing.md,
   },
   skeletonListItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   skeletonListItemText: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: DesignTokens.spacing[3],
   },
   skeletonGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    padding: 12,
-    gap: 12,
+    padding: DesignTokens.spacing[3],
+    gap: DesignTokens.spacing[3],
   },
   skeletonGridItem: {
     width: (SCREEN_WIDTH - 48) / 2,
@@ -223,6 +228,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   skeletonGridContent: {
-    padding: 12,
+    padding: DesignTokens.spacing[3],
   },
-});
+}))

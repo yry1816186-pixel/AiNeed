@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Modal, Pressable } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+
 
 interface FeedbackModalProps {
   visible: boolean;
@@ -18,6 +21,8 @@ const DISLIKE_REASONS = [
 ];
 
 export const FeedbackModal: React.FC<FeedbackModalProps> = ({ visible, onSubmit, onClose }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [action, setAction] = useState<"like" | "dislike" | null>(null);
   const [rating, setRating] = useState(0);
   const [dislikeReason, setDislikeReason] = useState<string | undefined>(undefined);
@@ -134,26 +139,26 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ visible, onSubmit,
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   overlay: { flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.4)" },
   modalContent: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 20,
-    paddingBottom: 32,
+    padding: DesignTokens.spacing[5],
+    paddingBottom: Spacing.xl,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: 16,
+    marginBottom: Spacing.md,
     textAlign: "center",
   },
-  actionRow: { flexDirection: "row", gap: 16, marginBottom: 20, justifyContent: "center" },
+  actionRow: { flexDirection: "row", gap: Spacing.md, marginBottom: DesignTokens.spacing[5], justifyContent: "center" },
   actionButton: {
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 12,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
@@ -161,49 +166,49 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   actionButtonActive: {
-    borderColor: DesignTokens.colors.semantic.success,
-    backgroundColor: DesignTokens.colors.semantic.successLight,
+    borderColor: colors.success,
+    backgroundColor: colors.successLight,
   },
   actionButtonActiveDislike: {
-    borderColor: DesignTokens.colors.semantic.error,
-    backgroundColor: DesignTokens.colors.semantic.errorLight,
+    borderColor: colors.error,
+    backgroundColor: colors.errorLight,
   },
   actionButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: DesignTokens.colors.neutral[600] },
-  actionButtonTextActive: { color: DesignTokens.colors.semantic.success },
-  actionButtonTextDislike: { color: DesignTokens.colors.semantic.error },
-  ratingRow: { flexDirection: "row", justifyContent: "center", gap: 8, marginBottom: 16 },
-  starButton: { padding: 4 },
-  reasonsContainer: { marginBottom: 16 },
+  actionButtonTextActive: { color: colors.success },
+  actionButtonTextDislike: { color: colors.error },
+  ratingRow: { flexDirection: "row", justifyContent: "center", gap: Spacing.sm, marginBottom: Spacing.md},
+  starButton: { padding: Spacing.xs},
+  reasonsContainer: { marginBottom: Spacing.md},
   reasonsTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: DesignTokens.colors.neutral[700],
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
-  reasonsRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  reasonsRow: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm},
   reasonChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: Spacing.sm,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     borderWidth: 1,
     borderColor: "transparent",
   },
   reasonChipActive: {
-    borderColor: DesignTokens.colors.brand.terracotta,
+    borderColor: colors.primary,
     backgroundColor: DesignTokens.colors.neutral[50],
   },
   reasonChipText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral[600] },
-  reasonChipTextActive: { color: DesignTokens.colors.brand.terracotta, fontWeight: "500" },
+  reasonChipTextActive: { color: colors.primary, fontWeight: "500" },
   submitButton: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: colors.primary,
     borderRadius: 12,
-    paddingVertical: 14,
+    paddingVertical: DesignTokens.spacing['3.5'],
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   submitButtonDisabled: { opacity: 0.5 },
-  submitButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: DesignTokens.colors.neutral.white },
-  closeButton: { alignItems: "center", paddingVertical: 10 },
+  submitButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.surface },
+  closeButton: { alignItems: "center", paddingVertical: DesignTokens.spacing['2.5']},
   closeButtonText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.neutral[500] },
-});
+}))

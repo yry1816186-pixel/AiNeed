@@ -41,9 +41,10 @@ import {
   withDecay,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors } from '../../../design-system/theme';
+import { Colors, Spacing } from '../../../design-system/theme';
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -92,6 +93,8 @@ export interface TransitionProviderProps {
 }
 
 export const TransitionProvider: React.FC<TransitionProviderProps> = ({ children }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const currentTransition = useSharedValue(0);
   const [transitionType, setTransitionType] = useState<TransitionType>("fade");
 
@@ -941,7 +944,7 @@ export const HeroTransition: React.FC<HeroTransitionProps> = ({
   return <AnimatedView style={[styles.heroContainer, animatedStyle]}>{children}</AnimatedView>;
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   modalContainer: {
     flex: 1,
     justifyContent: "flex-end",
@@ -954,20 +957,20 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral[900],
   },
   modalContent: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     minHeight: SCREEN_HEIGHT * 0.3,
     maxHeight: SCREEN_HEIGHT * 0.9,
   },
   modalHandle: {
-    width: 36,
+    width: DesignTokens.spacing[9],
     height: 5,
     backgroundColor: Colors.neutral[300],
     borderRadius: 2.5,
     alignSelf: "center",
-    marginTop: 12,
-    marginBottom: 8,
+    marginTop: DesignTokens.spacing[3],
+    marginBottom: Spacing.sm,
   },
   sheetContainer: {
     flex: 1,
@@ -981,17 +984,17 @@ const styles = StyleSheet.create({
     backgroundColor: DesignTokens.colors.neutral[900],
   },
   sheetContent: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingBottom: Platform.OS === "ios" ? 34 : 16,
   },
   sheetHandleContainer: {
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: DesignTokens.spacing[3],
   },
   sheetHandle: {
-    width: 36,
+    width: DesignTokens.spacing[9],
     height: 5,
     backgroundColor: Colors.neutral[300],
     borderRadius: 2.5,
@@ -1002,7 +1005,7 @@ const styles = StyleSheet.create({
   heroContainer: {
     overflow: "hidden",
   },
-});
+}))
 
 export default {
   TransitionProvider,

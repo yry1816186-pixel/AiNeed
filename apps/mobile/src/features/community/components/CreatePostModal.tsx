@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, Alert } fro
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { Spacing } from '../../../design-system/theme';
+
 
 const CATEGORIES = [
   { key: "all", label: "全部" },
@@ -110,8 +112,8 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
@@ -120,15 +122,15 @@ const s = StyleSheet.create({
   modalSubmitText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
   modalCategoryRow: {
     flexDirection: "row",
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    gap: 8,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing[3],
+    gap: Spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   modalCategoryChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
+    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
     backgroundColor: colors.surface,
   },
@@ -136,8 +138,8 @@ const s = StyleSheet.create({
   modalCategoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   modalCategoryChipTextActive: { color: colors.surface, fontWeight: "600" },
   modalTitleInput: {
-    paddingHorizontal: 20,
-    paddingVertical: 14,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing['3.5'],
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: colors.textPrimary,
@@ -146,8 +148,8 @@ const s = StyleSheet.create({
   },
   modalContentInput: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing['3.5'],
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textPrimary,
     lineHeight: 22,
@@ -155,12 +157,12 @@ const s = StyleSheet.create({
   },
   modalToolbar: {
     flexDirection: "row",
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing[3],
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    gap: 24,
+    gap: Spacing.lg,
   },
-  modalToolBtn: { flexDirection: "row", alignItems: "center", gap: 6 },
+  modalToolBtn: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5']},
   modalToolText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
 });

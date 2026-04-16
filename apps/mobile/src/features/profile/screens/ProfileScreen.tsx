@@ -25,7 +25,7 @@ import type { RootStackParamList } from '../../../types/navigation';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 // 引入增强主题令牌
-import { colors } from '../../../design-system/theme/tokens/colors';
+import { colors , flatColors as colors } from '../../../design-system/theme/tokens/colors';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { typography } from '../../../design-system/theme/tokens/typography';
 import { spacing } from '../../../design-system/theme/tokens/spacing';
@@ -36,6 +36,8 @@ import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTranslation, useI18n } from '../../../i18n';
 import { withErrorBoundary } from '../../../shared/components/ErrorBoundary';
 import { BrandPattern, BrandDivider } from '../../../components/brand/BrandMotif';
+import { Spacing } from '../../../design-system/theme';
+
 
 type ProfileNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -52,7 +54,7 @@ export const ProfileScreenComponent: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   // 季节强调色，回退到品牌色
-  const accentColor = seasonAccent?.accent ?? DesignTokens.colors.brand.terracotta;
+  const accentColor = seasonAccent?.accent ?? colors.primary;
 
   const fetchStats = useCallback(async () => {
     try {
@@ -250,7 +252,7 @@ export const ProfileScreenComponent: React.FC = () => {
                 <Text style={styles.profileEmail}>{displayEmail}</Text>
                 {isVip && (
                   <View style={styles.memberBadge}>
-                    <Ionicons name="diamond" size={12} color={DesignTokens.colors.neutral.white} />
+                    <Ionicons name="diamond" size={12} color={colors.surface} />
                     <Text style={styles.memberBadgeText}>VIP会员</Text>
                   </View>
                 )}
@@ -263,7 +265,7 @@ export const ProfileScreenComponent: React.FC = () => {
               accessibilityLabel="编辑个人资料"
               accessibilityRole="button"
             >
-              <Ionicons name="create-outline" size={16} color={DesignTokens.colors.neutral.white} />
+              <Ionicons name="create-outline" size={16} color={colors.surface} />
               <Text style={styles.editButtonText}>{t.profile.editProfile}</Text>
             </TouchableOpacity>
           </LinearGradient>
@@ -420,7 +422,7 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
   },
   avatarImage: {
     width: 72,
@@ -430,49 +432,49 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.5)",
   },
   profileInfo: {
-    marginLeft: 16,
+    marginLeft: Spacing.md,
     flex: 1,
   },
   profileName: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.neutral.white,
-    marginBottom: 4,
+    color: colors.surface,
+    marginBottom: Spacing.xs,
   },
   profileEmail: {
     fontSize: typography.fontSize.sm,
     color: "rgba(255,255,255,0.85)",
-    marginTop: 2,
+    marginTop: DesignTokens.spacing['0.5'],
   },
   memberBadge: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.25)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingVertical: Spacing.xs,
     borderRadius: 12,
     alignSelf: "flex-start",
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   memberBadgeText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.bold,
-    color: DesignTokens.colors.neutral.white,
-    marginLeft: 4,
+    color: colors.surface,
+    marginLeft: Spacing.xs,
   },
   editButton: {
-    marginTop: 16,
+    marginTop: Spacing.md,
     alignSelf: "flex-start",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.25)",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
-    gap: 6,
+    gap: DesignTokens.spacing['1.5'],
   },
   editButtonText: {
-    color: DesignTokens.colors.neutral.white,
+    color: colors.surface,
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semibold,
   },
@@ -486,7 +488,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginHorizontal: spacing.layout.screenPadding,
     marginBottom: spacing.layout.cardGap,
-    gap: 12,
+    gap: DesignTokens.spacing[3],
   },
   statCard: {
     flex: 1,
@@ -504,7 +506,7 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: typography.fontSize.sm,
     color: colors.neutral[500],
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
   },
 
   // ===== Menu Section（升级版）=====
@@ -513,14 +515,14 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.layout.screenPadding,
     borderRadius: spacing.borderRadius.xl,
     overflow: "hidden",
-    marginBottom: 40,
+    marginBottom: DesignTokens.spacing[10],
     ...shadows.presets.md,
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
     padding: spacing.layout.listItemPadding,
-    gap: 14,
+    gap: DesignTokens.spacing['3.5'],
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.neutral[200],
   },
@@ -552,12 +554,12 @@ const styles = StyleSheet.create({
   seasonCardHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginBottom: 8,
+    gap: Spacing.sm,
+    marginBottom: Spacing.sm,
   },
   seasonDot: {
-    width: 10,
-    height: 10,
+    width: DesignTokens.spacing['2.5'],
+    height: DesignTokens.spacing['2.5'],
     borderRadius: 5,
   },
   seasonCardTitle: {
@@ -577,21 +579,21 @@ const styles = StyleSheet.create({
   },
   seasonColorPreview: {
     flexDirection: "row",
-    gap: 4,
+    gap: Spacing.xs,
   },
   seasonColorChip: {
-    width: 20,
-    height: 20,
+    width: DesignTokens.spacing[5],
+    height: DesignTokens.spacing[5],
     borderRadius: 10,
   },
   learningTip: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 6,
+    gap: DesignTokens.spacing['1.5'],
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.layout.sectionGap,
-    marginBottom: 20,
+    marginBottom: DesignTokens.spacing[5],
   },
   learningTipText: {
     fontSize: typography.fontSize.sm,

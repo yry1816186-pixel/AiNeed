@@ -19,6 +19,8 @@ import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { communityApi, type CommunityPost } from '../../../services/api/community.api';
 import type { CommunityStackParamList } from '../../../navigation/types';
+import { Spacing } from '../../../design-system/theme';
+
 
 type InfluencerProfileRoute = RouteProp<CommunityStackParamList, "InfluencerProfile">;
 
@@ -238,7 +240,7 @@ export const InfluencerProfileScreen: React.FC = () => {
           <Text style={s.nickname}>{profile?.nickname}</Text>
           {profile?.bloggerLevel && (
             <View style={s.badge}>
-              <Ionicons name="checkmark-circle" size={12} color={DesignTokens.colors.neutral.white} />
+              <Ionicons name="checkmark-circle" size={12} color={colors.surface} />
               <Text style={s.badgeText}>
                 {profile.bloggerLevel === "big_v" ? "Big V" : "Blogger"}
               </Text>
@@ -254,7 +256,7 @@ export const InfluencerProfileScreen: React.FC = () => {
             {followLoading ? (
               <ActivityIndicator
                 size="small"
-                color={profile?.isFollowing ? colors.text : DesignTokens.colors.neutral.white}
+                color={profile?.isFollowing ? colors.text : colors.surface}
               />
             ) : (
               <Text style={[s.followBtnText, profile?.isFollowing && s.followingBtnText]}>
@@ -296,7 +298,7 @@ export const InfluencerProfileScreen: React.FC = () => {
           numColumns={NUM_COLUMNS}
           scrollEnabled={false}
           columnWrapperStyle={{ gap: CARD_GAP }}
-          contentContainerStyle={{ gap: CARD_GAP, paddingBottom: 24 }}
+          contentContainerStyle={{ gap: CARD_GAP, paddingBottom: Spacing.lg}}
           ListEmptyComponent={
             <View style={s.emptyPosts}>
               <Ionicons name="images-outline" size={36} color={colors.textTertiary} />
@@ -315,28 +317,28 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
+  iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: 12 },
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: DesignTokens.spacing[3]},
   retryBtn: {
-    marginTop: 16,
+    marginTop: Spacing.md,
     backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
   },
   retryBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   scrollView: { flex: 1 },
   profileSection: {
     backgroundColor: colors.surface,
-    padding: 20,
+    padding: DesignTokens.spacing[5],
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
@@ -350,33 +352,33 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  statsRow: { flex: 1, flexDirection: "row", justifyContent: "space-around", marginLeft: 20 },
+  statsRow: { flex: 1, flexDirection: "row", justifyContent: "space-around", marginLeft: DesignTokens.spacing[5]},
   statItem: { alignItems: "center" },
   statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
-  nickname: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary, marginTop: 14 },
+  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
+  nickname: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary, marginTop: DesignTokens.spacing['3.5']},
   badge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    backgroundColor: DesignTokens.colors.brand.slate,
-    paddingHorizontal: 8,
+    gap: Spacing.xs,
+    backgroundColor: colors.neutral[500],
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: 8,
     alignSelf: "flex-start",
-    marginTop: 6,
+    marginTop: DesignTokens.spacing['1.5'],
   },
-  badgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: DesignTokens.colors.neutral.white },
-  bio: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: 8, lineHeight: 20 },
+  badgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: colors.surface },
+  bio: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: Spacing.sm, lineHeight: 20 },
   followBtn: {
-    marginTop: 14,
+    marginTop: DesignTokens.spacing['3.5'],
     backgroundColor: colors.primary,
-    paddingVertical: 10,
+    paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
     alignItems: "center",
   },
   followingBtn: { backgroundColor: colors.subtleBg },
-  followBtnText: { color: DesignTokens.colors.neutral.white, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  followBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
   followingBtnText: { color: colors.text },
   tabBar: {
     flexDirection: "row",
@@ -387,7 +389,7 @@ const s = StyleSheet.create({
   tab: {
     flex: 1,
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: DesignTokens.spacing[3],
     borderBottomWidth: 2,
     borderBottomColor: "transparent",
   },
@@ -406,12 +408,12 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  postInfo: { padding: 8 },
+  postInfo: { padding: Spacing.sm},
   postTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: colors.textPrimary, lineHeight: 16 },
-  postStats: { flexDirection: "row", alignItems: "center", gap: 3, marginTop: 4 },
+  postStats: { flexDirection: "row", alignItems: "center", gap: 3, marginTop: Spacing.xs},
   postStatText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
   emptyPosts: { alignItems: "center", justifyContent: "center", paddingVertical: 60 },
-  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: 8 },
+  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: Spacing.sm},
 });
 
 export default InfluencerProfileScreen;
