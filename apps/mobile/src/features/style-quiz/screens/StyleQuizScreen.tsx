@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useCallback, useState } from "react";
+import React, { useEffect, useRef, useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -9,19 +9,19 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Shadows } from '../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import {
-  useStyleQuizStore,
+  useQuizStore as useStyleQuizStore,
   useStyleQuizCurrentQuiz,
   useStyleQuizProgress,
   useStyleQuizResult,
   useStyleQuizLoading,
   useStyleQuizError,
-} from "../../stores/styleQuizStore";
+} from "../../stores/index";
 import { QuizProgress } from "./components/QuizProgress";
-import type { RootStackParamList } from "../../types/navigation";
+import type { RootStackParamList } from "../../../types/navigation";
 
 const QUIZ_ID = "default";
 
