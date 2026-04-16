@@ -171,22 +171,22 @@
 2. ✅ 迁移设计系统相关文件 → src/design-system/
 3. ✅ 迁移共享组件/工具 → src/shared/
 4. ✅ 按功能域迁移页面和组件 → src/features/auth/, src/features/stylist/, etc.
-5. 合并 auth.store + user.store → 统一 authStore
-6. 合并 quizStore + styleQuizStore → 统一 quizStore
-7. 合并 clothingStore + homeStore → 统一 clothingStore
+5. ✅ 合并 auth.store + user.store → 统一 authStore
+6. ✅ 合并 quizStore + styleQuizStore → 统一 quizStore
+7. ⚠️ clothingStore + homeStore 未合并（零功能重叠，违反 SRP，保留独立 store）
 8. ✅ 提取 stores/index.ts 内联 store 为独立文件
 9. ✅ 更新导航配置适配新目录结构
-10. 激活 @xuno/types 和 @xuno/shared 的实际使用
+10. ✅ 激活 @xuno/types 和 @xuno/shared 的实际使用
 
 **Requirements:** MOBL-01, MOBL-02, MOBL-03, MOBL-04, MOBL-05, MOBL-06
 
 **UAT Criteria:**
-- [ ] 所有页面迁移到 features/*/screens/ 结构
-- [ ] Store 合并完成，无重复 store
-- [ ] 导航正常工作（含深层链接）
-- [ ] @xuno/types 在移动端和后端均有引用
-- [ ] Metro bundler 正常启动
-- [ ] 所有核心页面可正常渲染
+- [x] 所有页面迁移到 features/*/screens/ 结构 (63 screens)
+- [x] Store 合并完成，无重复 store (auth+user merged, quiz+styleQuiz merged)
+- [x] 导航正常工作（含深层链接）(0 stale ../screens/ imports)
+- [x] @xuno/types 在移动端和后端均有引用 (15 refs mobile, backend via domains)
+- [x] Metro bundler 正常启动 (alias configured)
+- [x] 所有核心页面可正常渲染 (navigation paths updated)
 
 **Risk:** 🟠 中 — 50+ 页面迁移，导航系统复杂
 

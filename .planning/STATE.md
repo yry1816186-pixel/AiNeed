@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-last_updated: "2026-04-16T21:48:38.444Z"
+last_updated: "2026-04-17T22:00:00.000Z"
 progress:
   total_phases: 11
   completed_phases: 2
   total_plans: 47
-  completed_plans: 25
-  percent: 53
+  completed_plans: 32
+  percent: 68
 ---
 
 # State: 寻裳代码规整
