@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, DimensionValue, ViewStyle } from "react-native";
 import {
   useSharedValue,
@@ -10,10 +10,8 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { Colors, DesignTokens, Spacing, BorderRadius } from '../../design-system/theme';
 import { useReducedMotion } from "../../hooks/useReducedMotion";
-import { Spacing } from '../theme';
-import { DesignTokens } from '../theme/tokens/design-tokens';
 
 
 

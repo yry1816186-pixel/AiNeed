@@ -59,19 +59,19 @@ const STATE_CONFIG = {
     animation: "breathe",
   },
   listening: {
-    gradient: [colors.neutral[500], "colors.textTertiary"] as [string, string],
+    gradient: [colors.neutral[500], colors.textTertiary] as [string, string],
     gradientFlow: [colors.neutral[500], colors.textTertiary, "#B8C5D1", colors.neutral[500]] as [string, string, string, string], // custom gradient mid-tone
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.08)"] as [string, string],
     glowColor: colors.neutral[500],
-    particleColor: "colors.textTertiary", // custom color
+    particleColor: colors.textTertiary,
     animation: "pulse",
   },
   thinking: {
-    gradient: [colors.warning, "colors.primary"] as [string, string],
-    gradientFlow: [colors.warning, "colors.primary", "#F5D89A", colors.warning] as [string, string, string, string], // custom color
+    gradient: [colors.warning, colors.primary] as [string, string],
+    gradientFlow: [colors.warning, colors.primary, "#F5D89A", colors.warning] as [string, string, string, string], // custom gradient mid-tone
     innerGradient: ["rgba(255,255,255,0.4)", "rgba(255,255,255,0.1)"] as [string, string],
     glowColor: colors.warning,
-    particleColor: "colors.primary", // custom color
+    particleColor: colors.primary,
     animation: "pulse",
   },
   responding: {
