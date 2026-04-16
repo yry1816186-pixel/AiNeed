@@ -10,8 +10,7 @@ import {
 } from "react-native";
 
 import { getOptimizedImageUrl, getPlaceholder } from "../../utils/imageOptimizer";
-import { DesignTokens, flatColors as colors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 
 export interface OptimizedImageProps extends AccessibilityProps {
   /** Source URI of the image */
@@ -127,13 +126,6 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "colors.backgroundTertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
 }))
-
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  errorContainer: { flex: 1 },
-  loaderContainer: { flex: 1 },
-});

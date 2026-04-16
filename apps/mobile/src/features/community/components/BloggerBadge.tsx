@@ -1,7 +1,7 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens, flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface BloggerBadgeProps {
@@ -10,16 +10,16 @@ interface BloggerBadgeProps {
 
 function BloggerBadgeInner({ level }: BloggerBadgeProps) {
   const { colors } = useTheme();
-  const eS = useS(colors);
+  const styles = useStyles(colors);
   if (level === "big_v") {
     return (
-      <View style={s.bigVBadge}>
+      <View style={styles.bigVBadge}>
         <Ionicons name="shield-checkmark" size={10} color={colors.surface} />
       </View>
     );
   }
   return (
-    <View style={s.bloggerBadge}>
+    <View style={styles.bloggerBadge}>
       <Ionicons name="checkmark" size={8} color={colors.surface} />
     </View>
   );
@@ -27,7 +27,7 @@ function BloggerBadgeInner({ level }: BloggerBadgeProps) {
 
 export const BloggerBadge = React.memo(BloggerBadgeInner);
 
-const useS = createStyles((colors) => ({
+const useStyles = createStyles((colors) => ({
   bloggerBadge: {
     position: "absolute",
     bottom: -2,
@@ -48,7 +48,7 @@ const useS = createStyles((colors) => ({
     width: DesignTokens.spacing['3.5'],
     height: DesignTokens.spacing['3.5'],
     borderRadius: 7,
-    backgroundColor: "colors.warning",
+    backgroundColor: colors.warning,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,

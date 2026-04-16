@@ -1,9 +1,9 @@
 import React, { memo, useCallback } from "react";
-import { View, Text, StyleSheet, Pressable, type ViewStyle } from "react-native";
+import { View, Text, Pressable, type ViewStyle } from "react-native";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import type { FeedItem } from '../../../services/api/recommendation-feed.api';
 import { OptimizedImage } from "../common/OptimizedImage";
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 
@@ -147,7 +147,7 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 4,
   },
   harmonyText: {
-    color: DesignTokens.colors.semantic.success,
+    color: colors.success,
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
   },
@@ -218,28 +218,3 @@ const useStyles = createStyles((colors) => ({
     color: colors.textSecondary,
   },
 }))
-
-
-const styles = StyleSheet.create({
-  card: { flex: 1 },
-  cardCompact: { flex: 1 },
-  imageContainer: { flex: 1 },
-  image: { flex: 1 },
-  discountBadge: { flex: 1 },
-  discountText: { flex: 1 },
-  harmonyBadge: { flex: 1 },
-  harmonyText: { flex: 1 },
-  infoContainer: { flex: 1 },
-  brandName: { flex: 1 },
-  scoreRow: { flex: 1 },
-  scoreLabel: { flex: 1 },
-  scoreTrack: { flex: 1 },
-  scoreFill: { flex: 1 },
-  matchReason: { flex: 1 },
-  priceRow: { flex: 1 },
-  price: { flex: 1 },
-  originalPrice: { flex: 1 },
-  tagsRow: { flex: 1 },
-  tag: { flex: 1 },
-  tagText: { flex: 1 },
-});

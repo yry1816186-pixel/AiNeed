@@ -1,8 +1,8 @@
 ﻿import React, { memo } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import FastImage from "react-native-fast-image";
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { Colors, Spacing, BorderRadius, Typography, Shadows, flatColors as colors, DesignTokens } from '../../../design-system/theme';
+import { Spacing, BorderRadius, Typography, Shadows, DesignTokens } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface ClothingCardProps {
@@ -56,7 +56,7 @@ export const ClothingCard = memo(function ClothingCard({
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
               size={18}
-              color={isFavorite ? Colors.rose[500] : Colors.neutral[400]}
+              color={isFavorite ? themeColors.error : themeColors.textTertiary}
             />
           </TouchableOpacity>
         )}
@@ -91,7 +91,7 @@ export const ClothingCard = memo(function ClothingCard({
         {reasons && reasons.length > 0 && (
           <View style={styles.reasonsContainer}>
             <View style={styles.reasonIconContainer}>
-              <Ionicons name="sparkles" size={12} color={Colors.primary[600]} />
+              <Ionicons name="sparkles" size={12} color={themeColors.primary} />
             </View>
             <Text style={styles.reasonText} numberOfLines={1}>
               {reasons[0]}
@@ -105,30 +105,31 @@ export const ClothingCard = memo(function ClothingCard({
 
 /**
  * 颜色代码映射函数
+ * 服装颜色是物理颜色，不随主题变化，使用 DesignTokens 静态值
  */
 const COLOR_MAP: Record<string, string> = {
-  black: Colors.neutral[900],
-  white: Colors.white,
+  black: DesignTokens.colors.neutral[900],
+  white: DesignTokens.colors.neutral[50],
   red: DesignTokens.colors.semantic.error,
-  blue: Colors.sky[500],
+  blue: DesignTokens.colors.semantic.info,
   green: DesignTokens.colors.semantic.success,
   yellow: DesignTokens.colors.semantic.warning,
-  orange: Colors.amber[500],
-  purple: Colors.primary[500],
+  orange: DesignTokens.colors.semantic.warning,
+  purple: DesignTokens.colors.brand.terracotta,
   pink: DesignTokens.colors.brand.terracottaLight,
   brown: DesignTokens.colors.brand.terracottaDark,
-  gray: Colors.neutral[500],
-  beige: colors.warningLight,
-  navy: Colors.sky[900],
+  gray: DesignTokens.colors.neutral[500],
+  beige: DesignTokens.colors.semantic.warningLight,
+  navy: DesignTokens.colors.neutral[800],
 };
 
 function getColorCode(colorName: string): string {
-  return COLOR_MAP[colorName.toLowerCase()] || Colors.neutral[300];
+  return COLOR_MAP[colorName.toLowerCase()] || DesignTokens.colors.neutral[300];
 }
 
 const useStyles = createStyles((colors) => ({
   card: {
-    backgroundColor: Colors.white,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
     ...Shadows.lg,
@@ -149,7 +150,7 @@ const useStyles = createStyles((colors) => ({
     width: DesignTokens.spacing[9],
     height: DesignTokens.spacing[9],
     borderRadius: BorderRadius.full,
-    backgroundColor: "rgba(255,255,255,0.95)", // no exact DesignToken for semi-transparent white
+    backgroundColor: "rgba(255,255,255,0.95)",
     justifyContent: "center",
     alignItems: "center",
     ...Shadows.sm,
@@ -158,14 +159,14 @@ const useStyles = createStyles((colors) => ({
     position: "absolute",
     bottom: Spacing.sm,
     left: Spacing.sm,
-    backgroundColor: Colors.primary[600],
+    backgroundColor: colors.primary,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.md,
     ...Shadows.sm,
   },
   scoreText: {
-    color: Colors.white,
+    color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "700",
   },
@@ -174,13 +175,13 @@ const useStyles = createStyles((colors) => ({
   },
   category: {
     ...Typography.caption.sm,
-    color: Colors.neutral[400],
+    color: colors.textTertiary,
     marginBottom: Spacing.xs,
     fontWeight: "500",
   },
   name: {
     ...Typography.body.sm,
-    color: Colors.neutral[800],
+    color: colors.textPrimary,
     marginBottom: Spacing.sm,
     height: 42,
     lineHeight: 21,
@@ -194,11 +195,11 @@ const useStyles = createStyles((colors) => ({
   },
   price: {
     ...Typography.heading.sm,
-    color: Colors.primary[600],
+    color: colors.primary,
   },
   originalPrice: {
     ...Typography.caption.sm,
-    color: Colors.neutral[400],
+    color: colors.textTertiary,
     textDecorationLine: "line-through",
   },
   colorRow: {
@@ -210,13 +211,13 @@ const useStyles = createStyles((colors) => ({
     height: DesignTokens.spacing['3.5'],
     borderRadius: BorderRadius.full,
     borderWidth: 1.5,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.borderLight,
   },
   reasonsContainer: {
     marginTop: Spacing.sm,
     paddingTop: Spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: Colors.neutral[100],
+    borderTopColor: colors.divider,
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.xs,
@@ -225,13 +226,13 @@ const useStyles = createStyles((colors) => ({
     width: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: Colors.primary[50],
+    backgroundColor: colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",
   },
   reasonText: {
     ...Typography.caption.sm,
-    color: Colors.primary[600],
+    color: colors.primary,
     fontWeight: "500",
   },
 }))
@@ -265,25 +266,4 @@ export const ClothingGrid = memo(function ClothingGrid({
       ))}
     </View>
   );
-});
-
-
-const styles = StyleSheet.create({
-  card: { flex: 1 },
-  imageContainer: { flex: 1 },
-  image: { flex: 1 },
-  favoriteButton: { flex: 1 },
-  scoreBadge: { flex: 1 },
-  scoreText: { flex: 1 },
-  content: { flex: 1 },
-  category: { flex: 1 },
-  name: { flex: 1 },
-  priceRow: { flex: 1 },
-  price: { flex: 1 },
-  originalPrice: { flex: 1 },
-  colorRow: { flex: 1 },
-  colorDot: { flex: 1 },
-  reasonsContainer: { flex: 1 },
-  reasonIconContainer: { flex: 1 },
-  reasonText: { flex: 1 },
 });
