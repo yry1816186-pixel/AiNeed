@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   Image,
   ImageProps,
@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as FileSystem from "@/src/polyfills/expo-file-system";
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");

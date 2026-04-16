@@ -14,8 +14,8 @@ import {
   ClothingSortOptions,
   ClothingItemInput,
   ClothingCategory,
-} from "../types/clothing";
-import { clothingApi } from "../services/api/clothing.api";
+} from "../../types/clothing";
+import { clothingApi } from "../../services/api/clothing.api";
 import { backgroundRemovalService } from "../services/ai";
 import { clothingCategorizationService } from "../services/ai";
 

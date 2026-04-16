@@ -7,7 +7,7 @@ import React, {
   ReactNode,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { featureFlagApi } from "../services/api/feature-flag.api";
+import { featureFlagApi } from "../../services/api/feature-flag.api";
 import wsService from "../services/websocket";
 
 interface FeatureFlagClientDto {

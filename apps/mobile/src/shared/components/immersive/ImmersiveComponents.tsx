@@ -1,4 +1,4 @@
-﻿import React, { useRef, useEffect, useCallback, useState } from "react";
+import React, { useRef, useEffect, useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -36,8 +36,8 @@ import {
   useDerivedValue,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors } from '../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { Colors } from '../../../design-system/theme';
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
 
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 

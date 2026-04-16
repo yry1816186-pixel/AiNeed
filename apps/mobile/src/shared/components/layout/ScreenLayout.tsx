@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import {
   View,
   ScrollView,
@@ -14,8 +14,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, Spacing } from '../design-system/theme';
-import type { ScrollEvent } from "../../types/events";
+import { Colors, Spacing } from '../../../design-system/theme';
+import type { ScrollEvent } from "../../../types/events";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 

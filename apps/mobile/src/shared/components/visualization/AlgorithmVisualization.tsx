@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -40,8 +40,8 @@ import {
   useAnimatedProps,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors } from '../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { Colors } from '../../../design-system/theme';
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);

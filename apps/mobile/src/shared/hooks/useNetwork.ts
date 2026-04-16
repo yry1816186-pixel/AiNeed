@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { offlineStorage, OfflineRequest } from "../utils/secureStorage";
-import apiClient from "../services/api/client";
+import apiClient from "../../services/api/client";
 
 export type NetInfoStateType =
   | "unknown"

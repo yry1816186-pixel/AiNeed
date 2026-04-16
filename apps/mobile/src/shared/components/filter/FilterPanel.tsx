@@ -1,9 +1,9 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Feather } from "@/src/polyfills/expo-vector-icons";
-import { ClothingCategory, CATEGORY_LABELS } from "../../types/clothing";
+import { ClothingCategory, CATEGORY_LABELS } from "../../../types/clothing";
 import { haptics } from "../../utils/haptics";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
 
 interface FilterOption {
   label: string;

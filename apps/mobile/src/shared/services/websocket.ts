@@ -1,7 +1,7 @@
-﻿import { io, Socket } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { mobileRuntimeConfig } from "../config/runtime";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../utils/secureStorage";
-import type { ChatMessage, ChatTypingPayload, ChatReadPayload } from "../types/chat";
+import type { ChatMessage, ChatTypingPayload, ChatReadPayload } from "../../types/chat";
 
 const WS_URL = mobileRuntimeConfig.apiUrl.replace(/\/api\/v1$/, "");
 

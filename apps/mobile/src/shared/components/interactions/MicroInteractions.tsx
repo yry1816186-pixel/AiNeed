@@ -1,4 +1,4 @@
-﻿import React, {
+import React, {
   useRef,
   useEffect,
   useCallback,
@@ -38,8 +38,8 @@ import {
   useAnimatedRef,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors } from '../design-system/theme';
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { Colors } from '../../../design-system/theme';
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");

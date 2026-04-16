@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography } from '../../../design-system/theme';
 
 interface RetryConfig {
   maxRetries?: number;

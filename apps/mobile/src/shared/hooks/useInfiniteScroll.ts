@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
-import apiClient from "../services/api/client";
-import { toAppError } from "../services/api/error";
+import apiClient from "../../services/api/client";
+import { toAppError } from "../../services/api/error";
 import type { ApiResponse, PaginatedResponse } from "../types";
 
 interface UseInfiniteScrollOptions<T> {

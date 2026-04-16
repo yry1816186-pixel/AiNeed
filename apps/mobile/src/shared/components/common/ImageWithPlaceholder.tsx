@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useRef, useEffect, memo } from "react";
+import React, { useState, useCallback, useRef, useEffect, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import FastImage, { FastImageProps } from "react-native-fast-image";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../../design-system/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

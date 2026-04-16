@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 错误展示 UI 组件
  *
  * 提供丰富的错误展示界面，支持多种错误类型和恢复操作
@@ -14,7 +14,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { Colors, BorderRadius, Spacing, Typography } from '../design-system/theme';
+import { Colors, BorderRadius, Spacing, Typography } from '../../../design-system/theme';
 import {
   StructuredError,
   ErrorCategory,

@@ -2,7 +2,7 @@ import {
   useInfiniteQuery as useTanStackInfiniteQuery,
 } from "@tanstack/react-query";
 import { useCallback } from "react";
-import apiClient from "../services/api/client";
+import apiClient from "../../services/api/client";
 import type { PaginatedResponse } from "../types";
 
 interface CursorPage<T> {

@@ -1,9 +1,9 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { LinearGradient } from "../../polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../../design-system/theme';
 
 /**
  * EmptyState - UX layer variant

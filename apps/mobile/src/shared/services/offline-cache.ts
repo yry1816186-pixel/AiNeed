@@ -9,9 +9,9 @@
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { ClothingItem } from "../types/clothing";
-import type { User } from "../types/user";
-import type { PostCardData } from "../types/social";
+import type { ClothingItem } from "../../types/clothing";
+import type { User } from "../../types/user";
+import type { PostCardData } from "../../types/social";
 
 interface Brand {
   id: string;

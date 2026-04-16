@@ -1,8 +1,8 @@
-﻿import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Text, StyleSheet, Animated } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
-import { Colors, Shadows } from '../design-system/theme';
+import { Colors, Shadows } from '../../../design-system/theme';
 
 export const OfflineBanner: React.FC = () => {
   const { isConnected } = useNetworkStatus();

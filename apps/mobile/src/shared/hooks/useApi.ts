@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import apiClient from "../services/api/client";
-import { toAppError, AppError } from "../services/api/error";
+import apiClient from "../../services/api/client";
+import { toAppError, AppError } from "../../services/api/error";
 import type { ApiResponse } from "../types";
 
 interface UseApiOptions {

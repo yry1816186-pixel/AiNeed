@@ -1,4 +1,4 @@
-﻿/**
+/**
  * TanStack Query 统一变更 hooks
  *
  * 所有 mutation 在成功后自动 invalidate 相关查询，
@@ -10,21 +10,21 @@ import {
   type UseMutationOptions,
 } from "@tanstack/react-query";
 
-import { cartApi, favoriteApi } from "../services/api/commerce.api";
-import { profileApi } from "../services/api/profile.api";
-import { tryOnApi, recommendationsApi } from "../services/api/tryon.api";
-import { aiStylistApi } from "../services/api/ai-stylist.api";
+import { cartApi, favoriteApi } from "../../services/api/commerce.api";
+import { profileApi } from "../../services/api/profile.api";
+import { tryOnApi, recommendationsApi } from "../../services/api/tryon.api";
+import { aiStylistApi } from "../../services/api/ai-stylist.api";
 
 import { queryKeys } from "./useQueryHooks";
 
 import type { ApiResponse } from "../types";
-import type { CartItem } from "../types/api";
-import type { ClothingItem } from "../types/clothing";
+import type { CartItem } from "../../types/api";
+import type { ClothingItem } from "../../types/clothing";
 import type {
   UserProfile,
   UpdateProfileDto,
-} from "../services/api/profile.api";
-import type { AiStylistSessionResponse } from "../services/api/ai-stylist.api";
+} from "../../services/api/profile.api";
+import type { AiStylistSessionResponse } from "../../services/api/ai-stylist.api";
 
 // ---------------------------------------------------------------------------
 // Helpers

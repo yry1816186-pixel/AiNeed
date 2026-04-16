@@ -7,9 +7,9 @@ import React, {
   ReactNode,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Outfit, OutfitInput, OutfitItem, OutfitCanvasState } from "../types/outfit";
-import { ClothingItem } from "../types/clothing";
-import { outfitApi } from "../services/api/outfit.api";
+import { Outfit, OutfitInput, OutfitItem, OutfitCanvasState } from "../../types/outfit";
+import { ClothingItem } from "../../types/clothing";
+import { outfitApi } from "../../services/api/outfit.api";
 
 const OUTFIT_STORAGE_KEY = "@outfits";
 

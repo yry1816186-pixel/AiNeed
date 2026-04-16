@@ -1,4 +1,4 @@
-﻿import React, { useMemo } from "react";
+import React, { useMemo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import {
   Svg,
@@ -10,7 +10,7 @@ import {
   Stop,
   Text as SvgText,
 } from "react-native-svg";
-import { Colors, Spacing, BorderRadius, Typography } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography } from '../../../design-system/theme';
 
 interface SeasonPaletteProps {
   season: string;

@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useRef, memo } from "react";
+import React, { useCallback, useRef, memo } from "react";
 import {
   View,
   Image,
@@ -9,7 +9,7 @@ import {
   ViewStyle,
   ImageResizeMode,
 } from "react-native";
-import { Colors, BorderRadius } from '../design-system/theme';
+import { Colors, BorderRadius } from '../../../design-system/theme';
 
 interface ProgressiveImageProps {
   thumbnailSource?: { uri: string };

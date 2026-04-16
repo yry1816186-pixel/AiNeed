@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
 import { useColorScheme, Appearance, type ColorValue } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DesignTokens, darkTokens } from "../design-system/theme/tokens/design-tokens";
-import type { DesignTokensType, DarkTokensType } from "../design-system/theme/tokens/design-tokens";
+import { DesignTokens, darkTokens } from "../../design-system/theme/tokens/design-tokens";
+import type { DesignTokensType, DarkTokensType } from "../../design-system/theme/tokens/design-tokens";
 import {
   seasonAccentColors,
   normalizeColorSeason,
   type ColorSeason,
   type SeasonAccentColors,
-} from "../design-system/theme/tokens/season-colors";
+} from "../../design-system/theme/tokens/season-colors";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
@@ -244,5 +244,5 @@ export function useTheme(): ThemeContextType {
 
 export { ThemeContext };
 export type { DesignTokensType, DarkTokensType };
-export { normalizeColorSeason, seasonAccentColors, seasonLabels, seasonDescriptions } from "../design-system/theme/tokens/season-colors";
+export { normalizeColorSeason, seasonAccentColors, seasonLabels, seasonDescriptions } from "../../design-system/theme/tokens/season-colors";
 export type { ColorSeason, SeasonAccentColors };

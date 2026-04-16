@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useRef, useEffect, useState } from "react";
+import React, { useCallback, useRef, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -24,7 +24,7 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");

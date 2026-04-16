@@ -1,8 +1,8 @@
-﻿import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, RefreshControl, ViewStyle } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { InfiniteData, UseInfiniteQueryResult } from "@tanstack/react-query";
-import { Colors, Spacing, Typography } from '../design-system/theme';
+import { Colors, Spacing, Typography } from '../../../design-system/theme';
 import { SkeletonScreen } from "./SkeletonScreen";
 import { ErrorState } from "./ErrorState";
 import { EmptyState } from "./EmptyState";

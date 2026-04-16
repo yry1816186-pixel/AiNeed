@@ -1,4 +1,4 @@
-﻿/**
+/**
  * TanStack Query 统一数据获取 hooks
  *
  * 替代分散在各 Store 中的手写 loading/error/cache 逻辑，
@@ -11,28 +11,28 @@ import {
   type UseInfiniteQueryOptions,
 } from "@tanstack/react-query";
 
-import { clothingApi } from "../services/api/clothing.api";
-import { cartApi } from "../services/api/commerce.api";
-import { profileApi } from "../services/api/profile.api";
-import { tryOnApi, recommendationsApi } from "../services/api/tryon.api";
-import { aiStylistApi } from "../services/api/ai-stylist.api";
-import { recommendationFeedApi } from "../services/api/recommendation-feed.api";
-import { searchApi } from "../services/api/commerce.api";
+import { clothingApi } from "../../services/api/clothing.api";
+import { cartApi } from "../../services/api/commerce.api";
+import { profileApi } from "../../services/api/profile.api";
+import { tryOnApi, recommendationsApi } from "../../services/api/tryon.api";
+import { aiStylistApi } from "../../services/api/ai-stylist.api";
+import { recommendationFeedApi } from "../../services/api/recommendation-feed.api";
+import { searchApi } from "../../services/api/commerce.api";
 
 import type { ApiResponse, PaginatedResponse, SearchFilters } from "../types";
-import type { ClothingItem, ClothingFilter, ClothingSortOptions } from "../types/clothing";
-import type { CartItem } from "../types/api";
+import type { ClothingItem, ClothingFilter, ClothingSortOptions } from "../../types/clothing";
+import type { CartItem } from "../../types/api";
 import type {
   UserProfile,
   BodyAnalysisReport,
   ColorAnalysisReport,
-} from "../services/api/profile.api";
-import type { TryOnResult, RecommendedItem } from "../services/api/tryon.api";
+} from "../../services/api/profile.api";
+import type { TryOnResult, RecommendedItem } from "../../services/api/tryon.api";
 import type {
   AiStylistSessionResponse,
   AiStylistSuggestionResponse,
-} from "../services/api/ai-stylist.api";
-import type { FeedResult, FeedParams } from "../services/api/recommendation-feed.api";
+} from "../../services/api/ai-stylist.api";
+import type { FeedResult, FeedParams } from "../../services/api/recommendation-feed.api";
 
 // ---------------------------------------------------------------------------
 // Helpers

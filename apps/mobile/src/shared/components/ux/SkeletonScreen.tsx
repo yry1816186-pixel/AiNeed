@@ -1,6 +1,6 @@
-﻿import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated } from "react-native";
-import { Colors, Spacing, BorderRadius } from '../design-system/theme';
+import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
 
 const SkeletonBlock: React.FC<{
   width?: number | string;

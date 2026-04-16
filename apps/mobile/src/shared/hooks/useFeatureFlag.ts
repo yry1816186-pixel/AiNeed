@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { featureFlagApi } from "../services/api/feature-flag.api";
+import { featureFlagApi } from "../../services/api/feature-flag.api";
 
 interface UseFeatureFlagOptions {
   key: string;

@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import apiClient from "../services/api/client";
+import apiClient from "../../services/api/client";
 import type { ApiResponse } from "../types";
 
 interface UseUploadProgressOptions {
