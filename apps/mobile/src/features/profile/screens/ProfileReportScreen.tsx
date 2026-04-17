@@ -21,18 +21,13 @@ import type {
   ColorAnalysisReport,
 } from "@/src/services/api/profile.api";
 import type { RootStackParamList } from "@/src/types/navigation";
-import { colors } from "@/src/theme/tokens/colors";
-import { typography } from "@/src/theme/tokens/typography";
-import { spacing } from "@/src/theme/tokens/spacing";
-import { shadows } from "@/src/theme/tokens/shadows";
 import { withErrorBoundary } from "@/src/shared/components/ErrorBoundary";
 import { BodyTypeCard } from '../../../components/BodyTypeCard';
 import { ColorSeasonCard } from '../../../components/ColorSeasonCard';
 import { StyleTagsCard } from '../../../components/StyleTagsCard';
 import { SharePosterPreview } from '../../../components/SharePosterPreview';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { Spacing } from '../../../design-system/theme';
+import { DesignTokens, Spacing, flatColors as colors, typography, spacing, shadows } from '../../../design-system/theme';
 
 type ProfileReportNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

@@ -1,4 +1,4 @@
-import apiClient from "./client";
+import apiClient from '../../../services/api/client';
 import type { ApiResponse, PaginatedResponse } from '../../../types';
 
 export type BloggerProductType = "digital" | "physical";

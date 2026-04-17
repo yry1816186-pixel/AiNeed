@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 const CATEGORIES = [

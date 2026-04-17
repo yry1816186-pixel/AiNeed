@@ -37,13 +37,12 @@ import {
   interpolate,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import {
-  DesignTokens,
+import { DesignTokens,
   Spacing,
   BorderRadius,
   Shadows,
   gradients as themeGradients,
-} from '../../design-system/theme';
+  flatColors as colors } from '../../design-system/theme';
 import { createStyles } from '../../../shared/contexts/ThemeContext';
 import { useTheme as useUnifiedTheme } from '../../../shared/contexts/ThemeContext';
 

@@ -21,7 +21,7 @@ import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { flatColors as colors, Spacing } from '../../../design-system/theme';
 import type { RootStackParamList } from '../../../types/navigation';
-import type { Outfit } from '../../types/outfit';
+import type { Outfit } from '../../../types/outfit';
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

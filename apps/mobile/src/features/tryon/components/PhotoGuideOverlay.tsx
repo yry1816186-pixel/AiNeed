@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import Svg, { Ellipse, Path } from "react-native-svg";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

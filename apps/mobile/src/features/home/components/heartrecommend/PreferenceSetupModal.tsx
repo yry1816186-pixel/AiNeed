@@ -22,8 +22,8 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, BorderRadius, Shadows, Spacing, flatColors as colors } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { profileApi } from '../../../services/api/profile.api';
+import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
+import { profileApi } from '../../../../services/api/profile.api';
 import { useAuthStore } from '../../../stores';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

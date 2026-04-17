@@ -10,14 +10,14 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRoute, useNavigation, NavigationProp } from "@react-navigation/native";
-import { useConsultantStore } from '../../stores/consultantStore';
+import { useConsultantStore } from '../../../stores/consultantStore';
 import { CalendarGrid } from '../../../components/consultant/CalendarGrid';
 import { TimeSlotItem } from '../../../components/consultant/TimeSlotItem';
 import { ServiceTypeChip } from '../../../components/consultant/ServiceTypeChip';
 import type { ServiceType } from '../../../types/consultant';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

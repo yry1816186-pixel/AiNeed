@@ -1,8 +1,8 @@
 import { useMemo, memo, type ComponentProps } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
-import type { WeatherData } from "../../../stores/homeStore";
+import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
+import type { WeatherData } from '../../../../stores/homeStore';
 import { Spacing, flatColors as colors } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 

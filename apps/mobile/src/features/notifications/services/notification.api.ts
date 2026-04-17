@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { apiClient } from '../../../services/api/client';
 
 /**
  * Push notification settings - per-category toggles with quiet hours

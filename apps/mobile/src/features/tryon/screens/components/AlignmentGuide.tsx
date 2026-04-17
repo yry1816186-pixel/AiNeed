@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useMemo } from "react";
 import { Animated, Text, View } from "react-native";
 import type { AlignmentStatus } from "../../../hooks/useReferenceLines";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import type { FlatColors } from '../../../../shared/contexts/ThemeContext';
 

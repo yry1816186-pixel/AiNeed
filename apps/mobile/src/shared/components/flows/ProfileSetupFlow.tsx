@@ -28,7 +28,7 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { MagneticButton, GlowText, FloatingElement, ParticleEffect } from "../../design-system/ui/FluidAnimations";
-import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius, flatColors as colors } from '../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme";
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
 

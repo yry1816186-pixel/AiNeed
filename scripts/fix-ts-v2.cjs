@@ -104,8 +104,10 @@ function fixFile(filePath) {
 
   // Fix 1: Add flatColors import for module-level colors usage
   // This is needed even if component has useTheme(), because StyleSheet.create runs at module level
+  // Also needed if createStyles is used (colors is a callback param, not available at module level)
   const usesColorsInStyleSheet = /StyleSheet\.create\s*\(\s*\{[\s\S]*?colors\.\w+/.test(content);
-  if (usesColors && (usesColorsInModuleLevel || usesColorsInStyleSheet) && !hasFlatColorsImport) {
+  const usesCreateStylesPattern = /\bcreateStyles\s*\(/.test(content);
+  if (usesColors && (usesColorsInModuleLevel || usesColorsInStyleSheet || usesCreateStylesPattern) && !hasFlatColorsImport) {
     const themeImportPath = computeImportPath(filePath, "design-system/theme");
     const existingThemeMatch = content.match(/from\s+['"]([^'"]*design-system\/theme(?:\/index)?)['"]/);
     if (existingThemeMatch) {

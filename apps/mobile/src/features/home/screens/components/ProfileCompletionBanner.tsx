@@ -2,7 +2,7 @@ import { useState, useCallback, memo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
 import { Spacing, flatColors as colors } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 

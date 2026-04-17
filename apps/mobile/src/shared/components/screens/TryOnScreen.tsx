@@ -19,23 +19,23 @@ import {
   pickImageSecurely,
   ImageValidationError,
 } from "../../utils/imagePicker";
-import { photosApi } from "../../services/api/photos.api";
-import { tryOnApi, type TryOnResult } from "../../services/api/tryon.api";
-import { clothingApi } from "../../services/api/clothing.api";
+import { photosApi } from '../../../services/api/photos.api';
+import { tryOnApi, type TryOnResult } from '../../../services/api/tryon.api';
+import { clothingApi } from '../../../services/api/clothing.api';
 import {
   wsService,
   type TryOnEventPayload,
   type TryOnProgressPayload,
 } from "../../services/websocket";
-import type { ClothingItem } from "../../types/clothing";
-import { colors } from "../../theme/tokens/colors";
+import type { ClothingItem } from '../../../types/clothing';
+import { colors } from '../../../design-system/theme/tokens/colors';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { typography } from "../../theme/tokens/typography";
-import { spacing } from "../../theme/tokens/spacing";
-import { shadows } from "../../theme/tokens/shadows";
+import { typography } from '../../../design-system/theme/tokens/typography';
+import { spacing } from '../../../design-system/theme/tokens/spacing';
+import { shadows } from '../../../design-system/theme/tokens/shadows';
 import { TryOnProgress } from "../loading/TryOnProgress";
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");

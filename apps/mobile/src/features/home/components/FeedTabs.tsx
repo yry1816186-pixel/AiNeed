@@ -10,7 +10,7 @@ import {
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import type { FeedCategory } from '../../../services/api/recommendation-feed.api';
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

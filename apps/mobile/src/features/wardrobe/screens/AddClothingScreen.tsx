@@ -22,8 +22,8 @@ import { clothingApi } from '../../../services/api/clothing.api';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import type { ClothingCategory, ClothingStyle, Season, Occasion } from '../../types/clothing';
-import { CATEGORY_LABELS } from '../../types/clothing';
+import type { ClothingCategory, ClothingStyle, Season, Occasion } from '../../../types/clothing';
+import { CATEGORY_LABELS } from '../../../types/clothing';
 
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");

@@ -1,4 +1,4 @@
-import apiClient from "./client";
+import apiClient from '../../../services/api/client';
 import type { ApiResponse } from '../../../types/api';
 
 export type PlanTier = "basic" | "premium" | "vip";

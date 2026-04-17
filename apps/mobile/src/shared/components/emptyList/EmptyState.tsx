@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Feather } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 interface EmptyStateProps {
   icon?: keyof typeof Feather.glyphMap;

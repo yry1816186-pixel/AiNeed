@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
-import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius, flatColors as colors } from '../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 interface PrivacyConsentModalProps {
   visible: boolean;

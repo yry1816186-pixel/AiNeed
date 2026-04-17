@@ -1,6 +1,6 @@
-import apiClient from "./client";
+import apiClient from '../../../services/api/client';
 import { ApiResponse } from '../../../types';
-import { buildPhotoAssetUrl, buildTryOnResultAssetUrl, normalizeAssetUrl } from "./asset-url";
+import { buildPhotoAssetUrl, buildTryOnResultAssetUrl, normalizeAssetUrl } from '../../../services/api/asset-url';
 
 export interface TryOnResult {
   id: string;

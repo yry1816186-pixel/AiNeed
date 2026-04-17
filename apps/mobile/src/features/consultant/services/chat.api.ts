@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { apiClient } from '../../../services/api/client';
 
 export const chatApi = {
   createRoom: (consultantId: string) => apiClient.post("/chat/rooms", { consultantId }),

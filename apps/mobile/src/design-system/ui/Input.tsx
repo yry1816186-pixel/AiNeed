@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Input - UI layer re-export with extended theme tokens
  *
  * This file provides the UI-layer Input with additional theme tokens.
@@ -29,9 +29,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
-import { SpringConfigs } from "../../theme/tokens/animations";
-import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
+import { Colors, Spacing, BorderRadius, Typography, SpringConfigs, DesignTokens } from '../../design-system/theme';
 
 // Re-export from primitives for backward compatibility
 export {

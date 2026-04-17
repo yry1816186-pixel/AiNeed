@@ -5,8 +5,7 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, DesignTokens , flatColors as colors, Spacing } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-import { haptics } from '../../../utils/haptics';
-import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
+import { haptics } from '../../../../utils/haptics';
 
 
 interface ActionButtonsProps {

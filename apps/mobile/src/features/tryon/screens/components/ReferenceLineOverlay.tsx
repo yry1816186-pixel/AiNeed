@@ -7,7 +7,7 @@ import type {
   AlignmentLevel,
   OverallAlignment,
 } from "../../../hooks/useReferenceLines";
-import { DesignTokens } from "../../../design-system/theme";
+import { DesignTokens, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 
 interface ReferenceLineOverlayProps {

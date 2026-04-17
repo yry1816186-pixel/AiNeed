@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { flatColors as colors } from '../../../design-system/theme';
 
 const REGION_DATA: Record<string, Record<string, string[]>> = {
   "北京市": {

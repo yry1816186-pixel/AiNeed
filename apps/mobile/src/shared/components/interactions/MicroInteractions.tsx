@@ -38,8 +38,8 @@ import {
   useAnimatedRef,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors, Spacing } from '../../../design-system/theme';
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { Colors, Spacing, flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
 

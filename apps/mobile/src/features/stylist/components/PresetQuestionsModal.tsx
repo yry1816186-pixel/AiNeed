@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Modal, Pressable, ScrollView } from "react-native";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import type { PresetQuestion } from '../stores/aiStylistStore';
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

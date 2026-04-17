@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Svg, { Circle, Path, Line, Text as SvgText, G } from "react-native-svg";
-import { colors } from "../../theme/tokens/colors";
+import { colors } from '../../../design-system/theme/tokens/colors';
 import { useTheme } from '../../../shared/contexts/ThemeContext';
 
 export type BodyType = "rectangle" | "triangle" | "inverted_triangle" | "hourglass" | "oval";

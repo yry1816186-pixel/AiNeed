@@ -1,17 +1,16 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
 
 // 引入主题令牌
-import {
-  Colors,
+import { Colors,
   Typography as ThemeTypography,
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
-} from '../../design-system/theme';
+  flatColors as colors } from '../../design-system/theme';
 
 import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
 import { Spacing } from '../theme';

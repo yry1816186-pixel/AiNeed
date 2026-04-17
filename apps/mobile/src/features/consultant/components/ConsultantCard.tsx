@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { RatingBadge } from "../../design-system/ui/Rating";
 import { MatchBadge } from "./MatchBadge";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
+import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface ConsultantCardProps {

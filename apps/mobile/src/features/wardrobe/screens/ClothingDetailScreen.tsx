@@ -13,7 +13,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
 import type { RootStackParamList } from '../../../types/navigation';
-import type { ClothingItem } from '../../types/clothing';
+import type { ClothingItem } from '../../../types/clothing';
 import { clothingApi } from '../../../services/api/clothing.api';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import {

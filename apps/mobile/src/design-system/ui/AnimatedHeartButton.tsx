@@ -11,10 +11,8 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors } from '../theme';
-import { SpringConfigs, Duration } from "../../theme/tokens/animations";
+import { Colors, SpringConfigs, Duration, DesignTokens } from '../theme';
 import { useReducedMotion } from "../../hooks/useReducedMotion";
-import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
 
 
 export interface AnimatedHeartButtonProps {

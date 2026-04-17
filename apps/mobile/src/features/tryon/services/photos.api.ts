@@ -1,6 +1,6 @@
-import apiClient from "./client";
+import apiClient from '../../../services/api/client';
 import { ApiResponse } from '../../../types';
-import { buildPhotoAssetUrl } from "./asset-url";
+import { buildPhotoAssetUrl } from '../../../services/api/asset-url';
 
 
 export type PhotoType = "front" | "side" | "full_body" | "half_body" | "face";

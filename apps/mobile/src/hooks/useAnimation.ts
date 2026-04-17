@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback } from "react";
 import { Animated, Easing, EasingFunction } from "react-native";
-import { SpringConfigs, Duration } from "../theme/tokens/animations";
+import { SpringConfigs, Duration } from '../design-system/theme/tokens/animations';
 
 export function useAnimation(initialValue = 0) {
   const anim = useRef(new Animated.Value(initialValue)).current;

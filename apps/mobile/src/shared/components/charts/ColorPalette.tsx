@@ -1,10 +1,11 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Svg, { Rect, Text as SvgText, Path, G } from "react-native-svg";
-import { colors } from "../../theme/tokens/colors";
-import { typography } from "../../theme/tokens/typography";
+import { colors } from '../../../design-system/theme/tokens/colors';
+import { typography } from '../../../design-system/theme/tokens/typography';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { flatColors as colors } from '../../../design-system/theme';
 
 export interface ColorPaletteProps {
   colors: { name: string; hex: string; label?: string }[];

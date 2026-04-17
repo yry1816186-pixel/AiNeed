@@ -4,7 +4,7 @@ import { AISizeBadge } from "./AISizeBadge";
 import type { SizeRecommendation } from "../../../services/api/commerce.api";
 import { stockNotificationApi } from "../../../services/api/commerce.api";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

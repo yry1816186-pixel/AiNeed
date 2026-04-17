@@ -34,7 +34,7 @@ import {
 import { PreferenceSelector } from "./PreferenceSelector";
 import { OutfitCard } from "./OutfitCard";
 import { AnalysisProgress } from "./AnalysisProgress";
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

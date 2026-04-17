@@ -10,12 +10,12 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRoute, useNavigation, useFocusEffect, RouteProp, NavigationProp, ParamListBase } from "@react-navigation/native";
-import { useConsultantStore } from '../../stores/consultantStore';
+import { useConsultantStore } from '../../../stores/consultantStore';
 import { CaseCard } from '../../../components/consultant/CaseCard';
 import { consultantApi } from '../../../services/api/consultant.api';
 import type { ConsultantProfile } from '../../../types/consultant';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens , Spacing } from '../../../design-system/theme'
+import { DesignTokens , Spacing, flatColors as colors } from '../../../design-system/theme'
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 export const AdvisorProfileScreen: React.FC = () => {

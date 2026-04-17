@@ -24,10 +24,10 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");

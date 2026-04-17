@@ -8,7 +8,7 @@
 import React, { useMemo } from "react";
 import { PaperProvider, MD3LightTheme, MD3DarkTheme, configureFonts } from "react-native-paper";
 
-import { DesignTokens, darkTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens, darkTokens } from '../theme';
 
 /** 从 DesignTokens 生成 React Paper MD3 Light 主题 */
 function createLightPaperTheme() {

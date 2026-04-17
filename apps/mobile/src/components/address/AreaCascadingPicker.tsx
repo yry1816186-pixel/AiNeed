@@ -7,7 +7,7 @@ import {
   FlatList,
   StyleSheet,
 } from 'react-native';
-import { useTheme } from '../../../shared/contexts/ThemeContext';
+import { useTheme } from '../../shared/contexts/ThemeContext';
 
 interface AreaValue {
   province?: string;

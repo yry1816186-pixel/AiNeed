@@ -10,13 +10,9 @@ import {
   LinearGradient as SvgLinearGradient,
   Stop,
 } from "react-native-svg";
-import { colors } from "@/src/theme/tokens/colors";
-import { DesignTokens } from "@/src/theme/tokens/design-tokens";
-import { typography } from "@/src/theme/tokens/typography";
-import { spacing } from "@/src/theme/tokens/spacing";
-import { shadows } from "@/src/theme/tokens/shadows";
 import type { ColorAnalysisReport } from "@/src/services/api/profile.api";
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import { DesignTokens, flatColors as colors, typography, spacing, shadows } from '../../../../design-system/theme';
 
 interface ColorSeasonCardProps {
   colorAnalysis: ColorAnalysisReport | null;

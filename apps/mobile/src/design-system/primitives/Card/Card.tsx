@@ -20,9 +20,7 @@ import Animated, {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../theme';
-import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
-import { DesignTokens } from '../../theme/tokens/design-tokens';
+import { Colors, Spacing, BorderRadius, Shadows, SpringConfigs, Duration, DesignTokens } from '../../theme';
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

@@ -14,7 +14,7 @@ import type { OutfitPlanDetail } from '../stores/aiStylistStore';
 import type { AiStylistOutfitItem } from '../../../services/api/ai-stylist.api';
 import { ReasoningCard } from "./ReasoningCard";
 import { WeatherBadge } from "./WeatherBadge";
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

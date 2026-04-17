@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Button - UI layer re-export with extended variants
  *
  * This file re-exports the canonical Button from primitives/Button
@@ -22,8 +22,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Typography, Shadows, gradients , DesignTokens } from '../../design-system/theme'
-import { SpringConfigs } from "../../theme/tokens/animations";
+import { Colors, Spacing, BorderRadius, Typography, Shadows, gradients, DesignTokens, SpringConfigs } from '../../design-system/theme'
 
 // Re-export from primitives for backward compatibility
 export {

@@ -1,6 +1,6 @@
-import apiClient from "./client";
+import apiClient from '../../../services/api/client';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { compressImage } from "../../utils/imageCompressor";
+import { compressImage } from '../../../utils/imageCompressor';
 import {
   ApiResponse,
   PaginatedResponse,
@@ -10,7 +10,7 @@ import {
   Address,
   SearchFilters,
 } from "../../types";
-import type { ClothingItem } from "../../types/clothing";
+import type { ClothingItem } from '../../../types/clothing';
 import type { FormDataValue } from "../../types";
 
 interface BackendBrand {

@@ -30,8 +30,8 @@ import {
   runOnJS,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors , Spacing } from '../../../../design-system/theme'
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Colors , Spacing, flatColors as colors } from '../../../../design-system/theme'
+import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
 
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';

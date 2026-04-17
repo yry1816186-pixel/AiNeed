@@ -1,10 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { colors } from "../../theme/tokens/colors";
+import { colors } from '../../../design-system/theme/tokens/colors';
 
-import { spacing } from "../../theme/tokens/spacing";
+import { spacing } from '../../../design-system/theme/tokens/spacing';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { flatColors as colors } from '../../../design-system/theme';
 
 export interface TagCloudTag {
   label: string;

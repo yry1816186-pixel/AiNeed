@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import { notificationApi } from "./api/notification.api";
+import { notificationApi } from '../../services/api/notification.api';
 import { secureStorage } from "../utils/secureStorage";
 
 const PUSH_TOKEN_KEY = "@xuno_push_token";

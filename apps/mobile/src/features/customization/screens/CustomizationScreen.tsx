@@ -20,7 +20,7 @@ import type {
   CustomizationType,
   CustomizationStatus,
   CustomizationRequest,
-} from '../../types/customization';
+} from '../../../types/customization';
 import type { RootStackParamList } from '../../../types/navigation';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 

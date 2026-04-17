@@ -33,7 +33,7 @@ import {
   useAnimatedRef,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors , Spacing } from '../../../design-system/theme'
+import { Colors , Spacing, flatColors as colors } from '../../../design-system/theme'
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 

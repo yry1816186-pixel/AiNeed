@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TryOnResult } from "../../services/api/tryon.api";
-import { virtualTryOnService } from "../services/ai";
+import { virtualTryOnService } from '../../services/ai';
 import { photosApi, type PhotoType } from "../../services/api/photos.api";
 
 const VTO_STORAGE_KEY = "@virtual_tryons";

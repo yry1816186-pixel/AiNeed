@@ -1,4 +1,4 @@
-import apiClient from "./api/client";
+import apiClient from '../../../services/api/client';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { ApiResponse } from '../../../types';
 import type { OnboardingFormData } from '../stores/onboardingStore';

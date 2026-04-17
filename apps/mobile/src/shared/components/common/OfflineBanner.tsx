@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from "react";
 import { Text, StyleSheet, Animated } from "react-native";
 import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
-import { Colors, Shadows, Spacing } from '../../../design-system/theme';
+import { Colors, Shadows, Spacing, flatColors as colors } from '../../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 export const OfflineBanner: React.FC = () => {
   const { colors } = useTheme();

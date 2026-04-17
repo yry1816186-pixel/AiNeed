@@ -14,6 +14,7 @@ import {
   Shadows as ThemeShadows,
   Typography as ThemeTypography,
 } from '../theme';
+import { flatColors as colors } from '../../design-system/theme';
 
 interface ChatBubbleProps {
   message: string;

@@ -16,7 +16,7 @@ import {
   ClothingCategory,
 } from "../../types/clothing";
 import { clothingApi } from '../../services/api/clothing.api';
-import { backgroundRemovalService, clothingCategorizationService } from '../services/ai';
+import { backgroundRemovalService, clothingCategorizationService } from '../../services/ai';
 
 const CLOTHING_STORAGE_KEY = "@clothing_items";
 const _CLOTHING_IMAGES_DIR = `${FileSystem.documentDirectory ?? ""}clothing/`;

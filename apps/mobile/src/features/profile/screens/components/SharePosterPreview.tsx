@@ -18,12 +18,7 @@ import Animated, {
   withSpring,
   runOnJS,
 } from "react-native-reanimated";
-import { colors } from "@/src/theme/tokens/colors";
-import { typography } from "@/src/theme/tokens/typography";
-import { spacing } from "@/src/theme/tokens/spacing";
-import { shadows } from "@/src/theme/tokens/shadows";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing } from '../../../../design-system/theme';
+import { DesignTokens, Spacing, flatColors as colors, typography, spacing, shadows } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 
 

@@ -17,7 +17,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { clothingApi } from '../../../services/api/clothing.api';
-import type { ClothingItem } from '../../types/clothing';
+import type { ClothingItem } from '../../../types/clothing';
 
 import type { ProfileStackParamList } from '../../../navigation/types';
 import type { RootStackParamList } from '../../../types/navigation';

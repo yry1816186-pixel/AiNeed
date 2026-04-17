@@ -1,6 +1,6 @@
-import apiClient from "./client";
-import type { ApiResponse } from "../../types/api";
-import { compressImage } from "../../utils/imageCompressor";
+import apiClient from '../../../services/api/client';
+import type { ApiResponse } from '../../../services/api';
+import { compressImage } from '../../../utils/imageCompressor';
 
 export type AiStylistActionType =
   | "ask_question"

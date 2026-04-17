@@ -2,12 +2,8 @@ import React, { useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Svg, Circle, Rect, Text as SvgText, Line, Path } from "react-native-svg";
-import { colors } from "@/src/theme/tokens/colors";
-import { typography } from "@/src/theme/tokens/typography";
-import { spacing } from "@/src/theme/tokens/spacing";
-import { shadows } from "@/src/theme/tokens/shadows";
 import type { BodyAnalysisReport } from "@/src/services/api/profile.api";
-import { DesignTokens , flatColors as colors } from '../../../../design-system/theme';
+import { DesignTokens, flatColors as colors, typography, spacing, shadows } from '../../../../design-system/theme';
 
 interface BodyTypeCardProps {
   bodyAnalysis: BodyAnalysisReport | null;

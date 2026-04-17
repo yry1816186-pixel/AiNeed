@@ -1,4 +1,4 @@
-import apiClient from "./api/client";
+import apiClient from '../../../services/api/client';
 import type { ApiResponse } from '../../../types/api';
 import type { QuizQuestion, QuizAnswer, QuizResult } from '../stores/quizStore';
 

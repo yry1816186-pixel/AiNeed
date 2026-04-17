@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-import type { PhotoQualityResult, PhotoQualityIssue } from "../../../stores/photoStore";
+import type { PhotoQualityResult, PhotoQualityIssue } from '../../../../stores/photoStore';
 import { DesignTokens , flatColors as colors } from '../../../design-system/theme';
 import { Spacing } from '../../../../design-system/theme';
 

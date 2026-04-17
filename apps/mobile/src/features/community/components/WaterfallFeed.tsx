@@ -12,7 +12,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

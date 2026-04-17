@@ -21,7 +21,7 @@ import { useTranslation } from '../../../i18n';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { clothingApi } from '../../../services/api/clothing.api';
 import { outfitApi } from '../../../services/api/outfit.api';
-import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from '../../types/clothing';
+import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from '../../../types/clothing';
 import type { RootStackParamList } from '../../../types/navigation';
 import { ImportSheet } from '../../../components/wardrobe/ImportSheet';
 import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';

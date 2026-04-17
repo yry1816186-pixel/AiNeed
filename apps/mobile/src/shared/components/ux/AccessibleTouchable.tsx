@@ -9,7 +9,7 @@ import {
   AccessibilityRole,
 } from "react-native";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme } from '../../shared/contexts/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { flatColors as colors } from '../../../design-system/theme';
 
 

@@ -23,9 +23,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius } from '../../theme';
-import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
-import { DesignTokens } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, SpringConfigs, Duration, DesignTokens } from '../../theme';
 
 export type InputVariant = "outlined" | "filled" | "underline";
 export type InputSize = "sm" | "md" | "lg";

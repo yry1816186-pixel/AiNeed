@@ -11,14 +11,12 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Spacing } from '../theme';
 import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
 import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
-import {
-  Colors,
+import { Colors,
   Typography as ThemeTypography,
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
-  SpringConfigs,
-} from '../../design-system/theme';
+  flatColors as colors } from '../../design-system/theme';
 
 import Animated, {
   useSharedValue,

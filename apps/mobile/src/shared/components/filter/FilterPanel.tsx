@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-nati
 import { Feather } from "@/src/polyfills/expo-vector-icons";
 import { ClothingCategory, CATEGORY_LABELS } from "../../../types/clothing";
 import { haptics } from "../../utils/haptics";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 
 interface FilterOption {

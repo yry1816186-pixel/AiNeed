@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows, flatColors as colors } from '../../../design-system/theme';
 import customizationApi from '../../../services/api/customization.api';
 import type { RootStackParamList } from '../../../types/navigation';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";

@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import { View, ViewStyle, StyleSheet } from "react-native";
-import { DesignTokens } from "../design-system/theme";
+import { DesignTokens, flatColors as colors } from '../design-system/theme';
 import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 
 export interface CameraRef {

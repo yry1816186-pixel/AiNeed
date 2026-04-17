@@ -2,7 +2,7 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import FastImage from "react-native-fast-image";
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { Spacing, BorderRadius, Typography, Shadows, DesignTokens } from '../../../design-system/theme';
+import { Spacing, BorderRadius, Typography, Shadows, DesignTokens, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface ClothingCardProps {

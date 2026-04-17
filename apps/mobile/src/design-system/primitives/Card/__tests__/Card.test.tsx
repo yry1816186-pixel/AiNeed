@@ -2,7 +2,7 @@ import React from "react";
 import { render, fireEvent } from "@testing-library/react-native";
 import { Text } from "react-native";
 import { Card } from "../Card";
-import { DesignTokens } from '../../../theme/tokens/design-tokens';
+import { DesignTokens } from '../../../theme';
 
 
 jest.mock("@/src/polyfills/expo-linear-gradient", () => {

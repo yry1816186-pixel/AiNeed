@@ -20,7 +20,8 @@ import AnimatedReanimated from "react-native-reanimated";
 import { ParticleEffect, FloatingElement, GlowText, MagneticButton } from "../../design-system/ui/FluidAnimations";
 import { Colors, Spacing, BorderRadius, flatColors } from '../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme";
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { flatColors as colors } from '../../../design-system/theme';
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);

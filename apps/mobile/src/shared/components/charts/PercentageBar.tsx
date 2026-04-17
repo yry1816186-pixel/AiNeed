@@ -1,9 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { colors } from "@/src/theme/tokens/colors";
-import { typography } from "@/src/theme/tokens/typography";
-import { spacing } from "@/src/theme/tokens/spacing";
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens, flatColors as colors, typography, spacing } from '../../../design-system/theme';
 
 interface PercentageBarProps {
   label: string;

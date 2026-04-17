@@ -10,10 +10,9 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../../theme';
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
-import { Spacing } from '../../theme';
+import { theme, DesignTokens, Spacing } from '../../theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { flatColors as colors } from '../../../design-system/theme';
 
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");

@@ -20,6 +20,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { flatColors as colors } from '../../../design-system/theme';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);

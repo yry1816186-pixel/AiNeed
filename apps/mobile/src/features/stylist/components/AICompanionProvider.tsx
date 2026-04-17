@@ -16,7 +16,7 @@ import {
   AiStylistResolution,
   AiStylistProgress,
   AiStylistOutfitPlan,
-} from "../../services/api/ai-stylist.api";
+} from '../../../services/api/ai-stylist.api';
 import {
   useSpeechRecognition,
   SpeechRecognitionResult,

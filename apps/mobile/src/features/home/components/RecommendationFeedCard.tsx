@@ -3,7 +3,7 @@ import { View, Text, Pressable, type ViewStyle } from "react-native";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import type { FeedItem } from '../../../services/api/recommendation-feed.api';
 import { OptimizedImage } from "../common/OptimizedImage";
-import { Spacing } from '../../../design-system/theme';
+import { Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

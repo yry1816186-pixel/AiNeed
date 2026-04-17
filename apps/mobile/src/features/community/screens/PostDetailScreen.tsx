@@ -18,9 +18,9 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { SharedElement } from "react-navigation-shared-element";
-import { theme , Spacing } from '../../../design-system/theme'
+import { theme , Spacing, flatColors as colors } from '../../../design-system/theme'
 import { communityApi, PostComment } from '../../../services/api/community.api';
-import { DesignTokens } from '../../../theme/tokens/design-tokens';
+import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { BookmarkSheet } from '../../../components/community/BookmarkSheet';
 import type { RootStackParamList } from '../../../types/navigation';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
