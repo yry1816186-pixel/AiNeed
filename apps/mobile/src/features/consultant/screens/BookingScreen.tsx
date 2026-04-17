@@ -79,7 +79,7 @@ export const BookingScreen: React.FC = () => {
     try {
       const scheduledAt = `${selectedDate}T${selectedSlot.startTime}:00`;
       await createBooking({
-        consultantId,
+        consultantId: consultantId || '',
         serviceType: selectedServiceType,
         scheduledAt,
         durationMinutes: 60,

@@ -1,8 +1,2 @@
-apps/mobile/src/features/community/screens/InfluencerProfileScreen.tsx(130,44): error TS2345: Argument of type '[string, { postId: string; }]' is not assignable to parameter of type 'never'.
-apps/mobile/src/features/consultant/screens/BookingScreen.tsx(82,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
-  Type 'undefined' is not assignable to type 'string'.
-apps/mobile/src/features/customization/screens/CustomizationScreen.tsx(217,46): error TS2345: Argument of type 'string' is not assignable to parameter of type '{ key: string; params?: undefined; merge?: boolean | undefined; } | { name: "HomeFeed"; key?: string | undefined; params: undefined; merge?: boolean | undefined; } | { key: string; params?: undefined; merge?: boolean | undefined; } | ... 128 more ... | { ...; }'.
-apps/mobile/src/features/notifications/screens/NotificationsScreen.tsx(40,66): error TS2339: Property 'primary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
-apps/mobile/src/features/search/screens/SearchScreen.tsx(101,47): error TS2552: Cannot find name 'PRICERANGES'. Did you mean 'PRICE_RANGES'?
-apps/mobile/src/features/search/screens/SearchScreen.tsx(102,47): error TS2552: Cannot find name 'PRICERANGES'. Did you mean 'PRICE_RANGES'?
+apps/mobile/src/features/consultant/screens/BookingScreen.tsx(69,44): error TS1005: ',' expected.
 

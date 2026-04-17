@@ -214,7 +214,7 @@ export const CustomizationScreen: React.FC = () => {
       <View style={styles.quickActions}>
         <TouchableOpacity
           style={styles.quickActionCard}
-          onPress={() => navigation.navigate("CustomizationEditor")}
+          onPress={() => navigation.navigate("CustomizationEditor" as never)}
           activeOpacity={0.7}
         >
           <View style={styles.quickActionIcon}>

@@ -109,7 +109,7 @@ export interface ThemeContextType {
   spacing: TokenSet["spacing"];
   borderRadius: TokenSet["borderRadius"];
   shadows: TokenSet["shadows"];
-  gradients: TokenSet["gradients"];
+  gradients: FlatColors["gradients"];
   animation: TokenSet["animation"];
   setMode: (mode: ThemeMode) => void;
   toggleTheme: () => void;

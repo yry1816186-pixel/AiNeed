@@ -1,0 +1,1 @@
+﻿apps/mobile/src/features/notifications/screens/NotificationsScreen.tsx(40,66): error TS2339: Property 'primary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.

@@ -37,7 +37,7 @@ const CATEGORY_TABS: { key: NotificationCategory; label: string }[] = [
 ];
 
 const NOTIFICATION_ICONS: Record<string, { icon: string; color: string }> = {
-  order: { icon: "bag-outline", color: DesignTokens.colors.brand.primary },
+  order: { icon: "bag-outline", color: DesignTokens.colors.brand.terracotta },
   recommendation: { icon: "sparkles-outline", color: colors.warning },
   community: { icon: "people-outline", color: colors.success },
   system: { icon: "information-circle-outline", color: colors.neutral[500] },
