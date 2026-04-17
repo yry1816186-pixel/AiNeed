@@ -10,15 +10,15 @@ import {
   requestMediaLibraryPermissionsAsync,
 } from "@/src/polyfills/expo-image-picker";
 import { pickImageSecurely } from '../../../utils/imagePicker';
-import { useCameraPermissions } from '../../hooks/useCameraPermissions';
-import { useReferenceLines } from '../../../hooks/useReferenceLines';
+import { useCameraPermissions } from '../hooks/useCameraPermissions';
+import { useReferenceLines } from '../../../shared/hooks/useReferenceLines';
 import { usePhotoStore } from '../stores/photoStore';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import { ReferenceLineOverlay } from '../../../components/ReferenceLineOverlay';
-import AlignmentGuide from '../../../components/AlignmentGuide';
-import PhotoQualityFeedback from '../../../components/PhotoQualityFeedback';
+import { ReferenceLineOverlay } from './components/ReferenceLineOverlay';
+import AlignmentGuide from './components/AlignmentGuide';
+import PhotoQualityFeedback from './components/PhotoQualityFeedback';
 
 
 const CAPTURE_BUTTON_SIZE = 72;

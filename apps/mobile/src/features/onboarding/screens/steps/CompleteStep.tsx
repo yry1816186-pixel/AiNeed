@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
 import { flatColors as colors, Colors, Spacing, BorderRadius, Shadows } from '../../../../design-system/theme';
-import { Ionicons } from '../../../../polyfills/expo-vector-icons.ts';
-import { LinearGradient } from '../../../../polyfills/expo-linear-gradient.tsx';
+import { Ionicons } from '../../../../polyfills/expo-vector-icons';
+import { LinearGradient } from '../../../../polyfills/expo-linear-gradient';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,

@@ -23,9 +23,6 @@ import { useProfileStore } from '../stores/profileStore';
 import type { UserStats, User } from '../../../types/user';
 import type { RootStackParamList } from '../../../types/navigation';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
-// 引入增强主题令牌
-import { colors , flatColors as colors } from '../../../design-system/theme/tokens/colors';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { typography } from '../../../design-system/theme/tokens/typography';
 import { spacing } from '../../../design-system/theme/tokens/spacing';
@@ -48,7 +45,7 @@ export const ProfileScreenComponent: React.FC = () => {
   const { language, setLanguage, getLanguageName, supportedLanguages } = useI18n();
   const { user, logout, isVip } = useAuthStore();
   const { completeness, loadCompleteness, colorAnalysis } = useProfileStore();
-  const { colorSeason, seasonAccent, setSeasonAccent } = useTheme();
+  const { colorSeason, seasonAccent, setSeasonAccent, colors } = useTheme();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

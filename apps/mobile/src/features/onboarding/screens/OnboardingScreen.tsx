@@ -23,13 +23,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp as NavProp } from "@react-navigation/native";
 import { useTranslation } from '../../../i18n';
-import { Colors, Spacing, BorderRadius, Shadows, flatColors as colors } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows, flatColors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { profileApi, type UpdateProfileDto } from '../../../services/api/profile.api';
 import { pickImageSecurely, ImageValidationError } from '../../../utils/imagePicker';
 import { PhotoGuideOverlay } from '../../../components/photo/PhotoGuideOverlay';
-import { PrivacyConsentModal } from '../../../components/privacy/PrivacyConsentModal';
+import { PrivacyConsentModal } from '../../../shared/components/privacy/PrivacyConsentModal';
 import type { RootStackParamList } from '../../../types/navigation';
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
@@ -461,7 +461,7 @@ export const OnboardingScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: flatColors.surface,
   },
   progressContainer: {
     flexDirection: "row",
@@ -479,13 +479,13 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: "100%",
-    backgroundColor: colors.primary,
+    backgroundColor: flatColors.primary,
     borderRadius: BorderRadius.full,
   },
   progressText: {
     marginLeft: Spacing[3],
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textTertiary,
+    color: flatColors.textTertiary,
     fontWeight: "400",
     minWidth: DesignTokens.spacing[10],
   },
@@ -504,13 +504,13 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: flatColors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   stepSubtitle: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: colors.textSecondary,
+    color: flatColors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 24,
     fontWeight: "400",
@@ -525,11 +525,11 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: colors.textSecondary,
+    color: flatColors.textSecondary,
     marginBottom: Spacing[3],
   },
   requiredAsterisk: {
-    color: colors.error,
+    color: flatColors.error,
   },
   genderRow: {
     flexDirection: "row",
@@ -548,16 +548,16 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   genderPillSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: flatColors.primary,
+    borderColor: flatColors.primary,
   },
   genderPillText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: colors.textSecondary,
+    color: flatColors.textSecondary,
   },
   genderPillTextSelected: {
-    color: colors.surface,
+    color: flatColors.surface,
     fontWeight: "600",
   },
   ageRow: {
@@ -573,16 +573,16 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   agePillSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: flatColors.primary,
+    borderColor: flatColors.primary,
   },
   agePillText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: colors.textSecondary,
+    color: flatColors.textSecondary,
   },
   agePillTextSelected: {
-    color: colors.surface,
+    color: flatColors.surface,
     fontWeight: "600",
   },
   uploadArea: {
@@ -598,12 +598,12 @@ const styles = StyleSheet.create({
   uploadLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.textSecondary,
+    color: flatColors.textSecondary,
   },
   uploadHint: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "400",
-    color: colors.textTertiary,
+    color: flatColors.textTertiary,
     marginTop: Spacing[1],
   },
   photoUploadedContainer: {
@@ -633,7 +633,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
     marginTop: Spacing[4],
-    backgroundColor: colors.neutral[900],
+    backgroundColor: flatColors.neutral[900],
     alignItems: "center",
     justifyContent: "flex-end",
     paddingBottom: Spacing[4],
@@ -641,7 +641,7 @@ const styles = StyleSheet.create({
   captureButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.primary,
+    backgroundColor: flatColors.primary,
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[6],
     paddingVertical: Spacing[3],
@@ -650,7 +650,7 @@ const styles = StyleSheet.create({
   captureButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.surface,
+    color: flatColors.surface,
   },
   skipButton: {
     paddingHorizontal: Spacing[5],
@@ -660,7 +660,7 @@ const styles = StyleSheet.create({
   skipText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: colors.textTertiary,
+    color: flatColors.textTertiary,
   },
   quizPlaceholder: {
     flex: 1,
@@ -672,17 +672,17 @@ const styles = StyleSheet.create({
   quizPlaceholderTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: flatColors.textPrimary,
   },
   quizPlaceholderSubtitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: colors.textSecondary,
+    color: flatColors.textSecondary,
     textAlign: "center",
     lineHeight: 24,
   },
   quizStartButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: flatColors.primary,
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[8],
     paddingVertical: Spacing[4],
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
   quizStartButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.surface,
+    color: flatColors.surface,
   },
   footer: {
     flexDirection: "row",
@@ -709,7 +709,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: colors.textSecondary,
+    color: flatColors.textSecondary,
     fontWeight: "400",
   },
   footerSpacer: {
@@ -718,7 +718,7 @@ const styles = StyleSheet.create({
   nextButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.primary,
+    backgroundColor: flatColors.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     paddingHorizontal: Spacing[6],
@@ -732,7 +732,7 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.surface,
+    color: flatColors.surface,
   },
 });
 

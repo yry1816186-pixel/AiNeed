@@ -12,7 +12,7 @@ import {
   Modal,
 } from "react-native";
 import { communityApi } from '../../../services/api/community.api';
-import { theme , Spacing, flatColors as colors } from '../../../design-system/theme'
+import { theme , Spacing } from '../../../design-system/theme'
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';

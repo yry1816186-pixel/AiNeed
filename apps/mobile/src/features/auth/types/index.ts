@@ -6,6 +6,10 @@ import { toAppError } from "../../../services/api/error";
 import type { User, UserPreferences, UserStats } from "../../../types/user";
 import type { ApiResponse } from "../../../types";
 
+// Re-export types for auth module consumers
+export type { User, UserPreferences, UserStats, AuthTokens, LoginCredentials, RegisterData } from "./user";
+export type { ApiResponse } from "../../../types";
+
 interface StyleProfile {
   preferredStyles: string[];
   preferredColors: string[];

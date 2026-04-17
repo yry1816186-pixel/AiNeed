@@ -4,7 +4,7 @@ import { Feather } from "@/src/polyfills/expo-vector-icons";
 import { ClothingCategory, CATEGORY_LABELS } from "../../../types/clothing";
 import { haptics } from "../../utils/haptics";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 
@@ -29,6 +29,8 @@ title,
   onSelect,
   multiSelect = true,
 }: FilterSectionProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>

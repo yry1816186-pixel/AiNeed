@@ -41,9 +41,8 @@ import { DesignTokens,
   Spacing,
   BorderRadius,
   Shadows,
-  gradients as themeGradients,
-  flatColors as colors } from '../../design-system/theme';
-import { createStyles } from '../../../shared/contexts/ThemeContext';
+  gradients as themeGradients } from '../../../design-system/theme';
+import { createStyles , ThemeMode, ThemeProvider as UnifiedThemeProvider} from '../../../shared/contexts/ThemeContext';
 import { useTheme as useUnifiedTheme } from '../../../shared/contexts/ThemeContext';
 
 
@@ -157,6 +156,7 @@ export interface ThemeSwitchProps {
 
 export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
   const { mode, isDark, setMode, colors } = useUnifiedTheme();
+  const styles = useStyles(colors);
   const switchTranslateX = useSharedValue(isDark ? 24 : 0);
   const iconRotation = useSharedValue(isDark ? 180 : 0);
 
@@ -186,8 +186,6 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
   }));
 
   const handleToggle = () => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     if (mode === "system") {
       void setMode(isDark ? "light" : "dark");
     } else {

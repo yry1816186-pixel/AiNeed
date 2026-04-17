@@ -18,7 +18,7 @@ import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 import { ImageWithPlaceholder } from '../../../shared/components/common/ImageWithPlaceholder';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -58,7 +58,7 @@ const RecommendationCard = memo(function RecommendationCard({
       onPress={() => onPress(item)}
       activeOpacity={0.85}
     >
-      <ImageWithPlaceholder source={{ uri: item.mainImage }} style={styles.cardImage} />
+      <ImageWithPlaceholder source={{ uri: item.mainImage }} style={styles.cardImage as any} />
       {item.score && item.score > 0.8 && (
         <View style={styles.matchBadge}>
           <Text style={styles.matchText}>{Math.round(item.score * 100)}% 匹配</Text>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.textPrimary },
   filterButton: { padding: Spacing.sm},
   tabBar: {
     flexDirection: "row",

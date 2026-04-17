@@ -9,7 +9,7 @@ import {
   FlatList,
 } from "react-native";
 import type { FilterOptions } from '../../../services/api/commerce.api';
-import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface FilterTagsProps {

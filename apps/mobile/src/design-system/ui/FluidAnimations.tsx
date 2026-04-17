@@ -9,8 +9,7 @@ import {
   DimensionValue,
   NativeSyntheticEvent,
   GestureResponderEvent,
-  View,
-} from "react-native";
+  View} from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -25,10 +24,9 @@ import {
   interpolate,
   Extrapolate,
   Easing,
-  useAnimatedScrollHandler,
-} from "react-native-reanimated";
+  useAnimatedScrollHandler} from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors, DesignTokens, Spacing, BorderRadius, flatColors as colors } from '../../design-system/theme';
+import { Colors, DesignTokens, Spacing, BorderRadius } from '../../design-system/theme';
 import type { ScrollEvent } from "../../types/events";
 import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 
@@ -54,8 +52,7 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
   tint = "light",
   onPress,
   enableGlow = true,
-  glowColor = Colors.primary[500],
-}) => {
+  glowColor = Colors.primary[500]}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(1);
@@ -97,8 +94,7 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: enableGlow ? interpolate(glowValue.value, [0, 1], [0.1, 0.3]) : 0,
     shadowRadius: enableGlow ? interpolate(glowValue.value, [0, 1], [15, 30]) : 0,
-    elevation: enableGlow ? interpolate(glowValue.value, [0, 1], [8, 16]) : 4,
-  }));
+    elevation: enableGlow ? interpolate(glowValue.value, [0, 1], [8, 16]) : 4}));
 
   const handlePressIn = () => {
     scale.value = withSpring(0.97, { damping: 15, stiffness: 300 });
@@ -144,8 +140,9 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   size = "lg",
   icon,
   style,
-  disabled = false,
-}) => {
+  disabled = false}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const scale = useSharedValue(1);
@@ -172,8 +169,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: interpolate(glowIntensity.value, [0, 1], [0.2, 0.5]),
     shadowRadius: interpolate(glowIntensity.value, [0, 1], [10, 25]),
-    elevation: interpolate(glowIntensity.value, [0, 1], [5, 15]),
-  }));
+    elevation: interpolate(glowIntensity.value, [0, 1], [5, 15])}));
 
   const handlePressIn = () => {
     scale.value = withSpring(0.94, { damping: 15, stiffness: 300 });
@@ -181,8 +177,6 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   };
 
   const handlePressOut = () => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     scale.value = withSpring(1, { damping: 15, stiffness: 300 });
     glowIntensity.value = withTiming(0, { duration: 150 });
   };
@@ -191,8 +185,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
     sm: { height: DesignTokens.spacing[9], paddingHorizontal: Spacing.md, fontSize: DesignTokens.typography.sizes.sm },
     md: { height: DesignTokens.spacing[11], paddingHorizontal: DesignTokens.spacing[5], fontSize: DesignTokens.typography.sizes.base },
     lg: { height: 52, paddingHorizontal: DesignTokens.spacing[7], fontSize: DesignTokens.typography.sizes.md },
-    xl: { height: 60, paddingHorizontal: DesignTokens.spacing[9], fontSize: DesignTokens.typography.sizes.lg },
-  };
+    xl: { height: 60, paddingHorizontal: DesignTokens.spacing[9], fontSize: DesignTokens.typography.sizes.lg }};
 
   const sizeStyle = sizeStyles[size];
 
@@ -213,8 +206,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
                 styles.magneticButtonGradient,
                 {
                   height: sizeStyle.height,
-                  paddingHorizontal: sizeStyle.paddingHorizontal,
-                },
+                  paddingHorizontal: sizeStyle.paddingHorizontal},
               ]}
             >
               {icon}
@@ -236,8 +228,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
           animatedStyle,
           {
             height: sizeStyle.height,
-            paddingHorizontal: sizeStyle.paddingHorizontal,
-          },
+            paddingHorizontal: sizeStyle.paddingHorizontal},
           disabled && styles.magneticButtonDisabled,
           style,
         ]}
@@ -264,26 +255,22 @@ export interface ParallaxScrollViewProps {
 }
 
 export const ParallaxScrollView: React.FC<ParallaxScrollViewProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   children,
   headerComponent,
-  headerHeight = 300,
-}) => {
+  headerHeight = 300}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scrollY = useSharedValue(0);
 
   const headerAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
       { translateY: scrollY.value * 0.5 },
       {
-        scale: interpolate(scrollY.value, [-100, 0], [1.2, 1], Extrapolate.CLAMP),
-      },
-    ],
-  }));
+        scale: interpolate(scrollY.value, [-100, 0], [1.2, 1], Extrapolate.CLAMP)},
+    ]}));
 
   const headerOpacityStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, headerHeight * 0.5], [1, 0], Extrapolate.CLAMP),
-  }));
+    opacity: interpolate(scrollY.value, [0, headerHeight * 0.5], [1, 0], Extrapolate.CLAMP)}));
 
   return (
     <View style={styles.parallaxContainer}>
@@ -301,8 +288,7 @@ export const ParallaxScrollView: React.FC<ParallaxScrollViewProps> = ({
           onScroll: (event: { contentOffset: { y: number } }) => {
             "worklet";
             scrollY.value = event.contentOffset.y;
-          },
-        })}
+          }})}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: headerHeight }}
@@ -326,8 +312,7 @@ export const FloatingElement: React.FC<FloatingElementProps> = ({
   amplitude = 10,
   duration = 3000,
   delay = 0,
-  style,
-}) => {
+  style}) => {
   const translateY = useSharedValue(0);
 
   useEffect(() => {
@@ -337,12 +322,10 @@ export const FloatingElement: React.FC<FloatingElementProps> = ({
         withSequence(
           withTiming(-amplitude, {
             duration: duration / 2,
-            easing: Easing.inOut(Easing.ease),
-          }),
+            easing: Easing.inOut(Easing.ease)}),
           withTiming(0, {
             duration: duration / 2,
-            easing: Easing.inOut(Easing.ease),
-          })
+            easing: Easing.inOut(Easing.ease)})
         ),
         -1,
         true
@@ -351,8 +334,7 @@ export const FloatingElement: React.FC<FloatingElementProps> = ({
   }, [amplitude, duration, delay]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
-  }));
+    transform: [{ translateY: translateY.value }]}));
 
   return <AnimatedView style={[animatedStyle, style]}>{children}</AnimatedView>;
 };
@@ -368,8 +350,7 @@ export const GlowText: React.FC<GlowTextProps> = ({
   text,
   style,
   glowColor = Colors.primary[500],
-  animated = true,
-}) => {
+  animated = true}) => {
   const glowValue = useSharedValue(0);
 
   useEffect(() => {
@@ -388,8 +369,7 @@ export const GlowText: React.FC<GlowTextProps> = ({
   const animatedStyle = useAnimatedStyle(() => ({
     textShadowColor: glowColor,
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: animated ? interpolate(glowValue.value, [0, 1], [5, 20]) : 10,
-  }));
+    textShadowRadius: animated ? interpolate(glowValue.value, [0, 1], [5, 20]) : 10}));
 
   return <AnimatedText style={[animatedStyle, style]}>{text}</AnimatedText>;
 };
@@ -428,8 +408,7 @@ const ParticleDot: React.FC<ParticleDotProps> = ({ color, size }) => {
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: initialX }, { translateY: y.value }, { scale: initialScale }],
-    opacity: opacity.value,
-  }));
+    opacity: opacity.value}));
 
   return (
     <AnimatedView
@@ -439,8 +418,7 @@ const ParticleDot: React.FC<ParticleDotProps> = ({ color, size }) => {
           width: size,
           height: size,
           borderRadius: size / 2,
-          backgroundColor: color,
-        },
+          backgroundColor: color},
         animatedStyle,
       ]}
     />
@@ -448,13 +426,12 @@ const ParticleDot: React.FC<ParticleDotProps> = ({ color, size }) => {
 };
 
 export const ParticleEffect: React.FC<ParticleEffectProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   count = 20,
   color = Colors.primary[400],
   size = 4,
-  style,
-}) => {
+  style}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={[styles.particleContainer, style]}>
       {Array.from({ length: count }, (_, i) => (
@@ -475,8 +452,7 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   children,
   onPress,
   rippleColor = "rgba(198, 123, 92, 0.3)",
-  style,
-}) => {
+  style}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0);
@@ -498,8 +474,7 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
     transform: [{ scale: scale.value }],
     opacity: opacity.value,
     left: x.value - 50,
-    top: y.value - 50,
-  }));
+    top: y.value - 50}));
 
   return (
     <Pressable onPress={handlePress} style={[styles.rippleContainer, style]}>
@@ -523,8 +498,7 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   width = "100%",
   height = 20,
   borderRadius = 8,
-  style,
-}) => {
+  style}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const shimmerPosition = useSharedValue(-1);
@@ -540,10 +514,8 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   const shimmerStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        translateX: shimmerPosition.value * (typeof width === "number" ? width : SCREEN_WIDTH),
-      },
-    ],
-  }));
+        translateX: shimmerPosition.value * (typeof width === "number" ? width : SCREEN_WIDTH)},
+    ]}));
 
   return (
     <View
@@ -582,8 +554,7 @@ const StaggeredListItem: React.FC<StaggeredListItemProps> = ({ item, index, stag
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ translateY: translateY.value }, { scale: scale.value }],
-  }));
+    transform: [{ translateY: translateY.value }, { scale: scale.value }]}));
 
   return <AnimatedView style={animatedStyle}>{item}</AnimatedView>;
 };
@@ -591,8 +562,7 @@ const StaggeredListItem: React.FC<StaggeredListItemProps> = ({ item, index, stag
 export const StaggeredList: React.FC<StaggeredListProps> = ({
   items,
   staggerDelay = 100,
-  style,
-}) => {
+  style}) => {
   return (
     <View style={style}>
       {items.map((item, index) => (
@@ -608,17 +578,13 @@ const useStyles = createStyles((colors) => ({
     overflow: "hidden",
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
-  },
+    borderColor: "rgba(255, 255, 255, 0.2)"},
   liquidGlassPressable: {
-    flex: 1,
-  },
+    flex: 1},
   liquidGlassBlur: {
-    flex: 1,
-  },
+    flex: 1},
   liquidGlassContent: {
-    padding: Spacing[5],
-  },
+    padding: Spacing[5]},
   liquidGlassBorder: {
     position: "absolute",
     top: 0,
@@ -627,55 +593,45 @@ const useStyles = createStyles((colors) => ({
     bottom: 0,
     borderRadius: BorderRadius["3xl"],
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-  },
+    borderColor: "rgba(255, 255, 255, 0.3)"},
   magneticButton: {
     backgroundColor: Colors.primary[600],
     borderRadius: BorderRadius.xl,
     justifyContent: "center",
     alignItems: "center",
-    flexDirection: "row",
-  },
+    flexDirection: "row"},
   magneticButtonDisabled: {
-    backgroundColor: Colors.neutral[300],
-  },
+    backgroundColor: Colors.neutral[300]},
   magneticButtonPressable: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing[2],
-  },
+    gap: Spacing[2]},
   magneticButtonGradient: {
     borderRadius: BorderRadius.xl,
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
-    gap: Spacing[2],
-  },
+    gap: Spacing[2]},
   magneticButtonText: {
     color: Colors.white,
-    fontWeight: "700",
-  },
+    fontWeight: "700"},
   parallaxContainer: {
-    flex: 1,
-  },
+    flex: 1},
   parallaxHeader: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   parallaxHeaderOverlay: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: 100,
-  },
+    height: 100},
   parallaxHeaderGradient: {
-    flex: 1,
-  },
+    flex: 1},
   particleContainer: {
     position: "absolute",
     top: 0,
@@ -683,30 +639,23 @@ const useStyles = createStyles((colors) => ({
     right: 0,
     bottom: 0,
     overflow: "hidden",
-    pointerEvents: "none",
-  },
+    pointerEvents: "none"},
   particle: {
-    position: "absolute",
-  },
+    position: "absolute"},
   rippleContainer: {
     overflow: "hidden",
-    position: "relative",
-  },
+    position: "relative"},
   ripple: {
     position: "absolute",
     width: 100,
     height: 100,
-    borderRadius: 50,
-  },
+    borderRadius: 50},
   skeleton: {
     backgroundColor: Colors.neutral[200],
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   skeletonShimmer: {
     position: "absolute",
     top: 0,
     bottom: 0,
     width: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
-  },
-}))
+    backgroundColor: "rgba(255, 255, 255, 0.5)"}}))

@@ -1,11 +1,9 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Svg, { Rect, Text as SvgText, Path, G } from "react-native-svg";
-import { colors } from '../../../design-system/theme/tokens/colors';
 import { typography } from '../../../design-system/theme/tokens/typography';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
-import { flatColors as} from '../../../design-system/theme';
 
 export interface ColorPaletteProps {
   colors: { name: string; hex: string; label?: string }[];
@@ -27,8 +25,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
   gap = 8,
   showLabel = true,
   type = "neutral",
-  accessibilityLabel,
-}) => {
+  accessibilityLabel}) => {
   const e_styles = use_styles(colors);
   const { colors } = useTheme();
   const _styles = use_styles(colors);

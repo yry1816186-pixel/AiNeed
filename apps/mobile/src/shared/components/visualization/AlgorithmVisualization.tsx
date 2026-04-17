@@ -8,8 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  ViewStyle,
-} from "react-native";
+  ViewStyle} from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
@@ -23,8 +22,7 @@ import Svg, {
   LinearGradient as SvgLinearGradient,
   Text as SvgText,
   Polygon,
-  Line,
-} from "react-native-svg";
+  Line} from "react-native-svg";
 import {
   useSharedValue,
   useAnimatedStyle,
@@ -37,10 +35,9 @@ import {
   Extrapolate,
   Easing,
   runOnJS,
-  useAnimatedProps,
-} from "react-native-reanimated";
+  useAnimatedProps} from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors , Spacing, flatColors as colors } from '../../../design-system/theme'
+import { Colors , Spacing } from '../../../design-system/theme'
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
@@ -53,16 +50,15 @@ const _AnimatedPolygon = AnimatedReanimated.createAnimatedComponent(Polygon);
 const springConfig = {
   damping: 15,
   stiffness: 150,
-  mass: 0.5,
-};
+  mass: 0.5};
 
 const BreakdownItem: React.FC<{
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   item: { label: string; score: number; weight: number };
   index: number;
   getScoreColor: (score: number) => string;
 }> = ({ item, index, getScoreColor }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const itemWidth = useSharedValue(0);
 
   useEffect(() => {
@@ -70,8 +66,7 @@ const BreakdownItem: React.FC<{
   }, []);
 
   const barAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${itemWidth.value}%`,
-  }));
+    width: `${itemWidth.value}%`}));
 
   return (
     <View style={styles.breakdownItem}>
@@ -93,12 +88,12 @@ const BreakdownItem: React.FC<{
 };
 
 const ColorBarRow: React.FC<{
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   colorItem: { color: string; name: string; percentage: number };
   index: number;
   showAnimation: boolean;
 }> = ({ colorItem, index, showAnimation }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const barWidth = useSharedValue(0);
   const barOpacity = useSharedValue(0);
 
@@ -114,12 +109,10 @@ const ColorBarRow: React.FC<{
 
   const barAnimatedStyle = useAnimatedStyle(() => ({
     width: `${barWidth.value}%`,
-    opacity: barOpacity.value,
-  }));
+    opacity: barOpacity.value}));
 
   const dotAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: barOpacity.value,
-  }));
+    opacity: barOpacity.value}));
 
   return (
     <View style={styles.colorBarRow}>
@@ -142,12 +135,12 @@ const ColorBarRow: React.FC<{
 };
 
 const ColorSwatchItem: React.FC<{
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   colorItem: { color: string; name: string; percentage: number };
   index: number;
   baseDelay: number;
 }> = ({ colorItem, index, baseDelay }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const swatchScale = useSharedValue(0);
 
   useEffect(() => {
@@ -155,8 +148,7 @@ const ColorSwatchItem: React.FC<{
   }, []);
 
   const swatchAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: swatchScale.value }],
-  }));
+    transform: [{ scale: swatchScale.value }]}));
 
   return (
     <AnimatedView
@@ -168,12 +160,12 @@ const ColorSwatchItem: React.FC<{
 };
 
 const MeasurementItem: React.FC<{
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   label: string;
   value: number;
   index: number;
 }> = ({ label, value, index }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const itemOpacity = useSharedValue(0);
   const itemTranslateY = useSharedValue(20);
 
@@ -184,8 +176,7 @@ const MeasurementItem: React.FC<{
 
   const itemAnimatedStyle = useAnimatedStyle(() => ({
     opacity: itemOpacity.value,
-    transform: [{ translateY: itemTranslateY.value }],
-  }));
+    transform: [{ translateY: itemTranslateY.value }]}));
 
   return (
     <AnimatedView style={[styles.measurementItem, itemAnimatedStyle]}>
@@ -206,8 +197,7 @@ const RecommendationItem: React.FC<{ rec: string; index: number }> = ({ rec, ind
   }, []);
 
   const recAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: recOpacity.value,
-  }));
+    opacity: recOpacity.value}));
 
   return (
     <AnimatedView style={[styles.recommendationItem, recAnimatedStyle]}>
@@ -218,13 +208,13 @@ const RecommendationItem: React.FC<{ rec: string; index: number }> = ({ rec, ind
 };
 
 const ItemPreviewCard: React.FC<{
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   item: { id: string; name: string; image: string; category: string };
   index: number;
   isSelected: boolean;
   onPress: () => void;
 }> = ({ item, index, isSelected, onPress }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const itemScale = useSharedValue(0);
 
   useEffect(() => {
@@ -232,8 +222,7 @@ const ItemPreviewCard: React.FC<{
   }, []);
 
   const itemAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: itemScale.value }],
-  }));
+    transform: [{ scale: itemScale.value }]}));
 
   return (
     <AnimatedView style={itemAnimatedStyle}>
@@ -251,13 +240,13 @@ const ItemPreviewCard: React.FC<{
 };
 
 const AnalysisBarItem: React.FC<{
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   label: string;
   value: number;
   index: number;
   getScoreColor: (score: number) => string;
 }> = ({ label, value, index, getScoreColor }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const barWidth = useSharedValue(0);
 
   useEffect(() => {
@@ -265,8 +254,7 @@ const AnalysisBarItem: React.FC<{
   }, []);
 
   const barAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${barWidth.value}%`,
-  }));
+    width: `${barWidth.value}%`}));
 
   return (
     <View style={styles.analysisItem}>
@@ -300,8 +288,7 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   label,
   showAnimation = true,
   breakdown,
-  style,
-}) => {
+  style}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const animatedScore = useSharedValue(0);
@@ -312,8 +299,7 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   const sizeConfig = {
     small: { circleSize: 80, strokeWidth: 6, fontSize: DesignTokens.typography.sizes['2xl'], labelSize: 10 },
     medium: { circleSize: 120, strokeWidth: 8, fontSize: DesignTokens.typography.sizes['3xl'], labelSize: 12 },
-    large: { circleSize: 160, strokeWidth: 10, fontSize: DesignTokens.typography.sizes['5xl'], labelSize: 14 },
-  };
+    large: { circleSize: 160, strokeWidth: 10, fontSize: DesignTokens.typography.sizes['5xl'], labelSize: 14 }};
 
   const config = sizeConfig[size];
   const radius = (config.circleSize - config.strokeWidth) / 2;
@@ -343,8 +329,7 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   }, [score, showAnimation]);
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+    transform: [{ scale: scale.value }]}));
 
   const getScoreColor = (value: number) => {
     if (value >= 90) {
@@ -364,13 +349,11 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   const animatedProps = useAnimatedProps(() => {
     const strokeDashoffset = circumference * (1 - animatedProgress.value / 100);
     return {
-      strokeDashoffset,
-    };
+      strokeDashoffset};
   });
 
   const glowAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: glowOpacity.value,
-  }));
+    opacity: glowOpacity.value}));
 
   return (
     <AnimatedView style={[styles.matchContainer, containerAnimatedStyle, style]}>
@@ -429,8 +412,7 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
                 width: config.circleSize + 20,
                 height: config.circleSize + 20,
                 borderRadius: (config.circleSize + 20) / 2,
-                borderColor: scoreColor,
-              },
+                borderColor: scoreColor},
             ]}
           />
         )}
@@ -469,8 +451,9 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
   size = 200,
   showLabels = true,
   showAnimation = true,
-  style,
-}) => {
+  style}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const animatedProgress = useSharedValue(0);
   const scale = useSharedValue(0.8);
 
@@ -496,8 +479,7 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
     const r = (value / max) * radius;
     return {
       x: centerX + r * Math.cos(angle),
-      y: centerY + r * Math.sin(angle),
-    };
+      y: centerY + r * Math.sin(angle)};
   };
 
   const generatePath = (values: number[], maxValues: number[]) => {
@@ -515,16 +497,13 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
   const values = dimensions.map((d) => d.value);
 
   const animatedProps = useAnimatedProps(() => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     const animatedValues = values.map((v) => v * animatedProgress.value);
     const path = generatePath(animatedValues, maxValues);
     return { d: path };
   });
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+    transform: [{ scale: scale.value }]}));
 
   return (
     <AnimatedView style={[styles.radarContainer, containerAnimatedStyle, style]}>
@@ -640,13 +619,12 @@ export interface ColorPaletteAnalysisProps {
 }
 
 export const ColorPaletteAnalysis: React.FC<ColorPaletteAnalysisProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
-  colors,
+  colors: paletteColors,
   title,
   showAnimation = true,
-  style,
-}) => {
+  style}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const opacity = useSharedValue(0);
 
@@ -662,15 +640,14 @@ export const ColorPaletteAnalysis: React.FC<ColorPaletteAnalysisProps> = ({
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }],
-  }));
+    transform: [{ scale: scale.value }]}));
 
   return (
     <AnimatedView style={[styles.colorPaletteContainer, containerAnimatedStyle, style]}>
       {title && <Text style={styles.colorPaletteTitle}>{title}</Text>}
 
       <View style={styles.colorBarsContainer}>
-        {colors.map((colorItem, index) => (
+        {paletteColors.map((colorItem, index) => (
           <ColorBarRow
             key={index}
             colorItem={colorItem}
@@ -681,12 +658,12 @@ export const ColorPaletteAnalysis: React.FC<ColorPaletteAnalysisProps> = ({
       </View>
 
       <View style={styles.colorSwatches}>
-        {colors.map((colorItem, index) => (
+        {paletteColors.map((colorItem, index) => (
           <ColorSwatchItem
             key={index}
             colorItem={colorItem}
             index={index}
-            baseDelay={colors.length * 80}
+            baseDelay={paletteColors.length * 80}
           />
         ))}
       </View>
@@ -708,14 +685,13 @@ export interface BodyShapeAnalysisProps {
 }
 
 export const BodyShapeAnalysis: React.FC<BodyShapeAnalysisProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   measurements,
   bodyType,
   recommendations,
   showAnimation = true,
-  style,
-}) => {
+  style}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const bodyOpacity = useSharedValue(0);
   const highlightScale = useSharedValue(1);
@@ -737,24 +713,20 @@ export const BodyShapeAnalysis: React.FC<BodyShapeAnalysisProps> = ({
   }, [showAnimation]);
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+    transform: [{ scale: scale.value }]}));
 
   const bodyAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: bodyOpacity.value,
-  }));
+    opacity: bodyOpacity.value}));
 
   const highlightAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: highlightScale.value }],
-  }));
+    transform: [{ scale: highlightScale.value }]}));
 
   const maxMeasurement = Math.max(...Object.values(measurements));
   const normalizedMeasurements = {
     shoulder: (measurements.shoulder / maxMeasurement) * 100,
     bust: (measurements.bust / maxMeasurement) * 100,
     waist: (measurements.waist / maxMeasurement) * 100,
-    hip: (measurements.hip / maxMeasurement) * 100,
-  };
+    hip: (measurements.hip / maxMeasurement) * 100};
 
   return (
     <AnimatedView style={[styles.bodyAnalysisContainer, containerAnimatedStyle, style]}>
@@ -793,8 +765,7 @@ export const BodyShapeAnalysis: React.FC<BodyShapeAnalysisProps> = ({
             shoulder: "肩宽",
             bust: "胸围",
             waist: "腰围",
-            hip: "臀围",
-          };
+            hip: "臀围"};
 
           return <MeasurementItem key={key} label={labels[key]} value={value} index={index} />;
         })}
@@ -833,8 +804,9 @@ export const OutfitCompatibility: React.FC<OutfitCompatibilityProps> = ({
   compatibilityScore,
   analysis,
   suggestions,
-  style,
-}) => {
+  style}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
@@ -843,12 +815,9 @@ export const OutfitCompatibility: React.FC<OutfitCompatibilityProps> = ({
   }, []);
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+    transform: [{ scale: scale.value }]}));
 
   const getScoreColor = (score: number) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     if (score >= 80) {
       return colors.success; // custom color
     }
@@ -885,8 +854,7 @@ export const OutfitCompatibility: React.FC<OutfitCompatibilityProps> = ({
             colorHarmony: "色彩协调",
             styleMatch: "风格匹配",
             occasionFit: "场合适配",
-            seasonMatch: "季节适宜",
-          };
+            seasonMatch: "季节适宜"};
 
           return (
             <AnalysisBarItem
@@ -924,14 +892,13 @@ export interface TrendIndicatorProps {
 }
 
 export const TrendIndicator: React.FC<TrendIndicatorProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   trend,
   value,
   label,
   period,
-  style,
-}) => {
+  style}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.8);
   const arrowTranslateY = useSharedValue(0);
 
@@ -951,24 +918,20 @@ export const TrendIndicator: React.FC<TrendIndicatorProps> = ({
   }, [trend]);
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
+    transform: [{ scale: scale.value }]}));
 
   const arrowAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: arrowTranslateY.value }],
-  }));
+    transform: [{ translateY: arrowTranslateY.value }]}));
 
   const trendColors = {
     up: colors.success, // custom color
     down: colors.error, // custom color
-    stable: Colors.neutral[500],
-  };
+    stable: Colors.neutral[500]};
 
   const trendIcons = {
     up: "trending-up",
     down: "trending-down",
-    stable: "remove",
-  };
+    stable: "remove"};
 
   return (
     <AnimatedView style={[styles.trendContainer, containerAnimatedStyle, style]}>
@@ -989,117 +952,92 @@ export const TrendIndicator: React.FC<TrendIndicatorProps> = ({
 
 const useStyles = createStyles((colors) => ({
   matchContainer: {
-    alignItems: "center",
-  },
+    alignItems: "center"},
   scoreContent: {
     position: "absolute",
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   scoreValue: {
-    fontWeight: "800",
-  },
+    fontWeight: "800"},
   scoreLabel: {
     color: Colors.neutral[500],
-    marginTop: DesignTokens.spacing['0.5'],
-  },
+    marginTop: DesignTokens.spacing['0.5']},
   glowRing: {
     position: "absolute",
     borderWidth: 2,
-    opacity: 0.5,
-  },
+    opacity: 0.5},
   breakdownContainer: {
     marginTop: Spacing.lg,
-    width: "100%",
-  },
+    width: "100%"},
   breakdownItem: {
-    marginBottom: DesignTokens.spacing[3],
-  },
+    marginBottom: DesignTokens.spacing[3]},
   breakdownHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: DesignTokens.spacing['1.5'],
-  },
+    marginBottom: DesignTokens.spacing['1.5']},
   breakdownLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[600],
-  },
+    color: Colors.neutral[600]},
   breakdownScore: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: Colors.neutral[700],
-  },
+    color: Colors.neutral[700]},
   breakdownBar: {
     height: DesignTokens.spacing['1.5'],
     backgroundColor: Colors.neutral[100],
     borderRadius: 3,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   breakdownFill: {
     height: "100%",
-    borderRadius: 3,
-  },
+    borderRadius: 3},
   radarContainer: {
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   colorPaletteContainer: {
     backgroundColor: colors.surface,
     borderRadius: 20,
-    padding: DesignTokens.spacing[5],
-  },
+    padding: DesignTokens.spacing[5]},
   colorPaletteTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: Colors.neutral[800],
-    marginBottom: Spacing.md,
-  },
+    marginBottom: Spacing.md},
   colorBarsContainer: {
-    marginBottom: DesignTokens.spacing[5],
-  },
+    marginBottom: DesignTokens.spacing[5]},
   colorBarRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: DesignTokens.spacing[3],
-  },
+    marginBottom: DesignTokens.spacing[3]},
   colorDot: {
     width: Spacing.md,
     height: Spacing.md,
     borderRadius: 8,
-    marginRight: DesignTokens.spacing[3],
-  },
+    marginRight: DesignTokens.spacing[3]},
   colorBarInfo: {
-    flex: 1,
-  },
+    flex: 1},
   colorBarHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: Spacing.xs,
-  },
+    marginBottom: Spacing.xs},
   colorName: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[700],
-    fontWeight: "500",
-  },
+    fontWeight: "500"},
   colorPercentage: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
-  },
+    color: Colors.neutral[500]},
   colorBarTrack: {
     height: Spacing.sm,
     backgroundColor: Colors.neutral[100],
     borderRadius: 4,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   colorBarFill: {
     height: "100%",
-    borderRadius: 4,
-  },
+    borderRadius: 4},
   colorSwatches: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.sm,
-  },
+    gap: Spacing.sm},
   colorSwatch: {
     width: 50,
     height: 50,
@@ -1110,213 +1048,170 @@ const useStyles = createStyles((colors) => ({
     shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
-  },
+    elevation: 3},
   colorSwatchHex: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: colors.textInverse,
     fontWeight: "600",
     textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
+    textShadowRadius: 2},
   bodyAnalysisContainer: {
     backgroundColor: colors.surface,
     borderRadius: 24,
-    padding: DesignTokens.spacing[5],
-  },
+    padding: DesignTokens.spacing[5]},
   bodyVisualContainer: {
     alignItems: "center",
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   bodyVisual: {
-    alignItems: "center",
-  },
+    alignItems: "center"},
   bodyOutline: {
     width: 120,
-    alignItems: "center",
-  },
+    alignItems: "center"},
   bodyPart: {
     backgroundColor: Colors.primary[100],
     marginVertical: DesignTokens.spacing['0.5'],
-    borderRadius: 20,
-  },
+    borderRadius: 20},
   shoulder: {
-    height: 30,
-  },
+    height: 30},
   bust: {
-    height: DesignTokens.spacing[10],
-  },
+    height: DesignTokens.spacing[10]},
   waist: {
-    height: 25,
-  },
+    height: 25},
   hip: {
-    height: 35,
-  },
+    height: 35},
   bodyTypeHighlight: {
     marginTop: Spacing.md,
     borderRadius: 20,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   bodyTypeGradient: {
     paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: Spacing.sm,
-  },
+    paddingVertical: Spacing.sm},
   bodyTypeText: {
     color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.base,
-    fontWeight: "600",
-  },
+    fontWeight: "600"},
   measurementsGrid: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   measurementItem: {
-    alignItems: "center",
-  },
+    alignItems: "center"},
   measurementLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
-    marginBottom: Spacing.xs,
-  },
+    marginBottom: Spacing.xs},
   measurementValue: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
-    color: Colors.neutral[800],
-  },
+    color: Colors.neutral[800]},
   measurementUnit: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[400],
-  },
+    color: Colors.neutral[400]},
   recommendationsContainer: {
     borderTopWidth: 1,
     borderTopColor: Colors.neutral[100],
-    paddingTop: Spacing.md,
-  },
+    paddingTop: Spacing.md},
   recommendationsTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[700],
-    marginBottom: DesignTokens.spacing[3],
-  },
+    marginBottom: DesignTokens.spacing[3]},
   recommendationItem: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   recommendationDot: {
     width: DesignTokens.spacing['1.5'],
     height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
     backgroundColor: Colors.primary[500],
     marginTop: DesignTokens.spacing['1.5'],
-    marginRight: DesignTokens.spacing['2.5'],
-  },
+    marginRight: DesignTokens.spacing['2.5']},
   recommendationText: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[600],
-    lineHeight: 20,
-  },
+    lineHeight: 20},
   compatibilityContainer: {
     backgroundColor: colors.surface,
     borderRadius: 24,
-    padding: DesignTokens.spacing[5],
-  },
+    padding: DesignTokens.spacing[5]},
   itemsPreview: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing.lg,
-    flexWrap: "wrap",
-  },
+    flexWrap: "wrap"},
   itemPreview: {
     width: 70,
-    alignItems: "center",
-  },
+    alignItems: "center"},
   itemPreviewSelected: {
-    opacity: 0.7,
-  },
+    opacity: 0.7},
   itemPreviewImage: {
     width: 60,
     height: 75,
     borderRadius: 12,
-    marginBottom: Spacing.xs,
-  },
+    marginBottom: Spacing.xs},
   itemPreviewName: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[600],
-    textAlign: "center",
-  },
+    textAlign: "center"},
   itemConnector: {
-    marginHorizontal: Spacing.xs,
-  },
+    marginHorizontal: Spacing.xs},
   scoreOverview: {
     alignItems: "center",
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   analysisGrid: {
-    marginBottom: DesignTokens.spacing[5],
-  },
+    marginBottom: DesignTokens.spacing[5]},
   analysisItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: DesignTokens.spacing[3],
-  },
+    marginBottom: DesignTokens.spacing[3]},
   analysisLabel: {
     width: Spacing['4xl'],
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[600],
-  },
+    color: Colors.neutral[600]},
   analysisBar: {
     flex: 1,
     height: Spacing.sm,
     backgroundColor: Colors.neutral[100],
     borderRadius: 4,
     marginHorizontal: DesignTokens.spacing[3],
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   analysisFill: {
     height: "100%",
-    borderRadius: 4,
-  },
+    borderRadius: 4},
   analysisValue: {
     width: DesignTokens.spacing[10],
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    textAlign: "right",
-  },
+    textAlign: "right"},
   suggestionsContainer: {
     backgroundColor: Colors.warning[50],
     borderRadius: 12,
-    padding: DesignTokens.spacing[3],
-  },
+    padding: DesignTokens.spacing[3]},
   suggestionsTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: Colors.warning[700],
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   suggestionItem: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: DesignTokens.spacing['1.5'],
-  },
+    marginBottom: DesignTokens.spacing['1.5']},
   suggestionText: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.warning[800],
     marginLeft: Spacing.sm,
-    lineHeight: 18,
-  },
+    lineHeight: 18},
   trendContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: Spacing.md,
-  },
+    padding: Spacing.md},
   trendIcon: {
     width: DesignTokens.spacing[11],
     height: DesignTokens.spacing[11],
@@ -1324,26 +1219,20 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: Colors.neutral[50],
     alignItems: "center",
     justifyContent: "center",
-    marginRight: DesignTokens.spacing[3],
-  },
+    marginRight: DesignTokens.spacing[3]},
   trendContent: {
-    flex: 1,
-  },
+    flex: 1},
   trendValue: {
     fontSize: DesignTokens.typography.sizes.xl,
-    fontWeight: "700",
-  },
+    fontWeight: "700"},
   trendLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[600],
-    marginTop: DesignTokens.spacing['0.5'],
-  },
+    marginTop: DesignTokens.spacing['0.5']},
   trendPeriod: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: Colors.neutral[400],
-    marginTop: DesignTokens.spacing['0.5'],
-  },
-}))
+    marginTop: DesignTokens.spacing['0.5']}}))
 
 export default {
   MatchScore,
@@ -1351,5 +1240,4 @@ export default {
   ColorPaletteAnalysis,
   BodyShapeAnalysis,
   OutfitCompatibility,
-  TrendIndicator,
-};
+  TrendIndicator};

@@ -18,7 +18,6 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as FileSystem from "@/src/polyfills/expo-file-system";
 import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
 import { useTheme, createStyles } from '../contexts/ThemeContext';
-import { flatColors as colors } from '../../design-system/theme';
 
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");

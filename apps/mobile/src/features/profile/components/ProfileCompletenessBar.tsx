@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Colors, Spacing } from '../../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
@@ -74,7 +74,7 @@ export const ProfileCompletenessBar: React.FC<ProfileCompletenessBarProps> = ({
 
 const styles = StyleSheet.create({
   pressable: {
-    minHeight: DesignTokens.spacing[11],
+    minHeight: 44,
   },
   container: {
     paddingVertical: Spacing[3],

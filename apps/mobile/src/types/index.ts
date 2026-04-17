@@ -16,6 +16,11 @@ export type {
   PaginatedResponse,
 } from "@xuno/types";
 
+export type {
+  ClothingItem,
+  Brand,
+} from "@xuno/types";
+
 export {
   Gender,
   BodyType,
@@ -26,8 +31,6 @@ export {
   PhotoType,
   PhotoStatus,
   ClothingCategory,
-  ClothingItem,
-  Brand,
   PriceRange,
   TryOnStatus,
   RecommendationType,

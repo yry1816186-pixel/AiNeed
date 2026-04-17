@@ -1,1 +1,0 @@
-﻿  Index signature for type 'string' is missing in type '{}'.

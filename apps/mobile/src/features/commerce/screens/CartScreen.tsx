@@ -26,7 +26,7 @@ import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTranslation } from '../../../i18n';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 import { haptics } from '../../../utils/haptics';
 import { withErrorBoundary } from '../../../shared/components/ErrorBoundary';
 import { EmptyCartView } from '../components/EmptyCartView';
@@ -504,6 +504,8 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
   onQuantityChange,
   onDelete,
 }) => {
+  const { colors } = useTheme();
+  const t = useTranslation();
   const translateX = useRef(new Animated.Value(0)).current;
   const itemPrice = item.item?.price ?? 0;
   const lineTotal = itemPrice * item.quantity;

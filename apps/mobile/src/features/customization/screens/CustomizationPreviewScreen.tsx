@@ -6,10 +6,9 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  ScrollView,
-} from "react-native";
+  ScrollView} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "../../../polyfills/expo-vector-icons.ts";
+import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
@@ -70,8 +69,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
             text: "查看订单",
             onPress: () => {
               navigation.replace("CustomizationOrderDetail" as keyof RootStackParamList, { requestId });
-            },
-          },
+            }},
         ]);
       } else {
         Alert.alert("提交失败", "请稍后重试");
@@ -228,39 +226,33 @@ export const CustomizationPreviewScreen: React.FC = () => {
       </ScrollView>
     </SafeAreaView>
   );
-
-  replace?: any;};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.Colors.surface,
-  },
+    backgroundColor: theme.Colors.surface},
   topBar: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: Spacing[4],
-    paddingVertical: Spacing[2],
-  },
+    paddingVertical: Spacing[2]},
   backButton: {
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   topBarTitle: {
     flex: 1,
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.Colors.textPrimary,
-  },
+    color: theme.Colors.textPrimary},
   scrollContent: {
     paddingHorizontal: Spacing[4],
-    paddingBottom: Spacing[8],
-  },
+    paddingBottom: Spacing[8]},
   previewContainer: {
     height: 280,
     backgroundColor: Colors.neutral[50],
@@ -269,48 +261,38 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: Spacing[4],
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
-  },
+    borderColor: Colors.neutral[200]},
   previewUrlText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.Colors.textSecondary,
-  },
+    color: theme.Colors.textSecondary},
   previewPlaceholder: {
-    alignItems: "center",
-  },
+    alignItems: "center"},
   previewPlaceholderText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[400],
-    marginTop: Spacing[2],
-  },
+    marginTop: Spacing[2]},
   section: {
-    marginBottom: Spacing[4],
-  },
+    marginBottom: Spacing[4]},
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.Colors.textPrimary,
-    marginBottom: Spacing[3],
-  },
+    marginBottom: Spacing[3]},
   packagingCard: {
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
     padding: Spacing[3],
-    gap: Spacing[2],
-  },
+    gap: Spacing[2]},
   packagingItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing[2],
-  },
+    gap: Spacing[2]},
   packagingText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.Colors.textPrimary,
-  },
+    color: theme.Colors.textPrimary},
   sideOptions: {
     flexDirection: "row",
-    gap: Spacing[2],
-  },
+    gap: Spacing[2]},
   sideOption: {
     flex: 1,
     paddingVertical: Spacing[3],
@@ -318,89 +300,71 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     backgroundColor: Colors.neutral[50],
     borderWidth: 1.5,
-    borderColor: "transparent",
-  },
+    borderColor: "transparent"},
   sideOptionSelected: {
     borderColor: theme.Colors.primary,
-    backgroundColor: "rgba(198, 123, 92, 0.06)",
-  },
+    backgroundColor: "rgba(198, 123, 92, 0.06)"},
   sideOptionText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.Colors.textSecondary,
-  },
+    color: theme.Colors.textSecondary},
   sideOptionTextSelected: {
     color: theme.Colors.primary,
-    fontWeight: "600",
-  },
+    fontWeight: "600"},
   calculateButton: {
     backgroundColor: theme.Colors.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",
-    marginBottom: Spacing[4],
-  },
+    marginBottom: Spacing[4]},
   calculateButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.Colors.surface,
-  },
+    color: theme.Colors.surface},
   quoteCard: {
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
-    padding: Spacing[4],
-  },
+    padding: Spacing[4]},
   quoteRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: Spacing[1],
-  },
+    paddingVertical: Spacing[1]},
   quoteLabel: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.Colors.textSecondary,
-  },
+    color: theme.Colors.textSecondary},
   quoteValue: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.Colors.textPrimary,
-  },
+    color: theme.Colors.textPrimary},
   quoteTotal: {
     borderTopWidth: 1,
     borderTopColor: Colors.neutral[200],
     marginTop: Spacing[2],
-    paddingTop: Spacing[2],
-  },
+    paddingTop: Spacing[2]},
   quoteTotalLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.Colors.textPrimary,
-  },
+    color: theme.colors.textPrimary},
   quoteTotalValue: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.Colors.primary,
-  },
+    color: theme.colors.primary},
   estimatedDays: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.Colors.textTertiary,
-    marginTop: Spacing[2],
-  },
+    color: theme.colors.textTertiary,
+    marginTop: Spacing[2]},
   submitButton: {
-    backgroundColor: theme.Colors.primary,
+    backgroundColor: theme.colors.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",
     marginBottom: Spacing[2],
-    ...Shadows.brand,
-  },
+    ...Shadows.brand},
   submitButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.Colors.surface,
-  },
+    color: theme.Colors.surface},
   disclaimer: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: theme.Colors.textTertiary,
-    textAlign: "center",
-  },
-});
+    textAlign: "center"}});
 
 export default CustomizationPreviewScreen;

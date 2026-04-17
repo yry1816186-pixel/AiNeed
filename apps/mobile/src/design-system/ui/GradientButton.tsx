@@ -16,7 +16,7 @@ import { Colors,
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
-  flatColors as colors } from '../../design-system/theme';
+  SpringConfigs } from '../../design-system/theme';
 
 import Animated, {
   useSharedValue,

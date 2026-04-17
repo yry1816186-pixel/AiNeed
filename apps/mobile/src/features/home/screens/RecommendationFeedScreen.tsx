@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { View, Text, StyleSheet, RefreshControl, ActivityIndicator, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FlashList } from "../../../polyfills/flash-list.tsx";
+import { FlashList } from '../../../polyfills/flash-list';
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { useRecommendationFeedStore } from '../stores/recommendationFeedStore';
 import { FeedTabs } from '../../../components/recommendations/FeedTabs';
@@ -9,7 +9,7 @@ import { RecommendationCard } from '../../../components/recommendations/Recommen
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import type { FeedItem, FeedCategory } from '../../../services/api/recommendation-feed.api';
 import type { RootStackParamList } from '../../../types/navigation';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

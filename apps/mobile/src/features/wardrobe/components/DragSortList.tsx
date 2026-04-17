@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -299,7 +299,7 @@ const collectionStyles = StyleSheet.create({
     justifyContent: "center",
   },
   info: { flex: 1 },
-  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
   count: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
   actions: { flexDirection: "row", gap: Spacing.xs},
   actionBtn: { padding: Spacing.sm},

@@ -5,8 +5,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   withTiming,
-  withDelay,
-} from "react-native-reanimated";
+  withDelay} from "react-native-reanimated";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { SpringConfigs, ListAnimations, Duration } from '../../../design-system/theme/tokens/animations';
 import { useReducedMotion } from '../../../hooks/useReducedMotion';
@@ -14,7 +13,7 @@ import type { OutfitPlanDetail } from '../stores/aiStylistStore';
 import type { AiStylistOutfitItem } from '../../../services/api/ai-stylist.api';
 import { ReasoningCard } from "./ReasoningCard";
 import { WeatherBadge } from "./WeatherBadge";
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 
@@ -36,8 +35,6 @@ const formatPrice = (price?: number | null) => {
 
 /** Animated item card with staggered bounce-in */
 const AnimatedItemCard: React.FC<{
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   item: AiStylistOutfitItem;
   itemIdx: number;
   cardWidth: number;
@@ -46,6 +43,8 @@ const AnimatedItemCard: React.FC<{
   activeOutfitIndex: number;
 }> = ({ item, itemIdx, cardWidth, onItemPress, onItemReplace, activeOutfitIndex }) => {
   const { reducedMotion } = useReducedMotion();
+  const { colors: _themeColors } = useTheme();
+  const styles = useStyles(_themeColors);
   const scale = useSharedValue(reducedMotion ? 1 : 0.3);
   const opacity = useSharedValue(reducedMotion ? 1 : 0);
   const translateY = useSharedValue(reducedMotion ? 0 : 50);
@@ -65,8 +64,7 @@ const AnimatedItemCard: React.FC<{
       { scale: scale.value },
       { translateY: translateY.value },
     ],
-    opacity: opacity.value,
-  }));
+    opacity: opacity.value}));
 
   return (
     <Animated.View style={animatedStyle}>
@@ -103,8 +101,7 @@ export const OutfitPlanView: React.FC<OutfitPlanViewProps> = ({
   plan,
   onItemReplace,
   onItemPress,
-  onFeedback,
-}) => {
+  onFeedback}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [activeOutfitIndex, setActiveOutfitIndex] = useState(0);
@@ -199,8 +196,7 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: DesignTokens.spacing[3],
-  },
+    marginBottom: DesignTokens.spacing[3]},
   title: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: DesignTokens.colors.neutral[900] },
   tabBar: { marginBottom: DesignTokens.spacing[3], maxHeight: DesignTokens.spacing[10] },
   tab: {
@@ -208,8 +204,7 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing.sm,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
-    marginRight: Spacing.sm,
-  },
+    marginRight: Spacing.sm},
   tabActive: { backgroundColor: colors.primary },
   tabText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.neutral[600] },
   tabTextActive: { color: colors.surface, fontWeight: "500" },
@@ -219,8 +214,7 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 12,
     padding: Spacing.sm,
     borderWidth: 1,
-    borderColor: DesignTokens.colors.neutral[200],
-  },
+    borderColor: DesignTokens.colors.neutral[200]},
   itemImage: { width: "100%", height: 120, borderRadius: 8, marginBottom: Spacing.sm},
   itemImagePlaceholder: {
     width: "100%",
@@ -229,45 +223,38 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: DesignTokens.colors.neutral[100],
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   itemImagePlaceholderText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral[400] },
   itemName: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: DesignTokens.colors.neutral[800],
-    marginBottom: DesignTokens.spacing['0.5'],
-  },
+    marginBottom: DesignTokens.spacing['0.5']},
   itemBrand: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.neutral[500], marginBottom: DesignTokens.spacing['0.5']},
   itemPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.primary,
-    marginBottom: DesignTokens.spacing['1.5'],
-  },
+    marginBottom: DesignTokens.spacing['1.5']},
   replaceButton: {
     backgroundColor: DesignTokens.colors.neutral[100],
     borderRadius: 6,
     paddingVertical: Spacing.xs,
-    alignItems: "center",
-  },
+    alignItems: "center"},
   replaceButtonText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral[600] },
   totalPrice: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
     marginTop: DesignTokens.spacing[3],
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   feedbackRow: { flexDirection: "row", gap: DesignTokens.spacing[3], marginTop: Spacing.sm},
   feedbackButton: {
     flex: 1,
     paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 8,
     backgroundColor: colors.primary,
-    alignItems: "center",
-  },
+    alignItems: "center"},
   dislikeButton: { backgroundColor: DesignTokens.colors.neutral[100] },
   feedbackButtonText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.surface },
-  dislikeButtonText: { color: DesignTokens.colors.neutral[600] },
-}))
+  dislikeButtonText: { color: DesignTokens.colors.neutral[600] }}))

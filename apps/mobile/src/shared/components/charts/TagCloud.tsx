@@ -1,11 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { colors } from '../../../design-system/theme/tokens/colors';
 
 import { spacing } from '../../../design-system/theme/tokens/spacing';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
-import { flatColors as} from '../../../design-system/theme';
 
 export interface TagCloudTag {
   label: string;
@@ -48,8 +46,7 @@ const getTagStyle = (weight: number, active: boolean) => {
     backgroundColor: active ? colors.brand.warmPrimary : colors.neutral[100],
     color: active ? colors.surface : colors.neutral[600],
     borderColor: active ? colors.brand.warmPrimary : colors.neutral[200],
-    borderWidth: 1,
-  };
+    borderWidth: 1};
 };
 
 export const TagCloud: React.FC<TagCloudProps> = ({ tags, accessibilityLabel }) => {
@@ -77,8 +74,7 @@ export const TagCloud: React.FC<TagCloudProps> = ({ tags, accessibilityLabel }) 
                 borderColor: tagStyle.borderColor,
                 borderWidth: tagStyle.borderWidth,
                 paddingVertical: tagStyle.paddingVertical,
-                paddingHorizontal: tagStyle.paddingHorizontal,
-              },
+                paddingHorizontal: tagStyle.paddingHorizontal},
             ]}
             accessible={true}
             accessibilityLabel={`${tag.label}${tag.active ? " 已选中" : ""}`}
@@ -89,8 +85,7 @@ export const TagCloud: React.FC<TagCloudProps> = ({ tags, accessibilityLabel }) 
                 styles.tagText,
                 {
                   fontSize: tagStyle.fontSize,
-                  color: tagStyle.color,
-                },
+                  color: tagStyle.color},
               ]}
             >
               {tag.label}
@@ -106,15 +101,11 @@ const useStyles = createStyles((colors) => ({
   container: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: spacing.aliases.sm,
-  },
+    gap: spacing.aliases.sm},
   tag: {
     borderRadius: spacing.borderRadius.full,
-    borderStyle: "solid",
-  },
+    borderStyle: "solid"},
   tagText: {
-    fontWeight: "500" as const,
-  },
-}))
+    fontWeight: "500" as const}}))
 
 export default TagCloud;

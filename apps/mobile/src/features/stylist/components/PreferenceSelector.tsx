@@ -12,7 +12,7 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { AiStylistAction } from '../../../services/api/ai-stylist.api';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

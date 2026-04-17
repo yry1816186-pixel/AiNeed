@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from "react-native";
-import { Ionicons } from "../../../../polyfills/expo-vector-icons.ts";
+import { Ionicons } from '../../../../polyfills/expo-vector-icons';
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, flatColors as colors } from '../../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, flatColors } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import type { OnboardingFormData } from '../../../../stores/onboardingStore';
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
@@ -169,13 +169,13 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: flatColors.textPrimary,
     letterSpacing: -0.5,
     lineHeight: 34,
   },
   stepSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textSecondary,
+    color: flatColors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
   },
@@ -195,15 +195,15 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: colors.textSecondary,
+    color: flatColors.textSecondary,
   },
   requiredMark: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.error,
+    color: flatColors.error,
   },
   optionalMark: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textTertiary,
+    color: flatColors.textTertiary,
     marginLeft: Spacing[1],
   },
   genderRow: {
@@ -220,15 +220,15 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   genderCardSelected: {
-    backgroundColor: colors.primary,
+    backgroundColor: flatColors.primary,
   },
   genderLabel: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: colors.textSecondary,
+    color: flatColors.textSecondary,
   },
   genderLabelSelected: {
-    color: colors.surface,
+    color: flatColors.surface,
   },
   ageScrollContent: {
     gap: Spacing[2],
@@ -241,19 +241,19 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   agePillSelected: {
-    backgroundColor: colors.primary,
+    backgroundColor: flatColors.primary,
   },
   agePillText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: colors.textSecondary,
+    color: flatColors.textSecondary,
   },
   agePillTextSelected: {
-    color: colors.surface,
+    color: flatColors.surface,
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.error,
+    color: flatColors.error,
     marginTop: Spacing[2],
   },
   inputRow: {
@@ -277,11 +277,11 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.md,
-    color: colors.textPrimary,
+    color: flatColors.textPrimary,
     padding: 0,
   },
   inputUnit: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textTertiary,
+    color: flatColors.textTertiary,
   },
 });

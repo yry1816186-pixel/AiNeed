@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   content: { flex: 1, padding: DesignTokens.spacing[5]},
-  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: '700', color: colors.text },
+  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: '700', color: colors.textPrimary },
   subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: Spacing.sm, marginBottom: Spacing.xl},
   form: { gap: Spacing.md},
   inputGroup: {
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
     paddingVertical: DesignTokens.spacing['3.5'],
     gap: DesignTokens.spacing[3],
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary },
   eyeButton: { padding: Spacing.xs},
   registerButton: {
     backgroundColor: colors.primary,

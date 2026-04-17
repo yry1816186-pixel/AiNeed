@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface CaseCardProps {

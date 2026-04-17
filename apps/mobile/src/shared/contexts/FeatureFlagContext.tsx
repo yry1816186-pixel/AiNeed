@@ -133,7 +133,7 @@ export function FeatureFlagProvider({ children }: { children: ReactNode }) {
       void refreshFlags();
     };
 
-    const socket = (wsService as { socket?: { on: (event: string, handler: () => void) => void; off: (event: string, handler: () => void) => void } }).socket;
+    const socket = (wsService as unknown as { socket?: { on: (event: string, handler: () => void) => void; off: (event: string, handler: () => void) => void } }).socket;
     if (socket) {
       socket.on("feature_flag_updated", handleFlagUpdate);
       return () => {

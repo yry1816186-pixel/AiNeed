@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { UserCoupon } from '../../../services/api/commerce.api';
-import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface CouponSelectorProps {

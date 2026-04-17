@@ -10,9 +10,9 @@ import {
   LinearGradient as SvgLinearGradient,
   Stop,
 } from "react-native-svg";
-import type { ColorAnalysisReport } from "@/src/services/api/profile.api";
+import type { ColorAnalysisReport } from "../../../../services/api/profile.api";
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-import { DesignTokens, flatColors as colors, typography, spacing, shadows } from '../../../../design-system/theme';
+import { DesignTokens, flatColors as staticColors, Spacing, Shadows, spacing, typography, shadows } from '../../../../design-system/theme';
 
 interface ColorSeasonCardProps {
   colorAnalysis: ColorAnalysisReport | null;
@@ -21,57 +21,57 @@ interface ColorSeasonCardProps {
 }
 
 const COLOR_MAP: Record<string, string> = {
-  珊瑚色: colors.errorLight,
-  桃色: colors.errorLight,
-  杏色: colors.primaryLight,
-  暖黄色: colors.warning,
-  草绿色: colors.success,
-  天蓝色: colors.infoLight,
-  象牙白: colors.surface,
-  粉色: colors.errorLight,
-  薰衣草色: colors.backgroundTertiary,
-  浅蓝色: colors.infoLight,
-  玫瑰色: colors.primary,
-  薄荷绿: colors.successLight,
-  淡紫色: colors.primaryLight,
-  雾蓝色: colors.neutral[500],
+  珊瑚色: staticColors.errorLight,
+  桃色: staticColors.errorLight,
+  杏色: staticColors.primaryLight,
+  暖黄色: staticColors.warning,
+  草绿色: staticColors.success,
+  天蓝色: staticColors.infoLight,
+  象牙白: staticColors.surface,
+  粉色: staticColors.errorLight,
+  薰衣草色: staticColors.backgroundTertiary,
+  浅蓝色: staticColors.infoLight,
+  玫瑰色: staticColors.primary,
+  薄荷绿: staticColors.successLight,
+  淡紫色: staticColors.primaryLight,
+  雾蓝色: staticColors.neutral[500],
   驼色: "#C19A6B",
-  棕色: colors.primaryDark,
+  棕色: staticColors.primaryDark,
   橄榄绿: "#808000",
   铁锈红: "#B7410E",
   芥末黄: "#FFDB58",
   南瓜色: "#FF7518",
   酒红色: "#722F37",
-  正红色: colors.error,
-  纯白色: colors.surface,
-  黑色: colors.neutral[900],
+  正红色: staticColors.error,
+  纯白色: staticColors.surface,
+  黑色: staticColors.neutral[900],
   宝蓝色: "#4169E1",
   翠绿色: "#50C878",
   深紫色: "#301934",
-  玫红色: colors.primary,
-  暖米色: colors.backgroundTertiary,
-  棕褐色: colors.primary,
-  奶油白: colors.backgroundTertiary,
+  玫红色: staticColors.primary,
+  暖米色: staticColors.backgroundTertiary,
+  棕褐色: staticColors.primary,
+  奶油白: staticColors.backgroundTertiary,
   柔和灰色: DesignTokens.colors.neutral[400],
-  米白色: colors.backgroundTertiary,
+  米白色: staticColors.backgroundTertiary,
   淡粉色: "#FFB6C1",
-  浅灰蓝色: colors.neutral[500],
-  米色: colors.backgroundTertiary,
-  奶油色: colors.backgroundTertiary,
+  浅灰蓝色: staticColors.neutral[500],
+  米色: staticColors.backgroundTertiary,
+  奶油色: staticColors.backgroundTertiary,
   深棕色: "#654321",
   军绿色: "#4B5320",
-  纯黑色: colors.neutral[900],
-  冷灰色: colors.textTertiary,
+  纯黑色: staticColors.neutral[900],
+  冷灰色: staticColors.textTertiary,
   深紫红色: "#4A0028",
   冰蓝色: "#99FFFF",
-  橙色: colors.warning,
-  深黄色: colors.warning,
-  鲜艳的红色: colors.error,
-  暖棕色: colors.primaryDark,
+  橙色: staticColors.warning,
+  深黄色: staticColors.warning,
+  鲜艳的红色: staticColors.error,
+  暖棕色: staticColors.primaryDark,
   冷蓝色: "#6495ED",
-  亮粉色: colors.primaryLight,
+  亮粉色: staticColors.primaryLight,
   荧光色: "#CCFF00",
-  深灰色: colors.textSecondary,
+  深灰色: staticColors.textSecondary,
   藏青色: "#000080",
 };
 
@@ -152,7 +152,7 @@ colorNames,
               rx={8}
               ry={8}
               fill={hex}
-              stroke={isLight ? colors.neutral[200] : "transparent"}
+              stroke={isLight ? staticColors.neutral[200] : "transparent"}
               strokeWidth={isLight ? 1 : 0}
             />
             {labels && (
@@ -160,7 +160,7 @@ colorNames,
                 x={x + blockSize / 2}
                 y={y + blockSize + 12}
                 textAnchor="middle"
-                fill={colors.neutral[600]}
+                fill={staticColors.neutral[600]}
                 fontSize={9}
                 fontFamily={typography.fontFamily.sans}
               >
@@ -186,7 +186,7 @@ function isLightColor(hex: string): boolean {
 }
 
 function SeasonGradientBand({ season }: { season: string }) {
-  const gradientColors = SEASON_GRADIENT[season] || [DesignTokens.colors.neutral[300], colors.textTertiary];
+  const gradientColors = SEASON_GRADIENT[season] || [DesignTokens.colors.neutral[300], staticColors.textTertiary];
   const width = 300;
   const height = 24;
 

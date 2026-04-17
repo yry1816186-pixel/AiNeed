@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { Animated, Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-import type { PhotoQualityResult, PhotoQualityIssue } from '../../../../stores/photoStore';
-import { DesignTokens , flatColors as colors } from '../../../design-system/theme';
+import type { PhotoQualityResult, PhotoQualityIssue } from '../../stores/photoStore';
+import { DesignTokens , flatColors as colors } from '../../../../design-system/theme';
 import { Spacing } from '../../../../design-system/theme';
 
 
@@ -38,12 +38,12 @@ function getIssueIcon(type: PhotoQualityIssue["type"]): keyof typeof Ionicons.gl
 }
 
 function getSeverityColor(severity: PhotoQualityIssue["severity"]): string {
-  const colors: Record<PhotoQualityIssue["severity"], string> = {
+  const severityColors: Record<PhotoQualityIssue["severity"], string> = {
     low: colors.warning,
-    medium: "colors.warning",
+    medium: colors.warning,
     high: colors.error,
   };
-  return colors[severity];
+  return severityColors[severity];
 }
 
 const ScoreCircle: React.FC<{ score: number }> = ({ score }) => {

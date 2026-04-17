@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { Skeleton } from "../../design-system/ui/Skeleton";
+import { Skeleton } from '../../../design-system/ui/Skeleton';
 import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 

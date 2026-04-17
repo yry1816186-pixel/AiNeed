@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, Dimensions, Pressable, ScrollView } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
@@ -15,7 +15,7 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, flatColors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 
@@ -26,7 +26,7 @@ const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 const ICON_SIZE = 24;
 
 const Icons = {
-  stylist: ({ color = colors.textInverse }) => (
+  stylist: ({ color = flatColors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2Z"
@@ -43,7 +43,7 @@ const Icons = {
       />
     </Svg>
   ),
-  photo: ({ color = colors.textInverse }) => (
+  photo: ({ color = flatColors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4Z"
@@ -65,7 +65,7 @@ const Icons = {
       />
     </Svg>
   ),
-  recommend: ({ color = colors.textInverse }) => (
+  recommend: ({ color = flatColors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
@@ -76,7 +76,7 @@ const Icons = {
       />
     </Svg>
   ),
-  wardrobe: ({ color = colors.textInverse }) => (
+  wardrobe: ({ color = flatColors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3Z"
@@ -109,6 +109,8 @@ interface ActionItemProps {
 }
 
 const ActionItemComponent: React.FC<ActionItemProps> = ({ action, index, visible, onPress }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.8);
 
@@ -128,8 +130,6 @@ const ActionItemComponent: React.FC<ActionItemProps> = ({ action, index, visible
   }));
 
   const renderIcon = () => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     const iconColor = colors.textInverse;
     switch (action.id) {
       case "stylist":
@@ -183,7 +183,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "stylist",
     label: "AI 造型师",
     description: "获取穿搭建议",
-    gradient: [colors.primary, colors.primary],
+    gradient: [flatColors.primary, flatColors.primary],
     onPress: () => {},
   },
   {
@@ -191,7 +191,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "photo",
     label: "拍照分析",
     description: "分析身材和肤色",
-    gradient: [colors.neutral[500], "colors.textTertiary"], // custom color
+    gradient: [flatColors.neutral[500], flatColors.textTertiary],
     onPress: () => {},
   },
   {
@@ -199,7 +199,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "recommend",
     label: "智能推荐",
     description: "个性化推荐",
-    gradient: [colors.success, "colors.secondary"], // custom color
+    gradient: [flatColors.success, flatColors.secondary],
     onPress: () => {},
   },
   {
@@ -207,7 +207,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "wardrobe",
     label: "我的衣橱",
     description: "管理你的衣物",
-    gradient: [colors.warning, "colors.primary"], // custom color
+    gradient: [flatColors.warning, flatColors.primary],
     onPress: () => {},
   },
 ];

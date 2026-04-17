@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -34,7 +34,7 @@ import {
 import { PreferenceSelector } from "./PreferenceSelector";
 import { OutfitCard } from "./OutfitCard";
 import { AnalysisProgress } from "./AnalysisProgress";
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 
@@ -526,11 +526,11 @@ const useStyles = createStyles((colors) => ({
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
   headerLeft: {
-    width: DesignTokens.spacing[11],
+    width: 44,
   },
   closeButton: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
@@ -546,7 +546,7 @@ const useStyles = createStyles((colors) => ({
     color: DesignTokens.colors.neutral[900],
   },
   headerRight: {
-    width: DesignTokens.spacing[11],
+    width: 44,
   },
   stateIndicator: {
     flexDirection: "row",

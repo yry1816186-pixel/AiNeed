@@ -159,7 +159,7 @@ export const OutfitDetailScreen: React.FC = () => {
           <Ionicons
             name={outfit.isFavorite ? "heart" : "heart-outline"}
             size={24}
-            color={outfit.isFavorite ? colors.error : colors.text}
+            color={outfit.isFavorite ? colors.error : colors.textPrimary}
           />
         </TouchableOpacity>
       </View>
@@ -168,7 +168,7 @@ export const OutfitDetailScreen: React.FC = () => {
           {outfit.thumbnailUri ? (
             <Image
               source={{ uri: outfit.thumbnailUri }}
-              style={styles.mainImage}
+              style={styles.mainImage as any}
               accessibilityLabel="搭配图片"
             />
           ) : (
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
   actionButton: {
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],

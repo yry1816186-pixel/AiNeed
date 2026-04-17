@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { TagCloud } from "../../../components/charts/TagCloud";
-import { PercentageBar } from "../../../components/charts/PercentageBar";
-import { flatColors as colors, typography, spacing, shadows } from '../../../../design-system/theme';
+import { TagCloud } from '../../../../shared/components/charts/TagCloud';
+import { PercentageBar } from '../../../../shared/components/charts/PercentageBar';
+import { flatColors as colors, Spacing, Shadows, spacing, typography, shadows } from '../../../../design-system/theme';
 
 interface StylePreferences {
   preferredStyles: string[];

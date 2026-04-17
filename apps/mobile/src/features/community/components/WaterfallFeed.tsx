@@ -12,7 +12,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 
@@ -63,6 +63,8 @@ const PostCard: React.FC<{
   onAuthorPress: (authorId: string) => void;
   onLikePress: (postId: string) => void;
 }> = ({ post, index, onPostPress, onAuthorPress, onLikePress }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const imageHeight = useMemo(() => {
     const heights = [180, 220, 200, 240, 190, 210];
     return heights[index % heights.length];
@@ -92,8 +94,6 @@ const PostCard: React.FC<{
   }, []);
 
   const formatCount = useCallback((count: number) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     if (count >= 10000) {
       return `${(count / 10000).toFixed(1)}万`;
     }

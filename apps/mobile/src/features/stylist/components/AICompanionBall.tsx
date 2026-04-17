@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback, useState, useRef } from "react";
+import React, { useEffect, useCallback, useState, useRef } from "react";
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
@@ -20,8 +20,8 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens, flatColors as _flatColors } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing, flatColors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 
@@ -48,36 +48,36 @@ export interface AICompanionBallProps {
 
 const STATE_CONFIG = {
   idle: {
-    gradient: [colors.secondary, colors.primary] as [string, string],
+    gradient: [flatColors.secondary, flatColors.primary] as [string, string],
     innerGradient: ["rgba(255,255,255,0.25)", "rgba(255,255,255,0.05)"] as [string, string],
-    glowColor: colors.secondary,
+    glowColor: flatColors.secondary,
     animation: "breathe",
   },
   listening: {
-    gradient: [colors.neutral[500], "colors.textTertiary"] as [string, string], // custom color
+    gradient: [flatColors.neutral[500], flatColors.textTertiary] as [string, string],
     innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.08)"] as [string, string],
-    glowColor: colors.neutral[500],
+    glowColor: flatColors.neutral[500],
     animation: "pulse",
   },
   thinking: {
-    gradient: [colors.warning, "colors.primary"] as [string, string], // custom color
+    gradient: [flatColors.warning, flatColors.primary] as [string, string],
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.1)"] as [string, string],
-    glowColor: colors.warning,
+    glowColor: flatColors.warning,
     animation: "pulse",
   },
   responding: {
-    gradient: [colors.success, "colors.secondary"] as [string, string], // custom color
+    gradient: [flatColors.success, flatColors.secondary] as [string, string],
     innerGradient: ["rgba(255,255,255,0.28)", "rgba(255,255,255,0.06)"] as [string, string],
-    glowColor: colors.success,
+    glowColor: flatColors.success,
     animation: "glow",
   },
   collapsed: {
-    gradient: [colors.primary, colors.primary] as [
+    gradient: [flatColors.primary, flatColors.primary] as [
       string,
       string
     ],
     innerGradient: ["rgba(255,255,255,0.2)", "rgba(255,255,255,0.03)"] as [string, string],
-    glowColor: colors.primary,
+    glowColor: flatColors.primary,
     animation: "none",
   },
 };

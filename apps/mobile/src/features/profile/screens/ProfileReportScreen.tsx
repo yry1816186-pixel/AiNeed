@@ -14,20 +14,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp, FadeInDown } from "react-native-reanimated";
-import { profileApi } from "@/src/services/api/profile.api";
+import { profileApi } from "../../../services/api/profile.api";
 import type {
   UserProfile,
   BodyAnalysisReport,
   ColorAnalysisReport,
-} from "@/src/services/api/profile.api";
-import type { RootStackParamList } from "@/src/types/navigation";
-import { withErrorBoundary } from "@/src/shared/components/ErrorBoundary";
-import { BodyTypeCard } from '../../../components/BodyTypeCard';
-import { ColorSeasonCard } from '../../../components/ColorSeasonCard';
-import { StyleTagsCard } from '../../../components/StyleTagsCard';
-import { SharePosterPreview } from '../../../components/SharePosterPreview';
+} from "../../../services/api/profile.api";
+import type { RootStackParamList } from "../../../types/navigation";
+import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
+import { BodyTypeCard } from './components/BodyTypeCard';
+import { ColorSeasonCard } from './components/ColorSeasonCard';
+import { StyleTagsCard } from './components/StyleTagsCard';
+import { SharePosterPreview } from './components/SharePosterPreview';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens, Spacing, flatColors as colors, typography, spacing, shadows } from '../../../design-system/theme';
+import { DesignTokens, Spacing, Shadows } from '../../../design-system/theme';
 
 type ProfileReportNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -170,7 +170,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
           <View style={styles.headerRight} />
         </View>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.brand.warmPrimary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>正在生成你的风格画像...</Text>
         </View>
       </SafeAreaView>
@@ -202,7 +202,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
             accessibilityRole="button"
           >
             <LinearGradient
-              colors={[colors.gradients.coralRose[0], colors.gradients.coralRose[1]]}
+              colors={[DesignTokens.gradients.brand[0], DesignTokens.gradients.brand[1]]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.emptyButtonGradient}
@@ -236,7 +236,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
       >
         <Animated.View entering={FadeInUp.duration(600).springify()}>
           <LinearGradient
-            colors={[colors.gradients.coralRose[0], colors.gradients.coralRose[1]]}
+            colors={[DesignTokens.gradients.brand[0], DesignTokens.gradients.brand[1]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.summaryCard}
@@ -315,7 +315,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
           accessibilityRole="button"
         >
           <LinearGradient
-            colors={[colors.gradients.oceanDeep[0], colors.gradients.oceanDeep[1]]}
+            colors={[DesignTokens.gradients.sage[0], DesignTokens.gradients.sage[1]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.shareButtonGradient}
@@ -338,16 +338,16 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: spacing.layout.screenPadding,
-    paddingVertical: spacing.scale[3],
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.neutral.white,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.neutral[200],
-    ...shadows.presets.xs,
+    ...DesignTokens.shadows.xs,
   },
   headerTitle: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: DesignTokens.typography.fontWeights.bold,
     color: colors.neutral[900],
   },
   headerRight: {
@@ -357,65 +357,65 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: spacing.layout.screenPadding,
-    paddingTop: spacing.layout.cardGap,
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingTop: DesignTokens.spacing[3],
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: spacing.scale[4],
+    gap: DesignTokens.spacing[4],
   },
   loadingText: {
-    fontSize: typography.fontSize.base,
+    fontSize: DesignTokens.typography.sizes.base,
     color: colors.neutral[500],
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: spacing.layout.screenPadding,
-    gap: spacing.scale[3],
+    paddingHorizontal: DesignTokens.spacing[5],
+    gap: DesignTokens.spacing[3],
   },
   emptyTitle: {
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.bold,
+    fontSize: DesignTokens.typography.sizes.xl,
+    fontWeight: DesignTokens.typography.fontWeights.bold,
     color: colors.neutral[800],
-    marginTop: spacing.scale[4],
+    marginTop: DesignTokens.spacing[4],
   },
   emptySubtitle: {
-    fontSize: typography.fontSize.sm,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
   },
   emptyButton: {
-    marginTop: spacing.scale[4],
-    borderRadius: spacing.borderRadius.xl,
+    marginTop: DesignTokens.spacing[4],
+    borderRadius: DesignTokens.borderRadius.xl,
     overflow: "hidden",
   },
   emptyButtonGradient: {
-    paddingVertical: spacing.scale[3],
-    paddingHorizontal: spacing.scale[8],
+    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: DesignTokens.spacing[8],
   },
   emptyButtonText: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semibold,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: DesignTokens.typography.fontWeights.semibold,
     color: colors.surface,
   },
   summaryCard: {
-    borderRadius: spacing.borderRadius["2xl"],
-    padding: spacing.layout.modalPadding,
-    marginBottom: spacing.layout.cardGap,
-    ...shadows.presets.lg,
+    borderRadius: DesignTokens.borderRadius["2xl"],
+    padding: DesignTokens.spacing[5],
+    marginBottom: DesignTokens.spacing[3],
+    ...DesignTokens.shadows.lg,
   },
   summaryTop: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: spacing.scale[4],
+    marginBottom: DesignTokens.spacing[4],
   },
   avatarContainer: {
-    marginRight: spacing.scale[4],
+    marginRight: DesignTokens.spacing[4],
   },
   avatar: {
     width: Spacing['3xl'],
@@ -428,8 +428,8 @@ const useStyles = createStyles((colors) => ({
     borderColor: "rgba(255,255,255,0.5)",
   },
   avatarText: {
-    fontSize: typography.fontSize["2xl"],
-    fontWeight: typography.fontWeight.bold,
+    fontSize: DesignTokens.typography.sizes["2xl"],
+    fontWeight: DesignTokens.typography.fontWeights.bold,
     color: colors.surface,
   },
   avatarImage: {
@@ -443,18 +443,18 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
   },
   summaryName: {
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.bold,
+    fontSize: DesignTokens.typography.sizes.xl,
+    fontWeight: DesignTokens.typography.fontWeights.bold,
     color: colors.surface,
-    marginBottom: spacing.scale[1],
+    marginBottom: DesignTokens.spacing[1],
   },
   summaryPersonality: {
-    fontSize: typography.fontSize.sm,
+    fontSize: DesignTokens.typography.sizes.sm,
     color: "rgba(255,255,255,0.9)",
-    fontWeight: typography.fontWeight.medium,
+    fontWeight: DesignTokens.typography.fontWeights.medium,
   },
   progressContainer: {
-    gap: spacing.scale[2],
+    gap: DesignTokens.spacing[2],
   },
   progressTrack: {
     height: DesignTokens.spacing['1.5'],
@@ -468,9 +468,9 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.surface,
   },
   progressText: {
-    fontSize: typography.fontSize.xs,
+    fontSize: DesignTokens.typography.sizes.xs,
     color: "rgba(255,255,255,0.85)",
-    fontWeight: typography.fontWeight.medium,
+    fontWeight: DesignTokens.typography.fontWeights.medium,
   },
   bottomSpacer: {
     height: Spacing['4xl'],
@@ -480,27 +480,27 @@ const useStyles = createStyles((colors) => ({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: spacing.layout.screenPadding,
-    paddingVertical: spacing.scale[4],
+    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: DesignTokens.spacing[4],
     backgroundColor: colors.neutral.white,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.neutral[200],
-    ...shadows.presets.md,
+    ...DesignTokens.shadows.md,
   },
   shareButton: {
-    borderRadius: spacing.borderRadius.xl,
+    borderRadius: DesignTokens.borderRadius.xl,
     overflow: "hidden",
   },
   shareButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: spacing.scale[2],
-    paddingVertical: spacing.scale[3] + 2,
+    gap: DesignTokens.spacing[2],
+    paddingVertical: DesignTokens.spacing[3] + 2,
   },
   shareButtonText: {
-    fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.bold,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: DesignTokens.typography.fontWeights.bold,
     color: colors.surface,
   },
 }))

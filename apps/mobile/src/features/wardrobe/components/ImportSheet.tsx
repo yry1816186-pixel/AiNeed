@@ -12,7 +12,7 @@ import {
   FlatList,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme , Spacing, flatColors as colors } from '../../../design-system/theme'
+import { theme, Spacing } from '../../../design-system/theme'
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { communityApi } from '../../../services/api/community.api';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';

@@ -14,10 +14,11 @@ import { useTypewriter } from '../../../hooks/useAdvancedAnimations';
 import { Duration } from '../../../design-system/theme/tokens/animations';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { flatColors as colors } from '../../../design-system/theme';
 
 /** Blinking cursor shown while typewriter is active */
 function TypingCursor() {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const opacity = useSharedValue(1);
   const { reducedMotion } = useReducedMotion();
 

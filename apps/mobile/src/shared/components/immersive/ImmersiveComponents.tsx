@@ -14,8 +14,7 @@ import {
   StatusBar,
   ViewStyle,
   ImageSourcePropType,
-  Animated,
-} from "react-native";
+  Animated} from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
@@ -34,9 +33,9 @@ import {
   runOnJS,
   useAnimatedScrollHandler,
   useDerivedValue,
-} from "react-native-reanimated";
+  SharedValue} from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors , Spacing, flatColors as colors } from '../../../design-system/theme'
+import { Colors , Spacing } from '../../../design-system/theme'
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -50,8 +49,7 @@ const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 const springConfig = {
   damping: 20,
   stiffness: 200,
-  mass: 0.8,
-};
+  mass: 0.8};
 
 export interface FullScreenGalleryProps {
   visible: boolean;
@@ -83,19 +81,18 @@ const GalleryThumbnail: React.FC<GalleryThumbnailProps> = ({ item, index, select
   const thumbnailScale = useSharedValue(1);
 
   useEffect(() => {
-    thumbnailScale.valueOf = withSpring(selected ? 1.1 : 1, springConfig);
+    thumbnailScale.value = withSpring(selected ? 1.1 : 1, springConfig);
   }, [selected, thumbnailScale]);
 
   const thumbnailAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: thumbnailScale.valueOf }],
-    borderWidth: selected ? 2 : 0,
-  }));
+    transform: [{ scale: thumbnailScale.value }],
+    borderWidth: selected ? 2 : 0}));
 
   return (
     <TouchableOpacity onPress={() => onPress(index)}>
       <AnimatedImage
         source={{ uri: item.uri }}
-        style={[styles.thumbnail, thumbnailAnimatedStyle]}
+        style={[styles.thumbnail, thumbnailAnimatedStyle as any]}
       />
     </TouchableOpacity>
   );
@@ -111,8 +108,7 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
   showCounter = true,
   enableZoom = true,
   enableSwipeDown = true,
-  backgroundColor = DesignTokens.colors.neutral[900],
-}) => {
+  backgroundColor = DesignTokens.colors.neutral[900]}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
@@ -128,19 +124,19 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
 
   useEffect(() => {
     if (visible) {
-      opacity.valueOf = withTiming(1, { duration: 300 });
-      scale.valueOf = withSpring(1, springConfig);
+      opacity.value = withTiming(1, { duration: 300 });
+      scale.value = withSpring(1, springConfig);
       StatusBar.setHidden(true);
     } else {
-      opacity.valueOf = withTiming(0, { duration: 200 });
-      scale.valueOf = withTiming(0.9, { duration: 200 });
+      opacity.value = withTiming(0, { duration: 200 });
+      scale.value = withTiming(0.9, { duration: 200 });
       StatusBar.setHidden(false);
     }
   }, [visible]);
 
   const handleScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
-      translateY.valueOf = event.contentOffset.y;
+      translateY.value = event.contentOffset.y;
     },
     onMomentumEnd: (event) => {
       const index = Math.round(event.contentOffset.x / SCREEN_WIDTH);
@@ -148,57 +144,53 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
       if (onIndexChange) {
         runOnJS(onIndexChange)(index);
       }
-    },
-  });
+    }});
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((event) => {
       if (enableZoom) {
-        zoomScale.valueOf = Math.max(1, Math.min(4, event.scale));
+        zoomScale.value = Math.max(1, Math.min(4, event.scale));
       }
     })
     .onEnd(() => {
-      if (zoomScale.valueOf < 1.2) {
-        zoomScale.valueOf = withSpring(1, springConfig);
+      if (zoomScale.value < 1.2) {
+        zoomScale.value = withSpring(1, springConfig);
       }
     });
 
   const panGesture = Gesture.Pan()
     .onUpdate((event) => {
-      if (enableSwipeDown && zoomScale.valueOf === 1 && event.translationY > 0) {
-        translateY.valueOf = event.translationY;
+      if (enableSwipeDown && zoomScale.value === 1 && event.translationY > 0) {
+        translateY.value = event.translationY;
       }
     })
     .onEnd((event) => {
       if (event.translationY > 100 || event.velocityY > 500) {
-        opacity.valueOf = withTiming(0, { duration: 200 });
+        opacity.value = withTiming(0, { duration: 200 });
         runOnJS(onClose)();
       } else {
-        translateY.valueOf = withSpring(0, springConfig);
+        translateY.value = withSpring(0, springConfig);
       }
     });
 
   const tapGesture = Gesture.Tap().onEnd(() => {
-    controlsOpacity.valueOf = controlsOpacity.valueOf === 1 ? withTiming(0) : withTiming(1);
+    controlsOpacity.value = controlsOpacity.value === 1 ? withTiming(0) : withTiming(1);
     runOnJS(setControlsVisible)(!controlsVisible);
   });
 
   const composedGesture = Gesture.Simultaneous(pinchGesture, panGesture, tapGesture);
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.valueOf,
-    transform: [{ scale: scale.valueOf }],
-  }));
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }]}));
 
   const imageAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: zoomScale.valueOf }, { translateY: translateY.valueOf * 0.3 }],
-  }));
+    transform: [{ scale: zoomScale.value }, { translateY: translateY.value * 0.3 }]}));
 
   const controlsAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: controlsOpacity.valueOf,
-  }));
+    opacity: controlsOpacity.value}));
 
-  const renderImage = ({ item, index }: { item: (typeof images)[0]; _index: number }) => (
+  const renderImage = ({ item }: { item: (typeof images)[0]; index: number }) => (
     <GestureDetector gesture={composedGesture}>
       <AnimatedView style={[styles.imageContainer, imageAnimatedStyle]}>
         <AnimatedImage
@@ -260,8 +252,7 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
           getItemLayout={(_, index) => ({
             length: SCREEN_WIDTH,
             offset: SCREEN_WIDTH * index,
-            index,
-          })}
+            index})}
         />
 
         {showThumbnails && images.length > 1 && (
@@ -308,8 +299,6 @@ export interface ARGuideOverlayProps {
 }
 
 export const ARGuideOverlay: React.FC<ARGuideOverlayProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   visible,
   step,
   totalSteps,
@@ -318,38 +307,37 @@ export const ARGuideOverlay: React.FC<ARGuideOverlayProps> = ({
   highlightArea,
   onNext,
   onSkip,
-  onComplete,
-}) => {
+  onComplete}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const opacity = useSharedValue(0);
   const pulseScale = useSharedValue(1);
   const highlightOpacity = useSharedValue(0.5);
 
   useEffect(() => {
     if (visible) {
-      opacity.valueOf = withTiming(1, { duration: 300 });
-      pulseScale.valueOf = withRepeat(
+      opacity.value = withTiming(1, { duration: 300 });
+      pulseScale.value = withRepeat(
         withSequence(withTiming(1.1, { duration: 800 }), withTiming(1, { duration: 800 })),
         -1,
         true
       );
-      highlightOpacity.valueOf = withRepeat(
+      highlightOpacity.value = withRepeat(
         withSequence(withTiming(0.8, { duration: 600 }), withTiming(0.4, { duration: 600 })),
         -1,
         true
       );
     } else {
-      opacity.valueOf = withTiming(0, { duration: 200 });
+      opacity.value = withTiming(0, { duration: 200 });
     }
   }, [visible]);
 
   const overlayAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.valueOf,
-  }));
+    opacity: opacity.value}));
 
   const highlightAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseScale.valueOf }],
-    opacity: highlightOpacity.valueOf,
-  }));
+    transform: [{ scale: pulseScale.value }],
+    opacity: highlightOpacity.value}));
 
   const isLastStep = step === totalSteps - 1;
 
@@ -368,8 +356,7 @@ export const ARGuideOverlay: React.FC<ARGuideOverlayProps> = ({
                 left: highlightArea.x,
                 top: highlightArea.y,
                 width: highlightArea.width,
-                height: highlightArea.height,
-              },
+                height: highlightArea.height},
               highlightAnimatedStyle,
             ]}
           >
@@ -425,8 +412,6 @@ export interface VirtualTryOnPreviewProps {
 }
 
 export const VirtualTryOnPreview: React.FC<VirtualTryOnPreviewProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   visible,
   productImage,
   userImage,
@@ -437,8 +422,9 @@ export const VirtualTryOnPreview: React.FC<VirtualTryOnPreviewProps> = ({
   onCapture,
   onRetry,
   onSave,
-  onShare,
-}) => {
+  onShare}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.9);
   const shimmerTranslate = useSharedValue(-SCREEN_WIDTH);
@@ -447,49 +433,46 @@ export const VirtualTryOnPreview: React.FC<VirtualTryOnPreviewProps> = ({
 
   useEffect(() => {
     if (visible) {
-      opacity.valueOf = withTiming(1, { duration: 300 });
-      scale.valueOf = withSpring(1, springConfig);
+      opacity.value = withTiming(1, { duration: 300 });
+      scale.value = withSpring(1, springConfig);
     } else {
-      opacity.valueOf = withTiming(0, { duration: 200 });
-      scale.valueOf = withTiming(0.9, { duration: 200 });
+      opacity.value = withTiming(0, { duration: 200 });
+      scale.value = withTiming(0.9, { duration: 200 });
     }
   }, [visible]);
 
   useEffect(() => {
     if (isProcessing) {
-      shimmerTranslate.valueOf = withRepeat(
+      shimmerTranslate.value = withRepeat(
         withTiming(SCREEN_WIDTH, { duration: 1500, easing: Easing.linear }),
         -1,
         false
       );
     } else {
-      shimmerTranslate.valueOf = -SCREEN_WIDTH;
+      shimmerTranslate.value = -SCREEN_WIDTH;
     }
   }, [isProcessing]);
 
   useEffect(() => {
     if (resultImage && !isProcessing) {
-      resultScale.valueOf = withSpring(1, springConfig);
-      resultOpacity.valueOf = withTiming(1, { duration: 500 });
+      resultScale.value = withSpring(1, springConfig);
+      resultOpacity.value = withTiming(1, { duration: 500 });
     } else {
-      resultScale.valueOf = 0.8;
-      resultOpacity.valueOf = 0;
+      resultScale.value = 0.8;
+      resultOpacity.value = 0;
     }
   }, [resultImage, isProcessing]);
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.valueOf,
-    transform: [{ scale: scale.valueOf }],
-  }));
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }]}));
 
   const shimmerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shimmerTranslate.valueOf }],
-  }));
+    transform: [{ translateX: shimmerTranslate.value }]}));
 
   const resultAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: resultScale.valueOf }],
-    opacity: resultOpacity.valueOf,
-  }));
+    transform: [{ scale: resultScale.value }],
+    opacity: resultOpacity.value}));
 
   if (!visible) {
     return null;
@@ -516,7 +499,7 @@ export const VirtualTryOnPreview: React.FC<VirtualTryOnPreviewProps> = ({
               {resultImage ? (
                 <AnimatedImage
                   source={{ uri: resultImage }}
-                  style={[styles.resultPreview, resultAnimatedStyle]}
+                  style={[styles.resultPreview, resultAnimatedStyle as any]}
                 />
               ) : (
                 <View style={styles.resultPlaceholder}>
@@ -591,8 +574,9 @@ export const ImmersiveProductView: React.FC<ImmersiveProductViewProps> = ({
   product,
   onClose,
   onAddToCart,
-  onTryOn,
-}) => {
+  onTryOn}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scrollY = useSharedValue(0);
   const opacity = useSharedValue(0);
   const imageScale = useSharedValue(1);
@@ -601,43 +585,37 @@ export const ImmersiveProductView: React.FC<ImmersiveProductViewProps> = ({
 
   useEffect(() => {
     if (visible) {
-      opacity.valueOf = withTiming(1, { duration: 400 });
+      opacity.value = withTiming(1, { duration: 400 });
       StatusBar.setHidden(true);
     } else {
-      opacity.valueOf = withTiming(0, { duration: 300 });
+      opacity.value = withTiming(0, { duration: 300 });
       StatusBar.setHidden(false);
     }
   }, [visible]);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
-      scrollY.valueOf = event.contentOffset.y;
-      imageScale.valueOf = interpolate(
+      scrollY.value = event.contentOffset.y;
+      imageScale.value = interpolate(
         event.contentOffset.y,
         [-100, 0, 100],
         [1.2, 1, 0.9],
         Extrapolate.CLAMP
       );
-    },
-  });
+    }});
 
   const headerOpacity = useDerivedValue(() => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
-    return interpolate(scrollY.valueOf, [0, 100], [0, 1], Extrapolate.CLAMP);
+    return interpolate(scrollY.value, [0, 100], [0, 1], Extrapolate.CLAMP);
   });
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.valueOf,
-  }));
+    opacity: opacity.value}));
 
   const headerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: headerOpacity.valueOf,
-  }));
+    opacity: headerOpacity.value}));
 
   const imageAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: imageScale.valueOf }],
-  }));
+    transform: [{ scale: imageScale.value }]}));
 
   if (!visible) {
     return null;
@@ -784,29 +762,27 @@ export interface StoryViewerProps {
 interface StoryProgressBarProps {
   index: number;
   currentItemIndex: number;
-  progress: number;
+  progress: SharedValue<number>;
 }
 
 const StoryProgressBar: React.FC<StoryProgressBarProps> = ({
   index,
   currentItemIndex,
-  progress,
-}) => {
-  const barAnimatedStyle = useAnimatedStyle(() => {
+  progress}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
+  const barAnimatedStyle = useAnimatedStyle(() => {
     const widthProgress =
-      index < currentItemIndex ? 1 : index === currentItemIndex ? progress.valueOf : 0;
+      index < currentItemIndex ? 1 : index === currentItemIndex ? progress.value : 0;
 
     return {
-      width: `${widthProgress * 100}%`,
-    };
+      width: `${widthProgress * 100}%`};
   }, [currentItemIndex, index]);
 
   return (
     <View style={styles.progressBarContainer}>
       <View style={styles.progressBarBackground} />
-      <AnimatedView style={[styles.progressBarFill, barAnimatedStyle]} />
+      <AnimatedView style={[styles.progressBarFill, barAnimatedStyle as any]} />
     </View>
   );
 };
@@ -815,8 +791,9 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   visible,
   stories,
   initialStoryIndex = 0,
-  onClose,
-}) => {
+  onClose}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(initialStoryIndex);
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const progress = useSharedValue(0);
@@ -828,18 +805,18 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
   useEffect(() => {
     if (visible) {
-      opacity.valueOf = withTiming(1, { duration: 200 });
+      opacity.value = withTiming(1, { duration: 200 });
       StatusBar.setHidden(true);
     } else {
-      opacity.valueOf = withTiming(0, { duration: 150 });
+      opacity.value = withTiming(0, { duration: 150 });
       StatusBar.setHidden(false);
     }
   }, [visible]);
 
   useEffect(() => {
     if (visible && currentStory) {
-      progress.valueOf = 0;
-      progress.valueOf = withTiming(1, { duration, easing: Easing.linear }, (finished) => {
+      progress.value = 0;
+      progress.value = withTiming(1, { duration, easing: Easing.linear }, (finished) => {
         if (finished) {
           runOnJS(handleNext)();
         }
@@ -859,8 +836,6 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   }, [currentItemIndex, currentStoryIndex, currentStory, stories.length, onClose]);
 
   const handlePrevious = useCallback(() => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     if (currentItemIndex > 0) {
       setCurrentItemIndex((prev) => prev - 1);
     } else if (currentStoryIndex > 0) {
@@ -881,12 +856,10 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   );
 
   const _progressAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${progress.valueOf * 100}%`,
-  }));
+    width: `${progress.value * 100}%`}));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.valueOf,
-  }));
+    opacity: opacity.value}));
 
   if (!visible || !currentStory) {
     return null;
@@ -937,107 +910,88 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
 const useStyles = createStyles((colors) => ({
   galleryContainer: {
-    flex: 1,
-  },
+    flex: 1},
   backButton: {
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 20,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   closeButton: {
     position: "absolute",
     top: Platform.OS === "ios" ? 50 : 30,
     right: Spacing.md,
-    zIndex: 10,
-  },
+    zIndex: 10},
   closeButtonBlur: {
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   counterContainer: {
     position: "absolute",
     top: Platform.OS === "ios" ? 50 : 30,
     left: Spacing.md,
-    zIndex: 10,
-  },
+    zIndex: 10},
   counterBlur: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: 16,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   counterText: {
     color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.base,
-    fontWeight: "600",
-  },
+    fontWeight: "600"},
   imageContainer: {
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   fullScreenImage: {
     width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT,
-  },
+    height: SCREEN_HEIGHT},
   captionContainer: {
     position: "absolute",
     bottom: 100,
     left: Spacing.md,
-    right: Spacing.md,
-  },
+    right: Spacing.md},
   captionBlur: {
     padding: DesignTokens.spacing[3],
     borderRadius: 12,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   captionText: {
     color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.base,
-    textAlign: "center",
-  },
+    textAlign: "center"},
   thumbnailsContainer: {
     position: "absolute",
     bottom: Platform.OS === "ios" ? 40 : 20,
     left: 0,
-    right: 0,
-  },
+    right: 0},
   thumbnailsBlur: {
     paddingVertical: Spacing.sm,
     borderRadius: 20,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   thumbnailsList: {
-    paddingHorizontal: DesignTokens.spacing[3],
-  },
+    paddingHorizontal: DesignTokens.spacing[3]},
   thumbnail: {
     width: 50,
     height: 50,
     borderRadius: 8,
     marginHorizontal: Spacing.xs,
-    borderColor: colors.surface,
-  },
+    borderColor: colors.surface},
   guideOverlay: {
     ...StyleSheet.absoluteFillObject,
-    zIndex: 1000,
-  },
+    zIndex: 1000},
   guideMask: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.7)",
-  },
+    backgroundColor: "rgba(0,0,0,0.7)"},
   highlightArea: {
     position: "absolute",
     borderRadius: 12,
     borderWidth: 3,
-    borderColor: colors.primary,
-  },
+    borderColor: colors.primary},
   highlightBorder: {
     ...StyleSheet.absoluteFillObject,
     borderRadius: 12,
@@ -1045,121 +999,99 @@ const useStyles = createStyles((colors) => ({
     shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
-    shadowRadius: 10,
-  },
+    shadowRadius: 10},
   guideContent: {
     position: "absolute",
     bottom: Platform.OS === "ios" ? 100 : 80,
     left: DesignTokens.spacing[5],
-    right: DesignTokens.spacing[5],
-  },
+    right: DesignTokens.spacing[5]},
   guideCard: {
     backgroundColor: colors.surface,
     borderRadius: 20,
-    padding: Spacing.lg,
-  },
+    padding: Spacing.lg},
   guideProgress: {
     flexDirection: "row",
     justifyContent: "center",
     gap: Spacing.sm,
-    marginBottom: Spacing.md,
-  },
+    marginBottom: Spacing.md},
   progressDot: {
     width: Spacing.sm,
     height: Spacing.sm,
     borderRadius: 4,
-    backgroundColor: Colors.neutral[200],
-  },
+    backgroundColor: Colors.neutral[200]},
   progressDotActive: {
-    backgroundColor: Colors.primary[500],
-  },
+    backgroundColor: Colors.primary[500]},
   guideTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   guideDescription: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[600],
     textAlign: "center",
     lineHeight: 20,
-    marginBottom: DesignTokens.spacing[5],
-  },
+    marginBottom: DesignTokens.spacing[5]},
   guideActions: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: DesignTokens.spacing[3],
-  },
+    gap: DesignTokens.spacing[3]},
   skipButton: {
     paddingVertical: DesignTokens.spacing[3],
-    paddingHorizontal: Spacing.lg,
-  },
+    paddingHorizontal: Spacing.lg},
   skipText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
-    fontWeight: "500",
-  },
+    fontWeight: "500"},
   nextButton: {
     flex: 1,
     borderRadius: 24,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   nextButtonGradient: {
     paddingVertical: DesignTokens.spacing[3],
     alignItems: "center",
-    borderRadius: 24,
-  },
+    borderRadius: 24},
   nextText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textInverse,
-    fontWeight: "600",
-  },
+    fontWeight: "600"},
   tryOnContainer: {
-    flex: 1,
-  },
+    flex: 1},
   tryOnHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: Platform.OS === "ios" ? 50 : 30,
     paddingHorizontal: DesignTokens.spacing[5],
-    paddingBottom: Spacing.md,
-  },
+    paddingBottom: Spacing.md},
   tryOnTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   tryOnContent: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   tryOnPreviewContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing[5],
-  },
+    gap: DesignTokens.spacing[5]},
   productPreview: {
     width: SCREEN_WIDTH * 0.35,
     height: SCREEN_WIDTH * 0.5,
-    borderRadius: 16,
-  },
+    borderRadius: 16},
   previewDivider: {
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: "rgba(255,255,255,0.2)",
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   resultPreview: {
     width: SCREEN_WIDTH * 0.35,
     height: SCREEN_WIDTH * 0.5,
-    borderRadius: 16,
-  },
+    borderRadius: 16},
   resultPlaceholder: {
     width: SCREEN_WIDTH * 0.35,
     height: SCREEN_WIDTH * 0.5,
@@ -1167,133 +1099,108 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: "rgba(255,255,255,0.1)",
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   shimmerOverlay: {
-    ...StyleSheet.absoluteFillObject,
-  },
+    ...StyleSheet.absoluteFillObject},
   processingIndicator: {
-    alignItems: "center",
-  },
+    alignItems: "center"},
   processingText: {
     color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.base,
-    marginBottom: DesignTokens.spacing[3],
-  },
+    marginBottom: DesignTokens.spacing[3]},
   progressBar: {
     width: 100,
     height: Spacing.xs,
     backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 2,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   progressFill: {
     height: "100%",
     backgroundColor: colors.primary,
-    borderRadius: 2,
-  },
+    borderRadius: 2},
   captureButton: {
     alignItems: "center",
-    gap: Spacing.sm,
-  },
+    gap: Spacing.sm},
   captureText: {
     color: colors.textInverse,
     fontSize: DesignTokens.typography.sizes.base,
-    fontWeight: "500",
-  },
+    fontWeight: "500"},
   resultActions: {
     flexDirection: "row",
     gap: DesignTokens.spacing[5],
-    marginTop: 30,
-  },
+    marginTop: 30},
   actionButton: {
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5'],
-  },
+    gap: DesignTokens.spacing['1.5']},
   actionText: {
     color: colors.textInverse,
-    fontSize: DesignTokens.typography.sizes.sm,
-  },
+    fontSize: DesignTokens.typography.sizes.sm},
   immersiveContainer: {
     flex: 1,
-    backgroundColor: colors.surface,
-  },
+    backgroundColor: colors.surface},
   immersiveHeader: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 10,
-  },
+    zIndex: 10},
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: Platform.OS === "ios" ? 50 : 30,
     paddingHorizontal: Spacing.md,
-    paddingBottom: DesignTokens.spacing[3],
-  },
+    paddingBottom: DesignTokens.spacing[3]},
   headerTitle: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginHorizontal: Spacing.md,
-  },
+    marginHorizontal: Spacing.md},
   productImageContainer: {
     width: SCREEN_WIDTH,
-    height: SCREEN_WIDTH * 1.3,
-  },
+    height: SCREEN_WIDTH * 1.3},
   productImage: {
     width: "100%",
-    height: "100%",
-  },
+    height: "100%"},
   imageGradient: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: 100,
-  },
+    height: 100},
   productDetails: {
     padding: DesignTokens.spacing[5],
     marginTop: -40,
     backgroundColor: colors.surface,
     borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-  },
+    borderTopRightRadius: 24},
   productBrand: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     textTransform: "uppercase",
-    letterSpacing: 1,
-  },
+    letterSpacing: 1},
   productName: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
     color: Colors.neutral[800],
-    marginTop: Spacing.xs,
-  },
+    marginTop: Spacing.xs},
   productPrice: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "800",
     color: Colors.primary[500],
-    marginTop: Spacing.sm,
-  },
+    marginTop: Spacing.sm},
   optionSection: {
-    marginTop: Spacing.lg,
-  },
+    marginTop: Spacing.lg},
   optionLabel: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[700],
-    marginBottom: DesignTokens.spacing[3],
-  },
+    marginBottom: DesignTokens.spacing[3]},
   colorOptions: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3],
-  },
+    gap: DesignTokens.spacing[3]},
   colorOption: {
     width: DesignTokens.spacing[9],
     height: DesignTokens.spacing[9],
@@ -1301,64 +1208,52 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: "transparent",
-  },
+    borderColor: "transparent"},
   colorOptionSelected: {
-    borderColor: Colors.primary[500],
-  },
+    borderColor: Colors.primary[500]},
   sizeOptions: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: DesignTokens.spacing['2.5'],
-  },
+    gap: DesignTokens.spacing['2.5']},
   sizeOption: {
     paddingHorizontal: DesignTokens.spacing[5],
     paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 12,
     backgroundColor: Colors.neutral[100],
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
-  },
+    borderColor: Colors.neutral[200]},
   sizeOptionSelected: {
     backgroundColor: Colors.primary[500],
-    borderColor: Colors.primary[500],
-  },
+    borderColor: Colors.primary[500]},
   sizeText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: Colors.neutral[700],
-  },
+    color: Colors.neutral[700]},
   sizeTextSelected: {
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   descriptionSection: {
-    marginTop: Spacing.lg,
-  },
+    marginTop: Spacing.lg},
   descriptionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: Colors.neutral[700],
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   descriptionText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[600],
-    lineHeight: 22,
-  },
+    lineHeight: 22},
   immersiveFooter: {
     position: "absolute",
     bottom: 0,
     left: 0,
-    right: 0,
-  },
+    right: 0},
   footerContent: {
     flexDirection: "row",
     alignItems: "center",
     gap: DesignTokens.spacing[3],
     paddingTop: DesignTokens.spacing[3],
     paddingHorizontal: DesignTokens.spacing[5],
-    paddingBottom: Platform.OS === "ios" ? 34 : 16,
-  },
+    paddingBottom: Platform.OS === "ios" ? 34 : 16},
   tryOnButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -1366,32 +1261,26 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: DesignTokens.spacing[5],
     paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 24,
-    backgroundColor: Colors.neutral[100],
-  },
+    backgroundColor: Colors.neutral[100]},
   tryOnText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: Colors.primary[500],
-  },
+    color: Colors.primary[500]},
   addToCartButton: {
     flex: 1,
     borderRadius: 24,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   addToCartGradient: {
     paddingVertical: DesignTokens.spacing['3.5'],
     alignItems: "center",
-    borderRadius: 24,
-  },
+    borderRadius: 24},
   addToCartText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   storyContainer: {
     flex: 1,
-    backgroundColor: DesignTokens.colors.neutral[900],
-  },
+    backgroundColor: DesignTokens.colors.neutral[900]},
   storyHeader: {
     position: "absolute",
     top: 0,
@@ -1399,58 +1288,46 @@ const useStyles = createStyles((colors) => ({
     right: 0,
     paddingTop: Platform.OS === "ios" ? 50 : 30,
     paddingHorizontal: DesignTokens.spacing[3],
-    zIndex: 10,
-  },
+    zIndex: 10},
   progressBars: {
     flexDirection: "row",
     gap: Spacing.xs,
-    marginBottom: DesignTokens.spacing[3],
-  },
+    marginBottom: DesignTokens.spacing[3]},
   progressBarContainer: {
     flex: 1,
     height: 3,
     backgroundColor: "rgba(255,255,255,0.3)",
     borderRadius: 1.5,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   progressBarBackground: {
-    ...StyleSheet.absoluteFillObject,
-  },
+    ...StyleSheet.absoluteFillObject},
   progressBarFill: {
     height: "100%",
     backgroundColor: colors.surface,
-    borderRadius: 1.5,
-  },
+    borderRadius: 1.5},
   storyUserInfo: {
     flexDirection: "row",
-    alignItems: "center",
-  },
+    alignItems: "center"},
   storyAvatar: {
     width: Spacing.xl,
     height: Spacing.xl,
     borderRadius: 16,
-    marginRight: DesignTokens.spacing['2.5'],
-  },
+    marginRight: DesignTokens.spacing['2.5']},
   storyUserName: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   storyCloseButton: {
-    padding: Spacing.xs,
-  },
+    padding: Spacing.xs},
   storyTapArea: {
     position: "absolute",
     top: 0,
-    bottom: 0,
-  },
-}))
+    bottom: 0}}))
 
 export default {
   FullScreenGallery,
   ARGuideOverlay,
   VirtualTryOnPreview,
   ImmersiveProductView,
-  StoryViewer,
-};
+  StoryViewer};

@@ -6,8 +6,8 @@ import type {
   AlignmentStatus,
   AlignmentLevel,
   OverallAlignment,
-} from "../../../hooks/useReferenceLines";
-import { DesignTokens, flatColors as colors } from '../../../design-system/theme';
+} from "../../../../shared/hooks/useReferenceLines";
+import { DesignTokens, flatColors as staticColors } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 
 interface ReferenceLineOverlayProps {
@@ -22,14 +22,14 @@ function getLineColor(level: AlignmentLevel | OverallAlignment): string {
     case "aligned":
     case "perfect":
     case "good":
-      return colors.success;
+      return staticColors.success;
     case "slight":
-      return colors.warning;
+      return staticColors.warning;
     case "off":
     case "adjust":
-      return colors.error;
+      return staticColors.error;
     default:
-      return colors.warning;
+      return staticColors.warning;
   }
 }
 

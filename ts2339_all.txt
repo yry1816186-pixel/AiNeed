@@ -1,0 +1,237 @@
+src/contexts/FeatureFlagContext.tsx(138,14): error TS2339: Property 'on' does not exist on type '{}'.
+src/contexts/FeatureFlagContext.tsx(140,16): error TS2339: Property 'off' does not exist on type '{}'.
+src/design-system/ui/Button.tsx(254,27): error TS2339: Property 'create' does not exist on type '{ new (): StyleSheet; prototype: StyleSheet; }'.
+src/design-system/ui/ChatBubble.tsx(50,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/design-system/ui/ChatBubble.tsx(50,60): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/features/community/components/BookmarkSheet.tsx(131,27): error TS2339: Property 'overlay' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(132,41): error TS2339: Property 'backdrop' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(133,29): error TS2339: Property 'sheet' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(134,31): error TS2339: Property 'handle' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(135,31): error TS2339: Property 'title' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(138,88): error TS2339: Property 'loader' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(140,39): error TS2339: Property 'list' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(144,33): error TS2339: Property 'collectionItem' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(147,39): error TS2339: Property 'collectionIcon' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(150,39): error TS2339: Property 'collectionInfo' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(151,41): error TS2339: Property 'collectionName' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(152,41): error TS2339: Property 'collectionCount' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(161,33): error TS2339: Property 'newCollectionRow' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(163,31): error TS2339: Property 'newCollectionInput' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(172,32): error TS2339: Property 'createBtn' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(172,62): error TS2339: Property 'createBtnDisabled' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(176,37): error TS2339: Property 'createBtnText' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(180,45): error TS2339: Property 'newBtn' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/components/BookmarkSheet.tsx(182,35): error TS2339: Property 'newBtnText' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/CommunityScreen.tsx(154,25): error TS2339: Property 'common' does not exist on type 'string'.
+src/features/community/screens/CommunityScreen.tsx(154,40): error TS2339: Property 'community' does not exist on type 'string'.
+src/features/community/screens/CommunityScreen.tsx(157,25): error TS2339: Property 'common' does not exist on type 'string'.
+src/features/community/screens/CommunityScreen.tsx(157,63): error TS2339: Property 'community' does not exist on type 'string'.
+src/features/community/screens/CommunityScreen.tsx(160,23): error TS2339: Property 'common' does not exist on type 'string'.
+src/features/community/screens/CommunityScreen.tsx(160,41): error TS2339: Property 'errors' does not exist on type 'string'.
+src/features/community/screens/PostDetailScreen.tsx(203,35): error TS2339: Property 'container' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(204,29): error TS2339: Property 'centerContainer' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(213,35): error TS2339: Property 'container' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(214,29): error TS2339: Property 'centerContainer' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(215,31): error TS2339: Property 'errorText' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(217,33): error TS2339: Property 'goBackText' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(229,44): error TS2339: Property 'commentItem' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(230,29): error TS2339: Property 'commentHeader' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(232,74): error TS2339: Property 'commentAvatar' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(234,33): error TS2339: Property 'commentAvatarPlaceholder' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(235,35): error TS2339: Property 'commentAvatarText' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(240,31): error TS2339: Property 'commentBody' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(241,33): error TS2339: Property 'commentAuthor' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(242,33): error TS2339: Property 'commentContent' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(243,33): error TS2339: Property 'commentMeta' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(244,35): error TS2339: Property 'commentTime' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(257,37): error TS2339: Property 'replyLink' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(263,35): error TS2339: Property 'repliesSection' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(265,39): error TS2339: Property 'repliesExpanded' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(268,41): error TS2339: Property 'showRepliesText' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(280,33): error TS2339: Property 'container' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(281,27): error TS2339: Property 'header' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(282,77): error TS2339: Property 'backBtn' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(285,29): error TS2339: Property 'headerTitle' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(286,64): error TS2339: Property 'moreBtn' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(291,33): error TS2339: Property 'content' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(293,29): error TS2339: Property 'authorSection' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(295,33): error TS2339: Property 'authorAvatarWrapper' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(296,73): error TS2339: Property 'authorAvatar' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(298,37): error TS2339: Property 'authorBadge' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(303,37): error TS2339: Property 'authorBigVBadge' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(309,33): error TS2339: Property 'authorAvatarPlaceholder' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(310,35): error TS2339: Property 'authorAvatarText' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(313,31): error TS2339: Property 'authorInfo' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(314,33): error TS2339: Property 'authorName' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(315,33): error TS2339: Property 'postTime' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(325,29): error TS2339: Property 'postTitle' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(326,29): error TS2339: Property 'postContent' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(330,31): error TS2339: Property 'imageCarousel' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(346,59): error TS2339: Property 'carouselImage' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(352,35): error TS2339: Property 'carouselImage' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(359,35): error TS2339: Property 'paginationDots' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(363,36): error TS2339: Property 'dot' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(363,79): error TS2339: Property 'dotActive' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(373,31): error TS2339: Property 'tagsRow' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(375,45): error TS2339: Property 'tagChip' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(376,37): error TS2339: Property 'tagText' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(384,43): error TS2339: Property 'purchaseBtn' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(386,33): error TS2339: Property 'purchaseBtnText' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(391,29): error TS2339: Property 'commentsSection' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(392,31): error TS2339: Property 'commentsTitle' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(394,33): error TS2339: Property 'noComments' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(404,27): error TS2339: Property 'bottomBar' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(405,29): error TS2339: Property 'commentInputContainer' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(407,27): error TS2339: Property 'commentInput' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(415,28): error TS2339: Property 'sendBtn' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(415,67): error TS2339: Property 'sendBtnDisabled' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(430,29): error TS2339: Property 'actionButtons' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(431,43): error TS2339: Property 'actionBtn' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(437,34): error TS2339: Property 'actionCount' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(437,70): error TS2339: Property 'actionCountLiked' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(441,43): error TS2339: Property 'actionBtn' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(443,33): error TS2339: Property 'actionCount' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(445,43): error TS2339: Property 'actionBtn' does not exist on type 'NamedStyles<unknown>'.
+src/features/community/screens/PostDetailScreen.tsx(452,43): error TS2339: Property 'actionBtn' does not exist on type 'NamedStyles<unknown>'.
+src/features/consultant/screens/AdvisorProfileScreen.tsx(30,38): error TS2339: Property 'id' does not exist on type 'object'.
+src/features/consultant/screens/AdvisorProfileScreen.tsx(61,32): error TS2339: Property 'count' does not exist on type 'ConsultantProfile'.
+src/features/consultant/screens/BookingScreen.tsx(42,11): error TS2339: Property 'consultantId' does not exist on type '{}'.
+src/features/consultant/screens/BookingScreen.tsx(42,25): error TS2339: Property 'consultant' does not exist on type '{}'.
+src/features/consultant/screens/ChatScreen.tsx(34,11): error TS2339: Property 'roomId' does not exist on type '{}'.
+src/features/consultant/screens/ChatScreen.tsx(34,19): error TS2339: Property 'consultantId' does not exist on type '{}'.
+src/features/consultant/screens/ChatScreen.tsx(34,33): error TS2339: Property 'consultantName' does not exist on type '{}'.
+src/features/consultant/screens/ChatScreen.tsx(127,25): error TS2339: Property 'proposalData' does not exist on type 'ChatMessage'.
+src/features/consultant/screens/ChatScreen.tsx(128,27): error TS2339: Property 'proposalData' does not exist on type 'ChatMessage'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(71,26): error TS2339: Property 'replace' does not exist on type 'Navigation'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(155,69): error TS2339: Property 'textPrimary' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(200,67): error TS2339: Property 'surface' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(218,67): error TS2339: Property 'surface' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(234,35): error TS2339: Property 'surface' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(252,25): error TS2339: Property 'textPrimary' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(267,25): error TS2339: Property 'textSecondary' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(279,25): error TS2339: Property 'textPrimary' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(292,25): error TS2339: Property 'textPrimary' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(309,25): error TS2339: Property 'textSecondary' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(322,25): error TS2339: Property 'surface' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(333,25): error TS2339: Property 'textSecondary' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(336,25): error TS2339: Property 'textPrimary' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(345,25): error TS2339: Property 'textPrimary' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(352,25): error TS2339: Property 'textTertiary' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(364,25): error TS2339: Property 'surface' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/customization/screens/CustomizationPreviewScreen.tsx(367,25): error TS2339: Property 'textTertiary' does not exist on type '{ readonly brand: { terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }; ... 17 more ...; readonly gradient: { ...; }; }'.
+src/features/notifications/screens/NotificationsScreen.tsx(40,66): error TS2339: Property 'primary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/onboarding/screens/steps/CompleteStep.tsx(34,29): error TS2339: Property 'secondaryLight' does not exist on type 'FlatColors'.
+src/features/profile/screens/components/BodyTypeCard.tsx(137,68): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/BodyTypeCard.tsx(143,30): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/BodyTypeCard.tsx(150,28): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/BodyTypeCard.tsx(164,42): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/BodyTypeCard.tsx(165,63): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/BodyTypeCard.tsx(221,71): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/BodyTypeCard.tsx(336,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/features/profile/screens/components/BodyTypeCard.tsx(344,25): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/BodyTypeCard.tsx(391,35): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/BodyTypeCard.tsx(406,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/features/profile/screens/components/BodyTypeCard.tsx(414,25): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/ColorSeasonCard.tsx(233,74): error TS2339: Property 'warmAccent' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/ColorSeasonCard.tsx(279,70): error TS2339: Property 'fashion' does not exist on type 'FlatColors'.
+src/features/profile/screens/components/ColorSeasonCard.tsx(316,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/features/profile/screens/components/ColorSeasonCard.tsx(324,25): error TS2339: Property 'warmAccent' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/ColorSeasonCard.tsx(350,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/features/profile/screens/components/ColorSeasonCard.tsx(353,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/features/profile/screens/components/SharePosterPreview.tsx(82,26): error TS2339: Property 'gradients' does not exist on type 'FlatColors'.
+src/features/profile/screens/components/SharePosterPreview.tsx(144,26): error TS2339: Property 'gradients' does not exist on type 'FlatColors'.
+src/features/profile/screens/components/StyleTagsCard.tsx(43,38): error TS2339: Property 'warmAccent' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/StyleTagsCard.tsx(44,32): error TS2339: Property 'gradients' does not exist on type 'FlatColors'.
+src/features/profile/screens/components/StyleTagsCard.tsx(45,38): error TS2339: Property 'warmSecondary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/StyleTagsCard.tsx(46,38): error TS2339: Property 'primary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/components/StyleTagsCard.tsx(123,70): error TS2339: Property 'primary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/ProfileReportScreen.tsx(173,63): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/features/profile/screens/ProfileReportScreen.tsx(205,31): error TS2339: Property 'gradients' does not exist on type 'FlatColors'.
+src/features/profile/screens/ProfileReportScreen.tsx(205,62): error TS2339: Property 'gradients' does not exist on type 'FlatColors'.
+src/features/profile/screens/ProfileReportScreen.tsx(239,29): error TS2339: Property 'gradients' does not exist on type 'FlatColors'.
+src/features/profile/screens/ProfileReportScreen.tsx(239,60): error TS2339: Property 'gradients' does not exist on type 'FlatColors'.
+src/features/profile/screens/ProfileReportScreen.tsx(318,29): error TS2339: Property 'gradients' does not exist on type 'FlatColors'.
+src/features/profile/screens/ProfileReportScreen.tsx(318,60): error TS2339: Property 'gradients' does not exist on type 'FlatColors'.
+src/features/profile/screens/ProfileScreen.tsx(174,21): error TS2339: Property 'purple' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/profile/screens/ProfileScreen.tsx(181,21): error TS2339: Property 'amber' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/profile/screens/ProfileScreen.tsx(204,21): error TS2339: Property 'error' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/profile/screens/ProfileScreen.tsx(255,70): error TS2339: Property 'surface' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/profile/screens/ProfileScreen.tsx(268,71): error TS2339: Property 'surface' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/profile/screens/ProfileScreen.tsx(298,80): error TS2339: Property 'textTertiary' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/profile/screens/ProfileScreen.tsx(364,31): error TS2339: Property 'textTertiary' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/profile/screens/ProfileScreen.tsx(372,79): error TS2339: Property 'textTertiary' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/profile/screens/ProfileScreen.tsx(425,19): error TS2339: Property 'surface' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/profile/screens/ProfileScreen.tsx(441,19): error TS2339: Property 'surface' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/profile/screens/ProfileScreen.tsx(462,19): error TS2339: Property 'surface' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/profile/screens/ProfileScreen.tsx(477,19): error TS2339: Property 'surface' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(36,51): error TS2339: Property 'loadProgress' does not exist on type 'QuizState'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(37,51): error TS2339: Property 'selectAnswer' does not exist on type 'QuizState'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(38,48): error TS2339: Property 'submitAll' does not exist on type 'QuizState'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(51,41): error TS2339: Property 'questionIndex' does not exist on type '{ currentQuestionIndex: number; totalQuestions: number; answers: Record<string, string>; }'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(126,19): error TS2339: Property 'styleTags' does not exist on type 'StyleQuizResult'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(126,39): error TS2339: Property 'styleTags' does not exist on type 'StyleQuizResult'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(130,25): error TS2339: Property 'styleTags' does not exist on type 'StyleQuizResult'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(139,19): error TS2339: Property 'colorPalette' does not exist on type 'StyleQuizResult'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(139,42): error TS2339: Property 'colorPalette' does not exist on type 'StyleQuizResult'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(143,25): error TS2339: Property 'colorPalette' does not exist on type 'StyleQuizResult'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(240,63): error TS2339: Property 'title' does not exist on type 'StyleQuizQuestion'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(241,28): error TS2339: Property 'subtitle' does not exist on type 'StyleQuizQuestion'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(242,68): error TS2339: Property 'subtitle' does not exist on type 'StyleQuizQuestion'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(247,27): error TS2339: Property 'images' does not exist on type 'StyleQuizQuestion'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(249,31): error TS2339: Property 'images' does not exist on type 'StyleQuizQuestion'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(278,28): error TS2339: Property 'images' does not exist on type 'StyleQuizQuestion'.
+src/features/style-quiz/screens/StyleQuizScreen.tsx(278,54): error TS2339: Property 'images' does not exist on type 'StyleQuizQuestion'.
+src/features/stylist/components/AICompanionProvider.tsx(381,42): error TS2339: Property 'setError' does not exist on type 'AiStylistState'.
+src/features/stylist/components/AICompanionProvider.tsx(766,36): error TS2339: Property 'setError' does not exist on type 'AiStylistState'.
+src/features/stylist/screens/SessionCalendarScreen.tsx(246,29): error TS2339: Property 'secondaryLight' does not exist on type 'FlatColors'.
+src/features/tryon/screens/components/PhotoQualityFeedback.tsx(42,17): error TS2339: Property 'warning' does not exist on type 'Record<"medium" | "low" | "high", string>'.
+src/features/tryon/screens/components/PhotoQualityFeedback.tsx(44,18): error TS2339: Property 'error' does not exist on type 'Record<"medium" | "low" | "high", string>'.
+src/features/wardrobe/screens/ClothingDetailScreen.tsx(192,40): error TS2339: Property 'like' does not exist on type 'FlatColors'.
+src/features/wardrobe/screens/ClothingDetailScreen.tsx(248,42): error TS2339: Property 'like' does not exist on type 'FlatColors'.
+src/polyfills/expo-router.tsx(222,14): error TS2339: Property 'name' does not exist on type '{ _name: string; options?: ScreenOptions | undefined; }'.
+src/polyfills/expo-router.tsx(226,14): error TS2339: Property 'name' does not exist on type '{ _name: string; options?: ScreenOptions | undefined; }'.
+src/shared/components/charts/ColorPalette.tsx(55,32): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/shared/components/charts/PercentageBar.tsx(15,24): error TS2339: Property 'primary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/shared/components/charts/TagCloud.tsx(49,28): error TS2339: Property 'surface' does not exist on type '{ brand: { readonly primary: string; readonly secondary: string; readonly accent: string; readonly success: string; readonly warning: string; readonly error: string; readonly info: string; readonly warmPrimary: "#FF6B6B"; readonly warmSecondary: "#40C057"; readonly warmAccent: "#167FFB"; }; ... 6 more ...; warmPrima...'.
+src/shared/components/immersive/ImmersiveComponents.tsx(192,32): error TS2339: Property 'index' does not exist on type '{ item: { uri: string; caption?: string | undefined; id?: string | undefined; }; _index: number; }'.
+src/shared/components/screens/TryOnHistoryScreen.tsx(133,20): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnHistoryScreen.tsx(135,35): error TS2339: Property 'main' does not exist on type 'string'.
+src/shared/components/screens/TryOnHistoryScreen.tsx(136,20): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnHistoryScreen.tsx(169,68): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnHistoryScreen.tsx(173,87): error TS2339: Property 'main' does not exist on type 'string'.
+src/shared/components/screens/TryOnHistoryScreen.tsx(247,35): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/shared/components/screens/TryOnHistoryScreen.tsx(300,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnHistoryScreen.tsx(307,44): error TS2339: Property 'light' does not exist on type 'string'.
+src/shared/components/screens/TryOnHistoryScreen.tsx(328,35): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/shared/components/screens/TryOnScreen.tsx(376,29): error TS2339: Property 'gradients' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(376,60): error TS2339: Property 'gradients' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(421,75): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(459,74): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(513,67): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(518,69): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(529,82): error TS2339: Property 'main' does not exist on type 'string'.
+src/shared/components/screens/TryOnScreen.tsx(540,73): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(553,78): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/shared/components/screens/TryOnScreen.tsx(576,33): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(586,76): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/shared/components/screens/TryOnScreen.tsx(671,35): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/shared/components/screens/TryOnScreen.tsx(684,19): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(697,25): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(745,35): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.
+src/shared/components/screens/TryOnScreen.tsx(765,44): error TS2339: Property 'main' does not exist on type 'string'.
+src/shared/components/screens/TryOnScreen.tsx(785,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(790,19): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(796,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(804,19): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(810,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(818,19): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(824,44): error TS2339: Property 'light' does not exist on type 'string'.
+src/shared/components/screens/TryOnScreen.tsx(831,34): error TS2339: Property 'dark' does not exist on type 'string'.
+src/shared/components/screens/TryOnScreen.tsx(860,25): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(869,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(882,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(897,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(899,25): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(903,19): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(912,29): error TS2339: Property 'warmPrimary' does not exist on type 'FlatColors'.
+src/shared/components/screens/TryOnScreen.tsx(932,25): error TS2339: Property 'warmPrimary' does not exist on type '{ terracotta: string; terracottaLight: string; terracottaDark: string; sage: string; sageLight: string; sageDark: string; camel: string; camelLight: string; camelDark: string; slate: string; slateLight: string; slateDark: string; }'.

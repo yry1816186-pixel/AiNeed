@@ -16,7 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
-import { theme, Colors, Shadows , flatColors as colors } from '../design-system/theme';
+import { theme, Colors, Shadows , flatColors as colors } from '../../../../design-system/theme';
 import { recommendationsApi } from '../../../../services/api/tryon.api';
 import { cartApi } from '../../../../services/api/commerce.api';
 import { useAuthStore, useHeartRecommendStore } from "../../stores";

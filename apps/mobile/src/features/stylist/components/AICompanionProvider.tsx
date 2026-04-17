@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useRef, useEff
 import { AppState, AppStateStatus } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
-import { navigateTab } from "../../navigation/navigationService";
+import { navigateTab } from "../../../navigation/navigationService";
 import { AICompanionBall, CompanionState } from "./AICompanionBall";
 import { AICompanionMenu, QuickAction } from "./AICompanionMenu";
 import { AICompanionChat, ChatMessage } from "./AICompanionChat";
@@ -20,7 +20,7 @@ import {
 import {
   useSpeechRecognition,
   SpeechRecognitionResult,
-} from "../../services/speech/speechRecognition";
+} from "../../../services/speech/speechRecognition";
 import { useAiStylistStore } from "../stores/aiStylistStore";
 
 const POSITION_STORAGE_KEY = "@xuno_companion_position";
@@ -133,12 +133,12 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         void sendMessage(result.text);
       }
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error("Voice recognition error:", error);
       setIsVoiceMode(false);
       setState("idle");
     },
-    onStatusChange: (status: any) => {
+    onStatusChange: (status: string) => {
       if (status === "listening") {
         setState("listening");
         setIsVoiceMode(true);
@@ -378,7 +378,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
             }
           } catch (error) {
             console.error("Polling error:", error);
-            useAiStylistStore.getState().set({ error: 'AI 助手连接中断，正在重试...' });
+            useAiStylistStore.getState().setError('AI 助手连接中断，正在重试...');
           }
         }, POLL_INTERVAL);
       }
@@ -431,7 +431,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
           if (responseData.sessionId) {
             currentSessionId = responseData.sessionId;
             setSessionId(currentSessionId);
-            void saveSession(currentSessionId, responseData.sessionExpiresAt);
+            void saveSession(currentSessionId!, responseData.sessionExpiresAt);
           } else {
             throw new Error("Failed to create session");
           }
@@ -763,7 +763,7 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
       await startListening();
     } catch (error) {
       console.error("Failed to start voice input:", error);
-      useAiStylistStore.getState().set({ error: '语音输入启动失败' });
+      useAiStylistStore.getState().setError('语音输入启动失败');
     }
   }, [enableVoiceInput, isVoiceAvailable, requestVoicePermissions, startListening]);
 

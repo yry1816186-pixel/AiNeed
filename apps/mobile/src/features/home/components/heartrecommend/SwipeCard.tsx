@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback, memo, useMemo } from "react";
+import React, { useEffect, useCallback, memo, useMemo } from "react";
 import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -18,12 +18,12 @@ import {
 } from "react-native-svg";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, BorderRadius, Shadows , Spacing, flatColors as colors } from '../../../../design-system/theme'
+import { Colors, BorderRadius, Shadows , Spacing, flatColors } from '../../../../design-system/theme'
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
 import { SpringConfigs } from '../../../../design-system/theme/tokens/animations';
-import { useReducedMotion } from '../../../hooks/useReducedMotion';
-import { AnimatedHeartButton } from "../../design-system/ui/AnimatedHeartButton";
+import { useReducedMotion } from '../../../../hooks/useReducedMotion';
+import { AnimatedHeartButton } from '../../../../design-system/ui/AnimatedHeartButton';
 import { ActionButtons } from "./ActionButtons";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -431,7 +431,7 @@ function ColorHarmonyArc({ score }: { score: number }) {
         d={`M ${strokeWidth / 2} ${size / 2} A ${radius} ${radius} 0 0 1 ${
           size - strokeWidth / 2
         } ${size / 2}`}
-        stroke={colors.primary}
+        stroke={flatColors.primary}
         strokeWidth={strokeWidth}
         fill="none"
         strokeLinecap="round"
@@ -444,7 +444,7 @@ function ColorHarmonyArc({ score }: { score: number }) {
         textAnchor="middle"
         fontSize={9}
         fontWeight="600"
-        fill={colors.textInverse}
+        fill={flatColors.textInverse}
       >
         {Math.round(score * 100)}%
       </SvgText>
@@ -487,7 +487,7 @@ function CIEDE2000Arc({ score, colors: itemColors }: { score: number; colors: st
         cx={center}
         cy={center}
         r={radius}
-        stroke={colors.primary}
+        stroke={flatColors.primary}
         strokeWidth={strokeWidth}
         fill="none"
         strokeDasharray={`${fillLength} ${circumference}`}
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: BorderRadius["3xl"],
     overflow: "hidden",
-    backgroundColor: colors.surface,
+    backgroundColor: flatColors.surface,
     ...Shadows.xl,
   },
   cardImage: {
@@ -630,7 +630,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: colors.textInverse,
+    color: flatColors.textInverse,
     marginBottom: Spacing.sm,
   },
   priceRow: {
@@ -645,7 +645,7 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "800",
-    color: colors.textInverse,
+    color: flatColors.textInverse,
   },
   originalPriceText: {
     fontSize: DesignTokens.typography.sizes.md,
@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
   },
   reasonText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textInverse,
+    color: flatColors.textInverse,
     fontWeight: "500",
   },
   colorOptions: {
@@ -714,7 +714,7 @@ const styles = StyleSheet.create({
   reasonPillText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "500",
-    color: DesignTokens.colors.brand.terracottaLight,
+    color: DesignTokens.flatColors.brand.terracottaLight,
   },
   harmonyArcContainer: {
     marginLeft: Spacing.sm,

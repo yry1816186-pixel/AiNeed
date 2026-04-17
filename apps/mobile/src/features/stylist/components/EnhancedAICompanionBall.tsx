@@ -19,8 +19,8 @@ import AnimatedReanimated from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Spacing, flatColors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { flatColors as colors } from '../../../design-system/theme';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -47,56 +47,56 @@ export interface EnhancedAICompanionBallProps {
 
 const STATE_CONFIG = {
   idle: {
-    gradient: [colors.secondary, colors.primary] as [string, string],
+    gradient: [flatColors.secondary, flatColors.primary] as [string, string],
     gradientFlow: [
-      colors.secondary,
-      colors.primary,
-      colors.primaryLight,
-      colors.secondary,
+      flatColors.secondary,
+      flatColors.primary,
+      flatColors.primaryLight,
+      flatColors.secondary,
     ] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.05)"] as [string, string],
-    glowColor: colors.secondary,
-    particleColor: colors.secondary,
+    glowColor: flatColors.secondary,
+    particleColor: flatColors.secondary,
     animation: "breathe",
   },
   listening: {
-    gradient: [colors.neutral[500], colors.textTertiary] as [string, string],
-    gradientFlow: [colors.neutral[500], colors.textTertiary, DesignTokens.colors.brand.slate, colors.neutral[500]] as [string, string, string, string],
+    gradient: [flatColors.neutral[500], flatColors.textTertiary] as [string, string],
+    gradientFlow: [flatColors.neutral[500], flatColors.textTertiary, DesignTokens.colors.brand.slate, flatColors.neutral[500]] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.08)"] as [string, string],
-    glowColor: colors.neutral[500],
-    particleColor: colors.textTertiary,
+    glowColor: flatColors.neutral[500],
+    particleColor: flatColors.textTertiary,
     animation: "pulse",
   },
   thinking: {
-    gradient: [colors.warning, colors.primary] as [string, string],
-    gradientFlow: [colors.warning, colors.primary, DesignTokens.colors.semantic.warning, colors.warning] as [string, string, string, string],
+    gradient: [flatColors.warning, flatColors.primary] as [string, string],
+    gradientFlow: [flatColors.warning, flatColors.primary, DesignTokens.colors.semantic.warning, flatColors.warning] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.4)", "rgba(255,255,255,0.1)"] as [string, string],
-    glowColor: colors.warning,
-    particleColor: colors.primary,
+    glowColor: flatColors.warning,
+    particleColor: flatColors.primary,
     animation: "pulse",
   },
   responding: {
-    gradient: [colors.success, colors.secondary] as [string, string],
-    gradientFlow: [colors.success, colors.secondary, DesignTokens.colors.brand.sage, colors.success] as [string, string, string, string],
+    gradient: [flatColors.success, flatColors.secondary] as [string, string],
+    gradientFlow: [flatColors.success, flatColors.secondary, DesignTokens.colors.brand.sage, flatColors.success] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.32)", "rgba(255,255,255,0.06)"] as [string, string],
-    glowColor: colors.success,
-    particleColor: colors.secondary,
+    glowColor: flatColors.success,
+    particleColor: flatColors.secondary,
     animation: "glow",
   },
   collapsed: {
-    gradient: [colors.primary, colors.primary] as [
+    gradient: [flatColors.primary, flatColors.primary] as [
       string,
       string
     ],
     gradientFlow: [
-      colors.primary,
-      colors.primary,
-      colors.primaryLight,
-      colors.primary,
+      flatColors.primary,
+      flatColors.primary,
+      flatColors.primaryLight,
+      flatColors.primary,
     ] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.25)", "rgba(255,255,255,0.03)"] as [string, string],
-    glowColor: colors.primary,
-    particleColor: colors.primary,
+    glowColor: flatColors.primary,
+    particleColor: flatColors.primary,
     animation: "none",
   },
 };
@@ -109,6 +109,8 @@ interface ParticleProps {
 }
 
 const Particle: React.FC<ParticleProps> = ({ index, color, ballSize, isActive }) => {
+  const { colors: _themeColors } = useTheme();
+  const styles = useStyles(_themeColors);
   const angle = useSharedValue(index * 72 * (Math.PI / 180));
   const radius = useSharedValue(ballSize * 0.6);
   const opacity = useSharedValue(0);

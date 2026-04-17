@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
-import { Ionicons } from "../../../polyfills/expo-vector-icons.ts";
+import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius, Typography } from '../../../design-system/theme';
 

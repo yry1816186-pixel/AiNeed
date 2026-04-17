@@ -4,7 +4,6 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Colors, theme, Spacing, BorderRadius, Shadows, DesignTokens } from '../../theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { flatColors as colors } from '../../../design-system/theme';
 
 interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap;

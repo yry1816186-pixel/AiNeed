@@ -1,102 +1,129 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
+const { execSync } = require("child_process");
 
-const fixes = {
-  'apps/mobile/src/design-system/ui/ChatBubble.tsx': {
-    old: `import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import Animated, { FadeInUp } from "react-native-reanimated";
+const MOBILE_DIR = path.join(__dirname, "..", "apps", "mobile");
+const SRC_DIR = path.join(MOBILE_DIR, "src");
 
-// 引入主题令牌
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import {
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
-import { Spacing } from '../../design-system/theme';
-  Colors,
-  Spacing as ThemeSpacing,
-  BorderRadius as ThemeBorderRadius,
-  Shadows as ThemeShadows,
-  Typography as ThemeTypography,
-} from '../theme';`,
-    new: `import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import Animated, { FadeInUp } from "react-native-reanimated";
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
-import {
-  Spacing as ThemeSpacing,
-  BorderRadius as ThemeBorderRadius,
-  Shadows as ThemeShadows,
-  Typography as ThemeTypography,
-} from '../theme';`
-  },
-  'apps/mobile/src/design-system/ui/GradientButton.tsx': {
-    old: `// 引入主题令牌
-import {
-import { useTheme } from '../../design-system/theme';
-  Colors,
-  Typography as ThemeTypography,
-  Spacing as ThemeSpacing,
-  BorderRadius as ThemeBorderRadius,
-  Shadows as ThemeShadows,
-  DesignTokens,
-  SpringConfigs,
-} from '../../design-system/theme';`,
-    new: `import { useTheme } from '../../shared/contexts/ThemeContext';
-import {
-  Typography as ThemeTypography,
-  Spacing as ThemeSpacing,
-  BorderRadius as ThemeBorderRadius,
-  Shadows as ThemeShadows,
-  SpringConfigs,
-} from '../../design-system/theme';`
-  },
-  'apps/mobile/src/features/stylist/components/OutfitCard.tsx': {
-    old: `import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
-
-import {
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-  AiStylistResolution,
-  AiStylistOutfitPlan,
-  AiStylistOutfitItem,
-} from '../../../services/api/ai-stylist.api';`,
-    new: `import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { Spacing } from '../../../design-system/theme';
-import {
-  AiStylistResolution,
-  AiStylistOutfitPlan,
-  AiStylistOutfitItem,
-} from '../../../services/api/ai-stylist.api';`
-  },
-  'apps/mobile/src/features/customization/stores/customizationEditorStore.ts': {
-    old: `import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import type {
-import { useTheme } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors } from '../../../design-system/theme';
-
-  CustomizationTemplate as ApiTemplate,`,
-    new: `import type {
-  CustomizationTemplate as ApiTemplate,`
-  }
-};
-
-for (const [file, { old, new: newVal }] of Object.entries(fixes)) {
-  const fullPath = path.join(__dirname, '..', file);
-  let content = fs.readFileSync(fullPath, 'utf8');
-  if (content.includes(old)) {
-    content = content.replace(old, newVal);
-    const tmp = fullPath + '.tmp';
-    fs.writeFileSync(tmp, content, 'utf8');
-    try { fs.renameSync(tmp, fullPath); } catch (e) {
-      fs.unlinkSync(tmp);
-      fs.writeFileSync(fullPath, content, 'utf8');
-    }
-    console.log(`Fixed: ${file}`);
-  } else {
-    console.log(`Pattern not found in: ${file}`);
+function runTsc() {
+  try {
+    const cmd = `node "${path.join(__dirname, "..", "node_modules", "typescript", "bin", "tsc")}" --noEmit 2>&1`;
+    return execSync(cmd, { cwd: MOBILE_DIR, encoding: "utf-8", maxBuffer: 20 * 1024 * 1024 });
+  } catch (e) {
+    return e.stdout || e.message;
   }
 }
+
+function parseErrors(output) {
+  const errors = [];
+  for (const line of output.split("\n")) {
+    const m = line.match(/^src[\\\/]([^(]+)\((\d+),(\d+)\):\s+error\s+(TS\d+):\s+(.*)/);
+    if (m) {
+      errors.push({
+        file: m[1].replace(/\\/g, "/"),
+        line: parseInt(m[2]),
+        col: parseInt(m[3]),
+        code: m[4],
+        message: m[5],
+      });
+    }
+  }
+  return errors;
+}
+
+const output = runTsc();
+const errors = parseErrors(output);
+console.log(`Total errors: ${errors.length}`);
+
+const syntaxErrors = errors.filter(e => ["TS1005", "TS1109", "TS1131", "TS1128", "TS1003"].includes(e.code));
+const syntaxByFile = new Map();
+for (const e of syntaxErrors) {
+  if (!syntaxByFile.has(e.file)) syntaxByFile.set(e.file, []);
+  syntaxByFile.get(e.file).push(e);
+}
+
+console.log(`Files with syntax errors: ${syntaxByFile.size}`);
+
+for (const [file, errs] of syntaxByFile) {
+  const fullPath = path.join(SRC_DIR, file);
+  if (!fs.existsSync(fullPath)) continue;
+
+  let content = fs.readFileSync(fullPath, "utf-8");
+  const lines = content.split("\n");
+  let modified = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (/^\s*const\s*\{\s*colors\s*\}\s*=\s*useTheme\(\)/.test(line)) {
+      let prevLine = i > 0 ? lines[i - 1] : "";
+      let nextLine = i + 1 < lines.length ? lines[i + 1] : "";
+
+      if (/=\s*\(\s*\{\s*$/.test(prevLine) || /=\s*\(\s*$/.test(prevLine)) {
+        const nextUseStyles = /^\s*const\s+styles\s*=\s*useStyles\(colors\)/.test(nextLine);
+
+        let searchIdx = i + (nextUseStyles ? 2 : 1);
+        while (searchIdx < lines.length) {
+          const searchLine = lines[searchIdx];
+          if (/^\}\)\s*=>\s*\{/.test(searchLine.trim()) || /^\}\)\s*=>\s*$/.test(searchLine.trim())) {
+            const insertIdx = searchIdx + 1;
+            const indent = line.match(/^(\s*)/)[1];
+
+            lines.splice(i, nextUseStyles ? 2 : 1);
+            const newInsertIdx = insertIdx - (nextUseStyles ? 2 : 1);
+
+            lines.splice(newInsertIdx, 0, `${indent}const { colors } = useTheme();`);
+            if (nextUseStyles) {
+              lines.splice(newInsertIdx + 1, 0, `${indent}const styles = useStyles(colors);`);
+            }
+
+            modified = true;
+            i = newInsertIdx + (nextUseStyles ? 2 : 1);
+            break;
+          }
+          searchIdx++;
+        }
+      }
+    }
+  }
+
+  if (modified) {
+    content = lines.join("\n");
+    fs.writeFileSync(fullPath, content, "utf-8");
+    console.log(`Fixed misplaced hooks in: ${file}`);
+  }
+}
+
+// Also fix double commas in imports
+const allFiles = new Set();
+for (const e of errors) {
+  allFiles.add(e.file);
+}
+
+for (const file of allFiles) {
+  const fullPath = path.join(SRC_DIR, file);
+  if (!fs.existsSync(fullPath)) continue;
+
+  let content = fs.readFileSync(fullPath, "utf-8");
+  const original = content;
+
+  content = content.replace(/,\s*,/g, ",");
+  content = content.replace(/\{\s*,/g, "{");
+  content = content.replace(/,\s*\}/g, "}");
+
+  if (content !== original) {
+    fs.writeFileSync(fullPath, content, "utf-8");
+    console.log(`Fixed double commas in: ${file}`);
+  }
+}
+
+console.log("\nRe-running tsc...");
+const newOutput = runTsc();
+const newErrors = parseErrors(newOutput);
+console.log(`Remaining errors: ${newErrors.length}`);
+
+const byCode = {};
+for (const e of newErrors) {
+  byCode[e.code] = (byCode[e.code] || 0) + 1;
+}
+console.log("Error distribution:", Object.entries(byCode).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}:${v}`).join(", "));

@@ -18,13 +18,13 @@ import { useGlow } from '../../../hooks/useAdvancedAnimations';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { SpringConfigs, Duration } from '../../../design-system/theme/tokens/animations';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, flatColors } from '../../../design-system/theme';
 
 
-const TERRACOTTA = colors.primary; // #C67B5C
-const CAMEL = colors.primary; // #B5A08C
-const SAGE = colors.secondary; // #8B9A7D
-const _TERRACOTTA_LIGHT = colors.primaryLight; // #D4917A
+const TERRACOTTA = flatColors.primary; // #C67B5C
+const CAMEL = flatColors.primary; // #B5A08C
+const SAGE = flatColors.secondary; // #8B9A7D
+const _TERRACOTTA_LIGHT = flatColors.primaryLight; // #D4917A
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const BUBBLE_WIDTH = SCREEN_WIDTH * 0.6;
@@ -75,7 +75,7 @@ const r = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.surface,
+    backgroundColor: flatColors.surface,
     borderRadius: 16,
     paddingHorizontal: DesignTokens.spacing['3.5'],
     paddingVertical: DesignTokens.spacing[3],
@@ -110,7 +110,7 @@ const r = StyleSheet.create({
 
 // ============ Stage 1: Terracotta Gradient Lines (0-2s) ============
 
-function GradientLines({ stageProgress }: { _stageProgress: Animated.SharedValue<number> }) {
+function GradientLines({ stageProgress }: { stageProgress: Animated.SharedValue<number> }) {
   const line1X = useSharedValue(-BUBBLE_WIDTH);
   const line2X = useSharedValue(-BUBBLE_WIDTH);
   const line3X = useSharedValue(-BUBBLE_WIDTH);
@@ -288,13 +288,13 @@ const s = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.surface,
+    backgroundColor: flatColors.surface,
     borderRadius: 16,
     paddingHorizontal: DesignTokens.spacing['3.5'],
     paddingVertical: DesignTokens.spacing[3],
     borderBottomLeftRadius: 4,
     maxWidth: BUBBLE_WIDTH,
-    minHeight: DesignTokens.spacing[11],
+    minHeight: 44,
   },
   linesContainer: {
     width: "100%",

@@ -14,6 +14,7 @@ import {
   ViewStyle,
   TextStyle,
   Platform,
+  StyleSheet,
 } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";

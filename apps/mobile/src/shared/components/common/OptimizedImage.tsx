@@ -11,7 +11,6 @@ import {
 
 import { getOptimizedImageUrl, getPlaceholder } from "../../utils/imageOptimizer";
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
-import { flatColors as colors } from '../../../design-system/theme';
 
 export interface OptimizedImageProps extends AccessibilityProps {
   /** Source URI of the image */

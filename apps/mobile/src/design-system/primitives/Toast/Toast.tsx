@@ -12,7 +12,7 @@ import {
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme, DesignTokens, Spacing } from '../../theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { flatColors as colors } from '../../../design-system/theme';
+
 
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
@@ -53,6 +53,7 @@ interface ToastProviderProps {
 export function ToastProvider({
 children }: ToastProviderProps) {
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const show = (type: ToastType, message: string, duration = 3000) => {
@@ -61,8 +62,6 @@ children }: ToastProviderProps) {
   };
 
   const removeToast = (id: string) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
@@ -92,6 +91,8 @@ interface ToastItemProps {
 }
 
 function ToastItem({ toast, onDismiss }: ToastItemProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const translateY = useRef(new Animated.Value(-100)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -145,8 +146,6 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
   };
 
   const getColor = () => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     switch (toast.type) {
       case "success":
         return theme.colors.success;

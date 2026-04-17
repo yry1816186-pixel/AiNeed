@@ -23,13 +23,13 @@ describe("logger", () => {
   });
 
   describe("when __DEV__ is true", () => {
-    let logger: typeof import("../logger").logger;
+    let logger: typeof import("../../shared/utils/logger").logger;
 
     beforeEach(() => {
       (global as any).__DEV__ = true;
       jest.resetModules();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      logger = require("../logger").logger;
+      logger = require("../../shared/utils/logger").logger;
     });
 
     it("should output log messages", () => {
@@ -64,13 +64,13 @@ describe("logger", () => {
   });
 
   describe("when __DEV__ is false", () => {
-    let logger: typeof import("../logger").logger;
+    let logger: typeof import("../../shared/utils/logger").logger;
 
     beforeEach(() => {
       (global as any).__DEV__ = false;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       jest.resetModules();
-      logger = require("../logger").logger;
+      logger = require("../../shared/utils/logger").logger;
     });
 
     afterEach(() => {

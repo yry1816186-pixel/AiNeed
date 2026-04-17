@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
   placeholder: { width: DesignTokens.spacing[10] },
   content: { flex: 1 },
   sectionTitle: {
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
   settingInfo: { flex: 1 },
-  settingTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.text },
+  settingTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.textPrimary },
   settingDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: DesignTokens.spacing['0.5']},
   categoryIcon: {
     width: DesignTokens.spacing[9],

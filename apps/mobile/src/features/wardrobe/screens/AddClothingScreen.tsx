@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
   saveButton: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,

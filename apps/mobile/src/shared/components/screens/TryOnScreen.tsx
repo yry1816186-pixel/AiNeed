@@ -8,8 +8,7 @@ import {
   ActivityIndicator,
   ScrollView,
   Alert,
-  Dimensions,
-} from "react-native";
+  Dimensions} from "react-native";
 import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
@@ -17,24 +16,21 @@ import Animated, { FadeInUp, SlideInLeft } from "react-native-reanimated";
 import Share from "react-native-share";
 import {
   pickImageSecurely,
-  ImageValidationError,
-} from "../../utils/imagePicker";
+  ImageValidationError} from "../../utils/imagePicker";
 import { photosApi } from '../../../services/api/photos.api';
 import { tryOnApi, type TryOnResult } from '../../../services/api/tryon.api';
 import { clothingApi } from '../../../services/api/clothing.api';
 import {
   wsService,
   type TryOnEventPayload,
-  type TryOnProgressPayload,
-} from "../../services/websocket";
+  type TryOnProgressPayload} from "../../services/websocket";
 import type { ClothingItem } from '../../../types/clothing';
-import { colors } from '../../../design-system/theme/tokens/colors';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { typography } from '../../../design-system/theme/tokens/typography';
 import { spacing } from '../../../design-system/theme/tokens/spacing';
 import { shadows } from '../../../design-system/theme/tokens/shadows';
 import { TryOnProgress } from "../loading/TryOnProgress";
-import { Spacing, flatColors as} from '../../../design-system/theme';
+import {Spacing} from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 
@@ -313,8 +309,7 @@ export const TryOnScreen: React.FC = () => {
         title: "寻裳 AI 试衣效果",
         message: "看看我的 AI 虚拟试衣效果！",
         url: imageUrl.startsWith("data:") ? imageUrl : imageUrl,
-        type: imageUrl.startsWith("data:image/png") ? "image/png" : "image/jpeg",
-      });
+        type: imageUrl.startsWith("data:image/png") ? "image/png" : "image/jpeg"});
     } catch (error: unknown) {
       // User cancelled sharing - not an error
       if (error instanceof Error && error.message?.includes("cancel")) {
@@ -335,8 +330,7 @@ export const TryOnScreen: React.FC = () => {
       await Share.open({
         title: "保存试衣结果",
         url: imageUrl,
-        type: "image/jpeg",
-      });
+        type: "image/jpeg"});
     } catch (error: unknown) {
       if (error instanceof Error && error.message?.includes("cancel")) {
         return;
@@ -359,8 +353,7 @@ export const TryOnScreen: React.FC = () => {
     queued: "排队等待中...",
     processing: "AI 处理中...",
     completed: "试衣完成！",
-    failed: "试衣失败",
-  };
+    failed: "试衣失败"};
 
   const isProcessing = phase === "uploading" || phase === "queued" || phase === "processing";
   const canStart = personImage && (clothingImage || clothingItem) && !isProcessing;
@@ -568,8 +561,7 @@ export const TryOnScreen: React.FC = () => {
                 </View>
                 <Image
                   source={{
-                    uri: result.resultImageDataUri || result.resultImageUrl || personImage!,
-                  }}
+                    uri: result.resultImageDataUri || result.resultImageUrl || personImage!}}
                   style={styles.comparisonImage}
                 />
               </View>
@@ -603,64 +595,53 @@ export const TryOnScreen: React.FC = () => {
 const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral[50],
-  },
+    backgroundColor: colors.neutral[50]},
   content: {
     padding: spacing.layout.screenPadding,
-    paddingBottom: DesignTokens.spacing[10],
-  },
+    paddingBottom: DesignTokens.spacing[10]},
 
   navBar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: spacing.layout.sectionGap,
-    paddingVertical: Spacing.xs,
-  },
+    paddingVertical: Spacing.xs},
   navBackButton: {
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: colors.neutral[100],
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   navTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
-    color: colors.neutral[900],
-  },
+    color: colors.neutral[900]},
   navPlaceholder: {
-    width: DesignTokens.spacing[10],
-  },
+    width: DesignTokens.spacing[10]},
 
   headerSection: {
     marginBottom: spacing.layout.sectionGap,
     borderRadius: spacing.borderRadius["2xl"],
     overflow: "hidden",
-    ...shadows.presets.lg,
-  },
+    ...shadows.presets.lg},
   headerGradient: {
     padding: spacing.layout.modalPadding,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-  },
+    justifyContent: "space-between"},
   headerContent: {
-    flex: 1,
-  },
+    flex: 1},
   headerTitle: {
     fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
     color: colors.textInverse,
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   headerSubtitle: {
     fontSize: typography.fontSize.base,
     color: "rgba(255,255,255,0.9)",
     lineHeight: 22,
-    marginBottom: DesignTokens.spacing[3],
-  },
+    marginBottom: DesignTokens.spacing[3]},
   headerBadge: {
     flexDirection: "row",
     alignItems: "center",
@@ -668,47 +649,39 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: DesignTokens.spacing[3],
     paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
-    alignSelf: "flex-start",
-  },
+    alignSelf: "flex-start"},
   headerBadgeText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
     color: colors.textInverse,
-    marginLeft: DesignTokens.spacing['1.5'],
-  },
+    marginLeft: DesignTokens.spacing['1.5']},
 
   section: {
-    marginBottom: spacing.layout.cardGap,
-  },
+    marginBottom: spacing.layout.cardGap},
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
     gap: DesignTokens.spacing['2.5'],
-    marginBottom: DesignTokens.spacing[3],
-  },
+    marginBottom: DesignTokens.spacing[3]},
   stepNumber: {
     width: DesignTokens.spacing[7],
     height: DesignTokens.spacing[7],
     borderRadius: 14,
     backgroundColor: colors.brand.warmPrimary,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   stepNumberText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   sectionTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.neutral[900],
-  },
+    color: colors.neutral[900]},
   clothingNameHint: {
     fontSize: typography.fontSize.sm,
     color: colors.warmPrimary.ocean[600],
-    fontWeight: typography.fontWeight.medium,
-  },
+    fontWeight: typography.fontWeight.medium},
 
   imagePicker: {
     borderRadius: spacing.borderRadius.xl,
@@ -716,19 +689,16 @@ const useStyles = createStyles((colors) => ({
     borderWidth: 2,
     borderColor: colors.neutral[300],
     borderStyle: "dashed",
-    backgroundColor: colors.neutral.white,
-  },
+    backgroundColor: colors.neutral.white},
   imagePickerFilled: {
     borderWidth: 2,
     borderStyle: "solid",
-    borderColor: colors.warmPrimary.mint[300],
-  },
+    borderColor: colors.warmPrimary.mint[300]},
   placeholder: {
     height: 220,
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[5],
-  },
+    padding: DesignTokens.spacing[5]},
   placeholderIconContainer: {
     width: 72,
     height: 72,
@@ -736,25 +706,21 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.md,
-  },
+    marginBottom: Spacing.md},
   placeholderTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[700],
-    marginTop: DesignTokens.spacing['2.5'],
-  },
+    marginTop: DesignTokens.spacing['2.5']},
   placeholderSubtitle: {
     fontSize: typography.fontSize.sm,
     color: colors.neutral[500],
     marginTop: DesignTokens.spacing['1.5'],
-    textAlign: "center",
-  },
+    textAlign: "center"},
   previewImage: {
     width: "100%",
     height: 220,
-    resizeMode: "cover",
-  },
+    resizeMode: "cover"},
   changeButton: {
     position: "absolute",
     bottom: DesignTokens.spacing[3],
@@ -765,13 +731,11 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: DesignTokens.spacing[3],
     paddingVertical: Spacing.sm,
     borderRadius: 16,
-    gap: DesignTokens.spacing['1.5'],
-  },
+    gap: DesignTokens.spacing['1.5']},
   changeButtonText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
 
   button: {
     flexDirection: "row",
@@ -782,21 +746,17 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing.md,
     gap: DesignTokens.spacing['2.5'],
     ...shadows.presets.lg,
-    marginBottom: Spacing.md,
-  },
+    marginBottom: Spacing.md},
   buttonDisabled: {
-    backgroundColor: colors.neutral[300],
-  },
+    backgroundColor: colors.neutral[300]},
   buttonText: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   processingContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['2.5'],
-  },
+    gap: DesignTokens.spacing['2.5']},
   retryButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -806,32 +766,27 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing.md,
     gap: DesignTokens.spacing['2.5'],
     ...shadows.presets.lg,
-    marginBottom: Spacing.md,
-  },
+    marginBottom: Spacing.md},
 
   progressContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: DesignTokens.spacing[3],
-    marginBottom: DesignTokens.spacing[5],
-  },
+    marginBottom: DesignTokens.spacing[5]},
   progressBarBg: {
     flex: 1,
     height: Spacing.sm,
     backgroundColor: colors.neutral[200],
     borderRadius: 4,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   progressBarFill: {
     height: "100%",
     backgroundColor: colors.warmPrimary.mint[500],
-    borderRadius: 4,
-  },
+    borderRadius: 4},
   progressText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
-    color: colors.warmPrimary.mint[600],
-  },
+    color: colors.warmPrimary.mint[600]},
 
   tipContainer: {
     flexDirection: "row",
@@ -841,14 +796,12 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: DesignTokens.spacing['3.5'],
     paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: spacing.borderRadius.lg,
-    marginTop: DesignTokens.spacing[3],
-  },
+    marginTop: DesignTokens.spacing[3]},
   tipText: {
     flex: 1,
     fontSize: typography.fontSize.sm,
     color: colors.warmPrimary.coral[700],
-    lineHeight: 20,
-  },
+    lineHeight: 20},
   timeoutWarning: {
     flexDirection: "row",
     alignItems: "center",
@@ -857,13 +810,11 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: DesignTokens.spacing['3.5'],
     paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: spacing.borderRadius.lg,
-    marginTop: Spacing.sm,
-  },
+    marginTop: Spacing.sm},
   timeoutWarningText: {
     flex: 1,
     fontSize: typography.fontSize.sm,
-    color: colors.warmPrimary.ocean[700],
-  },
+    color: colors.warmPrimary.ocean[700]},
 
   errorSection: {
     flexDirection: "row",
@@ -872,82 +823,68 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.semantic.error.light,
     padding: Spacing.md,
     borderRadius: spacing.borderRadius.lg,
-    marginBottom: Spacing.md,
-  },
+    marginBottom: Spacing.md},
   errorText: {
     flex: 1,
     fontSize: typography.fontSize.base,
-    color: colors.semantic.error.dark,
-  },
+    color: colors.semantic.error.dark},
 
   resultSection: {
     backgroundColor: colors.neutral.white,
     borderRadius: spacing.borderRadius["2xl"],
     padding: spacing.layout.cardPadding,
-    ...shadows.presets.lg,
-  },
+    ...shadows.presets.lg},
   resultHeader: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
-    marginBottom: DesignTokens.spacing[5],
-  },
+    marginBottom: DesignTokens.spacing[5]},
   resultTitle: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: colors.neutral[900],
-  },
+    color: colors.neutral[900]},
 
   comparisonContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: DesignTokens.spacing[3],
-    marginBottom: DesignTokens.spacing[5],
-  },
+    marginBottom: DesignTokens.spacing[5]},
   comparisonCard: {
     flex: 1,
     borderRadius: spacing.borderRadius.lg,
     overflow: "hidden",
-    backgroundColor: colors.neutral[100],
-  },
+    backgroundColor: colors.neutral[100]},
   comparisonCardAfter: {
     borderWidth: 2,
-    borderColor: colors.warmPrimary.mint[400],
-  },
+    borderColor: colors.warmPrimary.mint[400]},
   comparisonLabel: {
     backgroundColor: colors.neutral[200],
     paddingHorizontal: DesignTokens.spacing[3],
     paddingVertical: DesignTokens.spacing['1.5'],
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-  },
+    gap: Spacing.xs},
   comparisonLabelAfter: {
-    backgroundColor: colors.warmPrimary.mint[500],
-  },
+    backgroundColor: colors.warmPrimary.mint[500]},
   comparisonLabelText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.neutral[700],
-  },
+    color: colors.neutral[700]},
   comparisonImage: {
     width: "100%",
     aspectRatio: 3 / 4,
-    resizeMode: "cover",
-  },
+    resizeMode: "cover"},
   arrowContainer: {
     width: Spacing.xl,
     height: Spacing.xl,
     borderRadius: 16,
     backgroundColor: colors.warmPrimary.coral[50],
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
 
   actionButtons: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3],
-  },
+    gap: DesignTokens.spacing[3]},
   actionButtonSecondary: {
     flex: 1,
     flexDirection: "row",
@@ -958,13 +895,11 @@ const useStyles = createStyles((colors) => ({
     borderRadius: spacing.borderRadius.xl,
     backgroundColor: colors.warmPrimary.ocean[50],
     borderWidth: 1.5,
-    borderColor: colors.warmPrimary.ocean[200],
-  },
+    borderColor: colors.warmPrimary.ocean[200]},
   actionButtonTextSecondary: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.warmPrimary.ocean[700],
-  },
+    color: colors.warmPrimary.ocean[700]},
   actionButtonPrimary: {
     flex: 1,
     flexDirection: "row",
@@ -974,13 +909,11 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: 13,
     borderRadius: spacing.borderRadius.xl,
     backgroundColor: colors.warmPrimary.mint[500],
-    ...shadows.presets.md,
-  },
+    ...shadows.presets.md},
   actionButtonTextPrimary: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   tryMoreButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -991,13 +924,10 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.neutral[100],
     marginTop: DesignTokens.spacing[3],
     borderWidth: 1.5,
-    borderColor: colors.neutral[300],
-  },
+    borderColor: colors.neutral[300]},
   tryMoreButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.brand.warmPrimary,
-  },
-}))
+    color: colors.brand.warmPrimary}}))
 
 export default TryOnScreen;

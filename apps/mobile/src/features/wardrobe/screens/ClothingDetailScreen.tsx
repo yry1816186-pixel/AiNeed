@@ -23,9 +23,9 @@ import {
   type SizeRecommendation,
 } from '../../../services/api/commerce.api';
 import { useSizeRecommendationStore } from '../../../stores/sizeRecommendationStore';
-import { ProductImageCarousel } from '../../../components/ProductImageCarousel';
-import { SKUSelector } from '../../../components/SKUSelector';
-import { OutfitRecommendationCards } from '../../../components/OutfitRecommendationCards';
+import { ProductImageCarousel } from '../../commerce/components/ProductImageCarousel';
+import { SKUSelector } from '../../commerce/components/SKUSelector';
+import { OutfitRecommendationCards } from '../../commerce/components/OutfitRecommendationCards';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { flatColors as colors, Spacing } from '../../../design-system/theme';
 
@@ -189,7 +189,7 @@ export const ClothingDetailScreen: React.FC = () => {
           <Ionicons
             name={isFavorite ? "heart" : "heart-outline"}
             size={24}
-            color={isFavorite ? colors.like : colors.text}
+            color={isFavorite ? colors.like : colors.textPrimary}
           />
         </TouchableOpacity>
       </View>
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
   loadingContainer: {
     flex: 1,
     alignItems: "center",

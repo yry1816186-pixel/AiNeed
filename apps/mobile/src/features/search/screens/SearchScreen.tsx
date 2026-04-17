@@ -23,10 +23,10 @@ import type {
   Season,
   Occasion,
 } from '../../../types/clothing';
-import { CategoryNavigation } from '../../../components/CategoryNavigation';
-import { SubcategoryTabs } from '../../../components/SubcategoryTabs';
-import { FilterTags } from '../../../components/FilterTags';
-import { SortBar } from '../../../components/SortBar';
+import { CategoryNavigation } from '../../commerce/components/CategoryNavigation';
+import { SubcategoryTabs } from '../../commerce/components/SubcategoryTabs';
+import { FilterTags } from '../../commerce/components/FilterTags';
+import { SortBar } from '../../commerce/components/SortBar';
 import {
   launchImageLibraryAsync,
   launchCameraAsync,
@@ -35,7 +35,7 @@ import {
   requestMediaLibraryPermissionsAsync,
 } from "@/src/polyfills/expo-image-picker";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
 
 import {
   FilterPanel,
@@ -415,13 +415,13 @@ export const SearchScreen: React.FC = () => {
       <View style={styles.header}>
         <View style={styles.searchRow}>
           <View style={styles.searchBar}>
-            <Ionicons name="search-outline" size={20} color={colors.textTertiary} />
+            <Ionicons name="search-outline" size={20} color={staticColors.textTertiary} />
             <TextInput
               ref={searchInputRef}
               style={styles.searchInput}
               placeholder={t.search.placeholder}
               accessibilityLabel={t.search.placeholder}
-              placeholderTextColor={colors.textTertiary}
+              placeholderTextColor={staticColors.textTertiary}
               value={query}
               onChangeText={setQuery}
               returnKeyType="search"
@@ -433,7 +433,7 @@ export const SearchScreen: React.FC = () => {
                 onPress={handleClearSearch}
                 hitSlop={{ top: DesignTokens.spacing['2.5'], right: DesignTokens.spacing['2.5'], bottom: DesignTokens.spacing['2.5'], left: DesignTokens.spacing['2.5']}}
               >
-                <Ionicons name="close-circle" size={18} color={colors.textTertiary} />
+                <Ionicons name="close-circle" size={18} color={staticColors.textTertiary} />
               </TouchableOpacity>
             ) : null}
           </View>
@@ -444,7 +444,7 @@ export const SearchScreen: React.FC = () => {
             accessibilityLabel="以图搜衣"
             accessibilityRole="button"
           >
-            <Ionicons name="camera-outline" size={22} color={colors.primary} />
+            <Ionicons name="camera-outline" size={22} color={staticColors.primary} />
           </TouchableOpacity>
         </View>
 
@@ -458,7 +458,7 @@ export const SearchScreen: React.FC = () => {
             <Ionicons
               name="options-outline"
               size={16}
-              color={showFilters ? colors.primary : colors.textSecondary}
+              color={showFilters ? staticColors.primary : staticColors.textSecondary}
             />
             <Text style={[styles.filterToggleText, showFilters && styles.filterToggleTextActive]}>
               {t.search.filters}
@@ -561,10 +561,10 @@ export const SearchScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
   },
   header: {
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     paddingHorizontal: DesignTokens.spacing[5],
     paddingTop: Spacing.md,
     paddingBottom: DesignTokens.spacing[3],
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.divider,
+    backgroundColor: staticColors.divider,
     borderRadius: 16,
     paddingHorizontal: Spacing.md,
     paddingVertical: DesignTokens.spacing[3],
@@ -587,13 +587,13 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.md,
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
   },
   cameraButton: {
     width: 46,
     height: 46,
     borderRadius: 14,
-    backgroundColor: colors.cartLight,
+    backgroundColor: staticColors.cartLight,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -610,21 +610,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: DesignTokens.spacing[3],
     paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
-    backgroundColor: colors.divider,
+    backgroundColor: staticColors.divider,
   },
   filterToggleActive: {
-    backgroundColor: colors.cartLight,
+    backgroundColor: staticColors.cartLight,
   },
   filterToggleText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
   },
   filterToggleTextActive: {
-    color: colors.primary,
+    color: staticColors.primary,
     fontWeight: "500",
   },
   filterBadge: {
-    backgroundColor: colors.primary,
+    backgroundColor: staticColors.primary,
     borderRadius: 10,
     minWidth: 18,
     height: 18,
@@ -635,11 +635,11 @@ const styles = StyleSheet.create({
   filterBadgeText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
-    color: colors.surface,
+    color: staticColors.surface,
   },
   separator: {
     height: 1,
-    backgroundColor: colors.border,
+    backgroundColor: staticColors.border,
   },
 });
 

@@ -9,9 +9,9 @@ import {
   OrderStatus,
   Address,
   SearchFilters,
-} from "../../types";
+} from '../../../navigation/types';
 import type { ClothingItem } from '../../../types/clothing';
-import type { FormDataValue } from "../../types";
+import type { FormDataValue } from '../../../navigation/types';
 
 interface BackendBrand {
   id?: string;

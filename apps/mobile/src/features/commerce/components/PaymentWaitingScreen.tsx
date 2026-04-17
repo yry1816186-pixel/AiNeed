@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { paymentApi } from '../../../services/api/commerce.api';
-import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface PaymentWaitingScreenProps {

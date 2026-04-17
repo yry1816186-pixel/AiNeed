@@ -3,15 +3,12 @@ import {
   Linking,
   StatusBar,
   StyleSheet,
-  Text,
   View,
-  ActivityIndicator,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { NavigationContainer } from '@react-navigation/native';
-import { Ionicons } from './src/polyfills/expo-vector-icons';
 import { ErrorBoundary } from './src/shared/components/ErrorBoundary';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import {
@@ -20,12 +17,13 @@ import {
   navigateDeepLink,
   isNavigationReady as checkNavigationReady,
 } from './src/navigation/navigationService';
-import { ThemeProvider as UnifiedThemeProvider, useTheme, createStyles } from './src/shared/contexts/ThemeContext';
+import { ThemeProvider as UnifiedThemeProvider, useTheme } from './src/shared/contexts/ThemeContext';
 import { ThemeProvider as PaperThemeProvider } from './src/design-system/ui/PaperThemeProvider';
 import { useAuthStore } from './src/stores/index';
 import { OfflineBanner } from './src/shared/components/common/OfflineBanner';
 import { I18nProvider } from './src/i18n';
 import { FeatureFlagProvider } from './src/shared/contexts/FeatureFlagContext';
+import { SplashScreen as AnimatedSplashScreen } from './src/shared/components/flows/FlowAnimations';
 import { initSentry } from './src/shared/services/sentry';
 import apiClient from './src/shared/services/apiClient';
 import { authApi } from './src/features/auth/services/auth.api';
@@ -56,47 +54,9 @@ function ThemedStatusBar() {
   );
 }
 
-const splashStyles = createStyles((colors) => ({
-  container: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoContainer: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  brandName: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.primary,
-    letterSpacing: 1.5,
-    marginBottom: 32,
-  },
-}));
-
 function SplashScreen() {
-  const { colors } = useTheme();
-  const styles = splashStyles(colors);
-  return (
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Ionicons name="shirt-outline" size={48} color={colors.surface} />
-      </View>
-      <Text style={styles.brandName}>寻裳</Text>
-      <ActivityIndicator
-        size="large"
-        color={colors.primary}
-        style={rootStyles.loader}
-      />
-    </View>
-  );
+  const setLoading = useAuthStore((state) => state.setLoading);
+  return <AnimatedSplashScreen onFinish={() => setLoading(false)} />;
 }
 
 export default function App() {
@@ -303,8 +263,5 @@ export default function App() {
 const rootStyles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  loader: {
-    marginTop: 8,
   },
 });

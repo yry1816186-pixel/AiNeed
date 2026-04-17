@@ -8,13 +8,13 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
-import { FlashList } from "../../../polyfills/flash-list.tsx";
+import { FlashList } from '../../../polyfills/flash-list';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { PostMasonryCard } from '../../../components/community/PostMasonryCard';
-import type { PostCardData } from '../../../components/community/PostMasonryCard';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { PostMasonryCard } from '../components/PostMasonryCard';
+import type { PostCardData } from '../components/PostMasonryCard';
+import { Spacing } from '../../../design-system/theme';
 
 
 type PostCardDataInternal = PostCardData;

@@ -216,7 +216,7 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary },
   iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
   qrBanner: {
     flexDirection: "row",
@@ -241,7 +241,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   qrBannerText: { flex: 1, marginLeft: DesignTokens.spacing[3]},
-  qrBannerTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  qrBannerTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
   qrBannerDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing.xl},
   loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},

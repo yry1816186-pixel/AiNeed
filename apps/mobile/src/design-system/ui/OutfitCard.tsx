@@ -9,8 +9,7 @@ import { Colors,
   Typography as ThemeTypography,
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
-  Shadows as ThemeShadows,
-  flatColors as colors } from '../../design-system/theme';
+  Shadows as ThemeShadows } from '../../design-system/theme';
 
 import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
 import { Spacing } from '../theme';

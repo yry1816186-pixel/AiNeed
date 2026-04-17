@@ -1,1 +1,0 @@
-﻿apps/mobile/src/features/customization/screens/CustomizationOrderDetailScreen.tsx(484,1): error TS1005: '}' expected.

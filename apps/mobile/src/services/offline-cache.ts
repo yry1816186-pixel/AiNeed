@@ -9,7 +9,7 @@
  */
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { logger } from "../utils/logger";
+import { logger } from '../shared/utils/logger';
 import type { ClothingItem } from "../types/clothing";
 import type { User } from "../types/user";
 import type { PostCardData } from "../types/social";

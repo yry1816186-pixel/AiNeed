@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens, flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface BloggerBadgeProps {

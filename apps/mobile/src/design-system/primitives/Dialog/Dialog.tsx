@@ -13,7 +13,6 @@ import {
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, theme, DesignTokens, Spacing } from '../../theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { flatColors as colors } from '../../../design-system/theme';
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

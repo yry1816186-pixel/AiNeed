@@ -182,11 +182,11 @@ export const useClothingStore = create<ClothingState>()(
           const response = await clothingApi.getAll({ page, limit });
           if (response.success && response.data) {
             set({
-              items: response.data.items,
+              items: response.data.items as unknown as ClothingItem[],
               pagination: {
                 page: response.data.page,
                 pageSize: response.data.pageSize,
-                hasMore: response.data.hasMore,
+                hasMore: response.data.hasMore ?? false,
                 total: response.data.total,
               },
               isLoading: false,
@@ -204,7 +204,7 @@ export const useClothingStore = create<ClothingState>()(
         try {
           const response = await clothingApi.getAll({ page: 1, limit });
           if (response.success && response.data) {
-            set({ featuredItems: response.data.items, isLoading: false });
+            set({ featuredItems: response.data.items as unknown as ClothingItem[], isLoading: false });
           } else {
             set({ error: '获取精选商品失败，请稍后重试', isLoading: false });
           }

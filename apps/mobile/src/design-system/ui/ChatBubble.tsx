@@ -14,7 +14,7 @@ import {
   Shadows as ThemeShadows,
   Typography as ThemeTypography,
 } from '../theme';
-import { flatColors as colors } from '../../design-system/theme';
+
 
 interface ChatBubbleProps {
   message: string;
@@ -47,7 +47,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
         {/* AI头像 */}
         {!isUser && showAvatar && (
           <LinearGradient
-            colors={[colors.warmPrimary.coral[400], colors.warmPrimary.mint[400]]}
+            colors={[colors.primary, colors.secondary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.avatar}

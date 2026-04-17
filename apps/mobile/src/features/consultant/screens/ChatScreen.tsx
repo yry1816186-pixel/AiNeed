@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -15,13 +15,13 @@ import { useRoute, useNavigation, RouteProp, NavigationProp, ParamListBase } fro
 import { useChatStore } from '../stores/chatStore';
 import { useConsultantStore } from '../../../stores/consultantStore';
 import type { ChatMessage, ChatTypingPayload } from '../../../types/chat';
-import { ChatBubble } from "../../design-system/ui/ChatBubble";
-import { TypingIndicator } from '../../../components/consultant/TypingIndicator';
-import { ProposalCard } from '../../../components/consultant/ProposalCard';
+import { ChatBubble } from '../../../design-system/ui/ChatBubble';
+import { TypingIndicator } from '../components/TypingIndicator';
+import { ProposalCard } from '../components/ProposalCard';
 import wsService from '../../../services/websocket';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 

@@ -3,8 +3,8 @@ const path = require("path");
 
 const SRC_DIR = path.join(__dirname, "..", "src");
 
-function getAllFiles(dir, ext = [".ts", ".tsx"]) {
-  const results = [];
+function getAllFiles(dir: string, ext: string[] = [".ts", ".tsx"]): string[] {
+  const results: string[] = [];
   if (!fs.existsSync(dir)) return results;
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
@@ -12,15 +12,15 @@ function getAllFiles(dir, ext = [".ts", ".tsx"]) {
     if (entry.name === "node_modules" || entry.name === ".expo") continue;
     if (entry.isDirectory()) {
       results.push(...getAllFiles(fullPath, ext));
-    } else if (ext.some(e => entry.name.endsWith(e))) {
+    } else if (ext.some((e: string) => entry.name.endsWith(e))) {
       results.push(fullPath);
     }
   }
   return results;
 }
 
-function fixMismatchedQuotes(content) {
-  return content.replace(/from\s+'([^']*?)"/g, (match, p1) => {
+function fixMismatchedQuotes(content: string): string {
+  return content.replace(/from\s+'([^']*?)"/g, (match: string, p1: string) => {
     return `from '${p1}'`;
   });
 }

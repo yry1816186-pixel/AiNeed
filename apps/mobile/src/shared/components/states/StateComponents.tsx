@@ -9,8 +9,7 @@ import {
   Image,
   ViewStyle,
   TextStyle,
-  Animated,
-} from "react-native";
+  Animated} from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
@@ -25,10 +24,9 @@ import {
   interpolate,
   Extrapolate,
   Easing,
-  runOnJS,
-} from "react-native-reanimated";
+  runOnJS} from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors , Spacing, flatColors as colors } from '../../../design-system/theme'
+import { Colors , Spacing, flatColors } from '../../../design-system/theme'
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
@@ -40,10 +38,9 @@ const _AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
 const springConfig = {
   damping: 15,
   stiffness: 150,
-  mass: 0.5,
-};
+  mass: 0.5};
 
-const confettiColors = [colors.neutral[300], colors.neutral[700], colors.warning, colors.success, colors.error, colors.primary]; // custom color
+const confettiColors = [flatColors.neutral[300], flatColors.neutral[700], flatColors.warning, flatColors.success, flatColors.error, flatColors.primary]; // custom color
 
 export interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap | "custom";
@@ -78,8 +75,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onSecondaryAction,
   illustration,
   style,
-  animated = true,
-}) => {
+  animated = true}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0.8);
@@ -96,8 +92,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         withSequence(
           withTiming(-10, {
             duration: 2000,
-            easing: Easing.inOut(Easing.ease),
-          }),
+            easing: Easing.inOut(Easing.ease)}),
           withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
@@ -117,12 +112,10 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }],
-  }));
+    transform: [{ scale: scale.value }]}));
 
   const floatAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: floatY.value }, { rotateZ: `${rotation.value}deg` }],
-  }));
+    transform: [{ translateY: floatY.value }, { rotateZ: `${rotation.value}deg` }]}));
 
   const getIllustrationIcon = () => {
     switch (illustration) {
@@ -137,8 +130,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       case "no-notification":
         return {
           icon: "notifications-off-outline",
-          color: Colors.neutral[400],
-        };
+          color: Colors.neutral[400]};
       case "no-favorite":
         return { icon: "heart-outline", color: Colors.error[300] };
       case "no-order":
@@ -148,8 +140,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       default:
         return {
           icon: icon || "help-circle-outline",
-          color: Colors.neutral[400],
-        };
+          color: Colors.neutral[400]};
     }
   };
 
@@ -198,16 +189,15 @@ export interface ErrorStateProps {
 }
 
 export const ErrorState: React.FC<ErrorStateProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   title = "出错了",
   message = "抱歉，发生了一些错误，请稍后重试",
   errorCode,
   onRetry,
   onReport,
   showIllustration = true,
-  style,
-}) => {
+  style}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const shakeX = useSharedValue(0);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.9);
@@ -226,13 +216,11 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   }, []);
 
   const shakeAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shakeX.value }],
-  }));
+    transform: [{ translateX: shakeX.value }]}));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }],
-  }));
+    transform: [{ scale: scale.value }]}));
 
   return (
     <AnimatedView style={[styles.errorContainer, containerAnimatedStyle, style]}>
@@ -299,12 +287,10 @@ export const NetworkError: React.FC<NetworkErrorProps> = ({ onRetry, onSettings,
   }, []);
 
   const pulseAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseScale.value }],
-  }));
+    transform: [{ scale: pulseScale.value }]}));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
+    opacity: opacity.value}));
 
   return (
     <AnimatedView style={[styles.networkContainer, containerAnimatedStyle, style]}>
@@ -349,12 +335,11 @@ export interface MaintenanceScreenProps {
 }
 
 export const MaintenanceScreen: React.FC<MaintenanceScreenProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   estimatedTime,
   message = "我们正在进行系统维护，请稍后再试",
-  style,
-}) => {
+  style}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const rotation = useSharedValue(0);
   const opacity = useSharedValue(0);
 
@@ -368,12 +353,10 @@ export const MaintenanceScreen: React.FC<MaintenanceScreenProps> = ({
   }, []);
 
   const gearAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotateZ: `${rotation.value}deg` }],
-  }));
+    transform: [{ rotateZ: `${rotation.value}deg` }]}));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
+    opacity: opacity.value}));
 
   return (
     <AnimatedView style={[styles.maintenanceContainer, containerAnimatedStyle, style]}>
@@ -412,12 +395,11 @@ export interface PermissionDeniedProps {
 }
 
 export const PermissionDenied: React.FC<PermissionDeniedProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   permission,
   onOpenSettings,
-  style,
-}) => {
+  style}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const opacity = useSharedValue(0);
 
@@ -428,31 +410,25 @@ export const PermissionDenied: React.FC<PermissionDeniedProps> = ({
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }],
-  }));
+    transform: [{ scale: scale.value }]}));
 
   const permissionConfig = {
     camera: {
       icon: "camera-outline",
       title: "需要相机权限",
-      message: "请在设置中允许访问相机，以便您可以使用拍照功能",
-    },
+      message: "请在设置中允许访问相机，以便您可以使用拍照功能"},
     gallery: {
       icon: "images-outline",
       title: "需要相册权限",
-      message: "请在设置中允许访问相册，以便您可以选择和保存照片",
-    },
+      message: "请在设置中允许访问相册，以便您可以选择和保存照片"},
     location: {
       icon: "location-outline",
       title: "需要位置权限",
-      message: "请在设置中允许访问位置，以便我们可以为您推荐附近的门店",
-    },
+      message: "请在设置中允许访问位置，以便我们可以为您推荐附近的门店"},
     notification: {
       icon: "notifications-outline",
       title: "需要通知权限",
-      message: "请在设置中允许发送通知，以便您不会错过重要消息",
-    },
-  };
+      message: "请在设置中允许发送通知，以便您不会错过重要消息"}};
 
   const config = permissionConfig[permission];
 
@@ -512,8 +488,7 @@ const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ index }) => {
   useEffect(() => {
     confettiY.value = withTiming(SCREEN_HEIGHT + 50, {
       duration: fallDuration,
-      easing: Easing.out(Easing.quad),
-    });
+      easing: Easing.out(Easing.quad)});
     confettiX.value = withSequence(
       withTiming(initialX + drift1, { duration: 500 }),
       withTiming(initialX + drift2, { duration: 500 }),
@@ -540,8 +515,7 @@ const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ index }) => {
       { translateX: confettiX.value },
       { rotateZ: `${confettiRotation.value}deg` },
     ],
-    opacity: confettiOpacity.value,
-  }));
+    opacity: confettiOpacity.value}));
 
   return (
     <AnimatedView
@@ -555,16 +529,15 @@ const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ index }) => {
 };
 
 export const SuccessState: React.FC<SuccessStateProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   title,
   message,
   icon = "checkmark-circle",
   actionLabel,
   onAction,
   confetti = false,
-  style,
-}) => {
+  style}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
   const checkScale = useSharedValue(0);
@@ -585,12 +558,10 @@ export const SuccessState: React.FC<SuccessStateProps> = ({
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }],
-  }));
+    transform: [{ scale: scale.value }]}));
 
   const checkAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: checkScale.value }],
-  }));
+    transform: [{ scale: checkScale.value }]}));
 
   return (
     <AnimatedView style={[styles.successContainer, containerAnimatedStyle, style]}>
@@ -646,8 +617,7 @@ export const OfflineBanner: React.FC<OfflineBannerProps> = ({ visible, onRetry, 
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
-    opacity: opacity.value,
-  }));
+    opacity: opacity.value}));
 
   if (!visible) {
     return null;
@@ -674,110 +644,90 @@ const useStyles = createStyles((colors) => ({
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10],
-  },
+    padding: DesignTokens.spacing[10]},
   emptyIconContainer: {
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   emptyIconCircle: {
     width: 120,
     height: 120,
     borderRadius: 60,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   emptyDescription: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   emptyAction: {
     borderRadius: 24,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   emptyActionGradient: {
     paddingHorizontal: Spacing.xl,
     paddingVertical: DesignTokens.spacing['3.5'],
-    borderRadius: 24,
-  },
+    borderRadius: 24},
   emptyActionText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   emptySecondaryAction: {
     marginTop: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['2.5'],
-  },
+    paddingVertical: DesignTokens.spacing['2.5']},
   emptySecondaryText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.primary[500],
-    fontWeight: "500",
-  },
+    fontWeight: "500"},
   errorContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10],
-  },
+    padding: DesignTokens.spacing[10]},
   errorIllustration: {
     marginBottom: Spacing.lg,
-    alignItems: "center",
-  },
+    alignItems: "center"},
   errorIconContainer: {
     width: 100,
     height: 100,
     borderRadius: 50,
     backgroundColor: `${Colors.error[500]}15`,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   errorDecorations: {
     position: "absolute",
     width: 140,
-    height: 140,
-  },
+    height: 140},
   errorDot: {
     position: "absolute",
     width: Spacing.sm,
     height: Spacing.sm,
     borderRadius: 4,
-    backgroundColor: Colors.error[300],
-  },
+    backgroundColor: Colors.error[300]},
   errorDot1: {
     top: DesignTokens.spacing['2.5'],
-    left: DesignTokens.spacing[5],
-  },
+    left: DesignTokens.spacing[5]},
   errorDot2: {
     top: 30,
-    right: 15,
-  },
+    right: 15},
   errorDot3: {
     bottom: DesignTokens.spacing[5],
-    left: 30,
-  },
+    left: 30},
   errorTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   errorMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.md,
-  },
+    marginBottom: Spacing.md},
   errorCodeContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -785,23 +735,19 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: 8,
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   errorCodeLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
-    marginRight: Spacing.sm,
-  },
+    marginRight: Spacing.sm},
   errorCodeValue: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: Colors.neutral[700],
-    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
-  },
+    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace"},
   errorActions: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3],
-  },
+    gap: DesignTokens.spacing[3]},
   retryButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -809,13 +755,11 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: Colors.primary[500],
     paddingHorizontal: Spacing.lg,
     paddingVertical: DesignTokens.spacing[3],
-    borderRadius: 24,
-  },
+    borderRadius: 24},
   retryText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   reportButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -823,36 +767,30 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: Colors.neutral[100],
     paddingHorizontal: Spacing.lg,
     paddingVertical: DesignTokens.spacing[3],
-    borderRadius: 24,
-  },
+    borderRadius: 24},
   reportText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: Colors.neutral[600],
-  },
+    color: Colors.neutral[600]},
   networkContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10],
-  },
+    padding: DesignTokens.spacing[10]},
   networkIconContainer: {
     marginBottom: Spacing.lg,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   networkIconBg: {
     width: 100,
     height: 100,
     borderRadius: 50,
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   networkWaves: {
     position: "absolute",
     width: 160,
-    height: 160,
-  },
+    height: 160},
   networkWave: {
     position: "absolute",
     width: DesignTokens.spacing[10],
@@ -860,84 +798,70 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 20,
     borderWidth: 2,
     borderColor: Colors.neutral[300],
-    opacity: 0.5,
-  },
+    opacity: 0.5},
   networkWave1: {
     top: 0,
-    right: 0,
-  },
+    right: 0},
   networkWave2: {
     bottom: DesignTokens.spacing[5],
     left: DesignTokens.spacing['2.5'],
     width: 30,
     height: 30,
-    borderRadius: 15,
-  },
+    borderRadius: 15},
   networkWave3: {
     top: 30,
     left: 0,
     width: 25,
     height: 25,
-    borderRadius: 12.5,
-  },
+    borderRadius: 12.5},
   networkTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   networkMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   networkActions: {
     alignItems: "center",
-    gap: DesignTokens.spacing[3],
-  },
+    gap: DesignTokens.spacing[3]},
   networkRetryButton: {
     borderRadius: 24,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   networkRetryGradient: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
     paddingHorizontal: Spacing.lg,
     paddingVertical: DesignTokens.spacing[3],
-    borderRadius: 24,
-  },
+    borderRadius: 24},
   networkRetryText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   networkSettingsButton: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
-    paddingVertical: DesignTokens.spacing['2.5'],
-  },
+    paddingVertical: DesignTokens.spacing['2.5']},
   networkSettingsText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[600],
-    fontWeight: "500",
-  },
+    fontWeight: "500"},
   maintenanceContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10],
-  },
+    padding: DesignTokens.spacing[10]},
   maintenanceIconContainer: {
     width: 100,
     height: 100,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   maintenanceTools: {
     position: "absolute",
     bottom: 0,
@@ -947,22 +871,19 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 18,
     backgroundColor: `${Colors.warning[500]}20`,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   maintenanceTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   maintenanceMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.md,
-  },
+    marginBottom: Spacing.md},
   estimatedTimeContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -971,35 +892,29 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: Spacing.md,
     paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 12,
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   estimatedTimeText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[600],
-  },
+    color: Colors.neutral[600]},
   maintenanceTips: {
     backgroundColor: Colors.neutral[50],
     padding: Spacing.md,
     borderRadius: 12,
-    width: "100%",
-  },
+    width: "100%"},
   maintenanceTipsTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: Colors.neutral[700],
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   maintenanceTip: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: Colors.neutral[500],
     lineHeight: 20,
-    marginBottom: Spacing.xs,
-  },
+    marginBottom: Spacing.xs},
   permissionContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10],
-  },
+    padding: DesignTokens.spacing[10]},
   permissionIconContainer: {
     width: 100,
     height: 100,
@@ -1007,8 +922,7 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: Colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   permissionLock: {
     position: "absolute",
     bottom: 0,
@@ -1023,121 +937,100 @@ const useStyles = createStyles((colors) => ({
     shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 4,
-  },
+    elevation: 4},
   permissionTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   permissionMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   permissionButton: {
     borderRadius: 24,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   permissionButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
     paddingHorizontal: Spacing.lg,
     paddingVertical: DesignTokens.spacing[3],
-    borderRadius: 24,
-  },
+    borderRadius: 24},
   permissionButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   successContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10],
-  },
+    padding: DesignTokens.spacing[10]},
   successIconContainer: {
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   successIconGradient: {
     width: Spacing['4xl'],
     height: Spacing['4xl'],
     borderRadius: 40,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   successTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   successMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   successAction: {
-    paddingVertical: DesignTokens.spacing[3],
-  },
+    paddingVertical: DesignTokens.spacing[3]},
   successActionText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.primary[500],
-    fontWeight: "600",
-  },
+    fontWeight: "600"},
   confettiContainer: {
     ...StyleSheet.absoluteFillObject,
-    overflow: "hidden",
-  },
+    overflow: "hidden"},
   confetti: {
     position: "absolute",
     width: DesignTokens.spacing['2.5'],
     height: DesignTokens.spacing['2.5'],
     borderRadius: 2,
-    top: -20,
-  },
+    top: -20},
   offlineBanner: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     paddingTop: Platform.OS === "ios" ? 50 : 30,
-    zIndex: 100,
-  },
+    zIndex: 100},
   offlineContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: Spacing.sm,
     paddingVertical: DesignTokens.spacing['2.5'],
-    backgroundColor: Colors.warning[50],
-  },
+    backgroundColor: Colors.warning[50]},
   offlineText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: Colors.warning[700],
-    fontWeight: "500",
-  },
+    fontWeight: "500"},
   offlineRetry: {
     marginLeft: Spacing.sm,
     paddingHorizontal: DesignTokens.spacing[3],
     paddingVertical: Spacing.xs,
     backgroundColor: Colors.warning[500],
-    borderRadius: 12,
-  },
+    borderRadius: 12},
   offlineRetryText: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textInverse,
-    fontWeight: "600",
-  },
-}))
+    fontWeight: "600"}}))
 
 export default {
   EmptyState,
@@ -1146,5 +1039,4 @@ export default {
   MaintenanceScreen,
   PermissionDenied,
   SuccessState,
-  OfflineBanner,
-};
+  OfflineBanner};

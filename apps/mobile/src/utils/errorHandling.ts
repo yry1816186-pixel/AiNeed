@@ -5,7 +5,7 @@
  */
 
 import * as Sentry from "@sentry/react-native";
-import { logger } from "./logger";
+import { logger } from "../shared/utils/logger";
 
 // ============================================================================
 // 错误类型定义

@@ -172,7 +172,7 @@ export const OutfitPlanScreen: React.FC = () => {
               {outfit.items.map((item, itemIdx) => (
                 <TouchableOpacity key={`item-${itemIdx}`} style={s.itemCard}>
                   {item.imageUrl ? (
-                    <Image source={{ uri: item.imageUrl }} style={s.itemImage} resizeMode="cover" />
+                    <Image source={{ uri: item.imageUrl }} style={s.itemImage as any} resizeMode="cover" />
                   ) : (
                     <View style={s.itemImagePlaceholder}>
                       <Ionicons name="shirt-outline" size={24} color={colors.textTertiary} />
@@ -217,7 +217,7 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary },
   backBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing.xl},
   loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
@@ -273,7 +273,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     marginBottom: DesignTokens.spacing[3],
   },
-  outfitTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: colors.text },
+  outfitTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: colors.textPrimary },
   outfitPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
   itemsGrid: { flexDirection: "row", flexWrap: "wrap", gap: DesignTokens.spacing['2.5']},
   itemCard: {

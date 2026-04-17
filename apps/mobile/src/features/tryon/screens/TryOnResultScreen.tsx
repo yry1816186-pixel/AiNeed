@@ -9,6 +9,7 @@ import {
   ScrollView,
   Alert,
   Dimensions,
+  ImageStyle,
 } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -188,7 +189,7 @@ export const TryOnResultScreen: React.FC = () => {
               {result?.photo?.thumbnailUrl ? (
                 <Image
                   source={{ uri: result.photo.thumbnailUrl }}
-                  style={s.comparisonImage}
+                  style={s.comparisonImage as ImageStyle}
                   resizeMode="cover"
                 />
               ) : (
@@ -212,7 +213,7 @@ export const TryOnResultScreen: React.FC = () => {
               {isComplete && result?.resultImageUrl ? (
                 <Image
                   source={{ uri: result.resultImageUrl }}
-                  style={s.comparisonImage}
+                  style={s.comparisonImage as ImageStyle}
                   resizeMode="cover"
                 />
               ) : isProcessing ? (
@@ -240,7 +241,7 @@ export const TryOnResultScreen: React.FC = () => {
               {result.item.mainImage && (
                 <Image
                   source={{ uri: result.item.mainImage }}
-                  style={s.itemThumb}
+                  style={s.itemThumb as ImageStyle}
                   resizeMode="cover"
                 />
               )}
@@ -301,7 +302,7 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary },
   iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing.xl},
   loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
@@ -377,7 +378,7 @@ const s = StyleSheet.create({
     backgroundColor: colors.placeholderBg,
   },
   itemDetails: { marginLeft: DesignTokens.spacing[3], flex: 1 },
-  itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.text },
+  itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary },
   actionRow: { flexDirection: "row", gap: DesignTokens.spacing['2.5'], justifyContent: "center", flexWrap: "wrap" },
   actionBtnOutline: {
     flexDirection: "row",

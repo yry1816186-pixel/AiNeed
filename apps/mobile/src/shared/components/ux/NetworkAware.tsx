@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
-import { Ionicons } from "../../../polyfills/expo-vector-icons.ts";
+import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
 import { Colors, Spacing, Typography, ZIndex } from '../../../design-system/theme';
 

@@ -39,7 +39,7 @@ export const useRecommendationStore = create<RecommendationState>((set) => ({
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
   clearError: () => set({ error: null }),
-  clear: () => set({ recommendations: [], similarItems: [], outfitRecommendations: [], error: null }),
+  clear: () => set({ recommendations: [], similarItems: [], outfitRecommendations: {}, error: null }),
 
   fetchRecommendations: async (category = "daily", page = 1, pageSize = 10) => {
     set({ isLoading: true, error: null });

@@ -7,18 +7,16 @@ import {
   Image,
   FlatList,
   RefreshControl,
-  Alert,
-} from "react-native";
+  Alert} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { tryOnApi, type TryOnResult } from '../../../services/api/tryon.api';
-import { colors } from '../../../design-system/theme/tokens/colors';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { typography } from '../../../design-system/theme/tokens/typography';
 import { spacing } from '../../../design-system/theme/tokens/spacing';
 import { shadows } from '../../../design-system/theme/tokens/shadows';
-import { Spacing, flatColors as} from '../../../design-system/theme';
+import {Spacing} from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 
@@ -97,8 +95,7 @@ export const TryOnHistoryScreen: React.FC = () => {
           await tryOnApi.deleteTryOn(id);
           setItems((prev) => prev.filter((item) => item.id !== id));
           setTotal((prev) => prev - 1);
-        },
-      },
+        }},
     ]);
   }, []);
 
@@ -151,8 +148,7 @@ export const TryOnHistoryScreen: React.FC = () => {
           <View style={styles.card}>
             <Image
               source={{
-                uri: item.resultImageDataUri ?? item.resultImageUrl ?? item.item?.mainImage ?? "",
-              }}
+                uri: item.resultImageDataUri ?? item.resultImageUrl ?? item.item?.mainImage ?? ""}}
               style={styles.cardImage}
             />
             <View style={styles.cardContent}>
@@ -235,115 +231,95 @@ export const TryOnHistoryScreen: React.FC = () => {
 const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral[50],
-  },
+    backgroundColor: colors.neutral[50]},
   tabBar: {
     flexDirection: "row",
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: DesignTokens.spacing[3],
-    gap: Spacing.sm,
-  },
+    gap: Spacing.sm},
   tab: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: 20,
-    backgroundColor: colors.neutral[100],
-  },
+    backgroundColor: colors.neutral[100]},
   tabActive: {
-    backgroundColor: colors.brand.warmPrimary,
-  },
+    backgroundColor: colors.brand.warmPrimary},
   tabText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
-    color: colors.neutral[600],
-  },
+    color: colors.neutral[600]},
   tabTextActive: {
     color: colors.textInverse,
-    fontWeight: typography.fontWeight.bold,
-  },
+    fontWeight: typography.fontWeight.bold},
   listContent: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingBottom: DesignTokens.spacing[10],
-  },
+    paddingBottom: DesignTokens.spacing[10]},
   card: {
     flexDirection: "row",
     backgroundColor: colors.neutral.white,
     borderRadius: spacing.borderRadius.xl,
     padding: DesignTokens.spacing[3],
     marginBottom: DesignTokens.spacing[3],
-    ...shadows.presets.md,
-  },
+    ...shadows.presets.md},
   cardImage: {
     width: Spacing['4xl'],
     height: 100,
     borderRadius: spacing.borderRadius.lg,
     resizeMode: "cover",
-    backgroundColor: colors.neutral[100],
-  },
+    backgroundColor: colors.neutral[100]},
   cardContent: {
     flex: 1,
     marginLeft: DesignTokens.spacing[3],
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   cardTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[900],
-    marginBottom: Spacing.xs,
-  },
+    marginBottom: Spacing.xs},
   cardDate: {
     fontSize: typography.fontSize.xs,
     color: colors.neutral[500],
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   statusBadge: {
     alignSelf: "flex-start",
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
-    borderRadius: 10,
-  },
+    borderRadius: 10},
   statusText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textInverse,
-  },
+    color: colors.textInverse},
   cardActions: {
     justifyContent: "center",
-    gap: Spacing.sm,
-  },
+    gap: Spacing.sm},
   retryButton: {
     width: DesignTokens.spacing[9],
     height: DesignTokens.spacing[9],
     borderRadius: 18,
     backgroundColor: colors.warmPrimary.ocean[50],
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   deleteButton: {
     width: DesignTokens.spacing[9],
     height: DesignTokens.spacing[9],
     borderRadius: 18,
     backgroundColor: colors.semantic.error.light,
     alignItems: "center",
-    justifyContent: "center",
-  },
+    justifyContent: "center"},
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: Spacing['4xl'],
-  },
+    paddingTop: Spacing['4xl']},
   emptyTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[700],
-    marginTop: Spacing.md,
-  },
+    marginTop: Spacing.md},
   emptySubtitle: {
     fontSize: typography.fontSize.base,
     color: colors.neutral[500],
     marginTop: DesignTokens.spacing['1.5'],
-    marginBottom: Spacing.lg,
-  },
+    marginBottom: Spacing.lg},
   emptyButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -352,13 +328,10 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: Spacing.lg,
     paddingVertical: DesignTokens.spacing[3],
     borderRadius: spacing.borderRadius.xl,
-    ...shadows.presets.md,
-  },
+    ...shadows.presets.md},
   emptyButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textInverse,
-  },
-}))
+    color: colors.textInverse}}))
 
 export default TryOnHistoryScreen;

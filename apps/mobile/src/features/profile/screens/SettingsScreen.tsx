@@ -467,7 +467,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: '600', color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: '600', color: colors.textPrimary },
   placeholder: { width: DesignTokens.spacing[10] },
   content: { flex: 1 },
   sectionTitle: {
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.divider,
   },
   settingItemLast: { borderBottomWidth: 0 },
-  settingText: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
+  settingText: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary },
   dangerButton: { borderBottomWidth: 0 },
   footer: {
     alignItems: 'center',

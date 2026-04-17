@@ -17,7 +17,7 @@ import Animated, {
   withSpring,
   withSequence,
 } from "react-native-reanimated";
-import { Colors, Typography, Spacing, BorderRadius, Shadows, SpringConfigs, flatColors as colors, DesignTokens } from '../../design-system/theme';
+import { Colors, Typography, Spacing, BorderRadius, Shadows, SpringConfigs, DesignTokens } from '../../design-system/theme';
 import { Skeleton as SkeletonBase } from "../skeleton/Skeleton";
 import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 
@@ -460,7 +460,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   borderRadius = BorderRadius.md,
   style,
 }) => {
-  return <SkeletonBase width={width} height={height} borderRadius={borderRadius} style={style} />;
+  return <SkeletonBase width={width ?? undefined} height={height} borderRadius={borderRadius} style={style} />;
 };
 
 /** @deprecated 使用 ui/Badge 替代 */

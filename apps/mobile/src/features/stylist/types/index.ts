@@ -4,5 +4,3 @@ export type {
   AiModelConfig,
   AiModelResponse,
 } from "@xuno/types";
-
-export { AiStylistSessionStatus, AnalysisStatus } from "@xuno/types";

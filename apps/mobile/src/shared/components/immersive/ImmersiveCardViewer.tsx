@@ -26,7 +26,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 
@@ -87,6 +87,8 @@ const SingleCard: React.FC<{
   onDislike: () => void;
   onItemClick: (item: OutfitItem) => void;
 }> = ({ card, index, currentIndex, translateY, onLike, onDislike, onItemClick }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const isActive = index === currentIndex;
   const scale = useSharedValue(1);
   const likeOpacity = useSharedValue(0);
@@ -161,8 +163,6 @@ const SingleCard: React.FC<{
     });
 
   const handleItemPress = useCallback((item: OutfitItem) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     setSelectedItem(item);
     itemModalVisible.value = withTiming(1, { duration: 300 });
     onItemClick(item);

@@ -6,7 +6,7 @@ import {
   type CameraOptions,
   type ImageLibraryOptions,
 } from "react-native-image-picker";
-import { Ionicons } from "../../../../polyfills/expo-vector-icons.ts";
+import { Ionicons } from '../../../../polyfills/expo-vector-icons';
 import Animated, { SlideInRight } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius, flatColors as colors } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';

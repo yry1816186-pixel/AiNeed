@@ -1,13 +1,13 @@
-﻿import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { StyleSheet, Alert, useWindowDimensions } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTranslation } from '../../../i18n';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { communityApi } from '../../../services/api/community.api';
-import { TrendingCard } from '../../../components/community/TrendingCard';
-import { CreatePostModal } from '../../../components/community/CreatePostModal';
-import type { PostCardData } from '../../../components/community/PostMasonryCard';
+import { TrendingCard } from '../components/TrendingCard';
+import { CreatePostModal } from '../components/CreatePostModal';
+import type { PostCardData } from '../components/PostMasonryCard';
 import { CommunityHeader } from './CommunityHeader';
 import { CommunityFeed } from './CommunityFeed';
 import { CreatePostFab } from './CreatePostFab';

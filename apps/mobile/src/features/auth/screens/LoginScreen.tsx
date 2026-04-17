@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,15 @@ import {
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  withRepeat,
+  withSequence,
+  withDelay,
+} from "react-native-reanimated";
 import { authApi } from '../../../services/api/auth.api';
 import { useTranslation } from '../../../i18n';
 
@@ -20,7 +29,7 @@ import { wechatAuth } from '../../../services/auth/wechat';
 import { useAuthStore } from '../stores/index';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
+import { flatColors as colors, Spacing, theme } from '../../../design-system/theme';
 import type { RootStackParamList } from '../../../types/navigation';
 
 
@@ -30,12 +39,68 @@ export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginNavigationProp>();
   const { setUser, setToken, onboardingCompleted } = useAuthStore();
   const t = useTranslation();
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [wechatLoading, setWechatLoading] = useState(false);
+
+  // ── Entrance animations ──────────────────────────────────────────
+  const brandOpacity = useSharedValue(0);
+  const brandScale = useSharedValue(0.85);
+  const formOpacity = useSharedValue(0);
+  const formTranslateY = useSharedValue(24);
+  const buttonsOpacity = useSharedValue(0);
+  const buttonsTranslateY = useSharedValue(16);
+
+  // ── Logo floating animation ──────────────────────────────────────
+  const logoFloatY = useSharedValue(0);
+
+  useEffect(() => {
+    // Brand: fade in + scale up with spring
+    brandOpacity.value = withTiming(1, { duration: 500 });
+    brandScale.value = withSpring(1, { damping: 14, stiffness: 100 });
+
+    // Form: staggered fade in + slide up
+    formOpacity.value = withDelay(250, withTiming(1, { duration: 450 }));
+    formTranslateY.value = withDelay(250, withSpring(0, { damping: 16, stiffness: 90 }));
+
+    // Buttons: fade in after form
+    buttonsOpacity.value = withDelay(500, withTiming(1, { duration: 400 }));
+    buttonsTranslateY.value = withDelay(500, withSpring(0, { damping: 16, stiffness: 90 }));
+
+    // Logo floating: gentle up-down, 5px amplitude, 3s period
+    logoFloatY.value = withRepeat(
+      withSequence(
+        withTiming(-5, { duration: 1500 }),
+        withTiming(5, { duration: 1500 }),
+      ),
+      -1, // infinite
+      true, // reverse
+    );
+  }, []);
+
+  const brandAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: brandOpacity.value,
+    transform: [{ scale: brandScale.value }],
+  }));
+
+  const formAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: formOpacity.value,
+    transform: [{ translateY: formTranslateY.value }],
+  }));
+
+  const buttonsAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: buttonsOpacity.value,
+    transform: [{ translateY: buttonsTranslateY.value }],
+  }));
+
+  const logoAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: logoFloatY.value }],
+  }));
 
   const validateInputs = useCallback((): string | null => {
     const trimmedEmail = email.trim();
@@ -215,25 +280,34 @@ export const LoginScreen: React.FC = () => {
             disabled={isLoading || wechatLoading}
             accessibilityLabel={t.common.back}
           >
-            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+            <Ionicons name="arrow-back" size={24} color={themeColors.textPrimary} />
           </TouchableOpacity>
         </View>
         <View style={styles.content}>
-          <View style={styles.brandSection}>
-            <View style={styles.logoContainer}>
-              <Ionicons name="shirt-outline" size={36} color={colors.surface} />
-            </View>
+          {/* Brand section with entrance animation */}
+          <Animated.View style={[styles.brandSection, brandAnimatedStyle]}>
+            <Animated.View style={logoAnimatedStyle}>
+              <View style={styles.logoContainer}>
+                <Ionicons name="shirt-outline" size={36} color={themeColors.surface} />
+              </View>
+            </Animated.View>
             <Text style={styles.brandName}>寻裳</Text>
-          </View>
-          <Text style={styles.title}>{t.auth.login}</Text>
-          <Text style={styles.subtitle}>{t.auth.login}</Text>
-          <View style={styles.form}>
+          </Animated.View>
+
+          {/* Title & subtitle with form entrance animation */}
+          <Animated.View style={formAnimatedStyle}>
+            <Text style={styles.title}>{t.auth.login}</Text>
+            <Text style={styles.subtitle}>{t.auth.login}</Text>
+          </Animated.View>
+
+          {/* Form fields with entrance animation */}
+          <Animated.View style={[styles.form, formAnimatedStyle]}>
             <View style={styles.inputGroup}>
-              <Ionicons name="mail-outline" size={20} color={colors.textTertiary} />
+              <Ionicons name="mail-outline" size={20} color={themeColors.textTertiary} />
               <TextInput
                 style={styles.input}
                 placeholder={t.auth.email}
-                placeholderTextColor={colors.textTertiary}
+                placeholderTextColor={themeColors.textTertiary}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -251,11 +325,11 @@ export const LoginScreen: React.FC = () => {
               />
             </View>
             <View style={styles.inputGroup}>
-              <Ionicons name="lock-closed-outline" size={20} color={colors.textTertiary} />
+              <Ionicons name="lock-closed-outline" size={20} color={themeColors.textTertiary} />
               <TextInput
                 style={styles.input}
                 placeholder={t.auth.password}
-                placeholderTextColor={colors.textTertiary}
+                placeholderTextColor={themeColors.textTertiary}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
@@ -276,7 +350,7 @@ export const LoginScreen: React.FC = () => {
                 <Ionicons
                   name={showPassword ? "eye-outline" : "eye-off-outline"}
                   size={20}
-                  color={colors.textTertiary}
+                  color={themeColors.textTertiary}
                 />
               </TouchableOpacity>
             </View>
@@ -299,12 +373,15 @@ export const LoginScreen: React.FC = () => {
               accessibilityRole="button"
             >
               {isLoading ? (
-                <ActivityIndicator size="small" color={colors.surface} />
+                <ActivityIndicator size="small" color={themeColors.surface} />
               ) : (
                 <Text style={styles.loginButtonText}>{t.auth.login}</Text>
               )}
             </TouchableOpacity>
+          </Animated.View>
 
+          {/* Social buttons with delayed entrance animation */}
+          <Animated.View style={buttonsAnimatedStyle}>
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
               <Text style={styles.dividerText}>或</Text>
@@ -320,10 +397,10 @@ export const LoginScreen: React.FC = () => {
               accessibilityRole="button"
             >
               {wechatLoading ? (
-                <ActivityIndicator size="small" color={colors.surface} />
+                <ActivityIndicator size="small" color={themeColors.surface} />
               ) : (
                 <>
-                  <Ionicons name="logo-wechat" size={22} color={colors.surface} />
+                  <Ionicons name="logo-wechat" size={22} color={themeColors.surface} />
                   <Text style={styles.wechatButtonText}>微信一键登录</Text>
                 </>
               )}
@@ -337,7 +414,7 @@ export const LoginScreen: React.FC = () => {
               accessibilityLabel="手机号登录"
               accessibilityRole="button"
             >
-              <Ionicons name="phone-portrait-outline" size={20} color={colors.primary} />
+              <Ionicons name="phone-portrait-outline" size={20} color={themeColors.primary} />
               <Text style={styles.phoneLoginText}>手机号登录</Text>
             </TouchableOpacity>
 
@@ -350,16 +427,16 @@ export const LoginScreen: React.FC = () => {
             >
               <Text style={styles.registerText}>{t.auth.register}</Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         </View>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: { flex: 1, backgroundColor: colors.surface },
-  header: { padding: DesignTokens.spacing[5]},
+  header: { padding: DesignTokens.spacing[5] },
   backButton: {
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
@@ -368,7 +445,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  content: { flex: 1, padding: DesignTokens.spacing[5]},
+  content: { flex: 1, padding: DesignTokens.spacing[5] },
   brandSection: {
     alignItems: "center",
     marginBottom: Spacing.lg,
@@ -388,9 +465,9 @@ const styles = StyleSheet.create({
     color: colors.primary,
     letterSpacing: 1.2,
   },
-  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: colors.text },
-  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: Spacing.sm, marginBottom: Spacing.xl},
-  form: { gap: Spacing.md},
+  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: colors.textPrimary },
+  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: Spacing.sm, marginBottom: Spacing.xl },
+  form: { gap: Spacing.md },
   inputGroup: {
     flexDirection: "row",
     alignItems: "center",
@@ -400,8 +477,8 @@ const styles = StyleSheet.create({
     paddingVertical: DesignTokens.spacing['3.5'],
     gap: DesignTokens.spacing[3],
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
-  eyeButton: { padding: Spacing.xs},
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary },
+  eyeButton: { padding: Spacing.xs },
   forgotPasswordLink: { alignItems: "flex-end" },
   forgotPasswordText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
   loginButton: {
@@ -432,7 +509,7 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
   },
   wechatButton: {
-    backgroundColor: "colors.success", // custom color
+    backgroundColor: colors.success,
     borderRadius: theme.BorderRadius.md,
     paddingVertical: Spacing.md,
     alignItems: "center",
@@ -454,8 +531,8 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   phoneLoginText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.primary },
-  registerLink: { alignItems: "center", marginTop: Spacing.md},
+  registerLink: { alignItems: "center", marginTop: Spacing.md },
   registerText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
-});
+}));
 
 export default LoginScreen;

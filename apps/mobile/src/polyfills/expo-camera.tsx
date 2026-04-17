@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import { View, ViewStyle, StyleSheet } from "react-native";
-import { DesignTokens, flatColors as colors } from '../design-system/theme';
+import { DesignTokens } from '../design-system/theme';
 import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 
 export interface CameraRef {
@@ -23,8 +23,7 @@ export const Camera: React.FC<CameraProps> = ({
   flashMode = "auto",
   onCameraReady,
   onMountError,
-  children,
-}) => {
+  children}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   React.useEffect(() => {
@@ -35,13 +34,13 @@ export const Camera: React.FC<CameraProps> = ({
 };
 
 export const CameraView: React.FC<CameraProps & { facing?: "front" | "back"; flash?: string }> =
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   React.forwardRef(
     (
       { style, facing = "back", flash, flashMode = "auto", onCameraReady, onMountError, children },
       ref
     ) => {
+      const { colors } = useTheme();
+      const styles = useStyles(colors);
       React.useEffect(() => {
         onCameraReady?.();
       }, []);
@@ -49,8 +48,7 @@ export const CameraView: React.FC<CameraProps & { facing?: "front" | "back"; fla
       React.useImperativeHandle(ref, () => ({
         takePictureAsync: async () => {
           return { uri: `file:///tmp/photo_${Date.now()}.jpg` };
-        },
-      }));
+        }}));
 
       return <View style={[styles.camera, style]}>{children}</View>;
     }
@@ -58,15 +56,13 @@ export const CameraView: React.FC<CameraProps & { facing?: "front" | "back"; fla
 
 export const CameraType = {
   front: "front" as const,
-  back: "back" as const,
-};
+  back: "back" as const};
 
 export const FlashMode = {
   on: "on" as const,
   off: "off" as const,
   auto: "auto" as const,
-  torch: "torch" as const,
-};
+  torch: "torch" as const};
 
 export async function requestCameraPermissionsAsync(): Promise<{
   status: string;
@@ -86,9 +82,7 @@ export function useCameraPermissions(): [
 const useStyles = createStyles((colors) => ({
   camera: {
     flex: 1,
-    backgroundColor: colors.neutral[900],
-  },
-}))
+    backgroundColor: colors.neutral[900]}}))
 
 export default {
   Camera,
@@ -96,5 +90,4 @@ export default {
   CameraType,
   FlashMode,
   requestCameraPermissionsAsync,
-  useCameraPermissions,
-};
+  useCameraPermissions};

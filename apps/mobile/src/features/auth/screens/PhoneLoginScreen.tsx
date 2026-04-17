@@ -18,7 +18,7 @@ import { useTranslation } from '../../../i18n';
 import { useAuthStore } from '../stores/index';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
+import { flatColors as colors, Spacing , theme} from '../../../design-system/theme';
 import type { RootStackParamList } from '../../../types/navigation';
 
 
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
     letterSpacing: 1.2,
   },
-  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: colors.text },
+  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: colors.textPrimary },
   subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: Spacing.sm, marginBottom: Spacing.xl},
   form: { gap: Spacing.md},
   inputGroup: {
@@ -338,8 +338,8 @@ const styles = StyleSheet.create({
     paddingVertical: DesignTokens.spacing['3.5'],
     gap: DesignTokens.spacing[3],
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
-  codeInput: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary },
+  codeInput: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary },
   codeButton: {
     paddingHorizontal: DesignTokens.spacing[3],
     paddingVertical: Spacing.sm,

@@ -21,7 +21,7 @@ import { useAuthStore } from '../stores/index';
 import type { ClothingItem } from '../../../types/clothing';
 import type { RootStackParamList } from '../../../types/navigation';
 import { ImageWithPlaceholder } from '../../../shared/components/common/ImageWithPlaceholder';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing } from '../../../design-system/theme';
 
 
 type NavProp = NativeStackNavigationProp<RootStackParamList>;
@@ -44,7 +44,7 @@ const FavoriteItem = memo(function FavoriteItem({ item, onPress, onRemove }: Fav
   return (
     <TouchableOpacity style={styles.card} onPress={() => onPress(item.id)} activeOpacity={0.7}>
       {item.imageUri ? (
-        <ImageWithPlaceholder source={{ uri: item.imageUri }} style={styles.image} />
+        <ImageWithPlaceholder source={{ uri: item.imageUri }} style={styles.image as any} />
       ) : (
         <View style={styles.placeholder}>
           <Ionicons name="shirt-outline" size={40} color={colors.textTertiary} />
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary },
   backBtn: { width: Spacing.xl, height: Spacing.xl, alignItems: "center", justifyContent: "center" },
   list: { padding: Spacing.md},
   emptyList: { flex: 1 },
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   info: { flex: 1, padding: DesignTokens.spacing[3], justifyContent: "center" },
-  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
   brand: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary, marginTop: DesignTokens.spacing['0.5']},
   price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: colors.primary, marginTop: Spacing.xs},
   actions: { justifyContent: "center", paddingRight: DesignTokens.spacing[3]},

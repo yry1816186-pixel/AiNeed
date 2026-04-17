@@ -5,8 +5,7 @@ import React, {
   useState,
   createContext,
   useContext,
-  ReactNode,
-} from "react";
+  ReactNode} from "react";
 import {
   View,
   Text,
@@ -19,8 +18,7 @@ import {
   Animated,
   StyleProp,
   ViewStyle,
-  LayoutChangeEvent,
-} from "react-native";
+  LayoutChangeEvent} from "react-native";
 
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -38,10 +36,9 @@ import {
   SharedValue,
   useDerivedValue,
   cancelAnimation,
-  withDecay,
-} from "react-native-reanimated";
+  withDecay} from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors, Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Colors, Spacing } from '../../../design-system/theme';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
@@ -53,14 +50,12 @@ const _AnimatedImage = AnimatedReanimated.createAnimatedComponent(Image);
 const springConfig = {
   damping: 20,
   stiffness: 200,
-  mass: 0.8,
-};
+  mass: 0.8};
 
 const transitionSpringConfig = {
   damping: 25,
   stiffness: 180,
-  mass: 1,
-};
+  mass: 1};
 
 type TransitionType =
   | "fade"
@@ -130,8 +125,7 @@ export const TransitionProvider: React.FC<TransitionProviderProps> = ({ children
         currentTransition,
         transitionType,
         startTransition,
-        endTransition,
-      }}
+        endTransition}}
     >
       {children}
     </TransitionContext.Provider>
@@ -176,8 +170,7 @@ export const SharedElement: React.FC<SharedElementTransitionProps> = ({
   children,
   sharedId,
   style,
-  isActive = false,
-}) => {
+  isActive = false}) => {
   const elementRef = useRef<View>(null);
   const context = useSharedElement();
   const scale = useSharedValue(1);
@@ -193,8 +186,7 @@ export const SharedElement: React.FC<SharedElementTransitionProps> = ({
             width,
             height,
             pageX,
-            pageY,
-          });
+            pageY});
         });
       }
     },
@@ -211,8 +203,7 @@ export const SharedElement: React.FC<SharedElementTransitionProps> = ({
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
-    opacity: opacity.value,
-  }));
+    opacity: opacity.value}));
 
   return (
     <AnimatedView ref={elementRef} style={[style, animatedStyle]} onLayout={onLayout}>
@@ -232,8 +223,7 @@ export const FadeTransition: React.FC<FadeTransitionProps> = ({
   children,
   visible,
   duration = 300,
-  style,
-}) => {
+  style}) => {
   const opacity = useSharedValue(visible ? 1 : 0);
   const scale = useSharedValue(visible ? 1 : 0.95);
   const { reducedMotion } = useReducedMotion();
@@ -246,8 +236,7 @@ export const FadeTransition: React.FC<FadeTransitionProps> = ({
       } else {
         opacity.value = withTiming(1, {
           duration,
-          easing: Easing.out(Easing.ease),
-        });
+          easing: Easing.out(Easing.ease)});
         scale.value = withSpring(1, springConfig);
       }
     } else {
@@ -257,8 +246,7 @@ export const FadeTransition: React.FC<FadeTransitionProps> = ({
       } else {
         opacity.value = withTiming(0, {
           duration: duration * 0.7,
-          easing: Easing.in(Easing.ease),
-        });
+          easing: Easing.in(Easing.ease)});
         scale.value = withTiming(0.95, { duration: duration * 0.7 });
       }
     }
@@ -266,8 +254,7 @@ export const FadeTransition: React.FC<FadeTransitionProps> = ({
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }],
-  }));
+    transform: [{ scale: scale.value }]}));
 
   return <AnimatedView style={[style, animatedStyle]}>{children}</AnimatedView>;
 };
@@ -285,8 +272,7 @@ export const SlideTransition: React.FC<SlideTransitionProps> = ({
   visible,
   direction = "right",
   duration = 350,
-  style,
-}) => {
+  style}) => {
   const translateValue = useSharedValue(visible ? 0 : SCREEN_WIDTH);
   const opacity = useSharedValue(visible ? 1 : 0);
   const { reducedMotion } = useReducedMotion();
@@ -322,8 +308,7 @@ export const SlideTransition: React.FC<SlideTransitionProps> = ({
       } else {
         translateValue.value = withTiming(getInitialValue(), {
           duration,
-          easing: Easing.in(Easing.ease),
-        });
+          easing: Easing.in(Easing.ease)});
         opacity.value = withTiming(0, { duration: duration * 0.3 });
       }
     }
@@ -341,8 +326,7 @@ export const SlideTransition: React.FC<SlideTransitionProps> = ({
     }
     return {
       opacity: opacity.value,
-      transform: [transform as { translateX: number } | { translateY: number }],
-    };
+      transform: [transform as { translateX: number } | { translateY: number }]};
   });
 
   return <AnimatedView style={[style, animatedStyle]}>{children}</AnimatedView>;
@@ -363,8 +347,7 @@ export const ScaleTransition: React.FC<ScaleTransitionProps> = ({
   fromScale = 0.8,
   toScale = 1,
   duration = 300,
-  style,
-}) => {
+  style}) => {
   const scale = useSharedValue(visible ? toScale : fromScale);
   const opacity = useSharedValue(visible ? 1 : 0);
   const { reducedMotion } = useReducedMotion();
@@ -385,8 +368,7 @@ export const ScaleTransition: React.FC<ScaleTransitionProps> = ({
       } else {
         scale.value = withTiming(fromScale, {
           duration,
-          easing: Easing.in(Easing.ease),
-        });
+          easing: Easing.in(Easing.ease)});
         opacity.value = withTiming(0, { duration: duration * 0.4 });
       }
     }
@@ -394,8 +376,7 @@ export const ScaleTransition: React.FC<ScaleTransitionProps> = ({
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
-    opacity: opacity.value,
-  }));
+    opacity: opacity.value}));
 
   return <AnimatedView style={[style, animatedStyle]}>{children}</AnimatedView>;
 };
@@ -413,8 +394,7 @@ export const FlipTransition: React.FC<FlipTransitionProps> = ({
   visible,
   direction = "horizontal",
   duration = 500,
-  style,
-}) => {
+  style}) => {
   const rotateValue = useSharedValue(visible ? 0 : 180);
   const opacity = useSharedValue(visible ? 1 : 0);
   const { reducedMotion } = useReducedMotion();
@@ -435,8 +415,7 @@ export const FlipTransition: React.FC<FlipTransitionProps> = ({
       } else {
         rotateValue.value = withTiming(180, {
           duration,
-          easing: Easing.inOut(Easing.ease),
-        });
+          easing: Easing.inOut(Easing.ease)});
         opacity.value = withTiming(0, { duration: duration * 0.2 });
       }
     }
@@ -449,8 +428,7 @@ export const FlipTransition: React.FC<FlipTransitionProps> = ({
       direction === "horizontal"
         ? { rotateY: `${rotateValue.value}deg` }
         : { rotateX: `${rotateValue.value}deg` },
-    ],
-  }));
+    ]}));
 
   return <AnimatedView style={[style, animatedStyle]}>{children}</AnimatedView>;
 };
@@ -472,8 +450,9 @@ export const ModalTransition: React.FC<ModalTransitionProps> = ({
   style,
   backdropOpacity = 0.5,
   enableGestureClose = true,
-  snapPoints = [0.9, 0.5, 0],
-}) => {
+  snapPoints = [0.9, 0.5, 0]}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdrop = useSharedValue(0);
   const modalScale = useSharedValue(0.9);
@@ -532,12 +511,10 @@ export const ModalTransition: React.FC<ModalTransitionProps> = ({
     });
 
   const modalAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }, { scale: modalScale.value }],
-  }));
+    transform: [{ translateY: translateY.value }, { scale: modalScale.value }]}));
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: backdrop.value,
-  }));
+    opacity: backdrop.value}));
 
   const handleBackdropPress = () => {
   const { colors } = useTheme();
@@ -581,8 +558,6 @@ export interface BottomSheetTransitionProps {
 }
 
 export const BottomSheetTransition: React.FC<BottomSheetTransitionProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   visible,
   onClose,
   children,
@@ -591,8 +566,9 @@ export const BottomSheetTransition: React.FC<BottomSheetTransitionProps> = ({
   enablePanDownToClose = true,
   style,
   backdropComponent,
-  handleComponent,
-}) => {
+  handleComponent}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const animatedPosition = useSharedValue(1);
   const _currentPosition = useSharedValue(snapPoints[initialSnap]);
   const backdropOpacity = useSharedValue(0);
@@ -665,12 +641,10 @@ export const BottomSheetTransition: React.FC<BottomSheetTransitionProps> = ({
     });
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: animatedPosition.value }],
-  }));
+    transform: [{ translateY: animatedPosition.value }]}));
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: backdropOpacity.value,
-  }));
+    opacity: backdropOpacity.value}));
 
   const defaultHandle = (
     <View style={styles.sheetHandleContainer}>
@@ -710,8 +684,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
   children,
   from = "slide",
   duration = 350,
-  style,
-}) => {
+  style}) => {
   const opacity = useSharedValue(0);
   const translateX = useSharedValue(from === "slide" ? SCREEN_WIDTH * 0.1 : 0);
   const scale = useSharedValue(from === "scale" ? 0.95 : 1);
@@ -727,8 +700,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
     } else {
       opacity.value = withTiming(1, {
         duration,
-        easing: Easing.out(Easing.ease),
-      });
+        easing: Easing.out(Easing.ease)});
       translateX.value = withSpring(0, springConfig);
       scale.value = withSpring(1, springConfig);
       rotateY.value = withSpring(0, springConfig);
@@ -742,8 +714,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
       { scale: scale.value },
       { perspective: 1000 },
       { rotateY: `${rotateY.value}deg` },
-    ],
-  }));
+    ]}));
 
   return <AnimatedView style={[style, animatedStyle]}>{children}</AnimatedView>;
 };
@@ -769,8 +740,7 @@ const StaggerTransitionItem: React.FC<StaggerTransitionItemProps> = ({
   visible,
   index,
   staggerDelay,
-  direction,
-}) => {
+  direction}) => {
   const translateValue = useSharedValue(visible ? 0 : 30);
   const opacity = useSharedValue(visible ? 1 : 0);
   const { reducedMotion } = useReducedMotion();
@@ -813,8 +783,7 @@ const StaggerTransitionItem: React.FC<StaggerTransitionItemProps> = ({
 
     return {
       opacity: opacity.value,
-      transform: [transform as { translateX: number } | { translateY: number }],
-    };
+      transform: [transform as { translateX: number } | { translateY: number }]};
   });
 
   return <AnimatedView style={animatedStyle}>{child}</AnimatedView>;
@@ -825,8 +794,7 @@ export const StaggerTransition: React.FC<StaggerTransitionProps> = ({
   visible,
   staggerDelay = 80,
   direction = "up",
-  style,
-}) => {
+  style}) => {
   const childArray = React.Children.toArray(children);
 
   return (
@@ -854,14 +822,13 @@ export interface CrossFadeTransitionProps {
 }
 
 export const CrossFadeTransition: React.FC<CrossFadeTransitionProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   from,
   to,
   progress,
   duration = 300,
-  style,
-}) => {
+  style}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const fromOpacity = useSharedValue(1 - progress);
   const toOpacity = useSharedValue(progress);
   const fromScale = useSharedValue(1 - progress * 0.05);
@@ -876,13 +843,11 @@ export const CrossFadeTransition: React.FC<CrossFadeTransitionProps> = ({
 
   const fromAnimatedStyle = useAnimatedStyle(() => ({
     opacity: fromOpacity.value,
-    transform: [{ scale: fromScale.value }],
-  }));
+    transform: [{ scale: fromScale.value }]}));
 
   const toAnimatedStyle = useAnimatedStyle(() => ({
     opacity: toOpacity.value,
-    transform: [{ scale: toScale.value }],
-  }));
+    transform: [{ scale: toScale.value }]}));
 
   return (
     <View style={[styles.crossFadeContainer, style]}>
@@ -902,15 +867,14 @@ export interface HeroTransitionProps {
 }
 
 export const HeroTransition: React.FC<HeroTransitionProps> = ({
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   children,
   sourceImage,
   sourceStyle,
   targetStyle,
   visible,
-  duration = 400,
-}) => {
+  duration = 400}) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(visible ? 1 : 0.5);
   const opacity = useSharedValue(visible ? 1 : 0);
   const borderRadius = useSharedValue(visible ? 0 : 20);
@@ -935,8 +899,7 @@ export const HeroTransition: React.FC<HeroTransitionProps> = ({
       } else {
         scale.value = withTiming(0.5, {
           duration,
-          easing: Easing.in(Easing.ease),
-        });
+          easing: Easing.in(Easing.ease)});
         opacity.value = withTiming(0, { duration: duration * 0.3 });
         borderRadius.value = withTiming(20, { duration });
       }
@@ -946,8 +909,7 @@ export const HeroTransition: React.FC<HeroTransitionProps> = ({
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
     opacity: opacity.value,
-    borderRadius: borderRadius.value,
-  }));
+    borderRadius: borderRadius.value}));
 
   return <AnimatedView style={[styles.heroContainer, animatedStyle]}>{children}</AnimatedView>;
 };
@@ -955,22 +917,18 @@ export const HeroTransition: React.FC<HeroTransitionProps> = ({
 const useStyles = createStyles((colors) => ({
   modalContainer: {
     flex: 1,
-    justifyContent: "flex-end",
-  },
+    justifyContent: "flex-end"},
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
-  },
+    ...StyleSheet.absoluteFillObject},
   backdropFill: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: DesignTokens.colors.neutral[900],
-  },
+    backgroundColor: DesignTokens.colors.neutral[900]},
   modalContent: {
     backgroundColor: colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     minHeight: SCREEN_HEIGHT * 0.3,
-    maxHeight: SCREEN_HEIGHT * 0.9,
-  },
+    maxHeight: SCREEN_HEIGHT * 0.9},
   modalHandle: {
     width: DesignTokens.spacing[9],
     height: 5,
@@ -978,42 +936,32 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 2.5,
     alignSelf: "center",
     marginTop: DesignTokens.spacing[3],
-    marginBottom: Spacing.sm,
-  },
+    marginBottom: Spacing.sm},
   sheetContainer: {
     flex: 1,
-    justifyContent: "flex-end",
-  },
+    justifyContent: "flex-end"},
   sheetBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-  },
+    ...StyleSheet.absoluteFillObject},
   sheetBackdropFill: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: DesignTokens.colors.neutral[900],
-  },
+    backgroundColor: DesignTokens.colors.neutral[900]},
   sheetContent: {
     backgroundColor: colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingBottom: Platform.OS === "ios" ? 34 : 16,
-  },
+    paddingBottom: Platform.OS === "ios" ? 34 : 16},
   sheetHandleContainer: {
     alignItems: "center",
-    paddingVertical: DesignTokens.spacing[3],
-  },
+    paddingVertical: DesignTokens.spacing[3]},
   sheetHandle: {
     width: DesignTokens.spacing[9],
     height: 5,
     backgroundColor: Colors.neutral[300],
-    borderRadius: 2.5,
-  },
+    borderRadius: 2.5},
   crossFadeContainer: {
-    position: "relative",
-  },
+    position: "relative"},
   heroContainer: {
-    overflow: "hidden",
-  },
-}))
+    overflow: "hidden"}}))
 
 export default {
   TransitionProvider,
@@ -1028,5 +976,4 @@ export default {
   PageTransition,
   StaggerTransition,
   CrossFadeTransition,
-  HeroTransition,
-};
+  HeroTransition};

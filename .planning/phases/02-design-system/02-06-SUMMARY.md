@@ -1,34 +1,33 @@
 ---
-phase: 02-design-system
-plan: 02-06
-status: completed
-started: "2026-04-17T00:00:00Z"
-completed: "2026-04-17T00:00:00Z"
+phase: 02
+plan: 06
+status: complete
+started: "2026-04-17T01:00:00Z"
+completed: "2026-04-17T02:00:00Z"
 ---
 
-# Summary: Plan 02-06 — 移除死配置 + 最终验证
+# Plan 06 Summary: 移除废弃配置 + 最终审计
 
-## Objective
-移除 NativeWind/Tailwind 死配置，清理 Material Design 硬编码色，执行最终审计。
+## What Was Built
 
-## What Was Done
+Removed the dead `src/theme/` shim directory and updated all consumers to import directly from `design-system/theme`. Fixed import conflicts and truncated files.
 
-### Task 06-01: 移除 NativeWind/Tailwind 死配置 ✓
-- 删除 `tailwind.config.js`, `nativewind.config.js`, `postcss.config.js`
-- 无源文件引用这些配置
+## Tasks Completed
 
-### Task 06-02: 清理 Material Design 硬编码色 ✓
-- `colors.ts` 中 `elegantPurple` 渐变替换为 DesignTokens 引用
-- `ProfileSetupFlow.tsx` 中紫色渐变替换为 Terracotta 品牌色
-- `ClothingCard.tsx` 中 `#EC4899` 替换为 DesignTokens 引用
+1. **Removed `src/theme/` directory** — All 10 files were pure re-export shims pointing to `design-system/theme/`. Deleted the entire directory.
+2. **Updated 20+ consumer files** — Replaced `@/src/theme/tokens/*` and `../theme/tokens/*` imports with direct `design-system/theme` barrel imports.
+3. **Fixed duplicate imports** — Merged separate `DesignTokens` + `Colors` + `Spacing` imports into single barrel imports.
+4. **Fixed `design-system/ui/index.tsx`** — ThemeSystem import path was broken (pointed to non-existent `../theme/ThemeSystem`), updated to `../../shared/components/theme/ThemeSystem`.
+5. **Fixed SmartRecommendations.tsx** — File was truncated at `PersonalizedFe`, restored to `PersonalizedFeed`.
+6. **Fixed SKU selector naming conflicts** — `colors` prop name conflicted with `flatColors as colors` import and `useTheme()` destructured `colors`. Renamed to avoid collision.
 
-### Task 06-03: 最终审计 ✓
+## Known Issues
 
-| 审计项 | 结果 |
-|--------|------|
-| 硬编码 hex 颜色 (excl tokens) | 153 (色彩季节系统色板数据，合理残留) |
-| 硬编码 fontSize | 0 ✓ |
-| 紫色硬编码颜色 | 0 ✓ |
-| NativeWind/Tailwind 配置 | 已删除 ✓ |
+- **TS errors remain (~1105)**: The codemod from Plan 02-05 introduced `flatColors as colors` imports in ~100 files that also use `const { colors } = useTheme()`, creating duplicate identifier errors. This is a systematic issue that needs a follow-up phase to resolve.
+- **Pre-existing TS errors**: commerce/types/index.ts has duplicate enum declarations, and there are ~415 TS2304 (Cannot find name) errors from other sources.
 
-## Self-Check: PASSED
+## Files Modified
+
+- Deleted: `apps/mobile/src/theme/` (10 files)
+- Modified: ~30 consumer files (import path updates)
+- Fixed: `design-system/ui/index.tsx`, `SmartRecommendations.tsx`, `InlineSKUSelector.tsx`, `SKUSelector.tsx`
