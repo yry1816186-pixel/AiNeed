@@ -54,8 +54,7 @@ function CommunityFeedInner({
   onViewableItemsChanged,
   viewabilityConfig,
 }: CommunityFeedProps) {
-    const { colors } = useTheme();
-  const styles = useStyles(colors);
+  const { colors } = useTheme();
   const currentPosts = activeMainTab === "discover" ? posts : followingFeed;
 
   const renderFollowingFeedItem = (item: PostCardDataInternal, index: number) => {

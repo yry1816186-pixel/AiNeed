@@ -58,7 +58,7 @@ export const AdvisorProfileScreen: React.FC = () => {
 
   const profile = "data" in currentConsultant ? (currentConsultant as unknown as { data: ConsultantProfile }).data : currentConsultant as unknown as ConsultantProfile;
   const specialties = Array.isArray(profile.specialties) ? profile.specialties : [];
-  const bookingCount = ((profile as Record<string, unknown>).count as Record<string, unknown> | undefined)?.bookings as number || 0;
+  const bookingCount = ((profile as unknown as Record<string, unknown>).count as Record<string, unknown> | undefined)?.bookings as number || 0;
 
   return (
     <View style={styles.container}>

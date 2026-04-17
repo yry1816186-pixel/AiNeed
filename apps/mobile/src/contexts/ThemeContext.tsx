@@ -25,7 +25,13 @@ export type { FlatColors };
 
 function buildFlatColors(base: TokenSet["colors"]): FlatColors {
   return {
-    brand: base.brand,
+    brand: {
+      ...base.brand,
+      primary: base.brand.terracotta,
+      warmPrimary: base.brand.terracotta,
+      warmAccent: base.brand.camel,
+      warmSecondary: base.brand.sageLight,
+    },
     neutral: base.neutral,
     semantic: base.semantic,
     backgrounds: base.backgrounds,

@@ -44,7 +44,7 @@ import {
   SearchSuggestions,
   SearchResultList,
   LoadingOverlay,
-  PRICERANGES,
+  PRICE_RANGES,
 } from '../../search/components/SearchScreenParts';
 
 const DEBOUNCE_MS = 300;
@@ -98,8 +98,8 @@ export const SearchScreen: React.FC = () => {
 
   const currentExtraParams = useMemo(
     () => ({
-      minPrice: selectedPriceRange !== null ? PRICERANGES[selectedPriceRange].min : undefined,
-      maxPrice: selectedPriceRange !== null ? PRICERANGES[selectedPriceRange].max : undefined,
+      minPrice: selectedPriceRange !== null ? PRICE_RANGES[selectedPriceRange].min : undefined,
+      maxPrice: selectedPriceRange !== null ? PRICE_RANGES[selectedPriceRange].max : undefined,
       sizes: selectedSizes.length > 0 ? selectedSizes : undefined,
     }),
     [selectedPriceRange, selectedSizes]

@@ -642,7 +642,7 @@ export const CheckoutScreen: React.FC = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.secondaryButtonWide}
-                  onPress={() => navigation.navigate("MainTabs", { screen: "Home" as const })}
+                  onPress={() => (navigation as any).navigate("MainTabs", { screen: "Home" })}
                   accessibilityLabel={t.checkout.backToHome}
                 >
                   <Text style={styles.secondaryText}>{t.checkout.backToHome}</Text>

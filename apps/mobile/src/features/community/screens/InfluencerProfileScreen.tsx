@@ -127,7 +127,7 @@ export const InfluencerProfileScreen: React.FC = () => {
     ({ item }: { item: CommunityPost }) => (
       <TouchableOpacity
         style={s.postCard}
-        onPress={() => navigation.navigate("PostDetail", { postId: item.id })}
+        onPress={() => (navigation as any).navigate("PostDetail", { postId: item.id })}
         activeOpacity={0.85}
       >
         {item.images[0] ? (

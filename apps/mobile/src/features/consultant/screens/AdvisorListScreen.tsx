@@ -119,7 +119,7 @@ export const AdvisorListScreen: React.FC = () => {
 
       {/* Consultant list */}
       <FlatList
-        data={displayData as Record<string, unknown>[]}
+        data={displayData as unknown as Record<string, unknown>[]}
         keyExtractor={(item: Record<string, unknown>) => String(item.consultantId || item.id)}
         renderItem={({ item, index }: { item: Record<string, unknown>; index: number }) => (
           <ConsultantCard

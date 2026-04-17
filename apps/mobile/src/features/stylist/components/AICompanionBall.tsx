@@ -20,8 +20,7 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens, flatColors as _flatColors } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing, flatColors } from '../../../design-system/theme';
+import { DesignTokens, Spacing, flatColors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 
@@ -54,9 +53,9 @@ const STATE_CONFIG = {
     animation: "breathe",
   },
   listening: {
-    gradient: [flatColors.neutral[500], flatColors.textTertiary] as [string, string],
+    gradient: [flatColors.textTertiary, flatColors.textTertiary] as [string, string],
     innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.08)"] as [string, string],
-    glowColor: flatColors.neutral[500],
+    glowColor: flatColors.textTertiary,
     animation: "pulse",
   },
   thinking: {

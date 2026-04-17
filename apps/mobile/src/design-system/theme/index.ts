@@ -450,7 +450,7 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
       warmPrimary: "#C67C4E",
       warmAccent: "#E8A87C",
       warmSecondary: "#D4917A",
-    },
+    } as FlatColors['brand'],
     neutral: base.neutral,
     semantic: base.semantic,
     backgrounds: base.backgrounds,

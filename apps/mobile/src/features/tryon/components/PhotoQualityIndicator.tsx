@@ -160,7 +160,7 @@ const metricStyles = StyleSheet.create({
   label: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "400",
-    color: colors.textSecondary,
+    color: DesignTokens.colors.text.secondary,
   },
   value: {
     fontSize: DesignTokens.typography.sizes.base,

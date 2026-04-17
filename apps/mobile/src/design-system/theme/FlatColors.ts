@@ -1,12 +1,24 @@
-// FlatColors type - standalone definition to avoid circular dependencies
-// This file must NOT import from contexts/ or any file that imports from design-system/theme/index.ts
-
 import type { DesignTokens } from "./tokens/design-tokens";
 
 type TokenSet = typeof DesignTokens;
 
+type BrandColors = TokenSet["colors"]["brand"] & {
+  primary: string;
+  warmPrimary: string;
+  warmAccent: string;
+  warmSecondary: string;
+};
+
+type GradientColors = TokenSet["gradients"] & {
+  warm: string[];
+  cool: string[];
+  hero: string[];
+  coralRose: string[];
+  oceanMint: string[];
+};
+
 export interface FlatColors {
-  brand: TokenSet["colors"]["brand"];
+  brand: BrandColors;
   neutral: TokenSet["colors"]["neutral"];
   semantic: TokenSet["colors"]["semantic"];
   backgrounds: TokenSet["colors"]["backgrounds"];
@@ -49,4 +61,19 @@ export interface FlatColors {
   terracottaDark: string;
   amber: string;
   secondary: string;
+  secondaryLight: string;
+  warmPrimary: string;
+  warmAccent: string;
+  warmSecondary: string;
+  like: string;
+  ocean: string;
+  mint: string;
+  coral: string;
+  main: string;
+  light: string;
+  dark: string;
+  oceanMint: string;
+  fashion: string;
+  purple: string;
+  gradients: GradientColors;
 }

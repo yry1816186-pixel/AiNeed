@@ -127,8 +127,8 @@ export const ChatScreen: React.FC = () => {
       return (
         <View style={styles.proposalWrapper}>
           <ProposalCard
-            title={(item as Record<string, unknown>).proposalData != null ? ((item as Record<string, unknown>).proposalData as Record<string, unknown>).title as string || "造型方案" : "造型方案"}
-            summary={(item as Record<string, unknown>).proposalData != null ? ((item as Record<string, unknown>).proposalData as Record<string, unknown>).summary as string || item.content : item.content}
+            title={(item as unknown as Record<string, unknown>).proposalData != null ? ((item as unknown as Record<string, unknown>).proposalData as Record<string, unknown>).title as string || "造型方案" : "造型方案"}
+            summary={(item as unknown as Record<string, unknown>).proposalData != null ? ((item as unknown as Record<string, unknown>).proposalData as Record<string, unknown>).summary as string || item.content : item.content}
             onViewProposal={() => Alert.alert("查看方案", "方案详情功能即将上线")}
             onSaveToWardrobe={() => Alert.alert("保存", "已保存到灵感衣橱")}
           />
