@@ -133,12 +133,12 @@ export const AICompanionProvider: React.FC<AICompanionProviderProps> = ({
         void sendMessage(result.text);
       }
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Voice recognition error:", error);
       setIsVoiceMode(false);
       setState("idle");
     },
-    onStatusChange: (status) => {
+    onStatusChange: (status: any) => {
       if (status === "listening") {
         setState("listening");
         setIsVoiceMode(true);

@@ -92,6 +92,8 @@ const PostCard: React.FC<{
   }, []);
 
   const formatCount = useCallback((count: number) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     if (count >= 10000) {
       return `${(count / 10000).toFixed(1)}万`;
     }

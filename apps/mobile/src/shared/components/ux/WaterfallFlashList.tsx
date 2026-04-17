@@ -36,7 +36,7 @@ export function WaterfallFlashList<T extends WaterfallItem>({
   query,
   renderItem,
   estimatedItemSize,
-  _numColumns = 2,
+  numColumns = 2,
   gap = Spacing[3],
   contentPadding = Spacing[3],
   keyExtractor,

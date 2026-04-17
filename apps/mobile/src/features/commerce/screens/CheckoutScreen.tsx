@@ -95,8 +95,8 @@ export const CheckoutScreen: React.FC = () => {
           ? cartResponse.data.filter((item) => item.selected)
           : [];
       const selectedFromStore = items
-        .filter((item) => item.selected)
-        .map((item) => ({
+        .filter((item: any) => item.selected)
+        .map((item: any) => ({
           id: item.id,
           productId: item.item?.id ?? "",
           name: item.item?.name ?? "",
@@ -107,7 +107,7 @@ export const CheckoutScreen: React.FC = () => {
         }));
 
       setCartItems(
-        (selectedFromApi.length > 0 ? selectedFromApi : selectedFromStore).map((item) => ({
+        (selectedFromApi.length > 0 ? selectedFromApi : selectedFromStore).map((item: any) => ({
           id: item.id,
           productId: item.productId,
           name: item.name,
@@ -134,8 +134,8 @@ export const CheckoutScreen: React.FC = () => {
     } catch {
       setCartItems(
         items
-          .filter((item) => item.selected)
-          .map((item) => ({
+          .filter((item: any) => item.selected)
+          .map((item: any) => ({
             id: item.id,
             productId: item.item?.id ?? "",
             name: item.item?.name ?? "",

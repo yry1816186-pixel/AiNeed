@@ -128,6 +128,8 @@ const ActionItemComponent: React.FC<ActionItemProps> = ({ action, index, visible
   }));
 
   const renderIcon = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     const iconColor = colors.textInverse;
     switch (action.id) {
       case "stylist":

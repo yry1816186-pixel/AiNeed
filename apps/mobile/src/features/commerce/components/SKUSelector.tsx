@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "rea
 import { AISizeBadge } from "./AISizeBadge";
 import type { SizeRecommendation } from "../../../services/api/commerce.api";
 import { stockNotificationApi } from "../../../services/api/commerce.api";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens, Spacing, flatColors as themeColors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 
@@ -35,8 +34,8 @@ export const SKUSelector: React.FC<SKUSelectorProps> = ({
   itemId,
   aiRecommendation,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  const { colors: themeColorsFromHook } = useTheme();
+  const styles = useStyles(themeColorsFromHook);
   const [color, setColor] = useState(selectedColor);
   const [size, setSize] = useState(selectedSize);
   const [qty, setQty] = useState(quantity);

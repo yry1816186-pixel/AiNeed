@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { View, Text, StyleSheet, RefreshControl, ActivityIndicator, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FlashList } from "../../polyfills/flash-list";
+import { FlashList } from "../../../polyfills/flash-list.tsx";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { useRecommendationFeedStore } from '../stores/recommendationFeedStore';
 import { FeedTabs } from '../../../components/recommendations/FeedTabs';

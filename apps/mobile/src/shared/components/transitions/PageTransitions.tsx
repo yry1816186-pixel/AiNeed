@@ -176,7 +176,7 @@ export const SharedElement: React.FC<SharedElementTransitionProps> = ({
   children,
   sharedId,
   style,
-  _isActive = false,
+  isActive = false,
 }) => {
   const elementRef = useRef<View>(null);
   const context = useSharedElement();
@@ -540,6 +540,8 @@ export const ModalTransition: React.FC<ModalTransitionProps> = ({
   }));
 
   const handleBackdropPress = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     translateY.value = withTiming(SCREEN_HEIGHT, { duration: 250 });
     backdrop.value = withTiming(0, { duration: 200 });
     setTimeout(onClose, 200);
@@ -579,6 +581,8 @@ export interface BottomSheetTransitionProps {
 }
 
 export const BottomSheetTransition: React.FC<BottomSheetTransitionProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   visible,
   onClose,
   children,
@@ -850,6 +854,8 @@ export interface CrossFadeTransitionProps {
 }
 
 export const CrossFadeTransition: React.FC<CrossFadeTransitionProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   from,
   to,
   progress,
@@ -896,6 +902,8 @@ export interface HeroTransitionProps {
 }
 
 export const HeroTransition: React.FC<HeroTransitionProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   children,
   sourceImage,
   sourceStyle,

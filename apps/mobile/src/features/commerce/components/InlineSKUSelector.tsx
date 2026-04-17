@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { cartEnhancementApi } from '../../../services/api/commerce.api';
-import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens, Spacing, flatColors as themeColors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 interface InlineSKUSelectorProps {
@@ -25,8 +25,8 @@ export const InlineSKUSelector: React.FC<InlineSKUSelectorProps> = ({
   onChange,
   onClose,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  const { colors: themeColorsFromHook } = useTheme();
+  const styles = useStyles(themeColorsFromHook);
   const [color, setColor] = useState(currentColor);
   const [size, setSize] = useState(currentSize);
 

@@ -61,6 +61,8 @@ children }: ToastProviderProps) {
   };
 
   const removeToast = (id: string) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
@@ -143,6 +145,8 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
   };
 
   const getColor = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     switch (toast.type) {
       case "success":
         return theme.colors.success;

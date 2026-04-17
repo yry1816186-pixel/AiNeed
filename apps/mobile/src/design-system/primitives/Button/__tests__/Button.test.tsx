@@ -89,7 +89,7 @@ describe("Button", () => {
   });
 
   it("shows loading state with ActivityIndicator", () => {
-    const { queryByText, _UNSAFE_root } = render(<Button loading>Loading</Button>);
+    const { queryByText, UNSAFE_root } = render(<Button loading>Loading</Button>);
     expect(queryByText("Loading")).toBeNull();
   });
 

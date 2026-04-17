@@ -100,14 +100,14 @@ export const CartScreenComponent: React.FC = () => {
 
   const selectedTotal = useMemo(() => {
     return items
-      .filter((item) => selectedIds.has(item.id))
-      .reduce((sum, item) => sum + (item.item?.price || 0) * item.quantity, 0);
+      .filter((item: any) => selectedIds.has(item.id))
+      .reduce((sum: any, item: any) => sum + (item.item?.price || 0) * item.quantity, 0);
   }, [items, selectedIds]);
 
   const selectedCount = useMemo(() => {
     return items
-      .filter((item) => selectedIds.has(item.id))
-      .reduce((sum, item) => sum + item.quantity, 0);
+      .filter((item: any) => selectedIds.has(item.id))
+      .reduce((sum: any, item: any) => sum + item.quantity, 0);
   }, [items, selectedIds]);
 
   const toggleSelect = useCallback(
@@ -150,11 +150,11 @@ export const CartScreenComponent: React.FC = () => {
     const nextSelected = !allSelected;
     const previousSelectedIds = new Set(selectedIds);
     const nextSelectedIds = nextSelected
-      ? new Set(items.map((item) => item.id))
+      ? new Set(items.map((item: any) => item.id))
       : new Set<string>();
 
     setSelectedIds(nextSelectedIds);
-    items.forEach((item) => {
+    items.forEach((item: any) => {
       updateItem(item.id, { selected: nextSelected });
     });
 
@@ -162,7 +162,7 @@ export const CartScreenComponent: React.FC = () => {
       await cartApi.selectAll(nextSelected);
     } catch {
       setSelectedIds(previousSelectedIds);
-      items.forEach((item) => {
+      items.forEach((item: any) => {
         updateItem(item.id, { selected: previousSelectedIds.has(item.id) });
       });
       Alert.alert("提示", "更新全选状态失败，请重试");
@@ -183,7 +183,7 @@ export const CartScreenComponent: React.FC = () => {
         await cartApi.update(id, { quantity: newQuantity });
       } catch {
         updateItem(id, {
-          quantity: items.find((i) => i.id === id)?.quantity ?? newQuantity - 1,
+          quantity: items.find((i: any) => i.id === id)?.quantity ?? newQuantity - 1,
         });
         Alert.alert("提示", "更新数量失败，请重试");
       } finally {

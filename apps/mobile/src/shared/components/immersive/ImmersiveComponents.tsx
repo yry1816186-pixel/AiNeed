@@ -78,14 +78,16 @@ interface GalleryThumbnailProps {
 }
 
 const GalleryThumbnail: React.FC<GalleryThumbnailProps> = ({ item, index, selected, onPress }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const thumbnailScale = useSharedValue(1);
 
   useEffect(() => {
-    thumbnailScale.value = withSpring(selected ? 1.1 : 1, springConfig);
+    thumbnailScale.valueOf = withSpring(selected ? 1.1 : 1, springConfig);
   }, [selected, thumbnailScale]);
 
   const thumbnailAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: thumbnailScale.value }],
+    transform: [{ scale: thumbnailScale.valueOf }],
     borderWidth: selected ? 2 : 0,
   }));
 
@@ -126,19 +128,19 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
 
   useEffect(() => {
     if (visible) {
-      opacity.value = withTiming(1, { duration: 300 });
-      scale.value = withSpring(1, springConfig);
+      opacity.valueOf = withTiming(1, { duration: 300 });
+      scale.valueOf = withSpring(1, springConfig);
       StatusBar.setHidden(true);
     } else {
-      opacity.value = withTiming(0, { duration: 200 });
-      scale.value = withTiming(0.9, { duration: 200 });
+      opacity.valueOf = withTiming(0, { duration: 200 });
+      scale.valueOf = withTiming(0.9, { duration: 200 });
       StatusBar.setHidden(false);
     }
   }, [visible]);
 
   const handleScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
-      translateY.value = event.contentOffset.y;
+      translateY.valueOf = event.contentOffset.y;
     },
     onMomentumEnd: (event) => {
       const index = Math.round(event.contentOffset.x / SCREEN_WIDTH);
@@ -152,48 +154,48 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
   const pinchGesture = Gesture.Pinch()
     .onUpdate((event) => {
       if (enableZoom) {
-        zoomScale.value = Math.max(1, Math.min(4, event.scale));
+        zoomScale.valueOf = Math.max(1, Math.min(4, event.scale));
       }
     })
     .onEnd(() => {
-      if (zoomScale.value < 1.2) {
-        zoomScale.value = withSpring(1, springConfig);
+      if (zoomScale.valueOf < 1.2) {
+        zoomScale.valueOf = withSpring(1, springConfig);
       }
     });
 
   const panGesture = Gesture.Pan()
     .onUpdate((event) => {
-      if (enableSwipeDown && zoomScale.value === 1 && event.translationY > 0) {
-        translateY.value = event.translationY;
+      if (enableSwipeDown && zoomScale.valueOf === 1 && event.translationY > 0) {
+        translateY.valueOf = event.translationY;
       }
     })
     .onEnd((event) => {
       if (event.translationY > 100 || event.velocityY > 500) {
-        opacity.value = withTiming(0, { duration: 200 });
+        opacity.valueOf = withTiming(0, { duration: 200 });
         runOnJS(onClose)();
       } else {
-        translateY.value = withSpring(0, springConfig);
+        translateY.valueOf = withSpring(0, springConfig);
       }
     });
 
   const tapGesture = Gesture.Tap().onEnd(() => {
-    controlsOpacity.value = controlsOpacity.value === 1 ? withTiming(0) : withTiming(1);
+    controlsOpacity.valueOf = controlsOpacity.valueOf === 1 ? withTiming(0) : withTiming(1);
     runOnJS(setControlsVisible)(!controlsVisible);
   });
 
   const composedGesture = Gesture.Simultaneous(pinchGesture, panGesture, tapGesture);
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ scale: scale.value }],
+    opacity: opacity.valueOf,
+    transform: [{ scale: scale.valueOf }],
   }));
 
   const imageAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: zoomScale.value }, { translateY: translateY.value * 0.3 }],
+    transform: [{ scale: zoomScale.valueOf }, { translateY: translateY.valueOf * 0.3 }],
   }));
 
   const controlsAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: controlsOpacity.value,
+    opacity: controlsOpacity.valueOf,
   }));
 
   const renderImage = ({ item, index }: { item: (typeof images)[0]; _index: number }) => (
@@ -306,6 +308,8 @@ export interface ARGuideOverlayProps {
 }
 
 export const ARGuideOverlay: React.FC<ARGuideOverlayProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   visible,
   step,
   totalSteps,
@@ -322,29 +326,29 @@ export const ARGuideOverlay: React.FC<ARGuideOverlayProps> = ({
 
   useEffect(() => {
     if (visible) {
-      opacity.value = withTiming(1, { duration: 300 });
-      pulseScale.value = withRepeat(
+      opacity.valueOf = withTiming(1, { duration: 300 });
+      pulseScale.valueOf = withRepeat(
         withSequence(withTiming(1.1, { duration: 800 }), withTiming(1, { duration: 800 })),
         -1,
         true
       );
-      highlightOpacity.value = withRepeat(
+      highlightOpacity.valueOf = withRepeat(
         withSequence(withTiming(0.8, { duration: 600 }), withTiming(0.4, { duration: 600 })),
         -1,
         true
       );
     } else {
-      opacity.value = withTiming(0, { duration: 200 });
+      opacity.valueOf = withTiming(0, { duration: 200 });
     }
   }, [visible]);
 
   const overlayAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
+    opacity: opacity.valueOf,
   }));
 
   const highlightAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseScale.value }],
-    opacity: highlightOpacity.value,
+    transform: [{ scale: pulseScale.valueOf }],
+    opacity: highlightOpacity.valueOf,
   }));
 
   const isLastStep = step === totalSteps - 1;
@@ -421,6 +425,8 @@ export interface VirtualTryOnPreviewProps {
 }
 
 export const VirtualTryOnPreview: React.FC<VirtualTryOnPreviewProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   visible,
   productImage,
   userImage,
@@ -441,48 +447,48 @@ export const VirtualTryOnPreview: React.FC<VirtualTryOnPreviewProps> = ({
 
   useEffect(() => {
     if (visible) {
-      opacity.value = withTiming(1, { duration: 300 });
-      scale.value = withSpring(1, springConfig);
+      opacity.valueOf = withTiming(1, { duration: 300 });
+      scale.valueOf = withSpring(1, springConfig);
     } else {
-      opacity.value = withTiming(0, { duration: 200 });
-      scale.value = withTiming(0.9, { duration: 200 });
+      opacity.valueOf = withTiming(0, { duration: 200 });
+      scale.valueOf = withTiming(0.9, { duration: 200 });
     }
   }, [visible]);
 
   useEffect(() => {
     if (isProcessing) {
-      shimmerTranslate.value = withRepeat(
+      shimmerTranslate.valueOf = withRepeat(
         withTiming(SCREEN_WIDTH, { duration: 1500, easing: Easing.linear }),
         -1,
         false
       );
     } else {
-      shimmerTranslate.value = -SCREEN_WIDTH;
+      shimmerTranslate.valueOf = -SCREEN_WIDTH;
     }
   }, [isProcessing]);
 
   useEffect(() => {
     if (resultImage && !isProcessing) {
-      resultScale.value = withSpring(1, springConfig);
-      resultOpacity.value = withTiming(1, { duration: 500 });
+      resultScale.valueOf = withSpring(1, springConfig);
+      resultOpacity.valueOf = withTiming(1, { duration: 500 });
     } else {
-      resultScale.value = 0.8;
-      resultOpacity.value = 0;
+      resultScale.valueOf = 0.8;
+      resultOpacity.valueOf = 0;
     }
   }, [resultImage, isProcessing]);
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ scale: scale.value }],
+    opacity: opacity.valueOf,
+    transform: [{ scale: scale.valueOf }],
   }));
 
   const shimmerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shimmerTranslate.value }],
+    transform: [{ translateX: shimmerTranslate.valueOf }],
   }));
 
   const resultAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: resultScale.value }],
-    opacity: resultOpacity.value,
+    transform: [{ scale: resultScale.valueOf }],
+    opacity: resultOpacity.valueOf,
   }));
 
   if (!visible) {
@@ -595,18 +601,18 @@ export const ImmersiveProductView: React.FC<ImmersiveProductViewProps> = ({
 
   useEffect(() => {
     if (visible) {
-      opacity.value = withTiming(1, { duration: 400 });
+      opacity.valueOf = withTiming(1, { duration: 400 });
       StatusBar.setHidden(true);
     } else {
-      opacity.value = withTiming(0, { duration: 300 });
+      opacity.valueOf = withTiming(0, { duration: 300 });
       StatusBar.setHidden(false);
     }
   }, [visible]);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-      imageScale.value = interpolate(
+      scrollY.valueOf = event.contentOffset.y;
+      imageScale.valueOf = interpolate(
         event.contentOffset.y,
         [-100, 0, 100],
         [1.2, 1, 0.9],
@@ -616,19 +622,21 @@ export const ImmersiveProductView: React.FC<ImmersiveProductViewProps> = ({
   });
 
   const headerOpacity = useDerivedValue(() => {
-    return interpolate(scrollY.value, [0, 100], [0, 1], Extrapolate.CLAMP);
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
+    return interpolate(scrollY.valueOf, [0, 100], [0, 1], Extrapolate.CLAMP);
   });
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
+    opacity: opacity.valueOf,
   }));
 
   const headerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: headerOpacity.value,
+    opacity: headerOpacity.valueOf,
   }));
 
   const imageAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: imageScale.value }],
+    transform: [{ scale: imageScale.valueOf }],
   }));
 
   if (!visible) {
@@ -785,8 +793,10 @@ const StoryProgressBar: React.FC<StoryProgressBarProps> = ({
   progress,
 }) => {
   const barAnimatedStyle = useAnimatedStyle(() => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     const widthProgress =
-      index < currentItemIndex ? 1 : index === currentItemIndex ? progress.value : 0;
+      index < currentItemIndex ? 1 : index === currentItemIndex ? progress.valueOf : 0;
 
     return {
       width: `${widthProgress * 100}%`,
@@ -818,18 +828,18 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
   useEffect(() => {
     if (visible) {
-      opacity.value = withTiming(1, { duration: 200 });
+      opacity.valueOf = withTiming(1, { duration: 200 });
       StatusBar.setHidden(true);
     } else {
-      opacity.value = withTiming(0, { duration: 150 });
+      opacity.valueOf = withTiming(0, { duration: 150 });
       StatusBar.setHidden(false);
     }
   }, [visible]);
 
   useEffect(() => {
     if (visible && currentStory) {
-      progress.value = 0;
-      progress.value = withTiming(1, { duration, easing: Easing.linear }, (finished) => {
+      progress.valueOf = 0;
+      progress.valueOf = withTiming(1, { duration, easing: Easing.linear }, (finished) => {
         if (finished) {
           runOnJS(handleNext)();
         }
@@ -849,6 +859,8 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   }, [currentItemIndex, currentStoryIndex, currentStory, stories.length, onClose]);
 
   const handlePrevious = useCallback(() => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     if (currentItemIndex > 0) {
       setCurrentItemIndex((prev) => prev - 1);
     } else if (currentStoryIndex > 0) {
@@ -869,11 +881,11 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   );
 
   const _progressAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${progress.value * 100}%`,
+    width: `${progress.valueOf * 100}%`,
   }));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
+    opacity: opacity.valueOf,
   }));
 
   if (!visible || !currentStory) {

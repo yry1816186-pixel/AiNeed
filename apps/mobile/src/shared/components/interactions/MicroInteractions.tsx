@@ -85,6 +85,8 @@ interface RippleCircleProps {
 }
 
 const RippleCircle: React.FC<RippleCircleProps> = ({ color, duration, onComplete, ripple }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -455,6 +457,8 @@ export interface SwipeActionProps {
 }
 
 export const SwipeAction: React.FC<SwipeActionProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   children,
   style,
   leftActions = [],
@@ -557,6 +561,8 @@ export interface PullToRefreshProps {
 }
 
 export const PullToRefresh: React.FC<PullToRefreshProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   children,
   onRefresh,
   refreshing = false,

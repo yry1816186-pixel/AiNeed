@@ -127,7 +127,7 @@ export const StyleQuizScreen: React.FC = () => {
             <View style={styles.resultSection}>
               <Text style={styles.resultSectionTitle}>风格标签</Text>
               <View style={styles.tagRow}>
-                {result.styleTags.map((tag) => (
+                {result.styleTags.map((tag: any) => (
                   <View key={tag} style={styles.tag}>
                     <Text style={styles.tagText}>{tag}</Text>
                   </View>
@@ -140,7 +140,7 @@ export const StyleQuizScreen: React.FC = () => {
             <View style={styles.resultSection}>
               <Text style={styles.resultSectionTitle}>色彩偏好</Text>
               <View style={styles.paletteRow}>
-                {result.colorPalette.map((color, i) => (
+                {result.colorPalette.map((color: any, i: any) => (
                   <View key={`color-${i}`} style={[styles.colorDot, { backgroundColor: color }]} />
                 ))}
               </View>
@@ -246,7 +246,7 @@ export const StyleQuizScreen: React.FC = () => {
         {/* Image grid (2x2) */}
         {(currentQuestion.images ?? currentQuestion.options ?? []).length > 0 && (
           <View style={styles.imageGrid}>
-            {(currentQuestion.images ?? []).map((image, _index) => (
+            {(currentQuestion.images ?? []).map((image: any, _index: any) => (
               <View key={image.id} style={styles.imageGridItem}>
                 <TouchableOpacity
                   style={[

@@ -19,8 +19,8 @@ export interface CameraProps {
 
 export const Camera: React.FC<CameraProps> = ({
   style,
-  _type = "back",
-  _flashMode = "auto",
+  type = "back",
+  flashMode = "auto",
   onCameraReady,
   onMountError,
   children,
@@ -35,9 +35,11 @@ export const Camera: React.FC<CameraProps> = ({
 };
 
 export const CameraView: React.FC<CameraProps & { facing?: "front" | "back"; flash?: string }> =
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   React.forwardRef(
     (
-      { style, _facing = "back", flash, _flashMode = "auto", onCameraReady, onMountError, children },
+      { style, facing = "back", flash, flashMode = "auto", onCameraReady, onMountError, children },
       ref
     ) => {
       React.useEffect(() => {

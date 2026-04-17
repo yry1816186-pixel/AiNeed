@@ -93,7 +93,7 @@ export const AICompanionBall: React.FC<AICompanionBallProps> = ({
   size = 64,
   showHint = false,
   hintMessage = "有什么可以帮你的？",
-  _enableVoiceInput = true,
+  enableVoiceInput = true,
   onVoiceStart,
   onVoiceEnd,
   onVoiceResult,

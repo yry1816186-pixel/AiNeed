@@ -74,8 +74,8 @@ const FavoriteItem = memo(function FavoriteItem({ item, onPress, onRemove }: Fav
 
 export const FavoritesScreen: React.FC = () => {
   const navigation = useNavigation<NavProp>();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const authLoading = useAuthStore((state) => state.isLoading);
+  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+  const authLoading = useAuthStore((state: any) => state.isLoading);
   const t = useTranslation();
   const [items, setItems] = useState<ClothingItem[]>([]);
   const [loading, setLoading] = useState(true);

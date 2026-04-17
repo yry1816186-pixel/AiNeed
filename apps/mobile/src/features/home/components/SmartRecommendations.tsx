@@ -416,7 +416,7 @@ export const PersonalizedFeed: React.FC<PersonalizedFeedProps> = ({
   onItemPress,
   onSeeAll,
   onRefresh,
-  _refreshing = false,
+  refreshing = false,
   style,
 }) => {
   const { colors } = useTheme();
@@ -590,6 +590,8 @@ export interface AIInsightCardProps {
 }
 
 export const AIInsightCard: React.FC<AIInsightCardProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   insight,
   dismissible = true,
   onDismiss,

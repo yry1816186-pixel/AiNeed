@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
-import { Ionicons } from "../../polyfills/expo-vector-icons";
-import { LinearGradient } from "../../polyfills/expo-linear-gradient";
+import { Ionicons } from "../../../polyfills/expo-vector-icons.ts";
+import { LinearGradient } from "../../../polyfills/expo-linear-gradient.tsx";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../../design-system/theme';
 
@@ -28,7 +28,7 @@ export function EmptyState({
   description,
   actionLabel,
   onAction,
-  _variant = "default",
+  variant = "default",
   accessibilityLabel,
   style,
 }: EmptyStateProps) {

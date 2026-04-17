@@ -186,6 +186,8 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
   }));
 
   const handleToggle = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     if (mode === "system") {
       void setMode(isDark ? "light" : "dark");
     } else {
@@ -234,6 +236,8 @@ export interface AccentColorPickerProps {
 }
 
 export const AccentColorPicker: React.FC<AccentColorPickerProps> = ({ style }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { colors } = useUnifiedTheme();
 
   return (
@@ -269,6 +273,8 @@ export interface ThemeSettingsSheetProps {
 }
 
 export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({ visible, onClose }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { colors, mode, setMode, isDark } = useUnifiedTheme();
   const translateY = useSharedValue(SCREEN_WIDTH);
   const backdropOpacity = useSharedValue(0);
@@ -409,6 +415,8 @@ export interface GlassCardProps {
 }
 
 export const GlassCard: React.FC<GlassCardProps> = ({ children, style, intensity = 80, tint }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { isDark, colors } = useUnifiedTheme();
   const defaultTint = tint || (isDark ? "dark" : "light");
 

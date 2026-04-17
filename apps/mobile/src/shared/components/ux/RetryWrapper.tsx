@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   ViewStyle,
 } from "react-native";
-import { Ionicons } from "../../polyfills/expo-vector-icons";
+import { Ionicons } from "../../../polyfills/expo-vector-icons.ts";
 import { Colors, Spacing, BorderRadius, Typography } from '../../../design-system/theme';
 
 interface RetryConfig {

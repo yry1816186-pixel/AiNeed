@@ -36,6 +36,8 @@ const formatPrice = (price?: number | null) => {
 
 /** Animated item card with staggered bounce-in */
 const AnimatedItemCard: React.FC<{
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   item: AiStylistOutfitItem;
   itemIdx: number;
   cardWidth: number;

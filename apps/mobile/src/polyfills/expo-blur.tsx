@@ -9,7 +9,7 @@ export interface BlurViewProps {
 }
 
 export const BlurView: React.FC<BlurViewProps> = ({
-  _intensity = 50,
+  intensity = 50,
   tint = "default",
   style,
   children,

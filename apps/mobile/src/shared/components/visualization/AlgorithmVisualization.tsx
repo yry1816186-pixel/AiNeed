@@ -57,6 +57,8 @@ const springConfig = {
 };
 
 const BreakdownItem: React.FC<{
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   item: { label: string; score: number; weight: number };
   index: number;
   getScoreColor: (score: number) => string;
@@ -91,6 +93,8 @@ const BreakdownItem: React.FC<{
 };
 
 const ColorBarRow: React.FC<{
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   colorItem: { color: string; name: string; percentage: number };
   index: number;
   showAnimation: boolean;
@@ -138,6 +142,8 @@ const ColorBarRow: React.FC<{
 };
 
 const ColorSwatchItem: React.FC<{
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   colorItem: { color: string; name: string; percentage: number };
   index: number;
   baseDelay: number;
@@ -162,6 +168,8 @@ const ColorSwatchItem: React.FC<{
 };
 
 const MeasurementItem: React.FC<{
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   label: string;
   value: number;
   index: number;
@@ -189,6 +197,8 @@ const MeasurementItem: React.FC<{
 };
 
 const RecommendationItem: React.FC<{ rec: string; index: number }> = ({ rec, index }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const recOpacity = useSharedValue(0);
 
   useEffect(() => {
@@ -208,6 +218,8 @@ const RecommendationItem: React.FC<{ rec: string; index: number }> = ({ rec, ind
 };
 
 const ItemPreviewCard: React.FC<{
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   item: { id: string; name: string; image: string; category: string };
   index: number;
   isSelected: boolean;
@@ -239,6 +251,8 @@ const ItemPreviewCard: React.FC<{
 };
 
 const AnalysisBarItem: React.FC<{
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   label: string;
   value: number;
   index: number;
@@ -501,6 +515,8 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
   const values = dimensions.map((d) => d.value);
 
   const animatedProps = useAnimatedProps(() => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     const animatedValues = values.map((v) => v * animatedProgress.value);
     const path = generatePath(animatedValues, maxValues);
     return { d: path };
@@ -624,6 +640,8 @@ export interface ColorPaletteAnalysisProps {
 }
 
 export const ColorPaletteAnalysis: React.FC<ColorPaletteAnalysisProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   colors,
   title,
   showAnimation = true,
@@ -690,6 +708,8 @@ export interface BodyShapeAnalysisProps {
 }
 
 export const BodyShapeAnalysis: React.FC<BodyShapeAnalysisProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   measurements,
   bodyType,
   recommendations,
@@ -827,6 +847,8 @@ export const OutfitCompatibility: React.FC<OutfitCompatibilityProps> = ({
   }));
 
   const getScoreColor = (score: number) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     if (score >= 80) {
       return colors.success; // custom color
     }
@@ -902,6 +924,8 @@ export interface TrendIndicatorProps {
 }
 
 export const TrendIndicator: React.FC<TrendIndicatorProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   trend,
   value,
   label,

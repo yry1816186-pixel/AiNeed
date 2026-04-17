@@ -37,6 +37,8 @@ interface AnimatedDotProps {
 }
 
 const AnimatedDot: React.FC<AnimatedDotProps> = ({ dotValue }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const style = useAnimatedStyle(() => ({
     opacity: dotValue.value,
     transform: [{ scale: interpolate(dotValue.value, [0, 1], [1, 1.3]) }],

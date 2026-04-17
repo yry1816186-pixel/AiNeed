@@ -227,6 +227,8 @@ interface OptionChipProps {
 }
 
 const OptionChip: React.FC<OptionChipProps> = ({ option, isSelected, index, onPress }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0.8);
   const opacity = useSharedValue(0);
 

@@ -161,6 +161,8 @@ const SingleCard: React.FC<{
     });
 
   const handleItemPress = useCallback((item: OutfitItem) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     setSelectedItem(item);
     itemModalVisible.value = withTiming(1, { duration: 300 });
     onItemClick(item);

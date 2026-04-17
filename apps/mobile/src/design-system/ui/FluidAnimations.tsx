@@ -181,6 +181,8 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   };
 
   const handlePressOut = () => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     scale.value = withSpring(1, { damping: 15, stiffness: 300 });
     glowIntensity.value = withTiming(0, { duration: 150 });
   };
@@ -262,6 +264,8 @@ export interface ParallaxScrollViewProps {
 }
 
 export const ParallaxScrollView: React.FC<ParallaxScrollViewProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   children,
   headerComponent,
   headerHeight = 300,
@@ -403,6 +407,8 @@ interface ParticleDotProps {
 }
 
 const ParticleDot: React.FC<ParticleDotProps> = ({ color, size }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const initialX = useRef(Math.random() * SCREEN_WIDTH).current;
   const initialScale = useRef(Math.random() * 0.5 + 0.5).current;
   const initialOpacity = useRef(Math.random() * 0.5 + 0.2).current;
@@ -442,6 +448,8 @@ const ParticleDot: React.FC<ParticleDotProps> = ({ color, size }) => {
 };
 
 export const ParticleEffect: React.FC<ParticleEffectProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   count = 20,
   color = Colors.primary[400],
   size = 4,

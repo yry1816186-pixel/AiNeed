@@ -198,6 +198,8 @@ export interface ErrorStateProps {
 }
 
 export const ErrorState: React.FC<ErrorStateProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   title = "出错了",
   message = "抱歉，发生了一些错误，请稍后重试",
   errorCode,
@@ -282,6 +284,8 @@ export interface NetworkErrorProps {
 }
 
 export const NetworkError: React.FC<NetworkErrorProps> = ({ onRetry, onSettings, style }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const pulseScale = useSharedValue(1);
   const opacity = useSharedValue(0);
 
@@ -345,6 +349,8 @@ export interface MaintenanceScreenProps {
 }
 
 export const MaintenanceScreen: React.FC<MaintenanceScreenProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   estimatedTime,
   message = "我们正在进行系统维护，请稍后再试",
   style,
@@ -406,6 +412,8 @@ export interface PermissionDeniedProps {
 }
 
 export const PermissionDenied: React.FC<PermissionDeniedProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   permission,
   onOpenSettings,
   style,
@@ -487,6 +495,8 @@ interface ConfettiPieceProps {
 }
 
 const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ index }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const initialX = useRef(Math.random() * SCREEN_WIDTH).current;
   const drift1 = useRef((Math.random() - 0.5) * 100).current;
   const drift2 = useRef((Math.random() - 0.5) * 100).current;
@@ -545,6 +555,8 @@ const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ index }) => {
 };
 
 export const SuccessState: React.FC<SuccessStateProps> = ({
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   title,
   message,
   icon = "checkmark-circle",
@@ -617,6 +629,8 @@ export interface OfflineBannerProps {
 }
 
 export const OfflineBanner: React.FC<OfflineBannerProps> = ({ visible, onRetry, style }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const translateY = useSharedValue(-60);
   const opacity = useSharedValue(0);
 

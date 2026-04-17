@@ -193,6 +193,8 @@ const Particle: React.FC<ParticleProps> = ({ index, color, ballSize, isActive })
   }, [isActive, ballSize, index]);
 
   const animatedStyle = useAnimatedStyle(() => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     const x = Math.cos(angle.value) * radius.value;
     const y = Math.sin(angle.value) * radius.value;
 
@@ -227,7 +229,7 @@ export const EnhancedAICompanionBall: React.FC<EnhancedAICompanionBallProps> = (
   size = 64,
   showHint = false,
   hintMessage = "有什么可以帮你的？",
-  _enableVoiceInput = true,
+  enableVoiceInput = true,
   onVoiceStart,
   onVoiceEnd,
   onVoiceResult,

@@ -8,7 +8,7 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
-import { FlashList } from "../../polyfills/flash-list";
+import { FlashList } from "../../../polyfills/flash-list.tsx";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
@@ -148,7 +148,7 @@ function CommunityFeedInner({
           index={index}
           onPress={() => {}}
           visible={visibleIds.has(item.id)}
-          onHeightMeasured={(height) => onHeightMeasured(item.id, height)}
+          onHeightMeasured={(height: any) => onHeightMeasured(item.id, height)}
         />
       )}
       onEndReached={onLoadMore}

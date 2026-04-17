@@ -21,7 +21,8 @@ import { Spacing, flatColors as colors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
 
-type TimeSlot = { startTime: string; endTime: string };
+type TimeSlot = { startTime: string; endTime: string 
+  isAvailable?: any;};
 
 const SERVICE_TYPES = [
   { label: "整体形象改造", value: "styling_consultation" },

@@ -489,7 +489,7 @@ export const SearchScreen: React.FC = () => {
         selectedPriceRange={selectedPriceRange}
         selectedSizes={selectedSizes}
         hasActiveFilters={hasActiveFilters}
-        setSelectedCategory={(cat) => {
+        setSelectedCategory={(cat: any) => {
           setSelectedCategory(cat);
           if (cat) {
             void clothingEnhancementApi.getSubcategories(cat).then((res) => {
@@ -510,7 +510,7 @@ export const SearchScreen: React.FC = () => {
 
       <CategoryNavigation
         selectedCategory={selectedCategory}
-        onSelectCategory={(cat) => {
+        onSelectCategory={(cat: any) => {
           setSelectedCategory(cat as ClothingCategory | null);
           if (cat) {
             void clothingEnhancementApi.getSubcategories(cat).then((res) => {
@@ -541,7 +541,7 @@ export const SearchScreen: React.FC = () => {
       <FilterTags
         filterOptions={filterOptions}
         activeFilters={activeFilterDimensions}
-        onApplyFilter={(dimension, value) => {
+        onApplyFilter={(dimension: any, value: any) => {
           setActiveFilterDimensions((prev) => ({
             ...prev,
             [dimension]: value,

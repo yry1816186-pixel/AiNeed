@@ -32,8 +32,8 @@ import {
 
 export const AiStylistScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const authLoading = useAuthStore((s) => s.isLoading);
+  const isAuthenticated = useAuthStore((s: any) => s.isAuthenticated);
+  const authLoading = useAuthStore((s: any) => s.isLoading);
   const t = useTranslation();
 
   const {

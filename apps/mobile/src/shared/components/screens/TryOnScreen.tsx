@@ -34,7 +34,7 @@ import { typography } from '../../../design-system/theme/tokens/typography';
 import { spacing } from '../../../design-system/theme/tokens/spacing';
 import { shadows } from '../../../design-system/theme/tokens/shadows';
 import { TryOnProgress } from "../loading/TryOnProgress";
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, flatColors as} from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 

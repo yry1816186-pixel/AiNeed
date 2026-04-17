@@ -13,7 +13,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { Ionicons } from "../../polyfills/expo-vector-icons";
+import { Ionicons } from "../../../polyfills/expo-vector-icons.ts";
 import { Colors, BorderRadius, Spacing, Typography } from '../../../design-system/theme';
 import {
   StructuredError,

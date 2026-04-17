@@ -18,7 +18,7 @@ import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens"
 import { typography } from '../../../design-system/theme/tokens/typography';
 import { spacing } from '../../../design-system/theme/tokens/spacing';
 import { shadows } from '../../../design-system/theme/tokens/shadows';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, flatColors as} from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 

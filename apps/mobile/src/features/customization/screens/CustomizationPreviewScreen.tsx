@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "../polyfills/expo-vector-icons";
+import { Ionicons } from "../../../polyfills/expo-vector-icons.ts";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
@@ -228,7 +228,8 @@ export const CustomizationPreviewScreen: React.FC = () => {
       </ScrollView>
     </SafeAreaView>
   );
-};
+
+  replace?: any;};
 
 const styles = StyleSheet.create({
   container: {

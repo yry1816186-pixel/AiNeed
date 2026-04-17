@@ -125,7 +125,7 @@ export const ProductGrid = memo(function ProductGrid({
   onItemPress,
   onFavorite,
   favorites,
-  _loading = false,
+  loading = false,
   onEndReached,
 }: ProductGridProps) {
   const renderItem = useCallback(

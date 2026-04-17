@@ -20,7 +20,7 @@ export const SharePosterScreen: React.FC = () => {
   const navigation = useNavigation<SharePosterNavProp>();
   const viewShotRef = useRef<View>(null);
   const { profile, colorAnalysis, loadProfile, loadColorAnalysis } = useProfileStore();
-  const user = useAuthStore((s) => s.user);
+  const user = useAuthStore((s: any) => s.user);
   const [isSharing, setIsSharing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 

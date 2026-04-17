@@ -58,7 +58,7 @@ const HomeScreen: React.FC = () => {
   const styles = useStyles(colors);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
-  const user = useAuthStore((s) => s.user);
+  const user = useAuthStore((s: any) => s.user);
   useScreenTracking("Home");
   const t = useTranslation();
   const { isEnabled } = useFeatureFlags();
@@ -261,7 +261,7 @@ const HomeScreen: React.FC = () => {
           return (
             <RecommendationCard
               item={(item as { type: "recommendationItem"; item: FeedItem }).item}
-              onPress={(feedItem) => navigation.navigate("Product", { clothingId: feedItem.id })}
+              onPress={(feedItem: any) => navigation.navigate("Product", { clothingId: feedItem.id })}
             />
           );
 

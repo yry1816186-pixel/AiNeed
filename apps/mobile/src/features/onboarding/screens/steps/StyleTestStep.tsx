@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
-import { Ionicons } from "../../../polyfills/expo-vector-icons";
-import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
+import { Ionicons } from "../../../../polyfills/expo-vector-icons.ts";
+import { LinearGradient } from "../../../../polyfills/expo-linear-gradient.tsx";
 import Animated, { SlideInRight } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';

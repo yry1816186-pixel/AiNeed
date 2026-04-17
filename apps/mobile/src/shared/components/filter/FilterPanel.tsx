@@ -27,7 +27,7 @@ title,
   options,
   selected,
   onSelect,
-  _multiSelect = true,
+  multiSelect = true,
 }: FilterSectionProps) {
   return (
     <View style={styles.section}>

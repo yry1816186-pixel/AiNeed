@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: colors.secondaryLight,
   },
-  planBadgeText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.secondaryDark, fontWeight: "600" },
+  planBadgeText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.secondary, fontWeight: "600" },
   emptyState: { alignItems: "center", paddingVertical: Spacing.lg},
   emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
 });
