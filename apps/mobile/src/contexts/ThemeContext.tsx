@@ -109,7 +109,7 @@ export interface ThemeContextType {
   spacing: TokenSet["spacing"];
   borderRadius: TokenSet["borderRadius"];
   shadows: TokenSet["shadows"];
-  gradients: FlatColors["gradients"];
+  gradients: TokenSet["gradients"] & FlatColors["gradients"];
   animation: TokenSet["animation"];
   setMode: (mode: ThemeMode) => void;
   toggleTheme: () => void;
@@ -207,7 +207,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       spacing: tokens.spacing,
       borderRadius: tokens.borderRadius,
       shadows: tokens.shadows,
-      gradients: tokens.gradients,
+      gradients: flatColors.gradients as TokenSet["gradients"] & FlatColors["gradients"],
       animation: tokens.animation,
       setMode,
       toggleTheme,
