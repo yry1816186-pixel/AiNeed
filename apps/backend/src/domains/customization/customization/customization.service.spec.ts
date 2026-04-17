@@ -1,6 +1,6 @@
 import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { CustomizationType, CustomizationStatus, ProductTemplateType } from "@prisma/client";
+import { CustomizationType, CustomizationStatus, ProductTemplateType } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 

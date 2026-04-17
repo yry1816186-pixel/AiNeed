@@ -98,7 +98,7 @@ export class FavoritesService {
         ...f.item,
         price: parseFloat(f.item.price.toString()),
       };
-    }).filter((item): item is NonNullable<typeof item> => item !== null);
+    }).filter((item: unknown): item is NonNullable<typeof item> => item !== null);
 
     return createPaginatedResponse(favoritesItems, total, page, pageSize);
   }

@@ -112,7 +112,7 @@ export class SessionArchiveService {
       orderBy: { createdAt: "desc" },
     });
 
-    return sessions.map((s): ArchivedSession => {
+    return sessions.map((s: { id: string; status: string; payload: unknown; createdAt: Date; updatedAt: Date }): ArchivedSession => {
       const payload = s.payload as Record<string, unknown> | null;
       const goalValue = payload ? (payload).goal : undefined;
       return {

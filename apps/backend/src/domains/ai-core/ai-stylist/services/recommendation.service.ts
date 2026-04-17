@@ -549,7 +549,7 @@ export class AiStylistRecommendationService {
             },
           })
         : [];
-      const dbItemMap = new Map(dbItems.map((item) => [item.id, item]));
+      const dbItemMap = new Map(dbItems.map((item: { id: string; [key: string]: unknown }) => [item.id, item]));
 
       const items: StylistOutfitItem[] = (mlResult.items || []).map(
         (item: { item_id?: string; category?: string; reasons?: string[]; price?: number; brand?: string; score?: number }) => {

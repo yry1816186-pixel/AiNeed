@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { CustomizationStatus } from "@prisma/client";
+import { CustomizationStatus } from "../../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 

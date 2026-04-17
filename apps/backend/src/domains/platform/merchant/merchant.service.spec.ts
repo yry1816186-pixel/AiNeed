@@ -5,7 +5,7 @@
   BadRequestException,
 } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { ClothingCategory } from "@prisma/client";
+import { ClothingCategory } from "../../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import * as bcrypt from "../../../common/security/bcrypt";

@@ -189,7 +189,7 @@ export class AiStylistSessionService {
           return null;
         }
       })
-      .filter((s): s is NonNullable<typeof s> => s !== null);
+      .filter((s: unknown): s is NonNullable<typeof s> => s !== null);
 
     return { sessions, total };
   }

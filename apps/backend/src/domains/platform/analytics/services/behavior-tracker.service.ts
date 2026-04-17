@@ -435,7 +435,8 @@ export class BehaviorTrackerService {
     let purchaseCount = 0;
 
     for (const event of events) {
-      const meta = (event.metadata as Record<string, unknown>) || {};
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const meta = (event.metadata as any) || {};
       if (meta.implicitFeedback) {
         totalDwellTime += meta.implicitFeedback.dwellTime || 0;
         totalScrollDepth += meta.implicitFeedback.scrollDepth || 0;
@@ -605,7 +606,7 @@ export class BehaviorTrackerService {
       where: { userId },
     });
     const existingMap = new Map(
-      existingPrefs.map((p) => [`${p.category}:${p.key}`, p]),
+      existingPrefs.map((p: any) => [`${p.category}:${p.key}`, p]),
     );
 
     const now = new Date();
@@ -622,7 +623,7 @@ export class BehaviorTrackerService {
       if (!category || !key) {
         continue;
       }
-      const existing = existingMap.get(compoundKey);
+      const existing = existingMap.get(compoundKey) as any | undefined;
 
       let newWeight: number;
       let trend: "rising" | "stable" | "declining" = "stable";
@@ -833,7 +834,7 @@ export class BehaviorTrackerService {
     });
 
     // Map Prisma results to the expected type, converting JsonValue to Record<string, unknown>
-    return events.map((event) => ({
+    return events.map((event: any) => ({
       id: event.id,
       userId: event.userId,
       sessionId: event.sessionId,

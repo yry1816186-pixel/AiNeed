@@ -51,7 +51,7 @@ export class MerchantService {
 
     // 使用事务创建品牌和商家账户
     try {
-      const result = await this.prisma.$transaction(async (tx) => {
+      const result = await this.prisma.$transaction(async (tx: any) => {
         const brand = await tx.brand.create({
           data: {
             name: data.brandName,
@@ -154,7 +154,8 @@ export class MerchantService {
   ) {
     const { limit = 20, offset = 0, status } = options;
 
-    const where: Prisma.ClothingItemWhereInput = { brandId };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = { brandId };
     if (status === "active") {where.isActive = true;}
     if (status === "inactive") {where.isActive = false;}
 
@@ -332,7 +333,7 @@ export class MerchantService {
 
     // 统计各类事件
     const stats = behaviorEvents.reduce(
-      (acc, event) => {
+      (acc: Record<string, number>, event: { eventType: string }) => {
         const type = event.eventType;
         acc[type] = (acc[type] || 0) + 1;
         return acc;
@@ -364,15 +365,15 @@ export class MerchantService {
     });
 
     // 统计试衣次数
-    const productIds = products.map((p) => p.id);
+    const productIds = products.map((p: { id: string; viewCount: number; likeCount: number }) => p.id);
     const tryOnCount = await this.prisma.virtualTryOn.count({
       where: { itemId: { in: productIds } },
     });
 
     return {
-      totalViews: products.reduce((sum, p) => sum + (p.viewCount || 0), 0),
+      totalViews: products.reduce((sum: number, p: { viewCount: number }) => sum + (p.viewCount || 0), 0),
       totalTryOns: tryOnCount,
-      totalFavorites: products.reduce((sum, p) => sum + (p.likeCount || 0), 0),
+      totalFavorites: products.reduce((sum: number, p: { likeCount: number }) => sum + (p.likeCount || 0), 0),
     };
   }
 
@@ -394,7 +395,7 @@ export class MerchantService {
     });
 
     // 批量获取所有产品的试衣次数，避免N+1查询
-    const productIds = products.map((p) => p.id);
+    const productIds = products.map((p: any) => p.id);
     const tryOnCounts = await this.prisma.virtualTryOn.groupBy({
       by: ["itemId"],
       where: { itemId: { in: productIds } },
@@ -403,10 +404,10 @@ export class MerchantService {
 
     // 创建itemId到count的映射
     const tryOnMap = new Map(
-      tryOnCounts.map((t) => [t.itemId, t._count.id]),
+      tryOnCounts.map((t: any) => [t.itemId, t._count.id]),
     );
 
-    return products.map((p) => ({
+    return products.map((p: any) => ({
       ...p,
       tryOnCount: tryOnMap.get(p.id) || 0,
     }));
@@ -420,7 +421,7 @@ export class MerchantService {
       where: { brandId },
       select: { id: true },
     });
-    const productIds = products.map((p) => p.id);
+    const productIds = products.map((p: { id: string }) => p.id);
 
     if (productIds.length === 0) {
       return {
@@ -464,7 +465,7 @@ export class MerchantService {
         eventType: s.event_type,
         count: Number(s.count),
       })),
-      dailyTryOns: dailyTryOns.map((t) => ({
+      dailyTryOns: dailyTryOns.map((t: any) => ({
         date: t.date,
         count: Number(t.count),
       })),
@@ -480,9 +481,7 @@ export class MerchantService {
         where: { brandId },
         select: { id: true },
       })
-    ).map((p) => p.id);
-
-    // 获取与该品牌产品有交互的用户ID
+    ).map((p: any) => p.id);
     const interactions = await this.prisma.userBehaviorEvent.findMany({
       where: {
         targetId: { in: productIds },

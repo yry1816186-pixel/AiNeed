@@ -127,14 +127,14 @@ export class RecommendationFeedService {
       include: { brand: true },
     });
 
-    const itemMap = new Map(clothingItems.map((i) => [i.id, i]));
+    const itemMap = new Map(clothingItems.map((i: any) => [i.id, i]));
     const userProfile = await this.prisma.userProfile.findUnique({
       where: { userId },
     });
 
     const feedItems: FeedItem[] = [];
     for (const rec of recommendations) {
-      const item = itemMap.get(rec.itemId);
+      const item = itemMap.get(rec.itemId) as any;
       if (!item) {continue;}
 
       const attrs = item.attributes as Record<string, unknown> | null;

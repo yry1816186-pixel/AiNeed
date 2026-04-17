@@ -4,7 +4,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ClothingCategory } from "@prisma/client";
+import { ClothingCategory } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
@@ -114,7 +114,7 @@ export class OutfitCompletionService {
 
     const anchorColors = anchor.colors || [];
     const anchorStyles = anchor.tags || [];
-    const anchorOccasions = anchor.tags?.filter((t) =>
+    const anchorOccasions = anchor.tags?.filter((t: any) =>
       ["daily", "work", "date", "party", "sport", "travel", "interview", "dinner", "formal", "casual"].includes(t.toLowerCase()),
     ) || [];
 
@@ -181,7 +181,7 @@ export class OutfitCompletionService {
       orderBy: { createdAt: "desc" },
     });
 
-    const scored = dbItems.map((item) => {
+    const scored = dbItems.map((item: any) => {
       let score = 0;
       const itemColors = item.colors || [];
       const itemStyles = item.tags || [];

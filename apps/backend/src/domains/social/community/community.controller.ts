@@ -26,8 +26,6 @@ import {
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 
-import { Request } from "express";
-
 import { RequestWithUser } from "../../../common/types/common.types";
 import { AuthGuard } from "../../identity/auth/guards/auth.guard";
 
@@ -83,7 +81,7 @@ export class CommunityController {
   @Get("posts")
   @ApiOperation({ summary: "获取帖子列表", description: "分页获取社区帖子列表，支持按分类、标签、作者筛选" })
   @ApiResponse({ status: 200, description: "获取成功" })
-  async getPosts(@Query() query: PostQueryDto, @Request() req: RequestWithUser) {
+  async getPosts(@Query() query: PostQueryDto, @NestRequest() req: RequestWithUser) {
     const adminMode = req.user?.role === 'admin';
     return this.communityService.getPosts(query, req.user?.id, adminMode);
   }

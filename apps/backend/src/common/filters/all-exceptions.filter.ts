@@ -119,6 +119,8 @@ const SENSITIVE_FIELDS = [
   "email",
 ];
 
+type PrismaClientKnownRequestErrorType = InstanceType<typeof PrismaClientKnownRequestError>;
+
 /**
  * 全局异常过滤器
  *
@@ -328,7 +330,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
    * 处理数据库错误 (Prisma)
    */
   private handleDatabaseError(
-    exception: PrismaClientKnownRequestError,
+    exception: PrismaClientKnownRequestErrorType,
     timestamp: string,
     path: string,
     requestId: string | undefined,

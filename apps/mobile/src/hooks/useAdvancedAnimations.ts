@@ -22,6 +22,7 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 import { useTheme } from '../shared/contexts/ThemeContext';
+import { flatColors as colors } from '../design-system/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { createAnimatedComponent } = AnimatedReanimated;

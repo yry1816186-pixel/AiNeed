@@ -184,7 +184,7 @@ export class BloggerDashboardService {
       select: { price: true, salesCount: true },
     });
 
-    const totalRevenue = products.reduce((sum, p) => sum + Number(p.price) * p.salesCount * 0.8, 0);
+    const totalRevenue = products.reduce((sum: any, p: any) => sum + Number(p.price) * p.salesCount * 0.8, 0);
     const trendMap = new Map<string, number>();
     const today = new Date();
     const dailyAvg = totalRevenue / Math.max(days, 1);

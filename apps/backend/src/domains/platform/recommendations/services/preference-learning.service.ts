@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
-import { BehaviorEventType, Prisma } from "@prisma/client";
+import { BehaviorEventType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";
@@ -60,7 +60,7 @@ export class PreferenceLearningService {
         action: input.eventType,
         targetType: input.targetType,
         targetId: input.targetId,
-        metadata: input.metadata as Prisma.InputJsonValue,
+        metadata: input.metadata as any,
       },
     });
 
@@ -255,7 +255,7 @@ export class PreferenceLearningService {
       take: limit,
     });
 
-    return weights.map((w) => ({
+    return weights.map((w: any) => ({
       category: w.category,
       key: w.key,
       value: Number(w.weight),

@@ -1,5 +1,4 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import {
@@ -38,7 +37,8 @@ export class ShareTemplateService {
   ): Promise<PaginatedResponse<any>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(query);
 
-    const where: Prisma.ShareTemplateWhereInput = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = {};
     if (query.isActive !== undefined) {
       where.isActive = query.isActive;
     }

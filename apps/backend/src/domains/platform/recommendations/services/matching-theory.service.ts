@@ -481,12 +481,12 @@ export class MatchingTheoryService {
       const c1 = color1.toLowerCase();
       const c2 = color2.toLowerCase();
 
-      const isBest1 = profile.bestColors.some(
+      const isBest1 = profile?.bestColors.some(
         (bc) => c1.includes(bc) || bc.includes(c1),
-      );
-      const isBest2 = profile.bestColors.some(
+      ) ?? false;
+      const isBest2 = profile?.bestColors.some(
         (bc) => c2.includes(bc) || bc.includes(c2),
-      );
+      ) ?? false;
 
       if (isBest1 && isBest2) {
         score += 0.2;
@@ -495,12 +495,12 @@ export class MatchingTheoryService {
         score += 0.1;
       }
 
-      const isAvoid1 = profile.avoidColors.some(
+      const isAvoid1 = profile?.avoidColors.some(
         (ac) => c1.includes(ac) || ac.includes(c1),
-      );
-      const isAvoid2 = profile.avoidColors.some(
+      ) ?? false;
+      const isAvoid2 = profile?.avoidColors.some(
         (ac) => c2.includes(ac) || ac.includes(c2),
-      );
+      ) ?? false;
 
       if (isAvoid1 || isAvoid2) {
         score -= 0.1;
@@ -534,10 +534,10 @@ export class MatchingTheoryService {
     if (params.bodyType) {
       const rec = this.bodyTypeRecommendations[params.bodyType];
       const styleMatch = params.itemStyles.filter((s) =>
-        rec.suitableStyles.includes(s.toLowerCase()),
+        rec?.suitableStyles.includes(s.toLowerCase()),
       ).length;
       const styleAvoid = params.itemStyles.filter((s) =>
-        rec.avoidStyles.includes(s.toLowerCase()),
+        rec?.avoidStyles.includes(s.toLowerCase()),
       ).length;
 
       const bodyScore = Math.max(0, 0.5 + styleMatch * 0.1 - styleAvoid * 0.15);
@@ -546,7 +546,7 @@ export class MatchingTheoryService {
       factorCount++;
 
       if (styleAvoid > 0) {
-        suggestions.push(`建议避免: ${rec.avoidStyles.join(", ")}`);
+        suggestions.push(`建议避免: ${rec?.avoidStyles.join(", ")}`);
       }
     }
 
@@ -566,7 +566,7 @@ export class MatchingTheoryService {
     if (params.colorSeason && params.itemColors.length > 0) {
       const profile = this.colorSeasonProfiles[params.colorSeason];
       const goodColors = params.itemColors.filter((c) =>
-        profile.bestColors.some((bc) => c.includes(bc) || bc.includes(c)),
+        profile?.bestColors.some((bc) => c.includes(bc) || bc.includes(c)),
       ).length;
 
       const seasonScore = goodColors / params.itemColors.length;
@@ -576,7 +576,7 @@ export class MatchingTheoryService {
 
       if (goodColors < params.itemColors.length) {
         suggestions.push(
-          `推荐颜色: ${profile.bestColors.slice(0, 5).join(", ")}`,
+          `推荐颜色: ${profile?.bestColors.slice(0, 5).join(", ")}`,
         );
       }
     }
@@ -584,7 +584,7 @@ export class MatchingTheoryService {
     if (params.skinTone && params.itemColors.length > 0) {
       const flattering = this.skinToneColors[params.skinTone];
       const matchedColors = params.itemColors.filter((c) =>
-        flattering.some((fc) => c.includes(fc) || fc.includes(c)),
+        flattering?.some((fc) => c.includes(fc) || fc.includes(c)),
       ).length;
 
       const skinScore = matchedColors / params.itemColors.length;
@@ -613,7 +613,7 @@ export class MatchingTheoryService {
       [ColorSeason.winter_cool]: "冬季冷型",
       [ColorSeason.winter_deep]: "冬季深型",
     };
-    return names[season];
+    return names[season]!;
   }
 
   getOccasionStyleGuide(occasion: string): {
@@ -696,13 +696,13 @@ export class MatchingTheoryService {
     if (bodyType) {
       const rec = this.bodyTypeRecommendations[bodyType];
       const styleMatch = [...itemStyles, ...itemTags].filter((s: string) =>
-        rec.suitableStyles.some(
+        rec?.suitableStyles.some(
           (rs: string) =>
             s.toLowerCase().includes(rs) || rs.includes(s.toLowerCase()),
         ),
       ).length;
       const styleAvoid = [...itemStyles, ...itemTags].filter((s: string) =>
-        rec.avoidStyles.some(
+        rec?.avoidStyles.some(
           (rs: string) =>
             s.toLowerCase().includes(rs) || rs.includes(s.toLowerCase()),
         ),
@@ -716,7 +716,7 @@ export class MatchingTheoryService {
     if (colorSeason && itemColors.length > 0) {
       const profile = this.colorSeasonProfiles[colorSeason];
       const goodColors = itemColors.filter((c: string) =>
-        profile.bestColors.some(
+        profile?.bestColors.some(
           (bc: string) =>
             c.toLowerCase().includes(bc) || bc.includes(c.toLowerCase()),
         ),

@@ -18,220 +18,255 @@ function getAllTsxFiles(dir) {
   return results;
 }
 
-function getRelativeImportPath(fromFile, toFile) {
-  let rel = path.relative(path.dirname(fromFile), toFile).replace(/\\/g, "/");
-  if (!rel.startsWith(".")) rel = "./" + rel;
-  return rel;
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function hasColorsDefinition(content) {
-  const patterns = [
-    /const\s*\{\s*colors\s*\}\s*=\s*useTheme\(\)/,
-    /const\s+colors\s*=\s*useTheme\(\)/,
-    /import\s+\{[^}]*flatColors[^}]*\}\s*from/,
-    /import\s+\{[^}]*colors[^}]*as\s+colors[^}]*\}\s*from/,
-    /flatColors\s+as\s+colors/,
-    /const\s+colors\s*=\s*flatColors/,
-    /const\s+colors\s*=\s*\{/,
-  ];
-  return patterns.some((p) => p.test(content));
-}
-
-function hasStylesDefinition(content) {
-  const patterns = [
-    /const\s+styles\s*=\s*StyleSheet\.create/,
-    /const\s+styles\s*=\s*makeStyles/,
-    /const\s+styles\s*=\s*createStyles/,
-    /const\s+styles\s*=\s*useStyles/,
-  ];
-  return patterns.some((p) => p.test(content));
-}
-
-function usesColorsVariable(content) {
-  const usagePattern = /\bcolors\.\w+/;
-  return usagePattern.test(content);
-}
-
-function usesStylesVariable(content) {
-  const usagePattern = /\bstyles\.\w+/;
-  return usagePattern.test(content);
-}
-
-function hasUseThemeImport(content) {
-  return /import\s+\{[^}]*useTheme[^}]*\}\s*from/.test(content);
-}
-
-function hasCreateStylesImport(content) {
-  return /import\s+\{[^}]*createStyles[^}]*\}\s*from/.test(content);
-}
-
-function findThemeContextImportPath(content) {
-  const match = content.match(
-    /import\s+\{[^}]*\}\s*from\s*['"]([^'"]*ThemeContext)['"]/
-  );
-  return match ? match[1] : null;
-}
-
-function findDesignSystemThemeImportPath(content) {
-  const match = content.match(
-    /import\s+\{[^}]*\}\s*from\s*['"]([^'"]*design-system\/theme[^'"]*|[^'"]*theme\/index)['"]/
-  );
-  return match ? match[1] : null;
-}
-
-function addColorsImportFromTheme(filePath, content) {
-  const themeContextPath = findThemeContextImportPath(content);
-  const designThemePath = findDesignSystemThemeImportPath(content);
-
-  let importPath;
-  if (themeContextPath) {
-    importPath = themeContextPath;
-  } else if (designThemePath) {
-    importPath = designThemePath;
-  } else {
-    const srcDir = path.join(MOBILE_SRC);
-    const relToSrc = path.relative(path.dirname(filePath), srcDir).replace(/\\/g, "/");
-    const prefix = relToSrc.startsWith(".") ? relToSrc : "./" + relToSrc;
-    importPath = prefix + "/shared/contexts/ThemeContext";
-  }
-
-  if (themeContextPath) {
-    const existingImportRegex = new RegExp(
-      `(import\\s*\\{[^}]*)\\}from\\s*['"]${escapeRegExp(importPath)}['"]`
-    );
-    const match = content.match(existingImportRegex);
-    if (match) {
-      const imports = match[1];
-      if (!imports.includes("useTheme")) {
-        content = content.replace(
-          existingImportRegex,
-          `${imports}, useTheme } from '${importPath}'`
-        );
-      }
+function findLastImportEnd(content) {
+  const lines = content.split("\n");
+  let lastImportEndLine = -1;
+  let inImport = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^\s*import\s/.test(line) || /^\s*import\s*type\s/.test(line)) {
+      inImport = true;
     }
-  } else {
-    const lastImportIndex = content.lastIndexOf("\nimport ");
-    const nextNewline = content.indexOf("\n", lastImportIndex + 1);
-    content =
-      content.slice(0, nextNewline) +
-      `\nimport { useTheme } from '${importPath}';` +
-      content.slice(nextNewline);
+    if (inImport && /from\s+['"][^'"]+['"]\s*;?\s*$/.test(line)) {
+      lastImportEndLine = i;
+      inImport = false;
+    }
+    if (inImport && /;\s*$/.test(line) && !/from\s+['"]/.test(line)) {
+      lastImportEndLine = i;
+      inImport = false;
+    }
   }
-
-  return content;
+  return lastImportEndLine;
 }
 
-function addFlatColorsImport(filePath, content) {
-  const designThemePath = findDesignSystemThemeImportPath(content);
-
-  let importPath;
-  if (designThemePath) {
-    importPath = designThemePath;
-  } else {
-    const srcDir = path.join(MOBILE_SRC);
-    const relToSrc = path.relative(path.dirname(filePath), srcDir).replace(/\\/g, "/");
-    const prefix = relToSrc.startsWith(".") ? relToSrc : "./" + relToSrc;
-    importPath = prefix + "/design-system/theme";
+function insertAfterImports(content, newLine) {
+  const lines = content.split("\n");
+  const idx = findLastImportEnd(content);
+  if (idx >= 0) {
+    lines.splice(idx + 1, 0, newLine);
+    return lines.join("\n");
   }
+  return newLine + "\n" + content;
+}
 
-  const existingImportRegex = new RegExp(
-    `import\\s*\\{([^}]*)\\}\\s*from\\s*['"]${escapeRegExp(importPath)}['"]`
-  );
-  const match = content.match(existingImportRegex);
+function computeImportPath(filePath, targetRelFromSrc) {
+  const relToSrc = path.relative(path.dirname(filePath), MOBILE_SRC).replace(/\\/g, "/");
+  const prefix = relToSrc.startsWith(".") ? relToSrc : "./" + relToSrc;
+  return prefix + "/" + targetRelFromSrc;
+}
+
+function hasModuleLevelFlatColorsImport(content) {
+  return /import\s+\{[^}]*flatColors\s+as\s+colors[^}]*\}\s*from/.test(content);
+}
+
+function usesColorsInStyleSheet(content) {
+  return /StyleSheet\.create\s*\(\s*\{[\s\S]*?colors\.\w+/.test(content);
+}
+
+function usesColorsInModule(content) {
+  const lines = content.split("\n");
+  let inFunction = 0;
+  for (const line of lines) {
+    const opens = (line.match(/\{/g) || []).length;
+    const closes = (line.match(/\}/g) || []).length;
+    if (inFunction === 0 && /\bcolors\.\w+/.test(line) && !/^\s*\/\//.test(line)) {
+      return true;
+    }
+    inFunction += opens - closes;
+    if (inFunction < 0) inFunction = 0;
+  }
+  return false;
+}
+
+function addToExistingImport(content, importPath, nameToAdd) {
+  const escapedPath = escapeRegExp(importPath);
+  const regex = new RegExp(`(import\\s*\\{)([^}]*)(\\}\\s*from\\s*['"]${escapedPath}['"])`);
+  const match = content.match(regex);
   if (match) {
-    const imports = match[1];
-    if (!imports.includes("flatColors")) {
-      content = content.replace(
-        existingImportRegex,
-        `import {${imports}, flatColors as colors } from '${importPath}'`
-      );
-    }
-  } else {
-    const lastImportIndex = content.lastIndexOf("\nimport ");
-    const nextNewline = content.indexOf("\n", lastImportIndex + 1);
-    content =
-      content.slice(0, nextNewline) +
-      `\nimport { flatColors as colors } from '${importPath}';` +
-      content.slice(nextNewline);
+    const existing = match[2].trim();
+    if (existing.includes(nameToAdd) || existing.includes("flatColors")) return content;
+    const newImports = existing ? `${existing}, ${nameToAdd}` : nameToAdd;
+    return content.replace(regex, `import { ${newImports} } from '${importPath}'`);
   }
-
-  return content;
-}
-
-function addUseThemeDestructure(content) {
-  const componentPatterns = [
-    /(export\s+(?:default\s+)?function\s+\w+\s*\([^)]*\)\s*(?::\s*[^{]+)?\s*\{)/,
-    /(export\s+const\s+\w+\s*:\s*React\.FC[^=]*=\s*\([^)]*\)\s*=>\s*\{)/,
-    /(export\s+const\s+\w+\s*=\s*\([^)]*\)\s*=>\s*\{)/,
-    /(const\s+\w+\s*=\s*React\.memo\(\s*\([^)]*\)\s*=>\s*\{)/,
-    /(export\s+default\s+function\s+\w+\s*\([^)]*\)\s*\{)/,
-  ];
-
-  for (const pattern of componentPatterns) {
-    const match = content.match(pattern);
-    if (match) {
-      const insertPos = content.indexOf(match[0]) + match[0].length;
-      const nextLine = content.indexOf("\n", insertPos);
-      content =
-        content.slice(0, nextLine + 1) +
-        "  const { colors } = useTheme();\n" +
-        content.slice(nextLine + 1);
-      return content;
-    }
-  }
-
-  return content;
-}
-
-function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return null;
 }
 
 function fixFile(filePath) {
   let content = fs.readFileSync(filePath, "utf-8");
+  const original = content;
   let modified = false;
-  const originalContent = content;
 
-  if (usesColorsVariable(content) && !hasColorsDefinition(content)) {
-    const usesInStyleSheet =
-      /StyleSheet\.create\s*\(\s*\{[\s\S]*?colors\.\w+/.test(content);
+  const relPath = path.relative(MOBILE_SRC, filePath).replace(/\\/g, "/");
 
-    if (usesInStyleSheet) {
-      content = addFlatColorsImport(filePath, content);
-    } else if (hasUseThemeImport(content)) {
-      content = addUseThemeDestructure(content);
+  // Skip design-system token files - they ARE the source of colors
+  if (relPath.includes("design-system/theme/tokens/")) return false;
+  if (relPath.includes("design-system/theme/FlatColors")) return false;
+  if (relPath.includes("shared/contexts/ThemeContext")) return false;
+
+  // Fix 1: Wrong import path - flatColors from design-tokens instead of theme index
+  const wrongPathRegex = /import\s*\{([^}]*)\}\s*from\s*['"]([^'"]*design-system\/theme\/tokens\/design-tokens)['"]/g;
+  let m;
+  while ((m = wrongPathRegex.exec(content)) !== null) {
+    const imports = m[1];
+    const oldPath = m[2];
+    if (imports.includes("flatColors")) {
+      const newPath = oldPath.replace(/\/tokens\/design-tokens$/, "");
+      const otherImports = imports.replace(/,\s*flatColors\s+as\s+colors\s*,?/, ",").replace(/,\s*$/, "").replace(/^\s*,\s*/, "");
+      if (otherImports.trim()) {
+        content = content.replace(m[0], `import {${otherImports} } from '${oldPath}';\nimport { flatColors as colors } from '${newPath}';`);
+      } else {
+        content = content.replace(m[0], `import { flatColors as colors } from '${newPath}';`);
+      }
+      modified = true;
+    }
+    if (imports.includes("useTheme") || imports.includes("createStyles")) {
+      const themeItems = [];
+      const otherItems = [];
+      imports.split(",").forEach(item => {
+        const t = item.trim();
+        if (t.includes("useTheme") || t.includes("createStyles")) themeItems.push(t);
+        else if (t && !t.includes("flatColors")) otherItems.push(t);
+      });
+      const correctPath = computeImportPath(filePath, "shared/contexts/ThemeContext");
+      if (otherItems.length > 0 && themeItems.length > 0) {
+        content = content.replace(m[0], `import { ${otherItems.join(", ")} } from '${oldPath}';\nimport { ${themeItems.join(", ")} } from '${correctPath}';`);
+      } else if (themeItems.length > 0) {
+        content = content.replace(m[0], `import { ${themeItems.join(", ")} } from '${correctPath}';`);
+      }
+      modified = true;
+    }
+  }
+
+  // Fix 2: If colors is used at module level (StyleSheet.create or other module-level code), need flatColors import
+  const needsModuleLevelColors = usesColorsInStyleSheet(content) || usesColorsInModule(content);
+  if (needsModuleLevelColors && !hasModuleLevelFlatColorsImport(content)) {
+    const themeImportPath = computeImportPath(filePath, "design-system/theme");
+    const existingThemeMatch = content.match(/from\s+['"]([^'"]*design-system\/theme(?:\/index)?)['"]/);
+    if (existingThemeMatch) {
+      const result = addToExistingImport(content, existingThemeMatch[1], "flatColors as colors");
+      if (result && result !== content) {
+        content = result;
+        modified = true;
+      } else {
+        content = insertAfterImports(content, `import { flatColors as colors } from '${themeImportPath}';`);
+        modified = true;
+      }
     } else {
-      content = addColorsImportFromTheme(filePath, content);
-      content = addUseThemeDestructure(content);
+      content = insertAfterImports(content, `import { flatColors as colors } from '${themeImportPath}';`);
+      modified = true;
+    }
+  }
+
+  // Fix 3: If colors is used inside component functions but not at module level and not defined, add useTheme destructure
+  const usesColors = /\bcolors\.\w+/.test(content);
+  const hasColorsVar = hasModuleLevelFlatColorsImport(content) ||
+    /const\s*\{\s*colors\s*[:}]/.test(content);
+
+  if (usesColors && !hasColorsVar && !needsModuleLevelColors) {
+    const hasUseThemeImport = /import\s+[^;]*useTheme[^;]*from/.test(content);
+    if (!hasUseThemeImport) {
+      const importPath = computeImportPath(filePath, "shared/contexts/ThemeContext");
+      content = insertAfterImports(content, `import { useTheme } from '${importPath}';`);
+    }
+    const lines = content.split("\n");
+    for (let i = 0; i < lines.length; i++) {
+      const funcMatch = lines[i].match(/^(export\s+(?:default\s+)?(?:function|const)\s+\w+[^{]*\{)/);
+      if (funcMatch && !lines[i].includes("StyleSheet") && !lines[i].includes("import") && !lines[i].includes("type ")) {
+        // Check if next line already has useTheme
+        if (!lines[i + 1] || !lines[i + 1].includes("useTheme")) {
+          lines.splice(i + 1, 0, "  const { colors } = useTheme();");
+          content = lines.join("\n");
+        }
+        break;
+      }
     }
     modified = true;
   }
 
-  if (usesStylesVariable(content) && !hasStylesDefinition(content)) {
-    const hasStyleSheetCreate = /StyleSheet\.create/.test(content);
-    if (!hasStyleSheetCreate) {
-      const lastBrace = content.lastIndexOf("\n}");
-      if (lastBrace > 0) {
-        const stylesUsed = [];
-        const styleRegex = /styles\.(\w+)/g;
-        let m;
-        while ((m = styleRegex.exec(content)) !== null) {
-          if (!stylesUsed.includes(m[1])) stylesUsed.push(m[1]);
-        }
-
-        const stylesObj = stylesUsed
-          .map((s) => `  ${s}: { flex: 1 },`)
-          .join("\n");
-
-        content =
-          content +
-          `\n\nconst styles = StyleSheet.create({\n${stylesObj}\n});\n`;
-        modified = true;
-      }
+  // Fix 4: styles variable not defined
+  const usesStyles = /\bstyles\.\w+/.test(content);
+  const hasStylesDef = /const\s+styles\s*=/.test(content);
+  if (usesStyles && !hasStylesDef) {
+    const stylesUsed = [];
+    const re = /styles\.(\w+)/g;
+    let sm;
+    while ((sm = re.exec(content)) !== null) {
+      if (!stylesUsed.includes(sm[1])) stylesUsed.push(sm[1]);
+    }
+    if (stylesUsed.length > 0) {
+      const obj = stylesUsed.map(s => `  ${s}: {} as any,`).join("\n");
+      content = content.trimEnd() + `\n\nconst styles = StyleSheet.create({\n${obj}\n});\n`;
+      modified = true;
     }
   }
 
-  if (modified && content !== originalContent) {
+  // Fix 5: partStyles variable not defined
+  const usesPartStyles = /\bpartStyles\.\w+/.test(content);
+  const hasPartStylesDef = /const\s+partStyles\s*=/.test(content);
+  if (usesPartStyles && !hasPartStylesDef) {
+    const used = [];
+    const re = /partStyles\.(\w+)/g;
+    let sm;
+    while ((sm = re.exec(content)) !== null) {
+      if (!used.includes(sm[1])) used.push(sm[1]);
+    }
+    if (used.length > 0) {
+      const obj = used.map(s => `  ${s}: {} as any,`).join("\n");
+      content = content.trimEnd() + `\n\nconst partStyles = StyleSheet.create({\n${obj}\n});\n`;
+      modified = true;
+    }
+  }
+
+  // Fix 6: theme variable not defined (module level)
+  const usesThemeVar = /\btheme\.(?:colors|spacing|typography|borderRadius|shadows|gradients|animation)\b/.test(content);
+  const hasThemeVar = /import\s+.*\btheme\b.*from/.test(content) || /const\s+theme\s*=/.test(content);
+  if (usesThemeVar && !hasThemeVar) {
+    const importPath = computeImportPath(filePath, "design-system/theme");
+    const existingMatch = content.match(/from\s+['"]([^'"]*design-system\/theme(?:\/index)?)['"]/);
+    if (existingMatch) {
+      const result = addToExistingImport(content, existingMatch[1], "theme");
+      if (result && result !== content) {
+        content = result;
+        modified = true;
+      }
+    } else {
+      content = insertAfterImports(content, `import { theme } from '${importPath}';`);
+      modified = true;
+    }
+  }
+
+  // Fix 7: createStyles not defined
+  const usesCreateStyles = /\bcreateStyles\s*\(/.test(content);
+  const hasCreateStyles = /import\s+[^;]*createStyles[^;]*from/.test(content);
+  if (usesCreateStyles && !hasCreateStyles) {
+    const importPath = computeImportPath(filePath, "shared/contexts/ThemeContext");
+    const existingMatch = content.match(/from\s+['"]([^'"]*shared\/contexts\/ThemeContext)['"]/);
+    if (existingMatch) {
+      const result = addToExistingImport(content, existingMatch[1], "createStyles");
+      if (result && result !== content) {
+        content = result;
+        modified = true;
+      }
+    } else {
+      content = insertAfterImports(content, `import { createStyles } from '${importPath}';`);
+      modified = true;
+    }
+  }
+
+  // Fix 8: useUnifiedTheme not defined
+  const usesUnifiedTheme = /\buseUnifiedTheme\s*\(/.test(content);
+  const hasUnifiedTheme = /import\s+[^;]*useUnifiedTheme[^;]*from/.test(content);
+  if (usesUnifiedTheme && !hasUnifiedTheme) {
+    const importPath = computeImportPath(filePath, "shared/contexts/ThemeContext");
+    content = insertAfterImports(content, `import { useTheme as useUnifiedTheme } from '${importPath}';`);
+    modified = true;
+  }
+
+  if (modified && content !== original) {
     fs.writeFileSync(filePath, content, "utf-8");
     return true;
   }
@@ -240,7 +275,6 @@ function fixFile(filePath) {
 
 const files = getAllTsxFiles(MOBILE_SRC);
 let fixedCount = 0;
-
 for (const file of files) {
   try {
     if (fixFile(file)) {
@@ -251,5 +285,4 @@ for (const file of files) {
     console.error(`Error fixing ${file}: ${e.message}`);
   }
 }
-
 console.log(`\nTotal files fixed: ${fixedCount}`);

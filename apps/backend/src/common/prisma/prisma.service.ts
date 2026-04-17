@@ -164,7 +164,7 @@ export class PrismaService
 
     if (sequences.length > 0) {
       const resetStatements = sequences
-        .map((row) => `ALTER SEQUENCE "${row.sequencename}" RESTART WITH 1;`)
+        .map((row: { sequencename: string }) => `ALTER SEQUENCE "${row.sequencename}" RESTART WITH 1;`)
         .join("\n");
       await this.$executeRawUnsafe(resetStatements);
     }

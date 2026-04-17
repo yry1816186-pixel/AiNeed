@@ -1185,9 +1185,9 @@ export class DecisionEngineService {
     }
 
     // Add from preference weights
-    const styleWeights = preferenceWeights.filter((w) => w.category === "decision_style");
+    const styleWeights = preferenceWeights.filter((w: { category: string; key: string; weight: number }) => w.category === "decision_style");
     stylePreferences.push(
-      ...styleWeights.sort((a, b) => Number(b.weight) - Number(a.weight)).map((w) => w.key),
+      ...styleWeights.sort((a: { weight: number }, b: { weight: number }) => Number(b.weight) - Number(a.weight)).map((w: { key: string }) => w.key),
     );
 
     // Extract color preferences
@@ -1245,7 +1245,7 @@ export class DecisionEngineService {
       orderBy: { timestamp: "asc" },
     });
 
-    return decisions.map((d) => ({
+    return decisions.map((d: { id: string; sessionId: string; nodeId: string; nodeType: string; chosenOptionId: string | null; rejectedOptionIds: string[]; decisionTime: number | null; timestamp: Date }) => ({
       id: d.id,
       sessionId: d.sessionId,
       nodeId: d.nodeId,

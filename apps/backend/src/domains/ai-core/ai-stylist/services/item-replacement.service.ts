@@ -121,8 +121,8 @@ export class ItemReplacementService {
 
     // 基于用户画像计算匹配分并排序
     const scored: AlternativeItem[] = candidates
-      .filter((c) => !existingIds.has(c.id))
-      .map((candidate) => {
+      .filter((c: { id: string }) => !existingIds.has(c.id))
+      .map((candidate: { tags?: string[]; [key: string]: unknown }) => {
         let matchScore = 50; // 基础分
 
         // 画像偏好加分
@@ -132,14 +132,14 @@ export class ItemReplacementService {
             typeof p === "string" ? p : p.name ?? "",
           );
           const tags = (candidate.tags) || [];
-          const overlap = tags.filter((t) => prefs.some((p) => t.includes(p) || p.includes(t)));
+          const overlap = tags.filter((t: string) => prefs.some((p) => t.includes(p) || p.includes(t)));
           matchScore += overlap.length * 10;
         }
 
         // 色彩偏好加分
         if (colorPrefs.length > 0) {
           const tags = (candidate.tags) || [];
-          const colorMatch = tags.filter((t) =>
+          const colorMatch = tags.filter((t: string) =>
             colorPrefs.some((c) => t.includes(c) || c.includes(t)),
           );
           matchScore += colorMatch.length * 8;

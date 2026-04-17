@@ -9,6 +9,7 @@ import {
 import { Prisma } from '@prisma/client';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const { PrismaClientKnownRequestError } = require('@prisma/client/runtime/library') as any;
+type PrismaClientKnownRequestErrorType = InstanceType<typeof PrismaClientKnownRequestError>;
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -252,7 +253,7 @@ export class ErrorInterceptor implements NestInterceptor {
     return new HttpException(response, statusCode);
   }
 
-  private mapPrismaError(exception: PrismaClientKnownRequestError): {
+  private mapPrismaError(exception: PrismaClientKnownRequestErrorType): {
     status: number;
     title: string;
     detail: string;
@@ -291,7 +292,7 @@ export class ErrorInterceptor implements NestInterceptor {
     }
   }
 
-  private getPrismaStatusCode(exception: PrismaClientKnownRequestError): number {
+  private getPrismaStatusCode(exception: PrismaClientKnownRequestErrorType): number {
     const codeMap: Record<string, number> = {
       P2002: HttpStatus.CONFLICT,
       P2025: HttpStatus.NOT_FOUND,

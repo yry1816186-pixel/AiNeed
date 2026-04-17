@@ -201,6 +201,7 @@ export class KnowledgeGraphService {
     });
 
     items.forEach((item: any) => {
+      const nodeId = `item_${item.id}`;
       this.graph.nodes.set(nodeId, {
         id: nodeId,
         type: "item",

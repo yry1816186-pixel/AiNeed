@@ -6,6 +6,7 @@ import {
   ColorSeason,
   ClothingCategory,
 } from '../../../../types/prisma-enums';
+import { ClothingItem, UserProfile as PrismaUserProfile } from '@prisma/client';
 import Decimal from "decimal.js";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -403,6 +404,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
     });
 
     const scoredItems = items.map((item: any) => {
+      const attrs = item.attributes as ItemAttributes | null;
 
       let score = 50;
 
@@ -596,6 +598,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
     });
 
     const scoredItems = items.map((item: any) => {
+      const viewScore = Math.min(item.viewCount / 100, 30);
       const likeScore = Math.min(item.likeCount / 25, 30);
       const recencyScore = 20;
       const featuredScore = item.isFeatured ? 20 : 0;

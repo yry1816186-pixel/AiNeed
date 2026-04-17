@@ -601,7 +601,7 @@ export class StyleQuizService {
       throw new NotFoundException("问卷不存在");
     }
 
-    const questionIds = quiz.questions.map((q) => q.id);
+    const questionIds = quiz.questions.map((q: { id: string }) => q.id);
 
     const answeredCount = await this.prisma.quizAnswer.count({
       where: { userId, questionId: { in: questionIds } },

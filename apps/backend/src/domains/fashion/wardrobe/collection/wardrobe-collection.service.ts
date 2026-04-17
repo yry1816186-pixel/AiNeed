@@ -1,5 +1,4 @@
 import { Injectable, Logger, NotFoundException, ForbiddenException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
@@ -198,7 +197,8 @@ export class WardrobeCollectionService {
 
     const { itemType, page = 1, pageSize = 20 } = query;
 
-    const where: Prisma.WardrobeCollectionItemWhereInput = { collectionId };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: Record<string, any> = { collectionId };
     if (itemType) {
       where.itemType = itemType;
     }

@@ -7,6 +7,6 @@ import { PhotosModule } from './photos/photos.module';
 
 @Module({
   imports: [AiStylistModule, TryOnModule, AIModule, AISafetyModule, PhotosModule],
-  exports: [AiStylistModule, TryOnModule, AiModule, AiSafetyModule, PhotosModule],
+  exports: [AiStylistModule, TryOnModule, AIModule, AISafetyModule, PhotosModule],
 })
 export class AiCoreModule {}

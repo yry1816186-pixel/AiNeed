@@ -130,7 +130,7 @@ export class PhotosService {
 
     // 批量处理所有 thumbnailDataUri，并行请求
     const photosWithDataUri = await Promise.all(
-      photos.map(async (photo) => {
+      photos.map(async (photo: { id: string; url: string | null; thumbnailUrl: string | null; thumbnailDataUri: string | null; analyzedAt: Date | null; createdAt: Date }) => {
         const previewAssetUrl = photo.thumbnailUrl ?? photo.url;
 
         if (!previewAssetUrl) {

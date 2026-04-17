@@ -56,6 +56,6 @@ export class MerchantAuthGuard implements CanActivate {
     const parts = authHeader.split(" ");
     if (parts.length !== 2 || parts[0] !== "Bearer") {return null;}
 
-    return parts[1];
+    return parts[1] ?? null;
   }
 }

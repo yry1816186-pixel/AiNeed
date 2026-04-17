@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 
 import {
   CustomizationType,
@@ -317,7 +316,8 @@ export class CustomizationService {
     page: number = 1,
     limit: number = 10,
   ) {
-    const where: Prisma.CustomizationRequestWhereInput = { userId };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = { userId };
     if (status) {
       where.status = status;
     }
@@ -395,7 +395,7 @@ export class CustomizationService {
         ...(data.title !== undefined && { title: data.title }),
         ...(data.description !== undefined && { description: data.description }),
         ...(data.referenceImages !== undefined && { referenceImages: data.referenceImages }),
-        ...(data.preferences !== undefined && { preferences: data.preferences as Prisma.InputJsonValue }),
+        ...(data.preferences !== undefined && { preferences: data.preferences as Record<string, unknown> }),
       },
     });
   }
