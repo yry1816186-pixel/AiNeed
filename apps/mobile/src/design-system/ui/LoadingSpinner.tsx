@@ -10,7 +10,7 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import { Colors, Spacing, BorderRadius, Shadows } from '../../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
 
 export type SpinnerSize = "sm" | "md" | "lg";
 

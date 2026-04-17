@@ -121,7 +121,7 @@ const METAL_LABELS: Record<string, string> = {
 };
 
 function ColorPalette({
-  colorNames,
+colorNames,
   labels,
   columns = 4,
 }: {

@@ -5,13 +5,13 @@ import {
   BadRequestException,
   ForbiddenException,
 } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import Decimal from "decimal.js";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import { CreateReviewDto, ReviewQueryDto } from "./dto";
 
-const asJson = (value: unknown): Prisma.InputJsonValue => value as Prisma.InputJsonValue;
+const asJson = (value: unknown): Record<string, unknown> => value as Record<string, unknown>;
 
 const RANKING_WEIGHTS = {
   rating: 0.40,
@@ -66,10 +66,12 @@ export class ConsultantReviewService {
   async getReviews(query: ReviewQueryDto) {
     const { consultantId, page = 1, pageSize = 20, sortBy = "latest" } = query;
 
-    const where: Prisma.ConsultantReviewWhereInput = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const where: any = {};
     if (consultantId) {where.consultantId = consultantId;}
 
-    let orderBy: Prisma.ConsultantReviewOrderByWithRelationInput;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let orderBy: any;
     switch (sortBy) {
       case "highest":
         orderBy = { rating: "desc" };
@@ -102,7 +104,7 @@ export class ConsultantReviewService {
     ]);
 
     // Anonymize reviews where isAnonymous is true
-    const sanitized = reviews.map((review) => ({
+    const sanitized = reviews.map((review: any) => ({
       ...review,
       user: review.isAnonymous
         ? { id: "anonymous", nickname: "匿名用户", avatar: null }
@@ -162,7 +164,7 @@ export class ConsultantReviewService {
     await this.prisma.consultantProfile.update({
       where: { id: consultantId },
       data: {
-        rating: new Prisma.Decimal(stats._avg.rating ?? 0).toFixed(1),
+        rating: new Decimal(stats._avg.rating ?? 0).toFixed(1),
         reviewCount: stats._count,
       },
     });

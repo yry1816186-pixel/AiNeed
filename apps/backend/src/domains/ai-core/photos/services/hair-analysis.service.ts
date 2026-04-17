@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
-import { FaceShape, Gender } from "@prisma/client";
+import { FaceShape, Gender } from "../../../../types/prisma-enums";
 
 export interface HairRecommendation {
   name: string;
@@ -121,7 +121,7 @@ export class HairAnalysisService {
     };
 
     return gender === "male"
-      ? maleRecommendations[faceShape] || maleRecommendations.oval
-      : femaleRecommendations[faceShape] || femaleRecommendations.oval;
+      ? maleRecommendations[faceShape] ?? maleRecommendations.oval!
+      : femaleRecommendations[faceShape] ?? femaleRecommendations.oval!;
   }
 }

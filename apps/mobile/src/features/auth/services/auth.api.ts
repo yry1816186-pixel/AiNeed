@@ -9,7 +9,7 @@ import {
   AuthTokens,
   BodyAnalysis,
   ColorAnalysis,
-} from '../../types/user';
+} from '../../../types/user';
 
 interface AuthResponsePayload {
   user: User;

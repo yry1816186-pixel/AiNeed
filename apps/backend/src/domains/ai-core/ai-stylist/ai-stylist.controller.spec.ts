@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { PhotoType } from "@prisma/client";
+import { PhotoType } from "../../../types/prisma-enums";
 
 import { AiQuotaService } from "../../../modules/security/rate-limit/ai-quota.service";
 

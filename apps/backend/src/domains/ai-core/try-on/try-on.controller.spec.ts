@@ -1,7 +1,7 @@
 import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Test, TestingModule } from "@nestjs/testing";
-import { TryOnStatus } from "@prisma/client";
+import { TryOnStatus } from "../../../../types/prisma-enums";
 
 import { AiQuotaGuard } from "../../../modules/security/rate-limit/ai-quota.guard";
 

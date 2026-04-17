@@ -1,4 +1,4 @@
-import { NotificationType } from "@prisma/client";
+import { NotificationType } from "../../../../types/prisma-enums";
 
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";

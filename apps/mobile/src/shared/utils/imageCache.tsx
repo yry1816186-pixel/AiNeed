@@ -237,7 +237,7 @@ export interface CachedImageProps extends Omit<ImageProps, "source"> {
 }
 
 export const CachedImage = ({
-  source,
+source,
   placeholder,
   errorComponent,
   showProgress = false,

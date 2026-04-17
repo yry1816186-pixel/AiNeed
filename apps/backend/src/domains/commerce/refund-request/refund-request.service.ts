@@ -85,7 +85,7 @@ export class RefundRequestService {
       data: {
         orderId: dto.orderId,
         userId,
-        type: dto.type as RefundType,
+        type: dto.type as unknown as RefundType,
         reason: dto.reason,
         description: dto.description,
         images: dto.images ?? [],

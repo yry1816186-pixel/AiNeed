@@ -6,7 +6,7 @@ import {
   ColorSeason,
   ClothingCategory,
 } from '../../../../types/prisma-enums';
-import { ClothingItem, UserProfile as PrismaUserProfile } from '@prisma/client';
+import { UserProfile as PrismaUserProfile } from '../../../../types/prisma-enums';
 import Decimal from "decimal.js";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -74,8 +74,8 @@ interface UserProfile {
 }
 
 interface UserBehaviorData {
-  favorites: Array<{ item: Pick<ClothingItem, "category"> | null }>;
-  tryOns: Array<{ item: Pick<ClothingItem, "brandId"> | null }>;
+  favorites: Array<{ item: Pick<any, "category"> | null }>;
+  tryOns: Array<{ item: Pick<any, "brandId"> | null }>;
   views: Array<{
     query: string;
     id: string;
@@ -201,7 +201,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
 
   private async calculateAllScores(
     profile: UserProfile | null,
-    item: ClothingItem,
+    item: any,
     userBehaviors: UserBehaviorData,
     context: RecommendationContext,
   ): Promise<{
@@ -225,7 +225,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
 
   private async contentBasedScore(
     profile: UserProfile | null,
-    item: ClothingItem,
+    item: any,
     context: RecommendationContext,
   ): Promise<number> {
     if (!profile) {return 0.5;}
@@ -282,7 +282,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
   }
 
   private collaborativeScore(
-    item: ClothingItem,
+    item: any,
     userBehaviors: UserBehaviorData,
   ): number {
     let score = 0.5;
@@ -312,7 +312,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
   }
 
   private async knowledgeGraphScore(
-    item: ClothingItem,
+    item: any,
     context: RecommendationContext,
   ): Promise<number> {
     let score = 0.5;
@@ -341,7 +341,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
   }
 
   private theoryBasedScore(
-    item: ClothingItem,
+    item: any,
     profile: UserProfile | null,
     context: RecommendationContext,
   ): number {
@@ -491,7 +491,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
       });
 
       const scored = await Promise.all(
-        candidates.map(async (item) => {
+        candidates.map(async (item: any) => {
           const scores = await this.calculateAllScores(
             profile,
             item,
@@ -692,7 +692,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
 
   private async findBestItem(
     items: Array<
-      ClothingItem & {
+      any & {
         brand: { id: string; name: string; logo: string | null } | null;
       }
     >,
@@ -774,7 +774,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
 
   private generateMatchReasons(
     profile: UserProfile | null,
-    item: ClothingItem,
+    item: any,
     scores: {
       contentBased: number;
       collaborative: number;

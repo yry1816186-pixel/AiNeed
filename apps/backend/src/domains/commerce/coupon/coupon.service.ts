@@ -51,7 +51,7 @@ export class CouponService {
       data: {
         code,
         name: dto.name,
-        type: dto.type as CouponType,
+        type: dto.type as unknown as CouponType,
         value: dto.value,
         minOrderAmount: dto.minOrderAmount ?? 0,
         maxDiscount: dto.maxDiscount,

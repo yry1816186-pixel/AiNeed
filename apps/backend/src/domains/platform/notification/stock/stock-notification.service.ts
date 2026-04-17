@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
+import {
   Injectable,
   Logger,
   NotFoundException,
   BadRequestException,
 } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { StockNotificationStatus } from "@prisma/client";
+import { StockNotificationStatus } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
@@ -147,7 +147,7 @@ export class StockNotificationService {
 
     this.eventEmitter.emit("STOCK_RESTOCKED", {
       itemId,
-      notifiedUserIds: subscriptions.map((s) => s.userId),
+      notifiedUserIds: subscriptions.map((s: any) => s.userId),
       count: subscriptions.length,
     });
 

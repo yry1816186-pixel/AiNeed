@@ -4,7 +4,7 @@ import {
   SkinTone,
   ColorSeason,
   ClothingCategory,
-} from "@prisma/client";
+} from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { AIIntegrationService } from '../../../ai-core/ai/services/ai-integration.service';
@@ -248,7 +248,7 @@ export class UnifiedRecommendationEngine {
       ]);
 
     const sequenceLength = userBehaviors.filter(
-      (b) => b.type === "page_view" || b.type === "click",
+      (b: { type: string }) => b.type === "page_view" || b.type === "click",
     ).length;
 
     return {
@@ -474,7 +474,7 @@ export class UnifiedRecommendationEngine {
       take: 200,
     });
     
-    return items.map(item => ({
+    return items.map((item: any) => ({
       ...item,
       price: Number(item.price),
       originalPrice: item.originalPrice ? Number(item.originalPrice) : null,
@@ -1254,7 +1254,7 @@ export class UnifiedRecommendationEngine {
       });
 
       const scored: RecommendationResult[] = await Promise.all(
-        candidates.map(async (item) => {
+        candidates.map(async (item: any) => {
           const features = await this.multimodalFusion.extractItemFeatures(
             item.id,
           );

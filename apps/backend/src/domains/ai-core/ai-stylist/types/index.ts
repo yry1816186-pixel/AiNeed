@@ -75,7 +75,7 @@ export interface GLM5Response {
 
 // ==================== Clothing Item Types ====================
 
-import { ClothingCategory , TryOnStatus , BodyType, SkinTone, ColorSeason } from "@prisma/client";
+import { ClothingCategory , TryOnStatus , BodyType, SkinTone, ColorSeason } from "../../../../../types/prisma-enums";
 
 export interface ClothingItemBasic {
   id: string;
@@ -349,7 +349,7 @@ export interface StylistAction {
   field?: string;
   options?: string[];
   canSkip?: boolean;
-  photoType?: import("@prisma/client").PhotoType;
+  photoType?: import("../../../../../types/prisma-enums").PhotoType;
 }
 
 export interface StylistSlots {

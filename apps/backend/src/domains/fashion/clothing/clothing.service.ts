@@ -397,7 +397,7 @@ export class ClothingService {
     // 组装结果
     const itemsWithBrand: ClothingItemListItem[] = items.map((item: Record<string, unknown>) => ({
       ...item,
-      brand: item.brandId ? (brandsMap.get(item.brandId) || null) : null
+      brand: item.brandId ? (brandsMap.get(item.brandId as string) || null) : null
     }));
 
     return createPaginatedResponse(normalizeClothingListItems(itemsWithBrand), total, Math.floor(skip / take) + 1, take);

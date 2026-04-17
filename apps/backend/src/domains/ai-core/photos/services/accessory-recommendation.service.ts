@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from "@nestjs/common";
-import { BodyType, FaceShape, SkinTone, UserProfile } from "@prisma/client";
+import { BodyType, FaceShape, SkinTone } from "../../../../types/prisma-enums";
+
+export interface UserProfileLike {
+  faceShape?: FaceShape;
+  bodyType?: BodyType;
+  height?: number;
+  skinTone?: SkinTone;
+}
 
 export interface AccessoryRecommendation {
   category: string;
@@ -14,7 +21,7 @@ export class AccessoryRecommendationService {
    * 配饰推荐
    */
   async recommendAccessories(
-    profile: Partial<UserProfile>,
+    profile: Partial<UserProfileLike>,
   ): Promise<AccessoryRecommendation[]> {
     const recommendations: AccessoryRecommendation[] = [];
 
@@ -66,7 +73,7 @@ export class AccessoryRecommendationService {
       oblong: ["大框", "飞行员款", "圆形框", "宽框"],
       diamond: ["椭圆形", "猫眼款", "无框", "柔和线条"],
     };
-    return glassesMap[shape] || glassesMap.oval;
+    return glassesMap[shape] || glassesMap.oval!;
   }
 
   private getBagByBodyType(bodyType: BodyType, height: number): string[] {
@@ -103,7 +110,7 @@ export class AccessoryRecommendationService {
       tan: ["金色", "古铜色", "深色宝石", "珊瑚色"],
       dark: ["金色", "古铜色", "大胆设计", "彩色宝石"],
     };
-    return jewelryMap[tone] || jewelryMap.medium;
+    return jewelryMap[tone] ?? jewelryMap.medium!;
   }
 
   private getScarfByHeight(height: number): string[] {
@@ -124,7 +131,7 @@ export class AccessoryRecommendationService {
       oblong: "长",
       diamond: "菱形",
     };
-    return names[shape];
+    return names[shape]!;
   }
 
   private getBodyTypeName(type: BodyType): string {
@@ -135,7 +142,7 @@ export class AccessoryRecommendationService {
       hourglass: "X型",
       oval: "O型",
     };
-    return names[type];
+    return names[type]!;
   }
 
   private getSkinToneName(tone: SkinTone): string {
@@ -147,6 +154,6 @@ export class AccessoryRecommendationService {
       tan: "小麦",
       dark: "深色",
     };
-    return names[tone];
+    return names[tone]!;
   }
 }

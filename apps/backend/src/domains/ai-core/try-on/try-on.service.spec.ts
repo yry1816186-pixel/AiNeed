@@ -4,7 +4,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { TryOnStatus } from "@prisma/client";
+import { TryOnStatus } from "../../../../types/prisma-enums";
 
 import { NotificationService } from "../../../common/gateway/notification.service";
 import { StructuredLoggerService } from "../../../common/logging/structured-logger.service";

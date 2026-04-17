@@ -13,7 +13,6 @@ import {
   UseInterceptors,
   UploadedFiles,
 } from "@nestjs/common";
-import { Request } from "express";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import {
   ApiTags,
@@ -43,7 +42,7 @@ import {
   TrendingQueryDto,
 } from "./dto/community.dto";
 
-const imageFileFilter = (_req: Request, file: Express.Multer.File, callback: (error: Error | null, acceptFile: boolean) => void) => {
+const imageFileFilter = (_req: any, file: Express.Multer.File, callback: (error: Error | null, acceptFile: boolean) => void) => {
   if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
     return callback(new Error("Only image files are allowed"), false);
   }
@@ -102,7 +101,7 @@ export class CommunityController {
   @ApiQuery({ name: "page", type: Number, required: false, description: "页码" })
   @ApiQuery({ name: "pageSize", type: Number, required: false, description: "每页数量" })
   async getFollowingFeed(
-    @Request() req: RequestWithUser,
+    @NestRequest() req: RequestWithUser,
     @Query("page", ParseIntPipe) page = 1,
     @Query("pageSize", ParseIntPipe) pageSize = 20,
   ) {
@@ -118,7 +117,7 @@ export class CommunityController {
   @ApiQuery({ name: "page", type: Number, required: false, description: "页码" })
   @ApiQuery({ name: "pageSize", type: Number, required: false, description: "每页数量" })
   async getFollowingPosts(
-    @Request() req: RequestWithUser,
+    @NestRequest() req: RequestWithUser,
     @Query("page", ParseIntPipe) page = 1,
     @Query("pageSize", ParseIntPipe) pageSize = 20,
   ) {
@@ -134,7 +133,7 @@ export class CommunityController {
   @ApiQuery({ name: "page", type: Number, required: false, description: "页码" })
   @ApiQuery({ name: "pageSize", type: Number, required: false, description: "每页数量" })
   async getRecommendedPosts(
-    @Request() req: RequestWithUser,
+    @NestRequest() req: RequestWithUser,
     @Query("page", ParseIntPipe) page = 1,
     @Query("pageSize", ParseIntPipe) pageSize = 20,
   ) {
@@ -150,7 +149,7 @@ export class CommunityController {
   @ApiResponse({ status: 200, description: "获取成功" })
   @ApiResponse({ status: 404, description: "帖子不存在" })
   @ApiParam({ name: "id", description: "帖子 ID" })
-  async getPostById(@Param("id") id: string, @Request() req: RequestWithUser) {
+  async getPostById(@Param("id") id: string, @NestRequest() req: RequestWithUser) {
     const adminMode = req.user?.role === 'admin';
     return this.communityService.getPostById(id, req.user?.id, adminMode);
   }
@@ -166,7 +165,7 @@ export class CommunityController {
   @ApiResponse({ status: 404, description: "帖子不存在" })
   @ApiParam({ name: "id", description: "帖子 ID" })
   async updatePost(
-    @Request() req: RequestWithUser,
+    @NestRequest() req: RequestWithUser,
     @Param("id") id: string,
     @Body() dto: UpdatePostDto,
   ) {
@@ -182,7 +181,7 @@ export class CommunityController {
   @ApiResponse({ status: 403, description: "无权操作" })
   @ApiResponse({ status: 404, description: "帖子不存在" })
   @ApiParam({ name: "id", description: "帖子 ID" })
-  async deletePost(@Request() req: RequestWithUser, @Param("id") id: string) {
+  async deletePost(@NestRequest() req: RequestWithUser, @Param("id") id: string) {
     return this.communityService.deletePost(req.user.id, id);
   }
 
@@ -194,7 +193,7 @@ export class CommunityController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "帖子不存在" })
   @ApiParam({ name: "id", description: "帖子 ID" })
-  async likePost(@Request() req: RequestWithUser, @Param("id") id: string) {
+  async likePost(@NestRequest() req: RequestWithUser, @Param("id") id: string) {
     return this.communityService.likePost(req.user.id, id);
   }
 
@@ -207,7 +206,7 @@ export class CommunityController {
   @ApiResponse({ status: 404, description: "帖子不存在" })
   @ApiParam({ name: "id", description: "帖子 ID" })
   async bookmarkPost(
-    @Request() req: RequestWithUser,
+    @NestRequest() req: RequestWithUser,
     @Param("id") id: string,
     @Body() dto: BookmarkPostDto,
   ) {
@@ -223,7 +222,7 @@ export class CommunityController {
   @ApiResponse({ status: 404, description: "帖子不存在" })
   @ApiParam({ name: "id", description: "帖子 ID" })
   async sharePost(
-    @Request() req: RequestWithUser,
+    @NestRequest() req: RequestWithUser,
     @Param("id") id: string,
     @Body() _dto: SharePostDto,
   ) {
@@ -240,7 +239,7 @@ export class CommunityController {
   @ApiResponse({ status: 404, description: "帖子不存在" })
   @ApiParam({ name: "id", description: "帖子 ID" })
   async createComment(
-    @Request() req: RequestWithUser,
+    @NestRequest() req: RequestWithUser,
     @Param("id") id: string,
     @Body() dto: CreateCommentDto,
   ) {
@@ -270,7 +269,7 @@ export class CommunityController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 409, description: "已经举报过" })
   async reportContent(
-    @Request() req: RequestWithUser,
+    @NestRequest() req: RequestWithUser,
     @Body() dto: CreateReportDto,
   ) {
     return this.communityService.reportContent(req.user.id, dto);
@@ -284,7 +283,7 @@ export class CommunityController {
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "用户不存在" })
   @ApiParam({ name: "id", description: "目标用户 ID" })
-  async followUser(@Request() req: RequestWithUser, @Param("id") targetUserId: string) {
+  async followUser(@NestRequest() req: RequestWithUser, @Param("id") targetUserId: string) {
     return this.communityService.followUser(req.user.id, targetUserId);
   }
 
@@ -293,7 +292,7 @@ export class CommunityController {
   @ApiResponse({ status: 200, description: "获取成功" })
   @ApiResponse({ status: 404, description: "用户不存在" })
   @ApiParam({ name: "id", description: "用户 ID" })
-  async getUserProfile(@Param("id") userId: string, @Request() req: RequestWithUser) {
+  async getUserProfile(@Param("id") userId: string, @NestRequest() req: RequestWithUser) {
     return this.communityService.getUserPublicProfile(userId, req.user?.id);
   }
 }

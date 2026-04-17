@@ -137,7 +137,7 @@ export class OnboardingService {
     }
 
     const currentStep = profile.onboardingStep;
-    const percentage = STEP_PERCENTAGE[currentStep];
+    const percentage = STEP_PERCENTAGE[currentStep as OnboardingStep];
     const currentIndex = STEP_ORDER.indexOf(currentStep);
 
     const steps = STEP_ORDER.filter((s) => s !== OnboardingStep.COMPLETED).map(

@@ -8,6 +8,7 @@ import {
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { NotificationService } from "../../platform/notification/services/notification.service";
+import { NotificationType } from "../../../types/prisma-enums";
 
 import type {
   CreateBloggerProductDto,
@@ -190,7 +191,7 @@ export class BloggerProductService {
 
     try {
       await this.notificationService.send(product.bloggerId, {
-        type: "blogger_product_sold",
+        type: NotificationType.blogger_product_sold,
         title: "商品售出通知",
         content: `您的商品「${product.title}」已被购买，收入 ¥${bloggerRevenue.toFixed(2)}`,
         targetType: "blogger_product",

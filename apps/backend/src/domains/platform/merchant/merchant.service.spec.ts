@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
+import {
   NotFoundException,
   ForbiddenException,
   BadRequestException,
 } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { ClothingCategory } from "../../../../../types/prisma-enums";
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import * as bcrypt from "../../../common/security/bcrypt";

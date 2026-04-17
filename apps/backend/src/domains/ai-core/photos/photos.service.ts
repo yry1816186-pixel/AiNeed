@@ -10,7 +10,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Cron } from "@nestjs/schedule";
-import { AnalysisStatus, PhotoType } from "@prisma/client";
+import { AnalysisStatus, PhotoType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { stripExifFromBuffer } from "../../../common/security/image-sanitizer";

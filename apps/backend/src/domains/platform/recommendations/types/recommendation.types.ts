@@ -10,7 +10,7 @@ import {
   SkinTone,
   ColorSeason,
   ClothingCategory,
-} from "@prisma/client";
+} from "../../../../types/prisma-enums";
 
 /**
  * 服装商品属性接口

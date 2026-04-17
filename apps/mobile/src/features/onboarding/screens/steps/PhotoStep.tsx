@@ -28,7 +28,6 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
 
   const handleTakePhoto = () => {
-    const { colors } = useTheme();
     void launchCamera(IMAGE_PICKER_OPTIONS, (response) => {
       if (response.didCancel || response.errorCode) {
         return;

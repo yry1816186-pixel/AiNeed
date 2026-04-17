@@ -8,7 +8,12 @@
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Cron } from "@nestjs/schedule";
 
-import { MembershipPlan, UserSubscription, BehaviorEventType } from "../../../types/prisma-enums";
+import { BehaviorEventType } from "../../../types/prisma-enums";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MembershipPlan = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type UserSubscription = any;
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import {

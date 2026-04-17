@@ -202,7 +202,7 @@ export class OrderService {
     const orderItems = itemsWithDetails.map((item) => {
       totalAmount += Number(item.clothingItem.price) * item.quantity;
       return {
-        itemId: item.itemId,
+        itemId: item.itemId ?? '',
         itemName: item.clothingItem.name,
         itemImage: item.clothingItem.images[0] || "",
         color: item.color,
@@ -548,7 +548,7 @@ export class OrderService {
       status: order.status,
       items: (order.items || []).map((item) => ({
         id: item.id,
-        itemId: item.itemId,
+        itemId: item.itemId ?? '',
         itemName: item.itemName,
         itemImage: item.itemImage,
         color: item.color,

@@ -2,7 +2,7 @@
 import { BadRequestException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { PhotoType, AnalysisStatus } from "@prisma/client";
+import { PhotoType, AnalysisStatus } from "../../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { MalwareScannerService } from "../../../common/security/malware-scanner.service";

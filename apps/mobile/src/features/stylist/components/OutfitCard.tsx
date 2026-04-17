@@ -34,8 +34,6 @@ const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 
 const formatPrice = (price?: number | null) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   if (price === null || price === undefined) {
     return null;
   }
@@ -48,6 +46,8 @@ export interface OutfitCardProps {
 }
 
 export const OutfitCard = React.memo(function OutfitCard({ result, onItemPress }: OutfitCardProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [activeOutfitIndex, setActiveOutfitIndex] = useState(0);
   const containerOpacity = useSharedValue(0);
   const containerScale = useSharedValue(0.95);
@@ -161,6 +161,8 @@ interface OutfitItemCardProps {
 }
 
 const OutfitItemCard = React.memo(function OutfitItemCard({ item, index, onPress }: OutfitItemCardProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const opacity = useSharedValue(0);
   const translateX = useSharedValue(20);
 
@@ -470,45 +472,3 @@ const useStyles = createStyles((colors) => ({
   },
 }))
 
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  summarySection: { flex: 1 },
-  summaryGradient: { flex: 1 },
-  summaryTitle: { flex: 1 },
-  summaryText: { flex: 1 },
-  whySection: { flex: 1 },
-  whyTitle: { flex: 1 },
-  reasonItem: { flex: 1 },
-  reasonDot: { flex: 1 },
-  reasonText: { flex: 1 },
-  outfitTabs: { flex: 1 },
-  outfitTab: { flex: 1 },
-  outfitTabActive: { flex: 1 },
-  outfitTabText: { flex: 1 },
-  outfitTabTextActive: { flex: 1 },
-  outfitSection: { flex: 1 },
-  outfitHeader: { flex: 1 },
-  outfitTitle: { flex: 1 },
-  totalPrice: { flex: 1 },
-  styleTags: { flex: 1 },
-  styleTag: { flex: 1 },
-  styleTagText: { flex: 1 },
-  itemCard: { flex: 1 },
-  itemCardClickable: { flex: 1 },
-  itemImageContainer: { flex: 1 },
-  itemImage: { flex: 1 },
-  itemImagePlaceholder: { flex: 1 },
-  itemContent: { flex: 1 },
-  itemHeader: { flex: 1 },
-  itemCategory: { flex: 1 },
-  itemBrand: { flex: 1 },
-  itemName: { flex: 1 },
-  itemReason: { flex: 1 },
-  itemFooter: { flex: 1 },
-  itemPrice: { flex: 1 },
-  viewLink: { flex: 1 },
-  viewLinkText: { flex: 1 },
-  scoreBadge: { flex: 1 },
-  scoreText: { flex: 1 },
-});

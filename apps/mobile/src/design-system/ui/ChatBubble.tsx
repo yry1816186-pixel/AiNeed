@@ -5,7 +5,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
 
 // 引入主题令牌
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
 import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import {
   Colors,

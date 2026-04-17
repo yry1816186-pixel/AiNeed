@@ -31,7 +31,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
 import { SpringConfigs } from "../../theme/tokens/animations";
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
 
 // Re-export from primitives for backward compatibility
 export {

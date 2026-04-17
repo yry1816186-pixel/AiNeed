@@ -149,9 +149,9 @@ export class ItemReplacementService {
           id: candidate.id,
           name: candidate.name,
           category: candidate.category,
-          imageUrl: (candidate.images)?.[0] ?? null,
+          imageUrl: (candidate.images as string[] | undefined)?.[0] ?? null,
           price: candidate.price ? Number(candidate.price) : null,
-          brand: candidate.brand?.name ?? null,
+          brand: (candidate.brand as { name: string } | null)?.name ?? null,
           tags: (candidate.tags) || [],
           matchScore: Math.min(matchScore, 100),
         };

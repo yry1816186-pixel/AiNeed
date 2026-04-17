@@ -5,7 +5,7 @@ import { ClothingCategory, CATEGORY_LABELS } from "../../../types/clothing";
 import { haptics } from "../../utils/haptics";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 
 
 interface FilterOption {
@@ -23,7 +23,7 @@ interface FilterSectionProps {
 }
 
 function FilterSection({
-  title,
+title,
   options,
   selected,
   onSelect,

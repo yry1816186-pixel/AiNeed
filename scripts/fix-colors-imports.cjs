@@ -105,6 +105,7 @@ function fixFile(filePath) {
   // Skip design-system token files - they ARE the source of colors
   if (relPath.includes("design-system/theme/tokens/")) return false;
   if (relPath.includes("design-system/theme/FlatColors")) return false;
+  if (relPath.includes("design-system/theme/index.ts")) return false;
   if (relPath.includes("shared/contexts/ThemeContext")) return false;
 
   // Fix 1: Wrong import path - flatColors from design-tokens instead of theme index

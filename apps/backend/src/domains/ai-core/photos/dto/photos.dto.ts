@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { AnalysisStatus, PhotoType } from "@prisma/client";
+import { AnalysisStatus, PhotoType } from "../../../../types/prisma-enums";
 
 export class PhotoUploadResultDto {
   @ApiProperty({ description: "照片 ID", format: "uuid" })

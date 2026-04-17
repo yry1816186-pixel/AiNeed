@@ -345,7 +345,7 @@ export class ProfileService {
       },
     };
 
-    const guide = bodyTypeGuides[profile.bodyType];
+    const guide = bodyTypeGuides[profile.bodyType as BodyType];
 
     return {
       bodyType: profile.bodyType,
@@ -438,7 +438,7 @@ export class ProfileService {
       },
     };
 
-    return colorGuides[profile.colorSeason] ?? colorGuides[ColorSeason.spring_warm]!;
+    return colorGuides[profile.colorSeason as ColorSeason] ?? colorGuides[ColorSeason.spring_warm]!;
   }
 
   async getStyleRecommendations(userId: string) {

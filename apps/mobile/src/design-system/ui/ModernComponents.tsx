@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -76,6 +76,8 @@ export const GlassCard: React.FC<GlassCardProps> = ({
   intensity = 80,
   tint = "light",
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <BlurView
       intensity={intensity}
@@ -114,6 +116,8 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   fullWidth = false,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scaleAnim = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -248,6 +252,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onFavorite,
   isFavorite = false,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scaleAnim = useSharedValue(1);
   const favoriteAnim = useSharedValue(1);
 
@@ -363,6 +369,8 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   gradient = "primary",
   onPress,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scaleAnim = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -416,6 +424,8 @@ export interface SectionHeaderProps {
 
 /** @deprecated 在业务页面中直接实现 SectionHeader */
 export const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, action }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={styles.sectionHeader}>
       <View style={styles.sectionHeaderText}>
@@ -463,6 +473,8 @@ export interface BadgeProps {
 
 /** @deprecated 使用 ui/Badge 替代 */
 export const Badge: React.FC<BadgeProps> = ({ text, variant = "primary", size = "md" }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const variantStyles: Record<string, { bg: string; text: string }> = {
     primary: { bg: Colors.primary[100], text: Colors.primary[700] },
     success: { bg: colors.successLight, text: colors.success },
@@ -511,6 +523,8 @@ export interface AvatarProps {
 
 /** @deprecated 使用业务页面中的头像组件替代 */
 export const Avatar: React.FC<AvatarProps> = ({ name, size = "md", online }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const sizeMap = {
     sm: 32,
     md: 40,

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
-import { NotificationType } from "@prisma/client";
+import { NotificationType } from "../../../../types/prisma-enums";
 
 import { NotificationTemplateService } from "../services/notification-template.service";
 import { NotificationService } from "../services/notification.service";

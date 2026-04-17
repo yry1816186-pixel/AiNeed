@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { TryOnStatus } from "@prisma/client";
+import { TryOnStatus } from "../../../../types/prisma-enums";
 import {
   IsInt,
   IsNotEmpty,

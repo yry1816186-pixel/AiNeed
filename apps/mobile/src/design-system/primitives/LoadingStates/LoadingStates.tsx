@@ -15,10 +15,8 @@ import Animated, {
   withTiming,
   withSequence,
   Easing,
-  interpolate,
   interpolateColor,
 } from "react-native-reanimated";
-import { Colors, theme } from '../theme';
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { Spacing } from '../../theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
@@ -35,8 +33,7 @@ interface SpinnerProps {
 
 export function Spinner({ size = "large", color, style }: SpinnerProps) {
   const { colors } = useTheme();
-  const styles = useStyles(colors);
-  return <ActivityIndicator size={size} color={color || Colors.primary[500]} style={style} />;
+  return <ActivityIndicator size={size} color={color || colors.primary} style={style} />;
 }
 
 // 全屏加载遮罩
@@ -46,6 +43,9 @@ interface LoadingOverlayProps {
 }
 
 export function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
+
   if (!visible) {
     return null;
   }
@@ -53,7 +53,7 @@ export function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
   return (
     <View style={styles.overlay}>
       <View style={styles.overlayContent}>
-        <Spinner size="large" color={DesignTokens.colors.text.inverse} />
+        <Spinner size="large" color={colors.textInverse} />
         {message && <Text style={styles.overlayMessage}>{message}</Text>}
       </View>
     </View>
@@ -69,6 +69,7 @@ interface SkeletonProps {
 }
 
 export function Skeleton({ width = "100%", height = 16, borderRadius = 8, style }: SkeletonProps) {
+  const { colors } = useTheme();
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -86,7 +87,7 @@ export function Skeleton({ width = "100%", height = 16, borderRadius = 8, style 
     backgroundColor: interpolateColor(
       progress.value,
       [0, 1],
-      [theme.colors.neutral[200], theme.colors.neutral[300]]
+      [colors.placeholderBg, colors.border]
     ),
   }));
 
@@ -95,13 +96,16 @@ export function Skeleton({ width = "100%", height = 16, borderRadius = 8, style 
 
   return (
     <Animated.View
-      style={[styles.skeleton, { height, borderRadius }, widthStyle, animatedStyle, style]}
+      style={[{ height, borderRadius }, widthStyle, animatedStyle, style]}
     />
   );
 }
 
 // 预设骨架屏模板
 export function SkeletonText({ lines = 3 }: { lines?: number }) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
+
   return (
     <View style={styles.skeletonTextContainer}>
       {Array.from({ length: lines }).map((_, index) => (
@@ -117,19 +121,25 @@ export function SkeletonText({ lines = 3 }: { lines?: number }) {
 }
 
 export function SkeletonCard() {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
+
   return (
     <View style={styles.skeletonCard}>
       <Skeleton width="100%" height={120} borderRadius={12} />
       <View style={styles.skeletonCardContent}>
         <Skeleton width="70%" height={16} />
-        <Skeleton width="40%" height={12} style={{ marginTop: Spacing.sm}} />
-        <Skeleton width="50%" height={14} style={{ marginTop: Spacing.sm}} />
+        <Skeleton width="40%" height={12} style={{ marginTop: Spacing.sm }} />
+        <Skeleton width="50%" height={14} style={{ marginTop: Spacing.sm }} />
       </View>
     </View>
   );
 }
 
 export function SkeletonList({ count = 4 }: { count?: number }) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
+
   return (
     <View style={styles.skeletonList}>
       {Array.from({ length: count }).map((_, index) => (
@@ -137,7 +147,7 @@ export function SkeletonList({ count = 4 }: { count?: number }) {
           <Skeleton width={48} height={48} borderRadius={24} />
           <View style={styles.skeletonListItemText}>
             <Skeleton width="70%" height={14} />
-            <Skeleton width="50%" height={12} style={{ marginTop: DesignTokens.spacing['1.5']}} />
+            <Skeleton width="50%" height={12} style={{ marginTop: DesignTokens.spacing['1.5'] }} />
           </View>
         </View>
       ))}
@@ -146,14 +156,17 @@ export function SkeletonList({ count = 4 }: { count?: number }) {
 }
 
 export function SkeletonProductGrid() {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
+
   return (
     <View style={styles.skeletonGrid}>
       {Array.from({ length: 4 }).map((_, index) => (
         <View key={index} style={styles.skeletonGridItem}>
           <Skeleton width="100%" height={(SCREEN_WIDTH - 48) / 2} borderRadius={12} />
           <View style={styles.skeletonGridContent}>
-            <Skeleton width="80%" height={14} style={{ marginTop: Spacing.sm}} />
-            <Skeleton width="50%" height={12} style={{ marginTop: Spacing.xs}} />
+            <Skeleton width="80%" height={14} style={{ marginTop: Spacing.sm }} />
+            <Skeleton width="50%" height={12} style={{ marginTop: Spacing.xs }} />
           </View>
         </View>
       ))}
@@ -175,22 +188,19 @@ const useStyles = createStyles((colors) => ({
   overlayMessage: {
     marginTop: Spacing.md,
     fontSize: DesignTokens.typography.sizes.md,
-    color: DesignTokens.colors.text.inverse,
+    color: colors.textInverse,
     fontWeight: "500",
-  },
-  skeleton: {
-    backgroundColor: theme.colors.neutral[200],
   },
   skeletonTextContainer: {
     padding: Spacing.md,
   },
   skeletonCard: {
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     overflow: "hidden",
     ...Platform.select({
       ios: {
-        shadowColor: colors.neutral[900],
+        shadowColor: colors.textPrimary,
         shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
         shadowOpacity: 0.1,
         shadowRadius: 4,
@@ -223,11 +233,11 @@ const useStyles = createStyles((colors) => ({
   },
   skeletonGridItem: {
     width: (SCREEN_WIDTH - 48) / 2,
-    backgroundColor: DesignTokens.colors.backgrounds.primary,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     overflow: "hidden",
   },
   skeletonGridContent: {
     padding: DesignTokens.spacing[3],
   },
-}))
+}));

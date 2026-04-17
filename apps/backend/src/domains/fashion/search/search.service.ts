@@ -309,7 +309,7 @@ export class SearchService {
             ...item,
             similarityScore: sim.similarity,
             matchReasons: sim.reasons || [],
-          };
+          } as ScoredSearchResult;
         })
         .slice(0, limit);
     } catch (error: unknown) {
@@ -551,8 +551,8 @@ export class SearchService {
       const sorted = items
         .map((item: ClothingItemWithBrand) => ({
           ...item,
-          totalPurchases: (item as Record<string, unknown>).salesStats
-            ? ((item as Record<string, unknown>).salesStats as Array<{ purchases: number }>)
+          totalPurchases: (item as unknown as Record<string, unknown>).salesStats
+            ? ((item as unknown as Record<string, unknown>).salesStats as Array<{ purchases: number }>)
                 .reduce((sum: number, s: { purchases: number }) => sum + s.purchases, 0)
             : 0,
         }))

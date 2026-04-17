@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { ProductTemplateType } from "../../../../../types/prisma-enums";
+import { ProductTemplateType } from "../../../../types/prisma-enums";
 import { Type } from "class-transformer";
 import { IsString, IsOptional, IsEnum, IsObject, IsArray, ValidateNested, IsNumber, Min, Max, IsIn } from "class-validator";
 

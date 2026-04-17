@@ -27,7 +27,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");

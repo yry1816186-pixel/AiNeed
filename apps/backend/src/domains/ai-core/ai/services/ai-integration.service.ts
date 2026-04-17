@@ -6,7 +6,8 @@ import {
   ServiceUnavailableException,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ClothingCategory, Prisma } from "@prisma/client";
+import { ClothingCategory } from "../../../../types/prisma-enums";
+import { Prisma } from "@prisma/client";
 import axios, { AxiosInstance } from "axios";
 
 import { allowUnverifiedAiFallbacks } from "../../../../common/config/runtime-flags";
@@ -343,7 +344,7 @@ export class AIIntegrationService implements OnModuleInit {
   async batchEnrichItems(limit: number = 100): Promise<number> {
     const items = await this.prisma.clothingItem.findMany({
       where: {
-        OR: [{ attributes: { equals: {} } }, { attributes: { equals: Prisma.DbNull as any } }],
+        OR: [{ attributes: { equals: {} } }, { attributes: { equals: null } }],
       },
       take: limit,
     });

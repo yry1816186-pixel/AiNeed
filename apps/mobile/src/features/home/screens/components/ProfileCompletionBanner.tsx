@@ -16,6 +16,8 @@ interface ProfileCompletionBannerProps {
 
 const ProfileCompletionBanner = memo(
   ({ completionPercent, isComplete, onDismiss, onContinue }: ProfileCompletionBannerProps) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
     const [visible, setVisible] = useState(true);
 
     const handleDismiss = useCallback(() => {

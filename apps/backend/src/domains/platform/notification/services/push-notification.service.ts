@@ -375,7 +375,7 @@ export class PushNotificationService {
       where: { userId, isActive: true },
       select: { token: true, platform: true },
     });
-    return devices.map((d) => d.token);
+    return devices.map((d: any) => d.token);
   }
 
   /**

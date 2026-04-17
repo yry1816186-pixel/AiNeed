@@ -65,7 +65,7 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     divider: base.borders.light,
     cartLight: DesignTokens.colors.brand.terracottaLight, // warm light background for cart
     terracottaDark: base.brand.terracottaDark,
-    amber: colors.warning,
+    amber: base.semantic.warning,
     secondary: base.brand.sage,
   };
 }
@@ -211,3 +211,4 @@ export { ThemeContext };
 export type { DesignTokensType, DarkTokensType };
 export { normalizeColorSeason, seasonAccentColors, seasonLabels, seasonDescriptions } from "../design-system/theme";
 export type { ColorSeason, SeasonAccentColors };
+export { createStyles } from "../shared/contexts/ThemeContext";

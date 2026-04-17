@@ -549,17 +549,17 @@ export class AiStylistRecommendationService {
             },
           })
         : [];
-      const dbItemMap = new Map(dbItems.map((item: { id: string; [key: string]: unknown }) => [item.id, item]));
+      const dbItemMap = new Map(dbItems.map((item: { id: string; [key: string]: any }) => [item.id, item]));
 
       const items: StylistOutfitItem[] = (mlResult.items || []).map(
         (item: { item_id?: string; category?: string; reasons?: string[]; price?: number; brand?: string; score?: number }) => {
-          const dbItem = item.item_id ? dbItemMap.get(item.item_id) : null;
+          const dbItem = item.item_id ? dbItemMap.get(item.item_id) as Record<string, any> | undefined : undefined;
           return {
             itemId: item.item_id,
             category: dbItem?.category || item.category || "unknown",
             name: dbItem?.name || item.item_id || "推荐单品",
             reason: item.reasons?.[0] || "符合你的场景和风格需求",
-            imageUrl: dbItem?.mainImage || dbItem?.images?.[0],
+            imageUrl: dbItem?.mainImage || (dbItem?.images as string[] | undefined)?.[0],
             externalUrl: dbItem?.externalUrl || null,
             price:
               typeof dbItem?.price === "number"
@@ -567,7 +567,7 @@ export class AiStylistRecommendationService {
                 : typeof item.price === "number"
                   ? item.price
                   : null,
-            brand: dbItem?.brand?.name || item.brand || null,
+            brand: (dbItem?.brand as { name: string } | null)?.name || item.brand || null,
             score: typeof item.score === "number" ? item.score : undefined,
           };
         },

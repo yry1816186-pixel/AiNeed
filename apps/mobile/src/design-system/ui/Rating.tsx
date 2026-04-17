@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
 import { flatColors as colors } from '../theme';
 
 

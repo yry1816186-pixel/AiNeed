@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as FileSystem from "@/src/polyfills/expo-file-system";
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { DesignTokens } from '../design-system/theme/tokens/design-tokens';
 import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 
 
@@ -237,7 +237,7 @@ export interface CachedImageProps extends Omit<ImageProps, "source"> {
 }
 
 export const CachedImage = ({
-  source,
+source,
   placeholder,
   errorComponent,
   showProgress = false,

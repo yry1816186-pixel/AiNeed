@@ -13,7 +13,7 @@ import {
   Shadows as ThemeShadows,
 } from '../../design-system/theme';
 
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
 import { Spacing } from '../theme';
 import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 

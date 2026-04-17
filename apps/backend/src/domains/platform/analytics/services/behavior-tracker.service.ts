@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
-import { BehaviorEventType } from "../../../../../types/prisma-enums";
+import { BehaviorEventType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";
@@ -583,7 +583,7 @@ export class BehaviorTrackerService {
     const weights = new Map<string, { delta: number; implicitSum: number }>();
 
     for (const event of events) {
-      const baseImpact = this.getEventImpact(event.eventType);
+      const baseImpact = this.getEventImpact(event.eventType as BehaviorEventType);
       const implicitScore = event.implicitScore || 0;
       const combinedImpact = baseImpact * (1 + implicitScore * 0.5);
       const features = this.extractFeatures(event);

@@ -204,7 +204,6 @@ export const SubscriptionScreen: React.FC = () => {
   );
 
   const renderCurrentPlan = () => {
-    const { colors } = useTheme();
     if (!currentSubscription) {
       return null;
     }

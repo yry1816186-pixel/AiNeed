@@ -4,7 +4,7 @@ import { colors } from "../../theme/tokens/colors";
 
 import { spacing } from "../../theme/tokens/spacing";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 
 export interface TagCloudTag {
   label: string;

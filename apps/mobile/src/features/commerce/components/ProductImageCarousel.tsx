@@ -9,7 +9,7 @@ import {
   Modal,
   Dimensions,
 } from "react-native";
-import { DesignTokens } from "../theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 

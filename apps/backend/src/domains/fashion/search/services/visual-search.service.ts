@@ -98,7 +98,7 @@ export class VisualSearchService {
     );
 
     // 按相似度排序并返回 top N
-    scoredItems.sort((a: VisualSearchResult, b: VisualSearchResult) => b.similarityScore - a.similarityScore);
+    scoredItems.sort((a: ClothingItemCandidate & { similarityScore: number; matchReasons: string[] }, b: ClothingItemCandidate & { similarityScore: number; matchReasons: string[] }) => b.similarityScore - a.similarityScore);
 
     return scoredItems.slice(0, limit).map((item) => ({
       id: item.id,
@@ -423,7 +423,7 @@ export class VisualSearchService {
       };
     });
 
-    scoredItems.sort((a: VisualSearchResult, b: VisualSearchResult) => b.similarityScore - a.similarityScore);
+    scoredItems.sort((a: ClothingItemCandidate & { similarityScore: number; matchReasons: string[] }, b: ClothingItemCandidate & { similarityScore: number; matchReasons: string[] }) => b.similarityScore - a.similarityScore);
 
     return scoredItems.slice(0, limit);
   }

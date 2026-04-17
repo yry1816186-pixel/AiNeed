@@ -469,6 +469,8 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   rippleColor = "rgba(198, 123, 92, 0.3)",
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0.5);
   const x = useSharedValue(0);
@@ -515,6 +517,8 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
   borderRadius = 8,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const shimmerPosition = useSharedValue(-1);
 
   useEffect(() => {

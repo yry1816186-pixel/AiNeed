@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from '../theme';
+import { theme } from '../../theme';
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { Spacing } from '../../theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
@@ -51,7 +51,9 @@ interface ToastProviderProps {
   children: React.ReactNode;
 }
 
-export function ToastProvider({ children }: ToastProviderProps) {
+export function ToastProvider({
+children }: ToastProviderProps) {
+  const { colors } = useTheme();
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const show = (type: ToastType, message: string, duration = 3000) => {

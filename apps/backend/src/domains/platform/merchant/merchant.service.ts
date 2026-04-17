@@ -460,7 +460,7 @@ export class MerchantService {
     `;
 
     return {
-      dailyStats: dailyStats.map((s) => ({
+      dailyStats: dailyStats.map((s: any) => ({
         date: s.date,
         eventType: s.event_type,
         count: Number(s.count),
@@ -492,7 +492,7 @@ export class MerchantService {
     });
 
     const userIds = interactions
-      .map((i) => i.userId)
+      .map((i: any) => i.userId)
       .filter(Boolean) as string[];
 
     if (userIds.length === 0) {
@@ -515,7 +515,7 @@ export class MerchantService {
     const colorSeasonDistribution: Record<string, number> = {};
     const stylePreferences: Record<string, number> = {};
 
-    profiles.forEach((p) => {
+    profiles.forEach((p: any) => {
       if (p.bodyType) {
         bodyTypeDistribution[p.bodyType] =
           (bodyTypeDistribution[p.bodyType] || 0) + 1;
@@ -525,7 +525,7 @@ export class MerchantService {
           (colorSeasonDistribution[p.colorSeason] || 0) + 1;
       }
       if (p.stylePreferences && Array.isArray(p.stylePreferences)) {
-        (p.stylePreferences as Array<string | { name?: string }>).forEach((s) => {
+        (p.stylePreferences as Array<string | { name?: string }>).forEach((s: string | { name?: string }) => {
           const style = typeof s === "string" ? s : s?.name;
           if (style) {
             stylePreferences[style] = (stylePreferences[style] || 0) + 1;
@@ -696,7 +696,7 @@ export class MerchantService {
 
     // Verify order contains this brand's items
     const hasBrandItems = order.items.some(
-      (item) => item.item?.brandId === brandId,
+      (item: any) => item.item?.brandId === brandId,
     );
     if (!hasBrandItems) {
       throw new ForbiddenException("该订单不包含您的商品");

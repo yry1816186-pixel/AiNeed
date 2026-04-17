@@ -23,9 +23,9 @@ interface TrendingCardProps {
 }
 
 const DIRECTION_CONFIG = {
-  up: { icon: "arrow-up", color: colors.success },
-  down: { icon: "arrow-down", color: colors.error },
-  stable: { icon: "arrow-forward", color: colors.textTertiary },
+  up: { icon: "arrow-up", color: DesignTokens.colors.semantic.success },
+  down: { icon: "arrow-down", color: DesignTokens.colors.semantic.error },
+  stable: { icon: "arrow-forward", color: DesignTokens.colors.text.tertiary },
 } as const;
 
 export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {

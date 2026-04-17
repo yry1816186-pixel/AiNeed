@@ -1,6 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { PhotoType } from "@prisma/client";
+import { PhotoType } from "../../../types/prisma-enums";
 
 import { CircuitBreakerService } from "../../../common/circuit-breaker";
 import { PrismaService } from "../../../common/prisma/prisma.service";

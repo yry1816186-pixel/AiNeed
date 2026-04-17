@@ -690,7 +690,7 @@ export class SASRecService {
     });
 
     return {
-      recommendations: popularItems.map((item, index) => ({
+      recommendations: popularItems.map((item: any, index: number) => ({
         itemId: item.id,
         score: 1 - index * 0.05,
         rank: index + 1,

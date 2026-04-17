@@ -19,7 +19,7 @@ import { typography } from "../../theme/tokens/typography";
 import { spacing } from "../../theme/tokens/spacing";
 import { shadows } from "../../theme/tokens/shadows";
 import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 
 
 type FilterTab = "all" | "completed" | "failed";

@@ -18,9 +18,9 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { ParticleEffect, FloatingElement, GlowText, MagneticButton } from "../../design-system/ui/FluidAnimations";
-import { Colors, Spacing, BorderRadius } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius, flatColors } from '../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme";
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -94,7 +94,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   return (
     <View style={styles.splashContainer}>
       <LinearGradient
-        colors={["colors.textPrimary", "colors.neutral[700]", "colors.neutral[700]", DesignTokens.colors.neutral[800]]}
+        colors={[colors.textPrimary, colors.neutral[700], colors.neutral[700], DesignTokens.colors.neutral[800]]}
         locations={[0, 0.3, 0.7, 1]}
         style={styles.splashGradient}
       >
@@ -134,28 +134,28 @@ const ONBOARDING_DATA = [
     title: "发现你的风格",
     subtitle: "AI分析你的穿搭偏好，找到最适合你的时尚风格",
     icon: "✨",
-    gradient: [colors.primary, colors.primary],
+    gradient: [flatColors.primary, flatColors.primaryLight] as [string, string],
   },
   {
     id: "body",
     title: "了解你的身型",
     subtitle: "智能体型分析，为你推荐最显瘦的穿搭方案",
     icon: "👤",
-    gradient: [colors.info, colors.infoLight],
+    gradient: [flatColors.info, flatColors.infoLight] as [string, string],
   },
   {
     id: "color",
     title: "找到你的色彩",
     subtitle: "肤色分析，发现让你更加光彩照人的颜色",
     icon: "🎨",
-    gradient: [colors.success, colors.successLight],
+    gradient: [flatColors.success, flatColors.successLight] as [string, string],
   },
   {
     id: "tryon",
     title: "虚拟试穿",
     subtitle: "AI虚拟试穿，足不出户体验万千穿搭",
     icon: "👗",
-    gradient: ["colors.warning", "colors.warning"],
+    gradient: [flatColors.warning, flatColors.warningLight] as [string, string],
   },
 ];
 
@@ -167,6 +167,8 @@ interface OnboardingDotProps {
 }
 
 const OnboardingDot: React.FC<OnboardingDotProps> = ({ color, isActive }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const dotScale = useSharedValue(1);
   const dotOpacity = useSharedValue(0.4);
 
@@ -190,6 +192,8 @@ const OnboardingDot: React.FC<OnboardingDotProps> = ({ color, isActive }) => {
 };
 
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [currentIndex, setCurrentIndex] = useState(0);
   const slideOffset = useSharedValue(0);
 
@@ -211,7 +215,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 
   return (
     <View style={styles.onboardingContainer}>
-      <LinearGradient colors={["colors.textPrimary", "colors.neutral[700]", "colors.neutral[700]"]} style={styles.onboardingGradient}>
+      <LinearGradient colors={[colors.textPrimary, colors.neutral[700], colors.neutral[700]]} style={styles.onboardingGradient}>
         <View style={styles.onboardingHeader}>
           <Pressable onPress={skip}>
             <Text style={styles.skipText}>跳过</Text>
@@ -254,6 +258,8 @@ interface OnboardingSlideProps {
 }
 
 const OnboardingSlide: React.FC<OnboardingSlideProps> = ({ data, isActive }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const iconScale = useSharedValue(0);
   const iconRotate = useSharedValue(-90);
   const titleOpacity = useSharedValue(0);
@@ -325,6 +331,8 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
   onCapture,
   onCancel,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const frameScale = useSharedValue(1);
   const frameOpacity = useSharedValue(0);
   const cornerScale = useSharedValue(0);
@@ -441,25 +449,25 @@ const ANALYSIS_CONFIG = {
     title: "体型分析中",
     steps: ["检测人体轮廓", "分析身体比例", "识别体型特征", "生成分析报告"],
     icon: "👤",
-    gradient: [colors.info, colors.infoLight],
+    gradient: [flatColors.info, flatColors.infoLight] as [string, string],
   },
   color: {
     title: "肤色分析中",
     steps: ["提取皮肤区域", "分析肤色色调", "匹配色彩季节", "生成配色建议"],
     icon: "🎨",
-    gradient: [colors.success, colors.successLight],
+    gradient: [flatColors.success, flatColors.successLight] as [string, string],
   },
   style: {
     title: "风格分析中",
     steps: ["识别服装元素", "分析穿搭风格", "匹配流行趋势", "生成风格报告"],
     icon: "✨",
-    gradient: [colors.primary, colors.primary],
+    gradient: [flatColors.primary, flatColors.primaryLight] as [string, string],
   },
   tryon: {
     title: "虚拟试穿中",
     steps: ["处理人物图像", "分析服装属性", "生成试穿效果", "优化细节"],
     icon: "👗",
-    gradient: ["colors.warning", "colors.warning"],
+    gradient: [flatColors.warning, flatColors.warningLight] as [string, string],
   },
 };
 
@@ -476,6 +484,8 @@ const AnalysisStepItem: React.FC<AnalysisStepItemProps> = ({
   index,
   step,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const stepOpacity = useSharedValue(0.3);
   const stepScale = useSharedValue(1);
 
@@ -527,6 +537,8 @@ const AnalysisStepItem: React.FC<AnalysisStepItemProps> = ({
 };
 
 export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({ type, onComplete }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const config = ANALYSIS_CONFIG[type];
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -600,7 +612,7 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({ type, onCo
 
   return (
     <View style={styles.analysisContainer}>
-      <LinearGradient colors={["colors.textPrimary", "colors.neutral[700]", "colors.neutral[700]"]} style={styles.analysisGradient}>
+      <LinearGradient colors={[colors.textPrimary, colors.neutral[700], colors.neutral[700]]} style={styles.analysisGradient}>
         <AnimatedView style={[styles.particleContainer, { opacity: particleOpacity }]}>
           <ParticleEffect count={30} color={`${config.gradient[0]}50`} size={3} />
         </AnimatedView>
@@ -657,6 +669,8 @@ export const ResultAnimation: React.FC<ResultAnimationProps> = ({
   onContinue,
   onRetry,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const config = ANALYSIS_CONFIG[type];
 
   const containerScale = useSharedValue(0.8);
@@ -695,7 +709,7 @@ export const ResultAnimation: React.FC<ResultAnimationProps> = ({
 
   return (
     <View style={styles.resultContainer}>
-      <LinearGradient colors={["colors.textPrimary", "colors.neutral[700]", "colors.neutral[700]"]} style={styles.resultGradient}>
+      <LinearGradient colors={[colors.textPrimary, colors.neutral[700], colors.neutral[700]]} style={styles.resultGradient}>
         <AnimatedView style={[styles.celebrationContainer, celebrationAnimatedStyle]}>
           <ParticleEffect count={50} color={config.gradient[0]} size={4} />
         </AnimatedView>
@@ -869,7 +883,7 @@ const useStyles = createStyles((colors) => ({
   },
   cameraGuideContainer: {
     flex: 1,
-    backgroundColor: "colors.textPrimary", // custom color
+    backgroundColor: colors.textPrimary,
   },
   cameraHeader: {
     flexDirection: "row",

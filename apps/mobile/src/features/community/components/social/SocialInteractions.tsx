@@ -1,4 +1,4 @@
-﻿import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -192,6 +192,8 @@ interface SharePlatformItemProps {
 }
 
 const SharePlatformItem: React.FC<SharePlatformItemProps> = ({ platform, index, onPress }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const platformScale = useSharedValue(0);
 
   useEffect(() => {
@@ -224,6 +226,8 @@ export const ShareSheet: React.FC<ShareSheetProps> = ({
   onCopyLink,
   product,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
   const itemOpacity = useSharedValue(0);
@@ -343,6 +347,8 @@ export const CommentInput: React.FC<CommentInputProps> = ({
   placeholder = "写下你的评论...",
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [text, setText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
@@ -449,6 +455,8 @@ const _AnimatedCommentItem: React.FC<AnimatedCommentItemProps> = ({
   index,
   onLikeComment,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const commentOpacity = useSharedValue(0);
   const commentTranslateX = useSharedValue(20);
 
@@ -497,6 +505,8 @@ export const CommentSheet: React.FC<CommentSheetProps> = ({
   onCommentSubmit,
   onLikeComment,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
 
@@ -519,6 +529,8 @@ export const CommentSheet: React.FC<CommentSheetProps> = ({
   }));
 
   const CommentItem: React.FC<{ item: CommentSheetItem; index: number }> = ({ item, index }) => {
+    const { colors } = useTheme();
+    const styles = useStyles(colors);
     const commentOpacity = useSharedValue(0);
     const commentTranslateX = useSharedValue(20);
 
@@ -609,6 +621,8 @@ interface ReactionOptionItemProps {
 }
 
 const ReactionOptionItem: React.FC<ReactionOptionItemProps> = ({ reaction, index, onSelect }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const reactionScale = useSharedValue(0);
 
   useEffect(() => {
@@ -637,6 +651,8 @@ export const ReactionPicker: React.FC<ReactionPickerProps> = ({
   onSelect,
   onDismiss,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
 

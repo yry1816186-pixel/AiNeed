@@ -1,6 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
-import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService, REDIS_KEY_PREFIX, REDIS_KEY_SEPARATOR } from "../../../common/redis/redis.service";
@@ -26,7 +25,7 @@ export class BloggerScoreService implements OnModuleInit {
 
   private registerPrismaMiddleware() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.prisma.$use(async (params: Prisma.MiddlewareParams, next: (params: Prisma.MiddlewareParams) => Promise<any>) => {
+    this.prisma.$use(async (params: any, next: (params: any) => Promise<any>) => {
       if (params.model === "User" && params.action === "update") {
         if (!this.isInternalUpdate) {
           const data = params.args?.data;

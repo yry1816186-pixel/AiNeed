@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { OrderStatus } from "../../../../../types/prisma-enums";
+import { OrderStatus } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 

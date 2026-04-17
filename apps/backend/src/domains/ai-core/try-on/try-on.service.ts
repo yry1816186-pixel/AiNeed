@@ -5,7 +5,8 @@ import {
   Inject,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { TryOnStatus, Prisma } from "@prisma/client";
+import { TryOnStatus } from "../../../../types/prisma-enums";
+import { Prisma } from "@prisma/client";
 import axios from "axios";
 import Redis from "ioredis";
 

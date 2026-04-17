@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, theme, Spacing, BorderRadius, Shadows } from '../theme';
+import { Colors, theme, Spacing, BorderRadius, Shadows } from '../../theme';
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
@@ -64,7 +64,9 @@ export function EmptyState({
 }
 
 /** Empty wardrobe - hanger icon + "Start adding your first piece" + photo button */
-export function EmptyWardrobe({ onAdd }: { onAdd?: () => void }) {
+export function EmptyWardrobe({
+onAdd }: { onAdd?: () => void }) {
+  const { colors } = useTheme();
   return (
     <EmptyState
       icon="shirt-outline"
@@ -175,7 +177,7 @@ export function EmptyPosts({ onPublish }: { onPublish?: () => void }) {
 
 /** Generic empty state - brand icon + warm encouraging text */
 export function EmptyGeneric({
-  title,
+title,
   description,
   actionLabel,
   onAction,
