@@ -1028,4 +1028,5 @@ const useStyles = createStyles((colors) => ({
 
 export default {
   SmartRecommendationCard,
-  PersonalizedFe
+  PersonalizedFeed,
+};
