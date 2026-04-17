@@ -14,6 +14,7 @@ import {
   type SeasonAccentColors,
 } from "../design-system/theme/tokens/season-colors";
 import type { FlatColors } from "../design-system/theme/FlatColors";
+import { WarmPrimaryColors } from "../design-system/theme/tokens/colors";
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
@@ -67,6 +68,25 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     terracottaDark: base.brand.terracottaDark,
     amber: base.semantic.warning,
     secondary: base.brand.sage,
+    warmPrimary: base.brand.terracotta,
+    warmAccent: base.brand.camel,
+    warmSecondary: base.brand.sageLight,
+    like: base.semantic.error,
+    ocean: WarmPrimaryColors.ocean[500],
+    mint: WarmPrimaryColors.mint[400],
+    coral: WarmPrimaryColors.coral[500],
+    main: base.brand.terracotta,
+    light: base.brand.terracottaLight,
+    dark: base.brand.terracottaDark,
+    oceanMint: '#33AA99',
+    fashion: '#FF7F7F',
+    purple: '#7B68EE',
+    secondaryLight: base.brand.sageLight,
+    gradients: {
+      ...DesignTokens.gradients,
+      coralRose: [WarmPrimaryColors.coral[500], '#FF8E8E'],
+      oceanMint: [WarmPrimaryColors.ocean[500], WarmPrimaryColors.mint[400]],
+    },
   };
 }
 

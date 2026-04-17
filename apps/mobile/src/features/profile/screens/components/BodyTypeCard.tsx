@@ -134,20 +134,20 @@ function BodySilhouette({
       >
         臀
       </SvgText>
-      <Circle cx={centerX} cy={topY - 8} r={14} fill={colors.brand.warmPrimary} opacity={0.15} />
+      <Circle cx={centerX} cy={topY - 8} r={14} fill={colors.primary} opacity={0.15} />
       <Circle
         cx={centerX}
         cy={topY - 8}
         r={14}
         fill="transparent"
-        stroke={colors.brand.warmPrimary}
+        stroke={colors.primary}
         strokeWidth={1.5}
       />
       <SvgText
         x={centerX}
         y={topY - 4}
         textAnchor="middle"
-        fill={colors.brand.warmPrimary}
+        fill={colors.primary}
         fontSize={10}
         fontWeight="600"
       >
@@ -161,8 +161,8 @@ function BodySilhouette({
           ? "Y"
           : "O"}
       </SvgText>
-      <Path d={pathD} fill={colors.brand.warmPrimary} opacity={0.12} />
-      <Path d={pathD} fill="transparent" stroke={colors.brand.warmPrimary} strokeWidth={2} />
+      <Path d={pathD} fill={colors.primary} opacity={0.12} />
+      <Path d={pathD} fill="transparent" stroke={colors.primary} strokeWidth={2} />
     </Svg>
   );
 }
@@ -218,7 +218,7 @@ export const BodyTypeCard: React.FC<BodyTypeCardProps> = ({
         accessibilityRole="button"
       >
         <View style={styles.cardHeaderLeft}>
-          <Ionicons name={bodyTypeIcon} size={20} color={colors.brand.warmPrimary} />
+          <Ionicons name={bodyTypeIcon} size={20} color={colors.primary} />
           <Text style={styles.cardHeaderTitle}>体型分析</Text>
           <View style={styles.typeBadge}>
             <Text style={styles.typeBadgeText}>{bodyTypeName}</Text>
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
     color: colors.neutral[800],
   },
   typeBadge: {
-    backgroundColor: colors.warmPrimary.coral[50],
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: spacing.scale[2],
     paddingVertical: spacing.scale[1],
     borderRadius: spacing.borderRadius.md,
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   typeBadgeText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.brand.warmPrimary,
+    color: colors.primary,
   },
   cardContent: {
     marginTop: spacing.scale[4],
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
     width: DesignTokens.spacing['1.5'],
     height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
-    backgroundColor: colors.brand.warmPrimary,
+    backgroundColor: colors.primary,
     marginTop: 7,
   },
   recommendationText: {
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     gap: spacing.scale[2],
   },
   idealTag: {
-    backgroundColor: colors.warmPrimary.coral[50],
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: spacing.scale[3],
     paddingVertical: spacing.scale[1] + 2,
     borderRadius: spacing.borderRadius.lg,
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   idealTagText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.medium,
-    color: colors.brand.warmPrimary,
+    color: colors.primary,
   },
   avoidTag: {
     backgroundColor: colors.neutral[100],

@@ -16,9 +16,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { useAuthStore } from '../stores/index';
+import { useAuthStore } from '../../auth/stores';
 import { authApi, userApi } from '../../../services/api/auth.api';
-import { ProfileCompletenessBar } from '../../../components/profile/ProfileCompletenessBar';
+import { ProfileCompletenessBar } from '../components/ProfileCompletenessBar';
 import { useProfileStore } from '../stores/profileStore';
 import type { UserStats, User } from '../../../types/user';
 import type { RootStackParamList } from '../../../types/navigation';
@@ -32,7 +32,7 @@ import { seasonLabels, type ColorSeason } from '../../../design-system/theme/tok
 import { useScreenTracking } from '../../../hooks/useAnalytics';
 import { useTranslation, useI18n } from '../../../i18n';
 import { withErrorBoundary } from '../../../shared/components/ErrorBoundary';
-import { BrandPattern, BrandDivider } from '../../../components/brand/BrandMotif';
+import { BrandPattern, BrandDivider } from '../../commerce/components/BrandMotif';
 import { Spacing } from '../../../design-system/theme';
 
 
@@ -46,6 +46,7 @@ export const ProfileScreenComponent: React.FC = () => {
   const { user, logout, isVip } = useAuthStore();
   const { completeness, loadCompleteness, colorAnalysis } = useProfileStore();
   const { colorSeason, seasonAccent, setSeasonAccent, colors } = useTheme();
+  const styles = useStyles(colors);
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -168,7 +169,7 @@ export const ProfileScreenComponent: React.FC = () => {
       icon: "color-wand-outline" as const,
       label: "私人定制",
       accessibilityLabel: "私人定制",
-      color: colors.purple,
+      color: colors.secondary,
       onPress: () => navigation.navigate("CustomDesign" as never),
     },
     {
@@ -187,10 +188,10 @@ export const ProfileScreenComponent: React.FC = () => {
         Alert.alert(
           t.profile.language,
           "",
-          supportedLanguages.map((lang) => ({
+          [...supportedLanguages.map((lang) => ({
             text: `${lang.nativeName}${lang.code === language ? " ✓" : ""}`,
             onPress: () => void setLanguage(lang.code),
-          })).concat([{ text: t.common.cancel, style: "cancel" as const }])
+          })), { text: t.common.cancel, style: "cancel" as const }]
         );
       },
     },
@@ -374,13 +375,13 @@ export const ProfileScreenComponent: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.neutral[50] },
+const useStyles = createStyles((colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     padding: spacing.layout.screenPadding,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.neutral[200],
+    borderBottomColor: colors.borderLight,
     ...shadows.presets.xs,
     overflow: "hidden",
   },
@@ -391,11 +392,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: colors.neutral[900],
+    color: colors.textPrimary,
   },
   content: { flex: 1 },
 
-  // ===== Profile Card（升级版 - 渐变背景）=====
+  // ===== Profile Card =====
   profileCard: {
     margin: spacing.layout.screenPadding,
     borderRadius: spacing.borderRadius["2xl"],
@@ -476,7 +477,7 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
   },
 
-  // ===== Stats Cards（升级版）=====
+  // ===== Stats Cards =====
   statsLoading: {
     paddingVertical: spacing.layout.sectionGap,
     alignItems: "center",
@@ -489,7 +490,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.surface,
     borderRadius: spacing.borderRadius.xl,
     padding: spacing.layout.cardPadding,
     alignItems: "center",
@@ -498,17 +499,17 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
-    color: colors.brand.warmPrimary,
+    color: colors.primary,
   },
   statLabel: {
     fontSize: typography.fontSize.sm,
-    color: colors.neutral[500],
+    color: colors.textTertiary,
     marginTop: DesignTokens.spacing['1.5'],
   },
 
-  // ===== Menu Section（升级版）=====
+  // ===== Menu Section =====
   menuSection: {
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.surface,
     marginHorizontal: spacing.layout.screenPadding,
     borderRadius: spacing.borderRadius.xl,
     overflow: "hidden",
@@ -521,7 +522,7 @@ const styles = StyleSheet.create({
     padding: spacing.layout.listItemPadding,
     gap: DesignTokens.spacing['3.5'],
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.neutral[200],
+    borderBottomColor: colors.borderLight,
   },
   menuItemLast: {
     borderBottomWidth: 0,
@@ -533,7 +534,7 @@ const styles = StyleSheet.create({
   },
   completenessContainer: {
     marginHorizontal: spacing.layout.screenPadding,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.surface,
     borderRadius: spacing.borderRadius.xl,
     padding: spacing.layout.cardPadding,
     marginBottom: spacing.layout.cardGap,
@@ -541,7 +542,7 @@ const styles = StyleSheet.create({
   },
   seasonCard: {
     marginHorizontal: spacing.layout.screenPadding,
-    backgroundColor: colors.neutral.white,
+    backgroundColor: colors.surface,
     borderRadius: spacing.borderRadius.xl,
     padding: spacing.layout.cardPadding,
     marginBottom: spacing.layout.cardGap,
@@ -563,7 +564,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.neutral[700],
+    color: colors.textSecondary,
   },
   seasonCardBody: {
     flexDirection: "row",
@@ -595,9 +596,9 @@ const styles = StyleSheet.create({
   learningTipText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.regular,
-    color: colors.neutral[500],
+    color: colors.textTertiary,
   },
-});
+}));
 
 const ProfileScreen = withErrorBoundary(ProfileScreenComponent, {
   screenName: "ProfileScreen",

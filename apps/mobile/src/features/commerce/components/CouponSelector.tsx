@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { UserCoupon } from '../../../services/api/commerce.api';
@@ -51,7 +51,7 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
             }}
           >
             <Text style={styles.noCouponText}>不使用优惠券</Text>
-            {selectedCouponId === null && <Ionicons name="checkmark" size={20} color="colors.error" />}
+            {selectedCouponId === null && <Ionicons name="checkmark" size={20} color={colors.error} />}
           </TouchableOpacity>
 
           <FlatList
@@ -81,7 +81,7 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
                     <Ionicons
                       name="checkmark-circle"
                       size={20}
-                      color="colors.error"
+                      color={colors.error}
                       style={styles.checkIcon}
                     />
                   )}
@@ -112,7 +112,7 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "space-between",
     padding: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: "colors.backgroundTertiary",
+    borderBottomColor: colors.backgroundTertiary,
   },
   title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
   close: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
@@ -123,7 +123,7 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: Spacing.md,
     paddingVertical: DesignTokens.spacing['3.5'],
     borderBottomWidth: 1,
-    borderBottomColor: "colors.backgroundTertiary",
+    borderBottomColor: colors.backgroundTertiary,
   },
   noCouponText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
   couponRow: {
@@ -139,13 +139,13 @@ const useStyles = createStyles((colors) => ({
     width: Spacing['4xl'],
     alignItems: "center",
     borderRightWidth: 1,
-    borderRightColor: "colors.backgroundTertiary",
+    borderRightColor: colors.backgroundTertiary,
     marginRight: DesignTokens.spacing[3],
   },
   couponDiscount: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: "colors.error",
+    color: colors.error,
   },
   couponCondition: {
     fontSize: DesignTokens.typography.sizes.xs,

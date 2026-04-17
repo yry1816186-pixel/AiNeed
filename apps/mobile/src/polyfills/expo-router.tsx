@@ -219,11 +219,11 @@ export interface ScreenOptions {
 }
 
 export const Stack = {
-  Screen: ({ name, options }: { _name: string; options?: ScreenOptions }) => null,
+  Screen: ({ name, options }: { name: string; options?: ScreenOptions }) => null,
 };
 
 export const Tabs = {
-  Screen: ({ name, options }: { _name: string; options?: ScreenOptions }) => null,
+  Screen: ({ name, options }: { name: string; options?: ScreenOptions }) => null,
 };
 
 export default {

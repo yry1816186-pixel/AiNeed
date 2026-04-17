@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -61,7 +61,7 @@ const useStyles = createStyles((colors) => ({
   title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing[3]},
   card: {
     width: 200,
-    backgroundColor: "colors.backgroundSecondary",
+    backgroundColor: colors.backgroundSecondary,
     borderRadius: 12,
     padding: DesignTokens.spacing[3],
     marginRight: DesignTokens.spacing[3],

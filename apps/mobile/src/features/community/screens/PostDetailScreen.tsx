@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+﻿﻿﻿import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -482,7 +482,7 @@ const useStyles = createStyles((colors) => ({
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary },
   backBtn: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], justifyContent: "center" },
   moreBtn: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], alignItems: "flex-end", justifyContent: "center" },
   content: { flex: 1 },
@@ -530,7 +530,7 @@ const useStyles = createStyles((colors) => ({
     borderColor: colors.surface,
   },
   authorInfo: { marginLeft: DesignTokens.spacing[3], flex: 1 },
-  authorName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.text },
+  authorName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: theme.colors.textPrimary },
   postTime: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
   postTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
@@ -633,7 +633,7 @@ const useStyles = createStyles((colors) => ({
   },
   commentAvatarText: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.textSecondary },
   commentBody: { flex: 1 },
-  commentAuthor: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.text },
+  commentAuthor: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: theme.colors.textPrimary },
   commentContent: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary, lineHeight: 20, marginTop: Spacing.xs},
   commentMeta: {
     flexDirection: "row",

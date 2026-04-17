@@ -147,17 +147,17 @@ export const CommunityScreen: React.FC = () => {
     }
   }, [tab, hasMore, loading, page, fetchPosts]);
   const onCreate = useCallback(
-    async (t: string, c: string, ct: string) => {
+    async (title: string, c: string, ct: string) => {
       try {
-        const r = await communityApi.createPost({ title: t, content: c, category: ct });
+        const r = await communityApi.createPost({ title, content: c, category: ct });
         if (r.success) {
-          Alert.alert(t.common.done, t.community.post);
+          Alert.alert(t?.common?.done || "Done", t?.community?.post || "Posted");
           void fetchPosts(1, false);
         } else {
-          Alert.alert(t.common.confirm, r.error?.message || t.community.post);
+          Alert.alert(t?.common?.confirm || "Confirm", r.error?.message || t?.community?.post || "Error");
         }
       } catch {
-        Alert.alert(t.common.confirm, t.errors.serverError);
+        Alert.alert(t?.common?.confirm || "Confirm", t?.errors?.serverError || "Server Error");
       }
     },
     [fetchPosts]

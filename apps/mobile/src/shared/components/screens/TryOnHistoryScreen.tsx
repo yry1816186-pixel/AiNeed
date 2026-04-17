@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+﻿﻿﻿﻿import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import { spacing } from '../../../design-system/theme/tokens/spacing';
 import { shadows } from '../../../design-system/theme/tokens/shadows';
 import {Spacing} from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { WarmPrimaryColors } from '../../../design-system/theme/tokens/colors';
 
 
 type FilterTab = "all" | "completed" | "failed";
@@ -129,10 +130,10 @@ export const TryOnHistoryScreen: React.FC = () => {
     ({ item }: { item: TryOnResult }) => {
       const statusColor =
         item.status === "completed"
-          ? colors.warmPrimary.mint[500]
+          ? colors.successLight
           : item.status === "failed"
-          ? colors.semantic.error.main
-          : colors.warmPrimary.ocean[500];
+          ? colors.error
+          : colors.info;
 
       const statusLabel =
         item.status === "completed"
@@ -165,11 +166,11 @@ export const TryOnHistoryScreen: React.FC = () => {
             <View style={styles.cardActions}>
               {item.status === "failed" && (
                 <TouchableOpacity style={styles.retryButton} onPress={() => handleRetry(item.id)}>
-                  <Ionicons name="refresh" size={16} color={colors.warmPrimary.ocean[600]} />
+                  <Ionicons name="refresh" size={16} color={WarmPrimaryColors.ocean[600]} />
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
-                <Ionicons name="trash-outline" size={16} color={colors.semantic.error.main} />
+                <Ionicons name="trash-outline" size={16} color={colors.error} />
               </TouchableOpacity>
             </View>
           </View>
@@ -243,7 +244,7 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 20,
     backgroundColor: colors.neutral[100]},
   tabActive: {
-    backgroundColor: colors.brand.warmPrimary},
+    backgroundColor: colors.warmPrimary},
   tabText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
@@ -296,14 +297,14 @@ const useStyles = createStyles((colors) => ({
     width: DesignTokens.spacing[9],
     height: DesignTokens.spacing[9],
     borderRadius: 18,
-    backgroundColor: colors.warmPrimary.ocean[50],
+    backgroundColor: colors.infoLight,
     alignItems: "center",
     justifyContent: "center"},
   deleteButton: {
     width: DesignTokens.spacing[9],
     height: DesignTokens.spacing[9],
     borderRadius: 18,
-    backgroundColor: colors.semantic.error.light,
+    backgroundColor: colors.errorLight,
     alignItems: "center",
     justifyContent: "center"},
   emptyContainer: {
@@ -324,7 +325,7 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
-    backgroundColor: colors.brand.warmPrimary,
+    backgroundColor: colors.warmPrimary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: DesignTokens.spacing[3],
     borderRadius: spacing.borderRadius.xl,

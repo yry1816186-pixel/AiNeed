@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿﻿﻿﻿import React from "react";
 import { View, StyleSheet } from "react-native";
 import Svg, { Rect, Text as SvgText, Path, G } from "react-native-svg";
 import { typography } from '../../../design-system/theme/tokens/typography';
@@ -26,7 +26,6 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
   showLabel = true,
   type = "neutral",
   accessibilityLabel}) => {
-  const e_styles = use_styles(colors);
   const { colors } = useTheme();
   const _styles = use_styles(colors);
   const defaultA11yLabel =
@@ -50,7 +49,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
             height={indicatorSize}
             rx={indicatorSize / 2}
             ry={indicatorSize / 2}
-            fill={colors.brand.warmPrimary}
+            fill={colors.primary}
           />
           <Path
             d={CheckPath}

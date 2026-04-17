@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+﻿import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
   },
   headerBtn: { paddingVertical: Spacing.xs, paddingHorizontal: Spacing.sm},
   headerBtnDisabled: { opacity: 0.5 },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
   cancelText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
   publishText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
   body: { flex: 1 },
@@ -607,7 +607,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: colors.background,
   },
-  tagChipActive: { backgroundColor: "colors.infoLight" }, // custom color
+  tagChipActive: { backgroundColor: colors.infoLight }, // custom color
   tagChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   tagChipTextActive: { color: colors.neutral[500], fontWeight: "600" },
   categoryRow: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm},
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: colors.background,
   },
-  searchResultName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.text },
+  searchResultName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
 });
 
 export default CreatePostScreen;

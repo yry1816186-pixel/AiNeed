@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
@@ -36,12 +36,12 @@ const useStyles = createStyles((colors) => ({
   chipDefault: {
     backgroundColor: colors.backgroundTertiary,
     borderWidth: 1,
-    borderColor: "colors.border",
+    borderColor: colors.border,
   },
   chipSelected: {
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     borderWidth: 1,
-    borderColor: "colors.primary",
+    borderColor: colors.primary,
   },
   text: {
     fontSize: DesignTokens.typography.sizes.base,

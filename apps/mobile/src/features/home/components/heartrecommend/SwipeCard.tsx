@@ -714,7 +714,7 @@ const styles = StyleSheet.create({
   reasonPillText: {
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "500",
-    color: DesignTokens.flatColors.brand.terracottaLight,
+    color: flatColors.brand.terracottaLight,
   },
   harmonyArcContainer: {
     marginLeft: Spacing.sm,

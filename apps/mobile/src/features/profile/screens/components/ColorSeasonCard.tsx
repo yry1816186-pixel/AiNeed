@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+﻿﻿﻿﻿import React, { useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import {
@@ -230,7 +230,7 @@ export const ColorSeasonCard: React.FC<ColorSeasonCardProps> = ({
         accessibilityRole="button"
       >
         <View style={styles.cardHeaderLeft}>
-          <Ionicons name="palette-outline" size={20} color={colors.brand.warmAccent} />
+          <Ionicons name="palette-outline" size={20} color={colors.gold} />
           <Text style={styles.cardHeaderTitle}>色彩季型</Text>
           <View style={styles.typeBadge}>
             <Text style={styles.typeBadgeText}>{seasonName}</Text>
@@ -276,7 +276,7 @@ export const ColorSeasonCard: React.FC<ColorSeasonCardProps> = ({
           )}
 
           <View style={styles.metalSection}>
-            <Ionicons name="diamond-outline" size={16} color={colors.fashion.champagne} />
+            <Ionicons name="diamond-outline" size={16} color={colors.gold} />
             <Text style={styles.metalLabel}>饰品偏好：</Text>
             <Text style={styles.metalValue}>
               {METAL_LABELS[metalPreference] || metalPreference}
@@ -313,7 +313,7 @@ const useStyles = createStyles((colors) => ({
     color: colors.neutral[800],
   },
   typeBadge: {
-    backgroundColor: colors.warmPrimary.ocean[50],
+    backgroundColor: colors.warmPrimary,
     paddingHorizontal: spacing.scale[2],
     paddingVertical: spacing.scale[1],
     borderRadius: spacing.borderRadius.md,
@@ -321,7 +321,7 @@ const useStyles = createStyles((colors) => ({
   typeBadgeText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.brand.warmAccent,
+    color: colors.gold,
   },
   cardContent: {
     marginTop: spacing.scale[4],
@@ -347,10 +347,10 @@ const useStyles = createStyles((colors) => ({
     borderRadius: spacing.borderRadius.md,
   },
   warmTag: {
-    backgroundColor: colors.warmPrimary.coral[50],
+    backgroundColor: colors.gold,
   },
   depthTag: {
-    backgroundColor: colors.warmPrimary.ocean[50],
+    backgroundColor: colors.warmPrimary,
   },
   seasonTagText: {
     fontSize: typography.fontSize["2xs"],

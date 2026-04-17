@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+﻿﻿﻿﻿﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -44,6 +44,8 @@ export const CartScreenComponent: React.FC = () => {
   const navigation = useNavigation<Navigation>();
   useScreenTracking("Cart");
   const t = useTranslation();
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -74,7 +76,7 @@ export const CartScreenComponent: React.FC = () => {
             size: item.size,
             quantity: item.quantity,
             selected: item.selected ?? false,
-          }))
+          })) as any
         );
         setSelectedIds(selected);
       }
@@ -150,7 +152,7 @@ export const CartScreenComponent: React.FC = () => {
     const nextSelected = !allSelected;
     const previousSelectedIds = new Set(selectedIds);
     const nextSelectedIds = nextSelected
-      ? new Set(items.map((item: any) => item.id))
+      ? new Set<string>(items.map((item: any) => item.id))
       : new Set<string>();
 
     setSelectedIds(nextSelectedIds);
@@ -505,6 +507,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
   onDelete,
 }) => {
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const t = useTranslation();
   const translateX = useRef(new Animated.Value(0)).current;
   const itemPrice = item.item?.price ?? 0;
@@ -646,7 +649,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: { flex: 1, backgroundColor: colors.background },
   header: {
     paddingHorizontal: DesignTokens.spacing[5],
@@ -658,7 +661,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.textPrimary },
   badge: {
     marginLeft: DesignTokens.spacing['2.5'],
     backgroundColor: colors.primary,
@@ -840,7 +843,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderColor: colors.placeholderBg,
   },
-  quantityText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.text },
+  quantityText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary },
 
   footer: {
     flexDirection: "row",
@@ -877,7 +880,7 @@ const styles = StyleSheet.create({
     minWidth: 110,
     alignItems: "center",
   },
-  checkoutButtonDisabled: { backgroundColor: "colors.infoLight" }, // custom color
+  checkoutButtonDisabled: { backgroundColor: colors.infoLight }, // custom color
   checkoutButtonText: {
     color: colors.surface,
     fontSize: DesignTokens.typography.sizes.md,
@@ -901,7 +904,7 @@ const styles = StyleSheet.create({
   },
   couponEntryText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: "colors.error", // custom color
+    color: colors.error, // custom color
   },
   batchRow: {
     flexDirection: "row",
@@ -948,7 +951,7 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-});
+}));
 
 const CartScreen = withErrorBoundary(CartScreenComponent, {
   screenName: "CartScreen",

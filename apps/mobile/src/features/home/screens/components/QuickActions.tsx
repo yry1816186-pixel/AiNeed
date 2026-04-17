@@ -1,4 +1,4 @@
-import { memo, type ComponentProps } from "react";
+﻿﻿﻿import { memo, type ComponentProps } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
@@ -59,7 +59,7 @@ const QuickActions = memo(
         title: "购物车",
         description: "查看购物车",
         icon: "cart-outline",
-        gradient: ["colors.primary", colors.primaryLight], // custom color
+        gradient: [colors.primary, colors.primaryLight], // custom color
         onPress: onCart,
         locked: false,
       },
@@ -77,7 +77,7 @@ const QuickActions = memo(
         title: "风格报告",
         description: "专属风格分析",
         icon: "document-text-outline",
-        gradient: [colors.neutral[500], "colors.textTertiary"], // custom color
+        gradient: [colors.neutral[500], colors.textTertiary], // custom color
         onPress: onStyleReport,
         locked: !isStyleReportUnlocked,
       },

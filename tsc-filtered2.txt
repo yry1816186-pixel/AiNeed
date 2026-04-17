@@ -1,0 +1,7 @@
+﻿
+apps/mobile/src/features/stylist/components/AI
+CompanionBall.tsx(23,24): error TS2305: Module
+ '"../../../design-system/theme/tokens/design-
+tokens"' has no exported member 'flatColors'.
+
+

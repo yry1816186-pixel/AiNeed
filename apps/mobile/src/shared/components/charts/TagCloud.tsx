@@ -1,9 +1,9 @@
-import React from "react";
+﻿﻿﻿﻿import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 import { spacing } from '../../../design-system/theme/tokens/spacing';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { useTheme, createStyles, type FlatColors } from '../../contexts/ThemeContext';
 
 export interface TagCloudTag {
   label: string;
@@ -16,7 +16,7 @@ export interface TagCloudProps {
   accessibilityLabel?: string;
 }
 
-const getTagStyle = (weight: number, active: boolean) => {
+const getTagStyle = (weight: number, active: boolean, colors: FlatColors) => {
   let fontSize: number;
   let paddingVertical: number;
   let paddingHorizontal: number;
@@ -43,9 +43,9 @@ const getTagStyle = (weight: number, active: boolean) => {
     fontSize,
     paddingVertical,
     paddingHorizontal,
-    backgroundColor: active ? colors.brand.warmPrimary : colors.neutral[100],
+    backgroundColor: active ? colors.primary : colors.neutral[100],
     color: active ? colors.surface : colors.neutral[600],
-    borderColor: active ? colors.brand.warmPrimary : colors.neutral[200],
+    borderColor: active ? colors.primary : colors.neutral[200],
     borderWidth: 1};
 };
 
@@ -62,7 +62,7 @@ export const TagCloud: React.FC<TagCloudProps> = ({ tags, accessibilityLabel }) 
       accessibilityRole="list"
     >
       {tags.map((tag, index) => {
-        const tagStyle = getTagStyle(tag.weight, tag.active);
+        const tagStyle = getTagStyle(tag.weight, tag.active, colors);
 
         return (
           <View

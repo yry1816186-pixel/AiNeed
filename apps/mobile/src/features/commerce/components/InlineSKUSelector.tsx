@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿﻿import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { cartEnhancementApi } from '../../../services/api/commerce.api';
 import { DesignTokens, Spacing, flatColors as themeColors } from '../../../design-system/theme';
@@ -102,7 +102,7 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "space-between",
     padding: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: "colors.backgroundTertiary",
+    borderBottomColor: colors.backgroundTertiary,
   },
   title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
   close: { fontSize: DesignTokens.typography.sizes.md, color: colors.textTertiary },
@@ -120,11 +120,11 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 8,
     backgroundColor: colors.backgroundTertiary,
   },
-  chipSelected: { backgroundColor: "colors.errorLight", borderWidth: 1, borderColor: "colors.error" },
+  chipSelected: { backgroundColor: "colors.errorLight", borderWidth: 1, borderColor: colors.error },
   chipText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  chipTextSelected: { color: "colors.error", fontWeight: "500" },
+  chipTextSelected: { color: colors.error, fontWeight: "500" },
   confirm: {
-    backgroundColor: "colors.error",
+    backgroundColor: colors.error,
     paddingVertical: DesignTokens.spacing['3.5'],
     alignItems: "center",
   },

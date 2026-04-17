@@ -17,7 +17,7 @@ import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens'
 import { useBloggerStore } from '../stores/bloggerStore';
 import type { TrendMetric } from '../../../services/api/blogger.api';
 import type { RootStackParamList } from '../../../types/navigation';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
 
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
@@ -137,7 +137,7 @@ export const BloggerDashboardScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={staticColors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>数据面板</Text>
         <View style={styles.headerSpacer} />
@@ -163,7 +163,7 @@ export const BloggerDashboardScreen: React.FC = () => {
 
         {/* Core metrics grid */}
         {isLoadingDashboard ? (
-          <ActivityIndicator size="large" color={colors.primary} style={styles.loader} />
+          <ActivityIndicator size="large" color={staticColors.primary} style={styles.loader} />
         ) : dashboardData ? (
           <View style={styles.metricsGrid}>
             <MetricCard
@@ -239,7 +239,7 @@ export const BloggerDashboardScreen: React.FC = () => {
             ))}
           </View>
           {isLoadingTrend ? (
-            <ActivityIndicator size="small" color={colors.primary} style={styles.loader} />
+            <ActivityIndicator size="small" color={staticColors.primary} style={styles.loader} />
           ) : (
             <TrendChart data={trendData} width={SCREEN_WIDTH} />
           )}
@@ -250,15 +250,15 @@ export const BloggerDashboardScreen: React.FC = () => {
           style={styles.manageBtn}
           onPress={() => navigation.navigate("BloggerProfile", {})}
         >
-          <Ionicons name="bag-outline" size={18} color={colors.primary} />
+          <Ionicons name="bag-outline" size={18} color={staticColors.primary} />
           <Text style={styles.manageBtnText}>管理我的商品</Text>
-          <Ionicons name="chevron-forward" size={16} color={colors.textTertiary} />
+          <Ionicons name="chevron-forward" size={16} color={staticColors.textTertiary} />
         </TouchableOpacity>
 
         {/* Non-blogger upgrade prompt */}
         {!isBlogger && (
           <View style={styles.upgradeSection}>
-            <Ionicons name="rocket-outline" size={32} color={colors.primary} />
+            <Ionicons name="rocket-outline" size={32} color={staticColors.primary} />
             <Text style={styles.upgradeTitle}>成为博主解锁更多数据</Text>
             <Text style={styles.upgradeDesc}>综合分≥60 且 粉丝≥500 即可自动升级为博主</Text>
           </View>
@@ -271,24 +271,24 @@ export const BloggerDashboardScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+  container: { flex: 1, backgroundColor: staticColors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: Spacing.md,
     paddingVertical: DesignTokens.spacing[3],
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: staticColors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: staticColors.textPrimary },
   backBtn: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], justifyContent: "center" },
   headerSpacer: { width: DesignTokens.spacing[10] },
   scrollContent: { paddingHorizontal: Spacing.md, paddingTop: DesignTokens.spacing[3]},
   periodRow: {
     flexDirection: "row",
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 10,
     padding: Spacing.xs,
     marginBottom: Spacing.md,
@@ -299,9 +299,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 8,
   },
-  periodTabActive: { backgroundColor: colors.primary },
-  periodTabText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  periodTabTextActive: { color: colors.surface, fontWeight: "600" },
+  periodTabActive: { backgroundColor: staticColors.primary },
+  periodTabText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textSecondary },
+  periodTabTextActive: { color: staticColors.surface, fontWeight: "600" },
   metricsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -309,41 +309,41 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     width: (SCREEN_WIDTH - 42) / 2,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 12,
     padding: DesignTokens.spacing['3.5'],
   },
-  metricValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
-  metricLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: Spacing.xs},
+  metricValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: staticColors.textPrimary },
+  metricLabel: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.textSecondary, marginTop: Spacing.xs},
   metricChange: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", marginTop: Spacing.xs},
-  metricUp: { color: "colors.success" },
-  metricDown: { color: "colors.error" },
+  metricUp: { color: staticColors.success },
+  metricDown: { color: staticColors.error },
   loader: { paddingVertical: Spacing.lg},
   noData: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textTertiary,
+    color: staticColors.textTertiary,
     textAlign: "center",
     paddingVertical: DesignTokens.spacing[10],
   },
   enhancedSection: {
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 12,
     padding: DesignTokens.spacing['3.5'],
     marginTop: Spacing.md,
   },
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing['2.5']},
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: staticColors.textPrimary, marginBottom: DesignTokens.spacing['2.5']},
   enhancedRow: { flexDirection: "row", gap: DesignTokens.spacing['2.5']},
   enhancedCard: {
     flex: 1,
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: staticColors.backgroundTertiary,
     borderRadius: 10,
     padding: DesignTokens.spacing['3.5'],
     alignItems: "center",
   },
-  enhancedValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
-  enhancedLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: Spacing.xs},
+  enhancedValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: staticColors.primary },
+  enhancedLabel: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.textSecondary, marginTop: Spacing.xs},
   chartSection: {
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 12,
     padding: DesignTokens.spacing['3.5'],
     marginTop: Spacing.md,
@@ -357,22 +357,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: DesignTokens.spacing[3],
     paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 14,
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
   },
-  metricChipActive: { backgroundColor: colors.backgroundTertiary },
-  metricChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
-  metricChipTextActive: { color: colors.primary, fontWeight: "600" },
+  metricChipActive: { backgroundColor: staticColors.backgroundTertiary },
+  metricChipText: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.textSecondary },
+  metricChipTextActive: { color: staticColors.primary, fontWeight: "600" },
   chartContainer: {
     position: "relative",
     marginTop: Spacing.sm,
   },
   chartArea: {
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: staticColors.border,
   },
   chartBar: {
     position: "absolute",
-    backgroundColor: colors.primary,
+    backgroundColor: staticColors.primary,
     borderRadius: 3,
   },
   chartXAxis: {
@@ -380,26 +380,26 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingTop: DesignTokens.spacing['1.5'],
   },
-  chartXLabel: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
+  chartXLabel: { fontSize: DesignTokens.typography.sizes.xs, color: staticColors.textTertiary },
   chartEmpty: {
     height: 120,
     alignItems: "center",
     justifyContent: "center",
   },
-  chartEmptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
+  chartEmptyText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textTertiary },
   manageBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 12,
     padding: Spacing.md,
     marginTop: Spacing.md,
   },
-  manageBtnText: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, fontWeight: "500" },
+  manageBtnText: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: staticColors.textPrimary, fontWeight: "500" },
   upgradeSection: {
     alignItems: "center",
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 12,
     padding: Spacing.lg,
     marginTop: Spacing.md,
@@ -407,12 +407,12 @@ const styles = StyleSheet.create({
   upgradeTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     marginTop: DesignTokens.spacing[3],
   },
   upgradeDesc: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginTop: DesignTokens.spacing['1.5'],
     textAlign: "center",
   },

@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { Colors, Spacing , flatColors as colors } from '../../../design-system/theme';
@@ -58,7 +58,7 @@ export const DesignToolbar: React.FC<DesignToolbarProps> = ({
           <Ionicons
             name={tool.icon}
             size={22}
-            color={tool.disabled ? Colors.neutral[300] : colors.text}
+            color={tool.disabled ? Colors.neutral[300] : colors.textPrimary}
           />
           <Text style={[styles.toolLabel, tool.disabled && styles.toolLabelDisabled]}>
             {tool.label}

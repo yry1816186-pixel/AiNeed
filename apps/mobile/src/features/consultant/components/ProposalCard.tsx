@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
@@ -47,7 +47,7 @@ const useStyles = createStyles((colors) => ({
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: "colors.textPrimary",
+    color: colors.textPrimary,
     marginBottom: DesignTokens.spacing['1.5'],
   },
   summary: {
@@ -61,7 +61,7 @@ const useStyles = createStyles((colors) => ({
     gap: Spacing.sm,
   },
   primaryBtn: {
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: 8,
@@ -76,10 +76,10 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing.sm,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "colors.primary",
+    borderColor: colors.primary,
   },
   secondaryBtnText: {
-    color: "colors.primary",
+    color: colors.primary,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },

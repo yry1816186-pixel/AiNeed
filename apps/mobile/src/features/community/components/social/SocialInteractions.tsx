@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+﻿﻿﻿import React, { useRef, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -129,11 +129,11 @@ export const AnimatedLikeButton: React.FC<LikeButtonProps> = ({
         <Ionicons
           name={isLiked ? "heart" : "heart-outline"}
           size={config.iconSize}
-          color={isLiked ? "colors.error" : Colors.neutral[400]}
+          color={isLiked ? colors.error : Colors.neutral[400]}
         />
         {isLiked && (
           <AnimatedView style={[StyleSheet.absoluteFill, heartAnimatedStyle]}>
-            <Ionicons name="heart" size={config.iconSize} color="colors.error" />
+            <Ionicons name="heart" size={config.iconSize} color={colors.error} />
           </AnimatedView>
         )}
       </AnimatedView>
@@ -260,11 +260,11 @@ export const ShareSheet: React.FC<ShareSheetProps> = ({
       id: "wechat",
       name: "微信",
       icon: "chatbubble-ellipses",
-      color: "colors.success",
+      color: colors.success,
     },
-    { id: "moments", name: "朋友圈", icon: "camera-outline", color: "colors.success" },
-    { id: "weibo", name: "微博", icon: "logo-twitter", color: "colors.error" },
-    { id: "qq", name: "QQ", icon: "chatbubbles", color: "colors.info" },
+    { id: "moments", name: "朋友圈", icon: "camera-outline", color: colors.success },
+    { id: "weibo", name: "微博", icon: "logo-twitter", color: colors.error },
+    { id: "qq", name: "QQ", icon: "chatbubbles", color: colors.info },
     {
       id: "link",
       name: "复制链接",
@@ -484,7 +484,7 @@ const _AnimatedCommentItem: React.FC<AnimatedCommentItemProps> = ({
             <Ionicons
               name={item.isLiked ? "heart" : "heart-outline"}
               size={16}
-              color={item.isLiked ? "colors.error" : Colors.neutral[400]}
+              color={item.isLiked ? colors.error : Colors.neutral[400]}
             />
             <Text style={styles.commentLikes}>{item.likes}</Text>
           </TouchableOpacity>
@@ -558,7 +558,7 @@ export const CommentSheet: React.FC<CommentSheetProps> = ({
               <Ionicons
                 name={item.isLiked ? "heart" : "heart-outline"}
                 size={16}
-                color={item.isLiked ? "colors.error" : Colors.neutral[400]}
+                color={item.isLiked ? colors.error : Colors.neutral[400]}
               />
               <Text style={styles.commentLikes}>{item.likes}</Text>
             </TouchableOpacity>
@@ -741,7 +741,7 @@ const useStyles = createStyles((colors) => ({
     width: DesignTokens.spacing['1.5'],
     height: DesignTokens.spacing['1.5'],
     borderRadius: 3,
-    backgroundColor: "colors.error", // custom color
+    backgroundColor: colors.error, // custom color
   },
   backdrop: {
     flex: 1,

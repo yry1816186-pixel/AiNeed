@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿﻿﻿﻿﻿import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from "react-native";
 import { Ionicons } from '../../../../polyfills/expo-vector-icons';
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
@@ -40,10 +40,12 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
   const ageRangeError = validationAttempted && !formData.ageRange;
 
   const handleUpdate = (data: Partial<OnboardingFormData>) => {
-    const { colors } = useTheme();
     setValidationAttempted(true);
     updateFormData(data);
   };
+
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
 
   return (
     <Animated.View
@@ -75,7 +77,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
                   <Ionicons
                     name={option.icon}
                     size={24}
-                    color={isSelected ? colors.surface : colors.textSecondary}
+                    color={isSelected ? flatColors.surface : flatColors.textSecondary}
                   />
                   <Text style={[styles.genderLabel, isSelected && styles.genderLabelSelected]}>
                     {option.label}
@@ -127,7 +129,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
                 <TextInput
                   style={styles.textInput}
                   placeholder="170"
-                  placeholderTextColor={colors.textTertiary}
+                  placeholderTextColor={flatColors.textTertiary}
                   value={formData.height}
                   onChangeText={(value) => handleUpdate({ height: value })}
                   keyboardType="numeric"
@@ -141,7 +143,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
                 <TextInput
                   style={styles.textInput}
                   placeholder="65"
-                  placeholderTextColor={colors.textTertiary}
+                  placeholderTextColor={flatColors.textTertiary}
                   value={formData.weight}
                   onChangeText={(value) => handleUpdate({ weight: value })}
                   keyboardType="numeric"
@@ -157,7 +159,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => StyleSheet.create({
   stepContent: {
     flex: 1,
   },
@@ -284,4 +286,4 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.base,
     color: flatColors.textTertiary,
   },
-});
+}));

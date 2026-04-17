@@ -18,11 +18,11 @@ import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { launchImageLibrary } from "react-native-image-picker";
 import { useCustomizationEditorStore, type DesignLayer } from '../stores/customizationEditorStore';
-import { TemplateSelector } from '../../../components/customization/TemplateSelector';
-import { DesignToolbar } from '../../../components/customization/DesignToolbar';
-import { LayerPanel } from '../../../components/customization/LayerPanel';
-import { DesignCanvas } from '../../../components/customization/DesignCanvas';
-import { ColorPicker } from '../../../components/customization/ColorPicker';
+import { TemplateSelector } from '../components/TemplateSelector';
+import { DesignToolbar } from '../components/DesignToolbar';
+import { LayerPanel } from '../components/LayerPanel';
+import { DesignCanvas } from '../components/DesignCanvas';
+import { ColorPicker } from '../components/ColorPicker';
 import type { RootStackParamList } from '../../../types/navigation';
 
 type Navigation = NavigationProp<RootStackParamList>;

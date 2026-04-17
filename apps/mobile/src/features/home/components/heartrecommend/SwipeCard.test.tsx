@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react-native";
-import { SwipeCard, type ProductItem } from "../SwipeCard";
+import { SwipeCard, type ProductItem } from "./SwipeCard";
 
 jest.mock("@/src/polyfills/expo-linear-gradient", () => {
   const { View } = require("react-native");

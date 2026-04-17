@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿﻿import React, { useState } from "react";
 import {
   View,
   Text,
@@ -173,9 +173,9 @@ const useStyles = createStyles((colors) => ({
   },
   tagActive: { backgroundColor: "colors.errorLight" },
   tagText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
-  tagTextActive: { color: "colors.error" },
+  tagTextActive: { color: colors.error },
   badge: {
-    backgroundColor: "colors.error",
+    backgroundColor: colors.error,
     borderRadius: 8,
     minWidth: Spacing.md,
     height: Spacing.md,
@@ -201,7 +201,7 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     padding: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: "colors.backgroundTertiary",
+    borderBottomColor: colors.backgroundTertiary,
   },
   modalTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
   modalClose: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },

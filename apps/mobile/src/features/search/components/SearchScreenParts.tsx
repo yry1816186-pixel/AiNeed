@@ -16,7 +16,7 @@ import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens'
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { ClothingItem, ClothingCategory, Season, Occasion } from '../../../types/clothing';
 import { CATEGORY_LABELS, SEASON_LABELS, OCCASION_LABELS } from '../../../types/clothing';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -283,13 +283,13 @@ export const ActiveFilterPills: React.FC<ActiveFilterPillsProps> = React.memo(
             onPress={() => setSelectedCategory(null)}
           >
             <Text style={styles.activeFilterPillText}>{CATEGORY_LABELS[selectedCategory]}</Text>
-            <Ionicons name="close" size={14} color={colors.primary} />
+            <Ionicons name="close" size={14} color={staticColors.primary} />
           </TouchableOpacity>
         ) : null}
         {selectedSeason ? (
           <TouchableOpacity style={styles.activeFilterPill} onPress={() => setSelectedSeason(null)}>
             <Text style={styles.activeFilterPillText}>{SEASON_LABELS[selectedSeason]}</Text>
-            <Ionicons name="close" size={14} color={colors.primary} />
+            <Ionicons name="close" size={14} color={staticColors.primary} />
           </TouchableOpacity>
         ) : null}
         {selectedOccasion ? (
@@ -298,7 +298,7 @@ export const ActiveFilterPills: React.FC<ActiveFilterPillsProps> = React.memo(
             onPress={() => setSelectedOccasion(null)}
           >
             <Text style={styles.activeFilterPillText}>{OCCASION_LABELS[selectedOccasion]}</Text>
-            <Ionicons name="close" size={14} color={colors.primary} />
+            <Ionicons name="close" size={14} color={staticColors.primary} />
           </TouchableOpacity>
         ) : null}
       </ScrollView>
@@ -333,7 +333,7 @@ export const ResultCard: React.FC<ResultCardProps> = React.memo(function ResultC
         />
       ) : (
         <View style={styles.cardPlaceholder}>
-          <Ionicons name="shirt-outline" size={32} color={colors.textTertiary} />
+          <Ionicons name="shirt-outline" size={32} color={staticColors.textTertiary} />
         </View>
       )}
       <View style={styles.cardInfo}>
@@ -376,7 +376,7 @@ export const EmptySearchState: React.FC<EmptySearchStateProps> = React.memo(
   function EmptySearchState({ query, hasActiveFilters, onClearFilters }) {
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="search-outline" size={64} color={colors.border} />
+        <Ionicons name="search-outline" size={64} color={staticColors.border} />
         <Text style={styles.emptyTitle}>未找到结果</Text>
         <Text style={styles.emptySubtitle}>
           {query.trim() ? `没有找到与“${query.trim()}”相关的单品` : "试试调整筛选条件"}
@@ -401,7 +401,7 @@ function QuickBrowseGrid({ onCategorySelect }: QuickBrowseGridProps) {
       {CATEGORIES.slice(0, 8).map((cat) => (
         <TouchableOpacity key={cat} style={styles.quickItem} onPress={() => onCategorySelect(cat)}>
           <View style={styles.quickIcon}>
-            <Ionicons name={getCategoryIcon(cat)} size={24} color={colors.primary} />
+            <Ionicons name={getCategoryIcon(cat)} size={24} color={staticColors.primary} />
           </View>
           <Text style={styles.quickLabel}>{CATEGORY_LABELS[cat]}</Text>
         </TouchableOpacity>
@@ -438,8 +438,8 @@ export const SearchSuggestions: React.FC<SearchSuggestionsProps> = React.memo(
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={onRefresh}
-            tintColor={colors.primary}
-            colors={[colors.primary]}
+            tintColor={staticColors.primary}
+            colors={[staticColors.primary]}
           />
         }
       >
@@ -458,7 +458,7 @@ export const SearchSuggestions: React.FC<SearchSuggestionsProps> = React.memo(
                   style={styles.tag}
                   onPress={() => onTagPress(term)}
                 >
-                  <Ionicons name="time-outline" size={14} color={colors.textSecondary} />
+                  <Ionicons name="time-outline" size={14} color={staticColors.textSecondary} />
                   <Text style={styles.tagText}>{term}</Text>
                 </TouchableOpacity>
               ))}
@@ -476,7 +476,7 @@ export const SearchSuggestions: React.FC<SearchSuggestionsProps> = React.memo(
                   style={styles.tag}
                   onPress={() => onTagPress(term)}
                 >
-                  <Ionicons name="trending-up-outline" size={14} color={colors.primary} />
+                  <Ionicons name="trending-up-outline" size={14} color={staticColors.primary} />
                   <Text style={styles.tagText}>{term}</Text>
                 </TouchableOpacity>
               ))}
@@ -516,8 +516,8 @@ export const SearchResultList: React.FC<SearchResultListProps> = React.memo(
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={onRefresh}
-            tintColor={colors.primary}
-            colors={[colors.primary]}
+            tintColor={staticColors.primary}
+            colors={[staticColors.primary]}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -529,7 +529,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = React.memo(
 export const LoadingOverlay: React.FC = React.memo(function LoadingOverlay() {
   return (
     <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color={colors.primary} />
+      <ActivityIndicator size="large" color={staticColors.primary} />
       <Text style={styles.loadingText}>搜索中...</Text>
     </View>
   );
@@ -537,11 +537,11 @@ export const LoadingOverlay: React.FC = React.memo(function LoadingOverlay() {
 
 const styles = StyleSheet.create({
   filterPanel: {
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     paddingHorizontal: DesignTokens.spacing[5],
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: staticColors.border,
   },
   filterGroup: {
     marginTop: DesignTokens.spacing[3],
@@ -549,25 +549,25 @@ const styles = StyleSheet.create({
   filterGroupTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginBottom: Spacing.sm,
   },
   filterChip: {
     paddingHorizontal: DesignTokens.spacing['3.5'],
     paddingVertical: 7,
     borderRadius: 16,
-    backgroundColor: colors.divider,
+    backgroundColor: staticColors.divider,
     marginRight: Spacing.sm,
   },
   filterChipActive: {
-    backgroundColor: colors.primary,
+    backgroundColor: staticColors.primary,
   },
   filterChipText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
   },
   filterChipTextActive: {
-    color: colors.surface,
+    color: staticColors.surface,
     fontWeight: "500",
   },
   clearAllFilters: {
@@ -580,7 +580,7 @@ const styles = StyleSheet.create({
   },
   clearAllFiltersText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textTertiary,
+    color: staticColors.textTertiary,
   },
   activeFilters: {
     flex: 1,
@@ -589,7 +589,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.xs,
-    backgroundColor: colors.cartLight,
+    backgroundColor: staticColors.cartLight,
     borderRadius: 12,
     paddingHorizontal: DesignTokens.spacing['2.5'],
     paddingVertical: Spacing.xs,
@@ -597,7 +597,7 @@ const styles = StyleSheet.create({
   },
   activeFilterPillText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.primary,
+    color: staticColors.primary,
     fontWeight: "500",
   },
   suggestionContent: {
@@ -616,12 +616,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     marginBottom: DesignTokens.spacing[3],
   },
   clearText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textTertiary,
+    color: staticColors.textTertiary,
   },
   tags: {
     flexDirection: "row",
@@ -632,14 +632,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.xs,
-    backgroundColor: colors.cartLight,
+    backgroundColor: staticColors.cartLight,
     borderRadius: 16,
     paddingHorizontal: DesignTokens.spacing['3.5'],
     paddingVertical: Spacing.sm,
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.primary,
+    color: staticColors.primary,
   },
   quickGrid: {
     flexDirection: "row",
@@ -655,13 +655,13 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 16,
-    backgroundColor: colors.backgroundTertiary, // custom color
+    backgroundColor: staticColors.backgroundTertiary,
     alignItems: "center",
     justifyContent: "center",
   },
   quickLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     textAlign: "center",
   },
   row: {
@@ -678,11 +678,11 @@ const styles = StyleSheet.create({
   },
   card: {
     width: CARD_WIDTH,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 20,
     overflow: "hidden",
     marginBottom: Spacing.md,
-    shadowColor: colors.neutral[900],
+    shadowColor: staticColors.neutral[900],
     shadowOpacity: 0.06,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: DesignTokens.spacing['1.5'] },
@@ -706,7 +706,7 @@ const styles = StyleSheet.create({
   cardName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
   },
   cardMeta: {
     flexDirection: "row",
@@ -716,11 +716,11 @@ const styles = StyleSheet.create({
   },
   cardCategory: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.primary,
+    color: staticColors.primary,
   },
   cardBrand: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     flex: 1,
     textAlign: "right",
   },
@@ -740,7 +740,7 @@ const styles = StyleSheet.create({
   },
   cardColor: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
   },
   emptyContainer: {
     flex: 1,
@@ -752,13 +752,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     marginTop: Spacing.md,
   },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     textAlign: "center",
     marginTop: Spacing.sm,
   },
@@ -767,12 +767,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: DesignTokens.spacing[4],
     paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
-    backgroundColor: colors.cartLight,
+    backgroundColor: staticColors.cartLight,
   },
   clearFiltersText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.primary,
+    color: staticColors.primary,
   },
   loadingContainer: {
     flex: 1,
@@ -782,6 +782,6 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
   },
 });

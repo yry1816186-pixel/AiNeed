@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+﻿﻿﻿﻿import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -582,7 +582,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      <LinearGradient colors={["colors.textPrimary", "colors.neutral[700]", "colors.neutral[700]"]} style={styles.gradient}>
+      <LinearGradient colors={[colors.textPrimary, "colors.neutral[700]", "colors.neutral[700]"]} style={styles.gradient}>
         {currentStep > 0 && currentStep < 5 && (
           <View style={styles.header}>
             <Pressable onPress={goToPrev} style={styles.backButton}>

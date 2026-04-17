@@ -1,6 +1,8 @@
-﻿﻿﻿import { create } from "zustand";
+﻿﻿﻿﻿﻿﻿import { create } from "zustand";
 
 import { couponApi, type UserCoupon } from "../../../services/api/commerce.api";
+
+export { useCartStore } from "./cart.store";
 
 interface CouponStore {
   availableCoupons: UserCoupon[];

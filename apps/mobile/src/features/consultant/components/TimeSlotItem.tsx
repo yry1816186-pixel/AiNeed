@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
@@ -65,16 +65,16 @@ const useStyles = createStyles((colors) => ({
   },
   available: {
     backgroundColor: colors.surface,
-    borderColor: "colors.border",
+    borderColor: colors.border,
   },
   booked: {
     backgroundColor: colors.backgroundTertiary,
-    borderColor: "colors.backgroundTertiary",
+    borderColor: colors.backgroundTertiary,
     opacity: 0.6,
   },
   selected: {
     backgroundColor: DesignTokens.colors.backgrounds.secondary, // warm-tinted bg,
-    borderColor: "colors.primary",
+    borderColor: colors.primary,
     borderWidth: 2,
   },
   time: {
@@ -86,7 +86,7 @@ const useStyles = createStyles((colors) => ({
     color: colors.textTertiary,
   },
   timeSelected: {
-    color: "colors.primary",
+    color: colors.primary,
   },
   bookedLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -94,7 +94,7 @@ const useStyles = createStyles((colors) => ({
   },
   selectedLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "colors.primary",
+    color: colors.primary,
     fontWeight: "500",
   },
   availableLabel: {

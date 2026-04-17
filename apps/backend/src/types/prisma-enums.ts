@@ -373,3 +373,28 @@ export enum UserRole {
   customer_service = 'customer_service',
   reviewer = 'reviewer',
 }
+
+export interface PrismaUserProfile {
+  id: string;
+  userId: string;
+  bodyType?: BodyType | null;
+  skinTone?: SkinTone | null;
+  faceShape?: FaceShape | null;
+  colorSeason?: ColorSeason | null;
+  height?: number | null;
+  weight?: number | null;
+  shoulder?: number | null;
+  bust?: number | null;
+  waist?: number | null;
+  hip?: number | null;
+  inseam?: number | null;
+  stylePreferences?: any;
+  colorPreferences?: any;
+  priceRangeMin?: number | null;
+  priceRangeMax?: number | null;
+  onboardingStep: OnboardingStep;
+  onboardingCompletedAt?: Date | null;
+  skippedOnboardingSteps: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}

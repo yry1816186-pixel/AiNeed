@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
@@ -42,9 +42,9 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: DesignTokens.spacing['2.5'],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "colors.backgroundTertiary",
+    borderBottomColor: colors.backgroundTertiary,
   },
   sortItem: { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs},
   sortText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
-  sortTextActive: { color: "colors.error", fontWeight: "600" },
+  sortTextActive: { color: colors.error, fontWeight: "600" },
 }))

@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   RefreshControl,
+  ActivityIndicator,
   type TextStyle,
 } from "react-native";
 import Geolocation, { type GeolocationResponse } from "@react-native-community/geolocation";
@@ -19,7 +20,7 @@ import Animated, {
   withDelay,
 } from "react-native-reanimated";
 import { useHomeStore } from '../stores/homeStore';
-import { useAuthStore } from '../stores/index';
+import { useAuthStore } from '../../auth/stores';
 import { useRecommendationFeedStore } from '../stores/recommendationFeedStore';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { withErrorBoundary } from '../../../shared/components/ErrorBoundary';
@@ -30,8 +31,7 @@ import { FeatureFlagKeys } from '../../../constants/feature-flags';
 import { WeatherGreeting } from './components/WeatherGreeting';
 import { ProfileCompletionBanner } from './components/ProfileCompletionBanner';
 import QuickActions from './components/QuickActions';
-import { RecommendationCard } from '../../../components/recommendations/RecommendationFeedCard';
-import { BrandRefreshIndicator } from '../../../components/loading/BrandRefreshIndicator';
+import { RecommendationCard } from '../../home/components/RecommendationFeedCard';
 import type { RootStackParamList } from '../../../types/navigation';
 import type { FeedItem } from '../../../services/api/recommendation-feed.api';
 import { Spacing, LayoutSpacing } from '../../../design-system/theme';
@@ -361,7 +361,7 @@ const HomeScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Custom brand refresh indicator overlay */}
-      {refreshing && <BrandRefreshIndicator refreshing={refreshing} />}
+      {refreshing && <ActivityIndicator size="large" color={DesignTokens.colors.brand.terracotta} />}
       <FlashList<HomeSection>
         data={sections}
         renderItem={renderItem}

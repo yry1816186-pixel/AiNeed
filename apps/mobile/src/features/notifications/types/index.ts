@@ -1,8 +1,9 @@
 export {
-  type UserPhoto,
-  type PhotoType,
-  type PhotoStatus,
-  type PhotoAnalysisResult,
   PhotoType,
   PhotoStatus,
+} from "@xuno/types";
+
+export type {
+  UserPhoto,
+  PhotoAnalysisResult,
 } from "@xuno/types";

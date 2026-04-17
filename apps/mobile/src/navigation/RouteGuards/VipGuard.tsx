@@ -4,7 +4,7 @@ import { useAuthStore } from "../../stores/index";
 import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
-import { Spacing, flatColors as colors } from '../../design-system/theme';
+import { Spacing, flatColors as staticColors } from '../../design-system/theme';
 
 
 interface VipGuardProps {
@@ -58,13 +58,13 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: Spacing.xl,
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
   },
   iconCircle: {
     width: Spacing['3xl'],
     height: Spacing['3xl'],
     borderRadius: 32,
-    backgroundColor: colors.subtleBg,
+    backgroundColor: staticColors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing.md,
@@ -72,25 +72,25 @@ const s = StyleSheet.create({
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     marginBottom: DesignTokens.spacing['1.5'],
   },
   subtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginBottom: Spacing.lg,
   },
   upgradeBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: DesignTokens.spacing['1.5'],
-    backgroundColor: colors.primary,
+    backgroundColor: staticColors.primary,
     paddingHorizontal: DesignTokens.spacing[7],
     paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
   },
   upgradeText: {
-    color: colors.surface,
+    color: staticColors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿﻿import React, { useState } from "react";
 import {
   View,
   Text,
@@ -185,10 +185,10 @@ const useStyles = createStyles((colors) => ({
   typeButtonActive: {
     backgroundColor: "colors.errorLight", // custom color
     borderWidth: 1,
-    borderColor: "colors.error", // custom color
+    borderColor: colors.error, // custom color
   },
   typeText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  typeTextActive: { color: "colors.error", fontWeight: "600" }, // custom color
+  typeTextActive: { color: colors.error, fontWeight: "600" }, // custom color
   reasonRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -204,12 +204,12 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  radioActive: { borderColor: "colors.error" }, // custom color
+  radioActive: { borderColor: colors.error }, // custom color
   radioInner: {
     width: Spacing.sm,
     height: Spacing.sm,
     borderRadius: 4,
-    backgroundColor: "colors.error", // custom color
+    backgroundColor: colors.error, // custom color
   },
   reasonText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
   textArea: {
@@ -230,10 +230,10 @@ const useStyles = createStyles((colors) => ({
   amountText: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: "colors.error", // custom color
+    color: colors.error, // custom color
   },
   submitButton: {
-    backgroundColor: "colors.error", // custom color
+    backgroundColor: colors.error, // custom color
     paddingVertical: Spacing.md,
     alignItems: "center",
   },

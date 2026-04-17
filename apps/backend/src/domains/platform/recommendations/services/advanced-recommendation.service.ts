@@ -6,7 +6,7 @@ import {
   ColorSeason,
   ClothingCategory,
 } from '../../../../types/prisma-enums';
-import { UserProfile as PrismaUserProfile } from '../../../../types/prisma-enums';
+import { PrismaUserProfile } from '../../../../types/prisma-enums';
 import Decimal from "decimal.js";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";

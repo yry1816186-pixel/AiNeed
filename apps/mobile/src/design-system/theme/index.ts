@@ -444,7 +444,13 @@ export const ZIndex = {
 
 function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
   return {
-    brand: base.brand,
+    brand: {
+      ...base.brand,
+      primary: base.brand.terracotta,
+      warmPrimary: "#C67C4E",
+      warmAccent: "#E8A87C",
+      warmSecondary: "#D4917A",
+    },
     neutral: base.neutral,
     semantic: base.semantic,
     backgrounds: base.backgrounds,
@@ -487,6 +493,28 @@ function buildFlatThemeColors(base: typeof DesignTokens.colors): FlatColors {
     terracottaDark: base.brand.terracottaDark,
     amber: DesignTokens.colors.semantic.warning,
     secondary: base.brand.sage,
+    warmPrimary: "#C67C4E",
+    warmAccent: "#E8A87C",
+    warmSecondary: "#D4917A",
+    like: base.semantic.error,
+    ocean: "#4A90D9",
+    mint: "#7ED4AD",
+    coral: "#FF7F7F",
+    main: "#C67C4E",
+    light: "#F5E6D3",
+    dark: "#8B5E3C",
+    oceanMint: "#5BB5A2",
+    fashion: "#C67C4E",
+    purple: "#9B59B6",
+    secondaryLight: "#A3B096",
+    gradients: {
+      ...DesignTokens.gradients,
+      warm: ['#C67C4E', '#E8A87C'],
+      cool: ['#4A90D9', '#7ED4AD'],
+      hero: ['#C67C4E', '#4A90D9'],
+      coralRose: ['#FF7F7F', '#FF6B6B'],
+      oceanMint: ['#4A90D9', '#7ED4AD'],
+    },
   };
 }
 

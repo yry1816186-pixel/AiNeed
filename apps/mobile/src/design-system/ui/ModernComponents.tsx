@@ -460,7 +460,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   borderRadius = BorderRadius.md,
   style,
 }) => {
-  return <SkeletonBase width={width ?? undefined} height={height} borderRadius={borderRadius} style={style} />;
+  return <SkeletonBase width={(width ?? undefined) as any} height={height} borderRadius={borderRadius} style={style} />;
 };
 
 /** @deprecated 使用 ui/Badge 替代 */

@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
@@ -50,21 +50,21 @@ const useStyles = createStyles((colors) => ({
   },
   freeText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "colors.success",
+    color: colors.success,
     fontWeight: "500",
     marginBottom: Spacing.xs,
   },
   barBackground: {
     height: Spacing.xs,
     borderRadius: 2,
-    backgroundColor: "colors.backgroundTertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
   barFill: {
     height: Spacing.xs,
     borderRadius: 2,
-    backgroundColor: "colors.success",
+    backgroundColor: colors.success,
   },
   barFillComplete: {
-    backgroundColor: "colors.success",
+    backgroundColor: colors.success,
   },
 }))

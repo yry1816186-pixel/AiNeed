@@ -10,7 +10,7 @@ import { SharedElement } from "react-navigation-shared-element";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { BloggerBadge } from "./BloggerBadge";
-import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
+import { DesignTokens, Spacing, flatColors as staticColors } from '../../../design-system/theme';
 
 export interface PostCardData {
   id: string;
@@ -133,10 +133,10 @@ export const PostMasonryCard = React.memo(PostMasonryCardInner);
 
 const s = StyleSheet.create({
   masonryCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 14,
     overflow: "hidden",
-    shadowColor: colors.neutral[900],
+    shadowColor: staticColors.neutral[900],
     shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
     shadowOpacity: 0.06,
     shadowRadius: 10,
@@ -144,7 +144,7 @@ const s = StyleSheet.create({
   },
   masonryImageContainer: {
     width: "100%",
-    backgroundColor: colors.subtleBg,
+    backgroundColor: staticColors.subtleBg,
     overflow: "hidden",
   },
   masonryImage: { width: "100%", height: "100%" },
@@ -152,7 +152,7 @@ const s = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.subtleBg,
+    backgroundColor: staticColors.subtleBg,
   },
   featuredBadge: {
     position: "absolute",
@@ -166,9 +166,9 @@ const s = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 8,
   },
-  featuredText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "700", color: colors.surface },
+  featuredText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "700", color: staticColors.surface },
   masonryInfo: { padding: DesignTokens.spacing['2.5']},
-  masonryTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: colors.textPrimary, lineHeight: 18 },
+  masonryTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: staticColors.textPrimary, lineHeight: 18 },
   masonryFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -181,17 +181,17 @@ const s = StyleSheet.create({
     width: DesignTokens.spacing[5],
     height: DesignTokens.spacing[5],
     borderRadius: 10,
-    backgroundColor: colors.subtleBg,
+    backgroundColor: staticColors.subtleBg,
   },
   masonryAvatarPlaceholder: {
     width: DesignTokens.spacing[5],
     height: DesignTokens.spacing[5],
     borderRadius: 10,
-    backgroundColor: colors.primary,
+    backgroundColor: staticColors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  masonryAuthorName: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary, flex: 1 },
+  masonryAuthorName: { fontSize: DesignTokens.typography.sizes.xs, color: staticColors.textTertiary, flex: 1 },
   masonryLikes: { flexDirection: "row", alignItems: "center", gap: 3 },
-  masonryLikesCount: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary, fontWeight: "500" },
+  masonryLikesCount: { fontSize: DesignTokens.typography.sizes.xs, color: staticColors.textTertiary, fontWeight: "500" },
 });

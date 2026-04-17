@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+﻿﻿﻿﻿﻿import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -17,7 +17,7 @@ import Share from "react-native-share";
 import {
   pickImageSecurely,
   ImageValidationError} from "../../utils/imagePicker";
-import { photosApi } from '../../../services/api/photos.api';
+import { photosApi, type PhotoType } from '../../../services/api/photos.api';
 import { tryOnApi, type TryOnResult } from '../../../services/api/tryon.api';
 import { clothingApi } from '../../../services/api/clothing.api';
 import {
@@ -29,9 +29,10 @@ import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens"
 import { typography } from '../../../design-system/theme/tokens/typography';
 import { spacing } from '../../../design-system/theme/tokens/spacing';
 import { shadows } from '../../../design-system/theme/tokens/shadows';
-import { TryOnProgress } from "../loading/TryOnProgress";
+import { TryOnProgress } from "../../../features/tryon/components/TryOnProgress";
 import {Spacing} from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { WarmPrimaryColors } from '../../../design-system/theme/tokens/colors';
 
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
@@ -270,7 +271,7 @@ export const TryOnScreen: React.FC = () => {
       if (itemId) {
         createResponse = await tryOnApi.create(photoId, itemId);
       } else {
-        const clothingUploadResponse = await photosApi.upload(clothingImage!, "clothing");
+        const clothingUploadResponse = await photosApi.upload(clothingImage!, "full_body" as PhotoType);
         if (!clothingUploadResponse.success || !clothingUploadResponse.data) {
           throw new Error(clothingUploadResponse.error?.message || "服装图片上传失败");
         }
@@ -372,7 +373,7 @@ export const TryOnScreen: React.FC = () => {
       <Animated.View entering={FadeInUp.duration(600).springify()}>
         <View style={styles.headerSection}>
           <LinearGradient
-            colors={[colors.gradients.oceanMint[0], colors.gradients.oceanMint[1]]}
+            colors={[colors.gradients.oceanMint?.[0] ?? WarmPrimaryColors.ocean[500], colors.gradients.oceanMint?.[1] ?? WarmPrimaryColors.mint[400]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.headerGradient}
@@ -417,7 +418,7 @@ export const TryOnScreen: React.FC = () => {
             ) : (
               <View style={styles.placeholder}>
                 <View style={styles.placeholderIconContainer}>
-                  <Ionicons name="person-outline" size={40} color={colors.warmPrimary.ocean[400]} />
+                  <Ionicons name="person-outline" size={40} color={WarmPrimaryColors.ocean[400]} />
                 </View>
                 <Text style={styles.placeholderTitle}>点击选择人物照片</Text>
                 <Text style={styles.placeholderSubtitle}>建议：全身照、正面站立、光线充足</Text>
@@ -455,7 +456,7 @@ export const TryOnScreen: React.FC = () => {
             ) : (
               <View style={styles.placeholder}>
                 <View style={styles.placeholderIconContainer}>
-                  <Ionicons name="shirt-outline" size={40} color={colors.warmPrimary.coral[400]} />
+                  <Ionicons name="shirt-outline" size={40} color={WarmPrimaryColors.coral[400]} />
                 </View>
                 <Text style={styles.placeholderTitle}>点击选择服装图片</Text>
                 <Text style={styles.placeholderSubtitle}>支持：上衣、裤子、连衣裙等单品类</Text>
@@ -509,12 +510,12 @@ export const TryOnScreen: React.FC = () => {
             progress={progress / 100}
           />
           <View style={styles.tipContainer}>
-            <Ionicons name="bulb-outline" size={16} color={colors.warmPrimary.coral[500]} />
+            <Ionicons name="bulb-outline" size={16} color={WarmPrimaryColors.coral[500]} />
             <Text style={styles.tipText}>{STYLE_TIPS[currentTip]}</Text>
           </View>
           {timeoutWarning && (
             <View style={styles.timeoutWarning}>
-              <Ionicons name="time-outline" size={16} color={colors.warmPrimary.ocean[500]} />
+              <Ionicons name="time-outline" size={16} color={WarmPrimaryColors.ocean[500]} />
               <Text style={styles.timeoutWarningText}>{timeoutWarning}</Text>
             </View>
           )}
@@ -525,7 +526,7 @@ export const TryOnScreen: React.FC = () => {
       {phase === "failed" && errorMessage && (
         <Animated.View entering={FadeInUp.duration(300)}>
           <View style={styles.errorSection}>
-            <Ionicons name="alert-circle" size={24} color={colors.semantic.error.main} />
+            <Ionicons name="alert-circle" size={24} color={colors.semantic.error} />
             <Text style={styles.errorText}>{errorMessage}</Text>
           </View>
         </Animated.View>
@@ -536,7 +537,7 @@ export const TryOnScreen: React.FC = () => {
         <Animated.View entering={FadeInUp.delay(200).springify()}>
           <View style={styles.resultSection}>
             <View style={styles.resultHeader}>
-              <Ionicons name="checkmark-circle" size={24} color={colors.warmPrimary.mint[500]} />
+              <Ionicons name="checkmark-circle" size={24} color={colors.success} />
               <Text style={styles.resultTitle}>试衣完成！</Text>
             </View>
 
@@ -549,7 +550,7 @@ export const TryOnScreen: React.FC = () => {
               </View>
 
               <View style={styles.arrowContainer}>
-                <Ionicons name="arrow-forward" size={28} color={colors.brand.warmPrimary} />
+                <Ionicons name="arrow-forward" size={28} color={colors.warmPrimary} />
               </View>
 
               <View style={[styles.comparisonCard, styles.comparisonCardAfter]}>
@@ -572,7 +573,7 @@ export const TryOnScreen: React.FC = () => {
                 <Ionicons
                   name="share-social-outline"
                   size={20}
-                  color={colors.warmPrimary.ocean[700]}
+                  color={colors.info}
                 />
                 <Text style={styles.actionButtonTextSecondary}>分享结果</Text>
               </TouchableOpacity>
@@ -582,7 +583,7 @@ export const TryOnScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
             <TouchableOpacity style={styles.tryMoreButton} onPress={handleTryMore}>
-              <Ionicons name="shirt-outline" size={18} color={colors.brand.warmPrimary} />
+              <Ionicons name="shirt-outline" size={18} color={colors.warmPrimary} />
               <Text style={styles.tryMoreButtonText}>试穿更多</Text>
             </TouchableOpacity>
           </View>
@@ -667,7 +668,7 @@ const useStyles = createStyles((colors) => ({
     width: DesignTokens.spacing[7],
     height: DesignTokens.spacing[7],
     borderRadius: 14,
-    backgroundColor: colors.brand.warmPrimary,
+    backgroundColor: colors.warmPrimary,
     alignItems: "center",
     justifyContent: "center"},
   stepNumberText: {
@@ -680,7 +681,7 @@ const useStyles = createStyles((colors) => ({
     color: colors.neutral[900]},
   clothingNameHint: {
     fontSize: typography.fontSize.sm,
-    color: colors.warmPrimary.ocean[600],
+    color: colors.info,
     fontWeight: typography.fontWeight.medium},
 
   imagePicker: {
@@ -693,7 +694,7 @@ const useStyles = createStyles((colors) => ({
   imagePickerFilled: {
     borderWidth: 2,
     borderStyle: "solid",
-    borderColor: colors.warmPrimary.mint[300]},
+    borderColor: colors.successLight},
   placeholder: {
     height: 220,
     alignItems: "center",
@@ -741,7 +742,7 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.brand.warmPrimary,
+    backgroundColor: colors.warmPrimary,
     borderRadius: spacing.borderRadius.xl,
     paddingVertical: Spacing.md,
     gap: DesignTokens.spacing['2.5'],
@@ -761,7 +762,7 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.semantic.error.main,
+    backgroundColor: colors.error,
     borderRadius: spacing.borderRadius.xl,
     paddingVertical: Spacing.md,
     gap: DesignTokens.spacing['2.5'],
@@ -781,18 +782,18 @@ const useStyles = createStyles((colors) => ({
     overflow: "hidden"},
   progressBarFill: {
     height: "100%",
-    backgroundColor: colors.warmPrimary.mint[500],
+    backgroundColor: colors.success,
     borderRadius: 4},
   progressText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
-    color: colors.warmPrimary.mint[600]},
+    color: colors.success},
 
   tipContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
-    backgroundColor: colors.warmPrimary.coral[50],
+    backgroundColor: colors.errorLight,
     paddingHorizontal: DesignTokens.spacing['3.5'],
     paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: spacing.borderRadius.lg,
@@ -800,13 +801,13 @@ const useStyles = createStyles((colors) => ({
   tipText: {
     flex: 1,
     fontSize: typography.fontSize.sm,
-    color: colors.warmPrimary.coral[700],
+    color: colors.error,
     lineHeight: 20},
   timeoutWarning: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
-    backgroundColor: colors.warmPrimary.ocean[50],
+    backgroundColor: colors.infoLight,
     paddingHorizontal: DesignTokens.spacing['3.5'],
     paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: spacing.borderRadius.lg,
@@ -814,20 +815,20 @@ const useStyles = createStyles((colors) => ({
   timeoutWarningText: {
     flex: 1,
     fontSize: typography.fontSize.sm,
-    color: colors.warmPrimary.ocean[700]},
+    color: colors.info},
 
   errorSection: {
     flexDirection: "row",
     alignItems: "center",
     gap: DesignTokens.spacing['2.5'],
-    backgroundColor: colors.semantic.error.light,
+    backgroundColor: colors.errorLight,
     padding: Spacing.md,
     borderRadius: spacing.borderRadius.lg,
     marginBottom: Spacing.md},
   errorText: {
     flex: 1,
     fontSize: typography.fontSize.base,
-    color: colors.semantic.error.dark},
+    color: colors.error},
 
   resultSection: {
     backgroundColor: colors.neutral.white,
@@ -856,7 +857,7 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.neutral[100]},
   comparisonCardAfter: {
     borderWidth: 2,
-    borderColor: colors.warmPrimary.mint[400]},
+    borderColor: colors.successLight},
   comparisonLabel: {
     backgroundColor: colors.neutral[200],
     paddingHorizontal: DesignTokens.spacing[3],
@@ -865,7 +866,7 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     gap: Spacing.xs},
   comparisonLabelAfter: {
-    backgroundColor: colors.warmPrimary.mint[500]},
+    backgroundColor: colors.success},
   comparisonLabelText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.semibold,
@@ -878,7 +879,7 @@ const useStyles = createStyles((colors) => ({
     width: Spacing.xl,
     height: Spacing.xl,
     borderRadius: 16,
-    backgroundColor: colors.warmPrimary.coral[50],
+    backgroundColor: colors.errorLight,
     alignItems: "center",
     justifyContent: "center"},
 
@@ -893,13 +894,13 @@ const useStyles = createStyles((colors) => ({
     gap: Spacing.sm,
     paddingVertical: 13,
     borderRadius: spacing.borderRadius.xl,
-    backgroundColor: colors.warmPrimary.ocean[50],
+    backgroundColor: colors.infoLight,
     borderWidth: 1.5,
-    borderColor: colors.warmPrimary.ocean[200]},
+    borderColor: colors.infoLight},
   actionButtonTextSecondary: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.warmPrimary.ocean[700]},
+    color: colors.info},
   actionButtonPrimary: {
     flex: 1,
     flexDirection: "row",
@@ -908,7 +909,7 @@ const useStyles = createStyles((colors) => ({
     gap: Spacing.sm,
     paddingVertical: 13,
     borderRadius: spacing.borderRadius.xl,
-    backgroundColor: colors.warmPrimary.mint[500],
+    backgroundColor: colors.success,
     ...shadows.presets.md},
   actionButtonTextPrimary: {
     fontSize: typography.fontSize.base,
@@ -928,6 +929,6 @@ const useStyles = createStyles((colors) => ({
   tryMoreButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.brand.warmPrimary}}))
+    color: colors.warmPrimary}}))
 
 export default TryOnScreen;

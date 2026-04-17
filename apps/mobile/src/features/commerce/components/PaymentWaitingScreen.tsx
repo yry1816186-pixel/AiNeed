@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+﻿﻿import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { paymentApi } from '../../../services/api/commerce.api';
@@ -66,7 +66,7 @@ export const PaymentWaitingScreen: React.FC<PaymentWaitingScreenProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <ActivityIndicator size="large" color="colors.error" />
+        <ActivityIndicator size="large" color={colors.error} />
         <Text style={styles.pollingText}>正在查询支付结果...</Text>
       </View>
     </SafeAreaView>
@@ -92,7 +92,7 @@ const useStyles = createStyles((colors) => ({
   timeoutIcon: {
     fontSize: DesignTokens.typography.sizes['5xl'],
     fontWeight: "700",
-    color: "colors.error",
+    color: colors.error,
   },
   timeoutTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
@@ -108,7 +108,7 @@ const useStyles = createStyles((colors) => ({
   },
   actionButton: {
     marginTop: Spacing.lg,
-    backgroundColor: "colors.error",
+    backgroundColor: colors.error,
     paddingHorizontal: Spacing.xl,
     paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,

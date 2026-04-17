@@ -1,4 +1,4 @@
-﻿﻿import React, { Suspense, lazy } from "react";
+﻿﻿﻿import React, { Suspense, lazy } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
@@ -12,7 +12,7 @@ import type {
 import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
 import { GuardedScreen } from "./RouteGuards";
 import { PageTransitions } from '../design-system/theme/tokens/animations';
-import { flatColors as colors } from '../design-system/theme';
+import { flatColors as staticColors } from '../design-system/theme';
 
 const OutfitPlanScreenLazy = lazy(() => import("../features/stylist/screens/OutfitPlanScreen"));
 const ChatHistoryScreenLazy = lazy(() => import("../features/stylist/screens/ChatHistoryScreen"));
@@ -33,7 +33,7 @@ const BrandScreenLazy = lazy(() => import("../features/wardrobe/screens/BrandScr
 const styles = StyleSheet.create({
   loader: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
 
 const screenLoader = (
   <View style={styles.loader}>
-    <ActivityIndicator size="large" color={colors.primary} />
+    <ActivityIndicator size="large" color={staticColors.primary} />
   </View>
 );
 

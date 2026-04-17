@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, Alert } fro
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
 
 
 const CATEGORIES = [
@@ -107,7 +107,7 @@ function CreatePostModalInner({ visible, onClose, onSubmit }: CreatePostModalPro
 export const CreatePostModal = React.memo(CreatePostModalInner);
 
 const s = StyleSheet.create({
-  modalContainer: { flex: 1, backgroundColor: colors.background },
+  modalContainer: { flex: 1, backgroundColor: staticColors.background },
   modalHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -115,43 +115,43 @@ const s = StyleSheet.create({
     paddingHorizontal: DesignTokens.spacing[5],
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: staticColors.border,
   },
-  modalTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
-  modalCancelText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  modalSubmitText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
+  modalTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: staticColors.textPrimary },
+  modalCancelText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textSecondary },
+  modalSubmitText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: staticColors.primary },
   modalCategoryRow: {
     flexDirection: "row",
     paddingHorizontal: DesignTokens.spacing[5],
     paddingVertical: DesignTokens.spacing[3],
     gap: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: staticColors.border,
   },
   modalCategoryChip: {
     paddingHorizontal: DesignTokens.spacing['3.5'],
     paddingVertical: DesignTokens.spacing['1.5'],
     borderRadius: 16,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
   },
-  modalCategoryChipActive: { backgroundColor: colors.primary },
-  modalCategoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
-  modalCategoryChipTextActive: { color: colors.surface, fontWeight: "600" },
+  modalCategoryChipActive: { backgroundColor: staticColors.primary },
+  modalCategoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.textSecondary },
+  modalCategoryChipTextActive: { color: staticColors.surface, fontWeight: "600" },
   modalTitleInput: {
     paddingHorizontal: DesignTokens.spacing[5],
     paddingVertical: DesignTokens.spacing['3.5'],
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: staticColors.border,
   },
   modalContentInput: {
     flex: 1,
     paddingHorizontal: DesignTokens.spacing[5],
     paddingVertical: DesignTokens.spacing['3.5'],
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     lineHeight: 22,
     minHeight: 150,
   },
@@ -160,9 +160,9 @@ const s = StyleSheet.create({
     paddingHorizontal: DesignTokens.spacing[5],
     paddingVertical: DesignTokens.spacing[3],
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: staticColors.border,
     gap: Spacing.lg,
   },
   modalToolBtn: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5']},
-  modalToolText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
+  modalToolText: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.textSecondary },
 });

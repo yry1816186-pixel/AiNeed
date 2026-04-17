@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
@@ -75,7 +75,7 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 12,
     padding: DesignTokens.spacing[3],
     borderWidth: 1,
-    borderColor: "colors.backgroundTertiary",
+    borderColor: colors.backgroundTertiary,
     width: 240,
   },
   imageRow: {

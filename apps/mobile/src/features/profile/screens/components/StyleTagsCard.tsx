@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+﻿﻿﻿﻿import React, { useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { TagCloud } from '../../../../shared/components/charts/TagCloud';
@@ -40,10 +40,10 @@ const ALL_STYLE_TAGS = [
 ];
 
 const OCCASION_CONFIG = [
-  { label: "工作", color: colors.brand.warmAccent },
+  { label: "工作", color: colors.gold },
   { label: "约会", color: colors.gradients.coralRose[0] },
-  { label: "运动", color: colors.brand.warmSecondary },
-  { label: "休闲", color: colors.brand.primary },
+  { label: "运动", color: colors.secondary },
+  { label: "休闲", color: colors.primary },
 ];
 
 const DEFAULT_OCCASION_PERCENTAGES = [35, 25, 15, 25];
@@ -120,7 +120,7 @@ export const StyleTagsCard: React.FC<StyleTagsCardProps> = ({
         accessibilityLabel={collapsed ? "展开风格标签" : "收起风格标签"}
         accessibilityRole="button"
       >
-        <Ionicons name="prism-outline" size={20} color={colors.brand.primary} />
+        <Ionicons name="prism-outline" size={20} color={colors.primary} />
         <Text style={styles.headerTitle}>风格标签</Text>
         <Ionicons
           name={collapsed ? "chevron-down-outline" : "chevron-up-outline"}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
+﻿﻿﻿﻿import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import {
   View,
   Text,
@@ -23,8 +23,8 @@ import { clothingApi } from '../../../services/api/clothing.api';
 import { outfitApi } from '../../../services/api/outfit.api';
 import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from '../../../types/clothing';
 import type { RootStackParamList } from '../../../types/navigation';
-import { ImportSheet } from '../../../components/wardrobe/ImportSheet';
-import { DesignTokens, Spacing, flatColors as colors } from '../../../design-system/theme';
+import { ImportSheet } from '../components/ImportSheet';
+import { DesignTokens, Spacing, flatColors as staticColors } from '../../../design-system/theme';
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -244,7 +244,7 @@ export const WardrobeScreen: React.FC = () => {
     }
     return (
       <View style={styles.loadingMoreContainer}>
-        <ActivityIndicator size="small" color={colors.primary} />
+        <ActivityIndicator size="small" color={staticColors.primary} />
       </View>
     );
   }, [loadingMore]);
@@ -256,7 +256,7 @@ export const WardrobeScreen: React.FC = () => {
 
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="shirt-outline" size={64} color={colors.textTertiary} />
+        <Ionicons name="shirt-outline" size={64} color={staticColors.textTertiary} />
         <Text style={styles.emptyText}>
           {searchQuery.trim() || selectedCategory ? t.search.noResults : t.wardrobe.title}
         </Text>
@@ -272,7 +272,7 @@ export const WardrobeScreen: React.FC = () => {
             accessibilityLabel="添加服装"
             accessibilityRole="button"
           >
-            <Ionicons name="add" size={20} color={colors.surface} />
+            <Ionicons name="add" size={20} color={staticColors.surface} />
             <Text style={styles.emptyAddButtonText}>{t.wardrobe.addClothing}</Text>
           </TouchableOpacity>
         )}
@@ -285,7 +285,7 @@ export const WardrobeScreen: React.FC = () => {
     if (loading) {
       return (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={staticColors.primary} />
           <Text style={styles.loadingText}>加载中...</Text>
         </View>
       );
@@ -294,7 +294,7 @@ export const WardrobeScreen: React.FC = () => {
     if (error && items.length === 0) {
       return (
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={colors.error} />
+          <Ionicons name="alert-circle-outline" size={48} color={staticColors.error} />
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
@@ -320,8 +320,8 @@ export const WardrobeScreen: React.FC = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={[colors.primary]}
-            tintColor={colors.primary}
+            colors={[staticColors.primary]}
+            tintColor={staticColors.primary}
           />
         }
         onEndReached={handleLoadMore}
@@ -362,7 +362,7 @@ export const WardrobeScreen: React.FC = () => {
             accessibilityLabel="导入衣橱"
             accessibilityRole="button"
           >
-            <Ionicons name="download-outline" size={22} color={colors.primary} />
+            <Ionicons name="download-outline" size={22} color={staticColors.primary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.addButton}
@@ -370,7 +370,7 @@ export const WardrobeScreen: React.FC = () => {
             accessibilityLabel="添加服装"
             accessibilityRole="button"
           >
-            <Ionicons name="add" size={24} color={colors.surface} />
+            <Ionicons name="add" size={24} color={staticColors.surface} />
           </TouchableOpacity>
         </View>
       </View>
@@ -390,13 +390,13 @@ export const WardrobeScreen: React.FC = () => {
         <Ionicons
           name="search-outline"
           size={18}
-          color={colors.textTertiary}
+          color={staticColors.textTertiary}
           style={styles.searchIcon}
         />
         <TextInput
           style={styles.searchInput}
           placeholder="搜索服装名称、品牌..."
-          placeholderTextColor={colors.textTertiary}
+          placeholderTextColor={staticColors.textTertiary}
           value={searchQuery}
           onChangeText={handleSearch}
           returnKeyType="search"
@@ -468,21 +468,21 @@ const GRID_ROW_GAP = 12;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: DesignTokens.spacing[5],
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: staticColors.border,
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes['2xl'],
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
   },
   headerActions: {
     flexDirection: "row",
@@ -493,17 +493,17 @@ const styles = StyleSheet.create({
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 20,
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: staticColors.border,
   },
   addButton: {
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 20,
-    backgroundColor: colors.primary,
+    backgroundColor: staticColors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -515,11 +515,11 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 16,
     padding: Spacing.md,
     alignItems: "center",
-    shadowColor: colors.neutral[900],
+    shadowColor: staticColors.neutral[900],
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 3,
@@ -528,23 +528,23 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
-    color: colors.primary,
+    color: staticColors.primary,
   },
   statLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginTop: DesignTokens.spacing['0.5'],
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     marginHorizontal: Spacing.md,
     marginVertical: Spacing.sm,
     borderRadius: 12,
     paddingHorizontal: DesignTokens.spacing[3],
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: staticColors.border,
   },
   searchIcon: {
     marginRight: Spacing.sm,
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: DesignTokens.spacing[10],
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
   },
   categoryScroll: {
     maxHeight: DesignTokens.spacing[11],
@@ -568,21 +568,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: DesignTokens.spacing['3.5'],
     paddingVertical: Spacing.sm,
     borderRadius: 20,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: staticColors.border,
   },
   categoryTabActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: staticColors.primary,
+    borderColor: staticColors.primary,
   },
   categoryTabText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
   },
   categoryTabTextActive: {
-    color: colors.surface,
+    color: staticColors.surface,
     fontWeight: "600",
   },
   flatList: {
@@ -599,10 +599,10 @@ const styles = StyleSheet.create({
   },
   gridItem: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 12,
     overflow: "hidden",
-    shadowColor: colors.neutral[900],
+    shadowColor: staticColors.neutral[900],
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 3,
@@ -612,7 +612,7 @@ const styles = StyleSheet.create({
     position: "relative",
     width: "100%",
     aspectRatio: 1,
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: staticColors.placeholderBg,
   },
   gridItemImage: {
     width: "100%",
@@ -622,7 +622,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.placeholderBg,
+    backgroundColor: staticColors.placeholderBg,
   },
   favoriteBadge: {
     position: "absolute",
@@ -631,21 +631,21 @@ const styles = StyleSheet.create({
     width: DesignTokens.spacing[5],
     height: DesignTokens.spacing[5],
     borderRadius: 10,
-    backgroundColor: colors.error,
+    backgroundColor: staticColors.error,
     alignItems: "center",
     justifyContent: "center",
   },
   gridItemName: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     paddingHorizontal: Spacing.sm,
     paddingTop: Spacing.sm,
     paddingBottom: DesignTokens.spacing['0.5'],
   },
   gridItemCategory: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     paddingHorizontal: Spacing.sm,
     paddingBottom: Spacing.sm,
   },
@@ -657,7 +657,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginTop: DesignTokens.spacing[3],
   },
   loadingMoreContainer: {
@@ -673,18 +673,18 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     marginTop: Spacing.md,
   },
   emptySubtext: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginTop: Spacing.sm,
   },
   emptyAddButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.primary,
+    backgroundColor: staticColors.primary,
     borderRadius: 12,
     paddingHorizontal: DesignTokens.spacing[5],
     paddingVertical: DesignTokens.spacing[3],
@@ -694,7 +694,7 @@ const styles = StyleSheet.create({
   emptyAddButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.surface,
+    color: staticColors.surface,
   },
   errorContainer: {
     flex: 1,
@@ -705,7 +705,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginTop: DesignTokens.spacing[3],
     textAlign: "center",
   },
@@ -714,12 +714,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 8,
-    backgroundColor: colors.primary,
+    backgroundColor: staticColors.primary,
   },
   retryButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.surface,
+    color: staticColors.surface,
   },
 });
 

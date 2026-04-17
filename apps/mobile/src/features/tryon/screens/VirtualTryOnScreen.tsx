@@ -58,7 +58,7 @@ const TryOnScreenWrapper: React.FC<{ isV2TryOn: boolean }> = ({ isV2TryOn }) => 
   const LazyTryOn = React.useMemo(
     () =>
       React.lazy(() =>
-        import("../components/screens/TryOnScreen").then((mod) => ({
+        import("../../../shared/components/screens/TryOnScreen").then((mod) => ({
           default: mod.TryOnScreen,
         }))
       ),
@@ -73,7 +73,7 @@ const TryOnScreenWrapper: React.FC<{ isV2TryOn: boolean }> = ({ isV2TryOn }) => 
         </View>
       }
     >
-      <LazyTryOn isV2={isV2TryOn} as any />
+      <LazyTryOn {...({isV2: isV2TryOn} as any)} />
     </React.Suspense>
   );
 };

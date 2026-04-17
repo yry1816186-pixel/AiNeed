@@ -23,7 +23,7 @@ const SkeletonBlock: React.FC<{
   return (
     <Animated.View
       style={[
-        { width, height, borderRadius, backgroundColor: Colors.neutral[200], opacity },
+        { width: width as number, height, borderRadius, backgroundColor: Colors.neutral[200], opacity },
         style,
       ]}
     />

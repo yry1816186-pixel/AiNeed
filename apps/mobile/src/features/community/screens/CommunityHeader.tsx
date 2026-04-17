@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
 
 
 const CATEGORIES = [
@@ -95,23 +95,23 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: DesignTokens.spacing[5],
     paddingVertical: DesignTokens.spacing['3.5'],
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: staticColors.textPrimary },
   searchBtn: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
     alignItems: "center",
     justifyContent: "center",
   },
   mainTabRow: {
     flexDirection: "row",
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     paddingHorizontal: DesignTokens.spacing[5],
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: staticColors.border,
   },
   mainTab: {
     paddingVertical: DesignTokens.spacing[3],
@@ -120,11 +120,11 @@ const s = StyleSheet.create({
   },
   mainTabActive: {
     borderBottomWidth: 2,
-    borderBottomColor: colors.primary,
+    borderBottomColor: staticColors.primary,
   },
-  mainTabText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, fontWeight: "500" },
-  mainTabTextActive: { color: colors.primary, fontWeight: "700" },
-  categoryScroll: { backgroundColor: colors.surface, maxHeight: 52 },
+  mainTabText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textSecondary, fontWeight: "500" },
+  mainTabTextActive: { color: staticColors.primary, fontWeight: "700" },
+  categoryScroll: { backgroundColor: staticColors.surface, maxHeight: 52 },
   categoryScrollContent: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
@@ -135,9 +135,9 @@ const s = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 7,
     borderRadius: 20,
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
   },
-  categoryChipActive: { backgroundColor: colors.primary },
-  categoryChipText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, fontWeight: "500" },
-  categoryChipTextActive: { color: colors.surface, fontWeight: "600" },
+  categoryChipActive: { backgroundColor: staticColors.primary },
+  categoryChipText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textSecondary, fontWeight: "500" },
+  categoryChipTextActive: { color: staticColors.surface, fontWeight: "600" },
 });

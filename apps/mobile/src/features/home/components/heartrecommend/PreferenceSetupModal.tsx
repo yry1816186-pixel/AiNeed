@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿﻿﻿import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -20,11 +20,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, BorderRadius, Shadows, Spacing, flatColors as colors } from '../../../../design-system/theme';
+import { Colors, BorderRadius, Shadows, Spacing, flatColors as staticColors } from '../../../../design-system/theme';
 import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
 import { profileApi } from '../../../../services/api/profile.api';
-import { useAuthStore } from '../../../stores';
+import { useAuthStore } from '../../../../stores/index';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -72,14 +72,14 @@ const AnimatedPreferenceOptionCard: React.FC<AnimatedPreferenceOptionCardProps> 
       onPress={onPress}
       activeOpacity={0.9}
     >
-      <Ionicons name={option.icon} size={32} color={isSelected ? Colors.primary[600] : colors.textSecondary} />
+      <Ionicons name={option.icon} size={32} color={isSelected ? Colors.primary[600] : staticColors.textSecondary} />
       <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
         {option.label}
       </Text>
       {option.description && <Text style={styles.optionDescription}>{option.description}</Text>}
       {isSelected && (
         <View style={styles.checkMark}>
-          <Ionicons name="checkmark" size={14} color={colors.textInverse} />
+          <Ionicons name="checkmark" size={14} color={staticColors.textInverse} />
         </View>
       )}
     </AnimatedTouchable>
@@ -373,7 +373,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
         <View style={styles.header}>
           {currentStep > 0 ? (
             <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-              <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+              <Ionicons name="arrow-back" size={24} color={staticColors.textPrimary} />
             </TouchableOpacity>
           ) : (
             <View style={styles.backButtonPlaceholder} />
@@ -408,7 +408,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
             disabled={!canProceed() || loading}
           >
             <LinearGradient
-              colors={canProceed() ? [colors.neutral[300], colors.neutral[700]] : [DesignTokens.colors.neutral[300], colors.textTertiary /* custom color */]}
+              colors={canProceed() ? [staticColors.neutral[300], staticColors.neutral[700]] : [DesignTokens.colors.neutral[300], staticColors.textTertiary /* custom color */]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.nextButtonGradient}
@@ -417,7 +417,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
                 {currentStep === totalSteps - 1 ? "开始探索" : "下一步"}
               </Text>
               {currentStep < totalSteps - 1 && (
-                <Ionicons name="arrow-forward" size={20} color={colors.textInverse} />
+                <Ionicons name="arrow-forward" size={20} color={staticColors.textInverse} />
               )}
             </LinearGradient>
           </TouchableOpacity>
@@ -430,7 +430,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
   },
   header: {
     flexDirection: "row",
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 20,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     alignItems: "center",
     justifyContent: "center",
     ...Shadows.sm,
@@ -460,19 +460,19 @@ const styles = StyleSheet.create({
   progressBar: {
     width: "100%",
     height: DesignTokens.spacing['1.5'],
-    backgroundColor: Colors.neutral[200],
+    backgroundColor: staticColors.neutral[200],
     borderRadius: 3,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: Colors.primary[500],
+    backgroundColor: staticColors.primary[500],
     borderRadius: 3,
   },
   progressText: {
     marginTop: Spacing.sm,
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     fontWeight: "500",
   },
   skipButton: {
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     fontWeight: "500",
   },
   scrollView: {
@@ -497,12 +497,12 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: DesignTokens.typography.sizes['3xl'],
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     marginBottom: Spacing.sm,
   },
   stepSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginBottom: Spacing.lg,
   },
   optionsGrid: {
@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
   optionCard: {
     width: (SCREEN_WIDTH - 40 - 24) / 3,
     aspectRatio: 0.9,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: BorderRadius.xl,
     padding: DesignTokens.spacing[3],
     alignItems: "center",
@@ -523,21 +523,21 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
   optionCardSelected: {
-    borderColor: Colors.primary[500],
-    backgroundColor: Colors.primary[50],
+    borderColor: staticColors.primary[500],
+    backgroundColor: staticColors.primary[50],
   },
   optionLabel: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     textAlign: "center",
   },
   optionLabelSelected: {
-    color: Colors.primary[600],
+    color: staticColors.primary[600],
   },
   optionDescription: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: colors.textTertiary,
+    color: staticColors.textTertiary,
     marginTop: DesignTokens.spacing['0.5'],
     textAlign: "center",
   },
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
     width: DesignTokens.spacing[5],
     height: DesignTokens.spacing[5],
     borderRadius: 10,
-    backgroundColor: Colors.primary[500],
+    backgroundColor: staticColors.primary[500],
     alignItems: "center",
     justifyContent: "center",
   },
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.textInverse,
+    color: staticColors.textInverse,
   },
 });
 

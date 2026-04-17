@@ -88,7 +88,7 @@ export const AdvisorListScreen: React.FC = () => {
   if (isLoading && displayData.length === 0) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="colors.primary" />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.loadingText}>正在加载顾问列表...</Text>
       </View>
     );
@@ -119,7 +119,7 @@ export const AdvisorListScreen: React.FC = () => {
 
       {/* Consultant list */}
       <FlatList
-        data={displayData}
+        data={displayData as Record<string, unknown>[]}
         keyExtractor={(item: Record<string, unknown>) => String(item.consultantId || item.id)}
         renderItem={({ item, index }: { item: Record<string, unknown>; index: number }) => (
           <ConsultantCard
@@ -186,7 +186,7 @@ export const AdvisorListScreen: React.FC = () => {
 };
 
 const useStyles = createStyles((colors) => ({
-  container: { flex: 1, backgroundColor: "colors.backgroundSecondary" },
+  container: { flex: 1, backgroundColor: colors.backgroundSecondary },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -195,9 +195,9 @@ const useStyles = createStyles((colors) => ({
     paddingBottom: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: "colors.textPrimary" },
+  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: colors.textPrimary },
   matchButton: {
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: 20,
@@ -208,7 +208,7 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: DesignTokens.spacing[3],
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "colors.backgroundTertiary",
+    borderBottomColor: colors.backgroundTertiary,
   },
   matchResultsBar: {
     flexDirection: "row",
@@ -218,7 +218,7 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing.sm,
     backgroundColor: DesignTokens.colors.neutral[50],
   },
-  matchResultsText: { fontSize: DesignTokens.typography.sizes.sm, color: "colors.primary" },
+  matchResultsText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary },
   clearMatchText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   listContent: { paddingHorizontal: Spacing.md, paddingTop: DesignTokens.spacing[3], paddingBottom: Spacing.lg},
   emptyContainer: {
@@ -229,7 +229,7 @@ const useStyles = createStyles((colors) => ({
   emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginBottom: Spacing.sm},
   emptySubtitle: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginBottom: Spacing.lg},
   matchCta: {
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,
@@ -253,11 +253,11 @@ const useStyles = createStyles((colors) => ({
     padding: Spacing.lg,
     paddingBottom: DesignTokens.spacing[10],
   },
-  sheetTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "600", color: "colors.textPrimary", marginBottom: DesignTokens.spacing[5]},
+  sheetTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing[5]},
   sheetLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginBottom: Spacing.sm, marginTop: DesignTokens.spacing[3]},
   notesInput: {
     borderWidth: 1,
-    borderColor: "colors.border",
+    borderColor: colors.border,
     borderRadius: 12,
     padding: DesignTokens.spacing[3],
     fontSize: DesignTokens.typography.sizes.base,
@@ -270,7 +270,7 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "colors.border",
+    borderColor: colors.border,
     alignItems: "center",
   },
   sheetCancelText: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary },
@@ -278,7 +278,7 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
     paddingVertical: DesignTokens.spacing['3.5'],
     borderRadius: 12,
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     alignItems: "center",
   },
   sheetSubmitText: { fontSize: DesignTokens.typography.sizes.md, color: colors.surface, fontWeight: "500" },

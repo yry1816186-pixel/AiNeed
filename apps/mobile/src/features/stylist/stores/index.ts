@@ -1,4 +1,4 @@
-﻿﻿import { create } from "zustand";
+﻿﻿﻿import { create } from "zustand";
 import {
   aiStylistApi,
   type AiStylistSessionResponse,
@@ -104,6 +104,7 @@ interface AiStylistState {
   fetchArchivedSessions: (date: string) => Promise<void>;
   setCurrentSessionId: (id: string | null) => void;
   clearError: () => void;
+  setError: (error: string) => void;
   reset: () => void;
 }
 
@@ -282,6 +283,7 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
 
   setCurrentSessionId: (id) => set({ currentSessionId: id }),
   clearError: () => set({ error: null }),
+  setError: (error) => set({ error }),
   reset: () => set(initialState),
 }));
 

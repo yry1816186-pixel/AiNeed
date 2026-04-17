@@ -19,8 +19,7 @@ import {
   useStyleQuizResult,
   useStyleQuizLoading,
   useStyleQuizError,
-} from '../stores/index';
-import { QuizProgress } from '../../../components/QuizProgress';
+} from '../stores/quizStore';
 import type { RootStackParamList } from '../../../types/navigation';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
@@ -36,7 +35,7 @@ export const StyleQuizScreen: React.FC = () => {
   const loadProgress = useStyleQuizStore((s) => s.loadProgress);
   const selectAnswer = useStyleQuizStore((s) => s.selectAnswer);
   const submitAll = useStyleQuizStore((s) => s.submitAll);
-  const reset = useStyleQuizStore((s) => s.reset);
+  const resetQuiz = useStyleQuizStore((s) => s.resetQuiz);
 
   const currentQuiz = useStyleQuizCurrentQuiz();
   const progress = useStyleQuizProgress();
@@ -84,8 +83,8 @@ export const StyleQuizScreen: React.FC = () => {
       }
       setSelectedOption(optionId);
 
-      // Auto-save answer via store (non-blocking)
-      void selectAnswer(QUIZ_ID, currentQuestion.id, optionId);
+      // Auto-save answer via store (synchronous)
+      selectAnswer(currentQuestion.id, optionId);
 
       // Auto-advance after 300ms delay
       if (autoAdvanceTimer.current) {
@@ -109,25 +108,28 @@ export const StyleQuizScreen: React.FC = () => {
   }, [submitAll]);
 
   const handleSkip = useCallback(() => {
-    reset();
+    resetQuiz();
     if (navigation.canGoBack()) {
       navigation.goBack();
     }
-  }, [reset, navigation]);
+  }, [resetQuiz, navigation]);
 
   // Show result after submission
   if (result) {
+    const styleTags = (result as any).styleTags ?? [];
+    const colorPalette = (result as any).colorPalette ?? [];
+
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.resultContainer}>
           <Text style={styles.resultTitle}>你的风格画像</Text>
           <Text style={styles.resultSubtitle}>基于 AI 分析，以下是你的风格测试结果</Text>
 
-          {result.styleTags && result.styleTags.length > 0 && (
+          {styleTags.length > 0 && (
             <View style={styles.resultSection}>
               <Text style={styles.resultSectionTitle}>风格标签</Text>
               <View style={styles.tagRow}>
-                {result.styleTags.map((tag: any) => (
+                {styleTags.map((tag: any) => (
                   <View key={tag} style={styles.tag}>
                     <Text style={styles.tagText}>{tag}</Text>
                   </View>
@@ -136,11 +138,11 @@ export const StyleQuizScreen: React.FC = () => {
             </View>
           )}
 
-          {result.colorPalette && result.colorPalette.length > 0 && (
+          {colorPalette.length > 0 && (
             <View style={styles.resultSection}>
               <Text style={styles.resultSectionTitle}>色彩偏好</Text>
               <View style={styles.paletteRow}>
-                {result.colorPalette.map((color: any, i: any) => (
+                {colorPalette.map((color: any, i: any) => (
                   <View key={`color-${i}`} style={[styles.colorDot, { backgroundColor: color }]} />
                 ))}
               </View>
@@ -216,6 +218,11 @@ export const StyleQuizScreen: React.FC = () => {
     return null;
   }
 
+  // Access optional properties with type assertion for compatibility
+  const questionTitle = currentQuestion.title ?? '';
+  const questionSubtitle = currentQuestion.subtitle ?? null;
+  const questionImages = currentQuestion.images ?? null;
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Skip button */}
@@ -229,7 +236,13 @@ export const StyleQuizScreen: React.FC = () => {
         <Text style={styles.skipTopRightText}>跳过</Text>
       </TouchableOpacity>
 
-      <QuizProgress currentStep={currentQuestionIndex + 1} totalSteps={totalQuestions} />
+      {/* Progress indicator */}
+      <View style={styles.progressContainer}>
+        <View style={styles.progressTrack}>
+          <View style={[styles.progressFill, { width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }]} />
+        </View>
+        <Text style={styles.progressText}>{currentQuestionIndex + 1} / {totalQuestions}</Text>
+      </View>
 
       <ScrollView
         style={styles.scrollView}
@@ -237,16 +250,16 @@ export const StyleQuizScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.questionHeader}>
-          <Text style={styles.questionTitle}>{currentQuestion.title}</Text>
-          {currentQuestion.subtitle ? (
-            <Text style={styles.questionSubtitle}>{currentQuestion.subtitle}</Text>
+          <Text style={styles.questionTitle}>{questionTitle}</Text>
+          {questionSubtitle ? (
+            <Text style={styles.questionSubtitle}>{questionSubtitle}</Text>
           ) : null}
         </View>
 
         {/* Image grid (2x2) */}
-        {(currentQuestion.images ?? currentQuestion.options ?? []).length > 0 && (
+        {(questionImages ?? currentQuestion.options ?? []).length > 0 && (
           <View style={styles.imageGrid}>
-            {(currentQuestion.images ?? []).map((image: any, _index: any) => (
+            {(questionImages ?? []).map((image: any, _index: any) => (
               <View key={image.id} style={styles.imageGridItem}>
                 <TouchableOpacity
                   style={[
@@ -275,7 +288,7 @@ export const StyleQuizScreen: React.FC = () => {
         )}
 
         {/* Text options grid */}
-        {(!currentQuestion.images || currentQuestion.images.length === 0) &&
+        {(!questionImages || questionImages.length === 0) &&
           currentQuestion.options.map((option) => (
             <TouchableOpacity
               key={option.id}
@@ -344,6 +357,32 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     color: Colors.neutral[500],
+  },
+  progressContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: Spacing[5],
+    paddingTop: Spacing[3],
+    paddingBottom: Spacing[2],
+  },
+  progressTrack: {
+    flex: 1,
+    height: 3,
+    backgroundColor: Colors.neutral[200],
+    borderRadius: BorderRadius.full,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: Colors.primary[500],
+    borderRadius: BorderRadius.full,
+  },
+  progressText: {
+    marginLeft: Spacing[3],
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: Colors.neutral[500],
+    fontWeight: "400",
+    minWidth: DesignTokens.spacing[10],
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.md,

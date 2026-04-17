@@ -12,7 +12,7 @@ import {
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing, BorderRadius, Shadows, flatColors as colors } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows, flatColors as staticColors } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useProfileStore } from '../stores/profileStore';
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[8],
   },
   sectionCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     marginBottom: Spacing[4],
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     marginBottom: Spacing[4],
   },
   formGroup: {
@@ -346,28 +346,28 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginBottom: Spacing[2],
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: staticColors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[3],
     height: Spacing['2xl'],
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: staticColors.neutral[200],
   },
   textInput: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.md,
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     padding: 0,
   },
   unitText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: colors.textTertiary,
+    color: staticColors.textTertiary,
     marginLeft: Spacing[2],
   },
   pillRow: {
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   pill: {
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: staticColors.neutral[50],
     borderRadius: BorderRadius.full,
     paddingHorizontal: Spacing[5],
     paddingVertical: Spacing[3],
@@ -384,22 +384,22 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   pillSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: staticColors.primary,
+    borderColor: staticColors.primary,
   },
   pillText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
   },
   pillTextSelected: {
-    color: colors.surface,
+    color: staticColors.surface,
     fontWeight: "600",
   },
   saveButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.primary,
+    color: staticColors.primary,
   },
   bodyGrid: {
     flexDirection: "row",
@@ -415,24 +415,24 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   tag: {
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: staticColors.neutral[50],
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[2],
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: staticColors.neutral[200],
   },
   tagSelected: {
     backgroundColor: "rgba(198, 123, 92, 0.1)",
-    borderColor: colors.primary,
+    borderColor: staticColors.primary,
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
   },
   tagTextSelected: {
-    color: colors.primary,
+    color: staticColors.primary,
     fontWeight: "600",
   },
 });

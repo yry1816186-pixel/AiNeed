@@ -1,0 +1,7 @@
+﻿
+apps/mobile/src/features/onboarding/screens/st
+eps/BasicInfoStep.tsx(43,13): error TS2339: Pr
+operty 'Colors' does not exist on type 'ThemeC
+ontextType'.
+
+

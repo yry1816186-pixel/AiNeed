@@ -12,7 +12,7 @@ interface PercentageBarProps {
 export const PercentageBar: React.FC<PercentageBarProps> = ({
   label,
   percentage,
-  color = colors.brand.primary,
+  color = colors.primary,
   showPercentage = true,
 }) => {
   const clampedPercentage = Math.max(0, Math.min(100, percentage));

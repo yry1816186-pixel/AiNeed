@@ -1,4 +1,4 @@
-﻿import React, { memo } from "react";
+﻿﻿﻿﻿import React, { memo } from "react";
 import { View, Text, TouchableOpacity } from 'react-native';
 import FastImage from "react-native-fast-image";
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';

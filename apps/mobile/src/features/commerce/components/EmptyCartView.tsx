@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens, Spacing } from '../../../design-system/theme';
@@ -43,7 +43,7 @@ const useStyles = createStyles((colors) => ({
   },
   button: {
     marginTop: Spacing.lg,
-    backgroundColor: "colors.error",
+    backgroundColor: colors.error,
     paddingHorizontal: Spacing.xl,
     paddingVertical: DesignTokens.spacing[3],
     borderRadius: 24,

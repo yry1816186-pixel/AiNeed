@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+﻿import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { useAuthStore } from '../stores/index';
+import { useAuthStore } from '../../../stores/index';
 import { authApi } from '../../../services/api/auth.api';
 import { apiClient } from '../../../services/api/client';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';

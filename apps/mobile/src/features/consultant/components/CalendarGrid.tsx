@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+﻿﻿import React, { useState, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
@@ -153,7 +153,7 @@ const useStyles = createStyles((colors) => ({
   monthLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: "colors.textPrimary",
+    color: colors.textPrimary,
   },
   weekdayRow: {
     flexDirection: "row",
@@ -178,7 +178,7 @@ const useStyles = createStyles((colors) => ({
     marginBottom: Spacing.xs,
   },
   cellSelected: {
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
   },
   cellAvailable: {
     backgroundColor: DesignTokens.colors.neutral[50],
@@ -195,7 +195,7 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
   },
   dayTextAvailable: {
-    color: "colors.primary",
+    color: colors.primary,
     fontWeight: "500",
   },
 }))

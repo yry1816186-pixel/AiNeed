@@ -10,18 +10,19 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { theme, Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useCustomizationEditorStore } from "../stores/customizationEditorStore";
 import customizationApi from '../../../services/api/customization.api';
+import { useTheme } from '../../../shared/contexts/ThemeContext';
 import type { RootStackParamList } from '../../../types/navigation';
 
-type Navigation = import("@react-navigation/native").NavigationProp<RootStackParamList>;
 type PreviewRoute = RouteProp<RootStackParamList, "CustomizationPreview">;
 
 export const CustomizationPreviewScreen: React.FC = () => {
-  const navigation = useNavigation<Navigation>();
+  const navigation = useNavigation();
   const route = useRoute<PreviewRoute>();
+  const { colors } = useTheme();
   const { designId } = route.params;
   const store = useCustomizationEditorStore();
 
@@ -68,7 +69,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
           {
             text: "查看订单",
             onPress: () => {
-              navigation.replace("CustomizationOrderDetail" as keyof RootStackParamList, { requestId });
+              (navigation as any).replace("CustomizationOrderDetail", { requestId });
             }},
         ]);
       } else {
@@ -152,7 +153,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color={theme.Colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>定制预览</Text>
         <View style={{ width: DesignTokens.spacing[10] }} />
@@ -176,11 +177,11 @@ export const CustomizationPreviewScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>专属包装</Text>
           <View style={styles.packagingCard}>
             <View style={styles.packagingItem}>
-              <Ionicons name="gift-outline" size={20} color={theme.Colors.primary} />
+              <Ionicons name="gift-outline" size={20} color={colors.primary} />
               <Text style={styles.packagingText}>AiNeed 专属包装盒</Text>
             </View>
             <View style={styles.packagingItem}>
-              <Ionicons name="heart-outline" size={20} color={theme.Colors.primary} />
+              <Ionicons name="heart-outline" size={20} color={colors.primary} />
               <Text style={styles.packagingText}>感谢卡 + 品牌贴纸</Text>
             </View>
           </View>
@@ -197,7 +198,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
             activeOpacity={0.7}
           >
             {isCalculating ? (
-              <ActivityIndicator size="small" color={theme.Colors.surface} />
+              <ActivityIndicator size="small" color={colors.surface} />
             ) : (
               <Text style={styles.calculateButtonText}>计算报价</Text>
             )}
@@ -215,7 +216,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
             activeOpacity={0.7}
           >
             {isSubmitting ? (
-              <ActivityIndicator size="small" color={theme.Colors.surface} />
+              <ActivityIndicator size="small" color={colors.surface} />
             ) : (
               <Text style={styles.submitButtonText}>确认定制 (不可退款)</Text>
             )}
@@ -231,7 +232,7 @@ export const CustomizationPreviewScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.Colors.surface},
+    backgroundColor: '#FFFFFF'},
   topBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.Colors.textPrimary},
+    color: '#1A1A1A'},
   scrollContent: {
     paddingHorizontal: Spacing[4],
     paddingBottom: Spacing[8]},
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.neutral[200]},
   previewUrlText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.Colors.textSecondary},
+    color: '#666666'},
   previewPlaceholder: {
     alignItems: "center"},
   previewPlaceholderText: {
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.Colors.textPrimary,
+    color: '#1A1A1A',
     marginBottom: Spacing[3]},
   packagingCard: {
     backgroundColor: Colors.neutral[50],
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
     gap: Spacing[2]},
   packagingText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.Colors.textPrimary},
+    color: '#1A1A1A'},
   sideOptions: {
     flexDirection: "row",
     gap: Spacing[2]},
@@ -302,16 +303,16 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "transparent"},
   sideOptionSelected: {
-    borderColor: theme.Colors.primary,
+    borderColor: '#C67B5C',
     backgroundColor: "rgba(198, 123, 92, 0.06)"},
   sideOptionText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.Colors.textSecondary},
+    color: '#666666'},
   sideOptionTextSelected: {
-    color: theme.Colors.primary,
+    color: '#C67B5C',
     fontWeight: "600"},
   calculateButton: {
-    backgroundColor: theme.Colors.primary,
+    backgroundColor: '#C67B5C',
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",
@@ -319,7 +320,7 @@ const styles = StyleSheet.create({
   calculateButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.Colors.surface},
+    color: '#FFFFFF'},
   quoteCard: {
     backgroundColor: Colors.neutral[50],
     borderRadius: BorderRadius.lg,
@@ -330,10 +331,10 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[1]},
   quoteLabel: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.Colors.textSecondary},
+    color: '#666666'},
   quoteValue: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: theme.Colors.textPrimary},
+    color: '#1A1A1A'},
   quoteTotal: {
     borderTopWidth: 1,
     borderTopColor: Colors.neutral[200],
@@ -342,17 +343,17 @@ const styles = StyleSheet.create({
   quoteTotalLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.textPrimary},
+    color: '#1A1A1A'},
   quoteTotalValue: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.colors.primary},
+    color: '#C67B5C'},
   estimatedDays: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.colors.textTertiary,
+    color: '#888888',
     marginTop: Spacing[2]},
   submitButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: '#C67B5C',
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",
@@ -361,10 +362,10 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: theme.Colors.surface},
+    color: '#FFFFFF'},
   disclaimer: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: theme.Colors.textTertiary,
+    color: '#888888',
     textAlign: "center"}});
 
 export default CustomizationPreviewScreen;

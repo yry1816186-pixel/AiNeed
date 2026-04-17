@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+﻿﻿﻿import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -266,7 +266,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
                 </LinearGradient>
               </Pressable>
               <Pressable style={styles.photoButton} onPress={() => onUploadPhoto?.("library")}>
-                <LinearGradient colors={[colors.neutral[500], "colors.textTertiary"]} style={styles.photoButtonGradient}>
+                <LinearGradient colors={[colors.neutral[500], colors.textTertiary]} style={styles.photoButtonGradient}>
                   <Ionicons name="images" size={24} color={colors.textInverse} />
                   <Text style={styles.photoButtonText}>相册</Text>
                 </LinearGradient>

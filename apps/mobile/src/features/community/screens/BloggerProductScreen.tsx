@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -97,7 +97,7 @@ export const BloggerProductScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.successContainer}>
-          <Ionicons name="checkmark-circle" size={64} color="colors.success" />
+          <Ionicons name="checkmark-circle" size={64} color={colors.success} />
           <Text style={styles.successTitle}>购买成功</Text>
           <Text style={styles.successSubtitle}>{product.title}</Text>
           {product.type === "digital" && product.content && (
@@ -265,7 +265,7 @@ export const BloggerProductScreen: React.FC = () => {
               >
                 {selectedPayment === "alipay" && <View style={styles.paymentRadioInner} />}
               </View>
-              <Ionicons name="wallet-outline" size={20} color="colors.info" />
+              <Ionicons name="wallet-outline" size={20} color={colors.info} />
               <Text style={styles.paymentName}>支付宝</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -283,7 +283,7 @@ export const BloggerProductScreen: React.FC = () => {
               >
                 {selectedPayment === "wechat" && <View style={styles.paymentRadioInner} />}
               </View>
-              <Ionicons name="chatbubble-ellipses-outline" size={20} color="colors.success" />
+              <Ionicons name="chatbubble-ellipses-outline" size={20} color={colors.success} />
               <Text style={styles.paymentName}>微信支付</Text>
             </TouchableOpacity>
 
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
   backBtn: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], justifyContent: "center" },
   headerSpacer: { width: DesignTokens.spacing[10] },
   carouselSection: { backgroundColor: DesignTokens.colors.neutral[50] },
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     marginTop: Spacing.sm,
   },
-  productTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
+  productTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.textPrimary },
   productPrice: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.primary, marginTop: Spacing.sm},
   originalPrice: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   bloggerAvatarText: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.surface },
   bloggerInfo: { flex: 1 },
   bloggerNameRow: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5']},
-  bloggerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  bloggerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
   bloggerBadgeSmall: {
     width: DesignTokens.spacing['3.5'],
     height: DesignTokens.spacing['3.5'],

@@ -21,7 +21,7 @@ import { communityApi } from '../../../services/api/community.api';
 import { bloggerApi, BloggerProduct } from '../../../services/api/blogger.api';
 import { FollowButton } from '../components/social/FollowButton';
 import type { RootStackParamList } from '../../../types/navigation';
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
 
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
@@ -210,7 +210,7 @@ export const BloggerProfileScreen: React.FC = () => {
             <Image source={{ uri: item.image }} style={styles.postImage} resizeMode="cover" />
           ) : (
             <View style={styles.postImagePlaceholder}>
-              <Ionicons name="image-outline" size={24} color={colors.textTertiary} />
+              <Ionicons name="image-outline" size={24} color={staticColors.textTertiary} />
             </View>
           )}
         </View>
@@ -218,7 +218,7 @@ export const BloggerProfileScreen: React.FC = () => {
           {item.title}
         </Text>
         <View style={styles.postFooter}>
-          <Ionicons name="heart-outline" size={12} color={colors.textTertiary} />
+          <Ionicons name="heart-outline" size={12} color={staticColors.textTertiary} />
           <Text style={styles.postLikes}>{item.likesCount}</Text>
         </View>
       </TouchableOpacity>
@@ -237,7 +237,7 @@ export const BloggerProfileScreen: React.FC = () => {
           <Image source={{ uri: item.images[0] }} style={styles.productImage} resizeMode="cover" />
         ) : (
           <View style={styles.productImagePlaceholder}>
-            <Ionicons name="bag-outline" size={24} color={colors.textTertiary} />
+            <Ionicons name="bag-outline" size={24} color={staticColors.textTertiary} />
           </View>
         )}
         <Text style={styles.productTitle} numberOfLines={2}>
@@ -253,7 +253,7 @@ export const BloggerProfileScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={staticColors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -263,7 +263,7 @@ export const BloggerProfileScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={staticColors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{blogger.nickname}</Text>
         <View style={styles.headerSpacer} />
@@ -352,9 +352,9 @@ export const BloggerProfileScreen: React.FC = () => {
               <View style={styles.levelInfo}>
                 <View style={styles.levelBadge}>
                   {blogger.bloggerLevel === "big_v" ? (
-                    <Ionicons name="shield-checkmark" size={16} color="colors.warning" /> // custom color
+                    <Ionicons name="shield-checkmark" size={16} color="staticColors.warning" /> // custom color
                   ) : (
-                    <Ionicons name="checkmark-circle" size={16} color={colors.neutral[500]} />
+                    <Ionicons name="checkmark-circle" size={16} color={staticColors.neutral[500]} />
                   )}
                   <Text style={styles.levelText}>
                     {blogger.bloggerLevel === "big_v" ? "大V认证" : "博主认证"}
@@ -366,7 +366,7 @@ export const BloggerProfileScreen: React.FC = () => {
         )}
 
         {loadingMore && (
-          <ActivityIndicator size="small" color={colors.primary} style={styles.loader} />
+          <ActivityIndicator size="small" color={staticColors.primary} style={styles.loader} />
         )}
         <View style={{ height: DesignTokens.spacing[10] }} />
       </ScrollView>
@@ -375,7 +375,7 @@ export const BloggerProfileScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+  container: { flex: 1, backgroundColor: staticColors.background },
   centerContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
   header: {
     flexDirection: "row",
@@ -383,17 +383,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: Spacing.md,
     paddingVertical: DesignTokens.spacing[3],
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: staticColors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: staticColors.textPrimary },
   backBtn: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], justifyContent: "center" },
   headerSpacer: { width: DesignTokens.spacing[10] },
   profileSection: {
     alignItems: "center",
     paddingVertical: DesignTokens.spacing[5],
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     paddingHorizontal: Spacing.md,
   },
   avatarWrapper: { position: "relative", marginBottom: DesignTokens.spacing[3]},
@@ -402,11 +402,11 @@ const styles = StyleSheet.create({
     width: Spacing['4xl'],
     height: Spacing['4xl'],
     borderRadius: 40,
-    backgroundColor: colors.primary,
+    backgroundColor: staticColors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "600", color: colors.surface },
+  avatarText: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "600", color: staticColors.surface },
   bloggerBadge: {
     position: "absolute",
     bottom: -2,
@@ -414,11 +414,11 @@ const styles = StyleSheet.create({
     width: Spacing.md,
     height: Spacing.md,
     borderRadius: 8,
-    backgroundColor: colors.neutral[500],
+    backgroundColor: staticColors.neutral[500],
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: colors.surface,
+    borderColor: staticColors.surface,
   },
   bigVBadge: {
     position: "absolute",
@@ -427,16 +427,16 @@ const styles = StyleSheet.create({
     width: DesignTokens.spacing[5],
     height: DesignTokens.spacing[5],
     borderRadius: 10,
-    backgroundColor: "colors.warning", // custom color
+    backgroundColor: "staticColors.warning", // custom color
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: colors.surface,
+    borderColor: staticColors.surface,
   },
-  nickname: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.text },
+  nickname: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: staticColors.textPrimary },
   bio: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginTop: DesignTokens.spacing['1.5'],
     textAlign: "center",
     lineHeight: 20,
@@ -448,15 +448,15 @@ const styles = StyleSheet.create({
     gap: Spacing.lg,
   },
   stat: { alignItems: "center" },
-  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
-  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: DesignTokens.spacing['0.5']},
-  statDivider: { width: 1, height: DesignTokens.spacing[5], backgroundColor: colors.border },
+  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: staticColors.textPrimary },
+  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.textSecondary, marginTop: DesignTokens.spacing['0.5']},
+  statDivider: { width: 1, height: DesignTokens.spacing[5], backgroundColor: staticColors.border },
   tabRow: {
     flexDirection: "row",
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     marginTop: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: staticColors.border,
   },
   tab: {
     flex: 1,
@@ -465,10 +465,10 @@ const styles = StyleSheet.create({
   },
   tabActive: {
     borderBottomWidth: 2,
-    borderBottomColor: colors.neutral[500],
+    borderBottomColor: staticColors.neutral[500],
   },
-  tabText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, fontWeight: "500" },
-  tabTextActive: { color: colors.neutral[500], fontWeight: "700" },
+  tabText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textSecondary, fontWeight: "500" },
+  tabTextActive: { color: staticColors.neutral[500], fontWeight: "700" },
   postsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -479,13 +479,13 @@ const styles = StyleSheet.create({
     padding: DesignTokens.spacing['1.5'],
   },
   postCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 10,
     overflow: "hidden",
   },
   postImageContainer: {
     width: "100%",
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
     overflow: "hidden",
   },
   postImage: { width: "100%", height: "100%" },
@@ -493,12 +493,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
   },
   postTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     padding: Spacing.sm,
     lineHeight: 16,
   },
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingBottom: Spacing.sm,
   },
-  postLikes: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
+  postLikes: { fontSize: DesignTokens.typography.sizes.xs, color: staticColors.textTertiary },
   productsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -520,58 +520,58 @@ const styles = StyleSheet.create({
     padding: DesignTokens.spacing['1.5'],
   },
   productCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderRadius: 10,
     overflow: "hidden",
   },
   productImage: {
     width: "100%",
     height: 160,
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
   },
   productImagePlaceholder: {
     width: "100%",
     height: 160,
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
     alignItems: "center",
     justifyContent: "center",
   },
   productTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     padding: Spacing.sm,
     lineHeight: 18,
   },
   productPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
-    color: colors.neutral[500],
+    color: staticColors.neutral[500],
     paddingHorizontal: Spacing.sm,
     paddingBottom: Spacing.sm,
   },
   aboutSection: {
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     padding: Spacing.md,
     marginTop: Spacing.sm,
   },
-  aboutTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: Spacing.sm},
-  aboutText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, lineHeight: 22 },
+  aboutTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: staticColors.textPrimary, marginBottom: Spacing.sm},
+  aboutText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textSecondary, lineHeight: 22 },
   levelInfo: { marginTop: Spacing.md},
   levelBadge: {
     flexDirection: "row",
     alignItems: "center",
     gap: DesignTokens.spacing['1.5'],
-    backgroundColor: "colors.infoLight", // custom color
+    backgroundColor: staticColors.infoLight, // custom color
     paddingHorizontal: DesignTokens.spacing[3],
     paddingVertical: Spacing.sm,
     borderRadius: 8,
     alignSelf: "flex-start",
   },
-  levelText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.neutral[500], fontWeight: "500" },
+  levelText: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.neutral[500], fontWeight: "500" },
   emptyText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textTertiary,
+    color: staticColors.textTertiary,
     textAlign: "center",
     paddingVertical: DesignTokens.spacing[10],
     width: "100%",

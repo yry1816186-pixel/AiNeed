@@ -1,8 +1,4 @@
 export {
-  type PostCategory,
-  type PostSortBy,
-  type EarningStatus,
-  type WithdrawalStatus,
   PostCategory,
   PostSortBy,
   EarningStatus,

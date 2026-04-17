@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿import React from "react";
 import { Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { DesignTokens, Spacing } from '../../../design-system/theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
@@ -66,7 +66,7 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 16,
     backgroundColor: colors.backgroundTertiary,
   },
-  chipSelected: { backgroundColor: "colors.error" },
+  chipSelected: { backgroundColor: colors.error },
   chipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   chipTextSelected: { color: colors.surface, fontWeight: "500" },
 }))

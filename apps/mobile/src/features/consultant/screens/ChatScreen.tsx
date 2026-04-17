@@ -31,7 +31,10 @@ export const ChatScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp<ParamListBase>>();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  const { roomId, consultantId, consultantName } = route.params || {};
+  const params = (route.params || {}) as Record<string, unknown>;
+  const roomId = params.roomId as string | undefined;
+  const consultantId = params.consultantId as string | undefined;
+  const consultantName = params.consultantName as string | undefined;
 
   const { messages, currentRoom, fetchMessages, sendMessage, markAsRead, addMessage } =
     useChatStore();
@@ -124,8 +127,8 @@ export const ChatScreen: React.FC = () => {
       return (
         <View style={styles.proposalWrapper}>
           <ProposalCard
-            title={item.proposalData?.title || "造型方案"}
-            summary={item.proposalData?.summary || item.content}
+            title={(item as Record<string, unknown>).proposalData != null ? ((item as Record<string, unknown>).proposalData as Record<string, unknown>).title as string || "造型方案" : "造型方案"}
+            summary={(item as Record<string, unknown>).proposalData != null ? ((item as Record<string, unknown>).proposalData as Record<string, unknown>).summary as string || item.content : item.content}
             onViewProposal={() => Alert.alert("查看方案", "方案详情功能即将上线")}
             onSaveToWardrobe={() => Alert.alert("保存", "已保存到灵感衣橱")}
           />
@@ -146,7 +149,7 @@ export const ChatScreen: React.FC = () => {
         message={item.content}
         isUser={isUser}
         timestamp={item.createdAt}
-        avatar={isUser ? undefined : "🎨"}
+        showAvatar={!isUser}
       />
     );
   };

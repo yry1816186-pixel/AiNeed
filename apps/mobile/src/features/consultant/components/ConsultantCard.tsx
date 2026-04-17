@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { RatingBadge } from '../../../design-system/ui/Rating';
@@ -88,7 +88,7 @@ const useStyles = createStyles((colors) => ({
     padding: Spacing.md,
     marginBottom: DesignTokens.spacing[3],
     borderWidth: 1,
-    borderColor: "colors.backgroundTertiary",
+    borderColor: colors.backgroundTertiary,
   },
   header: {
     flexDirection: "row",
@@ -105,7 +105,7 @@ const useStyles = createStyles((colors) => ({
     width: Spacing['2xl'],
     height: Spacing['2xl'],
     borderRadius: 24,
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginRight: DesignTokens.spacing[3],
@@ -121,7 +121,7 @@ const useStyles = createStyles((colors) => ({
   studioName: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: "colors.textPrimary",
+    color: colors.textPrimary,
     marginBottom: Spacing.xs,
   },
   specialtyRow: {
@@ -135,11 +135,11 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: DesignTokens.spacing['0.5'],
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "colors.primaryLight",
+    borderColor: colors.primaryLight,
   },
   specialtyText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "colors.primary",
+    color: colors.primary,
   },
   footer: {
     marginBottom: Spacing.sm,
@@ -161,7 +161,7 @@ const useStyles = createStyles((colors) => ({
   },
   price: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "colors.primary",
+    color: colors.primary,
     marginTop: Spacing.xs,
   },
   cta: {
@@ -169,7 +169,7 @@ const useStyles = createStyles((colors) => ({
   },
   ctaText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: "colors.primary",
+    color: colors.primary,
     fontWeight: "500",
   },
 }))

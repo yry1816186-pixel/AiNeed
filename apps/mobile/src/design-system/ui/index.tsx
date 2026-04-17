@@ -1,4 +1,4 @@
-﻿// UI Component Index - Single source of truth
+﻿﻿// UI Component Index - Single source of truth
 // All components are re-exported from their dedicated files.
 // No inline implementations allowed in this file.
 // Overlapping components with primitives/ are re-exported from primitives/ to avoid duplication.

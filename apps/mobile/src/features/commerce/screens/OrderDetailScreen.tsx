@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -35,8 +35,8 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: "待支付", color: colors.warning },
   paid: { label: "待发货", color: colors.primary },
   confirmed: { label: "已确认", color: colors.primary },
-  processing: { label: "处理中", color: "colors.info" },
-  shipped: { label: "配送中", color: "colors.info" },
+  processing: { label: "处理中", color: colors.info },
+  shipped: { label: "配送中", color: colors.info },
   delivered: { label: "已签收", color: colors.success },
   cancelled: { label: "已取消", color: colors.error },
   refunded: { label: "已退款", color: colors.textTertiary },
@@ -274,7 +274,7 @@ export const OrderDetailScreen: React.FC = () => {
               accessibilityLabel="取消订单"
             >
               {cancelling ? (
-                <ActivityIndicator size="small" color="colors.error" />
+                <ActivityIndicator size="small" color={colors.error} />
               ) : (
                 <Text style={styles.dangerButtonText}>取消订单</Text>
               )}
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "colors.backgroundTertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -466,13 +466,13 @@ const styles = StyleSheet.create({
     gap: DesignTokens.spacing[3],
     paddingVertical: DesignTokens.spacing['2.5'],
     borderBottomWidth: 1,
-    borderBottomColor: "colors.backgroundTertiary",
+    borderBottomColor: colors.backgroundTertiary,
   },
   itemImage: {
     width: 60,
     height: 60,
     borderRadius: 16,
-    backgroundColor: "colors.backgroundTertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
   itemImageFallback: {
     width: 60,
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "colors.backgroundTertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
   itemContent: {
     flex: 1,
@@ -609,13 +609,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "colors.error",
+    borderColor: colors.error,
     backgroundColor: colors.surface,
   },
   dangerButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: "colors.error",
+    color: colors.error,
   },
   actionRow: {
     flexDirection: "row",
@@ -627,7 +627,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: 16,
     alignItems: "center",
-    backgroundColor: "colors.error",
+    backgroundColor: colors.error,
   },
   primaryFilledText: {
     fontSize: DesignTokens.typography.sizes.base,

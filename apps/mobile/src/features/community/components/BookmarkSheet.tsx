@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+﻿﻿import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -239,7 +239,7 @@ const useStyles = createStyles((colors) => ({
     marginRight: DesignTokens.spacing[3],
   },
   collectionInfo: { flex: 1 },
-  collectionName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.text },
+  collectionName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.textPrimary },
   collectionCount: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
   newBtn: {
     flexDirection: "row",

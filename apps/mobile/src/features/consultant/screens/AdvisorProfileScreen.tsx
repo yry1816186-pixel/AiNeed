@@ -27,7 +27,7 @@ export const AdvisorProfileScreen: React.FC = () => {
   const { currentConsultant, fetchConsultantById, isLoading } = useConsultantStore();
   const [cases, setCases] = useState<Record<string, unknown>[]>([]);
 
-  const consultantId = route.params?.id;
+  const consultantId = (route.params as any)?.id as string | undefined;
 
   useFocusEffect(
     useCallback(() => {
@@ -51,14 +51,14 @@ export const AdvisorProfileScreen: React.FC = () => {
   if (isLoading || !currentConsultant) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="colors.primary" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   const profile = "data" in currentConsultant ? (currentConsultant as unknown as { data: ConsultantProfile }).data : currentConsultant as unknown as ConsultantProfile;
   const specialties = Array.isArray(profile.specialties) ? profile.specialties : [];
-  const bookingCount = profile.count?.bookings || 0;
+  const bookingCount = ((profile as Record<string, unknown>).count as Record<string, unknown> | undefined)?.bookings as number || 0;
 
   return (
     <View style={styles.container}>
@@ -136,7 +136,17 @@ export const AdvisorProfileScreen: React.FC = () => {
               horizontal
               data={cases}
               keyExtractor={(item: Record<string, unknown>) => String(item.bookingId)}
-              renderItem={({ item }: { item: Record<string, unknown> }) => <CaseCard {...item as Record<string, unknown>} />}
+              renderItem={({ item }: { item: Record<string, unknown> }) => (
+                <CaseCard
+                  serviceType={String(item.serviceType || "")}
+                  beforeImages={(item.beforeImages || []) as string[]}
+                  afterImages={(item.afterImages || []) as string[]}
+                  rating={Number(item.rating || 0)}
+                  reviewExcerpt={item.reviewExcerpt as string | null ?? null}
+                  clientName={String(item.clientName || "")}
+                  price={Number(item.price || 0)}
+                />
+              )}
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.casesList}
             />
@@ -169,22 +179,22 @@ const useStyles = createStyles((colors) => ({
   },
   backBtn: { padding: Spacing.sm},
   backBtnText: { fontSize: DesignTokens.typography.sizes.xl, color: colors.textPrimary },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "colors.textPrimary" },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
   shareBtn: { padding: Spacing.sm},
-  shareBtnText: { fontSize: DesignTokens.typography.sizes.base, color: "colors.primary" },
+  shareBtnText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
   profileHero: { alignItems: "center", paddingHorizontal: Spacing.lg, paddingTop: DesignTokens.spacing[3], paddingBottom: DesignTokens.spacing[5]},
   avatar: { width: Spacing['4xl'], height: Spacing['4xl'], borderRadius: 40, marginBottom: DesignTokens.spacing[3]},
   avatarPlaceholder: {
     width: Spacing['4xl'],
     height: Spacing['4xl'],
     borderRadius: 40,
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: DesignTokens.spacing[3],
   },
   avatarPlaceholderText: { color: colors.surface, fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "600" },
-  studioName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: "colors.textPrimary", marginBottom: Spacing.sm},
+  studioName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: colors.textPrimary, marginBottom: Spacing.sm},
   specialtyRow: { flexDirection: "row", flexWrap: "wrap", gap: DesignTokens.spacing['1.5'], marginBottom: DesignTokens.spacing[3]},
   specialtyBadge: {
     backgroundColor: DesignTokens.colors.neutral[50],
@@ -192,11 +202,11 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing.xs,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "colors.primaryLight",
+    borderColor: colors.primaryLight,
   },
-  specialtyText: { fontSize: DesignTokens.typography.sizes.sm, color: "colors.primary" },
+  specialtyText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary },
   ratingRow: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5']},
-  ratingValue: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "colors.primary" },
+  ratingValue: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.primary },
   ratingLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   reviewCount: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   infoRow: {
@@ -205,15 +215,15 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing.md,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "colors.backgroundTertiary",
+    borderColor: colors.backgroundTertiary,
     marginHorizontal: Spacing.md,
   },
   infoItem: { alignItems: "center" },
   infoValue: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
   infoLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: Spacing.xs},
-  infoDivider: { width: 1, backgroundColor: "colors.backgroundTertiary" },
+  infoDivider: { width: 1, backgroundColor: colors.backgroundTertiary },
   section: { paddingHorizontal: Spacing.md, paddingTop: DesignTokens.spacing[5]},
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: "colors.textPrimary", marginBottom: DesignTokens.spacing[3]},
+  sectionTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing[3]},
   bioText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.text.secondary, lineHeight: 22 },
   casesList: { gap: DesignTokens.spacing[3]},
   bottomCta: {
@@ -221,11 +231,11 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing.md,
     paddingBottom: Spacing.xl,
     borderTopWidth: 1,
-    borderTopColor: "colors.backgroundTertiary",
+    borderTopColor: colors.backgroundTertiary,
     backgroundColor: colors.surface,
   },
   bookButton: {
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     paddingVertical: Spacing.md,
     borderRadius: 12,
     alignItems: "center",

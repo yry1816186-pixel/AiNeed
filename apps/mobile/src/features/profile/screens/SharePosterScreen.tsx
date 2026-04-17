@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState, useEffect } from "react";
+﻿import React, { useRef, useCallback, useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from '../../../polyfills/expo-vector-icons';
@@ -8,7 +8,7 @@ import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '.
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 import { useProfileStore } from '../stores/profileStore';
-import { useAuthStore } from '../stores/index';
+import { useAuthStore } from '../../../stores/index';
 import { ScreenLayout, Header } from '../../../shared/components/layout/ScreenLayout';
 import type { RootStackParamList } from '../../../types/navigation';
 

@@ -7,7 +7,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import type { RootStackParamList } from '../../../types/navigation';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
 
 
 type LegalScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -288,7 +288,7 @@ export const LegalScreen: React.FC<LegalScreenProps> = ({ type }) => {
           accessibilityLabel="返回"
           accessibilityRole="button"
         >
-          <Ionicons name="chevron-back-outline" size={24} color={colors.textPrimary} />
+          <Ionicons name="chevron-back-outline" size={24} color={staticColors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{title}</Text>
         <View style={styles.backButton} />
@@ -316,16 +316,16 @@ export const LegalScreen: React.FC<LegalScreenProps> = ({ type }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: staticColors.background,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: Spacing.md,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: staticColors.border,
   },
   backButton: {
     width: DesignTokens.spacing[10],
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
   },
   content: {
     flex: 1,
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   },
   lastUpdatedText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textTertiary,
+    color: staticColors.textTertiary,
   },
   documentContent: {
     paddingBottom: DesignTokens.spacing[10],
@@ -355,27 +355,27 @@ const styles = StyleSheet.create({
   heading1: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     marginTop: Spacing.lg,
     marginBottom: DesignTokens.spacing[3],
   },
   heading2: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: staticColors.textPrimary,
     marginTop: Spacing.md,
     marginBottom: Spacing.sm,
   },
   paragraph: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginBottom: Spacing.sm,
   },
   bulletItem: {
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
-    color: colors.textSecondary,
+    color: staticColors.textSecondary,
     marginLeft: Spacing.md,
     marginBottom: Spacing.xs,
   },
@@ -384,17 +384,17 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: Spacing.md,
-    backgroundColor: colors.surface,
+    backgroundColor: staticColors.surface,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: staticColors.border,
     alignItems: "center",
   },
   footerText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textTertiary,
+    color: staticColors.textTertiary,
   },
   linkText: {
-    color: colors.primary,
+    color: staticColors.primary,
     textDecorationLine: "underline",
   },
 });

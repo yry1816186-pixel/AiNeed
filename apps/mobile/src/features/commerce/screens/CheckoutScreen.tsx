@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+﻿﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -642,7 +642,7 @@ export const CheckoutScreen: React.FC = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.secondaryButtonWide}
-                  onPress={() => navigation.navigate("MainTabs", { screen: "Home", params: {} })}
+                  onPress={() => navigation.navigate("MainTabs", { screen: "Home" as const })}
                   accessibilityLabel={t.checkout.backToHome}
                 >
                   <Text style={styles.secondaryText}>{t.checkout.backToHome}</Text>
@@ -715,7 +715,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: DesignTokens.colors.neutral[100],
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
   headerPlaceholder: { width: DesignTokens.spacing[10] },
   progressRow: {
     flexDirection: "row",
@@ -757,12 +757,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: DesignTokens.spacing[3],
   },
-  itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
   muted: { fontSize: DesignTokens.typography.sizes.sm, lineHeight: 20, color: colors.textSecondary },
-  price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: colors.text },
-  value: { fontSize: DesignTokens.typography.sizes.base, color: colors.text },
+  price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: colors.textPrimary },
+  value: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
   totalRow: { marginTop: DesignTokens.spacing[3], paddingTop: DesignTokens.spacing[3], borderTopWidth: 1, borderTopColor: DesignTokens.colors.neutral[100] },
-  totalLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
+  totalLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
   totalValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
   primaryButton: {
     marginHorizontal: DesignTokens.spacing[5],
@@ -858,7 +858,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     marginTop: DesignTokens.spacing['2.5'],
   },
-  paymentLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.text },
+  paymentLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
   successCard: {
     marginHorizontal: DesignTokens.spacing[5],
     marginTop: Spacing.xl,
@@ -868,7 +868,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: DesignTokens.spacing['2.5'],
   },
-  successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.text },
+  successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.textPrimary },
   paymentButtonsRow: {
     flexDirection: "row",
     gap: DesignTokens.spacing[3],

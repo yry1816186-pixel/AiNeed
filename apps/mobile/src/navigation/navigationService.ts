@@ -1,4 +1,4 @@
-﻿import { createNavigationContainerRef, CommonActions } from "@react-navigation/native";
+import { createNavigationContainerRef, CommonActions } from "@react-navigation/native";
 import type {
   RootStackParamList,
   AuthStackParamList,
@@ -11,7 +11,7 @@ import type {
   DeepLinkRouteConfig,
   GuardType,
 } from "./types";
-import { DEEPLINK_ROUTES, GUARDED_ROUTES } from "./types";
+import { DEEP_LINK_ROUTES, GUARDED_ROUTES } from "./types";
 import { useAuthStore } from "../stores/index";
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();

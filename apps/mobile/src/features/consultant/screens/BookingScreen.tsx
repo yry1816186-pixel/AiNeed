@@ -39,7 +39,9 @@ export const BookingScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<Record<string, unknown>>>();
   const { availableSlots, fetchAvailableSlots, createBooking, isLoading } = useConsultantStore();
 
-  const { consultantId, consultant } = route.params || {};
+  const params = (route.params || {}) as Record<string, unknown>;
+  const consultantId = params.consultantId as string | undefined;
+  const consultant = params.consultant as Record<string, unknown> | undefined;
 
   const [selectedServiceType, setSelectedServiceType] =
     useState<ServiceType>("styling_consultation");
@@ -47,7 +49,7 @@ export const BookingScreen: React.FC = () => {
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [notes, setNotes] = useState("");
 
-  const price = consultant?.basePrice || 299;
+  const price = (consultant?.basePrice as number) || 299;
   const depositAmount = Math.round(price * 0.3 * 100) / 100;
   const finalPaymentAmount = Math.round(price * 0.7 * 100) / 100;
 
@@ -88,7 +90,7 @@ export const BookingScreen: React.FC = () => {
         { text: "确定", onPress: () => navigation.goBack() },
       ]);
     } catch (e: unknown) {
-      Alert.alert("预约失败", e.message || "请稍后重试");
+      Alert.alert("预约失败", (e instanceof Error ? e.message : "请稍后重试"));
     }
   };
 

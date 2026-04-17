@@ -88,13 +88,15 @@ export const useCartStore = create<CartState>()(
                 originalPrice: item.originalPrice,
                 category: 'other',
                 colors: [],
+                images: [],
+                sizes: [],
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
               } as ClothingItem,
               color: item.color,
               size: item.size,
               quantity: item.quantity,
-              selected: item.selected,
+              selected: item.selected ?? false,
             }));
             const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
             const totalPrice = cartItems.reduce(

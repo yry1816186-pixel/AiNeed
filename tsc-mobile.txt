@@ -1,0 +1,7 @@
+apps/mobile/src/features/community/screens/BloggerProductScreen.tsx(100,61): error TS1145: '{' or JSX element expected.
+apps/mobile/src/features/community/screens/BloggerProductScreen.tsx(100,67): error TS1003: Identifier expected.
+apps/mobile/src/features/community/screens/BloggerProductScreen.tsx(100,77): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+apps/mobile/src/features/community/screens/BloggerProductScreen.tsx(268,63): error TS1145: '{' or JSX element expected.
+apps/mobile/src/features/community/screens/BloggerProductScreen.tsx(268,69): error TS1003: Identifier expected.
+apps/mobile/src/features/community/screens/BloggerProductScreen.tsx(268,76): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+

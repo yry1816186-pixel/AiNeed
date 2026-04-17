@@ -1,4 +1,4 @@
-import React from "react";
+﻿﻿import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
@@ -24,7 +24,7 @@ export const MatchBadge: React.FC<MatchBadgeProps> = ({ percentage, size = "defa
 
 const useStyles = createStyles((colors) => ({
   badge: {
-    backgroundColor: "colors.primary",
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 12,

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+﻿import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -195,7 +195,7 @@ export const PaymentScreen: React.FC = () => {
             onPress={() => setSelectedProvider("alipay")}
             activeOpacity={0.7}
           >
-            <View style={[s.providerIcon, { backgroundColor: "colors.info" /* custom color */ }]}>
+            <View style={[s.providerIcon, { backgroundColor: colors.info /* custom color */ }]}>
               <Text style={s.providerIconText}>A</Text>
             </View>
             <View style={s.providerInfo}>
@@ -212,7 +212,7 @@ export const PaymentScreen: React.FC = () => {
             onPress={() => setSelectedProvider("wechat")}
             activeOpacity={0.7}
           >
-            <View style={[s.providerIcon, { backgroundColor: "colors.success" /* custom color */ }]}>
+            <View style={[s.providerIcon, { backgroundColor: colors.success /* custom color */ }]}>
               <Text style={s.providerIconText}>W</Text>
             </View>
             <View style={s.providerInfo}>
@@ -267,7 +267,7 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary },
   iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
   content: { flex: 1, padding: Spacing.md},
@@ -297,7 +297,7 @@ const s = StyleSheet.create({
     marginTop: Spacing.sm,
     paddingTop: DesignTokens.spacing[3],
   },
-  totalLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  totalLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
   totalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
   paymentSection: {
     backgroundColor: colors.surface,
@@ -331,7 +331,7 @@ const s = StyleSheet.create({
   },
   providerIconText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700" },
   providerInfo: { flex: 1, marginLeft: DesignTokens.spacing[3]},
-  providerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  providerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
   providerDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
   radio: {
     width: 22,

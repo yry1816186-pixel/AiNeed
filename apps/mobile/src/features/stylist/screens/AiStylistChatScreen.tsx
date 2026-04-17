@@ -526,7 +526,7 @@ const AnimatedMessageBubble: React.FC<{ msg: ChatMessage; index: number }> = ({ 
             <TypewriterMessage
               text={msg.content}
               speed={40}
-              textStyle={[s.bubbleText, s.assistantBubbleText]}
+              textStyle={[s.bubbleText, s.assistantBubbleText] as any}
             />
           ) : (
             <Text style={[s.bubbleText, msg.role === "user" ? s.userBubbleText : s.assistantBubbleText]}>

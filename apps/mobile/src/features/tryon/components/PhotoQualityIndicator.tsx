@@ -1,6 +1,6 @@
-import React from "react";
+﻿﻿import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Spacing, BorderRadius, flatColors as colors } from '../../../design-system/theme';
+import { Spacing, BorderRadius } from '../../../design-system/theme';
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 
@@ -160,7 +160,7 @@ const metricStyles = StyleSheet.create({
   label: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "400",
-    color: "colors.textSecondary",
+    color: colors.textSecondary,
   },
   value: {
     fontSize: DesignTokens.typography.sizes.base,

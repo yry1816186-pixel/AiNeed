@@ -4,6 +4,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Colors, theme, Spacing, BorderRadius, Shadows, DesignTokens } from '../../theme';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { flatColors as staticColors } from '../../theme';
 
 interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap;
@@ -193,7 +194,7 @@ title,
       description={description ?? "精彩即将到来，敬请期待"}
       actionLabel={actionLabel}
       onAction={onAction}
-      iconGradient={[colors.primary, colors.primary]}
+      iconGradient={[staticColors.primary, staticColors.primary]}
     />
   );
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -47,8 +47,8 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: "待支付", color: colors.warning },
   paid: { label: "待发货", color: colors.primary },
   confirmed: { label: "已确认", color: colors.primary },
-  processing: { label: "处理中", color: "colors.info" },
-  shipped: { label: "配送中", color: "colors.info" },
+  processing: { label: "处理中", color: colors.info },
+  shipped: { label: "配送中", color: colors.info },
   delivered: { label: "已签收", color: colors.success },
   cancelled: { label: "已取消", color: colors.error },
   refunded: { label: "已退款", color: colors.textTertiary },
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "colors.backgroundTertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   tabItemActive: {
-    backgroundColor: "colors.backgroundTertiary",
+    backgroundColor: colors.backgroundTertiary,
     borderWidth: 1,
     borderColor: colors.primary,
   },
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 14,
-    backgroundColor: "colors.backgroundTertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
   itemThumbnailFallback: {
     width: 54,
@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "colors.backgroundTertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
   moreItemsBadge: {
     width: 54,
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: DesignTokens.spacing['3.5'],
     borderTopWidth: 1,
-    borderTopColor: "colors.backgroundTertiary",
+    borderTopColor: colors.backgroundTertiary,
   },
   orderDate: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -605,7 +605,7 @@ const styles = StyleSheet.create({
   },
   dangerText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: "colors.error",
+    color: colors.error,
   },
 });
 

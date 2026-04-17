@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, memo } from "react";
+﻿﻿﻿﻿import React, { useState, useCallback, useEffect, memo } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { recommendationsApi, type RecommendedItem } from '../../../services/api/tryon.api';
-import { useAuthStore } from '../stores/index';
+import { useAuthStore } from '../../../stores';
 import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
 import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
 
@@ -49,6 +49,7 @@ const RecommendationCard = memo(function RecommendationCard({
   onPress,
 }: RecommendationCardProps) {
     const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <TouchableOpacity
       style={[
@@ -81,6 +82,8 @@ const RecommendationCard = memo(function RecommendationCard({
 
 export const RecommendationsScreen: React.FC = () => {
   const navigation = useNavigation();
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { isAuthenticated } = useAuthStore();
 
   const [activeTab, setActiveTab] = useState<RecommendationTab>("personalized");
@@ -131,7 +134,7 @@ export const RecommendationsScreen: React.FC = () => {
 
   const handleItemPress = useCallback(
     (item: RecommendedItem) => {
-      navigation.navigate("RecommendationDetail", {
+      (navigation as any).navigate("RecommendationDetail", {
         id: item.id,
         recommendation: item,
       });
@@ -192,7 +195,7 @@ export const RecommendationsScreen: React.FC = () => {
         </Text>
       </View>
     );
-  }, [loading, error, activeTab, fetchRecommendations, isAuthenticated]);
+  }, [loading, error, activeTab, fetchRecommendations, isAuthenticated, colors]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -254,67 +257,67 @@ export const RecommendationsScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+const useStyles = createStyles((colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#FFFFFF' },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: Spacing.md,
     paddingVertical: DesignTokens.spacing[3],
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
+    borderBottomColor: '#E5E5E5',
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.textPrimary },
+  headerTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: '#1A1A1A' },
   filterButton: { padding: Spacing.sm},
   tabBar: {
     flexDirection: "row",
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
+    borderBottomColor: '#E5E5E5',
   },
   tab: {
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     marginRight: Spacing.sm,
     borderRadius: 20,
-    backgroundColor: colors.background,
+    backgroundColor: '#F5F5F5',
   },
-  tabActive: { backgroundColor: colors.primary },
-  tabLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textSecondary },
-  tabLabelActive: { color: colors.surface },
+  tabActive: { backgroundColor: '#C67B5C' },
+  tabLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: '#666666' },
+  tabLabelActive: { color: '#FFFFFF' },
   list: { paddingHorizontal: DesignTokens.spacing['1.5'], paddingBottom: DesignTokens.spacing[5]},
   emptyList: { flexGrow: 1 },
   card: {
     width: CARD_WIDTH,
     marginBottom: DesignTokens.spacing[3],
     borderRadius: 12,
-    backgroundColor: colors.surface,
+    backgroundColor: '#FFFFFF',
     overflow: "hidden",
     elevation: 2,
-    shadowColor: colors.neutral[900],
+    shadowColor: '#333333',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
   },
-  cardImage: { width: "100%", height: CARD_WIDTH * 1.2, backgroundColor: colors.background },
+  cardImage: { width: "100%", height: CARD_WIDTH * 1.2, backgroundColor: '#F5F5F5' },
   matchBadge: {
     position: "absolute",
     top: Spacing.sm,
     left: Spacing.sm,
-    backgroundColor: colors.primary,
+    backgroundColor: '#C67B5C',
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: 10,
   },
-  matchText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "700", color: colors.surface },
+  matchText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "700", color: '#FFFFFF' },
   cardInfo: { padding: DesignTokens.spacing['2.5']},
-  cardName: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: colors.textPrimary, lineHeight: 18 },
-  cardBrand: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textSecondary, marginTop: DesignTokens.spacing['0.5']},
-  cardPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: colors.primary, marginTop: Spacing.xs},
+  cardName: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: '#1A1A1A', lineHeight: 18 },
+  cardBrand: { fontSize: DesignTokens.typography.sizes.xs, color: '#888888', marginTop: DesignTokens.spacing['0.5']},
+  cardPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: '#C67B5C', marginTop: Spacing.xs},
   centerContainer: {
     flex: 1,
     alignItems: "center",
@@ -322,22 +325,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: DesignTokens.spacing[10],
     paddingVertical: 60,
   },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginTop: Spacing.md},
+  emptyTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: '#1A1A1A', marginTop: Spacing.md},
   emptySubtext: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textSecondary,
+    color: '#888888',
     marginTop: Spacing.sm,
     textAlign: "center",
   },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
+  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: '#888888', marginTop: DesignTokens.spacing[3]},
   retryButton: {
     marginTop: Spacing.md,
     paddingHorizontal: DesignTokens.spacing[5],
     paddingVertical: DesignTokens.spacing['2.5'],
     borderRadius: 20,
-    backgroundColor: colors.primary,
+    backgroundColor: '#C67B5C',
   },
-  retryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.surface },
-});
+  retryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: '#FFFFFF' },
+}));
 
 export default RecommendationsScreen;

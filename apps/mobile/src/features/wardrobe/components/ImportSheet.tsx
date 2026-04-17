@@ -371,7 +371,7 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  itemName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
+  itemName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary },
   checkbox: {
     width: DesignTokens.spacing[5],
     height: DesignTokens.spacing[5],
