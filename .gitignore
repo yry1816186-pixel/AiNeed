@@ -21,7 +21,8 @@
 !.env.security.example
 *.keystore
 *.jks
-secrets/
+infra/secrets/*.txt
+!infra/secrets/README.md
 .secrets/
 
 # --- Package Managers ---
@@ -137,6 +138,21 @@ apps/backend/prisma/compiled/
 # --- Misc ---
 SKILL.md
 mobilesrcservicesapi*
+
+# --- Temporary diagnostic files ---
+tsc-*.txt
+ts2339_*.txt
+test-*.txt
+cov-*.txt
+coverage-*.txt
+community_errors.txt
+nest-build-output.txt
+eslint-any.json
+test-fq*.json
+test-all*.json
+test-refund.json
+test-coupon*.json
+fix-*.ps1
 
 # --- Tool Output Files ---
 eslint-current*.json
