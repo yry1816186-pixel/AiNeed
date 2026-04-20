@@ -15,7 +15,8 @@ import Animated, {
   Easing,
   interpolate,
 } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius , DesignTokens } from '../../design-system/theme'
+import { Colors, Spacing, BorderRadius } from "../../design-system/theme";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 // Re-export from canonical skeleton implementation
 export {
@@ -71,6 +72,8 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   borderRadius = BorderRadius.md,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const animatedStyle = useShimmerAnimation();
   return (
     <Animated.View
@@ -79,7 +82,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
           width,
           height,
           borderRadius,
-          backgroundColor: Colors.neutral[200],
+          backgroundColor: colors.neutral[200],
         },
         animatedStyle,
         style,
@@ -103,7 +106,7 @@ export const CircleSkeleton: React.FC<CircleSkeletonProps> = ({ size = 48, style
           width: size,
           height: size,
           borderRadius: size / 2,
-          backgroundColor: Colors.neutral[200],
+          backgroundColor: colors.neutral[200],
         },
         animatedStyle,
         style,
@@ -136,7 +139,7 @@ export const TextSkeleton: React.FC<TextSkeletonProps> = ({
             width: index === lines - 1 ? `${lastLineWidth}%` : "100%",
             height: lineHeight,
             borderRadius: BorderRadius.sm,
-            backgroundColor: Colors.neutral[200],
+            backgroundColor: colors.neutral[200],
             marginBottom: index < lines - 1 ? Spacing[2] : 0,
             ...animatedStyle,
           }}
@@ -155,19 +158,19 @@ export const CardSkeleton: React.FC<CardSkeletonProps> = ({ style }) => {
   const animatedStyle = useShimmerAnimation();
   return (
     <Animated.View style={[styles.card, animatedStyle, style]}>
-      <View style={[styles.cardImage, { backgroundColor: Colors.neutral[100] }]} />
+      <View style={[styles.cardImage, { backgroundColor: colors.neutral[100] }]} />
       <View style={styles.cardContent}>
-        <View style={[styles.line, { width: "70%", backgroundColor: Colors.neutral[200] }]} />
-        <View style={[styles.line, { width: "50%", backgroundColor: Colors.neutral[200] }]} />
+        <View style={[styles.line, { width: "70%", backgroundColor: colors.neutral[200] }]} />
+        <View style={[styles.line, { width: "50%", backgroundColor: colors.neutral[200] }]} />
         <View
-          style={[styles.line, { width: "40%", height: 18, backgroundColor: Colors.neutral[200] }]}
+          style={[styles.line, { width: "40%", height: 18, backgroundColor: colors.neutral[200] }]}
         />
       </View>
     </Animated.View>
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   card: {
     backgroundColor: Colors.neutral.white,
     borderRadius: BorderRadius.xl,
@@ -175,7 +178,7 @@ const styles = StyleSheet.create({
   },
   cardImage: { width: "100%", height: 180 },
   cardContent: { padding: Spacing.md, gap: Spacing[2] },
-  line: { height: DesignTokens.spacing['3.5'], borderRadius: BorderRadius.sm },
-});
+  line: { height: 14, borderRadius: BorderRadius.sm },
+}));
 
 export default Skeleton;

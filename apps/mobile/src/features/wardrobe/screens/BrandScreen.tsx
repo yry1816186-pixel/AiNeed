@@ -15,18 +15,20 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { clothingApi } from '../../../services/api/clothing.api';
-import type { ClothingItem } from '../../../types/clothing';
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { clothingApi } from "../../../services/api/clothing.api";
+import type { ClothingItem } from "../../types/clothing";
 
-import type { ProfileStackParamList } from '../../../navigation/types';
-import type { RootStackParamList } from '../../../types/navigation';
-import { DesignTokens , flatColors as colors, Spacing } from '../../../design-system/theme';
+import type { ProfileStackParamList } from "../../../navigation/types";
+import type { RootStackParamList } from "../../../types/navigation";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type BrandRoute = RouteProp<ProfileStackParamList, "Brand">;
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
 export const BrandScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<BrandRoute>();
   const brandId = route.params?.brandId;
@@ -182,7 +184,7 @@ export const BrandScreen: React.FC = () => {
           }
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
-          contentContainerStyle={{ paddingBottom: Spacing.lg}}
+          contentContainerStyle={{ paddingBottom: 24 }}
           ListEmptyComponent={
             <View style={s.centerContent}>
               <Ionicons name="shirt-outline" size={48} color={colors.textTertiary} />
@@ -210,63 +212,88 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary },
-  iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: colors.text,
+  },
+  iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   qrBanner: {
     flexDirection: "row",
     alignItems: "center",
-    marginHorizontal: Spacing.md,
-    marginVertical: DesignTokens.spacing[3],
+    marginHorizontal: 16,
+    marginVertical: 12,
     backgroundColor: colors.surface,
     borderRadius: 14,
-    padding: DesignTokens.spacing['3.5'],
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+    padding: 14,
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
   },
   qrBannerIcon: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 10,
     backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
   },
-  qrBannerText: { flex: 1, marginLeft: DesignTokens.spacing[3]},
-  qrBannerTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
-  qrBannerDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
-  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing.xl},
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: DesignTokens.spacing[3]},
+  qrBannerText: { flex: 1, marginLeft: 12 },
+  qrBannerTitle: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.text,
+  },
+  qrBannerDesc: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.textTertiary,
+    marginTop: 2,
+  },
+  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
+  loadingText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textSecondary,
+    marginTop: 12,
+  },
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: 12 },
   retryBtn: {
-    marginTop: Spacing.md,
+    marginTop: 16,
     backgroundColor: colors.primary,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 24,
+    paddingVertical: 10,
     borderRadius: 20,
   },
-  retryBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: Spacing.md},
+  retryBtnText: {
+    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+  },
+  emptyTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginTop: 16,
+  },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
-    marginTop: Spacing.sm,
+    marginTop: 8,
     textAlign: "center",
   },
   productCard: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
@@ -284,18 +311,31 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  productInfo: { flex: 1, marginLeft: DesignTokens.spacing['3.5']},
-  productName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary, lineHeight: 20 },
-  productBrand: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 3 },
-  priceRow: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, marginTop: DesignTokens.spacing['1.5']},
-  productPrice: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: colors.primary },
+  productInfo: { flex: 1, marginLeft: 14 },
+  productName: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+    color: colors.textPrimary,
+    lineHeight: 20,
+  },
+  productBrand: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.textTertiary,
+    marginTop: 3,
+  },
+  priceRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 6 },
+  productPrice: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "700",
+    color: colors.primary,
+  },
   productColors: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   loadingMore: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
+    gap: 8,
+    paddingVertical: 16,
   },
   loadingMoreText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
 });

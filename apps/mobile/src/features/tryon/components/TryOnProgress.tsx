@@ -14,11 +14,16 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors , Spacing } from '../../../design-system/theme'
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { SpringConfigs, Duration, LoadingAnimations } from '../../../design-system/theme/tokens/animations';
-import { useReducedMotion } from '../../../hooks/useReducedMotion';
-import { useStaggeredAnimation } from '../../../hooks/useAdvancedAnimations';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import {
+  SpringConfigs,
+  Duration,
+  LoadingAnimations,
+} from "../../../design-system/theme/tokens/animations";
+import { useReducedMotion } from "../../../hooks/useReducedMotion";
+import { useStaggeredAnimation } from "../../../hooks/useAdvancedAnimations";
+import { Colors } from "../../../theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -64,14 +69,8 @@ function StepIcon({
     }
 
     // Entrance animation
-    scale.value = withDelay(
-      index * 100,
-      withSpring(1, SpringConfigs.bouncy)
-    );
-    opacity.value = withDelay(
-      index * 100,
-      withTiming(1, { duration: Duration.normal })
-    );
+    scale.value = withDelay(index * 100, withSpring(1, SpringConfigs.bouncy));
+    opacity.value = withDelay(index * 100, withTiming(1, { duration: Duration.normal }));
   }, [index, reducedMotion]);
 
   // Step-specific animations when active
@@ -112,10 +111,7 @@ function StepIcon({
     // Step 2: Sparkles pulse
     if (index === 2) {
       scale.value = withRepeat(
-        withSequence(
-          withSpring(1.2, SpringConfigs.bouncy),
-          withSpring(1, SpringConfigs.bouncy)
-        ),
+        withSequence(withSpring(1.2, SpringConfigs.bouncy), withSpring(1, SpringConfigs.bouncy)),
         -1,
         true
       );
@@ -135,10 +131,7 @@ function StepIcon({
   }, [isComplete, reducedMotion]);
 
   const iconAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: scale.value },
-      { rotate: `${rotation.value}deg` },
-    ],
+    transform: [{ scale: scale.value }, { rotate: `${rotation.value}deg` }],
     opacity: opacity.value,
   }));
 
@@ -148,31 +141,27 @@ function StepIcon({
   }));
 
   const iconColor = isComplete
-    ? Colors.primary[500]
+    ? colors.primary[500]
     : isActive
-      ? Colors.primary[400]
-      : Colors.neutral[400];
+      ? colors.primary[400]
+      : colors.neutral[400];
 
   const bgColor = isComplete
-    ? Colors.primary[50]
+    ? colors.primary[50]
     : isActive
-      ? Colors.primary[100]
-      : Colors.neutral[100];
+      ? colors.primary[100]
+      : colors.neutral[100];
 
   return (
     <View style={styles.stepIconContainer}>
       <Animated.View
-        style={[
-          styles.stepIconCircle,
-          { backgroundColor: bgColor },
-          iconAnimatedStyle,
-        ]}
+        style={[styles.stepIconCircle, { backgroundColor: bgColor }, iconAnimatedStyle]}
       >
         <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={24} color={iconColor} />
         {/* Scan line for body analysis step */}
         {index === 0 && (
           <Animated.View style={[styles.scanLine, scanLineStyle]}>
-            <View style={[styles.scanLineInner, { backgroundColor: Colors.primary[400] }]} />
+            <View style={[styles.scanLineInner, { backgroundColor: colors.primary[400] }]} />
           </Animated.View>
         )}
       </Animated.View>
@@ -201,7 +190,7 @@ function GradientProgressBar({ progress }: { progress: number }) {
     <View style={styles.progressBarTrack}>
       <Animated.View style={[styles.progressBarFill, barStyle]}>
         <LinearGradient
-          colors={[Colors.primary[400], Colors.primary[600]]}
+          colors={[colors.primary[400], colors.primary[600]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={StyleSheet.absoluteFill}
@@ -219,11 +208,9 @@ function GradientProgressBar({ progress }: { progress: number }) {
  * Progress bar uses brand gradient (primary[400] -> primary[600]).
  * Uses StaggeredAnimation for step entrance.
  */
-export const TryOnProgress: React.FC<TryOnProgressProps> = ({
-  currentStep,
-  progress,
-  style,
-}) => {
+export const TryOnProgress: React.FC<TryOnProgressProps> = ({ currentStep, progress, style }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const staggered = useStaggeredAnimation(STEPS.length, 100);
 
   useEffect(() => {
@@ -264,12 +251,7 @@ export const TryOnProgress: React.FC<TryOnProgressProps> = ({
               </Text>
               {/* Connector line */}
               {i < STEPS.length - 1 && (
-                <View
-                  style={[
-                    styles.connector,
-                    i < currentStep && styles.connectorComplete,
-                  ]}
-                />
+                <View style={[styles.connector, i < currentStep && styles.connectorComplete]} />
               )}
             </Animated.View>
           );
@@ -289,16 +271,16 @@ export const TryOnProgress: React.FC<TryOnProgressProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
-    paddingVertical: Spacing.md,
-    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: 16,
+    paddingHorizontal: 20,
   },
   stepsRow: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    marginBottom: DesignTokens.spacing[5],
+    marginBottom: 20,
   },
   stepWrapper: {
     alignItems: "center",
@@ -310,8 +292,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   stepIconCircle: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: 48,
+    height: 48,
     borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
@@ -319,44 +301,44 @@ const styles = StyleSheet.create({
   },
   scanLine: {
     position: "absolute",
-    left: Spacing.xs,
-    right: Spacing.xs,
-    height: DesignTokens.spacing['0.5'],
+    left: 4,
+    right: 4,
+    height: 2,
   },
   scanLineInner: {
     flex: 1,
-    height: DesignTokens.spacing['0.5'],
+    height: 2,
     borderRadius: 1,
   },
   stepLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
-    marginTop: Spacing.sm,
+    color: colors.neutral[500],
+    marginTop: 8,
     textAlign: "center",
   },
   stepLabelActive: {
-    color: Colors.primary[500],
+    color: colors.primary[500],
     fontWeight: "600",
   },
   stepLabelComplete: {
-    color: Colors.primary[600],
+    color: colors.primary[600],
     fontWeight: "500",
   },
   connector: {
     position: "absolute",
-    top: Spacing.lg,
+    top: 24,
     right: -20,
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing['0.5'],
-    backgroundColor: Colors.neutral[200],
+    width: 40,
+    height: 2,
+    backgroundColor: colors.neutral[200],
   },
   connectorComplete: {
-    backgroundColor: Colors.primary[400],
+    backgroundColor: colors.primary[400],
   },
   progressBarTrack: {
-    height: DesignTokens.spacing['1.5'],
+    height: 6,
     borderRadius: 3,
-    backgroundColor: Colors.neutral[200],
+    backgroundColor: colors.neutral[200],
     overflow: "hidden",
   },
   progressBarFill: {
@@ -366,9 +348,9 @@ const styles = StyleSheet.create({
   },
   currentStepText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.primary[500],
+    color: colors.primary[500],
     fontWeight: "500",
-    marginTop: DesignTokens.spacing[3],
+    marginTop: 12,
     textAlign: "center",
   },
-});
+}));

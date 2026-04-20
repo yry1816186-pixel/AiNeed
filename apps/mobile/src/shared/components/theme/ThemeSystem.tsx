@@ -9,10 +9,7 @@
  * 所有组件现在消费统一的 ThemeContext。
  * 品牌色统一使用 Terracotta #C67B5C（暗色模式 #D68B6C）。
  */
-import React, {
-  useEffect,
-  ReactNode,
-} from "react";
+import React, { useEffect, ReactNode } from "react";
 import {
   View,
   Text,
@@ -37,14 +34,14 @@ import {
   interpolate,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { DesignTokens,
+import {
   Spacing,
   BorderRadius,
   Shadows,
-  gradients as themeGradients } from '../../../design-system/theme';
-import { createStyles , ThemeMode, ThemeProvider as UnifiedThemeProvider} from '../../../shared/contexts/ThemeContext';
-import { useTheme as useUnifiedTheme } from '../../../shared/contexts/ThemeContext';
-
+  gradients as themeGradients,
+} from "../../design-system/theme";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -84,8 +81,9 @@ export const ThemedView: React.FC<ThemedViewProps> = ({
   style,
   variant = "background",
 }) => {
-  const { colors } = useUnifiedTheme();
+  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useUnifiedTheme();
 
   const backgroundColor = {
     background: colors.backgrounds.primary,
@@ -155,7 +153,6 @@ export interface ThemeSwitchProps {
 
 export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
   const { mode, isDark, setMode, colors } = useUnifiedTheme();
-  const styles = useStyles(colors);
   const switchTranslateX = useSharedValue(isDark ? 24 : 0);
   const iconRotation = useSharedValue(isDark ? 180 : 0);
 
@@ -185,6 +182,7 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ style }) => {
   }));
 
   const handleToggle = () => {
+    const { colors, isDark } = useTheme();
     if (mode === "system") {
       void setMode(isDark ? "light" : "dark");
     } else {
@@ -234,13 +232,10 @@ export interface AccentColorPickerProps {
 
 export const AccentColorPicker: React.FC<AccentColorPickerProps> = ({ style }) => {
   const { colors } = useUnifiedTheme();
-  const styles = useStyles(colors);
 
   return (
     <View style={[styles.accentPicker, style]}>
-      <Text style={[styles.pickerTitle, { color: colors.text.primary }]}>
-        品牌强调色
-      </Text>
+      <Text style={[styles.pickerTitle, { color: colors.text.primary }]}>品牌强调色</Text>
       <View style={styles.colorOptions}>
         <View style={styles.colorOption}>
           <View
@@ -252,9 +247,7 @@ export const AccentColorPicker: React.FC<AccentColorPickerProps> = ({ style }) =
           >
             <Ionicons name="checkmark" size={16} color={colors.surface} />
           </View>
-          <Text style={[styles.colorLabel, { color: colors.text.secondary }]}>
-            Terracotta
-          </Text>
+          <Text style={[styles.colorLabel, { color: colors.text.secondary }]}>Terracotta</Text>
         </View>
       </View>
     </View>
@@ -270,7 +263,6 @@ export interface ThemeSettingsSheetProps {
 
 export const ThemeSettingsSheet: React.FC<ThemeSettingsSheetProps> = ({ visible, onClose }) => {
   const { colors, mode, setMode, isDark } = useUnifiedTheme();
-  const styles = useStyles(colors);
   const translateY = useSharedValue(SCREEN_WIDTH);
   const backdropOpacity = useSharedValue(0);
 
@@ -411,11 +403,12 @@ export interface GlassCardProps {
 
 export const GlassCard: React.FC<GlassCardProps> = ({ children, style, intensity = 80, tint }) => {
   const { isDark, colors } = useUnifiedTheme();
-  const styles = useStyles(colors);
   const defaultTint = tint || (isDark ? "dark" : "light");
 
   return (
-    <View style={[styles.glassCard, { backgroundColor: `${colors.backgrounds.elevated}40` }, style]}>
+    <View
+      style={[styles.glassCard, { backgroundColor: `${colors.backgrounds.elevated}40` }, style]}
+    >
       <BlurView
         intensity={intensity}
         tint={defaultTint}
@@ -437,30 +430,30 @@ export const GlassCard: React.FC<GlassCardProps> = ({ children, style, intensity
 
 const useStyles = createStyles((colors) => ({
   themeSwitch: {
-    padding: Spacing.xs,
+    padding: 4,
   },
   switchTrack: {
-    width: Spacing['2xl'],
-    height: DesignTokens.spacing[7],
+    width: 48,
+    height: 28,
     borderRadius: 14,
-    padding: DesignTokens.spacing['0.5'],
+    padding: 2,
   },
   switchThumb: {
-    width: Spacing.lg,
-    height: Spacing.lg,
+    width: 24,
+    height: 24,
     borderRadius: 12,
     backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
   },
   iconContainer: {
-    width: Spacing.lg,
-    height: Spacing.lg,
+    width: 24,
+    height: 24,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -469,33 +462,33 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   accentPicker: {
-    marginTop: Spacing.lg,
+    marginTop: 24,
   },
   pickerTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    marginBottom: Spacing.md,
+    marginBottom: 16,
   },
   colorOptions: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.md,
+    gap: 16,
   },
   colorOption: {
     alignItems: "center",
     width: 60,
   },
   colorCircle: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
   },
   colorCircleSelected: {
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: Spacing.xs },
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 6,
@@ -506,7 +499,7 @@ const useStyles = createStyles((colors) => ({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.neutral[900],
+    backgroundColor: DesignTokens.colors.neutral.black,
   },
   sheet: {
     position: "absolute",
@@ -515,41 +508,41 @@ const useStyles = createStyles((colors) => ({
     right: 0,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingTop: DesignTokens.spacing[3],
+    paddingHorizontal: 20,
+    paddingTop: 12,
     paddingBottom: Platform.OS === "ios" ? 40 : 20,
   },
   sheetHandle: {
-    width: DesignTokens.spacing[9],
+    width: 36,
     height: 5,
-    backgroundColor: DesignTokens.colors.neutral[200],
+    backgroundColor: "#E4E4E7",
     borderRadius: 2.5,
     alignSelf: "center",
-    marginBottom: DesignTokens.spacing[5],
+    marginBottom: 20,
   },
   sheetTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    marginBottom: DesignTokens.spacing[5],
+    marginBottom: 20,
   },
   themeOptions: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3],
+    gap: 12,
   },
   themeOption: {
     flex: 1,
     alignItems: "center",
-    padding: Spacing.md,
+    padding: 16,
     borderRadius: 16,
     position: "relative",
   },
   themeOptionIcon: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
   },
   themeOptionLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -557,8 +550,8 @@ const useStyles = createStyles((colors) => ({
   },
   checkMark: {
     position: "absolute",
-    top: Spacing.sm,
-    right: Spacing.sm,
+    top: 8,
+    right: 8,
     width: 18,
     height: 18,
     borderRadius: 9,
@@ -566,13 +559,13 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   accentSection: {
-    marginTop: Spacing.lg,
+    marginTop: 24,
   },
   glassCard: {
     borderRadius: 20,
     overflow: "hidden",
   },
-}))
+}));
 
 const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 

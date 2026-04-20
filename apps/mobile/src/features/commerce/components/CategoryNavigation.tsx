@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const CATEGORIES = [
   { key: "tops", icon: "tshirt-crew", label: "上装" },
@@ -45,18 +46,18 @@ export const CategoryNavigation: React.FC<CategoryNavigationProps> = ({
                 {cat.key === "tops"
                   ? "T"
                   : cat.key === "bottoms"
-                  ? "P"
-                  : cat.key === "dresses"
-                  ? "D"
-                  : cat.key === "outerwear"
-                  ? "C"
-                  : cat.key === "shoes"
-                  ? "S"
-                  : cat.key === "accessories"
-                  ? "A"
-                  : cat.key === "activewear"
-                  ? "R"
-                  : "W"}
+                    ? "P"
+                    : cat.key === "dresses"
+                      ? "D"
+                      : cat.key === "outerwear"
+                        ? "C"
+                        : cat.key === "shoes"
+                          ? "S"
+                          : cat.key === "accessories"
+                            ? "A"
+                            : cat.key === "activewear"
+                              ? "R"
+                              : "W"}
               </Text>
             </View>
             <Text style={[styles.label, isSelected && styles.labelSelected]}>{cat.label}</Text>
@@ -68,21 +69,25 @@ export const CategoryNavigation: React.FC<CategoryNavigationProps> = ({
 };
 
 const useStyles = createStyles((colors) => ({
-  container: { maxHeight: Spacing['4xl'], backgroundColor: colors.surface },
-  content: { paddingHorizontal: DesignTokens.spacing[3], paddingVertical: Spacing.sm, gap: Spacing.xs},
-  item: { alignItems: "center", width: 56, paddingVertical: Spacing.xs},
+  container: { maxHeight: 80, backgroundColor: colors.surface },
+  content: { paddingHorizontal: 12, paddingVertical: 8, gap: 4 },
+  item: { alignItems: "center", width: 56, paddingVertical: 4 },
   itemSelected: {},
   iconCircle: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: colors.backgroundTertiary,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   iconCircleSelected: { backgroundColor: "colors.errorLight" },
-  iconEmoji: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textSecondary },
+  iconEmoji: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textSecondary,
+  },
   label: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
-  labelSelected: { color: colors.error, fontWeight: "500" },
-}))
+  labelSelected: { color: "colors.error", fontWeight: "500" },
+}));

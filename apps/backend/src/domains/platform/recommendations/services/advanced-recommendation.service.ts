@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import {
-  BodyType,
-  SkinTone,
-  ColorSeason,
-  ClothingCategory,
-} from '../../../../types/prisma-enums';
-import { PrismaUserProfile } from '../../../../types/prisma-enums';
-import Decimal from "decimal.js";
+import { Prisma } from "@prisma/client";
+import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
@@ -18,7 +12,7 @@ import { MultimodalFusionService } from "./multimodal-fusion.service";
 /**
  * 将 Prisma Decimal 类型转换为 number
  */
-function toNumber(value: Decimal | number | null | undefined): number {
+function toNumber(value: Prisma.Decimal | number | null | undefined): number {
   if (value === null || value === undefined) {
     return 0;
   }
@@ -74,8 +68,8 @@ interface UserProfile {
 }
 
 interface UserBehaviorData {
-  favorites: Array<{ item: Pick<any, "category"> | null }>;
-  tryOns: Array<{ item: Pick<any, "brandId"> | null }>;
+  favorites: Array<{ item: Pick<ClothingItem, "category"> | null }>;
+  tryOns: Array<{ item: Pick<ClothingItem, "brandId"> | null }>;
   views: Array<{
     query: string;
     id: string;
@@ -93,7 +87,9 @@ interface ItemAttributes {
 }
 
 function toUserProfile(profile: PrismaUserProfile | null): UserProfile | null {
-  if (!profile) {return null;}
+  if (!profile) {
+    return null;
+  }
 
   let stylePrefs: StylePreferences = null;
   if (profile.stylePreferences) {
@@ -133,22 +129,20 @@ export class AdvancedRecommendationService implements OnModuleInit {
     private prisma: PrismaService,
     private multimodalFusion: MultimodalFusionService,
     private knowledgeGraph: KnowledgeGraphService,
-    private matchingTheory: MatchingTheoryService,
+    private matchingTheory: MatchingTheoryService
   ) {}
 
   async onModuleInit() {
     this.logger.log("初始化知识图谱...");
     await this.knowledgeGraph.buildGraph();
     const stats = this.knowledgeGraph.getGraphStats();
-    this.logger.log(
-      `知识图谱构建完成: ${stats.nodeCount}节点, ${stats.edgeCount}边`,
-    );
+    this.logger.log(`知识图谱构建完成: ${stats.nodeCount}节点, ${stats.edgeCount}边`);
   }
 
   async getPersonalizedRecommendations(
     userId: string,
     context: RecommendationContext = {},
-    limit: number = 20,
+    limit: number = 20
   ): Promise<ScoredItem[]> {
     const prismaProfile = await this.prisma.userProfile.findUnique({
       where: { userId },
@@ -160,22 +154,12 @@ export class AdvancedRecommendationService implements OnModuleInit {
     const candidates = await this.getCandidateItems(limit * 4);
 
     const scoredItems = await Promise.all(
-      candidates.map(async (item: any) => {
-        const scores = await this.calculateAllScores(
-          profile,
-          item,
-          userBehaviors,
-          context,
-        );
+      candidates.map(async (item) => {
+        const scores = await this.calculateAllScores(profile, item, userBehaviors, context);
 
         const totalScore = this.combineScores(scores);
 
-        const matchReasons = this.generateMatchReasons(
-          profile,
-          item,
-          scores,
-          context,
-        );
+        const matchReasons = this.generateMatchReasons(profile, item, scores, context);
 
         return {
           id: item.id,
@@ -189,10 +173,10 @@ export class AdvancedRecommendationService implements OnModuleInit {
           matchReasons,
           breakdown: scores,
         };
-      }),
+      })
     );
 
-    scoredItems.sort((a: any, b: any) => b.score - a.score);
+    scoredItems.sort((a, b) => b.score - a.score);
 
     const diverseItems = this.optimizeDiversity(scoredItems, limit);
 
@@ -201,9 +185,9 @@ export class AdvancedRecommendationService implements OnModuleInit {
 
   private async calculateAllScores(
     profile: UserProfile | null,
-    item: any,
+    item: ClothingItem,
     userBehaviors: UserBehaviorData,
-    context: RecommendationContext,
+    context: RecommendationContext
   ): Promise<{
     contentBased: number;
     collaborative: number;
@@ -225,10 +209,12 @@ export class AdvancedRecommendationService implements OnModuleInit {
 
   private async contentBasedScore(
     profile: UserProfile | null,
-    item: any,
-    context: RecommendationContext,
+    item: ClothingItem,
+    context: RecommendationContext
   ): Promise<number> {
-    if (!profile) {return 0.5;}
+    if (!profile) {
+      return 0.5;
+    }
 
     const attrs = item.attributes as ItemAttributes | null;
     let score = 0.5;
@@ -246,13 +232,9 @@ export class AdvancedRecommendationService implements OnModuleInit {
     }
 
     if (profile.skinTone && item.colors?.length > 0) {
-      const flatteringColors = this.matchingTheory.getFlatteringColors(
-        profile.skinTone,
-      );
+      const flatteringColors = this.matchingTheory.getFlatteringColors(profile.skinTone);
       const hasFlatteringColor = item.colors.some((c: string) =>
-        flatteringColors.some((fc) =>
-          c.toLowerCase().includes(fc.toLowerCase()),
-        ),
+        flatteringColors.some((fc) => c.toLowerCase().includes(fc.toLowerCase()))
       );
       if (hasFlatteringColor) {
         score += 0.1;
@@ -261,13 +243,11 @@ export class AdvancedRecommendationService implements OnModuleInit {
 
     if (profile.stylePreferences && attrs?.style) {
       const userStyles = Array.isArray(profile.stylePreferences)
-        ? profile.stylePreferences.map((s) =>
-            typeof s === "string" ? s : s.name,
-          )
+        ? profile.stylePreferences.map((s) => (typeof s === "string" ? s : s.name))
         : [];
       const itemStyles = attrs.style || [];
       const matchingStyles = userStyles.filter((s: string) =>
-        itemStyles.some((is: string) => is.toLowerCase() === s.toLowerCase()),
+        itemStyles.some((is: string) => is.toLowerCase() === s.toLowerCase())
       );
       score += matchingStyles.length * 0.05;
     }
@@ -281,25 +261,20 @@ export class AdvancedRecommendationService implements OnModuleInit {
     return Math.min(score, 1);
   }
 
-  private collaborativeScore(
-    item: any,
-    userBehaviors: UserBehaviorData,
-  ): number {
+  private collaborativeScore(item: ClothingItem, userBehaviors: UserBehaviorData): number {
     let score = 0.5;
 
     const favoriteCategories = new Set(
       userBehaviors.favorites
         .map((f) => f.item?.category)
-        .filter((c): c is ClothingCategory => c !== undefined),
+        .filter((c): c is ClothingCategory => c !== undefined)
     );
     if (favoriteCategories.has(item.category)) {
       score += 0.1;
     }
 
     const triedBrands = new Set(
-      userBehaviors.tryOns
-        .map((t) => t.item?.brandId)
-        .filter((id): id is string => id !== null),
+      userBehaviors.tryOns.map((t) => t.item?.brandId).filter((id): id is string => id !== null)
     );
     if (item.brandId && triedBrands.has(item.brandId)) {
       score += 0.05;
@@ -312,8 +287,8 @@ export class AdvancedRecommendationService implements OnModuleInit {
   }
 
   private async knowledgeGraphScore(
-    item: any,
-    context: RecommendationContext,
+    item: ClothingItem,
+    context: RecommendationContext
   ): Promise<number> {
     let score = 0.5;
 
@@ -322,15 +297,11 @@ export class AdvancedRecommendationService implements OnModuleInit {
     ]);
     score += Math.min(relatedItems.length * 0.02, 0.1);
 
-    const compatibleItems = this.knowledgeGraph.findCompatibleItemsByStyle(
-      item.id,
-    );
+    const compatibleItems = this.knowledgeGraph.findCompatibleItemsByStyle(item.id);
     score += Math.min(compatibleItems.length * 0.01, 0.1);
 
     if (context.occasion) {
-      const occasionItems = this.knowledgeGraph.getItemsForOccasion(
-        context.occasion,
-      );
+      const occasionItems = this.knowledgeGraph.getItemsForOccasion(context.occasion);
       const isSuitable = occasionItems.some((i) => i.id === `item_${item.id}`);
       if (isSuitable) {
         score += 0.1;
@@ -341,11 +312,13 @@ export class AdvancedRecommendationService implements OnModuleInit {
   }
 
   private theoryBasedScore(
-    item: any,
+    item: ClothingItem,
     profile: UserProfile | null,
-    context: RecommendationContext,
+    context: RecommendationContext
   ): number {
-    if (!profile) {return 0.5;}
+    if (!profile) {
+      return 0.5;
+    }
 
     const attrs = item.attributes as ItemAttributes | null;
     const outfitScore = this.matchingTheory.calculateOutfitScore({
@@ -377,7 +350,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
   async getOccasionRecommendations(
     userId: string,
     occasion: string,
-    limit: number = 10,
+    limit: number = 10
   ): Promise<ScoredItem[]> {
     const prismaProfile = await this.prisma.userProfile.findUnique({
       where: { userId },
@@ -390,11 +363,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
       where: {
         isActive: true,
         category: {
-          in: [
-            ClothingCategory.tops,
-            ClothingCategory.bottoms,
-            ClothingCategory.dresses,
-          ],
+          in: [ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.dresses],
         },
       },
       include: {
@@ -403,7 +372,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
       take: limit * 3,
     });
 
-    const scoredItems = items.map((item: any) => {
+    const scoredItems = items.map((item) => {
       const attrs = item.attributes as ItemAttributes | null;
 
       let score = 50;
@@ -414,16 +383,14 @@ export class AdvancedRecommendationService implements OnModuleInit {
 
       if (attrs?.style) {
         const matchingStyles = attrs.style.filter((s: string) =>
-          styleGuide.suitableStyles.includes(s.toLowerCase()),
+          styleGuide.suitableStyles.includes(s.toLowerCase())
         );
         score += matchingStyles.length * 10;
       }
 
       if (item.colors) {
         const matchingColors = item.colors.filter((c: string) =>
-          styleGuide.suitableColors.some((sc) =>
-            c.toLowerCase().includes(sc.toLowerCase()),
-          ),
+          styleGuide.suitableColors.some((sc) => c.toLowerCase().includes(sc.toLowerCase()))
         );
         score += matchingColors.length * 5;
       }
@@ -446,7 +413,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
       };
     });
 
-    scoredItems.sort((a: any, b: any) => b.score - a.score);
+    scoredItems.sort((a, b) => b.score - a.score);
 
     return scoredItems.slice(0, limit);
   }
@@ -454,7 +421,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
   async getOutfitRecommendation(
     baseItemId: string,
     userId?: string,
-    occasion?: string,
+    occasion?: string
   ): Promise<{
     tops?: ScoredItem[];
     bottoms?: ScoredItem[];
@@ -491,12 +458,12 @@ export class AdvancedRecommendationService implements OnModuleInit {
       });
 
       const scored = await Promise.all(
-        candidates.map(async (item: any) => {
+        candidates.map(async (item) => {
           const scores = await this.calculateAllScores(
             profile,
             item,
             { favorites: [], tryOns: [], views: [] },
-            { occasion },
+            { occasion }
           );
 
           const totalScore = this.combineScores(scores);
@@ -514,10 +481,10 @@ export class AdvancedRecommendationService implements OnModuleInit {
               occasion,
             }),
           };
-        }),
+        })
       );
 
-      scored.sort((a: any, b: any) => b.score - a.score);
+      scored.sort((a, b) => b.score - a.score);
       results[key] = scored.slice(0, 5);
 
       const firstScored = scored[0];
@@ -534,12 +501,9 @@ export class AdvancedRecommendationService implements OnModuleInit {
   }
 
   private getComplementaryCategories(
-    baseCategory: ClothingCategory,
+    baseCategory: ClothingCategory
   ): Record<string, ClothingCategory> {
-    const complementMap: Record<
-      ClothingCategory,
-      Record<string, ClothingCategory>
-    > = {
+    const complementMap: Record<ClothingCategory, Record<string, ClothingCategory>> = {
       [ClothingCategory.tops]: {
         bottoms: ClothingCategory.bottoms,
         footwear: ClothingCategory.footwear,
@@ -597,8 +561,8 @@ export class AdvancedRecommendationService implements OnModuleInit {
       take: limit * 2,
     });
 
-    const scoredItems = items.map((item: any) => {
-      const viewScore = Math.min(item.viewCount / 100, 30);
+    const scoredItems = items.map((item) => {
+      const viewScore = Math.min(item.viewCount / 50, 30);
       const likeScore = Math.min(item.likeCount / 25, 30);
       const recencyScore = 20;
       const featuredScore = item.isFeatured ? 20 : 0;
@@ -611,15 +575,12 @@ export class AdvancedRecommendationService implements OnModuleInit {
         currency: item.currency,
         brand: item.brand,
         category: item.category,
-        score: Math.min(
-          viewScore + likeScore + recencyScore + featuredScore,
-          100,
-        ),
+        score: Math.min(viewScore + likeScore + recencyScore + featuredScore, 100),
         matchReasons: ["热门单品", "近期爆款"],
       };
     });
 
-    scoredItems.sort((a: any, b: any) => b.score - a.score);
+    scoredItems.sort((a, b) => b.score - a.score);
 
     return scoredItems.slice(0, limit);
   }
@@ -637,11 +598,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
     const outfitTemplates = [
       {
         name: "简约通勤风",
-        categories: [
-          ClothingCategory.tops,
-          ClothingCategory.bottoms,
-          ClothingCategory.footwear,
-        ],
+        categories: [ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.footwear],
         description: "简洁大方的职场穿搭，展现专业气质",
       },
       {
@@ -692,11 +649,11 @@ export class AdvancedRecommendationService implements OnModuleInit {
 
   private async findBestItem(
     items: Array<
-      any & {
+      ClothingItem & {
         brand: { id: string; name: string; logo: string | null } | null;
       }
     >,
-    profile: UserProfile | null,
+    profile: UserProfile | null
   ): Promise<ScoredItem | null> {
     // 如果数组为空，返回 null
     if (items.length === 0) {
@@ -712,7 +669,7 @@ export class AdvancedRecommendationService implements OnModuleInit {
         profile,
         item,
         { favorites: [], tryOns: [], views: [] },
-        {},
+        {}
       );
       const score = this.combineScores(scores);
 
@@ -774,14 +731,14 @@ export class AdvancedRecommendationService implements OnModuleInit {
 
   private generateMatchReasons(
     profile: UserProfile | null,
-    item: any,
+    item: ClothingItem,
     scores: {
       contentBased: number;
       collaborative: number;
       knowledgeGraph: number;
       theoryBased: number;
     },
-    context: RecommendationContext,
+    context: RecommendationContext
   ): string[] {
     const reasons: string[] = [];
     const attrs = item.attributes as ItemAttributes | null;
@@ -790,21 +747,14 @@ export class AdvancedRecommendationService implements OnModuleInit {
       reasons.push(`适合${this.getBodyTypeName(profile.bodyType)}体型`);
     }
 
-    if (
-      profile?.colorSeason &&
-      attrs?.colorSeasons?.includes(profile.colorSeason)
-    ) {
+    if (profile?.colorSeason && attrs?.colorSeasons?.includes(profile.colorSeason)) {
       reasons.push(`符合${this.getColorSeasonName(profile.colorSeason)}型色彩`);
     }
 
     if (profile?.skinTone && item.colors?.length > 0) {
-      const flatteringColors = this.matchingTheory.getFlatteringColors(
-        profile.skinTone,
-      );
+      const flatteringColors = this.matchingTheory.getFlatteringColors(profile.skinTone);
       const matchedColor = item.colors.find((c: string) =>
-        flatteringColors.some((fc) =>
-          c.toLowerCase().includes(fc.toLowerCase()),
-        ),
+        flatteringColors.some((fc) => c.toLowerCase().includes(fc.toLowerCase()))
       );
       if (matchedColor) {
         reasons.push(`${matchedColor}色适合您的肤色`);
@@ -838,14 +788,18 @@ export class AdvancedRecommendationService implements OnModuleInit {
         categoryCount[item.category] = count + 1;
       }
 
-      if (result.length >= limit) {break;}
+      if (result.length >= limit) {
+        break;
+      }
     }
 
     if (result.length < limit) {
       for (const item of items) {
         if (!result.some((r) => r.id === item.id)) {
           result.push(item);
-          if (result.length >= limit) {break;}
+          if (result.length >= limit) {
+            break;
+          }
         }
       }
     }

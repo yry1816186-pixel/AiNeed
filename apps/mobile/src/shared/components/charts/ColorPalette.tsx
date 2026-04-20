@@ -1,9 +1,10 @@
-﻿﻿﻿﻿﻿import React from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import Svg, { Rect, Text as SvgText, Path, G } from "react-native-svg";
-import { typography } from '../../../design-system/theme/tokens/typography';
+import { colors } from "../../theme/tokens/colors";
+import { typography } from "../../theme/tokens/typography";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 export interface ColorPaletteProps {
   colors: { name: string; hex: string; label?: string }[];
@@ -25,7 +26,8 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
   gap = 8,
   showLabel = true,
   type = "neutral",
-  accessibilityLabel}) => {
+  accessibilityLabel,
+}) => {
   const { colors } = useTheme();
   const _styles = use_styles(colors);
   const defaultA11yLabel =
@@ -49,7 +51,7 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
             height={indicatorSize}
             rx={indicatorSize / 2}
             ry={indicatorSize / 2}
-            fill={colors.primary}
+            fill={colors.brand.warmPrimary}
           />
           <Path
             d={CheckPath}
@@ -137,6 +139,6 @@ export const ColorPalette: React.FC<ColorPaletteProps> = ({
   );
 };
 
-const use_styles = createStyles((colors) => ({}))
+const use_styles = createStyles((colors) => ({}));
 
 export default ColorPalette;

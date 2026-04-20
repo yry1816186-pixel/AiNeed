@@ -1,7 +1,15 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  ReactNode,
+} from "react";
 import { useColorScheme, Appearance, StyleSheet, type ColorValue } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DesignTokens, darkTokens } from '../../design-system/theme';
+import { DesignTokens, darkTokens } from "../../design-system/theme";
 import type { DesignTokensType, DarkTokensType } from "../../design-system/theme";
 import {
   seasonAccentColors,
@@ -11,8 +19,6 @@ import {
 } from "../../design-system/theme";
 import { FeatureFlagDefaults } from "../../constants/feature-flags";
 import type { FlatColors } from "../../design-system/theme/FlatColors";
-import { WarmPrimaryColors } from "../../design-system/theme/tokens/colors";
-
 
 export type ThemeMode = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
@@ -21,13 +27,7 @@ type TokenSet = typeof DesignTokens;
 
 function buildFlatColors(base: TokenSet["colors"]): FlatColors {
   return {
-    brand: {
-      ...base.brand,
-      primary: base.brand.terracotta,
-      warmPrimary: '#C67C4E',
-      warmAccent: '#E8A87C',
-      warmSecondary: '#D4917A',
-    } as FlatColors['brand'],
+    brand: base.brand,
     neutral: base.neutral,
     semantic: base.semantic,
     backgrounds: base.backgrounds,
@@ -51,7 +51,7 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     primaryLight: base.brand.terracottaLight,
     primaryDark: base.brand.terracottaDark,
     subtleBg: base.backgrounds.tertiary,
-    gold: DesignTokens.colors.brand.camel,
+    gold: "colors.warning",
     placeholderBg: base.neutral[200],
     overlay: base.backgrounds.overlay,
     background: base.backgrounds.primary,
@@ -66,29 +66,11 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     info: base.semantic.info,
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
-    cartLight: DesignTokens.colors.brand.terracottaLight, // warm light background for cart
+    cartLight: "#FFF5F0",
+    purple: DesignTokens.colors.brand.terracottaDark,
     terracottaDark: base.brand.terracottaDark,
-    amber: base.semantic.warning,
+    amber: DesignTokens.colors.semantic.warning,
     secondary: base.brand.sage,
-    warmPrimary: base.brand.terracotta,
-    warmAccent: base.brand.camel,
-    warmSecondary: base.brand.sageLight,
-    like: base.semantic.error,
-    ocean: WarmPrimaryColors.ocean[500],
-    mint: WarmPrimaryColors.mint[400],
-    coral: WarmPrimaryColors.coral[500],
-    main: base.brand.terracotta,
-    light: base.brand.terracottaLight,
-    dark: base.brand.terracottaDark,
-    oceanMint: '#33AA99',
-    fashion: '#FF7F7F',
-    purple: '#7B68EE',
-    secondaryLight: base.brand.sageLight,
-    gradients: {
-      ...DesignTokens.gradients,
-      coralRose: [WarmPrimaryColors.coral[500], '#FF8E8E'],
-      oceanMint: [WarmPrimaryColors.ocean[500], WarmPrimaryColors.mint[400]],
-    },
   };
 }
 
@@ -105,7 +87,7 @@ export interface ThemeContextType {
   spacing: TokenSet["spacing"];
   borderRadius: TokenSet["borderRadius"];
   shadows: TokenSet["shadows"];
-  gradients: FlatColors["gradients"];
+  gradients: TokenSet["gradients"];
   animation: TokenSet["animation"];
   setMode: (mode: ThemeMode) => void;
   toggleTheme: () => void;
@@ -120,7 +102,7 @@ const SEASON_STORAGE_KEY = "@xuno_color_season";
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const systemColorScheme = useColorScheme();
   const [mode, setModeState] = useState<ThemeMode>("system");
   const [colorSeason, setColorSeasonState] = useState<ColorSeason | null>(null);
@@ -136,11 +118,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         if (savedMode === "light" || savedMode === "dark" || savedMode === "system") {
           setModeState(savedMode);
         }
-        if (savedSeason && (savedSeason === "spring" || savedSeason === "summer" || savedSeason === "autumn" || savedSeason === "winter")) {
+        if (
+          savedSeason &&
+          (savedSeason === "spring" ||
+            savedSeason === "summer" ||
+            savedSeason === "autumn" ||
+            savedSeason === "winter")
+        ) {
           setColorSeasonState(savedSeason as ColorSeason);
         }
       } catch (e) {
-        console.error('Failed to load theme:', e);
+        console.error("Failed to load theme:", e);
       } finally {
         setIsReady(true);
       }
@@ -155,7 +143,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return () => subscription.remove();
   }, []);
 
-  const isDark = FeatureFlagDefaults.dark_mode && (mode === "dark" || (mode === "system" && systemColorScheme === "dark"));
+  const isDark =
+    FeatureFlagDefaults.dark_mode &&
+    (mode === "dark" || (mode === "system" && systemColorScheme === "dark"));
   const resolvedTheme: ResolvedTheme = isDark ? "dark" : "light";
 
   const tokens: TokenSet = (isDark ? darkTokens : DesignTokens) as TokenSet;
@@ -166,7 +156,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, newMode);
     } catch (e) {
-      console.error('Failed to save theme:', e);
+      console.error("Failed to save theme:", e);
     }
   }, []);
 
@@ -184,7 +174,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         await AsyncStorage.removeItem(SEASON_STORAGE_KEY);
       }
     } catch (e) {
-      console.error('Failed to reset theme:', e);
+      console.error("Failed to reset theme:", e);
     }
   }, []);
 
@@ -203,7 +193,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       spacing: tokens.spacing,
       borderRadius: tokens.borderRadius,
       shadows: tokens.shadows,
-      gradients: flatColors.gradients,
+      gradients: tokens.gradients,
       animation: tokens.animation,
       setMode,
       toggleTheme,
@@ -211,7 +201,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       seasonAccent,
       setSeasonAccent,
     }),
-    [resolvedTheme, mode, isDark, tokens, flatColors, setMode, toggleTheme, colorSeason, seasonAccent, setSeasonAccent],
+    [
+      resolvedTheme,
+      mode,
+      isDark,
+      tokens,
+      flatColors,
+      setMode,
+      toggleTheme,
+      colorSeason,
+      seasonAccent,
+      setSeasonAccent,
+    ]
   );
 
   if (!isReady) {
@@ -232,10 +233,15 @@ export function useTheme(): ThemeContextType {
 export function createStyles<T extends StyleSheet.NamedStyles<T>>(
   factory: (colors: FlatColors) => T
 ): (colors: FlatColors) => T {
-  return (colors: FlatColors) => StyleSheet.create(factory(colors)) as T;
+  return (colors: FlatColors) => StyleSheet.create(factory(colors));
 }
 
 export { ThemeContext };
 export type { DesignTokensType, DarkTokensType, FlatColors };
-export { normalizeColorSeason, seasonAccentColors, seasonLabels, seasonDescriptions } from "../../design-system/theme";
+export {
+  normalizeColorSeason,
+  seasonAccentColors,
+  seasonLabels,
+  seasonDescriptions,
+} from "../../design-system/theme";
 export type { ColorSeason, SeasonAccentColors };

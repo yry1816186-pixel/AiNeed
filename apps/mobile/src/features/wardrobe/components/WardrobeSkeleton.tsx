@@ -1,9 +1,8 @@
 ﻿import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { Skeleton } from '../../../design-system/ui/Skeleton';
-import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-
+import { Skeleton } from "../../design-system/ui/Skeleton";
+import { Colors, Spacing, BorderRadius } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_GAP = 12;
@@ -19,6 +18,8 @@ const CARD_WIDTH = (SCREEN_WIDTH - HORIZONTAL_PADDING * 2 - CARD_GAP) / NUM_COLU
  * - 2-column grid of clothing items
  */
 export const WardrobeSkeleton: React.FC = () => {
+  const styles = useStyles(colors);
+  const { colors } = useTheme();
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -34,29 +35,39 @@ export const WardrobeSkeleton: React.FC = () => {
       <View style={styles.statsRow}>
         <View style={styles.statCard}>
           <Skeleton width={50} height={28} borderRadius={BorderRadius.sm} />
-          <Skeleton width={40} height={12} borderRadius={BorderRadius.sm} style={{ marginTop: Spacing.xs}} />
+          <Skeleton
+            width={40}
+            height={12}
+            borderRadius={BorderRadius.sm}
+            style={{ marginTop: 4 }}
+          />
         </View>
         <View style={styles.statCard}>
           <Skeleton width={50} height={28} borderRadius={BorderRadius.sm} />
-          <Skeleton width={40} height={12} borderRadius={BorderRadius.sm} style={{ marginTop: Spacing.xs}} />
+          <Skeleton
+            width={40}
+            height={12}
+            borderRadius={BorderRadius.sm}
+            style={{ marginTop: 4 }}
+          />
         </View>
       </View>
 
       {/* Search bar */}
       <View style={styles.searchContainer}>
         <Skeleton width={18} height={18} borderRadius={9} />
-        <Skeleton width="80%" height={16} borderRadius={BorderRadius.sm} style={{ marginLeft: Spacing.sm}} />
+        <Skeleton
+          width="80%"
+          height={16}
+          borderRadius={BorderRadius.sm}
+          style={{ marginLeft: 8 }}
+        />
       </View>
 
       {/* Category tabs */}
       <View style={styles.categoryRow}>
         {[0, 1, 2, 3, 4].map((i) => (
-          <Skeleton
-            key={i}
-            width={60 + (i % 2) * 20}
-            height={32}
-            borderRadius={16}
-          />
+          <Skeleton key={i} width={60 + (i % 2) * 20} height={32} borderRadius={16} />
         ))}
       </View>
 
@@ -65,8 +76,18 @@ export const WardrobeSkeleton: React.FC = () => {
         {Array.from({ length: 6 }).map((_, i) => (
           <View key={i} style={styles.gridItem}>
             <Skeleton width={CARD_WIDTH} height={CARD_WIDTH} borderRadius={BorderRadius.lg} />
-            <Skeleton width="70%" height={13} borderRadius={BorderRadius.sm} style={{ marginTop: Spacing.sm, paddingHorizontal: Spacing.sm}} />
-            <Skeleton width="50%" height={11} borderRadius={BorderRadius.sm} style={{ marginTop: Spacing.xs, paddingHorizontal: Spacing.sm, paddingBottom: Spacing.sm}} />
+            <Skeleton
+              width="70%"
+              height={13}
+              borderRadius={BorderRadius.sm}
+              style={{ marginTop: 8, paddingHorizontal: 8 }}
+            />
+            <Skeleton
+              width="50%"
+              height={11}
+              borderRadius={BorderRadius.sm}
+              style={{ marginTop: 4, paddingHorizontal: 8, paddingBottom: 8 }}
+            />
           </View>
         ))}
       </View>
@@ -74,60 +95,60 @@ export const WardrobeSkeleton: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: DesignTokens.spacing[5],
+    padding: 20,
     backgroundColor: Colors.neutral.white,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[200],
+    borderBottomColor: colors.neutral[200],
   },
   headerActions: {
     flexDirection: "row",
-    gap: Spacing.sm,
+    gap: 8,
   },
   statsRow: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3],
-    padding: Spacing.md,
-    paddingBottom: Spacing.sm,
+    gap: 12,
+    padding: 16,
+    paddingBottom: 8,
   },
   statCard: {
     flex: 1,
     backgroundColor: Colors.neutral.white,
     borderRadius: 16,
-    padding: Spacing.md,
+    padding: 16,
     alignItems: "center",
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.neutral.white,
-    marginHorizontal: Spacing.md,
-    marginVertical: Spacing.sm,
+    marginHorizontal: 16,
+    marginVertical: 8,
     borderRadius: 12,
-    paddingHorizontal: DesignTokens.spacing[3],
-    height: DesignTokens.spacing[10],
+    paddingHorizontal: 12,
+    height: 40,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   categoryRow: {
     flexDirection: "row",
-    gap: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     paddingHorizontal: HORIZONTAL_PADDING,
-    paddingTop: Spacing.sm,
+    paddingTop: 8,
     gap: CARD_GAP,
   },
   gridItem: {
@@ -137,4 +158,4 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginBottom: CARD_GAP,
   },
-});
+}));

@@ -13,11 +13,10 @@ import {
   Easing as ReanimatedEasing,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { AiStylistProgress } from '../../../services/api/ai-stylist.api';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { AiStylistProgress } from "../../../services/api/ai-stylist.api";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 
@@ -37,8 +36,6 @@ interface AnimatedDotProps {
 }
 
 const AnimatedDot: React.FC<AnimatedDotProps> = ({ dotValue }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const style = useAnimatedStyle(() => ({
     opacity: dotValue.value,
     transform: [{ scale: interpolate(dotValue.value, [0, 1], [1, 1.3]) }],
@@ -105,6 +102,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({ progress }) 
   };
 
   const getCurrentStageIndex = () => {
+    const { colors } = useTheme();
     const stageMap: Record<string, number> = {
       uploading: 0,
       analyzing: 1,
@@ -121,7 +119,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({ progress }) 
       <View style={styles.iconContainer}>
         <AnimatedView style={[styles.iconGlow, pulseStyle]}>
           <LinearGradient
-            colors={[colors.secondary, colors.primary]}
+            colors={[colors.secondary, DesignTokens.colors.brand.camel]}
             style={styles.iconGradient}
           >
             <Ionicons name="analytics" size={28} color={colors.textInverse} />
@@ -162,9 +160,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({ progress }) 
                     <Ionicons
                       name={stage.icon}
                       size={12}
-                      color={
-                        isActive ? colors.secondary : DesignTokens.colors.neutral[400]
-                      }
+                      color={isActive ? colors.secondary : DesignTokens.colors.neutral[400]}
                     />
                   )}
                 </View>
@@ -210,14 +206,14 @@ const useStyles = createStyles((colors) => ({
   container: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 16,
-    padding: Spacing.md,
-    marginVertical: Spacing.sm,
+    padding: 16,
+    marginVertical: 8,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     flexDirection: "row",
   },
   iconContainer: {
-    marginRight: Spacing.md,
+    marginRight: 16,
   },
   iconGlow: {
     width: 56,
@@ -240,19 +236,19 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   detail: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
     lineHeight: 18,
   },
   progressContainer: {
-    marginBottom: Spacing.md,
+    marginBottom: 16,
   },
   progressTrack: {
-    height: DesignTokens.spacing['1.5'],
+    height: 6,
     backgroundColor: DesignTokens.colors.neutral[200],
     borderRadius: 3,
     overflow: "hidden",
@@ -265,26 +261,26 @@ const useStyles = createStyles((colors) => ({
   etaText: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
-    marginTop: DesignTokens.spacing['1.5'],
+    marginTop: 6,
     textAlign: "right",
   },
   stagesContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: Spacing.md,
+    marginBottom: 16,
   },
   stageItem: {
     alignItems: "center",
     flex: 1,
   },
   stageDot: {
-    width: Spacing.lg,
-    height: Spacing.lg,
+    width: 24,
+    height: 24,
     borderRadius: 12,
     backgroundColor: DesignTokens.colors.neutral[200],
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   stageDotActive: {
     backgroundColor: colors.secondary + "30",
@@ -308,10 +304,10 @@ const useStyles = createStyles((colors) => ({
   },
   stageLine: {
     position: "absolute",
-    top: DesignTokens.spacing[3],
+    top: 12,
     left: "60%",
     right: "-40%",
-    height: DesignTokens.spacing['0.5'],
+    height: 2,
     backgroundColor: DesignTokens.colors.neutral[200],
     zIndex: -1,
   },
@@ -322,25 +318,25 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: DesignTokens.colors.neutral[100],
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 8,
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   hintText: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
-    marginLeft: DesignTokens.spacing['1.5'],
+    marginLeft: 6,
   },
   loadingDots: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: DesignTokens.spacing['1.5'],
+    gap: 6,
   },
   dot: {
-    width: Spacing.sm,
-    height: Spacing.sm,
+    width: 8,
+    height: 8,
     borderRadius: 4,
     backgroundColor: colors.secondary,
   },
-}))
+}));

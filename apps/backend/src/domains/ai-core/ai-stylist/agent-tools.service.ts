@@ -14,7 +14,7 @@ import axios, { AxiosInstance } from "axios";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
-import { StyleUnderstandingService } from '../ai/services/style-understanding.service';
+import { StyleUnderstandingService } from "../ai/services/style-understanding.service";
 import {
   RecommendationsService,
   type RecommendedItem,
@@ -58,7 +58,8 @@ export const GLM5_AGENT_TOOLS: GLM5FunctionTool[] = [
     type: "function",
     function: {
       name: "get_user_profile",
-      description: "Get user body profile information including body type, skin tone, color season, measurements, and style preferences.",
+      description:
+        "Get user body profile information including body type, skin tone, color season, measurements, and style preferences.",
       parameters: {
         type: "object",
         description: "Parameters for getting user profile",
@@ -92,7 +93,8 @@ export const GLM5_AGENT_TOOLS: GLM5FunctionTool[] = [
     type: "function",
     function: {
       name: "recommend_outfit",
-      description: "Generate personalized outfit recommendations based on user context and preferences.",
+      description:
+        "Generate personalized outfit recommendations based on user context and preferences.",
       parameters: {
         type: "object",
         description: "Parameters for outfit recommendation",
@@ -124,7 +126,8 @@ export const GLM5_AGENT_TOOLS: GLM5FunctionTool[] = [
     type: "function",
     function: {
       name: "record_user_decision",
-      description: "Record user decision on recommendations for learning and improving future recommendations.",
+      description:
+        "Record user decision on recommendations for learning and improving future recommendations.",
       parameters: {
         type: "object",
         description: "Parameters for recording user decision",
@@ -140,13 +143,18 @@ export const GLM5_AGENT_TOOLS: GLM5FunctionTool[] = [
     type: "function",
     function: {
       name: "get_system_context",
-      description: "Get comprehensive local system context including Git status, database statistics, service health, system resources, and project file information. Use this when users ask about system status, data overview, version info, or 'what's new'.",
+      description:
+        "Get comprehensive local system context including Git status, database statistics, service health, system resources, and project file information. Use this when users ask about system status, data overview, version info, or 'what's new'.",
       parameters: {
         type: "object",
         description: "Parameters for getting system context",
         properties: {
           refresh: { type: "boolean", description: "Force refresh cached data (default false)" },
-          section: { type: "string", enum: ["git", "database", "services", "resources", "files", "all"], description: "Which section to return. Default is 'all'." },
+          section: {
+            type: "string",
+            enum: ["git", "database", "services", "resources", "files", "all"],
+            description: "Which section to return. Default is 'all'.",
+          },
         },
         required: [],
       },
@@ -169,11 +177,14 @@ export class AgentToolsService {
     private readonly prisma: PrismaService,
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
-    private readonly systemContextService: SystemContextService,
+    private readonly systemContextService: SystemContextService
   ) {
     this.glmApiKey = this.configService.get<string>("GLM_API_KEY", "");
     this.glmModel = this.configService.get<string>("GLM_MODEL", "glm-5");
-    this.glmApiUrl = this.configService.get<string>("GLM_API_URL", "https://open.bigmodel.cn/api/paas/v4");
+    this.glmApiUrl = this.configService.get<string>(
+      "GLM_API_URL",
+      "https://open.bigmodel.cn/api/paas/v4"
+    );
     this.mlServiceUrl = this.configService.get<string>("ML_SERVICE_URL", "http://localhost:8001");
   }
 
@@ -196,8 +207,15 @@ export class AgentToolsService {
   async executeFunctionCall(call: FunctionCall): Promise<FunctionResult> {
     this.logger.log(`Executing function: ${call.name}`);
     try {
-      let result: UserProfileResult | ClothingSearchResult | OutfitRecommendationResult | VirtualTryOnResult | UserDecisionResult | SystemContextResult | Partial<SystemContextResult>;
-      
+      let result:
+        | UserProfileResult
+        | ClothingSearchResult
+        | OutfitRecommendationResult
+        | VirtualTryOnResult
+        | UserDecisionResult
+        | SystemContextResult
+        | Partial<SystemContextResult>;
+
       switch (call.name) {
         case "get_user_profile": {
           const input = this.parseArguments<GetUserProfileInput>(call.arguments);
@@ -272,9 +290,15 @@ export class AgentToolsService {
     const { query, filters = {}, limit = 20, offset = 0 } = input;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { isActive: true };
-    if (filters.category) {where.category = filters.category;}
-    if (filters.colors && filters.colors.length > 0) {where.colors = { hasSome: filters.colors };}
-    if (filters.styles && filters.styles.length > 0) {where.tags = { hasSome: filters.styles };}
+    if (filters.category) {
+      where.category = filters.category;
+    }
+    if (filters.colors && filters.colors.length > 0) {
+      where.colors = { hasSome: filters.colors };
+    }
+    if (filters.styles && filters.styles.length > 0) {
+      where.tags = { hasSome: filters.styles };
+    }
 
     const [items, total] = await Promise.all([
       this.prisma.clothingItem.findMany({
@@ -314,7 +338,9 @@ export class AgentToolsService {
   async recommendOutfit(input: RecommendOutfitInput): Promise<OutfitRecommendationResult> {
     const { context = {}, preferences = {} } = input;
     let styleQuery = context.stylePreference || "casual";
-    if (context.occasion) {styleQuery += ` ${context.occasion}`;}
+    if (context.occasion) {
+      styleQuery += ` ${context.occasion}`;
+    }
 
     const styleAnalysis = await this.styleUnderstandingService.analyzeStyle(styleQuery);
 
@@ -351,14 +377,16 @@ export class AgentToolsService {
         name: r.item.name,
         category: r.item.category,
         colors: r.item.colors,
-        tags: [],  // tags field not available in RecommendedItem
+        tags: [], // tags field not available in RecommendedItem
         images: r.item.images,
         price: Number(r.item.price),
-        brand: r.item.brand ? {
-          id: r.item.brand.id,
-          name: r.item.brand.name,
-          logo: r.item.brand.logo,
-        } : undefined,
+        brand: r.item.brand
+          ? {
+              id: r.item.brand.id,
+              name: r.item.brand.name,
+              logo: r.item.brand.logo,
+            }
+          : undefined,
         viewCount: r.item.viewCount,
         likeCount: r.item.likeCount,
       })),
@@ -376,7 +404,9 @@ export class AgentToolsService {
       const photo = await this.prisma.userPhoto.findUnique({
         where: { id: personImage.photoId },
       });
-      if (!photo) {throw new NotFoundException("Photo not found");}
+      if (!photo) {
+        throw new NotFoundException("Photo not found");
+      }
       photoUrl = photo.url;
       userId = photo.userId;
     } else if (personImage.imageUrl) {
@@ -392,7 +422,9 @@ export class AgentToolsService {
     const item = await this.prisma.clothingItem.findUnique({
       where: { id: outfit.itemId },
     });
-    if (!item) {throw new NotFoundException("Item not found");}
+    if (!item) {
+      throw new NotFoundException("Item not found");
+    }
     const garmentImageUrl = item.images[0] || "";
     if (!garmentImageUrl) {
       throw new Error("Item does not have a usable image");
@@ -400,7 +432,7 @@ export class AgentToolsService {
 
     const tryOnId = randomUUID();
     const { TryOnStatus } = await import("../../../types/prisma-enums");
-    
+
     try {
       const response = await axios.post<TryOnServiceResponse>(
         `${this.mlServiceUrl}/api/tryon`,
@@ -425,7 +457,11 @@ export class AgentToolsService {
             },
           });
         }
-        return { tryOnId, status: TryOnStatus.completed, resultImageUrl: response.data.result_image_url };
+        return {
+          tryOnId,
+          status: TryOnStatus.completed,
+          resultImageUrl: response.data.result_image_url,
+        };
       }
       return { tryOnId, status: TryOnStatus.failed, resultImageUrl: null };
     } catch (error) {
@@ -466,7 +502,9 @@ export class AgentToolsService {
   }
 
   // Tool 6: Get System Context
-  async getSystemContext(input: GetSystemContextInput): Promise<SystemContextResult | Partial<SystemContextResult>> {
+  async getSystemContext(
+    input: GetSystemContextInput
+  ): Promise<SystemContextResult | Partial<SystemContextResult>> {
     const { refresh = false, section } = input;
     const fullContext = await this.systemContextService.getFullContext(refresh);
 
@@ -487,7 +525,7 @@ export class AgentToolsService {
   // GLM-5 Integration
   async callGLM5WithTools(
     messages: Array<{ role: string; content: string }>,
-    tools?: GLM5FunctionTool[],
+    tools?: GLM5FunctionTool[]
   ): Promise<{ message: GLM5Message; toolCalls?: GLM5ToolCall[] }> {
     const payload = {
       model: this.glmModel,
@@ -506,7 +544,7 @@ export class AgentToolsService {
   async executeAgentLoop(
     userMessage: string,
     systemPrompt: string,
-    maxIterations: number = 5,
+    maxIterations: number = 5
   ): Promise<AgentLoopResult> {
     const messages: Array<{ role: string; content: string }> = [
       { role: "system", content: systemPrompt },

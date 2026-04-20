@@ -18,7 +18,10 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:seed": "ts-node prisma/seed.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dep:check": "depcruise src --validate",
+    "dep:graph": "depcruise src/domains --output-type dot | dot -T svg > docs/dependency-graph.svg",
+    "dep:report": "depcruise src --output-type html > docs/dependency-report.html"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

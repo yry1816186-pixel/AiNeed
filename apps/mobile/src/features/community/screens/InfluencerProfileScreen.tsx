@@ -15,12 +15,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { communityApi, type CommunityPost } from '../../../services/api/community.api';
-import type { CommunityStackParamList } from '../../../navigation/types';
-import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
-
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { communityApi, type CommunityPost } from "../../../services/api/community.api";
+import type { CommunityStackParamList } from "../../../navigation/types";
 
 type InfluencerProfileRoute = RouteProp<CommunityStackParamList, "InfluencerProfile">;
 
@@ -106,7 +104,7 @@ export const InfluencerProfileScreen: React.FC = () => {
         );
       }
     } catch (error) {
-      console.error('Follow operation failed:', error);
+      console.error("Follow operation failed:", error);
     } finally {
       setFollowLoading(false);
     }
@@ -127,14 +125,14 @@ export const InfluencerProfileScreen: React.FC = () => {
     ({ item }: { item: CommunityPost }) => (
       <TouchableOpacity
         style={s.postCard}
-        onPress={() => (navigation as any).navigate("PostDetail", { postId: item.id })}
+        onPress={() => navigation.navigate("PostDetail", { postId: item.id })}
         activeOpacity={0.85}
       >
         {item.images[0] ? (
           <Image source={{ uri: item.images[0] }} style={s.postImage} resizeMode="cover" />
         ) : (
           <View style={s.postImagePlaceholder}>
-            <Ionicons name="image-outline" size={24} color={staticColors.textTertiary} />
+            <Ionicons name="image-outline" size={24} color={colors.textTertiary} />
           </View>
         )}
         <View style={s.postInfo}>
@@ -142,7 +140,7 @@ export const InfluencerProfileScreen: React.FC = () => {
             {item.title}
           </Text>
           <View style={s.postStats}>
-            <Ionicons name="heart-outline" size={12} color={staticColors.textTertiary} />
+            <Ionicons name="heart-outline" size={12} color={colors.textTertiary} />
             <Text style={s.postStatText}>{formatCount(item.likesCount)}</Text>
           </View>
         </View>
@@ -156,13 +154,13 @@ export const InfluencerProfileScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={staticColors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Profile</Text>
           <View style={s.iconBtn} />
         </View>
         <View style={s.centerContent}>
-          <ActivityIndicator size="large" color={staticColors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
     );
@@ -173,13 +171,13 @@ export const InfluencerProfileScreen: React.FC = () => {
       <SafeAreaView style={s.container}>
         <View style={s.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-            <Ionicons name="chevron-back" size={24} color={staticColors.textPrimary} />
+            <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={s.headerTitle}>Profile</Text>
           <View style={s.iconBtn} />
         </View>
         <View style={s.centerContent}>
-          <Ionicons name="alert-circle-outline" size={48} color={staticColors.textTertiary} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textTertiary} />
           <Text style={s.errorText}>{error}</Text>
           <TouchableOpacity style={s.retryBtn} onPress={fetchData}>
             <Text style={s.retryBtnText}>Retry</Text>
@@ -193,11 +191,11 @@ export const InfluencerProfileScreen: React.FC = () => {
     <SafeAreaView style={s.container}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.iconBtn}>
-          <Ionicons name="chevron-back" size={24} color={staticColors.textPrimary} />
+          <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.headerTitle}>{profile?.nickname ?? "Profile"}</Text>
         <TouchableOpacity style={s.iconBtn}>
-          <Ionicons name="ellipsis-horizontal" size={22} color={staticColors.textPrimary} />
+          <Ionicons name="ellipsis-horizontal" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -207,7 +205,7 @@ export const InfluencerProfileScreen: React.FC = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor={staticColors.primary}
+            tintColor={colors.primary}
           />
         }
       >
@@ -218,7 +216,7 @@ export const InfluencerProfileScreen: React.FC = () => {
               <Image source={{ uri: profile.avatar }} style={s.avatar} />
             ) : (
               <View style={s.avatarPlaceholder}>
-                <Ionicons name="person" size={28} color={staticColors.surface} />
+                <Ionicons name="person" size={28} color={colors.surface} />
               </View>
             )}
             <View style={s.statsRow}>
@@ -240,7 +238,7 @@ export const InfluencerProfileScreen: React.FC = () => {
           <Text style={s.nickname}>{profile?.nickname}</Text>
           {profile?.bloggerLevel && (
             <View style={s.badge}>
-              <Ionicons name="checkmark-circle" size={12} color={staticColors.surface} />
+              <Ionicons name="checkmark-circle" size={12} color={colors.surface} />
               <Text style={s.badgeText}>
                 {profile.bloggerLevel === "big_v" ? "Big V" : "Blogger"}
               </Text>
@@ -256,7 +254,7 @@ export const InfluencerProfileScreen: React.FC = () => {
             {followLoading ? (
               <ActivityIndicator
                 size="small"
-                color={profile?.isFollowing ? staticColors.textPrimary : staticColors.surface}
+                color={profile?.isFollowing ? colors.text : colors.surface}
               />
             ) : (
               <Text style={[s.followBtnText, profile?.isFollowing && s.followingBtnText]}>
@@ -275,7 +273,7 @@ export const InfluencerProfileScreen: React.FC = () => {
             <Ionicons
               name="grid-outline"
               size={20}
-              color={activeTab === "posts" ? staticColors.primary : staticColors.textTertiary}
+              color={activeTab === "posts" ? colors.primary : colors.textTertiary}
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -285,7 +283,7 @@ export const InfluencerProfileScreen: React.FC = () => {
             <Ionicons
               name="shirt-outline"
               size={20}
-              color={activeTab === "outfits" ? staticColors.primary : staticColors.textTertiary}
+              color={activeTab === "outfits" ? colors.primary : colors.textTertiary}
             />
           </TouchableOpacity>
         </View>
@@ -298,10 +296,10 @@ export const InfluencerProfileScreen: React.FC = () => {
           numColumns={NUM_COLUMNS}
           scrollEnabled={false}
           columnWrapperStyle={{ gap: CARD_GAP }}
-          contentContainerStyle={{ gap: CARD_GAP, paddingBottom: Spacing.lg}}
+          contentContainerStyle={{ gap: CARD_GAP, paddingBottom: 24 }}
           ListEmptyComponent={
             <View style={s.emptyPosts}>
-              <Ionicons name="images-outline" size={36} color={staticColors.textTertiary} />
+              <Ionicons name="images-outline" size={36} color={colors.textTertiary} />
               <Text style={s.emptyText}>No posts yet</Text>
             </View>
           }
@@ -312,108 +310,147 @@ export const InfluencerProfileScreen: React.FC = () => {
 };
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: staticColors.background },
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
-    backgroundColor: staticColors.surface,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: staticColors.border,
+    borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: staticColors.textPrimary },
-  iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: colors.text,
+  },
+  iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.error, marginTop: DesignTokens.spacing[3]},
+  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: 12 },
   retryBtn: {
-    marginTop: Spacing.md,
-    backgroundColor: staticColors.primary,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    marginTop: 16,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 10,
     borderRadius: 20,
   },
-  retryBtnText: { color: staticColors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  retryBtnText: {
+    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+  },
   scrollView: { flex: 1 },
   profileSection: {
-    backgroundColor: staticColors.surface,
-    padding: DesignTokens.spacing[5],
+    backgroundColor: colors.surface,
+    padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: staticColors.divider,
+    borderBottomColor: colors.divider,
   },
   avatarRow: { flexDirection: "row", alignItems: "center" },
-  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: staticColors.placeholderBg },
+  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.placeholderBg },
   avatarPlaceholder: {
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: staticColors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  statsRow: { flex: 1, flexDirection: "row", justifyContent: "space-around", marginLeft: DesignTokens.spacing[5]},
+  statsRow: { flex: 1, flexDirection: "row", justifyContent: "space-around", marginLeft: 20 },
   statItem: { alignItems: "center" },
-  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: staticColors.textPrimary },
-  statLabel: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
-  nickname: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: staticColors.textPrimary, marginTop: DesignTokens.spacing['3.5']},
+  statNumber: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.text },
+  statLabel: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.textTertiary,
+    marginTop: 2,
+  },
+  nickname: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: colors.textPrimary,
+    marginTop: 14,
+  },
   badge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-    backgroundColor: staticColors.neutral[500],
-    paddingHorizontal: Spacing.sm,
+    gap: 4,
+    backgroundColor: DesignTokens.colors.brand.slate,
+    paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 8,
     alignSelf: "flex-start",
-    marginTop: DesignTokens.spacing['1.5'],
+    marginTop: 6,
   },
-  badgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: staticColors.surface },
-  bio: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textSecondary, marginTop: Spacing.sm, lineHeight: 20 },
+  badgeText: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    fontWeight: "600",
+    color: colors.surface,
+  },
+  bio: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textSecondary,
+    marginTop: 8,
+    lineHeight: 20,
+  },
   followBtn: {
-    marginTop: DesignTokens.spacing['3.5'],
-    backgroundColor: staticColors.primary,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    marginTop: 14,
+    backgroundColor: colors.primary,
+    paddingVertical: 10,
     borderRadius: 20,
     alignItems: "center",
   },
-  followingBtn: { backgroundColor: staticColors.subtleBg },
-  followBtnText: { color: staticColors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-  followingBtnText: { color: staticColors.textPrimary },
+  followingBtn: { backgroundColor: colors.subtleBg },
+  followBtnText: {
+    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+  },
+  followingBtnText: { color: colors.text },
   tabBar: {
     flexDirection: "row",
-    backgroundColor: staticColors.surface,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: staticColors.divider,
+    borderBottomColor: colors.divider,
   },
   tab: {
     flex: 1,
     alignItems: "center",
-    paddingVertical: DesignTokens.spacing[3],
+    paddingVertical: 12,
     borderBottomWidth: 2,
     borderBottomColor: "transparent",
   },
-  tabActive: { borderBottomColor: staticColors.primary },
+  tabActive: { borderBottomColor: colors.primary },
   postCard: {
     width: CARD_WIDTH,
-    backgroundColor: staticColors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 10,
     overflow: "hidden",
   },
-  postImage: { width: "100%", height: CARD_WIDTH, backgroundColor: staticColors.placeholderBg },
+  postImage: { width: "100%", height: CARD_WIDTH, backgroundColor: colors.placeholderBg },
   postImagePlaceholder: {
     width: "100%",
     height: CARD_WIDTH,
-    backgroundColor: staticColors.subtleBg,
+    backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
   },
-  postInfo: { padding: Spacing.sm},
-  postTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: staticColors.textPrimary, lineHeight: 16 },
-  postStats: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, marginTop: Spacing.xs},
-  postStatText: { fontSize: DesignTokens.typography.sizes.xs, color: staticColors.textTertiary },
+  postInfo: { padding: 8 },
+  postTitle: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    fontWeight: "500",
+    color: colors.textPrimary,
+    lineHeight: 16,
+  },
+  postStats: { flexDirection: "row", alignItems: "center", gap: 3, marginTop: 4 },
+  postStatText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
   emptyPosts: { alignItems: "center", justifyContent: "center", paddingVertical: 60 },
-  emptyText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textTertiary, marginTop: Spacing.sm},
+  emptyText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textTertiary,
+    marginTop: 8,
+  },
 });
 
 export default InfluencerProfileScreen;

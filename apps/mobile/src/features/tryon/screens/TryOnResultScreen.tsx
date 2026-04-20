@@ -11,16 +11,16 @@ import {
   Dimensions,
   ImageStyle,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import { tryOnApi, type TryOnResult } from '../../../services/api/tryon.api';
-import type { TryOnStackParamList } from '../../../navigation/types';
-
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, Spacing } from "../../../design-system/theme";
+import { tryOnApi, type TryOnResult } from "../../../services/api/tryon.api";
+import type { TryOnStackParamList } from "../../../navigation/types";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type TryOnResultRoute = RouteProp<TryOnStackParamList, "TryOnResult">;
 
@@ -28,6 +28,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const _IMAGE_HEIGHT = SCREEN_WIDTH * 1.2;
 
 export const TryOnResultScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const route = useRoute<TryOnResultRoute>();
   const resultId = route.params?.resultId;
@@ -169,9 +170,7 @@ export const TryOnResultScreen: React.FC = () => {
           <Ionicons
             name={isComplete ? "checkmark-circle" : isFailed ? "close-circle" : "time"}
             size={16}
-            color={
-              isComplete ? colors.success : isFailed ? colors.error : colors.amber
-            }
+            color={isComplete ? colors.success : isFailed ? colors.error : colors.amber}
           />
           <Text
             style={[s.statusText, isComplete && s.statusTextSuccess, isFailed && s.statusTextError]}
@@ -302,28 +301,55 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary },
-  iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
-  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing.xl},
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: DesignTokens.spacing[3], textAlign: "center" },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: colors.textPrimary,
+  },
+  iconBtn: {
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  centerContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: Spacing.xl,
+  },
+  loadingText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textSecondary,
+    marginTop: DesignTokens.spacing[3],
+  },
+  errorText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.error,
+    marginTop: DesignTokens.spacing[3],
+    textAlign: "center",
+  },
   actionBtn: {
     backgroundColor: colors.primary,
     paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing["2.5"],
     borderRadius: 20,
     marginTop: Spacing.md,
   },
-  actionBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  actionBtnText: {
+    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+  },
   scrollView: { flex: 1 },
-  scrollContent: { padding: Spacing.md, paddingBottom: DesignTokens.spacing[10]},
+  scrollContent: { padding: Spacing.md, paddingBottom: DesignTokens.spacing[10] },
   statusBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5'],
+    gap: DesignTokens.spacing["1.5"],
     alignSelf: "center",
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: DesignTokens.spacing["3.5"],
+    paddingVertical: DesignTokens.spacing["1.5"],
     borderRadius: 20,
     backgroundColor: colors.subtleBg,
     marginBottom: DesignTokens.spacing[5],
@@ -331,10 +357,18 @@ const s = StyleSheet.create({
   statusBadgeSuccess: { backgroundColor: colors.successLight },
   statusBadgeError: { backgroundColor: colors.errorLight },
   statusBadgeProcessing: { backgroundColor: colors.warningLight },
-  statusText: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "600", color: colors.textSecondary },
+  statusText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    fontWeight: "600",
+    color: colors.textSecondary,
+  },
   statusTextSuccess: { color: colors.success },
   statusTextError: { color: colors.error },
-  comparisonContainer: { flexDirection: "row", alignItems: "center", marginBottom: DesignTokens.spacing[5]},
+  comparisonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: DesignTokens.spacing[5],
+  },
   comparisonItem: { flex: 1 },
   comparisonLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -356,57 +390,78 @@ const s = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: colors.subtleBg,
   },
-  processingText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: Spacing.sm},
-  divider: { paddingHorizontal: Spacing.sm, alignItems: "center", gap: Spacing.xs},
+  processingText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.textSecondary,
+    marginTop: Spacing.sm,
+  },
+  divider: { paddingHorizontal: Spacing.sm, alignItems: "center", gap: Spacing.xs },
   dividerLine: { width: 1, height: 30, backgroundColor: colors.border },
   itemCard: {
     backgroundColor: colors.surface,
     borderRadius: 14,
-    padding: DesignTokens.spacing['3.5'],
+    padding: DesignTokens.spacing["3.5"],
     marginBottom: DesignTokens.spacing[5],
     shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+    shadowOffset: { width: 0, height: DesignTokens.spacing["0.5"] },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
   },
   itemInfo: { flexDirection: "row", alignItems: "center" },
   itemThumb: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: Spacing["2xl"],
+    height: Spacing["2xl"],
     borderRadius: 8,
     backgroundColor: colors.placeholderBg,
   },
   itemDetails: { marginLeft: DesignTokens.spacing[3], flex: 1 },
-  itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary },
-  actionRow: { flexDirection: "row", gap: DesignTokens.spacing['2.5'], justifyContent: "center", flexWrap: "wrap" },
+  itemName: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+    color: colors.textPrimary,
+  },
+  actionRow: {
+    flexDirection: "row",
+    gap: DesignTokens.spacing["2.5"],
+    justifyContent: "center",
+    flexWrap: "wrap",
+  },
   actionBtnOutline: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5'],
+    gap: DesignTokens.spacing["1.5"],
     paddingHorizontal: DesignTokens.spacing[4],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing["2.5"],
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.primary,
   },
-  actionBtnPrimaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
-  actionBtnWhiteText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.surface },
+  actionBtnPrimaryText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.primary,
+  },
+  actionBtnWhiteText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.surface,
+  },
   retryActionBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5'],
+    gap: DesignTokens.spacing["1.5"],
     paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing["2.5"],
     borderRadius: 20,
     backgroundColor: colors.primary,
   },
   shareActionBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5'],
+    gap: DesignTokens.spacing["1.5"],
     paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing["2.5"],
     borderRadius: 20,
   },
 });

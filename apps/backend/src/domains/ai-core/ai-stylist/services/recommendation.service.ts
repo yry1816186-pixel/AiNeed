@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { StyleUnderstandingService } from '../../ai/services/style-understanding.service';
+import { StyleUnderstandingService } from "../../ai/services/style-understanding.service";
 import {
   RecommendationsService,
   type RecommendedItem,
-} from '../../../platform/recommendations/recommendations.service';
+} from "../../../platform/recommendations/recommendations.service";
 import { DecisionEngineService } from "../decision-engine.service";
 import { LlmProviderService } from "../llm-provider.service";
 import type {
@@ -54,40 +54,39 @@ export class AiStylistRecommendationService {
     private recommendationsService: RecommendationsService,
     private styleUnderstandingService: StyleUnderstandingService,
     private decisionEngineService: DecisionEngineService,
-    private llmProvider: LlmProviderService,
+    private llmProvider: LlmProviderService
   ) {}
 
   async resolveSession(
     userId: string,
     sessionId: string,
-    deriveOrchestrationFn: (session: StylistSession) => { nextAction: import("../types").StylistAction; missingFields: string[] },
+    deriveOrchestrationFn: (session: StylistSession) => {
+      nextAction: import("../types").StylistAction;
+      missingFields: string[];
+    },
     composeAssistantMessageFn: (
       session: StylistSession,
       nextAction: import("../types").StylistAction,
       slotUpdates: Partial<import("../types").StylistSlots>,
       missingFields: string[],
-      stage: string,
+      stage: string
     ) => Promise<{ message: string; isFallback: boolean }>,
     buildChatResultFn: (
       session: StylistSession,
       assistantMessage: string,
-      options?: Record<string, unknown>,
-    ) => ChatResult,
+      options?: Record<string, unknown>
+    ) => ChatResult
   ): Promise<ChatResult> {
     const session = await this.sessionService.getSessionOrThrow(userId, sessionId);
     await this.contextService.syncPhotoAnalysis(session);
 
     const orchestration = deriveOrchestrationFn(session);
     if (orchestration.nextAction.type === "poll_analysis") {
-      return buildChatResultFn(
-        session,
-        "照片还在分析中，请稍后再生成方案。",
-        {
-          nextAction: orchestration.nextAction,
-          missingFields: orchestration.missingFields,
-          analysisStatus: session.state.lastPhotoStatus,
-        },
-      );
+      return buildChatResultFn(session, "照片还在分析中，请稍后再生成方案。", {
+        nextAction: orchestration.nextAction,
+        missingFields: orchestration.missingFields,
+        analysisStatus: session.state.lastPhotoStatus,
+      });
     }
 
     if (
@@ -99,7 +98,7 @@ export class AiStylistRecommendationService {
         orchestration.nextAction,
         {},
         orchestration.missingFields,
-        "resolve_guard",
+        "resolve_guard"
       );
       await this.sessionService.persistSession(session);
       return buildChatResultFn(session, message, {
@@ -111,11 +110,9 @@ export class AiStylistRecommendationService {
 
     const result = await this.generateOutfitResult(userId, session);
     session.result = result;
-    session.state.candidateReady = result.outfits.some(
-      (outfit) => outfit.items.length > 0,
-    );
+    session.state.candidateReady = result.outfits.some((outfit) => outfit.items.length > 0);
     session.state.commerceReady = result.outfits.some((outfit) =>
-      outfit.items.some((item) => Boolean(item.externalUrl)),
+      outfit.items.some((item) => Boolean(item.externalUrl))
     );
     session.state.currentStage = "resolved";
     session.updatedAt = new Date().toISOString();
@@ -131,15 +128,11 @@ export class AiStylistRecommendationService {
       nextAction: { type: "show_outfit_cards" },
       missingFields: [],
       result,
-      previewRecommendations: result.outfits.flatMap((outfit) =>
-        outfit.items.slice(0, 2),
-      ),
+      previewRecommendations: result.outfits.flatMap((outfit) => outfit.items.slice(0, 2)),
     });
   }
 
-  async generateDynamicStyleOptions(): Promise<
-    Array<{ id: string; label: string }>
-  > {
+  async generateDynamicStyleOptions(): Promise<Array<{ id: string; label: string }>> {
     const fallbackOptions = [
       { id: "minimalist", label: "极简风" },
       { id: "korean", label: "韩系" },
@@ -154,9 +147,7 @@ export class AiStylistRecommendationService {
 
     try {
       const response = await this.llmProvider.chat({
-        messages: [
-          { role: "user", content: DYNAMIC_STYLE_PROMPT },
-        ],
+        messages: [{ role: "user", content: DYNAMIC_STYLE_PROMPT }],
         maxTokens: 500,
         temperature: 0.5,
         requestId: `dynamic-styles-${Date.now()}`,
@@ -184,9 +175,7 @@ export class AiStylistRecommendationService {
     }
   }
 
-  async generateDynamicOccasionOptions(): Promise<
-    Array<{ id: string; label: string }>
-  > {
+  async generateDynamicOccasionOptions(): Promise<Array<{ id: string; label: string }>> {
     const fallbackOptions = [
       { id: "work", label: "通勤" },
       { id: "date", label: "约会" },
@@ -201,9 +190,7 @@ export class AiStylistRecommendationService {
 
     try {
       const response = await this.llmProvider.chat({
-        messages: [
-          { role: "user", content: DYNAMIC_OCCASION_PROMPT },
-        ],
+        messages: [{ role: "user", content: DYNAMIC_OCCASION_PROMPT }],
         maxTokens: 500,
         temperature: 0.5,
         requestId: `dynamic-occasions-${Date.now()}`,
@@ -239,7 +226,7 @@ export class AiStylistRecommendationService {
     itemId?: string,
     rating?: number,
     dislikeReason?: string,
-    dislikeDetail?: string,
+    dislikeDetail?: string
   ): Promise<{ success: boolean; message: string }> {
     const session = await this.sessionService.loadPersistedSession(userId, sessionId);
     if (!session) {
@@ -290,23 +277,22 @@ export class AiStylistRecommendationService {
     }
 
     if (action === "like") {
-      session.feedback.likes.push(feedbackEntry as typeof session.feedback.likes[number]);
+      session.feedback.likes.push(feedbackEntry as (typeof session.feedback.likes)[number]);
     } else {
-      session.feedback.dislikes.push(feedbackEntry as typeof session.feedback.dislikes[number]);
+      session.feedback.dislikes.push(feedbackEntry as (typeof session.feedback.dislikes)[number]);
     }
 
     await this.sessionService.persistSession(session);
 
     return {
       success: true,
-      message:
-        action === "like" ? "感谢你的喜欢！" : "收到反馈，我会继续改进！",
+      message: action === "like" ? "感谢你的喜欢！" : "收到反馈，我会继续改进！",
     };
   }
 
   async getSessionFeedback(
     userId: string,
-    sessionId: string,
+    sessionId: string
   ): Promise<{
     likes: Array<{ outfitIndex: number; itemId?: string; timestamp: string }>;
     dislikes: Array<{
@@ -325,7 +311,7 @@ export class AiStylistRecommendationService {
 
   private async generateOutfitResult(
     userId: string,
-    session: StylistSession,
+    session: StylistSession
   ): Promise<StylistResolution> {
     const prompt = this.buildRecommendationPrompt(session);
     const userProfile = {
@@ -359,15 +345,11 @@ export class AiStylistRecommendationService {
         outfits.findIndex(
           (candidate) =>
             candidate.items.map((item: any) => item.itemId).join(",") ===
-            outfit.items.map((item) => item.itemId).join(","),
-        ) === index,
+            outfit.items.map((item) => item.itemId).join(",")
+        ) === index
     );
 
-    const rankedOutfits = await this.rankOutfitsWithDecisionEngine(
-      userId,
-      session,
-      uniqueOutfits,
-    );
+    const rankedOutfits = await this.rankOutfitsWithDecisionEngine(userId, session, uniqueOutfits);
 
     return {
       lookSummary: this.buildLookSummary(session),
@@ -379,7 +361,7 @@ export class AiStylistRecommendationService {
   private async rankOutfitsWithDecisionEngine(
     userId: string,
     session: StylistSession,
-    outfits: StylistOutfitPlan[],
+    outfits: StylistOutfitPlan[]
   ): Promise<StylistOutfitPlan[]> {
     if (outfits.length <= 1) {
       return outfits;
@@ -409,19 +391,24 @@ export class AiStylistRecommendationService {
           };
         });
 
-        const avgStyleScore = itemScores.length > 0
-          ? itemScores.reduce((sum, s) => sum + s.styleScore, 0) / itemScores.length
-          : 50;
-        const avgPreferenceScore = itemScores.length > 0
-          ? itemScores.reduce((sum, s) => sum + s.preferenceScore, 0) / itemScores.length
-          : 50;
+        const avgStyleScore =
+          itemScores.length > 0
+            ? itemScores.reduce((sum, s) => sum + s.styleScore, 0) / itemScores.length
+            : 50;
+        const avgPreferenceScore =
+          itemScores.length > 0
+            ? itemScores.reduce((sum, s) => sum + s.preferenceScore, 0) / itemScores.length
+            : 50;
 
-        const existingAvgScore = outfit.items
-          .filter((item) => typeof item.score === "number")
-          .reduce((sum, item) => sum + (item.score ?? 0), 0) /
-          Math.max(outfit.items.filter((item) => typeof item.score === "number").length, 1) * 100;
+        const existingAvgScore =
+          (outfit.items
+            .filter((item) => typeof item.score === "number")
+            .reduce((sum, item) => sum + (item.score ?? 0), 0) /
+            Math.max(outfit.items.filter((item) => typeof item.score === "number").length, 1)) *
+          100;
 
-        const compositeScore = avgStyleScore * 0.3 + avgPreferenceScore * 0.4 + existingAvgScore * 0.3;
+        const compositeScore =
+          avgStyleScore * 0.3 + avgPreferenceScore * 0.4 + existingAvgScore * 0.3;
 
         return { outfit, compositeScore };
       });
@@ -439,16 +426,13 @@ export class AiStylistRecommendationService {
       return scoredOutfits.map((s) => s.outfit);
     } catch (error) {
       this.logger.warn(
-        `DecisionEngine ranking failed, using original order: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `DecisionEngine ranking failed, using original order: ${error instanceof Error ? error.message : "Unknown error"}`
       );
       return outfits;
     }
   }
 
-  private computeItemStyleScore(
-    item: StylistOutfitItem,
-    context: DecisionContext,
-  ): number {
+  private computeItemStyleScore(item: StylistOutfitItem, context: DecisionContext): number {
     let score = 50;
     const nameLower = item.name.toLowerCase();
     const reasonLower = item.reason.toLowerCase();
@@ -456,19 +440,21 @@ export class AiStylistRecommendationService {
     if (context.preferredStyles.length > 0) {
       const isPreferred = context.preferredStyles.some(
         (style) =>
-          nameLower.includes(style.toLowerCase()) ||
-          reasonLower.includes(style.toLowerCase()),
+          nameLower.includes(style.toLowerCase()) || reasonLower.includes(style.toLowerCase())
       );
-      if (isPreferred) { score += 30; }
+      if (isPreferred) {
+        score += 30;
+      }
     }
 
     if (context.styleAvoidances.length > 0) {
       const isAvoided = context.styleAvoidances.some(
         (avoid) =>
-          nameLower.includes(avoid.toLowerCase()) ||
-          reasonLower.includes(avoid.toLowerCase()),
+          nameLower.includes(avoid.toLowerCase()) || reasonLower.includes(avoid.toLowerCase())
       );
-      if (isAvoided) { score -= 40; }
+      if (isAvoided) {
+        score -= 40;
+      }
     }
 
     if (context.occasion) {
@@ -482,34 +468,37 @@ export class AiStylistRecommendationService {
         campus: ["校园", "青春", "休闲"],
       };
       const keywords = occasionKeywords[context.occasion] || [];
-      const matchesKeyword = keywords.some((kw) =>
-        nameLower.includes(kw) || reasonLower.includes(kw),
+      const matchesKeyword = keywords.some(
+        (kw) => nameLower.includes(kw) || reasonLower.includes(kw)
       );
-      if (matchesKeyword) { score += 15; }
+      if (matchesKeyword) {
+        score += 15;
+      }
     }
 
     return Math.max(0, Math.min(100, score));
   }
 
-  private computeItemPreferenceScore(
-    item: StylistOutfitItem,
-    profile: UserProfile,
-  ): number {
+  private computeItemPreferenceScore(item: StylistOutfitItem, profile: UserProfile): number {
     let score = 50;
     const nameLower = item.name.toLowerCase();
 
     if (profile.stylePreferences.length > 0) {
-      const matchesPreference = profile.stylePreferences.some(
-        (pref) => nameLower.includes(pref.toLowerCase()),
+      const matchesPreference = profile.stylePreferences.some((pref) =>
+        nameLower.includes(pref.toLowerCase())
       );
-      if (matchesPreference) { score += 20; }
+      if (matchesPreference) {
+        score += 20;
+      }
     }
 
     if (profile.colorPreferences.length > 0) {
-      const matchesColor = profile.colorPreferences.some(
-        (color) => nameLower.includes(color.toLowerCase()),
+      const matchesColor = profile.colorPreferences.some((color) =>
+        nameLower.includes(color.toLowerCase())
       );
-      if (matchesColor) { score += 25; }
+      if (matchesColor) {
+        score += 25;
+      }
     }
 
     return Math.max(0, Math.min(100, score));
@@ -518,14 +507,13 @@ export class AiStylistRecommendationService {
   private async buildMlOutfit(
     prompt: string,
     userProfile: Record<string, unknown>,
-    session: StylistSession,
+    session: StylistSession
   ): Promise<StylistOutfitPlan> {
     try {
-      const mlResult =
-        await this.styleUnderstandingService.getOutfitRecommendation(prompt, {
-          userProfile,
-          occasion: session.state.slots.occasion,
-        });
+      const mlResult = await this.styleUnderstandingService.getOutfitRecommendation(prompt, {
+        userProfile,
+        occasion: session.state.slots.occasion,
+      });
 
       const itemIds = (mlResult.items || [])
         .map((item) => item.item_id)
@@ -549,11 +537,22 @@ export class AiStylistRecommendationService {
             },
           })
         : [];
-      const dbItemMap = new Map(dbItems.map((item: { id: string; [key: string]: any }) => [item.id, item]));
+      const dbItemMap = new Map(
+        dbItems.map((item: { id: string; [key: string]: any }) => [item.id, item])
+      );
 
       const items: StylistOutfitItem[] = (mlResult.items || []).map(
-        (item: { item_id?: string; category?: string; reasons?: string[]; price?: number; brand?: string; score?: number }) => {
-          const dbItem = item.item_id ? dbItemMap.get(item.item_id) as Record<string, any> | undefined : undefined;
+        (item: {
+          item_id?: string;
+          category?: string;
+          reasons?: string[];
+          price?: number;
+          brand?: string;
+          score?: number;
+        }) => {
+          const dbItem = item.item_id
+            ? (dbItemMap.get(item.item_id) as Record<string, any> | undefined)
+            : undefined;
           return {
             itemId: item.item_id,
             category: dbItem?.category || item.category || "unknown",
@@ -570,20 +569,20 @@ export class AiStylistRecommendationService {
             brand: (dbItem?.brand as { name: string } | null)?.name || item.brand || null,
             score: typeof item.score === "number" ? item.score : undefined,
           };
-        },
+        }
       );
 
       return {
         title: "AI 主方案",
         items,
         styleExplanation: this.contextService.deduplicateStrings(
-          items.map((item) => item.reason).slice(0, 3),
+          items.map((item) => item.reason).slice(0, 3)
         ),
         estimatedTotalPrice: this.sumItemPrices(items),
       };
     } catch (error) {
       this.logger.warn(
-        `ML outfit generation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `ML outfit generation failed: ${error instanceof Error ? error.message : "Unknown error"}`
       );
       return {
         title: "AI 主方案",
@@ -593,9 +592,7 @@ export class AiStylistRecommendationService {
     }
   }
 
-  private buildFallbackOutfit(
-    recommendations: RecommendedItem[],
-  ): StylistOutfitPlan {
+  private buildFallbackOutfit(recommendations: RecommendedItem[]): StylistOutfitPlan {
     const categories = new Set<string>();
     const items: StylistOutfitItem[] = [];
 
@@ -619,9 +616,7 @@ export class AiStylistRecommendationService {
         imageUrl: clothingItem.images?.[0],
         externalUrl: null,
         price:
-          typeof clothingItem.price === "number"
-            ? clothingItem.price
-            : Number(clothingItem.price),
+          typeof clothingItem.price === "number" ? clothingItem.price : Number(clothingItem.price),
         brand: clothingItem.brand?.name || null,
         score: recommendation.score,
       });
@@ -635,7 +630,7 @@ export class AiStylistRecommendationService {
       title: "基础备选方案",
       items,
       styleExplanation: this.contextService.deduplicateStrings(
-        items.map((item) => item.reason).slice(0, 3),
+        items.map((item) => item.reason).slice(0, 3)
       ),
       estimatedTotalPrice: this.sumItemPrices(items),
     };
@@ -649,18 +644,14 @@ export class AiStylistRecommendationService {
       session.state.slots.preferredStyles.length
         ? `偏好风格：${session.state.slots.preferredStyles.join("、")}`
         : "",
-      session.state.slots.fitGoals.length
-        ? `目标：${session.state.slots.fitGoals.join("、")}`
-        : "",
-      session.state.slots.budgetMax
-        ? `预算：${session.state.slots.budgetMax}元以内`
-        : "",
+      session.state.slots.fitGoals.length ? `目标：${session.state.slots.fitGoals.join("、")}` : "",
+      session.state.slots.budgetMax ? `预算：${session.state.slots.budgetMax}元以内` : "",
       session.state.bodyProfile.bodyType
         ? `体型：${this.contextService.getBodyTypeName(session.state.bodyProfile.bodyType)}`
         : "",
       session.state.bodyProfile.colorSeason
         ? `色彩季型：${this.contextService.getColorSeasonName(
-            session.state.bodyProfile.colorSeason,
+            session.state.bodyProfile.colorSeason
           )}`
         : "",
     ].filter(Boolean);
@@ -670,8 +661,7 @@ export class AiStylistRecommendationService {
 
   private buildLookSummary(session: StylistSession): string {
     const style = session.state.slots.preferredStyles[0] || "轻量通勤";
-    const occasion =
-      this.contextService.getOccasionName(session.state.slots.occasion) || "日常";
+    const occasion = this.contextService.getOccasionName(session.state.slots.occasion) || "日常";
     const goal =
       session.state.slots.fitGoals.length > 0
         ? session.state.slots.fitGoals.join("、")
@@ -684,26 +674,24 @@ export class AiStylistRecommendationService {
 
     if (session.state.slots.occasion) {
       reasons.push(
-        `场景优先按${this.contextService.getOccasionName(session.state.slots.occasion)}来控制正式度和单品噪点。`,
+        `场景优先按${this.contextService.getOccasionName(session.state.slots.occasion)}来控制正式度和单品噪点。`
       );
     }
     if (session.state.slots.fitGoals.length > 0) {
-      reasons.push(
-        `这次重点满足 ${session.state.slots.fitGoals.join("、")} 的诉求。`,
-      );
+      reasons.push(`这次重点满足 ${session.state.slots.fitGoals.join("、")} 的诉求。`);
     }
     if (session.state.bodyProfile.bodyType) {
       reasons.push(
         `版型选择参考了你的${this.contextService.getBodyTypeName(
-          session.state.bodyProfile.bodyType,
-        )}特征。`,
+          session.state.bodyProfile.bodyType
+        )}特征。`
       );
     }
     if (session.state.bodyProfile.colorSeason) {
       reasons.push(
         `配色优先贴合${this.contextService.getColorSeasonName(
-          session.state.bodyProfile.colorSeason,
-        )}的友好色域。`,
+          session.state.bodyProfile.colorSeason
+        )}的友好色域。`
       );
     }
 
@@ -712,8 +700,7 @@ export class AiStylistRecommendationService {
 
   private sumItemPrices(items: StylistOutfitItem[]): number | undefined {
     const pricedItems = items.filter(
-      (item): item is StylistOutfitItem & { price: number } =>
-        typeof item.price === "number",
+      (item): item is StylistOutfitItem & { price: number } => typeof item.price === "number"
     );
 
     if (pricedItems.length === 0) {

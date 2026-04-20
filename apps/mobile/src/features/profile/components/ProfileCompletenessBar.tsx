@@ -1,7 +1,8 @@
-import React from "react";
+﻿import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Colors, Spacing } from '../../../design-system/theme';
+import { Colors, Spacing } from "../../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface ProfileCompletenessBarProps {
   percentage: number;
@@ -37,6 +38,8 @@ export const ProfileCompletenessBar: React.FC<ProfileCompletenessBarProps> = ({
   missingFields,
   onPress,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const clampedPercentage = Math.max(0, Math.min(100, percentage));
 
   const content = (
@@ -72,7 +75,7 @@ export const ProfileCompletenessBar: React.FC<ProfileCompletenessBarProps> = ({
   return <View accessibilityLabel={`画像完整度 ${clampedPercentage}%`}>{content}</View>;
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   pressable: {
     minHeight: 44,
   },
@@ -88,31 +91,31 @@ const styles = StyleSheet.create({
   percentageText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
   },
   track: {
-    height: Spacing.sm,
-    backgroundColor: Colors.neutral[200],
+    height: 8,
+    backgroundColor: colors.neutral[200],
     borderRadius: 12,
     overflow: "hidden",
   },
   fill: {
-    height: Spacing.sm,
-    backgroundColor: Colors.primary[500],
+    height: 8,
+    backgroundColor: colors.primary[500],
     borderRadius: 12,
   },
   missingText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "400",
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
     marginTop: Spacing[2],
   },
   ctaText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: Colors.primary[500],
+    color: colors.primary[500],
     marginTop: Spacing[1],
   },
-});
+}));
 
 export default ProfileCompletenessBar;

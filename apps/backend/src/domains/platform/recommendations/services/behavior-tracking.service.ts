@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  Logger,
-} from "@nestjs/common";
-import { BehaviorEventType } from '../../../../types/prisma-enums';
+import { Injectable, Logger } from "@nestjs/common";
+import { BehaviorEventType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import { RedisService } from "../../../../common/redis/redis.service";
@@ -48,7 +45,7 @@ export class BehaviorTrackingService {
   constructor(
     private prisma: PrismaService,
     private redisService: RedisService,
-    private cacheService: RecommendationCacheService,
+    private cacheService: RecommendationCacheService
   ) {}
 
   async track(input: TrackBehaviorInput): Promise<void> {
@@ -68,8 +65,14 @@ export class BehaviorTrackingService {
 
     try {
       const weightMap: Record<string, number> = {
-        view: 1, click: 2, post_like: 3, favorite: 4,
-        add_to_cart: 5, purchase: 8, try_on_complete: 6, share: 4,
+        view: 1,
+        click: 2,
+        post_like: 3,
+        favorite: 4,
+        add_to_cart: 5,
+        purchase: 8,
+        try_on_complete: 6,
+        share: 4,
       };
       const rawValue = weightMap[action] || 1;
       await this.prisma.userBehaviorEvent.create({
@@ -99,7 +102,7 @@ export class BehaviorTrackingService {
 
   async getUserBehaviorSummary(
     userId: string,
-    days: number = 30,
+    days: number = 30
   ): Promise<{
     totalActions: number;
     categoryPreferences: Record<string, number>;
@@ -119,7 +122,7 @@ export class BehaviorTrackingService {
       take: 200,
     });
 
-    const itemIds = [...new Set(behaviors.map((b: any) => b.itemId).filter(Boolean) as string[])];
+    const itemIds = [...new Set(behaviors.map((b) => b.itemId).filter(Boolean) as string[])];
 
     const items = await this.prisma.clothingItem.findMany({
       where: { id: { in: itemIds } },
@@ -131,7 +134,7 @@ export class BehaviorTrackingService {
       },
     });
 
-    const itemMap = new Map(items.map((i: any) => [i.id, i]));
+    const itemMap = new Map(items.map((i) => [i.id, i]));
 
     const categoryPrefs: Record<string, number> = {};
     const stylePrefs: Record<string, number> = {};
@@ -141,9 +144,11 @@ export class BehaviorTrackingService {
     for (const b of behaviors) {
       const weight = ACTION_WEIGHTS[b.type as BehaviorAction] || 0.1;
       const itemId = b.itemId;
-      if (!itemId) {continue;}
+      if (!itemId) {
+        continue;
+      }
 
-      const item = itemMap.get(itemId) as any;
+      const item = itemMap.get(itemId);
       if (item) {
         const cat = item.category as string;
         categoryPrefs[cat] = (categoryPrefs[cat] || 0) + weight;
@@ -206,7 +211,9 @@ export class BehaviorTrackingService {
       take: 50,
     });
     for (const item of recentViews) {
-      if (item.itemId) {excluded.add(item.itemId);}
+      if (item.itemId) {
+        excluded.add(item.itemId);
+      }
     }
 
     return excluded;
@@ -215,7 +222,7 @@ export class BehaviorTrackingService {
   private async updatePreferenceCache(
     userId: string,
     action: BehaviorAction,
-    clothingId: string,
+    clothingId: string
   ): Promise<void> {
     try {
       const redis = this.redisService.getClient();
@@ -227,11 +234,13 @@ export class BehaviorTrackingService {
         select: { category: true, tags: true, colors: true },
       });
 
-      if (!clothing) {return;}
+      if (!clothing) {
+        return;
+      }
 
       const category = clothing.category as string;
       const color = clothing.colors?.[0] || "";
-      const tags = (clothing.tags) || [];
+      const tags = clothing.tags || [];
 
       const multi = redis.multi();
       multi.hincrbyfloat(cacheKey, `cat:${category}`, weight);
@@ -255,7 +264,7 @@ export class BehaviorTrackingService {
 
   async getDecayedBehaviors(
     userId: string,
-    limit: number = 100,
+    limit: number = 100
   ): Promise<Array<{ itemId: string; action: string; value: number }>> {
     const events = await this.prisma.userBehaviorEvent.findMany({
       where: { userId },
@@ -263,10 +272,12 @@ export class BehaviorTrackingService {
       take: limit,
     });
 
-    return events.map((event: any) => ({
+    return events.map((event) => ({
       itemId: event.targetId || "",
       action: event.action || "view",
-      value: ((event.metadata as Record<string, number> | null)?.value ?? 1) * this.calculateTimeDecay(event.createdAt),
+      value:
+        ((event.metadata as Record<string, number> | null)?.value ?? 1) *
+        this.calculateTimeDecay(event.createdAt),
     }));
   }
 

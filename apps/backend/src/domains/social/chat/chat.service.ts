@@ -84,8 +84,7 @@ export class ChatService {
   async getRoomsByUser(userId: string, query: ChatRoomQueryDto) {
     const { page = 1, pageSize = 20, isActive } = query;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = { userId };
+    const where: Record<string, unknown> = { userId };
 
     if (isActive !== undefined) {
       where.isActive = isActive;
@@ -182,8 +181,7 @@ export class ChatService {
     // 验证权限
     await this.verifyRoomAccess(userId, room);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = {};
+    const data: Record<string, unknown> = {};
     if (dto.isActive !== undefined) {
       data.isActive = dto.isActive;
     }
@@ -282,9 +280,7 @@ export class ChatService {
 
     const { page = 1, pageSize = 50, messageType, beforeId } = query;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = { roomId };
-
+    const where: Record<string, unknown> = { roomId };
     if (messageType) {
       where.messageType = messageType;
     }
@@ -335,8 +331,7 @@ export class ChatService {
     await this.verifyRoomAccess(userId, room);
 
     // 标记所有未读消息为已读
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {
+    const where: Record<string, unknown> = {
       roomId,
       isRead: false,
       senderId: { not: userId },
@@ -401,10 +396,7 @@ export class ChatService {
   /**
    * 验证用户是否有权访问聊天室
    */
-  private async verifyRoomAccess(
-    userId: string,
-    room: { userId: string; consultantId: string },
-  ) {
+  private async verifyRoomAccess(userId: string, room: { userId: string; consultantId: string }) {
     // 聊天室用户本人
     if (room.userId === userId) {
       return;

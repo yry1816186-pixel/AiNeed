@@ -1,11 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useAuthStore } from "../../stores/index";
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
-import { Spacing, flatColors as staticColors } from '../../design-system/theme';
-
 
 interface VipGuardProps {
   children: React.ReactNode;
@@ -14,7 +12,7 @@ interface VipGuardProps {
 }
 
 export function VipGuard({ children, onNotVip, featureName = "该功能" }: VipGuardProps) {
-    const { colors } = useTheme();
+  const { colors } = useTheme();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isVip = useAuthStore((state) => state.isVip);
   const hasTriggered = useRef(false);
@@ -57,40 +55,40 @@ const s = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: Spacing.xl,
-    backgroundColor: staticColors.background,
+    padding: 32,
+    backgroundColor: colors.background,
   },
   iconCircle: {
-    width: Spacing['3xl'],
-    height: Spacing['3xl'],
+    width: 64,
+    height: 64,
     borderRadius: 32,
-    backgroundColor: staticColors.subtleBg,
+    backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.md,
+    marginBottom: 16,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: staticColors.textPrimary,
-    marginBottom: DesignTokens.spacing['1.5'],
+    color: colors.textPrimary,
+    marginBottom: 6,
   },
   subtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textSecondary,
-    marginBottom: Spacing.lg,
+    color: colors.textSecondary,
+    marginBottom: 24,
   },
   upgradeBtn: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5'],
-    backgroundColor: staticColors.primary,
-    paddingHorizontal: DesignTokens.spacing[7],
-    paddingVertical: DesignTokens.spacing[3],
+    gap: 6,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 28,
+    paddingVertical: 12,
     borderRadius: 24,
   },
   upgradeText: {
-    color: staticColors.surface,
+    color: colors.surface,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },

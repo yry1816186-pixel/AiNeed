@@ -14,7 +14,8 @@ import {
   StatusBar,
   ViewStyle,
   ImageSourcePropType,
-  Animated} from "react-native";
+  Animated,
+} from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
@@ -33,13 +34,12 @@ import {
   runOnJS,
   useAnimatedScrollHandler,
   useDerivedValue,
-  SharedValue} from "react-native-reanimated";
+} from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors , Spacing } from '../../../design-system/theme'
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Colors } from "../../../design-system/theme";
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
 
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -49,7 +49,8 @@ const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 const springConfig = {
   damping: 20,
   stiffness: 200,
-  mass: 0.8};
+  mass: 0.8,
+};
 
 export interface FullScreenGalleryProps {
   visible: boolean;
@@ -76,8 +77,6 @@ interface GalleryThumbnailProps {
 }
 
 const GalleryThumbnail: React.FC<GalleryThumbnailProps> = ({ item, index, selected, onPress }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const thumbnailScale = useSharedValue(1);
 
   useEffect(() => {
@@ -86,13 +85,14 @@ const GalleryThumbnail: React.FC<GalleryThumbnailProps> = ({ item, index, select
 
   const thumbnailAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: thumbnailScale.value }],
-    borderWidth: selected ? 2 : 0}));
+    borderWidth: selected ? 2 : 0,
+  }));
 
   return (
     <TouchableOpacity onPress={() => onPress(index)}>
       <AnimatedImage
         source={{ uri: item.uri }}
-        style={[styles.thumbnail, thumbnailAnimatedStyle as any]}
+        style={[styles.thumbnail, thumbnailAnimatedStyle]}
       />
     </TouchableOpacity>
   );
@@ -108,9 +108,8 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
   showCounter = true,
   enableZoom = true,
   enableSwipeDown = true,
-  backgroundColor = DesignTokens.colors.neutral[900]}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  backgroundColor = DesignTokens.colors.neutral[900],
+}) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const flatListRef = useRef<FlatList>(null);
 
@@ -144,7 +143,8 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
       if (onIndexChange) {
         runOnJS(onIndexChange)(index);
       }
-    }});
+    },
+  });
 
   const pinchGesture = Gesture.Pinch()
     .onUpdate((event) => {
@@ -182,15 +182,18 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }]}));
+    transform: [{ scale: scale.value }],
+  }));
 
   const imageAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: zoomScale.value }, { translateY: translateY.value * 0.3 }]}));
+    transform: [{ scale: zoomScale.value }, { translateY: translateY.value * 0.3 }],
+  }));
 
   const controlsAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: controlsOpacity.value}));
+    opacity: controlsOpacity.value,
+  }));
 
-  const renderImage = ({ item }: { item: (typeof images)[0]; index: number }) => (
+  const renderImage = ({ item, index }: { item: (typeof images)[0]; _index: number }) => (
     <GestureDetector gesture={composedGesture}>
       <AnimatedView style={[styles.imageContainer, imageAnimatedStyle]}>
         <AnimatedImage
@@ -224,7 +227,7 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
       <AnimatedView style={[styles.galleryContainer, { backgroundColor }, containerAnimatedStyle]}>
         <AnimatedPressable style={[styles.closeButton, controlsAnimatedStyle]} onPress={onClose}>
           <BlurView intensity={80} style={styles.closeButtonBlur}>
-            <Ionicons name="close" size={24} color={colors.textInverse} />
+            <Ionicons name="close" size={24} color={DesignTokens.colors.text.inverse} />
           </BlurView>
         </AnimatedPressable>
 
@@ -252,7 +255,8 @@ export const FullScreenGallery: React.FC<FullScreenGalleryProps> = ({
           getItemLayout={(_, index) => ({
             length: SCREEN_WIDTH,
             offset: SCREEN_WIDTH * index,
-            index})}
+            index,
+          })}
         />
 
         {showThumbnails && images.length > 1 && (
@@ -307,9 +311,8 @@ export const ARGuideOverlay: React.FC<ARGuideOverlayProps> = ({
   highlightArea,
   onNext,
   onSkip,
-  onComplete}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  onComplete,
+}) => {
   const opacity = useSharedValue(0);
   const pulseScale = useSharedValue(1);
   const highlightOpacity = useSharedValue(0.5);
@@ -333,11 +336,13 @@ export const ARGuideOverlay: React.FC<ARGuideOverlayProps> = ({
   }, [visible]);
 
   const overlayAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value}));
+    opacity: opacity.value,
+  }));
 
   const highlightAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: pulseScale.value }],
-    opacity: highlightOpacity.value}));
+    opacity: highlightOpacity.value,
+  }));
 
   const isLastStep = step === totalSteps - 1;
 
@@ -356,7 +361,8 @@ export const ARGuideOverlay: React.FC<ARGuideOverlayProps> = ({
                 left: highlightArea.x,
                 top: highlightArea.y,
                 width: highlightArea.width,
-                height: highlightArea.height},
+                height: highlightArea.height,
+              },
               highlightAnimatedStyle,
             ]}
           >
@@ -386,7 +392,13 @@ export const ARGuideOverlay: React.FC<ARGuideOverlayProps> = ({
               <Text style={styles.skipText}>跳过</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.nextButton} onPress={isLastStep ? onComplete : onNext}>
-              <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.nextButtonGradient}>
+              <LinearGradient
+                colors={[
+                  DesignTokens.colors.brand.terracotta,
+                  DesignTokens.colors.brand.terracottaDark,
+                ]}
+                style={styles.nextButtonGradient}
+              >
                 <Text style={styles.nextText}>{isLastStep ? "开始体验" : "下一步"}</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -422,9 +434,8 @@ export const VirtualTryOnPreview: React.FC<VirtualTryOnPreviewProps> = ({
   onCapture,
   onRetry,
   onSave,
-  onShare}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  onShare,
+}) => {
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.9);
   const shimmerTranslate = useSharedValue(-SCREEN_WIDTH);
@@ -465,14 +476,17 @@ export const VirtualTryOnPreview: React.FC<VirtualTryOnPreviewProps> = ({
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }]}));
+    transform: [{ scale: scale.value }],
+  }));
 
   const shimmerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shimmerTranslate.value }]}));
+    transform: [{ translateX: shimmerTranslate.value }],
+  }));
 
   const resultAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: resultScale.value }],
-    opacity: resultOpacity.value}));
+    opacity: resultOpacity.value,
+  }));
 
   if (!visible) {
     return null;
@@ -484,22 +498,22 @@ export const VirtualTryOnPreview: React.FC<VirtualTryOnPreviewProps> = ({
         <BlurView intensity={100} style={StyleSheet.absoluteFill as ViewStyle}>
           <View style={styles.tryOnHeader}>
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <Ionicons name="close" size={28} color={colors.textInverse} />
+              <Ionicons name="close" size={28} color={DesignTokens.colors.text.inverse} />
             </TouchableOpacity>
             <Text style={styles.tryOnTitle}>虚拟试衣</Text>
-            <View style={{ width: DesignTokens.spacing[7] }} />
+            <View style={{ width: 28 }} />
           </View>
 
           <View style={styles.tryOnContent}>
             <View style={styles.tryOnPreviewContainer}>
               <Image source={{ uri: productImage }} style={styles.productPreview} />
               <View style={styles.previewDivider}>
-                <Ionicons name="arrow-forward" size={24} color={colors.textInverse} />
+                <Ionicons name="arrow-forward" size={24} color={DesignTokens.colors.text.inverse} />
               </View>
               {resultImage ? (
                 <AnimatedImage
                   source={{ uri: resultImage }}
-                  style={[styles.resultPreview, resultAnimatedStyle as any]}
+                  style={[styles.resultPreview, resultAnimatedStyle]}
                 />
               ) : (
                 <View style={styles.resultPlaceholder}>
@@ -522,7 +536,7 @@ export const VirtualTryOnPreview: React.FC<VirtualTryOnPreviewProps> = ({
                     </>
                   ) : (
                     <TouchableOpacity style={styles.captureButton} onPress={onCapture}>
-                      <Ionicons name="camera" size={32} color={colors.textInverse} />
+                      <Ionicons name="camera" size={32} color={DesignTokens.colors.text.inverse} />
                       <Text style={styles.captureText}>拍照试衣</Text>
                     </TouchableOpacity>
                   )}
@@ -533,15 +547,15 @@ export const VirtualTryOnPreview: React.FC<VirtualTryOnPreviewProps> = ({
             {resultImage && !isProcessing && (
               <AnimatedView style={[styles.resultActions, resultAnimatedStyle]}>
                 <TouchableOpacity style={styles.actionButton} onPress={onRetry}>
-                  <Ionicons name="refresh" size={20} color={colors.textInverse} />
+                  <Ionicons name="refresh" size={20} color={DesignTokens.colors.text.inverse} />
                   <Text style={styles.actionText}>重试</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton} onPress={onSave}>
-                  <Ionicons name="download" size={20} color={colors.textInverse} />
+                  <Ionicons name="download" size={20} color={DesignTokens.colors.text.inverse} />
                   <Text style={styles.actionText}>保存</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton} onPress={onShare}>
-                  <Ionicons name="share" size={20} color={colors.textInverse} />
+                  <Ionicons name="share" size={20} color={DesignTokens.colors.text.inverse} />
                   <Text style={styles.actionText}>分享</Text>
                 </TouchableOpacity>
               </AnimatedView>
@@ -574,9 +588,8 @@ export const ImmersiveProductView: React.FC<ImmersiveProductViewProps> = ({
   product,
   onClose,
   onAddToCart,
-  onTryOn}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  onTryOn,
+}) => {
   const scrollY = useSharedValue(0);
   const opacity = useSharedValue(0);
   const imageScale = useSharedValue(1);
@@ -602,20 +615,24 @@ export const ImmersiveProductView: React.FC<ImmersiveProductViewProps> = ({
         [1.2, 1, 0.9],
         Extrapolate.CLAMP
       );
-    }});
+    },
+  });
 
   const headerOpacity = useDerivedValue(() => {
     return interpolate(scrollY.value, [0, 100], [0, 1], Extrapolate.CLAMP);
   });
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value}));
+    opacity: opacity.value,
+  }));
 
   const headerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: headerOpacity.value}));
+    opacity: headerOpacity.value,
+  }));
 
   const imageAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: imageScale.value }]}));
+    transform: [{ scale: imageScale.value }],
+  }));
 
   if (!visible) {
     return null;
@@ -633,7 +650,7 @@ export const ImmersiveProductView: React.FC<ImmersiveProductViewProps> = ({
               <Text style={styles.headerTitle} numberOfLines={1}>
                 {product.name}
               </Text>
-              <View style={{ width: DesignTokens.spacing[10] }} />
+              <View style={{ width: 40 }} />
             </View>
           </BlurView>
         </AnimatedView>
@@ -675,7 +692,11 @@ export const ImmersiveProductView: React.FC<ImmersiveProductViewProps> = ({
                         <Ionicons
                           name="checkmark"
                           size={16}
-                          color={color === "#fff" ? DesignTokens.colors.neutral[800] : colors.textInverse}
+                          color={
+                            color === "#fff"
+                              ? DesignTokens.colors.neutral[900]
+                              : DesignTokens.colors.text.inverse
+                          }
                         />
                       )}
                     </TouchableOpacity>
@@ -729,7 +750,13 @@ export const ImmersiveProductView: React.FC<ImmersiveProductViewProps> = ({
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={styles.addToCartButton} onPress={onAddToCart}>
-                <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.addToCartGradient}>
+                <LinearGradient
+                  colors={[
+                    DesignTokens.colors.brand.terracotta,
+                    DesignTokens.colors.brand.terracottaDark,
+                  ]}
+                  style={styles.addToCartGradient}
+                >
                   <Text style={styles.addToCartText}>加入购物车</Text>
                 </LinearGradient>
               </TouchableOpacity>
@@ -762,27 +789,27 @@ export interface StoryViewerProps {
 interface StoryProgressBarProps {
   index: number;
   currentItemIndex: number;
-  progress: SharedValue<number>;
+  progress: number;
 }
 
 const StoryProgressBar: React.FC<StoryProgressBarProps> = ({
   index,
   currentItemIndex,
-  progress}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  progress,
+}) => {
   const barAnimatedStyle = useAnimatedStyle(() => {
     const widthProgress =
       index < currentItemIndex ? 1 : index === currentItemIndex ? progress.value : 0;
 
     return {
-      width: `${widthProgress * 100}%`};
+      width: `${widthProgress * 100}%`,
+    };
   }, [currentItemIndex, index]);
 
   return (
     <View style={styles.progressBarContainer}>
       <View style={styles.progressBarBackground} />
-      <AnimatedView style={[styles.progressBarFill, barAnimatedStyle as any]} />
+      <AnimatedView style={[styles.progressBarFill, barAnimatedStyle]} />
     </View>
   );
 };
@@ -791,9 +818,8 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   visible,
   stories,
   initialStoryIndex = 0,
-  onClose}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  onClose,
+}) => {
   const [currentStoryIndex, setCurrentStoryIndex] = useState(initialStoryIndex);
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const progress = useSharedValue(0);
@@ -856,10 +882,12 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   );
 
   const _progressAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${progress.value * 100}%`}));
+    width: `${progress.value * 100}%`,
+  }));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value}));
+    opacity: opacity.value,
+  }));
 
   if (!visible || !currentStory) {
     return null;
@@ -890,7 +918,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
             <Image source={{ uri: currentStory.user.avatar }} style={styles.storyAvatar} />
             <Text style={styles.storyUserName}>{currentStory.user.name}</Text>
             <TouchableOpacity style={styles.storyCloseButton} onPress={onClose}>
-              <Ionicons name="close" size={24} color={colors.textInverse} />
+              <Ionicons name="close" size={24} color={DesignTokens.colors.text.inverse} />
             </TouchableOpacity>
           </View>
         </View>
@@ -908,190 +936,231 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   );
 };
 
-const useStyles = createStyles((colors) => ({
+const styles = StyleSheet.create({
   galleryContainer: {
-    flex: 1},
+    flex: 1,
+  },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center"},
-  closeButton: {
-    position: "absolute",
-    top: Platform.OS === "ios" ? 50 : 30,
-    right: Spacing.md,
-    zIndex: 10},
-  closeButtonBlur: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden"},
+  },
+  closeButton: {
+    position: "absolute",
+    top: Platform.OS === "ios" ? 50 : 30,
+    right: 16,
+    zIndex: 10,
+  },
+  closeButtonBlur: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
   counterContainer: {
     position: "absolute",
     top: Platform.OS === "ios" ? 50 : 30,
-    left: Spacing.md,
-    zIndex: 10},
+    left: 16,
+    zIndex: 10,
+  },
   counterBlur: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 16,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   counterText: {
-    color: colors.textInverse,
-    fontSize: DesignTokens.typography.sizes.base,
-    fontWeight: "600"},
+    color: DesignTokens.colors.text.inverse,
+    fontSize: 14,
+    fontWeight: "600",
+  },
   imageContainer: {
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   fullScreenImage: {
     width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT},
+    height: SCREEN_HEIGHT,
+  },
   captionContainer: {
     position: "absolute",
     bottom: 100,
-    left: Spacing.md,
-    right: Spacing.md},
+    left: 16,
+    right: 16,
+  },
   captionBlur: {
-    padding: DesignTokens.spacing[3],
+    padding: 12,
     borderRadius: 12,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   captionText: {
-    color: colors.textInverse,
-    fontSize: DesignTokens.typography.sizes.base,
-    textAlign: "center"},
+    color: DesignTokens.colors.text.inverse,
+    fontSize: 14,
+    textAlign: "center",
+  },
   thumbnailsContainer: {
     position: "absolute",
     bottom: Platform.OS === "ios" ? 40 : 20,
     left: 0,
-    right: 0},
+    right: 0,
+  },
   thumbnailsBlur: {
-    paddingVertical: Spacing.sm,
+    paddingVertical: 8,
     borderRadius: 20,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   thumbnailsList: {
-    paddingHorizontal: DesignTokens.spacing[3]},
+    paddingHorizontal: 12,
+  },
   thumbnail: {
     width: 50,
     height: 50,
     borderRadius: 8,
-    marginHorizontal: Spacing.xs,
-    borderColor: colors.surface},
+    marginHorizontal: 4,
+    borderColor: DesignTokens.colors.neutral.white,
+  },
   guideOverlay: {
     ...StyleSheet.absoluteFillObject,
-    zIndex: 1000},
+    zIndex: 1000,
+  },
   guideMask: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.7)"},
+    backgroundColor: "rgba(0,0,0,0.7)",
+  },
   highlightArea: {
     position: "absolute",
     borderRadius: 12,
     borderWidth: 3,
-    borderColor: colors.primary},
+    borderColor: DesignTokens.colors.brand.terracotta,
+  },
   highlightBorder: {
     ...StyleSheet.absoluteFillObject,
     borderRadius: 12,
     backgroundColor: "transparent",
-    shadowColor: colors.primary,
+    shadowColor: DesignTokens.colors.brand.terracotta,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
-    shadowRadius: 10},
+    shadowRadius: 10,
+  },
   guideContent: {
     position: "absolute",
     bottom: Platform.OS === "ios" ? 100 : 80,
-    left: DesignTokens.spacing[5],
-    right: DesignTokens.spacing[5]},
+    left: 20,
+    right: 20,
+  },
   guideCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderRadius: 20,
-    padding: Spacing.lg},
+    padding: 24,
+  },
   guideProgress: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: Spacing.sm,
-    marginBottom: Spacing.md},
+    gap: 8,
+    marginBottom: 16,
+  },
   progressDot: {
-    width: Spacing.sm,
-    height: Spacing.sm,
+    width: 8,
+    height: 8,
     borderRadius: 4,
-    backgroundColor: Colors.neutral[200]},
+    backgroundColor: Colors.neutral[200],
+  },
   progressDotActive: {
-    backgroundColor: Colors.primary[500]},
+    backgroundColor: Colors.primary[500],
+  },
   guideTitle: {
-    fontSize: DesignTokens.typography.sizes.xl,
+    fontSize: 20,
     fontWeight: "700",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm},
+    marginBottom: 8,
+  },
   guideDescription: {
-    fontSize: DesignTokens.typography.sizes.base,
+    fontSize: 14,
     color: Colors.neutral[600],
     textAlign: "center",
     lineHeight: 20,
-    marginBottom: DesignTokens.spacing[5]},
+    marginBottom: 20,
+  },
   guideActions: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: DesignTokens.spacing[3]},
+    gap: 12,
+  },
   skipButton: {
-    paddingVertical: DesignTokens.spacing[3],
-    paddingHorizontal: Spacing.lg},
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+  },
   skipText: {
-    fontSize: DesignTokens.typography.sizes.base,
+    fontSize: 14,
     color: Colors.neutral[500],
-    fontWeight: "500"},
+    fontWeight: "500",
+  },
   nextButton: {
     flex: 1,
     borderRadius: 24,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   nextButtonGradient: {
-    paddingVertical: DesignTokens.spacing[3],
+    paddingVertical: 12,
     alignItems: "center",
-    borderRadius: 24},
+    borderRadius: 24,
+  },
   nextText: {
-    fontSize: DesignTokens.typography.sizes.base,
-    color: colors.textInverse,
-    fontWeight: "600"},
+    fontSize: 15,
+    color: DesignTokens.colors.text.inverse,
+    fontWeight: "600",
+  },
   tryOnContainer: {
-    flex: 1},
+    flex: 1,
+  },
   tryOnHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: Platform.OS === "ios" ? 50 : 30,
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingBottom: Spacing.md},
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+  },
   tryOnTitle: {
-    fontSize: DesignTokens.typography.sizes.lg,
+    fontSize: 18,
     fontWeight: "600",
-    color: colors.textInverse},
+    color: DesignTokens.colors.text.inverse,
+  },
   tryOnContent: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   tryOnPreviewContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing[5]},
+    gap: 20,
+  },
   productPreview: {
     width: SCREEN_WIDTH * 0.35,
     height: SCREEN_WIDTH * 0.5,
-    borderRadius: 16},
+    borderRadius: 16,
+  },
   previewDivider: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: "rgba(255,255,255,0.2)",
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   resultPreview: {
     width: SCREEN_WIDTH * 0.35,
     height: SCREEN_WIDTH * 0.5,
-    borderRadius: 16},
+    borderRadius: 16,
+  },
   resultPlaceholder: {
     width: SCREEN_WIDTH * 0.35,
     height: SCREEN_WIDTH * 0.5,
@@ -1099,235 +1168,290 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: "rgba(255,255,255,0.1)",
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   shimmerOverlay: {
-    ...StyleSheet.absoluteFillObject},
+    ...StyleSheet.absoluteFillObject,
+  },
   processingIndicator: {
-    alignItems: "center"},
+    alignItems: "center",
+  },
   processingText: {
-    color: colors.textInverse,
-    fontSize: DesignTokens.typography.sizes.base,
-    marginBottom: DesignTokens.spacing[3]},
+    color: DesignTokens.colors.text.inverse,
+    fontSize: 14,
+    marginBottom: 12,
+  },
   progressBar: {
     width: 100,
-    height: Spacing.xs,
+    height: 4,
     backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 2,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   progressFill: {
     height: "100%",
-    backgroundColor: colors.primary,
-    borderRadius: 2},
+    backgroundColor: DesignTokens.colors.brand.terracotta,
+    borderRadius: 2,
+  },
   captureButton: {
     alignItems: "center",
-    gap: Spacing.sm},
+    gap: 8,
+  },
   captureText: {
-    color: colors.textInverse,
-    fontSize: DesignTokens.typography.sizes.base,
-    fontWeight: "500"},
+    color: DesignTokens.colors.text.inverse,
+    fontSize: 14,
+    fontWeight: "500",
+  },
   resultActions: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[5],
-    marginTop: 30},
+    gap: 20,
+    marginTop: 30,
+  },
   actionButton: {
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5']},
+    gap: 6,
+  },
   actionText: {
-    color: colors.textInverse,
-    fontSize: DesignTokens.typography.sizes.sm},
+    color: DesignTokens.colors.text.inverse,
+    fontSize: 12,
+  },
   immersiveContainer: {
     flex: 1,
-    backgroundColor: colors.surface},
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
+  },
   immersiveHeader: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 10},
+    zIndex: 10,
+  },
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: Platform.OS === "ios" ? 50 : 30,
-    paddingHorizontal: Spacing.md,
-    paddingBottom: DesignTokens.spacing[3]},
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
   headerTitle: {
     flex: 1,
-    fontSize: DesignTokens.typography.sizes.md,
+    fontSize: 16,
     fontWeight: "600",
     color: Colors.neutral[800],
     textAlign: "center",
-    marginHorizontal: Spacing.md},
+    marginHorizontal: 16,
+  },
   productImageContainer: {
     width: SCREEN_WIDTH,
-    height: SCREEN_WIDTH * 1.3},
+    height: SCREEN_WIDTH * 1.3,
+  },
   productImage: {
     width: "100%",
-    height: "100%"},
+    height: "100%",
+  },
   imageGradient: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: 100},
+    height: 100,
+  },
   productDetails: {
-    padding: DesignTokens.spacing[5],
+    padding: 20,
     marginTop: -40,
-    backgroundColor: colors.surface,
+    backgroundColor: DesignTokens.colors.backgrounds.primary,
     borderTopLeftRadius: 24,
-    borderTopRightRadius: 24},
+    borderTopRightRadius: 24,
+  },
   productBrand: {
-    fontSize: DesignTokens.typography.sizes.sm,
+    fontSize: 13,
     color: Colors.neutral[500],
     textTransform: "uppercase",
-    letterSpacing: 1},
+    letterSpacing: 1,
+  },
   productName: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: 24,
     fontWeight: "700",
     color: Colors.neutral[800],
-    marginTop: Spacing.xs},
+    marginTop: 4,
+  },
   productPrice: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: 28,
     fontWeight: "800",
     color: Colors.primary[500],
-    marginTop: Spacing.sm},
+    marginTop: 8,
+  },
   optionSection: {
-    marginTop: Spacing.lg},
+    marginTop: 24,
+  },
   optionLabel: {
-    fontSize: DesignTokens.typography.sizes.base,
+    fontSize: 14,
     fontWeight: "600",
     color: Colors.neutral[700],
-    marginBottom: DesignTokens.spacing[3]},
+    marginBottom: 12,
+  },
   colorOptions: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3]},
+    gap: 12,
+  },
   colorOption: {
-    width: DesignTokens.spacing[9],
-    height: DesignTokens.spacing[9],
+    width: 36,
+    height: 36,
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
-    borderColor: "transparent"},
+    borderColor: "transparent",
+  },
   colorOptionSelected: {
-    borderColor: Colors.primary[500]},
+    borderColor: Colors.primary[500],
+  },
   sizeOptions: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: DesignTokens.spacing['2.5']},
+    gap: 10,
+  },
   sizeOption: {
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: 12,
     backgroundColor: Colors.neutral[100],
     borderWidth: 1,
-    borderColor: Colors.neutral[200]},
+    borderColor: Colors.neutral[200],
+  },
   sizeOptionSelected: {
     backgroundColor: Colors.primary[500],
-    borderColor: Colors.primary[500]},
+    borderColor: Colors.primary[500],
+  },
   sizeText: {
-    fontSize: DesignTokens.typography.sizes.base,
+    fontSize: 14,
     fontWeight: "500",
-    color: Colors.neutral[700]},
+    color: Colors.neutral[700],
+  },
   sizeTextSelected: {
-    color: colors.textInverse},
+    color: DesignTokens.colors.text.inverse,
+  },
   descriptionSection: {
-    marginTop: Spacing.lg},
+    marginTop: 24,
+  },
   descriptionTitle: {
-    fontSize: DesignTokens.typography.sizes.md,
+    fontSize: 16,
     fontWeight: "600",
     color: Colors.neutral[700],
-    marginBottom: Spacing.sm},
+    marginBottom: 8,
+  },
   descriptionText: {
-    fontSize: DesignTokens.typography.sizes.base,
+    fontSize: 14,
     color: Colors.neutral[600],
-    lineHeight: 22},
+    lineHeight: 22,
+  },
   immersiveFooter: {
     position: "absolute",
     bottom: 0,
     left: 0,
-    right: 0},
+    right: 0,
+  },
   footerContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing[3],
-    paddingTop: DesignTokens.spacing[3],
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingBottom: Platform.OS === "ios" ? 34 : 16},
+    gap: 12,
+    paddingTop: 12,
+    paddingHorizontal: 20,
+    paddingBottom: Platform.OS === "ios" ? 34 : 16,
+  },
   tryOnButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5'],
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing['3.5'],
+    gap: 6,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
     borderRadius: 24,
-    backgroundColor: Colors.neutral[100]},
+    backgroundColor: Colors.neutral[100],
+  },
   tryOnText: {
-    fontSize: DesignTokens.typography.sizes.base,
+    fontSize: 14,
     fontWeight: "600",
-    color: Colors.primary[500]},
+    color: Colors.primary[500],
+  },
   addToCartButton: {
     flex: 1,
     borderRadius: 24,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   addToCartGradient: {
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: 14,
     alignItems: "center",
-    borderRadius: 24},
+    borderRadius: 24,
+  },
   addToCartText: {
-    fontSize: DesignTokens.typography.sizes.base,
+    fontSize: 15,
     fontWeight: "600",
-    color: colors.textInverse},
+    color: DesignTokens.colors.text.inverse,
+  },
   storyContainer: {
     flex: 1,
-    backgroundColor: DesignTokens.colors.neutral[900]},
+    backgroundColor: DesignTokens.colors.neutral[900],
+  },
   storyHeader: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     paddingTop: Platform.OS === "ios" ? 50 : 30,
-    paddingHorizontal: DesignTokens.spacing[3],
-    zIndex: 10},
+    paddingHorizontal: 12,
+    zIndex: 10,
+  },
   progressBars: {
     flexDirection: "row",
-    gap: Spacing.xs,
-    marginBottom: DesignTokens.spacing[3]},
+    gap: 4,
+    marginBottom: 12,
+  },
   progressBarContainer: {
     flex: 1,
     height: 3,
     backgroundColor: "rgba(255,255,255,0.3)",
     borderRadius: 1.5,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   progressBarBackground: {
-    ...StyleSheet.absoluteFillObject},
+    ...StyleSheet.absoluteFillObject,
+  },
   progressBarFill: {
     height: "100%",
-    backgroundColor: colors.surface,
-    borderRadius: 1.5},
+    backgroundColor: DesignTokens.colors.neutral.white,
+    borderRadius: 1.5,
+  },
   storyUserInfo: {
     flexDirection: "row",
-    alignItems: "center"},
+    alignItems: "center",
+  },
   storyAvatar: {
-    width: Spacing.xl,
-    height: Spacing.xl,
+    width: 32,
+    height: 32,
     borderRadius: 16,
-    marginRight: DesignTokens.spacing['2.5']},
+    marginRight: 10,
+  },
   storyUserName: {
     flex: 1,
-    fontSize: DesignTokens.typography.sizes.base,
+    fontSize: 14,
     fontWeight: "600",
-    color: colors.textInverse},
+    color: DesignTokens.colors.text.inverse,
+  },
   storyCloseButton: {
-    padding: Spacing.xs},
+    padding: 4,
+  },
   storyTapArea: {
     position: "absolute",
     top: 0,
-    bottom: 0}}))
+    bottom: 0,
+  },
+});
 
 export default {
   FullScreenGallery,
   ARGuideOverlay,
   VirtualTryOnPreview,
   ImmersiveProductView,
-  StoryViewer};
+  StoryViewer,
+};

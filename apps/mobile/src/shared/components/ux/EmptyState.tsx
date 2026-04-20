@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../../design-system/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 /**
  * EmptyState - UX layer variant
@@ -32,6 +33,8 @@ export function EmptyState({
   accessibilityLabel,
   style,
 }: EmptyStateProps) {
+  const styles = useStyles(colors);
+  const { colors } = useTheme();
   const label = accessibilityLabel || `空状态: ${title}`;
   return (
     <Animated.View
@@ -42,12 +45,12 @@ export function EmptyState({
     >
       <View style={styles.iconContainer}>
         <LinearGradient
-          colors={[Colors.primary[50], Colors.sage[50]]}
+          colors={[colors.primary[50], Colors.sage[50]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.iconGradient}
         >
-          <Ionicons name={icon} size={48} color={Colors.primary[500]} />
+          <Ionicons name={icon} size={48} color={colors.primary[500]} />
         </LinearGradient>
       </View>
       <Text style={styles.title}>{title}</Text>
@@ -67,7 +70,7 @@ export function EmptyState({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: { flex: 1, alignItems: "center", justifyContent: "center", padding: Spacing[10] },
   iconContainer: { marginBottom: Spacing[6] },
   iconGradient: {
@@ -79,25 +82,25 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.heading.lg,
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
     textAlign: "center",
     marginBottom: Spacing[2],
   },
   description: {
     ...Typography.body.md,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
     maxWidth: 280,
     marginBottom: Spacing[6],
   },
   actionButton: {
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     paddingHorizontal: Spacing[8],
     paddingVertical: Spacing[3],
     borderRadius: BorderRadius.xl,
     ...Shadows.md,
   },
   actionText: { ...Typography.styles.button, color: Colors.neutral.white },
-});
+}));
 
 export default EmptyState;

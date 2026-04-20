@@ -72,15 +72,12 @@ export class AiStylistSessionService {
   constructor(
     private configService: ConfigService,
     private prisma: PrismaService,
-    private redisService: RedisService,
+    private redisService: RedisService
   ) {
     this.useRedis = this.configService.get<string>("REDIS_URL") ? true : false;
   }
 
-  async getSessionOrThrow(
-    userId: string,
-    sessionId: string,
-  ): Promise<StylistSession> {
+  async getSessionOrThrow(userId: string, sessionId: string): Promise<StylistSession> {
     await this.cleanupExpiredSessions();
     const key = this.getSessionKey(userId, sessionId);
     const cachedSession = this.sessionStore.get(key);
@@ -101,15 +98,10 @@ export class AiStylistSessionService {
   async persistSession(session: StylistSession): Promise<void> {
     await this.cleanupExpiredSessions();
     session.updatedAt = new Date().toISOString();
-    session.conversationHistory = session.conversationHistory.slice(
-      -this.maxSessionMessages,
-    );
+    session.conversationHistory = session.conversationHistory.slice(-this.maxSessionMessages);
     const key = this.getSessionKey(session.userId, session.id);
 
-    await this.writeSessionRecord(
-      session,
-      new Date(Date.now() + this.sessionTtlMs),
-    );
+    await this.writeSessionRecord(session, new Date(Date.now() + this.sessionTtlMs));
 
     if (this.useRedis) {
       try {
@@ -117,7 +109,7 @@ export class AiStylistSessionService {
         await this.redisService.setex(
           redisKey,
           Math.floor(this.sessionTtlMs / 1000),
-          JSON.stringify(session),
+          JSON.stringify(session)
         );
       } catch (error) {
         this.logger.warn(`Redis session persist failed, falling back to DB-only: ${error}`);
@@ -139,7 +131,7 @@ export class AiStylistSessionService {
 
   async listSessions(
     userId: string,
-    options?: { limit?: number; offset?: number },
+    options?: { limit?: number; offset?: number }
   ): Promise<{
     sessions: Array<{
       id: string;
@@ -184,20 +176,17 @@ export class AiStylistSessionService {
           };
         } catch (error) {
           this.logger.warn(
-            `Failed to parse session record ${record.id}: ${error instanceof Error ? error.message : String(error)}. Record will be skipped.`,
+            `Failed to parse session record ${record.id}: ${error instanceof Error ? error.message : String(error)}. Record will be skipped.`
           );
           return null;
         }
       })
-      .filter((s: unknown): s is NonNullable<typeof s> => s !== null);
+      .filter((s: any): s is NonNullable<typeof s> => s !== null);
 
     return { sessions, total };
   }
 
-  async deleteSession(
-    userId: string,
-    sessionId: string,
-  ): Promise<{ success: boolean }> {
+  async deleteSession(userId: string, sessionId: string): Promise<{ success: boolean }> {
     const key = this.getSessionKey(userId, sessionId);
     this.sessionStore.delete(key);
 
@@ -207,7 +196,7 @@ export class AiStylistSessionService {
       });
     } catch (primaryError) {
       this.logger.warn(
-        `Failed to delete AI stylist session from primary table: ${primaryError instanceof Error ? primaryError.message : String(primaryError)}. Attempting fallback deletion.`,
+        `Failed to delete AI stylist session from primary table: ${primaryError instanceof Error ? primaryError.message : String(primaryError)}. Attempting fallback deletion.`
       );
       try {
         await this.prisma.systemConfig.delete({
@@ -215,7 +204,7 @@ export class AiStylistSessionService {
         });
       } catch (fallbackError) {
         this.logger.error(
-          `Failed to delete session config from fallback table: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}. Session cleanup may be incomplete for userId=${userId}, sessionId=${sessionId}`,
+          `Failed to delete session config from fallback table: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}. Session cleanup may be incomplete for userId=${userId}, sessionId=${sessionId}`
         );
       }
     }
@@ -223,10 +212,7 @@ export class AiStylistSessionService {
     return { success: true };
   }
 
-  async loadPersistedSession(
-    userId: string,
-    sessionId: string,
-  ): Promise<StylistSession | null> {
+  async loadPersistedSession(userId: string, sessionId: string): Promise<StylistSession | null> {
     const key = this.getSessionKey(userId, sessionId);
 
     if (this.useRedis) {
@@ -284,12 +270,9 @@ export class AiStylistSessionService {
     return Date.now() - new Date(updatedAt).getTime() > this.sessionTtlMs;
   }
 
-  private async writeSessionRecord(
-    session: StylistSession,
-    expiresAt: Date,
-  ): Promise<void> {
+  private async writeSessionRecord(session: StylistSession, expiresAt: Date): Promise<void> {
     try {
-      const sessionPayload = session as unknown as any;
+      const sessionPayload = session as unknown as Record<string, unknown>;
 
       await this.prisma.aiStylistSession.upsert({
         where: { id: session.id },
@@ -308,7 +291,7 @@ export class AiStylistSessionService {
       return;
     } catch (error: unknown) {
       this.logger.warn(
-        `AiStylistSession 表写入失败，回退 SystemConfig: ${error instanceof Error ? error.message : String(error)}`,
+        `AiStylistSession 表写入失败，回退 SystemConfig: ${error instanceof Error ? error.message : String(error)}`
       );
     }
 
@@ -326,9 +309,7 @@ export class AiStylistSessionService {
     });
   }
 
-  private async deleteExpiredSessionRecords(
-    expiredBefore: Date,
-  ): Promise<void> {
+  private async deleteExpiredSessionRecords(expiredBefore: Date): Promise<void> {
     try {
       await this.prisma.aiStylistSession.deleteMany({
         where: {
@@ -340,7 +321,7 @@ export class AiStylistSessionService {
       return;
     } catch (error: unknown) {
       this.logger.warn(
-        `AiStylistSession 过期清理失败，回退 SystemConfig: ${error instanceof Error ? error.message : String(error)}`,
+        `AiStylistSession 过期清理失败，回退 SystemConfig: ${error instanceof Error ? error.message : String(error)}`
       );
     }
 
@@ -356,7 +337,7 @@ export class AiStylistSessionService {
 
   private async readSessionRecord(
     userId: string,
-    sessionId: string,
+    sessionId: string
   ): Promise<StylistSession | null> {
     try {
       const record = await this.prisma.aiStylistSession.findUnique({
@@ -375,7 +356,7 @@ export class AiStylistSessionService {
       }
     } catch (error: unknown) {
       this.logger.warn(
-        `AiStylistSession 表读取失败，回退 SystemConfig: ${error instanceof Error ? error.message : String(error)}`,
+        `AiStylistSession 表读取失败，回退 SystemConfig: ${error instanceof Error ? error.message : String(error)}`
       );
     }
 
@@ -407,7 +388,7 @@ export class AiStylistSessionService {
       return session;
     } catch (error: unknown) {
       this.logger.warn(
-        `AI 造型师会话反序列化失败: ${error instanceof Error ? error.message : String(error)}`,
+        `AI 造型师会话反序列化失败: ${error instanceof Error ? error.message : String(error)}`
       );
       await this.prisma.systemConfig.delete({
         where: {

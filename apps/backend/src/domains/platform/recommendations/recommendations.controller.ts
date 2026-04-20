@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Controller, Get, Post, Param, Body, Query, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Param, Body, Query, UseGuards } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiQuery } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
-import { ClothingCategory } from '../../../types/prisma-enums';
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { CacheKey, CacheTTL } from "../../../common/decorators/cache.decorators";
 import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
@@ -22,10 +22,7 @@ import {
 } from "./dto";
 import { RecommendationsService } from "./recommendations.service";
 import { AdvancedRecommendationService } from "./services/advanced-recommendation.service";
-import {
-  BehaviorTrackingService,
-  type BehaviorAction,
-} from "./services/behavior-tracking.service";
+import { BehaviorTrackingService, type BehaviorAction } from "./services/behavior-tracking.service";
 import { OutfitCompletionService } from "./services/outfit-completion.service";
 import { RecommendationFeedService } from "./services/recommendation-feed.service";
 
@@ -135,7 +132,7 @@ export class RecommendationsController {
     private advancedRecommendationService: AdvancedRecommendationService,
     private outfitCompletionService: OutfitCompletionService,
     private behaviorTrackingService: BehaviorTrackingService,
-    private feedService: RecommendationFeedService,
+    private feedService: RecommendationFeedService
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -145,8 +142,7 @@ export class RecommendationsController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取个性化推荐",
-    description:
-      "根据用户画像和行为数据，返回个性化服装推荐。支持按分类、场合、季节筛选。",
+    description: "根据用户画像和行为数据，返回个性化服装推荐。支持按分类、场合、季节筛选。",
   })
   @ApiQuery({
     name: "category",
@@ -189,17 +185,14 @@ export class RecommendationsController {
     @Query("category") category?: ClothingCategory,
     @Query("occasion") occasion?: string,
     @Query("season") season?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
-    const result = await this.recommendationsService.getPersonalizedRecommendations(
-      userId,
-      {
-        category,
-        occasion,
-        season,
-        limit: limit ? parseInt(limit) : 20,
-      },
-    );
+    const result = await this.recommendationsService.getPersonalizedRecommendations(userId, {
+      category,
+      occasion,
+      season,
+      limit: limit ? parseInt(limit) : 20,
+    });
     return { items: result, total: result.length };
   }
 
@@ -214,16 +207,13 @@ export class RecommendationsController {
       "获取分页推荐 Feed，支持 daily/occasion/trending/explore 四种分类。返回包含 colorHarmony 和 matchReason 的 FeedItem。",
   })
   @ApiResponse({ status: 200, description: "获取成功" })
-  async getFeed(
-    @CurrentUser("id") userId: string,
-    @Query() dto: GetFeedDto,
-  ) {
+  async getFeed(@CurrentUser("id") userId: string, @Query() dto: GetFeedDto) {
     return this.feedService.getFeed(
       userId,
       (dto.category as "daily" | "occasion" | "trending" | "explore") || "daily",
       dto.subCategory,
       dto.page || 1,
-      dto.pageSize || 10,
+      dto.pageSize || 10
     );
   }
 
@@ -269,12 +259,12 @@ export class RecommendationsController {
     @CurrentUser("id") userId: string,
     @Query("occasion") occasion?: string,
     @Query("season") season?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
     return this.advancedRecommendationService.getPersonalizedRecommendations(
       userId,
       { occasion, season },
-      limit ? parseInt(limit) : 20,
+      limit ? parseInt(limit) : 20
     );
   }
 
@@ -284,9 +274,7 @@ export class RecommendationsController {
   @ApiOperation({ summary: "获取每日穿搭推荐" })
   @ApiResponse({ status: 200, description: "每日穿搭推荐" })
   async getDailyOutfit(@CurrentUser("id") userId: string) {
-    return this.advancedRecommendationService.getDailyOutfitRecommendation(
-      userId,
-    );
+    return this.advancedRecommendationService.getDailyOutfitRecommendation(userId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -294,8 +282,7 @@ export class RecommendationsController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取场合推荐",
-    description:
-      "根据特定场合（面试、约会、派对等）返回适合的服装推荐和穿搭建议。",
+    description: "根据特定场合（面试、约会、派对等）返回适合的服装推荐和穿搭建议。",
   })
   @ApiQuery({
     name: "type",
@@ -323,12 +310,12 @@ export class RecommendationsController {
   async getOccasionRecommendations(
     @CurrentUser("id") userId: string,
     @Query("type") occasion: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
     return this.advancedRecommendationService.getOccasionRecommendations(
       userId,
       occasion || "daily",
-      limit ? parseInt(limit) : 10,
+      limit ? parseInt(limit) : 10
     );
   }
 
@@ -339,8 +326,7 @@ export class RecommendationsController {
   @CacheTTL(180)
   @ApiOperation({
     summary: "获取热门趋势推荐",
-    description:
-      "获取当前热门服装趋势和流行单品，无需登录即可访问。数据基于全平台用户行为统计。",
+    description: "获取当前热门服装趋势和流行单品，无需登录即可访问。数据基于全平台用户行为统计。",
   })
   @ApiQuery({
     name: "limit",
@@ -360,7 +346,7 @@ export class RecommendationsController {
   })
   async getTrendingRecommendations(@Query("limit") limit?: string) {
     return this.advancedRecommendationService.getTrendingRecommendations(
-      limit ? parseInt(limit) : 20,
+      limit ? parseInt(limit) : 20
     );
   }
 
@@ -369,8 +355,7 @@ export class RecommendationsController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取风格指南",
-    description:
-      "根据用户画像生成个人风格指南，包含风格分析、推荐单品和穿搭技巧。",
+    description: "根据用户画像生成个人风格指南，包含风格分析、推荐单品和穿搭技巧。",
   })
   @ApiResponse({
     status: 200,
@@ -390,8 +375,7 @@ export class RecommendationsController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: "发现页面推荐",
-    description:
-      "发现页面推荐接口。已登录用户返回个性化推荐，未登录用户返回热门推荐。",
+    description: "发现页面推荐接口。已登录用户返回个性化推荐，未登录用户返回热门推荐。",
   })
   @ApiQuery({
     name: "limit",
@@ -407,7 +391,7 @@ export class RecommendationsController {
   })
   async getDiscoverRecommendations(
     @CurrentUser("id") userId?: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
     // 如果用户已登录，返回个性化推荐
     // 否则返回热门推荐
@@ -415,11 +399,11 @@ export class RecommendationsController {
       return this.advancedRecommendationService.getPersonalizedRecommendations(
         userId,
         {},
-        limit ? parseInt(limit) : 20,
+        limit ? parseInt(limit) : 20
       );
     } else {
       return this.advancedRecommendationService.getTrendingRecommendations(
-        limit ? parseInt(limit) : 20,
+        limit ? parseInt(limit) : 20
       );
     }
   }
@@ -429,8 +413,7 @@ export class RecommendationsController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: "获取搭配推荐（Complete the Look）",
-    description:
-      "基于选中的服装，推荐互补的搭配单品（上装/下装/鞋/配饰），包含色彩和谐度评分。",
+    description: "基于选中的服装，推荐互补的搭配单品（上装/下装/鞋/配饰），包含色彩和谐度评分。",
   })
   @ApiResponse({
     status: 200,
@@ -438,7 +421,7 @@ export class RecommendationsController {
   })
   async getCompleteTheLook(
     @CurrentUser("id") userId: string,
-    @Param("clothingId") clothingId: string,
+    @Param("clothingId") clothingId: string
   ) {
     return this.outfitCompletionService.getCompleteTheLook(clothingId, userId);
   }
@@ -448,17 +431,13 @@ export class RecommendationsController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: "提交推荐反馈",
-    description:
-      "用户对推荐结果进行反馈（like/dislike/ignore），反馈将用于改进后续推荐质量。",
+    description: "用户对推荐结果进行反馈（like/dislike/ignore），反馈将用于改进后续推荐质量。",
   })
   @ApiResponse({
     status: 200,
     description: "反馈已记录",
   })
-  async submitFeedback(
-    @CurrentUser("id") userId: string,
-    @Body() dto: SubmitFeedbackDto,
-  ) {
+  async submitFeedback(@CurrentUser("id") userId: string, @Body() dto: SubmitFeedbackDto) {
     const actionMap: Record<string, BehaviorAction> = {
       like: "post_like",
       dislike: "click",
@@ -491,7 +470,7 @@ export class RecommendationsController {
   })
   async submitBatchFeedback(
     @CurrentUser("id") userId: string,
-    @Body() dto: SubmitBatchFeedbackDto,
+    @Body() dto: SubmitBatchFeedbackDto
   ) {
     const actionMap: Record<string, BehaviorAction> = {
       like: "post_like",
@@ -502,13 +481,13 @@ export class RecommendationsController {
     await this.behaviorTrackingService.trackBatch(
       dto.items.map((item) => ({
         userId,
-        action: actionMap[item.action] || "click" as BehaviorAction,
+        action: actionMap[item.action] || ("click" as BehaviorAction),
         clothingId: item.clothingId,
         context: {
           recommendationId: item.recommendationId,
           source: "recommendation_feedback_batch",
         },
-      })),
+      }))
     );
 
     return { success: true, message: `已记录 ${dto.items.length} 条反馈` };
@@ -530,11 +509,10 @@ export class RecommendationsController {
   })
   async getColdStartRecommendations(
     @CurrentUser("id") userId: string,
-    @Query("limit") limit?: string,
+    @Query("limit") limit?: string
   ) {
-    return this.recommendationsService.getPersonalizedRecommendations(
-      userId,
-      { limit: limit ? parseInt(limit) : 20 },
-    );
+    return this.recommendationsService.getPersonalizedRecommendations(userId, {
+      limit: limit ? parseInt(limit) : 20,
+    });
   }
 }

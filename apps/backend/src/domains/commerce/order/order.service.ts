@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  BadRequestException,
-} from "@nestjs/common";
+import { Injectable, Logger, NotFoundException, BadRequestException } from "@nestjs/common";
 import { IsIn, IsString } from "class-validator";
 import { Cron } from "@nestjs/schedule";
-import Decimal from "decimal.js";
-
-import { OrderStatus } from '../../../types/prisma-enums';
+import { OrderStatus } from "../../../types/prisma-enums";
+import { Prisma } from "@prisma/client";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Order = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type OrderItem = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type OrderAddress = any;
 
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -37,7 +37,7 @@ export interface CreateOrderDto {
  */
 export class PayOrderDto {
   @IsString()
-  @IsIn(['alipay', 'wechat'], { message: '支付方式仅支持 alipay 或 wechat' })
+  @IsIn(["alipay", "wechat"], { message: "支付方式仅支持 alipay 或 wechat" })
   paymentMethod!: string;
 }
 
@@ -75,43 +75,9 @@ export interface OrderItemResponse {
 
 // FIX-CODE-005: 定义类型安全的Order类型 (修复时间: 2026-03-19)
 
-interface OrderWithRelations {
-  id: string;
-  orderNo: string;
-  status: string;
-  totalAmount: Decimal;
-  shippingFee: Decimal;
-  discountAmount: Decimal;
-  finalAmount: Decimal;
-  paymentMethod: string | null;
-  paymentTime: Date | null;
-  paidAt: Date | null;
-  shipTime: Date | null;
-  receiveTime: Date | null;
-  expressCompany: string | null;
-  expressNo: string | null;
-  remark: string | null;
-  isDeleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  items: Array<{
-    id: string;
-    itemId: string | null;
-    itemName: string;
-    itemImage: string;
-    color: string;
-    size: string;
-    quantity: number;
-    price: Decimal;
-  }>;
-  address: {
-    name: string;
-    phone: string;
-    province: string;
-    city: string;
-    district: string;
-    address: string;
-  } | null;
+interface OrderWithRelations extends Order {
+  items: OrderItem[];
+  address: OrderAddress | null;
 }
 
 export interface ShippingAddressResponse {
@@ -146,7 +112,7 @@ export class OrderService {
     private prisma: PrismaService,
     private paymentService: PaymentService,
     private notificationService: NotificationService,
-    private softDeleteService: SoftDeleteService,
+    private softDeleteService: SoftDeleteService
   ) {}
 
   async create(userId: string, dto: CreateOrderDto): Promise<OrderResponse> {
@@ -169,13 +135,11 @@ export class OrderService {
     });
 
     // 创建商品 ID 到商品的映射
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const itemMap = new Map(clothingItems.map((item: any) => [item.id, item]));
 
     // 验证所有商品并检查库存
-    const itemsWithDetails = dto.items.map((item) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const clothingItem: any = itemMap.get(item.itemId);
+    const itemsWithDetails = dto.items.map((item: any) => {
+      const clothingItem = itemMap.get(item.itemId);
 
       if (!clothingItem) {
         throw new NotFoundException(`商品 ${item.itemId} 不存在`);
@@ -199,10 +163,10 @@ export class OrderService {
     });
 
     let totalAmount = 0;
-    const orderItems = itemsWithDetails.map((item) => {
+    const orderItems = itemsWithDetails.map((item: any) => {
       totalAmount += Number(item.clothingItem.price) * item.quantity;
       return {
-        itemId: item.itemId ?? '',
+        itemId: item.itemId,
         itemName: item.clothingItem.name,
         itemImage: item.clothingItem.images[0] || "",
         color: item.color,
@@ -217,7 +181,6 @@ export class OrderService {
 
     const orderNo = this.generateOrderNo();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const order = await this.prisma.$transaction(async (tx: any) => {
       // FIX-BL-010: 扣减库存 (修复时间: 2026-03-19)
       for (const item of itemsWithDetails) {
@@ -233,9 +196,7 @@ export class OrderService {
         });
 
         if (updated.count === 0) {
-          throw new BadRequestException(
-            `商品 ${item.clothingItem.name} 库存已被抢光，请重新下单`
-          );
+          throw new BadRequestException(`商品 ${item.clothingItem.name} 库存已被抢光，请重新下单`);
         }
       }
 
@@ -290,11 +251,10 @@ export class OrderService {
 
   async findAll(
     userId: string,
-    options: { status?: string; page?: number; limit?: number } = {},
+    options: { status?: string; page?: number; limit?: number } = {}
   ): Promise<{ items: OrderResponse[]; total: number }> {
     const { status, page = 1, limit = 10 } = options;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { userId, isDeleted: false };
     if (status) {
       where.status = status as OrderStatus;
@@ -315,7 +275,6 @@ export class OrderService {
     ]);
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       items: orders.map((order: any) => this.mapToOrderResponse(order)),
       total,
     };
@@ -354,11 +313,7 @@ export class OrderService {
       throw new BadRequestException("只能删除已取消、已送达或已退款的订单");
     }
 
-    const success = await this.softDeleteService.softDelete(
-      this.prisma,
-      'order',
-      orderId,
-    );
+    const success = await this.softDeleteService.softDelete(this.prisma, "order", orderId);
 
     return { success };
   }
@@ -366,7 +321,7 @@ export class OrderService {
   async pay(
     userId: string,
     orderId: string,
-    paymentMethod: string,
+    paymentMethod: string
   ): Promise<{ paymentUrl?: string; qrCode?: string }> {
     const order = await this.findOne(userId, orderId);
 
@@ -399,9 +354,7 @@ export class OrderService {
       };
     }
 
-    throw new BadRequestException(
-      paymentResult.error?.message || "支付创建失败",
-    );
+    throw new BadRequestException(paymentResult.error?.message || "支付创建失败");
   }
 
   async cancel(userId: string, orderId: string): Promise<void> {
@@ -434,8 +387,7 @@ export class OrderService {
 
     // Batch stock restoration in a single transaction (fixes N+1)
     await this.prisma.$transaction([
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(orderWithItems?.items || []).map((item: any) =>
+      ...(orderWithItems?.items || []).map((item) =>
         this.prisma.clothingItem.update({
           where: { id: item.itemId },
           data: { stock: { increment: item.quantity } },
@@ -503,9 +455,8 @@ export class OrderService {
   async updateOrderStatus(
     orderId: string,
     status: OrderStatus,
-    extraData?: Record<string, unknown>,
+    extraData?: Record<string, unknown>
   ): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: any = { status };
 
     if (status === OrderStatus.paid) {
@@ -548,7 +499,7 @@ export class OrderService {
       status: order.status,
       items: (order.items || []).map((item) => ({
         id: item.id,
-        itemId: item.itemId ?? '',
+        itemId: item.itemId,
         itemName: item.itemName,
         itemImage: item.itemImage,
         color: item.color,
@@ -661,13 +612,7 @@ export class OrderService {
    * Get orders by tab with pagination.
    * Tabs: all, pending, paid, shipped, completed, refund
    */
-  async getOrdersByTab(
-    userId: string,
-    tab: string,
-    page: number = 1,
-    limit: number = 10,
-  ) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async getOrdersByTab(userId: string, tab: string, page: number = 1, limit: number = 10) {
     const where: any = { userId, isDeleted: false };
 
     switch (tab) {
@@ -703,8 +648,7 @@ export class OrderService {
     ]);
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      items: orders.map((order: any) => this.mapToOrderResponse(order)),
+      items: orders.map((order) => this.mapToOrderResponse(order)),
       total,
       page,
       limit,

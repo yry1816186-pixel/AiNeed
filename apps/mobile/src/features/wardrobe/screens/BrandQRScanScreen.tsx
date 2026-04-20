@@ -11,12 +11,12 @@ import {
   Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Colors, Spacing, BorderRadius, Shadows, flatColors as staticColors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import brandQRApi, { type QRScanResult } from '../../../services/api/brand-qr.api';
-import type { RootStackParamList } from '../../../types/navigation';
+import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import brandQRApi, { type QRScanResult } from "../../../services/api/brand-qr.api";
+import type { RootStackParamList } from "../../../types/navigation";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 type Navigation = NavigationProp<RootStackParamList>;
@@ -91,7 +91,7 @@ export const BrandQRScanScreen: React.FC = () => {
         <TextInput
           style={styles.codeInput}
           placeholder="输入二维码编码..."
-          placeholderTextColor={staticColors.textTertiary}
+          placeholderTextColor={colors.textTertiary}
           value={manualCode}
           onChangeText={setManualCode}
           autoCapitalize="none"
@@ -104,9 +104,9 @@ export const BrandQRScanScreen: React.FC = () => {
           activeOpacity={0.7}
         >
           {isScanning ? (
-            <ActivityIndicator size="small" color={staticColors.surface} />
+            <ActivityIndicator size="small" color={colors.surface} />
           ) : (
-            <Ionicons name="scan-outline" size={24} color={staticColors.surface} />
+            <Ionicons name="scan-outline" size={24} color={colors.surface} />
           )}
         </TouchableOpacity>
       </View>
@@ -214,10 +214,10 @@ export const BrandQRScanScreen: React.FC = () => {
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
         >
-          <Ionicons name="arrow-back" size={24} color={staticColors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.topBarTitle}>品牌扫码</Text>
-        <View style={{ width: DesignTokens.spacing[10] }} />
+        <View style={{ width: 40 }} />
       </View>
 
       <KeyboardAvoidingView
@@ -226,7 +226,7 @@ export const BrandQRScanScreen: React.FC = () => {
       >
         {/* Camera Placeholder */}
         <View style={styles.cameraPlaceholder}>
-          <Ionicons name="qr-code-outline" size={64} color={Colors.neutral[300]} />
+          <Ionicons name="qr-code-outline" size={64} color={colors.neutral[300]} />
           <Text style={styles.cameraHint}>相机扫码功能即将上线{"\n"}请使用下方手动输入</Text>
         </View>
 
@@ -240,7 +240,7 @@ export const BrandQRScanScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: staticColors.surface,
+    backgroundColor: colors.surface,
   },
   topBar: {
     flexDirection: "row",
@@ -249,10 +249,10 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[2],
   },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   },
   cameraPlaceholder: {
     height: 200,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     alignItems: "center",
     justifyContent: "center",
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   },
   cameraHint: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
     textAlign: "center",
     marginTop: Spacing[3],
     lineHeight: 20,
@@ -288,12 +288,12 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[1],
   },
   inputHint: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: Spacing[3],
   },
   inputRow: {
@@ -302,20 +302,20 @@ const styles = StyleSheet.create({
   },
   codeInput: {
     flex: 1,
-    height: Spacing['2xl'],
-    backgroundColor: Colors.neutral[50],
+    height: 48,
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[4],
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   scanButton: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: 48,
+    height: 48,
     borderRadius: BorderRadius.lg,
-    backgroundColor: staticColors.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -325,21 +325,21 @@ const styles = StyleSheet.create({
   resultTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[3],
   },
   brandCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.lg,
     padding: Spacing[3],
     marginBottom: Spacing[3],
     gap: Spacing[3],
   },
   brandLogo: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
     backgroundColor: "rgba(198, 123, 92, 0.1)",
     alignItems: "center",
@@ -351,14 +351,14 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
   },
   brandSlug: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
   },
   productCard: {
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.lg,
     padding: Spacing[3],
     marginBottom: Spacing[4],
@@ -370,16 +370,16 @@ const styles = StyleSheet.create({
   },
   productLabel: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
   },
   productValue: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     fontWeight: "500",
   },
   importButton: {
     flexDirection: "row",
-    backgroundColor: staticColors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   importButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: staticColors.surface,
+    color: colors.surface,
   },
   resetButton: {
     alignItems: "center",
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
   },
   resetButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
   },
 });
 

@@ -1,19 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  Logger,
-} from "@nestjs/common";
-import { Gender } from '../../../types/prisma-enums';
+import { Injectable, NotFoundException, BadRequestException, Logger } from "@nestjs/common";
+import { Gender } from "@/types/prisma-enums";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type User = any;
 
 import { EncryptionService } from "../../../common/encryption";
-import { PIIEncryptionService, PII_FIELDS } from "../../../common/encryption/pii-encryption.service";
+import {
+  PIIEncryptionService,
+  PII_FIELDS,
+} from "../../../common/encryption/pii-encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import * as bcrypt from "../../../common/security/bcrypt";
 import { CacheKeyBuilder, CACHE_TTL } from "../../../modules/cache/cache.constants";
 import { CacheService } from "../../../modules/cache/cache.service";
-
 
 type UserPiiField = (typeof PII_FIELDS)["User"][number];
 
@@ -42,10 +41,7 @@ export interface UserResponse {
   updatedAt: Date;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type User = Awaited<ReturnType<PrismaService['user']['findUnique']>> & Record<string, any>;
-
-type UserWithDecrypted = Omit<User, 'phone'> & {
+type UserWithDecrypted = Omit<User, "phone"> & {
   phone: string | null;
   nickname: string | null;
   avatar: string | null;
@@ -59,7 +55,7 @@ export class UsersService {
     private prisma: PrismaService,
     private cacheService: CacheService,
     private encryptionService: EncryptionService,
-    private piiEncryptionService: PIIEncryptionService,
+    private piiEncryptionService: PIIEncryptionService
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,7 +97,7 @@ export class UsersService {
           updatedAt: decryptedUser.updatedAt,
         };
       },
-      CACHE_TTL.USER,
+      CACHE_TTL.USER
     );
   }
 
@@ -141,10 +137,7 @@ export class UsersService {
     return this.toUserResponse(this.decryptPii(updated));
   }
 
-  async changePassword(
-    id: string,
-    dto: ChangePasswordDto,
-  ): Promise<{ success: boolean }> {
+  async changePassword(id: string, dto: ChangePasswordDto): Promise<{ success: boolean }> {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -153,10 +146,7 @@ export class UsersService {
       throw new NotFoundException("用户不存在");
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      dto.oldPassword,
-      user.password,
-    );
+    const isPasswordValid = await bcrypt.compare(dto.oldPassword, user.password);
 
     if (!isPasswordValid) {
       throw new BadRequestException("原密码错误");
@@ -166,7 +156,8 @@ export class UsersService {
       throw new BadRequestException("新密码不能与原密码相同");
     }
 
-    const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]{8,32}$/;
+    const PASSWORD_REGEX =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]{8,32}$/;
     if (!PASSWORD_REGEX.test(dto.newPassword)) {
       throw new BadRequestException("密码必须为8-32位，包含大小写字母和数字");
     }
@@ -239,13 +230,12 @@ export class UsersService {
     const stats = await this.cacheService.getOrSet(
       cacheKey,
       async () => {
-        const [photosCount, tryOnsCount, favoritesCount, ordersCount] =
-          await Promise.all([
-            this.prisma.userPhoto.count({ where: { userId: id } }),
-            this.prisma.virtualTryOn.count({ where: { userId: id } }),
-            this.prisma.favorite.count({ where: { userId: id } }),
-            this.prisma.order.count({ where: { userId: id } }),
-          ]);
+        const [photosCount, tryOnsCount, favoritesCount, ordersCount] = await Promise.all([
+          this.prisma.userPhoto.count({ where: { userId: id } }),
+          this.prisma.virtualTryOn.count({ where: { userId: id } }),
+          this.prisma.favorite.count({ where: { userId: id } }),
+          this.prisma.order.count({ where: { userId: id } }),
+        ]);
 
         return {
           photosCount,
@@ -254,7 +244,7 @@ export class UsersService {
           ordersCount,
         };
       },
-      CACHE_TTL.MEDIUM, // 5 minutes cache for stats
+      CACHE_TTL.MEDIUM // 5 minutes cache for stats
     );
 
     return (

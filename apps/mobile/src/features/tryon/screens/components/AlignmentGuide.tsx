@@ -1,64 +1,55 @@
 import React, { useEffect, useRef, useMemo } from "react";
-import { Animated, Text, View } from "react-native";
-import type { AlignmentStatus } from "../../../../shared/hooks/useReferenceLines";
-import { DesignTokens } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-import type { FlatColors } from '../../../../shared/contexts/ThemeContext';
-
+import { Animated, StyleSheet, Text, View } from "react-native";
+import type { AlignmentStatus } from "../../../hooks/useReferenceLines";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface AlignmentGuideProps {
   alignmentStatus: AlignmentStatus | null;
 }
 
-function getStatusColors(colors: FlatColors) {
-  return {
-    aligned: colors.success,
-    perfect: colors.success,
-    good: colors.success,
-    slight: colors.warning,
-    off: colors.error,
-    adjust: colors.error,
-  } as const;
-}
+const STATUS_COLORS = {
+  aligned: colors.success,
+  perfect: colors.success,
+  good: colors.success,
+  slight: colors.warning,
+  off: colors.error,
+  adjust: colors.error,
+} as const;
 
-function getStatusMessage(
-  status: AlignmentStatus,
-  colors: FlatColors,
-): { message: string; color: string } | null {
-  const statusColors = getStatusColors(colors);
+function getStatusMessage(status: AlignmentStatus): { message: string; color: string } | null {
   if (status.overall === "perfect") {
-    return { message: "完美！", color: statusColors.perfect };
+    return { message: "完美！", color: STATUS_COLORS.perfect };
   }
   if (status.overall === "adjust") {
-    return { message: "请调整姿势", color: statusColors.adjust };
+    return { message: "请调整姿势", color: STATUS_COLORS.adjust };
   }
   if (status.shoulder === "off") {
-    return { message: "请调整肩膀水平", color: statusColors.off };
+    return { message: "请调整肩膀水平", color: STATUS_COLORS.off };
   }
   if (status.shoulder === "slight") {
-    return { message: "肩膀稍向左/右偏", color: statusColors.slight };
+    return { message: "肩膀稍向左/右偏", color: STATUS_COLORS.slight };
   }
   if (status.posture === "off") {
-    return { message: "请站直", color: statusColors.off };
+    return { message: "请站直", color: STATUS_COLORS.off };
   }
   if (status.posture === "slight") {
-    return { message: "姿势稍有不正", color: statusColors.slight };
+    return { message: "姿势稍有不正", color: STATUS_COLORS.slight };
   }
   if (status.center === "off") {
-    return { message: "请站到画面中央", color: statusColors.off };
+    return { message: "请站到画面中央", color: STATUS_COLORS.off };
   }
   if (status.center === "slight") {
-    return { message: "请稍向左/右移动", color: statusColors.slight };
+    return { message: "请稍向左/右移动", color: STATUS_COLORS.slight };
   }
   if (status.overall === "good") {
-    return { message: "很好，可以拍照", color: statusColors.good };
+    return { message: "很好，可以拍照", color: STATUS_COLORS.good };
   }
   return null;
 }
 
 const AlignmentGuide: React.FC<AlignmentGuideProps> = ({ alignmentStatus }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const prevMessageRef = useRef<string | null>(null);
 
@@ -66,8 +57,8 @@ const AlignmentGuide: React.FC<AlignmentGuideProps> = ({ alignmentStatus }) => {
     if (!alignmentStatus) {
       return null;
     }
-    return getStatusMessage(alignmentStatus, colors);
-  }, [alignmentStatus, colors]);
+    return getStatusMessage(alignmentStatus);
+  }, [alignmentStatus]);
 
   useEffect(() => {
     if (statusInfo && statusInfo.message !== prevMessageRef.current) {
@@ -118,8 +109,8 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
   },
   badge: {
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: 20,
   },
   text: {
@@ -127,6 +118,6 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-}))
+}));
 
 export default AlignmentGuide;

@@ -1,7 +1,8 @@
-﻿﻿import React, { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface CalendarGridProps {
   selectedDate: string | null;
@@ -28,6 +29,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   const firstDayOfWeek = new Date(viewYear, viewMonth, 1).getDay();
 
   const handlePrevMonth = () => {
+    const { colors } = useTheme();
     if (viewMonth === 0) {
       setViewMonth(11);
       setViewYear(viewYear - 1);
@@ -133,17 +135,17 @@ const useStyles = createStyles((colors) => ({
   container: {
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: DesignTokens.spacing[3],
+    padding: 12,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   navBtn: {
-    padding: Spacing.sm,
-    minWidth: DesignTokens.spacing[11],
+    padding: 8,
+    minWidth: 44,
     alignItems: "center",
   },
   navBtnText: {
@@ -153,11 +155,11 @@ const useStyles = createStyles((colors) => ({
   monthLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: "colors.textPrimary",
   },
   weekdayRow: {
     flexDirection: "row",
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
   },
   weekdayText: {
     flex: 1,
@@ -175,13 +177,13 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 8,
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   cellSelected: {
-    backgroundColor: colors.primary,
+    backgroundColor: "colors.primary",
   },
   cellAvailable: {
-    backgroundColor: DesignTokens.colors.neutral[50],
+    backgroundColor: "DesignTokens.colors.neutral[50]",
   },
   dayText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -195,9 +197,9 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
   },
   dayTextAvailable: {
-    color: colors.primary,
+    color: "colors.primary",
     fontWeight: "500",
   },
-}))
+}));
 
 export default CalendarGrid;

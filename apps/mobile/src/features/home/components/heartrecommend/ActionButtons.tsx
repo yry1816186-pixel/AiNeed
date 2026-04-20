@@ -3,10 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, Pressable } from "react-nativ
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, DesignTokens , flatColors as colors, Spacing } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-import { haptics } from '../../../../utils/haptics';
-
+import { Colors, DesignTokens } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+import { haptics } from "../../../../shared/utils/haptics";
 
 interface ActionButtonsProps {
   onRefresh: () => void;
@@ -17,9 +16,17 @@ export const EmptyState: React.FC<ActionButtonsProps> = ({ onRefresh }) => (
     <Ionicons name="shirt-outline" size={64} color={colors.textTertiary} />
     <Text style={styles.emptyTitle}>暂无更多推荐</Text>
     <Text style={styles.emptySubtitle}>我们正在为您寻找更多心仪好物</Text>
-    <TouchableOpacity style={styles.refreshButton} onPress={onRefresh} accessibilityLabel="刷新推荐" accessibilityRole="button">
-      <LinearGradient colors={[colors.primary, colors.primary]} style={styles.refreshGradient}>
-        <Ionicons name="refresh" size={20} color={colors.surface} />
+    <TouchableOpacity
+      style={styles.refreshButton}
+      onPress={onRefresh}
+      accessibilityLabel="刷新推荐"
+      accessibilityRole="button"
+    >
+      <LinearGradient
+        colors={[DesignTokens.colors.brand.terracotta, DesignTokens.colors.brand.camel]}
+        style={styles.refreshGradient}
+      >
+        <Ionicons name="refresh" size={20} color={DesignTokens.colors.backgrounds.primary} />
         <Text style={styles.refreshText}>刷新推荐</Text>
       </LinearGradient>
     </TouchableOpacity>
@@ -78,14 +85,18 @@ const ActionButton: React.FC<ActionButtonProps> = ({
             borderRadius: size / 2,
             borderWidth: 2,
             borderColor,
-            backgroundColor: colors.surface,
+            backgroundColor: DesignTokens.colors.backgrounds.primary,
             alignItems: "center",
             justifyContent: "center",
           },
           animatedStyle,
         ]}
       >
-        <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={Math.round(size * 0.4)} color={color} />
+        <Ionicons
+          name={icon as keyof typeof Ionicons.glyphMap}
+          size={Math.round(size * 0.4)}
+          color={color}
+        />
       </Animated.View>
     </Pressable>
   );
@@ -124,16 +135,16 @@ export const ActionButtons: React.FC<ActionButtonsCallbacks> = ({
     <ActionButton
       icon="cart"
       size={48}
-      color={colors.success}
-      borderColor={colors.successLight}
+      color={DesignTokens.colors.semantic.success}
+      borderColor={DesignTokens.colors.semantic.successLight}
       onPress={onAddToCart}
       accessibilityLabel="加入购物车"
     />
     <ActionButton
       icon="heart"
       size={56}
-      color={colors.primary}
-      borderColor={colors.primaryLight}
+      color={DesignTokens.colors.brand.terracotta}
+      borderColor={DesignTokens.colors.brand.terracottaLight}
       onPress={onLike}
       accessibilityLabel="喜欢"
     />
@@ -144,19 +155,19 @@ const styles = StyleSheet.create({
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: DesignTokens.spacing[10],
+    paddingHorizontal: 40,
   },
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: colors.textPrimary,
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
     textAlign: "center",
-    marginBottom: Spacing.lg,
+    marginBottom: 24,
   },
   refreshButton: {
     borderRadius: 24,
@@ -165,19 +176,19 @@ const styles = StyleSheet.create({
   refreshGradient: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    paddingVertical: DesignTokens.spacing['3.5'],
-    paddingHorizontal: DesignTokens.spacing[7],
+    gap: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 28,
   },
   refreshText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.surface,
+    color: DesignTokens.colors.backgrounds.primary,
   },
   buttonsRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: DesignTokens.spacing[5],
+    gap: 20,
   },
 });

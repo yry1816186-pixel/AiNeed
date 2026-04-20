@@ -1,7 +1,8 @@
 ﻿import React from "react";
 import { View, Text, StyleSheet, Image, ViewStyle } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, gradients } from '../../design-system/theme';
+import { Colors, gradients } from "../../design-system/theme";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -30,11 +31,14 @@ const onlineDotSize: Record<AvatarSize, number> = {
 };
 
 export const Avatar: React.FC<AvatarProps> = ({ source, name, size = "md", online, style }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const avatarSize = sizeMap[size];
   const dotSize = onlineDotSize[size];
   const initial = name?.charAt(0)?.toUpperCase() || "?";
 
   const renderAvatar = () => {
+    const { colors } = useTheme();
     if (source) {
       return (
         <Image
@@ -74,7 +78,7 @@ export const Avatar: React.FC<AvatarProps> = ({ source, name, size = "md", onlin
               width: dotSize,
               height: dotSize,
               borderRadius: dotSize / 2,
-              backgroundColor: online ? Colors.semantic.success : Colors.neutral[400],
+              backgroundColor: online ? Colors.semantic.success : colors.neutral[400],
               borderWidth: 2,
               borderColor: Colors.neutral.white,
             },
@@ -123,19 +127,19 @@ export const AvatarGroup: React.FC<{
   );
 };
 
-const styles = StyleSheet.create({
-  image: { backgroundColor: Colors.neutral[100] },
+const useStyles = createStyles((colors) => ({
+  image: { backgroundColor: colors.neutral[100] },
   fallback: { alignItems: "center", justifyContent: "center" },
   initial: { color: Colors.neutral.white, fontWeight: "700" },
   onlineDot: { position: "absolute", bottom: 0, right: 0 },
   overflowAvatar: {
-    backgroundColor: Colors.neutral[200],
+    backgroundColor: colors.neutral[200],
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
     borderColor: Colors.neutral.white,
   },
-  overflowText: { color: Colors.neutral[600], fontWeight: "600" },
-});
+  overflowText: { color: colors.neutral[600], fontWeight: "600" },
+}));
 
 export default Avatar;

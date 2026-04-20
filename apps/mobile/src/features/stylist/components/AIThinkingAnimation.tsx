@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+﻿import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import Animated, {
   useSharedValue,
@@ -13,18 +13,16 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
-import { useReducedMotion } from '../../../hooks/useReducedMotion';
-import { useGlow } from '../../../hooks/useAdvancedAnimations';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { SpringConfigs, Duration } from '../../../design-system/theme/tokens/animations';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { Spacing, flatColors } from '../../../design-system/theme';
+import { useReducedMotion } from "../../../hooks/useReducedMotion";
+import { useGlow } from "../../../hooks/useAdvancedAnimations";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { SpringConfigs, Duration } from "../../../design-system/theme/tokens/animations";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
-
-const TERRACOTTA = flatColors.primary; // #C67B5C
-const CAMEL = flatColors.primary; // #B5A08C
-const SAGE = flatColors.secondary; // #8B9A7D
-const _TERRACOTTA_LIGHT = flatColors.primaryLight; // #D4917A
+const TERRACOTTA = colors.primary; // #C67B5C
+const CAMEL = DesignTokens.colors.brand.camel; // #B5A08C
+const SAGE = colors.secondary; // #8B9A7D
+const _TERRACOTTA_LIGHT = colors.primaryLight; // #D4917A
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const BUBBLE_WIDTH = SCREEN_WIDTH * 0.6;
@@ -40,7 +38,7 @@ const TOTAL_CYCLE = 6000;
 // ============ Reduced Motion: Static text with pulsing gradient bar ============
 
 function ReducedMotionAnimation() {
-    const { colors } = useTheme();
+  const { colors } = useTheme();
   const opacity = useSharedValue(0.4);
 
   useEffect(() => {
@@ -75,17 +73,17 @@ const r = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: flatColors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     borderBottomLeftRadius: 4,
     maxWidth: BUBBLE_WIDTH,
   },
   contentRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 8,
     flex: 1,
   },
   staticText: {
@@ -95,9 +93,9 @@ const r = StyleSheet.create({
   },
   gradientBar: {
     flex: 1,
-    height: DesignTokens.spacing['1.5'],
+    height: 6,
     borderRadius: 3,
-    backgroundColor: "rgba(198, 123, 92, 0.15)", // DesignTokens.colors.brand.terracotta with opacity
+    backgroundColor: "rgba(198, 123, 92, 0.15)",
     overflow: "hidden",
   },
   gradientFill: {
@@ -110,7 +108,7 @@ const r = StyleSheet.create({
 
 // ============ Stage 1: Terracotta Gradient Lines (0-2s) ============
 
-function GradientLines({ stageProgress }: { stageProgress: Animated.SharedValue<number> }) {
+function GradientLines({ stageProgress }: { _stageProgress: Animated.SharedValue<number> }) {
   const line1X = useSharedValue(-BUBBLE_WIDTH);
   const line2X = useSharedValue(-BUBBLE_WIDTH);
   const line3X = useSharedValue(-BUBBLE_WIDTH);
@@ -288,23 +286,23 @@ const s = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: flatColors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 16,
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     borderBottomLeftRadius: 4,
     maxWidth: BUBBLE_WIDTH,
     minHeight: 44,
   },
   linesContainer: {
     width: "100%",
-    gap: DesignTokens.spacing['1.5'],
-    paddingVertical: Spacing.xs,
+    gap: 6,
+    paddingVertical: 4,
   },
   lineTrack: {
-    height: Spacing.xs,
+    height: 4,
     borderRadius: 2,
-    backgroundColor: "rgba(198, 123, 92, 0.1)", // DesignTokens.colors.brand.terracotta with opacity
+    backgroundColor: "rgba(198, 123, 92, 0.1)",
     overflow: "hidden",
   },
   gradientLine: {
@@ -321,11 +319,11 @@ const s = StyleSheet.create({
   silhouetteContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing.xs,
+    paddingVertical: 4,
   },
   outfitContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing.xs,
+    paddingVertical: 4,
   },
 });

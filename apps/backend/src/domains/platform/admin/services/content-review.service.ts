@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 import { AdminAuditService } from "./admin-audit.service";
@@ -21,30 +19,25 @@ export class ContentReviewService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly auditService: AdminAuditService,
+    private readonly auditService: AdminAuditService
   ) {}
 
   async getReviewQueue(filters: ReviewQueueFilters) {
-    const {
-      page = 1,
-      pageSize = 20,
-      contentType,
-      priority,
-      startDate,
-      endDate,
-    } = filters;
+    const { page = 1, pageSize = 20, contentType, priority, startDate, endDate } = filters;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {
+    const where: Record<string, unknown> = {
       isDeleted: false,
       moderationStatus: { in: ["pending", "flagged"] },
     };
 
     if (startDate || endDate) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const createdAt: any = {};
-      if (startDate) {createdAt.gte = startDate;}
-      if (endDate) {createdAt.lte = endDate;}
+      const createdAt: Record<string, Date> = {};
+      if (startDate) {
+        createdAt.gte = startDate;
+      }
+      if (endDate) {
+        createdAt.lte = endDate;
+      }
       where.createdAt = createdAt;
     }
 
@@ -52,8 +45,7 @@ export class ContentReviewService {
       where.reportCount = { gt: 0 };
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const orderBy: any = {
+    const orderBy: Record<string, unknown> = {
       reportCount: "desc" as const,
     };
 
@@ -90,7 +82,7 @@ export class ContentReviewService {
     id: string,
     reviewerId: string,
     action: "approve" | "reject" | "delete",
-    note?: string,
+    note?: string
   ) {
     const post = await this.prisma.communityPost.findUnique({
       where: { id },
@@ -138,7 +130,7 @@ export class ContentReviewService {
     ids: string[],
     reviewerId: string,
     action: "approve" | "reject" | "delete",
-    note?: string,
+    note?: string
   ) {
     const results = { processed: 0, failed: 0 };
 

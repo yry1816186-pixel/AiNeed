@@ -1,0 +1,42 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path
+        android:name="hanger_hook"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M54,16 C54,10 60,7 64,11 C68,15 64,20 59,18" />
+
+    <path
+        android:name="hanger_body"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M54,20 L54,30 M30,48 C30,48 42,30 54,30 C66,30 78,48 78,48 L30,48 Z" />
+
+    <path
+        android:name="fabric_left"
+        android:fillColor="#C67B5C"
+        android:fillAlpha="0.9"
+        android:pathData="M30,48 C28,48 26,50 27,52 L35,80 C36,84 39,85 41,83 L48,52 C49,50 47,48 45,48 Z" />
+
+    <path
+        android:name="fabric_right"
+        android:fillColor="#D4917A"
+        android:fillAlpha="0.85"
+        android:pathData="M63,48 C61,48 59,50 60,52 L67,83 C69,85 72,84 73,80 L81,52 C82,50 80,48 78,48 Z" />
+
+    <path
+        android:name="fabric_center"
+        android:fillColor="#B5A08C"
+        android:fillAlpha="0.7"
+        android:pathData="M45,48 C44,48 42,49 43,51 L49,78 C50,80 51,81 53,80 L55,80 C57,81 58,80 59,78 L65,51 C66,49 65,48 63,48 Z" />
+
+</vector>

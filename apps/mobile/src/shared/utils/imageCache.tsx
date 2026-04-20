@@ -16,9 +16,9 @@ import {
 } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as FileSystem from "@/src/polyfills/expo-file-system";
-import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
-import { useTheme, createStyles } from '../contexts/ThemeContext';
-
+import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { flatColors as colors } from "../../design-system/theme";
+import { useTheme, createStyles } from "../contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -162,8 +162,6 @@ class ImageCacheManager {
     }
 
     const downloadPromise = (async () => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
       try {
         const cached = await this.getCachedImage(uri);
         if (cached) {
@@ -237,7 +235,7 @@ export interface CachedImageProps extends Omit<ImageProps, "source"> {
 }
 
 export const CachedImage = ({
-source,
+  source,
   placeholder,
   errorComponent,
   showProgress = false,
@@ -249,7 +247,6 @@ source,
   onError,
   ...props
 }: CachedImageProps) => {
-  const { colors } = useTheme();
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -454,15 +451,6 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     overflow: "hidden",
   },
-}))
+}));
 
 export { cacheManager };
-
-
-const styles = StyleSheet.create({
-  placeholder: { flex: 1 },
-  placeholderGradient: { flex: 1 },
-  progressContainer: { flex: 1 },
-  errorContainer: { flex: 1 },
-  image: { flex: 1 },
-});

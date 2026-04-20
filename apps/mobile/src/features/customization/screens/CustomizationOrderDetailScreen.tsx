@@ -10,13 +10,12 @@ import {
   RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
-import customizationApi from '../../../services/api/customization.api';
-import type { RootStackParamList } from '../../../types/navigation';
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import customizationApi from "../../../services/api/customization.api";
+import type { RootStackParamList } from "../../../types/navigation";
 
 type Navigation = import("@react-navigation/native").NavigationProp<RootStackParamList>;
 type OrderDetailRoute = RouteProp<RootStackParamList, "CustomizationOrderDetail">;
@@ -48,18 +47,17 @@ interface OrderDetail {
 }
 
 const STATUS_STEPS = [
-  { key: "draft", label: "草稿", icon: "create-outline" },
-  { key: "submitted", label: "已提交", icon: "paper-plane-outline" },
-  { key: "quoting", label: "报价中", icon: "pricetag-outline" },
-  { key: "confirmed", label: "已确认", icon: "checkmark-circle-outline" },
-  { key: "in_progress", label: "制作中", icon: "construct-outline" },
-  { key: "shipped", label: "已发货", icon: "car-outline" },
-  { key: "completed", label: "已完成", icon: "checkmark-done-outline" },
+  { key: "draft", label: "\u8349\u7A3F", icon: "create-outline" },
+  { key: "submitted", label: "\u5DF2\u63D0\u4EA4", icon: "paper-plane-outline" },
+  { key: "quoting", label: "\u62A5\u4EF7\u4E2D", icon: "pricetag-outline" },
+  { key: "confirmed", label: "\u5DF2\u786E\u8BA4", icon: "checkmark-circle-outline" },
+  { key: "in_progress", label: "\u5236\u4F5C\u4E2D", icon: "construct-outline" },
+  { key: "shipped", label: "\u5DF2\u53D1\u8D27", icon: "car-outline" },
+  { key: "completed", label: "\u5DF2\u5B8C\u6210", icon: "checkmark-done-outline" },
 ];
 
 export const CustomizationOrderDetailScreen: React.FC = () => {
   const { colors } = useTheme();
-  const styles = useStyles(colors);
   const navigation = useNavigation<Navigation>();
   const route = useRoute<OrderDetailRoute>();
   const { requestId } = route.params;
@@ -79,7 +77,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
         setOrder(response.data as unknown as OrderDetail);
       }
     } catch (error) {
-      console.error('Failed to load order detail:', error);
+      console.error("Failed to load order detail:", error);
     } finally {
       setIsLoading(false);
     }
@@ -92,40 +90,51 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
   }, [loadOrder]);
 
   const handleCancel = useCallback(async () => {
-    Alert.alert("取消定制", "确定要取消此定制需求吗？", [
-      { text: "取消", style: "cancel" },
-      {
-        text: "确定取消",
-        style: "destructive",
-        onPress: async () => {
-          const response = await customizationApi.cancel(requestId);
-          if (response.success) {
-            Alert.alert("已取消", "定制需求已取消");
-            void loadOrder();
-          }
+    Alert.alert(
+      "\u53D6\u6D88\u5B9A\u5236",
+      "\u786E\u5B9A\u8981\u53D6\u6D88\u6B64\u5B9A\u5236\u9700\u6C42\u5417\uFF1F",
+      [
+        { text: "\u53D6\u6D88", style: "cancel" },
+        {
+          text: "\u786E\u5B9A\u53D6\u6D88",
+          style: "destructive",
+          onPress: async () => {
+            const response = await customizationApi.cancel(requestId);
+            if (response.success) {
+              Alert.alert("\u5DF2\u53D6\u6D88", "\u5B9A\u5236\u9700\u6C42\u5DF2\u53D6\u6D88");
+              void loadOrder();
+            }
+          },
         },
-      },
-    ]);
+      ]
+    );
   }, [requestId, loadOrder]);
 
   const handleConfirmDelivery = useCallback(async () => {
-    Alert.alert("确认收货", "确认已收到定制商品？", [
-      { text: "取消", style: "cancel" },
-      {
-        text: "确认",
-        onPress: async () => {
-          Alert.alert("已确认", "感谢您的定制，期待您的下次光临");
-          void loadOrder();
+    Alert.alert(
+      "\u786E\u8BA4\u6536\u8D27",
+      "\u786E\u8BA4\u5DF2\u6536\u5230\u5B9A\u5236\u5546\u54C1\uFF1F",
+      [
+        { text: "\u53D6\u6D88", style: "cancel" },
+        {
+          text: "\u786E\u8BA4",
+          onPress: async () => {
+            Alert.alert(
+              "\u5DF2\u786E\u8BA4",
+              "\u611F\u8C22\u60A8\u7684\u5B9A\u5236\uFF0C\u671F\u5F85\u60A8\u7684\u4E0B\u6B21\u5149\u4E34"
+            );
+            void loadOrder();
+          },
         },
-      },
-    ]);
+      ]
+    );
   }, [loadOrder]);
 
   const currentStepIndex = order ? STATUS_STEPS.findIndex((s) => s.key === order.status) : -1;
 
   const renderStatusTimeline = () => (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>订单状态</Text>
+      <Text style={styles.sectionTitle}>{"\u8BA2\u5355\u72B6\u6001"}</Text>
       <View style={styles.timeline}>
         {STATUS_STEPS.map((step, index) => {
           const isCompleted = index <= currentStepIndex;
@@ -142,7 +151,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
                 <Ionicons
                   name={step.icon}
                   size={14}
-                  color={isCompleted ? colors.surface : Colors.neutral[400]}
+                  color={isCompleted ? colors.surface : colors.neutral[400]}
                 />
               </View>
               <Text
@@ -183,10 +192,10 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={Colors.neutral[300]} />
-          <Text style={styles.errorText}>订单不存在</Text>
+          <Ionicons name="alert-circle-outline" size={48} color={colors.neutral[300]} />
+          <Text style={styles.errorText}>{"\u8BA2\u5355\u4E0D\u5B58\u5728"}</Text>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.errorButton}>返回</Text>
+            <Text style={styles.errorButton}>{"\u8FD4\u56DE"}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -206,8 +215,8 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
         >
           <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.topBarTitle}>定制订单</Text>
-        <View style={{ width: DesignTokens.spacing[10] }} />
+        <Text style={styles.topBarTitle}>{"\u5B9A\u5236\u8BA2\u5355"}</Text>
+        <View style={{ width: 40 }} />
       </View>
 
       <ScrollView
@@ -221,29 +230,30 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
         }
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Order Info */}
         <View style={styles.orderInfoCard}>
-          <Text style={styles.orderTitle}>{order.title || "定制需求"}</Text>
+          <Text style={styles.orderTitle}>{order.title || "\u5B9A\u5236\u9700\u6C42"}</Text>
           <Text style={styles.orderDate}>
             {new Date(order.createdAt).toLocaleDateString("zh-CN")}
           </Text>
           {order.design?.template && (
-            <Text style={styles.templateName}>模板：{order.design.template.name}</Text>
+            <Text style={styles.templateName}>
+              {"\u6A21\u677F\uFF1A"}
+              {order.design.template.name}
+            </Text>
           )}
         </View>
 
         {renderStatusTimeline()}
 
-        {/* Tracking Info */}
         {order.trackingNumber && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>物流信息</Text>
+            <Text style={styles.sectionTitle}>{"\u7269\u6D41\u4FE1\u606F"}</Text>
             <View style={styles.trackingCard}>
-              <Text style={styles.trackingLabel}>快递单号</Text>
+              <Text style={styles.trackingLabel}>{"\u5FEB\u9012\u5355\u53F7"}</Text>
               <Text style={styles.trackingValue}>{order.trackingNumber}</Text>
               {order.carrier && (
                 <>
-                  <Text style={styles.trackingLabel}>承运商</Text>
+                  <Text style={styles.trackingLabel}>{"\u627F\u8FD0\u5546"}</Text>
                   <Text style={styles.trackingValue}>{order.carrier}</Text>
                 </>
               )}
@@ -251,22 +261,22 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
           </View>
         )}
 
-        {/* Packaging */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>专属包装</Text>
+          <Text style={styles.sectionTitle}>{"\u4E13\u5C5E\u5305\u88C5"}</Text>
           <View style={styles.packagingCard}>
             <View style={styles.packagingItem}>
               <Ionicons name="gift-outline" size={18} color={colors.primary} />
-              <Text style={styles.packagingText}>AiNeed 专属包装盒</Text>
+              <Text style={styles.packagingText}>AiNeed {"\u4E13\u5C5E\u5305\u88C5\u76D2"}</Text>
             </View>
             <View style={styles.packagingItem}>
               <Ionicons name="heart-outline" size={18} color={colors.primary} />
-              <Text style={styles.packagingText}>感谢卡 + 品牌贴纸</Text>
+              <Text style={styles.packagingText}>
+                {"\u611F\u8C22\u5361 + \u54C1\u724C\u8D34\u7EB8"}
+              </Text>
             </View>
           </View>
         </View>
 
-        {/* Actions */}
         <View style={styles.actions}>
           {canCancel && (
             <TouchableOpacity
@@ -274,7 +284,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
               onPress={handleCancel}
               activeOpacity={0.7}
             >
-              <Text style={styles.cancelButtonText}>取消定制</Text>
+              <Text style={styles.cancelButtonText}>{"\u53D6\u6D88\u5B9A\u5236"}</Text>
             </TouchableOpacity>
           )}
           {canConfirmDelivery && (
@@ -283,7 +293,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
               onPress={handleConfirmDelivery}
               activeOpacity={0.7}
             >
-              <Text style={styles.confirmButtonText}>确认收货</Text>
+              <Text style={styles.confirmButtonText}>{"\u786E\u8BA4\u6536\u8D27"}</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -292,7 +302,7 @@ export const CustomizationOrderDetailScreen: React.FC = () => {
   );
 };
 
-const useStyles = createStyles((colors) => ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.surface,
@@ -304,10 +314,10 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing[2],
   },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
@@ -343,7 +353,7 @@ const useStyles = createStyles((colors) => ({
     paddingBottom: Spacing[8],
   },
   orderInfoCard: {
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     marginBottom: Spacing[4],
@@ -382,10 +392,10 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
   },
   timelineDot: {
-    width: DesignTokens.spacing[7],
-    height: DesignTokens.spacing[7],
+    width: 28,
+    height: 28,
     borderRadius: 14,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing[1],
@@ -399,7 +409,7 @@ const useStyles = createStyles((colors) => ({
   },
   timelineLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
     textAlign: "center",
   },
   timelineLabelCompleted: {
@@ -411,17 +421,17 @@ const useStyles = createStyles((colors) => ({
   },
   timelineLine: {
     position: "absolute",
-    top: DesignTokens.spacing['3.5'],
+    top: 14,
     left: "50%",
     right: "-50%",
     height: 1,
-    backgroundColor: Colors.neutral[200],
+    backgroundColor: colors.neutral[200],
   },
   timelineLineCompleted: {
     backgroundColor: colors.primary,
   },
   trackingCard: {
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.lg,
     padding: Spacing[3],
     gap: Spacing[1],
@@ -437,7 +447,7 @@ const useStyles = createStyles((colors) => ({
     marginBottom: Spacing[1],
   },
   packagingCard: {
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.lg,
     padding: Spacing[3],
     gap: Spacing[2],
@@ -456,7 +466,7 @@ const useStyles = createStyles((colors) => ({
     marginTop: Spacing[4],
   },
   cancelButton: {
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",
@@ -478,6 +488,6 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
     color: colors.surface,
   },
-}))
+});
 
 export default CustomizationOrderDetailScreen;

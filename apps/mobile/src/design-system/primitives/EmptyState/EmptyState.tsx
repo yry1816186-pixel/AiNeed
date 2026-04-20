@@ -2,9 +2,10 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, theme, Spacing, BorderRadius, Shadows, DesignTokens } from '../../theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { flatColors as staticColors } from '../../theme';
+import { Colors, theme, Spacing, BorderRadius, Shadows } from "../theme";
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { flatColors as colors } from "../../theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap;
@@ -26,9 +27,9 @@ export function EmptyState({
   style,
   iconGradient,
 }: EmptyStateProps) {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
-  const gradient = iconGradient ?? [colors.primary, colors.primary];
+  const { colors } = useTheme();
+  const gradient = iconGradient ?? [colors.primary, DesignTokens.colors.brand.camel];
 
   return (
     <View style={[styles.container, style]}>
@@ -50,7 +51,7 @@ export function EmptyState({
           accessibilityRole="button"
         >
           <LinearGradient
-            colors={[colors.primary, colors.primary]}
+            colors={[colors.primary, DesignTokens.colors.brand.camel]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.actionGradient}
@@ -64,9 +65,7 @@ export function EmptyState({
 }
 
 /** Empty wardrobe - hanger icon + "Start adding your first piece" + photo button */
-export function EmptyWardrobe({
-onAdd }: { onAdd?: () => void }) {
-  const { colors } = useTheme();
+export function EmptyWardrobe({ onAdd }: { onAdd?: () => void }) {
   return (
     <EmptyState
       icon="shirt-outline"
@@ -74,7 +73,7 @@ onAdd }: { onAdd?: () => void }) {
       description="开始添加你的第一件衣服，让AI造型师为你推荐穿搭"
       actionLabel="拍照添加"
       onAction={onAdd}
-      iconGradient={[colors.primary, colors.primary]}
+      iconGradient={[colors.primary, DesignTokens.colors.brand.camel]}
     />
   );
 }
@@ -88,7 +87,7 @@ export function EmptyRecommendations({ onChat }: { onChat?: () => void }) {
       description="和AI造型师聊聊你的风格偏好，获取专属穿搭推荐"
       actionLabel="和AI聊聊"
       onAction={onChat}
-      iconGradient={[Colors.primary[400], Colors.primary[600]]}
+      iconGradient={[colors.primary[400], colors.primary[600]]}
     />
   );
 }
@@ -99,7 +98,9 @@ export function EmptySearch({ query, onClear }: { query?: string; onClear?: () =
     <EmptyState
       icon="search-outline"
       title="未找到结果"
-      description={query ? `没有找到"${query}"相关的商品，试试其他关键词吧` : "试试其他关键词，发现更多好物"}
+      description={
+        query ? `没有找到"${query}"相关的商品，试试其他关键词吧` : "试试其他关键词，发现更多好物"
+      }
       actionLabel={query ? "清除搜索" : undefined}
       onAction={onClear}
       iconGradient={[Colors.amber[400], Colors.amber[600]]}
@@ -156,7 +157,7 @@ export function EmptyNotifications() {
       icon="notifications-off-outline"
       title="暂无通知"
       description="新的通知会显示在这里，不错过任何精彩"
-      iconGradient={[Colors.neutral[300], Colors.neutral[500]]}
+      iconGradient={[colors.neutral[300], colors.neutral[500]]}
     />
   );
 }
@@ -170,14 +171,14 @@ export function EmptyPosts({ onPublish }: { onPublish?: () => void }) {
       description="分享你的穿搭灵感，让更多人看到你的风格"
       actionLabel="发布动态"
       onAction={onPublish}
-      iconGradient={[Colors.primary[400], Colors.primary[600]]}
+      iconGradient={[colors.primary[400], colors.primary[600]]}
     />
   );
 }
 
 /** Generic empty state - brand icon + warm encouraging text */
 export function EmptyGeneric({
-title,
+  title,
   description,
   actionLabel,
   onAction,
@@ -194,7 +195,7 @@ title,
       description={description ?? "精彩即将到来，敬请期待"}
       actionLabel={actionLabel}
       onAction={onAction}
-      iconGradient={[staticColors.primary, staticColors.primary]}
+      iconGradient={[colors.primary, DesignTokens.colors.brand.camel]}
     />
   );
 }
@@ -207,8 +208,8 @@ const useStyles = createStyles((colors) => ({
     padding: Spacing[8],
   },
   iconContainer: {
-    width: Spacing['5xl'],
-    height: Spacing['5xl'],
+    width: 96,
+    height: 96,
     borderRadius: 48,
     alignItems: "center",
     justifyContent: "center",
@@ -246,4 +247,4 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
     color: colors.surface,
   },
-}))
+}));

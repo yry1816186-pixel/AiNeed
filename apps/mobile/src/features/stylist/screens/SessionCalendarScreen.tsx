@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { useAiStylistStore } from '../stores/aiStylistStore';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-
+import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { useAiStylistStore } from "../stores/aiStylistStore";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -19,6 +18,7 @@ function getFirstDayOfWeek(year: number, month: number): number {
 }
 
 export const SessionCalendarScreen: React.FC = () => {
+  const { colors } = useTheme();
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
@@ -183,28 +183,36 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    padding: Spacing.md,
+    padding: 16,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: colors.text,
+  },
   monthNav: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 24,
+    paddingVertical: 12,
   },
-  navButton: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
-  monthLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
-  weekHeader: { flexDirection: "row", paddingHorizontal: Spacing.sm, marginBottom: Spacing.xs},
-  weekHeaderCell: { flex: 1, alignItems: "center", paddingVertical: Spacing.xs},
-  weekHeaderText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, fontWeight: "500" },
+  navButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
+  monthLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.text },
+  weekHeader: { flexDirection: "row", paddingHorizontal: 8, marginBottom: 4 },
+  weekHeaderCell: { flex: 1, alignItems: "center", paddingVertical: 4 },
+  weekHeaderText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.textTertiary,
+    fontWeight: "500",
+  },
   calendarGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: 8,
   },
   dayCell: {
     width: `${100 / 7}%` as unknown as number,
@@ -212,41 +220,50 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 8,
-    marginBottom: DesignTokens.spacing['0.5'],
+    marginBottom: 2,
   },
   dayCellSelected: { backgroundColor: colors.primary },
-  dayText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
+  dayText: { fontSize: DesignTokens.typography.sizes.base, color: colors.text },
   dayTextSelected: { color: colors.surface, fontWeight: "600" },
   dotMarker: {
-    width: Spacing.xs,
-    height: Spacing.xs,
+    width: 4,
+    height: 4,
     borderRadius: 2,
     backgroundColor: colors.primary,
-    marginTop: DesignTokens.spacing['0.5'],
+    marginTop: 2,
   },
-  sessionList: { flex: 1, paddingHorizontal: Spacing.md, marginTop: Spacing.sm},
-  sessionListContent: { paddingBottom: Spacing.lg, gap: Spacing.sm},
+  sessionList: { flex: 1, paddingHorizontal: 16, marginTop: 8 },
+  sessionListContent: { paddingBottom: 24, gap: 8 },
   sessionCard: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: DesignTokens.spacing['3.5'],
+    padding: 14,
     borderWidth: 1,
     borderColor: colors.border,
   },
   sessionCardInfo: { flex: 1 },
-  sessionGoal: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary, marginBottom: DesignTokens.spacing['0.5']},
+  sessionGoal: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+    color: colors.textPrimary,
+    marginBottom: 2,
+  },
   sessionTime: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   planBadge: {
-    paddingHorizontal: DesignTokens.spacing['2.5'],
-    paddingVertical: Spacing.xs,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.secondaryLight,
   },
-  planBadgeText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.secondary, fontWeight: "600" },
-  emptyState: { alignItems: "center", paddingVertical: Spacing.lg},
+  planBadgeText: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    color: colors.secondaryDark,
+    fontWeight: "600",
+  },
+  emptyState: { alignItems: "center", paddingVertical: 24 },
   emptyText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
 });
 

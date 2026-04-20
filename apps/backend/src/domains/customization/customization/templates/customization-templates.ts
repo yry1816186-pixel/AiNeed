@@ -1,4 +1,4 @@
-import { ProductTemplateType } from "../../../../types/prisma-enums";
+import { ProductTemplateType } from "@/types/prisma-enums";
 
 export interface TemplateSeedData {
   type: ProductTemplateType;
@@ -122,15 +122,11 @@ export function getTemplateSeedData(): TemplateSeedData[] {
   return [...TEMPLATES];
 }
 
-export function getTemplatesByType(
-  type: ProductTemplateType,
-): TemplateSeedData[] {
+export function getTemplatesByType(type: ProductTemplateType): TemplateSeedData[] {
   return TEMPLATES.filter((t) => t.type === type);
 }
 
-export function getTemplateByType(
-  type: ProductTemplateType,
-): TemplateSeedData | undefined {
+export function getTemplateByType(type: ProductTemplateType): TemplateSeedData | undefined {
   return TEMPLATES.find((t) => t.type === type);
 }
 

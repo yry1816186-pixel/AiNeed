@@ -1,23 +1,22 @@
 import React, { useCallback, useEffect } from "react";
 import { View, Text, StyleSheet, RefreshControl, ActivityIndicator, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FlashList } from '../../../polyfills/flash-list';
+import { FlashList } from "../../polyfills/flash-list";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { useRecommendationFeedStore } from '../stores/recommendationFeedStore';
-import { FeedTabs } from '../components/FeedTabs';
-import { RecommendationCard } from '../components/RecommendationFeedCard';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import type { FeedItem, FeedCategory } from '../../../services/api/recommendation-feed.api';
-import type { RootStackParamList } from '../../../types/navigation';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { useRecommendationFeedStore } from "../stores/recommendationFeedStore";
+import { FeedTabs } from "../../../components/recommendations/FeedTabs";
+import { RecommendationCard } from "../../../components/recommendations/RecommendationFeedCard";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import type { FeedItem, FeedCategory } from "../../../services/api/recommendation-feed.api";
+import type { RootStackParamList } from "../../../types/navigation";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const ESTIMATED_ITEM_SIZE = 280;
 
 export function RecommendationFeedScreen() {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const {
@@ -41,7 +40,7 @@ export function RecommendationFeedScreen() {
 
   const handleItemPress = useCallback(
     (item: FeedItem) => {
-      navigation.navigate("ClothingDetail", { id: item.id } as never);
+      navigation.navigate("ClothingDetail", { id: item.id });
     },
     [navigation]
   );
@@ -144,16 +143,16 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.surface,
   },
   listContent: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingTop: Spacing.sm,
-    paddingBottom: DesignTokens.spacing[5],
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: 20,
   },
   footerLoader: {
-    paddingVertical: Spacing.md,
+    paddingVertical: 16,
     alignItems: "center",
   },
   footerEnd: {
-    paddingVertical: Spacing.md,
+    paddingVertical: 16,
     alignItems: "center",
   },
   footerEndText: {
@@ -164,8 +163,8 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: DesignTokens.spacing[10],
-    gap: DesignTokens.spacing[3],
+    paddingHorizontal: 40,
+    gap: 12,
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -173,8 +172,8 @@ const useStyles = createStyles((colors) => ({
     textAlign: "center",
   },
   retryButton: {
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     backgroundColor: colors.primary,
     borderRadius: 8,
   },
@@ -183,4 +182,4 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-}))
+}));

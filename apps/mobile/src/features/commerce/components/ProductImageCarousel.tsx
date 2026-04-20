@@ -9,10 +9,7 @@ import {
   Modal,
   Dimensions,
 } from "react-native";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../theme/tokens/design-tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -21,8 +18,6 @@ interface ProductImageCarouselProps {
 }
 
 export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({ images }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const [activeIndex, setActiveIndex] = useState(0);
   const [zoomVisible, setZoomVisible] = useState(false);
   const [_zoomIndex, setZoomIndex] = useState(0);
@@ -93,7 +88,7 @@ export const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({ imag
   );
 };
 
-const useStyles = createStyles((colors) => ({
+const styles = StyleSheet.create({
   container: {
     width: SCREEN_WIDTH,
     height: SCREEN_WIDTH,
@@ -110,26 +105,26 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   placeholderText: {
-    fontSize: DesignTokens.typography.sizes.base,
+    fontSize: 14,
     color: DesignTokens.colors.neutral[300],
   },
   dots: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: Spacing.sm,
+    paddingVertical: 8,
   },
   dot: {
-    width: DesignTokens.spacing['1.5'],
-    height: DesignTokens.spacing['1.5'],
+    width: 6,
+    height: 6,
     borderRadius: 3,
     backgroundColor: DesignTokens.colors.neutral[200],
     marginHorizontal: 3,
   },
   dotActive: {
-    backgroundColor: DesignTokens.colors.brand.terracotta, // brand accent for active indicator
-    width: Spacing.sm,
-    height: Spacing.sm,
+    backgroundColor: "#FF4D4F", // custom color
+    width: 8,
+    height: 8,
     borderRadius: 4,
   },
   zoomOverlay: {
@@ -139,22 +134,22 @@ const useStyles = createStyles((colors) => ({
   zoomClose: {
     position: "absolute",
     top: 50,
-    right: DesignTokens.spacing[5],
+    right: 20,
     zIndex: 10,
-    width: DesignTokens.spacing[9],
-    height: DesignTokens.spacing[9],
+    width: 36,
+    height: 36,
     borderRadius: 18,
     backgroundColor: "rgba(255,255,255,0.3)",
     alignItems: "center",
     justifyContent: "center",
   },
   zoomCloseText: {
-    color: DesignTokens.colors.text.inverse,
-    fontSize: DesignTokens.typography.sizes.md,
+    color: "#FFFFFF",
+    fontSize: 16,
     fontWeight: "600",
   },
   zoomImage: {
     width: SCREEN_WIDTH,
     height: "100%",
   },
-}))
+});

@@ -5,19 +5,19 @@ import {
   BadRequestException,
   ForbiddenException,
 } from "@nestjs/common";
-import Decimal from "decimal.js";
+import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import { CreateReviewDto, ReviewQueryDto } from "./dto";
 
-const asJson = (value: unknown): Record<string, unknown> => value as Record<string, unknown>;
+const asJson = (value: unknown): any => value as any;
 
 const RANKING_WEIGHTS = {
-  rating: 0.40,
-  orderCount: 0.20,
-  responseSpeed: 0.20,
-  matchScore: 0.20,
+  rating: 0.4,
+  orderCount: 0.2,
+  responseSpeed: 0.2,
+  matchScore: 0.2,
 } as const;
 
 @Injectable()
@@ -32,15 +32,23 @@ export class ConsultantReviewService {
       where: { id: dto.bookingId },
     });
 
-    if (!booking) {throw new NotFoundException("预约不存在");}
-    if (booking.userId !== userId) {throw new ForbiddenException("仅预约用户可评价");}
-    if (booking.status !== "completed") {throw new BadRequestException("仅已完成的预约可评价");}
+    if (!booking) {
+      throw new NotFoundException("预约不存在");
+    }
+    if (booking.userId !== userId) {
+      throw new ForbiddenException("仅预约用户可评价");
+    }
+    if (booking.status !== "completed") {
+      throw new BadRequestException("仅已完成的预约可评价");
+    }
 
     // Check if already reviewed
     const existing = await this.prisma.consultantReview.findUnique({
       where: { bookingId: dto.bookingId },
     });
-    if (existing) {throw new BadRequestException("该预约已评价");}
+    if (existing) {
+      throw new BadRequestException("该预约已评价");
+    }
 
     // Create review
     const review = await this.prisma.consultantReview.create({
@@ -66,11 +74,11 @@ export class ConsultantReviewService {
   async getReviews(query: ReviewQueryDto) {
     const { consultantId, page = 1, pageSize = 20, sortBy = "latest" } = query;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {};
-    if (consultantId) {where.consultantId = consultantId;}
+    if (consultantId) {
+      where.consultantId = consultantId;
+    }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let orderBy: any;
     switch (sortBy) {
       case "highest":
@@ -104,7 +112,7 @@ export class ConsultantReviewService {
     ]);
 
     // Anonymize reviews where isAnonymous is true
-    const sanitized = reviews.map((review: any) => ({
+    const sanitized = reviews.map((review) => ({
       ...review,
       user: review.isAnonymous
         ? { id: "anonymous", nickname: "匿名用户", avatar: null }
@@ -125,7 +133,9 @@ export class ConsultantReviewService {
       },
     });
 
-    if (!consultant) {return 0;}
+    if (!consultant) {
+      return 0;
+    }
 
     // Rating dimension (40%)
     const ratingScore = Number(consultant.rating) / 5;
@@ -164,7 +174,7 @@ export class ConsultantReviewService {
     await this.prisma.consultantProfile.update({
       where: { id: consultantId },
       data: {
-        rating: new Decimal(stats._avg.rating ?? 0).toFixed(1),
+        rating: new any(stats._avg.rating ?? 0).toFixed(1),
         reviewCount: stats._count,
       },
     });

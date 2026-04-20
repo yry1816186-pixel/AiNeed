@@ -27,18 +27,14 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
-import { PhotoType } from '../../../types/prisma-enums';
+import { PhotoType } from "../../../types/prisma-enums";
 import type { Response } from "express";
 
 import { SensitiveDataInterceptor } from "../../../common/interceptors/sensitive-data.interceptor";
 import { CurrentUser } from "../../identity/auth/decorators/current-user.decorator";
 import { JwtAuthGuard } from "../../identity/auth/guards/jwt-auth.guard";
 
-import {
-  PhotoUploadResultDto,
-  PhotoResponseDto,
-  SuccessResponseDto,
-} from "./dto";
+import { PhotoUploadResultDto, PhotoResponseDto, SuccessResponseDto } from "./dto";
 import { PhotosService } from "./photos.service";
 import { PhotoQualityValidator } from "./services/photo-quality-validator.service";
 
@@ -52,12 +48,16 @@ export class PhotosController {
 
   constructor(
     private readonly photosService: PhotosService,
-    private readonly photoQualityValidator: PhotoQualityValidator,
+    private readonly photoQualityValidator: PhotoQualityValidator
   ) {}
 
   @Post("upload")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
-  @ApiOperation({ summary: "上传用户照片", description: "上传用户照片，支持正面照、侧面照、全身照、半身照、面部照。上传后自动触发 AI 体型和面部分析。" })
+  @ApiOperation({
+    summary: "上传用户照片",
+    description:
+      "上传用户照片，支持正面照、侧面照、全身照、半身照、面部照。上传后自动触发 AI 体型和面部分析。",
+  })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
@@ -79,12 +79,14 @@ export class PhotosController {
   async uploadPhoto(
     @CurrentUser("id") userId: string,
     @UploadedFile() file: Express.Multer.File,
-    @Body("type") type: PhotoType,
+    @Body("type") type: PhotoType
   ) {
     // Photo quality validation before storage
     const qualityReport = await this.photoQualityValidator.validateQuality(file.buffer);
     if (!qualityReport.passed) {
-      this.logger.warn(`Photo quality insufficient for user ${userId}: overall=${qualityReport.overall}`);
+      this.logger.warn(
+        `Photo quality insufficient for user ${userId}: overall=${qualityReport.overall}`
+      );
       throw new HttpException(
         {
           error: "Photo quality insufficient",
@@ -95,26 +97,22 @@ export class PhotosController {
             overall: qualityReport.overall,
           },
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
 
-    return this.photosService.uploadPhoto(
-      userId,
-      file,
-      type || PhotoType.full_body,
-    );
+    return this.photosService.uploadPhoto(userId, file, type || PhotoType.full_body);
   }
 
   @Get()
-  @ApiOperation({ summary: "获取用户照片列表", description: "获取当前用户的所有照片，可按类型筛选。" })
+  @ApiOperation({
+    summary: "获取用户照片列表",
+    description: "获取当前用户的所有照片，可按类型筛选。",
+  })
   @ApiQuery({ name: "type", description: "按照片类型筛选", enum: PhotoType, required: false })
   @ApiResponse({ status: 200, description: "获取成功", type: [PhotoResponseDto] })
   @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
-  async getUserPhotos(
-    @CurrentUser("id") userId: string,
-    @Query("type") type?: PhotoType,
-  ) {
+  async getUserPhotos(@CurrentUser("id") userId: string, @Query("type") type?: PhotoType) {
     return this.photosService.getUserPhotos(userId, type);
   }
 
@@ -124,10 +122,7 @@ export class PhotosController {
   @ApiResponse({ status: 200, description: "获取成功", type: PhotoResponseDto })
   @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
   @ApiResponse({ status: 404, description: "照片不存在" })
-  async getPhotoById(
-    @CurrentUser("id") userId: string,
-    @Param("id") photoId: string,
-  ) {
+  async getPhotoById(@CurrentUser("id") userId: string, @Param("id") photoId: string) {
     return this.photosService.getPhotoById(photoId, userId);
   }
 
@@ -140,14 +135,10 @@ export class PhotosController {
   async getPhotoAsset(
     @CurrentUser("id") userId: string,
     @Param("id") photoId: string,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     this.logger.log(`Serving original photo asset for ${photoId}`);
-    const asset = await this.photosService.getPhotoAsset(
-      photoId,
-      userId,
-      "original",
-    );
+    const asset = await this.photosService.getPhotoAsset(photoId, userId, "original");
 
     res.setHeader("Content-Type", asset.contentType);
     res.setHeader("Cache-Control", asset.cacheControl);
@@ -163,14 +154,10 @@ export class PhotosController {
   async getPhotoThumbnail(
     @CurrentUser("id") userId: string,
     @Param("id") photoId: string,
-    @Res() res: Response,
+    @Res() res: Response
   ) {
     this.logger.log(`Serving photo thumbnail asset for ${photoId}`);
-    const asset = await this.photosService.getPhotoAsset(
-      photoId,
-      userId,
-      "thumbnail",
-    );
+    const asset = await this.photosService.getPhotoAsset(photoId, userId, "thumbnail");
 
     res.setHeader("Content-Type", asset.contentType);
     res.setHeader("Cache-Control", asset.cacheControl);
@@ -183,10 +170,7 @@ export class PhotosController {
   @ApiResponse({ status: 200, description: "删除成功", type: SuccessResponseDto })
   @ApiResponse({ status: 400, description: "照片不存在" })
   @ApiResponse({ status: 401, description: "未授权，需要提供有效的 Access Token" })
-  async deletePhoto(
-    @CurrentUser("id") userId: string,
-    @Param("id") photoId: string,
-  ) {
+  async deletePhoto(@CurrentUser("id") userId: string, @Param("id") photoId: string) {
     await this.photosService.deletePhoto(photoId, userId);
     return { success: true };
   }

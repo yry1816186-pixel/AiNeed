@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -20,14 +20,15 @@ import {
   interpolate,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { flatColors as colors } from "../../../design-system/theme";
+
 import {
   AiStylistResolution,
   AiStylistOutfitPlan,
   AiStylistOutfitItem,
-} from '../../../services/api/ai-stylist.api';
+} from "../../../services/api/ai-stylist.api";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -46,8 +47,6 @@ export interface OutfitCardProps {
 }
 
 export const OutfitCard = React.memo(function OutfitCard({ result, onItemPress }: OutfitCardProps) {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const [activeOutfitIndex, setActiveOutfitIndex] = useState(0);
   const containerOpacity = useSharedValue(0);
   const containerScale = useSharedValue(0.95);
@@ -75,7 +74,7 @@ export const OutfitCard = React.memo(function OutfitCard({ result, onItemPress }
     <AnimatedView style={[styles.container, containerStyle]}>
       <View style={styles.summarySection}>
         <LinearGradient
-          colors={[colors.secondary, colors.primary]}
+          colors={[colors.secondary, DesignTokens.colors.brand.camel]}
           style={styles.summaryGradient}
         >
           <Ionicons name="sparkles" size={20} color={colors.textInverse} />
@@ -160,9 +159,11 @@ interface OutfitItemCardProps {
   onPress: () => void;
 }
 
-const OutfitItemCard = React.memo(function OutfitItemCard({ item, index, onPress }: OutfitItemCardProps) {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+const OutfitItemCard = React.memo(function OutfitItemCard({
+  item,
+  index,
+  onPress,
+}: OutfitItemCardProps) {
   const opacity = useSharedValue(0);
   const translateX = useSharedValue(20);
 
@@ -213,11 +214,7 @@ const OutfitItemCard = React.memo(function OutfitItemCard({ item, index, onPress
           {hasLink && (
             <View style={styles.viewLink}>
               <Text style={styles.viewLinkText}>查看商品</Text>
-              <Ionicons
-                name="open-outline"
-                size={14}
-                color={colors.primary}
-              />
+              <Ionicons name="open-outline" size={14} color={colors.primary} />
             </View>
           )}
         </View>
@@ -250,27 +247,27 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 20,
     overflow: "hidden",
-    marginVertical: Spacing.sm,
+    marginVertical: 8,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
   summarySection: {
-    padding: Spacing.md,
+    padding: 16,
   },
   summaryGradient: {
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "flex-start",
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 16,
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   summaryTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.textInverse,
-    marginLeft: DesignTokens.spacing['1.5'],
+    marginLeft: 6,
   },
   summaryText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -278,8 +275,8 @@ const useStyles = createStyles((colors) => ({
     color: DesignTokens.colors.neutral[800],
   },
   whySection: {
-    paddingHorizontal: Spacing.md,
-    paddingBottom: Spacing.md,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
@@ -287,20 +284,20 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[700],
-    marginBottom: DesignTokens.spacing['2.5'],
+    marginBottom: 10,
   },
   reasonItem: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: DesignTokens.spacing['1.5'],
+    marginBottom: 6,
   },
   reasonDot: {
-    width: DesignTokens.spacing['1.5'],
-    height: DesignTokens.spacing['1.5'],
+    width: 6,
+    height: 6,
     borderRadius: 3,
     backgroundColor: colors.secondary,
     marginTop: 7,
-    marginRight: Spacing.sm,
+    marginRight: 8,
   },
   reasonText: {
     flex: 1,
@@ -309,13 +306,13 @@ const useStyles = createStyles((colors) => ({
     color: DesignTokens.colors.neutral[600],
   },
   outfitTabs: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
-    gap: Spacing.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 8,
   },
   outfitTab: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 16,
     backgroundColor: DesignTokens.colors.neutral[100],
     borderWidth: 1,
@@ -335,13 +332,13 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
   },
   outfitSection: {
-    padding: Spacing.md,
+    padding: 16,
   },
   outfitHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   outfitTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -356,12 +353,12 @@ const useStyles = createStyles((colors) => ({
   styleTags: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: DesignTokens.spacing['1.5'],
-    marginBottom: Spacing.md,
+    gap: 6,
+    marginBottom: 16,
   },
   styleTag: {
-    paddingHorizontal: DesignTokens.spacing['2.5'],
-    paddingVertical: Spacing.xs,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 12,
     backgroundColor: DesignTokens.colors.neutral[100],
   },
@@ -373,21 +370,21 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: DesignTokens.spacing[3],
-    marginBottom: DesignTokens.spacing['2.5'],
+    padding: 12,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
   itemCardClickable: {
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 2,
   },
   itemImageContainer: {
-    width: Spacing['4xl'],
-    height: Spacing['4xl'],
+    width: 80,
+    height: 80,
     borderRadius: 8,
     overflow: "hidden",
     backgroundColor: DesignTokens.colors.neutral[100],
@@ -404,7 +401,7 @@ const useStyles = createStyles((colors) => ({
   },
   itemContent: {
     flex: 1,
-    marginLeft: DesignTokens.spacing[3],
+    marginLeft: 12,
     justifyContent: "space-between",
   },
   itemHeader: {
@@ -427,19 +424,19 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginTop: DesignTokens.spacing['0.5'],
+    marginTop: 2,
   },
   itemReason: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
-    marginTop: DesignTokens.spacing['0.5'],
+    marginTop: 2,
     lineHeight: 16,
   },
   itemFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: Spacing.xs,
+    marginTop: 4,
   },
   itemPrice: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -449,7 +446,7 @@ const useStyles = createStyles((colors) => ({
   viewLink: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
+    gap: 4,
   },
   viewLinkText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -458,11 +455,11 @@ const useStyles = createStyles((colors) => ({
   },
   scoreBadge: {
     position: "absolute",
-    top: Spacing.sm,
-    right: Spacing.sm,
+    top: 8,
+    right: 8,
     backgroundColor: colors.secondary,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderRadius: 10,
   },
   scoreText: {
@@ -470,5 +467,4 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "700",
     color: colors.textInverse,
   },
-}))
-
+}));

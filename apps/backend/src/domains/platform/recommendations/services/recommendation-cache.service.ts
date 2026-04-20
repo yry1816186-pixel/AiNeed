@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
 
 export interface CachedRecommendation {
   id: string;
@@ -23,7 +23,7 @@ export class RecommendationCacheService {
     userId: string,
     category: string,
     subCategory?: string,
-    version: string = "v1",
+    version: string = "v1"
   ): Promise<CachedRecommendation | null> {
     const cache = await this.prisma.recommendationCache.findFirst({
       where: {
@@ -35,7 +35,9 @@ export class RecommendationCacheService {
       },
     });
 
-    if (!cache) {return null;}
+    if (!cache) {
+      return null;
+    }
 
     return {
       id: cache.id,
@@ -56,7 +58,7 @@ export class RecommendationCacheService {
       subCategory?: string;
       version?: string;
       ttlMs?: number;
-    } = {},
+    } = {}
   ): Promise<CachedRecommendation> {
     const { subCategory, version = "v1", ttlMs = this.DEFAULT_TTL_MS } = options;
     const expiresAt = new Date(Date.now() + ttlMs);
@@ -96,10 +98,7 @@ export class RecommendationCacheService {
     };
   }
 
-  async invalidate(
-    userId: string,
-    category?: string,
-  ): Promise<number> {
+  async invalidate(userId: string, category?: string): Promise<number> {
     const where: Record<string, unknown> = { userId };
     if (category) {
       where.category = category;
@@ -107,7 +106,7 @@ export class RecommendationCacheService {
 
     const result = await this.prisma.recommendationCache.deleteMany({ where });
     this.logger.log(
-      `Invalidated ${result.count} cache entries for user ${userId}${category ? ` category ${category}` : ""}`,
+      `Invalidated ${result.count} cache entries for user ${userId}${category ? ` category ${category}` : ""}`
     );
     return result.count;
   }

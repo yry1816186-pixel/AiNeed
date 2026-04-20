@@ -12,9 +12,10 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
-import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
-import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
-import { useTheme } from '../../shared/contexts/ThemeContext';
+import { Colors, Spacing, BorderRadius, Typography } from "../../design-system/theme";
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import { flatColors as colors } from "../theme";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 type _ViewStyle = import("react-native").ViewStyle;
 type _ViewProps = import("react-native").ViewProps;
@@ -63,6 +64,7 @@ export function ProductBottomSheet({
   onAddToCart,
   onBuyNow,
 }: ProductBottomSheetProps) {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
   const snapPoints = useMemo(() => ["60%", "80%"], []);
 
@@ -190,7 +192,7 @@ export function ProductBottomSheet({
               </TouchableOpacity>
               <TouchableOpacity style={styles.buyNowButton} onPress={onBuyNow} activeOpacity={0.8}>
                 <LinearGradient
-                  colors={[Colors.primary[500], Colors.primary[600]]}
+                  colors={[colors.primary[500], colors.primary[600]]}
                   style={styles.buyNowGradient}
                 >
                   <Text style={styles.buyNowText}>立即购买</Text>
@@ -272,7 +274,7 @@ export function FilterBottomSheet({
           </TouchableOpacity>
           <TouchableOpacity style={styles.applyButton} onPress={onApply}>
             <LinearGradient
-              colors={[Colors.primary[500], Colors.primary[600]]}
+              colors={[colors.primary[500], colors.primary[600]]}
               style={styles.applyGradient}
             >
               <Text style={styles.applyText}>确定</Text>
@@ -362,16 +364,16 @@ export function ShareBottomSheet({ visible, onClose, onShare }: ShareBottomSheet
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   background: {
-    backgroundColor: Colors.neutral[0],
+    backgroundColor: colors.neutral[0],
     borderTopLeftRadius: BorderRadius["3xl"],
     borderTopRightRadius: BorderRadius["3xl"],
   },
   handleIndicator: {
-    backgroundColor: Colors.neutral[300],
-    width: DesignTokens.spacing[10],
-    height: Spacing.xs,
+    backgroundColor: colors.neutral[300],
+    width: 40,
+    height: 4,
   },
   content: {
     flex: 1,
@@ -382,16 +384,16 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[5],
   },
   productImage: {
-    width: Spacing['4xl'],
-    height: Spacing['4xl'],
+    width: 80,
+    height: 80,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
     marginRight: Spacing[4],
   },
   productImageEmoji: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
   },
   productInfo: {
     flex: 1,
@@ -399,13 +401,13 @@ const styles = StyleSheet.create({
   },
   productName: {
     ...Typography.body.md,
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     fontWeight: "600",
     marginBottom: Spacing[1],
   },
   productPrice: {
     ...Typography.heading.lg,
-    color: Colors.primary[600],
+    color: colors.primary[600],
     fontWeight: "800",
   },
   section: {
@@ -413,7 +415,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.body.md,
-    color: Colors.neutral[700],
+    color: colors.neutral[700],
     fontWeight: "600",
     marginBottom: Spacing[3],
   },
@@ -423,62 +425,62 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   sizeOption: {
-    minWidth: Spacing['2xl'],
-    height: DesignTokens.spacing[10],
+    minWidth: 48,
+    height: 40,
     paddingHorizontal: Spacing[3],
     alignItems: "center",
     justifyContent: "center",
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   sizeOptionSelected: {
-    borderColor: Colors.primary[500],
-    backgroundColor: Colors.primary[50],
+    borderColor: colors.primary[500],
+    backgroundColor: colors.primary[50],
   },
   sizeOptionUnavailable: {
-    borderColor: Colors.neutral[100],
-    backgroundColor: Colors.neutral[50],
+    borderColor: colors.neutral[100],
+    backgroundColor: colors.neutral[50],
   },
   sizeOptionText: {
     ...Typography.body.sm,
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
   },
   sizeOptionTextSelected: {
-    color: Colors.primary[600],
+    color: colors.primary[600],
     fontWeight: "600",
   },
   sizeOptionTextUnavailable: {
-    color: Colors.neutral[300],
+    color: colors.neutral[300],
     textDecorationLine: "line-through",
   },
   colorOption: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: Spacing[3],
-    height: DesignTokens.spacing[9],
+    height: 36,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
     gap: Spacing[2],
   },
   colorOptionSelected: {
-    borderColor: Colors.primary[500],
-    backgroundColor: Colors.primary[50],
+    borderColor: colors.primary[500],
+    backgroundColor: colors.primary[50],
   },
   colorDot: {
-    width: Spacing.md,
-    height: Spacing.md,
+    width: 16,
+    height: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   colorOptionText: {
     ...Typography.body.sm,
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
   },
   colorOptionTextSelected: {
-    color: Colors.primary[600],
+    color: colors.primary[600],
     fontWeight: "600",
   },
   actions: {
@@ -489,20 +491,20 @@ const styles = StyleSheet.create({
   },
   addToCartButton: {
     flex: 1,
-    height: Spacing['2xl'],
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.primary[100],
+    backgroundColor: colors.primary[100],
     borderRadius: BorderRadius.xl,
   },
   addToCartText: {
     ...Typography.body.md,
-    color: Colors.primary[700],
+    color: colors.primary[700],
     fontWeight: "600",
   },
   buyNowButton: {
     flex: 1,
-    height: Spacing['2xl'],
+    height: 48,
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
   },
@@ -513,7 +515,7 @@ const styles = StyleSheet.create({
   },
   buyNowText: {
     ...Typography.body.md,
-    color: Colors.neutral[0],
+    color: colors.neutral[0],
     fontWeight: "700",
   },
   filterContent: {
@@ -526,15 +528,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[5],
     paddingVertical: Spacing[4],
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[100],
+    borderBottomColor: colors.neutral[100],
   },
   filterTitle: {
     ...Typography.heading.md,
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
   },
   filterClose: {
     ...Typography.heading.sm,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   filterActions: {
     flexDirection: "row",
@@ -542,25 +544,25 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[4],
     gap: Spacing[3],
     borderTopWidth: 1,
-    borderTopColor: Colors.neutral[100],
+    borderTopColor: colors.neutral[100],
   },
   resetButton: {
     flex: 1,
-    height: Spacing['2xl'],
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: BorderRadius.xl,
     borderWidth: 1,
-    borderColor: Colors.neutral[300],
+    borderColor: colors.neutral[300],
   },
   resetText: {
     ...Typography.body.md,
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
     fontWeight: "600",
   },
   applyButton: {
     flex: 1,
-    height: Spacing['2xl'],
+    height: 48,
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
   },
@@ -571,7 +573,7 @@ const styles = StyleSheet.create({
   },
   applyText: {
     ...Typography.body.md,
-    color: Colors.neutral[0],
+    color: colors.neutral[0],
     fontWeight: "600",
   },
   shareContent: {
@@ -579,7 +581,7 @@ const styles = StyleSheet.create({
   },
   shareTitle: {
     ...Typography.heading.md,
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     textAlign: "center",
     marginBottom: Spacing[5],
   },
@@ -598,30 +600,30 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing[2],
   },
   shareIcon: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
   },
   shareName: {
     ...Typography.caption.md,
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
   },
   cancelButton: {
-    height: Spacing['2xl'],
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     borderRadius: BorderRadius.xl,
   },
   cancelText: {
     ...Typography.body.md,
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
     fontWeight: "500",
   },
-});
+}));
 
 export { BottomSheetModalProvider };

@@ -1,6 +1,7 @@
 ﻿import React from "react";
 import { View, Text, TouchableOpacity, ViewStyle } from "react-native";
-import { Colors, Spacing, Typography } from '../../design-system/theme';
+import { Colors, Spacing, Typography } from "../../design-system/theme";
+import { flatColors as colors } from "../theme";
 
 export interface SectionProps {
   title: string;
@@ -24,10 +25,10 @@ export const Section: React.FC<SectionProps> = ({ title, children, action, style
           paddingHorizontal: Spacing.xl,
         }}
       >
-        <Text style={[Typography.heading.lg, { color: Colors.neutral[900] }]}>{title}</Text>
+        <Text style={[Typography.heading.lg, { color: colors.neutral[900] }]}>{title}</Text>
         {action && (
           <TouchableOpacity onPress={action.onPress} activeOpacity={0.7}>
-            <Text style={[Typography.body.md, { color: Colors.primary[600], fontWeight: "600" }]}>
+            <Text style={[Typography.body.md, { color: colors.primary[600], fontWeight: "600" }]}>
               {action.text}
             </Text>
           </TouchableOpacity>

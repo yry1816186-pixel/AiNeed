@@ -1,7 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Clipboard } from 'react-native';
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Clipboard } from "react-native";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface TimelineEvent {
   status: string;
@@ -79,29 +81,29 @@ export const OrderTimeline: React.FC<OrderTimelineProps> = ({ events }) => {
 };
 
 const useStyles = createStyles((colors) => ({
-  container: { paddingLeft: Spacing.sm},
-  row: { flexDirection: "row", gap: DesignTokens.spacing[3]},
-  left: { alignItems: "center", width: DesignTokens.spacing[5] },
+  container: { paddingLeft: 8 },
+  row: { flexDirection: "row", gap: 12 },
+  left: { alignItems: "center", width: 20 },
   dot: {
-    width: DesignTokens.spacing['3.5'],
-    height: DesignTokens.spacing['3.5'],
+    width: 14,
+    height: 14,
     borderRadius: 7,
     borderWidth: 2,
-    borderColor: DesignTokens.colors.borders.default,
+    borderColor: "colors.border",
     backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
   },
   dotCurrent: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
-    borderColor: DesignTokens.colors.brand.terracotta,
+    backgroundColor: "colors.error",
+    borderColor: "colors.error",
   },
   dotPast: {
-    backgroundColor: DesignTokens.colors.semantic.success,
-    borderColor: DesignTokens.colors.semantic.success,
+    backgroundColor: "colors.success",
+    borderColor: "colors.success",
   },
   dotFuture: {
-    borderColor: DesignTokens.colors.borders.default,
+    borderColor: "colors.border",
   },
   checkMark: {
     fontSize: DesignTokens.typography.sizes.xs,
@@ -109,12 +111,12 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "700",
   },
   line: {
-    width: DesignTokens.spacing['0.5'],
+    width: 2,
     flex: 1,
-    backgroundColor: DesignTokens.colors.borders.default,
-    marginVertical: Spacing.xs,
+    backgroundColor: "colors.border",
+    marginVertical: 4,
   },
-  content: { flex: 1, paddingBottom: DesignTokens.spacing[5]},
+  content: { flex: 1, paddingBottom: 20 },
   statusText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
@@ -122,7 +124,7 @@ const useStyles = createStyles((colors) => ({
   },
   statusTextCurrent: {
     fontWeight: "700",
-    color: DesignTokens.colors.brand.terracotta,
+    color: "colors.error",
   },
   statusTextFuture: {
     color: DesignTokens.colors.neutral[300],
@@ -130,11 +132,11 @@ const useStyles = createStyles((colors) => ({
   timeText: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
-    marginTop: Spacing.xs,
+    marginTop: 4,
   },
   trackingText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.semantic.info,
-    marginTop: Spacing.xs,
+    color: "colors.info",
+    marginTop: 4,
   },
-}))
+}));

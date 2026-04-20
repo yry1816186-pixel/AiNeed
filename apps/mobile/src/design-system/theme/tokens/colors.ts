@@ -123,7 +123,7 @@ export const GradientPresets = {
   shimmer: ["rgba(255,255,255,0)", "rgba(255,255,255,0.3)", "rgba(255,255,255,0)"] as [
     string,
     string,
-    ...string[]
+    ...string[],
   ],
 
   // Auxiliary warm gradients - for decorative/categorical use only, NOT brand identity
@@ -137,7 +137,10 @@ export const GradientPresets = {
 
   // Auxiliary luxury gradients - for decorative/categorical use only
   luxuryGold: ["#FFD700", "#FFA500"] as [string, string], // 奢华金 (auxiliary)
-  elegantPurple: [DesignTokens.colors.brand.terracottaDark, DesignTokens.colors.brand.slateDark] as [string, string],
+  elegantPurple: [
+    DesignTokens.colors.brand.terracottaDark,
+    DesignTokens.colors.brand.slateDark,
+  ] as [string, string],
   romanticPink: ["#FF6B9D", "#FFB6C1"] as [string, string], // 浪漫粉 (auxiliary)
 } as const;
 

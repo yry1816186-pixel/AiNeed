@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿import React, { useEffect } from "react";
+﻿import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,8 @@ import {
   FlatList,
   Animated,
   StyleProp,
-  ViewStyle} from "react-native";
+  ViewStyle,
+} from "react-native";
 
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -29,11 +30,13 @@ import {
   runOnJS,
   useAnimatedScrollHandler,
   measure,
-  useAnimatedRef} from "react-native-reanimated";
+  useAnimatedRef,
+} from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors , Spacing } from '../../../design-system/theme'
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { Colors } from "../../../design-system/theme";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -66,7 +69,8 @@ type IoniconsIconName =
 const springConfig = {
   damping: 15,
   stiffness: 200,
-  mass: 0.5};
+  mass: 0.5,
+};
 
 interface RecommendationItem {
   id: string;
@@ -99,8 +103,6 @@ const RecommendationItemCard: React.FC<{
   index: number;
   onItemPress?: (item: RecommendationItem) => void;
 }> = ({ item, index, onItemPress }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const itemOpacity = useSharedValue(0);
   const itemTranslateX = useSharedValue(30);
   const imageScale = useSharedValue(0.95);
@@ -114,12 +116,15 @@ const RecommendationItemCard: React.FC<{
 
   const itemAnimatedStyle = useAnimatedStyle(() => ({
     opacity: itemOpacity.value,
-    transform: [{ translateX: itemTranslateX.value }]}));
+    transform: [{ translateX: itemTranslateX.value }],
+  }));
 
   const imageAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: imageScale.value }]}));
+    transform: [{ scale: imageScale.value }],
+  }));
 
   const handlePressIn = () => {
+    const { colors } = useTheme();
     isPressed.value = true;
     imageScale.value = withSpring(0.98, { damping: 10, stiffness: 300 });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -181,8 +186,6 @@ const FeedSectionCard: React.FC<{
   onItemPress?: (item: RecommendationItem, sectionId: string) => void;
   onSeeAll?: (sectionId: string) => void;
 }> = ({ section, sectionIndex, onItemPress, onSeeAll }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const sectionOpacity = useSharedValue(0);
   const sectionTranslateY = useSharedValue(50);
 
@@ -193,7 +196,8 @@ const FeedSectionCard: React.FC<{
 
   const sectionAnimatedStyle = useAnimatedStyle(() => ({
     opacity: sectionOpacity.value,
-    transform: [{ translateY: sectionTranslateY.value }]}));
+    transform: [{ translateY: sectionTranslateY.value }],
+  }));
 
   return (
     <AnimatedView style={[styles.feedSection, sectionAnimatedStyle]}>
@@ -215,8 +219,6 @@ const TimelineHistoryItem: React.FC<{
   totalItems: number;
   currentStyle: string;
 }> = ({ item, index, totalItems, currentStyle }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const dotScale = useSharedValue(0);
 
   useEffect(() => {
@@ -224,7 +226,8 @@ const TimelineHistoryItem: React.FC<{
   }, []);
 
   const dotAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: dotScale.value }]}));
+    transform: [{ scale: dotScale.value }],
+  }));
 
   const isCurrent = item.style === currentStyle;
 
@@ -246,8 +249,6 @@ const TypeIconHeader: React.FC<{
   type: "style" | "similar" | "trending" | "seasonal" | "personalized";
   typeConfig: Record<string, { icon: string; label: string; color: string }>;
 }> = ({ type, typeConfig }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const config = typeConfig[type];
   const iconScale = useSharedValue(0);
 
@@ -256,7 +257,8 @@ const TypeIconHeader: React.FC<{
   }, []);
 
   const iconAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: iconScale.value }]}));
+    transform: [{ scale: iconScale.value }],
+  }));
 
   return (
     <AnimatedView
@@ -294,7 +296,8 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
   items,
   onItemPress,
   onSeeAll,
-  style}) => {
+  style,
+}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const scrollX = useSharedValue(0);
@@ -307,32 +310,40 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
   const typeConfig = {
     style: {
       icon: "palette-outline",
-      color: colors.neutral[300],
-      label: "风格匹配"},
+      color: DesignTokens.colors.brand.slateLight,
+      label: "风格匹配",
+    },
     similar: {
       icon: "copy-outline",
       color: colors.success, // custom color
-      label: "相似推荐"},
+      label: "相似推荐",
+    },
     trending: {
       icon: "trending-up-outline",
       color: colors.warning, // custom color
-      label: "热门趋势"},
+      label: "热门趋势",
+    },
     seasonal: {
       icon: "sunny-outline",
-      color: colors.primary, // custom color
-      label: "当季推荐"},
+      color: DesignTokens.colors.brand.camel, // custom color
+      label: "当季推荐",
+    },
     personalized: {
       icon: "person-outline",
       color: colors.primaryDark, // custom color
-      label: "为你定制"}};
+      label: "为你定制",
+    },
+  };
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       scrollX.value = event.contentOffset.x;
-    }});
+    },
+  });
 
   const headerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollX.value, [0, 50], [1, 0.8], Extrapolate.CLAMP)}));
+    opacity: interpolate(scrollX.value, [0, 50], [1, 0.8], Extrapolate.CLAMP),
+  }));
 
   const renderHeader = () => {
     const config = typeConfig[type];
@@ -350,7 +361,7 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
         {onSeeAll && (
           <TouchableOpacity style={styles.seeAllButton} onPress={onSeeAll}>
             <Text style={styles.seeAllText}>查看全部</Text>
-            <Ionicons name="chevron-forward" size={16} color={Colors.primary[500]} />
+            <Ionicons name="chevron-forward" size={16} color={colors.primary[500]} />
           </TouchableOpacity>
         )}
       </AnimatedView>
@@ -364,7 +375,9 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
   };
 
   return (
-    <AnimatedView style={[styles.container, cardOpacity as any, style]}>
+    <AnimatedView
+      style={[styles.container, cardOpacity as Animated.AnimatedStyle<ViewStyle>, style]}
+    >
       {renderHeader()}
       <ScrollView
         horizontal
@@ -373,7 +386,7 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
         onScroll={scrollHandler}
       >
         {items.map((item, index) => renderItem(item, index))}
-        <View style={{ width: DesignTokens.spacing[5] }} />
+        <View style={{ width: 20 }} />
       </ScrollView>
     </AnimatedView>
   );
@@ -399,10 +412,9 @@ export const PersonalizedFeed: React.FC<PersonalizedFeedProps> = ({
   onItemPress,
   onSeeAll,
   onRefresh,
-  refreshing = false,
-  style}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  _refreshing = false,
+  style,
+}) => {
   const scrollY = useSharedValue(0);
   const headerOpacity = useSharedValue(0);
 
@@ -413,10 +425,12 @@ export const PersonalizedFeed: React.FC<PersonalizedFeedProps> = ({
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       scrollY.value = event.contentOffset.y;
-    }});
+    },
+  });
 
   const headerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, 100], [1, 0.3], Extrapolate.CLAMP)}));
+    opacity: interpolate(scrollY.value, [0, 100], [1, 0.3], Extrapolate.CLAMP),
+  }));
 
   const renderSection = (section: SectionData, sectionIndex: number) => {
     return (
@@ -475,9 +489,8 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
   title,
   description,
   confidence,
-  style}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  style,
+}) => {
   const scale = useSharedValue(0);
   const checkScale = useSharedValue(0);
 
@@ -487,47 +500,50 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }]}));
+    transform: [{ scale: scale.value }],
+  }));
 
   const checkAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: checkScale.value }]}));
+    transform: [{ scale: checkScale.value }],
+  }));
 
   const typeConfig = {
     style_match: {
       icon: "checkmark-circle",
-      color: colors.neutral[300],
-      bgColor: "rgba(102, 126, 234, 0.1)", // no exact DesignToken for semi-transparent
+      color: DesignTokens.colors.brand.slateLight,
+      bgColor: "rgba(102, 126, 234, 0.1)",
     },
     body_shape: {
       icon: "body-outline",
-      color: colors.success,
-      bgColor: "rgba(16, 185, 129, 0.1)", // DesignTokens.colors.semantic.success with opacity
+      color: colors.success, // custom color
+      bgColor: "rgba(16, 185, 129, 0.1)",
     },
     color_harmony: {
       icon: "color-palette",
-      color: colors.primary,
-      bgColor: "rgba(181, 160, 140, 0.1)", // DesignTokens.colors.brand.camel with opacity
+      color: DesignTokens.colors.brand.camel, // custom color
+      bgColor: "rgba(181, 160, 140, 0.1)",
     },
     trending: {
       icon: "trending-up",
-      color: colors.warning,
-      bgColor: "rgba(245, 158, 11, 0.1)", // DesignTokens.colors.semantic.warning with opacity
+      color: colors.warning, // custom color
+      bgColor: "rgba(245, 158, 11, 0.1)",
     },
     seasonal: {
       icon: "sunny",
-      color: colors.info,
-      bgColor: "rgba(59, 130, 246, 0.1)", // DesignTokens.colors.semantic.info with opacity
+      color: colors.info, // custom color
+      bgColor: "rgba(59, 130, 246, 0.1)",
     },
     price: {
       icon: "pricetag",
-      color: colors.success,
-      bgColor: "rgba(16, 185, 129, 0.1)", // DesignTokens.colors.semantic.success with opacity
+      color: colors.success, // custom color
+      bgColor: "rgba(16, 185, 129, 0.1)",
     },
     brand: {
       icon: "ribbon",
-      color: colors.primaryDark,
-      bgColor: "rgba(168, 101, 72, 0.1)", // DesignTokens.colors.brand.terracottaDark with opacity
-    }};
+      color: colors.primaryDark, // custom color
+      bgColor: "rgba(168, 101, 72, 0.1)",
+    },
+  };
 
   const config = typeConfig[type];
 
@@ -569,9 +585,8 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
   insight,
   dismissible = true,
   onDismiss,
-  style}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  style,
+}) => {
   const scale = useSharedValue(0.9);
   const opacity = useSharedValue(0);
 
@@ -582,13 +597,18 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
-    opacity: opacity.value}));
+    opacity: opacity.value,
+  }));
 
   const typeConfig = {
-    tip: { icon: "bulb", color: colors.warning, bgColor: colors.warningLight },
-    observation: { icon: "eye", color: colors.info, bgColor: DesignTokens.colors.backgrounds.secondary }, // info-tinted bg
-    suggestion: { icon: "sparkles", color: colors.primaryDark, bgColor: DesignTokens.colors.backgrounds.secondary }, // suggestion-tinted bg
-    warning: { icon: "alert", color: colors.error, bgColor: DesignTokens.colors.backgrounds.secondary }, // warning-tinted bg
+    tip: { icon: "bulb", color: colors.warning, bgColor: "colors.warningLight" }, // custom color
+    observation: { icon: "eye", color: colors.info, bgColor: "#EFF6FF" }, // custom color
+    suggestion: {
+      icon: "sparkles",
+      color: colors.primaryDark,
+      bgColor: DesignTokens.colors.backgrounds.tertiary,
+    },
+    warning: { icon: "alert", color: colors.error, bgColor: "#FEF2F2" }, // custom color
   };
 
   const config = typeConfig[insight.type];
@@ -604,7 +624,7 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
         <Text style={[styles.insightTitle, { color: config.color }]}>{insight.title}</Text>
         {dismissible && (
           <TouchableOpacity style={styles.dismissButton} onPress={onDismiss}>
-            <Ionicons name="close" size={16} color={Colors.neutral[400]} />
+            <Ionicons name="close" size={16} color={colors.neutral[400]} />
           </TouchableOpacity>
         )}
       </View>
@@ -635,8 +655,6 @@ export interface StyleEvolutionProps {
 }
 
 export const StyleEvolution: React.FC<StyleEvolutionProps> = ({ history, currentStyle, style }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const _scrollX = useSharedValue(0);
   const progress = useSharedValue(0);
 
@@ -645,7 +663,8 @@ export const StyleEvolution: React.FC<StyleEvolutionProps> = ({ history, current
   }, []);
 
   const progressAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${progress.value * 100}%`}));
+    width: `${progress.value * 100}%`,
+  }));
 
   return (
     <View style={[styles.evolutionContainer, style]}>
@@ -676,267 +695,335 @@ const useStyles = createStyles((colors) => ({
   container: {
     backgroundColor: colors.surface,
     borderRadius: 20,
-    padding: Spacing.md,
-    marginBottom: Spacing.md},
+    padding: 16,
+    marginBottom: 16,
+  },
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: Spacing.md},
+    marginBottom: 16,
+  },
   typeIndicator: {
     flexDirection: "row",
-    alignItems: "center"},
+    alignItems: "center",
+  },
   typeIcon: {
-    width: DesignTokens.spacing[9],
-    height: DesignTokens.spacing[9],
+    width: 36,
+    height: 36,
     borderRadius: 18,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   typeLabel: {
-    marginLeft: Spacing.sm,
+    marginLeft: 8,
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
-    fontWeight: "500"},
+    color: colors.neutral[500],
+    fontWeight: "500",
+  },
   headerContent: {
-    flex: 1},
+    flex: 1,
+  },
   cardTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
-    color: Colors.neutral[800]},
+    color: colors.neutral[800],
+  },
   cardSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
-    marginTop: DesignTokens.spacing['0.5']},
+    color: colors.neutral[500],
+    marginTop: 2,
+  },
   seeAllButton: {
     flexDirection: "row",
-    alignItems: "center"},
+    alignItems: "center",
+  },
   seeAllText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.primary[500],
+    color: colors.primary[500],
     fontWeight: "500",
-    marginRight: Spacing.xs},
+    marginRight: 4,
+  },
   itemsContainer: {
-    paddingHorizontal: Spacing.md},
+    paddingHorizontal: 16,
+  },
   recommendationItem: {
     width: 140,
-    marginRight: DesignTokens.spacing[3]},
+    marginRight: 12,
+  },
   itemTouchable: {
     borderRadius: 16,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   itemImage: {
     width: 140,
     height: 175,
-    borderRadius: 16},
+    borderRadius: 16,
+  },
   matchBadge: {
     position: "absolute",
-    top: Spacing.sm,
-    right: Spacing.sm,
-    backgroundColor: "rgba(102, 126, 234, 0.9)", // no exact DesignToken for semi-transparent
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: 10},
+    top: 8,
+    right: 8,
+    backgroundColor: "rgba(102, 126, 234, 0.9)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
   matchText: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: colors.textInverse,
-    fontWeight: "600"},
+    fontWeight: "600",
+  },
   itemInfo: {
-    padding: DesignTokens.spacing[3]},
+    padding: 12,
+  },
   priceRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm},
+    gap: 8,
+  },
   itemName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: Colors.neutral[800]},
+    color: colors.neutral[800],
+  },
   itemBrand: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
-    marginTop: DesignTokens.spacing['0.5']},
+    color: colors.neutral[500],
+    marginTop: 2,
+  },
   price: {
     flexDirection: "row",
     alignItems: "baseline",
-    marginTop: Spacing.xs},
+    marginTop: 4,
+  },
   itemPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "700",
-    color: Colors.primary[500]},
+    color: colors.primary[500],
+  },
   originalPrice: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
     textDecorationLine: "line-through",
-    marginLeft: DesignTokens.spacing['1.5']},
+    marginLeft: 6,
+  },
   itemReason: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.neutral[500],
-    marginTop: Spacing.xs,
-    fontStyle: "italic"},
+    color: colors.neutral[500],
+    marginTop: 4,
+    fontStyle: "italic",
+  },
   itemTags: {
     flexDirection: "row",
-    marginTop: DesignTokens.spacing['1.5'],
-    gap: Spacing.xs},
+    marginTop: 6,
+    gap: 4,
+  },
   itemTag: {
-    backgroundColor: Colors.neutral[100],
-    paddingHorizontal: DesignTokens.spacing['1.5'],
-    paddingVertical: DesignTokens.spacing['0.5'],
-    borderRadius: 4},
+    backgroundColor: colors.neutral[100],
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
   itemTagText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.neutral[600]},
+    color: colors.neutral[600],
+  },
   feedContainer: {
-    flex: 1},
+    flex: 1,
+  },
   feedHeader: {
     paddingTop: Platform.OS === "ios" ? 60 : 40,
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingBottom: DesignTokens.spacing[5]},
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
   feedHeaderContent: {
-    alignItems: "center"},
+    alignItems: "center",
+  },
   feedGreeting: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "800",
-    color: Colors.neutral[800]},
+    color: colors.neutral[800],
+  },
   feedSubGreeting: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[500],
-    marginTop: Spacing.xs},
+    color: colors.neutral[500],
+    marginTop: 4,
+  },
   feedSection: {
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   reasonContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: Spacing.md,
-    marginBottom: DesignTokens.spacing[3]},
+    padding: 16,
+    marginBottom: 12,
+  },
   reasonIcon: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   reasonContent: {
     flex: 1,
-    marginLeft: DesignTokens.spacing[3]},
+    marginLeft: 12,
+  },
   reasonTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: Colors.neutral[800]},
+    color: colors.neutral[800],
+  },
   reasonDescription: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
-    marginTop: DesignTokens.spacing['0.5']},
+    color: colors.neutral[500],
+    marginTop: 2,
+  },
   confidenceContainer: {
     flexDirection: "row",
-    alignItems: "center"},
+    alignItems: "center",
+  },
   confidenceText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: Colors.primary[500],
-    marginRight: Spacing.xs},
+    color: colors.primary[500],
+    marginRight: 4,
+  },
   checkIcon: {},
   insightCard: {
     borderRadius: 16,
-    padding: Spacing.md,
-    marginBottom: DesignTokens.spacing[3]},
+    padding: 16,
+    marginBottom: 12,
+  },
   insightHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: Spacing.sm},
+    marginBottom: 8,
+  },
   insightIcon: {
-    width: Spacing.xl,
-    height: Spacing.xl,
+    width: 32,
+    height: 32,
     borderRadius: 16,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   insightTitle: {
     flex: 1,
-    marginLeft: Spacing.sm,
+    marginLeft: 8,
     fontSize: DesignTokens.typography.sizes.base,
-    fontWeight: "600"},
+    fontWeight: "600",
+  },
   dismissButton: {
-    padding: Spacing.xs},
+    padding: 4,
+  },
   insightMessage: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[600],
-    lineHeight: 20},
+    color: colors.neutral[600],
+    lineHeight: 20,
+  },
   insightAction: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    marginTop: 12,
+    paddingVertical: 10,
     borderWidth: 1,
     borderRadius: 12,
-    gap: Spacing.xs},
+    gap: 4,
+  },
   insightActionText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    fontWeight: "600"},
+    fontWeight: "600",
+  },
   evolutionContainer: {
     backgroundColor: colors.surface,
     borderRadius: 20,
-    padding: DesignTokens.spacing[5],
-    marginBottom: Spacing.md},
+    padding: 20,
+    marginBottom: 16,
+  },
   evolutionHeader: {
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   evolutionTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "700",
-    color: Colors.neutral[800]},
+    color: colors.neutral[800],
+  },
   evolutionSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
-    marginTop: Spacing.xs},
+    color: colors.neutral[500],
+    marginTop: 4,
+  },
   timelineContainer: {
     height: 120,
-    position: "relative"},
+    position: "relative",
+  },
   timelineLine: {
     position: "absolute",
     left: 0,
     right: 0,
-    top: DesignTokens.spacing[5],
+    top: 20,
     height: 3,
-    backgroundColor: Colors.neutral[200],
-    borderRadius: 1.5},
+    backgroundColor: colors.neutral[200],
+    borderRadius: 1.5,
+  },
   timelineProgress: {
     height: "100%",
-    backgroundColor: Colors.primary[500],
-    borderRadius: 1.5},
+    backgroundColor: colors.primary[500],
+    borderRadius: 1.5,
+  },
   timelineItem: {
     position: "absolute",
-    alignItems: "center"},
+    alignItems: "center",
+  },
   timelineDot: {
-    width: DesignTokens.spacing[3],
-    height: DesignTokens.spacing[3],
+    width: 12,
+    height: 12,
     borderRadius: 6,
-    backgroundColor: Colors.neutral[300],
-    marginTop: DesignTokens.spacing['3.5']},
+    backgroundColor: colors.neutral[300],
+    marginTop: 14,
+  },
   timelineDotActive: {
-    backgroundColor: Colors.primary[500],
-    width: Spacing.md,
-    height: Spacing.md,
+    backgroundColor: colors.primary[500],
+    width: 16,
+    height: 16,
     borderRadius: 8,
-    marginTop: DesignTokens.spacing[3]},
+    marginTop: 12,
+  },
   timelineDate: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.neutral[400],
-    marginTop: Spacing.sm},
+    color: colors.neutral[400],
+    marginTop: 8,
+  },
   timelineDateActive: {
-    color: Colors.primary[500],
-    fontWeight: "600"},
+    color: colors.primary[500],
+    fontWeight: "600",
+  },
   timelineStyle: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
     fontWeight: "500",
-    marginTop: DesignTokens.spacing['0.5']},
+    marginTop: 2,
+  },
   timelineStyleActive: {
-    color: Colors.primary[600],
-    fontWeight: "600"},
+    color: colors.primary[600],
+    fontWeight: "600",
+  },
   timelineImage: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 8,
-    marginTop: Spacing.sm}}))
+    marginTop: 8,
+  },
+}));
 
 export default {
   SmartRecommendationCard,
-  PersonalizedFeed};
+  PersonalizedFeed,
+  RecommendationReason,
+  AIInsightCard,
+  StyleEvolution,
+};

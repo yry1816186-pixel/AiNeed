@@ -2,10 +2,9 @@ import { useState, useCallback, memo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface ProfileCompletionBannerProps {
   completionPercent: number;
@@ -16,8 +15,6 @@ interface ProfileCompletionBannerProps {
 
 const ProfileCompletionBanner = memo(
   ({ completionPercent, isComplete, onDismiss, onContinue }: ProfileCompletionBannerProps) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     const [visible, setVisible] = useState(true);
 
     const handleDismiss = useCallback(() => {
@@ -34,21 +31,14 @@ const ProfileCompletionBanner = memo(
       return (
         <View style={styles.container}>
           <LinearGradient
-            colors={[
-              colors.successLight,
-              colors.surfaceElevated,
-            ]}
+            colors={[colors.successLight, colors.surfaceElevated]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.completeGradient}
           >
             <View style={styles.completeContent}>
               <View style={styles.completeIconCircle}>
-                <Ionicons
-                  name="checkmark-circle"
-                  size={24}
-                  color={colors.success}
-                />
+                <Ionicons name="checkmark-circle" size={24} color={colors.success} />
               </View>
               <View style={styles.textArea}>
                 <Text style={styles.completeTitle}>你的风格画像已就绪 ✓</Text>
@@ -57,7 +47,7 @@ const ProfileCompletionBanner = memo(
             </View>
             <TouchableOpacity
               onPress={handleDismiss}
-              hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.sm, right: Spacing.sm}}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               accessibilityLabel="关闭"
               accessibilityRole="button"
             >
@@ -80,7 +70,7 @@ const ProfileCompletionBanner = memo(
             </View>
             <TouchableOpacity
               onPress={handleDismiss}
-              hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.sm, right: Spacing.sm}}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               accessibilityLabel="关闭"
               accessibilityRole="button"
             >
@@ -89,7 +79,7 @@ const ProfileCompletionBanner = memo(
           </View>
           <View style={styles.progressTrack}>
             <LinearGradient
-              colors={[colors.primary, colors.primary]}
+              colors={[colors.primary, DesignTokens.colors.brand.camel]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={[styles.progressFill, { width: `${clampedPercent}%` }]}
@@ -114,50 +104,50 @@ ProfileCompletionBanner.displayName = "ProfileCompletionBanner";
 
 const useStyles = createStyles((colors) => ({
   container: {
-    marginBottom: Spacing.md,
+    marginBottom: 16,
   },
   card: {
     backgroundColor: colors.surfaceElevated,
     borderRadius: 16,
-    padding: Spacing.md,
+    padding: 16,
     ...DesignTokens.shadows.sm,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   textArea: {
     flex: 1,
-    marginRight: Spacing.sm,
+    marginRight: 8,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   percentText: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
   },
   progressTrack: {
-    height: DesignTokens.spacing['1.5'],
+    height: 6,
     borderRadius: 3,
     backgroundColor: DesignTokens.colors.neutral[200],
-    marginBottom: DesignTokens.spacing['3.5'],
+    marginBottom: 14,
     overflow: "hidden",
   },
   progressFill: {
-    height: DesignTokens.spacing['1.5'],
+    height: 6,
     borderRadius: 3,
   },
   ctaButton: {
     backgroundColor: colors.primary,
     borderRadius: 12,
-    paddingVertical: DesignTokens.spacing['2.5'],
-    paddingHorizontal: DesignTokens.spacing[5],
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     alignSelf: "flex-start",
   },
   ctaText: {
@@ -167,7 +157,7 @@ const useStyles = createStyles((colors) => ({
   },
   completeGradient: {
     borderRadius: 16,
-    padding: Spacing.md,
+    padding: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -179,44 +169,25 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
   },
   completeIconCircle: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: colors.successLight,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: DesignTokens.spacing[3],
+    marginRight: 12,
   },
   completeTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.success,
-    marginBottom: DesignTokens.spacing['0.5'],
+    marginBottom: 2,
   },
   completeSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
   },
-}))
+}));
 
 export { ProfileCompletionBanner };
 export type { ProfileCompletionBannerProps };
-
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  completeGradient: { flex: 1 },
-  completeContent: { flex: 1 },
-  completeIconCircle: { flex: 1 },
-  textArea: { flex: 1 },
-  completeTitle: { flex: 1 },
-  completeSubtitle: { flex: 1 },
-  card: { flex: 1 },
-  header: { flex: 1 },
-  title: { flex: 1 },
-  percentText: { flex: 1 },
-  progressTrack: { flex: 1 },
-  progressFill: { flex: 1 },
-  ctaButton: { flex: 1 },
-  ctaText: { flex: 1 },
-});

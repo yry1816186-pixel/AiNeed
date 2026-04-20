@@ -2,10 +2,12 @@ import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, RefreshControl, ViewStyle } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { InfiniteData, UseInfiniteQueryResult } from "@tanstack/react-query";
-import { Colors, Spacing, Typography } from '../../../design-system/theme';
+import { Colors, Spacing, Typography } from "../../../design-system/theme";
 import { SkeletonScreen } from "./SkeletonScreen";
 import { ErrorState } from "./ErrorState";
 import { EmptyState } from "./EmptyState";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { flatColors as colors } from "../../../design-system/theme";
 
 export interface WaterfallItem {
   id: string;
@@ -137,7 +139,7 @@ export function WaterfallFlashList<T extends WaterfallItem>({
         <RefreshControl
           refreshing={isRefetching}
           onRefresh={() => refetch()}
-          tintColor={Colors.primary[500]}
+          tintColor={colors.primary[500]}
         />
       }
       showsVerticalScrollIndicator={false}
@@ -149,13 +151,13 @@ export function WaterfallFlashList<T extends WaterfallItem>({
 function LoadingFooter() {
   return (
     <View style={styles.loadingFooter}>
-      <ActivityIndicator size="small" color={Colors.primary[500]} />
+      <ActivityIndicator size="small" color={colors.primary[500]} />
       <Text style={styles.loadingText}>加载中...</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   column: { flex: 1 },
   loadingFooter: {
     flexDirection: "row",
@@ -164,7 +166,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[5],
     gap: Spacing[2],
   },
-  loadingText: { ...Typography.caption.md, color: Colors.neutral[400] },
-});
+  loadingText: { ...Typography.caption.md, color: colors.neutral[400] },
+}));
 
 export default WaterfallFlashList;

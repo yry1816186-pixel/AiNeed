@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+﻿import React, { useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, Dimensions, Pressable, ScrollView } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
@@ -14,10 +14,9 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing, flatColors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -26,7 +25,7 @@ const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 const ICON_SIZE = 24;
 
 const Icons = {
-  stylist: ({ color = flatColors.textInverse }) => (
+  stylist: ({ color = colors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2Z"
@@ -43,7 +42,7 @@ const Icons = {
       />
     </Svg>
   ),
-  photo: ({ color = flatColors.textInverse }) => (
+  photo: ({ color = colors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4Z"
@@ -65,7 +64,7 @@ const Icons = {
       />
     </Svg>
   ),
-  recommend: ({ color = flatColors.textInverse }) => (
+  recommend: ({ color = colors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
@@ -76,7 +75,7 @@ const Icons = {
       />
     </Svg>
   ),
-  wardrobe: ({ color = flatColors.textInverse }) => (
+  wardrobe: ({ color = colors.textInverse }) => (
     <Svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none">
       <Path
         d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3Z"
@@ -109,8 +108,6 @@ interface ActionItemProps {
 }
 
 const ActionItemComponent: React.FC<ActionItemProps> = ({ action, index, visible, onPress }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.8);
 
@@ -130,6 +127,7 @@ const ActionItemComponent: React.FC<ActionItemProps> = ({ action, index, visible
   }));
 
   const renderIcon = () => {
+    const { colors } = useTheme();
     const iconColor = colors.textInverse;
     switch (action.id) {
       case "stylist":
@@ -147,14 +145,14 @@ const ActionItemComponent: React.FC<ActionItemProps> = ({ action, index, visible
 
   return (
     <AnimatedView style={actionStyle}>
-      <Pressable style={styles.actionItem} onPress={() => onPress(action)} accessibilityLabel={action.label} accessibilityRole="button">
+      <Pressable
+        style={styles.actionItem}
+        onPress={() => onPress(action)}
+        accessibilityLabel={action.label}
+        accessibilityRole="button"
+      >
         <LinearGradient
-          colors={
-            action.gradient || [
-              colors.primary,
-              colors.primary,
-            ]
-          }
+          colors={action.gradient || [colors.primary, DesignTokens.colors.brand.camel]}
           style={styles.actionIcon}
         >
           {renderIcon()}
@@ -183,7 +181,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "stylist",
     label: "AI 造型师",
     description: "获取穿搭建议",
-    gradient: [flatColors.primary, flatColors.primary],
+    gradient: [colors.primary, DesignTokens.colors.brand.camel],
     onPress: () => {},
   },
   {
@@ -191,7 +189,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "photo",
     label: "拍照分析",
     description: "分析身材和肤色",
-    gradient: [flatColors.neutral[500], flatColors.textTertiary],
+    gradient: [DesignTokens.colors.brand.slate, "colors.textTertiary"], // custom color
     onPress: () => {},
   },
   {
@@ -199,7 +197,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "recommend",
     label: "智能推荐",
     description: "个性化推荐",
-    gradient: [flatColors.success, flatColors.secondary],
+    gradient: [colors.success, "colors.secondary"], // custom color
     onPress: () => {},
   },
   {
@@ -207,7 +205,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
     icon: "wardrobe",
     label: "我的衣橱",
     description: "管理你的衣物",
-    gradient: [flatColors.warning, flatColors.primary],
+    gradient: [colors.warning, "DesignTokens.colors.brand.camel"], // custom color
     onPress: () => {},
   },
 ];
@@ -274,7 +272,12 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
 
   return (
     <>
-      <AnimatedPressable style={[styles.backdrop, backdropStyle]} onPress={onClose} accessibilityLabel="关闭菜单" accessibilityRole="button" />
+      <AnimatedPressable
+        style={[styles.backdrop, backdropStyle]}
+        onPress={onClose}
+        accessibilityLabel="关闭菜单"
+        accessibilityRole="button"
+      />
 
       <AnimatedView
         style={[
@@ -287,7 +290,10 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
           menuStyle,
         ]}
       >
-        <LinearGradient colors={[colors.surface, colors.backgroundSecondary]} style={styles.menuGradient}>
+        <LinearGradient
+          colors={[colors.surface, colors.backgroundSecondary]}
+          style={styles.menuGradient}
+        >
           <View style={styles.menuHeader}>
             <Text style={styles.menuTitle}>AI 助手</Text>
             <Text style={styles.menuSubtitle}>选择你需要的服务</Text>
@@ -306,7 +312,12 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
           </ScrollView>
 
           <View style={styles.menuFooter}>
-            <Pressable style={styles.closeButton} onPress={onClose} accessibilityLabel="关闭" accessibilityRole="button">
+            <Pressable
+              style={styles.closeButton}
+              onPress={onClose}
+              accessibilityLabel="关闭"
+              accessibilityRole="button"
+            >
               <Text style={styles.closeButtonText}>关闭</Text>
             </Pressable>
           </View>
@@ -319,14 +330,14 @@ export const AICompanionMenu: React.FC<AICompanionMenuProps> = ({
 const useStyles = createStyles((colors) => ({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.neutral[900],
+    backgroundColor: DesignTokens.colors.neutral.black,
     zIndex: 9998,
   },
   menuContainer: {
     position: "absolute",
     borderRadius: 20,
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['2.5'] },
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.15,
     shadowRadius: 30,
     elevation: 10,
@@ -335,11 +346,11 @@ const useStyles = createStyles((colors) => ({
   },
   menuGradient: {
     flex: 1,
-    padding: Spacing.md,
+    padding: 16,
   },
   menuHeader: {
-    marginBottom: Spacing.md,
-    paddingBottom: DesignTokens.spacing[3],
+    marginBottom: 16,
+    paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
@@ -347,7 +358,7 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   menuSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -359,31 +370,31 @@ const useStyles = createStyles((colors) => ({
   actionItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: DesignTokens.spacing[3],
-    paddingHorizontal: DesignTokens.spacing[3],
+    paddingVertical: 12,
+    paddingHorizontal: 12,
     borderRadius: 12,
     backgroundColor: DesignTokens.colors.neutral[50],
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
   },
   actionIcon: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: 48,
+    height: 48,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
   },
   actionIconText: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
   },
   actionContent: {
     flex: 1,
-    marginLeft: DesignTokens.spacing[3],
+    marginLeft: 12,
   },
   actionLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: DesignTokens.spacing['0.5'],
+    marginBottom: 2,
   },
   actionDescription: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -392,17 +403,17 @@ const useStyles = createStyles((colors) => ({
   actionArrow: {
     fontSize: DesignTokens.typography.sizes.lg,
     color: DesignTokens.colors.neutral[400],
-    marginLeft: Spacing.sm,
+    marginLeft: 8,
   },
   menuFooter: {
-    marginTop: DesignTokens.spacing[3],
-    paddingTop: DesignTokens.spacing[3],
+    marginTop: 12,
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[200],
   },
   closeButton: {
     alignItems: "center",
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingVertical: 10,
     borderRadius: 10,
     backgroundColor: DesignTokens.colors.neutral[100],
   },
@@ -411,4 +422,4 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
     color: DesignTokens.colors.neutral[600],
   },
-}))
+}));

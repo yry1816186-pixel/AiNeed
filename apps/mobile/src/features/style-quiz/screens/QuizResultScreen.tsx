@@ -1,13 +1,15 @@
 import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { useQuizStore } from '../stores/quizStore';
-import { Colors, Spacing, BorderRadius , flatColors as colors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { useQuizStore } from "../stores/quizStore";
+import { Colors, Spacing, BorderRadius, flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { navigateProfile } from "../../../navigation/navigationService";
 
 const TAG_COLORS = [
   Colors.primary[500],
@@ -58,8 +60,8 @@ export const QuizResultScreen: React.FC = () => {
   }, []);
 
   const handleViewProfile = useCallback(() => {
-    navigation.navigate("Profile" as never);
-  }, [navigation]);
+    navigateProfile("ProfileMain");
+  }, []);
 
   const handleShare = useCallback(async () => {
     try {
@@ -69,7 +71,7 @@ export const QuizResultScreen: React.FC = () => {
       });
     } catch (error) {
       // Share failed
-      console.error('Share failed:', error);
+      console.error("Share failed:", error);
     }
   }, [styleTags]);
 
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
     top: -Spacing[4],
     left: 0,
     right: 0,
-    height: Spacing['4xl'],
+    height: Spacing["4xl"],
   },
   confettiDot: {
     position: "absolute",
@@ -228,7 +230,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   title: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "700",
     color: colors.textPrimary,
     marginTop: Spacing[4],
@@ -334,7 +336,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   confidenceValue: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "700",
     color: colors.primary,
   },

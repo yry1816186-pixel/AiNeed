@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿import { createWithEqualityFn } from "zustand/traditional";
+﻿import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
 import {
   profileApi,
@@ -57,9 +57,8 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
 
     loadCompleteness: async () => {
       try {
-        const response: ApiResponse<Completeness> = await apiClient.get<Completeness>(
-          "/profile/completeness"
-        );
+        const response: ApiResponse<Completeness> =
+          await apiClient.get<Completeness>("/profile/completeness");
         if (response.success && response.data) {
           set({ completeness: response.data });
         }
@@ -115,10 +114,10 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
         ]);
 
         set({
-          profile: profileRes.success ? profileRes.data ?? null : null,
-          completeness: completenessRes.success ? completenessRes.data ?? null : null,
-          bodyAnalysis: bodyRes.success ? bodyRes.data ?? null : null,
-          colorAnalysis: colorRes.success ? colorRes.data ?? null : null,
+          profile: profileRes.success ? (profileRes.data ?? null) : null,
+          completeness: completenessRes.success ? (completenessRes.data ?? null) : null,
+          bodyAnalysis: bodyRes.success ? (bodyRes.data ?? null) : null,
+          colorAnalysis: colorRes.success ? (colorRes.data ?? null) : null,
           isLoading: false,
         });
       } catch (err) {
@@ -211,10 +210,7 @@ export const useStyleQuizStore = createWithEqualityFn<StyleQuizState>(
 
     nextQuestion: () => {
       set((state) => ({
-        currentQuestionIndex: Math.min(
-          state.currentQuestionIndex + 1,
-          state.questions.length - 1
-        ),
+        currentQuestionIndex: Math.min(state.currentQuestionIndex + 1, state.questions.length - 1),
       }));
     },
 
@@ -338,10 +334,7 @@ export const useQuizStore = createWithEqualityFn<QuizState>(
 
     nextQuestion: () => {
       set((state) => ({
-        currentQuestionIndex: Math.min(
-          state.currentQuestionIndex + 1,
-          state.questions.length - 1
-        ),
+        currentQuestionIndex: Math.min(state.currentQuestionIndex + 1, state.questions.length - 1),
       }));
     },
 

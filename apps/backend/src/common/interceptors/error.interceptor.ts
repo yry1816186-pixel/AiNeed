@@ -5,30 +5,17 @@ import {
   CallHandler,
   HttpException,
   HttpStatus,
-} from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const { PrismaClientKnownRequestError } = require('@prisma/client/runtime/library') as any;
-type PrismaClientKnownRequestErrorType = InstanceType<typeof PrismaClientKnownRequestError>;
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+} from "@nestjs/common";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Observable, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
 
-import {
-  BusinessException,
-} from '../exceptions/business.exception';
-import {
-  ForbiddenException,
-} from '../exceptions/forbidden.exception';
-import {
-  NotFoundException,
-} from '../exceptions/not-found.exception';
-import {
-  ValidationException,
-} from '../exceptions/validation.exception';
+import { BusinessException } from "../exceptions/business.exception";
+import { ForbiddenException } from "../exceptions/forbidden.exception";
+import { NotFoundException } from "../exceptions/not-found.exception";
+import { ValidationException } from "../exceptions/validation.exception";
 
-import {
-  JsonApiError,
-} from './json-api.interceptor';
+import { JsonApiError } from "./json-api.interceptor";
 
 /**
  * 带有可选 stack 属性的异常接口
@@ -39,14 +26,14 @@ interface ExceptionWithStack {
 
 @Injectable()
 export class ErrorInterceptor implements NestInterceptor {
-  private readonly isProduction = process.env.NODE_ENV === 'production';
+  private readonly isProduction = process.env.NODE_ENV === "production";
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<{
       headers: Record<string, string>;
     }>();
 
-    const requestId = request.headers['x-request-id'] as string | undefined;
+    const requestId = request.headers["x-request-id"] as string | undefined;
 
     return next.handle().pipe(
       catchError((exception: unknown) => {
@@ -54,7 +41,7 @@ export class ErrorInterceptor implements NestInterceptor {
         const mappedException = this.mapToHttpException(exception, jsonApiErrors);
 
         throw mappedException;
-      }),
+      })
     );
   }
 
@@ -75,10 +62,10 @@ export class ErrorInterceptor implements NestInterceptor {
         return {
           status: String(HttpStatus.UNPROCESSABLE_ENTITY),
           code: String(exception.code),
-          title: 'Validation Error',
+          title: "Validation Error",
           detail: error.message,
           source: {
-            pointer: `/${error.field.replace(/\./g, '/')}`,
+            pointer: `/${error.field.replace(/\./g, "/")}`,
           },
           meta,
         } as JsonApiError;
@@ -96,7 +83,7 @@ export class ErrorInterceptor implements NestInterceptor {
         {
           status: String(HttpStatus.NOT_FOUND),
           code: String(exception.code),
-          title: 'Not Found',
+          title: "Not Found",
           detail: exception.message,
           source: {
             pointer: `/${exception.resourceType.toLowerCase()}`,
@@ -117,7 +104,7 @@ export class ErrorInterceptor implements NestInterceptor {
         {
           status: String(HttpStatus.FORBIDDEN),
           code: String(exception.code),
-          title: 'Forbidden',
+          title: "Forbidden",
           detail: exception.message,
           source: {
             parameter: exception.requiredPermission ?? exception.operation,
@@ -157,8 +144,8 @@ export class ErrorInterceptor implements NestInterceptor {
       const { status, title, detail } = this.mapPrismaError(exception);
       const meta: Record<string, unknown> = { ...baseMeta };
       if (!this.isProduction) {
-        meta.prismaCode = (exception as { code: string }).code;
-        meta.meta = (exception as { meta: unknown }).meta;
+        meta.prismaCode = (exception as PrismaClientKnownRequestError).code;
+        meta.meta = (exception as PrismaClientKnownRequestError).meta;
         const prismaEx = exception as ExceptionWithStack;
         if (prismaEx.stack) {
           meta.stack = prismaEx.stack;
@@ -170,7 +157,7 @@ export class ErrorInterceptor implements NestInterceptor {
           status: String(status),
           code: String(status * 100 + 1),
           title,
-          detail: this.isProduction ? detail : (exception as { message: string }).message,
+          detail: this.isProduction ? detail : exception.message,
           meta,
         } as JsonApiError,
       ];
@@ -183,13 +170,13 @@ export class ErrorInterceptor implements NestInterceptor {
       let sourcePointer: string | undefined;
       let sourceParameter: string | undefined;
 
-      if (typeof exceptionResponse === 'string') {
+      if (typeof exceptionResponse === "string") {
         detail = exceptionResponse;
-      } else if (typeof exceptionResponse === 'object') {
+      } else if (typeof exceptionResponse === "object") {
         const responseObj = exceptionResponse as Record<string, unknown>;
         if (Array.isArray(responseObj.message)) {
-          detail = (responseObj.message as string[]).join('; ');
-          sourcePointer = '/request-body';
+          detail = (responseObj.message as string[]).join("; ");
+          sourcePointer = "/request-body";
         } else {
           detail = String(responseObj.message ?? exception.message);
         }
@@ -229,9 +216,11 @@ export class ErrorInterceptor implements NestInterceptor {
     return [
       {
         status: String(HttpStatus.INTERNAL_SERVER_ERROR),
-        code: '50000',
-        title: 'Internal Server Error',
-        detail: this.isProduction ? 'An unexpected error occurred' : (error.message || 'Unknown error'),
+        code: "50000",
+        title: "Internal Server Error",
+        detail: this.isProduction
+          ? "An unexpected error occurred"
+          : error.message || "Unknown error",
         meta,
       } as JsonApiError,
     ];
@@ -253,46 +242,46 @@ export class ErrorInterceptor implements NestInterceptor {
     return new HttpException(response, statusCode);
   }
 
-  private mapPrismaError(exception: PrismaClientKnownRequestErrorType): {
+  private mapPrismaError(exception: PrismaClientKnownRequestError): {
     status: number;
     title: string;
     detail: string;
   } {
     switch (exception.code) {
-      case 'P2002':
+      case "P2002":
         return {
           status: HttpStatus.CONFLICT,
-          title: 'Conflict',
-          detail: 'Resource already exists',
+          title: "Conflict",
+          detail: "Resource already exists",
         };
-      case 'P2025':
+      case "P2025":
         return {
           status: HttpStatus.NOT_FOUND,
-          title: 'Not Found',
-          detail: 'Resource not found',
+          title: "Not Found",
+          detail: "Resource not found",
         };
-      case 'P2003':
+      case "P2003":
         return {
           status: HttpStatus.NOT_FOUND,
-          title: 'Not Found',
-          detail: 'Related resource not found',
+          title: "Not Found",
+          detail: "Related resource not found",
         };
-      case 'P2011':
+      case "P2011":
         return {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          title: 'Unprocessable Entity',
-          detail: 'Required field is missing',
+          title: "Unprocessable Entity",
+          detail: "Required field is missing",
         };
       default:
         return {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
-          title: 'Internal Server Error',
-          detail: 'Database operation failed',
+          title: "Internal Server Error",
+          detail: "Database operation failed",
         };
     }
   }
 
-  private getPrismaStatusCode(exception: PrismaClientKnownRequestErrorType): number {
+  private getPrismaStatusCode(exception: PrismaClientKnownRequestError): number {
     const codeMap: Record<string, number> = {
       P2002: HttpStatus.CONFLICT,
       P2025: HttpStatus.NOT_FOUND,
@@ -305,19 +294,19 @@ export class ErrorInterceptor implements NestInterceptor {
 
   private getTitleForStatus(status: number): string {
     const titles: Record<number, string> = {
-      [HttpStatus.BAD_REQUEST]: 'Bad Request',
-      [HttpStatus.UNAUTHORIZED]: 'Unauthorized',
-      [HttpStatus.FORBIDDEN]: 'Forbidden',
-      [HttpStatus.NOT_FOUND]: 'Not Found',
-      [HttpStatus.CONFLICT]: 'Conflict',
-      [HttpStatus.UNPROCESSABLE_ENTITY]: 'Unprocessable Entity',
-      [HttpStatus.TOO_MANY_REQUESTS]: 'Too Many Requests',
-      [HttpStatus.INTERNAL_SERVER_ERROR]: 'Internal Server Error',
-      [HttpStatus.BAD_GATEWAY]: 'Bad Gateway',
-      [HttpStatus.SERVICE_UNAVAILABLE]: 'Service Unavailable',
-      [HttpStatus.GATEWAY_TIMEOUT]: 'Gateway Timeout',
+      [HttpStatus.BAD_REQUEST]: "Bad Request",
+      [HttpStatus.UNAUTHORIZED]: "Unauthorized",
+      [HttpStatus.FORBIDDEN]: "Forbidden",
+      [HttpStatus.NOT_FOUND]: "Not Found",
+      [HttpStatus.CONFLICT]: "Conflict",
+      [HttpStatus.UNPROCESSABLE_ENTITY]: "Unprocessable Entity",
+      [HttpStatus.TOO_MANY_REQUESTS]: "Too Many Requests",
+      [HttpStatus.INTERNAL_SERVER_ERROR]: "Internal Server Error",
+      [HttpStatus.BAD_GATEWAY]: "Bad Gateway",
+      [HttpStatus.SERVICE_UNAVAILABLE]: "Service Unavailable",
+      [HttpStatus.GATEWAY_TIMEOUT]: "Gateway Timeout",
     };
 
-    return titles[status] ?? 'Error';
+    return titles[status] ?? "Error";
   }
 }

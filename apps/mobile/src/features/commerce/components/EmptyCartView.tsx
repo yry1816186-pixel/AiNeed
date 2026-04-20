@@ -1,8 +1,9 @@
-﻿﻿﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface EmptyCartViewProps {
   onGoShopping: () => void;
@@ -28,24 +29,24 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing['3xl'],
+    paddingVertical: 64,
   },
   heading: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginTop: Spacing.md,
+    marginTop: 16,
   },
   body: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
-    marginTop: Spacing.sm,
+    marginTop: 8,
   },
   button: {
-    marginTop: Spacing.lg,
-    backgroundColor: colors.error,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: DesignTokens.spacing[3],
+    marginTop: 24,
+    backgroundColor: "colors.error",
+    paddingHorizontal: 32,
+    paddingVertical: 12,
     borderRadius: 24,
   },
   buttonText: {
@@ -53,4 +54,4 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-}))
+}));

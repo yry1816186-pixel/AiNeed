@@ -10,18 +10,25 @@ import Animated, {
   SlideInRight,
   SlideOutLeft,
 } from "react-native-reanimated";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { useOnboardingStore } from '../stores/onboardingStore';
-import type { OnboardingStep } from '../stores/onboardingStore';
-import { onboardingService } from '../services/onboardingService';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  flatColors as colors,
+} from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { useOnboardingStore } from "../stores/onboardingStore";
+import type { OnboardingStep } from "../stores/onboardingStore";
+import { onboardingService } from "../services/onboardingService";
 import { BasicInfoStep } from "./steps/BasicInfoStep";
 import { PhotoStep } from "./steps/PhotoStep";
 import { StyleTestStep } from "./steps/StyleTestStep";
 import { CompleteStep } from "./steps/CompleteStep";
-import type { RootStackParamList } from '../../../types/navigation';
+import type { RootStackParamList } from "../../../types/navigation";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type NavigationPropType = NavigationProp<RootStackParamList>;
 
@@ -37,6 +44,7 @@ const STEP_TITLES: Record<OnboardingStep, string> = {
 const SKIPPABLE_STEPS: OnboardingStep[] = ["photo", "styleTest"];
 
 export const OnboardingWizard: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<NavigationPropType>();
   const {
     currentStep,
@@ -257,7 +265,7 @@ const styles = StyleSheet.create({
   progressTrack: {
     flex: 1,
     height: 3,
-    backgroundColor: Colors.neutral[200],
+    backgroundColor: colors.neutral[200],
     borderRadius: BorderRadius.full,
     overflow: "hidden",
   },

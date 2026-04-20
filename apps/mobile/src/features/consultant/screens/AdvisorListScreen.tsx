@@ -9,15 +9,17 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { useFocusEffect, useNavigation, ParamListBase } from '@react-navigation/native';
-import { useConsultantStore } from '../../../stores/consultantStore';
-import { ConsultantCard } from '../components/ConsultantCard';
-import { ServiceTypeChip } from '../components/ServiceTypeChip';
-import type { ServiceType } from '../../../types/consultant';
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useConsultantStore } from "../../stores/consultantStore";
+import { ConsultantCard } from "../../../components/consultant/ConsultantCard";
+import { ServiceTypeChip } from "../../../components/consultant/ServiceTypeChip";
+import type { ServiceType } from "../../../types/consultant";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { ParamListBase } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const SERVICE_TYPES = [
   { label: "全部", value: "" },
@@ -28,8 +30,8 @@ const SERVICE_TYPES = [
 ];
 
 export const AdvisorListScreen: React.FC = () => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const { consultants, matchResults, isLoading, fetchConsultants, matchConsultants } =
@@ -88,7 +90,7 @@ export const AdvisorListScreen: React.FC = () => {
   if (isLoading && displayData.length === 0) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color="colors.primary" />
         <Text style={styles.loadingText}>正在加载顾问列表...</Text>
       </View>
     );
@@ -119,13 +121,17 @@ export const AdvisorListScreen: React.FC = () => {
 
       {/* Consultant list */}
       <FlatList
-        data={displayData as unknown as Record<string, unknown>[]}
+        data={displayData}
         keyExtractor={(item: Record<string, unknown>) => String(item.consultantId || item.id)}
         renderItem={({ item, index }: { item: Record<string, unknown>; index: number }) => (
           <ConsultantCard
             id={String(item.consultantId || item.id)}
             studioName={String(item.studioName || "造型顾问")}
-            avatar={(item.avatar || (item.user as Record<string, unknown> | undefined)?.avatar || null) as string | null}
+            avatar={
+              (item.avatar ||
+                (item.user as Record<string, unknown> | undefined)?.avatar ||
+                null) as string | null
+            }
             specialties={(item.specialties || []) as string[]}
             rating={(item.rating || 0) as number}
             reviewCount={(item.reviewCount || 0) as number}
@@ -186,57 +192,82 @@ export const AdvisorListScreen: React.FC = () => {
 };
 
 const useStyles = createStyles((colors) => ({
-  container: { flex: 1, backgroundColor: colors.backgroundSecondary },
+  container: { flex: 1, backgroundColor: "colors.backgroundSecondary" },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingBottom: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingBottom: 12,
     backgroundColor: colors.surface,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "600", color: colors.textPrimary },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes["2xl"],
+    fontWeight: "600",
+    color: "colors.textPrimary",
+  },
   matchButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    backgroundColor: "colors.primary",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 20,
   },
-  matchButtonText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "500" },
+  matchButtonText: {
+    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+  },
   filterBar: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.backgroundTertiary,
+    borderBottomColor: "colors.backgroundTertiary",
   },
   matchResultsBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    backgroundColor: DesignTokens.colors.neutral[50],
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: "DesignTokens.colors.neutral[50]",
   },
-  matchResultsText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary },
+  matchResultsText: { fontSize: DesignTokens.typography.sizes.sm, color: "colors.primary" },
   clearMatchText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
-  listContent: { paddingHorizontal: Spacing.md, paddingTop: DesignTokens.spacing[3], paddingBottom: Spacing.lg},
+  listContent: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24 },
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: Spacing['4xl'],
+    paddingTop: 80,
   },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginBottom: Spacing.sm},
-  emptySubtitle: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginBottom: Spacing.lg},
+  emptyTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginBottom: 8,
+  },
+  emptySubtitle: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textSecondary,
+    marginBottom: 24,
+  },
   matchCta: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
+    backgroundColor: "colors.primary",
+    paddingHorizontal: 24,
+    paddingVertical: 12,
     borderRadius: 24,
   },
-  matchCtaText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.md, fontWeight: "500" },
+  matchCtaText: {
+    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "500",
+  },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
+  loadingText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textSecondary,
+    marginTop: 12,
+  },
   overlay: {
     position: "absolute",
     top: 0,
@@ -250,38 +281,52 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: Spacing.lg,
-    paddingBottom: DesignTokens.spacing[10],
+    padding: 24,
+    paddingBottom: 40,
   },
-  sheetTitle: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing[5]},
-  sheetLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginBottom: Spacing.sm, marginTop: DesignTokens.spacing[3]},
+  sheetTitle: {
+    fontSize: DesignTokens.typography.sizes.xl,
+    fontWeight: "600",
+    color: "colors.textPrimary",
+    marginBottom: 20,
+  },
+  sheetLabel: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textSecondary,
+    marginBottom: 8,
+    marginTop: 12,
+  },
   notesInput: {
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "colors.border",
     borderRadius: 12,
-    padding: DesignTokens.spacing[3],
+    padding: 12,
     fontSize: DesignTokens.typography.sizes.base,
-    minHeight: Spacing['4xl'],
+    minHeight: 80,
     textAlignVertical: "top",
   },
-  sheetActions: { flexDirection: "row", gap: DesignTokens.spacing[3], marginTop: Spacing.lg},
+  sheetActions: { flexDirection: "row", gap: 12, marginTop: 24 },
   sheetCancel: {
     flex: 1,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "colors.border",
     alignItems: "center",
   },
   sheetCancelText: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary },
   sheetSubmit: {
     flex: 1,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: colors.primary,
+    backgroundColor: "colors.primary",
     alignItems: "center",
   },
-  sheetSubmitText: { fontSize: DesignTokens.typography.sizes.md, color: colors.surface, fontWeight: "500" },
-}))
+  sheetSubmitText: {
+    fontSize: DesignTokens.typography.sizes.md,
+    color: colors.surface,
+    fontWeight: "500",
+  },
+}));
 
 export default AdvisorListScreen;

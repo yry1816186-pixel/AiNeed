@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface SceneQuickButtonsProps {
   onSceneSelect: (scene: string, message: string) => void;
@@ -73,27 +72,27 @@ export const SceneQuickButtons: React.FC<SceneQuickButtonsProps> = ({
 };
 
 const useStyles = createStyles((colors) => ({
-  container: { paddingVertical: Spacing.sm, paddingHorizontal: Spacing.xs, gap: Spacing.sm},
+  container: { paddingVertical: 8, paddingHorizontal: 4, gap: 8 },
   containerDisabled: { opacity: 0.5 },
   button: {
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 24,
     backgroundColor: DesignTokens.colors.neutral[50],
     borderWidth: 1,
     borderColor: colors.primary,
-    marginRight: Spacing.sm,
+    marginRight: 8,
     minWidth: 72,
   },
   iconContainer: {
-    width: DesignTokens.spacing[7],
-    height: DesignTokens.spacing[7],
+    width: 28,
+    height: 28,
     borderRadius: 14,
     backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   iconText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -105,4 +104,4 @@ const useStyles = createStyles((colors) => ({
     color: DesignTokens.colors.neutral[700],
     fontWeight: "500",
   },
-}))
+}));

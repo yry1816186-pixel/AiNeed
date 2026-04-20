@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import { create } from "zustand";
+﻿import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -304,9 +304,7 @@ export const useWardrobeStore = create<WardrobeState>((set, get) => ({
 
   toggleFavoriteOutfit: (id) => {
     set((state) => ({
-      outfits: state.outfits.map((o) =>
-        o.id === id ? { ...o, isFavorite: !o.isFavorite } : o
-      ),
+      outfits: state.outfits.map((o) => (o.id === id ? { ...o, isFavorite: !o.isFavorite } : o)),
     }));
   },
 

@@ -1,9 +1,13 @@
-﻿﻿﻿﻿import React, { useMemo } from "react";
+import React, { useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { TagCloud } from '../../../../shared/components/charts/TagCloud';
-import { PercentageBar } from '../../../../shared/components/charts/PercentageBar';
-import { flatColors as colors, Spacing, Shadows, spacing, typography, shadows } from '../../../../design-system/theme';
+import { colors } from "@/src/theme/tokens/colors";
+import { typography } from "@/src/theme/tokens/typography";
+import { spacing } from "@/src/theme/tokens/spacing";
+import { shadows } from "@/src/theme/tokens/shadows";
+import { TagCloud } from "../../../components/charts/TagCloud";
+import { PercentageBar } from "../../../components/charts/PercentageBar";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface StylePreferences {
   preferredStyles: string[];
@@ -40,10 +44,10 @@ const ALL_STYLE_TAGS = [
 ];
 
 const OCCASION_CONFIG = [
-  { label: "工作", color: colors.gold },
+  { label: "工作", color: colors.brand.warmAccent },
   { label: "约会", color: colors.gradients.coralRose[0] },
-  { label: "运动", color: colors.secondary },
-  { label: "休闲", color: colors.primary },
+  { label: "运动", color: colors.brand.warmSecondary },
+  { label: "休闲", color: colors.brand.primary },
 ];
 
 const DEFAULT_OCCASION_PERCENTAGES = [35, 25, 15, 25];
@@ -96,6 +100,8 @@ export const StyleTagsCard: React.FC<StyleTagsCardProps> = ({
   collapsed,
   onToggle,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const tagItems = useMemo(
     () => buildTagItems(stylePreferences?.preferredStyles ?? []),
     [stylePreferences?.preferredStyles]
@@ -120,7 +126,7 @@ export const StyleTagsCard: React.FC<StyleTagsCardProps> = ({
         accessibilityLabel={collapsed ? "展开风格标签" : "收起风格标签"}
         accessibilityRole="button"
       >
-        <Ionicons name="prism-outline" size={20} color={colors.primary} />
+        <Ionicons name="prism-outline" size={20} color={colors.brand.primary} />
         <Text style={styles.headerTitle}>风格标签</Text>
         <Ionicons
           name={collapsed ? "chevron-down-outline" : "chevron-up-outline"}
@@ -160,7 +166,7 @@ export const StyleTagsCard: React.FC<StyleTagsCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   card: {
     backgroundColor: colors.neutral.white,
     borderRadius: spacing.borderRadius.xl,
@@ -200,6 +206,6 @@ const styles = StyleSheet.create({
     color: colors.neutral[400],
     marginBottom: spacing.aliases.sm,
   },
-});
+}));
 
 export default StyleTagsCard;

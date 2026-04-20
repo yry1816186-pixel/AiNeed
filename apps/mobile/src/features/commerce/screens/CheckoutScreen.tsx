@@ -1,4 +1,4 @@
-﻿﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -11,26 +11,26 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { useScreenTracking } from '../../../hooks/useAnalytics';
-import { useTranslation } from '../../../i18n';
-import { useFeatureFlags } from '../../../shared/contexts/FeatureFlagContext';
-import { FeatureFlagKeys } from '../../../constants/feature-flags';
-import { addressApi, cartApi, orderApi, paymentApi } from '../../../services/api/commerce.api';
-import { useCartStore } from '../stores/index';
-import { useCouponStore } from '../stores/couponStore';
-import type { Address } from '../../../types';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import { CouponSelector } from '../components/CouponSelector';
-import { PaymentWaitingScreen } from '../components/PaymentWaitingScreen';
-import { AreaCascadingPicker } from '../../../components/address/AreaCascadingPicker';
-import type { RootStackParamList } from '../../../types/navigation';
-
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useTranslation } from "../../../i18n";
+import { useFeatureFlags } from "../../../shared/contexts/FeatureFlagContext";
+import { FeatureFlagKeys } from "../../../constants/feature-flags";
+import { addressApi, cartApi, orderApi, paymentApi } from "../../../services/api/commerce.api";
+import { useCartStore } from "../stores/index";
+import { useCouponStore } from "../stores/couponStore";
+import type { Address } from "../../../types";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, Spacing } from "../../../design-system/theme";
+import { CouponSelector } from "../components/CouponSelector";
+import { PaymentWaitingScreen } from "../components/PaymentWaitingScreen";
+import { AreaCascadingPicker } from "../../../components/address/AreaCascadingPicker";
+import type { RootStackParamList } from "../../../types/navigation";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -59,6 +59,7 @@ const EMPTY_ADDRESS: AddressDraft = {
 };
 
 export const CheckoutScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   useScreenTracking("Checkout");
   const t = useTranslation();
@@ -311,9 +312,7 @@ export const CheckoutScreen: React.FC = () => {
                       <Text style={styles.muted}>当前没有勾选任何商品。</Text>
                     ) : (
                       <>
-                        <Text style={styles.muted}>
-                          共 {cartItems.length} 件商品
-                        </Text>
+                        <Text style={styles.muted}>共 {cartItems.length} 件商品</Text>
                         <View style={[styles.spaceRow, styles.totalRow]}>
                           <Text style={styles.totalLabel}>应付总额</Text>
                           <Text style={styles.totalValue}>
@@ -325,60 +324,61 @@ export const CheckoutScreen: React.FC = () => {
                     )}
                   </View>
                 ) : (
-                <>
-                <View style={styles.card}>
-                  <Text style={styles.cardTitle}>{t.checkout.confirmItems}</Text>
-                  {cartItems.length === 0 ? (
-                    <Text style={styles.muted}>当前没有勾选任何商品。</Text>
-                  ) : (
-                    cartItems.map((item) => (
-                      <View key={item.id} style={styles.row}>
-                        <View style={styles.flex}>
-                          <Text style={styles.itemName}>{item.name}</Text>
-                          <Text style={styles.muted}>
-                            {item.color || "默认色"} / {item.size || "默认尺码"} x{item.quantity}
-                          </Text>
-                        </View>
-                        <Text style={styles.price}>
+                  <>
+                    <View style={styles.card}>
+                      <Text style={styles.cardTitle}>{t.checkout.confirmItems}</Text>
+                      {cartItems.length === 0 ? (
+                        <Text style={styles.muted}>当前没有勾选任何商品。</Text>
+                      ) : (
+                        cartItems.map((item) => (
+                          <View key={item.id} style={styles.row}>
+                            <View style={styles.flex}>
+                              <Text style={styles.itemName}>{item.name}</Text>
+                              <Text style={styles.muted}>
+                                {item.color || "默认色"} / {item.size || "默认尺码"} x
+                                {item.quantity}
+                              </Text>
+                            </View>
+                            <Text style={styles.price}>
+                              {"\u00A5"}
+                              {(item.price * item.quantity).toFixed(2)}
+                            </Text>
+                          </View>
+                        ))
+                      )}
+                    </View>
+
+                    <View style={styles.card}>
+                      <View style={styles.spaceRow}>
+                        <Text style={styles.muted}>商品小计</Text>
+                        <Text style={styles.value}>
                           {"\u00A5"}
-                          {(item.price * item.quantity).toFixed(2)}
+                          {itemsTotal.toFixed(2)}
                         </Text>
                       </View>
-                    ))
-                  )}
-                </View>
+                      <View style={styles.spaceRow}>
+                        <Text style={styles.muted}>运费</Text>
+                        <Text style={styles.value}>
+                          {shippingFee === 0 ? "免运费" : `\u00A5${shippingFee.toFixed(2)}`}
+                        </Text>
+                      </View>
+                      <View style={[styles.spaceRow, styles.totalRow]}>
+                        <Text style={styles.totalLabel}>应付总额</Text>
+                        <Text style={styles.totalValue}>
+                          {"\u00A5"}
+                          {orderTotal.toFixed(2)}
+                        </Text>
+                      </View>
+                    </View>
 
-                <View style={styles.card}>
-                  <View style={styles.spaceRow}>
-                    <Text style={styles.muted}>商品小计</Text>
-                    <Text style={styles.value}>
-                      {"\u00A5"}
-                      {itemsTotal.toFixed(2)}
-                    </Text>
-                  </View>
-                  <View style={styles.spaceRow}>
-                    <Text style={styles.muted}>运费</Text>
-                    <Text style={styles.value}>
-                      {shippingFee === 0 ? "免运费" : `\u00A5${shippingFee.toFixed(2)}`}
-                    </Text>
-                  </View>
-                  <View style={[styles.spaceRow, styles.totalRow]}>
-                    <Text style={styles.totalLabel}>应付总额</Text>
-                    <Text style={styles.totalValue}>
-                      {"\u00A5"}
-                      {orderTotal.toFixed(2)}
-                    </Text>
-                  </View>
-                </View>
-
-                <TouchableOpacity
-                  style={styles.primaryButton}
-                  onPress={() => setStep("address")}
-                  accessibilityLabel="进入地址选择"
-                >
-                  <Text style={styles.primaryText}>选择收货地址</Text>
-                </TouchableOpacity>
-                </>
+                    <TouchableOpacity
+                      style={styles.primaryButton}
+                      onPress={() => setStep("address")}
+                      accessibilityLabel="进入地址选择"
+                    >
+                      <Text style={styles.primaryText}>选择收货地址</Text>
+                    </TouchableOpacity>
+                  </>
                 )}
               </>
             ) : null}
@@ -429,11 +429,7 @@ export const CheckoutScreen: React.FC = () => {
                             ? `${draftAddress.province} ${draftAddress.city} ${draftAddress.district}`
                             : t.checkout.province}
                         </Text>
-                        <Ionicons
-                          name="chevron-forward"
-                          size={18}
-                          color={colors.textTertiary}
-                        />
+                        <Ionicons name="chevron-forward" size={18} color={colors.textTertiary} />
                       </TouchableOpacity>
                       <TextInput
                         style={[styles.input, styles.multiline]}
@@ -696,7 +692,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   flex: { flex: 1 },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
-  scrollContent: { paddingBottom: DesignTokens.spacing[7]},
+  scrollContent: { paddingBottom: DesignTokens.spacing[7] },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -715,21 +711,25 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: DesignTokens.colors.neutral[100],
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
   headerPlaceholder: { width: DesignTokens.spacing[10] },
   progressRow: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing["3.5"],
     backgroundColor: colors.surface,
   },
   progressItem: { alignItems: "center" },
   progressDot: {
-    width: DesignTokens.spacing['2.5'],
-    height: DesignTokens.spacing['2.5'],
+    width: DesignTokens.spacing["2.5"],
+    height: DesignTokens.spacing["2.5"],
     borderRadius: 5,
     backgroundColor: DesignTokens.colors.neutral[300],
-    marginBottom: DesignTokens.spacing['1.5'],
+    marginBottom: DesignTokens.spacing["1.5"],
   },
   progressDotActive: { backgroundColor: colors.primary },
   progressText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
@@ -741,12 +741,17 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: Spacing.md,
   },
-  cardTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing[3]},
+  cardTitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginBottom: DesignTokens.spacing[3],
+  },
   row: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing["2.5"],
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
     gap: DesignTokens.spacing[3],
@@ -757,13 +762,38 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: DesignTokens.spacing[3],
   },
-  itemName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
-  muted: { fontSize: DesignTokens.typography.sizes.sm, lineHeight: 20, color: colors.textSecondary },
-  price: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "700", color: colors.textPrimary },
+  itemName: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
+  muted: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    lineHeight: 20,
+    color: colors.textSecondary,
+  },
+  price: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "700",
+    color: colors.textPrimary,
+  },
   value: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
-  totalRow: { marginTop: DesignTokens.spacing[3], paddingTop: DesignTokens.spacing[3], borderTopWidth: 1, borderTopColor: DesignTokens.colors.neutral[100] },
-  totalLabel: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
-  totalValue: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
+  totalRow: {
+    marginTop: DesignTokens.spacing[3],
+    paddingTop: DesignTokens.spacing[3],
+    borderTopWidth: 1,
+    borderTopColor: DesignTokens.colors.neutral[100],
+  },
+  totalLabel: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
+  totalValue: {
+    fontSize: DesignTokens.typography.sizes.xl,
+    fontWeight: "700",
+    color: colors.primary,
+  },
   primaryButton: {
     marginHorizontal: DesignTokens.spacing[5],
     marginTop: Spacing.md,
@@ -774,7 +804,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonInline: {
     marginTop: Spacing.xs,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing["3.5"],
     borderRadius: 12,
     alignItems: "center",
     backgroundColor: colors.primary,
@@ -786,7 +816,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.primary,
   },
-  primaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.surface },
+  primaryText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.surface,
+  },
   secondaryButton: {
     paddingVertical: Spacing.md,
     paddingHorizontal: DesignTokens.spacing[5],
@@ -806,19 +840,28 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     backgroundColor: colors.surface,
   },
-  secondaryText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textSecondary },
-  actionRow: { flexDirection: "row", gap: DesignTokens.spacing[3], marginHorizontal: DesignTokens.spacing[5], marginTop: Spacing.md},
+  secondaryText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.textSecondary,
+  },
+  actionRow: {
+    flexDirection: "row",
+    gap: DesignTokens.spacing[3],
+    marginHorizontal: DesignTokens.spacing[5],
+    marginTop: Spacing.md,
+  },
   link: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
-  form: { gap: DesignTokens.spacing['2.5'], marginBottom: DesignTokens.spacing['2.5']},
+  form: { gap: DesignTokens.spacing["2.5"], marginBottom: DesignTokens.spacing["2.5"] },
   areaRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    height: Spacing['2xl'],
+    height: Spacing["2xl"],
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 12,
-    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingHorizontal: DesignTokens.spacing["3.5"],
     backgroundColor: colors.background,
   },
   areaText: {
@@ -830,18 +873,18 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
   },
   input: {
-    height: Spacing['2xl'],
+    height: Spacing["2xl"],
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 12,
-    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingHorizontal: DesignTokens.spacing["3.5"],
     backgroundColor: colors.background,
     color: colors.textPrimary,
   },
-  multiline: { height: 84, textAlignVertical: "top", paddingTop: DesignTokens.spacing[3]},
+  multiline: { height: 84, textAlignVertical: "top", paddingTop: DesignTokens.spacing[3] },
   addressCard: {
-    marginTop: DesignTokens.spacing['2.5'],
-    padding: DesignTokens.spacing['3.5'],
+    marginTop: DesignTokens.spacing["2.5"],
+    padding: DesignTokens.spacing["3.5"],
     borderRadius: 14,
     borderWidth: 1,
     borderColor: colors.border,
@@ -852,11 +895,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: DesignTokens.spacing[3],
-    padding: DesignTokens.spacing['3.5'],
+    padding: DesignTokens.spacing["3.5"],
     borderRadius: 14,
     borderWidth: 1,
     borderColor: colors.border,
-    marginTop: DesignTokens.spacing['2.5'],
+    marginTop: DesignTokens.spacing["2.5"],
   },
   paymentLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
   successCard: {
@@ -866,9 +909,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: colors.surface,
     alignItems: "center",
-    gap: DesignTokens.spacing['2.5'],
+    gap: DesignTokens.spacing["2.5"],
   },
-  successTitle: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.textPrimary },
+  successTitle: {
+    fontSize: DesignTokens.typography.sizes["2xl"],
+    fontWeight: "700",
+    color: colors.textPrimary,
+  },
   paymentButtonsRow: {
     flexDirection: "row",
     gap: DesignTokens.spacing[3],

@@ -11,19 +11,26 @@ import {
   Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  flatColors as colors,
+} from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { launchImageLibrary } from "react-native-image-picker";
-import { useCustomizationEditorStore, type DesignLayer } from '../stores/customizationEditorStore';
-import { TemplateSelector } from '../components/TemplateSelector';
-import { DesignToolbar } from '../components/DesignToolbar';
-import { LayerPanel } from '../components/LayerPanel';
-import { DesignCanvas } from '../components/DesignCanvas';
-import { ColorPicker } from '../components/ColorPicker';
-import type { RootStackParamList } from '../../../types/navigation';
+import { useCustomizationEditorStore, type DesignLayer } from "../stores/customizationEditorStore";
+import { TemplateSelector } from "../components/TemplateSelector";
+import { DesignToolbar } from "../components/DesignToolbar";
+import { LayerPanel } from "../components/LayerPanel";
+import { DesignCanvas } from "../components/DesignCanvas";
+import { ColorPicker } from "../components/ColorPicker";
+import type { RootStackParamList } from "../../../types/navigation";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = NavigationProp<RootStackParamList>;
 
@@ -32,6 +39,7 @@ const CANVAS_WIDTH = SCREEN_WIDTH - 32;
 const CANVAS_HEIGHT = Math.round(CANVAS_WIDTH * 1.2);
 
 export const CustomizationEditorScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const [showTextModal, setShowTextModal] = useState(false);
   const [textContent, setTextContent] = useState("");
@@ -309,7 +317,7 @@ const styles = StyleSheet.create({
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 20,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
@@ -328,7 +336,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[3],
     paddingVertical: Spacing[2],
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
   },
   topBarActionText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -373,7 +381,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: Spacing[1],
     paddingVertical: Spacing[1],
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
   },
   layerToggleText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -400,7 +408,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[3],
@@ -425,7 +433,7 @@ const styles = StyleSheet.create({
   },
   textSettingInput: {
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
     borderRadius: BorderRadius.md,
     width: 60,
     height: DesignTokens.spacing[9],
@@ -443,7 +451,7 @@ const styles = StyleSheet.create({
     height: Spacing.lg,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   colorButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -459,7 +467,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[2],
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
   },
   modalCancelText: {
     fontSize: DesignTokens.typography.sizes.base,

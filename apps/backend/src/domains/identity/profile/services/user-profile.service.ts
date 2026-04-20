@@ -1,14 +1,14 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { PrismaUpdateData } from "../../../../common/types/common.types";
-import { BehaviorTrackerService } from '../../../platform/analytics/services/behavior-tracker.service';
+import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { PrismaUpdateData } from "../../../../../../../common/types/common.types";
+import { BehaviorTrackerService } from "../../../../platform/analytics/services/behavior-tracker.service";
 import {
   BodyImageAnalysisService,
   BodyType,
-} from '../../../ai-core/photos/services/body-image-analysis.service';
-import { SASRecService } from '../../../platform/recommendations/services/sasrec.service';
+} from "../../../../ai-core/photos/services/body-image-analysis.service";
+import { SASRecService } from "../../../../platform/recommendations/services/sasrec.service";
 
 export interface UserBodyProfile {
   userId: string;
@@ -83,7 +83,7 @@ export class UserProfileService {
     private prisma: PrismaService,
     private bodyAnalysisService: BodyImageAnalysisService,
     private sasrecService: SASRecService,
-    private behaviorTracker: BehaviorTrackerService,
+    private behaviorTracker: BehaviorTrackerService
   ) {}
 
   async analyzeAndSaveBodyProfile(
@@ -96,7 +96,7 @@ export class UserProfileService {
       bustWidth?: number;
       waistWidth?: number;
       hipWidth?: number;
-    },
+    }
   ): Promise<UserBodyProfile> {
     this.logger.log(`Analyzing body profile for user ${userId}`);
 
@@ -121,17 +121,12 @@ export class UserProfileService {
 
     await this.saveBodyProfile(userId, profile);
 
-    this.logger.log(
-      `Body profile saved for user ${userId}: ${analysisResult.bodyType}`,
-    );
+    this.logger.log(`Body profile saved for user ${userId}: ${analysisResult.bodyType}`);
 
     return profile;
   }
 
-  private async saveBodyProfile(
-    userId: string,
-    profile: UserBodyProfile,
-  ): Promise<void> {
+  private async saveBodyProfile(userId: string, profile: UserBodyProfile): Promise<void> {
     await this.prisma.userProfile.upsert({
       where: { userId },
       create: {
@@ -168,7 +163,9 @@ export class UserProfileService {
       where: { userId },
     });
 
-    if (!profile) {return null;}
+    if (!profile) {
+      return null;
+    }
 
     return {
       userId: profile.userId,
@@ -181,14 +178,9 @@ export class UserProfileService {
         heightEstimate: profile.height || 0,
       },
       proportions: {
-        shoulderToHip:
-          profile.shoulder && profile.hip ? profile.shoulder / profile.hip : 1,
-        waistToHip:
-          profile.waist && profile.hip ? profile.waist / profile.hip : 0.7,
-        waistToShoulder:
-          profile.waist && profile.shoulder
-            ? profile.waist / profile.shoulder
-            : 0.7,
+        shoulderToHip: profile.shoulder && profile.hip ? profile.shoulder / profile.hip : 1,
+        waistToHip: profile.waist && profile.hip ? profile.waist / profile.hip : 0.7,
+        waistToShoulder: profile.waist && profile.shoulder ? profile.waist / profile.shoulder : 0.7,
       },
       stylePreferences: (profile.stylePreferences as string[]) || [],
       colorPreferences: (profile.colorPreferences as string[]) || [],
@@ -202,13 +194,10 @@ export class UserProfileService {
 
   async getPersonalizedRecommendations(
     userId: string,
-    topK: number = 20,
+    topK: number = 20
   ): Promise<PersonalizedRecommendation[]> {
     const bodyProfile = await this.getBodyProfile(userId);
-    const sequenceRecs = await this.sasrecService.getSequenceRecommendations(
-      userId,
-      topK * 2,
-    );
+    const sequenceRecs = await this.sasrecService.getSequenceRecommendations(userId, topK * 2);
 
     const itemIds = sequenceRecs.recommendations.map((rec) => rec.itemId);
 
@@ -233,17 +222,22 @@ export class UserProfileService {
     for (const rec of sequenceRecs.recommendations) {
       const item = itemMap.get(rec.itemId);
 
-      if (!item) {continue;}
+      if (!item) {
+        continue;
+      }
 
       const { bodyTypeMatch, styleMatch, priceMatch, reasons } = this.evaluateItemMatch(
         item as any,
-        bodyProfile,
+        bodyProfile
       );
 
       recommendations.push({
         itemId: rec.itemId,
         score:
-          rec.score * (bodyTypeMatch ? 1.2 : 1.0) * (styleMatch ? 1.1 : 1.0) * (priceMatch ? 1.05 : 1.0),
+          rec.score *
+          (bodyTypeMatch ? 1.2 : 1.0) *
+          (styleMatch ? 1.1 : 1.0) *
+          (priceMatch ? 1.05 : 1.0),
         reasons: [rec.reason, ...reasons].filter(Boolean),
         bodyTypeMatch,
         styleMatch,
@@ -266,7 +260,7 @@ export class UserProfileService {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       originalPrice: any;
     },
-    bodyProfile: UserBodyProfile | null,
+    bodyProfile: UserBodyProfile | null
   ): { bodyTypeMatch: boolean; styleMatch: boolean; priceMatch: boolean; reasons: string[] } {
     const reasons: string[] = [];
     let bodyTypeMatch = false;
@@ -274,29 +268,23 @@ export class UserProfileService {
     let priceMatch = false;
 
     if (bodyProfile) {
-      const bodyTypeRecommendations = this.getBodyTypeRecommendations(
-        bodyProfile.bodyType,
-      );
+      const bodyTypeRecommendations = this.getBodyTypeRecommendations(bodyProfile.bodyType);
 
       const itemTags = item.tags || [];
       const suitableStyles = bodyTypeRecommendations.suitableStyles || [];
 
       const hasMatchingTag = itemTags.some((tag: string) =>
-        suitableStyles.some(
-          (style) => tag.includes(style) || style.includes(tag),
-        ),
+        suitableStyles.some((style) => tag.includes(style) || style.includes(tag))
       );
 
       if (hasMatchingTag) {
         bodyTypeMatch = true;
-        reasons.push(
-          `适合您的${this.getBodyTypeName(bodyProfile.bodyType)}身材`,
-        );
+        reasons.push(`适合您的${this.getBodyTypeName(bodyProfile.bodyType)}身材`);
       }
 
       const avoidStyles = bodyTypeRecommendations.avoidStyles || [];
       const hasAvoidTag = itemTags.some((tag: string) =>
-        avoidStyles.some((style) => tag.includes(style) || style.includes(tag)),
+        avoidStyles.some((style) => tag.includes(style) || style.includes(tag))
       );
 
       if (hasAvoidTag) {
@@ -304,14 +292,9 @@ export class UserProfileService {
       }
     }
 
-    if (
-      bodyProfile?.stylePreferences &&
-      bodyProfile.stylePreferences.length > 0
-    ) {
+    if (bodyProfile?.stylePreferences && bodyProfile.stylePreferences.length > 0) {
       const itemTags = item.tags || [];
-      styleMatch = itemTags.some((tag: string) =>
-        bodyProfile.stylePreferences.includes(tag),
-      );
+      styleMatch = itemTags.some((tag: string) => bodyProfile.stylePreferences.includes(tag));
 
       if (styleMatch) {
         reasons.push("符合您的风格偏好");
@@ -322,7 +305,7 @@ export class UserProfileService {
     if (bodyProfile?.priceRange) {
       const itemPrice = Number(item.price) || Number(item.originalPrice) || 0;
       const { min, max } = bodyProfile.priceRange;
-      
+
       if (min !== null && max !== null) {
         if (itemPrice >= min && itemPrice <= max) {
           priceMatch = true;
@@ -344,10 +327,7 @@ export class UserProfileService {
     suitableStyles: string[];
     avoidStyles: string[];
   } {
-    const recommendations: Record<
-      BodyType,
-      { suitableStyles: string[]; avoidStyles: string[] }
-    > = {
+    const recommendations: Record<BodyType, { suitableStyles: string[]; avoidStyles: string[] }> = {
       rectangle: {
         suitableStyles: ["收腰", "V领", "A字", "高腰", "层次"],
         avoidStyles: ["直筒", "无腰身", "宽松"],
@@ -401,10 +381,7 @@ export class UserProfileService {
       preferredBrands: [],
     };
 
-    const recommendations = await this.getPersonalizedRecommendations(
-      userId,
-      10,
-    );
+    const recommendations = await this.getPersonalizedRecommendations(userId, 10);
 
     // 从行为追踪服务获取偏好数据
     let preferences: UserProfileSummary["preferences"] = {
@@ -427,7 +404,10 @@ export class UserProfileService {
         priceRange: {
           min: bodyProfile?.priceRange.min ?? null,
           max: bodyProfile?.priceRange.max ?? null,
-          primaryRange: this.getPriceRangeLabel(bodyProfile?.priceRange.min, bodyProfile?.priceRange.max),
+          primaryRange: this.getPriceRangeLabel(
+            bodyProfile?.priceRange.min,
+            bodyProfile?.priceRange.max
+          ),
         },
       };
     } catch (error) {
@@ -442,7 +422,10 @@ export class UserProfileService {
     };
   }
 
-  private getPriceRangeLabel(min: number | null | undefined, max: number | null | undefined): string {
+  private getPriceRangeLabel(
+    min: number | null | undefined,
+    max: number | null | undefined
+  ): string {
     if (min === null && max === null) {
       return "未设置";
     }
@@ -465,10 +448,7 @@ export class UserProfileService {
     return "超奢侈";
   }
 
-  async updateStylePreferences(
-    userId: string,
-    preferences: string[],
-  ): Promise<void> {
+  async updateStylePreferences(userId: string, preferences: string[]): Promise<void> {
     await this.prisma.userProfile.update({
       where: { userId },
       data: {
@@ -480,10 +460,7 @@ export class UserProfileService {
     this.logger.log(`Updated style preferences for user ${userId}`);
   }
 
-  async updateColorPreferences(
-    userId: string,
-    preferences: string[],
-  ): Promise<void> {
+  async updateColorPreferences(userId: string, preferences: string[]): Promise<void> {
     await this.prisma.userProfile.update({
       where: { userId },
       data: {
@@ -495,11 +472,7 @@ export class UserProfileService {
     this.logger.log(`Updated color preferences for user ${userId}`);
   }
 
-  async updatePriceRange(
-    userId: string,
-    min: number | null,
-    max: number | null,
-  ): Promise<void> {
+  async updatePriceRange(userId: string, min: number | null, max: number | null): Promise<void> {
     await this.prisma.userProfile.update({
       where: { userId },
       data: {
@@ -512,10 +485,7 @@ export class UserProfileService {
     this.logger.log(`Updated price range for user ${userId}: ${min}-${max}`);
   }
 
-  async updateProfile(
-    userId: string,
-    dto: UpdateProfileDto,
-  ): Promise<UserBodyProfile | null> {
+  async updateProfile(userId: string, dto: UpdateProfileDto): Promise<UserBodyProfile | null> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: any = { updatedAt: new Date() };
 
@@ -567,16 +537,16 @@ export class UserProfileService {
   async updateProfileFromBehavior(userId: string): Promise<void> {
     try {
       const behaviorProfile = await this.behaviorTracker.getUserBehaviorProfile(userId);
-      
+
       // 从行为偏好中提取风格偏好
       const stylePrefs = behaviorProfile.preferences.styles
-        .filter(s => s.weight > 0.3)
-        .map(s => s.key);
-      
+        .filter((s) => s.weight > 0.3)
+        .map((s) => s.key);
+
       // 从行为偏好中提取颜色偏好
       const colorPrefs = behaviorProfile.preferences.colors
-        .filter(c => c.weight > 0.3)
-        .map(c => c.key);
+        .filter((c) => c.weight > 0.3)
+        .map((c) => c.key);
 
       // 更新画像
       if (stylePrefs.length > 0 || colorPrefs.length > 0) {

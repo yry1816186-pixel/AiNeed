@@ -10,21 +10,27 @@ import {
   RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
 
-import { useScreenTracking } from '../../../hooks/useAnalytics';
-import { useTranslation } from '../../../i18n';
+import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useTranslation } from "../../../i18n";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Colors, Spacing, BorderRadius, Shadows, flatColors as colors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  flatColors as colors,
+} from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import {
   subscriptionApi,
   type MembershipPlan,
   type UserSubscription,
   type PlanTier,
-} from '../../../services/api/subscription.api';
-import type { RootStackParamList } from '../../../types/navigation';
+} from "../../../services/api/subscription.api";
+import type { RootStackParamList } from "../../../types/navigation";
 
 type Navigation = NavigationProp<RootStackParamList>;
 
@@ -92,7 +98,7 @@ const DEFAULT_PLANS: MembershipPlan[] = [
 ];
 
 const TIER_GRADIENT: Record<PlanTier, [string, string]> = {
-  basic: [Colors.neutral[100], Colors.neutral[50]],
+  basic: [colors.neutral[100], colors.neutral[50]],
   premium: [colors.primary, colors.primaryLight],
   vip: [colors.primaryDark, colors.primary], // custom color
 };
@@ -161,8 +167,8 @@ export const SubscriptionScreen: React.FC = () => {
       }`,
       [
         { text: t.common.cancel, style: "cancel" },
-      {
-        text: t.common.confirm,
+        {
+          text: t.common.confirm,
           style: "default",
           onPress: async () => {
             setIsSubscribing(true);
@@ -308,8 +314,8 @@ export const SubscriptionScreen: React.FC = () => {
                       ? colors.surface
                       : colors.success
                     : isSelected && isPaid
-                    ? "rgba(255,255,255,0.3)"
-                    : Colors.neutral[300]
+                      ? "rgba(255,255,255,0.3)"
+                      : colors.neutral[300]
                 }
               />
               <Text
@@ -341,10 +347,7 @@ export const SubscriptionScreen: React.FC = () => {
             activeOpacity={0.7}
           >
             {isSubscribing && isSelected ? (
-              <ActivityIndicator
-                size="small"
-                color={isPaid ? colors.primary : colors.surface}
-              />
+              <ActivityIndicator size="small" color={isPaid ? colors.primary : colors.surface} />
             ) : (
               <Text style={[styles.subscribeButtonText, isPaid && { color: colors.primary }]}>
                 {plan.price === 0 ? "切换到基础版" : "立即订阅"}
@@ -411,7 +414,7 @@ const styles = StyleSheet.create({
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 20,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
@@ -487,7 +490,7 @@ const styles = StyleSheet.create({
     gap: Spacing[4],
   },
   planCard: {
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius["2xl"],
     padding: Spacing[5],
     borderWidth: 1.5,
@@ -525,7 +528,7 @@ const styles = StyleSheet.create({
     width: DesignTokens.spacing[11],
     height: DesignTokens.spacing[11],
     borderRadius: 22,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
     marginRight: Spacing[3],
@@ -557,7 +560,7 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
   },
   priceFree: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "700",
     color: colors.textPrimary,
   },
@@ -567,7 +570,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   priceValue: {
-    fontSize: DesignTokens.typography.sizes['4xl'],
+    fontSize: DesignTokens.typography.sizes["4xl"],
     fontWeight: "700",
     color: colors.textPrimary,
     letterSpacing: -1,
@@ -597,7 +600,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   featureNameDisabled: {
-    color: Colors.neutral[300],
+    color: colors.neutral[300],
   },
   currentButton: {
     alignItems: "center",
@@ -605,7 +608,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
     borderRadius: BorderRadius.xl,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   currentButtonText: {
     fontSize: DesignTokens.typography.sizes.base,

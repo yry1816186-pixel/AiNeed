@@ -1,9 +1,8 @@
 ﻿import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { Skeleton } from '../../../design-system/ui/Skeleton';
-import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-
+import { Skeleton } from "../../design-system/ui/Skeleton";
+import { Colors, Spacing, BorderRadius } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const COLUMN_GAP = 8;
@@ -17,6 +16,8 @@ const COLUMN_WIDTH = (SCREEN_WIDTH - HORIZONTAL_PADDING * 2 - COLUMN_GAP) / NUM_
  * - 2-column masonry cards with varying heights
  */
 export const CommunitySkeleton: React.FC = () => {
+  const styles = useStyles(colors);
+  const { colors } = useTheme();
   // Simulate masonry with alternating heights
   const heights = [220, 180, 200, 240, 190, 210, 230, 170];
 
@@ -31,12 +32,7 @@ export const CommunitySkeleton: React.FC = () => {
       {/* Trending card placeholder */}
       <View style={styles.trendingRow}>
         {[0, 1, 2].map((i) => (
-          <Skeleton
-            key={i}
-            width={COLUMN_WIDTH * 0.6}
-            height={28}
-            borderRadius={14}
-          />
+          <Skeleton key={i} width={COLUMN_WIDTH * 0.6} height={28} borderRadius={14} />
         ))}
       </View>
 
@@ -82,22 +78,22 @@ export const CommunitySkeleton: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
   },
   headerRow: {
     flexDirection: "row",
-    gap: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   trendingRow: {
     flexDirection: "row",
-    gap: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    marginBottom: DesignTokens.spacing[3],
+    gap: 8,
+    paddingHorizontal: 16,
+    marginBottom: 12,
   },
   masonryContainer: {
     flexDirection: "row",
@@ -114,12 +110,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   cardTextContent: {
-    padding: Spacing.sm,
+    padding: 8,
   },
   cardAuthorRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-    marginTop: DesignTokens.spacing['1.5'],
+    gap: 4,
+    marginTop: 6,
   },
-});
+}));

@@ -1,0 +1,110 @@
+groups:
+  - name: critical
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status_code=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "API 5xx错误率超过1%"
+          description: "当前5xx错误率 {{ $value | humanizePercentage }}"
+
+      - alert: DatabaseConnectionPoolHigh
+        expr: db_connections_active > 80
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL连接数过高"
+          description: "当前活跃连接数 {{ $value }}"
+
+      - alert: BruteForceDetected
+        expr: rate(user_logins_total{method="failed"}[1m]) > 10
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "检测到暴力破解攻击"
+          description: "登录失败速率 {{ $value }}/s"
+
+      - alert: TryOnServiceDown
+        expr: increase(try_on_errors_total[5m]) > 20
+        for: 3m
+        labels:
+          severity: critical
+        annotations:
+          summary: "虚拟试穿服务异常"
+          description: "5分钟内试穿错误数 {{ $value }}"
+
+  - name: warning
+    rules:
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API P95延迟超过2秒"
+          description: "当前P95延迟 {{ $value }}s"
+
+      - alert: RedisMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis内存使用超过80%"
+
+      - alert: AIApiLatency
+        expr: histogram_quantile(0.95, sum(rate(ai_service_duration_seconds_bucket[5m])) by (le)) > 10
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "AI API P95延迟超过10秒"
+          description: "当前P95延迟 {{ $value }}s"
+
+      - alert: TryOnFailureRate
+        expr: rate(try_on_errors_total[10m]) / rate(try_on_requests_total[10m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "虚拟试穿失败率超过10%"
+          description: "当前失败率 {{ $value | humanizePercentage }}"
+
+      - alert: DiskSpaceLow
+        expr: node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} < 0.2
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "磁盘空间不足20%"
+
+      - alert: RedisCacheHitRateLow
+        expr: rate(redis_cache_hits_total[5m]) / (rate(redis_cache_hits_total[5m]) + rate(redis_cache_misses_total[5m])) < 0.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis缓存命中率低于50%"
+          description: "当前命中率 {{ $value | humanizePercentage }}"
+
+      - alert: AIServiceErrorRateHigh
+        expr: rate(ai_service_errors_total[5m]) / rate(ai_service_calls_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "AI服务错误率超过5%"
+          description: "当前错误率 {{ $value | humanizePercentage }}"
+
+      - alert: PaymentFailureSpike
+        expr: increase(payments_failed_total[10m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "支付失败数异常增长"
+          description: "10分钟内失败数 {{ $value }}"

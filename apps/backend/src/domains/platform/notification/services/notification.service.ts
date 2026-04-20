@@ -89,7 +89,7 @@ export class NotificationService {
     private readonly prisma: PrismaService,
     private readonly wsNotificationService: WebSocketNotificationService,
     private readonly pushNotificationService: PushNotificationService,
-    private readonly templateService: NotificationTemplateService,
+    private readonly templateService: NotificationTemplateService
   ) {}
 
   /**
@@ -127,7 +127,7 @@ export class NotificationService {
       this.logger.warn(
         `Failed to send WebSocket notification: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`,
+        }`
       );
     }
 
@@ -138,7 +138,7 @@ export class NotificationService {
       this.logger.warn(
         `Failed to send push notification: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`,
+        }`
       );
     }
 
@@ -148,7 +148,11 @@ export class NotificationService {
   /**
    * Send push notification if user has the category enabled and not in quiet hours.
    */
-  private async sendPushIfEnabled(userId: string, dto: CreateNotificationDto, notificationId: string) {
+  private async sendPushIfEnabled(
+    userId: string,
+    dto: CreateNotificationDto,
+    notificationId: string
+  ) {
     const settings = await this.getUserSettings(userId);
     const category = this.mapNotificationTypeToCategory(dto.type);
 
@@ -174,10 +178,7 @@ export class NotificationService {
 
     if (dto.templateKey) {
       // Use template for richer push content
-      const rendered = this.templateService.render(
-        dto.templateKey,
-        dto.templateVariables || {},
-      );
+      const rendered = this.templateService.render(dto.templateKey, dto.templateVariables || {});
       if (rendered) {
         pushPayload = {
           title: rendered.title,
@@ -208,7 +209,7 @@ export class NotificationService {
   private buildDefaultPushPayload(
     dto: CreateNotificationDto,
     notificationId: string,
-    category: string,
+    category: string
   ): PushPayload {
     return {
       title: dto.title,
@@ -255,8 +256,10 @@ export class NotificationService {
    * Map NotificationType to category for push preference checking.
    */
   private mapNotificationTypeToCategory(
-    type: string,
-  ): keyof Pick<PushNotificationSettings, "order" | "recommendation" | "community" | "system"> | null {
+    type: string
+  ):
+    | keyof Pick<PushNotificationSettings, "order" | "recommendation" | "community" | "system">
+    | null {
     const categoryMap: Record<string, "order" | "recommendation" | "community" | "system"> = {
       // Order
       system_update: "order",
@@ -288,7 +291,7 @@ export class NotificationService {
    * Map database notification type to WebSocket notification type
    */
   private mapNotificationType(
-    type: string,
+    type: string
   ):
     | "try_on_complete"
     | "recommendation"
@@ -363,11 +366,11 @@ export class NotificationService {
    */
   async getUserNotifications(
     userId: string,
-    options: { limit?: number; offset?: number; unreadOnly?: boolean } = {},
+    options: { limit?: number; offset?: number; unreadOnly?: boolean } = {}
   ) {
     const { limit = 20, offset = 0, unreadOnly = false } = options;
 
-    const where: any = { userId };
+    const where: Record<string, unknown> = { userId };
     if (unreadOnly) {
       where.isRead = false;
     }
@@ -444,18 +447,25 @@ export class NotificationService {
     const storedPush = (settings.push as Record<string, unknown>) || {};
     const push: PushNotificationSettings = {
       order: typeof storedPush.order === "boolean" ? storedPush.order : true,
-      recommendation: typeof storedPush.recommendation === "boolean" ? storedPush.recommendation : true,
+      recommendation:
+        typeof storedPush.recommendation === "boolean" ? storedPush.recommendation : true,
       community: typeof storedPush.community === "boolean" ? storedPush.community : true,
       system: typeof storedPush.system === "boolean" ? storedPush.system : true,
-      quietHoursEnabled: typeof storedPush.quietHoursEnabled === "boolean" ? storedPush.quietHoursEnabled : false,
-      quietHoursStart: typeof storedPush.quietHoursStart === "string" ? storedPush.quietHoursStart : "22:00",
-      quietHoursEnd: typeof storedPush.quietHoursEnd === "string" ? storedPush.quietHoursEnd : "08:00",
+      quietHoursEnabled:
+        typeof storedPush.quietHoursEnabled === "boolean" ? storedPush.quietHoursEnabled : false,
+      quietHoursStart:
+        typeof storedPush.quietHoursStart === "string" ? storedPush.quietHoursStart : "22:00",
+      quietHoursEnd:
+        typeof storedPush.quietHoursEnd === "string" ? storedPush.quietHoursEnd : "08:00",
     };
 
     return {
       id: settings.id,
       userId: settings.userId,
-      email: (settings.email as unknown as EmailNotificationSettings) || { marketing: true, transactional: true },
+      email: (settings.email as unknown as EmailNotificationSettings) || {
+        marketing: true,
+        transactional: true,
+      },
       push,
       inApp: (settings.inApp as unknown as InAppNotificationSettings) || { all: true },
       createdAt: settings.createdAt,
@@ -466,10 +476,7 @@ export class NotificationService {
   /**
    * Update user notification settings
    */
-  async updateUserSettings(
-    userId: string,
-    settings: UpdateNotificationSettingsDto,
-  ) {
+  async updateUserSettings(userId: string, settings: UpdateNotificationSettingsDto) {
     return this.prisma.userNotificationSetting.upsert({
       where: { userId },
       update: {

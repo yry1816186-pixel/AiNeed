@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Input - UI layer re-export with extended theme tokens
  *
  * This file provides the UI-layer Input with additional theme tokens.
@@ -29,7 +29,10 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius, Typography, SpringConfigs, DesignTokens } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography } from "../../design-system/theme";
+import { SpringConfigs } from "../../theme/tokens/animations";
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 // Re-export from primitives for backward compatibility
 export {
@@ -68,8 +71,8 @@ const sizeConfig: Record<
   InputSize,
   { height: number; fontSize: number; paddingHorizontal: number }
 > = {
-  sm: { height: DesignTokens.spacing[10], fontSize: Typography.sizes.sm, paddingHorizontal: Spacing.md },
-  md: { height: Spacing['2xl'], fontSize: Typography.sizes.base, paddingHorizontal: Spacing.lg },
+  sm: { height: 40, fontSize: Typography.sizes.sm, paddingHorizontal: Spacing.md },
+  md: { height: 48, fontSize: Typography.sizes.base, paddingHorizontal: Spacing.lg },
   lg: { height: 56, fontSize: Typography.sizes.base, paddingHorizontal: Spacing.xl },
 };
 
@@ -93,6 +96,8 @@ export const Input: React.FC<InputProps> = ({
   onBlur,
   ...textInputProps
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [isFocused, setIsFocused] = React.useState(false);
   const [hasValue, setHasValue] = React.useState(
     !!textInputProps.value || !!textInputProps.defaultValue
@@ -150,7 +155,7 @@ export const Input: React.FC<InputProps> = ({
     const color = interpolateColor(
       progress,
       [0, 1],
-      [Colors.neutral[400], error ? Colors.semantic.error : Colors.primary[500]]
+      [colors.neutral[400], error ? Colors.semantic.error : colors.primary[500]]
     );
     const paddingHorizontal = interpolate(progress, [0, 1], [0, 4]);
 
@@ -169,8 +174,8 @@ export const Input: React.FC<InputProps> = ({
   const borderColor = error
     ? Colors.semantic.error
     : isFocused
-    ? Colors.primary[500]
-    : Colors.neutral[200];
+      ? colors.primary[500]
+      : colors.neutral[200];
 
   const getVariantStyle = (): ViewStyle => {
     switch (variant) {
@@ -184,7 +189,7 @@ export const Input: React.FC<InputProps> = ({
       case "filled":
         return {
           borderWidth: 0,
-          backgroundColor: isFocused ? Colors.neutral[100] : Colors.neutral[50],
+          backgroundColor: isFocused ? colors.neutral[100] : colors.neutral[50],
           borderRadius: BorderRadius.xl,
         };
       case "underline":
@@ -201,9 +206,7 @@ export const Input: React.FC<InputProps> = ({
   };
 
   return (
-    <Animated.View
-      style={[styles.container, containerAnimatedStyle, containerStyle]}
-    >
+    <Animated.View style={[styles.container, containerAnimatedStyle, containerStyle]}>
       {label && (
         <Animated.Text style={[styles.label, labelAnimatedStyle]}>
           {label}
@@ -217,7 +220,7 @@ export const Input: React.FC<InputProps> = ({
               <Ionicons
                 name={leftIconName!}
                 size={20}
-                color={isFocused ? Colors.primary[500] : Colors.neutral[400]}
+                color={isFocused ? colors.primary[500] : colors.neutral[400]}
               />
             )}
           </View>
@@ -236,7 +239,7 @@ export const Input: React.FC<InputProps> = ({
             disabled && styles.disabled,
             inputStyle,
           ])}
-          placeholderTextColor={Colors.neutral[400]}
+          placeholderTextColor={colors.neutral[400]}
           editable={!disabled}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -252,7 +255,7 @@ export const Input: React.FC<InputProps> = ({
               <Ionicons
                 name={rightIconName!}
                 size={20}
-                color={onRightIconPress ? Colors.neutral[600] : Colors.neutral[400]}
+                color={onRightIconPress ? colors.neutral[600] : colors.neutral[400]}
               />
             )}
           </Pressable>
@@ -287,25 +290,31 @@ export const SearchInput: React.FC<SearchInputProps> = ({
     rightIconName={value && showClearButton ? "close-circle" : undefined}
     onRightIconPress={onClear}
     containerStyle={StyleSheet.flatten([
-      { backgroundColor: Colors.neutral[100], borderRadius: BorderRadius.xl },
+      { backgroundColor: colors.neutral[100], borderRadius: BorderRadius.xl },
       props.containerStyle,
     ])}
     inputStyle={{ backgroundColor: "transparent" }}
   />
 );
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: { marginBottom: Spacing.lg },
-  label: { position: "absolute", left: 0, fontWeight: "500", zIndex: 1, backgroundColor: "transparent" },
+  label: {
+    position: "absolute",
+    left: 0,
+    fontWeight: "500",
+    zIndex: 1,
+    backgroundColor: "transparent",
+  },
   required: { color: Colors.semantic.error },
   inputContainer: { flexDirection: "row", alignItems: "center", overflow: "visible" },
-  input: { flex: 1, color: Colors.neutral[900], fontWeight: "400" },
+  input: { flex: 1, color: colors.neutral[900], fontWeight: "400" },
   leftIconContainer: { paddingLeft: Spacing.lg, justifyContent: "center" },
   rightIconContainer: { paddingRight: Spacing.lg, justifyContent: "center" },
   disabled: { opacity: 0.5 },
   hintContainer: { marginTop: Spacing[1], paddingHorizontal: Spacing[1] },
-  hintText: { fontSize: DesignTokens.typography.sizes.sm, color: Colors.neutral[500] },
+  hintText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.neutral[500] },
   errorText: { color: Colors.semantic.error },
-});
+}));
 
 export default Input;

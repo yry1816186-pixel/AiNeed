@@ -18,8 +18,8 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 
-import { PrismaModule } from "../../../common/prisma/prisma.module";
-import { RedisModule } from "../../../common/redis/redis.module";
+import { PrismaModule } from "../../../../common/prisma/prisma.module";
+import { RedisModule } from "../../../../common/redis/redis.module";
 import { AIModule } from "../../ai-core/ai/ai.module";
 import { CacheModule } from "../../../modules/cache/cache.module";
 
@@ -37,11 +37,7 @@ import { RecommendationExplainerService } from "./services/recommendation-explai
 import { RecommendationFeedService } from "./services/recommendation-feed.service";
 import { SASRecClientService } from "./services/sasrec-client.service";
 import { UnifiedRecommendationEngine } from "./services/unified-recommendation.engine";
-import {
-  CollaborativeSubmodule,
-  ContentSubmodule,
-  KnowledgeSubmodule,
-} from "./submodules";
+import { CollaborativeSubmodule, ContentSubmodule, KnowledgeSubmodule } from "./submodules";
 
 @Module({
   imports: [

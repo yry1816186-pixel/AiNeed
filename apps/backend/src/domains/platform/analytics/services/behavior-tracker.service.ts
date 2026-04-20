@@ -145,7 +145,7 @@ export class BehaviorTrackerService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly redis: RedisService,
+    private readonly redis: RedisService
   ) {}
 
   /**
@@ -166,29 +166,19 @@ export class BehaviorTrackerService {
       const enrichedEvent = {
         ...event,
         createdAt: new Date().toISOString(),
-        implicitScore: this.calculateImplicitScore(
-          event.metadata?.implicitFeedback,
-        ),
+        implicitScore: this.calculateImplicitScore(event.metadata?.implicitFeedback),
         sessionContext: await this.getSessionContext(event.sessionId),
       };
 
-      await this.redis
-        .getClient()
-        .lpush(this.EVENT_QUEUE_KEY, JSON.stringify(enrichedEvent));
+      await this.redis.getClient().lpush(this.EVENT_QUEUE_KEY, JSON.stringify(enrichedEvent));
 
       await this.updateRealtimeStats(event);
 
       if (event.userId) {
-        await this.updateSessionAggregation(
-          event.userId,
-          event.sessionId,
-          enrichedEvent,
-        );
+        await this.updateSessionAggregation(event.userId, event.sessionId, enrichedEvent);
       }
 
-      this.logger.debug(
-        `Tracked event: ${event.eventType} for session ${event.sessionId}`,
-      );
+      this.logger.debug(`Tracked event: ${event.eventType} for session ${event.sessionId}`);
     } catch (error) {
       this.logger.error(`Failed to track event: ${this.getErrorMessage(error)}`);
     }
@@ -198,7 +188,9 @@ export class BehaviorTrackerService {
    * 计算隐式反馈得分
    */
   private calculateImplicitScore(implicitFeedback?: ImplicitFeedback): number {
-    if (!implicitFeedback) {return 0;}
+    if (!implicitFeedback) {
+      return 0;
+    }
 
     let score = 0;
 
@@ -214,8 +206,7 @@ export class BehaviorTrackerService {
     }
 
     const scrollDepth = implicitFeedback.scrollDepth || 0;
-    const scrollThresholds =
-      this.IMPLICIT_FEEDBACK_WEIGHTS.scrollDepth.thresholds;
+    const scrollThresholds = this.IMPLICIT_FEEDBACK_WEIGHTS.scrollDepth.thresholds;
     const scrollWeights = this.IMPLICIT_FEEDBACK_WEIGHTS.scrollDepth.weights;
     for (let i = scrollThresholds.length - 1; i >= 0; i--) {
       const threshold = scrollThresholds[i];
@@ -226,8 +217,7 @@ export class BehaviorTrackerService {
     }
 
     const attentionScore = implicitFeedback.attentionScore || 0;
-    const attThresholds =
-      this.IMPLICIT_FEEDBACK_WEIGHTS.attentionScore.thresholds;
+    const attThresholds = this.IMPLICIT_FEEDBACK_WEIGHTS.attentionScore.thresholds;
     const attWeights = this.IMPLICIT_FEEDBACK_WEIGHTS.attentionScore.weights;
     for (let i = attThresholds.length - 1; i >= 0; i--) {
       const threshold = attThresholds[i];
@@ -241,10 +231,7 @@ export class BehaviorTrackerService {
       score *= 0.3;
     }
 
-    if (
-      implicitFeedback.scrollVelocity &&
-      implicitFeedback.scrollVelocity > 1000
-    ) {
+    if (implicitFeedback.scrollVelocity && implicitFeedback.scrollVelocity > 1000) {
       score *= 0.7;
     }
 
@@ -277,7 +264,7 @@ export class BehaviorTrackerService {
   private async updateSessionAggregation(
     userId: string,
     sessionId: string,
-    event: EnrichedEvent,
+    event: EnrichedEvent
   ): Promise<void> {
     const client = this.redis.getClient();
     const sessionKey = `session:${sessionId}:aggregation`;
@@ -299,17 +286,22 @@ export class BehaviorTrackerService {
         };
 
     sessionData.totalEvents += 1;
-    sessionData.totalDwellTime +=
-      event.metadata?.implicitFeedback?.dwellTime || 0;
-    sessionData.totalScrollDepth +=
-      event.metadata?.implicitFeedback?.scrollDepth || 0;
+    sessionData.totalDwellTime += event.metadata?.implicitFeedback?.dwellTime || 0;
+    sessionData.totalScrollDepth += event.metadata?.implicitFeedback?.scrollDepth || 0;
     sessionData.implicitScoreSum += event.implicitScore || 0;
 
-    if (event.metadata?.category)
-      {sessionData.categories.add(event.metadata.category);}
-    if (event.metadata?.style) {sessionData.styles.add(event.metadata.style);}
-    if (event.metadata?.color) {sessionData.colors.add(event.metadata.color);}
-    if (event.metadata?.brand) {sessionData.brands.add(event.metadata.brand);}
+    if (event.metadata?.category) {
+      sessionData.categories.add(event.metadata.category);
+    }
+    if (event.metadata?.style) {
+      sessionData.styles.add(event.metadata.style);
+    }
+    if (event.metadata?.color) {
+      sessionData.colors.add(event.metadata.color);
+    }
+    if (event.metadata?.brand) {
+      sessionData.brands.add(event.metadata.brand);
+    }
 
     sessionData.categories = Array.from(sessionData.categories);
     sessionData.styles = Array.from(sessionData.styles);
@@ -333,11 +325,15 @@ export class BehaviorTrackerService {
       // 从队列中取出事件
       for (let i = 0; i < this.BATCH_SIZE; i++) {
         const event = await client.rpop(this.EVENT_QUEUE_KEY);
-        if (!event) {break;}
+        if (!event) {
+          break;
+        }
         events.push(event);
       }
 
-      if (events.length === 0) {return;}
+      if (events.length === 0) {
+        return;
+      }
 
       this.logger.log(`Processing ${events.length} behavior events`);
 
@@ -358,9 +354,7 @@ export class BehaviorTrackerService {
       // 异步更新用户画像权重
       await this.updatePreferenceWeightsBatch(parsedEvents);
     } catch (error) {
-      this.logger.error(
-        `Failed to process batch events: ${this.getErrorMessage(error)}`,
-      );
+      this.logger.error(`Failed to process batch events: ${this.getErrorMessage(error)}`);
     }
   }
 
@@ -389,10 +383,7 @@ export class BehaviorTrackerService {
       updatedAt: p.updatedAt,
     }));
 
-    const aggregatedPrefs = await this.aggregatePreferencesWithTrends(
-      userId,
-      preferences,
-    );
+    const aggregatedPrefs = await this.aggregatePreferencesWithTrends(userId, preferences);
 
     return {
       preferences: aggregatedPrefs,
@@ -409,9 +400,7 @@ export class BehaviorTrackerService {
   /**
    * 获取隐式信号统计
    */
-  private async getImplicitSignals(
-    userId: string,
-  ): Promise<BehaviorProfile["implicitSignals"]> {
+  private async getImplicitSignals(userId: string): Promise<BehaviorProfile["implicitSignals"]> {
     const client = this.redis.getClient();
     const statsKey = `user:${userId}:implicit_stats`;
 
@@ -435,15 +424,19 @@ export class BehaviorTrackerService {
     let purchaseCount = 0;
 
     for (const event of events) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const meta = (event.metadata as any) || {};
-      if (meta.implicitFeedback) {
-        totalDwellTime += meta.implicitFeedback.dwellTime || 0;
-        totalScrollDepth += meta.implicitFeedback.scrollDepth || 0;
+      const meta = (event.metadata as Record<string, unknown>) || {};
+      const implicitFeedback = meta.implicitFeedback as Record<string, unknown> | undefined;
+      if (implicitFeedback) {
+        totalDwellTime += (implicitFeedback.dwellTime as number) || 0;
+        totalScrollDepth += (implicitFeedback.scrollDepth as number) || 0;
       }
       viewCount++;
-      if (meta.clicked) {clickCount++;}
-      if (meta.purchased) {purchaseCount++;}
+      if (meta.clicked) {
+        clickCount++;
+      }
+      if (meta.purchased) {
+        purchaseCount++;
+      }
     }
 
     const result = {
@@ -484,7 +477,7 @@ export class BehaviorTrackerService {
    */
   private calculateEngagementScore(
     stats: { totalEvents: number },
-    implicitSignals: BehaviorProfile["implicitSignals"],
+    implicitSignals: BehaviorProfile["implicitSignals"]
   ): number {
     const eventScore = Math.min(stats.totalEvents / 100, 1) * 0.3;
     const dwellScore = Math.min(implicitSignals.avgDwellTime / 60, 1) * 0.3;
@@ -498,7 +491,9 @@ export class BehaviorTrackerService {
    * 计算偏好稳定性
    */
   private calculatePreferenceStability(preferences: UserPreferenceWeightItem[]): number {
-    if (preferences.length === 0) {return 0;}
+    if (preferences.length === 0) {
+      return 0;
+    }
 
     const client = this.redis.getClient();
     const totalStability = 0;
@@ -512,7 +507,7 @@ export class BehaviorTrackerService {
    */
   private async aggregatePreferencesWithTrends(
     userId: string,
-    preferences: UserPreferenceWeightItem[],
+    preferences: UserPreferenceWeightItem[]
   ): Promise<BehaviorProfile["preferences"]> {
     const client = this.redis.getClient();
     const result = {
@@ -541,10 +536,15 @@ export class BehaviorTrackerService {
       }
 
       const item = { key: pref.key, weight: pref.weight, trend };
-      if (pref.category === "style") {result.styles.push(item);}
-      else if (pref.category === "color") {result.colors.push(item);}
-      else if (pref.category === "brand") {result.brands.push(item);}
-      else if (pref.category === "category") {result.categories.push(item);}
+      if (pref.category === "style") {
+        result.styles.push(item);
+      } else if (pref.category === "color") {
+        result.colors.push(item);
+      } else if (pref.category === "brand") {
+        result.brands.push(item);
+      } else if (pref.category === "category") {
+        result.categories.push(item);
+      }
     }
 
     return result;
@@ -558,7 +558,9 @@ export class BehaviorTrackerService {
 
     // 按用户分组
     for (const event of events) {
-      if (!event.userId) {continue;}
+      if (!event.userId) {
+        continue;
+      }
       const userEvents = userEventsMap.get(event.userId) || [];
       userEvents.push(event);
       userEventsMap.set(event.userId, userEvents);
@@ -570,26 +572,25 @@ export class BehaviorTrackerService {
         await this.updatePreferenceWeights(userId, userEvents);
       } catch (error) {
         this.logger.error(
-          `Failed to update preferences for user ${userId}: ${this.getErrorMessage(error)}`,
+          `Failed to update preferences for user ${userId}: ${this.getErrorMessage(error)}`
         );
       }
     }
   }
 
-  private async updatePreferenceWeights(
-    userId: string,
-    events: EnrichedEvent[],
-  ): Promise<void> {
+  private async updatePreferenceWeights(userId: string, events: EnrichedEvent[]): Promise<void> {
     const weights = new Map<string, { delta: number; implicitSum: number }>();
 
     for (const event of events) {
-      const baseImpact = this.getEventImpact(event.eventType as BehaviorEventType);
+      const baseImpact = this.getEventImpact(event.eventType);
       const implicitScore = event.implicitScore || 0;
       const combinedImpact = baseImpact * (1 + implicitScore * 0.5);
       const features = this.extractFeatures(event);
 
       for (const [category, key] of Object.entries(features)) {
-        if (!key) {continue;}
+        if (!key) {
+          continue;
+        }
         const compoundKey = `${category}:${key}`;
         const current = weights.get(compoundKey) || {
           delta: 0,
@@ -605,8 +606,8 @@ export class BehaviorTrackerService {
     const existingPrefs = await this.prisma.userPreferenceWeight.findMany({
       where: { userId },
     });
-    const existingMap = new Map(
-      existingPrefs.map((p: any) => [`${p.category}:${p.key}`, p]),
+    const existingMap = new Map<string, any>(
+      existingPrefs.map((p) => [`${p.category}:${p.key}`, p])
     );
 
     const now = new Date();
@@ -623,34 +624,31 @@ export class BehaviorTrackerService {
       if (!category || !key) {
         continue;
       }
-      const existing = existingMap.get(compoundKey) as any | undefined;
+      const existing = existingMap.get(compoundKey);
 
       let newWeight: number;
       let trend: "rising" | "stable" | "declining" = "stable";
       let interactionCount = 1;
 
       if (existing) {
-        const decayedWeight = this.applyTimeDecay(
-          Number(existing.weight),
-          existing.updatedAt,
-        );
+        const decayedWeight = this.applyTimeDecay(Number(existing.weight), existing.updatedAt);
         newWeight = Math.min(
-          Math.max(
-            decayedWeight + data.delta * 0.3,
-            this.TIME_DECAY_CONFIG.minWeight,
-          ),
-          this.TIME_DECAY_CONFIG.maxWeight,
+          Math.max(decayedWeight + data.delta * 0.3, this.TIME_DECAY_CONFIG.minWeight),
+          this.TIME_DECAY_CONFIG.maxWeight
         );
-        interactionCount = (existing as Record<string, unknown>).interactionCount as number || 1;
+        interactionCount = ((existing as Record<string, unknown>).interactionCount as number) || 1;
         interactionCount += 1;
 
         const weightChange = newWeight - decayedWeight;
-        if (weightChange > 0.05) {trend = "rising";}
-        else if (weightChange < -0.05) {trend = "declining";}
+        if (weightChange > 0.05) {
+          trend = "rising";
+        } else if (weightChange < -0.05) {
+          trend = "declining";
+        }
       } else {
         newWeight = Math.min(
           Math.max(data.delta, this.TIME_DECAY_CONFIG.minWeight),
-          this.TIME_DECAY_CONFIG.maxWeight,
+          this.TIME_DECAY_CONFIG.maxWeight
         );
         trend = "rising";
       }
@@ -672,7 +670,7 @@ export class BehaviorTrackerService {
             weight: newWeight,
             source: "implicit",
           },
-        }),
+        })
       );
 
       // 收集趋势更新，稍后批量处理
@@ -683,7 +681,7 @@ export class BehaviorTrackerService {
     const allOperations = [
       ...(upserts.length > 0 ? upserts : []),
       ...trendUpdates.map(({ category, key, trend, weight }) =>
-        this.updatePreferenceTrend(userId, category, key, trend, weight),
+        this.updatePreferenceTrend(userId, category, key, trend, weight)
       ),
     ];
 
@@ -696,12 +694,8 @@ export class BehaviorTrackerService {
    * 应用时间衰减
    */
   private applyTimeDecay(currentWeight: number, lastUpdated: Date): number {
-    const daysSinceUpdate =
-      (Date.now() - lastUpdated.getTime()) / (1000 * 60 * 60 * 24);
-    const decayFactor = Math.pow(
-      0.5,
-      daysSinceUpdate / this.TIME_DECAY_CONFIG.halfLifeDays,
-    );
+    const daysSinceUpdate = (Date.now() - lastUpdated.getTime()) / (1000 * 60 * 60 * 24);
+    const decayFactor = Math.pow(0.5, daysSinceUpdate / this.TIME_DECAY_CONFIG.halfLifeDays);
     return currentWeight * decayFactor;
   }
 
@@ -713,7 +707,7 @@ export class BehaviorTrackerService {
     category: string,
     key: string,
     trend: "rising" | "stable" | "declining",
-    weight: number,
+    weight: number
   ): Promise<void> {
     const client = this.redis.getClient();
     const trendKey = `preference:${userId}:${category}:${key}:trend`;
@@ -772,10 +766,18 @@ export class BehaviorTrackerService {
 
     // 从metadata中提取
     if (event.metadata) {
-      if (event.metadata.style) {features.style = event.metadata.style;}
-      if (event.metadata.color) {features.color = event.metadata.color;}
-      if (event.metadata.brand) {features.brand = event.metadata.brand;}
-      if (event.metadata.category) {features.category = event.metadata.category;}
+      if (event.metadata.style) {
+        features.style = event.metadata.style;
+      }
+      if (event.metadata.color) {
+        features.color = event.metadata.color;
+      }
+      if (event.metadata.brand) {
+        features.brand = event.metadata.brand;
+      }
+      if (event.metadata.category) {
+        features.category = event.metadata.category;
+      }
     }
 
     // 从targetType推断
@@ -806,9 +808,7 @@ export class BehaviorTrackerService {
   /**
    * 获取用户同意设置
    */
-  private async getUserConsent(
-    userId: string,
-  ): Promise<{ granted: boolean } | null> {
+  private async getUserConsent(userId: string): Promise<{ granted: boolean } | null> {
     return this.prisma.userConsent.findUnique({
       where: {
         userId_consentType: { userId, consentType: "tracking" },
@@ -834,7 +834,7 @@ export class BehaviorTrackerService {
     });
 
     // Map Prisma results to the expected type, converting JsonValue to Record<string, unknown>
-    return events.map((event: any) => ({
+    return events.map((event) => ({
       id: event.id,
       userId: event.userId,
       sessionId: event.sessionId,
@@ -858,7 +858,7 @@ export class BehaviorTrackerService {
    * 获取行为统计
    */
   private async getBehaviorStats(
-    userId: string,
+    userId: string
   ): Promise<{ totalEvents: number; lastEventTime: Date | null }> {
     const [totalResult, lastResult] = await Promise.all([
       this.prisma.userBehaviorEvent.count({ where: { userId } }),
@@ -891,9 +891,13 @@ export class BehaviorTrackerService {
 
     for (const pref of preferences) {
       const item = { key: pref.key, weight: pref.weight };
-      if (pref.category === "style") {result.styles.push(item);}
-      else if (pref.category === "color") {result.colors.push(item);}
-      else if (pref.category === "brand") {result.brands.push(item);}
+      if (pref.category === "style") {
+        result.styles.push(item);
+      } else if (pref.category === "color") {
+        result.colors.push(item);
+      } else if (pref.category === "brand") {
+        result.brands.push(item);
+      }
     }
 
     return result;
@@ -904,7 +908,7 @@ export class BehaviorTrackerService {
    */
   async getTrending(
     type: "items" | "searches",
-    limit: number = 10,
+    limit: number = 10
   ): Promise<Array<{ id: string; score: number }>> {
     const client = this.redis.getClient();
     const key = type === "items" ? "trending:items" : "trending:searches";

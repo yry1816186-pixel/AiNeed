@@ -1,10 +1,11 @@
-﻿﻿import React from "react";
+﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { RatingBadge } from '../../../design-system/ui/Rating';
+import { RatingBadge } from "../../design-system/ui/Rating";
 import { MatchBadge } from "./MatchBadge";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface ConsultantCardProps {
   id: string;
@@ -85,30 +86,30 @@ const useStyles = createStyles((colors) => ({
   card: {
     backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: Spacing.md,
-    marginBottom: DesignTokens.spacing[3],
+    padding: 16,
+    marginBottom: 12,
     borderWidth: 1,
-    borderColor: colors.backgroundTertiary,
+    borderColor: "colors.backgroundTertiary",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   avatar: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: 48,
+    height: 48,
     borderRadius: 24,
-    marginRight: DesignTokens.spacing[3],
+    marginRight: 12,
   },
   avatarPlaceholder: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: 48,
+    height: 48,
     borderRadius: 24,
-    backgroundColor: colors.primary,
+    backgroundColor: "colors.primary",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: DesignTokens.spacing[3],
+    marginRight: 12,
   },
   avatarPlaceholderText: {
     color: colors.surface,
@@ -121,34 +122,34 @@ const useStyles = createStyles((colors) => ({
   studioName: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: colors.textPrimary,
-    marginBottom: Spacing.xs,
+    color: "colors.textPrimary",
+    marginBottom: 4,
   },
   specialtyRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.xs,
+    gap: 4,
   },
   specialtyBadge: {
-    backgroundColor: DesignTokens.colors.neutral[50],
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: DesignTokens.spacing['0.5'],
+    backgroundColor: "DesignTokens.colors.neutral[50]",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: colors.primaryLight,
+    borderColor: "colors.primaryLight",
   },
   specialtyText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.primary,
+    color: "colors.primary",
   },
   footer: {
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
   },
   ratingRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    marginBottom: Spacing.xs,
+    gap: 8,
+    marginBottom: 4,
   },
   reviewCount: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -161,17 +162,17 @@ const useStyles = createStyles((colors) => ({
   },
   price: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.primary,
-    marginTop: Spacing.xs,
+    color: "colors.primary",
+    marginTop: 4,
   },
   cta: {
     alignSelf: "flex-end",
   },
   ctaText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: colors.primary,
+    color: "colors.primary",
     fontWeight: "500",
   },
-}))
+}));
 
 export default ConsultantCard;

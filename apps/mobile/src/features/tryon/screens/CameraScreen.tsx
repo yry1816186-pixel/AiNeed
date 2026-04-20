@@ -1,25 +1,24 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import {
   launchCameraAsync,
   requestCameraPermissionsAsync,
   requestMediaLibraryPermissionsAsync,
 } from "@/src/polyfills/expo-image-picker";
-import { pickImageSecurely } from '../../../utils/imagePicker';
-import { useCameraPermissions } from '../hooks/useCameraPermissions';
-import { useReferenceLines } from '../../../shared/hooks/useReferenceLines';
-import { usePhotoStore } from '../stores/photoStore';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import { ReferenceLineOverlay } from './components/ReferenceLineOverlay';
-import AlignmentGuide from './components/AlignmentGuide';
-import PhotoQualityFeedback from './components/PhotoQualityFeedback';
-
+import { pickImageSecurely } from "../../../utils/imagePicker";
+import { useCameraPermissions } from "../../hooks/useCameraPermissions";
+import { useReferenceLines } from "../../../hooks/useReferenceLines";
+import { usePhotoStore } from "../stores/photoStore";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { ReferenceLineOverlay } from "../../../components/ReferenceLineOverlay";
+import AlignmentGuide from "../../../components/AlignmentGuide";
+import PhotoQualityFeedback from "../../../components/PhotoQualityFeedback";
+import { flatColors as colors } from "../../../design-system/theme";
 
 const CAPTURE_BUTTON_SIZE = 72;
 const CAPTURE_BUTTON_INNER = 60;
@@ -109,7 +108,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       });
       setShowQualityFeedback(true);
     } catch (e) {
-      console.error('Camera operation failed:', e);
+      console.error("Camera operation failed:", e);
       setQualityResult({
         score: 0,
         isAcceptable: false,
@@ -156,7 +155,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       });
       setShowQualityFeedback(true);
     } catch (e) {
-      console.error('Camera operation failed:', e);
+      console.error("Camera operation failed:", e);
     }
   }, [setCapturedImage, setQualityResult, setShowQualityFeedback]);
 
@@ -283,18 +282,18 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral[900],
+    backgroundColor: DesignTokens.colors.neutral.black,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -304,7 +303,7 @@ const styles = StyleSheet.create({
     color: colors.surface,
   },
   headerSpacer: {
-    width: DesignTokens.spacing[10],
+    width: 40,
   },
   previewContainer: {
     flex: 1,
@@ -318,18 +317,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   controls: {
-    paddingBottom: DesignTokens.spacing[5],
-    paddingTop: Spacing.md,
+    paddingBottom: 20,
+    paddingTop: 16,
   },
   controlsRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-evenly",
-    paddingHorizontal: DesignTokens.spacing[10],
+    paddingHorizontal: 40,
   },
   galleryButton: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: 48,
+    height: 48,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 24,
@@ -357,8 +356,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   flipButton: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: 48,
+    height: 48,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 24,
@@ -368,22 +367,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: DesignTokens.spacing[10],
+    paddingHorizontal: 40,
     backgroundColor: colors.background,
   },
   permissionTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: colors.textPrimary,
-    marginTop: Spacing.lg,
-    marginBottom: DesignTokens.spacing[3],
+    marginTop: 24,
+    marginBottom: 12,
   },
   permissionMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.xl,
+    marginBottom: 32,
   },
   settingsButton: {
     width: "100%",
@@ -401,8 +400,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   laterButton: {
-    marginTop: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    marginTop: 16,
+    paddingVertical: 12,
   },
   laterButtonText: {
     fontSize: DesignTokens.typography.sizes.base,

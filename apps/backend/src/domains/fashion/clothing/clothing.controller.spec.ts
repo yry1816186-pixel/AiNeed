@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from "@nestjs/testing";
-import { ClothingCategory } from '../../../types/prisma-enums';
+import { ClothingCategory } from "../../../../types/prisma-enums";
 
 import { ClothingController } from "./clothing.controller";
 import { ClothingService } from "./clothing.service";
@@ -98,7 +98,7 @@ describe("ClothingController", () => {
           category: ClothingCategory.tops,
           minPrice: 100,
           maxPrice: 500,
-        }),
+        })
       );
     });
 
@@ -122,7 +122,7 @@ describe("ClothingController", () => {
           colors: ["red", "blue"],
           sizes: ["M", "L"],
           tags: ["casual", "summer"],
-        }),
+        })
       );
     });
   });

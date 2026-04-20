@@ -1,7 +1,8 @@
-﻿﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface SortBarProps {
   activeSort: string;
@@ -39,12 +40,12 @@ const useStyles = createStyles((colors) => ({
   container: {
     flexDirection: "row",
     justifyContent: "space-around",
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingVertical: 10,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: colors.backgroundTertiary,
+    borderBottomColor: "colors.backgroundTertiary",
   },
-  sortItem: { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs},
+  sortItem: { paddingHorizontal: 8, paddingVertical: 4 },
   sortText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
-  sortTextActive: { color: colors.error, fontWeight: "600" },
-}))
+  sortTextActive: { color: "colors.error", fontWeight: "600" },
+}));

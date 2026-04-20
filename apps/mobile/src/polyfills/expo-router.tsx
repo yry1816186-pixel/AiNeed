@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
+import {
   useNavigation,
   StackActions,
   CommonActions,
@@ -10,7 +10,6 @@ import { navigationRef } from "../navigation/navigationService";
 import type { RootStackParamList } from "../types/navigation";
 
 import React from "react";
-
 
 type NavigationParams = Record<string, unknown>;
 
@@ -65,7 +64,7 @@ export function useRouter() {
     navigate: useCallback(
       (href: string, params?: NavigationParams) => {
         const path = href.replace(/^\//, "");
-        navigation.navigate(path as any, params as any);
+        (navigation.navigate as (name: string, params?: object) => void)(path, params);
       },
       [navigation]
     ),
@@ -127,7 +126,7 @@ export function Link({
 
   const _handlePress = useCallback(() => {
     const path = href.replace(/^\//, "");
-    navigation.navigate(path as never);
+    (navigation.navigate as (name: string, params?: object) => void)(path);
   }, [navigation, href]);
 
   return children;
@@ -168,7 +167,7 @@ export const router = {
     const nav = getNav();
     if (nav) {
       const path = href.replace(/^\//, "");
-      nav.navigate(path as any, params as any);
+      (nav.navigate as (name: string, params?: object) => void)(path, params);
     }
   },
   replace: (href: string, params?: NavigationParams) => {

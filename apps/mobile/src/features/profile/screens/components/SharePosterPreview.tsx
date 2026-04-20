@@ -18,9 +18,12 @@ import Animated, {
   withSpring,
   runOnJS,
 } from "react-native-reanimated";
-import { DesignTokens, Spacing, Shadows, spacing, typography, shadows } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-
+import { colors } from "@/src/theme/tokens/colors";
+import { typography } from "@/src/theme/tokens/typography";
+import { spacing } from "@/src/theme/tokens/spacing";
+import { shadows } from "@/src/theme/tokens/shadows";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface SharePosterPreviewProps {
   nickname: string;
@@ -212,8 +215,8 @@ const useStyles = createStyles((colors) => ({
     paddingTop: spacing.aliases.xl,
   },
   avatarCircle: {
-    width: Spacing['3xl'],
-    height: Spacing['3xl'],
+    width: 64,
+    height: 64,
     borderRadius: 32,
     backgroundColor: "rgba(255,255,255,0.3)",
     alignItems: "center",
@@ -223,8 +226,8 @@ const useStyles = createStyles((colors) => ({
     overflow: "hidden",
   },
   avatarImage: {
-    width: Spacing['3xl'],
-    height: Spacing['3xl'],
+    width: 64,
+    height: 64,
     borderRadius: 32,
   },
   avatarInitial: {
@@ -256,7 +259,7 @@ const useStyles = createStyles((colors) => ({
     paddingHorizontal: spacing.aliases.sm,
     paddingVertical: spacing.scale[1],
     borderRadius: spacing.borderRadius.full,
-    gap: Spacing.xs,
+    gap: 4,
   },
   infoChipText: {
     fontSize: typography.fontSize.xs,
@@ -332,7 +335,7 @@ const useStyles = createStyles((colors) => ({
     color: colors.neutral[700],
   },
   actionDivider: {
-    height: Spacing.sm,
+    height: 8,
     backgroundColor: colors.neutral[100],
   },
   actionCancel: {
@@ -344,6 +347,6 @@ const useStyles = createStyles((colors) => ({
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[400],
   },
-}))
+}));
 
 export default SharePosterPreview;

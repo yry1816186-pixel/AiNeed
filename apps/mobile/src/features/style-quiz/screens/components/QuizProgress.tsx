@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+﻿import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
-import { Colors, Spacing, BorderRadius } from '../../../../design-system/theme';
+import { Colors, Spacing, BorderRadius } from "../../../design-system/theme";
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface QuizProgressProps {
   currentStep: number;
@@ -9,6 +10,8 @@ interface QuizProgressProps {
 }
 
 export const QuizProgress: React.FC<QuizProgressProps> = ({ currentStep, totalSteps }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const progressAnim = React.useRef(new Animated.Value(0)).current;
   const progress = totalSteps > 0 ? currentStep / totalSteps : 0;
 
@@ -60,7 +63,7 @@ export const QuizProgress: React.FC<QuizProgressProps> = ({ currentStep, totalSt
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     paddingHorizontal: Spacing[5],
     paddingVertical: Spacing[3],
@@ -76,34 +79,34 @@ const styles = StyleSheet.create({
     gap: Spacing[1],
   },
   dot: {
-    width: Spacing.sm,
-    height: Spacing.sm,
+    width: 8,
+    height: 8,
     borderRadius: 4,
-    backgroundColor: Colors.neutral[300],
+    backgroundColor: colors.neutral[300],
   },
   dotCompleted: {
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
   },
   dotCurrent: {
-    backgroundColor: Colors.primary[500],
-    width: DesignTokens.spacing['2.5'],
-    height: DesignTokens.spacing['2.5'],
+    backgroundColor: colors.primary[500],
+    width: 10,
+    height: 10,
     borderRadius: 5,
   },
   stepText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
   },
   barBackground: {
-    height: Spacing.xs,
+    height: 4,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.neutral[200],
+    backgroundColor: colors.neutral[200],
     overflow: "hidden",
   },
   barFill: {
     height: "100%",
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
   },
-});
+}));

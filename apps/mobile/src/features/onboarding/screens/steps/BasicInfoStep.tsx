@@ -1,10 +1,10 @@
-﻿﻿﻿﻿﻿import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from "react-native";
-import { Ionicons } from '../../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../../../polyfills/expo-vector-icons";
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, flatColors } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-import type { OnboardingFormData } from '../../../../stores/onboardingStore';
+import { Colors, Spacing, BorderRadius, flatColors } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+import type { OnboardingFormData } from "../../../../stores/onboardingStore";
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface BasicInfoStepProps {
@@ -159,131 +159,133 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
   );
 };
 
-const useStyles = createStyles((colors) => StyleSheet.create({
-  stepContent: {
-    flex: 1,
-  },
-  stepHeader: {
-    paddingHorizontal: Spacing[5],
-    paddingTop: Spacing[6],
-    paddingBottom: Spacing[4],
-  },
-  stepTitle: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
-    fontWeight: "700",
-    color: flatColors.textPrimary,
-    letterSpacing: -0.5,
-    lineHeight: 34,
-  },
-  stepSubtitle: {
-    fontSize: DesignTokens.typography.sizes.base,
-    color: flatColors.textSecondary,
-    marginTop: Spacing[2],
-    lineHeight: 22,
-  },
-  scrollContent: {
-    paddingHorizontal: Spacing[5],
-    paddingBottom: Spacing[6],
-  },
-  section: {
-    marginBottom: Spacing[5],
-  },
-  labelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: Spacing[3],
-    gap: Spacing[1],
-  },
-  sectionLabel: {
-    fontSize: DesignTokens.typography.sizes.sm,
-    fontWeight: "500",
-    color: flatColors.textSecondary,
-  },
-  requiredMark: {
-    fontSize: DesignTokens.typography.sizes.sm,
-    color: flatColors.error,
-  },
-  optionalMark: {
-    fontSize: DesignTokens.typography.sizes.sm,
-    color: flatColors.textTertiary,
-    marginLeft: Spacing[1],
-  },
-  genderRow: {
-    flexDirection: "row",
-    gap: Spacing[3],
-  },
-  genderCard: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: Colors.neutral[50],
-    borderRadius: BorderRadius.xl,
-    paddingVertical: Spacing[4],
-    gap: Spacing[2],
-  },
-  genderCardSelected: {
-    backgroundColor: flatColors.primary,
-  },
-  genderLabel: {
-    fontSize: DesignTokens.typography.sizes.base,
-    fontWeight: "500",
-    color: flatColors.textSecondary,
-  },
-  genderLabelSelected: {
-    color: flatColors.surface,
-  },
-  ageScrollContent: {
-    gap: Spacing[2],
-    paddingVertical: Spacing[1],
-  },
-  agePill: {
-    backgroundColor: Colors.neutral[50],
-    borderRadius: BorderRadius.full,
-    paddingHorizontal: Spacing[5],
-    paddingVertical: Spacing[3],
-  },
-  agePillSelected: {
-    backgroundColor: flatColors.primary,
-  },
-  agePillText: {
-    fontSize: DesignTokens.typography.sizes.base,
-    fontWeight: "500",
-    color: flatColors.textSecondary,
-  },
-  agePillTextSelected: {
-    color: flatColors.surface,
-  },
-  errorText: {
-    fontSize: DesignTokens.typography.sizes.sm,
-    color: flatColors.error,
-    marginTop: Spacing[2],
-  },
-  inputRow: {
-    flexDirection: "row",
-    gap: Spacing[3],
-  },
-  inputField: {
-    flex: 1,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.neutral[50],
-    borderRadius: BorderRadius.lg,
-    paddingHorizontal: Spacing[3],
-    height: Spacing['2xl'],
-    borderWidth: 1,
-    borderColor: Colors.neutral[200],
-    gap: Spacing[2],
-  },
-  textInput: {
-    flex: 1,
-    fontSize: DesignTokens.typography.sizes.md,
-    color: flatColors.textPrimary,
-    padding: 0,
-  },
-  inputUnit: {
-    fontSize: DesignTokens.typography.sizes.base,
-    color: flatColors.textTertiary,
-  },
-}));
+const useStyles = createStyles((colors) =>
+  StyleSheet.create({
+    stepContent: {
+      flex: 1,
+    },
+    stepHeader: {
+      paddingHorizontal: Spacing[5],
+      paddingTop: Spacing[6],
+      paddingBottom: Spacing[4],
+    },
+    stepTitle: {
+      fontSize: DesignTokens.typography.sizes["2xl"],
+      fontWeight: "700",
+      color: flatColors.textPrimary,
+      letterSpacing: -0.5,
+      lineHeight: 34,
+    },
+    stepSubtitle: {
+      fontSize: DesignTokens.typography.sizes.base,
+      color: flatColors.textSecondary,
+      marginTop: Spacing[2],
+      lineHeight: 22,
+    },
+    scrollContent: {
+      paddingHorizontal: Spacing[5],
+      paddingBottom: Spacing[6],
+    },
+    section: {
+      marginBottom: Spacing[5],
+    },
+    labelRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: Spacing[3],
+      gap: Spacing[1],
+    },
+    sectionLabel: {
+      fontSize: DesignTokens.typography.sizes.sm,
+      fontWeight: "500",
+      color: flatColors.textSecondary,
+    },
+    requiredMark: {
+      fontSize: DesignTokens.typography.sizes.sm,
+      color: flatColors.error,
+    },
+    optionalMark: {
+      fontSize: DesignTokens.typography.sizes.sm,
+      color: flatColors.textTertiary,
+      marginLeft: Spacing[1],
+    },
+    genderRow: {
+      flexDirection: "row",
+      gap: Spacing[3],
+    },
+    genderCard: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.neutral[50],
+      borderRadius: BorderRadius.xl,
+      paddingVertical: Spacing[4],
+      gap: Spacing[2],
+    },
+    genderCardSelected: {
+      backgroundColor: flatColors.primary,
+    },
+    genderLabel: {
+      fontSize: DesignTokens.typography.sizes.base,
+      fontWeight: "500",
+      color: flatColors.textSecondary,
+    },
+    genderLabelSelected: {
+      color: flatColors.surface,
+    },
+    ageScrollContent: {
+      gap: Spacing[2],
+      paddingVertical: Spacing[1],
+    },
+    agePill: {
+      backgroundColor: colors.neutral[50],
+      borderRadius: BorderRadius.full,
+      paddingHorizontal: Spacing[5],
+      paddingVertical: Spacing[3],
+    },
+    agePillSelected: {
+      backgroundColor: flatColors.primary,
+    },
+    agePillText: {
+      fontSize: DesignTokens.typography.sizes.base,
+      fontWeight: "500",
+      color: flatColors.textSecondary,
+    },
+    agePillTextSelected: {
+      color: flatColors.surface,
+    },
+    errorText: {
+      fontSize: DesignTokens.typography.sizes.sm,
+      color: flatColors.error,
+      marginTop: Spacing[2],
+    },
+    inputRow: {
+      flexDirection: "row",
+      gap: Spacing[3],
+    },
+    inputField: {
+      flex: 1,
+    },
+    inputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.neutral[50],
+      borderRadius: BorderRadius.lg,
+      paddingHorizontal: Spacing[3],
+      height: Spacing["2xl"],
+      borderWidth: 1,
+      borderColor: colors.neutral[200],
+      gap: Spacing[2],
+    },
+    textInput: {
+      flex: 1,
+      fontSize: DesignTokens.typography.sizes.md,
+      color: flatColors.textPrimary,
+      padding: 0,
+    },
+    inputUnit: {
+      fontSize: DesignTokens.typography.sizes.base,
+      color: flatColors.textTertiary,
+    },
+  })
+);

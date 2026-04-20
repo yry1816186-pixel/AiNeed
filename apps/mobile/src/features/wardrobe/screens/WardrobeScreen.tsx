@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
+﻿import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import {
   View,
   Text,
@@ -16,15 +16,15 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useScreenTracking } from '../../../hooks/useAnalytics';
-import { useTranslation } from '../../../i18n';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { clothingApi } from '../../../services/api/clothing.api';
-import { outfitApi } from '../../../services/api/outfit.api';
-import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from '../../../types/clothing';
-import type { RootStackParamList } from '../../../types/navigation';
-import { ImportSheet } from '../components/ImportSheet';
-import { DesignTokens, Spacing, flatColors as staticColors } from '../../../design-system/theme';
+import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useTranslation } from "../../../i18n";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { clothingApi } from "../../../services/api/clothing.api";
+import { outfitApi } from "../../../services/api/outfit.api";
+import { ClothingItem, ClothingCategory, CATEGORY_LABELS } from "../../../types/clothing";
+import type { RootStackParamList } from "../../../types/navigation";
+import { ImportSheet } from "../components/ImportSheet";
+import { DesignTokens, Spacing, flatColors as staticColors } from "../../../design-system/theme";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -48,7 +48,7 @@ interface ClothingGridItemProps {
 }
 
 const ClothingGridItem = memo(function ClothingGridItem({ item, onPress }: ClothingGridItemProps) {
-    const { colors } = useTheme();
+  const { colors } = useTheme();
   const imageSource = item.thumbnailUri || item.imageUri;
   const categoryLabel = CATEGORY_LABELS[item.category] || item.category;
 
@@ -88,6 +88,8 @@ export const WardrobeScreen: React.FC = () => {
   const navigation = useNavigation<Navigation>();
   useScreenTracking("Wardrobe");
   const t = useTranslation();
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
 
   const [stats, setStats] = useState<WardrobeStats>({
     clothingTotal: 0,
@@ -480,7 +482,7 @@ const styles = StyleSheet.create({
     borderBottomColor: staticColors.border,
   },
   headerTitle: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "700",
     color: staticColors.textPrimary,
   },
@@ -526,14 +528,14 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   statNumber: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "700",
     color: staticColors.primary,
   },
   statLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: staticColors.textSecondary,
-    marginTop: DesignTokens.spacing['0.5'],
+    marginTop: DesignTokens.spacing["0.5"],
   },
   searchContainer: {
     flexDirection: "row",
@@ -565,7 +567,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   categoryTab: {
-    paddingHorizontal: DesignTokens.spacing['3.5'],
+    paddingHorizontal: DesignTokens.spacing["3.5"],
     paddingVertical: Spacing.sm,
     borderRadius: 20,
     backgroundColor: staticColors.surface,
@@ -626,8 +628,8 @@ const styles = StyleSheet.create({
   },
   favoriteBadge: {
     position: "absolute",
-    top: DesignTokens.spacing['1.5'],
-    right: DesignTokens.spacing['1.5'],
+    top: DesignTokens.spacing["1.5"],
+    right: DesignTokens.spacing["1.5"],
     width: DesignTokens.spacing[5],
     height: DesignTokens.spacing[5],
     borderRadius: 10,
@@ -641,7 +643,7 @@ const styles = StyleSheet.create({
     color: staticColors.textPrimary,
     paddingHorizontal: Spacing.sm,
     paddingTop: Spacing.sm,
-    paddingBottom: DesignTokens.spacing['0.5'],
+    paddingBottom: DesignTokens.spacing["0.5"],
   },
   gridItemCategory: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -653,7 +655,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing['3xl'],
+    paddingVertical: Spacing["3xl"],
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -668,7 +670,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing['3xl'],
+    paddingVertical: Spacing["3xl"],
   },
   emptyText: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -689,7 +691,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: DesignTokens.spacing[5],
     paddingVertical: DesignTokens.spacing[3],
     marginTop: DesignTokens.spacing[5],
-    gap: DesignTokens.spacing['1.5'],
+    gap: DesignTokens.spacing["1.5"],
   },
   emptyAddButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -700,7 +702,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing['3xl'],
+    paddingVertical: Spacing["3xl"],
     paddingHorizontal: Spacing.xl,
   },
   errorText: {
@@ -712,7 +714,7 @@ const styles = StyleSheet.create({
   retryButton: {
     marginTop: Spacing.md,
     paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing["2.5"],
     borderRadius: 8,
     backgroundColor: staticColors.primary,
   },

@@ -8,32 +8,32 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import type { RootStackParamList } from '../../../types/navigation';
-import type { ClothingItem } from '../../../types/clothing';
-import { clothingApi } from '../../../services/api/clothing.api';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import type { RootStackParamList } from "../../../types/navigation";
+import type { ClothingItem } from "../../types/clothing";
+import { clothingApi } from "../../../services/api/clothing.api";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import {
   cartApi,
   favoriteApi,
   clothingEnhancementApi,
   type SizeRecommendation,
-} from '../../../services/api/commerce.api';
-import { useSizeRecommendationStore } from '../../../stores/sizeRecommendationStore';
-import { ProductImageCarousel } from '../../commerce/components/ProductImageCarousel';
-import { SKUSelector } from '../../commerce/components/SKUSelector';
-import { OutfitRecommendationCards } from '../../commerce/components/OutfitRecommendationCards';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-
+} from "../../../services/api/commerce.api";
+import { useSizeRecommendationStore } from "../../../stores/sizeRecommendationStore";
+import { ProductImageCarousel } from "../../../components/ProductImageCarousel";
+import { SKUSelector } from "../../../components/SKUSelector";
+import { OutfitRecommendationCards } from "../../../components/OutfitRecommendationCards";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type ClothingDetailRouteProp = RouteProp<RootStackParamList, "ClothingDetail">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const ClothingDetailScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<ClothingDetailRouteProp>();
   const { clothingId } = route.params;
@@ -189,7 +189,7 @@ export const ClothingDetailScreen: React.FC = () => {
           <Ionicons
             name={isFavorite ? "heart" : "heart-outline"}
             size={24}
-            color={isFavorite ? colors.like : colors.textPrimary}
+            color={isFavorite ? colors.like : colors.text}
           />
         </TouchableOpacity>
       </View>
@@ -236,7 +236,7 @@ export const ClothingDetailScreen: React.FC = () => {
           </View>
         )}
 
-        <View style={{ height: Spacing['4xl'] }} />
+        <View style={{ height: 80 }} />
       </ScrollView>
 
       <View style={styles.bottomBar}>
@@ -290,43 +290,64 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   backButton: {
-    width: DesignTokens.spacing[9],
-    height: DesignTokens.spacing[9],
+    width: 36,
+    height: 36,
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.text,
+  },
   loadingContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: Spacing.sm},
+  loadingText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textTertiary,
+    marginTop: 8,
+  },
   errorContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[5],
+    padding: 20,
   },
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: DesignTokens.spacing[3], textAlign: "center" },
+  errorText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textTertiary,
+    marginTop: 12,
+    textAlign: "center",
+  },
   retryButton: {
     backgroundColor: colors.error,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 24,
+    paddingVertical: 10,
     borderRadius: 8,
-    marginTop: Spacing.md,
+    marginTop: 16,
   },
-  retryButtonText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.surface },
+  retryButtonText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+    color: colors.surface,
+  },
   content: { flex: 1 },
-  priceSection: { paddingHorizontal: Spacing.md, paddingTop: Spacing.md},
-  priceRow: { flexDirection: "row", alignItems: "baseline", gap: Spacing.sm},
-  currentPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
+  priceSection: { paddingHorizontal: 16, paddingTop: 16 },
+  priceRow: { flexDirection: "row", alignItems: "baseline", gap: 8 },
+  currentPrice: {
+    fontSize: DesignTokens.typography.sizes.xl,
+    fontWeight: "700",
+    color: colors.primary,
+  },
   originalPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
@@ -334,53 +355,74 @@ const styles = StyleSheet.create({
   },
   discountBadge: {
     backgroundColor: colors.primary,
-    paddingHorizontal: DesignTokens.spacing['1.5'],
-    paddingVertical: DesignTokens.spacing['0.5'],
+    paddingHorizontal: 6,
+    paddingVertical: 2,
     borderRadius: 4,
   },
-  discountText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: colors.surface },
+  discountText: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    fontWeight: "600",
+    color: colors.surface,
+  },
   skuTrigger: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   skuTriggerLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  infoSection: { paddingHorizontal: Spacing.md, paddingTop: Spacing.md},
-  itemName: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginBottom: Spacing.xs},
-  itemBrand: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginBottom: Spacing.sm},
-  relatedSection: { paddingHorizontal: Spacing.md, paddingTop: Spacing.sm},
+  infoSection: { paddingHorizontal: 16, paddingTop: 16 },
+  itemName: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginBottom: 4,
+  },
+  itemBrand: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textTertiary,
+    marginBottom: 8,
+  },
+  relatedSection: { paddingHorizontal: 16, paddingTop: 8 },
   bottomBar: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderTopWidth: 1,
     borderTopColor: colors.border,
     backgroundColor: colors.surface,
   },
-  bottomLeft: { flexDirection: "row", gap: Spacing.md},
-  bottomIconButton: { alignItems: "center", gap: DesignTokens.spacing['0.5']},
+  bottomLeft: { flexDirection: "row", gap: 16 },
+  bottomIconButton: { alignItems: "center", gap: 2 },
   bottomIconLabel: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textSecondary },
-  bottomRight: { flex: 1, flexDirection: "row", justifyContent: "flex-end", gap: Spacing.sm},
+  bottomRight: { flex: 1, flexDirection: "row", justifyContent: "flex-end", gap: 8 },
   addToCartButton: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.primary,
   },
-  addToCartText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.primary },
+  addToCartText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+    color: colors.primary,
+  },
   buyNowButton: {
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     borderRadius: 20,
     backgroundColor: colors.primary,
   },
-  buyNowText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.surface },
+  buyNowText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.surface,
+  },
 });
 
 export default ClothingDetailScreen;

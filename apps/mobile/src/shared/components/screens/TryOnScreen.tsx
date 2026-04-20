@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -8,32 +8,30 @@ import {
   ActivityIndicator,
   ScrollView,
   Alert,
-  Dimensions} from "react-native";
+  Dimensions,
+} from "react-native";
 import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp, SlideInLeft } from "react-native-reanimated";
 import Share from "react-native-share";
-import {
-  pickImageSecurely,
-  ImageValidationError} from "../../utils/imagePicker";
-import { photosApi, type PhotoType } from '../../../services/api/photos.api';
-import { tryOnApi, type TryOnResult } from '../../../services/api/tryon.api';
-import { clothingApi } from '../../../services/api/clothing.api';
+import { pickImageSecurely, ImageValidationError } from "../../utils/imagePicker";
+import { photosApi } from "../../services/api/photos.api";
+import { tryOnApi, type TryOnResult } from "../../services/api/tryon.api";
+import { clothingApi } from "../../services/api/clothing.api";
 import {
   wsService,
   type TryOnEventPayload,
-  type TryOnProgressPayload} from "../../services/websocket";
-import type { ClothingItem } from '../../../types/clothing';
+  type TryOnProgressPayload,
+} from "../../services/websocket";
+import type { ClothingItem } from "../../types/clothing";
+import { colors } from "../../theme/tokens/colors";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { typography } from '../../../design-system/theme/tokens/typography';
-import { spacing } from '../../../design-system/theme/tokens/spacing';
-import { shadows } from '../../../design-system/theme/tokens/shadows';
-import { TryOnProgress } from "../../../features/tryon/components/TryOnProgress";
-import {Spacing} from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
-import { WarmPrimaryColors } from '../../../design-system/theme/tokens/colors';
-
+import { typography } from "../../theme/tokens/typography";
+import { spacing } from "../../theme/tokens/spacing";
+import { shadows } from "../../theme/tokens/shadows";
+import { TryOnProgress } from "../loading/TryOnProgress";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -58,8 +56,8 @@ const STYLE_TIPS = [
 type TryOnPhase = "idle" | "uploading" | "queued" | "processing" | "completed" | "failed";
 
 export const TryOnScreen: React.FC = () => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();
@@ -271,11 +269,14 @@ export const TryOnScreen: React.FC = () => {
       if (itemId) {
         createResponse = await tryOnApi.create(photoId, itemId);
       } else {
-        const clothingUploadResponse = await photosApi.upload(clothingImage!, "full_body" as PhotoType);
+        const clothingUploadResponse = await photosApi.upload(clothingImage!, "clothing");
         if (!clothingUploadResponse.success || !clothingUploadResponse.data) {
           throw new Error(clothingUploadResponse.error?.message || "服装图片上传失败");
         }
-        createResponse = await tryOnApi.createWithClothingImage(photoId, clothingUploadResponse.data.id);
+        createResponse = await tryOnApi.createWithClothingImage(
+          photoId,
+          clothingUploadResponse.data.id
+        );
       }
 
       if (!createResponse.success || !createResponse.data) {
@@ -310,7 +311,8 @@ export const TryOnScreen: React.FC = () => {
         title: "寻裳 AI 试衣效果",
         message: "看看我的 AI 虚拟试衣效果！",
         url: imageUrl.startsWith("data:") ? imageUrl : imageUrl,
-        type: imageUrl.startsWith("data:image/png") ? "image/png" : "image/jpeg"});
+        type: imageUrl.startsWith("data:image/png") ? "image/png" : "image/jpeg",
+      });
     } catch (error: unknown) {
       // User cancelled sharing - not an error
       if (error instanceof Error && error.message?.includes("cancel")) {
@@ -331,7 +333,8 @@ export const TryOnScreen: React.FC = () => {
       await Share.open({
         title: "保存试衣结果",
         url: imageUrl,
-        type: "image/jpeg"});
+        type: "image/jpeg",
+      });
     } catch (error: unknown) {
       if (error instanceof Error && error.message?.includes("cancel")) {
         return;
@@ -354,7 +357,8 @@ export const TryOnScreen: React.FC = () => {
     queued: "排队等待中...",
     processing: "AI 处理中...",
     completed: "试衣完成！",
-    failed: "试衣失败"};
+    failed: "试衣失败",
+  };
 
   const isProcessing = phase === "uploading" || phase === "queued" || phase === "processing";
   const canStart = personImage && (clothingImage || clothingItem) && !isProcessing;
@@ -362,7 +366,11 @@ export const TryOnScreen: React.FC = () => {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navBackButton} onPress={() => navigation.goBack()} activeOpacity={0.7}>
+        <TouchableOpacity
+          style={styles.navBackButton}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.7}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.neutral[700]} />
         </TouchableOpacity>
         <Text style={styles.navTitle}>AI 虚拟试衣</Text>
@@ -373,7 +381,7 @@ export const TryOnScreen: React.FC = () => {
       <Animated.View entering={FadeInUp.duration(600).springify()}>
         <View style={styles.headerSection}>
           <LinearGradient
-            colors={[colors.gradients.oceanMint?.[0] ?? WarmPrimaryColors.ocean[500], colors.gradients.oceanMint?.[1] ?? WarmPrimaryColors.mint[400]]}
+            colors={[colors.gradients.oceanMint[0], colors.gradients.oceanMint[1]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.headerGradient}
@@ -418,7 +426,7 @@ export const TryOnScreen: React.FC = () => {
             ) : (
               <View style={styles.placeholder}>
                 <View style={styles.placeholderIconContainer}>
-                  <Ionicons name="person-outline" size={40} color={WarmPrimaryColors.ocean[400]} />
+                  <Ionicons name="person-outline" size={40} color={colors.warmPrimary.ocean[400]} />
                 </View>
                 <Text style={styles.placeholderTitle}>点击选择人物照片</Text>
                 <Text style={styles.placeholderSubtitle}>建议：全身照、正面站立、光线充足</Text>
@@ -456,7 +464,7 @@ export const TryOnScreen: React.FC = () => {
             ) : (
               <View style={styles.placeholder}>
                 <View style={styles.placeholderIconContainer}>
-                  <Ionicons name="shirt-outline" size={40} color={WarmPrimaryColors.coral[400]} />
+                  <Ionicons name="shirt-outline" size={40} color={colors.warmPrimary.coral[400]} />
                 </View>
                 <Text style={styles.placeholderTitle}>点击选择服装图片</Text>
                 <Text style={styles.placeholderSubtitle}>支持：上衣、裤子、连衣裙等单品类</Text>
@@ -503,19 +511,17 @@ export const TryOnScreen: React.FC = () => {
         <Animated.View entering={FadeInUp.duration(300)}>
           <TryOnProgress
             currentStep={
-              phase === "uploading" ? 0 :
-              phase === "queued" ? 1 :
-              phase === "processing" ? 2 : -1
+              phase === "uploading" ? 0 : phase === "queued" ? 1 : phase === "processing" ? 2 : -1
             }
             progress={progress / 100}
           />
           <View style={styles.tipContainer}>
-            <Ionicons name="bulb-outline" size={16} color={WarmPrimaryColors.coral[500]} />
+            <Ionicons name="bulb-outline" size={16} color={colors.warmPrimary.coral[500]} />
             <Text style={styles.tipText}>{STYLE_TIPS[currentTip]}</Text>
           </View>
           {timeoutWarning && (
             <View style={styles.timeoutWarning}>
-              <Ionicons name="time-outline" size={16} color={WarmPrimaryColors.ocean[500]} />
+              <Ionicons name="time-outline" size={16} color={colors.warmPrimary.ocean[500]} />
               <Text style={styles.timeoutWarningText}>{timeoutWarning}</Text>
             </View>
           )}
@@ -526,7 +532,7 @@ export const TryOnScreen: React.FC = () => {
       {phase === "failed" && errorMessage && (
         <Animated.View entering={FadeInUp.duration(300)}>
           <View style={styles.errorSection}>
-            <Ionicons name="alert-circle" size={24} color={colors.semantic.error} />
+            <Ionicons name="alert-circle" size={24} color={colors.semantic.error.main} />
             <Text style={styles.errorText}>{errorMessage}</Text>
           </View>
         </Animated.View>
@@ -537,7 +543,7 @@ export const TryOnScreen: React.FC = () => {
         <Animated.View entering={FadeInUp.delay(200).springify()}>
           <View style={styles.resultSection}>
             <View style={styles.resultHeader}>
-              <Ionicons name="checkmark-circle" size={24} color={colors.success} />
+              <Ionicons name="checkmark-circle" size={24} color={colors.warmPrimary.mint[500]} />
               <Text style={styles.resultTitle}>试衣完成！</Text>
             </View>
 
@@ -550,7 +556,7 @@ export const TryOnScreen: React.FC = () => {
               </View>
 
               <View style={styles.arrowContainer}>
-                <Ionicons name="arrow-forward" size={28} color={colors.warmPrimary} />
+                <Ionicons name="arrow-forward" size={28} color={colors.brand.warmPrimary} />
               </View>
 
               <View style={[styles.comparisonCard, styles.comparisonCardAfter]}>
@@ -562,7 +568,8 @@ export const TryOnScreen: React.FC = () => {
                 </View>
                 <Image
                   source={{
-                    uri: result.resultImageDataUri || result.resultImageUrl || personImage!}}
+                    uri: result.resultImageDataUri || result.resultImageUrl || personImage!,
+                  }}
                   style={styles.comparisonImage}
                 />
               </View>
@@ -573,7 +580,7 @@ export const TryOnScreen: React.FC = () => {
                 <Ionicons
                   name="share-social-outline"
                   size={20}
-                  color={colors.info}
+                  color={colors.warmPrimary.ocean[700]}
                 />
                 <Text style={styles.actionButtonTextSecondary}>分享结果</Text>
               </TouchableOpacity>
@@ -583,7 +590,7 @@ export const TryOnScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
             <TouchableOpacity style={styles.tryMoreButton} onPress={handleTryMore}>
-              <Ionicons name="shirt-outline" size={18} color={colors.warmPrimary} />
+              <Ionicons name="shirt-outline" size={18} color={colors.brand.warmPrimary} />
               <Text style={styles.tryMoreButtonText}>试穿更多</Text>
             </TouchableOpacity>
           </View>
@@ -596,93 +603,112 @@ export const TryOnScreen: React.FC = () => {
 const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral[50]},
+    backgroundColor: colors.neutral[50],
+  },
   content: {
     padding: spacing.layout.screenPadding,
-    paddingBottom: DesignTokens.spacing[10]},
+    paddingBottom: 40,
+  },
 
   navBar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: spacing.layout.sectionGap,
-    paddingVertical: Spacing.xs},
+    paddingVertical: 4,
+  },
   navBackButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: colors.neutral[100],
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   navTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
-    color: colors.neutral[900]},
+    color: colors.neutral[900],
+  },
   navPlaceholder: {
-    width: DesignTokens.spacing[10]},
+    width: 40,
+  },
 
   headerSection: {
     marginBottom: spacing.layout.sectionGap,
     borderRadius: spacing.borderRadius["2xl"],
     overflow: "hidden",
-    ...shadows.presets.lg},
+    ...shadows.presets.lg,
+  },
   headerGradient: {
     padding: spacing.layout.modalPadding,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between"},
+    justifyContent: "space-between",
+  },
   headerContent: {
-    flex: 1},
+    flex: 1,
+  },
   headerTitle: {
     fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
     color: colors.textInverse,
-    marginBottom: Spacing.sm},
+    marginBottom: 8,
+  },
   headerSubtitle: {
     fontSize: typography.fontSize.base,
     color: "rgba(255,255,255,0.9)",
     lineHeight: 22,
-    marginBottom: DesignTokens.spacing[3]},
+    marginBottom: 12,
+  },
   headerBadge: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.25)",
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 16,
-    alignSelf: "flex-start"},
+    alignSelf: "flex-start",
+  },
   headerBadgeText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
     color: colors.textInverse,
-    marginLeft: DesignTokens.spacing['1.5']},
+    marginLeft: 6,
+  },
 
   section: {
-    marginBottom: spacing.layout.cardGap},
+    marginBottom: spacing.layout.cardGap,
+  },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['2.5'],
-    marginBottom: DesignTokens.spacing[3]},
+    gap: 10,
+    marginBottom: 12,
+  },
   stepNumber: {
-    width: DesignTokens.spacing[7],
-    height: DesignTokens.spacing[7],
+    width: 28,
+    height: 28,
     borderRadius: 14,
-    backgroundColor: colors.warmPrimary,
+    backgroundColor: colors.brand.warmPrimary,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   stepNumberText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textInverse},
+    color: colors.textInverse,
+  },
   sectionTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.neutral[900]},
+    color: colors.neutral[900],
+  },
   clothingNameHint: {
     fontSize: typography.fontSize.sm,
-    color: colors.info,
-    fontWeight: typography.fontWeight.medium},
+    color: colors.warmPrimary.ocean[600],
+    fontWeight: typography.fontWeight.medium,
+  },
 
   imagePicker: {
     borderRadius: spacing.borderRadius.xl,
@@ -690,16 +716,19 @@ const useStyles = createStyles((colors) => ({
     borderWidth: 2,
     borderColor: colors.neutral[300],
     borderStyle: "dashed",
-    backgroundColor: colors.neutral.white},
+    backgroundColor: colors.neutral.white,
+  },
   imagePickerFilled: {
     borderWidth: 2,
     borderStyle: "solid",
-    borderColor: colors.successLight},
+    borderColor: colors.warmPrimary.mint[300],
+  },
   placeholder: {
     height: 220,
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[5]},
+    padding: 20,
+  },
   placeholderIconContainer: {
     width: 72,
     height: 72,
@@ -707,228 +736,268 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.md},
+    marginBottom: 16,
+  },
   placeholderTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[700],
-    marginTop: DesignTokens.spacing['2.5']},
+    marginTop: 10,
+  },
   placeholderSubtitle: {
     fontSize: typography.fontSize.sm,
     color: colors.neutral[500],
-    marginTop: DesignTokens.spacing['1.5'],
-    textAlign: "center"},
+    marginTop: 6,
+    textAlign: "center",
+  },
   previewImage: {
     width: "100%",
     height: 220,
-    resizeMode: "cover"},
+    resizeMode: "cover",
+  },
   changeButton: {
     position: "absolute",
-    bottom: DesignTokens.spacing[3],
-    right: DesignTokens.spacing[3],
+    bottom: 12,
+    right: 12,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.6)",
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 16,
-    gap: DesignTokens.spacing['1.5']},
+    gap: 6,
+  },
   changeButtonText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textInverse},
+    color: colors.textInverse,
+  },
 
   button: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.warmPrimary,
+    backgroundColor: colors.brand.warmPrimary,
     borderRadius: spacing.borderRadius.xl,
-    paddingVertical: Spacing.md,
-    gap: DesignTokens.spacing['2.5'],
+    paddingVertical: 16,
+    gap: 10,
     ...shadows.presets.lg,
-    marginBottom: Spacing.md},
+    marginBottom: 16,
+  },
   buttonDisabled: {
-    backgroundColor: colors.neutral[300]},
+    backgroundColor: colors.neutral[300],
+  },
   buttonText: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textInverse},
+    color: colors.textInverse,
+  },
   processingContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['2.5']},
+    gap: 10,
+  },
   retryButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.error,
+    backgroundColor: colors.semantic.error.main,
     borderRadius: spacing.borderRadius.xl,
-    paddingVertical: Spacing.md,
-    gap: DesignTokens.spacing['2.5'],
+    paddingVertical: 16,
+    gap: 10,
     ...shadows.presets.lg,
-    marginBottom: Spacing.md},
+    marginBottom: 16,
+  },
 
   progressContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing[3],
-    marginBottom: DesignTokens.spacing[5]},
+    gap: 12,
+    marginBottom: 20,
+  },
   progressBarBg: {
     flex: 1,
-    height: Spacing.sm,
+    height: 8,
     backgroundColor: colors.neutral[200],
     borderRadius: 4,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   progressBarFill: {
     height: "100%",
-    backgroundColor: colors.success,
-    borderRadius: 4},
+    backgroundColor: colors.warmPrimary.mint[500],
+    borderRadius: 4,
+  },
   progressText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
-    color: colors.success},
+    color: colors.warmPrimary.mint[600],
+  },
 
   tipContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    backgroundColor: colors.errorLight,
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    gap: 8,
+    backgroundColor: colors.warmPrimary.coral[50],
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     borderRadius: spacing.borderRadius.lg,
-    marginTop: DesignTokens.spacing[3]},
+    marginTop: 12,
+  },
   tipText: {
     flex: 1,
     fontSize: typography.fontSize.sm,
-    color: colors.error,
-    lineHeight: 20},
+    color: colors.warmPrimary.coral[700],
+    lineHeight: 20,
+  },
   timeoutWarning: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    backgroundColor: colors.infoLight,
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    gap: 8,
+    backgroundColor: colors.warmPrimary.ocean[50],
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     borderRadius: spacing.borderRadius.lg,
-    marginTop: Spacing.sm},
+    marginTop: 8,
+  },
   timeoutWarningText: {
     flex: 1,
     fontSize: typography.fontSize.sm,
-    color: colors.info},
+    color: colors.warmPrimary.ocean[700],
+  },
 
   errorSection: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['2.5'],
-    backgroundColor: colors.errorLight,
-    padding: Spacing.md,
+    gap: 10,
+    backgroundColor: colors.semantic.error.light,
+    padding: 16,
     borderRadius: spacing.borderRadius.lg,
-    marginBottom: Spacing.md},
+    marginBottom: 16,
+  },
   errorText: {
     flex: 1,
     fontSize: typography.fontSize.base,
-    color: colors.error},
+    color: colors.semantic.error.dark,
+  },
 
   resultSection: {
     backgroundColor: colors.neutral.white,
     borderRadius: spacing.borderRadius["2xl"],
     padding: spacing.layout.cardPadding,
-    ...shadows.presets.lg},
+    ...shadows.presets.lg,
+  },
   resultHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    marginBottom: DesignTokens.spacing[5]},
+    gap: 8,
+    marginBottom: 20,
+  },
   resultTitle: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: colors.neutral[900]},
+    color: colors.neutral[900],
+  },
 
   comparisonContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing[3],
-    marginBottom: DesignTokens.spacing[5]},
+    gap: 12,
+    marginBottom: 20,
+  },
   comparisonCard: {
     flex: 1,
     borderRadius: spacing.borderRadius.lg,
     overflow: "hidden",
-    backgroundColor: colors.neutral[100]},
+    backgroundColor: colors.neutral[100],
+  },
   comparisonCardAfter: {
     borderWidth: 2,
-    borderColor: colors.successLight},
+    borderColor: colors.warmPrimary.mint[400],
+  },
   comparisonLabel: {
     backgroundColor: colors.neutral[200],
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs},
+    gap: 4,
+  },
   comparisonLabelAfter: {
-    backgroundColor: colors.success},
+    backgroundColor: colors.warmPrimary.mint[500],
+  },
   comparisonLabelText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.neutral[700]},
+    color: colors.neutral[700],
+  },
   comparisonImage: {
     width: "100%",
     aspectRatio: 3 / 4,
-    resizeMode: "cover"},
+    resizeMode: "cover",
+  },
   arrowContainer: {
-    width: Spacing.xl,
-    height: Spacing.xl,
+    width: 32,
+    height: 32,
     borderRadius: 16,
-    backgroundColor: colors.errorLight,
+    backgroundColor: colors.warmPrimary.coral[50],
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
 
   actionButtons: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3]},
+    gap: 12,
+  },
   actionButtonSecondary: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
+    gap: 8,
     paddingVertical: 13,
     borderRadius: spacing.borderRadius.xl,
-    backgroundColor: colors.infoLight,
+    backgroundColor: colors.warmPrimary.ocean[50],
     borderWidth: 1.5,
-    borderColor: colors.infoLight},
+    borderColor: colors.warmPrimary.ocean[200],
+  },
   actionButtonTextSecondary: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.info},
+    color: colors.warmPrimary.ocean[700],
+  },
   actionButtonPrimary: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
+    gap: 8,
     paddingVertical: 13,
     borderRadius: spacing.borderRadius.xl,
-    backgroundColor: colors.success,
-    ...shadows.presets.md},
+    backgroundColor: colors.warmPrimary.mint[500],
+    ...shadows.presets.md,
+  },
   actionButtonTextPrimary: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textInverse},
+    color: colors.textInverse,
+  },
   tryMoreButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
+    gap: 8,
     paddingVertical: 13,
     borderRadius: spacing.borderRadius.xl,
     backgroundColor: colors.neutral[100],
-    marginTop: DesignTokens.spacing[3],
+    marginTop: 12,
     borderWidth: 1.5,
-    borderColor: colors.neutral[300]},
+    borderColor: colors.neutral[300],
+  },
   tryMoreButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.warmPrimary}}))
+    color: colors.brand.warmPrimary,
+  },
+}));
 
 export default TryOnScreen;

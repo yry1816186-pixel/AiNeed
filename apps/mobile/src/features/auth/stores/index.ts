@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿import { create } from "zustand";
+﻿import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { secureStorage, SECURE_STORAGE_KEYS } from "../../../utils/secureStorage";
@@ -44,7 +44,9 @@ const secureStorageAdapter: StateStorage = {
           refreshToken: refresh,
           user: userStr ? JSON.parse(userStr) : null,
           isAuthenticated: !!token,
-          onboardingCompleted: userStr ? (JSON.parse(userStr) as User)?.onboardingCompleted ?? false : false,
+          onboardingCompleted: userStr
+            ? ((JSON.parse(userStr) as User)?.onboardingCompleted ?? false)
+            : false,
           isVip: userStr ? deriveIsVip(JSON.parse(userStr) as User) : false,
         },
         version: 0,
@@ -302,7 +304,7 @@ export const useAuthStore = create<AuthState>()(
           await persistTokens(newAccess, newRefresh);
 
           const meResponse = await apiClient.get<User>("/auth/me");
-          const updatedUser = meResponse.success ? meResponse.data ?? get().user : get().user;
+          const updatedUser = meResponse.success ? (meResponse.data ?? get().user) : get().user;
           set({
             accessToken: newAccess,
             token: newAccess,

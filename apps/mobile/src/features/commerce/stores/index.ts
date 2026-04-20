@@ -1,8 +1,6 @@
-﻿﻿﻿﻿﻿﻿import { create } from "zustand";
+﻿import { create } from "zustand";
 
 import { couponApi, type UserCoupon } from "../../../services/api/commerce.api";
-
-export { useCartStore } from "./cart.store";
 
 interface CouponStore {
   availableCoupons: UserCoupon[];
@@ -185,9 +183,7 @@ export const useOrderStore = create<OrderState>((set) => ({
     try {
       // Stub - will be connected to API
       set((state) => ({
-        orders: state.orders.map((o) =>
-          o.id === id ? { ...o, status: "cancelled" as const } : o
-        ),
+        orders: state.orders.map((o) => (o.id === id ? { ...o, status: "cancelled" as const } : o)),
       }));
     } catch {
       set({ error: "Failed to cancel order" });

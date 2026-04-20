@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
-import { Snackbar } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from "react-native";
+import { Snackbar } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { useNotificationStore } from '../stores/notificationStore';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import type { RootStackParamList } from '../../../types/navigation';
-
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useNotificationStore } from "../stores/notificationStore";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, Spacing } from "../../../design-system/theme";
+import type { RootStackParamList } from "../../../types/navigation";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -49,10 +49,11 @@ const CATEGORY_TOGGLES: CategoryToggle[] = [
 ];
 
 export const NotificationSettingsScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const { settings, settingsLoading, fetchSettings, updateSettings } = useNotificationStore();
-  const error = useNotificationStore(state => state.error);
-  const clearError = useNotificationStore(state => state.clearError);
+  const error = useNotificationStore((state) => state.error);
+  const clearError = useNotificationStore((state) => state.clearError);
 
   useEffect(() => {
     void fetchSettings();
@@ -154,11 +155,7 @@ export const NotificationSettingsScreen: React.FC = () => {
               ]}
             >
               <View style={[styles.categoryIcon, { backgroundColor: colors.primary + "15" }]}>
-                <Ionicons
-                  name={toggle.icon as "bag-outline"}
-                  size={20}
-                  color={colors.primary}
-                />
+                <Ionicons name={toggle.icon as "bag-outline"} size={20} color={colors.primary} />
               </View>
               <View style={styles.settingInfo}>
                 <Text style={styles.settingTitle}>{toggle.title}</Text>
@@ -236,7 +233,7 @@ export const NotificationSettingsScreen: React.FC = () => {
         visible={!!error}
         onDismiss={clearError}
         duration={3000}
-        action={{ label: '关闭', onPress: clearError }}
+        action={{ label: "关闭", onPress: clearError }}
       >
         {error}
       </Snackbar>
@@ -263,7 +260,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
   placeholder: { width: DesignTokens.spacing[10] },
   content: { flex: 1 },
   sectionTitle: {
@@ -293,8 +294,16 @@ const styles = StyleSheet.create({
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
   settingInfo: { flex: 1 },
-  settingTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.textPrimary },
-  settingDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, marginTop: DesignTokens.spacing['0.5']},
+  settingTitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "500",
+    color: colors.textPrimary,
+  },
+  settingDesc: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.textSecondary,
+    marginTop: DesignTokens.spacing["0.5"],
+  },
   categoryIcon: {
     width: DesignTokens.spacing[9],
     height: DesignTokens.spacing[9],
@@ -314,7 +323,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   timeValue: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "600",
     color: colors.textPrimary,
   },

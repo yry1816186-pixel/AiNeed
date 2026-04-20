@@ -13,20 +13,14 @@ export class HairAnalysisService {
   /**
    * 发型推荐（基于脸型）
    */
-  async recommendHairstyle(
-    faceShape: FaceShape,
-    gender: Gender,
-  ): Promise<HairRecommendation[]> {
-    const recommendations = this.getRecommendationsByFaceShape(
-      faceShape,
-      gender,
-    );
+  async recommendHairstyle(faceShape: FaceShape, gender: Gender): Promise<HairRecommendation[]> {
+    const recommendations = this.getRecommendationsByFaceShape(faceShape, gender);
     return recommendations;
   }
 
   private getRecommendationsByFaceShape(
     faceShape: FaceShape,
-    gender: Gender,
+    gender: Gender
   ): HairRecommendation[] {
     const maleRecommendations: Record<FaceShape, HairRecommendation[]> = {
       oval: [
@@ -121,7 +115,7 @@ export class HairAnalysisService {
     };
 
     return gender === "male"
-      ? maleRecommendations[faceShape] ?? maleRecommendations.oval!
-      : femaleRecommendations[faceShape] ?? femaleRecommendations.oval!;
+      ? (maleRecommendations[faceShape] ?? maleRecommendations.oval)
+      : (femaleRecommendations[faceShape] ?? femaleRecommendations.oval);
   }
 }

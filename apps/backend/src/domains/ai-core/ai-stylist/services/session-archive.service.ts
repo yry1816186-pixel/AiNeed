@@ -35,11 +35,7 @@ export class SessionArchiveService {
    * @param year 年份
    * @param month 月份 (1-12)
    */
-  async getCalendarDays(
-    userId: string,
-    year: number,
-    month: number,
-  ): Promise<CalendarDay[]> {
+  async getCalendarDays(userId: string, year: number, month: number): Promise<CalendarDay[]> {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 1); // 下月1号
 
@@ -64,7 +60,7 @@ export class SessionArchiveService {
     for (const session of sessions) {
       const dateKey = session.createdAt.toISOString().slice(0, 10); // YYYY-MM-DD
       const payload = session.payload as Record<string, unknown> | null;
-      const hasPlan = !!(payload?.result);
+      const hasPlan = !!payload?.result;
 
       const existing = dayMap.get(dateKey);
       if (existing) {
@@ -88,7 +84,7 @@ export class SessionArchiveService {
    */
   async getSessionsByDate(
     userId: string,
-    date: string, // YYYY-MM-DD
+    date: string // YYYY-MM-DD
   ): Promise<ArchivedSession[]> {
     const startDate = new Date(date);
     const endDate = new Date(date);
@@ -112,14 +108,14 @@ export class SessionArchiveService {
       orderBy: { createdAt: "desc" },
     });
 
-    return sessions.map((s: { id: string; status: string; payload: unknown; createdAt: Date; updatedAt: Date }): ArchivedSession => {
+    return sessions.map((s: any): ArchivedSession => {
       const payload = s.payload as Record<string, unknown> | null;
-      const goalValue = payload ? (payload).goal : undefined;
+      const goalValue = payload ? payload.goal : undefined;
       return {
         id: s.id,
         status: s.status,
         goal: typeof goalValue === "string" ? goalValue : undefined,
-        hasOutfitPlan: !!(payload?.result),
+        hasOutfitPlan: !!payload?.result,
         createdAt: s.createdAt.toISOString(),
         updatedAt: s.updatedAt.toISOString(),
       };

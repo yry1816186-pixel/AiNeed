@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+﻿import React, { useState, useEffect, useCallback, useRef } from "react";
 import { StyleSheet, Alert, useWindowDimensions } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useScreenTracking } from '../../../hooks/useAnalytics';
-import { useTranslation } from '../../../i18n';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { communityApi } from '../../../services/api/community.api';
-import { TrendingCard } from '../components/TrendingCard';
-import { CreatePostModal } from '../components/CreatePostModal';
-import type { PostCardData } from '../components/PostMasonryCard';
-import { CommunityHeader } from './CommunityHeader';
-import { CommunityFeed } from './CommunityFeed';
-import { CreatePostFab } from './CreatePostFab';
-import { flatColors as colors } from '../../../design-system/theme';
+import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useTranslation } from "../../../i18n";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { communityApi } from "../../../services/api/community.api";
+import { TrendingCard } from "../../../components/community/TrendingCard";
+import { CreatePostModal } from "../../../components/community/CreatePostModal";
+import type { PostCardData } from "../../../components/community/PostMasonryCard";
+import { CommunityHeader } from "./CommunityHeader";
+import { CommunityFeed } from "./CommunityFeed";
+import { CreatePostFab } from "./CreatePostFab";
+import { flatColors as colors } from "../../../design-system/theme";
 
 const TEXT_AREA_HEIGHT = 68;
 
@@ -28,6 +28,7 @@ interface PostData {
 type PostItem = PostCardData;
 
 export const CommunityScreen: React.FC = () => {
+  const { colors } = useTheme();
   useScreenTracking("Community");
   const t = useTranslation();
   const { width: screenWidth } = useWindowDimensions();
@@ -147,17 +148,17 @@ export const CommunityScreen: React.FC = () => {
     }
   }, [tab, hasMore, loading, page, fetchPosts]);
   const onCreate = useCallback(
-    async (title: string, c: string, ct: string) => {
+    async (t: string, c: string, ct: string) => {
       try {
-        const r = await communityApi.createPost({ title, content: c, category: ct });
+        const r = await communityApi.createPost({ title: t, content: c, category: ct });
         if (r.success) {
-          Alert.alert(t?.common?.done || "Done", t?.community?.post || "Posted");
+          Alert.alert(t.common.done, t.community.post);
           void fetchPosts(1, false);
         } else {
-          Alert.alert(t?.common?.confirm || "Confirm", r.error?.message || t?.community?.post || "Error");
+          Alert.alert(t.common.confirm, r.error?.message || t.community.post);
         }
       } catch {
-        Alert.alert(t?.common?.confirm || "Confirm", t?.errors?.serverError || "Server Error");
+        Alert.alert(t.common.confirm, t.errors.serverError);
       }
     },
     [fetchPosts]

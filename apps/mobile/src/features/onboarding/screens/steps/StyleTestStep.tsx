@@ -1,11 +1,18 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
-import { Ionicons } from '../../../../polyfills/expo-vector-icons';
-import { LinearGradient } from '../../../../polyfills/expo-linear-gradient';
+import { Ionicons } from "../../../../polyfills/expo-vector-icons";
+import { LinearGradient } from "../../../../polyfills/expo-linear-gradient";
 import Animated, { SlideInRight } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  flatColors as colors,
+} from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../../design-system/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -88,7 +95,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[4],
   },
   title: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "700",
     color: colors.textPrimary,
     letterSpacing: -0.5,
@@ -130,7 +137,7 @@ const styles = StyleSheet.create({
   },
   featureCard: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     alignItems: "center",

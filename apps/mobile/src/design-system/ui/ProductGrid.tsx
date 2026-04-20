@@ -1,22 +1,14 @@
-﻿﻿﻿import React, { useCallback, memo } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  FlatList,
-} from "react-native";
+import React, { useCallback, memo } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, FlatList } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../design-system/theme";
 import { Rating } from "./Rating";
-import { OptimizedImage } from "../../shared/components/common/OptimizedImage";
-import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
-import { useTheme } from '../../shared/contexts/ThemeContext';
-import { flatColors as colors } from '../theme';
-
+import { OptimizedImage } from "../common/OptimizedImage";
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import { flatColors as colors } from "../theme";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = (SCREEN_WIDTH - Spacing[4] * 2 - Spacing[3]) / 2;
@@ -62,8 +54,11 @@ const ProductCard = memo(function ProductCard({
         {item.image ? (
           <OptimizedImage source={item.image} style={styles.image} resizeMode="cover" />
         ) : (
-          <LinearGradient colors={[DesignTokens.colors.backgrounds.tertiary, DesignTokens.colors.neutral[200], DesignTokens.colors.neutral[100]]} style={styles.image}>
-            <Ionicons name="shirt-outline" size={48} color={Colors.neutral[300]} />
+          <LinearGradient
+            colors={DesignTokens.gradients.brand as unknown as [string, string]}
+            style={styles.image}
+          >
+            <Ionicons name="shirt-outline" size={48} color={colors.neutral[300]} />
           </LinearGradient>
         )}
         {onFavorite && (
@@ -71,7 +66,7 @@ const ProductCard = memo(function ProductCard({
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
               size={16}
-              color={isFavorite ? Colors.rose[500] : Colors.neutral[400]}
+              color={isFavorite ? Colors.rose[500] : colors.neutral[400]}
             />
           </TouchableOpacity>
         )}
@@ -125,7 +120,7 @@ export const ProductGrid = memo(function ProductGrid({
   onItemPress,
   onFavorite,
   favorites,
-  loading = false,
+  _loading = false,
   onEndReached,
 }: ProductGridProps) {
   const renderItem = useCallback(
@@ -162,7 +157,10 @@ interface HorizontalProductListProps {
   onItemPress?: (item: Product) => void;
 }
 
-export const HorizontalProductList = memo(function HorizontalProductList({ products, onItemPress }: HorizontalProductListProps) {
+export const HorizontalProductList = memo(function HorizontalProductList({
+  products,
+  onItemPress,
+}: HorizontalProductListProps) {
   const renderItem = useCallback(
     ({ item }: { item: Product }) => (
       <TouchableOpacity
@@ -175,10 +173,10 @@ export const HorizontalProductList = memo(function HorizontalProductList({ produ
             <OptimizedImage source={item.image} style={styles.horizontalImage} resizeMode="cover" />
           ) : (
             <LinearGradient
-              colors={[DesignTokens.colors.backgrounds.tertiary, DesignTokens.colors.neutral[200], DesignTokens.colors.neutral[100]]}
+              colors={DesignTokens.gradients.brand as unknown as [string, string]}
               style={styles.horizontalImage}
             >
-              <Ionicons name="shirt-outline" size={40} color={Colors.neutral[300]} />
+              <Ionicons name="shirt-outline" size={40} color={colors.neutral[300]} />
             </LinearGradient>
           )}
         </View>
@@ -202,7 +200,7 @@ export const HorizontalProductList = memo(function HorizontalProductList({ produ
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   listContent: {
     padding: Spacing[4],
   },
@@ -211,7 +209,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: CARD_WIDTH,
-    backgroundColor: Colors.neutral[0],
+    backgroundColor: colors.neutral[0],
     borderRadius: BorderRadius.xl,
     overflow: "hidden",
     marginBottom: Spacing[3],
@@ -231,8 +229,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing[2],
     right: Spacing[2],
-    width: Spacing.xl,
-    height: Spacing.xl,
+    width: 32,
+    height: 32,
     borderRadius: 16,
     backgroundColor: "rgba(255, 255, 255, 0.95)",
     justifyContent: "center",
@@ -243,14 +241,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing[2],
     left: Spacing[2],
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     paddingHorizontal: Spacing[2],
     paddingVertical: Spacing[0.5],
     borderRadius: BorderRadius.sm,
   },
   discountText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.neutral[0],
+    color: colors.neutral[0],
     fontWeight: "700",
   },
   content: {
@@ -259,14 +257,14 @@ const styles = StyleSheet.create({
   },
   category: {
     ...Typography.caption.sm,
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
     fontWeight: "500",
   },
   name: {
     ...Typography.body.sm,
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
     fontWeight: "600",
-    height: DesignTokens.spacing[10],
+    height: 40,
     lineHeight: 20,
   },
   ratingRow: {
@@ -276,7 +274,7 @@ const styles = StyleSheet.create({
   },
   reviewCount: {
     ...Typography.caption.sm,
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
   },
   priceRow: {
     flexDirection: "row",
@@ -285,12 +283,12 @@ const styles = StyleSheet.create({
   },
   price: {
     ...Typography.heading.sm,
-    color: Colors.primary[600],
+    color: colors.primary[600],
     fontWeight: "800",
   },
   originalPrice: {
     ...Typography.caption.sm,
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
     textDecorationLine: "line-through",
   },
   colorRow: {
@@ -299,11 +297,11 @@ const styles = StyleSheet.create({
     marginTop: Spacing[1],
   },
   colorDot: {
-    width: DesignTokens.spacing[3],
-    height: DesignTokens.spacing[3],
+    width: 12,
+    height: 12,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   horizontalListContent: {
     paddingHorizontal: Spacing[4],
@@ -326,16 +324,16 @@ const styles = StyleSheet.create({
   },
   horizontalName: {
     ...Typography.body.sm,
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
     fontWeight: "500",
   },
   horizontalPrice: {
     ...Typography.body.sm,
-    color: Colors.primary[600],
+    color: colors.primary[600],
     fontWeight: "700",
     marginTop: Spacing[1],
   },
-});
+}));
 
 export { ProductCard };
 export type { Product };

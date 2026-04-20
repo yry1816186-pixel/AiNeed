@@ -1,20 +1,15 @@
-import React from "react";
+﻿import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
-
-// 引入主题令牌
-import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 import {
-  Colors,
-  Spacing,
+  Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
   Typography as ThemeTypography,
-} from '../theme';
-
+} from "../theme";
 
 interface ChatBubbleProps {
   message: string;
@@ -47,7 +42,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
         {/* AI头像 */}
         {!isUser && showAvatar && (
           <LinearGradient
-            colors={[colors.primary, colors.secondary]}
+            colors={[colors.warmPrimary.coral[400], colors.warmPrimary.mint[400]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.avatar}
@@ -61,7 +56,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           {isUser ? (
             // 用户消息：渐变背景
             <LinearGradient
-              colors={[Colors.primary[500], Colors.primary[600]]}
+              colors={[colors.primary[500], colors.primary[600]]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.userGradient}
@@ -85,23 +80,23 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
 
 const useStyles = createStyles((colors) => ({
   container: {
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
     maxWidth: "80%",
     alignSelf: "flex-end",
     flexDirection: "row",
     alignItems: "flex-end",
-    gap: Spacing.sm,
+    gap: 8,
   },
   aiContainer: {
     alignSelf: "flex-start",
   },
   avatar: {
-    width: Spacing.xl,
-    height: Spacing.xl,
+    width: 32,
+    height: 32,
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
 
   // 气泡样式
@@ -117,12 +112,12 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: Colors.neutral.white,
     borderBottomLeftRadius: 4,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
   },
 
   // 用户消息样式
   userGradient: {
-    padding: DesignTokens.spacing['3.5'],
+    padding: 14,
     borderRadius: ThemeBorderRadius["2xl"],
     borderBottomRightRadius: 4,
   },
@@ -134,23 +129,23 @@ const useStyles = createStyles((colors) => ({
   userTimestamp: {
     fontSize: ThemeTypography.sizes.xs,
     color: "rgba(255,255,255,0.7)",
-    marginTop: DesignTokens.spacing['1.5'],
+    marginTop: 6,
     textAlign: "right",
   },
 
   // AI消息样式
   aiMessage: {
     fontSize: ThemeTypography.sizes.base,
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     lineHeight: 22,
-    padding: DesignTokens.spacing['3.5'],
+    padding: 14,
   },
   aiTimestamp: {
     fontSize: ThemeTypography.sizes.xs,
-    color: Colors.neutral[400],
-    marginTop: DesignTokens.spacing['1.5'],
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingBottom: DesignTokens.spacing['2.5'],
+    color: colors.neutral[400],
+    marginTop: 6,
+    paddingHorizontal: 14,
+    paddingBottom: 10,
   },
   triangle: {
     position: "absolute",
@@ -166,6 +161,6 @@ const useStyles = createStyles((colors) => ({
     borderLeftColor: "transparent",
     borderBottomColor: "transparent",
   },
-}))
+}));
 
 export default ChatBubble;

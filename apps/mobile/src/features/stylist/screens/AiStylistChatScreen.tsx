@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
+  StyleSheet,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
@@ -9,26 +10,35 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute, NavigationProp } from '@react-navigation/native';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay } from "react-native-reanimated";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { useTranslation } from '../../../i18n';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  withDelay,
+} from "react-native-reanimated";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { useTranslation } from "../../../i18n";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
-import { SpringConfigs, ListAnimations, Duration } from '../../../design-system/theme/tokens/animations';
-import { useReducedMotion } from '../../../hooks/useReducedMotion';
-import { AIThinkingAnimation } from '../components/AIThinkingAnimation';
-import { TypewriterMessage } from '../components/TypewriterMessage';
-import { useAiStylistStore } from '../stores/aiStylistStore';
-import { useAiStylistChatStore } from '../stores/aiStylistChatStore';
-import { useAnalytics, useScreenTracking, AnalyticsEvents } from '../../../hooks/useAnalytics';
-import type { ChatMessage } from '../stores/aiStylistChatStore';
-import type { StylistStackParamList } from '../../../navigation/types';
-
+import {
+  SpringConfigs,
+  ListAnimations,
+  Duration,
+} from "../../../design-system/theme/tokens/animations";
+import { useReducedMotion } from "../../../hooks/useReducedMotion";
+import { AIThinkingAnimation } from "../../../components/aistylist/AIThinkingAnimation";
+import { TypewriterMessage } from "../../../components/aistylist/TypewriterMessage";
+import { useAiStylistStore } from "../stores/aiStylistStore";
+import { useAiStylistChatStore } from "../stores/aiStylistChatStore";
+import { useAnalytics, useScreenTracking, AnalyticsEvents } from "../../../hooks/useAnalytics";
+import type { ChatMessage } from "../stores/aiStylistChatStore";
+import type { StylistStackParamList } from "../../../navigation/types";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type AiStylistChatRoute = RouteProp<StylistStackParamList, "AiStylistChat">;
 
@@ -61,13 +71,13 @@ const SCENE_BUTTONS = [
 ];
 
 export const AiStylistChatScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp<StylistStackParamList>>();
+  const { colors } = useTheme();
+  const navigation = useNavigation();
   const route = useRoute<AiStylistChatRoute>();
   const sessionId = route.params?.sessionId;
   const { track } = useAnalytics();
   useScreenTracking("AiStylistChat");
-  const { colors, seasonAccent } = useTheme();
-  const styles = useStyles(colors);
+  const { seasonAccent } = useTheme();
   const t = useTranslation();
 
   // 季节强调色，回退到品牌色
@@ -103,7 +113,10 @@ export const AiStylistChatScreen: React.FC = () => {
     }
 
     setInputText("");
-    track(AnalyticsEvents.BUTTON_CLICK, { action: "stylist_send_message", messageLength: text.length });
+    track(AnalyticsEvents.BUTTON_CLICK, {
+      action: "stylist_send_message",
+      messageLength: text.length,
+    });
 
     const userMsg: ChatMessage = {
       id: `user_${Date.now()}`,
@@ -177,17 +190,22 @@ export const AiStylistChatScreen: React.FC = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} accessibilityLabel="返回" accessibilityRole="button">
+    <SafeAreaView style={s.container}>
+      <View style={s.header}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={s.backBtn}
+          accessibilityLabel="返回"
+          accessibilityRole="button"
+        >
           <Ionicons name="chevron-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <View style={styles.headerCenter}>
-          <View style={styles.onlineDot} />
-          <Text style={styles.headerTitle}>{t.navigation.stylist}</Text>
+        <View style={s.headerCenter}>
+          <View style={s.onlineDot} />
+          <Text style={s.headerTitle}>{t.navigation.stylist}</Text>
         </View>
         <TouchableOpacity
-          style={styles.backBtn}
+          style={s.backBtn}
           onPress={() => navigation.navigate("ChatHistory")}
           accessibilityLabel="聊天记录"
           accessibilityRole="button"
@@ -196,37 +214,41 @@ export const AiStylistChatScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      <KeyboardAvoidingView style={s.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView
           ref={scrollViewRef}
-          style={styles.flex}
-          contentContainerStyle={styles.messagesContainer}
+          style={s.flex}
+          contentContainerStyle={s.messagesContainer}
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         >
           {error && (
-            <View style={styles.errorBanner}>
-              <Text style={styles.errorText}>{error}</Text>
-              <TouchableOpacity onPress={clearError} accessibilityLabel="关闭错误提示" accessibilityRole="button">
-                <Text style={styles.errorDismiss}>关闭</Text>
+            <View style={s.errorBanner}>
+              <Text style={s.errorText}>{error}</Text>
+              <TouchableOpacity
+                onPress={clearError}
+                accessibilityLabel="关闭错误提示"
+                accessibilityRole="button"
+              >
+                <Text style={s.errorDismiss}>关闭</Text>
               </TouchableOpacity>
             </View>
           )}
 
           {messages.length === 0 && (
-            <View style={styles.welcomeSection}>
-              <View style={styles.welcomeIcon}>
-              <Ionicons name="sparkles" size={32} color={accentColor} />
-            </View>
-              <Text style={styles.welcomeTitle}>{t.stylist.greeting}</Text>
-              <Text style={styles.welcomeSubtitle}>{t.stylist.askOccasion}</Text>
+            <View style={s.welcomeSection}>
+              <View style={s.welcomeIcon}>
+                <Ionicons name="sparkles" size={32} color={accentColor} />
+              </View>
+              <Text style={s.welcomeTitle}>{t.stylist.greeting}</Text>
+              <Text style={s.welcomeSubtitle}>{t.stylist.askOccasion}</Text>
             </View>
           )}
 
           {messages.map((msg, idx) => renderMessage(msg, idx))}
 
           {isGenerating && (
-            <View style={[styles.messageBubble, styles.assistantBubble]}>
-              <View style={[styles.aiAvatar, { backgroundColor: accentColor }]}>
+            <View style={[s.messageBubble, s.assistantBubble]}>
+              <View style={[s.aiAvatar, { backgroundColor: accentColor }]}>
                 <Ionicons name="sparkles" size={12} color={colors.surface} />
               </View>
               <AIThinkingAnimation />
@@ -235,31 +257,34 @@ export const AiStylistChatScreen: React.FC = () => {
         </ScrollView>
 
         {/* Scene quick buttons */}
-        <View style={styles.sceneRow}>
+        <View style={s.sceneRow}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.sceneScrollContent}
+            contentContainerStyle={s.sceneScrollContent}
           >
             {SCENE_BUTTONS.map((scene) => (
-              <AnimatedSceneButton
+              <TouchableOpacity
                 key={scene.key}
-                scene={scene}
-                accentColor={accentColor}
+                style={[s.sceneButton, { borderColor: accentColor, borderWidth: 1 }]}
                 onPress={() => handleScenePress(scene)}
                 disabled={isGenerating}
-                style={styles.sceneButton}
-                labelStyle={styles.sceneLabel}
-              />
+                accessibilityLabel={scene.label}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: isGenerating }}
+              >
+                <Ionicons name={scene.icon} size={16} color={accentColor} />
+                <Text style={[s.sceneLabel, { color: accentColor }]}>{scene.label}</Text>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
 
         {/* Input area */}
-        <View style={styles.inputRow}>
-          <View style={styles.inputWrapper}>
+        <View style={s.inputRow}>
+          <View style={s.inputWrapper}>
             <TextInput
-              style={styles.input}
+              style={s.input}
               placeholder={t.stylist.askStyle}
               placeholderTextColor={colors.textTertiary}
               value={inputText}
@@ -272,7 +297,7 @@ export const AiStylistChatScreen: React.FC = () => {
             />
           </View>
           <TouchableOpacity
-            style={[styles.sendButton, (!inputText.trim() || isGenerating) && styles.sendButtonDisabled]}
+            style={[s.sendButton, (!inputText.trim() || isGenerating) && s.sendButtonDisabled]}
             onPress={handleSend}
             disabled={!inputText.trim() || isGenerating}
             accessibilityLabel="发送消息"
@@ -295,191 +320,154 @@ export const AiStylistChatScreen: React.FC = () => {
   );
 };
 
-// ============ Dynamic Styles ============
-
-const useStyles = createStyles((c) => ({
-  container: { flex: 1, backgroundColor: c.background },
+const s = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   flex: { flex: 1 },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
-    backgroundColor: c.surface,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: c.border,
+    borderBottomColor: colors.border,
   },
-  headerCenter: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5']},
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: c.textPrimary },
-  onlineDot: { width: Spacing.sm, height: Spacing.sm, borderRadius: 4, backgroundColor: c.success },
-  backBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
-  messagesContainer: { padding: Spacing.md, paddingBottom: Spacing.sm},
-  welcomeSection: { alignItems: "center", paddingVertical: DesignTokens.spacing[10]},
+  headerCenter: { flexDirection: "row", alignItems: "center", gap: 6 },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: colors.text,
+  },
+  onlineDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.success },
+  backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
+  messagesContainer: { padding: 16, paddingBottom: 8 },
+  welcomeSection: { alignItems: "center", paddingVertical: 40 },
   welcomeIcon: {
-    width: Spacing['3xl'],
-    height: Spacing['3xl'],
+    width: 64,
+    height: 64,
     borderRadius: 32,
-    backgroundColor: c.subtleBg,
+    backgroundColor: colors.subtleBg,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.md,
+    marginBottom: 16,
   },
-  welcomeTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: c.textPrimary },
+  welcomeTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.text,
+  },
   welcomeSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: c.textSecondary,
-    marginTop: Spacing.sm,
+    color: colors.textSecondary,
+    marginTop: 8,
     textAlign: "center",
     lineHeight: 20,
-    paddingHorizontal: Spacing.xl,
+    paddingHorizontal: 32,
   },
-  messageBubble: { flexDirection: "row", marginBottom: DesignTokens.spacing[3], alignItems: "flex-end" },
+  messageBubble: { flexDirection: "row", marginBottom: 12, alignItems: "flex-end" },
   userBubble: { justifyContent: "flex-end" },
   assistantBubble: { justifyContent: "flex-start" },
   aiAvatar: {
-    width: DesignTokens.spacing[7],
-    height: DesignTokens.spacing[7],
+    width: 28,
+    height: 28,
     borderRadius: 14,
-    backgroundColor: c.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: Spacing.sm,
+    marginRight: 8,
   },
-  bubbleContent: { maxWidth: "75%", borderRadius: 16, paddingHorizontal: DesignTokens.spacing['3.5'], paddingVertical: DesignTokens.spacing['2.5']},
-  userBubbleContent: { backgroundColor: c.primary, borderBottomRightRadius: 4 },
-  assistantBubbleContent: { backgroundColor: c.surface, borderBottomLeftRadius: 4 },
+  bubbleContent: { maxWidth: "75%", borderRadius: 16, paddingHorizontal: 14, paddingVertical: 10 },
+  userBubbleContent: { backgroundColor: colors.primary, borderBottomRightRadius: 4 },
+  assistantBubbleContent: { backgroundColor: colors.surface, borderBottomLeftRadius: 4 },
   bubbleText: { fontSize: DesignTokens.typography.sizes.base, lineHeight: 20 },
-  userBubbleText: { color: c.surface },
-  assistantBubbleText: { color: c.textPrimary },
+  userBubbleText: { color: colors.surface },
+  assistantBubbleText: { color: colors.text },
   typingBubble: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    backgroundColor: c.surface,
+    gap: 8,
+    backgroundColor: colors.surface,
     borderRadius: 16,
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     borderBottomLeftRadius: 4,
   },
-  typingText: { fontSize: DesignTokens.typography.sizes.sm, color: c.textSecondary },
+  typingText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   errorBanner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: DesignTokens.spacing[3],
-    padding: DesignTokens.spacing['2.5'],
+    marginBottom: 12,
+    padding: 10,
     borderRadius: 10,
-    backgroundColor: c.errorLight,
+    backgroundColor: colors.errorLight,
   },
-  errorText: { fontSize: DesignTokens.typography.sizes.sm, color: c.error, flex: 1 },
-  errorDismiss: { fontSize: DesignTokens.typography.sizes.sm, color: c.error, fontWeight: "600", marginLeft: DesignTokens.spacing[3]},
+  errorText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.error, flex: 1 },
+  errorDismiss: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.error,
+    fontWeight: "600",
+    marginLeft: 12,
+  },
   sceneRow: {
     borderTopWidth: 1,
-    borderTopColor: c.divider,
-    backgroundColor: c.surface,
+    borderTopColor: colors.divider,
+    backgroundColor: colors.surface,
   },
-  sceneScrollContent: { paddingHorizontal: DesignTokens.spacing[3], paddingVertical: Spacing.sm, gap: Spacing.sm},
+  sceneScrollContent: { paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
   sceneButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: c.subtleBg,
+    backgroundColor: colors.subtleBg,
   },
-  sceneLabel: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: c.primary },
+  sceneLabel: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    fontWeight: "500",
+    color: colors.primary,
+  },
   inputRow: {
     flexDirection: "row",
     alignItems: "flex-end",
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
-    backgroundColor: c.surface,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: c.border,
+    borderTopColor: colors.border,
   },
   inputWrapper: {
     flex: 1,
-    backgroundColor: c.background,
+    backgroundColor: colors.background,
     borderRadius: 20,
-    paddingHorizontal: DesignTokens.spacing[3],
+    paddingHorizontal: 12,
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: c.textPrimary, maxHeight: Spacing['4xl'], paddingVertical: Spacing.sm},
+  input: {
+    flex: 1,
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textPrimary,
+    maxHeight: 80,
+    paddingVertical: 8,
+  },
   sendButton: {
-    width: DesignTokens.spacing[9],
-    height: DesignTokens.spacing[9],
+    width: 36,
+    height: 36,
     borderRadius: 18,
-    backgroundColor: c.primary,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: Spacing.sm,
+    marginLeft: 8,
   },
-  sendButtonDisabled: { backgroundColor: c.subtleBg },
-}));
-
-// ============ Animated Scene Button ============
-
-interface AnimatedSceneButtonProps {
-  scene: (typeof SCENE_BUTTONS)[number];
-  accentColor: string;
-  onPress: () => void;
-  disabled: boolean;
-  style: any;
-  labelStyle: any;
-}
-
-const AnimatedSceneButton: React.FC<AnimatedSceneButtonProps> = ({
-  scene,
-  accentColor,
-  onPress,
-  disabled,
-  style,
-  labelStyle,
-}) => {
-  const { reducedMotion } = useReducedMotion();
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePressIn = useCallback(() => {
-    if (!reducedMotion) {
-      scale.value = withSpring(0.95, { damping: 15, stiffness: 400 });
-    }
-  }, [reducedMotion]);
-
-  const handlePressOut = useCallback(() => {
-    if (!reducedMotion) {
-      scale.value = withSpring(1, { damping: 15, stiffness: 400 });
-    }
-  }, [reducedMotion]);
-
-  return (
-    <Animated.View style={animatedStyle}>
-      <TouchableOpacity
-        style={[style, { borderColor: accentColor, borderWidth: 1 }]}
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        disabled={disabled}
-        accessibilityLabel={scene.label}
-        accessibilityRole="button"
-        accessibilityState={{ disabled }}
-      >
-        <Ionicons name={scene.icon} size={16} color={accentColor} />
-        <Text style={[labelStyle, { color: accentColor }]}>{scene.label}</Text>
-      </TouchableOpacity>
-    </Animated.View>
-  );
-};
+  sendButtonDisabled: { backgroundColor: colors.subtleBg },
+});
 
 /** Animated message bubble with staggered entrance and typewriter for AI */
 const AnimatedMessageBubble: React.FC<{ msg: ChatMessage; index: number }> = ({ msg, index }) => {
   const { reducedMotion } = useReducedMotion();
-  const { colors, seasonAccent } = useTheme();
-  const s = useStyles(colors);
+  const { seasonAccent } = useTheme();
   const accentColor = seasonAccent?.accent ?? colors.primary;
   const translateY = useSharedValue(reducedMotion ? 0 : 20);
   const opacity = useSharedValue(reducedMotion ? 1 : 0);
@@ -489,14 +477,8 @@ const AnimatedMessageBubble: React.FC<{ msg: ChatMessage; index: number }> = ({ 
       return;
     }
     const staggerDelay = index * ListAnimations.stagger.delay;
-    translateY.value = withDelay(
-      staggerDelay,
-      withSpring(0, SpringConfigs.gentle)
-    );
-    opacity.value = withDelay(
-      staggerDelay,
-      withTiming(1, { duration: Duration.normal })
-    );
+    translateY.value = withDelay(staggerDelay, withSpring(0, SpringConfigs.gentle));
+    opacity.value = withDelay(staggerDelay, withTiming(1, { duration: Duration.normal }));
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -508,9 +490,7 @@ const AnimatedMessageBubble: React.FC<{ msg: ChatMessage; index: number }> = ({ 
 
   return (
     <Animated.View style={animatedStyle}>
-      <View
-        style={[s.messageBubble, msg.role === "user" ? s.userBubble : s.assistantBubble]}
-      >
+      <View style={[s.messageBubble, msg.role === "user" ? s.userBubble : s.assistantBubble]}>
         {msg.role === "assistant" && (
           <View style={[s.aiAvatar, { backgroundColor: accentColor }]}>
             <Ionicons name="sparkles" size={12} color={colors.surface} />
@@ -526,10 +506,12 @@ const AnimatedMessageBubble: React.FC<{ msg: ChatMessage; index: number }> = ({ 
             <TypewriterMessage
               text={msg.content}
               speed={40}
-              textStyle={[s.bubbleText, s.assistantBubbleText] as any}
+              textStyle={[s.bubbleText, s.assistantBubbleText]}
             />
           ) : (
-            <Text style={[s.bubbleText, msg.role === "user" ? s.userBubbleText : s.assistantBubbleText]}>
+            <Text
+              style={[s.bubbleText, msg.role === "user" ? s.userBubbleText : s.assistantBubbleText]}
+            >
               {msg.content}
             </Text>
           )}

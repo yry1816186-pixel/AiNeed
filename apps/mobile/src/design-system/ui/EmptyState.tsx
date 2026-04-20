@@ -1,4 +1,4 @@
-/**
+﻿/**
  * EmptyState - UI layer re-export from primitives/EmptyState
  *
  * This file re-exports the canonical EmptyState from primitives/EmptyState
@@ -12,9 +12,8 @@ import { Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { Colors, DesignTokens, Spacing, BorderRadius, Typography, gradients } from '../../design-system/theme';
-
-
+import { Colors, Spacing, BorderRadius, Typography, gradients } from "../../design-system/theme";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 // Re-export from primitives for backward compatibility
 export {
@@ -52,10 +51,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onAction,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <Animated.View entering={FadeInUp.duration(600).springify()} style={[styles.container, style]}>
       <LinearGradient
-        colors={[Colors.primary[50], Colors.sage[50]]}
+        colors={[colors.primary[50], Colors.sage[50]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.iconContainer}
@@ -82,7 +83,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     alignItems: "center",
@@ -99,13 +100,13 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.styles.h4,
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     textAlign: "center",
     marginBottom: Spacing.sm,
   },
   subtitle: {
     ...Typography.styles.body,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
     maxWidth: 280,
@@ -116,13 +117,13 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   actionGradient: {
-    paddingVertical: DesignTokens.spacing['3.5'],
-    paddingHorizontal: Spacing.xl,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
   },
   actionLabel: {
     ...Typography.styles.button,
     color: Colors.neutral.white,
   },
-});
+}));
 
 export default EmptyState;

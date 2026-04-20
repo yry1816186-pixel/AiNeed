@@ -14,9 +14,9 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 import { Prisma } from "@prisma/client";
 
-import { AdminGuard } from "../../../common/guards/admin.guard";
-import { PrismaService } from "../../../common/prisma/prisma.service";
-import { RequestWithUser } from "../../../common/types/common.types";
+import { AdminGuard } from "../../../../common/guards/admin.guard";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { RequestWithUser } from "../../../../common/types/common.types";
 import { AuthGuard } from "../../identity/auth/guards/auth.guard";
 import { ContentModerationService } from "../../social/community/content-moderation.service";
 
@@ -34,7 +34,7 @@ import {
 export class AdminCommunityController {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly contentModerationService: ContentModerationService,
+    private readonly contentModerationService: ContentModerationService
   ) {}
 
   @Get("posts")
@@ -121,7 +121,7 @@ export class AdminCommunityController {
   async moderatePost(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: ModeratePostDto,
+    @Body() dto: ModeratePostDto
   ) {
     const post = await this.prisma.communityPost.findUnique({
       where: { id },
@@ -131,13 +131,7 @@ export class AdminCommunityController {
       throw new NotFoundException("Post not found");
     }
 
-    await this.contentModerationService.manualReview(
-      req.user.id,
-      id,
-      "post",
-      dto.action,
-      dto.note,
-    );
+    await this.contentModerationService.manualReview(req.user.id, id, "post", dto.action, dto.note);
 
     return { success: true };
   }
@@ -211,7 +205,7 @@ export class AdminCommunityController {
   async handleReport(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: HandleReportDto,
+    @Body() dto: HandleReportDto
   ) {
     const report = await this.prisma.contentReport.findUnique({
       where: { id },
@@ -238,7 +232,7 @@ export class AdminCommunityController {
         report.contentId,
         report.contentType,
         "reject",
-        dto.note || "Report resolved - content removed",
+        dto.note || "Report resolved - content removed"
       );
     }
 

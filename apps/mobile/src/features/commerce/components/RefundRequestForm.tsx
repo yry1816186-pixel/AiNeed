@@ -1,4 +1,4 @@
-﻿﻿import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,11 +8,10 @@ import {
   Modal,
   ScrollView,
 } from "react-native";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { refundApi } from '../../../services/api/commerce.api';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { refundApi } from "../../../services/api/commerce.api";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface RefundItem {
   id: string;
@@ -160,24 +159,28 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: Spacing.md,
+    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
-  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  title: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
   closeText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
-  body: { padding: Spacing.md},
+  body: { padding: 16 },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: colors.textPrimary,
-    marginBottom: Spacing.sm,
-    marginTop: DesignTokens.spacing[3],
+    marginBottom: 8,
+    marginTop: 12,
   },
-  typeRow: { flexDirection: "row", gap: DesignTokens.spacing[3]},
+  typeRow: { flexDirection: "row", gap: 12 },
   typeButton: {
     flex: 1,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingVertical: 12,
     borderRadius: 10,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
@@ -185,15 +188,15 @@ const useStyles = createStyles((colors) => ({
   typeButtonActive: {
     backgroundColor: "colors.errorLight", // custom color
     borderWidth: 1,
-    borderColor: colors.error, // custom color
+    borderColor: "colors.error", // custom color
   },
   typeText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  typeTextActive: { color: colors.error, fontWeight: "600" }, // custom color
+  typeTextActive: { color: "colors.error", fontWeight: "600" }, // custom color
   reasonRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.sm,
+    gap: 8,
+    paddingVertical: 8,
   },
   radioOuter: {
     width: 18,
@@ -204,20 +207,20 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  radioActive: { borderColor: colors.error }, // custom color
+  radioActive: { borderColor: "colors.error" }, // custom color
   radioInner: {
-    width: Spacing.sm,
-    height: Spacing.sm,
+    width: 8,
+    height: 8,
     borderRadius: 4,
-    backgroundColor: colors.error, // custom color
+    backgroundColor: "colors.error", // custom color
   },
   reasonText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
   textArea: {
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     borderRadius: 8,
-    padding: DesignTokens.spacing[3],
-    height: Spacing['4xl'],
+    padding: 12,
+    height: 80,
     textAlignVertical: "top",
     color: colors.textPrimary,
   },
@@ -225,16 +228,16 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
     textAlign: "right",
-    marginTop: Spacing.xs,
+    marginTop: 4,
   },
   amountText: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: colors.error, // custom color
+    color: "colors.error", // custom color
   },
   submitButton: {
-    backgroundColor: colors.error, // custom color
-    paddingVertical: Spacing.md,
+    backgroundColor: "colors.error", // custom color
+    paddingVertical: 16,
     alignItems: "center",
   },
   submitText: {
@@ -242,4 +245,4 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
     color: colors.textInverse,
   },
-}))
+}));

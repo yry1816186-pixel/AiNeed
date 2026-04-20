@@ -29,9 +29,7 @@ import {
   Inject,
   Optional,
 } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const { PrismaClientKnownRequestError } = require("@prisma/client/runtime/library") as any;
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Request, Response } from "express";
 
 import {
@@ -119,8 +117,6 @@ const SENSITIVE_FIELDS = [
   "email",
 ];
 
-type PrismaClientKnownRequestErrorType = InstanceType<typeof PrismaClientKnownRequestError>;
-
 /**
  * 全局异常过滤器
  *
@@ -144,7 +140,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     @Optional()
     private readonly logger?: StructuredLoggerService,
     @Optional()
-    private readonly sentryService?: SentryService,
+    private readonly sentryService?: SentryService
   ) {
     this.isProduction = process.env.NODE_ENV === "production";
     if (this.logger) {
@@ -217,7 +213,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     exception: ValidationException,
     timestamp: string,
     path: string,
-    requestId: string | undefined,
+    requestId: string | undefined
   ): ErrorResponse {
     const response: ErrorResponse = {
       code: exception.code,
@@ -248,7 +244,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     exception: NotFoundException,
     timestamp: string,
     path: string,
-    requestId: string | undefined,
+    requestId: string | undefined
   ): ErrorResponse {
     const response: ErrorResponse = {
       code: exception.code,
@@ -275,7 +271,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     exception: ForbiddenException,
     timestamp: string,
     path: string,
-    requestId: string | undefined,
+    requestId: string | undefined
   ): ErrorResponse {
     const response: ErrorResponse = {
       code: exception.code,
@@ -302,7 +298,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     exception: BusinessException,
     timestamp: string,
     path: string,
-    requestId: string | undefined,
+    requestId: string | undefined
   ): ErrorResponse {
     const response: ErrorResponse = {
       code: exception.businessCode,
@@ -330,10 +326,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
    * 处理数据库错误 (Prisma)
    */
   private handleDatabaseError(
-    exception: PrismaClientKnownRequestErrorType,
+    exception: PrismaClientKnownRequestError,
     timestamp: string,
     path: string,
-    requestId: string | undefined,
+    requestId: string | undefined
   ): ErrorResponse {
     let message = "数据库操作失败";
     let code = 50001;
@@ -394,7 +390,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     exception: HttpException,
     timestamp: string,
     path: string,
-    requestId: string | undefined,
+    requestId: string | undefined
   ): ErrorResponse {
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
@@ -476,7 +472,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     exception: unknown,
     timestamp: string,
     path: string,
-    requestId: string | undefined,
+    requestId: string | undefined
   ): ErrorResponse {
     const error = exception as Error;
 
@@ -533,11 +529,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   /**
    * 记录错误日志（带敏感信息脱敏）
    */
-  private logError(
-    exception: unknown,
-    request: Request,
-    errorResponse: ErrorResponse,
-  ): void {
+  private logError(exception: unknown, request: Request, errorResponse: ErrorResponse): void {
     // 脱敏请求体
     const sanitizedBody = this.sanitizeRequestBody(request.body);
 
@@ -563,7 +555,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
             `Server error: ${exception.message}`,
             exception.stack,
             "HttpException",
-            logData,
+            logData
           );
         } else {
           this.internalLogger.error(`Server error: ${exception.message}`, exception.stack);
@@ -584,7 +576,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
           `Unexpected error: ${error.message}`,
           error.stack,
           "UnhandledException",
-          logData,
+          logData
         );
       } else {
         this.internalLogger.error(`Unexpected error: ${error.message}`, error.stack);
@@ -641,7 +633,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
    * 遮罩IP地址
    */
   private maskIp(ip: string | undefined): string {
-    if (!ip) {return "unknown";}
+    if (!ip) {
+      return "unknown";
+    }
 
     if (ip.includes(".")) {
       const parts = ip.split(".");
@@ -660,12 +654,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
     return ip;
   }
 
-  private reportToSentry(
-    exception: unknown,
-    request: Request,
-    errorResponse: ErrorResponse,
-  ): void {
-    if (!this.sentryService?.isEnabled()) {return;}
+  private reportToSentry(exception: unknown, request: Request, errorResponse: ErrorResponse): void {
+    if (!this.sentryService?.isEnabled()) {
+      return;
+    }
 
     const statusCode = this.getStatusCode(exception);
 

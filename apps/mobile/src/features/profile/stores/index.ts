@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import { create } from "zustand";
+﻿import { create } from "zustand";
 
 interface ClothingAnalysis {
   category: string;
@@ -105,9 +105,8 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
 
     loadCompleteness: async () => {
       try {
-        const response: ApiResponse<Completeness> = await apiClient.get<Completeness>(
-          "/profile/completeness"
-        );
+        const response: ApiResponse<Completeness> =
+          await apiClient.get<Completeness>("/profile/completeness");
         if (response.success && response.data) {
           set({ completeness: response.data });
         }
@@ -163,10 +162,10 @@ export const useProfileStore = createWithEqualityFn<ProfileState>(
         ]);
 
         set({
-          profile: profileRes.success ? profileRes.data ?? null : null,
-          completeness: completenessRes.success ? completenessRes.data ?? null : null,
-          bodyAnalysis: bodyRes.success ? bodyRes.data ?? null : null,
-          colorAnalysis: colorRes.success ? colorRes.data ?? null : null,
+          profile: profileRes.success ? (profileRes.data ?? null) : null,
+          completeness: completenessRes.success ? (completenessRes.data ?? null) : null,
+          bodyAnalysis: bodyRes.success ? (bodyRes.data ?? null) : null,
+          colorAnalysis: colorRes.success ? (colorRes.data ?? null) : null,
           isLoading: false,
         });
       } catch (err) {

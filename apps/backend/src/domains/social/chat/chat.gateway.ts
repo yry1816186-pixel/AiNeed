@@ -5,9 +5,9 @@ import {
   Inject,
   OnModuleInit,
   OnModuleDestroy,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -17,23 +17,16 @@ import {
   OnGatewayInit,
   ConnectedSocket,
   MessageBody,
-} from '@nestjs/websockets';
-import Redis from 'ioredis';
-import { Server, Socket } from 'socket.io';
+} from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
+import Redis from "ioredis";
 
-import { PrismaService } from "../../../common/prisma/prisma.service";
-import { REDIS_CLIENT } from "../../../common/redis/redis.service";
-import { TokenBlacklistService } from '../../../domains/identity/auth/services/token-blacklist.service';
-import {
-  CHAT_EVENTS,
-  ChatMessageCreatedPayload,
-  ChatMessageReadPayload,
-} from '../../../modules/ws/events';
-import { EventBusService, EventEnvelope } from '../../../modules/ws/services/event-bus.service';
-
-import { ChatService } from './chat.service';
-import { SenderTypeDto, MessageTypeDto } from './dto/chat.dto';
-
+import { REDIS_CLIENT } from "../../common/redis/redis.service";
+import { PrismaService } from "../../common/prisma/prisma.service";
+import { EventBusService } from "../ws/services/event-bus.service";
+import { ChatService } from "./chat.service";
+import { SenderTypeDto, MessageTypeDto } from "./dto";
+import { CHAT_EVENTS, ChatMessageCreatedPayload, ChatMessageReadPayload } from "../ws/events";
 
 interface ChatUserConnection {
   socketId: string;
@@ -44,11 +37,11 @@ interface ChatUserConnection {
 
 @WebSocketGateway({
   cors: {
-    origin: process.env.CORS_ORIGINS?.split(',').filter(Boolean) || (process.env.NODE_ENV === 'production' ? [] : ['http://localhost:3000']),
+    origin: process.env.CORS_ORIGINS?.split(",") || ["http://localhost:3000"],
     credentials: true,
   },
-  namespace: '/ws/chat',
-  transports: ['websocket', 'polling'],
+  namespace: "/ws/chat",
+  transports: ["websocket", "polling"],
 })
 @UsePipes(new ValidationPipe())
 export class ChatGateway
@@ -69,14 +62,19 @@ export class ChatGateway
     @Inject(REDIS_CLIENT) private redis: Redis,
     private eventBus: EventBusService,
     private chatService: ChatService,
-    private prisma: PrismaService,
-    private tokenBlacklistService: TokenBlacklistService,
+    private prisma: PrismaService
   ) {}
 
   onModuleInit() {
     const eventMappings = [
-      { eventType: CHAT_EVENTS.MESSAGE_CREATED, handler: (envelope: EventEnvelope) => { this.handleMessageCreated(envelope); } },
-      { eventType: CHAT_EVENTS.MESSAGE_READ, handler: (envelope: EventEnvelope) => { this.handleMessageRead(envelope); } },
+      {
+        eventType: CHAT_EVENTS.MESSAGE_CREATED,
+        handler: (envelope: any) => this.handleMessageCreated(envelope),
+      },
+      {
+        eventType: CHAT_EVENTS.MESSAGE_READ,
+        handler: (envelope: any) => this.handleMessageRead(envelope),
+      },
     ];
 
     for (const mapping of eventMappings) {
@@ -84,7 +82,7 @@ export class ChatGateway
       this.eventUnsubscribers.push(() => this.eventBus.off(mapping.eventType, mapping.handler));
     }
 
-    this.logger.log('Chat WebSocket gateway initialized');
+    this.logger.log("Chat WebSocket gateway initialized");
   }
 
   onModuleDestroy() {
@@ -94,19 +92,19 @@ export class ChatGateway
     this.eventUnsubscribers = [];
     this.connections.clear();
     this.userSocketMap.clear();
-    this.logger.log('Chat WebSocket gateway destroyed');
+    this.logger.log("Chat WebSocket gateway destroyed");
   }
 
   afterInit(server: Server) {
-    this.logger.log('Chat WebSocket server initialized');
+    this.logger.log("Chat WebSocket server initialized");
   }
 
   async handleConnection(client: Socket) {
     try {
-      const userId = await this.extractUserId(client);
+      const userId = this.extractUserId(client);
       if (!userId) {
         this.logger.warn(`Chat client ${client.id} rejected: no valid token`);
-        client.emit('error', { message: 'Authentication required' });
+        client.emit("error", { message: "Authentication required" });
         client.disconnect();
         return;
       }
@@ -128,13 +126,13 @@ export class ChatGateway
 
       this.logger.log(`Chat client ${client.id} connected for user ${userId}`);
 
-      client.emit('connected', {
-        message: 'Connected to chat events',
+      client.emit("connected", {
+        message: "Connected to chat events",
         userId,
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Chat connection error: ${message}`);
       client.disconnect();
     }
@@ -156,56 +154,64 @@ export class ChatGateway
     }
   }
 
-  @SubscribeMessage('chat:join')
-  async handleJoinRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: { roomId: string },
-  ) {
+  @SubscribeMessage("chat:join")
+  async handleJoinRoom(@ConnectedSocket() client: Socket, @MessageBody() data: { roomId: string }) {
     const connection = this.connections.get(client.id);
-    if (!connection) {return;}
+    if (!connection) return;
 
     // 验证用户有权访问此聊天室
     try {
       await this.chatService.getRoomById(connection.userId, data.roomId);
     } catch {
-      client.emit('error', { message: '无权访问此聊天室' });
+      client.emit("error", { message: "无权访问此聊天室" });
       return;
     }
 
     await client.join(`chat:room:${data.roomId}`);
     connection.activeRoomId = data.roomId;
 
-    client.emit('chat:joined', { roomId: data.roomId });
+    client.emit("chat:joined", { roomId: data.roomId });
     this.logger.debug(`Client ${client.id} joined chat room: ${data.roomId}`);
   }
 
-  @SubscribeMessage('chat:leave')
+  @SubscribeMessage("chat:leave")
   async handleLeaveRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { roomId: string },
+    @MessageBody() data: { roomId: string }
   ) {
     await client.leave(`chat:room:${data.roomId}`);
     const connection = this.connections.get(client.id);
     if (connection?.activeRoomId === data.roomId) {
       connection.activeRoomId = undefined;
     }
-    client.emit('chat:left', { roomId: data.roomId });
+    client.emit("chat:left", { roomId: data.roomId });
   }
 
-  @SubscribeMessage('chat:message')
+  @SubscribeMessage("chat:message")
   async handleMessage(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { roomId: string; content: string; messageType: string; imageUrl?: string; fileUrl?: string },
+    @MessageBody()
+    data: {
+      roomId: string;
+      content: string;
+      messageType: string;
+      imageUrl?: string;
+      fileUrl?: string;
+    }
   ) {
     const connection = this.connections.get(client.id);
-    if (!connection) {return;}
+    if (!connection) return;
 
     try {
       // 确定发送者类型
       const room = await this.prisma.chatRoom.findUnique({ where: { id: data.roomId } });
-      if (!room) {throw new Error('Room not found');}
+      if (!room) throw new Error("Room not found");
 
-      const senderType = room.consultantId && (await this.chatService.isConsultant(connection.userId, room.consultantId)) ? SenderTypeDto.CONSULTANT : SenderTypeDto.USER;
+      const senderType =
+        room.consultantId &&
+        (await this.chatService.isConsultant(connection.userId, room.consultantId))
+          ? SenderTypeDto.CONSULTANT
+          : SenderTypeDto.USER;
 
       const message = await this.chatService.sendMessage(connection.userId, {
         roomId: data.roomId,
@@ -222,51 +228,53 @@ export class ChatGateway
         messageId: message.id,
         senderId: connection.userId,
         senderType,
-        messageType: data.messageType || 'text',
+        messageType: data.messageType || "text",
         content: data.content,
       });
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      client.emit('error', { message: `消息发送失败: ${msg}` });
+      const msg = error instanceof Error ? error.message : "Unknown error";
+      client.emit("error", { message: `消息发送失败: ${msg}` });
     }
   }
 
-  @SubscribeMessage('chat:typing')
+  @SubscribeMessage("chat:typing")
   async handleTyping(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { roomId: string; isTyping: boolean },
-  ) {
-    try {
-      const connection = this.connections.get(client.id);
-      if (!connection) {return;}
-
-      const room = await this.prisma.chatRoom.findUnique({ where: { id: data.roomId } });
-      if (!room) {return;}
-
-      const senderType = room.consultantId && (await this.chatService.isConsultant(connection.userId, room.consultantId)) ? 'consultant' : 'user';
-
-      this.server.to(`chat:room:${data.roomId}`).emit('chat:typing', {
-        roomId: data.roomId,
-        senderId: connection.userId,
-        senderType,
-        isTyping: data.isTyping,
-      });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      this.logger.error(`Error handling typing event: ${message}`);
-    }
-  }
-
-  @SubscribeMessage('chat:read')
-  async handleRead(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: { roomId: string; lastMessageId?: string },
+    @MessageBody() data: { roomId: string; isTyping: boolean }
   ) {
     const connection = this.connections.get(client.id);
-    if (!connection) {return;}
+    if (!connection) return;
+
+    const room = await this.prisma.chatRoom.findUnique({ where: { id: data.roomId } });
+    if (!room) return;
+
+    const senderType =
+      room.consultantId &&
+      (await this.chatService.isConsultant(connection.userId, room.consultantId))
+        ? SenderTypeDto.CONSULTANT
+        : SenderTypeDto.USER;
+
+    // 直接向聊天室广播打字状态
+    this.server.to(`chat:room:${data.roomId}`).emit("chat:typing", {
+      roomId: data.roomId,
+      senderId: connection.userId,
+      senderType,
+      isTyping: data.isTyping,
+    });
+  }
+
+  @SubscribeMessage("chat:read")
+  async handleRead(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { roomId: string; lastMessageId?: string }
+  ) {
+    const connection = this.connections.get(client.id);
+    if (!connection) return;
 
     try {
-      await this.chatService.markAsRead(connection.userId, data.roomId, { lastMessageId: data.lastMessageId });
+      await this.chatService.markAsRead(connection.userId, data.roomId, {
+        lastMessageId: data.lastMessageId,
+      });
 
       await this.eventBus.publish(CHAT_EVENTS.MESSAGE_READ, connection.userId, {
         roomId: data.roomId,
@@ -278,38 +286,28 @@ export class ChatGateway
     }
   }
 
-  private async handleMessageCreated(envelope: EventEnvelope) {
-    const payload = envelope.payload as unknown as ChatMessageCreatedPayload;
-    this.server.to(`chat:room:${payload.roomId}`).emit('chat:message', payload);
+  private async handleMessageCreated(envelope: { payload: ChatMessageCreatedPayload }) {
+    const { roomId } = envelope.payload;
+    this.server.to(`chat:room:${roomId}`).emit("chat:message", envelope.payload);
   }
 
-  private async handleMessageRead(envelope: EventEnvelope) {
-    const payload = envelope.payload as unknown as ChatMessageReadPayload;
-    this.server.to(`chat:room:${payload.roomId}`).emit('chat:read', payload);
+  private async handleMessageRead(envelope: { payload: ChatMessageReadPayload }) {
+    const { roomId } = envelope.payload;
+    this.server.to(`chat:room:${roomId}`).emit("chat:read", envelope.payload);
   }
 
-  private async extractUserId(client: Socket): Promise<string | null> {
+  private extractUserId(client: Socket): string | null {
     const auth = client.handshake.auth;
     const token = auth?.token;
-    if (!token) {return null;}
+    if (!token) return null;
     return this.validateToken(token as string);
   }
 
-  private async validateToken(token: string): Promise<string | null> {
+  private validateToken(token: string): string | null {
     try {
-      const jwtSecret = this.configService.get<string>('JWT_SECRET');
-      if (!jwtSecret) {return null;}
+      const jwtSecret = this.configService.get<string>("JWT_SECRET");
+      if (!jwtSecret) return null;
       const payload = this.jwtService.verify(token, { secret: jwtSecret });
-
-      // 检查 token 是否在黑名单中
-      if (payload.jti) {
-        const blacklisted = await this.tokenBlacklistService.isBlacklisted(payload.jti);
-        if (blacklisted) {
-          this.logger.warn(`Token is blacklisted: ${payload.jti.substring(0, 8)}...`);
-          return null;
-        }
-      }
-
       return payload.sub || payload.userId || null;
     } catch {
       return null;

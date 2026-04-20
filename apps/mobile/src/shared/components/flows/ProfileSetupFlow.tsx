@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import React, { useState, useEffect, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -27,10 +27,16 @@ import {
   runOnJS,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { MagneticButton, GlowText, FloatingElement, ParticleEffect } from '../../../design-system/ui/FluidAnimations';
-import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import {
+  MagneticButton,
+  GlowText,
+  FloatingElement,
+  ParticleEffect,
+} from "../../design-system/ui/FluidAnimations";
+import { Colors, Spacing, BorderRadius } from "../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme";
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -50,12 +56,42 @@ interface ProfileData {
 }
 
 const STYLE_OPTIONS = [
-  { id: "casual", name: "休闲", icon: "cafe-outline" as keyof typeof Ionicons.glyphMap, color: Colors.amber[500] },
-  { id: "formal", name: "商务", icon: "briefcase-outline" as keyof typeof Ionicons.glyphMap, color: Colors.neutral[700] },
-  { id: "streetwear", name: "街头", icon: "flame-outline" as keyof typeof Ionicons.glyphMap, color: Colors.rose[500] },
-  { id: "minimalist", name: "极简", icon: "sparkles-outline" as keyof typeof Ionicons.glyphMap, color: Colors.sky[500] },
-  { id: "vintage", name: "复古", icon: "time-outline" as keyof typeof Ionicons.glyphMap, color: Colors.emerald[500] },
-  { id: "bohemian", name: "波西米亚", icon: "flower-outline" as keyof typeof Ionicons.glyphMap, color: Colors.primary[500] },
+  {
+    id: "casual",
+    name: "休闲",
+    icon: "cafe-outline" as keyof typeof Ionicons.glyphMap,
+    color: Colors.amber[500],
+  },
+  {
+    id: "formal",
+    name: "商务",
+    icon: "briefcase-outline" as keyof typeof Ionicons.glyphMap,
+    color: colors.neutral[700],
+  },
+  {
+    id: "streetwear",
+    name: "街头",
+    icon: "flame-outline" as keyof typeof Ionicons.glyphMap,
+    color: Colors.rose[500],
+  },
+  {
+    id: "minimalist",
+    name: "极简",
+    icon: "sparkles-outline" as keyof typeof Ionicons.glyphMap,
+    color: Colors.sky[500],
+  },
+  {
+    id: "vintage",
+    name: "复古",
+    icon: "time-outline" as keyof typeof Ionicons.glyphMap,
+    color: Colors.emerald[500],
+  },
+  {
+    id: "bohemian",
+    name: "波西米亚",
+    icon: "flower-outline" as keyof typeof Ionicons.glyphMap,
+    color: colors.primary[500],
+  },
 ];
 
 const STEP_CONFIG = [
@@ -142,7 +178,10 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
         <ParticleEffect count={30} color="rgba(198, 123, 92, 0.3)" size={3} />
 
         <AnimatedView style={[styles.welcomeLogo, logoAnimatedStyle]}>
-          <LinearGradient colors={[colors.primary, colors.primary]} style={styles.welcomeLogoGradient}>
+          <LinearGradient
+            colors={[colors.primary, DesignTokens.colors.brand.camel]}
+            style={styles.welcomeLogoGradient}
+          >
             <Text style={styles.welcomeLogoText}>AI</Text>
           </LinearGradient>
         </AnimatedView>
@@ -151,7 +190,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
           <GlowText
             text="欢迎使用寻裳"
             style={styles.welcomeTitle}
-            glowColor={Colors.primary[400]}
+            glowColor={colors.primary[400]}
           />
           <Text style={styles.welcomeSubtitle}>让我们花1分钟了解你{"\n"}为你打造专属穿搭体验</Text>
         </AnimatedView>
@@ -179,6 +218,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
     }));
 
     const handleFocus = () => {
+      const { colors } = useTheme();
       inputFocus.value = withTiming(1, { duration: 200 });
     };
 
@@ -190,7 +230,7 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
       "worklet";
       const focusValue = inputFocus.value;
       return {
-        borderColor: focusValue > 0.5 ? Colors.primary[500] : "rgba(255, 255, 255, 0.2)",
+        borderColor: focusValue > 0.5 ? colors.primary[500] : "rgba(255, 255, 255, 0.2)",
         shadowOpacity: interpolate(inputFocus.value, [0, 1], [0, 0.3]),
       };
     });
@@ -278,7 +318,11 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
             style={styles.genderOptionGradient}
           >
             <FloatingElement amplitude={selected ? 5 : 0} duration={3000}>
-              <Ionicons name={option.icon as keyof typeof Ionicons.glyphMap} size={32} color={selected ? Colors.white : option.color} />
+              <Ionicons
+                name={option.icon as keyof typeof Ionicons.glyphMap}
+                size={32}
+                color={selected ? Colors.white : option.color}
+              />
             </FloatingElement>
             <Text style={[styles.genderLabel, selected && { color: Colors.white }]}>
               {option.label}
@@ -291,9 +335,24 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
 
   const GenderStep: React.FC = () => {
     const options = [
-      { id: "male", label: "男生", icon: "man-outline" as keyof typeof Ionicons.glyphMap, color: Colors.sky[500] },
-      { id: "female", label: "女生", icon: "woman-outline" as keyof typeof Ionicons.glyphMap, color: Colors.rose[500] },
-      { id: "other", label: "其他", icon: "person-outline" as keyof typeof Ionicons.glyphMap, color: Colors.primary[500] },
+      {
+        id: "male",
+        label: "男生",
+        icon: "man-outline" as keyof typeof Ionicons.glyphMap,
+        color: Colors.sky[500],
+      },
+      {
+        id: "female",
+        label: "女生",
+        icon: "woman-outline" as keyof typeof Ionicons.glyphMap,
+        color: Colors.rose[500],
+      },
+      {
+        id: "other",
+        label: "其他",
+        icon: "person-outline" as keyof typeof Ionicons.glyphMap,
+        color: colors.primary[500],
+      },
     ];
 
     return (
@@ -452,7 +511,11 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
             }
             style={styles.styleOptionGradient}
           >
-            <Ionicons name={option.icon as keyof typeof Ionicons.glyphMap} size={24} color={selected ? option.color : Colors.neutral[400]} />
+            <Ionicons
+              name={option.icon as keyof typeof Ionicons.glyphMap}
+              size={24}
+              color={selected ? option.color : colors.neutral[400]}
+            />
             <Text style={styles.styleName}>{option.name}</Text>
             {selected && (
               <View style={[styles.styleCheck, { backgroundColor: option.color }]}>
@@ -534,14 +597,17 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
         <ParticleEffect count={50} color="rgba(198, 123, 92, 0.4)" size={4} />
 
         <AnimatedView style={[styles.completeContainer, animatedStyle]}>
-          <LinearGradient colors={[colors.primary, colors.primary]} style={styles.completeIconGradient}>
+          <LinearGradient
+            colors={[colors.primary, DesignTokens.colors.brand.camel]}
+            style={styles.completeIconGradient}
+          >
             <Text style={styles.completeIcon}>🎉</Text>
           </LinearGradient>
 
           <GlowText
             text="设置完成！"
             style={styles.completeTitle}
-            glowColor={Colors.primary[400]}
+            glowColor={colors.primary[400]}
           />
           <Text style={styles.completeSubtitle}>
             {nickname}，欢迎来到寻裳{"\n"}开始你的时尚之旅吧
@@ -582,7 +648,14 @@ export const ProfileSetupScreen: React.FC<ProfileSetupScreenProps> = ({ onComple
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      <LinearGradient colors={[colors.textPrimary, "colors.neutral[700]", "colors.neutral[700]"]} style={styles.gradient}>
+      <LinearGradient
+        colors={[
+          "colors.textPrimary",
+          "DesignTokens.colors.brand.slateDark",
+          "DesignTokens.colors.brand.slateDark",
+        ]}
+        style={styles.gradient}
+      >
         {currentStep > 0 && currentStep < 5 && (
           <View style={styles.header}>
             <Pressable onPress={goToPrev} style={styles.backButton}>
@@ -631,8 +704,8 @@ const useStyles = createStyles((colors) => ({
     paddingBottom: Spacing[4],
   },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: BorderRadius.full,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     alignItems: "center",
@@ -647,14 +720,14 @@ const useStyles = createStyles((colors) => ({
     marginHorizontal: Spacing[4],
   },
   progressBackground: {
-    height: Spacing.xs,
+    height: 4,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: BorderRadius.full,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     borderRadius: BorderRadius.full,
   },
   stepIndicator: {
@@ -675,7 +748,7 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
   },
   stepTitle: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "800",
     color: Colors.white,
     textAlign: "center",
@@ -698,12 +771,12 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   welcomeLogoText: {
-    fontSize: DesignTokens.typography.sizes['5xl'],
+    fontSize: DesignTokens.typography.sizes["5xl"],
     fontWeight: "900",
     color: Colors.white,
   },
   welcomeTitle: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "800",
     color: Colors.white,
     textAlign: "center",
@@ -761,7 +834,7 @@ const useStyles = createStyles((colors) => ({
     padding: Spacing[3],
   },
   genderIcon: {
-    fontSize: DesignTokens.typography.sizes['4xl'],
+    fontSize: DesignTokens.typography.sizes["4xl"],
     marginBottom: Spacing[2],
   },
   genderLabel: {
@@ -787,7 +860,7 @@ const useStyles = createStyles((colors) => ({
   },
   bodyInput: {
     flex: 1,
-    fontSize: DesignTokens.typography.sizes['4xl'],
+    fontSize: DesignTokens.typography.sizes["4xl"],
     color: Colors.white,
     fontWeight: "700",
   },
@@ -818,7 +891,7 @@ const useStyles = createStyles((colors) => ({
     padding: Spacing[3],
   },
   styleIcon: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     marginBottom: Spacing[2],
   },
   styleName: {
@@ -830,8 +903,8 @@ const useStyles = createStyles((colors) => ({
     position: "absolute",
     top: Spacing[2],
     right: Spacing[2],
-    width: DesignTokens.spacing[5],
-    height: DesignTokens.spacing[5],
+    width: 20,
+    height: 20,
     borderRadius: BorderRadius.full,
     alignItems: "center",
     justifyContent: "center",
@@ -854,10 +927,10 @@ const useStyles = createStyles((colors) => ({
     marginBottom: Spacing[6],
   },
   completeIcon: {
-    fontSize: DesignTokens.typography.sizes['5xl'],
+    fontSize: DesignTokens.typography.sizes["5xl"],
   },
   completeTitle: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "800",
     color: Colors.white,
     marginBottom: Spacing[3],
@@ -875,4 +948,4 @@ const useStyles = createStyles((colors) => ({
     right: 0,
     alignItems: "center",
   },
-}))
+}));

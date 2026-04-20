@@ -4,27 +4,17 @@
  * 搜索模块类型定义 - 消除 any 类型，提供类型安全
  */
 
-import type { ClothingCategory } from '../../../../types/prisma-enums';
+import { ClothingCategory } from "../../../../../types/prisma-enums";
 
 // ============================================================================
-// Prisma Where 条件类型（本地定义，替代 Prisma namespace 中缺失的类型）
+// Prisma Where 条件类型
 // ============================================================================
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ClothingItemWhereInput = Record<string, any>;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ClothingItemOrderByWithRelationInput = Record<string, any>;
-
 /**
- * Prisma Decimal 的本地替代类型
+ * 服装商品搜索 Where 条件
+ * 用于 searchItems 和相关查询
  */
-export type PrismaDecimal = { toString(): string };
-
-/**
- * Prisma JsonValue 的本地替代类型
- */
-export type PrismaJsonValue = string | number | boolean | null | PrismaJsonValue[] | { [key: string]: PrismaJsonValue };
+export type ClothingItemWhereInput = any;
 
 /**
  * 服装商品价格范围条件
@@ -44,14 +34,19 @@ export interface SearchWhereBuilderInput {
   maxPrice?: number;
 }
 
+// ============================================================================
+// Prisma OrderBy 类型
+// ============================================================================
+
+/**
+ * 服装商品排序选项
+ */
+export type ClothingItemOrderByWithRelationInput = any;
+
 /**
  * 排序方式枚举
  */
-export type SortByOption =
-  | "relevance"
-  | "price_asc"
-  | "price_desc"
-  | "popular";
+export type SortByOption = "relevance" | "price_asc" | "price_desc" | "popular";
 
 // ============================================================================
 // ML 服务响应类型
@@ -144,12 +139,12 @@ export interface ClothingItemWithBrand {
   colors: string[];
   sizes: string[];
   tags: string[];
-  price: PrismaDecimal;
-  originalPrice: PrismaDecimal | null;
+  price: any;
+  originalPrice: any | null;
   currency: string;
   images: string[];
   mainImage: string | null;
-  attributes: PrismaJsonValue | null;
+  attributes: any | null;
   isActive: boolean;
   viewCount: number;
   likeCount: number;
@@ -256,9 +251,7 @@ export interface OpenAIAnalysisContent {
 /**
  * 构建 Prisma where 条件
  */
-export function buildSearchWhereClause(
-  input: SearchWhereBuilderInput,
-): ClothingItemWhereInput {
+export function buildSearchWhereClause(input: SearchWhereBuilderInput): ClothingItemWhereInput {
   const where: ClothingItemWhereInput = { isActive: true };
 
   if (input.query) {
@@ -290,9 +283,7 @@ export function buildSearchWhereClause(
 /**
  * 构建排序条件
  */
-export function buildOrderByClause(
-  sortBy: SortByOption,
-): ClothingItemOrderByWithRelationInput {
+export function buildOrderByClause(sortBy: SortByOption): ClothingItemOrderByWithRelationInput {
   switch (sortBy) {
     case "price_asc":
       return { price: "asc" };
@@ -308,9 +299,7 @@ export function buildOrderByClause(
 /**
  * 安全获取服装属性
  */
-export function getClothingAttributes(
-  attributes: PrismaJsonValue | null,
-): ClothingAttributes | null {
+export function getClothingAttributes(attributes: any | null): ClothingAttributes | null {
   if (attributes === null || attributes === undefined) {
     return null;
   }

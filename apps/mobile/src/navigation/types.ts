@@ -1,4 +1,5 @@
-import type { NavigatorScreenParams } from "@react-navigation/native";
+import type { NavigatorScreenParams, CompositeScreenProps } from "@react-navigation/native";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 // ============================================================
 // Auth Stack (Phase 1 - 用户画像 & 风格测试)
@@ -8,6 +9,7 @@ export type AuthStackParamList = {
   PhoneLogin: undefined;
   Register: undefined;
   Onboarding: undefined;
+  ProfileSetup: undefined;
 };
 
 // ============================================================
@@ -19,7 +21,10 @@ export type HomeStackParamList = {
   Notifications: undefined;
   RecommendationDetail: { recommendationId: string };
   Product: { clothingId: string };
+  ClothingDetail: { clothingId: string };
   OutfitDetail: { outfitId: string };
+  Recommendations: undefined;
+  RecommendationFeed: undefined;
 };
 
 // ============================================================
@@ -78,7 +83,11 @@ export type ProfileStackParamList = {
   OrderDetail: { orderId: string };
   AddClothing: { editId?: string };
   CustomDesign: undefined;
+  Customization: undefined;
   CustomEditor: { designId?: string };
+  CustomizationEditor: { templateId?: string };
+  CustomizationPreview: { designId: string };
+  CustomizationOrderDetail: { requestId: string };
   Brand: { brandId: string };
   AdvisorList: undefined;
   AdvisorProfile: { advisorId: string };
@@ -105,6 +114,38 @@ export type RootStackParamList = {
   Auth: NavigatorScreenParams<AuthStackParamList>;
   MainTabs: NavigatorScreenParams<MainTabParamList>;
 };
+
+// ============================================================
+// Per-Stack ScreenProps
+// ============================================================
+export type AuthStackScreenProps<T extends keyof AuthStackParamList = keyof AuthStackParamList> =
+  NativeStackScreenProps<AuthStackParamList, T>;
+
+export type HomeStackScreenProps<T extends keyof HomeStackParamList = keyof HomeStackParamList> =
+  NativeStackScreenProps<HomeStackParamList, T>;
+
+export type StylistStackScreenProps<
+  T extends keyof StylistStackParamList = keyof StylistStackParamList,
+> = NativeStackScreenProps<StylistStackParamList, T>;
+
+export type TryOnStackScreenProps<T extends keyof TryOnStackParamList = keyof TryOnStackParamList> =
+  NativeStackScreenProps<TryOnStackParamList, T>;
+
+export type CommunityStackScreenProps<
+  T extends keyof CommunityStackParamList = keyof CommunityStackParamList,
+> = NativeStackScreenProps<CommunityStackParamList, T>;
+
+export type ProfileStackScreenProps<
+  T extends keyof ProfileStackParamList = keyof ProfileStackParamList,
+> = NativeStackScreenProps<ProfileStackParamList, T>;
+
+export type RootStackScreenProps<T extends keyof RootStackParamList = keyof RootStackParamList> =
+  NativeStackScreenProps<RootStackParamList, T>;
+
+export type MainTabScreenProps<T extends keyof MainTabParamList = keyof MainTabParamList> =
+  NativeStackScreenProps<MainTabParamList, T>;
+
+export { CompositeScreenProps };
 
 // ============================================================
 // Tab Route Labels

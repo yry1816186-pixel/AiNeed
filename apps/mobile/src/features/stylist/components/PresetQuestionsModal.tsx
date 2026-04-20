@@ -1,10 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet, Modal, Pressable, ScrollView } from "react-native";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import type { PresetQuestion } from '../stores/aiStylistStore';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import type { PresetQuestion } from "../stores/aiStylistStore";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface PresetQuestionsModalProps {
   visible: boolean;
@@ -55,25 +54,25 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: DesignTokens.spacing[5],
-    paddingBottom: Spacing.xl,
+    padding: 20,
+    paddingBottom: 32,
     maxHeight: "70%",
   },
   title: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: Spacing.md,
+    marginBottom: 16,
     textAlign: "center",
   },
   questionsList: {
-    gap: DesignTokens.spacing['2.5'],
+    gap: 10,
   },
   questionButton: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.md,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
     borderRadius: 14,
     backgroundColor: DesignTokens.colors.neutral[50],
     borderWidth: 1,
@@ -81,7 +80,7 @@ const useStyles = createStyles((colors) => ({
   },
   questionIcon: {
     fontSize: DesignTokens.typography.sizes.xl,
-    marginRight: DesignTokens.spacing['3.5'],
+    marginRight: 14,
   },
   questionText: {
     fontSize: DesignTokens.typography.sizes.md,
@@ -91,11 +90,11 @@ const useStyles = createStyles((colors) => ({
   },
   skipButton: {
     alignItems: "center",
-    paddingVertical: DesignTokens.spacing['3.5'],
-    marginTop: DesignTokens.spacing[3],
+    paddingVertical: 14,
+    marginTop: 12,
   },
   skipButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[400],
   },
-}))
+}));

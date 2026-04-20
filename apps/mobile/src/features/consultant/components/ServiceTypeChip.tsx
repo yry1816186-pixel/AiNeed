@@ -1,7 +1,8 @@
-﻿﻿import React from "react";
+import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface ServiceTypeChipProps {
   label: string;
@@ -27,21 +28,21 @@ export const ServiceTypeChip: React.FC<ServiceTypeChipProps> = ({ label, selecte
 
 const useStyles = createStyles((colors) => ({
   chip: {
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     borderRadius: 20,
-    marginRight: Spacing.sm,
-    marginBottom: Spacing.sm,
+    marginRight: 8,
+    marginBottom: 8,
   },
   chipDefault: {
     backgroundColor: colors.backgroundTertiary,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "colors.border",
   },
   chipSelected: {
-    backgroundColor: colors.primary,
+    backgroundColor: "colors.primary",
     borderWidth: 1,
-    borderColor: colors.primary,
+    borderColor: "colors.primary",
   },
   text: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -53,6 +54,6 @@ const useStyles = createStyles((colors) => ({
     color: colors.surface,
     fontWeight: "500",
   },
-}))
+}));
 
 export default ServiceTypeChip;

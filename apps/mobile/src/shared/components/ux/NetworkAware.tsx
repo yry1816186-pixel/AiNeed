@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
-import { Colors, Spacing, Typography, ZIndex } from '../../../design-system/theme';
+import { Colors, Spacing, Typography, ZIndex } from "../../../design-system/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 interface NetworkAwareProps {
   children: React.ReactNode;
@@ -18,6 +19,8 @@ export function NetworkAware({
   onNetworkChange,
   showBanner = true,
 }: NetworkAwareProps) {
+  const styles = useStyles(colors);
+  const { colors } = useTheme();
   const { isConnected } = useNetworkStatus();
   const translateY = useSharedValue(-60);
   const isOffline = isConnected === false;
@@ -51,7 +54,7 @@ export function NetworkAware({
           accessibilityLabel={offlineMessage}
           accessibilityRole="alert"
         >
-          <Ionicons name="cloud-offline-outline" size={16} color={Colors.neutral[0]} />
+          <Ionicons name="cloud-offline-outline" size={16} color={colors.neutral[0]} />
           <Text style={styles.bannerText}>{offlineMessage}</Text>
         </Animated.View>
       )}
@@ -74,7 +77,7 @@ export function withNetworkAware<P extends object>(
   return ComponentWithNetwork;
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   wrapper: { flex: 1 },
   banner: {
     position: "absolute",
@@ -87,10 +90,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: Spacing[2],
     paddingVertical: Spacing[2],
-    backgroundColor: Colors.warning[500],
+    backgroundColor: colors.warning[500],
     elevation: 4,
   },
-  bannerText: { ...Typography.caption.md, color: Colors.neutral[0], fontWeight: "600" },
-});
+  bannerText: { ...Typography.caption.md, color: colors.neutral[0], fontWeight: "600" },
+}));
 
 export default NetworkAware;

@@ -1,25 +1,24 @@
 import React from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface BloggerBadgeProps {
   level: "blogger" | "big_v";
 }
 
 function BloggerBadgeInner({ level }: BloggerBadgeProps) {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   if (level === "big_v") {
     return (
-      <View style={styles.bigVBadge}>
+      <View style={s.bigVBadge}>
         <Ionicons name="shield-checkmark" size={10} color={colors.surface} />
       </View>
     );
   }
   return (
-    <View style={styles.bloggerBadge}>
+    <View style={s.bloggerBadge}>
       <Ionicons name="checkmark" size={8} color={colors.surface} />
     </View>
   );
@@ -27,13 +26,13 @@ function BloggerBadgeInner({ level }: BloggerBadgeProps) {
 
 export const BloggerBadge = React.memo(BloggerBadgeInner);
 
-const useStyles = createStyles((colors) => ({
+const useS = createStyles((colors) => ({
   bloggerBadge: {
     position: "absolute",
     bottom: -2,
     right: -2,
-    width: DesignTokens.spacing[3],
-    height: DesignTokens.spacing[3],
+    width: 12,
+    height: 12,
     borderRadius: 6,
     backgroundColor: colors.primary,
     alignItems: "center",
@@ -45,13 +44,13 @@ const useStyles = createStyles((colors) => ({
     position: "absolute",
     bottom: -3,
     right: -3,
-    width: DesignTokens.spacing['3.5'],
-    height: DesignTokens.spacing['3.5'],
+    width: 14,
+    height: 14,
     borderRadius: 7,
-    backgroundColor: colors.warning,
+    backgroundColor: "colors.warning",
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
     borderColor: colors.surface,
   },
-}))
+}));

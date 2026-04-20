@@ -1,7 +1,8 @@
-﻿﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface ProposalCardProps {
   title: string;
@@ -38,32 +39,32 @@ export const ProposalCard: React.FC<ProposalCardProps> = ({
 
 const useStyles = createStyles((colors) => ({
   card: {
-    backgroundColor: DesignTokens.colors.neutral[50],
+    backgroundColor: "DesignTokens.colors.neutral[50]",
     borderRadius: 12,
-    padding: Spacing.md,
+    padding: 16,
     borderWidth: 1,
-    borderColor: DesignTokens.colors.neutral[200],
+    borderColor: "DesignTokens.colors.neutral[200]",
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.textPrimary,
-    marginBottom: DesignTokens.spacing['1.5'],
+    color: "colors.textPrimary",
+    marginBottom: 6,
   },
   summary: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
     lineHeight: 20,
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   actions: {
     flexDirection: "row",
-    gap: Spacing.sm,
+    gap: 8,
   },
   primaryBtn: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    backgroundColor: "colors.primary",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 8,
   },
   primaryBtnText: {
@@ -72,17 +73,17 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "500",
   },
   secondaryBtn: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.primary,
+    borderColor: "colors.primary",
   },
   secondaryBtnText: {
-    color: colors.primary,
+    color: "colors.primary",
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },
-}))
+}));
 
 export default ProposalCard;

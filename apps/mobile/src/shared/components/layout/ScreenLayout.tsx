@@ -14,9 +14,10 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, Spacing } from '../../../design-system/theme';
+import { Colors, Spacing } from "../../../design-system/theme";
 import type { ScrollEvent } from "../../../types/events";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -49,7 +50,7 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   scrollable = false,
   refreshing = false,
   onRefresh,
-  backgroundColor = Colors.neutral[50],
+  backgroundColor = colors.neutral[50],
   gradientBackground,
   safeAreaTop = true,
   safeAreaBottom = true,
@@ -61,10 +62,12 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   onScroll,
   scrollEventThrottle = 16,
 }) => {
+  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const scrollY = React.useRef(new Animated.Value(0)).current;
 
   const renderContent = () => {
+    const { colors } = useTheme();
     if (scrollable) {
       return (
         <Animated.ScrollView
@@ -90,8 +93,8 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                tintColor={Colors.primary[500]}
-                colors={[Colors.primary[500]]}
+                tintColor={colors.primary[500]}
+                colors={[colors.primary[500]]}
               />
             ) : undefined
           }
@@ -318,7 +321,7 @@ export interface DividerProps {
 }
 
 export const Divider: React.FC<DividerProps> = ({
-  color = Colors.neutral[200],
+  color = colors.neutral[200],
   thickness = 1,
   marginVertical = Spacing[4],
   style,
@@ -346,7 +349,7 @@ export const Spacer: React.FC<SpacerProps> = ({ size = Spacing[4], horizontal = 
   return <View style={{ [horizontal ? "width" : "height"]: size }} />;
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
   },
@@ -391,12 +394,12 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
   },
   headerSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
-    marginTop: DesignTokens.spacing['0.5'],
+    color: colors.neutral[500],
+    marginTop: 2,
   },
   footerContainer: {
     borderTopWidth: 0,
@@ -421,16 +424,16 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
   },
   sectionSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[500],
-    marginTop: DesignTokens.spacing['0.5'],
+    color: colors.neutral[500],
+    marginTop: 2,
   },
   seeAllText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.primary[500],
+    color: colors.primary[500],
     fontWeight: "500",
   },
   horizontalContent: {
@@ -439,6 +442,6 @@ const styles = StyleSheet.create({
   verticalContent: {
     paddingHorizontal: Spacing[5],
   },
-});
+}));
 
 export default ScreenLayout;

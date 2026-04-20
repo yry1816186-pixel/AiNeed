@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from "@nestjs/testing";
-import { ClothingCategory } from '../../../types/prisma-enums';
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { RecommendationsController } from "./recommendations.controller";
 import { RecommendationsService } from "./recommendations.service";
@@ -92,17 +92,11 @@ describe("RecommendationsController", () => {
     it("should pass filter options to service", async () => {
       mockRecommendationsService.getPersonalizedRecommendations.mockResolvedValue([]);
 
-      await controller.getRecommendations(
-        "user-1",
-        ClothingCategory.tops,
-        "daily",
-        "spring",
-        "10",
-      );
+      await controller.getRecommendations("user-1", ClothingCategory.tops, "daily", "spring", "10");
 
       expect(mockRecommendationsService.getPersonalizedRecommendations).toHaveBeenCalledWith(
         "user-1",
-        { category: ClothingCategory.tops, occasion: "daily", season: "spring", limit: 10 },
+        { category: ClothingCategory.tops, occasion: "daily", season: "spring", limit: 10 }
       );
     });
   });
@@ -113,13 +107,7 @@ describe("RecommendationsController", () => {
 
       await controller.getFeed("user-1", { category: "daily" });
 
-      expect(mockFeedService.getFeed).toHaveBeenCalledWith(
-        "user-1",
-        "daily",
-        undefined,
-        1,
-        10,
-      );
+      expect(mockFeedService.getFeed).toHaveBeenCalledWith("user-1", "daily", undefined, 1, 10);
     });
   });
 
@@ -163,7 +151,7 @@ describe("RecommendationsController", () => {
           userId: "user-1",
           action: "like",
           clothingId: "item-1",
-        }),
+        })
       );
       expect(result.success).toBe(true);
     });
@@ -195,7 +183,7 @@ describe("RecommendationsController", () => {
       expect(mockAdvancedRecommendationService.getPersonalizedRecommendations).toHaveBeenCalledWith(
         "user-1",
         {},
-        20,
+        20
       );
     });
 

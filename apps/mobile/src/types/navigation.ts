@@ -8,6 +8,15 @@ import type {
   ProfileStackParamList,
   MainTabParamList as NewMainTabParamList,
   RootStackParamList as NewRootStackParamList,
+  AuthStackScreenProps,
+  HomeStackScreenProps,
+  StylistStackScreenProps,
+  TryOnStackScreenProps,
+  CommunityStackScreenProps,
+  ProfileStackScreenProps,
+  RootStackScreenProps,
+  MainTabScreenProps,
+  CompositeScreenProps,
 } from "../navigation/types";
 
 export type {
@@ -19,78 +28,20 @@ export type {
   ProfileStackParamList,
   NewMainTabParamList,
   NewRootStackParamList,
+  AuthStackScreenProps,
+  HomeStackScreenProps,
+  StylistStackScreenProps,
+  TryOnStackScreenProps,
+  CommunityStackScreenProps,
+  ProfileStackScreenProps,
+  RootStackScreenProps,
+  MainTabScreenProps,
+  CompositeScreenProps,
 };
 
 export type MainTabParamList = NewMainTabParamList;
 
-export type RootStackParamList = {
-  Auth: NavigatorScreenParams<AuthStackParamList>;
-  MainTabs: NavigatorScreenParams<NewMainTabParamList>;
-  Login: undefined;
-  PhoneLogin: undefined;
-  Register: undefined;
-  Onboarding: undefined;
-  HomeFeed: undefined;
-  Search: undefined;
-  Notifications: undefined;
-  RecommendationDetail: { recommendationId: string };
-  Product: { clothingId: string };
-  ClothingDetail: { clothingId: string };
-  OutfitDetail: { outfitId: string };
-  AIStylist: undefined;
-  AiStylist: undefined;
-  OutfitPlan: { planId?: string };
-  ChatHistory: undefined;
-  AiStylistChat: { sessionId?: string };
-  SessionCalendar: undefined;
-  VirtualTryOn: { clothingId?: string };
-  TryOnResult: { resultId: string };
-  TryOnHistory: undefined;
-  CommunityFeed: undefined;
-  Community: undefined;
-  PostDetail: { postId: string };
-  PostCreate: undefined;
-  InfluencerProfile: { influencerId: string };
-  InspirationWardrobe: { userId?: string };
-  BloggerDashboard: undefined;
-  BloggerProfile: { bloggerId?: string };
-  BloggerProduct: { productId?: string };
-  ProfileMain: undefined;
-  Profile: undefined;
-  ProfileEdit: undefined;
-  StyleQuiz: undefined;
-  BodyAnalysis: undefined;
-  ColorAnalysis: undefined;
-  SharePoster: { type?: string; id?: string };
-  Wardrobe: undefined;
-  Favorites: undefined;
-  Settings: undefined;
-  NotificationSettings: undefined;
-  Subscription: undefined;
-  Cart: undefined;
-  Checkout: undefined;
-  Payment: { orderId: string };
-  Orders: undefined;
-  OrderDetail: { orderId: string };
-  AddClothing: { editId?: string };
-  CustomDesign: undefined;
-  Customization: undefined;
-  CustomEditor: { designId?: string };
-  CustomizationEditor: { templateId?: string };
-  CustomizationPreview: { designId: string };
-  CustomizationOrderDetail: { requestId: string };
-  Brand: { brandId: string };
-  BrandQRScan: undefined;
-  AdvisorList: undefined;
-  AdvisorProfile: { advisorId: string };
-  Booking: { advisorId: string };
-  Chat: { advisorId: string; sessionId?: string };
-  Legal: { type: "terms" | "privacy" };
-  Explore: undefined;
-  Heart: undefined;
-  TermsOfService: undefined;
-  PrivacyPolicy: undefined;
-};
+export type RootStackParamList = NewRootStackParamList;
 
 export type BottomTabParamList = NewMainTabParamList;
 

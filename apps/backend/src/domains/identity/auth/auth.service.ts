@@ -12,10 +12,13 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Prisma } from "@prisma/client";
-import { Gender } from '../../../types/prisma-enums';
+import { Gender } from "@/types/prisma-enums";
 import type { StringValue } from "ms";
 
-import { StructuredLoggerService, ContextualLogger } from "../../../common/logging/structured-logger.service";
+import {
+  StructuredLoggerService,
+  ContextualLogger,
+} from "../../../common/logging/structured-logger.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
 import * as bcrypt from "../../../common/security/bcrypt";
@@ -24,7 +27,7 @@ import { CURRENT_TERMS_VERSION, CURRENT_PRIVACY_VERSION } from "../privacy/priva
 
 import { AuthHelpersService } from "./auth.helpers";
 import { RegisterDto, LoginDto, AuthResponseDto, PhoneRegisterDto } from "./dto/auth.dto";
-import { SmsService , ISmsService } from "./services/sms.service";
+import { SmsService, ISmsService } from "./services/sms.service";
 import { TokenBlacklistService } from "./services/token-blacklist.service";
 import { WechatService } from "./services/wechat.service";
 
@@ -33,11 +36,11 @@ import { WechatService } from "./services/wechat.service";
  * Contains the minimal claims needed for user identification.
  */
 export interface JwtPayload {
-  sub: string;  // User ID
+  sub: string; // User ID
   email: string;
   jti?: string;
-  iat?: number;  // Issued at (auto-added by JWT)
-  exp?: number;  // Expiration (auto-added by JWT)
+  iat?: number; // Issued at (auto-added by JWT)
+  exp?: number; // Expiration (auto-added by JWT)
 }
 
 @Injectable()
@@ -55,7 +58,7 @@ export class AuthService {
     private wechatService: WechatService,
     private tokenBlacklistService: TokenBlacklistService,
     private emailService: EmailService,
-    loggingService: StructuredLoggerService,
+    loggingService: StructuredLoggerService
   ) {
     this.logger = loggingService.createChildLogger(AuthService.name);
   }
@@ -68,7 +71,7 @@ export class AuthService {
       avatar?: string | null;
       createdAt: Date;
     },
-    tokens: { accessToken: string; refreshToken: string },
+    tokens: { accessToken: string; refreshToken: string }
   ): AuthResponseDto {
     return {
       user: {
@@ -83,10 +86,7 @@ export class AuthService {
     };
   }
 
-  private async findMatchingRefreshTokens(
-    userId: string,
-    refreshToken: string,
-  ) {
+  private async findMatchingRefreshTokens(userId: string, refreshToken: string) {
     const storedTokens = await this.prisma.refreshToken.findMany({
       where: {
         userId,
@@ -111,11 +111,13 @@ export class AuthService {
 
     const emailHash = createHash("sha256").update(dto.email.toLowerCase().trim()).digest("hex");
 
-    const existingUser = await this.prisma.user.findUnique({
-      where: { emailHash },
-    }) || await this.prisma.user.findUnique({
-      where: { email: dto.email },
-    });
+    const existingUser =
+      (await this.prisma.user.findUnique({
+        where: { emailHash },
+      })) ||
+      (await this.prisma.user.findUnique({
+        where: { email: dto.email },
+      }));
 
     if (existingUser) {
       this.logger.warn("注册失败：邮箱已存在", { email: dto.email });
@@ -124,7 +126,7 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(dto.password);
 
-    const [user] = await this.prisma.$transaction(async (tx: any) => {
+    const [user] = await this.prisma.$transaction(async (tx) => {
       const createdUser = await tx.user.create({
         data: {
           email: dto.email,
@@ -192,20 +194,21 @@ export class AuthService {
     try {
       const refreshSecret = this.configService.get<string>("JWT_REFRESH_SECRET");
       if (!refreshSecret) {
-        throw new Error("JWT_REFRESH_SECRET environment variable is required. Generate one with: node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\"");
+        throw new Error(
+          "JWT_REFRESH_SECRET environment variable is required. Generate one with: node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\""
+        );
       }
       payload = this.jwtService.verify<JwtPayload>(refreshToken, {
         secret: refreshSecret,
       });
     } catch (error) {
-      this.logger.warn("刷新Token失败：Token无效", { error: error instanceof Error ? error.message : "Unknown" });
+      this.logger.warn("刷新Token失败：Token无效", {
+        error: error instanceof Error ? error.message : "Unknown",
+      });
       throw new UnauthorizedException("Invalid refresh token");
     }
 
-    const matchedTokens = await this.findMatchingRefreshTokens(
-      payload.sub,
-      refreshToken,
-    );
+    const matchedTokens = await this.findMatchingRefreshTokens(payload.sub, refreshToken);
 
     if (matchedTokens.length === 0) {
       this.logger.warn("刷新Token失败：Token已过期或撤销", { userId: payload.sub });
@@ -245,10 +248,7 @@ export class AuthService {
     }
 
     if (refreshToken) {
-      const matchedTokens = await this.findMatchingRefreshTokens(
-        userId,
-        refreshToken,
-      );
+      const matchedTokens = await this.findMatchingRefreshTokens(userId, refreshToken);
 
       if (matchedTokens.length === 0) {
         return;
@@ -283,23 +283,36 @@ export class AuthService {
     });
   }
 
-  private async generateTokens(userId: string, email: string): Promise<{ accessToken: string; refreshToken: string }> {
+  private async generateTokens(
+    userId: string,
+    email: string
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const accessPayload: JwtPayload = { sub: userId, email, jti: randomUUID() };
     const refreshPayload: JwtPayload = { sub: userId, email, jti: randomUUID() };
 
     const accessSecret = this.configService.get<string>("JWT_SECRET");
     if (!accessSecret) {
-      throw new Error("JWT_SECRET environment variable is required. Generate one with: node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\"");
+      throw new Error(
+        "JWT_SECRET environment variable is required. Generate one with: node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\""
+      );
     }
     const accessExpiresIn = this.configService.get<string>("JWT_ACCESS_EXPIRES_IN", "15m");
-    const accessToken = this.jwtService.sign(accessPayload, { secret: accessSecret, expiresIn: accessExpiresIn as StringValue });
+    const accessToken = this.jwtService.sign(accessPayload, {
+      secret: accessSecret,
+      expiresIn: accessExpiresIn as StringValue,
+    });
 
     const refreshSecret = this.configService.get<string>("JWT_REFRESH_SECRET");
     if (!refreshSecret) {
-      throw new Error("JWT_REFRESH_SECRET environment variable is required. Generate one with: node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\"");
+      throw new Error(
+        "JWT_REFRESH_SECRET environment variable is required. Generate one with: node -e \"console.log(require('crypto').randomBytes(64).toString('hex'))\""
+      );
     }
     const refreshExpiresIn = this.configService.get<string>("JWT_REFRESH_EXPIRES_IN", "7d");
-    const refreshToken = this.jwtService.sign(refreshPayload, { secret: refreshSecret, expiresIn: refreshExpiresIn as StringValue });
+    const refreshToken = this.jwtService.sign(refreshPayload, {
+      secret: refreshSecret,
+      expiresIn: refreshExpiresIn as StringValue,
+    });
 
     const accessTtlSeconds = this.parseExpiresInSeconds(accessExpiresIn);
     await this.tokenBlacklistService.trackUserToken(userId, accessPayload.jti!, accessTtlSeconds);
@@ -335,9 +348,13 @@ export class AuthService {
     const value = parseInt(match[1]!, 10);
     const unit = match[2];
     const date = new Date();
-    if (unit === "d") {date.setDate(date.getDate() + value);}
-    else if (unit === "h") {date.setHours(date.getHours() + value);}
-    else if (unit === "m") {date.setMinutes(date.getMinutes() + value);}
+    if (unit === "d") {
+      date.setDate(date.getDate() + value);
+    } else if (unit === "h") {
+      date.setHours(date.getHours() + value);
+    } else if (unit === "m") {
+      date.setMinutes(date.getMinutes() + value);
+    }
     return date;
   }
 
@@ -348,9 +365,15 @@ export class AuthService {
     }
     const value = parseInt(match[1]!, 10);
     const unit = match[2];
-    if (unit === "d") {return value * 24 * 60 * 60;}
-    if (unit === "h") {return value * 60 * 60;}
-    if (unit === "m") {return value * 60;}
+    if (unit === "d") {
+      return value * 24 * 60 * 60;
+    }
+    if (unit === "h") {
+      return value * 60 * 60;
+    }
+    if (unit === "m") {
+      return value * 60;
+    }
     return value;
   }
 
@@ -434,7 +457,7 @@ export class AuthService {
 
   async verifySmsCode(phone: string, code: string): Promise<boolean> {
     const attemptsKey = `sms:attempts:${phone}`;
-    const attempts = parseInt(await this.redisService.get(attemptsKey) || "0", 10);
+    const attempts = parseInt((await this.redisService.get(attemptsKey)) || "0", 10);
     if (attempts >= 5) {
       throw new BadRequestException("验证码尝试次数过多，请重新获取");
     }
@@ -474,11 +497,13 @@ export class AuthService {
     });
 
     if (!user) {
-      const [createdUser] = await this.prisma.$transaction(async (tx: any) => {
+      const [createdUser] = await this.prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {
             email: `phone_${phone}@internal.placeholder`,
-            emailHash: createHash("sha256").update(`phone_${phone}@internal.placeholder`.toLowerCase().trim()).digest("hex"),
+            emailHash: createHash("sha256")
+              .update(`phone_${phone}@internal.placeholder`.toLowerCase().trim())
+              .digest("hex"),
             password: await bcrypt.hash(randomUUID()),
             phone,
             nickname: `用户${phone.slice(-4)}`,
@@ -511,24 +536,23 @@ export class AuthService {
 
     let user = await this.prisma.user.findFirst({
       where: {
-        OR: [
-          { wechatOpenId: openid },
-          ...(unionid ? [{ wechatUnionId: unionid }] : []),
-        ] as any[],
+        OR: [{ wechatOpenId: openid }, ...(unionid ? [{ wechatUnionId: unionid }] : [])] as any[],
       },
     });
 
     if (!user) {
       const wechatUserInfo = await this.wechatService.getUserInfo(
         tokenResponse.access_token,
-        openid,
+        openid
       );
 
-      const [createdUser] = await this.prisma.$transaction(async (tx: any) => {
+      const [createdUser] = await this.prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {
             email: `wechat_${openid}@internal.placeholder`,
-            emailHash: createHash("sha256").update(`wechat_${openid}@internal.placeholder`.toLowerCase().trim()).digest("hex"),
+            emailHash: createHash("sha256")
+              .update(`wechat_${openid}@internal.placeholder`.toLowerCase().trim())
+              .digest("hex"),
             password: await bcrypt.hash(randomUUID()),
             wechatOpenId: openid,
             ...(unionid ? { wechatUnionId: unionid } : {}),
@@ -578,12 +602,14 @@ export class AuthService {
       throw new ConflictException("该手机号已注册");
     }
 
-    const [user] = await this.prisma.$transaction(async (tx: any) => {
+    const [user] = await this.prisma.$transaction(async (tx) => {
       const placeholderEmail = `phone_${dto.phone}@internal.placeholder`;
       const createdUser = await tx.user.create({
         data: {
           email: placeholderEmail,
-          emailHash: createHash("sha256").update(placeholderEmail.toLowerCase().trim()).digest("hex"),
+          emailHash: createHash("sha256")
+            .update(placeholderEmail.toLowerCase().trim())
+            .digest("hex"),
           password: await bcrypt.hash(randomUUID()),
           phone: dto.phone,
           nickname: dto.nickname ?? `用户${dto.phone.slice(-4)}`,

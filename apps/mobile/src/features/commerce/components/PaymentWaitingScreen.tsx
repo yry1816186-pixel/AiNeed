@@ -1,9 +1,10 @@
-﻿﻿import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { paymentApi } from '../../../services/api/commerce.api';
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { paymentApi } from "../../../services/api/commerce.api";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface PaymentWaitingScreenProps {
   orderId: string;
@@ -66,7 +67,7 @@ export const PaymentWaitingScreen: React.FC<PaymentWaitingScreenProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <ActivityIndicator size="large" color={colors.error} />
+        <ActivityIndicator size="large" color="colors.error" />
         <Text style={styles.pollingText}>正在查询支付结果...</Text>
       </View>
     </SafeAreaView>
@@ -82,35 +83,35 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[5],
+    padding: 20,
   },
   pollingText: {
     fontSize: DesignTokens.typography.sizes.md,
     color: colors.textSecondary,
-    marginTop: Spacing.md,
+    marginTop: 16,
   },
   timeoutIcon: {
-    fontSize: DesignTokens.typography.sizes['5xl'],
+    fontSize: DesignTokens.typography.sizes["5xl"],
     fontWeight: "700",
-    color: colors.error,
+    color: "colors.error",
   },
   timeoutTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginTop: DesignTokens.spacing[3],
+    marginTop: 12,
   },
   timeoutMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
-    marginTop: Spacing.sm,
+    marginTop: 8,
     textAlign: "center",
   },
   actionButton: {
-    marginTop: Spacing.lg,
-    backgroundColor: colors.error,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: DesignTokens.spacing[3],
+    marginTop: 24,
+    backgroundColor: "colors.error",
+    paddingHorizontal: 32,
+    paddingVertical: 12,
     borderRadius: 24,
   },
   actionButtonText: {
@@ -118,4 +119,4 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-}))
+}));

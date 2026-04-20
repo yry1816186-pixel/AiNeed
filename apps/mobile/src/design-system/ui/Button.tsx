@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Button - UI layer re-export with extended variants
  *
  * This file re-exports the canonical Button from primitives/Button
@@ -7,29 +7,23 @@
  * The core animation logic lives in primitives/Button/Button.tsx (Reanimated).
  */
 import React from "react";
-import {
-  Pressable,
-  Text,
-  ActivityIndicator,
-  ViewStyle,
-  TextStyle,
-  Platform,
-  StyleSheet,
-} from "react-native";
+import { Pressable, Text, ActivityIndicator, ViewStyle, TextStyle, Platform } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Typography, Shadows, gradients, DesignTokens, SpringConfigs } from '../../design-system/theme'
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  Typography,
+  Shadows,
+  gradients,
+} from "../../design-system/theme";
+import { SpringConfigs } from "../../theme/tokens/animations";
+import { flatColors as colors } from "../theme";
 
 // Re-export from primitives for backward compatibility
-export {
-  Button as PrimitiveButton,
-  IconButton,
-} from "../../design-system/primitives/Button";
+export { Button as PrimitiveButton, IconButton } from "../../design-system/primitives/Button";
 export type {
   ButtonProps as PrimitiveButtonProps,
   ButtonVariant as PrimitiveButtonVariant,
@@ -71,13 +65,13 @@ const sizeConfig: Record<
   { height: number; paddingHorizontal: number; fontSize: number; borderRadius: number }
 > = {
   sm: {
-    height: DesignTokens.spacing[11],
+    height: 44,
     paddingHorizontal: Spacing.md,
     fontSize: Typography.sizes.sm,
     borderRadius: BorderRadius.lg,
   },
   md: {
-    height: DesignTokens.spacing[11],
+    height: 44,
     paddingHorizontal: Spacing.lg,
     fontSize: Typography.sizes.base,
     borderRadius: BorderRadius.xl,
@@ -97,10 +91,10 @@ const sizeConfig: Record<
 };
 
 const variantConfig: Record<ButtonVariant, { bg: string; text: string; border?: string }> = {
-  primary: { bg: Colors.primary[500], text: Colors.neutral.white },
-  secondary: { bg: Colors.neutral[100], text: Colors.primary[500] },
-  outline: { bg: "transparent", text: Colors.primary[500], border: Colors.primary[500] },
-  ghost: { bg: "transparent", text: Colors.primary[500] },
+  primary: { bg: colors.primary[500], text: Colors.neutral.white },
+  secondary: { bg: colors.neutral[100], text: colors.primary[500] },
+  outline: { bg: "transparent", text: colors.primary[500], border: colors.primary[500] },
+  ghost: { bg: "transparent", text: colors.primary[500] },
   text: { bg: "transparent", text: Colors.sage[500] },
   gradient: { bg: "transparent", text: Colors.neutral.white },
   danger: { bg: Colors.semantic.error, text: Colors.neutral.white },
@@ -186,7 +180,7 @@ export const Button: React.FC<ButtonProps> = ({
           size="small"
           color={
             ["outline", "ghost", "text"].includes(variant)
-              ? Colors.primary[500]
+              ? colors.primary[500]
               : Colors.neutral.white
           }
         />
@@ -250,8 +244,3 @@ export const Button: React.FC<ButtonProps> = ({
 };
 
 export default Button;
-
-
-const styles = StyleSheet.create({
-  button: { flex: 1 },
-});

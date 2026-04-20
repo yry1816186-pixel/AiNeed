@@ -1,8 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Typography } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography } from "../../../design-system/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export type ErrorType = "network" | "server" | "permission" | "timeout";
 
@@ -44,6 +45,8 @@ export function ErrorState({
   accessibilityLabel,
   style,
 }: ErrorStateProps) {
+  const styles = useStyles(colors);
+  const { colors } = useTheme();
   const config = ERROR_CONFIG[type];
   const displayTitle = title || config.title;
   const displayDesc = description || config.description;
@@ -57,7 +60,7 @@ export function ErrorState({
       accessibilityRole="alert"
     >
       <View style={styles.iconContainer}>
-        <Ionicons name={config.icon} size={56} color={Colors.error[500]} />
+        <Ionicons name={config.icon} size={56} color={colors.error[500]} />
       </View>
       <Text style={styles.title}>{displayTitle}</Text>
       <Text style={styles.description}>{displayDesc}</Text>
@@ -77,26 +80,26 @@ export function ErrorState({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: { flex: 1, alignItems: "center", justifyContent: "center", padding: Spacing[10] },
   iconContainer: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: Colors.error[50],
+    backgroundColor: colors.error[50],
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing[6],
   },
   title: {
     ...Typography.heading.lg,
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
     textAlign: "center",
     marginBottom: Spacing[2],
   },
   description: {
     ...Typography.body.md,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
     maxWidth: 280,
     marginBottom: Spacing[6],
@@ -105,13 +108,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing[2],
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     paddingHorizontal: Spacing[8],
     paddingVertical: Spacing[3],
     borderRadius: BorderRadius.xl,
     elevation: 3,
   },
   retryText: { ...Typography.styles.button, color: Colors.neutral.white },
-});
+}));
 
 export default ErrorState;

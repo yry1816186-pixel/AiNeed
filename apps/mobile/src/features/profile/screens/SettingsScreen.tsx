@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,25 +12,25 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { useAuthStore } from '../../../stores/index';
-import { authApi } from '../../../services/api/auth.api';
-import { apiClient } from '../../../services/api/client';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { useTranslation } from '../../../i18n';
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useAuthStore } from "../stores/index";
+import { authApi } from "../../../services/api/auth.api";
+import { apiClient } from "../../../services/api/client";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { useTranslation } from "../../../i18n";
 
-import type { RootStackParamList } from '../../../types/navigation';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-
+import type { RootStackParamList } from "../../../types/navigation";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
 export const SettingsScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const { user, logout } = useAuthStore();
   const { isDark, setMode } = useTheme();
@@ -42,9 +42,9 @@ export const SettingsScreen: React.FC = () => {
 
   // Password modal state
   const [passwordModalVisible, setPasswordModalVisible] = useState(false);
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
 
   // Delete account confirmation
@@ -67,84 +67,99 @@ export const SettingsScreen: React.FC = () => {
     void loadSettings();
   }, [user]);
 
-  const handleDarkModeToggle = useCallback(async (value: boolean) => {
-    setMode(value ? 'dark' : 'light');
-  }, [setMode]);
+  const handleDarkModeToggle = useCallback(
+    async (value: boolean) => {
+      setMode(value ? "dark" : "light");
+    },
+    [setMode]
+  );
 
   const handleNotificationToggle = useCallback(
-    async (key: 'outfitReminders' | 'newArrivals' | 'sales', value: boolean) => {
-      if (key === 'outfitReminders') { setOutfitReminders(value); }
-      if (key === 'newArrivals') { setNewArrivals(value); }
-      if (key === 'sales') { setSales(value); }
+    async (key: "outfitReminders" | "newArrivals" | "sales", value: boolean) => {
+      if (key === "outfitReminders") {
+        setOutfitReminders(value);
+      }
+      if (key === "newArrivals") {
+        setNewArrivals(value);
+      }
+      if (key === "sales") {
+        setSales(value);
+      }
 
       setUpdatingPrefs(true);
       try {
         await authApi.updatePreferences({
           notifications: {
-            outfitReminders: key === 'outfitReminders' ? value : outfitReminders,
-            newArrivals: key === 'newArrivals' ? value : newArrivals,
-            sales: key === 'sales' ? value : sales,
+            outfitReminders: key === "outfitReminders" ? value : outfitReminders,
+            newArrivals: key === "newArrivals" ? value : newArrivals,
+            sales: key === "sales" ? value : sales,
           },
         });
       } catch {
         // Revert on failure
-        if (key === 'outfitReminders') { setOutfitReminders(!value); }
-        if (key === 'newArrivals') { setNewArrivals(!value); }
-        if (key === 'sales') { setSales(!value); }
+        if (key === "outfitReminders") {
+          setOutfitReminders(!value);
+        }
+        if (key === "newArrivals") {
+          setNewArrivals(!value);
+        }
+        if (key === "sales") {
+          setSales(!value);
+        }
       } finally {
         setUpdatingPrefs(false);
       }
     },
-    [outfitReminders, newArrivals, sales],
+    [outfitReminders, newArrivals, sales]
   );
 
   const handleChangePassword = useCallback(async () => {
     if (!oldPassword.trim()) {
-      Alert.alert('提示', '请输入当前密码');
+      Alert.alert("提示", "请输入当前密码");
       return;
     }
     if (newPassword.length < 6) {
-      Alert.alert('提示', '新密码至少需要6个字符');
+      Alert.alert("提示", "新密码至少需要6个字符");
       return;
     }
     if (newPassword !== confirmPassword) {
-      Alert.alert('提示', '两次输入的新密码不一致');
+      Alert.alert("提示", "两次输入的新密码不一致");
       return;
     }
     setChangingPassword(true);
     try {
       const response = await authApi.changePassword(oldPassword, newPassword);
       if (response.success) {
-        Alert.alert('成功', '密码已修改');
+        Alert.alert("成功", "密码已修改");
         setPasswordModalVisible(false);
-        setOldPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
       } else {
-        Alert.alert('错误', response.error?.message || '密码修改失败');
+        Alert.alert("错误", response.error?.message || "密码修改失败");
       }
     } catch {
-      Alert.alert('错误', '网络错误，请重试');
+      Alert.alert("错误", "网络错误，请重试");
     } finally {
       setChangingPassword(false);
     }
   }, [oldPassword, newPassword, confirmPassword]);
 
   const handleLogout = useCallback(async () => {
-    Alert.alert('退出登录', '确定要退出登录吗？', [
-      { text: '取消', style: 'cancel' },
+    Alert.alert("退出登录", "确定要退出登录吗？", [
+      { text: "取消", style: "cancel" },
       {
-        text: '确定',
-        style: 'destructive',
+        text: "确定",
+        style: "destructive",
         onPress: async () => {
           try {
             await authApi.logout();
           } catch (error) {
             // Continue regardless
-            console.error('Settings operation failed:', error);
+            console.error("Settings operation failed:", error);
           }
           void logout();
-          navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+          navigation.reset({ index: 0, routes: [{ name: "Login" }] });
         },
       },
     ]);
@@ -152,67 +167,70 @@ export const SettingsScreen: React.FC = () => {
 
   const handleExportData = useCallback(async () => {
     Alert.alert(
-      'Export Data',
-      'Request a copy of your personal data? You will receive a download link when ready.',
+      "Export Data",
+      "Request a copy of your personal data? You will receive a download link when ready.",
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: 'Export',
+          text: "Export",
           onPress: async () => {
             setExporting(true);
             try {
-              await apiClient.post('/privacy/export', { format: 'json' });
-              Alert.alert('Success', 'Data export request submitted. You will receive a download link within 24 hours.');
+              await apiClient.post("/privacy/export", { format: "json" });
+              Alert.alert(
+                "Success",
+                "Data export request submitted. You will receive a download link within 24 hours."
+              );
             } catch {
-              Alert.alert('Error', 'Failed to request data export. Please try again.');
+              Alert.alert("Error", "Failed to request data export. Please try again.");
             } finally {
               setExporting(false);
             }
           },
         },
-      ],
+      ]
     );
   }, []);
 
   const handleDeleteAccount = useCallback(() => {
-    Alert.alert(
-      '删除账户',
-      '此操作不可撤销，您的所有数据将被永久删除。确定要继续吗？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '删除',
-          style: 'destructive',
-          onPress: () => {
-            Alert.alert('最终确认', '请再次确认删除账户', [
-              { text: '取消', style: 'cancel' },
-              {
-                text: '确认删除',
-                style: 'destructive',
-                onPress: async () => {
-                  setDeleting(true);
-                  try {
-                    await authApi.deleteAccount();
-                    void logout();
-                    navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
-                  } catch {
-                    Alert.alert('错误', '删除账户失败，请重试');
-                  } finally {
-                    setDeleting(false);
-                  }
-                },
+    Alert.alert("删除账户", "此操作不可撤销，您的所有数据将被永久删除。确定要继续吗？", [
+      { text: "取消", style: "cancel" },
+      {
+        text: "删除",
+        style: "destructive",
+        onPress: () => {
+          Alert.alert("最终确认", "请再次确认删除账户", [
+            { text: "取消", style: "cancel" },
+            {
+              text: "确认删除",
+              style: "destructive",
+              onPress: async () => {
+                setDeleting(true);
+                try {
+                  await authApi.deleteAccount();
+                  void logout();
+                  navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+                } catch {
+                  Alert.alert("错误", "删除账户失败，请重试");
+                } finally {
+                  setDeleting(false);
+                }
               },
-            ]);
-          },
+            },
+          ]);
         },
-      ],
-    );
+      },
+    ]);
   }, [logout, navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()} accessibilityLabel="返回">
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+          accessibilityLabel="返回"
+        >
           <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>设置</Text>
@@ -243,7 +261,7 @@ export const SettingsScreen: React.FC = () => {
             <Text style={styles.settingText}>穿搭提醒</Text>
             <Switch
               value={outfitReminders}
-              onValueChange={(v) => handleNotificationToggle('outfitReminders', v)}
+              onValueChange={(v) => handleNotificationToggle("outfitReminders", v)}
               disabled={updatingPrefs}
               trackColor={{ false: colors.placeholderBg, true: colors.primary }}
               thumbColor={colors.surface}
@@ -255,7 +273,7 @@ export const SettingsScreen: React.FC = () => {
             <Text style={styles.settingText}>新品上架</Text>
             <Switch
               value={newArrivals}
-              onValueChange={(v) => handleNotificationToggle('newArrivals', v)}
+              onValueChange={(v) => handleNotificationToggle("newArrivals", v)}
               disabled={updatingPrefs}
               trackColor={{ false: colors.placeholderBg, true: colors.primary }}
               thumbColor={colors.surface}
@@ -267,7 +285,7 @@ export const SettingsScreen: React.FC = () => {
             <Text style={styles.settingText}>促销活动</Text>
             <Switch
               value={sales}
-              onValueChange={(v) => handleNotificationToggle('sales', v)}
+              onValueChange={(v) => handleNotificationToggle("sales", v)}
               disabled={updatingPrefs}
               trackColor={{ false: colors.placeholderBg, true: colors.primary }}
               thumbColor={colors.surface}
@@ -281,7 +299,7 @@ export const SettingsScreen: React.FC = () => {
         <View style={styles.section}>
           <TouchableOpacity
             style={styles.settingItem}
-            onPress={() => navigation.navigate('Legal', { type: 'terms' })}
+            onPress={() => navigation.navigate("Legal", { type: "terms" })}
             accessibilityLabel="用户服务协议"
           >
             <Ionicons name="document-text-outline" size={22} color={colors.textSecondary} />
@@ -290,7 +308,7 @@ export const SettingsScreen: React.FC = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.settingItem, styles.settingItemLast]}
-            onPress={() => navigation.navigate('Legal', { type: 'privacy' })}
+            onPress={() => navigation.navigate("Legal", { type: "privacy" })}
             accessibilityLabel="隐私政策"
           >
             <Ionicons name="shield-checkmark-outline" size={22} color={colors.textSecondary} />
@@ -314,12 +332,12 @@ export const SettingsScreen: React.FC = () => {
             ) : (
               <Ionicons name="download-outline" size={22} color={colors.textSecondary} />
             )}
-            <Text style={styles.settingText}>{exporting ? 'Exporting...' : 'Export My Data'}</Text>
+            <Text style={styles.settingText}>{exporting ? "Exporting..." : "Export My Data"}</Text>
             <Ionicons name="chevron-forward-outline" size={18} color={colors.textTertiary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.settingItem}
-            onPress={() => navigation.navigate('NotificationSettings')}
+            onPress={() => navigation.navigate("NotificationSettings")}
             accessibilityLabel="Notification settings"
           >
             <Ionicons name="notifications-outline" size={22} color={colors.textSecondary} />
@@ -339,7 +357,7 @@ export const SettingsScreen: React.FC = () => {
               <Ionicons name="trash-outline" size={22} color={colors.error} />
             )}
             <Text style={[styles.settingText, { color: colors.error }]}>
-              {deleting ? 'Deleting...' : 'Delete My Account'}
+              {deleting ? "Deleting..." : "Delete My Account"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -356,7 +374,10 @@ export const SettingsScreen: React.FC = () => {
             <Text style={styles.settingText}>Change Password</Text>
             <Ionicons name="chevron-forward-outline" size={18} color={colors.textTertiary} />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.settingItem, styles.settingItemLast]} accessibilityLabel="About">
+          <TouchableOpacity
+            style={[styles.settingItem, styles.settingItemLast]}
+            accessibilityLabel="About"
+          >
             <Ionicons name="help-circle-outline" size={22} color={colors.textSecondary} />
             <Text style={styles.settingText}>About</Text>
             <Ionicons name="chevron-forward-outline" size={18} color={colors.textTertiary} />
@@ -389,12 +410,15 @@ export const SettingsScreen: React.FC = () => {
       >
         <KeyboardAvoidingView
           style={styles.modalOverlay}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>修改密码</Text>
-              <TouchableOpacity onPress={() => setPasswordModalVisible(false)} accessibilityLabel="关闭">
+              <TouchableOpacity
+                onPress={() => setPasswordModalVisible(false)}
+                accessibilityLabel="关闭"
+              >
                 <Ionicons name="close" size={24} color={colors.textSecondary} />
               </TouchableOpacity>
             </View>
@@ -451,56 +475,60 @@ export const SettingsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: DesignTokens.spacing[5],
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 20,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: colors.divider,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: '600', color: colors.textPrimary },
-  placeholder: { width: DesignTokens.spacing[10] },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.text,
+  },
+  placeholder: { width: 40 },
   content: { flex: 1 },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.sm,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.textSecondary,
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.sm,
-    marginHorizontal: DesignTokens.spacing[5],
-    textTransform: 'uppercase',
+    marginTop: 24,
+    marginBottom: 8,
+    marginHorizontal: 20,
+    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   section: {
     backgroundColor: colors.surface,
-    marginHorizontal: DesignTokens.spacing[5],
+    marginHorizontal: 20,
     borderRadius: 16,
-    overflow: 'hidden',
-    marginBottom: Spacing.xs,
+    overflow: "hidden",
+    marginBottom: 4,
   },
   settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Spacing.md,
-    gap: DesignTokens.spacing[3],
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    gap: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
   settingItemLast: { borderBottomWidth: 0 },
-  settingText: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary },
+  settingText: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
   dangerButton: { borderBottomWidth: 0 },
   footer: {
-    alignItems: 'center',
-    paddingVertical: Spacing.xl,
+    alignItems: "center",
+    paddingVertical: 32,
   },
   footerText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -508,46 +536,46 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.4)",
   },
   modalContent: {
     backgroundColor: colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    padding: Spacing.lg,
-    paddingBottom: DesignTokens.spacing[10],
+    padding: 24,
+    paddingBottom: 40,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.lg,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 24,
   },
   modalTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.textPrimary,
   },
   input: {
     backgroundColor: colors.background,
     borderRadius: 12,
-    padding: Spacing.md,
+    padding: 16,
     fontSize: DesignTokens.typography.sizes.md,
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
     color: colors.textPrimary,
   },
   submitButton: {
     backgroundColor: colors.primary,
     borderRadius: 12,
-    padding: Spacing.md,
-    alignItems: 'center',
-    marginTop: Spacing.sm,
+    padding: 16,
+    alignItems: "center",
+    marginTop: 8,
   },
   submitButtonText: {
     color: colors.surface,
     fontSize: DesignTokens.typography.sizes.md,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 

@@ -11,17 +11,17 @@ import {
   RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Colors, Spacing, BorderRadius, Shadows, flatColors as staticColors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { customizationApi } from '../../../services/api/customization.api';
+import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { customizationApi } from "../../../services/api/customization.api";
 import type {
   CustomizationType,
   CustomizationStatus,
   CustomizationRequest,
-} from '../../../types/customization';
-import type { RootStackParamList } from '../../../types/navigation';
+} from "../../types/customization";
+import type { RootStackParamList } from "../../../types/navigation";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 type Navigation = NavigationProp<RootStackParamList>;
@@ -61,14 +61,14 @@ const SERVICE_TYPES: ServiceType[] = [
 ];
 
 const STATUS_CONFIG: Record<CustomizationStatus, { label: string; color: string }> = {
-  draft: { label: "草稿", color: Colors.neutral[500] },
-  submitted: { label: "已提交", color: staticColors.info },
-  quoting: { label: "报价中", color: staticColors.warning },
-  confirmed: { label: "已确认", color: staticColors.success },
-  in_progress: { label: "进行中", color: staticColors.primary },
-  shipped: { label: "已发货", color: staticColors.info },
+  draft: { label: "草稿", color: colors.neutral[500] },
+  submitted: { label: "已提交", color: colors.info },
+  quoting: { label: "报价中", color: colors.warning },
+  confirmed: { label: "已确认", color: colors.success },
+  in_progress: { label: "进行中", color: colors.primary },
+  shipped: { label: "已发货", color: colors.info },
   completed: { label: "已完成", color: Colors.emerald[600] },
-  cancelled: { label: "已取消", color: Colors.neutral[400] },
+  cancelled: { label: "已取消", color: colors.neutral[400] },
 };
 
 type TabId = "new" | "list";
@@ -96,7 +96,7 @@ export const CustomizationScreen: React.FC = () => {
         setRequests(response.data.items);
       }
     } catch (error) {
-      console.error('Customization operation failed:', error);
+      console.error("Customization operation failed:", error);
     } finally {
       setIsLoadingRequests(false);
     }
@@ -178,7 +178,7 @@ export const CustomizationScreen: React.FC = () => {
         onPress={() => navigation.goBack()}
         activeOpacity={0.7}
       >
-        <Ionicons name="arrow-back" size={24} color={staticColors.textPrimary} />
+        <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
       </TouchableOpacity>
       <Text style={styles.headerTitle}>定制服务</Text>
       <View style={styles.headerSpacer} />
@@ -214,11 +214,11 @@ export const CustomizationScreen: React.FC = () => {
       <View style={styles.quickActions}>
         <TouchableOpacity
           style={styles.quickActionCard}
-          onPress={() => navigation.navigate("CustomizationEditor" as never)}
+          onPress={() => navigation.navigate("CustomizationEditor")}
           activeOpacity={0.7}
         >
           <View style={styles.quickActionIcon}>
-            <Ionicons name="color-palette-outline" size={28} color={staticColors.primary} />
+            <Ionicons name="color-palette-outline" size={28} color={colors.primary} />
           </View>
           <Text style={styles.quickActionTitle}>设计定制</Text>
           <Text style={styles.quickActionDesc}>选择模板，上传图案，创建专属定制</Text>
@@ -229,7 +229,7 @@ export const CustomizationScreen: React.FC = () => {
           activeOpacity={0.7}
         >
           <View style={styles.quickActionIcon}>
-            <Ionicons name="qr-code-outline" size={28} color={staticColors.primary} />
+            <Ionicons name="qr-code-outline" size={28} color={colors.primary} />
           </View>
           <Text style={styles.quickActionTitle}>品牌扫码</Text>
           <Text style={styles.quickActionDesc}>扫描品牌二维码，一键导入衣橱</Text>
@@ -256,7 +256,7 @@ export const CustomizationScreen: React.FC = () => {
                 <Ionicons
                   name={service.icon}
                   size={24}
-                  color={isSelected ? staticColors.surface : staticColors.primary}
+                  color={isSelected ? colors.surface : colors.primary}
                 />
               </View>
               <Text style={[styles.serviceLabel, isSelected && styles.serviceLabelSelected]}>
@@ -275,7 +275,7 @@ export const CustomizationScreen: React.FC = () => {
         <TextInput
           style={styles.textArea}
           placeholder="请详细描述您的定制需求，包括款式、用途、特殊要求等..."
-          placeholderTextColor={staticColors.textTertiary}
+          placeholderTextColor={colors.textTertiary}
           value={description}
           onChangeText={setDescription}
           multiline
@@ -289,33 +289,33 @@ export const CustomizationScreen: React.FC = () => {
       <Text style={styles.sectionTitle}>偏好与预算 (选填)</Text>
       <View style={styles.optionalFields}>
         <View style={styles.inputField}>
-          <Ionicons name="shirt-outline" size={18} color={staticColors.textTertiary} />
+          <Ionicons name="shirt-outline" size={18} color={colors.textTertiary} />
           <TextInput
             style={styles.textInput}
             placeholder="面料偏好 (如：真丝、羊毛、亚麻)"
-            placeholderTextColor={staticColors.textTertiary}
+            placeholderTextColor={colors.textTertiary}
             value={fabricPreference}
             onChangeText={setFabricPreference}
             maxLength={50}
           />
         </View>
         <View style={styles.inputField}>
-          <Ionicons name="wallet-outline" size={18} color={staticColors.textTertiary} />
+          <Ionicons name="wallet-outline" size={18} color={colors.textTertiary} />
           <TextInput
             style={styles.textInput}
             placeholder="预算范围 (如：2000-5000)"
-            placeholderTextColor={staticColors.textTertiary}
+            placeholderTextColor={colors.textTertiary}
             value={budgetRange}
             onChangeText={setBudgetRange}
             maxLength={30}
           />
         </View>
         <View style={styles.inputField}>
-          <Ionicons name="document-text-outline" size={18} color={staticColors.textTertiary} />
+          <Ionicons name="document-text-outline" size={18} color={colors.textTertiary} />
           <TextInput
             style={styles.textInput}
             placeholder="其他补充说明"
-            placeholderTextColor={staticColors.textTertiary}
+            placeholderTextColor={colors.textTertiary}
             value={additionalNotes}
             onChangeText={setAdditionalNotes}
             maxLength={200}
@@ -330,7 +330,7 @@ export const CustomizationScreen: React.FC = () => {
         activeOpacity={0.7}
       >
         {isSubmitting ? (
-          <ActivityIndicator size="small" color={staticColors.surface} />
+          <ActivityIndicator size="small" color={colors.surface} />
         ) : (
           <Text style={styles.submitButtonText}>提交定制需求</Text>
         )}
@@ -354,7 +354,7 @@ export const CustomizationScreen: React.FC = () => {
     if (requests.length === 0) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons name="document-text-outline" size={48} color={Colors.neutral[300]} />
+          <Ionicons name="document-text-outline" size={48} color={colors.neutral[300]} />
           <Text style={styles.emptyTitle}>暂无定制需求</Text>
           <Text style={styles.emptySubtitle}>点击"发起定制"开始您的第一个定制服务</Text>
           <TouchableOpacity
@@ -383,7 +383,7 @@ export const CustomizationScreen: React.FC = () => {
         {requests.map((request) => {
           const statusConfig = STATUS_CONFIG[request.status] || {
             label: request.status,
-            color: Colors.neutral[500],
+            color: colors.neutral[500],
           };
           return (
             <View key={request.id} style={styles.requestCard}>
@@ -439,7 +439,7 @@ export const CustomizationScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: staticColors.surface,
+    backgroundColor: colors.surface,
   },
   header: {
     flexDirection: "row",
@@ -448,10 +448,10 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[3],
   },
   headerBack: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
@@ -460,16 +460,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
   },
   headerSpacer: {
-    width: DesignTokens.spacing[10],
+    width: 40,
   },
   tabs: {
     flexDirection: "row",
     marginHorizontal: Spacing[5],
     marginBottom: Spacing[4],
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     borderRadius: BorderRadius.xl,
     padding: Spacing[1],
   },
@@ -480,16 +480,16 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
   },
   tabActive: {
-    backgroundColor: staticColors.surface,
+    backgroundColor: colors.surface,
     ...Shadows.sm,
   },
   tabText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: staticColors.textTertiary,
+    color: colors.textTertiary,
   },
   tabTextActive: {
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     fontWeight: "600",
   },
   content: {
@@ -502,7 +502,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     marginTop: Spacing[5],
     marginBottom: Spacing[3],
   },
@@ -513,60 +513,60 @@ const styles = StyleSheet.create({
   },
   serviceCard: {
     width: "47%",
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     borderWidth: 1.5,
     borderColor: "transparent",
   },
   serviceCardSelected: {
-    borderColor: staticColors.primary,
+    borderColor: colors.primary,
     backgroundColor: "rgba(198, 123, 92, 0.06)",
   },
   serviceIconContainer: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing[3],
   },
   serviceIconContainerSelected: {
-    backgroundColor: staticColors.primary,
+    backgroundColor: colors.primary,
   },
   serviceLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[1],
   },
   serviceLabelSelected: {
-    color: staticColors.primary,
+    color: colors.primary,
   },
   serviceDescription: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 18,
   },
   textAreaContainer: {
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
     minHeight: 140,
   },
   textArea: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     lineHeight: 22,
     minHeight: 100,
     textAlignVertical: "top",
   },
   charCount: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: staticColors.textTertiary,
+    color: colors.textTertiary,
     textAlign: "right",
     marginTop: Spacing[2],
   },
@@ -576,22 +576,22 @@ const styles = StyleSheet.create({
   inputField: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[4],
-    height: Spacing['2xl'],
+    height: 48,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
     gap: Spacing[2],
   },
   textInput: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     padding: 0,
   },
   submitButton: {
-    backgroundColor: staticColors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: staticColors.surface,
+    color: colors.surface,
   },
   bottomSpacer: {
     height: Spacing[8],
@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
     marginTop: Spacing[3],
   },
   emptyContainer: {
@@ -630,19 +630,19 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     marginTop: Spacing[4],
   },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
     textAlign: "center",
     marginTop: Spacing[2],
     lineHeight: 20,
   },
   emptyButton: {
     marginTop: Spacing[5],
-    backgroundColor: staticColors.primary,
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[6],
     paddingVertical: Spacing[3],
@@ -650,14 +650,14 @@ const styles = StyleSheet.create({
   emptyButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: staticColors.surface,
+    color: colors.surface,
   },
   listContainer: {
     paddingHorizontal: Spacing[5],
     paddingBottom: Spacing[6],
   },
   requestCard: {
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     marginBottom: Spacing[3],
@@ -680,7 +680,7 @@ const styles = StyleSheet.create({
   requestTypeText: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: staticColors.primary,
+    color: colors.primary,
   },
   statusBadge: {
     paddingHorizontal: Spacing[2],
@@ -693,7 +693,7 @@ const styles = StyleSheet.create({
   },
   requestDescription: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     lineHeight: 22,
     marginBottom: Spacing[3],
   },
@@ -704,7 +704,7 @@ const styles = StyleSheet.create({
   },
   requestDate: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: staticColors.textTertiary,
+    color: colors.textTertiary,
   },
   quoteInfo: {
     flexDirection: "row",
@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
   },
   quoteText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: staticColors.textTertiary,
+    color: colors.textTertiary,
   },
   quickActions: {
     flexDirection: "row",
@@ -722,15 +722,15 @@ const styles = StyleSheet.create({
   },
   quickActionCard: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     borderWidth: 1.5,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   quickActionIcon: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: 48,
+    height: 48,
     borderRadius: 24,
     backgroundColor: "rgba(198, 123, 92, 0.1)",
     alignItems: "center",
@@ -740,12 +740,12 @@ const styles = StyleSheet.create({
   quickActionTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[1],
   },
   quickActionDesc: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 18,
   },
 });

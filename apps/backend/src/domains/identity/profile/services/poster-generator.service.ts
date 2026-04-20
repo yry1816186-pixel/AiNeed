@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { ColorSeason } from '../../../../types/prisma-enums';
+import { ColorSeason } from "@/types/prisma-enums";
 import { createCanvas, Image, CanvasRenderingContext2D } from "canvas";
 import * as QRCode from "qrcode";
 import { v4 as uuidv4 } from "uuid";
@@ -33,7 +33,7 @@ export class PosterGeneratorService {
     private prisma: PrismaService,
     private storageService: StorageService,
     private redisService: RedisService,
-    private profileService: ProfileService,
+    private profileService: ProfileService
   ) {}
 
   async generateProfilePoster(userId: string): Promise<{
@@ -102,7 +102,10 @@ export class PosterGeneratorService {
     return result;
   }
 
-  async getPoster(userId: string, posterId: string): Promise<{
+  async getPoster(
+    userId: string,
+    posterId: string
+  ): Promise<{
     id: string;
     url: string;
     createdAt: Date;
@@ -145,11 +148,19 @@ export class PosterGeneratorService {
   private drawHeader(
     ctx: CanvasRenderingContext2D,
     template: PosterTemplate,
-    colorSeason: ColorSeason | null,
+    colorSeason: ColorSeason | null
   ): void {
     const { header } = template;
 
-    this.drawRoundedRect(ctx, 0, header.y, template.width, header.height, 0, header.backgroundColor);
+    this.drawRoundedRect(
+      ctx,
+      0,
+      header.y,
+      template.width,
+      header.height,
+      0,
+      header.backgroundColor
+    );
     ctx.fill();
 
     ctx.fillStyle = header.titleColor;
@@ -158,9 +169,7 @@ export class PosterGeneratorService {
     ctx.textBaseline = "middle";
     ctx.fillText("我的风格画像", template.width / 2, header.y + header.height * 0.4);
 
-    const seasonName = colorSeason
-      ? (COLOR_SEASON_DISPLAY_NAMES[colorSeason] ?? "春季型")
-      : "春季型";
+    const seasonName = colorSeason ? COLOR_SEASON_DISPLAY_NAMES[colorSeason] : "春季型";
     ctx.fillStyle = header.subtitleColor;
     ctx.font = `${header.subtitleFontSize}px ${FONT_FAMILY}`;
     ctx.fillText(seasonName, template.width / 2, header.y + header.height * 0.65);
@@ -170,12 +179,10 @@ export class PosterGeneratorService {
     ctx: CanvasRenderingContext2D,
     template: PosterTemplate,
     bodyAnalysis: BodyAnalysisResult,
-    seasonConfig: ColorSeasonConfig,
+    seasonConfig: ColorSeasonConfig
   ): void {
     const { bodySection, styleTags } = template;
-    const tags = bodyAnalysis.idealStyles.length > 0
-      ? bodyAnalysis.idealStyles
-      : ["待完善"];
+    const tags = bodyAnalysis.idealStyles.length > 0 ? bodyAnalysis.idealStyles : ["待完善"];
 
     const sectionY = bodySection.y;
     const cardX = bodySection.paddingX;
@@ -189,7 +196,7 @@ export class PosterGeneratorService {
       cardWidth,
       this.calculateStyleTagsHeight(tags, template),
       bodySection.cardBorderRadius,
-      bodySection.cardBackgroundColor,
+      bodySection.cardBackgroundColor
     );
     ctx.fill();
 
@@ -225,7 +232,7 @@ export class PosterGeneratorService {
         tagWidth,
         styleTags.tagHeight,
         styleTags.tagBorderRadius,
-        tagBackgroundColor,
+        tagBackgroundColor
       );
       ctx.fill();
 
@@ -251,20 +258,23 @@ export class PosterGeneratorService {
   private drawColorPalette(
     ctx: CanvasRenderingContext2D,
     template: PosterTemplate,
-    seasonConfig: ColorSeasonConfig,
+    seasonConfig: ColorSeasonConfig
   ): void {
     const { bodySection, colorPalette } = template;
     const { colorHexes, colorNames } = seasonConfig;
 
-    const styleTagsHeight = this.calculateStyleTagsHeight(
-      seasonConfig.colorNames,
-      template,
-    );
+    const styleTagsHeight = this.calculateStyleTagsHeight(seasonConfig.colorNames, template);
     const sectionY = bodySection.y + styleTagsHeight + bodySection.sectionGap;
 
     const cardX = bodySection.paddingX;
     const cardWidth = template.width - bodySection.paddingX * 2;
-    const cardHeight = bodySection.cardPadding + bodySection.labelFontSize + 12 + colorPalette.swatchSize + 20 + bodySection.cardPadding;
+    const cardHeight =
+      bodySection.cardPadding +
+      bodySection.labelFontSize +
+      12 +
+      colorPalette.swatchSize +
+      20 +
+      bodySection.cardPadding;
 
     ctx.fillStyle = bodySection.cardBackgroundColor;
     this.drawRoundedRect(
@@ -274,7 +284,7 @@ export class PosterGeneratorService {
       cardWidth,
       cardHeight,
       bodySection.cardBorderRadius,
-      bodySection.cardBackgroundColor,
+      bodySection.cardBackgroundColor
     );
     ctx.fill();
 
@@ -285,7 +295,9 @@ export class PosterGeneratorService {
     ctx.fillText("色彩调色板", cardX + bodySection.cardPadding, sectionY + bodySection.cardPadding);
 
     const swatchesStartY = sectionY + bodySection.cardPadding + bodySection.labelFontSize + 12;
-    const totalSwatchesWidth = colorHexes.length * colorPalette.swatchSize + (colorHexes.length - 1) * colorPalette.swatchGap;
+    const totalSwatchesWidth =
+      colorHexes.length * colorPalette.swatchSize +
+      (colorHexes.length - 1) * colorPalette.swatchGap;
     let swatchX = cardX + (cardWidth - totalSwatchesWidth) / 2;
 
     for (let i = 0; i < colorHexes.length; i++) {
@@ -315,24 +327,37 @@ export class PosterGeneratorService {
   private drawBodyAdvice(
     ctx: CanvasRenderingContext2D,
     template: PosterTemplate,
-    bodyAnalysis: BodyAnalysisResult,
+    bodyAnalysis: BodyAnalysisResult
   ): void {
     const { bodySection, bodyAdvice, colorPalette } = template;
 
     const styleTagsHeight = this.calculateStyleTagsHeight(
       bodyAnalysis.idealStyles.length > 0 ? bodyAnalysis.idealStyles : ["待完善"],
-      template,
+      template
     );
-    const colorCardHeight = bodySection.cardPadding + bodySection.labelFontSize + 12 + colorPalette.swatchSize + 20 + bodySection.cardPadding;
-    const sectionY = bodySection.y + styleTagsHeight + bodySection.sectionGap + colorCardHeight + bodySection.sectionGap;
+    const colorCardHeight =
+      bodySection.cardPadding +
+      bodySection.labelFontSize +
+      12 +
+      colorPalette.swatchSize +
+      20 +
+      bodySection.cardPadding;
+    const sectionY =
+      bodySection.y +
+      styleTagsHeight +
+      bodySection.sectionGap +
+      colorCardHeight +
+      bodySection.sectionGap;
 
-    const recommendations = bodyAnalysis.recommendations.length > 0
-      ? bodyAnalysis.recommendations
-      : [];
+    const recommendations =
+      bodyAnalysis.recommendations.length > 0 ? bodyAnalysis.recommendations : [];
 
     const cardX = bodySection.paddingX;
     const cardWidth = template.width - bodySection.paddingX * 2;
-    const cardHeight = bodySection.cardPadding + bodySection.labelFontSize + 12 +
+    const cardHeight =
+      bodySection.cardPadding +
+      bodySection.labelFontSize +
+      12 +
       (recommendations.length > 0
         ? recommendations.length * bodyAdvice.lineHeight
         : bodyAdvice.lineHeight) +
@@ -346,7 +371,7 @@ export class PosterGeneratorService {
       cardWidth,
       cardHeight,
       bodySection.cardBorderRadius,
-      bodySection.cardBackgroundColor,
+      bodySection.cardBackgroundColor
     );
     ctx.fill();
 
@@ -354,7 +379,11 @@ export class PosterGeneratorService {
     ctx.font = `bold ${bodySection.labelFontSize}px ${FONT_FAMILY}`;
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText("体型适配建议", cardX + bodySection.cardPadding, sectionY + bodySection.cardPadding);
+    ctx.fillText(
+      "体型适配建议",
+      cardX + bodySection.cardPadding,
+      sectionY + bodySection.cardPadding
+    );
 
     const adviceStartY = sectionY + bodySection.cardPadding + bodySection.labelFontSize + 12;
 
@@ -384,10 +413,7 @@ export class PosterGeneratorService {
     }
   }
 
-  private async drawQrCode(
-    ctx: CanvasRenderingContext2D,
-    template: PosterTemplate,
-  ): Promise<void> {
+  private async drawQrCode(ctx: CanvasRenderingContext2D, template: PosterTemplate): Promise<void> {
     const { qrCode } = template;
 
     try {
@@ -446,7 +472,7 @@ export class PosterGeneratorService {
     width: number,
     height: number,
     radius: number,
-    _fillColor: string,
+    _fillColor: string
   ): void {
     ctx.beginPath();
     if (radius === 0) {

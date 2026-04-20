@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 import { AdminAuditService } from "./admin-audit.service";
@@ -23,7 +21,7 @@ export class AdminConfigService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly auditService: AdminAuditService,
+    private readonly auditService: AdminAuditService
   ) {}
 
   async getConfig(key: string) {
@@ -40,7 +38,7 @@ export class AdminConfigService {
     key: string,
     value: Record<string, unknown>,
     description: string | undefined,
-    userId: string,
+    userId: string
   ) {
     const existing = await this.prisma.systemConfig.findUnique({
       where: { key },

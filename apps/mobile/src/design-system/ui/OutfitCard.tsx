@@ -1,20 +1,20 @@
-import React from "react";
+﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
 
 // 引入主题令牌
-import { Colors,
+import {
+  Colors,
   Typography as ThemeTypography,
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
-  Shadows as ThemeShadows } from '../../design-system/theme';
+  Shadows as ThemeShadows,
+} from "../../design-system/theme";
 
-import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../theme';
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import { flatColors as colors } from "../theme";
 
 interface OutfitCardProps {
   id: string;
@@ -52,12 +52,11 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
   onFavorite,
   isFavorite = false,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const { seasonAccent } = useTheme();
 
   // 季节强调色优先，回退到品牌色
-  const accentColor = seasonAccent?.accent ?? Colors.primary[500];
+  const accentColor = seasonAccent?.accent ?? colors.primary[500];
   const resolvedTagColor = tagColor ?? accentColor;
 
   return (
@@ -119,7 +118,7 @@ export const OutfitCard: React.FC<OutfitCardProps> = ({
 const useStyles = createStyles((colors) => ({
   card: {
     width: 140,
-    marginRight: Spacing.md,
+    marginRight: 16,
     backgroundColor: Colors.neutral.white,
     borderRadius: ThemeBorderRadius["2xl"],
     overflow: "hidden",
@@ -132,13 +131,13 @@ const useStyles = createStyles((colors) => ({
     width: 140,
     height: 180,
     resizeMode: "cover",
-    backgroundColor: Colors.neutral[200],
+    backgroundColor: colors.neutral[200],
   },
   tag: {
     position: "absolute",
-    top: DesignTokens.spacing['2.5'],
-    left: DesignTokens.spacing['2.5'],
-    paddingHorizontal: DesignTokens.spacing[3],
+    top: 10,
+    left: 10,
+    paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: ThemeBorderRadius.xl,
   },
@@ -149,36 +148,36 @@ const useStyles = createStyles((colors) => ({
   },
   favoriteButton: {
     position: "absolute",
-    top: DesignTokens.spacing['2.5'],
-    right: DesignTokens.spacing['2.5'],
-    width: Spacing.xl,
-    height: Spacing.xl,
+    top: 10,
+    right: 10,
+    width: 32,
+    height: 32,
     borderRadius: 16,
     backgroundColor: "rgba(0,0,0,0.35)",
     alignItems: "center",
     justifyContent: "center",
   },
   infoContainer: {
-    padding: DesignTokens.spacing[3],
+    padding: 12,
   },
   title: {
     fontSize: ThemeTypography.sizes.base,
     fontWeight: ThemeTypography.fontWeights.semibold,
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     textAlign: "center",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   subtitle: {
     fontSize: ThemeTypography.sizes.xs,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
-    marginBottom: DesignTokens.spacing['1.5'],
+    marginBottom: 6,
   },
   price: {
     fontSize: ThemeTypography.sizes.sm,
     fontWeight: ThemeTypography.fontWeights.bold,
     textAlign: "center",
   },
-}))
+}));
 
 export default OutfitCard;

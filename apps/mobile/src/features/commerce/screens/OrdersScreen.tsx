@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -10,21 +10,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Snackbar } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { Snackbar } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
+import type { CompositeScreenProps } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { orderApi, orderEnhancementApi } from '../../../services/api/commerce.api';
-import { useOrderStore } from '../stores/orderStore';
-import type { Order, OrderStatus } from '../../../types';
-import type { RootStackParamList } from '../../../types/navigation';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { orderApi, orderEnhancementApi } from "../../../services/api/commerce.api";
+import { useOrderStore } from "../stores/orderStore";
+import type { Order, OrderStatus } from "../../../types";
+import type { ProfileStackParamList, RootStackParamList } from "../../../navigation/types";
+import { navigateHome } from "../../../navigation/navigationService";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
-
-type OrdersNavigation = NativeStackNavigationProp<RootStackParamList>;
+type OrdersNavigation = CompositeScreenProps<
+  NativeStackNavigationProp<ProfileStackParamList>,
+  NativeStackNavigationProp<RootStackParamList>
+>["navigation"];
 type TabKey = "all" | "pending" | "paid" | "shipped" | "delivered" | "refund";
 
 interface TabConfig {
@@ -47,8 +50,8 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: "待支付", color: colors.warning },
   paid: { label: "待发货", color: colors.primary },
   confirmed: { label: "已确认", color: colors.primary },
-  processing: { label: "处理中", color: colors.info },
-  shipped: { label: "配送中", color: colors.info },
+  processing: { label: "处理中", color: "DesignTokens.colors.semantic.info" },
+  shipped: { label: "配送中", color: "DesignTokens.colors.semantic.info" },
   delivered: { label: "已签收", color: colors.success },
   cancelled: { label: "已取消", color: colors.error },
   refunded: { label: "已退款", color: colors.textTertiary },
@@ -65,8 +68,8 @@ function formatDate(dateString: string): string {
 
 export const OrdersScreen: React.FC = () => {
   const navigation = useNavigation<OrdersNavigation>();
-  const orderError = useOrderStore(state => state.error);
-  const clearOrderError = useOrderStore(state => state.clearError);
+  const orderError = useOrderStore((state) => state.error);
+  const clearOrderError = useOrderStore((state) => state.clearError);
   const [activeTab, setActiveTab] = useState<TabKey>("all");
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -247,7 +250,7 @@ export const OrdersScreen: React.FC = () => {
             {item.status === "delivered" ? (
               <TouchableOpacity
                 style={styles.secondaryButton}
-                onPress={() => navigation.navigate("MainTabs", { screen: "Home" } as never)}
+                onPress={() => navigateHome("HomeFeed")}
               >
                 <Text style={styles.secondaryButtonText}>再次购买</Text>
               </TouchableOpacity>
@@ -375,7 +378,7 @@ export const OrdersScreen: React.FC = () => {
         visible={!!orderError}
         onDismiss={clearOrderError}
         duration={3000}
-        action={{ label: '关闭', onPress: clearOrderError }}
+        action={{ label: "关闭", onPress: clearOrderError }}
       >
         {orderError}
       </Snackbar>
@@ -392,19 +395,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: Spacing.md,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   iconButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -412,25 +415,25 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   headerPlaceholder: {
-    width: DesignTokens.spacing[10],
+    width: 40,
   },
   tabBar: {
     flexDirection: "row",
-    gap: Spacing.sm,
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing['3.5'],
+    gap: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
     backgroundColor: colors.surface,
   },
   tabItem: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingVertical: 10,
     borderRadius: 14,
     backgroundColor: colors.background,
   },
   tabItemActive: {
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
     borderWidth: 1,
     borderColor: colors.primary,
   },
@@ -443,8 +446,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   listContent: {
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingBottom: DesignTokens.spacing[7],
+    paddingHorizontal: 20,
+    paddingBottom: 28,
   },
   center: {
     flex: 1,
@@ -456,24 +459,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 120,
-    paddingHorizontal: Spacing.xl,
+    paddingHorizontal: 32,
   },
   emptyTitle: {
-    marginTop: Spacing.md,
+    marginTop: 16,
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: colors.textPrimary,
   },
   emptySubtitle: {
-    marginTop: Spacing.sm,
+    marginTop: 8,
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     textAlign: "center",
     color: colors.textSecondary,
   },
   orderCard: {
-    marginTop: Spacing.md,
-    padding: Spacing.md,
+    marginTop: 16,
+    padding: 16,
     borderRadius: 20,
     backgroundColor: colors.surface,
   },
@@ -487,14 +490,14 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
   },
   orderIdValue: {
-    marginTop: Spacing.xs,
+    marginTop: 4,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.textPrimary,
   },
   statusBadge: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 999,
   },
   statusText: {
@@ -504,14 +507,14 @@ const styles = StyleSheet.create({
   itemsRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['2.5'],
-    marginTop: Spacing.md,
+    gap: 10,
+    marginTop: 16,
   },
   itemThumbnail: {
     width: 54,
     height: 54,
     borderRadius: 14,
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   itemThumbnailFallback: {
     width: 54,
@@ -519,7 +522,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   moreItemsBadge: {
     width: 54,
@@ -538,10 +541,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: Spacing.md,
-    paddingTop: DesignTokens.spacing['3.5'],
+    marginTop: 16,
+    paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: colors.backgroundTertiary,
+    borderTopColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   orderDate: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -550,7 +553,7 @@ const styles = StyleSheet.create({
   orderSummary: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 8,
   },
   orderSummaryText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -564,12 +567,12 @@ const styles = StyleSheet.create({
   actionRow: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    gap: DesignTokens.spacing['2.5'],
-    marginTop: Spacing.md,
+    gap: 10,
+    marginTop: 16,
   },
   secondaryButton: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
@@ -580,8 +583,8 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   primaryButton: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 12,
     backgroundColor: colors.primary,
   },
@@ -591,21 +594,21 @@ const styles = StyleSheet.create({
     color: colors.surface,
   },
   footerLoading: {
-    paddingVertical: DesignTokens.spacing[5],
+    paddingVertical: 20,
   },
   footerText: {
-    paddingVertical: DesignTokens.spacing[5],
+    paddingVertical: 20,
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
   },
   dangerTextButton: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
   dangerText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.error,
+    color: "DesignTokens.colors.semantic.error",
   },
 });
 

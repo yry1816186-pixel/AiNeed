@@ -1,9 +1,10 @@
-﻿﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import type { UserCoupon } from '../../../services/api/commerce.api';
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import type { UserCoupon } from "../../../services/api/commerce.api";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface CouponSelectorProps {
   visible: boolean;
@@ -51,7 +52,9 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
             }}
           >
             <Text style={styles.noCouponText}>不使用优惠券</Text>
-            {selectedCouponId === null && <Ionicons name="checkmark" size={20} color={colors.error} />}
+            {selectedCouponId === null && (
+              <Ionicons name="checkmark" size={20} color="colors.error" />
+            )}
           </TouchableOpacity>
 
           <FlatList
@@ -81,7 +84,7 @@ export const CouponSelector: React.FC<CouponSelectorProps> = ({
                     <Ionicons
                       name="checkmark-circle"
                       size={20}
-                      color={colors.error}
+                      color="colors.error"
                       style={styles.checkIcon}
                     />
                   )}
@@ -110,50 +113,58 @@ const useStyles = createStyles((colors) => ({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: Spacing.md,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.backgroundTertiary,
+    borderBottomColor: "colors.backgroundTertiary",
   },
-  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  title: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
   close: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
   noCouponRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: colors.backgroundTertiary,
+    borderBottomColor: "colors.backgroundTertiary",
   },
   noCouponText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
   couponRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: colors.backgroundTertiary,
   },
-  couponRowSelected: { backgroundColor: DesignTokens.colors.neutral[50] },
+  couponRowSelected: { backgroundColor: "DesignTokens.colors.neutral[50]" },
   couponLeft: {
-    width: Spacing['4xl'],
+    width: 80,
     alignItems: "center",
     borderRightWidth: 1,
-    borderRightColor: colors.backgroundTertiary,
-    marginRight: DesignTokens.spacing[3],
+    borderRightColor: "colors.backgroundTertiary",
+    marginRight: 12,
   },
   couponDiscount: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: colors.error,
+    color: "colors.error",
   },
   couponCondition: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: colors.textTertiary,
-    marginTop: DesignTokens.spacing['0.5'],
+    marginTop: 2,
   },
   couponRight: { flex: 1 },
   couponDesc: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
-  couponExpiry: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: Spacing.xs},
-  checkIcon: { marginLeft: Spacing.sm},
-}))
+  couponExpiry: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.textTertiary,
+    marginTop: 4,
+  },
+  checkIcon: { marginLeft: 8 },
+}));

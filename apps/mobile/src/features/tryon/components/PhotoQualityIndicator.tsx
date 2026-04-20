@@ -1,8 +1,9 @@
-﻿﻿import React from "react";
+﻿import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import { Spacing, BorderRadius } from '../../../design-system/theme';
+import { Spacing, BorderRadius } from "../../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface PhotoQuality {
   clarity: number;
@@ -19,12 +20,12 @@ interface PhotoQualityIndicatorProps {
 
 function getScoreColor(score: number): string {
   if (score >= 60) {
-    return DesignTokens.colors.semantic.success;
+    return "colors.success";
   }
   if (score >= 40) {
-    return DesignTokens.colors.semantic.warning;
+    return "colors.warning";
   }
-  return DesignTokens.colors.semantic.error;
+  return "colors.error";
 }
 
 function getScoreLabel(score: number): string {
@@ -110,15 +111,15 @@ const useStyles = createStyles((colors) => ({
     marginBottom: Spacing[4],
   },
   badge: {
-    width: Spacing['3xl'],
-    height: Spacing['3xl'],
+    width: 64,
+    height: 64,
     borderRadius: 32,
     borderWidth: 4,
     justifyContent: "center",
     alignItems: "center",
   },
   badgeScore: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "600",
   },
   badgeLabel: {
@@ -136,7 +137,7 @@ const useStyles = createStyles((colors) => ({
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[3],
     paddingHorizontal: Spacing[6],
-    minHeight: DesignTokens.spacing[11],
+    minHeight: 44,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -145,7 +146,7 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
     color: colors.surface,
   },
-}))
+}));
 
 const metricStyles = StyleSheet.create({
   container: {
@@ -155,25 +156,25 @@ const metricStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   label: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "400",
-    color: DesignTokens.colors.text.secondary,
+    color: "colors.textSecondary",
   },
   value: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
   track: {
-    height: DesignTokens.spacing['1.5'],
-    backgroundColor: DesignTokens.colors.neutral[200],
+    height: 6,
+    backgroundColor: "#E5E5E0",
     borderRadius: 3,
     overflow: "hidden",
   },
   fill: {
-    height: DesignTokens.spacing['1.5'],
+    height: 6,
     borderRadius: 3,
   },
 });

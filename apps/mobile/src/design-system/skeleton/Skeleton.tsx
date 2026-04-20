@@ -10,10 +10,9 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, DesignTokens, Spacing, BorderRadius } from '../../design-system/theme';
+import { Colors, DesignTokens, Spacing, BorderRadius } from "../../design-system/theme";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
-
-
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 
@@ -80,7 +79,7 @@ export function Skeleton({
   shimmerColor = "rgba(255,255,255,0.4)",
   baseColor,
 }: SkeletonProps) {
-  const resolvedBaseColor = baseColor || Colors.neutral[200];
+  const resolvedBaseColor = baseColor || colors.neutral[200];
   const { animatedStyle, shouldAnimate } = useShimmerAnimation(animated);
 
   if (shouldAnimate) {
@@ -88,7 +87,12 @@ export function Skeleton({
       <View
         style={[
           styles.skeleton,
-          { width: width as DimensionValue, height: height as DimensionValue, borderRadius, backgroundColor: resolvedBaseColor },
+          {
+            width: width as DimensionValue,
+            height: height as DimensionValue,
+            borderRadius,
+            backgroundColor: resolvedBaseColor,
+          },
           style,
         ]}
       >
@@ -111,12 +115,17 @@ export function Skeleton({
     <View
       style={[
         styles.skeleton,
-        { width: width as DimensionValue, height: height as DimensionValue, borderRadius, backgroundColor: resolvedBaseColor },
+        {
+          width: width as DimensionValue,
+          height: height as DimensionValue,
+          borderRadius,
+          backgroundColor: resolvedBaseColor,
+        },
         style,
       ]}
     >
       <LinearGradient
-        colors={[Colors.neutral[200], Colors.neutral[100], Colors.neutral[200]]}
+        colors={[colors.neutral[200], colors.neutral[100], colors.neutral[200]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.gradient}
@@ -140,6 +149,8 @@ export function SkeletonText({
   spacing?: number;
   style?: ViewStyle;
 }) {
+  const styles = useStyles(colors);
+  const { colors } = useTheme();
   return (
     <View style={style}>
       {Array.from({ length: lines }).map((_, index) => (
@@ -159,8 +170,8 @@ export function SkeletonCard({ style }: { style?: ViewStyle }) {
     <View style={[styles.card, style]}>
       <Skeleton width="100%" height={150} borderRadius={8} />
       <View style={styles.cardContent}>
-        <Skeleton width="80%" height={16} style={{ marginBottom: Spacing.sm}} />
-        <Skeleton width="50%" height={14} style={{ marginBottom: Spacing.sm}} />
+        <Skeleton width="80%" height={16} style={{ marginBottom: Spacing.sm }} />
+        <Skeleton width="50%" height={14} style={{ marginBottom: Spacing.sm }} />
         <Skeleton width="30%" height={18} />
       </View>
     </View>
@@ -239,8 +250,8 @@ export const LoadingShimmer: React.FC<{
           <Shimmer width={140} height={180} borderRadius={BorderRadius["2xl"]} />
           <View style={styles.cardText}>
             <Shimmer width={120} height={16} />
-            <Shimmer width={80} height={12} style={{ marginTop: Spacing.sm}} />
-            <Shimmer width={60} height={14} style={{ marginTop: Spacing.sm}} />
+            <Shimmer width={80} height={12} style={{ marginTop: Spacing.sm }} />
+            <Shimmer width={60} height={14} style={{ marginTop: Spacing.sm }} />
           </View>
         </View>
       );
@@ -251,7 +262,7 @@ export const LoadingShimmer: React.FC<{
           <Shimmer width={60} height={60} borderRadius={30} />
           <View style={styles.listText}>
             <Shimmer width={150} height={16} />
-            <Shimmer width={200} height={12} style={{ marginTop: Spacing.sm}} />
+            <Shimmer width={200} height={12} style={{ marginTop: Spacing.sm }} />
           </View>
         </View>
       );
@@ -260,10 +271,12 @@ export const LoadingShimmer: React.FC<{
       return (
         <View style={styles.detailTemplate}>
           <Shimmer width="100%" height={300} borderRadius={0} />
-          <View style={{ padding: DesignTokens.spacing[5]}}>
+          <View style={{ padding: DesignTokens.spacing[5] }}>
             <Shimmer width={200} height={28} />
-            <Shimmer width={150} height={16} style={{ marginTop: DesignTokens.spacing[3]}} />
-            <View style={{ flexDirection: "row", gap: Spacing.sm, marginTop: DesignTokens.spacing[5]}}>
+            <Shimmer width={150} height={16} style={{ marginTop: DesignTokens.spacing[3] }} />
+            <View
+              style={{ flexDirection: "row", gap: Spacing.sm, marginTop: DesignTokens.spacing[5] }}
+            >
               <Shimmer width={80} height={24} borderRadius={12} />
               <Shimmer width={80} height={24} borderRadius={12} />
               <Shimmer width={80} height={24} borderRadius={12} />
@@ -276,7 +289,13 @@ export const LoadingShimmer: React.FC<{
       return (
         <View style={styles.profileTemplate}>
           <Shimmer width="100%" height={160} borderRadius={BorderRadius["2xl"]} />
-          <View style={{ flexDirection: "row", gap: DesignTokens.spacing[3], marginTop: DesignTokens.spacing[5]}}>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: DesignTokens.spacing[3],
+              marginTop: DesignTokens.spacing[5],
+            }}
+          >
             {[1, 2, 3].map((i) => (
               <View key={i} style={{ flex: 1 }}>
                 <Shimmer width="100%" height={80} borderRadius={BorderRadius.xl} />
@@ -295,7 +314,7 @@ export const LoadingShimmer: React.FC<{
 // Styles
 // ============================================================================
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   skeleton: {
     overflow: "hidden",
   },
@@ -338,7 +357,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.md,
   },
   cardText: {
-    marginTop: DesignTokens.spacing['2.5'],
+    marginTop: DesignTokens.spacing["2.5"],
     alignItems: "center",
   },
   listTemplate: {
@@ -358,6 +377,6 @@ const styles = StyleSheet.create({
   profileTemplate: {
     marginHorizontal: DesignTokens.spacing[5],
   },
-});
+}));
 
 export default Skeleton;

@@ -3,10 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-nati
 import { Feather } from "@/src/polyfills/expo-vector-icons";
 import { ClothingCategory, CATEGORY_LABELS } from "../../../types/clothing";
 import { haptics } from "../../utils/haptics";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
-
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 interface FilterOption {
   label: string;
@@ -23,14 +22,12 @@ interface FilterSectionProps {
 }
 
 function FilterSection({
-title,
+  title,
   options,
   selected,
   onSelect,
-  multiSelect = true,
+  _multiSelect = true,
 }: FilterSectionProps) {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -91,8 +88,8 @@ export function FilterPanel({
   occasions,
   initialFilters,
 }: FilterPanelProps) {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const [selectedCategories, setSelectedCategories] = useState<ClothingCategory[]>(
     initialFilters?.categories || []
   );
@@ -249,7 +246,7 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: Spacing.md,
+    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
@@ -259,27 +256,27 @@ const useStyles = createStyles((colors) => ({
     color: colors.textPrimary,
   },
   content: {
-    padding: Spacing.md,
+    padding: 16,
   },
   section: {
-    marginBottom: DesignTokens.spacing[5],
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.textSecondary,
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   options: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.sm,
+    gap: 8,
   },
   option: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
   },
@@ -296,21 +293,21 @@ const useStyles = createStyles((colors) => ({
   count: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textSecondary,
-    marginLeft: Spacing.xs,
+    marginLeft: 4,
   },
   countSelected: {
     color: "rgba(255, 255, 255, 0.8)",
   },
   footer: {
     flexDirection: "row",
-    padding: Spacing.md,
+    padding: 16,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[200],
-    gap: DesignTokens.spacing[3],
+    gap: 12,
   },
   resetButton: {
     flex: 1,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
@@ -323,7 +320,7 @@ const useStyles = createStyles((colors) => ({
   },
   applyButton: {
     flex: 2,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingVertical: 12,
     borderRadius: 8,
     backgroundColor: colors.primary, // custom color
     alignItems: "center",
@@ -333,6 +330,6 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
     color: colors.textInverse,
   },
-}))
+}));
 
 export default FilterPanel;

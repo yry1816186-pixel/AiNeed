@@ -12,25 +12,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
+import { NavigationProp, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { clothingApi } from '../../../services/api/clothing.api';
-import { cartApi } from '../../../services/api/commerce.api';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import type { RootStackParamList } from '../../../types/navigation';
-import type { ClothingItem } from '../../../types/clothing';
-
+import { clothingApi } from "../../../services/api/clothing.api";
+import { cartApi } from "../../../services/api/commerce.api";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import type { HomeStackParamList } from "../../../navigation/types";
+import { navigateProfile } from "../../../navigation/navigationService";
+import type { ClothingItem } from "../../../types/clothing";
 import {
   CATEGORY_LABELS,
   OCCASION_LABELS,
   SEASON_LABELS,
   STYLE_LABELS,
-} from '../../../types/clothing';
+} from "../../../types/clothing";
 
 interface RecommendationDetail {
   id: string;
@@ -52,7 +51,7 @@ interface RecommendationDetail {
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-type RecommendationDetailRouteProp = RouteProp<RootStackParamList, "RecommendationDetail">;
+type RecommendationDetailRouteProp = RouteProp<HomeStackParamList, "RecommendationDetail">;
 
 interface RecommendationPreview {
   id: string;
@@ -147,7 +146,7 @@ function mergeRecommendationDetail(
 }
 
 export const RecommendationDetailScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NavigationProp<HomeStackParamList>>();
   const route = useRoute<RecommendationDetailRouteProp>();
   const { recommendationId } = route.params;
 
@@ -217,10 +216,7 @@ export const RecommendationDetailScreen: React.FC = () => {
       Alert.alert("已加入购物车", "这件推荐单品已经进入购物车。", [
         {
           text: "去购物车",
-          onPress: () =>
-            navigation.navigate("MainTabs", {
-              screen: "Cart" as never,
-            } as never),
+          onPress: () => navigateProfile("Cart"),
         },
         {
           text: "继续浏览",
@@ -339,7 +335,10 @@ export const RecommendationDetailScreen: React.FC = () => {
 
           {typeof recommendation.score === "number" && recommendation.score > 0 ? (
             <View style={styles.scoreOverlay}>
-              <LinearGradient colors={[colors.neutral[500], colors.neutral[700]]} style={styles.scoreBadge}>
+              <LinearGradient
+                colors={[DesignTokens.colors.brand.slate, DesignTokens.colors.brand.slateDark]}
+                style={styles.scoreBadge}
+              >
                 <Ionicons name="sparkles" size={16} color={colors.surface} />
                 <Text style={styles.scoreText}>
                   匹配度 {Math.round(recommendation.score * 100)}%
@@ -382,7 +381,11 @@ export const RecommendationDetailScreen: React.FC = () => {
             <Text style={styles.sectionTitle}>推荐理由</Text>
             {recommendation.matchReasons.map((reason, index) => (
               <View key={`${reason}-${index}`} style={styles.reasonRow}>
-                <Ionicons name="checkmark-circle" size={18} color={colors.success} />
+                <Ionicons
+                  name="checkmark-circle"
+                  size={18}
+                  color={DesignTokens.colors.semantic.success}
+                />
                 <Text style={styles.reasonText}>{reason}</Text>
               </View>
             ))}
@@ -494,7 +497,10 @@ export const RecommendationDetailScreen: React.FC = () => {
           accessibilityRole="button"
           disabled={isAddingToCart}
         >
-          <LinearGradient colors={[colors.neutral[500], colors.neutral[700]]} style={styles.primaryButtonGradient} />
+          <LinearGradient
+            colors={[DesignTokens.colors.brand.slate, DesignTokens.colors.brand.slateDark]}
+            style={styles.primaryButtonGradient}
+          />
           {isAddingToCart ? (
             <ActivityIndicator size="small" color={colors.surface} />
           ) : (
@@ -516,15 +522,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: Spacing.md,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   iconButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
@@ -555,15 +561,15 @@ const styles = StyleSheet.create({
   },
   scoreOverlay: {
     position: "absolute",
-    left: DesignTokens.spacing[5],
-    bottom: DesignTokens.spacing[5],
+    left: 20,
+    bottom: 20,
   },
   scoreBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 999,
   },
   scoreText: {
@@ -572,28 +578,28 @@ const styles = StyleSheet.create({
     color: colors.surface,
   },
   infoSection: {
-    marginTop: Spacing.md,
-    padding: DesignTokens.spacing[5],
+    marginTop: 16,
+    padding: 20,
     backgroundColor: colors.surface,
   },
   title: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "700",
     color: colors.textPrimary,
   },
   metaRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.sm,
-    marginTop: DesignTokens.spacing[3],
-    marginBottom: DesignTokens.spacing[3],
+    gap: 8,
+    marginTop: 12,
+    marginBottom: 12,
   },
   metaChip: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5'],
-    paddingHorizontal: DesignTokens.spacing['2.5'],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 999,
     backgroundColor: DesignTokens.colors.neutral[100],
   },
@@ -602,10 +608,10 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   price: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "700",
     color: colors.primary,
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   description: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -613,19 +619,19 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   section: {
-    marginTop: DesignTokens.spacing[5],
+    marginTop: 20,
   },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   reasonRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: DesignTokens.spacing['2.5'],
-    marginBottom: DesignTokens.spacing['2.5'],
+    gap: 10,
+    marginBottom: 10,
   },
   reasonText: {
     flex: 1,
@@ -636,11 +642,11 @@ const styles = StyleSheet.create({
   tagWrap: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.sm,
+    gap: 8,
   },
   tag: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 999,
     backgroundColor: DesignTokens.colors.neutral[100],
   },
@@ -651,8 +657,8 @@ const styles = StyleSheet.create({
   linkButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    marginTop: Spacing.lg,
+    gap: 8,
+    marginTop: 24,
   },
   linkButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -663,19 +669,19 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: 24,
   },
   stateText: {
-    marginTop: DesignTokens.spacing[3],
+    marginTop: 12,
     fontSize: DesignTokens.typography.sizes.md,
     lineHeight: 24,
     color: colors.textSecondary,
     textAlign: "center",
   },
   retryButton: {
-    marginTop: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
+    marginTop: 16,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
     borderRadius: 10,
     backgroundColor: colors.primary,
   },
@@ -693,8 +699,8 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     flexDirection: "row",
-    gap: DesignTokens.spacing[3],
-    padding: DesignTokens.spacing[5],
+    gap: 12,
+    padding: 20,
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
@@ -703,7 +709,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border,
@@ -718,8 +724,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    gap: 8,
+    paddingVertical: 14,
     borderRadius: 12,
     overflow: "hidden",
   },

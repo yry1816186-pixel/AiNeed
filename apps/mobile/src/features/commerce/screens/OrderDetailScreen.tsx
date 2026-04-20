@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -10,20 +10,23 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import type { CompositeScreenProps } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { orderApi, orderEnhancementApi, refundApi } from '../../../services/api/commerce.api';
-import type { Order } from '../../../types';
-import type { RootStackParamList } from '../../../types/navigation';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { orderApi, orderEnhancementApi, refundApi } from "../../../services/api/commerce.api";
+import type { Order } from "../../../types";
+import type { ProfileStackParamList, RootStackParamList } from "../../../navigation/types";
+import { navigateHome } from "../../../navigation/navigationService";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
-
-type Navigation = NativeStackNavigationProp<RootStackParamList>;
-type ScreenRoute = RouteProp<RootStackParamList, "OrderDetail">;
+type Navigation = CompositeScreenProps<
+  NativeStackNavigationProp<ProfileStackParamList>,
+  NativeStackNavigationProp<RootStackParamList>
+>["navigation"];
+type ScreenRoute = RouteProp<ProfileStackParamList, "OrderDetail">;
 
 interface TrackingStep {
   status: string;
@@ -35,8 +38,8 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: "待支付", color: colors.warning },
   paid: { label: "待发货", color: colors.primary },
   confirmed: { label: "已确认", color: colors.primary },
-  processing: { label: "处理中", color: colors.info },
-  shipped: { label: "配送中", color: colors.info },
+  processing: { label: "处理中", color: "DesignTokens.colors.semantic.info" },
+  shipped: { label: "配送中", color: "DesignTokens.colors.semantic.info" },
   delivered: { label: "已签收", color: colors.success },
   cancelled: { label: "已取消", color: colors.error },
   refunded: { label: "已退款", color: colors.textTertiary },
@@ -274,7 +277,7 @@ export const OrderDetailScreen: React.FC = () => {
               accessibilityLabel="取消订单"
             >
               {cancelling ? (
-                <ActivityIndicator size="small" color={colors.error} />
+                <ActivityIndicator size="small" color="DesignTokens.colors.semantic.error" />
               ) : (
                 <Text style={styles.dangerButtonText}>取消订单</Text>
               )}
@@ -350,7 +353,7 @@ export const OrderDetailScreen: React.FC = () => {
               {trackingSteps.length > 0 && (
                 <TouchableOpacity
                   style={styles.secondaryButton}
-                  onPress={() => navigation.navigate("OrderDetail", { orderId: order.id } as never)}
+                  onPress={() => navigation.navigate("OrderDetail", { orderId: order.id })}
                 >
                   <Text style={styles.secondaryButtonText}>查看物流</Text>
                 </TouchableOpacity>
@@ -363,7 +366,7 @@ export const OrderDetailScreen: React.FC = () => {
               <TouchableOpacity
                 style={styles.secondaryButton}
                 onPress={() => {
-                  navigation.navigate("MainTabs", { screen: "Home" } as never);
+                  navigateHome("HomeFeed");
                 }}
               >
                 <Text style={styles.secondaryButtonText}>再次购买</Text>
@@ -385,19 +388,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: Spacing.md,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   iconButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -408,8 +411,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: Spacing.xl,
-    gap: DesignTokens.spacing[3],
+    paddingHorizontal: 32,
+    gap: 12,
   },
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -417,12 +420,12 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   scrollContent: {
-    padding: DesignTokens.spacing[5],
-    paddingBottom: DesignTokens.spacing[7],
-    gap: Spacing.md,
+    padding: 20,
+    paddingBottom: 28,
+    gap: 16,
   },
   heroCard: {
-    padding: DesignTokens.spacing[4],
+    padding: 18,
     borderRadius: 20,
     backgroundColor: colors.surface,
     flexDirection: "row",
@@ -434,15 +437,15 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
   },
   heroValue: {
-    marginTop: DesignTokens.spacing['1.5'],
+    marginTop: 6,
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.textPrimary,
     maxWidth: 220,
   },
   statusBadge: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 999,
   },
   statusText: {
@@ -450,7 +453,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   card: {
-    padding: Spacing.md,
+    padding: 16,
     borderRadius: 20,
     backgroundColor: colors.surface,
   },
@@ -458,21 +461,21 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   orderItemRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    gap: 12,
+    paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: colors.backgroundTertiary,
+    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   itemImage: {
     width: 60,
     height: 60,
     borderRadius: 16,
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   itemImageFallback: {
     width: 60,
@@ -480,11 +483,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
   },
   itemContent: {
     flex: 1,
-    gap: Spacing.xs,
+    gap: 4,
   },
   itemName: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -506,13 +509,13 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   addressText: {
-    marginTop: DesignTokens.spacing['1.5'],
+    marginTop: 6,
     fontSize: DesignTokens.typography.sizes.base,
     lineHeight: 22,
     color: colors.textSecondary,
   },
   summaryRow: {
-    marginTop: DesignTokens.spacing[3],
+    marginTop: 12,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -532,31 +535,31 @@ const styles = StyleSheet.create({
   },
   timelineRow: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3],
+    gap: 12,
   },
   timelineLeft: {
     alignItems: "center",
     width: 18,
   },
   timelineDot: {
-    width: DesignTokens.spacing['2.5'],
-    height: DesignTokens.spacing['2.5'],
+    width: 10,
+    height: 10,
     borderRadius: 5,
-    backgroundColor: DesignTokens.colors.neutral[300],
-    marginTop: DesignTokens.spacing['1.5'],
+    backgroundColor: "DesignTokens.colors.neutral[300]",
+    marginTop: 6,
   },
   timelineDotActive: {
     backgroundColor: colors.primary,
   },
   timelineLine: {
-    width: DesignTokens.spacing['0.5'],
+    width: 2,
     flex: 1,
-    marginTop: DesignTokens.spacing['1.5'],
-    backgroundColor: DesignTokens.colors.neutral[200],
+    marginTop: 6,
+    backgroundColor: "DesignTokens.colors.neutral[200]",
   },
   timelineContent: {
     flex: 1,
-    paddingBottom: DesignTokens.spacing[4],
+    paddingBottom: 18,
   },
   timelineStatus: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -564,13 +567,13 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
   timelineDescription: {
-    marginTop: Spacing.xs,
+    marginTop: 4,
     fontSize: DesignTokens.typography.sizes.sm,
     lineHeight: 20,
     color: colors.textSecondary,
   },
   timelineTime: {
-    marginTop: DesignTokens.spacing['1.5'],
+    marginTop: 6,
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
   },
@@ -580,9 +583,9 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   primaryButton: {
-    marginTop: Spacing.sm,
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing['3.5'],
+    marginTop: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
     borderRadius: 14,
     backgroundColor: colors.primary,
   },
@@ -592,7 +595,7 @@ const styles = StyleSheet.create({
     color: colors.surface,
   },
   secondaryButton: {
-    paddingVertical: Spacing.md,
+    paddingVertical: 16,
     borderRadius: 16,
     alignItems: "center",
     borderWidth: 1,
@@ -605,34 +608,34 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   dangerButton: {
-    paddingVertical: Spacing.md,
+    paddingVertical: 16,
     borderRadius: 16,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: colors.error,
+    borderColor: "DesignTokens.colors.semantic.error",
     backgroundColor: colors.surface,
   },
   dangerButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.error,
+    color: "DesignTokens.colors.semantic.error",
   },
   actionRow: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3],
-    marginTop: Spacing.sm,
+    gap: 12,
+    marginTop: 8,
   },
   primaryButtonFilled: {
     flex: 1,
-    paddingVertical: Spacing.md,
+    paddingVertical: 16,
     borderRadius: 16,
     alignItems: "center",
-    backgroundColor: colors.error,
+    backgroundColor: "DesignTokens.colors.semantic.error",
   },
   primaryFilledText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.surface,
+    color: DesignTokens.colors.backgrounds.primary,
   },
 });
 

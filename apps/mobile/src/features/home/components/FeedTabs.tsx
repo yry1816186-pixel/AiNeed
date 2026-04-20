@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+﻿import React, { useCallback } from "react";
 import {
   View,
   Text,
@@ -8,11 +8,10 @@ import {
   type LayoutChangeEvent,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import type { FeedCategory } from '../../../services/api/recommendation-feed.api';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import type { FeedCategory } from "../../../services/api/recommendation-feed.api";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface FeedTab {
   key: FeedCategory;
@@ -49,8 +48,8 @@ export function FeedTabs({
   onCategoryChange,
   onSubCategoryChange,
 }: FeedTabsProps) {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const handleCategoryPress = useCallback(
     (category: FeedCategory) => {
       if (category !== activeCategory) {
@@ -133,18 +132,18 @@ const useStyles = createStyles((colors) => ({
     borderBottomColor: colors.border,
   },
   tabsContainer: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
-    gap: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 6,
   },
   tab: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: colors.backgroundSecondary,
-    gap: Spacing.xs,
+    gap: 4,
   },
   tabActive: {
     backgroundColor: colors.primary,
@@ -158,13 +157,13 @@ const useStyles = createStyles((colors) => ({
     color: colors.textInverse,
   },
   subTabsContainer: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingBottom: Spacing.sm,
-    gap: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 12,
+    paddingBottom: 8,
+    gap: 6,
   },
   subTab: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 16,
     backgroundColor: colors.backgroundSecondary,
   },
@@ -179,4 +178,4 @@ const useStyles = createStyles((colors) => ({
     color: colors.primary,
     fontWeight: "600",
   },
-}))
+}));

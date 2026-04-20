@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+﻿import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -11,30 +11,32 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { useRoute, useNavigation, RouteProp, NavigationProp, ParamListBase } from "@react-navigation/native";
-import { useChatStore } from '../stores/chatStore';
-import { useConsultantStore } from '../../../stores/consultantStore';
-import type { ChatMessage, ChatTypingPayload } from '../../../types/chat';
-import { ChatBubble } from '../../../design-system/ui/ChatBubble';
-import { TypingIndicator } from '../components/TypingIndicator';
-import { ProposalCard } from '../components/ProposalCard';
-import wsService from '../../../services/websocket';
+import {
+  useRoute,
+  useNavigation,
+  RouteProp,
+  NavigationProp,
+  ParamListBase,
+} from "@react-navigation/native";
+import { useChatStore } from "../stores/chatStore";
+import { useConsultantStore } from "../../stores/consultantStore";
+import type { ChatMessage, ChatTypingPayload } from "../../types/chat";
+import { ChatBubble } from "../../design-system/ui/ChatBubble";
+import { TypingIndicator } from "../../../components/consultant/TypingIndicator";
+import { ProposalCard } from "../../../components/consultant/ProposalCard";
+import wsService from "../../../services/websocket";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 export const ChatScreen: React.FC = () => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp<ParamListBase>>();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  const params = (route.params || {}) as Record<string, unknown>;
-  const roomId = params.roomId as string | undefined;
-  const consultantId = params.consultantId as string | undefined;
-  const consultantName = params.consultantName as string | undefined;
+  const { roomId, consultantId, consultantName } = route.params || {};
 
   const { messages, currentRoom, fetchMessages, sendMessage, markAsRead, addMessage } =
     useChatStore();
@@ -127,8 +129,8 @@ export const ChatScreen: React.FC = () => {
       return (
         <View style={styles.proposalWrapper}>
           <ProposalCard
-            title={(item as unknown as Record<string, unknown>).proposalData != null ? ((item as unknown as Record<string, unknown>).proposalData as Record<string, unknown>).title as string || "造型方案" : "造型方案"}
-            summary={(item as unknown as Record<string, unknown>).proposalData != null ? ((item as unknown as Record<string, unknown>).proposalData as Record<string, unknown>).summary as string || item.content : item.content}
+            title={item.proposalData?.title || "造型方案"}
+            summary={item.proposalData?.summary || item.content}
             onViewProposal={() => Alert.alert("查看方案", "方案详情功能即将上线")}
             onSaveToWardrobe={() => Alert.alert("保存", "已保存到灵感衣橱")}
           />
@@ -149,7 +151,7 @@ export const ChatScreen: React.FC = () => {
         message={item.content}
         isUser={isUser}
         timestamp={item.createdAt}
-        showAvatar={!isUser}
+        avatar={isUser ? undefined : "🎨"}
       />
     );
   };
@@ -215,63 +217,75 @@ const useStyles = createStyles((colors) => ({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingBottom: DesignTokens.spacing[3],
+    paddingHorizontal: 12,
+    paddingBottom: 12,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
-  backBtn: { padding: Spacing.sm},
+  backBtn: { padding: 8 },
   backBtnText: { fontSize: DesignTokens.typography.sizes.xl, color: colors.textPrimary },
   headerCenter: { flex: 1, alignItems: "center" },
-  headerName: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
-  onlineIndicator: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, marginTop: DesignTokens.spacing['0.5']},
-  onlineDot: { width: Spacing.sm, height: Spacing.sm, borderRadius: 4 },
+  headerName: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
+  onlineIndicator: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 },
+  onlineDot: { width: 8, height: 8, borderRadius: 4 },
   dotOnline: { backgroundColor: colors.success }, // custom color
   dotOffline: { backgroundColor: DesignTokens.colors.neutral[300] },
   onlineText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
-  headerAvatar: { width: Spacing.xl, height: Spacing.xl, borderRadius: 16 },
+  headerAvatar: { width: 32, height: 32, borderRadius: 16 },
   headerAvatarPlaceholder: {
-    width: Spacing.xl,
-    height: Spacing.xl,
+    width: 32,
+    height: 32,
     borderRadius: 16,
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  headerAvatarText: { color: colors.textInverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-  messagesList: { paddingHorizontal: Spacing.md, paddingTop: DesignTokens.spacing[3], paddingBottom: DesignTokens.spacing[3]},
-  proposalWrapper: { marginVertical: Spacing.sm, maxWidth: "85%", alignSelf: "center" },
-  systemMessage: { alignItems: "center", marginVertical: Spacing.sm},
+  headerAvatarText: {
+    color: colors.textInverse,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+  },
+  messagesList: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 },
+  proposalWrapper: { marginVertical: 8, maxWidth: "85%", alignSelf: "center" },
+  systemMessage: { alignItems: "center", marginVertical: 8 },
   systemMessageText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   inputBar: {
     flexDirection: "row",
     alignItems: "flex-end",
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['2.5'],
-    paddingBottom: DesignTokens.spacing[7],
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    paddingBottom: 28,
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[100],
-    gap: Spacing.sm,
+    gap: 8,
   },
   textInput: {
     flex: 1,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     borderRadius: 20,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     fontSize: DesignTokens.typography.sizes.base,
     maxHeight: 100,
   },
   sendButton: {
     backgroundColor: colors.primary,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 20,
   },
-  sendButtonText: { color: colors.textInverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "500" },
-}))
+  sendButtonText: {
+    color: colors.textInverse,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+  },
+}));
 
 export default ChatScreen;

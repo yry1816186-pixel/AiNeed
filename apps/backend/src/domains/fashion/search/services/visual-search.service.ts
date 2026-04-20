@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import type { ClothingCategory } from '../../../../types/prisma-enums';
+import { ClothingCategory } from "../../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import {
@@ -55,7 +55,7 @@ interface ClothingItemCandidate extends ClothingItemWithBrand {
 export class VisualSearchService {
   constructor(
     private prisma: PrismaService,
-    private aiImageService: AIImageService,
+    private aiImageService: AIImageService
   ) {}
 
   async searchByImage(
@@ -65,7 +65,7 @@ export class VisualSearchService {
       minPrice?: number;
       maxPrice?: number;
       limit?: number;
-    } = {},
+    } = {}
   ): Promise<VisualSearchResult[]> {
     const { category, minPrice, maxPrice, limit = 20 } = options;
 
@@ -77,28 +77,24 @@ export class VisualSearchService {
       category || features.category,
       minPrice,
       maxPrice,
-      limit * 3,
+      limit * 3
     );
 
     // 计算相似度并排序
     const scoredItems = await Promise.all(
       candidates.map(async (item) => {
         const similarity = await this.calculateSimilarity(features, item);
-        const matchReasons = this.generateMatchReasons(
-          features,
-          item,
-          similarity,
-        );
+        const matchReasons = this.generateMatchReasons(features, item, similarity);
         return {
           ...item,
           similarityScore: similarity,
           matchReasons,
         };
-      }),
+      })
     );
 
     // 按相似度排序并返回 top N
-    scoredItems.sort((a: ClothingItemCandidate & { similarityScore: number; matchReasons: string[] }, b: ClothingItemCandidate & { similarityScore: number; matchReasons: string[] }) => b.similarityScore - a.similarityScore);
+    scoredItems.sort((a: any, b: any) => b.similarityScore - a.similarityScore);
 
     return scoredItems.slice(0, limit).map((item) => ({
       id: item.id,
@@ -127,7 +123,7 @@ export class VisualSearchService {
     category?: string,
     minPrice?: number,
     maxPrice?: number,
-    limit?: number,
+    limit?: number
   ): Promise<ClothingItemCandidate[]> {
     const where: ClothingItemWhereInput = { isActive: true };
 
@@ -162,16 +158,13 @@ export class VisualSearchService {
 
   private async calculateSimilarity(
     queryFeatures: ImageFeatures,
-    item: ClothingItemCandidate,
+    item: ClothingItemCandidate
   ): Promise<number> {
     let score = 50; // 基础分
 
     // 颜色相似度
     if (item.colors && item.colors.length > 0) {
-      const colorMatch = this.calculateColorMatch(
-        queryFeatures.dominantColors,
-        item.colors,
-      );
+      const colorMatch = this.calculateColorMatch(queryFeatures.dominantColors, item.colors);
       score += colorMatch * 20;
     }
 
@@ -191,10 +184,7 @@ export class VisualSearchService {
       if (
         queryFeatures.style &&
         Array.isArray(attrs.style) &&
-        attrs.style.some(
-          (style) =>
-            style.toLowerCase() === queryFeatures.style?.toLowerCase(),
-        )
+        attrs.style.some((style) => style.toLowerCase() === queryFeatures.style?.toLowerCase())
       ) {
         score += 10;
       }
@@ -207,11 +197,10 @@ export class VisualSearchService {
     return Math.min(score, 100);
   }
 
-  private calculateColorMatch(
-    queryColors: string[],
-    itemColors: string[],
-  ): number {
-    if (!queryColors.length || !itemColors.length) {return 0;}
+  private calculateColorMatch(queryColors: string[], itemColors: string[]): number {
+    if (!queryColors.length || !itemColors.length) {
+      return 0;
+    }
 
     let matchCount = 0;
     const colorMappings: Record<string, string[]> = {
@@ -234,11 +223,7 @@ export class VisualSearchService {
         const icLower = ic.toLowerCase();
 
         // 直接匹配
-        if (
-          qcLower === icLower ||
-          icLower.includes(qcLower) ||
-          qcLower.includes(icLower)
-        ) {
+        if (qcLower === icLower || icLower.includes(qcLower) || qcLower.includes(icLower)) {
           matchCount++;
           break;
         }
@@ -262,7 +247,7 @@ export class VisualSearchService {
   private generateMatchReasons(
     features: ImageFeatures,
     item: ClothingItemCandidate,
-    similarity: number,
+    similarity: number
   ): string[] {
     const reasons: string[] = [];
 
@@ -273,15 +258,8 @@ export class VisualSearchService {
     }
 
     // 颜色匹配原因
-    if (
-      item.colors &&
-      item.colors.length > 0 &&
-      features.dominantColors.length > 0
-    ) {
-      const matchedColor = this.findMatchedColor(
-        features.dominantColors,
-        item.colors,
-      );
+    if (item.colors && item.colors.length > 0 && features.dominantColors.length > 0) {
+      const matchedColor = this.findMatchedColor(features.dominantColors, item.colors);
       if (matchedColor) {
         reasons.push(`包含${matchedColor}色调`);
       }
@@ -306,10 +284,7 @@ export class VisualSearchService {
     return reasons.slice(0, 3);
   }
 
-  private findMatchedColor(
-    queryColors: string[],
-    itemColors: string[],
-  ): string | null {
+  private findMatchedColor(queryColors: string[], itemColors: string[]): string | null {
     for (const qc of queryColors) {
       const qcLower = qc.toLowerCase();
       for (const ic of itemColors) {
@@ -334,10 +309,7 @@ export class VisualSearchService {
     };
   }
 
-  async findSimilarItems(
-    itemId: string,
-    limit: number = 10,
-  ): Promise<VisualSearchResult[]> {
+  async findSimilarItems(itemId: string, limit: number = 10): Promise<VisualSearchResult[]> {
     const item = await this.prisma.clothingItem.findUnique({
       where: { id: itemId },
       include: {
@@ -375,7 +347,7 @@ export class VisualSearchService {
     });
 
     // 计算相似度
-    const scoredItems = similarItems.map((similar: ClothingItemCandidate) => {
+    const scoredItems = similarItems.map((similar: any) => {
       let score = 50;
 
       // 同品牌加成
@@ -385,10 +357,8 @@ export class VisualSearchService {
 
       // 颜色匹配
       if (item.colors && similar.colors) {
-        const commonColors = item.colors.filter((c: string) =>
-          similar.colors.some((sc: string) =>
-            sc.toLowerCase().includes(c.toLowerCase()),
-          ),
+        const commonColors = item.colors.filter((c: any) =>
+          similar.colors.some((sc: any) => sc.toLowerCase().includes(c.toLowerCase()))
         );
         score += commonColors.length * 10;
       }
@@ -399,9 +369,7 @@ export class VisualSearchService {
 
       if (itemAttrs?.style && similarAttrs?.style) {
         const similarStyles = similarAttrs.style;
-        const commonStyles = itemAttrs.style.filter((s) =>
-          similarStyles.includes(s),
-        );
+        const commonStyles = itemAttrs.style.filter((s) => similarStyles.includes(s));
         score += commonStyles.length * 5;
       }
 
@@ -423,17 +391,12 @@ export class VisualSearchService {
       };
     });
 
-    scoredItems.sort((a: ClothingItemCandidate & { similarityScore: number; matchReasons: string[] }, b: ClothingItemCandidate & { similarityScore: number; matchReasons: string[] }) => b.similarityScore - a.similarityScore);
+    scoredItems.sort((a: any, b: any) => b.similarityScore - a.similarityScore);
 
     return scoredItems.slice(0, limit);
   }
 
-  private generateSimilarItemReasons(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    original: any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    similar: any,
-  ): string[] {
+  private generateSimilarItemReasons(original: any, similar: any): string[] {
     const reasons: string[] = ["相似款式"];
 
     if (original.brandId === similar.brandId && similar.brand) {
@@ -441,10 +404,8 @@ export class VisualSearchService {
     }
 
     if (original.colors && similar.colors) {
-      const commonColors = original.colors.filter((c: string) =>
-        similar.colors.some((sc: string) =>
-          sc.toLowerCase().includes(c.toLowerCase()),
-        ),
+      const commonColors = original.colors.filter((c: any) =>
+        similar.colors.some((sc: any) => sc.toLowerCase().includes(c.toLowerCase()))
       );
       if (commonColors.length > 0) {
         reasons.push(`相同${commonColors[0] ?? ""}色系`);

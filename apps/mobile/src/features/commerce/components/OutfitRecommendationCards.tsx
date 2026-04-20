@@ -1,11 +1,12 @@
-﻿﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import type { RootStackParamList } from '../../../types/navigation';
-import type { ClothingItem } from '../../../types/clothing';
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import type { RootStackParamList } from "../../../types/navigation";
+import type { ClothingItem } from "../../../types/clothing";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface OutfitSet {
   id: string;
@@ -57,21 +58,31 @@ export const OutfitRecommendationCards: React.FC<OutfitRecommendationCardsProps>
 };
 
 const useStyles = createStyles((colors) => ({
-  container: { paddingVertical: Spacing.md},
-  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing[3]},
+  container: { paddingVertical: 16 },
+  title: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginBottom: 12,
+  },
   card: {
     width: 200,
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: "colors.backgroundSecondary",
     borderRadius: 12,
-    padding: DesignTokens.spacing[3],
-    marginRight: DesignTokens.spacing[3],
+    padding: 12,
+    marginRight: 12,
   },
-  cardTitle: { fontSize: DesignTokens.typography.sizes.sm, fontWeight: "500", color: colors.textSecondary, marginBottom: Spacing.sm},
-  itemsRow: { flexDirection: "row", gap: DesignTokens.spacing['1.5']},
+  cardTitle: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    fontWeight: "500",
+    color: colors.textSecondary,
+    marginBottom: 8,
+  },
+  itemsRow: { flexDirection: "row", gap: 6 },
   itemImage: {
     width: 50,
     height: 50,
     borderRadius: 6,
     backgroundColor: colors.borderLight,
   },
-}))
+}));

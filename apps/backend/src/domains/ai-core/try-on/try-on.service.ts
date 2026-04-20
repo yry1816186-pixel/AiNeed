@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  BadRequestException,
-  NotFoundException,
-  Inject,
-} from "@nestjs/common";
+import { Injectable, BadRequestException, NotFoundException, Inject } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TryOnStatus } from "../../../types/prisma-enums";
 import { Prisma } from "@prisma/client";
@@ -62,7 +57,7 @@ export class TryOnService {
     private queueService: QueueService,
     private notificationService: NotificationService,
     @Inject(REDIS_CLIENT) private redis: Redis,
-    loggingService: StructuredLoggerService,
+    loggingService: StructuredLoggerService
   ) {
     this.logger = loggingService.createChildLogger(TryOnService.name);
     this.autoEnhance = this.configService.get<string>("TRYON_AUTO_ENHANCE", "true") !== "false";
@@ -72,41 +67,40 @@ export class TryOnService {
   async createTryOnRequest(
     userId: string,
     photoId: string,
-    itemId: string,
+    itemId: string
   ): Promise<CreateTryOnResult> {
     this.logger.log("创建试衣请求", { userId, photoId, itemId });
 
     await this.checkDailyTryonLimit(userId);
 
-    const [photo, item, existingRecord, activeCount] =
-      await Promise.all([
-        this.prisma.userPhoto.findFirst({
-          where: { id: photoId, userId },
-          select: { id: true, url: true, type: true },
-        }),
-        this.prisma.clothingItem.findUnique({
-          where: { id: itemId },
-          select: { id: true, images: true, category: true, mainImage: true },
-        }),
-        this.prisma.virtualTryOn.findFirst({
-          where: {
-            userId,
-            photoId,
-            itemId,
-            status: { in: [TryOnStatus.completed, TryOnStatus.pending, TryOnStatus.processing] },
-          },
-          select: { id: true, status: true },
-          orderBy: [
-            { status: 'asc' }, // completed < pending < processing in enum order, prefer completed
-          ],
-        }),
-        this.prisma.virtualTryOn.count({
-          where: {
-            userId,
-            status: { in: [TryOnStatus.pending, TryOnStatus.processing] },
-          },
-        }),
-      ]);
+    const [photo, item, existingRecord, activeCount] = await Promise.all([
+      this.prisma.userPhoto.findFirst({
+        where: { id: photoId, userId },
+        select: { id: true, url: true, type: true },
+      }),
+      this.prisma.clothingItem.findUnique({
+        where: { id: itemId },
+        select: { id: true, images: true, category: true, mainImage: true },
+      }),
+      this.prisma.virtualTryOn.findFirst({
+        where: {
+          userId,
+          photoId,
+          itemId,
+          status: { in: [TryOnStatus.completed, TryOnStatus.pending, TryOnStatus.processing] },
+        },
+        select: { id: true, status: true },
+        orderBy: [
+          { status: "asc" }, // completed < pending < processing in enum order, prefer completed
+        ],
+      }),
+      this.prisma.virtualTryOn.count({
+        where: {
+          userId,
+          status: { in: [TryOnStatus.pending, TryOnStatus.processing] },
+        },
+      }),
+    ]);
 
     if (!photo) {
       throw new NotFoundException("照片不存在");
@@ -160,9 +154,7 @@ export class TryOnService {
     }
 
     if (activeCount >= MAX_CONCURRENT_TRYONS_PER_USER) {
-      throw new BadRequestException(
-        `您已有 ${activeCount} 个试衣任务正在处理中，请等待完成后再试`,
-      );
+      throw new BadRequestException(`您已有 ${activeCount} 个试衣任务正在处理中，请等待完成后再试`);
     }
 
     const stableCacheKey = generateStableCacheKey(photoId, itemId, item.category);
@@ -209,7 +201,7 @@ export class TryOnService {
       itemId,
     });
 
-    const clothingImageUrl = item.mainImage || (item.images?.[0]) || "";
+    const clothingImageUrl = item.mainImage || item.images?.[0] || "";
     if (!clothingImageUrl) {
       throw new BadRequestException("服装商品缺少展示图片");
     }
@@ -218,7 +210,7 @@ export class TryOnService {
       userId,
       photoId,
       itemId,
-      item.category ?? undefined,
+      item.category ?? undefined
     );
 
     await this.incrementDailyTryonCount(userId);
@@ -253,7 +245,10 @@ export class TryOnService {
     return this.attachResultDataUri(tryOn);
   }
 
-  async getTryOnResultAsset(tryOnId: string, userId: string): Promise<{
+  async getTryOnResultAsset(
+    tryOnId: string,
+    userId: string
+  ): Promise<{
     body: Buffer;
     contentType: string;
     cacheControl: string;
@@ -274,7 +269,10 @@ export class TryOnService {
     return this.storage.fetchRemoteAsset(tryOn.resultImageUrl);
   }
 
-  async getShareImageAsset(tryOnId: string, userId: string): Promise<{
+  async getShareImageAsset(
+    tryOnId: string,
+    userId: string
+  ): Promise<{
     body: Buffer;
     contentType: string;
     cacheControl: string;
@@ -300,10 +298,7 @@ export class TryOnService {
    * Archive a completed try-on result to the user's inspiration wardrobe.
    * Called after try-on completion.
    */
-  async archiveToInspirationWardrobe(
-    tryOnId: string,
-    userId: string,
-  ): Promise<void> {
+  async archiveToInspirationWardrobe(tryOnId: string, userId: string): Promise<void> {
     try {
       const tryOn = await this.prisma.virtualTryOn.findFirst({
         where: { id: tryOnId, userId, status: "completed" },
@@ -380,7 +375,7 @@ export class TryOnService {
     category?: string,
     scene?: string,
     dateFrom?: string,
-    dateTo?: string,
+    dateTo?: string
   ) {
     const skip = (page - 1) * limit;
     const where: any = { userId };
@@ -427,7 +422,7 @@ export class TryOnService {
     ]);
 
     const itemsWithDataUri = await Promise.all(
-      items.map((item: any) => this.attachResultDataUri(item)),
+      items.map((item: any) => this.attachResultDataUri(item))
     );
 
     return {
@@ -464,10 +459,7 @@ export class TryOnService {
     });
   }
 
-  async retryTryOn(
-    tryOnId: string,
-    userId: string,
-  ): Promise<CreateTryOnResult> {
+  async retryTryOn(tryOnId: string, userId: string): Promise<CreateTryOnResult> {
     const original = await this.prisma.virtualTryOn.findFirst({
       where: { id: tryOnId, userId },
     });
@@ -498,14 +490,13 @@ export class TryOnService {
       select: { category: true, mainImage: true, images: true },
     });
 
-    const clothingImageUrl =
-      item?.mainImage || (item?.images?.[0]) || "";
+    const clothingImageUrl = item?.mainImage || item?.images?.[0] || "";
 
     await this.queueService.addVirtualTryOnTask(
       userId,
       original.photoId,
       original.itemId,
-      item?.category ?? undefined,
+      item?.category ?? undefined
     );
 
     await this.incrementDailyTryonCount(userId);
@@ -544,23 +535,15 @@ export class TryOnService {
   private async checkDailyTryonLimit(userId: string): Promise<void> {
     const used = await this.getDailyRetryCount(userId);
     if (used >= DAILY_TRYON_LIMIT) {
-      throw new BadRequestException(
-        "今日免费试衣次数已用完，明天再来吧",
-      );
+      throw new BadRequestException("今日免费试衣次数已用完，明天再来吧");
     }
   }
 
   private async incrementDailyTryonCount(userId: string): Promise<void> {
     const key = this.getDailyRetryKey(userId);
     const now = new Date();
-    const endOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1,
-    );
-    const ttlSeconds = Math.floor(
-      (endOfDay.getTime() - now.getTime()) / 1000,
-    );
+    const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const ttlSeconds = Math.floor((endOfDay.getTime() - now.getTime()) / 1000);
 
     const pipeline = this.redis.pipeline();
     pipeline.incr(key);
@@ -571,7 +554,7 @@ export class TryOnService {
   }
 
   private async attachResultDataUri<T extends { resultImageUrl?: string | null }>(
-    tryOn: T,
+    tryOn: T
   ): Promise<T & { resultImageDataUri?: string | null }> {
     if (!tryOn.resultImageUrl) {
       return {
@@ -583,13 +566,11 @@ export class TryOnService {
     try {
       return {
         ...tryOn,
-        resultImageDataUri: await this.storage.fetchRemoteAssetDataUri(
-          tryOn.resultImageUrl,
-        ),
+        resultImageDataUri: await this.storage.fetchRemoteAssetDataUri(tryOn.resultImageUrl),
       };
     } catch (error) {
       this.logger.warn(
-        `Failed to build inline try-on result asset: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to build inline try-on result asset: ${error instanceof Error ? error.message : String(error)}`
       );
       return {
         ...tryOn,
@@ -608,7 +589,7 @@ export class TryOnService {
       const analyzeResponse = await axios.post(
         `${this.mlServiceUrl}/api/photo-quality/analyze`,
         { image_url: photoUrl },
-        { timeout: 10000 },
+        { timeout: 10000 }
       );
 
       const qualityScore = analyzeResponse.data?.data?.overall_score ?? 1.0;
@@ -627,7 +608,7 @@ export class TryOnService {
       const enhanceResponse = await axios.post(
         `${this.mlServiceUrl}/api/photo-quality/enhance`,
         { image_url: photoUrl },
-        { timeout: 30000 },
+        { timeout: 30000 }
       );
 
       const enhancedBase64 = enhanceResponse.data?.data?.image_base64;
@@ -647,7 +628,7 @@ export class TryOnService {
           buffer: imageBuffer,
           size: imageBuffer.length,
         },
-        "enhanced-photos",
+        "enhanced-photos"
       );
 
       this.logger.log("Photo enhanced and uploaded", {

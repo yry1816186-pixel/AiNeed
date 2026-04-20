@@ -10,19 +10,17 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRoute, useNavigation, NavigationProp } from "@react-navigation/native";
-import { useConsultantStore } from '../../../stores/consultantStore';
-import { CalendarGrid } from '../components/CalendarGrid';
-import { TimeSlotItem } from '../components/TimeSlotItem';
-import { ServiceTypeChip } from '../components/ServiceTypeChip';
-import type { ServiceType } from '../../../types/consultant';
+import { useConsultantStore } from "../../stores/consultantStore";
+import { CalendarGrid } from "../../../components/consultant/CalendarGrid";
+import { TimeSlotItem } from "../../../components/consultant/TimeSlotItem";
+import { ServiceTypeChip } from "../../../components/consultant/ServiceTypeChip";
+import type { ServiceType } from "../../../types/consultant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
-
-type TimeSlot = { startTime: string; endTime: string 
-  isAvailable?: any;};
+type TimeSlot = { startTime: string; endTime: string };
 
 const SERVICE_TYPES = [
   { label: "整体形象改造", value: "styling_consultation" },
@@ -32,16 +30,14 @@ const SERVICE_TYPES = [
 ];
 
 export const BookingScreen: React.FC = () => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const route = useRoute();
   const navigation = useNavigation<NavigationProp<Record<string, unknown>>>();
   const { availableSlots, fetchAvailableSlots, createBooking, isLoading } = useConsultantStore();
 
-  const params = (route.params || {}) as Record<string, unknown>;
-  const consultantId = params.consultantId as string | undefined;
-  const consultant = params.consultant as Record<string, unknown> | undefined;
+  const { consultantId, consultant } = route.params || {};
 
   const [selectedServiceType, setSelectedServiceType] =
     useState<ServiceType>("styling_consultation");
@@ -49,7 +45,7 @@ export const BookingScreen: React.FC = () => {
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [notes, setNotes] = useState("");
 
-  const price = (consultant?.basePrice as number) || 299;
+  const price = consultant?.basePrice || 299;
   const depositAmount = Math.round(price * 0.3 * 100) / 100;
   const finalPaymentAmount = Math.round(price * 0.7 * 100) / 100;
 
@@ -79,7 +75,7 @@ export const BookingScreen: React.FC = () => {
     try {
       const scheduledAt = `${selectedDate}T${selectedSlot.startTime}:00`;
       await createBooking({
-        consultantId: consultantId || '',
+        consultantId,
         serviceType: selectedServiceType,
         scheduledAt,
         durationMinutes: 60,
@@ -90,7 +86,7 @@ export const BookingScreen: React.FC = () => {
         { text: "确定", onPress: () => navigation.goBack() },
       ]);
     } catch (e: unknown) {
-      Alert.alert("预约失败", (e instanceof Error ? e.message : "请稍后重试"));
+      Alert.alert("预约失败", e.message || "请稍后重试");
     }
   };
 
@@ -101,7 +97,7 @@ export const BookingScreen: React.FC = () => {
           <Text style={styles.backBtnText}>{"<"}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>预约服务</Text>
-        <View style={{ width: DesignTokens.spacing[11] }} />
+        <View style={{ width: 44 }} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
@@ -199,60 +195,76 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingBottom: Spacing.sm,
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
-  backBtn: { padding: Spacing.sm},
+  backBtn: { padding: 8 },
   backBtnText: { fontSize: DesignTokens.typography.sizes.xl, color: colors.textPrimary },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
-  content: { paddingHorizontal: Spacing.md, paddingBottom: 100 },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
+  content: { paddingHorizontal: 16, paddingBottom: 100 },
   sectionLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginTop: DesignTokens.spacing[5],
-    marginBottom: DesignTokens.spacing['2.5'],
+    marginTop: 20,
+    marginBottom: 10,
   },
   chipRow: { flexDirection: "row", flexWrap: "wrap" },
-  noSlotsText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, paddingVertical: DesignTokens.spacing[3]},
+  noSlotsText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textTertiary,
+    paddingVertical: 12,
+  },
   notesInput: {
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     borderRadius: 12,
-    padding: DesignTokens.spacing[3],
+    padding: 12,
     fontSize: DesignTokens.typography.sizes.base,
     minHeight: 60,
     textAlignVertical: "top",
   },
   priceSummary: {
-    marginTop: Spacing.lg,
-    padding: Spacing.md,
+    marginTop: 24,
+    padding: 16,
     backgroundColor: colors.backgroundSecondary,
     borderRadius: 12,
   },
   priceRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingVertical: 6,
   },
   priceLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  priceValue: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, fontWeight: "500" },
+  priceValue: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textPrimary,
+    fontWeight: "500",
+  },
   bottomCta: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.md,
-    paddingBottom: Spacing.xl,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingBottom: 32,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[100],
     backgroundColor: colors.surface,
   },
   payButton: {
     backgroundColor: colors.primary,
-    paddingVertical: Spacing.md,
+    paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
   },
   payButtonDisabled: { backgroundColor: colors.primaryLight },
-  payButtonText: { color: colors.textInverse, fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600" },
-}))
+  payButtonText: {
+    color: colors.textInverse,
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+  },
+}));
 
 export default BookingScreen;

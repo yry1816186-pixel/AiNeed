@@ -1,9 +1,10 @@
-import React from "react";
+﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing , flatColors as colors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import { Colors, Spacing } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
 
 interface DesignToolbarProps {
   onAddImage: () => void;
@@ -58,7 +59,7 @@ export const DesignToolbar: React.FC<DesignToolbarProps> = ({
           <Ionicons
             name={tool.icon}
             size={22}
-            color={tool.disabled ? Colors.neutral[300] : colors.textPrimary}
+            color={tool.disabled ? colors.neutral[300] : colors.text}
           />
           <Text style={[styles.toolLabel, tool.disabled && styles.toolLabelDisabled]}>
             {tool.label}
@@ -74,9 +75,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderTopWidth: 1,
-    borderTopColor: Colors.neutral[200],
+    borderTopColor: colors.neutral[200],
     paddingVertical: Spacing[2],
     paddingHorizontal: Spacing[2],
   },
@@ -93,9 +94,9 @@ const styles = StyleSheet.create({
   toolLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: colors.textSecondary,
-    marginTop: DesignTokens.spacing['0.5'],
+    marginTop: 2,
   },
   toolLabelDisabled: {
-    color: Colors.neutral[300],
+    color: colors.neutral[300],
   },
 });

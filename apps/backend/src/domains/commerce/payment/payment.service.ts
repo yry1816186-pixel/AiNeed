@@ -1,16 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  Logger,
-} from "@nestjs/common";
+import { Injectable, NotFoundException, BadRequestException, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Cron } from "@nestjs/schedule";
 import { PrismaClient } from "@prisma/client";
-
-import { OrderStatus } from '../../../types/prisma-enums';
+import { OrderStatus } from "@/types/prisma-enums";
 
 import { StructuredLoggerService, ContextualLogger } from "../../../common/logging";
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -49,7 +43,6 @@ import {
   PaymentRawCallbackData,
 } from "./types/common.types";
 
-
 const PAYMENT_IDEMPOTENCY_PREFIX = "payment:idempotency:";
 const IDEMPOTENCY_TTL_SECONDS = 300;
 
@@ -64,7 +57,7 @@ export class PaymentService {
     private readonly alipayProvider: AlipayProvider,
     private readonly wechatProvider: WechatProvider,
     private readonly redisService: RedisService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2
   ) {
     this.providers = new Map<PaymentProvider, PaymentProviderInterface>([
       ["alipay", alipayProvider as PaymentProviderInterface],
@@ -75,10 +68,7 @@ export class PaymentService {
   /**
    * 创建支付订单
    */
-  async createPayment(
-    userId: string,
-    dto: CreatePaymentDto,
-  ): Promise<PaymentResult> {
+  async createPayment(userId: string, dto: CreatePaymentDto): Promise<PaymentResult> {
     this.logger.log("创建支付订单", {
       userId,
       provider: dto.provider,
@@ -189,10 +179,7 @@ export class PaymentService {
   /**
    * 查询支付状态
    */
-  async queryPayment(
-    userId: string,
-    orderId: string,
-  ): Promise<PaymentStatusResponseDto> {
+  async queryPayment(userId: string, orderId: string): Promise<PaymentStatusResponseDto> {
     const record = await this.prisma.paymentRecord.findFirst({
       where: { orderId, userId },
     });
@@ -206,10 +193,7 @@ export class PaymentService {
       const provider = this.getProvider(record.provider as PaymentProvider);
       const queryResult = await provider.queryPayment(orderId);
 
-      if (
-        queryResult.status !== "pending" &&
-        (queryResult.status as string) !== record.status
-      ) {
+      if (queryResult.status !== "pending" && (queryResult.status as string) !== record.status) {
         // 状态发生变化，更新记录
         await this.prisma.paymentRecord.update({
           where: { id: record.id },
@@ -244,7 +228,7 @@ export class PaymentService {
    */
   async handleCallback(
     providerName: PaymentProvider,
-    callbackData: PaymentRawCallbackData,
+    callbackData: PaymentRawCallbackData
   ): Promise<{ success: boolean; message: string }> {
     this.logger.log("收到支付回调", { provider: providerName });
 
@@ -263,14 +247,10 @@ export class PaymentService {
     // 幂等性保护：使用 Redis 分布式锁
     const lockKey = `${PAYMENT_IDEMPOTENCY_PREFIX}${orderId}`;
     const lockValue = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    const lockAcquired = await this.redisService.getClient().set(
-      lockKey,
-      lockValue,
-      "PX",
-      IDEMPOTENCY_TTL_SECONDS * 1000,
-      "NX"
-    );
+
+    const lockAcquired = await this.redisService
+      .getClient()
+      .set(lockKey, lockValue, "PX", IDEMPOTENCY_TTL_SECONDS * 1000, "NX");
 
     if (!lockAcquired) {
       this.logger.log("订单正在处理中", { orderId });
@@ -331,8 +311,7 @@ export class PaymentService {
       }
 
       // 使用事务更新状态
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await this.prisma.$transaction(async (tx: any) => {
+      await this.prisma.$transaction(async (tx) => {
         // 更新支付记录
         await tx.paymentRecord.update({
           where: { id: record.id },
@@ -415,10 +394,7 @@ export class PaymentService {
   /**
    * 申请退款
    */
-  async refund(
-    userId: string,
-    dto: RefundPaymentDto,
-  ): Promise<RefundResponseDto> {
+  async refund(userId: string, dto: RefundPaymentDto): Promise<RefundResponseDto> {
     const record = await this.prisma.paymentRecord.findFirst({
       where: { orderId: dto.orderId, userId },
     });
@@ -432,9 +408,7 @@ export class PaymentService {
     }
 
     if (dto.amount > record.amount.toNumber()) {
-      throw new BadRequestException(
-        "Refund amount cannot exceed payment amount",
-      );
+      throw new BadRequestException("Refund amount cannot exceed payment amount");
     }
 
     const refundId = `refund_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -530,7 +504,7 @@ export class PaymentService {
   async getPaymentRecords(
     userId: string,
     page: number = 1,
-    pageSize: number = 10,
+    pageSize: number = 10
   ): Promise<PaymentListResponseDto> {
     const where = { userId };
 
@@ -545,8 +519,7 @@ export class PaymentService {
     ]);
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      items: records.map((record: any) => ({
+      items: records.map((record) => ({
         id: record.id,
         orderId: record.orderId,
         userId: record.userId,
@@ -570,7 +543,7 @@ export class PaymentService {
    */
   async pollPaymentStatus(
     userId: string,
-    orderId: string,
+    orderId: string
   ): Promise<{ paid: boolean; status: string }> {
     const result = await this.queryPayment(userId, orderId);
     return {
@@ -596,8 +569,7 @@ export class PaymentService {
    * 获取回调 URL
    */
   private getNotifyUrl(provider: PaymentProvider): string {
-    const baseUrl =
-      this.configService.get<string>("BACKEND_URL") || "http://localhost:3001";
+    const baseUrl = this.configService.get<string>("BACKEND_URL") || "http://localhost:3001";
     return `${baseUrl}/api/v1/payment/callback/${provider}`;
   }
 
@@ -606,7 +578,7 @@ export class PaymentService {
    */
   private async getOrderInfo(
     orderId: string,
-    userId: string,
+    userId: string
   ): Promise<{ amount: number; subject: string }> {
     // 检查是否是订阅订单
     const paymentOrder = await this.prisma.paymentOrder.findUnique({
@@ -636,10 +608,7 @@ export class PaymentService {
   /**
    * 激活订阅 - 通过事件驱动
    */
-  private async activateSubscription(
-    userId: string,
-    orderId: string,
-  ): Promise<void> {
+  private async activateSubscription(userId: string, orderId: string): Promise<void> {
     const paymentOrder = await this.prisma.paymentOrder.findUnique({
       where: { id: orderId },
     });
@@ -655,10 +624,7 @@ export class PaymentService {
           paymentRecordId: orderId,
           metadata,
         };
-        this.eventEmitter.emit(
-          PAYMENT_EVENTS.SUBSCRIPTION_ACTIVATION_REQUIRED,
-          payload,
-        );
+        this.eventEmitter.emit(PAYMENT_EVENTS.SUBSCRIPTION_ACTIVATION_REQUIRED, payload);
       }
     }
   }
@@ -667,7 +633,7 @@ export class PaymentService {
   async verifyAlipaySignature(body: PaymentRawCallbackData): Promise<boolean> {
     try {
       const provider = this.getProvider("alipay");
-      if ('verifyCallbackSign' in provider && typeof provider.verifyCallbackSign === 'function') {
+      if ("verifyCallbackSign" in provider && typeof provider.verifyCallbackSign === "function") {
         return provider.verifyCallbackSign(body);
       }
       this.logger.warn("支付宝Provider未实现签名验证方法");
@@ -732,13 +698,12 @@ export class PaymentService {
 
         if (orderWithItems && orderWithItems.items.length > 0) {
           await this.prisma.$transaction(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            orderWithItems.items.map((item: any) =>
+            orderWithItems.items.map((item) =>
               this.prisma.clothingItem.update({
                 where: { id: item.itemId },
                 data: { stock: { increment: item.quantity } },
-              }),
-            ),
+              })
+            )
           );
         }
 
@@ -751,9 +716,7 @@ export class PaymentService {
         this.logger.log(`Closed expired payment: ${record.orderId}`);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        this.logger.error(
-          `Failed to close expired payment ${record.orderId}: ${message}`,
-        );
+        this.logger.error(`Failed to close expired payment ${record.orderId}: ${message}`);
       }
     }
   }

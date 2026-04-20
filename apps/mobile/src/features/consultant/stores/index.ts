@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import { create } from "zustand";
+﻿import { create } from "zustand";
 import { consultantApi } from "../../../services/api/consultant.api";
 import type {
   ConsultantProfile,
@@ -216,8 +216,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
-  addMessage: (message) =>
-    set((state) => ({ messages: [...state.messages, message] })),
+  addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })),
 
   setCurrentRoom: (room) => set({ currentRoom: room }),
 

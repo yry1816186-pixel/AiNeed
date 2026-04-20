@@ -10,11 +10,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_GAP = 8;
@@ -63,8 +62,6 @@ const PostCard: React.FC<{
   onAuthorPress: (authorId: string) => void;
   onLikePress: (postId: string) => void;
 }> = ({ post, index, onPostPress, onAuthorPress, onLikePress }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const imageHeight = useMemo(() => {
     const heights = [180, 220, 200, 240, 190, 210];
     return heights[index % heights.length];
@@ -148,7 +145,12 @@ const PostCard: React.FC<{
         </View>
 
         <View style={styles.cardFooter}>
-          <Pressable style={styles.authorRow} onPress={() => onAuthorPress(post.author.id)} accessibilityLabel={`查看作者${post.author.nickname}`} accessibilityRole="link">
+          <Pressable
+            style={styles.authorRow}
+            onPress={() => onAuthorPress(post.author.id)}
+            accessibilityLabel={`查看作者${post.author.nickname}`}
+            accessibilityRole="link"
+          >
             {post.author.avatar ? (
               <Image source={{ uri: post.author.avatar }} style={styles.authorAvatar} />
             ) : (
@@ -163,7 +165,12 @@ const PostCard: React.FC<{
             </Text>
           </Pressable>
 
-          <Pressable style={styles.likeButton} onPress={() => onLikePress(post.id)} accessibilityLabel="点赞" accessibilityRole="button">
+          <Pressable
+            style={styles.likeButton}
+            onPress={() => onLikePress(post.id)}
+            accessibilityLabel="点赞"
+            accessibilityRole="button"
+          >
             <Text style={styles.likeIcon}>♡</Text>
             <Text style={styles.likeCount}>
               {formatCount(post.likeCount || post._count?.likes || 0)}
@@ -256,7 +263,7 @@ const useStyles = createStyles((colors) => ({
   },
   listContent: {
     paddingHorizontal: CARD_PADDING,
-    paddingTop: DesignTokens.spacing[3],
+    paddingTop: 12,
     paddingBottom: 100,
   },
   columnsWrapper: {
@@ -270,8 +277,8 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 12,
     overflow: "hidden",
     marginBottom: CARD_GAP,
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 2,
@@ -296,11 +303,11 @@ const useStyles = createStyles((colors) => ({
   },
   multiImageBadge: {
     position: "absolute",
-    top: Spacing.sm,
-    right: Spacing.sm,
+    top: 8,
+    right: 8,
     backgroundColor: "rgba(0,0,0,0.5)",
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderRadius: 8,
   },
   multiImageText: {
@@ -313,11 +320,11 @@ const useStyles = createStyles((colors) => ({
     bottom: 0,
     left: 0,
     right: 0,
-    height: DesignTokens.spacing[10],
+    height: 40,
   },
   cardContent: {
-    padding: DesignTokens.spacing['2.5'],
-    gap: DesignTokens.spacing['1.5'],
+    padding: 10,
+    gap: 6,
   },
   cardTitle: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -327,12 +334,12 @@ const useStyles = createStyles((colors) => ({
   },
   tagsRow: {
     flexDirection: "row",
-    gap: DesignTokens.spacing['1.5'],
+    gap: 6,
     flexWrap: "wrap",
   },
   tag: {
     backgroundColor: colors.primaryLight + "20",
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 10,
   },
@@ -345,8 +352,8 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: Spacing.xs,
-    paddingTop: Spacing.sm,
+    marginTop: 4,
+    paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[100],
   },
@@ -354,22 +361,22 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
-    marginRight: Spacing.sm,
+    marginRight: 8,
   },
   authorAvatar: {
-    width: DesignTokens.spacing[5],
-    height: DesignTokens.spacing[5],
+    width: 20,
+    height: 20,
     borderRadius: 10,
-    marginRight: DesignTokens.spacing['1.5'],
+    marginRight: 6,
   },
   authorAvatarPlaceholder: {
-    width: DesignTokens.spacing[5],
-    height: DesignTokens.spacing[5],
+    width: 20,
+    height: 20,
     borderRadius: 10,
     backgroundColor: colors.secondary,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: DesignTokens.spacing['1.5'],
+    marginRight: 6,
   },
   authorAvatarText: {
     fontSize: DesignTokens.typography.sizes.xs,
@@ -384,7 +391,7 @@ const useStyles = createStyles((colors) => ({
   likeButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
+    gap: 4,
   },
   likeIcon: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -398,11 +405,11 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: DesignTokens.spacing[5],
-    gap: Spacing.sm,
+    paddingVertical: 20,
+    gap: 8,
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[400],
   },
-}))
+}));

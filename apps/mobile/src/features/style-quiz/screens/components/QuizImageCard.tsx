@@ -1,9 +1,10 @@
 import React, { useRef, useCallback } from "react";
 import { View, Text, StyleSheet, Pressable, Animated } from "react-native";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../../design-system/theme';
-import { ProgressiveImage } from '../../../../shared/components/ux/ProgressiveImage';
-import type { QuizImage } from '../../../../stores/quizStore';
+import { Colors, Spacing, BorderRadius, Shadows } from "../../../../design-system/theme";
+import { ProgressiveImage } from "../../../../shared/components/ux/ProgressiveImage";
+import type { QuizImage } from "../../../../stores/quizStore";
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface QuizImageCardProps {
   image: QuizImage;
@@ -18,6 +19,8 @@ export const QuizImageCard: React.FC<QuizImageCardProps> = ({
   onPress,
   index,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = useCallback(() => {
@@ -76,7 +79,7 @@ export const QuizImageCard: React.FC<QuizImageCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   card: {
     borderRadius: BorderRadius.lg,
     backgroundColor: Colors.neutral.white,
@@ -85,7 +88,7 @@ const styles = StyleSheet.create({
   },
   cardSelected: {
     borderWidth: 2,
-    borderColor: Colors.primary[500],
+    borderColor: colors.primary[500],
   },
   image: {
     width: "100%",
@@ -98,7 +101,7 @@ const styles = StyleSheet.create({
     width: Spacing.lg,
     height: Spacing.lg,
     borderRadius: 12,
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     justifyContent: "center",
     alignItems: "center",
   },
@@ -114,6 +117,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
-    color: Colors.neutral[700],
+    color: colors.neutral[700],
   },
-});
+}));

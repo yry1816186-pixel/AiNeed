@@ -12,10 +12,11 @@ import {
   FlatList,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme, Spacing } from '../../../design-system/theme'
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { communityApi } from '../../../services/api/community.api';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { theme } from "../../../design-system/theme";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { communityApi } from "../../services/api/community.api";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 type ImportSource = "community" | "ai_stylist" | "tryon";
 
@@ -142,7 +143,7 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
       }
     } catch (error) {
       // Collections loading failure is non-critical
-      console.error('Failed to load collections:', error);
+      console.error("Failed to load collections:", error);
     }
   }, []);
 
@@ -203,7 +204,9 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
                   <Ionicons
                     name={SOURCE_ICONS[key] as "people-outline"}
                     size={14}
-                    color={activeSource === key ? colors.textInverse : colors.neutral[500]}
+                    color={
+                      activeSource === key ? colors.textInverse : DesignTokens.colors.brand.slate
+                    }
                   />
                   <Text
                     style={[
@@ -268,7 +271,9 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
                     {item.name}
                   </Text>
                   <View style={[styles.checkbox, item.selected && styles.checkboxChecked]}>
-                    {item.selected && <Ionicons name="checkmark" size={12} color={colors.textInverse} />}
+                    {item.selected && (
+                      <Ionicons name="checkmark" size={12} color={colors.textInverse} />
+                    )}
                   </View>
                 </TouchableOpacity>
               ))}
@@ -306,75 +311,90 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 16,
     paddingBottom: 34,
     maxHeight: 500,
   },
   handle: {
-    width: DesignTokens.spacing[10],
-    height: Spacing.xs,
+    width: 40,
+    height: 4,
     borderRadius: 2,
     backgroundColor: DesignTokens.colors.neutral[200],
     alignSelf: "center",
-    marginTop: DesignTokens.spacing['2.5'],
-    marginBottom: DesignTokens.spacing['3.5'],
+    marginTop: 10,
+    marginBottom: 14,
   },
-  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: theme.colors.textPrimary, marginBottom: DesignTokens.spacing[3]},
-  sourceRow: { flexDirection: "row", gap: Spacing.sm, marginBottom: DesignTokens.spacing[3]},
+  title: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: theme.colors.textPrimary,
+    marginBottom: 12,
+  },
+  sourceRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
   sourceChip: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-    paddingHorizontal: DesignTokens.spacing['2.5'],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 14,
-    backgroundColor: DesignTokens.colors.backgrounds.secondary, // lavender-tinted bg
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
   },
-  sourceChipActive: { backgroundColor: colors.neutral[500] },
-  sourceChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.neutral[500], fontWeight: "500" },
+  sourceChipActive: { backgroundColor: DesignTokens.colors.brand.slate },
+  sourceChipText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: DesignTokens.colors.brand.slate,
+    fontWeight: "500",
+  },
   sourceChipTextActive: { color: colors.textInverse },
   collectionRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    marginBottom: DesignTokens.spacing[3],
+    gap: 8,
+    marginBottom: 12,
   },
-  collectionLabel: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
+  collectionLabel: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: theme.colors.textSecondary,
+  },
   collectionChip: {
-    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 12,
     backgroundColor: theme.colors.background,
-    marginRight: DesignTokens.spacing['1.5'],
+    marginRight: 6,
   },
-  collectionChipActive: { backgroundColor: DesignTokens.colors.backgrounds.secondary }, // lavender-tinted bg
-  collectionChipText: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textSecondary },
-  collectionChipTextActive: { color: colors.neutral[500], fontWeight: "600" },
-  loader: { paddingVertical: Spacing.lg},
+  collectionChipActive: { backgroundColor: DesignTokens.colors.backgrounds.tertiary },
+  collectionChipText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: theme.colors.textSecondary,
+  },
+  collectionChipTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "600" },
+  loader: { paddingVertical: 24 },
   itemList: { maxHeight: 250 },
   itemRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['2.5'],
-    paddingVertical: DesignTokens.spacing['2.5'],
-    paddingHorizontal: Spacing.sm,
+    gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
-  itemRowSelected: { backgroundColor: DesignTokens.colors.backgrounds.tertiary }, // selected row bg
-  itemImage: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], borderRadius: 6 },
+  itemRowSelected: { backgroundColor: DesignTokens.colors.backgrounds.tertiary },
+  itemImage: { width: 40, height: 40, borderRadius: 6 },
   itemImagePlaceholder: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 6,
     backgroundColor: theme.colors.background,
     alignItems: "center",
     justifyContent: "center",
   },
-  itemName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textPrimary },
+  itemName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: theme.colors.text },
   checkbox: {
-    width: DesignTokens.spacing[5],
-    height: DesignTokens.spacing[5],
+    width: 20,
+    height: 20,
     borderRadius: 4,
     borderWidth: 1.5,
     borderColor: theme.colors.border,
@@ -382,20 +402,27 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   checkboxChecked: {
-    backgroundColor: colors.neutral[500],
-    borderColor: colors.neutral[500],
+    backgroundColor: DesignTokens.colors.brand.slate,
+    borderColor: DesignTokens.colors.brand.slate,
   },
-  emptyItems: { paddingVertical: Spacing.xl, alignItems: "center" },
-  emptyItemsText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.textTertiary },
+  emptyItems: { paddingVertical: 32, alignItems: "center" },
+  emptyItemsText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: theme.colors.textTertiary,
+  },
   importBtn: {
-    backgroundColor: colors.neutral[500],
+    backgroundColor: DesignTokens.colors.brand.slate,
     borderRadius: 12,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: 14,
     alignItems: "center",
-    marginTop: DesignTokens.spacing[3],
+    marginTop: 12,
   },
   importBtnDisabled: { opacity: 0.5 },
-  importBtnText: { color: colors.textInverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-}))
+  importBtnText: {
+    color: colors.textInverse,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+  },
+}));
 
 export default ImportSheet;

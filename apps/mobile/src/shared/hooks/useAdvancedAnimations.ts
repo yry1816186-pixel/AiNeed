@@ -1,9 +1,5 @@
 import React, { useEffect, useCallback } from "react";
-import {
-  Dimensions,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-} from "react-native";
+import { Dimensions, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Gesture } from "react-native-gesture-handler";
@@ -20,8 +16,8 @@ import {
   Easing,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { DesignTokens } from '../../design-system/theme';
-import { useTheme } from '../contexts/ThemeContext';
+import { DesignTokens } from "../../design-system/theme";
+import { flatColors as colors } from "../../design-system/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { createAnimatedComponent } = AnimatedReanimated;
@@ -44,7 +40,6 @@ export interface LiquidGlassConfig {
 export const useParallax = (
   config: ParallaxConfig = { speed: 0.5, direction: "vertical", enabled: true }
 ) => {
-  const { colors } = useTheme();
   const scrollY = useSharedValue(0);
   const translateY = useSharedValue(0);
 

@@ -1,15 +1,9 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  Logger,
-} from "@nestjs/common";
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Request } from "express";
 import { Observable, of, tap } from "rxjs";
 
-import { CacheService } from "../../modules/cache/cache.service";
+import { CacheService } from "../cache/cache.service";
 import {
   CACHE_KEY_METADATA,
   CACHE_TTL_METADATA,
@@ -22,7 +16,7 @@ export class CacheInterceptor implements NestInterceptor {
 
   constructor(
     private readonly cacheService: CacheService,
-    private readonly reflector: Reflector,
+    private readonly reflector: Reflector
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,10 +25,7 @@ export class CacheInterceptor implements NestInterceptor {
     const method = request.method.toUpperCase();
 
     // Handle cache invalidation on mutations
-    const clearPatterns = this.reflector.get<string[]>(
-      CACHE_CLEAR_METADATA,
-      context.getHandler(),
-    );
+    const clearPatterns = this.reflector.get<string[]>(CACHE_CLEAR_METADATA, context.getHandler());
 
     if (clearPatterns && clearPatterns.length > 0 && method !== "GET") {
       return next.handle().pipe(
@@ -47,7 +38,7 @@ export class CacheInterceptor implements NestInterceptor {
               this.logger.warn(`Failed to clear pattern ${pattern}: ${msg}`);
             }
           }
-        }),
+        })
       );
     }
 
@@ -56,14 +47,8 @@ export class CacheInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    const cacheKey = this.reflector.get<string>(
-      CACHE_KEY_METADATA,
-      context.getHandler(),
-    );
-    const cacheTtl = this.reflector.get<number>(
-      CACHE_TTL_METADATA,
-      context.getHandler(),
-    );
+    const cacheKey = this.reflector.get<string>(CACHE_KEY_METADATA, context.getHandler());
+    const cacheTtl = this.reflector.get<number>(CACHE_TTL_METADATA, context.getHandler());
 
     if (!cacheKey) {
       return next.handle();
@@ -142,7 +127,7 @@ export class CacheInterceptor implements NestInterceptor {
             acc[key] = query[key];
             return acc;
           },
-          {} as Record<string, unknown>,
+          {} as Record<string, unknown>
         );
       parts.push(JSON.stringify(sortedQuery));
     }

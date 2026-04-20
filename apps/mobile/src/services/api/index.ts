@@ -37,6 +37,16 @@ export {
   type QuizResult as StyleQuizResult,
   type QuizProgress,
 } from "./style-quiz.api";
+export {
+  bloggerApi,
+  type BloggerProduct,
+  type BloggerDashboardData,
+  type TrendDataPoint,
+  type TrendMetric,
+  type BloggerProductType,
+  type BloggerProductInput,
+  type PurchaseInput,
+} from "./blogger.api";
 export { AppError, AppErrorCode, classifyAxiosError, toAppError, getErrorMessage } from "./error";
 export {
   notificationApi,

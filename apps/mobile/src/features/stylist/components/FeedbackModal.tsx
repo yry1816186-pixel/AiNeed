@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Modal, Pressable } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface FeedbackModalProps {
   visible: boolean;
@@ -28,6 +27,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ visible, onSubmit,
   const [dislikeReason, setDislikeReason] = useState<string | undefined>(undefined);
 
   const handleSubmit = () => {
+    const { colors } = useTheme();
     if (!action) {
       return;
     }
@@ -87,7 +87,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ visible, onSubmit,
                 <Ionicons
                   name={star <= rating ? "star" : "star-outline"}
                   size={32}
-                  color={star <= rating ? DesignTokens.colors.semantic.warning : DesignTokens.colors.neutral[300]}
+                  color={star <= rating ? "#FFB800" : DesignTokens.colors.neutral[300]}
                 />
               </Pressable>
             ))}
@@ -145,20 +145,20 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: DesignTokens.spacing[5],
-    paddingBottom: Spacing.xl,
+    padding: 20,
+    paddingBottom: 32,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: Spacing.md,
+    marginBottom: 16,
     textAlign: "center",
   },
-  actionRow: { flexDirection: "row", gap: Spacing.md, marginBottom: DesignTokens.spacing[5], justifyContent: "center" },
+  actionRow: { flexDirection: "row", gap: 16, marginBottom: 20, justifyContent: "center" },
   actionButton: {
     flex: 1,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: 14,
     borderRadius: 12,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
@@ -173,22 +173,26 @@ const useStyles = createStyles((colors) => ({
     borderColor: colors.error,
     backgroundColor: colors.errorLight,
   },
-  actionButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: DesignTokens.colors.neutral[600] },
+  actionButtonText: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "500",
+    color: DesignTokens.colors.neutral[600],
+  },
   actionButtonTextActive: { color: colors.success },
   actionButtonTextDislike: { color: colors.error },
-  ratingRow: { flexDirection: "row", justifyContent: "center", gap: Spacing.sm, marginBottom: Spacing.md},
-  starButton: { padding: Spacing.xs},
-  reasonsContainer: { marginBottom: Spacing.md},
+  ratingRow: { flexDirection: "row", justifyContent: "center", gap: 8, marginBottom: 16 },
+  starButton: { padding: 4 },
+  reasonsContainer: { marginBottom: 16 },
   reasonsTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: DesignTokens.colors.neutral[700],
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
   },
-  reasonsRow: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm},
+  reasonsRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   reasonChip: {
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     borderWidth: 1,
@@ -198,17 +202,27 @@ const useStyles = createStyles((colors) => ({
     borderColor: colors.primary,
     backgroundColor: DesignTokens.colors.neutral[50],
   },
-  reasonChipText: { fontSize: DesignTokens.typography.sizes.sm, color: DesignTokens.colors.neutral[600] },
+  reasonChipText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: DesignTokens.colors.neutral[600],
+  },
   reasonChipTextActive: { color: colors.primary, fontWeight: "500" },
   submitButton: {
     backgroundColor: colors.primary,
     borderRadius: 12,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: 14,
     alignItems: "center",
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
   },
   submitButtonDisabled: { opacity: 0.5 },
-  submitButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.surface },
-  closeButton: { alignItems: "center", paddingVertical: DesignTokens.spacing['2.5']},
-  closeButtonText: { fontSize: DesignTokens.typography.sizes.base, color: DesignTokens.colors.neutral[500] },
-}))
+  submitButtonText: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.surface,
+  },
+  closeButton: { alignItems: "center", paddingVertical: 10 },
+  closeButtonText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: DesignTokens.colors.neutral[500],
+  },
+}));

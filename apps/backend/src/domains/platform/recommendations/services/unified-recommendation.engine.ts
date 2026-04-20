@@ -1,13 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
-import {
-  BodyType,
-  SkinTone,
-  ColorSeason,
-  ClothingCategory,
-} from "../../../../types/prisma-enums";
+import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../../types/prisma-enums";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { AIIntegrationService } from '../../../ai-core/ai/services/ai-integration.service';
+import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { AIIntegrationService } from "../../../../ai-core/ai/services/ai-integration.service";
 import {
   ClothingItemWithBrand,
   ClothingItemAttributes,
@@ -59,20 +54,20 @@ export class UnifiedRecommendationEngine {
 
   // Default strategy weights - can be dynamically adjusted based on user behavior
   private readonly defaultWeights: StrategyWeights = {
-    contentBased: 0.20,
-    collaborative: 0.20,
+    contentBased: 0.2,
+    collaborative: 0.2,
     knowledgeGraph: 0.15,
     theoryBased: 0.15,
-    sasrec: 0.20,
-    popularity: 0.10,
+    sasrec: 0.2,
+    popularity: 0.1,
   };
 
   // Cold start weights - more emphasis on popularity and content
   private readonly coldStartWeights: StrategyWeights = {
-    contentBased: 0.30,
+    contentBased: 0.3,
     collaborative: 0.05,
     knowledgeGraph: 0.15,
-    theoryBased: 0.20,
+    theoryBased: 0.2,
     sasrec: 0.05,
     popularity: 0.25,
   };
@@ -91,12 +86,10 @@ export class UnifiedRecommendationEngine {
     private coldStart: ColdStartService,
     private sasrec: SASRecService,
     private vectorSimilarity: VectorSimilarityService,
-    private explainer: RecommendationExplainerService,
+    private explainer: RecommendationExplainerService
   ) {}
 
-  async getRecommendations(
-    request: UnifiedRecommendationRequest,
-  ): Promise<RecommendationResult[]> {
+  async getRecommendations(request: UnifiedRecommendationRequest): Promise<RecommendationResult[]> {
     const { userId, context, options } = request;
     const limit = options?.limit || 20;
 
@@ -113,16 +106,10 @@ export class UnifiedRecommendationEngine {
     const candidates = await this.getCandidates(options);
 
     // Get SASRec recommendations if available
-    const sasrecRecommendations = await this.getSASRecRecommendations(
-      userId,
-      behaviorSummary,
-    );
+    const sasrecRecommendations = await this.getSASRecRecommendations(userId, behaviorSummary);
 
     // Get collaborative filtering recommendations
-    const cfRecommendations = await this.getCFRecommendations(
-      userId,
-      behaviorSummary,
-    );
+    const cfRecommendations = await this.getCFRecommendations(userId, behaviorSummary);
 
     // Calculate scores for all candidates
     const scoredResults = await Promise.all(
@@ -133,18 +120,13 @@ export class UnifiedRecommendationEngine {
           behaviorSummary,
           context,
           sasrecRecommendations,
-          cfRecommendations,
+          cfRecommendations
         );
 
         const totalScore = this.combineScores(scores, weights);
 
         // Generate explanation
-        const explanation = await this.generateExplanation(
-          item,
-          scores,
-          userProfile,
-          context,
-        );
+        const explanation = await this.generateExplanation(item, scores, userProfile, context);
 
         // Find similar items
         const similarItems = await this.findSimilarItems(item.id);
@@ -158,7 +140,7 @@ export class UnifiedRecommendationEngine {
           explanation,
           similarItems,
         };
-      }),
+      })
     );
 
     // Sort by score
@@ -198,7 +180,9 @@ export class UnifiedRecommendationEngine {
     return weights;
   }
 
-  getAdaptiveWeightsFromSignals(signals: DataMaturitySignals): StrategyWeights & { vector: number } {
+  getAdaptiveWeightsFromSignals(
+    signals: DataMaturitySignals
+  ): StrategyWeights & { vector: number } {
     if (signals.userInteractions < 5) {
       return {
         contentBased: signals.hasProfile ? 0.4 : 0.6,
@@ -235,20 +219,19 @@ export class UnifiedRecommendationEngine {
   }
 
   async assessDataMaturity(userId: string): Promise<DataMaturitySignals> {
-    const [totalUsers, totalInteractions, userBehaviors, userProfile] =
-      await Promise.all([
-        this.prisma.user.count(),
-        this.prisma.userBehavior.count(),
-        this.prisma.userBehavior.findMany({
-          where: { userId },
-          orderBy: { createdAt: "desc" },
-          take: 50,
-        }),
-        this.prisma.userProfile.findUnique({ where: { userId } }),
-      ]);
+    const [totalUsers, totalInteractions, userBehaviors, userProfile] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.userBehavior.count(),
+      this.prisma.userBehavior.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+        take: 50,
+      }),
+      this.prisma.userProfile.findUnique({ where: { userId } }),
+    ]);
 
     const sequenceLength = userBehaviors.filter(
-      (b: { type: string }) => b.type === "page_view" || b.type === "click",
+      (b: { type: string }) => b.type === "page_view" || b.type === "click"
     ).length;
 
     return {
@@ -281,7 +264,11 @@ export class UnifiedRecommendationEngine {
       }),
       this.prisma.order.findMany({
         where: { userId },
-        include: { items: { include: { item: { select: { category: true, brandId: true, attributes: true } } } } },
+        include: {
+          items: {
+            include: { item: { select: { category: true, brandId: true, attributes: true } } },
+          },
+        },
         take: 50,
       }),
       this.prisma.userBehavior.findMany({
@@ -301,8 +288,12 @@ export class UnifiedRecommendationEngine {
     for (const fav of favorites) {
       const cat = fav.item?.category;
       const brand = fav.item?.brandId;
-      if (cat) {favoriteCategories.set(cat, (favoriteCategories.get(cat) || 0) + 2);}
-      if (brand) {favoriteBrands.set(brand, (favoriteBrands.get(brand) || 0) + 2);}
+      if (cat) {
+        favoriteCategories.set(cat, (favoriteCategories.get(cat) || 0) + 2);
+      }
+      if (brand) {
+        favoriteBrands.set(brand, (favoriteBrands.get(brand) || 0) + 2);
+      }
       // 安全获取 attributes 中的 style 属性
       const attributes = fav.item?.attributes as ClothingItemAttributes | null;
       const styles = attributes?.style || [];
@@ -313,8 +304,12 @@ export class UnifiedRecommendationEngine {
     for (const tryOn of tryOns) {
       const cat = tryOn.item?.category;
       const brand = tryOn.item?.brandId;
-      if (cat) {favoriteCategories.set(cat, (favoriteCategories.get(cat) || 0) + 1);}
-      if (brand) {favoriteBrands.set(brand, (favoriteBrands.get(brand) || 0) + 1);}
+      if (cat) {
+        favoriteCategories.set(cat, (favoriteCategories.get(cat) || 0) + 1);
+      }
+      if (brand) {
+        favoriteBrands.set(brand, (favoriteBrands.get(brand) || 0) + 1);
+      }
       const attributes = tryOn.item?.attributes as ClothingItemAttributes | null;
       const styles = attributes?.style || [];
       styles.forEach((s: string) => favoriteStyles.add(s));
@@ -325,8 +320,12 @@ export class UnifiedRecommendationEngine {
       for (const orderItem of order.items) {
         const cat = orderItem.item?.category;
         const brand = orderItem.item?.brandId;
-        if (cat) {favoriteCategories.set(cat, (favoriteCategories.get(cat) || 0) + 5);}
-        if (brand) {favoriteBrands.set(brand, (favoriteBrands.get(brand) || 0) + 5);}
+        if (cat) {
+          favoriteCategories.set(cat, (favoriteCategories.get(cat) || 0) + 5);
+        }
+        if (brand) {
+          favoriteBrands.set(brand, (favoriteBrands.get(brand) || 0) + 5);
+        }
         const attributes = orderItem.item?.attributes as ClothingItemAttributes | null;
         const styles = attributes?.style || [];
         styles.forEach((s: string) => favoriteStyles.add(s));
@@ -357,7 +356,7 @@ export class UnifiedRecommendationEngine {
    */
   private async getSASRecRecommendations(
     userId: string,
-    behaviorSummary: UserBehaviorSummary,
+    behaviorSummary: UserBehaviorSummary
   ): Promise<Map<string, number>> {
     const scoreMap = new Map<string, number>();
 
@@ -366,10 +365,7 @@ export class UnifiedRecommendationEngine {
     }
 
     try {
-      const result = await this.sasrec.getSequenceRecommendations(
-        userId,
-        50,
-      );
+      const result = await this.sasrec.getSequenceRecommendations(userId, 50);
 
       for (const rec of result.recommendations) {
         scoreMap.set(rec.itemId, rec.score);
@@ -386,7 +382,7 @@ export class UnifiedRecommendationEngine {
    */
   private async getCFRecommendations(
     userId: string,
-    behaviorSummary: UserBehaviorSummary,
+    behaviorSummary: UserBehaviorSummary
   ): Promise<Map<string, number>> {
     const scoreMap = new Map<string, number>();
 
@@ -395,10 +391,10 @@ export class UnifiedRecommendationEngine {
     }
 
     try {
-      const result = await this.collaborativeFiltering.getHybridRecommendations(
-        userId,
-        { limit: 50, excludeViewed: true },
-      );
+      const result = await this.collaborativeFiltering.getHybridRecommendations(userId, {
+        limit: 50,
+        excludeViewed: true,
+      });
 
       for (const rec of result) {
         scoreMap.set(rec.itemId, rec.score);
@@ -414,11 +410,11 @@ export class UnifiedRecommendationEngine {
     const profile = await this.prisma.userProfile.findUnique({
       where: { userId },
     });
-    
+
     if (!profile) {
       return null;
     }
-    
+
     return {
       ...profile,
       stylePreferences: profile.stylePreferences as StylePreferenceItem[] | null,
@@ -462,8 +458,12 @@ export class UnifiedRecommendationEngine {
 
     if (options?.minPrice !== undefined || options?.maxPrice !== undefined) {
       where.price = {};
-      if (options?.minPrice !== undefined) {where.price.gte = options.minPrice;}
-      if (options?.maxPrice !== undefined) {where.price.lte = options.maxPrice;}
+      if (options?.minPrice !== undefined) {
+        where.price.gte = options.minPrice;
+      }
+      if (options?.maxPrice !== undefined) {
+        where.price.lte = options.maxPrice;
+      }
     }
 
     const items = await this.prisma.clothingItem.findMany({
@@ -473,7 +473,7 @@ export class UnifiedRecommendationEngine {
       },
       take: 200,
     });
-    
+
     return items.map((item: any) => ({
       ...item,
       price: Number(item.price),
@@ -497,14 +497,14 @@ export class UnifiedRecommendationEngine {
     behaviorSummary: UserBehaviorSummary,
     context?: RecommendationContext,
     sasrecScores?: Map<string, number>,
-    cfScores?: Map<string, number>,
+    cfScores?: Map<string, number>
   ): Promise<RecommendationScoreBreakdown> {
     // Content-based score
     const contentScore = await this.calculateContentBasedScore(
       item,
       userProfile,
       behaviorSummary,
-      context,
+      context
     );
 
     // Collaborative filtering score (from pre-computed CF recommendations)
@@ -514,11 +514,7 @@ export class UnifiedRecommendationEngine {
     const kgScore = await this.calculateKnowledgeGraphScore(item, context);
 
     // Theory-based score
-    const theoryScore = this.calculateTheoryBasedScore(
-      item,
-      userProfile,
-      context,
-    );
+    const theoryScore = this.calculateTheoryBasedScore(item, userProfile, context);
 
     // SASRec sequence score (from pre-computed SASRec recommendations)
     const sasrecScore = sasrecScores?.get(item.id) || 0;
@@ -565,7 +561,7 @@ export class UnifiedRecommendationEngine {
     // 品牌热度加成
     if (item.brand?.name) {
       const popularBrands = ["Nike", "Adidas", "Zara", "H&M", "Uniqlo", "Gucci", "LV"];
-      if (popularBrands.some(b => item.brand!.name.toLowerCase().includes(b.toLowerCase()))) {
+      if (popularBrands.some((b) => item.brand!.name.toLowerCase().includes(b.toLowerCase()))) {
         score += 0.1;
       }
     }
@@ -586,11 +582,13 @@ export class UnifiedRecommendationEngine {
     item: ClothingItemWithBrand,
     userProfile: UserProfileData | null,
     behaviorSummary: UserBehaviorSummary,
-    context?: RecommendationContext,
+    context?: RecommendationContext
   ): Promise<number> {
     let score = 0.5;
 
-    if (!userProfile) {return score;}
+    if (!userProfile) {
+      return score;
+    }
 
     // 获取商品属性
     const attributes = item.attributes;
@@ -611,13 +609,9 @@ export class UnifiedRecommendationEngine {
 
     // 肤色颜色匹配
     if (userProfile.skinTone && item.colors?.length > 0) {
-      const flatteringColors = this.matchingTheory.getFlatteringColors(
-        userProfile.skinTone,
-      );
+      const flatteringColors = this.matchingTheory.getFlatteringColors(userProfile.skinTone);
       const hasFlatteringColor = item.colors.some((c: string) =>
-        flatteringColors.some((fc) =>
-          c.toLowerCase().includes(fc.toLowerCase()),
-        ),
+        flatteringColors.some((fc) => c.toLowerCase().includes(fc.toLowerCase()))
       );
       if (hasFlatteringColor) {
         score += 0.1;
@@ -631,7 +625,7 @@ export class UnifiedRecommendationEngine {
         : [];
       const itemStyles = attributes.style || [];
       const matchingStyles = userStyles.filter((s: string) =>
-        itemStyles.some((is: string) => is.toLowerCase() === s.toLowerCase()),
+        itemStyles.some((is: string) => is.toLowerCase() === s.toLowerCase())
       );
       score += matchingStyles.length * 0.05;
     }
@@ -639,7 +633,7 @@ export class UnifiedRecommendationEngine {
     // 基于行为的风格匹配
     if (behaviorSummary.favoriteStyles.size > 0 && attributes?.style) {
       const matchingStyles = attributes.style.filter((s: string) =>
-        behaviorSummary.favoriteStyles.has(s),
+        behaviorSummary.favoriteStyles.has(s)
       );
       score += matchingStyles.length * 0.03;
     }
@@ -680,17 +674,10 @@ export class UnifiedRecommendationEngine {
     // 基础商品相似度（用于穿搭推荐）
     if (context?.baseItemId && item.id) {
       try {
-        const baseEmbedding = await this.aiIntegration.getItemEmbedding(
-          context.baseItemId,
-        );
-        const itemEmbedding = await this.aiIntegration.getItemEmbedding(
-          item.id,
-        );
+        const baseEmbedding = await this.aiIntegration.getItemEmbedding(context.baseItemId);
+        const itemEmbedding = await this.aiIntegration.getItemEmbedding(item.id);
         if (baseEmbedding && itemEmbedding) {
-          const similarity = this.cosineSimilarity(
-            baseEmbedding,
-            itemEmbedding,
-          );
+          const similarity = this.cosineSimilarity(baseEmbedding, itemEmbedding);
           score += similarity * 0.15;
         }
       } catch (error) {
@@ -713,7 +700,9 @@ export class UnifiedRecommendationEngine {
       norm1 += value1 * value1;
       norm2 += value2 * value2;
     }
-    if (norm1 === 0 || norm2 === 0) {return 0;}
+    if (norm1 === 0 || norm2 === 0) {
+      return 0;
+    }
     return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
   }
 
@@ -730,13 +719,15 @@ export class UnifiedRecommendationEngine {
       favorites: FavoriteWithItem[];
       tryOns: TryOnWithItem[];
       orders: OrderWithItems[];
-    },
+    }
   ): number {
     let score = 0.5;
 
     // 提取用户喜欢的品类
     const favoriteCategories = new Set(
-      userBehaviors.favorites.map((f) => f.item?.category).filter((c): c is ClothingCategory => c !== undefined),
+      userBehaviors.favorites
+        .map((f) => f.item?.category)
+        .filter((c): c is ClothingCategory => c !== undefined)
     );
     if (favoriteCategories.has(item.category)) {
       score += 0.1;
@@ -744,7 +735,9 @@ export class UnifiedRecommendationEngine {
 
     // 提取用户试穿过的品牌
     const triedBrands = new Set(
-      userBehaviors.tryOns.map((t) => t.item?.brandId).filter((b): b is string => typeof b === 'string'),
+      userBehaviors.tryOns
+        .map((t) => t.item?.brandId)
+        .filter((b): b is string => typeof b === "string")
     );
     if (item.brandId && triedBrands.has(item.brandId)) {
       score += 0.05;
@@ -752,19 +745,17 @@ export class UnifiedRecommendationEngine {
 
     // 提取用户购买过的商品风格
     const orderedItems = userBehaviors.orders.flatMap((o) =>
-      o.items.map((i) => i.item).filter((item): item is NonNullable<typeof item> => item !== null),
+      o.items.map((i) => i.item).filter((item): item is NonNullable<typeof item> => item !== null)
     );
     const orderedStyles = new Set(
       orderedItems.flatMap((i) => {
         const attrs = i?.attributes;
         return attrs?.style || [];
-      }),
+      })
     );
     const itemAttrs = item.attributes;
     if (itemAttrs?.style) {
-      const matchingStyles = itemAttrs.style.filter((s: string) =>
-        orderedStyles.has(s),
-      );
+      const matchingStyles = itemAttrs.style.filter((s: string) => orderedStyles.has(s));
       score += matchingStyles.length * 0.03;
     }
 
@@ -784,7 +775,7 @@ export class UnifiedRecommendationEngine {
    */
   private async calculateKnowledgeGraphScore(
     item: ClothingItemWithBrand,
-    context?: RecommendationContext,
+    context?: RecommendationContext
   ): Promise<number> {
     let score = 0.5;
 
@@ -795,16 +786,12 @@ export class UnifiedRecommendationEngine {
     score += Math.min(relatedItems.length * 0.02, 0.1);
 
     // 查找风格兼容的商品
-    const compatibleItems = this.knowledgeGraph.findCompatibleItemsByStyle(
-      item.id,
-    );
+    const compatibleItems = this.knowledgeGraph.findCompatibleItemsByStyle(item.id);
     score += Math.min(compatibleItems.length * 0.01, 0.1);
 
     // 场合适配性
     if (context?.occasion) {
-      const occasionItems = this.knowledgeGraph.getItemsForOccasion(
-        context.occasion,
-      );
+      const occasionItems = this.knowledgeGraph.getItemsForOccasion(context.occasion);
       const isSuitable = occasionItems.some((i) => i.id === `item_${item.id}`);
       if (isSuitable) {
         score += 0.1;
@@ -825,9 +812,11 @@ export class UnifiedRecommendationEngine {
   private calculateTheoryBasedScore(
     item: ClothingItemWithBrand,
     userProfile: UserProfileData | null,
-    context?: RecommendationContext,
+    context?: RecommendationContext
   ): number {
-    if (!userProfile) {return 0.5;}
+    if (!userProfile) {
+      return 0.5;
+    }
 
     const itemAttrs = item.attributes;
 
@@ -843,10 +832,7 @@ export class UnifiedRecommendationEngine {
     return outfitScore.score;
   }
 
-  private combineScores(
-    scores: RecommendationScoreBreakdown,
-    weights: StrategyWeights,
-  ): number {
+  private combineScores(scores: RecommendationScoreBreakdown, weights: StrategyWeights): number {
     return (
       scores.contentBased * weights.contentBased +
       scores.collaborative * weights.collaborative +
@@ -857,10 +843,7 @@ export class UnifiedRecommendationEngine {
     );
   }
 
-  private getSources(
-    scores: RecommendationScoreBreakdown,
-    weights: StrategyWeights,
-  ): string[] {
+  private getSources(scores: RecommendationScoreBreakdown, weights: StrategyWeights): string[] {
     const sources: string[] = [];
     const threshold = 0.5;
 
@@ -874,7 +857,7 @@ export class UnifiedRecommendationEngine {
     ];
 
     // Sort by weighted score
-    contributions.sort((a, b) => (b.score * b.weight) - (a.score * a.weight));
+    contributions.sort((a, b) => b.score * b.weight - a.score * a.weight);
 
     // Add top sources
     for (const contrib of contributions) {
@@ -890,15 +873,12 @@ export class UnifiedRecommendationEngine {
     item: ClothingItemWithBrand,
     scores: RecommendationScoreBreakdown,
     userProfile: UserProfileData | null,
-    context?: RecommendationContext,
+    context?: RecommendationContext
   ): string[] {
     const reasons: string[] = [];
 
     // Body type matching
-    if (
-      userProfile?.bodyType &&
-      item.attributes?.bodyTypeFit?.includes(userProfile.bodyType)
-    ) {
+    if (userProfile?.bodyType && item.attributes?.bodyTypeFit?.includes(userProfile.bodyType)) {
       reasons.push(`适合${this.getBodyTypeName(userProfile.bodyType)}体型`);
     }
 
@@ -907,24 +887,16 @@ export class UnifiedRecommendationEngine {
       userProfile?.colorSeason &&
       item.attributes?.colorSeasons?.includes(userProfile.colorSeason)
     ) {
-      reasons.push(
-        `符合${this.getColorSeasonName(userProfile.colorSeason)}型色彩`,
-      );
+      reasons.push(`符合${this.getColorSeasonName(userProfile.colorSeason)}型色彩`);
     }
 
     // Occasion matching
-    if (
-      context?.occasion &&
-      item.attributes?.occasions?.includes(context.occasion)
-    ) {
+    if (context?.occasion && item.attributes?.occasions?.includes(context.occasion)) {
       reasons.push(`适合${context.occasion}场合`);
     }
 
     // Season matching
-    if (
-      context?.season &&
-      item.attributes?.seasons?.includes(context.season)
-    ) {
+    if (context?.season && item.attributes?.seasons?.includes(context.season)) {
       reasons.push(`适合${context.season}季节`);
     }
 
@@ -973,7 +945,7 @@ export class UnifiedRecommendationEngine {
     item: ClothingItemWithBrand,
     scores: RecommendationScoreBreakdown,
     userProfile: UserProfileData | null,
-    context?: RecommendationContext,
+    context?: RecommendationContext
   ): Promise<RecommendationExplanation> {
     try {
       // 计算平均分数
@@ -995,7 +967,6 @@ export class UnifiedRecommendationEngine {
         matchingFactors: this.buildMatchingFactors(item, scores, userProfile, context),
       };
 
-      
       const explanation = await this.explainer.generateExplanation(explanationContext);
       return {
         ...explanation,
@@ -1025,7 +996,7 @@ export class UnifiedRecommendationEngine {
     item: ClothingItemWithBrand,
     scores: RecommendationScoreBreakdown,
     userProfile: UserProfileData | null,
-    _context?: RecommendationContext,
+    _context?: RecommendationContext
   ): RecommendationReason[] {
     const reasons: RecommendationReason[] = [];
     const itemAttrs = item.attributes;
@@ -1091,7 +1062,7 @@ export class UnifiedRecommendationEngine {
     item: ClothingItemWithBrand,
     scores: RecommendationScoreBreakdown,
     userProfile: UserProfileData | null,
-    context?: RecommendationContext,
+    context?: RecommendationContext
   ): MatchingFactorItem[] {
     const factors: MatchingFactorItem[] = [];
     const itemAttrs = item.attributes;
@@ -1102,7 +1073,7 @@ export class UnifiedRecommendationEngine {
         ? userProfile.stylePreferences.map((s: StylePreferenceItem) => s.name || String(s))
         : [];
       const matchingStyles = itemAttrs.style.filter((s: string) =>
-        userStyles.some((us: string) => us.toLowerCase() === s.toLowerCase()),
+        userStyles.some((us: string) => us.toLowerCase() === s.toLowerCase())
       );
       if (matchingStyles.length > 0) {
         factors.push({
@@ -1151,10 +1122,9 @@ export class UnifiedRecommendationEngine {
    */
   private async findSimilarItems(itemId: string): Promise<string[]> {
     try {
-      const similarItems = await this.collaborativeFiltering.getItemBasedRecommendations(
-        itemId,
-        { limit: 5 },
-      );
+      const similarItems = await this.collaborativeFiltering.getItemBasedRecommendations(itemId, {
+        limit: 5,
+      });
       return similarItems.map((item) => item.itemId);
     } catch (error) {
       this.logger.debug(`Failed to find similar items: ${error}`);
@@ -1162,10 +1132,7 @@ export class UnifiedRecommendationEngine {
     }
   }
 
-  private optimizeDiversity(
-    items: RecommendationResult[],
-    limit: number,
-  ): RecommendationResult[] {
+  private optimizeDiversity(items: RecommendationResult[], limit: number): RecommendationResult[] {
     const result: RecommendationResult[] = [];
     const categoryCount: Record<string, number> = {};
     const maxPerCategory = Math.ceil(limit / 4);
@@ -1179,14 +1146,18 @@ export class UnifiedRecommendationEngine {
         categoryCount[category] = count + 1;
       }
 
-      if (result.length >= limit) {break;}
+      if (result.length >= limit) {
+        break;
+      }
     }
 
     if (result.length < limit) {
       for (const item of items) {
         if (!result.some((r) => r.item.id === item.item.id)) {
           result.push(item);
-          if (result.length >= limit) {break;}
+          if (result.length >= limit) {
+            break;
+          }
         }
       }
     }
@@ -1222,7 +1193,7 @@ export class UnifiedRecommendationEngine {
   async getOutfitRecommendation(
     userId: string,
     baseItemId: string,
-    options?: { occasion?: string; limit?: number },
+    options?: { occasion?: string; limit?: number }
   ): Promise<OutfitRecommendationResult> {
     const userProfile = await this.getUserProfile(userId);
     const baseItem = await this.prisma.clothingItem.findUnique({
@@ -1233,8 +1204,7 @@ export class UnifiedRecommendationEngine {
       throw new Error("Base item not found");
     }
 
-    const baseFeatures =
-      await this.multimodalFusion.extractItemFeatures(baseItemId);
+    const baseFeatures = await this.multimodalFusion.extractItemFeatures(baseItemId);
 
     const categories = this.getComplementaryCategories(baseItem.category);
 
@@ -1255,19 +1225,16 @@ export class UnifiedRecommendationEngine {
 
       const scored: RecommendationResult[] = await Promise.all(
         candidates.map(async (item: any) => {
-          const features = await this.multimodalFusion.extractItemFeatures(
-            item.id,
+          const features = await this.multimodalFusion.extractItemFeatures(item.id);
+          const compatibility = await this.multimodalFusion.calculateCompatibility(
+            baseFeatures,
+            features
           );
-          const compatibility =
-            await this.multimodalFusion.calculateCompatibility(
-              baseFeatures,
-              features,
-            );
 
           const theoryScore = this.matchingTheory.calculateTheoryBasedScore(
             item,
             userProfile ?? {},
-            { occasion: options?.occasion },
+            { occasion: options?.occasion }
           );
 
           const itemScore = compatibility.score * 0.6 + theoryScore * 0.4;
@@ -1277,7 +1244,9 @@ export class UnifiedRecommendationEngine {
               ...item,
               price: Number(item.price),
               originalPrice: item.originalPrice ? Number(item.originalPrice) : null,
-              brand: item.brand ? { id: item.brand.id, name: item.brand.name, logo: item.brand.logo } : null,
+              brand: item.brand
+                ? { id: item.brand.id, name: item.brand.name, logo: item.brand.logo }
+                : null,
             } as ClothingItemWithBrand,
             score: itemScore,
             sources: ["搭配推荐"],
@@ -1289,16 +1258,22 @@ export class UnifiedRecommendationEngine {
               theoryBased: theoryScore,
             },
           };
-        }),
+        })
       );
 
       scored.sort((a, b) => b.score - a.score);
-      
-      if (key === 'tops') {results.tops = scored.slice(0, options?.limit || 5);}
-      else if (key === 'bottoms') {results.bottoms = scored.slice(0, options?.limit || 5);}
-      else if (key === 'footwear') {results.footwear = scored.slice(0, options?.limit || 5);}
-      else if (key === 'accessories') {results.accessories = scored.slice(0, options?.limit || 5);}
-      else if (key === 'outerwear') {results.outerwear = scored.slice(0, options?.limit || 5);}
+
+      if (key === "tops") {
+        results.tops = scored.slice(0, options?.limit || 5);
+      } else if (key === "bottoms") {
+        results.bottoms = scored.slice(0, options?.limit || 5);
+      } else if (key === "footwear") {
+        results.footwear = scored.slice(0, options?.limit || 5);
+      } else if (key === "accessories") {
+        results.accessories = scored.slice(0, options?.limit || 5);
+      } else if (key === "outerwear") {
+        results.outerwear = scored.slice(0, options?.limit || 5);
+      }
 
       const topResult = scored[0];
       if (topResult) {
@@ -1314,12 +1289,9 @@ export class UnifiedRecommendationEngine {
   }
 
   private getComplementaryCategories(
-    baseCategory: ClothingCategory,
+    baseCategory: ClothingCategory
   ): Record<string, ClothingCategory> {
-    const complementMap: Record<
-      ClothingCategory,
-      Record<string, ClothingCategory>
-    > = {
+    const complementMap: Record<ClothingCategory, Record<string, ClothingCategory>> = {
       [ClothingCategory.tops]: {
         bottoms: ClothingCategory.bottoms,
         footwear: ClothingCategory.footwear,

@@ -1,8 +1,9 @@
-import React from "react";
+﻿import React from "react";
 import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
-import { Colors, Spacing, BorderRadius } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius } from "../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 interface PrivacyConsentModalProps {
   visible: boolean;
@@ -76,12 +77,12 @@ const useStyles = createStyles((colors) => ({
     marginBottom: Spacing[4],
   },
   icon: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
   },
   title: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     textAlign: "center",
     marginBottom: Spacing[3],
   },
@@ -89,7 +90,7 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
     lineHeight: 24,
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
     textAlign: "center",
     marginBottom: Spacing[6],
   },
@@ -97,10 +98,10 @@ const useStyles = createStyles((colors) => ({
     gap: Spacing[3],
   },
   confirmButton: {
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[3],
-    minHeight: Spacing['2xl'],
+    minHeight: 48,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -113,17 +114,17 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: "transparent",
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[3],
-    minHeight: Spacing['2xl'],
+    minHeight: 48,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   cancelText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
   },
-}))
+}));
 
 export default PrivacyConsentModal;

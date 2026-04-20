@@ -1,6 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { DesignTokens, flatColors as colors, typography, spacing } from '../../../design-system/theme';
+import { colors } from "@/src/theme/tokens/colors";
+import { typography } from "@/src/theme/tokens/typography";
+import { spacing } from "@/src/theme/tokens/spacing";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 interface PercentageBarProps {
   label: string;
@@ -12,9 +15,11 @@ interface PercentageBarProps {
 export const PercentageBar: React.FC<PercentageBarProps> = ({
   label,
   percentage,
-  color = colors.primary,
+  color = colors.brand.primary,
   showPercentage = true,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const clampedPercentage = Math.max(0, Math.min(100, percentage));
 
   return (
@@ -36,7 +41,7 @@ export const PercentageBar: React.FC<PercentageBarProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     marginBottom: spacing.aliases.sm,
   },
@@ -57,7 +62,7 @@ const styles = StyleSheet.create({
     color: colors.neutral[500],
   },
   track: {
-    height: DesignTokens.spacing['1.5'],
+    height: 6,
     borderRadius: spacing.borderRadius.full,
     backgroundColor: colors.neutral[200],
     overflow: "hidden",
@@ -66,6 +71,6 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: spacing.borderRadius.full,
   },
-});
+}));
 
 export default PercentageBar;

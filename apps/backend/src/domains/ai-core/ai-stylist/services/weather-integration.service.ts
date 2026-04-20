@@ -2,7 +2,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 
 import { RedisService } from "../../../../common/redis/redis.service";
-import { WeatherService, type WeatherData } from '../../../fashion/weather/weather.service';
+import { WeatherService, type WeatherData } from "../../../fashion/weather/weather.service";
 
 /**
  * 天气智能集成服务 — AIS-06
@@ -29,7 +29,7 @@ export class WeatherIntegrationService {
 
   constructor(
     private weatherService: WeatherService,
-    private redisService: RedisService,
+    private redisService: RedisService
   ) {}
 
   /**
@@ -37,10 +37,7 @@ export class WeatherIntegrationService {
    * @param latitude 纬度
    * @param longitude 经度
    */
-  async getWeatherContext(
-    latitude: number,
-    longitude: number,
-  ): Promise<WeatherContext | null> {
+  async getWeatherContext(latitude: number, longitude: number): Promise<WeatherContext | null> {
     const cacheKey = `weather:${latitude.toFixed(2)}:${longitude.toFixed(2)}`;
 
     // 尝试从 Redis 缓存获取
@@ -56,7 +53,7 @@ export class WeatherIntegrationService {
     // 调用天气服务
     const weatherData: WeatherData | null = await this.weatherService.getWeatherByLocation(
       latitude,
-      longitude,
+      longitude
     );
 
     if (!weatherData) {
@@ -66,7 +63,7 @@ export class WeatherIntegrationService {
 
     const weatherStyles = this.weatherService.getWeatherBasedStyles(
       weatherData.temperature,
-      weatherData.condition,
+      weatherData.condition
     );
 
     const context: WeatherContext = {
@@ -82,11 +79,7 @@ export class WeatherIntegrationService {
 
     // 写入 Redis 缓存（使用 setex 设置 TTL）
     try {
-      await this.redisService.setex(
-        cacheKey,
-        WEATHER_CACHE_TTL_SECONDS,
-        JSON.stringify(context),
-      );
+      await this.redisService.setex(cacheKey, WEATHER_CACHE_TTL_SECONDS, JSON.stringify(context));
     } catch {
       // Redis 不可用时跳过缓存
     }

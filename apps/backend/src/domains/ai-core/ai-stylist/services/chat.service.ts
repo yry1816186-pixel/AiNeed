@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
-import { PhotoType } from '../../../../types/prisma-enums';
+import { PhotoType } from "../../../../types/prisma-enums";
 
-import { PhotosService } from '../../photos/photos.service';
+import { PhotosService } from "../../photos/photos.service";
 import { LlmProviderService } from "../llm-provider.service";
-import {
-  STYLIST_SYSTEM_PROMPT,
-  buildConversationContextPrompt,
-} from "../prompts/system-prompt";
+import { STYLIST_SYSTEM_PROMPT, buildConversationContextPrompt } from "../prompts/system-prompt";
 import type {
   ChatMessage,
   StylistAction,
@@ -32,7 +29,7 @@ export class AiStylistChatService {
     private sessionService: AiStylistSessionService,
     private contextService: AiStylistContextService,
     private photosService: PhotosService,
-    private llmProvider: LlmProviderService,
+    private llmProvider: LlmProviderService
   ) {}
 
   async processChat(
@@ -40,7 +37,7 @@ export class AiStylistChatService {
     message: string,
     conversationHistory: ChatMessage[] = [],
     buildSessionFn: (userId: string, context: import("../types").StylistContext) => StylistSession,
-    processMessageFn: (session: StylistSession, message: string) => Promise<ChatResult>,
+    processMessageFn: (session: StylistSession, message: string) => Promise<ChatResult>
   ): Promise<ChatResult> {
     const trimmedMessage = message?.trim().slice(0, 2000);
     if (!trimmedMessage) {
@@ -64,7 +61,7 @@ export class AiStylistChatService {
         if (historyMessage.role === "user") {
           this.contextService.mergeSlots(
             session.state.slots,
-            this.contextService.extractSlotUpdates(historyMessage.content),
+            this.contextService.extractSlotUpdates(historyMessage.content)
           );
         }
       }
@@ -77,7 +74,7 @@ export class AiStylistChatService {
     userId: string,
     sessionId: string,
     message: string,
-    processMessageFn: (session: StylistSession, message: string) => Promise<ChatResult>,
+    processMessageFn: (session: StylistSession, message: string) => Promise<ChatResult>
   ): Promise<ChatResult> {
     const trimmedMessage = message?.trim().slice(0, 2000);
     if (!trimmedMessage) {
@@ -101,19 +98,22 @@ export class AiStylistChatService {
   async processMessageInSession(
     session: StylistSession,
     message: string,
-    deriveOrchestrationFn: (session: StylistSession) => { nextAction: StylistAction; missingFields: string[] },
+    deriveOrchestrationFn: (session: StylistSession) => {
+      nextAction: StylistAction;
+      missingFields: string[];
+    },
     composeAssistantMessageFn: (
       session: StylistSession,
       nextAction: StylistAction,
       slotUpdates: Partial<StylistSlots>,
       missingFields: string[],
-      stage: string,
+      stage: string
     ) => Promise<{ message: string; isFallback: boolean }>,
     buildChatResultFn: (
       session: StylistSession,
       assistantMessage: string,
-      options?: Record<string, unknown>,
-    ) => ChatResult,
+      options?: Record<string, unknown>
+    ) => ChatResult
   ): Promise<ChatResult> {
     const slotUpdates = this.contextService.extractSlotUpdates(message);
 
@@ -127,14 +127,13 @@ export class AiStylistChatService {
     session.updatedAt = new Date().toISOString();
 
     const orchestration = deriveOrchestrationFn(session);
-    const { message: assistantMessage, isFallback } =
-      await composeAssistantMessageFn(
-        session,
-        orchestration.nextAction,
-        slotUpdates,
-        orchestration.missingFields,
-        "message_turn",
-      );
+    const { message: assistantMessage, isFallback } = await composeAssistantMessageFn(
+      session,
+      orchestration.nextAction,
+      slotUpdates,
+      orchestration.missingFields,
+      "message_turn"
+    );
 
     session.conversationHistory.push({
       role: "assistant",
@@ -157,8 +156,8 @@ export class AiStylistChatService {
     buildChatResultFn: (
       session: StylistSession,
       assistantMessage: string,
-      options?: Record<string, unknown>,
-    ) => ChatResult,
+      options?: Record<string, unknown>
+    ) => ChatResult
   ): Promise<ChatResult> {
     const session = await this.sessionService.getSessionOrThrow(userId, sessionId);
     const photo = await this.photosService.uploadPhoto(userId, file, type);
@@ -189,12 +188,15 @@ export class AiStylistChatService {
     userId: string,
     sessionId: string,
     photoId: string,
-    deriveOrchestrationFn: (session: StylistSession) => { nextAction: StylistAction; missingFields: string[] },
+    deriveOrchestrationFn: (session: StylistSession) => {
+      nextAction: StylistAction;
+      missingFields: string[];
+    },
     buildChatResultFn: (
       session: StylistSession,
       assistantMessage: string,
-      options?: Record<string, unknown>,
-    ) => ChatResult,
+      options?: Record<string, unknown>
+    ) => ChatResult
   ): Promise<ChatResult> {
     const session = await this.sessionService.getSessionOrThrow(userId, sessionId);
     const photo = await this.photosService.getPhotoById(photoId, userId);
@@ -208,9 +210,7 @@ export class AiStylistChatService {
     session.state.photoRequested = true;
     session.state.photoSkipped = false;
     session.state.currentStage =
-      photo.analysisStatus === "completed"
-        ? "collecting_scene"
-        : "analysis_pending";
+      photo.analysisStatus === "completed" ? "collecting_scene" : "analysis_pending";
     session.updatedAt = new Date().toISOString();
 
     await this.contextService.syncPhotoAnalysis(session);
@@ -239,13 +239,16 @@ export class AiStylistChatService {
   async getSessionStatus(
     userId: string,
     sessionId: string,
-    deriveOrchestrationFn: (session: StylistSession) => { nextAction: StylistAction; missingFields: string[] },
+    deriveOrchestrationFn: (session: StylistSession) => {
+      nextAction: StylistAction;
+      missingFields: string[];
+    },
     buildTemplateMessageFn: (session: StylistSession, nextAction: StylistAction) => string,
     buildChatResultFn: (
       session: StylistSession,
       assistantMessage: string,
-      options?: Record<string, unknown>,
-    ) => ChatResult,
+      options?: Record<string, unknown>
+    ) => ChatResult
   ): Promise<ChatResult> {
     const session = await this.sessionService.getSessionOrThrow(userId, sessionId);
     await this.contextService.syncPhotoAnalysis(session);
@@ -271,7 +274,7 @@ export class AiStylistChatService {
     slotUpdates: Partial<StylistSlots>,
     missingFields: string[],
     stage: string,
-    buildTemplateMessageFn: (session: StylistSession, nextAction: StylistAction) => string,
+    buildTemplateMessageFn: (session: StylistSession, nextAction: StylistAction) => string
   ): Promise<{ message: string; isFallback: boolean }> {
     const fallbackMessage = buildTemplateMessageFn(session, nextAction);
 
@@ -324,8 +327,7 @@ export class AiStylistChatService {
       }
       return { message: content, isFallback: false };
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.warn(`Falling back to template copy: ${errorMessage}`);
       return { message: fallbackMessage, isFallback: true };
     }
@@ -334,7 +336,7 @@ export class AiStylistChatService {
   buildTemplateMessage(
     session: StylistSession,
     nextAction: StylistAction,
-    getOccasionNameFn: (occasion?: string) => string,
+    getOccasionNameFn: (occasion?: string) => string
   ): string {
     const occasionName = getOccasionNameFn(session.state.slots.occasion);
     const budgetText = session.state.slots.budgetMax
@@ -379,14 +381,14 @@ export class AiStylistChatService {
       session: StylistSession,
       nextAction?: StylistAction,
       analysisStatus?: string,
-      result?: import("../types").StylistResolution,
-    ) => import("../types").StylistProgress,
+      result?: import("../types").StylistResolution
+    ) => import("../types").StylistProgress
   ): ChatResult {
     const progress = buildProgressFn(
       session,
       options.nextAction,
       options.analysisStatus,
-      options.result,
+      options.result
     );
 
     return {
@@ -405,7 +407,7 @@ export class AiStylistChatService {
       analysisStatus: options.analysisStatus,
       progress,
       sessionExpiresAt: new Date(
-        new Date(session.updatedAt).getTime() + sessionTtlMs,
+        new Date(session.updatedAt).getTime() + sessionTtlMs
       ).toISOString(),
       isFallback: options.isFallback,
       isAIGenerated: true,
@@ -417,10 +419,9 @@ export class AiStylistChatService {
     session: StylistSession,
     nextAction?: StylistAction,
     analysisStatus?: string,
-    result?: import("../types").StylistResolution,
+    result?: import("../types").StylistResolution
   ): import("../types").StylistProgress {
-    const effectiveAnalysisStatus =
-      analysisStatus || session.state.lastPhotoStatus || "idle";
+    const effectiveAnalysisStatus = analysisStatus || session.state.lastPhotoStatus || "idle";
 
     if (
       effectiveAnalysisStatus === "pending" ||
@@ -509,10 +510,6 @@ export class AiStylistChatService {
   }
 
   private isPhotoSkipMessage(message: string): boolean {
-    return (
-      message.includes("跳过") ||
-      message.includes("先不要拍") ||
-      message.includes("直接推荐")
-    );
+    return message.includes("跳过") || message.includes("先不要拍") || message.includes("直接推荐");
   }
 }

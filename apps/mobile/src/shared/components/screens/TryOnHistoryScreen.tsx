@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,26 +7,30 @@ import {
   Image,
   FlatList,
   RefreshControl,
-  Alert} from "react-native";
+  Alert,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { tryOnApi, type TryOnResult } from '../../../services/api/tryon.api';
+import { tryOnApi, type TryOnResult } from "../../services/api/tryon.api";
+import { colors } from "../../theme/tokens/colors";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { typography } from '../../../design-system/theme/tokens/typography';
-import { spacing } from '../../../design-system/theme/tokens/spacing';
-import { shadows } from '../../../design-system/theme/tokens/shadows';
-import {Spacing} from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
-import { WarmPrimaryColors } from '../../../design-system/theme/tokens/colors';
+import { typography } from "../../theme/tokens/typography";
+import { spacing } from "../../theme/tokens/spacing";
+import { shadows } from "../../theme/tokens/shadows";
+import type { TryOnStackParamList } from "../../../navigation/types";
+import { navigateTryOn } from "../../../navigation/navigationService";
+import { useTheme } from "../../contexts/ThemeContext";
 
+type TryOnHistoryNavProp = NativeStackNavigationProp<TryOnStackParamList>;
 
 type FilterTab = "all" | "completed" | "failed";
 
 export const TryOnHistoryScreen: React.FC = () => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
-  const navigation = useNavigation();
+  const { colors } = useTheme();
+  const navigation = useNavigation<TryOnHistoryNavProp>();
   const [items, setItems] = useState<TryOnResult[]>([]);
   const [_total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -96,7 +100,8 @@ export const TryOnHistoryScreen: React.FC = () => {
           await tryOnApi.deleteTryOn(id);
           setItems((prev) => prev.filter((item) => item.id !== id));
           setTotal((prev) => prev - 1);
-        }},
+        },
+      },
     ]);
   }, []);
 
@@ -130,26 +135,27 @@ export const TryOnHistoryScreen: React.FC = () => {
     ({ item }: { item: TryOnResult }) => {
       const statusColor =
         item.status === "completed"
-          ? colors.successLight
+          ? colors.warmPrimary.mint[500]
           : item.status === "failed"
-          ? colors.error
-          : colors.info;
+            ? colors.semantic.error.main
+            : colors.warmPrimary.ocean[500];
 
       const statusLabel =
         item.status === "completed"
           ? "已完成"
           : item.status === "failed"
-          ? "失败"
-          : item.status === "processing"
-          ? "处理中"
-          : "等待中";
+            ? "失败"
+            : item.status === "processing"
+              ? "处理中"
+              : "等待中";
 
       return (
         <Animated.View entering={FadeInUp.duration(300)}>
           <View style={styles.card}>
             <Image
               source={{
-                uri: item.resultImageDataUri ?? item.resultImageUrl ?? item.item?.mainImage ?? ""}}
+                uri: item.resultImageDataUri ?? item.resultImageUrl ?? item.item?.mainImage ?? "",
+              }}
               style={styles.cardImage}
             />
             <View style={styles.cardContent}>
@@ -166,11 +172,11 @@ export const TryOnHistoryScreen: React.FC = () => {
             <View style={styles.cardActions}>
               {item.status === "failed" && (
                 <TouchableOpacity style={styles.retryButton} onPress={() => handleRetry(item.id)}>
-                  <Ionicons name="refresh" size={16} color={WarmPrimaryColors.ocean[600]} />
+                  <Ionicons name="refresh" size={16} color={colors.warmPrimary.ocean[600]} />
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
-                <Ionicons name="trash-outline" size={16} color={colors.error} />
+                <Ionicons name="trash-outline" size={16} color={colors.semantic.error.main} />
               </TouchableOpacity>
             </View>
           </View>
@@ -186,10 +192,7 @@ export const TryOnHistoryScreen: React.FC = () => {
         <Ionicons name="shirt-outline" size={64} color={colors.neutral[300]} />
         <Text style={styles.emptyTitle}>还没有试衣记录</Text>
         <Text style={styles.emptySubtitle}>去试试 AI 虚拟试衣吧</Text>
-        <TouchableOpacity
-          style={styles.emptyButton}
-          onPress={() => navigation.navigate("VirtualTryOn" as never)}
-        >
+        <TouchableOpacity style={styles.emptyButton} onPress={() => navigateTryOn("VirtualTryOn")}>
           <Ionicons name="sparkles" size={18} color={colors.textInverse} />
           <Text style={styles.emptyButtonText}>开始试衣</Text>
         </TouchableOpacity>
@@ -232,107 +235,130 @@ export const TryOnHistoryScreen: React.FC = () => {
 const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral[50]},
+    backgroundColor: colors.neutral[50],
+  },
   tabBar: {
     flexDirection: "row",
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingVertical: DesignTokens.spacing[3],
-    gap: Spacing.sm},
+    paddingVertical: 12,
+    gap: 8,
+  },
   tab: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: colors.neutral[100]},
+    backgroundColor: colors.neutral[100],
+  },
   tabActive: {
-    backgroundColor: colors.warmPrimary},
+    backgroundColor: colors.brand.warmPrimary,
+  },
   tabText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
-    color: colors.neutral[600]},
+    color: colors.neutral[600],
+  },
   tabTextActive: {
     color: colors.textInverse,
-    fontWeight: typography.fontWeight.bold},
+    fontWeight: typography.fontWeight.bold,
+  },
   listContent: {
     paddingHorizontal: spacing.layout.screenPadding,
-    paddingBottom: DesignTokens.spacing[10]},
+    paddingBottom: 40,
+  },
   card: {
     flexDirection: "row",
     backgroundColor: colors.neutral.white,
     borderRadius: spacing.borderRadius.xl,
-    padding: DesignTokens.spacing[3],
-    marginBottom: DesignTokens.spacing[3],
-    ...shadows.presets.md},
+    padding: 12,
+    marginBottom: 12,
+    ...shadows.presets.md,
+  },
   cardImage: {
-    width: Spacing['4xl'],
+    width: 80,
     height: 100,
     borderRadius: spacing.borderRadius.lg,
     resizeMode: "cover",
-    backgroundColor: colors.neutral[100]},
+    backgroundColor: colors.neutral[100],
+  },
   cardContent: {
     flex: 1,
-    marginLeft: DesignTokens.spacing[3],
-    justifyContent: "center"},
+    marginLeft: 12,
+    justifyContent: "center",
+  },
   cardTitle: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[900],
-    marginBottom: Spacing.xs},
+    marginBottom: 4,
+  },
   cardDate: {
     fontSize: typography.fontSize.xs,
     color: colors.neutral[500],
-    marginBottom: Spacing.sm},
+    marginBottom: 8,
+  },
   statusBadge: {
     alignSelf: "flex-start",
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 10},
+    borderRadius: 10,
+  },
   statusText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textInverse},
+    color: colors.textInverse,
+  },
   cardActions: {
     justifyContent: "center",
-    gap: Spacing.sm},
+    gap: 8,
+  },
   retryButton: {
-    width: DesignTokens.spacing[9],
-    height: DesignTokens.spacing[9],
+    width: 36,
+    height: 36,
     borderRadius: 18,
-    backgroundColor: colors.infoLight,
+    backgroundColor: colors.warmPrimary.ocean[50],
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   deleteButton: {
-    width: DesignTokens.spacing[9],
-    height: DesignTokens.spacing[9],
+    width: 36,
+    height: 36,
     borderRadius: 18,
-    backgroundColor: colors.errorLight,
+    backgroundColor: colors.semantic.error.light,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: Spacing['4xl']},
+    paddingTop: 80,
+  },
   emptyTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semibold,
     color: colors.neutral[700],
-    marginTop: Spacing.md},
+    marginTop: 16,
+  },
   emptySubtitle: {
     fontSize: typography.fontSize.base,
     color: colors.neutral[500],
-    marginTop: DesignTokens.spacing['1.5'],
-    marginBottom: Spacing.lg},
+    marginTop: 6,
+    marginBottom: 24,
+  },
   emptyButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    backgroundColor: colors.warmPrimary,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
+    gap: 8,
+    backgroundColor: colors.brand.warmPrimary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
     borderRadius: spacing.borderRadius.xl,
-    ...shadows.presets.md},
+    ...shadows.presets.md,
+  },
   emptyButtonText: {
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textInverse}}))
+    color: colors.textInverse,
+  },
+}));
 
 export default TryOnHistoryScreen;

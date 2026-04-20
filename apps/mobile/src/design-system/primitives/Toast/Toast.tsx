@@ -10,10 +10,10 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme, DesignTokens, Spacing } from '../../theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
-
+import { theme } from "../theme";
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { flatColors as colors } from "../../theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -37,8 +37,8 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function useToast() {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const context = useContext(ToastContext);
   if (!context) {
     throw new Error("useToast must be used within a ToastProvider");
@@ -50,10 +50,7 @@ interface ToastProviderProps {
   children: React.ReactNode;
 }
 
-export function ToastProvider({
-children }: ToastProviderProps) {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+export function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const show = (type: ToastType, message: string, duration = 3000) => {
@@ -91,8 +88,6 @@ interface ToastItemProps {
 }
 
 function ToastItem({ toast, onDismiss }: ToastItemProps) {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const translateY = useRef(new Animated.Value(-100)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -174,7 +169,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
         <Ionicons name={getIcon()} size={22} color={getColor()} />
         <Text style={styles.toastMessage}>{toast.message}</Text>
       </View>
-      <TouchableOpacity onPress={onDismiss} hitSlop={{ top: DesignTokens.spacing['2.5'], bottom: DesignTokens.spacing['2.5'], left: DesignTokens.spacing['2.5'], right: DesignTokens.spacing['2.5']}}>
+      <TouchableOpacity onPress={onDismiss} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
         <Ionicons name="close" size={18} color={theme.colors.neutral[400]} />
       </TouchableOpacity>
     </Animated.View>
@@ -189,22 +184,22 @@ const useStyles = createStyles((colors) => ({
     right: 0,
     zIndex: 9999,
     paddingTop: Platform.OS === "ios" ? 60 : 40,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 16,
   },
   toast: {
     backgroundColor: colors.surface,
     borderRadius: 12,
     borderLeftWidth: 4,
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     ...Platform.select({
       ios: {
-        shadowColor: colors.neutral[900],
-        shadowOffset: { width: 0, height: Spacing.xs },
+        shadowColor: DesignTokens.colors.neutral.black,
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 8,
       },
@@ -221,7 +216,7 @@ const useStyles = createStyles((colors) => ({
   toastMessage: {
     fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
-    marginLeft: DesignTokens.spacing[3],
+    marginLeft: 12,
     flex: 1,
   },
-}))
+}));

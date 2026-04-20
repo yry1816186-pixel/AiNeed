@@ -11,14 +11,14 @@ import {
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing, BorderRadius, Shadows, flatColors as staticColors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { useProfileStore } from '../stores/profileStore';
-import { ScreenLayout, Header } from '../../../shared/components/layout/ScreenLayout';
-import type { RootStackParamList } from '../../../types/navigation';
-import type { UpdateProfileDto } from '../../../services/api/profile.api';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useProfileStore } from "../stores/profileStore";
+import { ScreenLayout, Header } from "../../../shared/components/layout/ScreenLayout";
+import type { RootStackParamList } from "../../../types/navigation";
+import type { UpdateProfileDto } from "../../../services/api/profile.api";
 
 type ProfileEditNavigationProp = NavigationProp<RootStackParamList>;
 
@@ -157,23 +157,23 @@ export const ProfileEditScreen: React.FC = () => {
 
   const renderBodyField = (field: keyof BodyFormState, label: string, unit: string) => {
     return (
-    <View style={styles.inputField} key={field}>
-      <Text style={styles.inputLabel}>{label}</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="0"
-          placeholderTextColor={colors.textTertiary}
-          value={body[field]}
-          onChangeText={(v) => handleBodyChange(field, v)}
-          keyboardType="numeric"
-          maxLength={5}
-          accessibilityLabel={label}
-        />
-        <Text style={styles.unitText}>{unit}</Text>
+      <View style={styles.inputField} key={field}>
+        <Text style={styles.inputLabel}>{label}</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="0"
+            placeholderTextColor={colors.textTertiary}
+            value={body[field]}
+            onChangeText={(v) => handleBodyChange(field, v)}
+            keyboardType="numeric"
+            maxLength={5}
+            accessibilityLabel={label}
+          />
+          <Text style={styles.unitText}>{unit}</Text>
+        </View>
       </View>
-    </View>
-  );
+    );
   };
 
   return (
@@ -207,7 +207,7 @@ export const ProfileEditScreen: React.FC = () => {
         />
       }
       scrollable
-      backgroundColor={Colors.neutral[50]}
+      backgroundColor={colors.neutral[50]}
     >
       <View style={styles.content}>
         {/* Basic Info Section */}
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[8],
   },
   sectionCard: {
-    backgroundColor: staticColors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     marginBottom: Spacing[4],
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     marginBottom: Spacing[4],
   },
   formGroup: {
@@ -346,28 +346,28 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: Spacing[2],
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: staticColors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[3],
-    height: Spacing['2xl'],
+    height: 48,
     borderWidth: 1,
-    borderColor: staticColors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   textInput: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.md,
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     padding: 0,
   },
   unitText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: staticColors.textTertiary,
+    color: colors.textTertiary,
     marginLeft: Spacing[2],
   },
   pillRow: {
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   pill: {
-    backgroundColor: staticColors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.full,
     paddingHorizontal: Spacing[5],
     paddingVertical: Spacing[3],
@@ -384,22 +384,22 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   pillSelected: {
-    backgroundColor: staticColors.primary,
-    borderColor: staticColors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   pillText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
   },
   pillTextSelected: {
-    color: staticColors.surface,
+    color: colors.surface,
     fontWeight: "600",
   },
   saveButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: staticColors.primary,
+    color: colors.primary,
   },
   bodyGrid: {
     flexDirection: "row",
@@ -415,24 +415,24 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   tag: {
-    backgroundColor: staticColors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[2],
     borderWidth: 1,
-    borderColor: staticColors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   tagSelected: {
     backgroundColor: "rgba(198, 123, 92, 0.1)",
-    borderColor: staticColors.primary,
+    borderColor: colors.primary,
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
   },
   tagTextSelected: {
-    color: staticColors.primary,
+    color: colors.primary,
     fontWeight: "600",
   },
 });

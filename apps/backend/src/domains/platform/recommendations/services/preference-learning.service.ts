@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 import { BehaviorEventType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
@@ -47,7 +48,7 @@ export class PreferenceLearningService {
 
   constructor(
     private prisma: PrismaService,
-    private redisService: RedisService,
+    private redisService: RedisService
   ) {}
 
   async recordEvent(input: LearningInput): Promise<void> {
@@ -60,7 +61,7 @@ export class PreferenceLearningService {
         action: input.eventType,
         targetType: input.targetType,
         targetId: input.targetId,
-        metadata: input.metadata as any,
+        metadata: input.metadata as Prisma.InputJsonValue,
       },
     });
 
@@ -70,7 +71,7 @@ export class PreferenceLearningService {
   async recordFeedback(
     userId: string,
     itemId: string,
-    feedback: "like" | "dislike" | "purchase" | "view",
+    feedback: "like" | "dislike" | "purchase" | "view"
   ): Promise<void> {
     const eventTypeMap: Record<string, string> = {
       like: "like",
@@ -97,22 +98,15 @@ export class PreferenceLearningService {
     for (const { category, key, additionalWeight } of preferenceUpdates) {
       const finalWeight = baseWeight * additionalWeight;
 
-      await this.upsertPreferenceWeight(
-        input.userId,
-        category,
-        key,
-        finalWeight,
-      );
+      await this.upsertPreferenceWeight(input.userId, category, key, finalWeight);
     }
 
     await this.invalidateUserPreferenceCache(input.userId);
   }
 
   private async extractPreferenceKeys(
-    input: LearningInput,
-  ): Promise<
-    Array<{ category: string; key: string; additionalWeight: number }>
-  > {
+    input: LearningInput
+  ): Promise<Array<{ category: string; key: string; additionalWeight: number }>> {
     const keys: Array<{
       category: string;
       key: string;
@@ -205,7 +199,7 @@ export class PreferenceLearningService {
     userId: string,
     category: string,
     key: string,
-    delta: number,
+    delta: number
   ): Promise<void> {
     const existing = await this.prisma.userPreferenceWeight.findUnique({
       where: {
@@ -216,7 +210,7 @@ export class PreferenceLearningService {
     if (existing) {
       const newWeight = Math.max(
         this.MIN_WEIGHT,
-        Math.min(this.MAX_WEIGHT, Number(existing.weight) + delta),
+        Math.min(this.MAX_WEIGHT, Number(existing.weight) + delta)
       );
 
       await this.prisma.userPreferenceWeight.update({
@@ -232,10 +226,7 @@ export class PreferenceLearningService {
           userId,
           category,
           key,
-          weight: Math.max(
-            this.MIN_WEIGHT,
-            Math.min(this.MAX_WEIGHT, 1.0 + delta),
-          ),
+          weight: Math.max(this.MIN_WEIGHT, Math.min(this.MAX_WEIGHT, 1.0 + delta)),
           source: "behavior_learning",
         },
       });
@@ -245,7 +236,7 @@ export class PreferenceLearningService {
   async getUserPreferences(
     userId: string,
     category?: string,
-    limit: number = 20,
+    limit: number = 20
   ): Promise<UserPreference[]> {
     const where = category ? { userId, category } : { userId };
 
@@ -255,7 +246,7 @@ export class PreferenceLearningService {
       take: limit,
     });
 
-    return weights.map((w: any) => ({
+    return weights.map((w) => ({
       category: w.category,
       key: w.key,
       value: Number(w.weight),
@@ -263,11 +254,7 @@ export class PreferenceLearningService {
     }));
   }
 
-  async getTopPreferences(
-    userId: string,
-    category: string,
-    limit: number = 5,
-  ): Promise<string[]> {
+  async getTopPreferences(userId: string, category: string, limit: number = 5): Promise<string[]> {
     const prefs = await this.getUserPreferences(userId, category, limit);
     return prefs.map((p) => p.key);
   }
@@ -305,7 +292,7 @@ export class PreferenceLearningService {
       category?: string;
       colors?: string[];
       attributes?: Record<string, unknown>;
-    }>,
+    }>
   ): Promise<Map<string, number>> {
     const preferences = await this.getUserPreferences(userId);
     const prefMap = new Map<string, number>();
@@ -321,23 +308,27 @@ export class PreferenceLearningService {
 
       if (item.category) {
         const catScore = prefMap.get(`category:${item.category.toLowerCase()}`);
-        if (catScore) {score += catScore * 5;}
+        if (catScore) {
+          score += catScore * 5;
+        }
       }
 
       if (item.colors) {
         for (const color of item.colors) {
           const colorScore = prefMap.get(`color:${color.toLowerCase()}`);
-          if (colorScore) {score += colorScore * 2;}
+          if (colorScore) {
+            score += colorScore * 2;
+          }
         }
       }
 
       if (item.attributes) {
         const style = item.attributes.style;
         if (style) {
-          const styleScore = prefMap.get(
-            `style:${String(style).toLowerCase()}`,
-          );
-          if (styleScore) {score += styleScore * 3;}
+          const styleScore = prefMap.get(`style:${String(style).toLowerCase()}`);
+          if (styleScore) {
+            score += styleScore * 3;
+          }
         }
       }
 

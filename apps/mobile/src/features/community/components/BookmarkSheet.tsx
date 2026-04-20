@@ -1,4 +1,4 @@
-﻿﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,11 +11,12 @@ import {
   TextInput,
   Modal,
 } from "react-native";
-import { communityApi } from '../../../services/api/community.api';
-import { theme , Spacing } from '../../../design-system/theme'
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { communityApi } from "../../services/api/community.api";
+import { theme } from "../../../design-system/theme";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface Collection {
   id: string;
@@ -64,7 +65,7 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
       }
     } catch (error) {
       // Bookmark loading failure is non-critical
-      console.error('Bookmark operation failed:', error);
+      console.error("Bookmark operation failed:", error);
     } finally {
       setLoading(false);
     }
@@ -201,84 +202,100 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 16,
     paddingBottom: 34,
     maxHeight: 500,
   },
   handle: {
-    width: DesignTokens.spacing[10],
-    height: Spacing.xs,
+    width: 40,
+    height: 4,
     borderRadius: 2,
     backgroundColor: DesignTokens.colors.neutral[200],
     alignSelf: "center",
-    marginTop: DesignTokens.spacing['2.5'],
-    marginBottom: DesignTokens.spacing['3.5'],
+    marginTop: 10,
+    marginBottom: 14,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: theme.colors.textPrimary,
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
-  loader: { paddingVertical: Spacing.lg},
+  loader: { paddingVertical: 24 },
   list: { maxHeight: 300 },
   collectionItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: DesignTokens.spacing[3],
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
   },
   collectionIcon: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 10,
-    backgroundColor: DesignTokens.colors.backgrounds.secondary, // lavender-tinted bg
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: DesignTokens.spacing[3],
+    marginRight: 12,
   },
   collectionInfo: { flex: 1 },
-  collectionName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: theme.colors.textPrimary },
-  collectionCount: { fontSize: DesignTokens.typography.sizes.sm, color: theme.colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
+  collectionName: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+    color: theme.colors.text,
+  },
+  collectionCount: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: theme.colors.textTertiary,
+    marginTop: 2,
+  },
   newBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: DesignTokens.spacing['1.5'],
-    paddingVertical: DesignTokens.spacing['3.5'],
-    marginTop: Spacing.sm,
+    gap: 6,
+    paddingVertical: 14,
+    marginTop: 8,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
   },
-  newBtnText: { fontSize: DesignTokens.typography.sizes.base, color: theme.colors.primary, fontWeight: "500" },
+  newBtnText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: theme.colors.primary,
+    fontWeight: "500",
+  },
   newCollectionRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    marginTop: DesignTokens.spacing[3],
+    gap: 8,
+    marginTop: 12,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
-    paddingTop: DesignTokens.spacing[3],
+    paddingTop: 12,
   },
   newCollectionInput: {
     flex: 1,
-    height: DesignTokens.spacing[10],
+    height: 40,
     borderWidth: 1,
     borderColor: theme.colors.border,
     borderRadius: 8,
-    paddingHorizontal: DesignTokens.spacing[3],
+    paddingHorizontal: 12,
     fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textPrimary,
   },
   createBtn: {
     backgroundColor: theme.colors.primary,
     borderRadius: 8,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
   createBtnDisabled: { opacity: 0.5 },
-  createBtnText: { color: colors.textInverse, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-}))
+  createBtnText: {
+    color: colors.textInverse,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+  },
+}));
 
 export default BookmarkSheet;

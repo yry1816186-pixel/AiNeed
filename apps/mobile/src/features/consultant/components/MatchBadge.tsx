@@ -1,7 +1,8 @@
-﻿﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface MatchBadgeProps {
   percentage: number;
@@ -24,14 +25,14 @@ export const MatchBadge: React.FC<MatchBadgeProps> = ({ percentage, size = "defa
 
 const useStyles = createStyles((colors) => ({
   badge: {
-    backgroundColor: colors.primary,
+    backgroundColor: "colors.primary",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 12,
   },
   badgeDefault: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[7],
+    width: 44,
+    height: 28,
     borderRadius: 14,
   },
   badgeSmall: {
@@ -49,6 +50,6 @@ const useStyles = createStyles((colors) => ({
   textSmall: {
     fontSize: DesignTokens.typography.sizes.xs,
   },
-}))
+}));
 
 export default MatchBadge;

@@ -1,4 +1,4 @@
-﻿﻿﻿import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import {
@@ -10,11 +10,10 @@ import {
   interpolate,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { AiStylistAction } from '../../../services/api/ai-stylist.api';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { AiStylistAction } from "../../../services/api/ai-stylist.api";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
 const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
@@ -149,6 +148,7 @@ export const PreferenceSelector: React.FC<PreferenceSelectorProps> = ({
   };
 
   const handleConfirm = () => {
+    const { colors } = useTheme();
     if (selectedValues.length > 0) {
       onSelect(field, selectedValues);
     }
@@ -205,7 +205,7 @@ export const PreferenceSelector: React.FC<PreferenceSelectorProps> = ({
             <LinearGradient
               colors={
                 selectedValues.length > 0
-                  ? [colors.primary, colors.primary]
+                  ? [colors.primary, DesignTokens.colors.brand.camel]
                   : [DesignTokens.colors.neutral[300], DesignTokens.colors.neutral[400]]
               }
               style={styles.confirmGradient}
@@ -227,8 +227,6 @@ interface OptionChipProps {
 }
 
 const OptionChip: React.FC<OptionChipProps> = ({ option, isSelected, index, onPress }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const scale = useSharedValue(0.8);
   const opacity = useSharedValue(0);
 
@@ -262,38 +260,38 @@ const useStyles = createStyles((colors) => ({
   container: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 16,
-    padding: Spacing.md,
-    marginVertical: Spacing.sm,
+    padding: 16,
+    marginVertical: 8,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
   header: {
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   subtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[500],
   },
   optionsContainer: {
-    paddingVertical: Spacing.xs,
-    gap: Spacing.sm,
+    paddingVertical: 4,
+    gap: 8,
   },
   chip: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     borderWidth: 1.5,
     borderColor: DesignTokens.colors.neutral[200],
-    marginRight: Spacing.sm,
+    marginRight: 8,
   },
   chipSelected: {
     backgroundColor: colors.secondary + "20",
@@ -301,7 +299,7 @@ const useStyles = createStyles((colors) => ({
   },
   chipIcon: {
     fontSize: DesignTokens.typography.sizes.md,
-    marginRight: DesignTokens.spacing['1.5'],
+    marginRight: 6,
   },
   chipText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -319,7 +317,7 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.secondary,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: DesignTokens.spacing['1.5'],
+    marginLeft: 6,
   },
   checkmarkText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -330,12 +328,12 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
-    marginTop: Spacing.md,
-    gap: DesignTokens.spacing[3],
+    marginTop: 16,
+    gap: 12,
   },
   skipButton: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
   skipText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -350,8 +348,8 @@ const useStyles = createStyles((colors) => ({
     opacity: 0.6,
   },
   confirmGradient: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 24,
+    paddingVertical: 12,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -360,4 +358,4 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
     color: colors.textInverse,
   },
-}))
+}));

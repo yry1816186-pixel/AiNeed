@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from "@prisma/client";
 
 /**
  * Prisma 扩展操作参数类型
@@ -45,25 +45,29 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
     query: {
       $allModels: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        async $allOperations({ args, query, model, operation }: any) {
+        async $allOperations({
+          args,
+          query,
+          model,
+          operation,
+        }: {
+          args: any;
+          query: (args: any) => Promise<any>;
+          model: string;
+          operation: string;
+        }) {
           // 需要软删除的模型列表
-          const softDeleteModels = [
-            'ClothingItem',
-            'Order',
-            'CommunityPost',
-            'PostComment',
-          ];
+          const softDeleteModels = ["ClothingItem", "Order", "CommunityPost", "PostComment"];
 
           // 仅对查询操作注入 isDeleted 过滤
-          const filterOperations = ['findMany', 'findFirst', 'count', 'aggregate'];
+          const filterOperations = ["findMany", "findFirst", "count", "aggregate"];
 
           // 如果是软删除模型且是查询操作，自动添加 isDeleted: false 过滤
           if (softDeleteModels.includes(model) && filterOperations.includes(operation)) {
-            const currentWhere = (args.where || {});
+            const currentWhere = args.where || {};
 
             // 处理 findFirst, findMany, count, aggregate 等
-            if (!('isDeleted' in currentWhere)) {
+            if (!("isDeleted" in currentWhere)) {
               // 为 where 子句添加软删除过滤
               args.where = {
                 ...currentWhere,
@@ -84,7 +88,7 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
          */
         async softDelete<T extends { update: (args: ExtensionArgs) => Promise<unknown> }>(
           this: T,
-          args: ExtensionArgs,
+          args: ExtensionArgs
         ): Promise<unknown> {
           const context = Prisma.getExtensionContext(this) as T;
 
@@ -103,7 +107,7 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
          */
         async softDeleteMany<T extends { updateMany: (args: ExtensionArgs) => Promise<unknown> }>(
           this: T,
-          args: ExtensionArgs,
+          args: ExtensionArgs
         ): Promise<unknown> {
           const context = Prisma.getExtensionContext(this) as T;
 
@@ -129,7 +133,7 @@ export const softDeleteExtension = Prisma.defineExtension((client) => {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createSoftDeletePrismaClient<T extends { $extends: (extension: any) => any }>(
-  prisma: T,
-): ReturnType<T['$extends']> {
+  prisma: T
+): ReturnType<T["$extends"]> {
   return prisma.$extends(softDeleteExtension);
 }

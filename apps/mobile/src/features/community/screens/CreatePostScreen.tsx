@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -10,19 +10,18 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import { communityApi } from '../../../services/api/community.api';
-import apiClient from '../../../services/api/client';
-import type { RootStackParamList } from '../../../types/navigation';
-
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { communityApi } from "../../../services/api/community.api";
+import apiClient from "../../../services/api/client";
+import type { RootStackParamList } from "../../../types/navigation";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -55,6 +54,7 @@ interface SelectedItem {
 }
 
 export const CreatePostScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -491,7 +491,7 @@ export const CreatePostScreen: React.FC = () => {
           </View>
         )}
 
-        <View style={{ height: DesignTokens.spacing[10] }} />
+        <View style={{ height: 40 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -503,24 +503,32 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerBtn: { paddingVertical: Spacing.xs, paddingHorizontal: Spacing.sm},
+  headerBtn: { paddingVertical: 4, paddingHorizontal: 8 },
   headerBtnDisabled: { opacity: 0.5 },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.text,
+  },
   cancelText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  publishText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
+  publishText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.primary,
+  },
   body: { flex: 1 },
   titleInput: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: colors.textPrimary,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
     backgroundColor: colors.surface,
@@ -528,23 +536,28 @@ const styles = StyleSheet.create({
   contentInput: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textPrimary,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     minHeight: 120,
     backgroundColor: colors.surface,
     lineHeight: 22,
   },
   imageSection: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     backgroundColor: colors.surface,
-    marginTop: Spacing.sm,
+    marginTop: 8,
   },
-  sectionLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary, marginBottom: DesignTokens.spacing['2.5']},
+  sectionLabel: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginBottom: 10,
+  },
   imageGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.sm,
+    gap: 8,
   },
   imageCell: {
     width: 100,
@@ -556,8 +569,8 @@ const styles = StyleSheet.create({
   imageThumb: { width: "100%", height: "100%" },
   imageRemove: {
     position: "absolute",
-    top: Spacing.xs,
-    right: Spacing.xs,
+    top: 4,
+    right: 4,
     width: 22,
     height: 22,
     borderRadius: 11,
@@ -574,56 +587,56 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.xs,
+    gap: 4,
   },
   imageAddText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary },
   uploadIndicator: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5'],
-    marginTop: Spacing.sm,
+    gap: 6,
+    marginTop: 8,
   },
   uploadText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   section: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     backgroundColor: colors.surface,
-    marginTop: Spacing.sm,
+    marginTop: 8,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: DesignTokens.spacing['2.5'],
+    marginBottom: 10,
   },
   tagsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: Spacing.sm,
+    gap: 8,
   },
   tagChip: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 16,
     backgroundColor: colors.background,
   },
-  tagChipActive: { backgroundColor: colors.infoLight }, // custom color
+  tagChipActive: { backgroundColor: "colors.infoLight" }, // custom color
   tagChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
-  tagChipTextActive: { color: colors.neutral[500], fontWeight: "600" },
-  categoryRow: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm},
+  tagChipTextActive: { color: DesignTokens.colors.brand.slate, fontWeight: "600" },
+  categoryRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   categoryChip: {
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 14,
+    paddingVertical: 6,
     borderRadius: 16,
     backgroundColor: colors.background,
   },
   categoryChipActive: { backgroundColor: colors.primary },
   categoryChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   categoryChipTextActive: { color: colors.surface, fontWeight: "600" },
-  itemsList: { marginTop: Spacing.xs},
+  itemsList: { marginTop: 4 },
   itemCard: {
-    width: Spacing['4xl'],
-    marginRight: Spacing.sm,
+    width: 80,
+    marginRight: 8,
     alignItems: "center",
     position: "relative",
   },
@@ -636,11 +649,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  itemName: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textSecondary, marginTop: Spacing.xs, textAlign: "center" },
+  itemName: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    color: colors.textSecondary,
+    marginTop: 4,
+    textAlign: "center",
+  },
   itemRemove: {
     position: "absolute",
     top: -4,
-    right: DesignTokens.spacing['1.5'],
+    right: 6,
     width: 18,
     height: 18,
     borderRadius: 9,
@@ -661,37 +679,42 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    padding: Spacing.md,
+    padding: 16,
     maxHeight: 400,
   },
   searchInputRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 8,
     backgroundColor: colors.background,
     borderRadius: 10,
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
-    marginBottom: Spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 8,
   },
-  searchInput: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, paddingVertical: Spacing.xs},
-  searchLoader: { paddingVertical: DesignTokens.spacing[5]},
+  searchInput: {
+    flex: 1,
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textPrimary,
+    paddingVertical: 4,
+  },
+  searchLoader: { paddingVertical: 20 },
   searchResultItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['2.5'],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    gap: 10,
+    paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  searchResultImage: { width: DesignTokens.spacing[10], height: DesignTokens.spacing[10], borderRadius: 6 },
+  searchResultImage: { width: 40, height: 40, borderRadius: 6 },
   searchResultImagePlaceholder: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 6,
     backgroundColor: colors.background,
   },
-  searchResultName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
+  searchResultName: { flex: 1, fontSize: DesignTokens.typography.sizes.base, color: colors.text },
 });
 
 export default CreatePostScreen;

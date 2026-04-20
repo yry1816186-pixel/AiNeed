@@ -1,4 +1,4 @@
-﻿﻿﻿import React, { Suspense, lazy } from "react";
+﻿import React, { Suspense, lazy } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
@@ -9,14 +9,15 @@ import type {
   CommunityStackParamList,
   ProfileStackParamList,
 } from "./types";
-import { useTheme, createStyles } from '../shared/contexts/ThemeContext';
+import { useTheme, createStyles } from "../shared/contexts/ThemeContext";
 import { GuardedScreen } from "./RouteGuards";
-import { PageTransitions } from '../design-system/theme/tokens/animations';
-import { flatColors as staticColors } from '../design-system/theme';
+import { PageTransitions } from "../theme/tokens/animations";
 
 const OutfitPlanScreenLazy = lazy(() => import("../features/stylist/screens/OutfitPlanScreen"));
 const ChatHistoryScreenLazy = lazy(() => import("../features/stylist/screens/ChatHistoryScreen"));
-const AiStylistChatScreenLazy = lazy(() => import("../features/stylist/screens/AiStylistChatScreen"));
+const AiStylistChatScreenLazy = lazy(
+  () => import("../features/stylist/screens/AiStylistChatScreen")
+);
 
 const TryOnResultScreenLazy = lazy(() => import("../features/tryon/screens/TryOnResultScreen"));
 
@@ -24,16 +25,22 @@ const PaymentScreenLazy = lazy(() => import("../features/commerce/screens/Paymen
 
 const PostDetailScreenLazy = lazy(() => import("../features/community/screens/PostDetailScreen"));
 const PostCreateScreenLazy = lazy(() => import("../features/community/screens/CreatePostScreen"));
-const InfluencerProfileScreenLazy = lazy(() => import("../features/community/screens/InfluencerProfileScreen"));
-const InspirationWardrobeScreenLazy = lazy(() => import("../features/community/screens/InspirationWardrobeScreen"));
+const InfluencerProfileScreenLazy = lazy(
+  () => import("../features/community/screens/InfluencerProfileScreen")
+);
+const InspirationWardrobeScreenLazy = lazy(
+  () => import("../features/community/screens/InspirationWardrobeScreen")
+);
 
-const CustomEditorScreenLazy = lazy(() => import("../features/customization/screens/CustomizationEditorScreen"));
+const CustomEditorScreenLazy = lazy(
+  () => import("../features/customization/screens/CustomizationEditorScreen")
+);
 const BrandScreenLazy = lazy(() => import("../features/wardrobe/screens/BrandScreen"));
 
 const styles = StyleSheet.create({
   loader: {
     flex: 1,
-    backgroundColor: staticColors.surface,
+    backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -41,7 +48,7 @@ const styles = StyleSheet.create({
 
 const screenLoader = (
   <View style={styles.loader}>
-    <ActivityIndicator size="large" color={staticColors.primary} />
+    <ActivityIndicator size="large" color={colors.primary} />
   </View>
 );
 
@@ -51,13 +58,19 @@ const HomeFeedScreen = lazy(() => import("../features/home/screens/HomeScreen"))
 const SearchScreen = lazy(() =>
   import("../features/search/screens/SearchScreen").then((m) => ({ default: m.SearchScreen }))
 );
-const NotificationsScreen = lazy(() => import("../features/notifications/screens/NotificationsScreen"));
-const RecommendationDetailScreen = lazy(() => import("../features/home/screens/RecommendationDetailScreen"));
+const NotificationsScreen = lazy(
+  () => import("../features/notifications/screens/NotificationsScreen")
+);
+const RecommendationDetailScreen = lazy(
+  () => import("../features/home/screens/RecommendationDetailScreen")
+);
 const ProductScreen = lazy(() => import("../features/wardrobe/screens/ClothingDetailScreen"));
 const OutfitDetailScreen = lazy(() => import("../features/stylist/screens/OutfitDetailScreen"));
 
 const AIStylistScreen = lazy(() => import("../features/stylist/screens/AiStylistScreen"));
-const SessionCalendarScreen = lazy(() => import("../features/stylist/screens/SessionCalendarScreen"));
+const SessionCalendarScreen = lazy(
+  () => import("../features/stylist/screens/SessionCalendarScreen")
+);
 
 const VirtualTryOnScreen = lazy(() => import("../features/tryon/screens/VirtualTryOnScreen"));
 const TryOnHistoryScreenLazy = lazy(() =>
@@ -67,48 +80,72 @@ const TryOnHistoryScreenLazy = lazy(() =>
 );
 
 const CommunityFeedScreen = lazy(() => import("../features/community/screens/CommunityScreen"));
-const BloggerDashboardScreen = lazy(() => import("../features/community/screens/BloggerDashboardScreen"));
-const BloggerProfileScreen = lazy(() => import("../features/community/screens/BloggerProfileScreen"));
-const BloggerProductScreen = lazy(() => import("../features/community/screens/BloggerProductScreen"));
+const BloggerDashboardScreen = lazy(
+  () => import("../features/community/screens/BloggerDashboardScreen")
+);
+const BloggerProfileScreen = lazy(
+  () => import("../features/community/screens/BloggerProfileScreen")
+);
+const BloggerProductScreen = lazy(
+  () => import("../features/community/screens/BloggerProductScreen")
+);
 
 const ProfileMainScreen = lazy(() => import("../features/profile/screens/ProfileScreen"));
 const ProfileEditScreen = lazy(() =>
-  import("../features/profile/screens/ProfileEditScreen").then((m) => ({ default: m.ProfileEditScreen }))
+  import("../features/profile/screens/ProfileEditScreen").then((m) => ({
+    default: m.ProfileEditScreen,
+  }))
 );
 const BodyAnalysisScreen = lazy(() =>
-  import("../features/profile/screens/BodyAnalysisScreen").then((m) => ({ default: m.BodyAnalysisScreen }))
+  import("../features/profile/screens/BodyAnalysisScreen").then((m) => ({
+    default: m.BodyAnalysisScreen,
+  }))
 );
 const ColorAnalysisScreen = lazy(() =>
-  import("../features/profile/screens/ColorAnalysisScreen").then((m) => ({ default: m.ColorAnalysisScreen }))
+  import("../features/profile/screens/ColorAnalysisScreen").then((m) => ({
+    default: m.ColorAnalysisScreen,
+  }))
 );
 const SharePosterScreen = lazy(() =>
-  import("../features/profile/screens/SharePosterScreen").then((m) => ({ default: m.SharePosterScreen }))
+  import("../features/profile/screens/SharePosterScreen").then((m) => ({
+    default: m.SharePosterScreen,
+  }))
 );
 const StyleQuizScreen = lazy(() =>
-  import("../features/style-quiz/screens/StyleQuizScreen").then((m) => ({ default: m.StyleQuizScreen }))
+  import("../features/style-quiz/screens/StyleQuizScreen").then((m) => ({
+    default: m.StyleQuizScreen,
+  }))
 );
 const WardrobeScreen = lazy(() => import("../features/wardrobe/screens/WardrobeScreen"));
 const FavoritesScreen = lazy(() =>
-  import("../features/wardrobe/screens/FavoritesScreen").then((m) => ({ default: m.FavoritesScreen }))
+  import("../features/wardrobe/screens/FavoritesScreen").then((m) => ({
+    default: m.FavoritesScreen,
+  }))
 );
 const SettingsScreen = lazy(() => import("../features/profile/screens/SettingsScreen"));
-const NotificationSettingsScreen = lazy(() => import("../features/notifications/screens/NotificationSettingsScreen"));
+const NotificationSettingsScreen = lazy(
+  () => import("../features/notifications/screens/NotificationSettingsScreen")
+);
 const SubscriptionScreen = lazy(() => import("../features/commerce/screens/SubscriptionScreen"));
 const CartScreen = lazy(() => import("../features/commerce/screens/CartScreen"));
 const CheckoutScreen = lazy(() => import("../features/commerce/screens/CheckoutScreen"));
 const OrdersScreen = lazy(() => import("../features/commerce/screens/OrdersScreen"));
 const OrderDetailScreen = lazy(() => import("../features/commerce/screens/OrderDetailScreen"));
 const AddClothingScreen = lazy(() => import("../features/wardrobe/screens/AddClothingScreen"));
-const CustomDesignScreen = lazy(() => import("../features/customization/screens/CustomizationScreen"));
+const CustomDesignScreen = lazy(
+  () => import("../features/customization/screens/CustomizationScreen")
+);
 const LegalScreen = lazy(() => import("../features/profile/screens/LegalScreen"));
 
 const AdvisorListScreen = lazy(() => import("../features/consultant/screens/AdvisorListScreen"));
-const AdvisorProfileScreen = lazy(() => import("../features/consultant/screens/AdvisorProfileScreen"));
+const AdvisorProfileScreen = lazy(
+  () => import("../features/consultant/screens/AdvisorProfileScreen")
+);
 const BookingScreen = lazy(() => import("../features/consultant/screens/BookingScreen"));
 const ChatScreen = lazy(() => import("../features/consultant/screens/ChatScreen"));
 
 function SuspenseScreen({ children }: { children: React.ReactNode }) {
-    const { colors } = useTheme();
+  const { colors } = useTheme();
   return <Suspense fallback={screenLoader}>{children}</Suspense>;
 }
 

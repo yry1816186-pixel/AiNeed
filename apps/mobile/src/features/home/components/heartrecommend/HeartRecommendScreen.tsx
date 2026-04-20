@@ -16,18 +16,15 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
-import { theme, Colors, Shadows , flatColors as colors } from '../../../../design-system/theme';
-import { recommendationsApi } from '../../../../services/api/tryon.api';
-import { cartApi } from '../../../../services/api/commerce.api';
-import { useAuthStore } from '../../../../stores/index';
-import { useHeartRecommendStore } from '../../stores/heart-recommend.store';
+import { theme, Colors, Shadows } from "../design-system/theme";
+import { recommendationsApi } from "../../services/api/tryon.api";
+import { cartApi } from "../../services/api/commerce.api";
+import { useAuthStore, useHeartRecommendStore } from "../../stores";
 import PreferenceSetupModal from "./PreferenceSetupModal";
 import { SwipeCard, ProductItem } from "./SwipeCard";
 import { EmptyState } from "./ActionButtons";
-import { Spacing } from '../../../../design-system/theme';
-import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
-
-
+import { flatColors as colors } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const _CARD_WIDTH = SCREEN_WIDTH - 40;
@@ -38,6 +35,8 @@ interface HeartRecommendScreenProps {
 }
 
 export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onClose }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { user, isAuthenticated } = useAuthStore();
   const heartRecommendStore = useHeartRecommendStore();
   const [products, setProducts] = useState<ProductItem[]>([]);
@@ -154,6 +153,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
   };
 
   const handleSwipeLeft = () => {
+    const { colors } = useTheme();
     const currentProduct = products[currentIndex];
     if (currentProduct) {
       heartRecommendStore.addSwipeAction({
@@ -301,15 +301,15 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
             <Text style={styles.statText}>{stats.liked}</Text>
           </View>
           <View style={styles.statItem}>
-            <Ionicons name="cart" size={14} color={Colors.primary[500]} />
+            <Ionicons name="cart" size={14} color={colors.primary[500]} />
             <Text style={styles.statText}>{stats.cartAdded}</Text>
           </View>
         </View>
       </Animated.View>
 
       {isUsingMockData && (
-        <View style={{ backgroundColor: DesignTokens.colors.backgrounds.secondary, padding: Spacing.sm, paddingHorizontal: Spacing.md }}>
-          <Text style={{ color: DesignTokens.colors.semantic.warning, fontSize: DesignTokens.typography.sizes.sm }}>
+        <View style={{ backgroundColor: "#FFF3E0", padding: 8, paddingHorizontal: 16 }}>
+          <Text style={{ color: "#E65100", fontSize: DesignTokens.typography.sizes.sm }}>
             当前为示例数据，推荐服务暂不可用
           </Text>
         </View>
@@ -341,7 +341,7 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
@@ -351,12 +351,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: Platform.OS === "ios" ? 60 : 40,
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingBottom: Spacing.md,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: theme.colors.surface,
     alignItems: "center",
@@ -374,19 +374,19 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: theme.colors.textSecondary,
-    marginTop: DesignTokens.spacing['0.5'],
+    marginTop: 2,
   },
   statsContainer: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3],
+    gap: 12,
   },
   statItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
+    gap: 4,
     backgroundColor: theme.colors.surface,
-    paddingHorizontal: DesignTokens.spacing['2.5'],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 12,
   },
   statText: {
@@ -410,6 +410,6 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
     fontWeight: "500",
   },
-});
+}));
 
 export default HeartRecommendScreen;

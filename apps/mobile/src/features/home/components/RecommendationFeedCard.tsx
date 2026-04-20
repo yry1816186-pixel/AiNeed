@@ -1,11 +1,10 @@
 import React, { memo, useCallback } from "react";
-import { View, Text, Pressable, type ViewStyle } from "react-native";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import type { FeedItem } from '../../../services/api/recommendation-feed.api';
-import { OptimizedImage } from '../../../shared/components/common/OptimizedImage';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { View, Text, StyleSheet, Pressable, type ViewStyle } from "react-native";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import type { FeedItem } from "../../../services/api/recommendation-feed.api";
+import { OptimizedImage } from "../common/OptimizedImage";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface RecommendationCardProps {
   item: FeedItem;
@@ -22,8 +21,6 @@ export const RecommendationCard = memo(function RecommendationCard({
   style,
   compact = false,
 }: RecommendationCardProps) {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const handlePress = useCallback(() => onPress(item), [item, onPress]);
 
   const discount =
@@ -41,7 +38,7 @@ export const RecommendationCard = memo(function RecommendationCard({
       <View style={styles.imageContainer}>
         <OptimizedImage
           source={item.mainImage}
-          style={styles.image as any}
+          style={styles.image as ViewStyle}
           resizeMode="cover"
         />
         {discount > 0 && (
@@ -125,11 +122,11 @@ const useStyles = createStyles((colors) => ({
   },
   discountBadge: {
     position: "absolute",
-    top: DesignTokens.spacing['1.5'],
-    left: DesignTokens.spacing['1.5'],
+    top: 6,
+    left: 6,
     backgroundColor: colors.error,
-    paddingHorizontal: DesignTokens.spacing['1.5'],
-    paddingVertical: DesignTokens.spacing['0.5'],
+    paddingHorizontal: 6,
+    paddingVertical: 2,
     borderRadius: 4,
   },
   discountText: {
@@ -139,21 +136,21 @@ const useStyles = createStyles((colors) => ({
   },
   harmonyBadge: {
     position: "absolute",
-    top: DesignTokens.spacing['1.5'],
-    right: DesignTokens.spacing['1.5'],
+    top: 6,
+    right: 6,
     backgroundColor: "rgba(0,0,0,0.6)",
-    paddingHorizontal: DesignTokens.spacing['1.5'],
-    paddingVertical: DesignTokens.spacing['0.5'],
+    paddingHorizontal: 6,
+    paddingVertical: 2,
     borderRadius: 4,
   },
   harmonyText: {
-    color: colors.success,
+    color: "#4ADE80", // custom color
     fontSize: DesignTokens.typography.sizes.xs,
     fontWeight: "600",
   },
   infoContainer: {
-    padding: Spacing.sm,
-    gap: Spacing.xs,
+    padding: 8,
+    gap: 4,
   },
   brandName: {
     fontSize: DesignTokens.typography.sizes.xs,
@@ -163,7 +160,7 @@ const useStyles = createStyles((colors) => ({
   scoreRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5'],
+    gap: 6,
   },
   scoreLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
@@ -190,7 +187,7 @@ const useStyles = createStyles((colors) => ({
   priceRow: {
     flexDirection: "row",
     alignItems: "baseline",
-    gap: Spacing.xs,
+    gap: 4,
   },
   price: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -204,17 +201,17 @@ const useStyles = createStyles((colors) => ({
   },
   tagsRow: {
     flexDirection: "row",
-    gap: Spacing.xs,
+    gap: 4,
     flexWrap: "wrap",
   },
   tag: {
     backgroundColor: colors.backgroundSecondary,
-    paddingHorizontal: DesignTokens.spacing['1.5'],
-    paddingVertical: DesignTokens.spacing['0.5'],
+    paddingHorizontal: 6,
+    paddingVertical: 2,
     borderRadius: 4,
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: colors.textSecondary,
   },
-}))
+}));

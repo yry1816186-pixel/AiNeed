@@ -10,23 +10,24 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { smsApi } from '../../../services/api/sms.api';
-import { useTranslation } from '../../../i18n';
-import { useAuthStore } from '../stores/index';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing , theme} from '../../../design-system/theme';
-import type { RootStackParamList } from '../../../types/navigation';
-
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { smsApi } from "../../../services/api/sms.api";
+import { useTranslation } from "../../../i18n";
+import { useAuthStore } from "../stores/index";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, Spacing, theme } from "../../../design-system/theme";
+import type { RootStackParamList } from "../../../types/navigation";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type PhoneLoginNavigationProp = NavigationProp<RootStackParamList>;
 
 const COUNTDOWN_SECONDS = 60;
 
 export const PhoneLoginScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<PhoneLoginNavigationProp>();
   const { setUser, setToken, onboardingCompleted } = useAuthStore();
   const t = useTranslation();
@@ -297,7 +298,7 @@ export const PhoneLoginScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.surface },
-  header: { padding: DesignTokens.spacing[5]},
+  header: { padding: DesignTokens.spacing[5] },
   backButton: {
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
@@ -306,7 +307,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  content: { flex: 1, padding: DesignTokens.spacing[5]},
+  content: { flex: 1, padding: DesignTokens.spacing[5] },
   brandSection: {
     alignItems: "center",
     marginBottom: Spacing.lg,
@@ -326,16 +327,25 @@ const styles = StyleSheet.create({
     color: colors.primary,
     letterSpacing: 1.2,
   },
-  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: "700", color: colors.textPrimary },
-  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: Spacing.sm, marginBottom: Spacing.xl},
-  form: { gap: Spacing.md},
+  title: {
+    fontSize: DesignTokens.typography.sizes["3xl"],
+    fontWeight: "700",
+    color: colors.textPrimary,
+  },
+  subtitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    color: colors.textSecondary,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xl,
+  },
+  form: { gap: Spacing.md },
   inputGroup: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.background,
     borderRadius: theme.BorderRadius.md,
     paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing["3.5"],
     gap: DesignTokens.spacing[3],
   },
   input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary },
@@ -373,10 +383,14 @@ const styles = StyleSheet.create({
     ...theme.Shadows.brand,
   },
   loginButtonDisabled: { backgroundColor: colors.primaryLight },
-  loginButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.surface },
-  emailLoginLink: { alignItems: "center", marginTop: Spacing.md},
+  loginButtonText: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.surface,
+  },
+  emailLoginLink: { alignItems: "center", marginTop: Spacing.md },
   emailLoginText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
-  registerLink: { alignItems: "center", marginTop: Spacing.sm},
+  registerLink: { alignItems: "center", marginTop: Spacing.sm },
   registerText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
 });
 

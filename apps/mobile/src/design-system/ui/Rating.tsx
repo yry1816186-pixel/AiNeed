@@ -1,10 +1,9 @@
-import React from "react";
+﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography } from '../../design-system/theme';
-import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors } from '../theme';
-
+import { Colors, Spacing, BorderRadius, Typography } from "../../design-system/theme";
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 export interface RatingProps {
   value?: number;
@@ -29,6 +28,8 @@ export const Rating: React.FC<RatingProps> = ({
   onRatingChange,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const sizes = { default: 20, compact: 14, large: 28 };
   const starSize = sizes[variant] || size;
 
@@ -61,7 +62,7 @@ export const Rating: React.FC<RatingProps> = ({
             <Ionicons
               name={getStarIcon(index)}
               size={starSize}
-              color={filled || halfFilled ? Colors.amber[500] : Colors.neutral[300]}
+              color={filled || halfFilled ? Colors.amber[500] : colors.neutral[300]}
             />
           </TouchableOpacity>
         );
@@ -94,16 +95,16 @@ export const RatingBadge: React.FC<RatingBadgeProps> = ({ value, reviewCount, st
   </View>
 );
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: { flexDirection: "row", alignItems: "center", gap: Spacing[1] },
   ratingValue: {
     ...Typography.styles.bodySmall,
-    color: Colors.neutral[700],
+    color: colors.neutral[700],
     fontWeight: "600",
     marginLeft: Spacing[2],
   },
   ratingValueCompact: { fontSize: DesignTokens.typography.sizes.sm },
-  reviewCount: { ...Typography.styles.caption, color: Colors.neutral[500] },
+  reviewCount: { ...Typography.styles.caption, color: colors.neutral[500] },
   reviewCountCompact: { fontSize: DesignTokens.typography.sizes.xs },
   badgeContainer: {
     flexDirection: "row",
@@ -113,8 +114,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing[1],
     borderRadius: BorderRadius.sm,
   },
-  badgeValue: { ...Typography.styles.caption, color: DesignTokens.colors.semantic.success, fontWeight: "700" },
-  badgeCount: { ...Typography.styles.caption, color: Colors.neutral[500] },
-});
+  badgeValue: { ...Typography.styles.caption, color: "#1B7A3D", fontWeight: "700" },
+  badgeCount: { ...Typography.styles.caption, color: colors.neutral[500] },
+}));
 
 export default Rating;

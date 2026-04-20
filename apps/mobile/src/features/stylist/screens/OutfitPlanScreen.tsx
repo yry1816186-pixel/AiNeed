@@ -14,16 +14,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { useAiStylistStore, type OutfitPlanDetail } from '../stores/aiStylistStore';
-import type { StylistStackParamList } from '../../../navigation/types';
-import { DesignTokens , Spacing , flatColors as colors } from '../../../design-system/theme'
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { useAiStylistStore, type OutfitPlanDetail } from "../stores/aiStylistStore";
+import type { StylistStackParamList } from "../../../navigation/types";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type OutfitPlanRoute = RouteProp<StylistStackParamList, "OutfitPlan">;
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export const OutfitPlanScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const route = useRoute<OutfitPlanRoute>();
   const planId = route.params?.planId;
@@ -172,7 +174,7 @@ export const OutfitPlanScreen: React.FC = () => {
               {outfit.items.map((item, itemIdx) => (
                 <TouchableOpacity key={`item-${itemIdx}`} style={s.itemCard}>
                   {item.imageUrl ? (
-                    <Image source={{ uri: item.imageUrl }} style={s.itemImage as any} resizeMode="cover" />
+                    <Image source={{ uri: item.imageUrl }} style={s.itemImage} resizeMode="cover" />
                   ) : (
                     <View style={s.itemImagePlaceholder}>
                       <Ionicons name="shirt-outline" size={24} color={colors.textTertiary} />
@@ -211,58 +213,85 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary },
-  backBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
-  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing.xl},
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: DesignTokens.spacing[3], textAlign: "center" },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: colors.text,
+  },
+  backBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
+  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
+  loadingText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textSecondary,
+    marginTop: 12,
+  },
+  errorText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.error,
+    marginTop: 12,
+    textAlign: "center",
+  },
   retryBtn: {
-    marginTop: Spacing.md,
+    marginTop: 16,
     backgroundColor: colors.primary,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 24,
+    paddingVertical: 10,
     borderRadius: 20,
   },
-  retryBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: Spacing.md},
+  retryBtnText: {
+    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+  },
+  emptyTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginTop: 16,
+  },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
-    marginTop: Spacing.sm,
+    marginTop: 8,
     textAlign: "center",
   },
   scrollView: { flex: 1 },
-  scrollContent: { padding: Spacing.md, paddingBottom: DesignTokens.spacing[10]},
+  scrollContent: { padding: 16, paddingBottom: 40 },
   summaryCard: {
     backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: Spacing.md,
-    marginBottom: Spacing.md,
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
   },
-  summaryTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary, lineHeight: 24 },
-  reasonsContainer: { marginTop: DesignTokens.spacing[3], gap: DesignTokens.spacing['1.5']},
-  reasonChip: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5']},
+  summaryTitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    lineHeight: 24,
+  },
+  reasonsContainer: { marginTop: 12, gap: 6 },
+  reasonChip: { flexDirection: "row", alignItems: "center", gap: 6 },
   reasonText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, flex: 1 },
-  weatherRow: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing['1.5'], marginTop: DesignTokens.spacing[3]},
+  weatherRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 12 },
   weatherText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
   outfitCard: {
     backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: Spacing.md,
-    marginBottom: Spacing.md,
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
@@ -271,27 +300,35 @@ const s = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: DesignTokens.spacing[3],
+    marginBottom: 12,
   },
-  outfitTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: colors.textPrimary },
-  outfitPrice: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.primary },
-  itemsGrid: { flexDirection: "row", flexWrap: "wrap", gap: DesignTokens.spacing['2.5']},
+  outfitTitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "700",
+    color: colors.text,
+  },
+  outfitPrice: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.primary,
+  },
+  itemsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   itemCard: {
     width: (SCREEN_WIDTH - 64) / 3,
     backgroundColor: colors.background,
     borderRadius: 12,
-    padding: Spacing.sm,
+    padding: 8,
     alignItems: "center",
   },
   itemImage: {
     width: "100%",
-    height: Spacing['4xl'],
+    height: 80,
     borderRadius: 8,
     backgroundColor: colors.placeholderBg,
   },
   itemImagePlaceholder: {
     width: "100%",
-    height: Spacing['4xl'],
+    height: 80,
     borderRadius: 8,
     backgroundColor: colors.subtleBg,
     alignItems: "center",
@@ -301,21 +338,35 @@ const s = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "500",
     color: colors.textPrimary,
-    marginTop: DesignTokens.spacing['1.5'],
+    marginTop: 6,
     width: "100%",
   },
-  itemCategory: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
-  itemPrice: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: colors.primary, marginTop: DesignTokens.spacing['0.5']},
+  itemCategory: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    color: colors.textTertiary,
+    marginTop: 2,
+  },
+  itemPrice: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    fontWeight: "600",
+    color: colors.primary,
+    marginTop: 2,
+  },
   explanationRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: DesignTokens.spacing['1.5'],
-    marginTop: DesignTokens.spacing[3],
-    paddingTop: DesignTokens.spacing[3],
+    gap: 6,
+    marginTop: 12,
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: colors.divider,
   },
-  explanationText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, flex: 1, lineHeight: 18 },
+  explanationText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.textSecondary,
+    flex: 1,
+    lineHeight: 18,
+  },
 });
 
 export default OutfitPlanScreen;

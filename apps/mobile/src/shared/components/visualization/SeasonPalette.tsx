@@ -10,7 +10,8 @@ import {
   Stop,
   Text as SvgText,
 } from "react-native-svg";
-import { Colors, Spacing, BorderRadius, Typography , DesignTokens } from '../../../design-system/theme'
+import { Colors, Spacing, BorderRadius, Typography } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 export interface SeasonPaletteProps {
   season: string;
@@ -78,17 +79,19 @@ function describeArc(
   return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 1 ${end.x} ${end.y}`;
 }
 
-const BRAND_TERRACOTTA = Colors.primary[500];
+const BRAND_TERRACOTTA = colors.primary[500];
 const BRAND_TERRACOTTA_ALPHA_35 = `rgba(198,123,92,0.35)`;
 const AVOID_STROKE = `rgba(255,59,48,0.6)`;
-const TEXT_DARK = Colors.neutral[900];
-const TEXT_MUTED = Colors.neutral[500];
+const TEXT_DARK = colors.neutral[900];
+const TEXT_MUTED = colors.neutral[500];
 
 export const SeasonPalette: React.FC<SeasonPaletteProps> = ({
   season,
   bestColors,
   avoidColors,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const size = 200;
   const cx = size / 2;
   const cy = size / 2;
@@ -277,7 +280,7 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     backgroundColor: Colors.neutral.white,
     borderRadius: BorderRadius.xl,
@@ -286,7 +289,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.styles.h4,
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     marginBottom: Spacing.sm,
   },
   legend: {
@@ -301,14 +304,14 @@ const styles = StyleSheet.create({
     gap: Spacing[1],
   },
   legendDot: {
-    width: DesignTokens.spacing['2.5'],
-    height: DesignTokens.spacing['2.5'],
+    width: 10,
+    height: 10,
     borderRadius: 5,
   },
   legendText: {
     ...Typography.caption.xs,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
-});
+}));
 
 export default SeasonPalette;

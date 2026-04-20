@@ -14,7 +14,8 @@ import {
 } from "react-native";
 import FastImage, { FastImageProps } from "react-native-fast-image";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '../../../design-system/theme';
+import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../../design-system/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -66,7 +67,7 @@ const SkeletonPlaceholder: React.FC<{
           width: width as DimensionValue,
           height: height as DimensionValue,
           borderRadius,
-          backgroundColor: Colors.neutral[200],
+          backgroundColor: colors.neutral[200],
           opacity,
         },
         style,
@@ -111,7 +112,7 @@ const ErrorPlaceholder = memo(function ErrorPlaceholder({
         style,
       ]}
     >
-      <Ionicons name="image-outline" size={32} color={Colors.neutral[400]} />
+      <Ionicons name="image-outline" size={32} color={colors.neutral[400]} />
       <Text style={styles.errorText}>加载失败</Text>
       {canRetry && (
         <TouchableOpacity style={styles.retryButton} onPress={onRetry} activeOpacity={0.7}>
@@ -130,8 +131,10 @@ const ErrorPlaceholder = memo(function ErrorPlaceholder({
 /**
  * ImageWithPlaceholder 组件属性
  */
-export interface ImageWithPlaceholderProps
-  extends Omit<FastImageProps, "onLoad" | "onError" | "style"> {
+export interface ImageWithPlaceholderProps extends Omit<
+  FastImageProps,
+  "onLoad" | "onError" | "style"
+> {
   /** 图片源 */
   source: { uri: string; priority?: string } | number;
   /** 容器样式 */
@@ -291,6 +294,7 @@ export const ImageWithPlaceholder = memo(function ImageWithPlaceholder({
    * 渲染占位符
    */
   const renderPlaceholder = () => {
+    const { colors } = useTheme();
     if (status === "loaded") {
       return null;
     }
@@ -452,7 +456,7 @@ export const BannerImage = memo(function BannerImage({
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     position: "relative",
     overflow: "hidden",
@@ -469,7 +473,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   staticPlaceholder: {
-    backgroundColor: Colors.neutral[200],
+    backgroundColor: colors.neutral[200],
   },
   imageContainer: {
     position: "relative",
@@ -479,18 +483,18 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   errorContainer: {
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     justifyContent: "center",
     alignItems: "center",
     padding: Spacing[4],
   },
   errorText: {
     ...Typography.body.sm,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginBottom: Spacing[3],
   },
   retryButton: {
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[2],
     borderRadius: BorderRadius.md,
@@ -503,9 +507,9 @@ const styles = StyleSheet.create({
   },
   retryCountText: {
     ...Typography.caption.sm,
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
     marginTop: Spacing[2],
   },
-});
+}));
 
 export default ImageWithPlaceholder;

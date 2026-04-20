@@ -73,16 +73,16 @@ describe("QueueService", () => {
       providers: [
         QueueService,
         { provide: PrismaService, useValue: prisma },
-        { provide: `BullMQ_${QueueName.AI_TASKS}`, useValue: aiTasksQueue },
-        { provide: `BullMQ_${QueueName.STYLE_ANALYSIS}`, useValue: styleAnalysisQueue },
-        { provide: `BullMQ_${QueueName.VIRTUAL_TRYON}`, useValue: virtualTryOnQueue },
-        { provide: `BullMQ_${QueueName.WARDROBE_MATCH}`, useValue: wardrobeMatchQueue },
-        { provide: `BullMQ_${QueueName.BODY_ANALYSIS}`, useValue: bodyAnalysisQueue },
-        { provide: `BullMQ_${QueueName.PHOTO_PROCESSING}`, useValue: photoProcessingQueue },
-        { provide: `BullMQ_${QueueName.AI_GENERATION}`, useValue: aiGenerationQueue },
-        { provide: `BullMQ_${QueueName.NOTIFICATION}`, useValue: notificationQueue },
-        { provide: `BullMQ_${QueueName.DATA_EXPORT}`, useValue: dataExportQueue },
-        { provide: `BullMQ_${QueueName.CONTENT_MODERATION}`, useValue: contentModerationQueue },
+        { provide: `BullQueue_${QueueName.AI_TASKS}`, useValue: aiTasksQueue },
+        { provide: `BullQueue_${QueueName.STYLE_ANALYSIS}`, useValue: styleAnalysisQueue },
+        { provide: `BullQueue_${QueueName.VIRTUAL_TRYON}`, useValue: virtualTryOnQueue },
+        { provide: `BullQueue_${QueueName.WARDROBE_MATCH}`, useValue: wardrobeMatchQueue },
+        { provide: `BullQueue_${QueueName.BODY_ANALYSIS}`, useValue: bodyAnalysisQueue },
+        { provide: `BullQueue_${QueueName.PHOTO_PROCESSING}`, useValue: photoProcessingQueue },
+        { provide: `BullQueue_${QueueName.AI_GENERATION}`, useValue: aiGenerationQueue },
+        { provide: `BullQueue_${QueueName.NOTIFICATION}`, useValue: notificationQueue },
+        { provide: `BullQueue_${QueueName.DATA_EXPORT}`, useValue: dataExportQueue },
+        { provide: `BullQueue_${QueueName.CONTENT_MODERATION}`, useValue: contentModerationQueue },
       ],
     }).compile();
 
@@ -91,11 +91,10 @@ describe("QueueService", () => {
 
   describe("addStyleAnalysisTask", () => {
     it("should add job to styleAnalysisQueue and return task response", async () => {
-      const result = await service.addStyleAnalysisTask(
-        "user-1",
-        "I prefer casual style",
-        { bodyType: "slim", stylePreferences: ["casual"] },
-      );
+      const result = await service.addStyleAnalysisTask("user-1", "I prefer casual style", {
+        bodyType: "slim",
+        stylePreferences: ["casual"],
+      });
 
       expect(result.status).toBe(JOB_STATUS.PENDING);
       expect(result.estimatedWaitTime).toBe(10);
@@ -112,19 +111,14 @@ describe("QueueService", () => {
         expect.objectContaining({
           attempts: 3,
           backoff: { type: "exponential", delay: 1000 },
-        }),
+        })
       );
     });
   });
 
   describe("addVirtualTryOnTask", () => {
     it("should add job to virtualTryOnQueue when photo and item exist", async () => {
-      const result = await service.addVirtualTryOnTask(
-        "user-1",
-        "photo-1",
-        "item-1",
-        "tops",
-      );
+      const result = await service.addVirtualTryOnTask("user-1", "photo-1", "item-1", "tops");
 
       expect(result.status).toBe(JOB_STATUS.PENDING);
       expect(result.estimatedWaitTime).toBe(45);
@@ -142,9 +136,9 @@ describe("QueueService", () => {
     it("should throw NotFoundException when photo not found", async () => {
       prisma.userPhoto.findFirst.mockResolvedValueOnce(null);
 
-      await expect(
-        service.addVirtualTryOnTask("user-1", "bad-photo", "item-1"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.addVirtualTryOnTask("user-1", "bad-photo", "item-1")).rejects.toThrow(
+        NotFoundException
+      );
 
       expect(virtualTryOnQueue.add).not.toHaveBeenCalled();
     });
@@ -152,9 +146,9 @@ describe("QueueService", () => {
     it("should throw NotFoundException when clothing item not found", async () => {
       prisma.clothingItem.findUnique.mockResolvedValueOnce(null);
 
-      await expect(
-        service.addVirtualTryOnTask("user-1", "photo-1", "bad-item"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.addVirtualTryOnTask("user-1", "photo-1", "bad-item")).rejects.toThrow(
+        NotFoundException
+      );
 
       expect(virtualTryOnQueue.add).not.toHaveBeenCalled();
     });
@@ -167,8 +161,8 @@ describe("QueueService", () => {
         data: { userId: "user-1", type: "style_analysis" },
         returnvalue: { result: "done" },
         failedReason: undefined,
-        processedOn: Date.now(),
-        finishedOn: undefined,
+        processedOn: undefined,
+        finishedOn: Date.now(),
         getState: jest.fn().mockResolvedValue("completed"),
       };
       styleAnalysisQueue.getJob.mockResolvedValueOnce(mockJob);

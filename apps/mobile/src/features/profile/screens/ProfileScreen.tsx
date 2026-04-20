@@ -11,42 +11,48 @@ import {
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import type { CompositeScreenProps } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { useAuthStore } from '../../auth/stores';
-import { authApi, userApi } from '../../../services/api/auth.api';
-import { ProfileCompletenessBar } from '../components/ProfileCompletenessBar';
-import { useProfileStore } from '../stores/profileStore';
-import type { UserStats, User } from '../../../types/user';
-import type { RootStackParamList } from '../../../types/navigation';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { typography } from '../../../design-system/theme/tokens/typography';
-import { spacing } from '../../../design-system/theme/tokens/spacing';
-import { shadows } from '../../../design-system/theme/tokens/shadows';
+import { useAuthStore } from "../stores/index";
+import { authApi, userApi } from "../../../auth/services/auth.api";
+import { ProfileCompletenessBar } from "../components/ProfileCompletenessBar.tsx";
+import { useProfileStore } from "../stores/profileStore";
+import type { UserStats, User } from "../../../auth/types/user";
+import type { ProfileStackParamList, RootStackParamList } from "../../../navigation/types";
+import { navigateStylist } from "../../../navigation/navigationService";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
-import { seasonLabels, type ColorSeason } from '../../../design-system/theme/tokens/season-colors';
-import { useScreenTracking } from '../../../hooks/useAnalytics';
-import { useTranslation, useI18n } from '../../../i18n';
-import { withErrorBoundary } from '../../../shared/components/ErrorBoundary';
-import { BrandPattern, BrandDivider } from '../../commerce/components/BrandMotif';
-import { Spacing } from '../../../design-system/theme';
+// 引入增强主题令牌
+import { colors } from "../../../design-system/theme/tokens/colors";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { typography } from "../../../design-system/theme/tokens/typography";
+import { spacing } from "../../../design-system/theme/tokens/spacing";
+import { shadows } from "../../../design-system/theme/tokens/shadows";
 
+import { seasonLabels, type ColorSeason } from "../../../design-system/theme/tokens/season-colors";
+import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useTranslation, useI18n } from "../../../i18n";
+import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
+import { BrandPattern, BrandDivider } from "../../../components/brand/BrandMotif";
 
-type ProfileNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type ProfileNavigationProp = CompositeScreenProps<
+  NativeStackNavigationProp<ProfileStackParamList>,
+  NativeStackNavigationProp<RootStackParamList>
+>["navigation"];
 
 export const ProfileScreenComponent: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<ProfileNavigationProp>();
   useScreenTracking("Profile");
   const t = useTranslation();
   const { language, setLanguage, getLanguageName, supportedLanguages } = useI18n();
   const { user, logout, isVip } = useAuthStore();
   const { completeness, loadCompleteness, colorAnalysis } = useProfileStore();
-  const { colorSeason, seasonAccent, setSeasonAccent, colors } = useTheme();
-  const styles = useStyles(colors);
+  const { colorSeason, seasonAccent, setSeasonAccent } = useTheme();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -62,7 +68,7 @@ export const ProfileScreenComponent: React.FC = () => {
       }
     } catch (error) {
       // Stats fetch failed
-      console.error('Failed to load profile stats:', error);
+      console.error("Failed to load profile stats:", error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -100,98 +106,100 @@ export const ProfileScreenComponent: React.FC = () => {
       label: t.profile.editProfile,
       accessibilityLabel: t.profile.editProfile,
       color: colors.primary,
-      onPress: () => navigation.navigate("ProfileEdit" as never),
+      onPress: () => navigation.navigate("ProfileEdit"),
     },
     {
       icon: "body-outline" as const,
       label: "体型分析",
       accessibilityLabel: "体型分析",
-      color: colors.secondary,
-      onPress: () => navigation.navigate("BodyAnalysis" as never),
+      color: colors.textSecondary,
+      onPress: () => navigation.navigate("BodyAnalysis"),
     },
     {
       icon: "color-palette-outline" as const,
       label: colorSeason ? `色彩分析 · ${seasonLabels[colorSeason]}` : "色彩分析",
       accessibilityLabel: "色彩分析",
-      color: colorSeason ? accentColor : colors.secondary,
-      onPress: () => navigation.navigate("ColorAnalysis" as never),
+      color: colorSeason ? accentColor : colors.textSecondary,
+      onPress: () => navigation.navigate("ColorAnalysis"),
     },
     {
       icon: "sparkles-outline" as const,
       label: "风格测试",
       accessibilityLabel: "风格测试",
-      color: colors.secondary,
-      onPress: () => navigation.navigate("StyleQuiz" as never),
+      color: colors.textSecondary,
+      onPress: () => navigation.navigate("StyleQuiz"),
     },
     {
       icon: "share-outline" as const,
       label: "分享我的风格",
       accessibilityLabel: "分享我的风格",
-      color: colors.secondary,
-      onPress: () => navigation.navigate("SharePoster" as never),
+      color: colors.textSecondary,
+      onPress: () => navigation.navigate("SharePoster", { type: undefined, id: undefined }),
     },
     {
       icon: "settings-outline" as const,
       label: t.profile.settings,
       accessibilityLabel: t.profile.settings,
-      color: colors.secondary,
+      color: colors.textSecondary,
       onPress: () => navigation.navigate("Settings"),
     },
     {
       icon: "bag-outline" as const,
       label: t.profile.myOrders,
       accessibilityLabel: t.profile.myOrders,
-      color: colors.secondary,
+      color: colors.textSecondary,
       onPress: () => navigation.navigate("Orders"),
     },
     {
       icon: "shirt-outline" as const,
       label: t.wardrobe.title,
       accessibilityLabel: t.wardrobe.title,
-      color: colors.secondary,
-      onPress: () => navigation.navigate("Wardrobe" as never),
+      color: colors.textSecondary,
+      onPress: () => navigation.navigate("Wardrobe"),
     },
     {
       icon: "sparkles-outline" as const,
       label: "AI 造型师",
       accessibilityLabel: "AI 造型师",
-      color: colors.secondary,
-      onPress: () => navigation.navigate("AiStylist" as never),
+      color: colors.textSecondary,
+      onPress: () => navigateStylist("AIStylist"),
     },
     {
       icon: "heart-outline" as const,
       label: t.profile.myFavorites,
       accessibilityLabel: t.profile.myFavorites,
-      color: colors.secondary,
-      onPress: () => navigation.navigate("Favorites" as never),
+      color: colors.textSecondary,
+      onPress: () => navigation.navigate("Favorites"),
     },
     {
       icon: "color-wand-outline" as const,
       label: "私人定制",
       accessibilityLabel: "私人定制",
-      color: colors.secondary,
-      onPress: () => navigation.navigate("CustomDesign" as never),
+      color: colors.purple,
+      onPress: () => navigation.navigate("CustomDesign"),
     },
     {
       icon: "diamond-outline" as const,
       label: "会员订阅",
       accessibilityLabel: "会员订阅",
       color: colors.amber,
-      onPress: () => navigation.navigate("Subscription" as never),
+      onPress: () => navigation.navigate("Subscription"),
     },
     {
       icon: "globe-outline" as const,
       label: t.profile.language,
       accessibilityLabel: t.profile.language,
-      color: colors.secondary,
+      color: colors.textSecondary,
       onPress: () => {
         Alert.alert(
           t.profile.language,
           "",
-          [...supportedLanguages.map((lang) => ({
-            text: `${lang.nativeName}${lang.code === language ? " ✓" : ""}`,
-            onPress: () => void setLanguage(lang.code),
-          })), { text: t.common.cancel, style: "cancel" as const }]
+          supportedLanguages
+            .map((lang) => ({
+              text: `${lang.nativeName}${lang.code === language ? " ✓" : ""}`,
+              onPress: () => void setLanguage(lang.code),
+            }))
+            .concat([{ text: t.common.cancel, style: "cancel" as const }])
         );
       },
     },
@@ -201,14 +209,16 @@ export const ProfileScreenComponent: React.FC = () => {
       accessibilityLabel: t.profile.logout,
       color: colors.error,
       onPress: () => {
-        Alert.alert(
-          t.profile.logoutConfirm,
-          t.profile.logoutConfirmMessage,
-          [
-            { text: t.common.cancel, style: "cancel" },
-            { text: t.profile.logout, style: "destructive", onPress: () => { void handleLogout(); } },
-          ]
-        );
+        Alert.alert(t.profile.logoutConfirm, t.profile.logoutConfirmMessage, [
+          { text: t.common.cancel, style: "cancel" },
+          {
+            text: t.profile.logout,
+            style: "destructive",
+            onPress: () => {
+              void handleLogout();
+            },
+          },
+        ]);
       },
     },
   ];
@@ -259,7 +269,7 @@ export const ProfileScreenComponent: React.FC = () => {
 
             <TouchableOpacity
               style={styles.editButton}
-              onPress={() => navigation.navigate("ProfileEdit" as never)}
+              onPress={() => navigation.navigate("ProfileEdit")}
               accessibilityLabel="编辑个人资料"
               accessibilityRole="button"
             >
@@ -276,7 +286,7 @@ export const ProfileScreenComponent: React.FC = () => {
             <ProfileCompletenessBar
               percentage={completeness.percentage}
               missingFields={completeness.missingFields}
-              onPress={() => navigation.navigate("ProfileEdit" as never)}
+              onPress={() => navigation.navigate("ProfileEdit")}
             />
           </View>
         )}
@@ -285,7 +295,7 @@ export const ProfileScreenComponent: React.FC = () => {
         {colorSeason && seasonAccent && (
           <TouchableOpacity
             style={[styles.seasonCard, { borderLeftColor: accentColor }]}
-            onPress={() => navigation.navigate("ColorAnalysis" as never)}
+            onPress={() => navigation.navigate("ColorAnalysis")}
             activeOpacity={0.7}
             accessibilityLabel={`查看${seasonLabels[colorSeason]}色彩详情`}
             accessibilityRole="button"
@@ -304,7 +314,9 @@ export const ProfileScreenComponent: React.FC = () => {
                   <View key={i} style={[styles.seasonColorChip, { backgroundColor: hex }]} />
                 ))}
                 <View style={[styles.seasonColorChip, { backgroundColor: seasonAccent.accent }]} />
-                <View style={[styles.seasonColorChip, { backgroundColor: seasonAccent.accentLight }]} />
+                <View
+                  style={[styles.seasonColorChip, { backgroundColor: seasonAccent.accentLight }]}
+                />
               </View>
             </View>
           </TouchableOpacity>
@@ -356,11 +368,7 @@ export const ProfileScreenComponent: React.FC = () => {
             >
               <Ionicons name={item.icon} size={22} color={item.color} />
               <Text style={[styles.menuText, { color: item.color }]}>{item.label}</Text>
-              <Ionicons
-                name="chevron-forward-outline"
-                size={18}
-                color={colors.textTertiary}
-              />
+              <Ionicons name="chevron-forward-outline" size={18} color={colors.textTertiary} />
             </TouchableOpacity>
           ))}
         </View>
@@ -375,13 +383,13 @@ export const ProfileScreenComponent: React.FC = () => {
   );
 };
 
-const useStyles = createStyles((colors) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.neutral[50] },
   header: {
     padding: spacing.layout.screenPadding,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.neutral.white,
     borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
+    borderBottomColor: colors.neutral[200],
     ...shadows.presets.xs,
     overflow: "hidden",
   },
@@ -392,11 +400,11 @@ const useStyles = createStyles((colors) => StyleSheet.create({
   headerTitle: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: colors.textPrimary,
+    color: colors.neutral[900],
   },
   content: { flex: 1 },
 
-  // ===== Profile Card =====
+  // ===== Profile Card（升级版 - 渐变背景）=====
   profileCard: {
     margin: spacing.layout.screenPadding,
     borderRadius: spacing.borderRadius["2xl"],
@@ -430,46 +438,46 @@ const useStyles = createStyles((colors) => StyleSheet.create({
     borderColor: "rgba(255,255,255,0.5)",
   },
   profileInfo: {
-    marginLeft: Spacing.md,
+    marginLeft: 16,
     flex: 1,
   },
   profileName: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
     color: colors.surface,
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   profileEmail: {
     fontSize: typography.fontSize.sm,
     color: "rgba(255,255,255,0.85)",
-    marginTop: DesignTokens.spacing['0.5'],
+    marginTop: 2,
   },
   memberBadge: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.25)",
-    paddingHorizontal: DesignTokens.spacing['2.5'],
-    paddingVertical: Spacing.xs,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 12,
     alignSelf: "flex-start",
-    marginTop: Spacing.sm,
+    marginTop: 8,
   },
   memberBadgeText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.bold,
     color: colors.surface,
-    marginLeft: Spacing.xs,
+    marginLeft: 4,
   },
   editButton: {
-    marginTop: Spacing.md,
+    marginTop: 16,
     alignSelf: "flex-start",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.25)",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 20,
-    gap: DesignTokens.spacing['1.5'],
+    gap: 6,
   },
   editButtonText: {
     color: colors.surface,
@@ -477,7 +485,7 @@ const useStyles = createStyles((colors) => StyleSheet.create({
     fontWeight: typography.fontWeight.semibold,
   },
 
-  // ===== Stats Cards =====
+  // ===== Stats Cards（升级版）=====
   statsLoading: {
     paddingVertical: spacing.layout.sectionGap,
     alignItems: "center",
@@ -486,11 +494,11 @@ const useStyles = createStyles((colors) => StyleSheet.create({
     flexDirection: "row",
     marginHorizontal: spacing.layout.screenPadding,
     marginBottom: spacing.layout.cardGap,
-    gap: DesignTokens.spacing[3],
+    gap: 12,
   },
   statCard: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.neutral.white,
     borderRadius: spacing.borderRadius.xl,
     padding: spacing.layout.cardPadding,
     alignItems: "center",
@@ -499,30 +507,30 @@ const useStyles = createStyles((colors) => StyleSheet.create({
   statValue: {
     fontSize: typography.fontSize["2xl"],
     fontWeight: typography.fontWeight.bold,
-    color: colors.primary,
+    color: colors.brand.warmPrimary,
   },
   statLabel: {
     fontSize: typography.fontSize.sm,
-    color: colors.textTertiary,
-    marginTop: DesignTokens.spacing['1.5'],
+    color: colors.neutral[500],
+    marginTop: 6,
   },
 
-  // ===== Menu Section =====
+  // ===== Menu Section（升级版）=====
   menuSection: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.neutral.white,
     marginHorizontal: spacing.layout.screenPadding,
     borderRadius: spacing.borderRadius.xl,
     overflow: "hidden",
-    marginBottom: DesignTokens.spacing[10],
+    marginBottom: 40,
     ...shadows.presets.md,
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
     padding: spacing.layout.listItemPadding,
-    gap: DesignTokens.spacing['3.5'],
+    gap: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.borderLight,
+    borderBottomColor: colors.neutral[200],
   },
   menuItemLast: {
     borderBottomWidth: 0,
@@ -534,7 +542,7 @@ const useStyles = createStyles((colors) => StyleSheet.create({
   },
   completenessContainer: {
     marginHorizontal: spacing.layout.screenPadding,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.neutral.white,
     borderRadius: spacing.borderRadius.xl,
     padding: spacing.layout.cardPadding,
     marginBottom: spacing.layout.cardGap,
@@ -542,7 +550,7 @@ const useStyles = createStyles((colors) => StyleSheet.create({
   },
   seasonCard: {
     marginHorizontal: spacing.layout.screenPadding,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.neutral.white,
     borderRadius: spacing.borderRadius.xl,
     padding: spacing.layout.cardPadding,
     marginBottom: spacing.layout.cardGap,
@@ -552,19 +560,19 @@ const useStyles = createStyles((colors) => StyleSheet.create({
   seasonCardHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    marginBottom: Spacing.sm,
+    gap: 8,
+    marginBottom: 8,
   },
   seasonDot: {
-    width: DesignTokens.spacing['2.5'],
-    height: DesignTokens.spacing['2.5'],
+    width: 10,
+    height: 10,
     borderRadius: 5,
   },
   seasonCardTitle: {
     flex: 1,
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.textSecondary,
+    color: colors.neutral[700],
   },
   seasonCardBody: {
     flexDirection: "row",
@@ -577,28 +585,28 @@ const useStyles = createStyles((colors) => StyleSheet.create({
   },
   seasonColorPreview: {
     flexDirection: "row",
-    gap: Spacing.xs,
+    gap: 4,
   },
   seasonColorChip: {
-    width: DesignTokens.spacing[5],
-    height: DesignTokens.spacing[5],
+    width: 20,
+    height: 20,
     borderRadius: 10,
   },
   learningTip: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: DesignTokens.spacing['1.5'],
+    gap: 6,
     paddingHorizontal: spacing.layout.screenPadding,
     paddingVertical: spacing.layout.sectionGap,
-    marginBottom: DesignTokens.spacing[5],
+    marginBottom: 20,
   },
   learningTipText: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.regular,
-    color: colors.textTertiary,
+    color: colors.neutral[500],
   },
-}));
+});
 
 const ProfileScreen = withErrorBoundary(ProfileScreenComponent, {
   screenName: "ProfileScreen",

@@ -2,7 +2,11 @@ import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { RedisService, REDIS_KEY_PREFIX, REDIS_KEY_SEPARATOR } from "../../../common/redis/redis.service";
+import {
+  RedisService,
+  REDIS_KEY_PREFIX,
+  REDIS_KEY_SEPARATOR,
+} from "../../../common/redis/redis.service";
 
 const GRACE_KEY_PREFIX = `${REDIS_KEY_PREFIX}${REDIS_KEY_SEPARATOR}blogger${REDIS_KEY_SEPARATOR}grace`;
 const GRACE_TTL_SECONDS = 7 * 24 * 60 * 60;
@@ -16,7 +20,7 @@ export class BloggerScoreService implements OnModuleInit {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly redisService: RedisService,
+    private readonly redisService: RedisService
   ) {}
 
   onModuleInit() {
@@ -25,23 +29,32 @@ export class BloggerScoreService implements OnModuleInit {
 
   private registerPrismaMiddleware() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.prisma.$use(async (params: any, next: (params: any) => Promise<any>) => {
-      if (params.model === "User" && params.action === "update") {
-        if (!this.isInternalUpdate) {
-          const data = params.args?.data;
-          if (data) {
-            const forbiddenFields = Object.keys(data).filter((key) => ALLOWED_BLOGGER_FIELDS.has(key));
-            if (forbiddenFields.length > 0) {
-              this.logger.warn(`Blocked external User.update of blogger fields: ${forbiddenFields.join(", ")}`);
-              for (const field of forbiddenFields) {
-                delete data[field];
+    this.prisma.$use(
+      async (
+        params: Record<string, unknown>,
+        next: (params: Record<string, unknown>) => Promise<any>
+      ) => {
+        if (params.model === "User" && params.action === "update") {
+          if (!this.isInternalUpdate) {
+            const data = params.args?.data;
+            if (data) {
+              const forbiddenFields = Object.keys(data).filter((key) =>
+                ALLOWED_BLOGGER_FIELDS.has(key)
+              );
+              if (forbiddenFields.length > 0) {
+                this.logger.warn(
+                  `Blocked external User.update of blogger fields: ${forbiddenFields.join(", ")}`
+                );
+                for (const field of forbiddenFields) {
+                  delete data[field];
+                }
               }
             }
           }
         }
+        return next(params);
       }
-      return next(params);
-    });
+    );
   }
 
   private withInternalUpdate<T>(fn: () => Promise<T>): Promise<T> {
@@ -80,7 +93,8 @@ export class BloggerScoreService implements OnModuleInit {
     const totalBookmarks = postStats._sum.bookmarkCount ?? 0;
     const postCount = postStats._count;
 
-    const rawEngagement = (totalLikes + totalComments * 2 + totalBookmarks * 3) / Math.max(totalViews, 1);
+    const rawEngagement =
+      (totalLikes + totalComments * 2 + totalBookmarks * 3) / Math.max(totalViews, 1);
     const engagementScore = Math.min(rawEngagement * 100, 100);
 
     const contentScore = Math.min((postCount / 100) * 100, 100);
@@ -89,10 +103,7 @@ export class BloggerScoreService implements OnModuleInit {
     const bookmarkScore = Math.min(bookmarkRate * 100, 100);
 
     const compositeScore =
-      followerScore * 0.4 +
-      engagementScore * 0.3 +
-      contentScore * 0.2 +
-      bookmarkScore * 0.1;
+      followerScore * 0.4 + engagementScore * 0.3 + contentScore * 0.2 + bookmarkScore * 0.1;
 
     return Math.round(compositeScore * 100) / 100;
   }
@@ -131,7 +142,9 @@ export class BloggerScoreService implements OnModuleInit {
 
       if (!inGrace) {
         await this.redisService.setex(graceKey, GRACE_TTL_SECONDS, String(currentLevel));
-        this.logger.log(`Blogger ${userId} downgraded from ${currentLevel}, grace period started (7 days)`);
+        this.logger.log(
+          `Blogger ${userId} downgraded from ${currentLevel}, grace period started (7 days)`
+        );
         return { score, level: currentLevel };
       }
     }
@@ -149,11 +162,13 @@ export class BloggerScoreService implements OnModuleInit {
           bloggerLevel: isDowngrade ? currentLevel : newLevel,
           bloggerBadge: newLevel === "big_v" ? "big_v" : newLevel === "blogger" ? "blogger" : null,
         },
-      }),
+      })
     );
 
     if (isLevelChange) {
-      this.logger.log(`Blogger ${userId} level updated: ${currentLevel} -> ${isDowngrade ? currentLevel + " (grace)" : newLevel}`);
+      this.logger.log(
+        `Blogger ${userId} level updated: ${currentLevel} -> ${isDowngrade ? currentLevel + " (grace)" : newLevel}`
+      );
     }
 
     return { score, level: isDowngrade ? currentLevel : newLevel };
@@ -174,11 +189,15 @@ export class BloggerScoreService implements OnModuleInit {
         await this.updateBloggerLevel(blogger.id);
         updated++;
       } catch (error) {
-        this.logger.error(`Failed to recalculate score for ${blogger.id}: ${error instanceof Error ? error.message : "Unknown"}`);
+        this.logger.error(
+          `Failed to recalculate score for ${blogger.id}: ${error instanceof Error ? error.message : "Unknown"}`
+        );
       }
     }
 
-    this.logger.log(`Monthly recalculation complete: ${updated}/${bloggers.length} bloggers updated`);
+    this.logger.log(
+      `Monthly recalculation complete: ${updated}/${bloggers.length} bloggers updated`
+    );
   }
 
   async checkGracePeriod(userId: string): Promise<boolean> {

@@ -24,7 +24,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
-import { PhotoType } from '../../../types/prisma-enums';
+import { PhotoType } from "../../../types/prisma-enums";
 
 import { AuthenticatedRequest } from "../../../common/types/auth.types";
 import { AiQuotaGuard, SetQuotaType } from "../../../modules/security/rate-limit/ai-quota.guard";
@@ -164,7 +164,7 @@ export class AiStylistController {
     private readonly itemReplacementService: ItemReplacementService,
     private readonly sessionArchiveService: SessionArchiveService,
     private readonly presetQuestionsService: PresetQuestionsService,
-    private readonly weatherIntegrationService: WeatherIntegrationService,
+    private readonly weatherIntegrationService: WeatherIntegrationService
   ) {}
 
   @Post("sessions")
@@ -182,10 +182,7 @@ export class AiStylistController {
     status: 401,
     description: "未授权，需要提供有效的 Access Token",
   })
-  async createSession(
-    @Request() req: AuthenticatedRequest,
-    @Body() body: CreateStylistSessionDto,
-  ) {
+  async createSession(@Request() req: AuthenticatedRequest, @Body() body: CreateStylistSessionDto) {
     return this.stylistService.createSession(req.user.id, body);
   }
 
@@ -220,7 +217,7 @@ export class AiStylistController {
   async listSessions(
     @Request() req: AuthenticatedRequest,
     @Query("limit") limit?: string,
-    @Query("offset") offset?: string,
+    @Query("offset") offset?: string
   ) {
     return this.stylistService.listSessions(req.user.id, {
       limit: limit ? parseInt(limit, 10) : undefined,
@@ -254,14 +251,14 @@ export class AiStylistController {
   })
   async getSessionStatus(
     @Request() req: AuthenticatedRequest,
-    @Param("sessionId") sessionId: string,
+    @Param("sessionId") sessionId: string
   ) {
     return this.stylistService.getSessionStatus(req.user.id, sessionId);
   }
 
   @Post("sessions/:sessionId/messages")
   @UseGuards(AiQuotaGuard)
-  @SetQuotaType('ai-stylist')
+  @SetQuotaType("ai-stylist")
   @ApiOperation({
     summary: "发送 AI 造型师消息",
     description: "向指定会话发送消息，AI 将根据上下文返回穿搭建议。",
@@ -293,32 +290,28 @@ export class AiStylistController {
   async sendMessage(
     @Request() req: AuthenticatedRequest,
     @Param("sessionId") sessionId: string,
-    @Body() body: SendStylistMessageDto,
+    @Body() body: SendStylistMessageDto
   ) {
     let weatherContext: string | undefined;
     if (body.latitude !== undefined && body.longitude !== undefined) {
       const weather = await this.weatherIntegrationService.getWeatherContext(
         body.latitude,
-        body.longitude,
+        body.longitude
       );
       if (weather) {
         weatherContext = weather.slotString;
       }
     }
 
-    return this.stylistService.sendMessage(
-      req.user.id,
-      sessionId,
-      body.message,
-      weatherContext,
-    );
+    return this.stylistService.sendMessage(req.user.id, sessionId, body.message, weatherContext);
   }
 
   @Post("sessions/:sessionId/photo")
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   @ApiOperation({
     summary: "上传 AI 造型师照片",
-    description: "向指定会话上传用户照片，用于个性化穿搭推荐。支持正面、侧面、全身、半身、面部等类型。",
+    description:
+      "向指定会话上传用户照片，用于个性化穿搭推荐。支持正面、侧面、全身、半身、面部等类型。",
   })
   @ApiParam({
     name: "sessionId",
@@ -339,7 +332,8 @@ export class AiStylistController {
         type: {
           type: "string",
           enum: ["front", "side", "full_body", "half_body", "face"],
-          description: "照片类型：front(正面)、side(侧面)、full_body(全身)、half_body(半身)、face(面部)",
+          description:
+            "照片类型：front(正面)、side(侧面)、full_body(全身)、half_body(半身)、face(面部)",
         },
       },
       required: ["file"],
@@ -374,7 +368,7 @@ export class AiStylistController {
     @Request() req: AuthenticatedRequest,
     @Param("sessionId") sessionId: string,
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: UploadStylistPhotoDto,
+    @Body() body: UploadStylistPhotoDto
   ) {
     if (!file) {
       throw new BadRequestException("请上传图片文件");
@@ -384,13 +378,13 @@ export class AiStylistController {
       req.user.id,
       sessionId,
       file,
-      body.type || PhotoType.full_body,
+      body.type || PhotoType.full_body
     );
   }
 
   @Post("sessions/:sessionId/resolve")
   @UseGuards(AiQuotaGuard)
-  @SetQuotaType('ai-stylist')
+  @SetQuotaType("ai-stylist")
   @ApiOperation({
     summary: "生成 AI 造型师穿搭方案",
     description: "根据会话中的消息和照片，生成完整的穿搭方案推荐。",
@@ -420,7 +414,7 @@ export class AiStylistController {
   })
   async resolveSession(
     @Request() req: AuthenticatedRequest,
-    @Param("sessionId") sessionId: string,
+    @Param("sessionId") sessionId: string
   ) {
     return this.stylistService.resolveSession(req.user.id, sessionId);
   }
@@ -454,10 +448,7 @@ export class AiStylistController {
     status: 404,
     description: "会话不存在",
   })
-  async deleteSession(
-    @Request() req: AuthenticatedRequest,
-    @Param("sessionId") sessionId: string,
-  ) {
+  async deleteSession(@Request() req: AuthenticatedRequest, @Param("sessionId") sessionId: string) {
     return this.stylistService.deleteSession(req.user.id, sessionId);
   }
 
@@ -484,10 +475,7 @@ export class AiStylistController {
   })
   @ApiResponse({ status: 401, description: "未授权" })
   @ApiResponse({ status: 404, description: "会话不存在或未生成方案" })
-  async getOutfitPlan(
-    @Request() req: AuthenticatedRequest,
-    @Param("sessionId") sessionId: string,
-  ) {
+  async getOutfitPlan(@Request() req: AuthenticatedRequest, @Param("sessionId") sessionId: string) {
     return this.outfitPlanService.getOutfitPlan(req.user.id, sessionId);
   }
 
@@ -502,14 +490,14 @@ export class AiStylistController {
   async getAlternatives(
     @Request() req: AuthenticatedRequest,
     @Param("sessionId") sessionId: string,
-    @Query() query: GetAlternativesQueryDto,
+    @Query() query: GetAlternativesQueryDto
   ) {
     return this.itemReplacementService.getAlternatives(
       req.user.id,
       sessionId,
       query.outfitIndex,
       query.itemIndex,
-      query.limit,
+      query.limit
     );
   }
 
@@ -525,14 +513,14 @@ export class AiStylistController {
   async replaceItem(
     @Request() req: AuthenticatedRequest,
     @Param("sessionId") sessionId: string,
-    @Body() body: ReplaceItemDto,
+    @Body() body: ReplaceItemDto
   ) {
     return this.itemReplacementService.replaceItem(
       req.user.id,
       sessionId,
       body.outfitIndex,
       body.itemIndex,
-      body.newItemId,
+      body.newItemId
     );
   }
 
@@ -547,12 +535,12 @@ export class AiStylistController {
   async getCalendarDays(
     @Request() req: AuthenticatedRequest,
     @Query("year") year: string,
-    @Query("month") month: string,
+    @Query("month") month: string
   ) {
     return this.sessionArchiveService.getCalendarDays(
       req.user.id,
       parseInt(year, 10),
-      parseInt(month, 10),
+      parseInt(month, 10)
     );
   }
 
@@ -561,12 +549,14 @@ export class AiStylistController {
     summary: "获取指定日期的方案列表",
     description: "获取指定日期（YYYY-MM-DD）的所有穿搭方案。",
   })
-  @ApiParam({ name: "date", description: "日期，格式 YYYY-MM-DD", type: String, example: "2026-04-14" })
+  @ApiParam({
+    name: "date",
+    description: "日期，格式 YYYY-MM-DD",
+    type: String,
+    example: "2026-04-14",
+  })
   @ApiResponse({ status: 200, description: "获取成功" })
-  async getSessionsByDate(
-    @Request() req: AuthenticatedRequest,
-    @Param("date") date: string,
-  ) {
+  async getSessionsByDate(@Request() req: AuthenticatedRequest, @Param("date") date: string) {
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(date)) {
       throw new BadRequestException("日期格式必须为 YYYY-MM-DD");
@@ -577,7 +567,8 @@ export class AiStylistController {
   @Get("preset-questions")
   @ApiOperation({
     summary: "获取预设引导问题",
-    description: "获取 AI 造型师的预设引导问题列表，新用户首次进入时展示。同时返回是否为新用户的标识。",
+    description:
+      "获取 AI 造型师的预设引导问题列表，新用户首次进入时展示。同时返回是否为新用户的标识。",
   })
   @ApiResponse({ status: 200, description: "获取成功" })
   async getPresetQuestions(@Request() req: AuthenticatedRequest) {
@@ -588,10 +579,11 @@ export class AiStylistController {
 
   @Post("chat")
   @UseGuards(AiQuotaGuard)
-  @SetQuotaType('ai-stylist')
+  @SetQuotaType("ai-stylist")
   @ApiOperation({
     summary: "兼容旧版的无状态 AI 聊天接口",
-    description: "无状态的 AI 聊天接口，每次请求需要传入完整的对话历史。建议使用 sessions 接口替代。",
+    description:
+      "无状态的 AI 聊天接口，每次请求需要传入完整的对话历史。建议使用 sessions 接口替代。",
     deprecated: true,
   })
   @ApiBody({ type: LegacyChatDto })
@@ -609,21 +601,16 @@ export class AiStylistController {
     status: 401,
     description: "未授权，需要提供有效的 Access Token",
   })
-  async chat(
-    @Request() req: AuthenticatedRequest,
-    @Body() body: LegacyChatDto,
-  ) {
+  async chat(@Request() req: AuthenticatedRequest, @Body() body: LegacyChatDto) {
     return this.stylistService.chat(
       req.user.id,
       body.message,
       (body.conversationHistory || []).filter(
         (item) =>
           item &&
-          (item.role === "user" ||
-            item.role === "assistant" ||
-            item.role === "system") &&
-          typeof item.content === "string",
-      ) as Array<{ role: "user" | "assistant" | "system"; content: string }>,
+          (item.role === "user" || item.role === "assistant" || item.role === "system") &&
+          typeof item.content === "string"
+      ) as Array<{ role: "user" | "assistant" | "system"; content: string }>
     );
   }
 
@@ -725,7 +712,7 @@ export class AiStylistController {
   async submitFeedback(
     @Request() req: AuthenticatedRequest,
     @Param("sessionId") sessionId: string,
-    @Body() body: SubmitFeedbackDto,
+    @Body() body: SubmitFeedbackDto
   ) {
     return this.stylistService.submitFeedback(
       req.user.id,
@@ -735,7 +722,7 @@ export class AiStylistController {
       body.itemId,
       body.rating,
       body.dislikeReason,
-      body.dislikeDetail,
+      body.dislikeDetail
     );
   }
 
@@ -780,10 +767,7 @@ export class AiStylistController {
     status: 404,
     description: "会话不存在",
   })
-  async getFeedback(
-    @Request() req: AuthenticatedRequest,
-    @Param("sessionId") sessionId: string,
-  ) {
+  async getFeedback(@Request() req: AuthenticatedRequest, @Param("sessionId") sessionId: string) {
     return this.stylistService.getSessionFeedback(req.user.id, sessionId);
   }
 
@@ -822,13 +806,8 @@ export class AiStylistController {
       },
     },
   })
-  async getSystemContext(
-    @Query("refresh") refresh?: string,
-    @Query("section") section?: string,
-  ) {
-    const context = await this.systemContextService.getFullContext(
-      refresh === "true",
-    );
+  async getSystemContext(@Query("refresh") refresh?: string, @Query("section") section?: string) {
+    const context = await this.systemContextService.getFullContext(refresh === "true");
     if (section && section !== "all") {
       const keyMap: Record<string, keyof typeof context> = {
         git: "git",

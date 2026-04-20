@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,24 +11,24 @@ import {
   Dimensions,
   Platform,
 } from "react-native";
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { LinearGradient } from '@/src/polyfills/expo-linear-gradient';
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { outfitApi } from '../../../services/api/outfit.api';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import type { RootStackParamList } from '../../../types/navigation';
-import type { Outfit } from '../../../types/outfit';
-
+import { outfitApi } from "../../../services/api/outfit.api";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import type { RootStackParamList } from "../../../types/navigation";
+import type { Outfit } from "../../types/outfit";
+import { flatColors as colors } from "../../../design-system/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 type OutfitDetailRouteProp = RouteProp<RootStackParamList, "OutfitDetail">;
 
 export const OutfitDetailScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const route = useRoute<OutfitDetailRouteProp>();
   const { outfitId } = route.params;
@@ -159,7 +159,7 @@ export const OutfitDetailScreen: React.FC = () => {
           <Ionicons
             name={outfit.isFavorite ? "heart" : "heart-outline"}
             size={24}
-            color={outfit.isFavorite ? colors.error : colors.textPrimary}
+            color={outfit.isFavorite ? colors.error : colors.text}
           />
         </TouchableOpacity>
       </View>
@@ -168,7 +168,7 @@ export const OutfitDetailScreen: React.FC = () => {
           {outfit.thumbnailUri ? (
             <Image
               source={{ uri: outfit.thumbnailUri }}
-              style={styles.mainImage as any}
+              style={styles.mainImage}
               accessibilityLabel="搭配图片"
             />
           ) : (
@@ -198,7 +198,10 @@ export const OutfitDetailScreen: React.FC = () => {
           accessibilityLabel="标记为今日穿着"
           accessibilityRole="button"
         >
-          <LinearGradient colors={["colors.info" /* custom color */, colors.neutral[700]]} style={styles.wearButtonGradient} />
+          <LinearGradient
+            colors={["colors.info" /* custom color */, DesignTokens.colors.brand.slateDark]}
+            style={styles.wearButtonGradient}
+          />
           <Ionicons name="checkmark-circle-outline" size={20} color={colors.surface} />
           <Text style={styles.wearButtonText}>今日穿着</Text>
         </TouchableOpacity>
@@ -213,24 +216,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: Spacing.md,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.text,
+  },
   actionButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
@@ -246,26 +253,43 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  infoSection: { backgroundColor: colors.surface, marginTop: Spacing.md, padding: DesignTokens.spacing[5]},
-  outfitName: { fontSize: DesignTokens.typography.sizes['2xl'], fontWeight: "700", color: colors.textPrimary, marginBottom: Spacing.sm},
-  outfitDescription: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary, lineHeight: 22 },
+  infoSection: { backgroundColor: colors.surface, marginTop: 16, padding: 20 },
+  outfitName: {
+    fontSize: DesignTokens.typography.sizes["2xl"],
+    fontWeight: "700",
+    color: colors.textPrimary,
+    marginBottom: 8,
+  },
+  outfitDescription: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textSecondary,
+    lineHeight: 22,
+  },
   loadingContainer: { flex: 1, alignItems: "center", justifyContent: "center" },
-  loadingText: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: DesignTokens.spacing[3]},
-  errorContainer: { flex: 1, alignItems: "center", justifyContent: "center", padding: DesignTokens.spacing[5]},
+  loadingText: {
+    fontSize: DesignTokens.typography.sizes.md,
+    color: colors.textSecondary,
+    marginTop: 12,
+  },
+  errorContainer: { flex: 1, alignItems: "center", justifyContent: "center", padding: 20 },
   errorText: {
     fontSize: DesignTokens.typography.sizes.md,
     color: colors.textSecondary,
-    marginTop: DesignTokens.spacing[3],
+    marginTop: 12,
     textAlign: "center",
   },
   retryButton: {
     backgroundColor: colors.primary,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 24,
+    paddingVertical: 12,
     borderRadius: 8,
-    marginTop: Spacing.md,
+    marginTop: 16,
   },
-  retryButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.surface },
+  retryButtonText: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "500",
+    color: colors.surface,
+  },
   bottomSpacer: { height: 100 },
   footer: {
     position: "absolute",
@@ -273,8 +297,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     flexDirection: "row",
-    gap: DesignTokens.spacing[3],
-    padding: DesignTokens.spacing[5],
+    gap: 12,
+    padding: 20,
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
@@ -284,25 +308,33 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    gap: 8,
+    paddingVertical: 14,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.error,
   },
-  deleteButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "500", color: colors.error },
+  deleteButtonText: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "500",
+    color: colors.error,
+  },
   wearButton: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    gap: 8,
+    paddingVertical: 14,
     borderRadius: 12,
     overflow: "hidden",
   },
   wearButtonGradient: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
-  wearButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.surface },
+  wearButtonText: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.surface,
+  },
 });
 
 export default OutfitDetailScreen;

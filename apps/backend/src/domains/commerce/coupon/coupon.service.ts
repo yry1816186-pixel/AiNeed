@@ -1,17 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  BadRequestException,
-} from "@nestjs/common";
-import Decimal from "decimal.js";
-
-import { CouponType, UserCouponStatus } from '../../../types/prisma-enums';
+import { Injectable, Logger, NotFoundException, BadRequestException } from "@nestjs/common";
+import { CouponType, UserCouponStatus } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
-
+type Decimal = any;
 import { CreateCouponDto } from "./dto";
 
 export interface CouponValidationResult {
@@ -51,7 +44,7 @@ export class CouponService {
       data: {
         code,
         name: dto.name,
-        type: dto.type as unknown as CouponType,
+        type: dto.type as CouponType,
         value: dto.value,
         minOrderAmount: dto.minOrderAmount ?? 0,
         maxDiscount: dto.maxDiscount,
@@ -77,7 +70,7 @@ export class CouponService {
     userId: string,
     orderAmount: number,
     categoryIds?: string[],
-    brandId?: string,
+    brandId?: string
   ): Promise<CouponValidationResult> {
     const coupon = await this.prisma.coupon.findUnique({
       where: { code },
@@ -115,14 +108,8 @@ export class CouponService {
       };
     }
 
-    if (
-      coupon.applicableCategories.length > 0 &&
-      categoryIds &&
-      categoryIds.length > 0
-    ) {
-      const hasMatch = categoryIds.some((c) =>
-        coupon.applicableCategories.includes(c),
-      );
+    if (coupon.applicableCategories.length > 0 && categoryIds && categoryIds.length > 0) {
+      const hasMatch = categoryIds.some((c) => coupon.applicableCategories.includes(c));
       if (!hasMatch) {
         return { valid: false, discount: 0, reason: "该优惠码不适用于当前商品分类" };
       }
@@ -159,7 +146,7 @@ export class CouponService {
    */
   calculateDiscount(
     coupon: { type: string; value: number | Decimal; maxDiscount: number | Decimal | null },
-    orderAmount: number,
+    orderAmount: number
   ): number {
     const value = Number(coupon.value);
 
@@ -214,7 +201,6 @@ export class CouponService {
    * Uses atomic operation for usedCount increment to prevent overselling.
    */
   async useCoupon(userCouponId: string, orderId: string): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await this.prisma.$transaction(async (tx: any) => {
       const userCoupon = await tx.userCoupon.findUnique({
         where: { id: userCouponId },
@@ -286,15 +272,11 @@ export class CouponService {
    */
   async getApplicableCoupons(
     userId: string,
-    cartItems: { itemId: string; price: number; category?: string; brandId?: string }[],
+    cartItems: { itemId: string; price: number; category?: string; brandId?: string }[]
   ) {
     const totalAmount = cartItems.reduce((sum, item) => sum + item.price, 0);
-    const categoryIds = [
-      ...new Set(cartItems.map((i) => i.category).filter(Boolean)),
-    ] as string[];
-    const brandIds = [
-      ...new Set(cartItems.map((i) => i.brandId).filter(Boolean)),
-    ] as string[];
+    const categoryIds = [...new Set(cartItems.map((i) => i.category).filter(Boolean))] as string[];
+    const brandIds = [...new Set(cartItems.map((i) => i.brandId).filter(Boolean))] as string[];
 
     const allCoupons = await this.prisma.coupon.findMany({
       where: {
@@ -309,10 +291,15 @@ export class CouponService {
       const userUsage = await this.prisma.userCoupon.count({
         where: { userId, couponId: coupon.id },
       });
-      if (userUsage >= coupon.perUserLimit) {continue;}
-      if (coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit)
-        {continue;}
-      if (totalAmount < Number(coupon.minOrderAmount)) {continue;}
+      if (userUsage >= coupon.perUserLimit) {
+        continue;
+      }
+      if (coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit) {
+        continue;
+      }
+      if (totalAmount < Number(coupon.minOrderAmount)) {
+        continue;
+      }
 
       if (
         coupon.applicableCategories.length > 0 &&
@@ -398,7 +385,8 @@ export class CouponService {
   }
 
   private generateCode(type: string): string {
-    const prefix = type === "SHIPPING" ? "PROMO" : type === "PERCENTAGE" || type === "FIXED" ? "PROMO" : "FIRST";
+    const prefix =
+      type === "SHIPPING" ? "PROMO" : type === "PERCENTAGE" || type === "FIXED" ? "PROMO" : "FIRST";
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     let code = "";
     for (let i = 0; i < 8; i++) {

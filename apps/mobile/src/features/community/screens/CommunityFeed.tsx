@@ -8,14 +8,12 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
-import { FlashList } from '../../../polyfills/flash-list';
+import { FlashList } from "../../polyfills/flash-list";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { PostMasonryCard } from '../components/PostMasonryCard';
-import type { PostCardData } from '../components/PostMasonryCard';
-import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
-
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { PostMasonryCard } from "../../../components/community/PostMasonryCard";
+import type { PostCardData } from "../../../components/community/PostMasonryCard";
 
 type PostCardDataInternal = PostCardData;
 
@@ -65,7 +63,7 @@ function CommunityFeedInner({
             <Ionicons
               name={item.feedType === "like" ? "heart" : "shirt-outline"}
               size={16}
-              color={item.feedType === "like" ? colors.error : colors.neutral[500]} // custom color
+              color={item.feedType === "like" ? "colors.error" : DesignTokens.colors.brand.slate} // custom color
             />
             <Text style={s.feedActivityText}>{item.title}</Text>
           </View>
@@ -132,7 +130,7 @@ function CommunityFeedInner({
         contentContainerStyle={s.scrollContent}
       >
         {followingFeed.map((item, idx) => renderFollowingFeedItem(item, idx))}
-        <View style={{ height: Spacing['4xl'] }} />
+        <View style={{ height: 80 }} />
       </ScrollView>
     );
   }
@@ -148,17 +146,13 @@ function CommunityFeedInner({
           index={index}
           onPress={() => {}}
           visible={visibleIds.has(item.id)}
-          onHeightMeasured={(height: any) => onHeightMeasured(item.id, height)}
+          onHeightMeasured={(height) => onHeightMeasured(item.id, height)}
         />
       )}
       onEndReached={onLoadMore}
       onEndReachedThreshold={0.5}
       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          tintColor={colors.primary}
-        />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
       }
       contentContainerStyle={s.masonryListContent}
       onViewableItemsChanged={onViewableItemsChanged}
@@ -182,48 +176,70 @@ const s = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: DesignTokens.spacing[10],
+    paddingHorizontal: 40,
   },
-  loadingText: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textSecondary, marginTop: DesignTokens.spacing[3]},
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: staticColors.textPrimary, marginTop: Spacing.md},
-  emptySubtext: { fontSize: DesignTokens.typography.sizes.base, color: staticColors.textTertiary, marginTop: DesignTokens.spacing['1.5']},
-  errorTitle: { fontSize: DesignTokens.typography.sizes.md, color: staticColors.textPrimary, marginTop: Spacing.md, textAlign: "center" },
+  loadingText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textSecondary,
+    marginTop: 12,
+  },
+  emptyTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginTop: 16,
+  },
+  emptySubtext: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textTertiary,
+    marginTop: 6,
+  },
+  errorTitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    color: colors.textPrimary,
+    marginTop: 16,
+    textAlign: "center",
+  },
   retryBtn: {
-    marginTop: Spacing.lg,
-    backgroundColor: staticColors.primary,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    marginTop: 24,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 32,
+    paddingVertical: 14,
     borderRadius: 28,
   },
-  retryBtnText: { color: staticColors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
-  scrollContent: { paddingTop: DesignTokens.spacing[3], paddingBottom: DesignTokens.spacing[10]},
-  masonryListContent: { paddingHorizontal: DesignTokens.spacing[3], paddingTop: DesignTokens.spacing[3], paddingBottom: DesignTokens.spacing[10]},
+  retryBtnText: {
+    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+  },
+  scrollContent: { paddingTop: 12, paddingBottom: 40 },
+  masonryListContent: { paddingHorizontal: 12, paddingTop: 12, paddingBottom: 40 },
   loadingMore: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
+    gap: 8,
+    paddingVertical: 16,
   },
-  loadingMoreText: { fontSize: DesignTokens.typography.sizes.sm, color: staticColors.textTertiary },
+  loadingMoreText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   feedActivityCard: {
-    backgroundColor: staticColors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: DesignTokens.spacing['3.5'],
-    marginHorizontal: DesignTokens.spacing[3],
-    marginBottom: Spacing.sm,
+    padding: 14,
+    marginHorizontal: 12,
+    marginBottom: 8,
     flexDirection: "row",
     alignItems: "center",
   },
   feedActivityContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 8,
     flex: 1,
   },
   feedActivityText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
     flex: 1,
   },
 });

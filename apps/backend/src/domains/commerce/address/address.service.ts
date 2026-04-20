@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { AddressData } from "../../../common/types/common.types";
@@ -53,7 +49,7 @@ export interface ShippingAddressResponse {
 export class AddressService {
   constructor(
     private prisma: PrismaService,
-    private encryptionService: EncryptionService,
+    private encryptionService: EncryptionService
   ) {}
 
   async findAll(userId: string): Promise<AddressResponse[]> {
@@ -62,7 +58,7 @@ export class AddressService {
       orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }],
     });
 
-    return addresses.map((addr: AddressData) => this.mapToResponse(addr));
+    return addresses.map((addr: any) => this.mapToResponse(addr));
   }
 
   /**
@@ -93,10 +89,7 @@ export class AddressService {
     return this.mapToResponse(address);
   }
 
-  async create(
-    userId: string,
-    dto: CreateAddressDto,
-  ): Promise<AddressResponse> {
+  async create(userId: string, dto: CreateAddressDto): Promise<AddressResponse> {
     const phoneRegex = /^1[3-9]\d{9}$/;
     if (!phoneRegex.test(dto.phone)) {
       throw new BadRequestException("手机号格式不正确");
@@ -134,11 +127,7 @@ export class AddressService {
     return this.mapToResponse(address);
   }
 
-  async update(
-    userId: string,
-    id: string,
-    dto: UpdateAddressDto,
-  ): Promise<AddressResponse> {
+  async update(userId: string, id: string, dto: UpdateAddressDto): Promise<AddressResponse> {
     const existing = await this.prisma.userAddress.findFirst({
       where: { id, userId },
     });
@@ -162,7 +151,7 @@ export class AddressService {
     }
 
     // Prepare update data with encrypted PII fields
-    const updateData: Record<string, unknown> = { ...dto };
+    const updateData: any = { ...dto };
     if (dto.phone !== undefined) {
       updateData.phone = dto.phone ? this.encryptionService.encrypt(dto.phone) : undefined;
     }

@@ -1,21 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { InjectQueue } from '@nestjs/bullmq';
-import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  Inject,
-} from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { Queue } from 'bullmq';
+import { InjectQueue } from "@nestjs/bullmq";
+import { Injectable, Logger, NotFoundException, Inject } from "@nestjs/common";
+import { Queue } from "bullmq";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService, RedisKeyBuilder } from "../../../common/redis/redis.service";
 
-import { CreateFeatureFlagDto } from './dto/create-flag.dto';
-import { UpdateFeatureFlagDto } from './dto/update-flag.dto';
-import { PercentageStrategy, UserSegmentStrategy, ABTestStrategy } from './strategies';
-import type { ABTestResult } from './strategies';
+import { CreateFeatureFlagDto } from "./dto/create-flag.dto";
+import { UpdateFeatureFlagDto } from "./dto/update-flag.dto";
+import { PercentageStrategy, UserSegmentStrategy, ABTestStrategy } from "./strategies";
+import type { ABTestResult } from "./strategies";
 
 export interface EvaluateResult {
   enabled: boolean;
@@ -23,7 +17,7 @@ export interface EvaluateResult {
   reason: string;
 }
 
-const FEATURE_FLAG_QUEUE = 'feature_flag_evaluations';
+const FEATURE_FLAG_QUEUE = "feature_flag_evaluations";
 
 @Injectable()
 export class FeatureFlagService {
@@ -31,7 +25,10 @@ export class FeatureFlagService {
   private readonly LOCAL_TTL = 5000;
   private readonly REDIS_TTL = 30;
 
-  private localCache = new Map<string, { value: string | boolean | number | Record<string, unknown>; expiresAt: number }>();
+  private localCache = new Map<
+    string,
+    { value: string | boolean | number | Record<string, unknown>; expiresAt: number }
+  >();
   private percentageStrategy = new PercentageStrategy();
   private userSegmentStrategy = new UserSegmentStrategy();
   private abTestStrategy = new ABTestStrategy();
@@ -39,21 +36,24 @@ export class FeatureFlagService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly redisService: RedisService,
-    @InjectQueue(FEATURE_FLAG_QUEUE) private readonly evaluationQueue: Queue,
+    @InjectQueue(FEATURE_FLAG_QUEUE) private readonly evaluationQueue: Queue
   ) {}
 
   async findAll(query?: { skip?: number; take?: number; type?: string; enabled?: boolean }) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {};
-    if (query?.type) {where.type = query.type;}
-    if (query?.enabled !== undefined) {where.enabled = query.enabled;}
+    const where: Record<string, unknown> = {};
+    if (query?.type) {
+      where.type = query.type;
+    }
+    if (query?.enabled !== undefined) {
+      where.enabled = query.enabled;
+    }
 
     const [items, total] = await Promise.all([
       this.prisma.featureFlag.findMany({
         where,
         skip: query?.skip,
         take: query?.take,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       }),
       this.prisma.featureFlag.count({ where }),
     ]);
@@ -63,7 +63,9 @@ export class FeatureFlagService {
 
   async findOne(id: string) {
     const flag = await this.prisma.featureFlag.findUnique({ where: { id } });
-    if (!flag) {throw new NotFoundException(`Feature flag ${id} not found`);}
+    if (!flag) {
+      throw new NotFoundException(`Feature flag ${id} not found`);
+    }
     return flag;
   }
 
@@ -89,15 +91,28 @@ export class FeatureFlagService {
 
   async update(id: string, data: UpdateFeatureFlagDto) {
     const existing = await this.findOne(id);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const updateData: any = {};
-    if (data.key !== undefined) {updateData.key = data.key;}
-    if (data.name !== undefined) {updateData.name = data.name;}
-    if (data.description !== undefined) {updateData.description = data.description;}
-    if (data.type !== undefined) {updateData.type = data.type;}
-    if (data.value !== undefined) {updateData.value = data.value as any;}
-    if (data.enabled !== undefined) {updateData.enabled = data.enabled;}
-    if (data.rules !== undefined) {updateData.rules = data.rules as any;}
+    const updateData: Record<string, unknown> = {};
+    if (data.key !== undefined) {
+      updateData.key = data.key;
+    }
+    if (data.name !== undefined) {
+      updateData.name = data.name;
+    }
+    if (data.description !== undefined) {
+      updateData.description = data.description;
+    }
+    if (data.type !== undefined) {
+      updateData.type = data.type;
+    }
+    if (data.value !== undefined) {
+      updateData.value = data.value as any;
+    }
+    if (data.enabled !== undefined) {
+      updateData.enabled = data.enabled;
+    }
+    if (data.rules !== undefined) {
+      updateData.rules = data.rules as any;
+    }
 
     const flag = await this.prisma.featureFlag.update({
       where: { id },
@@ -117,54 +132,62 @@ export class FeatureFlagService {
     return { deleted: true };
   }
 
-  async evaluate(key: string, userId?: string, attributes?: Record<string, unknown>): Promise<EvaluateResult> {
+  async evaluate(
+    key: string,
+    userId?: string,
+    attributes?: Record<string, unknown>
+  ): Promise<EvaluateResult> {
     const flag = await this.getFlagWithCache(key);
     if (!flag) {
-      return { enabled: false, reason: 'flag_not_found' };
+      return { enabled: false, reason: "flag_not_found" };
     }
 
     if (!flag.enabled) {
       await this.logEvaluation(flag.id, userId, false, null, attributes);
-      return { enabled: false, reason: 'flag_disabled' };
+      return { enabled: false, reason: "flag_disabled" };
     }
 
     let result: EvaluateResult;
 
     switch (flag.type) {
-      case 'boolean': {
+      case "boolean": {
         const enabled = Boolean((flag.value as Record<string, unknown>).enabled ?? false);
-        result = { enabled, reason: 'boolean_toggle' };
+        result = { enabled, reason: "boolean_toggle" };
         break;
       }
-      case 'percentage': {
+      case "percentage": {
         if (!userId) {
-          result = { enabled: false, reason: 'no_user_id' };
+          result = { enabled: false, reason: "no_user_id" };
           break;
         }
         const enabled = this.percentageStrategy.evaluate(flag, userId);
-        result = { enabled, reason: enabled ? 'within_percentage' : 'outside_percentage' };
+        result = { enabled, reason: enabled ? "within_percentage" : "outside_percentage" };
         break;
       }
-      case 'segment': {
+      case "segment": {
         if (!userId) {
-          result = { enabled: false, reason: 'no_user_id' };
+          result = { enabled: false, reason: "no_user_id" };
           break;
         }
         const enabled = this.userSegmentStrategy.evaluate(flag, userId, attributes);
-        result = { enabled, reason: enabled ? 'in_segment' : 'not_in_segment' };
+        result = { enabled, reason: enabled ? "in_segment" : "not_in_segment" };
         break;
       }
-      case 'variant': {
+      case "variant": {
         if (!userId) {
-          result = { enabled: false, variant: 'control', reason: 'no_user_id' };
+          result = { enabled: false, variant: "control", reason: "no_user_id" };
           break;
         }
         const abResult: ABTestResult = this.abTestStrategy.evaluate(flag, userId);
-        result = { enabled: abResult.enabled, variant: abResult.variant, reason: 'variant_assigned' };
+        result = {
+          enabled: abResult.enabled,
+          variant: abResult.variant,
+          reason: "variant_assigned",
+        };
         break;
       }
       default:
-        result = { enabled: false, reason: 'unknown_type' };
+        result = { enabled: false, reason: "unknown_type" };
     }
 
     await this.logEvaluation(flag.id, userId, result.enabled, result.variant ?? null, attributes);
@@ -173,7 +196,7 @@ export class FeatureFlagService {
 
   async refreshCache(key?: string) {
     if (key) {
-      const redisKey = RedisKeyBuilder.cache('feature-flag', key);
+      const redisKey = RedisKeyBuilder.cache("feature-flag", key);
       await this.redisService.del(redisKey);
       this.localCache.delete(key);
     } else {
@@ -186,10 +209,13 @@ export class FeatureFlagService {
       where: { enabled: true },
       select: { key: true, type: true, value: true },
     });
-    return flags.map((f: any) => ({
+    return flags.map((f) => ({
       key: f.key,
       type: f.type,
-      value: f.type === 'boolean' ? (f.value as Record<string, unknown>).enabled ?? false : f.value,
+      value:
+        f.type === "boolean"
+          ? Boolean((f.value as Record<string, unknown>).enabled ?? false)
+          : f.value,
     }));
   }
 
@@ -200,7 +226,7 @@ export class FeatureFlagService {
       return cached.value;
     }
 
-    const redisKey = RedisKeyBuilder.cache('feature-flag', key);
+    const redisKey = RedisKeyBuilder.cache("feature-flag", key);
     const redisValue = await this.redisService.get(redisKey);
     if (redisValue) {
       const parsed = JSON.parse(redisValue);
@@ -221,23 +247,29 @@ export class FeatureFlagService {
     userId: string | undefined,
     result: boolean,
     variant: string | null,
-    attributes: Record<string, unknown> | undefined,
+    attributes: Record<string, unknown> | undefined
   ) {
     try {
-      await this.evaluationQueue.add('log-evaluation', {
-        flagId,
-        userId: userId ?? null,
-        result,
-        variant,
-        attributes: attributes ?? null,
-        evaluatedAt: new Date().toISOString(),
-      }, {
-        attempts: 2,
-        removeOnComplete: { count: 1000 },
-        removeOnFail: { count: 100 },
-      });
+      await this.evaluationQueue.add(
+        "log-evaluation",
+        {
+          flagId,
+          userId: userId ?? null,
+          result,
+          variant,
+          attributes: attributes ?? null,
+          evaluatedAt: new Date().toISOString(),
+        },
+        {
+          attempts: 2,
+          removeOnComplete: { count: 1000 },
+          removeOnFail: { count: 100 },
+        }
+      );
     } catch (error) {
-      this.logger.warn(`Failed to queue evaluation log: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.warn(
+        `Failed to queue evaluation log: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 }

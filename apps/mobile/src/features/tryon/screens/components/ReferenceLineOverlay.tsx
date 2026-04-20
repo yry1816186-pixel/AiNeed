@@ -6,9 +6,10 @@ import type {
   AlignmentStatus,
   AlignmentLevel,
   OverallAlignment,
-} from "../../../../shared/hooks/useReferenceLines";
-import { DesignTokens, flatColors as staticColors } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+} from "../../../hooks/useReferenceLines";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface ReferenceLineOverlayProps {
   referenceLines: ReferenceLines | null;
@@ -22,14 +23,14 @@ function getLineColor(level: AlignmentLevel | OverallAlignment): string {
     case "aligned":
     case "perfect":
     case "good":
-      return staticColors.success;
+      return colors.success;
     case "slight":
-      return staticColors.warning;
+      return colors.warning;
     case "off":
     case "adjust":
-      return staticColors.error;
+      return colors.error;
     default:
-      return staticColors.warning;
+      return colors.warning;
   }
 }
 
@@ -126,4 +127,4 @@ const useStyles = createStyles((colors) => ({
     top: 0,
     left: 0,
   },
-}))
+}));

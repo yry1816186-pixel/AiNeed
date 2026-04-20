@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 export interface AuditLogParams {
@@ -50,15 +48,7 @@ export class AdminAuditService {
   }
 
   async query(filters: AuditLogQueryFilters) {
-    const {
-      page = 1,
-      pageSize = 20,
-      userId,
-      action,
-      resource,
-      startDate,
-      endDate,
-    } = filters;
+    const { page = 1, pageSize = 20, userId, action, resource, startDate, endDate } = filters;
 
     const where: Record<string, unknown> = {};
 
@@ -76,8 +66,12 @@ export class AdminAuditService {
 
     if (startDate || endDate) {
       const createdAt: Record<string, Date> = {};
-      if (startDate) {createdAt.gte = startDate;}
-      if (endDate) {createdAt.lte = endDate;}
+      if (startDate) {
+        createdAt.gte = startDate;
+      }
+      if (endDate) {
+        createdAt.lte = endDate;
+      }
       where.createdAt = createdAt;
     }
 

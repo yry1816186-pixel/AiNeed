@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { OnboardingStep, Gender } from '../../../types/prisma-enums';
+import { OnboardingStep, Gender } from "@/types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
@@ -101,10 +101,7 @@ describe("OnboardingService", () => {
       const result = await service.getOnboardingState("test-user-id");
 
       expect(result.currentStep).toBe(OnboardingStep.STYLE_TEST);
-      expect(result.completedSteps).toEqual([
-        OnboardingStep.BASIC_INFO,
-        OnboardingStep.PHOTO,
-      ]);
+      expect(result.completedSteps).toEqual([OnboardingStep.BASIC_INFO, OnboardingStep.PHOTO]);
     });
 
     it("应该返回 COMPLETED 状态和所有步骤在 completedSteps", async () => {
@@ -126,9 +123,9 @@ describe("OnboardingService", () => {
     it("应该抛出 NotFoundException 当 profile 不存在", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getOnboardingState("non-existent-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getOnboardingState("non-existent-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
@@ -224,18 +221,18 @@ describe("OnboardingService", () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
 
-      await expect(
-        service.completeBasicInfo("non-existent-id", dto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.completeBasicInfo("non-existent-id", dto)).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("应该抛出 NotFoundException 当 profile 不存在", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
       mockPrismaService.userProfile.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.completeBasicInfo("test-user-id", dto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.completeBasicInfo("test-user-id", dto)).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("应该抛出 BadRequestException 当当前步骤不是 BASIC_INFO", async () => {
@@ -245,9 +242,9 @@ describe("OnboardingService", () => {
         onboardingStep: OnboardingStep.PHOTO,
       });
 
-      await expect(
-        service.completeBasicInfo("test-user-id", dto),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.completeBasicInfo("test-user-id", dto)).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("应该抛出 BadRequestException 当当前步骤是 COMPLETED", async () => {
@@ -257,9 +254,9 @@ describe("OnboardingService", () => {
         onboardingStep: OnboardingStep.COMPLETED,
       });
 
-      await expect(
-        service.completeBasicInfo("test-user-id", dto),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.completeBasicInfo("test-user-id", dto)).rejects.toThrow(
+        BadRequestException
+      );
     });
   });
 
@@ -325,23 +322,21 @@ describe("OnboardingService", () => {
     });
 
     it("应该抛出 BadRequestException 当尝试跳过 BASIC_INFO", async () => {
-      await expect(
-        service.skipStep("test-user-id", "BASIC_INFO"),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.skipStep("test-user-id", "BASIC_INFO")).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("应该抛出 BadRequestException 当尝试跳过无效步骤", async () => {
-      await expect(
-        service.skipStep("test-user-id", "INVALID_STEP"),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.skipStep("test-user-id", "INVALID_STEP")).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("应该抛出 NotFoundException 当 profile 不存在", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.skipStep("test-user-id", "PHOTO"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.skipStep("test-user-id", "PHOTO")).rejects.toThrow(NotFoundException);
     });
 
     it("应该抛出 BadRequestException 当当前步骤不匹配", async () => {
@@ -350,9 +345,7 @@ describe("OnboardingService", () => {
         onboardingStep: OnboardingStep.BASIC_INFO,
       });
 
-      await expect(
-        service.skipStep("test-user-id", "PHOTO"),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.skipStep("test-user-id", "PHOTO")).rejects.toThrow(BadRequestException);
     });
 
     it("应该抛出 BadRequestException 当尝试跳过 STYLE_TEST 但当前是 PHOTO", async () => {
@@ -361,9 +354,9 @@ describe("OnboardingService", () => {
         onboardingStep: OnboardingStep.PHOTO,
       });
 
-      await expect(
-        service.skipStep("test-user-id", "STYLE_TEST"),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.skipStep("test-user-id", "STYLE_TEST")).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("不应该重复添加已跳过的步骤", async () => {
@@ -390,7 +383,7 @@ describe("OnboardingService", () => {
           data: expect.objectContaining({
             skippedOnboardingSteps: ["PHOTO"],
           }),
-        }),
+        })
       );
     });
   });
@@ -503,9 +496,9 @@ describe("OnboardingService", () => {
     it("应该抛出 NotFoundException 当 profile 不存在", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getOnboardingProgress("non-existent-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getOnboardingProgress("non-existent-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("应该处理 skippedOnboardingSteps 为 null 的情况", async () => {

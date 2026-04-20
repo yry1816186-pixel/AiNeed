@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Injectable, Logger } from "@nestjs/common";
-import {
-  BodyType,
-  SkinTone,
-  ColorSeason,
-  ClothingCategory,
-} from '../../../types/prisma-enums';
-import Decimal from "decimal.js";
+import { Injectable, Logger } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CacheKeyBuilder, CACHE_TTL } from "../../../modules/cache/cache.constants";
@@ -35,13 +30,12 @@ export interface RecommendedItem {
     id: string;
     name: string;
     category: ClothingCategory;
-    price: Decimal;
-    originalPrice: Decimal | null;
+    price: Prisma.Decimal;
+    originalPrice: Prisma.Decimal | null;
     mainImage: string | null;
     images: string[];
     colors: string[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    attributes: any;
+    attributes: Prisma.JsonValue;
     viewCount: number;
     likeCount: number;
     brand: {
@@ -101,10 +95,34 @@ const OCCASION_STYLE_MAP: Record<string, string[]> = {
 
 // 季节-分类适配映射
 const SEASON_CATEGORY_MAP: Record<string, ClothingCategory[]> = {
-  spring: [ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.dresses, ClothingCategory.outerwear, ClothingCategory.footwear],
-  summer: [ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.dresses, ClothingCategory.swimwear, ClothingCategory.footwear],
-  autumn: [ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.outerwear, ClothingCategory.footwear, ClothingCategory.accessories],
-  winter: [ClothingCategory.outerwear, ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.footwear, ClothingCategory.accessories],
+  spring: [
+    ClothingCategory.tops,
+    ClothingCategory.bottoms,
+    ClothingCategory.dresses,
+    ClothingCategory.outerwear,
+    ClothingCategory.footwear,
+  ],
+  summer: [
+    ClothingCategory.tops,
+    ClothingCategory.bottoms,
+    ClothingCategory.dresses,
+    ClothingCategory.swimwear,
+    ClothingCategory.footwear,
+  ],
+  autumn: [
+    ClothingCategory.tops,
+    ClothingCategory.bottoms,
+    ClothingCategory.outerwear,
+    ClothingCategory.footwear,
+    ClothingCategory.accessories,
+  ],
+  winter: [
+    ClothingCategory.outerwear,
+    ClothingCategory.tops,
+    ClothingCategory.bottoms,
+    ClothingCategory.footwear,
+    ClothingCategory.accessories,
+  ],
 };
 
 // 搭配模板：上衣+下装+鞋包
@@ -113,12 +131,56 @@ const OUTFIT_TEMPLATES: Array<{
   slots: ClothingCategory[];
   occasion?: string;
 }> = [
-  { name: "日常通勤", slots: [ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.footwear], occasion: "daily" },
-  { name: "商务正装", slots: [ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.outerwear, ClothingCategory.footwear], occasion: "work" },
-  { name: "休闲出行", slots: [ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.footwear, ClothingCategory.accessories], occasion: "travel" },
-  { name: "约会穿搭", slots: [ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.footwear, ClothingCategory.accessories], occasion: "date" },
-  { name: "派对造型", slots: [ClothingCategory.dresses, ClothingCategory.footwear, ClothingCategory.accessories], occasion: "party" },
-  { name: "面试着装", slots: [ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.outerwear, ClothingCategory.footwear], occasion: "interview" },
+  {
+    name: "日常通勤",
+    slots: [ClothingCategory.tops, ClothingCategory.bottoms, ClothingCategory.footwear],
+    occasion: "daily",
+  },
+  {
+    name: "商务正装",
+    slots: [
+      ClothingCategory.tops,
+      ClothingCategory.bottoms,
+      ClothingCategory.outerwear,
+      ClothingCategory.footwear,
+    ],
+    occasion: "work",
+  },
+  {
+    name: "休闲出行",
+    slots: [
+      ClothingCategory.tops,
+      ClothingCategory.bottoms,
+      ClothingCategory.footwear,
+      ClothingCategory.accessories,
+    ],
+    occasion: "travel",
+  },
+  {
+    name: "约会穿搭",
+    slots: [
+      ClothingCategory.tops,
+      ClothingCategory.bottoms,
+      ClothingCategory.footwear,
+      ClothingCategory.accessories,
+    ],
+    occasion: "date",
+  },
+  {
+    name: "派对造型",
+    slots: [ClothingCategory.dresses, ClothingCategory.footwear, ClothingCategory.accessories],
+    occasion: "party",
+  },
+  {
+    name: "面试着装",
+    slots: [
+      ClothingCategory.tops,
+      ClothingCategory.bottoms,
+      ClothingCategory.outerwear,
+      ClothingCategory.footwear,
+    ],
+    occasion: "interview",
+  },
 ];
 
 @Injectable()
@@ -127,7 +189,7 @@ export class RecommendationsService {
 
   constructor(
     private prisma: PrismaService,
-    private cacheService: CacheService,
+    private cacheService: CacheService
   ) {}
 
   // ==================== 主推荐入口 ====================
@@ -139,7 +201,7 @@ export class RecommendationsService {
       occasion?: string;
       season?: string;
       limit?: number;
-    } = {},
+    } = {}
   ): Promise<RecommendedItem[]> {
     const { category, occasion, season, limit = 20 } = options;
 
@@ -168,16 +230,14 @@ export class RecommendationsService {
           profile,
           interactions,
           { category, season, occasion },
-          limit * 3,
+          limit * 3
         );
 
-        const scoredItems = candidateItems.map((item: any) => {
-          const { score, reasons } = this.computeRuleBasedScore(
-            profile,
-            interactions,
-            item,
-            { occasion, season },
-          );
+        const scoredItems = candidateItems.map((item) => {
+          const { score, reasons } = this.computeRuleBasedScore(profile, interactions, item, {
+            occasion,
+            season,
+          });
           return { item, score, matchReasons: reasons };
         });
 
@@ -186,7 +246,7 @@ export class RecommendationsService {
 
         return diversified.slice(0, limit);
       },
-      CACHE_TTL.OUTFIT_RECOMMENDATIONS,
+      CACHE_TTL.OUTFIT_RECOMMENDATIONS
     );
 
     return cached ?? [];
@@ -196,7 +256,7 @@ export class RecommendationsService {
 
   async getOutfitRecommendations(
     userId: string,
-    options: { occasion?: string; season?: string; limit?: number } = {},
+    options: { occasion?: string; season?: string; limit?: number } = {}
   ): Promise<OutfitRecommendation[]> {
     const { occasion, season, limit = 5 } = options;
 
@@ -216,10 +276,21 @@ export class RecommendationsService {
         const interactions = await this.buildUserInteractionSummary(userId);
 
         // 根据场合筛选搭配模板
-        let templates: Array<{ name: string; slots: ClothingCategory[]; occasion?: string }> = [...OUTFIT_TEMPLATES];
+        let templates: Array<{ name: string; slots: ClothingCategory[]; occasion?: string }> = [
+          ...OUTFIT_TEMPLATES,
+        ];
         if (occasion) {
           const matched = templates.filter((t) => t.occasion === occasion);
-          templates = matched.length > 0 ? matched : [OUTFIT_TEMPLATES[0] as { name: string; slots: ClothingCategory[]; occasion?: string }];
+          templates =
+            matched.length > 0
+              ? matched
+              : [
+                  OUTFIT_TEMPLATES[0] as {
+                    name: string;
+                    slots: ClothingCategory[];
+                    occasion?: string;
+                  },
+                ];
         }
 
         const outfits: OutfitRecommendation[] = [];
@@ -236,7 +307,7 @@ export class RecommendationsService {
 
         return outfits.sort((a, b) => b.totalScore - a.totalScore);
       },
-      CACHE_TTL.OUTFIT_COMBINATIONS,
+      CACHE_TTL.OUTFIT_COMBINATIONS
     );
 
     return cached ?? [];
@@ -285,9 +356,13 @@ export class RecommendationsService {
 
         // 基于用户行为数据补充建议
         const interactions = await this.buildUserInteractionSummary(userId);
-        if (interactions.viewedCategories && Object.keys(interactions.viewedCategories).length > 0) {
-          const topCategory = Object.entries(interactions.viewedCategories)
-            .sort((a, b) => b[1] - a[1])[0];
+        if (
+          interactions.viewedCategories &&
+          Object.keys(interactions.viewedCategories).length > 0
+        ) {
+          const topCategory = Object.entries(interactions.viewedCategories).sort(
+            (a, b) => b[1] - a[1]
+          )[0];
           if (topCategory) {
             const categoryName = this.getClothingCategoryName(topCategory[0] as ClothingCategory);
             recommendations.push(`您经常浏览${categoryName}类单品，可尝试更多该品类搭配`);
@@ -301,7 +376,7 @@ export class RecommendationsService {
           recommendations,
         };
       },
-      CACHE_TTL.STYLE_GUIDE,
+      CACHE_TTL.STYLE_GUIDE
     );
 
     return (
@@ -364,15 +439,15 @@ export class RecommendationsService {
       ]);
 
       // 收藏的商品ID集合
-      const favoriteItemIds = favorites.map((f: any) => f.itemId);
+      const favoriteItemIds = favorites.map((f) => f.itemId);
 
       // 浏览过的商品ID -> 用于协同过滤
       const viewedItemIds = behaviors
-        .filter((b: any) => b.itemId && b.type === "page_view")
-        .map((b: any) => b.itemId!);
+        .filter((b) => b.itemId && b.type === "page_view")
+        .map((b) => b.itemId!);
 
       // 购物车中的商品ID
-      const cartItemIds = cartItems.map((c: any) => c.itemId);
+      const cartItemIds = cartItems.map((c) => c.itemId);
 
       // 从收藏/浏览商品中提取偏好颜色
       const preferredColors = await this.extractPreferredColors([
@@ -393,7 +468,7 @@ export class RecommendationsService {
       }
 
       // 最近的行为类型（用于判断用户活跃度）
-      const recentBehaviorTypes = behaviors.slice(0, 20).map((b: any) => b.type);
+      const recentBehaviorTypes = behaviors.slice(0, 20).map((b) => b.type);
 
       return {
         favoriteItemIds,
@@ -403,7 +478,9 @@ export class RecommendationsService {
         recentBehaviorTypes,
       };
     } catch (error) {
-      this.logger.warn(`构建用户行为摘要失败: ${error instanceof Error ? error.message : "unknown"}`);
+      this.logger.warn(
+        `构建用户行为摘要失败: ${error instanceof Error ? error.message : "unknown"}`
+      );
       return {
         favoriteItemIds: [],
         viewedCategories: {},
@@ -415,7 +492,9 @@ export class RecommendationsService {
   }
 
   private async extractPreferredColors(itemIds: string[]): Promise<string[]> {
-    if (itemIds.length === 0) {return [];}
+    if (itemIds.length === 0) {
+      return [];
+    }
 
     const items = await this.prisma.clothingItem.findMany({
       where: { id: { in: itemIds.slice(0, 100) } },
@@ -442,10 +521,9 @@ export class RecommendationsService {
     profile: UserProfile,
     interactions: UserInteractionSummary,
     filters: { category?: ClothingCategory; season?: string; occasion?: string },
-    take: number,
+    take: number
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {
+    const where: Prisma.ClothingItemWhereInput = {
       isActive: true,
       isDeleted: false,
     };
@@ -462,10 +540,7 @@ export class RecommendationsService {
     }
 
     // 排除已收藏/已加购的商品（避免重复推荐过多）
-    const excludeIds = [
-      ...interactions.favoriteItemIds,
-      ...interactions.cartItemIds,
-    ].slice(0, 50);
+    const excludeIds = [...interactions.favoriteItemIds, ...interactions.cartItemIds].slice(0, 50);
 
     if (excludeIds.length > 0) {
       where.id = { notIn: excludeIds };
@@ -487,10 +562,7 @@ export class RecommendationsService {
         likeCount: true,
         brand: { select: { id: true, name: true, logo: true } },
       },
-      orderBy: [
-        { viewCount: "desc" },
-        { likeCount: "desc" },
-      ],
+      orderBy: [{ viewCount: "desc" }, { likeCount: "desc" }],
       take,
     });
   }
@@ -501,10 +573,9 @@ export class RecommendationsService {
     profile: UserProfile,
     interactions: UserInteractionSummary,
     item: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      attributes?: any;
+      attributes?: Prisma.JsonValue;
       colors: string[];
-      price: Decimal;
+      price: Prisma.Decimal;
       category: ClothingCategory;
       viewCount: number;
       likeCount: number;
@@ -513,7 +584,7 @@ export class RecommendationsService {
       images: string[];
       id: string;
     },
-    context: { occasion?: string; season?: string },
+    context: { occasion?: string; season?: string }
   ): { score: number; reasons: string[] } {
     let score = 40; // 基础分
     const reasons: string[] = [];
@@ -539,7 +610,7 @@ export class RecommendationsService {
     if (profile.skinTone && item.colors?.length > 0) {
       const flatteringColors = this.getFlatteringColors(profile.skinTone);
       const matchedColor = item.colors.find((c: string) =>
-        flatteringColors.includes(c.toLowerCase()),
+        flatteringColors.includes(c.toLowerCase())
       );
       if (matchedColor) {
         score += WEIGHTS.skinToneColorMatch;
@@ -550,9 +621,9 @@ export class RecommendationsService {
     // 4. 场合匹配 (+15)
     if (context.occasion && attrs?.styleTags && Array.isArray(attrs.styleTags)) {
       const occasionKeywords = OCCASION_STYLE_MAP[context.occasion.toLowerCase()] || [];
-      const hasMatch = attrs.styleTags.some((s: unknown) =>
-        typeof s === "string" &&
-        occasionKeywords.some((k) => s.toLowerCase().includes(k)),
+      const hasMatch = attrs.styleTags.some(
+        (s: unknown) =>
+          typeof s === "string" && occasionKeywords.some((k) => s.toLowerCase().includes(k))
       );
       if (hasMatch) {
         score += WEIGHTS.occasionMatch;
@@ -572,7 +643,7 @@ export class RecommendationsService {
     // 6. 颜色偏好匹配
     if (interactions.preferredColors.length > 0 && item.colors.length > 0) {
       const colorOverlap = item.colors.filter((c) =>
-        interactions.preferredColors.includes(c.toLowerCase()),
+        interactions.preferredColors.includes(c.toLowerCase())
       );
       if (colorOverlap.length > 0) {
         score += 5;
@@ -603,7 +674,11 @@ export class RecommendationsService {
     }
 
     // 9. 协同过滤：基于相似用户的简化实现
-    if (interactions.favoriteItemIds.length > 0 && attrs?.styleTags && Array.isArray(attrs.styleTags)) {
+    if (
+      interactions.favoriteItemIds.length > 0 &&
+      attrs?.styleTags &&
+      Array.isArray(attrs.styleTags)
+    ) {
       score += Math.min(WEIGHTS.collaborativeSimilarity, interactions.recentBehaviorTypes.length);
     }
 
@@ -632,7 +707,9 @@ export class RecommendationsService {
     const byCategory = new Map<string, ScoredItem[]>();
     for (const item of scoredItems) {
       const cat = item.item.category;
-      if (!byCategory.has(cat)) {byCategory.set(cat, []);}
+      if (!byCategory.has(cat)) {
+        byCategory.set(cat, []);
+      }
       byCategory.get(cat)!.push(item);
     }
 
@@ -643,24 +720,30 @@ export class RecommendationsService {
         if (top) {
           result.push(top);
           usedCategories.add(top.item.category);
-          if (top.item.brand) {usedBrands.add(top.item.brand.id);}
+          if (top.item.brand) {
+            usedBrands.add(top.item.brand.id);
+          }
         }
       }
     }
 
     // 第二轮：填充剩余位置，惩罚连续同类别/同品牌
-    const remaining = scoredItems.filter(
-      (item) => !result.includes(item),
-    );
+    const remaining = scoredItems.filter((item) => !result.includes(item));
 
     for (const item of remaining) {
-      if (result.length >= scoredItems.length) {break;}
+      if (result.length >= scoredItems.length) {
+        break;
+      }
 
       let penalty = 0;
       const last3 = result.slice(-3);
       for (const prev of last3) {
-        if (prev.item.category === item.item.category) {penalty += WEIGHTS.diversityPenalty;}
-        if (prev.item.brand?.id === item.item.brand?.id) {penalty += WEIGHTS.diversityPenalty;}
+        if (prev.item.category === item.item.category) {
+          penalty += WEIGHTS.diversityPenalty;
+        }
+        if (prev.item.brand?.id === item.item.brand?.id) {
+          penalty += WEIGHTS.diversityPenalty;
+        }
       }
 
       result.push({ ...item, score: item.score + penalty });
@@ -675,7 +758,7 @@ export class RecommendationsService {
     template: { name: string; slots: ClothingCategory[]; occasion?: string },
     profile: UserProfile | null,
     interactions: UserInteractionSummary,
-    context: { occasion?: string; season?: string },
+    context: { occasion?: string; season?: string }
   ): Promise<OutfitRecommendation | null> {
     const outfitItems: RecommendedItem[] = [];
     let totalScore = 0;
@@ -686,22 +769,24 @@ export class RecommendationsService {
         profile || { stylePreferences: [], colorPreferences: [] },
         interactions,
         { category: slot, season: context.season, occasion: context.occasion },
-        10,
+        10
       );
 
-      if (slotCandidates.length === 0) {continue;}
+      if (slotCandidates.length === 0) {
+        continue;
+      }
 
-      const scored = slotCandidates.map((item: any) => {
+      const scored = slotCandidates.map((item) => {
         const { score, reasons } = this.computeRuleBasedScore(
           profile || { stylePreferences: [], colorPreferences: [] },
           interactions,
           item,
-          context,
+          context
         );
         return { item, score, matchReasons: reasons };
       });
 
-      scored.sort((a: any, b: any) => b.score - a.score);
+      scored.sort((a, b) => b.score - a.score);
       const best = scored[0];
 
       if (best) {
@@ -711,7 +796,9 @@ export class RecommendationsService {
       }
     }
 
-    if (outfitItems.length < 2) {return null;} // 至少需要2件单品才算有效搭配
+    if (outfitItems.length < 2) {
+      return null;
+    } // 至少需要2件单品才算有效搭配
 
     // 生成搭配理由
     const uniqueReasons = [...new Set(allReasons)];
@@ -734,7 +821,7 @@ export class RecommendationsService {
 
   private async getPopularItems(
     category?: ClothingCategory,
-    limit: number = 20,
+    limit: number = 20
   ): Promise<RecommendedItem[]> {
     const items = await this.prisma.clothingItem.findMany({
       where: {
@@ -764,7 +851,7 @@ export class RecommendationsService {
       take: limit,
     });
 
-    return items.map((item: any) => ({
+    return items.map((item) => ({
       item: {
         id: item.id,
         name: item.name,

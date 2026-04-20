@@ -20,8 +20,15 @@ import Animated, {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius, Shadows, SpringConfigs, Duration, DesignTokens } from '../../theme';
-
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  SpringConfigs,
+  Duration,
+  DesignTokens,
+} from "../../theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -311,7 +318,7 @@ const styles = StyleSheet.create({
   },
   discountText: {
     color: Colors.white,
-    fontSize: DesignTokens.typography.sizes.sm,
+    fontSize: 12,
     fontWeight: "600",
   },
   favoriteButton: {
@@ -326,7 +333,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   favoriteIcon: {
-    fontSize: DesignTokens.typography.sizes.lg,
+    fontSize: 18,
     color: Colors.error[500],
   },
   productInfo: {
@@ -334,12 +341,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   brandText: {
-    fontSize: DesignTokens.typography.sizes.xs,
+    fontSize: 11,
     color: Colors.neutral[500],
     marginBottom: Spacing[1],
   },
   titleText: {
-    fontSize: DesignTokens.typography.sizes.sm,
+    fontSize: 13,
     fontWeight: "500",
     color: Colors.neutral[900],
     marginBottom: Spacing[2],
@@ -351,12 +358,12 @@ const styles = StyleSheet.create({
     gap: Spacing[2],
   },
   priceText: {
-    fontSize: DesignTokens.typography.sizes.md,
+    fontSize: 16,
     fontWeight: "700",
     color: Colors.neutral[900],
   },
   originalPriceText: {
-    fontSize: DesignTokens.typography.sizes.sm,
+    fontSize: 12,
     color: Colors.neutral[400],
     textDecorationLine: "line-through",
   },
@@ -367,11 +374,11 @@ const styles = StyleSheet.create({
     gap: Spacing[1],
   },
   ratingIcon: {
-    fontSize: DesignTokens.typography.sizes.sm,
+    fontSize: 12,
     color: Colors.amber[500],
   },
   ratingText: {
-    fontSize: DesignTokens.typography.sizes.sm,
+    fontSize: 12,
     color: Colors.neutral[600],
   },
 });

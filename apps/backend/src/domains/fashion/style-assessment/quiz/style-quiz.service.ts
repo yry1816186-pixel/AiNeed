@@ -1,5 +1,11 @@
-import { Injectable, Logger, NotFoundException, BadRequestException, Optional } from "@nestjs/common";
-import { PriceRange } from "../../../../types/prisma-enums";
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  BadRequestException,
+  Optional,
+} from "@nestjs/common";
+import { PriceRange } from "../../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import {
@@ -9,17 +15,6 @@ import {
 } from "../../../../common/types/api-response.types";
 import { OnboardingService } from "../../../../domains/identity/onboarding/onboarding.service";
 import { ProfileEventEmitter } from "../../../../domains/identity/profile/services/profile-event-emitter.service";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type StyleQuizWhereInput = Record<string, any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type QuizQuestionWhereInput = Record<string, any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type StyleQuizResultWhereInput = Record<string, any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type StyleQuizGetPayload<T> = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type StyleQuizResultGetPayload<T> = any;
 
 import {
   CreateStyleQuizDto,
@@ -34,10 +29,14 @@ import {
 } from "./dto/style-quiz.dto";
 import { ColorDerivationEngine } from "./services/color-derivation.service";
 import { ColorDeriverService } from "./services/color-deriver";
-import { QuestionSelectorService, QuizQuestionWithMeta, SelectedImageWithMeta, QuizImageMeta, QUESTION_IMAGE_META_MAP } from "./services/question-selector";
+import {
+  QuestionSelectorService,
+  QuizQuestionWithMeta,
+  SelectedImageWithMeta,
+  QuizImageMeta,
+  QUESTION_IMAGE_META_MAP,
+} from "./services/question-selector";
 import { StyleKeywordExtractorService } from "./services/style-keyword-extractor";
-
-
 
 @Injectable()
 export class StyleQuizService {
@@ -50,7 +49,7 @@ export class StyleQuizService {
     private readonly styleKeywordExtractor: StyleKeywordExtractorService,
     private readonly colorDerivation: ColorDerivationEngine,
     private readonly eventEmitter: ProfileEventEmitter,
-    @Optional() private readonly onboardingService: OnboardingService | null,
+    @Optional() private readonly onboardingService: OnboardingService | null
   ) {}
 
   // ==================== 问卷 CRUD ====================
@@ -66,10 +65,10 @@ export class StyleQuizService {
     });
   }
 
-  async getQuizzes(query: StyleQuizQueryDto): Promise<PaginatedResponse<StyleQuizGetPayload<{ include: { _count: { select: { questions: true; results: true } } } }>>> {
+  async getQuizzes(query: StyleQuizQueryDto): Promise<PaginatedResponse<any>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(query);
 
-    const where: StyleQuizWhereInput = {};
+    const where: any = {};
     if (query.isActive !== undefined) {
       where.isActive = query.isActive;
     }
@@ -167,7 +166,7 @@ export class StyleQuizService {
   }
 
   async getQuestions(quizId: string, query: QuizQuestionQueryDto) {
-    const where: QuizQuestionWhereInput = { quizId };
+    const where: any = { quizId };
 
     if (query.dimension) {
       where.dimension = query.dimension;
@@ -256,14 +255,12 @@ export class StyleQuizService {
       throw new NotFoundException("问卷不存在");
     }
 
-    const questionIds = new Set(quiz.questions.map((q: { id: string }) => q.id));
+    const questionIds = new Set(quiz.questions.map((q) => q.id));
 
     // 校验所有答案对应的题目都属于该问卷
     for (const answer of dto.answers) {
       if (!questionIds.has(answer.questionId)) {
-        throw new BadRequestException(
-          `题目 ${answer.questionId} 不属于该问卷`,
-        );
+        throw new BadRequestException(`题目 ${answer.questionId} 不属于该问卷`);
       }
     }
 
@@ -295,7 +292,9 @@ export class StyleQuizService {
         }));
         const colorResult = this.colorDerivation.deriveColorPreferences(colorInput);
         if (colorResult.colorPalette.length > 0) {
-          this.logger.log(`Derived ${colorResult.colorPalette.length} colors for user ${userId} from quiz ${dto.quizId}`);
+          this.logger.log(
+            `Derived ${colorResult.colorPalette.length} colors for user ${userId} from quiz ${dto.quizId}`
+          );
 
           // Write derived color palette to UserProfile
           const colorHexes = colorResult.colorPalette.map((c) => c.hex);
@@ -312,7 +311,9 @@ export class StyleQuizService {
         }
       }
     } catch (error) {
-      this.logger.warn(`Color derivation failed for user ${userId}: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.warn(
+        `Color derivation failed for user ${userId}: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
 
     return { count: created.count };
@@ -320,10 +321,10 @@ export class StyleQuizService {
 
   // ==================== 测试结果 ====================
 
-  async getQuizResults(userId: string, query: QuizResultQueryDto): Promise<PaginatedResponse<StyleQuizResultGetPayload<{ include: { quiz: { select: { id: true; title: true } } } }>>> {
+  async getQuizResults(userId: string, query: QuizResultQueryDto): Promise<PaginatedResponse<any>> {
     const { page = 1, pageSize = 20 } = normalizePaginationParams(query);
 
-    const where: StyleQuizResultWhereInput = { userId };
+    const where: any = { userId };
 
     if (query.quizId) {
       where.quizId = query.quizId;
@@ -376,9 +377,9 @@ export class StyleQuizService {
       styleKeywords: string[];
       priceRange: string;
       confidenceScore: number;
-    },
+    }
   ) {
-    return this.prisma.$transaction(async (tx: { styleQuizResult: { updateMany: (args: Record<string, unknown>) => Promise<unknown>; create: (args: Record<string, unknown>) => Promise<unknown> } }) => {
+    return this.prisma.$transaction(async (tx) => {
       // 将之前的结果标记为非最新
       await tx.styleQuizResult.updateMany({
         where: { userId, isLatest: true },
@@ -402,7 +403,9 @@ export class StyleQuizService {
         },
       });
 
-      this.logger.log(`User ${userId} saved quiz result for quiz ${quizId}, confidence: ${data.confidenceScore}`);
+      this.logger.log(
+        `User ${userId} saved quiz result for quiz ${quizId}, confidence: ${data.confidenceScore}`
+      );
 
       // 推进 onboarding 步骤：风格测试完成后从 STYLE_TEST 推进到 COMPLETED
       if (this.onboardingService) {
@@ -424,10 +427,7 @@ export class StyleQuizService {
 
   // ==================== 私有方法 ====================
 
-  private validateAnswerForQuestionType(
-    questionType: string,
-    dto: SubmitQuizAnswerDto,
-  ) {
+  private validateAnswerForQuestionType(questionType: string, dto: SubmitQuizAnswerDto) {
     switch (questionType) {
       case "visual_choice":
         if (dto.selectedImageIndex === undefined && dto.selectedImageIndex === null) {
@@ -453,7 +453,12 @@ export class StyleQuizService {
     return this.questionSelector.selectQuestions(userId, quizId);
   }
 
-  async saveAnswer(userId: string, questionId: string, selectedImageIndex: number, duration?: number) {
+  async saveAnswer(
+    userId: string,
+    questionId: string,
+    selectedImageIndex: number,
+    duration?: number
+  ) {
     const question = await this.prisma.quizQuestion.findUnique({
       where: { id: questionId },
     });
@@ -496,7 +501,7 @@ export class StyleQuizService {
       throw new NotFoundException("问卷不存在");
     }
 
-    const questionIds = quiz.questions.map((q: { id: string }) => q.id);
+    const questionIds = quiz.questions.map((q) => q.id);
 
     const answers = await this.prisma.quizAnswer.findMany({
       where: { userId, questionId: { in: questionIds } },
@@ -509,14 +514,24 @@ export class StyleQuizService {
     const selectedImages: SelectedImageWithMeta[] = [];
 
     for (const answer of answers) {
-      const question = quiz.questions.find((q: { id: string }) => q.id === answer.questionId);
-      if (!question || answer.selectedImageIndex === null || answer.selectedImageIndex === undefined) {continue;}
+      const question = quiz.questions.find((q) => q.id === answer.questionId);
+      if (
+        !question ||
+        answer.selectedImageIndex === null ||
+        answer.selectedImageIndex === undefined
+      ) {
+        continue;
+      }
 
       const imageMetas = QUESTION_IMAGE_META_MAP?.[question.id];
-      if (!imageMetas) {continue;}
+      if (!imageMetas) {
+        continue;
+      }
 
       const imageMeta = imageMetas.find((m) => m.index === answer.selectedImageIndex);
-      if (!imageMeta) {continue;}
+      if (!imageMeta) {
+        continue;
+      }
 
       selectedImages.push({
         questionId: answer.questionId,
@@ -527,7 +542,12 @@ export class StyleQuizService {
     }
 
     let colorResult: { hueDistribution: Record<string, number> };
-    let styleResult: { styleKeywords: string[]; occasionPreferences: Record<string, number>; priceRangePreference: string; confidenceScore: number };
+    let styleResult: {
+      styleKeywords: string[];
+      occasionPreferences: Record<string, number>;
+      priceRangePreference: string;
+      confidenceScore: number;
+    };
 
     if (selectedImages.length > 0) {
       colorResult = this.colorDeriver.deriveColorPreferences(selectedImages);
@@ -538,13 +558,16 @@ export class StyleQuizService {
       const priceScores: Record<string, number> = {};
 
       for (const answer of answers) {
-        const question = quiz.questions.find((q: { id: string; dimension: string }) => q.id === answer.questionId);
-        if (!question) {continue;}
+        const question = quiz.questions.find((q) => q.id === answer.questionId);
+        if (!question) {
+          continue;
+        }
 
         const dim = question.dimension;
 
         if (dim === "occasion" && answer.selectedOption) {
-          occasionPreferences[answer.selectedOption] = (occasionPreferences[answer.selectedOption] ?? 0) + 1;
+          occasionPreferences[answer.selectedOption] =
+            (occasionPreferences[answer.selectedOption] ?? 0) + 1;
         }
 
         if (dim === "style" && answer.selectedOption) {
@@ -601,7 +624,7 @@ export class StyleQuizService {
       throw new NotFoundException("问卷不存在");
     }
 
-    const questionIds = quiz.questions.map((q: { id: string }) => q.id);
+    const questionIds = quiz.questions.map((q) => q.id);
 
     const answeredCount = await this.prisma.quizAnswer.count({
       where: { userId, questionId: { in: questionIds } },

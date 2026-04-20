@@ -1,4 +1,4 @@
-﻿﻿﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -14,20 +14,24 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import Animated, { FadeInUp, FadeInDown } from "react-native-reanimated";
-import { profileApi } from "../../../services/api/profile.api";
+import { profileApi } from "@/src/services/api/profile.api";
 import type {
   UserProfile,
   BodyAnalysisReport,
   ColorAnalysisReport,
-} from "../../../services/api/profile.api";
-import type { RootStackParamList } from "../../../types/navigation";
-import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
-import { BodyTypeCard } from './components/BodyTypeCard';
-import { ColorSeasonCard } from './components/ColorSeasonCard';
-import { StyleTagsCard } from './components/StyleTagsCard';
-import { SharePosterPreview } from './components/SharePosterPreview';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens, Spacing, Shadows } from '../../../design-system/theme';
+} from "@/src/services/api/profile.api";
+import type { RootStackParamList } from "@/src/types/navigation";
+import { colors } from "@/src/theme/tokens/colors";
+import { typography } from "@/src/theme/tokens/typography";
+import { spacing } from "@/src/theme/tokens/spacing";
+import { shadows } from "@/src/theme/tokens/shadows";
+import { withErrorBoundary } from "@/src/shared/components/ErrorBoundary";
+import { BodyTypeCard } from "../../../components/BodyTypeCard";
+import { ColorSeasonCard } from "../../../components/ColorSeasonCard";
+import { StyleTagsCard } from "../../../components/StyleTagsCard";
+import { SharePosterPreview } from "../../../components/SharePosterPreview";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 type ProfileReportNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -94,8 +98,8 @@ function getProfileCompletion(profile: UserProfile): number {
 }
 
 export const ProfileReportScreenComponent: React.FC = () => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const navigation = useNavigation<ProfileReportNavigationProp>();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [bodyAnalysis, setBodyAnalysis] = useState<BodyAnalysisReport | null>(null);
@@ -170,7 +174,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
           <View style={styles.headerRight} />
         </View>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={colors.brand.warmPrimary} />
           <Text style={styles.loadingText}>正在生成你的风格画像...</Text>
         </View>
       </SafeAreaView>
@@ -202,7 +206,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
             accessibilityRole="button"
           >
             <LinearGradient
-              colors={[DesignTokens.gradients.brand[0], DesignTokens.gradients.brand[1]]}
+              colors={[colors.gradients.coralRose[0], colors.gradients.coralRose[1]]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.emptyButtonGradient}
@@ -236,7 +240,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
       >
         <Animated.View entering={FadeInUp.duration(600).springify()}>
           <LinearGradient
-            colors={[DesignTokens.gradients.brand[0], DesignTokens.gradients.brand[1]]}
+            colors={[colors.gradients.coralRose[0], colors.gradients.coralRose[1]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.summaryCard}
@@ -315,7 +319,7 @@ export const ProfileReportScreenComponent: React.FC = () => {
           accessibilityRole="button"
         >
           <LinearGradient
-            colors={[DesignTokens.gradients.sage[0], DesignTokens.gradients.sage[1]]}
+            colors={[colors.gradients.oceanDeep[0], colors.gradients.oceanDeep[1]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.shareButtonGradient}
@@ -338,88 +342,88 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: spacing.layout.screenPadding,
+    paddingVertical: spacing.scale[3],
     backgroundColor: colors.neutral.white,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.neutral[200],
-    ...DesignTokens.shadows.xs,
+    ...shadows.presets.xs,
   },
   headerTitle: {
-    fontSize: DesignTokens.typography.sizes.lg,
-    fontWeight: DesignTokens.typography.fontWeights.bold,
+    fontSize: typography.fontSize.lg,
+    fontWeight: typography.fontWeight.bold,
     color: colors.neutral[900],
   },
   headerRight: {
-    width: Spacing.lg,
+    width: 24,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingTop: DesignTokens.spacing[3],
+    paddingHorizontal: spacing.layout.screenPadding,
+    paddingTop: spacing.layout.cardGap,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: DesignTokens.spacing[4],
+    gap: spacing.scale[4],
   },
   loadingText: {
-    fontSize: DesignTokens.typography.sizes.base,
+    fontSize: typography.fontSize.base,
     color: colors.neutral[500],
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: DesignTokens.spacing[5],
-    gap: DesignTokens.spacing[3],
+    paddingHorizontal: spacing.layout.screenPadding,
+    gap: spacing.scale[3],
   },
   emptyTitle: {
-    fontSize: DesignTokens.typography.sizes.xl,
-    fontWeight: DesignTokens.typography.fontWeights.bold,
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.bold,
     color: colors.neutral[800],
-    marginTop: DesignTokens.spacing[4],
+    marginTop: spacing.scale[4],
   },
   emptySubtitle: {
-    fontSize: DesignTokens.typography.sizes.sm,
+    fontSize: typography.fontSize.sm,
     color: colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
   },
   emptyButton: {
-    marginTop: DesignTokens.spacing[4],
-    borderRadius: DesignTokens.borderRadius.xl,
+    marginTop: spacing.scale[4],
+    borderRadius: spacing.borderRadius.xl,
     overflow: "hidden",
   },
   emptyButtonGradient: {
-    paddingVertical: DesignTokens.spacing[3],
-    paddingHorizontal: DesignTokens.spacing[8],
+    paddingVertical: spacing.scale[3],
+    paddingHorizontal: spacing.scale[8],
   },
   emptyButtonText: {
-    fontSize: DesignTokens.typography.sizes.base,
-    fontWeight: DesignTokens.typography.fontWeights.semibold,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semibold,
     color: colors.surface,
   },
   summaryCard: {
-    borderRadius: DesignTokens.borderRadius["2xl"],
-    padding: DesignTokens.spacing[5],
-    marginBottom: DesignTokens.spacing[3],
-    ...DesignTokens.shadows.lg,
+    borderRadius: spacing.borderRadius["2xl"],
+    padding: spacing.layout.modalPadding,
+    marginBottom: spacing.layout.cardGap,
+    ...shadows.presets.lg,
   },
   summaryTop: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: DesignTokens.spacing[4],
+    marginBottom: spacing.scale[4],
   },
   avatarContainer: {
-    marginRight: DesignTokens.spacing[4],
+    marginRight: spacing.scale[4],
   },
   avatar: {
-    width: Spacing['3xl'],
-    height: Spacing['3xl'],
+    width: 64,
+    height: 64,
     borderRadius: 32,
     backgroundColor: "rgba(255,255,255,0.3)",
     alignItems: "center",
@@ -428,13 +432,13 @@ const useStyles = createStyles((colors) => ({
     borderColor: "rgba(255,255,255,0.5)",
   },
   avatarText: {
-    fontSize: DesignTokens.typography.sizes["2xl"],
-    fontWeight: DesignTokens.typography.fontWeights.bold,
+    fontSize: typography.fontSize["2xl"],
+    fontWeight: typography.fontWeight.bold,
     color: colors.surface,
   },
   avatarImage: {
-    width: Spacing['3xl'],
-    height: Spacing['3xl'],
+    width: 64,
+    height: 64,
     borderRadius: 32,
     borderWidth: 2,
     borderColor: "rgba(255,255,255,0.5)",
@@ -443,21 +447,21 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
   },
   summaryName: {
-    fontSize: DesignTokens.typography.sizes.xl,
-    fontWeight: DesignTokens.typography.fontWeights.bold,
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.bold,
     color: colors.surface,
-    marginBottom: DesignTokens.spacing[1],
+    marginBottom: spacing.scale[1],
   },
   summaryPersonality: {
-    fontSize: DesignTokens.typography.sizes.sm,
+    fontSize: typography.fontSize.sm,
     color: "rgba(255,255,255,0.9)",
-    fontWeight: DesignTokens.typography.fontWeights.medium,
+    fontWeight: typography.fontWeight.medium,
   },
   progressContainer: {
-    gap: DesignTokens.spacing[2],
+    gap: spacing.scale[2],
   },
   progressTrack: {
-    height: DesignTokens.spacing['1.5'],
+    height: 6,
     borderRadius: 3,
     backgroundColor: "rgba(255,255,255,0.3)",
     overflow: "hidden",
@@ -468,42 +472,42 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.surface,
   },
   progressText: {
-    fontSize: DesignTokens.typography.sizes.xs,
+    fontSize: typography.fontSize.xs,
     color: "rgba(255,255,255,0.85)",
-    fontWeight: DesignTokens.typography.fontWeights.medium,
+    fontWeight: typography.fontWeight.medium,
   },
   bottomSpacer: {
-    height: Spacing['4xl'],
+    height: 80,
   },
   bottomBar: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing[4],
+    paddingHorizontal: spacing.layout.screenPadding,
+    paddingVertical: spacing.scale[4],
     backgroundColor: colors.neutral.white,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.neutral[200],
-    ...DesignTokens.shadows.md,
+    ...shadows.presets.md,
   },
   shareButton: {
-    borderRadius: DesignTokens.borderRadius.xl,
+    borderRadius: spacing.borderRadius.xl,
     overflow: "hidden",
   },
   shareButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: DesignTokens.spacing[2],
-    paddingVertical: DesignTokens.spacing[3] + 2,
+    gap: spacing.scale[2],
+    paddingVertical: spacing.scale[3] + 2,
   },
   shareButtonText: {
-    fontSize: DesignTokens.typography.sizes.base,
-    fontWeight: DesignTokens.typography.fontWeights.bold,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.bold,
     color: colors.surface,
   },
-}))
+}));
 
 const ProfileReportScreen = withErrorBoundary(ProfileReportScreenComponent, {
   screenName: "ProfileReportScreen",

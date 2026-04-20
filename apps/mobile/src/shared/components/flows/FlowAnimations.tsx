@@ -17,10 +17,16 @@ import {
   cancelAnimation,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { ParticleEffect, FloatingElement, GlowText, MagneticButton } from '../../../design-system/ui/FluidAnimations';
-import { Colors, Spacing, BorderRadius, flatColors } from '../../../design-system/theme';
+import {
+  ParticleEffect,
+  FloatingElement,
+  GlowText,
+  MagneticButton,
+} from "../../design-system/ui/FluidAnimations";
+import { Colors, Spacing, BorderRadius } from "../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme";
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -85,7 +91,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   }));
 
   const glowAnimatedStyle = useAnimatedStyle(() => ({
-    shadowColor: Colors.primary[500],
+    shadowColor: colors.primary[500],
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: interpolate(glowValue.value, [0, 1], [0.2, 0.6]),
     shadowRadius: interpolate(glowValue.value, [0, 1], [20, 50]),
@@ -94,7 +100,12 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   return (
     <View style={styles.splashContainer}>
       <LinearGradient
-        colors={[colors.textPrimary, colors.neutral[700], colors.neutral[700], DesignTokens.colors.neutral[800]]}
+        colors={[
+          "colors.textPrimary",
+          "DesignTokens.colors.brand.slateDark",
+          "DesignTokens.colors.brand.slateDark",
+          DesignTokens.colors.neutral[800],
+        ]}
         locations={[0, 0.3, 0.7, 1]}
         style={styles.splashGradient}
       >
@@ -103,13 +114,16 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
         </AnimatedView>
 
         <AnimatedView style={[styles.splashLogoContainer, logoAnimatedStyle, glowAnimatedStyle]}>
-          <LinearGradient colors={[colors.primary, colors.primary]} style={styles.splashLogoGradient}>
+          <LinearGradient
+            colors={[colors.primary, DesignTokens.colors.brand.camel]}
+            style={styles.splashLogoGradient}
+          >
             <Text style={styles.splashLogoText}>AI</Text>
           </LinearGradient>
         </AnimatedView>
 
         <AnimatedView style={[styles.splashTextContainer, textAnimatedStyle]}>
-          <GlowText text="寻裳" style={styles.splashTitle} glowColor={Colors.primary[400]} />
+          <GlowText text="寻裳" style={styles.splashTitle} glowColor={colors.primary[400]} />
           <Text style={styles.splashSubtitle}>智能穿搭助手</Text>
         </AnimatedView>
 
@@ -134,28 +148,28 @@ const ONBOARDING_DATA = [
     title: "发现你的风格",
     subtitle: "AI分析你的穿搭偏好，找到最适合你的时尚风格",
     icon: "✨",
-    gradient: [flatColors.primary, flatColors.primaryLight] as [string, string],
+    gradient: [colors.primary, DesignTokens.colors.brand.camel],
   },
   {
     id: "body",
     title: "了解你的身型",
     subtitle: "智能体型分析，为你推荐最显瘦的穿搭方案",
     icon: "👤",
-    gradient: [flatColors.info, flatColors.infoLight] as [string, string],
+    gradient: [colors.info, colors.infoLight],
   },
   {
     id: "color",
     title: "找到你的色彩",
     subtitle: "肤色分析，发现让你更加光彩照人的颜色",
     icon: "🎨",
-    gradient: [flatColors.success, flatColors.successLight] as [string, string],
+    gradient: [colors.success, colors.successLight],
   },
   {
     id: "tryon",
     title: "虚拟试穿",
     subtitle: "AI虚拟试穿，足不出户体验万千穿搭",
     icon: "👗",
-    gradient: [flatColors.warning, flatColors.warningLight] as [string, string],
+    gradient: ["colors.warning", "colors.warning"],
   },
 ];
 
@@ -167,8 +181,6 @@ interface OnboardingDotProps {
 }
 
 const OnboardingDot: React.FC<OnboardingDotProps> = ({ color, isActive }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const dotScale = useSharedValue(1);
   const dotOpacity = useSharedValue(0.4);
 
@@ -192,8 +204,6 @@ const OnboardingDot: React.FC<OnboardingDotProps> = ({ color, isActive }) => {
 };
 
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const [currentIndex, setCurrentIndex] = useState(0);
   const slideOffset = useSharedValue(0);
 
@@ -215,7 +225,14 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 
   return (
     <View style={styles.onboardingContainer}>
-      <LinearGradient colors={[colors.textPrimary, colors.neutral[700], colors.neutral[700]]} style={styles.onboardingGradient}>
+      <LinearGradient
+        colors={[
+          "colors.textPrimary",
+          "DesignTokens.colors.brand.slateDark",
+          "DesignTokens.colors.brand.slateDark",
+        ]}
+        style={styles.onboardingGradient}
+      >
         <View style={styles.onboardingHeader}>
           <Pressable onPress={skip}>
             <Text style={styles.skipText}>跳过</Text>
@@ -258,8 +275,6 @@ interface OnboardingSlideProps {
 }
 
 const OnboardingSlide: React.FC<OnboardingSlideProps> = ({ data, isActive }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const iconScale = useSharedValue(0);
   const iconRotate = useSharedValue(-90);
   const titleOpacity = useSharedValue(0);
@@ -331,8 +346,6 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
   onCapture,
   onCancel,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const frameScale = useSharedValue(1);
   const frameOpacity = useSharedValue(0);
   const cornerScale = useSharedValue(0);
@@ -382,6 +395,7 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
   }));
 
   const handlePressIn = () => {
+    const { colors } = useTheme();
     buttonScale.value = withSpring(0.9, { damping: 15, stiffness: 300 });
   };
 
@@ -429,7 +443,10 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
             onPress={onCapture}
             style={styles.captureButtonInner}
           >
-            <LinearGradient colors={[colors.primary, colors.primary]} style={styles.captureButtonGradient}>
+            <LinearGradient
+              colors={[colors.primary, DesignTokens.colors.brand.camel]}
+              style={styles.captureButtonGradient}
+            >
               <Text style={styles.captureIcon}>📷</Text>
             </LinearGradient>
           </Pressable>
@@ -449,25 +466,25 @@ const ANALYSIS_CONFIG = {
     title: "体型分析中",
     steps: ["检测人体轮廓", "分析身体比例", "识别体型特征", "生成分析报告"],
     icon: "👤",
-    gradient: [flatColors.info, flatColors.infoLight] as [string, string],
+    gradient: [colors.info, colors.infoLight],
   },
   color: {
     title: "肤色分析中",
     steps: ["提取皮肤区域", "分析肤色色调", "匹配色彩季节", "生成配色建议"],
     icon: "🎨",
-    gradient: [flatColors.success, flatColors.successLight] as [string, string],
+    gradient: [colors.success, colors.successLight],
   },
   style: {
     title: "风格分析中",
     steps: ["识别服装元素", "分析穿搭风格", "匹配流行趋势", "生成风格报告"],
     icon: "✨",
-    gradient: [flatColors.primary, flatColors.primaryLight] as [string, string],
+    gradient: [colors.primary, DesignTokens.colors.brand.camel],
   },
   tryon: {
     title: "虚拟试穿中",
     steps: ["处理人物图像", "分析服装属性", "生成试穿效果", "优化细节"],
     icon: "👗",
-    gradient: [flatColors.warning, flatColors.warningLight] as [string, string],
+    gradient: ["colors.warning", "colors.warning"],
   },
 };
 
@@ -484,8 +501,6 @@ const AnalysisStepItem: React.FC<AnalysisStepItemProps> = ({
   index,
   step,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const stepOpacity = useSharedValue(0.3);
   const stepScale = useSharedValue(1);
 
@@ -537,8 +552,6 @@ const AnalysisStepItem: React.FC<AnalysisStepItemProps> = ({
 };
 
 export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({ type, onComplete }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const config = ANALYSIS_CONFIG[type];
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -588,9 +601,12 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({ type, onCo
       duration: totalSteps * stepDuration,
     });
 
-    const completeTimer = setTimeout(() => {
-      onComplete({ success: true, type });
-    }, totalSteps * stepDuration + 500);
+    const completeTimer = setTimeout(
+      () => {
+        onComplete({ success: true, type });
+      },
+      totalSteps * stepDuration + 500
+    );
 
     return () => {
       clearInterval(stepInterval);
@@ -612,7 +628,14 @@ export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({ type, onCo
 
   return (
     <View style={styles.analysisContainer}>
-      <LinearGradient colors={[colors.textPrimary, colors.neutral[700], colors.neutral[700]]} style={styles.analysisGradient}>
+      <LinearGradient
+        colors={[
+          "colors.textPrimary",
+          "DesignTokens.colors.brand.slateDark",
+          "DesignTokens.colors.brand.slateDark",
+        ]}
+        style={styles.analysisGradient}
+      >
         <AnimatedView style={[styles.particleContainer, { opacity: particleOpacity }]}>
           <ParticleEffect count={30} color={`${config.gradient[0]}50`} size={3} />
         </AnimatedView>
@@ -669,8 +692,6 @@ export const ResultAnimation: React.FC<ResultAnimationProps> = ({
   onContinue,
   onRetry,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const config = ANALYSIS_CONFIG[type];
 
   const containerScale = useSharedValue(0.8);
@@ -709,7 +730,14 @@ export const ResultAnimation: React.FC<ResultAnimationProps> = ({
 
   return (
     <View style={styles.resultContainer}>
-      <LinearGradient colors={[colors.textPrimary, colors.neutral[700], colors.neutral[700]]} style={styles.resultGradient}>
+      <LinearGradient
+        colors={[
+          "colors.textPrimary",
+          "DesignTokens.colors.brand.slateDark",
+          "DesignTokens.colors.brand.slateDark",
+        ]}
+        style={styles.resultGradient}
+      >
         <AnimatedView style={[styles.celebrationContainer, celebrationAnimatedStyle]}>
           <ParticleEffect count={50} color={config.gradient[0]} size={4} />
         </AnimatedView>
@@ -766,7 +794,7 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   splashLogoText: {
-    fontSize: DesignTokens.typography.sizes['5xl'],
+    fontSize: DesignTokens.typography.sizes["5xl"],
     fontWeight: "900",
     color: Colors.white,
   },
@@ -774,7 +802,7 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
   },
   splashTitle: {
-    fontSize: DesignTokens.typography.sizes['5xl'],
+    fontSize: DesignTokens.typography.sizes["5xl"],
     fontWeight: "900",
     color: Colors.white,
     letterSpacing: -2,
@@ -786,20 +814,20 @@ const useStyles = createStyles((colors) => ({
   },
   progressContainer: {
     position: "absolute",
-    bottom: Spacing['4xl'],
+    bottom: 80,
     width: SCREEN_WIDTH - 80,
     alignItems: "center",
   },
   progressBackground: {
     width: "100%",
-    height: Spacing.xs,
+    height: 4,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: BorderRadius.full,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     borderRadius: BorderRadius.full,
   },
   progressText: {
@@ -846,14 +874,14 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   slideIcon: {
-    fontSize: DesignTokens.typography.sizes['6xl'],
+    fontSize: DesignTokens.typography.sizes["6xl"],
   },
   slideTextContainer: {
     alignItems: "center",
     marginBottom: Spacing[4],
   },
   slideTitle: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "800",
     color: Colors.white,
     textAlign: "center",
@@ -877,13 +905,13 @@ const useStyles = createStyles((colors) => ({
     gap: Spacing[2],
   },
   dot: {
-    width: Spacing.sm,
-    height: Spacing.sm,
+    width: 8,
+    height: 8,
     borderRadius: BorderRadius.full,
   },
   cameraGuideContainer: {
     flex: 1,
-    backgroundColor: colors.textPrimary,
+    backgroundColor: "colors.textPrimary", // custom color
   },
   cameraHeader: {
     flexDirection: "row",
@@ -894,8 +922,8 @@ const useStyles = createStyles((colors) => ({
     paddingBottom: Spacing[4],
   },
   closeButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: BorderRadius.full,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     alignItems: "center",
@@ -911,7 +939,7 @@ const useStyles = createStyles((colors) => ({
     color: Colors.white,
   },
   placeholder: {
-    width: DesignTokens.spacing[10],
+    width: 40,
   },
   cameraPreview: {
     flex: 1,
@@ -932,7 +960,7 @@ const useStyles = createStyles((colors) => ({
     position: "absolute",
     width: 30,
     height: 30,
-    borderColor: Colors.primary[500],
+    borderColor: colors.primary[500],
   },
   cornerTL: {
     top: -2,
@@ -973,7 +1001,7 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   bodyGuideIcon: {
-    fontSize: DesignTokens.typography.sizes['5xl'],
+    fontSize: DesignTokens.typography.sizes["5xl"],
     opacity: 0.5,
   },
   guideText: {
@@ -995,8 +1023,8 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing[8],
   },
   captureButton: {
-    width: Spacing['4xl'],
-    height: Spacing['4xl'],
+    width: 80,
+    height: 80,
     borderRadius: BorderRadius.full,
     overflow: "hidden",
   },
@@ -1009,7 +1037,7 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   captureIcon: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
   },
   analysisContainer: {
     flex: 1,
@@ -1031,10 +1059,10 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   analysisIcon: {
-    fontSize: DesignTokens.typography.sizes['5xl'],
+    fontSize: DesignTokens.typography.sizes["5xl"],
   },
   analysisTitle: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "800",
     color: Colors.white,
     marginBottom: Spacing[10],
@@ -1049,8 +1077,8 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing[3],
   },
   stepDot: {
-    width: DesignTokens.spacing['2.5'],
-    height: DesignTokens.spacing['2.5'],
+    width: 10,
+    height: 10,
     borderRadius: BorderRadius.full,
     marginRight: Spacing[4],
   },
@@ -1068,7 +1096,7 @@ const useStyles = createStyles((colors) => ({
   },
   progressBarBackground: {
     width: "100%",
-    height: Spacing.xs,
+    height: 4,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: BorderRadius.full,
     overflow: "hidden",
@@ -1105,10 +1133,10 @@ const useStyles = createStyles((colors) => ({
     marginBottom: Spacing[6],
   },
   resultIcon: {
-    fontSize: DesignTokens.typography.sizes['5xl'],
+    fontSize: DesignTokens.typography.sizes["5xl"],
   },
   resultTitle: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "800",
     color: Colors.white,
     marginBottom: Spacing[2],
@@ -1131,4 +1159,4 @@ const useStyles = createStyles((colors) => ({
     color: "rgba(255, 255, 255, 0.6)",
     fontWeight: "500",
   },
-}))
+}));

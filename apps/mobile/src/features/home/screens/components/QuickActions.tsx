@@ -1,11 +1,10 @@
-﻿﻿﻿import { memo, type ComponentProps } from "react";
+import { memo, type ComponentProps } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-import { flatColors as colors } from '../../../../design-system/theme';
-
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface QuickActionsProps {
   onAiStylist: () => void;
@@ -50,7 +49,7 @@ const QuickActions = memo(
         title: "虚拟试衣",
         description: "一键试穿效果",
         icon: "shirt-outline",
-        gradient: ["colors.neutral[500]", "colors.secondary"], // custom color
+        gradient: ["DesignTokens.colors.brand.slate", "colors.secondary"], // custom color
         onPress: onVirtualTryOn,
         locked: false,
       },
@@ -59,7 +58,7 @@ const QuickActions = memo(
         title: "购物车",
         description: "查看购物车",
         icon: "cart-outline",
-        gradient: [colors.primary, colors.primaryLight], // custom color
+        gradient: ["DesignTokens.colors.brand.camel", colors.primaryLight], // custom color
         onPress: onCart,
         locked: false,
       },
@@ -77,7 +76,7 @@ const QuickActions = memo(
         title: "风格报告",
         description: "专属风格分析",
         icon: "document-text-outline",
-        gradient: [colors.neutral[500], colors.textTertiary], // custom color
+        gradient: [DesignTokens.colors.brand.slate, "colors.textTertiary"], // custom color
         onPress: onStyleReport,
         locked: !isStyleReportUnlocked,
       },
@@ -132,8 +131,8 @@ const useStyles = createStyles((colors) => ({
   },
   card: {
     width: "33.33%",
-    paddingHorizontal: DesignTokens.spacing['1.5'],
-    marginBottom: DesignTokens.spacing[3],
+    paddingHorizontal: 6,
+    marginBottom: 12,
   },
   cardLocked: {
     opacity: 0.5,
@@ -146,8 +145,8 @@ const useStyles = createStyles((colors) => ({
     borderColor: colors.borderLight,
   },
   iconContainer: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: DesignTokens.borderRadius.full,
     justifyContent: "center",
     alignItems: "center",
@@ -157,7 +156,7 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: DesignTokens.spacing['0.5'],
+    marginBottom: 2,
   },
   description: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -165,21 +164,9 @@ const useStyles = createStyles((colors) => ({
   },
   lockBadge: {
     position: "absolute",
-    top: DesignTokens.spacing['2.5'],
-    right: DesignTokens.spacing['3.5'],
+    top: 10,
+    right: 14,
   },
-}))
+}));
 
 export default QuickActions;
-
-
-const styles = StyleSheet.create({
-  grid: { flex: 1 },
-  card: { flex: 1 },
-  cardLocked: { flex: 1 },
-  cardContent: { flex: 1 },
-  iconContainer: { flex: 1 },
-  title: { flex: 1 },
-  description: { flex: 1 },
-  lockBadge: { flex: 1 },
-});

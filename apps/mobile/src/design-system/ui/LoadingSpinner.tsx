@@ -9,8 +9,9 @@ import Animated, {
   Easing,
   interpolate,
 } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Shadows } from '../../design-system/theme';
-import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
+import { Colors, Spacing, BorderRadius, Shadows } from "../../design-system/theme";
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 export type SpinnerSize = "sm" | "md" | "lg";
 
@@ -26,11 +27,13 @@ const sizeMap: Record<SpinnerSize, number> = { sm: 20, md: 36, lg: 52 };
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = "md",
-  color = Colors.primary[500],
+  color = colors.primary[500],
   style,
   overlay = false,
   text,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const rotation = useSharedValue(0);
   const pulseProgress = useSharedValue(0);
 
@@ -100,9 +103,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         <View style={styles.overlayContent}>
           {spinner}
           {text && (
-            <Animated.Text style={[styles.overlayText, textAnimatedStyle]}>
-              {text}
-            </Animated.Text>
+            <Animated.Text style={[styles.overlayText, textAnimatedStyle]}>{text}</Animated.Text>
           )}
         </View>
       </View>
@@ -119,14 +120,10 @@ export const InlineSpinner: React.FC<{ size?: SpinnerSize; color?: string; style
 }) => {
   const rotation = useSharedValue(0);
   const spinnerSize = sizeMap[size];
-  const c = color || Colors.primary[500];
+  const c = color || colors.primary[500];
 
   useEffect(() => {
-    rotation.value = withRepeat(
-      withTiming(1, { duration: 800, easing: Easing.linear }),
-      -1,
-      false
-    );
+    rotation.value = withRepeat(withTiming(1, { duration: 800, easing: Easing.linear }), -1, false);
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -152,13 +149,13 @@ export const InlineSpinner: React.FC<{ size?: SpinnerSize; color?: string; style
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   spinner: { position: "relative", justifyContent: "center", alignItems: "center" },
   arc: { borderWidth: 2.5, borderTopColor: "transparent", borderRightColor: "transparent" },
   dot: { position: "absolute" },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: Colors.overlay.dark,
+    backgroundColor: colors.overlay.dark,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -171,10 +168,10 @@ const styles = StyleSheet.create({
   },
   overlayText: {
     marginTop: Spacing.md,
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
   },
-});
+}));
 
 export default LoadingSpinner;

@@ -1,7 +1,8 @@
-﻿﻿import React from "react";
+import React from "react";
 import { Text, StyleSheet, TouchableOpacity } from "react-native";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface TimeSlotItemProps {
   startTime: string;
@@ -23,8 +24,8 @@ export const TimeSlotItem: React.FC<TimeSlotItemProps> = ({
   const variantStyle = !isAvailable
     ? styles.booked
     : isSelected
-    ? styles.selected
-    : styles.available;
+      ? styles.selected
+      : styles.available;
 
   return (
     <TouchableOpacity
@@ -57,24 +58,24 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     borderRadius: 12,
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
     borderWidth: 1,
   },
   available: {
     backgroundColor: colors.surface,
-    borderColor: colors.border,
+    borderColor: "colors.border",
   },
   booked: {
     backgroundColor: colors.backgroundTertiary,
-    borderColor: colors.backgroundTertiary,
+    borderColor: "colors.backgroundTertiary",
     opacity: 0.6,
   },
   selected: {
-    backgroundColor: DesignTokens.colors.backgrounds.secondary, // warm-tinted bg,
-    borderColor: colors.primary,
+    backgroundColor: "#FFF8F5",
+    borderColor: "colors.primary",
     borderWidth: 2,
   },
   time: {
@@ -86,7 +87,7 @@ const useStyles = createStyles((colors) => ({
     color: colors.textTertiary,
   },
   timeSelected: {
-    color: colors.primary,
+    color: "colors.primary",
   },
   bookedLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -94,13 +95,13 @@ const useStyles = createStyles((colors) => ({
   },
   selectedLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.primary,
+    color: "colors.primary",
     fontWeight: "500",
   },
   availableLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.success,
   },
-}))
+}));
 
 export default TimeSlotItem;

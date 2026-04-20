@@ -1,7 +1,4 @@
-import {
-  NotFoundException,
-  BadRequestException,
-} from "@nestjs/common";
+import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TryOnStatus } from "../../../types/prisma-enums";
@@ -81,8 +78,12 @@ describe("TryOnService", () => {
     getJobStatus: jest.fn().mockResolvedValue(null),
     getQueueStats: jest.fn().mockResolvedValue({ waiting: 0, active: 0, completed: 0, failed: 0 }),
     addVirtualTryOnTask: jest.fn().mockResolvedValue({ taskId: "mock-task-id", status: "pending" }),
-    addStyleAnalysisTask: jest.fn().mockResolvedValue({ taskId: "mock-task-id", status: "pending" }),
-    addImageAnalysisTask: jest.fn().mockResolvedValue({ taskId: "mock-task-id", status: "pending" }),
+    addStyleAnalysisTask: jest
+      .fn()
+      .mockResolvedValue({ taskId: "mock-task-id", status: "pending" }),
+    addImageAnalysisTask: jest
+      .fn()
+      .mockResolvedValue({ taskId: "mock-task-id", status: "pending" }),
   };
 
   const mockNotificationService = {
@@ -168,9 +169,7 @@ describe("TryOnService", () => {
 
     service = module.get<TryOnService>(TryOnService);
     prisma = module.get<PrismaService>(PrismaService);
-    orchestrator = module.get<TryOnOrchestratorService>(
-      TryOnOrchestratorService,
-    );
+    orchestrator = module.get<TryOnOrchestratorService>(TryOnOrchestratorService);
     redis = module.get(REDIS_CLIENT);
   });
 
@@ -181,17 +180,11 @@ describe("TryOnService", () => {
   describe("createTryOnRequest", () => {
     it("应该成功创建试衣请求", async () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
       mockPrismaService.virtualTryOn.create.mockResolvedValue(mockTryOn);
 
-      const result = await service.createTryOnRequest(
-        "test-user-id",
-        "photo-id",
-        "item-id",
-      );
+      const result = await service.createTryOnRequest("test-user-id", "photo-id", "item-id");
 
       expect(result.id).toBe("tryon-id");
       expect(result.status).toBe(TryOnStatus.pending);
@@ -208,18 +201,10 @@ describe("TryOnService", () => {
     it("应该返回已存在的试衣记录", async () => {
       const completedTryOn = { ...mockTryOn, status: TryOnStatus.completed };
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
-      mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(
-        completedTryOn,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
+      mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(completedTryOn);
 
-      const result = await service.createTryOnRequest(
-        "test-user-id",
-        "photo-id",
-        "item-id",
-      );
+      const result = await service.createTryOnRequest("test-user-id", "photo-id", "item-id");
 
       expect(result.id).toBe("tryon-id");
       expect(result.status).toBe(TryOnStatus.completed);
@@ -230,19 +215,13 @@ describe("TryOnService", () => {
     it("应该返回正在处理的试衣记录", async () => {
       const pendingTryOn = { ...mockTryOn, status: TryOnStatus.processing };
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       // 第一次调用检查已完成记录返回 null，第二次调用检查处理中记录返回 pendingTryOn
       mockPrismaService.virtualTryOn.findFirst
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(pendingTryOn);
 
-      const result = await service.createTryOnRequest(
-        "test-user-id",
-        "photo-id",
-        "item-id",
-      );
+      const result = await service.createTryOnRequest("test-user-id", "photo-id", "item-id");
 
       expect(result.status).toBe(TryOnStatus.processing);
       expect(result.estimatedWaitTime).toBe(30);
@@ -252,11 +231,7 @@ describe("TryOnService", () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(null);
 
       await expect(
-        service.createTryOnRequest(
-          "test-user-id",
-          "non-existent-photo",
-          "item-id",
-        ),
+        service.createTryOnRequest("test-user-id", "non-existent-photo", "item-id")
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -265,11 +240,7 @@ describe("TryOnService", () => {
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.createTryOnRequest(
-          "test-user-id",
-          "photo-id",
-          "non-existent-item",
-        ),
+        service.createTryOnRequest("test-user-id", "photo-id", "non-existent-item")
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -282,9 +253,7 @@ describe("TryOnService", () => {
         photo: mockPhoto,
         item: mockClothingItem,
       };
-      mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(
-        tryOnWithRelations,
-      );
+      mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(tryOnWithRelations);
 
       const result = await service.getTryOnStatus("tryon-id", "test-user-id");
 
@@ -301,9 +270,9 @@ describe("TryOnService", () => {
     it("应该抛出 NotFoundException 当试衣记录不存在", async () => {
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.getTryOnStatus("non-existent-id", "test-user-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getTryOnStatus("non-existent-id", "test-user-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
@@ -343,7 +312,7 @@ describe("TryOnService", () => {
         expect.objectContaining({
           skip: 10,
           take: 10,
-        }),
+        })
       );
     });
 
@@ -351,12 +320,7 @@ describe("TryOnService", () => {
       mockPrismaService.virtualTryOn.findMany.mockResolvedValue([]);
       mockPrismaService.virtualTryOn.count.mockResolvedValue(0);
 
-      await service.getUserTryOnHistory(
-        "test-user-id",
-        1,
-        10,
-        TryOnStatus.completed,
-      );
+      await service.getUserTryOnHistory("test-user-id", 1, 10, TryOnStatus.completed);
 
       expect(mockPrismaService.virtualTryOn.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -364,7 +328,7 @@ describe("TryOnService", () => {
             userId: "test-user-id",
             status: TryOnStatus.completed,
           },
-        }),
+        })
       );
     });
 
@@ -395,27 +359,21 @@ describe("TryOnService", () => {
     it("应该抛出 NotFoundException 当试衣记录不存在", async () => {
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.deleteTryOn("non-existent-id", "test-user-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.deleteTryOn("non-existent-id", "test-user-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
   describe("异步处理测试", () => {
     it("应该异步处理试衣请求并更新状态", async () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
       mockPrismaService.virtualTryOn.create.mockResolvedValue(mockTryOn);
 
       // 创建试衣请求会触发异步处理
-      await service.createTryOnRequest(
-        "test-user-id",
-        "photo-id",
-        "item-id",
-      );
+      await service.createTryOnRequest("test-user-id", "photo-id", "item-id");
 
       // 验证创建了试衣记录
       expect(mockPrismaService.virtualTryOn.create).toHaveBeenCalled();
@@ -423,17 +381,11 @@ describe("TryOnService", () => {
 
     it("应该在处理完成后发布完成事件", async () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
       mockPrismaService.virtualTryOn.create.mockResolvedValue(mockTryOn);
 
-      await service.createTryOnRequest(
-        "test-user-id",
-        "photo-id",
-        "item-id",
-      );
+      await service.createTryOnRequest("test-user-id", "photo-id", "item-id");
 
       // 验证队列任务被添加
       expect(mockQueueService.addVirtualTryOnTask).toHaveBeenCalled();
@@ -450,12 +402,10 @@ describe("TryOnService", () => {
       };
 
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        itemWithoutImages,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(itemWithoutImages);
 
       await expect(
-        service.createTryOnRequest("test-user-id", "photo-id", "item-id"),
+        service.createTryOnRequest("test-user-id", "photo-id", "item-id")
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -467,12 +417,10 @@ describe("TryOnService", () => {
       };
 
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        itemWithNullImages,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(itemWithNullImages);
 
       await expect(
-        service.createTryOnRequest("test-user-id", "photo-id", "item-id"),
+        service.createTryOnRequest("test-user-id", "photo-id", "item-id")
       ).rejects.toThrow(BadRequestException);
     });
   });
@@ -554,10 +502,7 @@ describe("TryOnService", () => {
       });
       mockStorageService.fetchRemoteAsset.mockResolvedValue(mockAsset);
 
-      const result = await service.getTryOnResultAsset(
-        "tryon-id",
-        "test-user-id",
-      );
+      const result = await service.getTryOnResultAsset("tryon-id", "test-user-id");
 
       expect(result.body).toBeInstanceOf(Buffer);
       expect(result.contentType).toBe("image/png");
@@ -566,9 +511,9 @@ describe("TryOnService", () => {
     it("应该拒绝不存在的试衣记录", async () => {
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.getTryOnResultAsset("non-existent-id", "test-user-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getTryOnResultAsset("non-existent-id", "test-user-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("应该拒绝没有结果图片的试衣记录", async () => {
@@ -577,9 +522,9 @@ describe("TryOnService", () => {
         resultImageUrl: null,
       });
 
-      await expect(
-        service.getTryOnResultAsset("tryon-id", "test-user-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getTryOnResultAsset("tryon-id", "test-user-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
@@ -588,11 +533,7 @@ describe("TryOnService", () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(null);
 
       await expect(
-        service.createTryOnRequest(
-          "test-user-id",
-          "other-user-photo",
-          "item-id",
-        ),
+        service.createTryOnRequest("test-user-id", "other-user-photo", "item-id")
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -622,16 +563,14 @@ describe("TryOnService", () => {
 
     it("应该处理 incrementDailyRetryCount 失败", async () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
       mockPrismaService.virtualTryOn.create.mockResolvedValue(mockTryOn);
       mockPipeline.exec.mockRejectedValueOnce(new Error("Redis pipeline error"));
 
       // incrementDailyRetryCount 中 pipeline 失败会导致请求抛出异常
       await expect(
-        service.createTryOnRequest("test-user-id", "photo-id", "item-id"),
+        service.createTryOnRequest("test-user-id", "photo-id", "item-id")
       ).rejects.toThrow("Redis pipeline error");
     });
   });
@@ -641,31 +580,23 @@ describe("TryOnService", () => {
   describe("createTryOnRequest 并发限制测试", () => {
     it("应该拒绝超过最大并发数的试衣请求", async () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
       mockPrismaService.virtualTryOn.count.mockResolvedValue(3);
 
       await expect(
-        service.createTryOnRequest("test-user-id", "photo-id", "item-id"),
+        service.createTryOnRequest("test-user-id", "photo-id", "item-id")
       ).rejects.toThrow(BadRequestException);
     });
 
     it("应该允许未达到最大并发数的试衣请求", async () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
       mockPrismaService.virtualTryOn.count.mockResolvedValue(2);
       mockPrismaService.virtualTryOn.create.mockResolvedValue(mockTryOn);
 
-      const result = await service.createTryOnRequest(
-        "test-user-id",
-        "photo-id",
-        "item-id",
-      );
+      const result = await service.createTryOnRequest("test-user-id", "photo-id", "item-id");
 
       expect(result.id).toBe("tryon-id");
       expect(mockPrismaService.virtualTryOn.create).toHaveBeenCalled();
@@ -676,9 +607,7 @@ describe("TryOnService", () => {
     it("应该返回 Redis 缓存的试衣结果", async () => {
       const cachedResult = { resultImageUrl: "https://example.com/cached-result.jpg" };
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
       mockPrismaService.virtualTryOn.count.mockResolvedValue(0);
       mockRedis.get.mockResolvedValueOnce(null); // daily retry check
@@ -689,11 +618,7 @@ describe("TryOnService", () => {
         resultImageUrl: cachedResult.resultImageUrl,
       });
 
-      const result = await service.createTryOnRequest(
-        "test-user-id",
-        "photo-id",
-        "item-id",
-      );
+      const result = await service.createTryOnRequest("test-user-id", "photo-id", "item-id");
 
       expect(result.status).toBe(TryOnStatus.completed);
       expect(result.estimatedWaitTime).toBe(0);
@@ -705,25 +630,19 @@ describe("TryOnService", () => {
       mockRedis.get.mockResolvedValueOnce("3"); // daily retry count = 3
 
       await expect(
-        service.createTryOnRequest("test-user-id", "photo-id", "item-id"),
+        service.createTryOnRequest("test-user-id", "photo-id", "item-id")
       ).rejects.toThrow(BadRequestException);
     });
 
     it("应该允许未达到每日限制的请求", async () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
       mockPrismaService.virtualTryOn.count.mockResolvedValue(0);
       mockRedis.get.mockResolvedValueOnce("1"); // daily retry count = 1 (below limit)
       mockPrismaService.virtualTryOn.create.mockResolvedValue(mockTryOn);
 
-      const result = await service.createTryOnRequest(
-        "test-user-id",
-        "photo-id",
-        "item-id",
-      );
+      const result = await service.createTryOnRequest("test-user-id", "photo-id", "item-id");
 
       expect(result.id).toBe("tryon-id");
     });
@@ -740,9 +659,7 @@ describe("TryOnService", () => {
       };
 
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(originalTryOn);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.virtualTryOn.create.mockResolvedValue({
         ...mockTryOn,
         id: "retry-tryon-id",
@@ -762,9 +679,9 @@ describe("TryOnService", () => {
     it("应该拒绝不存在的试衣记录重试", async () => {
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.retryTryOn("non-existent-id", "test-user-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.retryTryOn("non-existent-id", "test-user-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("应该拒绝超过每日重试限制的重试请求", async () => {
@@ -778,9 +695,9 @@ describe("TryOnService", () => {
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(originalTryOn);
       mockRedis.get.mockResolvedValueOnce("3"); // daily retry count = 3 (at limit)
 
-      await expect(
-        service.retryTryOn("tryon-id", "test-user-id"),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.retryTryOn("tryon-id", "test-user-id")).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("应该递增重试计数", async () => {
@@ -793,9 +710,7 @@ describe("TryOnService", () => {
       };
 
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(originalTryOn);
-      mockPrismaService.clothingItem.findUnique.mockResolvedValue(
-        mockClothingItem,
-      );
+      mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
       mockPrismaService.virtualTryOn.create.mockResolvedValue({
         ...mockTryOn,
         id: "retry-tryon-id-2",
@@ -810,7 +725,7 @@ describe("TryOnService", () => {
             retryCount: 3,
             parentTryOnId: originalTryOn.id,
           }),
-        }),
+        })
       );
     });
   });
@@ -870,15 +785,12 @@ describe("TryOnService", () => {
       });
       mockStorageService.fetchRemoteAsset.mockResolvedValue(mockAsset);
 
-      const result = await service.getShareImageAsset(
-        "tryon-id",
-        "test-user-id",
-      );
+      const result = await service.getShareImageAsset("tryon-id", "test-user-id");
 
       expect(result.body).toBeInstanceOf(Buffer);
       expect(result.contentType).toBe("image/jpeg");
       expect(mockStorageService.fetchRemoteAsset).toHaveBeenCalledWith(
-        "https://example.com/watermarked.jpg",
+        "https://example.com/watermarked.jpg"
       );
     });
 
@@ -899,16 +811,16 @@ describe("TryOnService", () => {
       await service.getShareImageAsset("tryon-id", "test-user-id");
 
       expect(mockStorageService.fetchRemoteAsset).toHaveBeenCalledWith(
-        "https://example.com/result.jpg",
+        "https://example.com/result.jpg"
       );
     });
 
     it("应该拒绝不存在的试衣记录", async () => {
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.getShareImageAsset("non-existent-id", "test-user-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getShareImageAsset("non-existent-id", "test-user-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("应该拒绝没有分享图的试衣记录", async () => {
@@ -918,9 +830,9 @@ describe("TryOnService", () => {
         watermarkedImageUrl: null,
       });
 
-      await expect(
-        service.getShareImageAsset("tryon-id", "test-user-id"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getShareImageAsset("tryon-id", "test-user-id")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
@@ -929,13 +841,7 @@ describe("TryOnService", () => {
       mockPrismaService.virtualTryOn.findMany.mockResolvedValue([]);
       mockPrismaService.virtualTryOn.count.mockResolvedValue(0);
 
-      await service.getUserTryOnHistory(
-        "test-user-id",
-        1,
-        10,
-        undefined,
-        "tops",
-      );
+      await service.getUserTryOnHistory("test-user-id", 1, 10, undefined, "tops");
 
       expect(mockPrismaService.virtualTryOn.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -943,7 +849,7 @@ describe("TryOnService", () => {
             userId: "test-user-id",
             category: "tops",
           }),
-        }),
+        })
       );
     });
 
@@ -951,14 +857,7 @@ describe("TryOnService", () => {
       mockPrismaService.virtualTryOn.findMany.mockResolvedValue([]);
       mockPrismaService.virtualTryOn.count.mockResolvedValue(0);
 
-      await service.getUserTryOnHistory(
-        "test-user-id",
-        1,
-        10,
-        undefined,
-        undefined,
-        "通勤",
-      );
+      await service.getUserTryOnHistory("test-user-id", 1, 10, undefined, undefined, "通勤");
 
       expect(mockPrismaService.virtualTryOn.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -966,7 +865,7 @@ describe("TryOnService", () => {
             userId: "test-user-id",
             scene: "通勤",
           }),
-        }),
+        })
       );
     });
 
@@ -982,7 +881,7 @@ describe("TryOnService", () => {
         undefined,
         undefined,
         "2026-01-01",
-        "2026-12-31",
+        "2026-12-31"
       );
 
       expect(mockPrismaService.virtualTryOn.findMany).toHaveBeenCalledWith(
@@ -994,7 +893,7 @@ describe("TryOnService", () => {
               lte: expect.any(Date),
             },
           }),
-        }),
+        })
       );
     });
 
@@ -1009,7 +908,7 @@ describe("TryOnService", () => {
         undefined,
         undefined,
         undefined,
-        "2026-01-01",
+        "2026-01-01"
       );
 
       expect(mockPrismaService.virtualTryOn.findMany).toHaveBeenCalledWith(
@@ -1019,7 +918,7 @@ describe("TryOnService", () => {
               gte: expect.any(Date),
             },
           }),
-        }),
+        })
       );
     });
 
@@ -1035,7 +934,7 @@ describe("TryOnService", () => {
         undefined,
         undefined,
         undefined,
-        "2026-12-31",
+        "2026-12-31"
       );
 
       expect(mockPrismaService.virtualTryOn.findMany).toHaveBeenCalledWith(
@@ -1045,7 +944,7 @@ describe("TryOnService", () => {
               lte: expect.any(Date),
             },
           }),
-        }),
+        })
       );
     });
 
@@ -1061,7 +960,7 @@ describe("TryOnService", () => {
         "tops",
         "通勤",
         "2026-01-01",
-        "2026-06-30",
+        "2026-06-30"
       );
 
       expect(mockPrismaService.virtualTryOn.findMany).toHaveBeenCalledWith(
@@ -1076,7 +975,7 @@ describe("TryOnService", () => {
               lte: expect.any(Date),
             },
           },
-        }),
+        })
       );
     });
 
@@ -1103,7 +1002,7 @@ describe("TryOnService", () => {
       await service.deleteTryOn("tryon-id", "test-user-id");
 
       expect(mockStorageService.delete).toHaveBeenCalledWith(
-        "https://storage.example.com/results/result.jpg",
+        "https://storage.example.com/results/result.jpg"
       );
       expect(mockPrismaService.virtualTryOn.delete).toHaveBeenCalledWith({
         where: { id: "tryon-id" },
@@ -1117,9 +1016,7 @@ describe("TryOnService", () => {
       };
 
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(tryOnWithResult);
-      mockStorageService.delete.mockRejectedValueOnce(
-        new Error("MinIO 不可用"),
-      );
+      mockStorageService.delete.mockRejectedValueOnce(new Error("MinIO 不可用"));
       mockPrismaService.virtualTryOn.delete.mockResolvedValue(tryOnWithResult);
 
       // 不应抛出异常，应继续删除数据库记录
@@ -1167,7 +1064,9 @@ describe("TryOnService", () => {
         userId: "test-user-id",
       });
       mockPrismaService.wardrobeCollectionItem.findFirst.mockResolvedValue(null);
-      mockPrismaService.wardrobeCollectionItem.create.mockResolvedValue({ id: "collection-item-id" });
+      mockPrismaService.wardrobeCollectionItem.create.mockResolvedValue({
+        id: "collection-item-id",
+      });
 
       await service.archiveToInspirationWardrobe("tryon-id", "test-user-id");
 
@@ -1199,7 +1098,9 @@ describe("TryOnService", () => {
         userId: "test-user-id",
       });
       mockPrismaService.wardrobeCollectionItem.findFirst.mockResolvedValue(null);
-      mockPrismaService.wardrobeCollectionItem.create.mockResolvedValue({ id: "collection-item-id" });
+      mockPrismaService.wardrobeCollectionItem.create.mockResolvedValue({
+        id: "collection-item-id",
+      });
 
       await service.archiveToInspirationWardrobe("tryon-id", "test-user-id");
 
@@ -1229,7 +1130,9 @@ describe("TryOnService", () => {
         name: "AI试衣效果",
         userId: "test-user-id",
       });
-      mockPrismaService.wardrobeCollectionItem.findFirst.mockResolvedValue({ id: "existing-item-id" });
+      mockPrismaService.wardrobeCollectionItem.findFirst.mockResolvedValue({
+        id: "existing-item-id",
+      });
 
       await service.archiveToInspirationWardrobe("tryon-id", "test-user-id");
 
@@ -1253,13 +1156,11 @@ describe("TryOnService", () => {
     });
 
     it("应该处理归档过程中的异常（不应抛出）", async () => {
-      mockPrismaService.virtualTryOn.findFirst.mockRejectedValue(
-        new Error("数据库错误"),
-      );
+      mockPrismaService.virtualTryOn.findFirst.mockRejectedValue(new Error("数据库错误"));
 
       // 不应抛出异常
       await expect(
-        service.archiveToInspirationWardrobe("tryon-id", "test-user-id"),
+        service.archiveToInspirationWardrobe("tryon-id", "test-user-id")
       ).resolves.toBeUndefined();
     });
   });
@@ -1275,7 +1176,7 @@ describe("TryOnService", () => {
 
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(tryOnWithResult);
       mockStorageService.fetchRemoteAssetDataUri.mockResolvedValueOnce(
-        "data:image/png;base64,abc123",
+        "data:image/png;base64,abc123"
       );
 
       const result = await service.getTryOnStatus("tryon-id", "test-user-id");
@@ -1292,9 +1193,7 @@ describe("TryOnService", () => {
       };
 
       mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(tryOnWithResult);
-      mockStorageService.fetchRemoteAssetDataUri.mockRejectedValueOnce(
-        new Error("获取图片失败"),
-      );
+      mockStorageService.fetchRemoteAssetDataUri.mockRejectedValueOnce(new Error("获取图片失败"));
 
       const result = await service.getTryOnStatus("tryon-id", "test-user-id");
 

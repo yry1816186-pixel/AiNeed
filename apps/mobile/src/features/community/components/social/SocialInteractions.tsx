@@ -1,4 +1,4 @@
-﻿﻿﻿import React, { useRef, useEffect, useState } from "react";
+﻿import React, { useRef, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -30,11 +30,12 @@ import {
   runOnJS,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors , Spacing } from '../../../../design-system/theme'
-import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
+import { Colors } from "../../../../design-system/theme";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import { flatColors as colors } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -86,6 +87,7 @@ export const AnimatedLikeButton: React.FC<LikeButtonProps> = ({
   const config = sizeConfig[size];
 
   const handlePress = () => {
+    const { colors } = useTheme();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     if (!isLiked) {
@@ -129,11 +131,11 @@ export const AnimatedLikeButton: React.FC<LikeButtonProps> = ({
         <Ionicons
           name={isLiked ? "heart" : "heart-outline"}
           size={config.iconSize}
-          color={isLiked ? colors.error : Colors.neutral[400]}
+          color={isLiked ? "colors.error" : colors.neutral[400]}
         />
         {isLiked && (
           <AnimatedView style={[StyleSheet.absoluteFill, heartAnimatedStyle]}>
-            <Ionicons name="heart" size={config.iconSize} color={colors.error} />
+            <Ionicons name="heart" size={config.iconSize} color="colors.error" />
           </AnimatedView>
         )}
       </AnimatedView>
@@ -192,8 +194,6 @@ interface SharePlatformItemProps {
 }
 
 const SharePlatformItem: React.FC<SharePlatformItemProps> = ({ platform, index, onPress }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const platformScale = useSharedValue(0);
 
   useEffect(() => {
@@ -226,8 +226,6 @@ export const ShareSheet: React.FC<ShareSheetProps> = ({
   onCopyLink,
   product,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
   const itemOpacity = useSharedValue(0);
@@ -260,16 +258,16 @@ export const ShareSheet: React.FC<ShareSheetProps> = ({
       id: "wechat",
       name: "微信",
       icon: "chatbubble-ellipses",
-      color: colors.success,
+      color: "colors.success",
     },
-    { id: "moments", name: "朋友圈", icon: "camera-outline", color: colors.success },
-    { id: "weibo", name: "微博", icon: "logo-twitter", color: colors.error },
-    { id: "qq", name: "QQ", icon: "chatbubbles", color: colors.info },
+    { id: "moments", name: "朋友圈", icon: "camera-outline", color: "colors.success" },
+    { id: "weibo", name: "微博", icon: "logo-twitter", color: "colors.error" },
+    { id: "qq", name: "QQ", icon: "chatbubbles", color: "colors.info" },
     {
       id: "link",
       name: "复制链接",
       icon: "link-outline",
-      color: Colors.neutral[500],
+      color: colors.neutral[500],
     },
   ];
 
@@ -290,7 +288,7 @@ export const ShareSheet: React.FC<ShareSheetProps> = ({
         <View style={styles.sheetHeader}>
           <Text style={styles.sheetTitle}>分享</Text>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Ionicons name="close" size={24} color={Colors.neutral[500]} />
+            <Ionicons name="close" size={24} color={colors.neutral[500]} />
           </TouchableOpacity>
         </View>
 
@@ -320,13 +318,13 @@ export const ShareSheet: React.FC<ShareSheetProps> = ({
         <View style={styles.actionsContainer}>
           {onSave && (
             <TouchableOpacity style={styles.actionButton} onPress={onSave}>
-              <Ionicons name="bookmark-outline" size={20} color={Colors.neutral[600]} />
+              <Ionicons name="bookmark-outline" size={20} color={colors.neutral[600]} />
               <Text style={styles.actionText}>保存到衣橱</Text>
             </TouchableOpacity>
           )}
           {onCopyLink && (
             <TouchableOpacity style={styles.actionButton} onPress={onCopyLink}>
-              <Ionicons name="link-outline" size={20} color={Colors.neutral[600]} />
+              <Ionicons name="link-outline" size={20} color={colors.neutral[600]} />
               <Text style={styles.actionText}>复制链接</Text>
             </TouchableOpacity>
           )}
@@ -347,8 +345,6 @@ export const CommentInput: React.FC<CommentInputProps> = ({
   placeholder = "写下你的评论...",
   style,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const [text, setText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
@@ -370,7 +366,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
     const borderColorValue = borderColor.value;
     return {
       transform: [{ scale: scale.value }],
-      borderColor: borderColorValue > 0.5 ? Colors.primary[500] : Colors.neutral[200],
+      borderColor: borderColorValue > 0.5 ? colors.primary[500] : colors.neutral[200],
     };
   });
 
@@ -390,7 +386,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
           ref={inputRef}
           style={styles.textInput}
           placeholder={placeholder}
-          placeholderTextColor={Colors.neutral[400]}
+          placeholderTextColor={colors.neutral[400]}
           value={text}
           onChangeText={setText}
           onFocus={() => setIsFocused(true)}
@@ -406,19 +402,19 @@ export const CommentInput: React.FC<CommentInputProps> = ({
           <Ionicons
             name="send"
             size={20}
-            color={text.trim() ? Colors.primary[500] : Colors.neutral[300]}
+            color={text.trim() ? colors.primary[500] : colors.neutral[300]}
           />
         </TouchableOpacity>
       </View>
       <View style={styles.inputActions}>
         <TouchableOpacity style={styles.actionIcon}>
-          <Ionicons name="image-outline" size={20} color={Colors.neutral[500]} />
+          <Ionicons name="image-outline" size={20} color={colors.neutral[500]} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionIcon}>
-          <Ionicons name="happy-outline" size={20} color={Colors.neutral[500]} />
+          <Ionicons name="happy-outline" size={20} color={colors.neutral[500]} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionIcon}>
-          <Ionicons name="at-outline" size={20} color={Colors.neutral[500]} />
+          <Ionicons name="at-outline" size={20} color={colors.neutral[500]} />
         </TouchableOpacity>
         <Text style={styles.characterCount}>{text.length}/500</Text>
       </View>
@@ -455,8 +451,6 @@ const _AnimatedCommentItem: React.FC<AnimatedCommentItemProps> = ({
   index,
   onLikeComment,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const commentOpacity = useSharedValue(0);
   const commentTranslateX = useSharedValue(20);
 
@@ -484,7 +478,7 @@ const _AnimatedCommentItem: React.FC<AnimatedCommentItemProps> = ({
             <Ionicons
               name={item.isLiked ? "heart" : "heart-outline"}
               size={16}
-              color={item.isLiked ? colors.error : Colors.neutral[400]}
+              color={item.isLiked ? "colors.error" : colors.neutral[400]}
             />
             <Text style={styles.commentLikes}>{item.likes}</Text>
           </TouchableOpacity>
@@ -505,8 +499,6 @@ export const CommentSheet: React.FC<CommentSheetProps> = ({
   onCommentSubmit,
   onLikeComment,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
 
@@ -529,8 +521,6 @@ export const CommentSheet: React.FC<CommentSheetProps> = ({
   }));
 
   const CommentItem: React.FC<{ item: CommentSheetItem; index: number }> = ({ item, index }) => {
-    const { colors } = useTheme();
-    const styles = useStyles(colors);
     const commentOpacity = useSharedValue(0);
     const commentTranslateX = useSharedValue(20);
 
@@ -558,7 +548,7 @@ export const CommentSheet: React.FC<CommentSheetProps> = ({
               <Ionicons
                 name={item.isLiked ? "heart" : "heart-outline"}
                 size={16}
-                color={item.isLiked ? colors.error : Colors.neutral[400]}
+                color={item.isLiked ? "colors.error" : colors.neutral[400]}
               />
               <Text style={styles.commentLikes}>{item.likes}</Text>
             </TouchableOpacity>
@@ -583,7 +573,7 @@ export const CommentSheet: React.FC<CommentSheetProps> = ({
         <View style={styles.sheetHeader}>
           <Text style={styles.sheetTitle}>评论 ({comments.length})</Text>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Ionicons name="close" size={24} color={Colors.neutral[500]} />
+            <Ionicons name="close" size={24} color={colors.neutral[500]} />
           </TouchableOpacity>
         </View>
 
@@ -621,8 +611,6 @@ interface ReactionOptionItemProps {
 }
 
 const ReactionOptionItem: React.FC<ReactionOptionItemProps> = ({ reaction, index, onSelect }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const reactionScale = useSharedValue(0);
 
   useEffect(() => {
@@ -651,8 +639,6 @@ export const ReactionPicker: React.FC<ReactionPickerProps> = ({
   onSelect,
   onDismiss,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
 
@@ -717,11 +703,11 @@ const useStyles = createStyles((colors) => ({
   likeButton: {
     flexDirection: "row",
     alignItems: "center",
-    padding: Spacing.sm,
+    padding: 8,
   },
   likeCount: {
-    marginLeft: Spacing.xs,
-    color: Colors.neutral[600],
+    marginLeft: 4,
+    color: colors.neutral[600],
   },
   particlesContainer: {
     position: "absolute",
@@ -738,10 +724,10 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "flex-start",
   },
   particleDot: {
-    width: DesignTokens.spacing['1.5'],
-    height: DesignTokens.spacing['1.5'],
+    width: 6,
+    height: 6,
     borderRadius: 3,
-    backgroundColor: colors.error, // custom color
+    backgroundColor: "colors.error", // custom color
   },
   backdrop: {
     flex: 1,
@@ -761,24 +747,24 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: Spacing.md,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[100],
+    borderBottomColor: colors.neutral[100],
   },
   sheetTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
   },
   closeButton: {
-    padding: Spacing.xs,
+    padding: 4,
   },
   productPreview: {
     flexDirection: "row",
     alignItems: "center",
-    padding: Spacing.md,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[100],
+    borderBottomColor: colors.neutral[100],
   },
   productImage: {
     width: 60,
@@ -787,26 +773,26 @@ const useStyles = createStyles((colors) => ({
   },
   productInfo: {
     flex: 1,
-    marginLeft: DesignTokens.spacing[3],
+    marginLeft: 12,
   },
   productName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
   },
   productPrice: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.primary[500],
-    marginTop: Spacing.xs,
+    color: colors.primary[500],
+    marginTop: 4,
   },
   platformsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    padding: DesignTokens.spacing[5],
+    padding: 20,
   },
   platformItem: {
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 16,
   },
   platformIcon: {
     width: 56,
@@ -814,34 +800,34 @@ const useStyles = createStyles((colors) => ({
     borderRadius: 28,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
   },
   platformName: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
   },
   actionsContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    padding: Spacing.md,
+    padding: 16,
     borderTopWidth: 1,
-    borderTopColor: Colors.neutral[100],
+    borderTopColor: colors.neutral[100],
   },
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    padding: DesignTokens.spacing[3],
-    gap: Spacing.sm,
+    padding: 12,
+    gap: 8,
   },
   actionText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[600],
-    marginLeft: Spacing.sm,
+    color: colors.neutral[600],
+    marginLeft: 8,
   },
   commentContainer: {
     backgroundColor: colors.surface,
     borderRadius: 24,
-    padding: DesignTokens.spacing[3],
+    padding: 12,
     borderWidth: 1,
   },
   inputContainer: {
@@ -851,34 +837,34 @@ const useStyles = createStyles((colors) => ({
   textInput: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[800],
-    paddingVertical: Spacing.sm,
+    color: colors.neutral[800],
+    paddingVertical: 8,
     maxHeight: 100,
   },
   sendButton: {
-    width: DesignTokens.spacing[9],
-    height: DesignTokens.spacing[9],
+    width: 36,
+    height: 36,
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    marginLeft: Spacing.sm,
+    marginLeft: 8,
   },
   sendButtonActive: {
-    backgroundColor: Colors.primary[50],
+    backgroundColor: colors.primary[50],
   },
   inputActions: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: Spacing.sm,
-    paddingHorizontal: Spacing.xs,
+    marginTop: 8,
+    paddingHorizontal: 4,
   },
   actionIcon: {
-    padding: Spacing.sm,
+    padding: 8,
   },
   characterCount: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
   },
   commentSheet: {
     position: "absolute",
@@ -891,18 +877,18 @@ const useStyles = createStyles((colors) => ({
     maxHeight: SCREEN_HEIGHT * 0.8,
   },
   commentsList: {
-    padding: Spacing.md,
+    padding: 16,
     paddingBottom: 100,
   },
   commentItem: {
     flexDirection: "row",
-    paddingVertical: DesignTokens.spacing[3],
+    paddingVertical: 12,
   },
   commentAvatar: {
-    width: DesignTokens.spacing[9],
-    height: DesignTokens.spacing[9],
+    width: 36,
+    height: 36,
     borderRadius: 18,
-    marginRight: DesignTokens.spacing[3],
+    marginRight: 12,
   },
   commentContent: {
     flex: 1,
@@ -910,41 +896,41 @@ const useStyles = createStyles((colors) => ({
   commentHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   commentUserName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
   },
   commentTime: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[400],
-    marginLeft: Spacing.sm,
+    color: colors.neutral[400],
+    marginLeft: 8,
   },
   commentText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[700],
+    color: colors.neutral[700],
     lineHeight: 20,
   },
   commentActions: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: Spacing.sm,
+    marginTop: 8,
   },
   commentAction: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: Spacing.md,
+    marginRight: 16,
   },
   commentLikes: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
-    marginLeft: Spacing.xs,
+    color: colors.neutral[500],
+    marginLeft: 4,
   },
   replyText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.primary[500],
+    color: colors.primary[500],
     fontWeight: "500",
   },
   reactionPicker: {
@@ -952,27 +938,27 @@ const useStyles = createStyles((colors) => ({
     width: 200,
     backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: DesignTokens.spacing[3],
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: Spacing.xs },
+    padding: 12,
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 8,
   },
   reactionItem: {
     alignItems: "center",
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   reactionEmoji: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
   },
   reactionLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.neutral[500],
-    marginTop: DesignTokens.spacing['0.5'],
+    color: colors.neutral[500],
+    marginTop: 2,
   },
-}))
+}));
 
 export default {
   AnimatedLikeButton,

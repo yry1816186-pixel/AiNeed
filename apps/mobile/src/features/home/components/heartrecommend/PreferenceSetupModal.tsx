@@ -1,4 +1,4 @@
-﻿﻿﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -20,11 +20,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, BorderRadius, Shadows, Spacing, flatColors as staticColors } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
-import { profileApi } from '../../../../services/api/profile.api';
-import { useAuthStore } from '../../../../stores/index';
+import { Colors, BorderRadius, Shadows } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { profileApi } from "../../../services/api/profile.api";
+import { useAuthStore } from "../../../stores";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -72,14 +72,18 @@ const AnimatedPreferenceOptionCard: React.FC<AnimatedPreferenceOptionCardProps> 
       onPress={onPress}
       activeOpacity={0.9}
     >
-      <Ionicons name={option.icon} size={32} color={isSelected ? Colors.primary[600] : staticColors.textSecondary} />
+      <Ionicons
+        name={option.icon}
+        size={32}
+        color={isSelected ? colors.primary[600] : colors.textSecondary}
+      />
       <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
         {option.label}
       </Text>
       {option.description && <Text style={styles.optionDescription}>{option.description}</Text>}
       {isSelected && (
         <View style={styles.checkMark}>
-          <Ionicons name="checkmark" size={14} color={staticColors.textInverse} />
+          <Ionicons name="checkmark" size={14} color={colors.textInverse} />
         </View>
       )}
     </AnimatedTouchable>
@@ -373,7 +377,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
         <View style={styles.header}>
           {currentStep > 0 ? (
             <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-              <Ionicons name="arrow-back" size={24} color={staticColors.textPrimary} />
+              <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
           ) : (
             <View style={styles.backButtonPlaceholder} />
@@ -408,7 +412,11 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
             disabled={!canProceed() || loading}
           >
             <LinearGradient
-              colors={canProceed() ? [staticColors.neutral[300], staticColors.neutral[700]] : [DesignTokens.colors.neutral[300], staticColors.textTertiary /* custom color */]}
+              colors={
+                canProceed()
+                  ? [DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark]
+                  : [DesignTokens.colors.neutral[300], colors.textTertiary /* custom color */]
+              }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.nextButtonGradient}
@@ -417,7 +425,7 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
                 {currentStep === totalSteps - 1 ? "开始探索" : "下一步"}
               </Text>
               {currentStep < totalSteps - 1 && (
-                <Ionicons name="arrow-forward" size={20} color={staticColors.textInverse} />
+                <Ionicons name="arrow-forward" size={20} color={colors.textInverse} />
               )}
             </LinearGradient>
           </TouchableOpacity>
@@ -430,92 +438,92 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: staticColors.background,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: Platform.OS === "ios" ? 60 : 40,
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingBottom: Spacing.md,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
-    backgroundColor: staticColors.surface,
+    backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
     ...Shadows.sm,
   },
   backButtonPlaceholder: {
-    width: DesignTokens.spacing[10],
+    width: 40,
   },
   progressContainer: {
     flex: 1,
-    marginHorizontal: Spacing.md,
+    marginHorizontal: 16,
     alignItems: "center",
   },
   progressBar: {
     width: "100%",
-    height: DesignTokens.spacing['1.5'],
-    backgroundColor: staticColors.neutral[200],
+    height: 6,
+    backgroundColor: colors.neutral[200],
     borderRadius: 3,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
-    backgroundColor: staticColors.primary[500],
+    backgroundColor: colors.primary[500],
     borderRadius: 3,
   },
   progressText: {
-    marginTop: Spacing.sm,
+    marginTop: 8,
     fontSize: DesignTokens.typography.sizes.sm,
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   skipButton: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   skipText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textSecondary,
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingBottom: DesignTokens.spacing[10],
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   stepContainer: {
-    paddingTop: DesignTokens.spacing[5],
+    paddingTop: 20,
   },
   stepTitle: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "700",
-    color: staticColors.textPrimary,
-    marginBottom: Spacing.sm,
+    color: colors.textPrimary,
+    marginBottom: 8,
   },
   stepSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: staticColors.textSecondary,
-    marginBottom: Spacing.lg,
+    color: colors.textSecondary,
+    marginBottom: 24,
   },
   optionsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: DesignTokens.spacing[3],
+    gap: 12,
   },
   optionCard: {
     width: (SCREEN_WIDTH - 40 - 24) / 3,
     aspectRatio: 0.9,
-    backgroundColor: staticColors.surface,
+    backgroundColor: colors.surface,
     borderRadius: BorderRadius.xl,
-    padding: DesignTokens.spacing[3],
+    padding: 12,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
@@ -523,39 +531,39 @@ const styles = StyleSheet.create({
     ...Shadows.sm,
   },
   optionCardSelected: {
-    borderColor: staticColors.primary[500],
-    backgroundColor: staticColors.primary[50],
+    borderColor: colors.primary[500],
+    backgroundColor: colors.primary[50],
   },
   optionLabel: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: staticColors.textPrimary,
+    color: colors.textPrimary,
     textAlign: "center",
   },
   optionLabelSelected: {
-    color: staticColors.primary[600],
+    color: colors.primary[600],
   },
   optionDescription: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: staticColors.textTertiary,
-    marginTop: DesignTokens.spacing['0.5'],
+    color: colors.textTertiary,
+    marginTop: 2,
     textAlign: "center",
   },
   checkMark: {
     position: "absolute",
-    top: Spacing.sm,
-    right: Spacing.sm,
-    width: DesignTokens.spacing[5],
-    height: DesignTokens.spacing[5],
+    top: 8,
+    right: 8,
+    width: 20,
+    height: 20,
     borderRadius: 10,
-    backgroundColor: staticColors.primary[500],
+    backgroundColor: colors.primary[500],
     alignItems: "center",
     justifyContent: "center",
   },
   footer: {
-    paddingHorizontal: DesignTokens.spacing[5],
+    paddingHorizontal: 20,
     paddingBottom: Platform.OS === "ios" ? 40 : 24,
-    paddingTop: Spacing.md,
+    paddingTop: 16,
   },
   nextButton: {
     borderRadius: 28,
@@ -569,13 +577,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
+    gap: 8,
+    paddingVertical: 16,
   },
   nextButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: staticColors.textInverse,
+    color: colors.textInverse,
   },
 });
 

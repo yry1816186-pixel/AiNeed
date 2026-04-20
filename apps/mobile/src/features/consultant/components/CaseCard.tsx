@@ -1,7 +1,8 @@
-﻿﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface CaseCardProps {
   serviceType: string;
@@ -73,15 +74,15 @@ const useStyles = createStyles((colors) => ({
   card: {
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: DesignTokens.spacing[3],
+    padding: 12,
     borderWidth: 1,
-    borderColor: colors.backgroundTertiary,
+    borderColor: "colors.backgroundTertiary",
     width: 240,
   },
   imageRow: {
     flexDirection: "row",
-    gap: Spacing.sm,
-    marginBottom: Spacing.sm,
+    gap: 8,
+    marginBottom: 8,
   },
   image: {
     flex: 1,
@@ -100,20 +101,20 @@ const useStyles = createStyles((colors) => ({
   badgeRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    marginBottom: Spacing.xs,
+    gap: 8,
+    marginBottom: 4,
   },
   typeBadge: {
-    backgroundColor: DesignTokens.colors.neutral[100],
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: DesignTokens.spacing['0.5'],
+    backgroundColor: "DesignTokens.colors.neutral[50]",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: DesignTokens.colors.brand.terracottaLight,
+    borderColor: "colors.primaryLight",
   },
   typeBadgeText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: DesignTokens.colors.brand.terracotta,
+    color: "colors.primary",
   },
   ratingText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -121,9 +122,9 @@ const useStyles = createStyles((colors) => ({
   },
   excerpt: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.text.secondary,
+    color: "#444",
     lineHeight: 18,
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   footer: {
     flexDirection: "row",
@@ -136,9 +137,9 @@ const useStyles = createStyles((colors) => ({
   },
   price: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: DesignTokens.colors.brand.terracotta,
+    color: "colors.primary",
     fontWeight: "500",
   },
-}))
+}));
 
 export default CaseCard;

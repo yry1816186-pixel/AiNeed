@@ -8,17 +8,24 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
-import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { useProfileStore } from '../stores/profileStore';
-import { ScreenLayout, Header } from '../../../shared/components/layout/ScreenLayout';
-import type { RootStackParamList } from '../../../types/navigation';
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  flatColors as colors,
+} from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useProfileStore } from "../stores/profileStore";
+import { ScreenLayout, Header } from "../../../shared/components/layout/ScreenLayout";
+import type { ProfileStackParamList } from "../../../navigation/types";
+import { navigateAuth } from "../../../navigation/navigationService";
 
-type BodyAnalysisNavProp = NavigationProp<RootStackParamList>;
+type BodyAnalysisNavProp = NavigationProp<ProfileStackParamList>;
 
 const BODY_TYPE_LABELS: Record<string, string> = {
   hourglass: "沙漏型",
@@ -303,10 +310,12 @@ export const BodyAnalysisScreen: React.FC = () => {
         <View style={styles.centerContainer}>
           <Ionicons name="body-outline" size={64} color={colors.textTertiary} />
           <Text style={styles.emptyTitle}>还没有体型数据</Text>
-          <Text style={styles.emptySubtitle}>完善身体数据后，AI将为你生成专属体型分析和穿搭建议</Text>
+          <Text style={styles.emptySubtitle}>
+            完善身体数据后，AI将为你生成专属体型分析和穿搭建议
+          </Text>
           <TouchableOpacity
             style={styles.emptyButton}
-            onPress={() => navigation.navigate("ProfileSetup" as never)}
+            onPress={() => navigateAuth("ProfileSetup")}
             accessibilityLabel="去完善数据"
             accessibilityRole="button"
           >
@@ -453,7 +462,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[1],
   },
   typeName: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "600",
     color: colors.surface,
     marginBottom: Spacing[2],
@@ -522,8 +531,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[3],
   },
   adviceBullet: {
-    width: DesignTokens.spacing['1.5'],
-    height: DesignTokens.spacing['1.5'],
+    width: DesignTokens.spacing["1.5"],
+    height: DesignTokens.spacing["1.5"],
     borderRadius: 3,
     backgroundColor: colors.primary,
     marginTop: Spacing.sm,

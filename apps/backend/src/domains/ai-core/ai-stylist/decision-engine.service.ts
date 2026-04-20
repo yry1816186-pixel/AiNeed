@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ClothingCategory } from '../../../types/prisma-enums';
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService } from "../../../common/redis/redis.service";
@@ -87,13 +87,7 @@ function extractStringArray(jsonValue: unknown): string[] {
 
 // ==================== Constants ====================
 
-const DECISION_NODE_TYPES: DecisionNodeType[] = [
-  "style",
-  "top",
-  "bottom",
-  "color",
-  "fit",
-];
+const DECISION_NODE_TYPES: DecisionNodeType[] = ["style", "top", "bottom", "color", "fit"];
 
 const NODE_TYPE_QUESTIONS: Record<DecisionNodeType, string> = {
   style: "你更偏好哪种穿搭风格？",
@@ -173,7 +167,7 @@ export class DecisionEngineService {
   constructor(
     private configService: ConfigService,
     private prisma: PrismaService,
-    private redisService: RedisService,
+    private redisService: RedisService
   ) {
     this.apiKey =
       this.configService.get<string>("AI_STYLIST_API_KEY", "") ||
@@ -182,10 +176,7 @@ export class DecisionEngineService {
     this.apiEndpoint =
       this.configService.get<string>("AI_STYLIST_API_ENDPOINT", "") ||
       this.configService.get<string>("GLM_API_ENDPOINT", "") ||
-      this.configService.get<string>(
-        "OPENAI_API_ENDPOINT",
-        "https://open.bigmodel.cn/api/paas/v4",
-      );
+      this.configService.get<string>("OPENAI_API_ENDPOINT", "https://open.bigmodel.cn/api/paas/v4");
     this.model =
       this.configService.get<string>("AI_STYLIST_MODEL", "") ||
       this.configService.get<string>("GLM_MODEL", "") ||
@@ -198,9 +189,7 @@ export class DecisionEngineService {
   /**
    * Create a new decision tree based on user profile and context
    */
-  async createDecisionTree(
-    input: CreateDecisionTreeInput,
-  ): Promise<DecisionTreeResult> {
+  async createDecisionTree(input: CreateDecisionTreeInput): Promise<DecisionTreeResult> {
     const { userId, sessionId, context, userProfile } = input;
 
     this.logger.log(`Creating decision tree for user ${userId}, session ${sessionId}`);
@@ -239,7 +228,7 @@ export class DecisionEngineService {
    */
   private async buildRootNode(
     context: DecisionContext,
-    userProfile: UserProfile,
+    userProfile: UserProfile
   ): Promise<DecisionNode> {
     // Determine the best starting node type
     const nodeType = this.determineRootNodeType(context, userProfile);
@@ -267,7 +256,7 @@ export class DecisionEngineService {
    */
   private determineRootNodeType(
     context: DecisionContext,
-    userProfile: UserProfile,
+    userProfile: UserProfile
   ): DecisionNodeType {
     // If user already has style preferences, start with fit or color
     if (context.preferredStyles.length > 0 || userProfile.stylePreferences.length > 0) {
@@ -289,9 +278,14 @@ export class DecisionEngineService {
   private async generateNodeOptions(
     nodeType: DecisionNodeType,
     context: DecisionContext,
-    userProfile: UserProfile,
+    userProfile: UserProfile
   ): Promise<DecisionOption[]> {
-    let baseOptions: Array<{ id: string; label: string; description?: string; fitTypes?: string[] }>;
+    let baseOptions: Array<{
+      id: string;
+      label: string;
+      description?: string;
+      fitTypes?: string[];
+    }>;
 
     switch (nodeType) {
       case "style":
@@ -329,9 +323,7 @@ export class DecisionEngineService {
     });
 
     // Sort by composite score and return top options
-    return scoredOptions
-      .sort((a: any, b: any) => b.compositeScore - a.compositeScore)
-      .slice(0, 4);
+    return scoredOptions.sort((a, b) => b.compositeScore - a.compositeScore).slice(0, 4);
   }
 
   /**
@@ -345,8 +337,12 @@ export class DecisionEngineService {
     const prioritized = [...STYLE_OPTIONS].sort((a, b) => {
       const aRecommended = recommendedStyles.includes(a.id);
       const bRecommended = recommendedStyles.includes(b.id);
-      if (aRecommended && !bRecommended) {return -1;}
-      if (!aRecommended && bRecommended) {return 1;}
+      if (aRecommended && !bRecommended) {
+        return -1;
+      }
+      if (!aRecommended && bRecommended) {
+        return 1;
+      }
       return 0;
     });
 
@@ -360,7 +356,9 @@ export class DecisionEngineService {
     const bodyType = userProfile.bodyType?.toLowerCase() || "rectangle";
 
     return TOP_OPTIONS.filter((opt) => {
-      if (!opt.fitTypes) {return true;}
+      if (!opt.fitTypes) {
+        return true;
+      }
       return opt.fitTypes.includes(bodyType);
     });
   }
@@ -372,7 +370,9 @@ export class DecisionEngineService {
     const bodyType = userProfile.bodyType?.toLowerCase() || "rectangle";
 
     return BOTTOM_OPTIONS.filter((opt) => {
-      if (!opt.fitTypes) {return true;}
+      if (!opt.fitTypes) {
+        return true;
+      }
       return opt.fitTypes.includes(bodyType);
     });
   }
@@ -380,10 +380,11 @@ export class DecisionEngineService {
   /**
    * Generate color options based on user's color season
    */
-  private generateColorOptions(userProfile: UserProfile): Array<{ id: string; label: string; description?: string }> {
+  private generateColorOptions(
+    userProfile: UserProfile
+  ): Array<{ id: string; label: string; description?: string }> {
     const colorSeason = userProfile.colorSeason?.toLowerCase() || "autumn";
-    const recommendedColors =
-      COLOR_SEASON_MAP[colorSeason] ?? COLOR_SEASON_MAP.autumn ?? [];
+    const recommendedColors = COLOR_SEASON_MAP[colorSeason] ?? COLOR_SEASON_MAP.autumn ?? [];
 
     // Add some neutral options
     const neutrals = ["黑色", "白色", "灰色", "藏青"];
@@ -403,7 +404,9 @@ export class DecisionEngineService {
     const bodyType = userProfile.bodyType?.toLowerCase() || "rectangle";
 
     return FIT_GOAL_OPTIONS.filter((opt) => {
-      if (opt.bodyTypes.length === 0) {return true;} // Universal options
+      if (opt.bodyTypes.length === 0) {
+        return true;
+      } // Universal options
       return opt.bodyTypes.includes(bodyType);
     });
   }
@@ -413,7 +416,7 @@ export class DecisionEngineService {
    */
   private buildOptionContent(
     opt: { id: string; label: string; fitTypes?: string[] },
-    nodeType: DecisionNodeType,
+    nodeType: DecisionNodeType
   ): DecisionOptionContent {
     const content: DecisionOptionContent = {};
 
@@ -449,7 +452,7 @@ export class DecisionEngineService {
     opt: { id: string; label: string; fitTypes?: string[] },
     nodeType: DecisionNodeType,
     context: DecisionContext,
-    userProfile: UserProfile,
+    userProfile: UserProfile
   ): { fitScore: number; styleScore: number; preferenceScore: number } {
     return {
       fitScore: this.calculateFitScore(opt, nodeType, userProfile),
@@ -464,11 +467,13 @@ export class DecisionEngineService {
   private calculateFitScore(
     opt: { id: string; label: string; fitTypes?: string[] },
     nodeType: DecisionNodeType,
-    userProfile: UserProfile,
+    userProfile: UserProfile
   ): number {
     const bodyType = userProfile.bodyType?.toLowerCase();
 
-    if (!bodyType) {return 50;} // Default score when no body type info
+    if (!bodyType) {
+      return 50;
+    } // Default score when no body type info
 
     // Check if option has fit type recommendations
     if (opt.fitTypes && opt.fitTypes.length > 0) {
@@ -478,24 +483,54 @@ export class DecisionEngineService {
     // Body type specific scoring
     const bodyTypeScores: Record<string, Record<string, number>> = {
       hourglass: {
-        fitted: 90, regular: 75, loose: 60, oversized: 50,
-        slim: 85, straight: 70, wide: 65, "skirt_a": 90,
+        fitted: 90,
+        regular: 75,
+        loose: 60,
+        oversized: 50,
+        slim: 85,
+        straight: 70,
+        wide: 65,
+        skirt_a: 90,
       },
       rectangle: {
-        fitted: 70, regular: 80, loose: 75, oversized: 85,
-        slim: 75, straight: 80, wide: 70, "skirt_a": 70,
+        fitted: 70,
+        regular: 80,
+        loose: 75,
+        oversized: 85,
+        slim: 75,
+        straight: 80,
+        wide: 70,
+        skirt_a: 70,
       },
       triangle: {
-        fitted: 60, regular: 75, loose: 80, oversized: 70,
-        slim: 55, straight: 85, wide: 90, "skirt_a": 90,
+        fitted: 60,
+        regular: 75,
+        loose: 80,
+        oversized: 70,
+        slim: 55,
+        straight: 85,
+        wide: 90,
+        skirt_a: 90,
       },
       inverted_triangle: {
-        fitted: 60, regular: 70, loose: 85, oversized: 90,
-        slim: 80, straight: 75, wide: 70, "skirt_a": 60,
+        fitted: 60,
+        regular: 70,
+        loose: 85,
+        oversized: 90,
+        slim: 80,
+        straight: 75,
+        wide: 70,
+        skirt_a: 60,
       },
       oval: {
-        fitted: 45, regular: 70, loose: 85, oversized: 80,
-        slim: 50, straight: 75, wide: 90, "skirt_a": 75,
+        fitted: 45,
+        regular: 70,
+        loose: 85,
+        oversized: 80,
+        slim: 50,
+        straight: 75,
+        wide: 90,
+        skirt_a: 75,
       },
     };
 
@@ -515,35 +550,44 @@ export class DecisionEngineService {
     opt: { id: string; label: string },
     nodeType: DecisionNodeType,
     context: DecisionContext,
-    userProfile: UserProfile,
+    userProfile: UserProfile
   ): number {
     let score = 50; // Base score
 
     // Check against preferred styles from context
     if (context.preferredStyles.length > 0) {
       const isPreferred = context.preferredStyles.some(
-        (style) => style.toLowerCase().includes(opt.label.toLowerCase()) ||
-                   opt.label.toLowerCase().includes(style.toLowerCase()),
+        (style) =>
+          style.toLowerCase().includes(opt.label.toLowerCase()) ||
+          opt.label.toLowerCase().includes(style.toLowerCase())
       );
-      if (isPreferred) {score += 30;}
+      if (isPreferred) {
+        score += 30;
+      }
     }
 
     // Check against style avoidances
     if (context.styleAvoidances.length > 0) {
       const isAvoided = context.styleAvoidances.some(
-        (avoid) => avoid.toLowerCase().includes(opt.label.toLowerCase()) ||
-                   opt.label.toLowerCase().includes(avoid.toLowerCase()),
+        (avoid) =>
+          avoid.toLowerCase().includes(opt.label.toLowerCase()) ||
+          opt.label.toLowerCase().includes(avoid.toLowerCase())
       );
-      if (isAvoided) {score -= 40;}
+      if (isAvoided) {
+        score -= 40;
+      }
     }
 
     // Check against user's historical preferences
     if (userProfile.stylePreferences.length > 0) {
       const matchesPreference = userProfile.stylePreferences.some(
-        (pref) => pref.toLowerCase().includes(opt.label.toLowerCase()) ||
-                  opt.label.toLowerCase().includes(pref.toLowerCase()),
+        (pref) =>
+          pref.toLowerCase().includes(opt.label.toLowerCase()) ||
+          opt.label.toLowerCase().includes(pref.toLowerCase())
       );
-      if (matchesPreference) {score += 20;}
+      if (matchesPreference) {
+        score += 20;
+      }
     }
 
     // Check occasion fit
@@ -579,15 +623,19 @@ export class DecisionEngineService {
   private calculatePreferenceScore(
     opt: { id: string; label: string },
     nodeType: DecisionNodeType,
-    userProfile: UserProfile,
+    userProfile: UserProfile
   ): number {
     let score = 50; // Base score
 
     // Analyze behavior history
     const relevantBehaviors = userProfile.behaviorHistory.filter((b) => {
-      if (!b.category) {return false;}
-      return b.category.toLowerCase() === nodeType.toLowerCase() ||
-             b.value?.toLowerCase().includes(opt.label.toLowerCase());
+      if (!b.category) {
+        return false;
+      }
+      return (
+        b.category.toLowerCase() === nodeType.toLowerCase() ||
+        b.value?.toLowerCase().includes(opt.label.toLowerCase())
+      );
     });
 
     // Weight behaviors by recency and type
@@ -613,10 +661,13 @@ export class DecisionEngineService {
     // Check color preferences for color node type
     if (nodeType === "color" && userProfile.colorPreferences.length > 0) {
       const colorMatch = userProfile.colorPreferences.some(
-        (color) => color.toLowerCase().includes(opt.label.toLowerCase()) ||
-                   opt.label.toLowerCase().includes(color.toLowerCase()),
+        (color) =>
+          color.toLowerCase().includes(opt.label.toLowerCase()) ||
+          opt.label.toLowerCase().includes(color.toLowerCase())
       );
-      if (colorMatch) {score += 25;}
+      if (colorMatch) {
+        score += 25;
+      }
     }
 
     return Math.max(0, Math.min(100, score));
@@ -631,11 +682,7 @@ export class DecisionEngineService {
     styleScore: number;
     preferenceScore: number;
   }): number {
-    return (
-      scores.fitScore * 0.3 +
-      scores.styleScore * 0.3 +
-      scores.preferenceScore * 0.4
-    );
+    return scores.fitScore * 0.3 + scores.styleScore * 0.3 + scores.preferenceScore * 0.4;
   }
 
   // ==================== LLM Reasoning ====================
@@ -647,7 +694,7 @@ export class DecisionEngineService {
     nodeType: DecisionNodeType,
     context: DecisionContext,
     userProfile: UserProfile,
-    options: DecisionOption[],
+    options: DecisionOption[]
   ): Promise<string> {
     // Fallback reasoning if LLM is not available
     const fallbackReasoning = this.buildFallbackReasoning(nodeType, context, userProfile, options);
@@ -661,7 +708,8 @@ export class DecisionEngineService {
       const response = await this.callLLM([
         {
           role: "system",
-          content: "你是一个专业的穿搭顾问。请用简洁的中文解释为什么推荐这些选项，控制在100字以内。",
+          content:
+            "你是一个专业的穿搭顾问。请用简洁的中文解释为什么推荐这些选项，控制在100字以内。",
         },
         {
           role: "user",
@@ -684,7 +732,7 @@ export class DecisionEngineService {
     nodeType: DecisionNodeType,
     context: DecisionContext,
     userProfile: UserProfile,
-    options: DecisionOption[],
+    options: DecisionOption[]
   ): string {
     const topOption = options[0];
     if (!topOption) {
@@ -721,19 +769,26 @@ export class DecisionEngineService {
     nodeType: DecisionNodeType,
     context: DecisionContext,
     userProfile: UserProfile,
-    options: DecisionOption[],
+    options: DecisionOption[]
   ): string {
-    const topOptions = options.slice(0, 3).map((o) => o.displayName).join("、");
+    const topOptions = options
+      .slice(0, 3)
+      .map((o) => o.displayName)
+      .join("、");
 
-    return JSON.stringify({
-      nodeType,
-      occasion: context.occasion,
-      bodyType: userProfile.bodyType,
-      colorSeason: userProfile.colorSeason,
-      preferredStyle: [...context.preferredStyles, ...userProfile.stylePreferences][0],
-      topOptions,
-      task: "请简要解释为什么推荐这些选项",
-    }, null, 2);
+    return JSON.stringify(
+      {
+        nodeType,
+        occasion: context.occasion,
+        bodyType: userProfile.bodyType,
+        colorSeason: userProfile.colorSeason,
+        preferredStyle: [...context.preferredStyles, ...userProfile.stylePreferences][0],
+        topOptions,
+        task: "请简要解释为什么推荐这些选项",
+      },
+      null,
+      2
+    );
   }
 
   // ==================== User Decision Recording ====================
@@ -831,9 +886,9 @@ export class DecisionEngineService {
    */
   private getNextNodeType(
     currentNodeType: DecisionNodeType,
-    tree: DecisionTree,
+    tree: DecisionTree
   ): DecisionNodeType | null {
-    const decisionTypes = tree.decisions.map((d: any) => d.nodeType);
+    const decisionTypes = tree.decisions.map((d) => d.nodeType);
     const currentIndex = DECISION_NODE_TYPES.indexOf(currentNodeType);
 
     // Check if all node types have been covered
@@ -873,10 +928,14 @@ export class DecisionEngineService {
 
     for (const decision of tree.decisions) {
       const node = tree.nodes.get(decision.nodeId);
-      if (!node) {continue;}
+      if (!node) {
+        continue;
+      }
 
       const chosenOption = node.options.find((o) => o.optionId === decision.chosenOptionId);
-      if (!chosenOption) {continue;}
+      if (!chosenOption) {
+        continue;
+      }
 
       switch (node.nodeType) {
         case "style":
@@ -915,7 +974,7 @@ export class DecisionEngineService {
     nodeType: DecisionNodeType,
     context: DecisionContext,
     userProfile: UserProfile,
-    parentNode: DecisionNode,
+    parentNode: DecisionNode
   ): Promise<DecisionNode> {
     const options = await this.generateNodeOptions(nodeType, context, userProfile);
     const llmReasoning = await this.generateNodeReasoning(nodeType, context, userProfile, options);
@@ -936,10 +995,7 @@ export class DecisionEngineService {
   /**
    * Persist decision to database
    */
-  private async persistDecision(
-    decision: UserDecision,
-    userId: string,
-  ): Promise<void> {
+  private async persistDecision(decision: UserDecision, userId: string): Promise<void> {
     try {
       await this.prisma.userDecision.create({
         data: {
@@ -966,10 +1022,12 @@ export class DecisionEngineService {
   private async updatePreferencesFromDecision(
     userId: string,
     decision: UserDecision,
-    node: DecisionNode,
+    node: DecisionNode
   ): Promise<void> {
     const chosenOption = node.options.find((o) => o.optionId === decision.chosenOptionId);
-    if (!chosenOption) {return;}
+    if (!chosenOption) {
+      return;
+    }
 
     try {
       // Update preference weights
@@ -1063,7 +1121,7 @@ export class DecisionEngineService {
         await this.redisService.setex(
           `${this.treeConfigPrefix}${tree.sessionId}`,
           ttlSeconds,
-          serializedTree,
+          serializedTree
         );
       } catch (error) {
         this.logger.warn(`Failed to persist tree to Redis: ${error}`);
@@ -1084,9 +1142,7 @@ export class DecisionEngineService {
     // Check Redis if available
     if (this.useRedis) {
       try {
-        const serializedTree = await this.redisService.get(
-          `${this.treeConfigPrefix}${sessionId}`,
-        );
+        const serializedTree = await this.redisService.get(`${this.treeConfigPrefix}${sessionId}`);
         if (serializedTree) {
           const tree = this.deserializeTree(serializedTree);
           this.treeCache.set(sessionId, tree);
@@ -1122,7 +1178,10 @@ export class DecisionEngineService {
    * Deserialize decision tree from storage
    */
   private deserializeTree(data: string): DecisionTree {
-    const parsed = JSON.parse(data) as Omit<DecisionTree, 'nodes' | 'decisions' | 'createdAt' | 'updatedAt'> & {
+    const parsed = JSON.parse(data) as Omit<
+      DecisionTree,
+      "nodes" | "decisions" | "createdAt" | "updatedAt"
+    > & {
       nodes: [string, DecisionNode][];
       decisions: SerializedDecision[];
       createdAt: string;
@@ -1133,10 +1192,12 @@ export class DecisionEngineService {
       nodes: new Map(parsed.nodes),
       createdAt: new Date(parsed.createdAt),
       updatedAt: new Date(parsed.updatedAt),
-      decisions: parsed.decisions.map((d): UserDecision => ({
-        ...d,
-        timestamp: new Date(d.timestamp),
-      })),
+      decisions: parsed.decisions.map(
+        (d): UserDecision => ({
+          ...d,
+          timestamp: new Date(d.timestamp),
+        })
+      ),
     };
   }
 
@@ -1185,9 +1246,11 @@ export class DecisionEngineService {
     }
 
     // Add from preference weights
-    const styleWeights = preferenceWeights.filter((w: { category: string; key: string; weight: number }) => w.category === "decision_style");
+    const styleWeights = preferenceWeights.filter((w: any) => w.category === "decision_style");
     stylePreferences.push(
-      ...styleWeights.sort((a: { weight: number }, b: { weight: number }) => Number(b.weight) - Number(a.weight)).map((w: { key: string }) => w.key),
+      ...styleWeights
+        .sort((a: any, b: any) => Number(b.weight) - Number(a.weight))
+        .map((w: any) => w.key)
     );
 
     // Extract color preferences
@@ -1245,7 +1308,7 @@ export class DecisionEngineService {
       orderBy: { timestamp: "asc" },
     });
 
-    return decisions.map((d: { id: string; sessionId: string; nodeId: string; nodeType: string; chosenOptionId: string | null; rejectedOptionIds: string[]; decisionTime: number | null; timestamp: Date }) => ({
+    return decisions.map((d: any) => ({
       id: d.id,
       sessionId: d.sessionId,
       nodeId: d.nodeId,
@@ -1307,7 +1370,9 @@ export class DecisionEngineService {
    */
   async getCurrentNode(sessionId: string): Promise<DecisionNode | null> {
     const tree = await this.getTree(sessionId);
-    if (!tree) {return null;}
+    if (!tree) {
+      return null;
+    }
 
     return tree.nodes.get(tree.currentNodeId) || null;
   }
@@ -1390,7 +1455,7 @@ export class DecisionEngineService {
    * Call LLM API
    */
   private async callLLM(
-    messages: Array<{ role: string; content: string }>,
+    messages: Array<{ role: string; content: string }>
   ): Promise<LlmChatCompletionResponse> {
     const response = await fetch(`${this.apiEndpoint}/chat/completions`, {
       method: "POST",

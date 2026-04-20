@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -17,9 +17,9 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { flatColors as colors, Spacing } from "../../../design-system/theme";
 import { bloggerApi, BloggerProduct } from "../../../services/api/blogger.api";
 import type { RootStackParamList } from "../../../types/navigation";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type BloggerProductRoute = RouteProp<RootStackParamList, "BloggerProduct">;
@@ -27,6 +27,7 @@ type BloggerProductRoute = RouteProp<RootStackParamList, "BloggerProduct">;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export const BloggerProductScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<BloggerProductRoute>();
   const productId = route.params?.productId ?? "";
@@ -96,7 +97,7 @@ export const BloggerProductScreen: React.FC = () => {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.successContainer}>
-          <Ionicons name="checkmark-circle" size={64} color={colors.success} />
+          <Ionicons name="checkmark-circle" size={64} color="colors.success" />
           <Text style={styles.successTitle}>购买成功</Text>
           <Text style={styles.successSubtitle}>{product.title}</Text>
           {product.type === "digital" && product.content && (
@@ -264,7 +265,7 @@ export const BloggerProductScreen: React.FC = () => {
               >
                 {selectedPayment === "alipay" && <View style={styles.paymentRadioInner} />}
               </View>
-              <Ionicons name="wallet-outline" size={20} color={colors.info} />
+              <Ionicons name="wallet-outline" size={20} color="colors.info" />
               <Text style={styles.paymentName}>支付宝</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -282,7 +283,7 @@ export const BloggerProductScreen: React.FC = () => {
               >
                 {selectedPayment === "wechat" && <View style={styles.paymentRadioInner} />}
               </View>
-              <Ionicons name="chatbubble-ellipses-outline" size={20} color={colors.success} />
+              <Ionicons name="chatbubble-ellipses-outline" size={20} color="colors.success" />
               <Text style={styles.paymentName}>微信支付</Text>
             </TouchableOpacity>
 
@@ -313,8 +314,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
@@ -322,66 +323,47 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: colors.text,
   },
-  backBtn: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
-    justifyContent: "center",
-  },
-  headerSpacer: { width: DesignTokens.spacing[10] },
+  backBtn: { width: 40, height: 40, justifyContent: "center" },
+  headerSpacer: { width: 40 },
   carouselSection: { backgroundColor: DesignTokens.colors.neutral[50] },
   carouselImage: { width: SCREEN_WIDTH, height: SCREEN_WIDTH * 0.8 },
-  dots: {
-    flexDirection: "row",
-    justifyContent: "center",
-    paddingVertical: DesignTokens.spacing["2.5"],
-    gap: DesignTokens.spacing["1.5"],
-  },
-  dot: {
-    width: DesignTokens.spacing["1.5"],
-    height: DesignTokens.spacing["1.5"],
-    borderRadius: 3,
-    backgroundColor: "rgba(0,0,0,0.2)",
-  },
-  dotActive: {
-    backgroundColor: colors.primary,
-    width: Spacing.sm,
-    height: Spacing.sm,
-    borderRadius: 4,
-  },
+  dots: { flexDirection: "row", justifyContent: "center", paddingVertical: 10, gap: 6 },
+  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "rgba(0,0,0,0.2)" },
+  dotActive: { backgroundColor: colors.primary, width: 8, height: 8, borderRadius: 4 },
   infoSection: {
     backgroundColor: colors.surface,
-    padding: Spacing.md,
-    marginTop: Spacing.sm,
+    padding: 16,
+    marginTop: 8,
   },
   productTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: colors.text,
   },
   productPrice: {
     fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "700",
     color: colors.primary,
-    marginTop: Spacing.sm,
+    marginTop: 8,
   },
   originalPrice: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
     textDecorationLine: "line-through",
-    marginTop: Spacing.xs,
+    marginTop: 4,
   },
   descriptionSection: {
     backgroundColor: colors.surface,
-    padding: Spacing.md,
-    marginTop: Spacing.sm,
+    padding: 16,
+    marginTop: 8,
   },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
   },
   descriptionText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -392,18 +374,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
-    padding: Spacing.md,
-    marginTop: Spacing.sm,
-    gap: DesignTokens.spacing[3],
+    padding: 16,
+    marginTop: 8,
+    gap: 12,
   },
-  bloggerAvatar: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
-    borderRadius: 22,
-  },
+  bloggerAvatar: { width: 44, height: 44, borderRadius: 22 },
   bloggerAvatarPlaceholder: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
     backgroundColor: colors.primary,
     alignItems: "center",
@@ -415,41 +393,41 @@ const styles = StyleSheet.create({
     color: colors.surface,
   },
   bloggerInfo: { flex: 1 },
-  bloggerNameRow: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing["1.5"] },
+  bloggerNameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   bloggerName: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textPrimary,
+    color: colors.text,
   },
   bloggerBadgeSmall: {
-    width: DesignTokens.spacing["3.5"],
-    height: DesignTokens.spacing["3.5"],
+    width: 14,
+    height: 14,
     borderRadius: 7,
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   bigVBadgeSmall: {
-    width: DesignTokens.spacing["3.5"],
-    height: DesignTokens.spacing["3.5"],
+    width: 14,
+    height: 14,
     borderRadius: 7,
-    backgroundColor: colors.warning,
+    backgroundColor: "colors.warning",
     alignItems: "center",
     justifyContent: "center",
   },
   bloggerLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
-    marginTop: DesignTokens.spacing["0.5"],
+    marginTop: 2,
   },
   externalLink: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 8,
     backgroundColor: colors.surface,
-    marginTop: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing["3.5"],
+    marginTop: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
   externalLinkText: {
     flex: 1,
@@ -458,11 +436,11 @@ const styles = StyleSheet.create({
   },
   salesInfo: {
     flexDirection: "row",
-    gap: Spacing.md,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    gap: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: colors.surface,
-    marginTop: Spacing.sm,
+    marginTop: 8,
   },
   salesText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   purchaseBar: {
@@ -473,18 +451,18 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
-    paddingBottom: DesignTokens.spacing[5],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    paddingBottom: 20,
   },
   purchaseBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
+    gap: 8,
     backgroundColor: colors.primary,
     borderRadius: 12,
-    paddingVertical: DesignTokens.spacing["3.5"],
+    paddingVertical: 14,
   },
   purchaseBtnText: {
     color: colors.surface,
@@ -503,23 +481,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 16,
     paddingBottom: 34,
   },
   sheetHandle: {
-    width: DesignTokens.spacing[10],
-    height: Spacing.xs,
+    width: 40,
+    height: 4,
     borderRadius: 2,
     backgroundColor: DesignTokens.colors.neutral[200],
     alignSelf: "center",
-    marginTop: DesignTokens.spacing["2.5"],
-    marginBottom: DesignTokens.spacing["3.5"],
+    marginTop: 10,
+    marginBottom: 14,
   },
   sheetTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: DesignTokens.spacing["3.5"],
+    marginBottom: 14,
   },
   sheetProductInfo: {
     flexDirection: "row",
@@ -527,14 +505,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.background,
     borderRadius: 10,
-    padding: DesignTokens.spacing[3],
-    marginBottom: Spacing.md,
+    padding: 12,
+    marginBottom: 16,
   },
   sheetProductName: {
     flex: 1,
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textPrimary,
-    marginRight: DesignTokens.spacing[3],
+    marginRight: 12,
   },
   sheetProductPrice: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -545,21 +523,21 @@ const styles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: DesignTokens.spacing["2.5"],
+    marginBottom: 10,
   },
   paymentOption: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing["2.5"],
-    paddingVertical: DesignTokens.spacing["3.5"],
-    paddingHorizontal: DesignTokens.spacing[3],
+    gap: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   paymentOptionSelected: { backgroundColor: colors.backgroundTertiary },
   paymentRadio: {
-    width: DesignTokens.spacing[5],
-    height: DesignTokens.spacing[5],
+    width: 20,
+    height: 20,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: colors.border,
@@ -567,19 +545,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   paymentRadioSelected: { borderColor: colors.primary },
-  paymentRadioInner: {
-    width: DesignTokens.spacing["2.5"],
-    height: DesignTokens.spacing["2.5"],
-    borderRadius: 5,
-    backgroundColor: colors.primary,
-  },
+  paymentRadioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.primary },
   paymentName: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, flex: 1 },
   confirmPurchaseBtn: {
     backgroundColor: colors.primary,
     borderRadius: 12,
-    paddingVertical: DesignTokens.spacing["3.5"],
+    paddingVertical: 14,
     alignItems: "center",
-    marginTop: DesignTokens.spacing[5],
+    marginTop: 20,
   },
   confirmPurchaseBtnDisabled: { opacity: 0.5 },
   confirmPurchaseBtnText: {
@@ -591,24 +564,24 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: Spacing.xl,
+    paddingHorizontal: 32,
   },
   successTitle: {
     fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "700",
     color: colors.textPrimary,
-    marginTop: Spacing.md,
+    marginTop: 16,
   },
   successSubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
-    marginTop: DesignTokens.spacing["1.5"],
+    marginTop: 6,
   },
   contentBox: {
     backgroundColor: colors.surface,
     borderRadius: 12,
-    padding: Spacing.md,
-    marginTop: DesignTokens.spacing[5],
+    padding: 16,
+    marginTop: 20,
     width: "100%",
     borderWidth: 1,
     borderColor: colors.border,
@@ -621,9 +594,9 @@ const styles = StyleSheet.create({
   viewSchemeBtn: {
     backgroundColor: colors.primary,
     borderRadius: 12,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: DesignTokens.spacing["3.5"],
-    marginTop: Spacing.lg,
+    paddingHorizontal: 32,
+    paddingVertical: 14,
+    marginTop: 24,
   },
   viewSchemeBtnText: {
     color: colors.surface,

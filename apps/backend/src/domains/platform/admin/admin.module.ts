@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from "@nestjs/common";
 
-import { PrismaModule } from "../../../common/prisma/prisma.module";
+import { PrismaModule } from "../../../../common/prisma/prisma.module";
 
 import { AdminAuditController } from "./admin-audit.controller";
 import { AdminConfigController } from "./admin-config.controller";
@@ -22,12 +22,7 @@ import { ContentReviewService } from "./services/content-review.service";
     AdminAuditController,
     AdminContentReviewController,
   ],
-  providers: [
-    AdminAuditService,
-    AdminDashboardService,
-    AdminConfigService,
-    ContentReviewService,
-  ],
+  providers: [AdminAuditService, AdminDashboardService, AdminConfigService, ContentReviewService],
   exports: [AdminAuditService, AdminConfigService, ContentReviewService],
 })
 export class AdminModule {}

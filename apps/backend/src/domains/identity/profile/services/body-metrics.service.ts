@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
-import { Gender } from '../../../../types/prisma-enums';
+import { Gender } from "@/types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 
@@ -70,10 +70,7 @@ export class BodyMetricsService {
     }
 
     const age = user?.birthDate
-      ? Math.floor(
-          (Date.now() - user.birthDate.getTime()) /
-            (365.25 * 24 * 60 * 60 * 1000),
-        )
+      ? Math.floor((Date.now() - user.birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000))
       : 25;
 
     const gender = user?.gender || Gender.female;
@@ -86,43 +83,18 @@ export class BodyMetricsService {
     const inseam = profile.inseam;
 
     return {
-      basicMetrics: this.calculateBasicMetrics(
-        height,
-        weight,
-        waist,
-        hip,
-        bust,
-      ),
-      bodyComposition: this.calculateBodyComposition(
-        height,
-        weight,
-        waist,
-        hip,
-        age,
-        gender,
-      ),
-      metabolicMetrics: this.calculateMetabolicMetrics(
-        height,
-        weight,
-        age,
-        gender,
-      ),
+      basicMetrics: this.calculateBasicMetrics(height, weight, waist, hip, bust),
+      bodyComposition: this.calculateBodyComposition(height, weight, waist, hip, age, gender),
+      metabolicMetrics: this.calculateMetabolicMetrics(height, weight, age, gender),
       healthIndices: this.calculateHealthIndices(height, weight, waist, hip),
-      bodyProportions: this.calculateBodyProportions(
-        shoulder,
-        waist,
-        hip,
-        height,
-        inseam,
-        bust,
-      ),
+      bodyProportions: this.calculateBodyProportions(shoulder, waist, hip, height, inseam, bust),
       sizeRecommendations: this.calculateSizeRecommendations(
         height,
         weight,
         bust,
         waist,
         hip,
-        inseam,
+        inseam
       ),
     };
   }
@@ -132,7 +104,7 @@ export class BodyMetricsService {
     weight: number,
     waist?: number | null,
     hip?: number | null,
-    bust?: number | null,
+    bust?: number | null
   ) {
     const metrics: AdvancedBodyMetrics["basicMetrics"] = [];
 
@@ -218,9 +190,13 @@ export class BodyMetricsService {
     if (bust && waist) {
       const bwr = bust / waist;
       let curveLevel = "匀称";
-      if (bwr > 1.2) {curveLevel = "曲线明显";}
-      else if (bwr > 1.1) {curveLevel = "曲线较好";}
-      else if (bwr < 1.0) {curveLevel = "偏直筒";}
+      if (bwr > 1.2) {
+        curveLevel = "曲线明显";
+      } else if (bwr > 1.1) {
+        curveLevel = "曲线较好";
+      } else if (bwr < 1.0) {
+        curveLevel = "偏直筒";
+      }
 
       metrics.push({
         name: "胸腰比",
@@ -253,7 +229,7 @@ export class BodyMetricsService {
     waist?: number | null,
     hip?: number | null,
     age: number = 25,
-    gender: Gender = Gender.female,
+    gender: Gender = Gender.female
   ): AdvancedBodyMetrics["bodyComposition"] {
     let bodyFatPercentage: number | null = null;
     let bodyFatCategory = "未知";
@@ -280,9 +256,7 @@ export class BodyMetricsService {
 
         const bodyFatNavy =
           495 /
-            (1.0324 -
-              0.19077 * Math.log10(waistCm - neckCm) +
-              0.15456 * Math.log10(heightInches)) -
+            (1.0324 - 0.19077 * Math.log10(waistCm - neckCm) + 0.15456 * Math.log10(heightInches)) -
           450;
 
         bodyFatPercentage = Math.max(5, Math.min(40, bodyFatNavy));
@@ -290,17 +264,29 @@ export class BodyMetricsService {
 
       if (bodyFatPercentage !== null) {
         if (gender === Gender.female) {
-          if (bodyFatPercentage < 18) {bodyFatCategory = "偏瘦";}
-          else if (bodyFatPercentage < 25) {bodyFatCategory = "理想";}
-          else if (bodyFatPercentage < 30) {bodyFatCategory = "正常";}
-          else if (bodyFatPercentage < 35) {bodyFatCategory = "偏高";}
-          else {bodyFatCategory = "需关注";}
+          if (bodyFatPercentage < 18) {
+            bodyFatCategory = "偏瘦";
+          } else if (bodyFatPercentage < 25) {
+            bodyFatCategory = "理想";
+          } else if (bodyFatPercentage < 30) {
+            bodyFatCategory = "正常";
+          } else if (bodyFatPercentage < 35) {
+            bodyFatCategory = "偏高";
+          } else {
+            bodyFatCategory = "需关注";
+          }
         } else {
-          if (bodyFatPercentage < 10) {bodyFatCategory = "偏瘦";}
-          else if (bodyFatPercentage < 18) {bodyFatCategory = "理想";}
-          else if (bodyFatPercentage < 25) {bodyFatCategory = "正常";}
-          else if (bodyFatPercentage < 30) {bodyFatCategory = "偏高";}
-          else {bodyFatCategory = "需关注";}
+          if (bodyFatPercentage < 10) {
+            bodyFatCategory = "偏瘦";
+          } else if (bodyFatPercentage < 18) {
+            bodyFatCategory = "理想";
+          } else if (bodyFatPercentage < 25) {
+            bodyFatCategory = "正常";
+          } else if (bodyFatPercentage < 30) {
+            bodyFatCategory = "偏高";
+          } else {
+            bodyFatCategory = "需关注";
+          }
         }
       }
     }
@@ -315,36 +301,36 @@ export class BodyMetricsService {
       bodyFatPercentage = Math.max(10, Math.min(50, bodyFatPercentage));
 
       if (gender === Gender.female) {
-        if (bodyFatPercentage < 18) {bodyFatCategory = "偏瘦";}
-        else if (bodyFatPercentage < 25) {bodyFatCategory = "理想";}
-        else {bodyFatCategory = "正常";}
+        if (bodyFatPercentage < 18) {
+          bodyFatCategory = "偏瘦";
+        } else if (bodyFatPercentage < 25) {
+          bodyFatCategory = "理想";
+        } else {
+          bodyFatCategory = "正常";
+        }
       } else {
-        if (bodyFatPercentage < 12) {bodyFatCategory = "偏瘦";}
-        else if (bodyFatPercentage < 20) {bodyFatCategory = "理想";}
-        else {bodyFatCategory = "正常";}
+        if (bodyFatPercentage < 12) {
+          bodyFatCategory = "偏瘦";
+        } else if (bodyFatPercentage < 20) {
+          bodyFatCategory = "理想";
+        } else {
+          bodyFatCategory = "正常";
+        }
       }
     }
 
-    const leanBodyMass = bodyFatPercentage
-      ? weight * (1 - bodyFatPercentage / 100)
-      : null;
+    const leanBodyMass = bodyFatPercentage ? weight * (1 - bodyFatPercentage / 100) : null;
 
     const muscleMass = leanBodyMass ? leanBodyMass * 0.9 : null;
 
-    const waterPercentage = bodyFatPercentage
-      ? 100 - bodyFatPercentage - 15
-      : null;
+    const waterPercentage = bodyFatPercentage ? 100 - bodyFatPercentage - 15 : null;
 
     return {
-      bodyFatPercentage: bodyFatPercentage
-        ? Math.round(bodyFatPercentage * 10) / 10
-        : null,
+      bodyFatPercentage: bodyFatPercentage ? Math.round(bodyFatPercentage * 10) / 10 : null,
       bodyFatCategory,
       leanBodyMass: leanBodyMass ? Math.round(leanBodyMass * 10) / 10 : null,
       muscleMass: muscleMass ? Math.round(muscleMass * 10) / 10 : null,
-      waterPercentage: waterPercentage
-        ? Math.round(waterPercentage * 10) / 10
-        : null,
+      waterPercentage: waterPercentage ? Math.round(waterPercentage * 10) / 10 : null,
     };
   }
 
@@ -352,7 +338,7 @@ export class BodyMetricsService {
     height: number,
     weight: number,
     age: number,
-    gender: Gender,
+    gender: Gender
   ): AdvancedBodyMetrics["metabolicMetrics"] {
     let bmr: number;
 
@@ -380,7 +366,7 @@ export class BodyMetricsService {
     height: number,
     weight: number,
     waist?: number | null,
-    hip?: number | null,
+    hip?: number | null
   ): AdvancedBodyMetrics["healthIndices"] {
     const bmi = weight / (height / 100) ** 2;
 
@@ -425,7 +411,7 @@ export class BodyMetricsService {
     hip?: number | null,
     height?: number | null,
     inseam?: number | null,
-    _bust?: number | null,
+    _bust?: number | null
   ): AdvancedBodyMetrics["bodyProportions"] {
     let shoulderToHipRatio: number | null = null;
     if (shoulder && hip) {
@@ -452,11 +438,7 @@ export class BodyMetricsService {
       const waistToHip = w / h;
       const waistToShoulder = w / s;
 
-      if (
-        Math.abs(shoulderToHip - 1) < 0.1 &&
-        waistToHip < 0.75 &&
-        waistToShoulder < 0.75
-      ) {
+      if (Math.abs(shoulderToHip - 1) < 0.1 && waistToHip < 0.75 && waistToShoulder < 0.75) {
         bodyTypeIndication = "X型（沙漏型）- 肩臀相近，腰细";
       } else if (shoulderToHip < 0.9 && waistToHip > 0.7) {
         bodyTypeIndication = "A型（梨形）- 臀部较宽";
@@ -470,15 +452,9 @@ export class BodyMetricsService {
     }
 
     return {
-      shoulderToHipRatio: shoulderToHipRatio
-        ? Math.round(shoulderToHipRatio * 100) / 100
-        : null,
-      legToBodyRatio: legToBodyRatio
-        ? Math.round(legToBodyRatio * 100) / 100
-        : null,
-      upperToLowerRatio: upperToLowerRatio
-        ? Math.round(upperToLowerRatio * 100) / 100
-        : null,
+      shoulderToHipRatio: shoulderToHipRatio ? Math.round(shoulderToHipRatio * 100) / 100 : null,
+      legToBodyRatio: legToBodyRatio ? Math.round(legToBodyRatio * 100) / 100 : null,
+      upperToLowerRatio: upperToLowerRatio ? Math.round(upperToLowerRatio * 100) / 100 : null,
       bodyTypeIndication,
     };
   }
@@ -489,7 +465,7 @@ export class BodyMetricsService {
     bust?: number | null,
     waist?: number | null,
     hip?: number | null,
-    _inseam?: number | null,
+    _inseam?: number | null
   ): AdvancedBodyMetrics["sizeRecommendations"] {
     const sizeChart = {
       XS: { bust: [76, 80], waist: [60, 64], hip: [84, 88] },
@@ -502,7 +478,7 @@ export class BodyMetricsService {
 
     const getSizeFromMeasurement = (
       measurement: number,
-      type: "bust" | "waist" | "hip",
+      type: "bust" | "waist" | "hip"
     ): string => {
       for (const [size, ranges] of Object.entries(sizeChart)) {
         const range = ranges[type];
@@ -520,10 +496,15 @@ export class BodyMetricsService {
       tops = getSizeFromMeasurement(bust, "bust");
     } else if (height && weight) {
       const bmi = weight / (height / 100) ** 2;
-      if (bmi < 18.5) {tops = "S";}
-      else if (bmi < 22) {tops = "M";}
-      else if (bmi < 25) {tops = "L";}
-      else {tops = "XL";}
+      if (bmi < 18.5) {
+        tops = "S";
+      } else if (bmi < 22) {
+        tops = "M";
+      } else if (bmi < 25) {
+        tops = "L";
+      } else {
+        tops = "XL";
+      }
     }
 
     let bottoms = "M";
@@ -536,10 +517,15 @@ export class BodyMetricsService {
       bottoms = sizeOrder[Math.max(waistIdx, hipIdx)] ?? "XL";
     } else if (height && weight) {
       const bmi = weight / (height / 100) ** 2;
-      if (bmi < 18.5) {bottoms = "S";}
-      else if (bmi < 22) {bottoms = "M";}
-      else if (bmi < 25) {bottoms = "L";}
-      else {bottoms = "XL";}
+      if (bmi < 18.5) {
+        bottoms = "S";
+      } else if (bmi < 22) {
+        bottoms = "M";
+      } else if (bmi < 25) {
+        bottoms = "L";
+      } else {
+        bottoms = "XL";
+      }
     }
 
     let dresses = "M";
@@ -553,7 +539,7 @@ export class BodyMetricsService {
           Math.max(
             sizeOrder.indexOf(bustSize),
             sizeOrder.indexOf(waistSize),
-            sizeOrder.indexOf(hipSize),
+            sizeOrder.indexOf(hipSize)
           )
         ] ?? "XL";
     } else {
@@ -562,12 +548,19 @@ export class BodyMetricsService {
 
     let shoes = "38";
     if (height) {
-      if (height < 155) {shoes = "35-36";}
-      else if (height < 160) {shoes = "36-37";}
-      else if (height < 165) {shoes = "37-38";}
-      else if (height < 170) {shoes = "38-39";}
-      else if (height < 175) {shoes = "39-40";}
-      else {shoes = "40-41";}
+      if (height < 155) {
+        shoes = "35-36";
+      } else if (height < 160) {
+        shoes = "36-37";
+      } else if (height < 165) {
+        shoes = "37-38";
+      } else if (height < 170) {
+        shoes = "38-39";
+      } else if (height < 175) {
+        shoes = "39-40";
+      } else {
+        shoes = "40-41";
+      }
     }
 
     return {

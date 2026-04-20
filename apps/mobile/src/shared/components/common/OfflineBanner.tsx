@@ -1,14 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import { Text, StyleSheet, Animated } from "react-native";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../polyfills/expo-vector-icons";
 import { useNetworkStatus } from "../../hooks/useNetworkStatus";
-import { Colors, Shadows, Spacing } from '../../../design-system/theme';
+import { Colors, Shadows } from "../../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export const OfflineBanner: React.FC = () => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const { isConnected } = useNetworkStatus();
   const translateY = useRef(new Animated.Value(-60)).current;
   const isOffline = isConnected === false;
@@ -47,9 +48,9 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.sm,
-    backgroundColor: Colors.warning?.[500] || colors.warning,
+    gap: 8,
+    paddingVertical: 8,
+    backgroundColor: colors.warning?.[500] || colors.warning,
     ...Shadows.sm,
   },
   text: {
@@ -57,4 +58,4 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
     color: colors.surface,
   },
-}))
+}));

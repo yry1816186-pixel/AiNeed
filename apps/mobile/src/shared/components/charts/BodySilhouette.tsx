@@ -1,8 +1,8 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Svg, { Circle, Path, Line, Text as SvgText, G } from "react-native-svg";
-import { colors } from '../../../design-system/theme/tokens/colors';
-import { useTheme } from '../../../shared/contexts/ThemeContext';
+import { colors } from "../../theme/tokens/colors";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 export type BodyType = "rectangle" | "triangle" | "inverted_triangle" | "hourglass" | "oval";
 
@@ -38,6 +38,7 @@ export const BodySilhouette: React.FC<BodySilhouetteProps> = ({
   accessibilityLabel,
 }) => {
   const { colors } = useTheme();
+  const _styles = use_styles(colors);
   const defaultA11yLabel =
     accessibilityLabel ||
     `体型轮廓: ${bodyType}, 肩部比例${shoulderRatio}, 腰部比例${waistRatio}, 臀部比例${hipRatio}`;
@@ -191,6 +192,6 @@ export const BodySilhouette: React.FC<BodySilhouetteProps> = ({
   );
 };
 
-const _styles = StyleSheet.create({});
+const use_styles = createStyles((colors) => ({}));
 
 export default BodySilhouette;

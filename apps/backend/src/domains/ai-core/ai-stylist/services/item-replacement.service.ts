@@ -36,7 +36,7 @@ export class ItemReplacementService {
   constructor(
     private sessionService: AiStylistSessionService,
     private contextService: AiStylistContextService,
-    private prisma: PrismaService,
+    private prisma: PrismaService
   ) {}
 
   /**
@@ -52,7 +52,7 @@ export class ItemReplacementService {
     sessionId: string,
     outfitIndex: number,
     itemIndex: number,
-    limit: number = 10,
+    limit: number = 10
   ): Promise<AlternativeItem[]> {
     const session = await this.sessionService.getSessionOrThrow(userId, sessionId);
     if (!session.result) {
@@ -115,32 +115,32 @@ export class ItemReplacementService {
     });
 
     // 排除当前方案中已有的同 category 商品 ID
-    const existingIds = new Set(
-      outfit.items.map((i) => i.itemId).filter(Boolean) as string[],
-    );
+    const existingIds = new Set(outfit.items.map((i) => i.itemId).filter(Boolean) as string[]);
 
     // 基于用户画像计算匹配分并排序
     const scored: AlternativeItem[] = candidates
-      .filter((c: { id: string }) => !existingIds.has(c.id))
-      .map((candidate: { tags?: string[]; [key: string]: unknown }) => {
+      .filter((c: any) => !existingIds.has(c.id))
+      .map((candidate: any) => {
         let matchScore = 50; // 基础分
 
         // 画像偏好加分
         const profile = userContext.userProfile;
         if (profile?.stylePreferences) {
           const prefs = profile.stylePreferences.map((p) =>
-            typeof p === "string" ? p : p.name ?? "",
+            typeof p === "string" ? p : (p.name ?? "")
           );
-          const tags = (candidate.tags) || [];
-          const overlap = tags.filter((t: string) => prefs.some((p) => t.includes(p) || p.includes(t)));
+          const tags = candidate.tags || [];
+          const overlap = tags.filter((t: any) =>
+            prefs.some((p) => t.includes(p) || p.includes(t))
+          );
           matchScore += overlap.length * 10;
         }
 
         // 色彩偏好加分
         if (colorPrefs.length > 0) {
-          const tags = (candidate.tags) || [];
-          const colorMatch = tags.filter((t: string) =>
-            colorPrefs.some((c) => t.includes(c) || c.includes(t)),
+          const tags = candidate.tags || [];
+          const colorMatch = tags.filter((t: any) =>
+            colorPrefs.some((c) => t.includes(c) || c.includes(t))
           );
           matchScore += colorMatch.length * 8;
         }
@@ -149,10 +149,10 @@ export class ItemReplacementService {
           id: candidate.id,
           name: candidate.name,
           category: candidate.category,
-          imageUrl: (candidate.images as string[] | undefined)?.[0] ?? null,
+          imageUrl: candidate.images?.[0] ?? null,
           price: candidate.price ? Number(candidate.price) : null,
-          brand: (candidate.brand as { name: string } | null)?.name ?? null,
-          tags: (candidate.tags) || [],
+          brand: candidate.brand?.name ?? null,
+          tags: candidate.tags || [],
           matchScore: Math.min(matchScore, 100),
         };
       })
@@ -170,7 +170,7 @@ export class ItemReplacementService {
     sessionId: string,
     outfitIndex: number,
     itemIndex: number,
-    newItemId: string,
+    newItemId: string
   ): Promise<ReplaceItemResult> {
     const session = await this.sessionService.getSessionOrThrow(userId, sessionId);
     if (!session.result) {
@@ -211,7 +211,7 @@ export class ItemReplacementService {
       category: newItem.category,
       name: newItem.name,
       reason: `替换自 ${originalItem.name}，与你的风格更匹配`,
-      imageUrl: (newItem.images)?.[0] ?? undefined,
+      imageUrl: newItem.images?.[0] ?? undefined,
       price: newItem.price ? Number(newItem.price) : undefined,
       brand: newItem.brand?.name ?? null,
       score: 80,
@@ -221,10 +221,7 @@ export class ItemReplacementService {
     outfit.items[itemIndex] = replacement;
 
     // 重新计算总价
-    outfit.estimatedTotalPrice = outfit.items.reduce(
-      (sum, item) => sum + (item.price ?? 0),
-      0,
-    );
+    outfit.estimatedTotalPrice = outfit.items.reduce((sum, item) => sum + (item.price ?? 0), 0);
 
     // 持久化更新
     await this.sessionService.persistSession(session);

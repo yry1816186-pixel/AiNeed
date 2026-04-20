@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import React from "react";
+﻿import React from "react";
 import {
   Text,
   StyleSheet,
@@ -16,9 +16,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, BorderRadius, Shadows, SpringConfigs, Duration, Spacing, DesignTokens } from '../../theme';
-
-
+import { Colors, BorderRadius, Shadows } from "../../theme";
+import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "gradient" | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "xl";
@@ -53,26 +52,26 @@ const sizeConfig: Record<
   }
 > = {
   sm: {
-    height: DesignTokens.spacing[9],
-    paddingHorizontal: Spacing.md,
+    height: 36,
+    paddingHorizontal: 16,
     fontSize: DesignTokens.typography.sizes.base,
     borderRadius: BorderRadius.lg,
   },
   md: {
-    height: DesignTokens.spacing[11],
-    paddingHorizontal: DesignTokens.spacing[5],
+    height: 44,
+    paddingHorizontal: 20,
     fontSize: DesignTokens.typography.sizes.md,
     borderRadius: BorderRadius.xl,
   },
   lg: {
     height: 52,
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: 24,
     fontSize: DesignTokens.typography.sizes.md,
     borderRadius: BorderRadius.xl,
   },
   xl: {
     height: 60,
-    paddingHorizontal: Spacing.xl,
+    paddingHorizontal: 32,
     fontSize: DesignTokens.typography.sizes.lg,
     borderRadius: BorderRadius["2xl"],
   },
@@ -81,7 +80,7 @@ const sizeConfig: Record<
 const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextStyle }> = {
   primary: {
     container: {
-      backgroundColor: Colors.primary[500],
+      backgroundColor: colors.primary[500],
     },
     text: {
       color: Colors.white,
@@ -89,20 +88,20 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextSty
   },
   secondary: {
     container: {
-      backgroundColor: Colors.neutral[100],
+      backgroundColor: colors.neutral[100],
     },
     text: {
-      color: Colors.neutral[800],
+      color: colors.neutral[800],
     },
   },
   outline: {
     container: {
       backgroundColor: "transparent",
       borderWidth: 1.5,
-      borderColor: Colors.primary[500],
+      borderColor: colors.primary[500],
     },
     text: {
-      color: Colors.primary[500],
+      color: colors.primary[500],
     },
   },
   ghost: {
@@ -110,7 +109,7 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextSty
       backgroundColor: "transparent",
     },
     text: {
-      color: Colors.primary[500],
+      color: colors.primary[500],
     },
   },
   gradient: {
@@ -123,7 +122,7 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextSty
   },
   danger: {
     container: {
-      backgroundColor: Colors.error[500],
+      backgroundColor: colors.error[500],
     },
     text: {
       color: Colors.white,
@@ -223,12 +222,12 @@ export const Button: React.FC<ButtonProps> = ({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === "outline" || variant === "ghost" ? Colors.primary[500] : Colors.white}
+          color={variant === "outline" || variant === "ghost" ? colors.primary[500] : Colors.white}
         />
       ) : (
         <>
           {icon && iconPosition === "left" && <>{icon}</>}
-          <Text style={[textStyleMerged, icon ? { marginHorizontal: Spacing.sm} : {}]}>{children}</Text>
+          <Text style={[textStyleMerged, icon ? { marginHorizontal: 8 } : {}]}>{children}</Text>
           {icon && iconPosition === "right" && <>{icon}</>}
         </>
       )}
@@ -277,12 +276,7 @@ export const Button: React.FC<ButtonProps> = ({
       ]}
     >
       <Animated.View
-        style={[
-          containerStyle,
-          animatedStyle,
-          variant === "primary" && Shadows.md,
-          style,
-        ]}
+        style={[containerStyle, animatedStyle, variant === "primary" && Shadows.md, style]}
       >
         {renderContent()}
       </Animated.View>

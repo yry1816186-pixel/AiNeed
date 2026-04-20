@@ -9,13 +9,9 @@ import {
   PanResponder,
   type GestureResponderEvent,
   type PanResponderGestureState,
-  type ViewStyle,
 } from "react-native";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import type { FeedItem } from '../../../services/api/recommendation-feed.api';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../theme/tokens/design-tokens";
+import type { FeedItem } from "../services/recommendation-feed.api";
 
 interface SwipeRecommendationCardProps {
   item: FeedItem;
@@ -32,8 +28,6 @@ export function SwipeRecommendationCard({
   onDislike,
   onSkip,
 }: SwipeRecommendationCardProps) {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const pan = useRef(new Animated.ValueXY()).current;
   const _rotate = useRef(new Animated.Value(0)).current;
 
@@ -87,7 +81,11 @@ export function SwipeRecommendationCard({
       ]}
       {...panResponder.panHandlers}
     >
-      <Image source={{ uri: item.mainImage }} style={styles.image as any} resizeMode="cover" />
+      <Image
+        source={{ uri: item.mainImage }}
+        style={styles.image as ViewStyle}
+        resizeMode="cover"
+      />
 
       <Animated.View style={[styles.overlay, styles.likeOverlay, { opacity: likeOpacity }]}>
         <Text style={styles.likeText}>♥ 喜欢</Text>
@@ -115,16 +113,16 @@ export function SwipeRecommendationCard({
 const CARD_WIDTH = 300;
 const CARD_HEIGHT = 420;
 
-const useStyles = createStyles((colors) => ({
+const styles = StyleSheet.create({
   card: {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
     borderRadius: DesignTokens.borderRadius.lg,
-    backgroundColor: colors.surface,
+    backgroundColor: DesignTokens.DesignTokens.colors.backgrounds.primary,
     overflow: "hidden",
     elevation: 4,
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+    shadowColor: DesignTokens.DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
   },
@@ -134,61 +132,61 @@ const useStyles = createStyles((colors) => ({
   },
   overlay: {
     position: "absolute",
-    top: DesignTokens.spacing[5],
-    padding: Spacing.sm,
+    top: 20,
+    padding: 8,
     borderRadius: 8,
     borderWidth: 3,
   },
   likeOverlay: {
-    right: DesignTokens.spacing[5],
-    borderColor: colors.success,
+    right: 20,
+    borderColor: DesignTokens.DesignTokens.colors.semantic.success,
     backgroundColor: "rgba(74, 222, 128, 0.15)",
   },
   dislikeOverlay: {
-    left: DesignTokens.spacing[5],
-    borderColor: colors.error,
+    left: 20,
+    borderColor: DesignTokens.DesignTokens.colors.semantic.error,
     backgroundColor: "rgba(239, 68, 68, 0.15)",
   },
   likeText: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "800",
-    color: colors.success,
+    color: DesignTokens.DesignTokens.colors.semantic.success,
   },
   dislikeText: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "800",
-    color: colors.error,
+    color: DesignTokens.DesignTokens.colors.semantic.error,
   },
   infoBar: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
-    gap: DesignTokens.spacing['0.5'],
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 2,
   },
   brandName: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.textSecondary,
+    color: DesignTokens.DesignTokens.colors.text.secondary,
   },
   price: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "700",
-    color: colors.textPrimary,
+    color: DesignTokens.DesignTokens.colors.text.primary,
   },
   matchReason: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: colors.primary,
+    color: DesignTokens.DesignTokens.colors.brand.terracotta,
     fontWeight: "500",
   },
   actionHints: {
     position: "absolute",
-    bottom: Spacing.sm,
+    bottom: 8,
     left: 0,
     right: 0,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 16,
   },
   hintText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: colors.textTertiary,
+    color: DesignTokens.DesignTokens.colors.text.tertiary,
   },
-}))
+});

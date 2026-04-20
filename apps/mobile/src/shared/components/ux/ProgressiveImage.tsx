@@ -9,7 +9,9 @@ import {
   ViewStyle,
   ImageResizeMode,
 } from "react-native";
-import { Colors, BorderRadius } from '../../../design-system/theme';
+import { Colors, BorderRadius } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { flatColors as colors } from "../../../design-system/theme";
 
 interface ProgressiveImageProps {
   thumbnailSource?: { uri: string };
@@ -97,14 +99,14 @@ export const ProgressiveImage = memo(function ProgressiveImage({
   );
 });
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     overflow: "hidden",
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
   },
   placeholder: {
-    backgroundColor: Colors.neutral[200],
+    backgroundColor: colors.neutral[200],
   },
-});
+}));
 
 export default ProgressiveImage;

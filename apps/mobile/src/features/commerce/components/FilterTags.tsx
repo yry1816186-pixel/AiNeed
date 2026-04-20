@@ -1,4 +1,4 @@
-﻿﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,9 +8,10 @@ import {
   Modal,
   FlatList,
 } from "react-native";
-import type { FilterOptions } from '../../../services/api/commerce.api';
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import type { FilterOptions } from "../../../services/api/commerce.api";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface FilterTagsProps {
   filterOptions: FilterOptions | null;
@@ -160,30 +161,34 @@ export const FilterTags: React.FC<FilterTagsProps> = ({
 };
 
 const useStyles = createStyles((colors) => ({
-  container: { maxHeight: DesignTokens.spacing[10], backgroundColor: colors.surface },
-  content: { paddingHorizontal: DesignTokens.spacing[3], gap: Spacing.sm},
+  container: { maxHeight: 40, backgroundColor: colors.surface },
+  content: { paddingHorizontal: 12, gap: 8 },
   tag: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 14,
+    paddingVertical: 6,
     borderRadius: 16,
     backgroundColor: colors.backgroundTertiary,
-    gap: Spacing.xs,
+    gap: 4,
   },
   tagActive: { backgroundColor: "colors.errorLight" },
   tagText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
-  tagTextActive: { color: colors.error },
+  tagTextActive: { color: "colors.error" },
   badge: {
-    backgroundColor: colors.error,
+    backgroundColor: "colors.error",
     borderRadius: 8,
-    minWidth: Spacing.md,
-    height: Spacing.md,
+    minWidth: 16,
+    height: 16,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 3,
   },
-  badgeText: { fontSize: DesignTokens.typography.sizes.xs, fontWeight: "600", color: colors.surface },
+  badgeText: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    fontWeight: "600",
+    color: colors.surface,
+  },
   modalOverlay: {
     flex: 1,
     justifyContent: "flex-end",
@@ -199,17 +204,21 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: Spacing.md,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.backgroundTertiary,
+    borderBottomColor: "colors.backgroundTertiary",
   },
-  modalTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  modalTitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
   modalClose: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary },
   optionRow: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: colors.backgroundTertiary,
   },
   optionText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
-}))
+}));

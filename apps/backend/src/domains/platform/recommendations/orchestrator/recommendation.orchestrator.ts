@@ -13,7 +13,7 @@
  */
 
 import { Injectable, Logger } from "@nestjs/common";
-import { ClothingCategory } from '../../../../types/prisma-enums';
+import { ClothingCategory } from "../../../../types/prisma-enums";
 
 import { CacheKeyBuilder, CACHE_TTL } from "../../../../modules/cache/cache.constants";
 import { CacheService } from "../../../../modules/cache/cache.service";
@@ -135,15 +135,13 @@ export class RecommendationOrchestrator {
     private readonly gnnCompatibility: GNNCompatibilityService,
     private readonly learningToRank: LearningToRankService,
     // Explainer
-    private readonly explainer: RecommendationExplainerService,
+    private readonly explainer: RecommendationExplainerService
   ) {}
 
   /**
    * Main entry point for getting recommendations
    */
-  async getRecommendations(
-    request: RecommendationRequest,
-  ): Promise<RecommendationResult[]> {
+  async getRecommendations(request: RecommendationRequest): Promise<RecommendationResult[]> {
     const { userId, context, options } = request;
     const algorithm = options?.algorithm || "unified";
     const limit = options?.limit || 20;
@@ -157,25 +155,27 @@ export class RecommendationOrchestrator {
       limit,
     });
 
-    return this.cacheService.getOrSet(
-      cacheKey,
-      async () => {
-        switch (algorithm) {
-          case "collaborative":
-            return this.getCollaborativeRecommendations(request);
-          case "content":
-            return this.getContentRecommendations(request);
-          case "knowledge":
-            return this.getKnowledgeRecommendations(request);
-          case "hybrid":
-            return this.getHybridRecommendations(request);
-          case "unified":
-          default:
-            return this.getUnifiedRecommendations(request);
-        }
-      },
-      CACHE_TTL.OUTFIT_RECOMMENDATIONS,
-    ).then((result) => result ?? []);
+    return this.cacheService
+      .getOrSet(
+        cacheKey,
+        async () => {
+          switch (algorithm) {
+            case "collaborative":
+              return this.getCollaborativeRecommendations(request);
+            case "content":
+              return this.getContentRecommendations(request);
+            case "knowledge":
+              return this.getKnowledgeRecommendations(request);
+            case "hybrid":
+              return this.getHybridRecommendations(request);
+            case "unified":
+            default:
+              return this.getUnifiedRecommendations(request);
+          }
+        },
+        CACHE_TTL.OUTFIT_RECOMMENDATIONS
+      )
+      .then((result) => result ?? []);
   }
 
   /**
@@ -184,17 +184,15 @@ export class RecommendationOrchestrator {
   async getOutfitRecommendations(
     userId: string,
     baseItemId: string,
-    options?: { occasion?: string; limit?: number },
+    options?: { occasion?: string; limit?: number }
   ): Promise<OutfitRecommendation> {
-    this.logger.log(
-      `Getting outfit recommendations for user ${userId}, base item ${baseItemId}`,
-    );
+    this.logger.log(`Getting outfit recommendations for user ${userId}, base item ${baseItemId}`);
 
     const occasion = options?.occasion;
     const result = await this.advancedRecommendation.getOutfitRecommendation(
       baseItemId,
       userId,
-      occasion,
+      occasion
     );
 
     // Map AdvancedRecommendationService result to OutfitRecommendation format
@@ -208,10 +206,19 @@ export class RecommendationOrchestrator {
       score: number;
       matchReasons?: string[];
     }
-    
+
     const mapItems = (items: OutfitItem[]): RecommendationResult[] =>
       items.map((item) => ({
-        item: { id: item.id, name: item.name, price: item.price, category: String(item.category), images: item.images, brand: item.brand ? { id: item.brand.id, name: item.brand.name, logo: item.brand.logo ?? null } : null },
+        item: {
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          category: String(item.category),
+          images: item.images,
+          brand: item.brand
+            ? { id: item.brand.id, name: item.brand.name, logo: item.brand.logo ?? null }
+            : null,
+        },
         score: item.score,
         sources: ["outfit"],
         reasons: item.matchReasons || [],
@@ -221,8 +228,14 @@ export class RecommendationOrchestrator {
       tops: result.tops ? mapItems(result.tops) : undefined,
       bottoms: result.bottoms ? mapItems(result.bottoms) : undefined,
       accessories: result.accessories ? mapItems(result.accessories) : undefined,
-      footwear: "footwear" in result && result.footwear ? mapItems(result.footwear as OutfitItem[]) : undefined,
-      outerwear: "outerwear" in result && result.outerwear ? mapItems(result.outerwear as OutfitItem[]) : undefined,
+      footwear:
+        "footwear" in result && result.footwear
+          ? mapItems(result.footwear as OutfitItem[])
+          : undefined,
+      outerwear:
+        "outerwear" in result && result.outerwear
+          ? mapItems(result.outerwear as OutfitItem[])
+          : undefined,
       overallScore: result.overallScore,
     };
   }
@@ -232,7 +245,7 @@ export class RecommendationOrchestrator {
    */
   async explainRecommendation(
     userId: string,
-    itemId: string,
+    itemId: string
   ): Promise<{
     reasons: string[];
     factors: Array<{ name: string; contribution: number }>;
@@ -247,7 +260,7 @@ export class RecommendationOrchestrator {
   async recordFeedback(
     userId: string,
     itemId: string,
-    feedback: "like" | "dislike" | "purchase" | "view",
+    feedback: "like" | "dislike" | "purchase" | "view"
   ): Promise<void> {
     await this.preferenceLearning.recordFeedback(userId, itemId, feedback);
     this.logger.debug(`Recorded ${feedback} feedback for item ${itemId}`);
@@ -256,7 +269,7 @@ export class RecommendationOrchestrator {
   // ==================== Private Algorithm Methods ====================
 
   private async getUnifiedRecommendations(
-    request: RecommendationRequest,
+    request: RecommendationRequest
   ): Promise<RecommendationResult[]> {
     this.logger.log("Computing unified recommendations");
     const { userId, context, options } = request;
@@ -269,11 +282,18 @@ export class RecommendationOrchestrator {
         season: context?.season,
         weather: context?.weather,
       },
-      limit,
+      limit
     );
 
     return scoredItems.map((item) => ({
-      item: { id: item.id, name: item.name, price: item.price, category: String(item.category), images: item.images, brand: item.brand },
+      item: {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        category: String(item.category),
+        images: item.images,
+        brand: item.brand,
+      },
       score: item.score,
       sources: ["unified"],
       reasons: item.matchReasons,
@@ -282,7 +302,7 @@ export class RecommendationOrchestrator {
   }
 
   private async getCollaborativeRecommendations(
-    request: RecommendationRequest,
+    request: RecommendationRequest
   ): Promise<RecommendationResult[]> {
     this.logger.log("Computing collaborative recommendations");
     const { userId, context, options } = request;
@@ -295,7 +315,7 @@ export class RecommendationOrchestrator {
         season: context?.season,
         weather: context?.weather,
       },
-      limit,
+      limit
     );
 
     // Collaborative-focused: weight collaborative component more heavily
@@ -304,7 +324,14 @@ export class RecommendationOrchestrator {
         const collabWeight = item.breakdown?.collaborative ?? 0.5;
         const adjustedScore = collabWeight * 0.6 + item.score * 0.4;
         return {
-          item: { id: item.id, name: item.name, price: item.price, category: String(item.category), images: item.images, brand: item.brand },
+          item: {
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            category: String(item.category),
+            images: item.images,
+            brand: item.brand,
+          },
           score: adjustedScore,
           sources: ["collaborative"],
           reasons: item.matchReasons,
@@ -315,7 +342,7 @@ export class RecommendationOrchestrator {
   }
 
   private async getContentRecommendations(
-    request: RecommendationRequest,
+    request: RecommendationRequest
   ): Promise<RecommendationResult[]> {
     this.logger.log("Computing content-based recommendations");
     const { userId, context, options } = request;
@@ -328,7 +355,7 @@ export class RecommendationOrchestrator {
         season: context?.season,
         weather: context?.weather,
       },
-      limit,
+      limit
     );
 
     // Content-focused: weight content-based component more heavily
@@ -337,7 +364,14 @@ export class RecommendationOrchestrator {
         const contentWeight = item.breakdown?.contentBased ?? 0.5;
         const adjustedScore = contentWeight * 0.6 + item.score * 0.4;
         return {
-          item: { id: item.id, name: item.name, price: item.price, category: String(item.category), images: item.images, brand: item.brand },
+          item: {
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            category: String(item.category),
+            images: item.images,
+            brand: item.brand,
+          },
           score: adjustedScore,
           sources: ["content"],
           reasons: item.matchReasons,
@@ -348,7 +382,7 @@ export class RecommendationOrchestrator {
   }
 
   private async getKnowledgeRecommendations(
-    request: RecommendationRequest,
+    request: RecommendationRequest
   ): Promise<RecommendationResult[]> {
     this.logger.log("Computing knowledge-based recommendations");
     const { userId, context, options } = request;
@@ -361,7 +395,7 @@ export class RecommendationOrchestrator {
         season: context?.season,
         weather: context?.weather,
       },
-      limit,
+      limit
     );
 
     // Knowledge-focused: weight knowledge graph and theory-based components more heavily
@@ -371,7 +405,14 @@ export class RecommendationOrchestrator {
         const theoryWeight = item.breakdown?.theoryBased ?? 0.5;
         const adjustedScore = (kgWeight + theoryWeight) * 0.3 + item.score * 0.4;
         return {
-          item: { id: item.id, name: item.name, price: item.price, category: String(item.category), images: item.images, brand: item.brand },
+          item: {
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            category: String(item.category),
+            images: item.images,
+            brand: item.brand,
+          },
           score: adjustedScore,
           sources: ["knowledge"],
           reasons: item.matchReasons,
@@ -382,7 +423,7 @@ export class RecommendationOrchestrator {
   }
 
   private async getHybridRecommendations(
-    request: RecommendationRequest,
+    request: RecommendationRequest
   ): Promise<RecommendationResult[]> {
     this.logger.log("Computing hybrid recommendations");
     // Hybrid uses the unified approach (already combines all algorithms)

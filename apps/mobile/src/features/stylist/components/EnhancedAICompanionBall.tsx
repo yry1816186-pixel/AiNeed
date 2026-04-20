@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+﻿import React, { useEffect, useCallback, useState } from "react";
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import {
@@ -18,9 +18,9 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing, flatColors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -47,56 +47,68 @@ export interface EnhancedAICompanionBallProps {
 
 const STATE_CONFIG = {
   idle: {
-    gradient: [flatColors.secondary, flatColors.primary] as [string, string],
+    gradient: [colors.secondary, DesignTokens.colors.brand.camel] as [string, string],
     gradientFlow: [
-      flatColors.secondary,
-      flatColors.primary,
-      flatColors.primaryLight,
-      flatColors.secondary,
+      colors.secondary,
+      DesignTokens.colors.brand.camel,
+      colors.primaryLight,
+      colors.secondary,
     ] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.3)", "rgba(255,255,255,0.05)"] as [string, string],
-    glowColor: flatColors.secondary,
-    particleColor: flatColors.secondary,
+    glowColor: colors.secondary,
+    particleColor: colors.secondary,
     animation: "breathe",
   },
   listening: {
-    gradient: [flatColors.neutral[500], flatColors.textTertiary] as [string, string],
-    gradientFlow: [flatColors.neutral[500], flatColors.textTertiary, DesignTokens.colors.brand.slate, flatColors.neutral[500]] as [string, string, string, string],
+    gradient: [DesignTokens.colors.brand.slate, "colors.textTertiary"] as [string, string],
+    gradientFlow: [
+      DesignTokens.colors.brand.slate,
+      "colors.textTertiary",
+      "#B8C5D1",
+      DesignTokens.colors.brand.slate,
+    ] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.35)", "rgba(255,255,255,0.08)"] as [string, string],
-    glowColor: flatColors.neutral[500],
-    particleColor: flatColors.textTertiary,
+    glowColor: DesignTokens.colors.brand.slate,
+    particleColor: "colors.textTertiary", // custom color
     animation: "pulse",
   },
   thinking: {
-    gradient: [flatColors.warning, flatColors.primary] as [string, string],
-    gradientFlow: [flatColors.warning, flatColors.primary, DesignTokens.colors.semantic.warning, flatColors.warning] as [string, string, string, string],
+    gradient: [colors.warning, "DesignTokens.colors.brand.camel"] as [string, string],
+    gradientFlow: [
+      colors.warning,
+      "DesignTokens.colors.brand.camel",
+      "#F5D89A",
+      colors.warning,
+    ] as [string, string, string, string], // custom color
     innerGradient: ["rgba(255,255,255,0.4)", "rgba(255,255,255,0.1)"] as [string, string],
-    glowColor: flatColors.warning,
-    particleColor: flatColors.primary,
+    glowColor: colors.warning,
+    particleColor: "DesignTokens.colors.brand.camel", // custom color
     animation: "pulse",
   },
   responding: {
-    gradient: [flatColors.success, flatColors.secondary] as [string, string],
-    gradientFlow: [flatColors.success, flatColors.secondary, DesignTokens.colors.brand.sage, flatColors.success] as [string, string, string, string],
+    gradient: [colors.success, "colors.secondary"] as [string, string],
+    gradientFlow: [colors.success, "colors.secondary", "#9DC4B5", colors.success] as [
+      string,
+      string,
+      string,
+      string,
+    ], // custom color
     innerGradient: ["rgba(255,255,255,0.32)", "rgba(255,255,255,0.06)"] as [string, string],
-    glowColor: flatColors.success,
-    particleColor: flatColors.secondary,
+    glowColor: colors.success,
+    particleColor: "colors.secondary", // custom color
     animation: "glow",
   },
   collapsed: {
-    gradient: [flatColors.primary, flatColors.primary] as [
-      string,
-      string
-    ],
+    gradient: [colors.primary, DesignTokens.colors.brand.camel] as [string, string],
     gradientFlow: [
-      flatColors.primary,
-      flatColors.primary,
-      flatColors.primaryLight,
-      flatColors.primary,
+      colors.primary,
+      DesignTokens.colors.brand.camel,
+      colors.primaryLight,
+      colors.primary,
     ] as [string, string, string, string],
     innerGradient: ["rgba(255,255,255,0.25)", "rgba(255,255,255,0.03)"] as [string, string],
-    glowColor: flatColors.primary,
-    particleColor: flatColors.primary,
+    glowColor: colors.primary,
+    particleColor: DesignTokens.colors.brand.camel,
     animation: "none",
   },
 };
@@ -109,8 +121,6 @@ interface ParticleProps {
 }
 
 const Particle: React.FC<ParticleProps> = ({ index, color, ballSize, isActive }) => {
-  const { colors: _themeColors } = useTheme();
-  const styles = useStyles(_themeColors);
   const angle = useSharedValue(index * 72 * (Math.PI / 180));
   const radius = useSharedValue(ballSize * 0.6);
   const opacity = useSharedValue(0);
@@ -195,8 +205,6 @@ const Particle: React.FC<ParticleProps> = ({ index, color, ballSize, isActive })
   }, [isActive, ballSize, index]);
 
   const animatedStyle = useAnimatedStyle(() => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
     const x = Math.cos(angle.value) * radius.value;
     const y = Math.sin(angle.value) * radius.value;
 
@@ -211,8 +219,8 @@ const Particle: React.FC<ParticleProps> = ({ index, color, ballSize, isActive })
       style={[
         styles.particle,
         {
-          width: DesignTokens.spacing['1.5'],
-          height: DesignTokens.spacing['1.5'],
+          width: 6,
+          height: 6,
           borderRadius: 3,
           backgroundColor: color,
         },
@@ -231,7 +239,7 @@ export const EnhancedAICompanionBall: React.FC<EnhancedAICompanionBallProps> = (
   size = 64,
   showHint = false,
   hintMessage = "有什么可以帮你的？",
-  enableVoiceInput = true,
+  _enableVoiceInput = true,
   onVoiceStart,
   onVoiceEnd,
   onVoiceResult,
@@ -614,18 +622,18 @@ const useStyles = createStyles((colors) => ({
   },
   innerGlow: {
     position: "absolute",
-    top: DesignTokens.spacing['1.5'],
-    left: DesignTokens.spacing['1.5'],
-    right: DesignTokens.spacing['1.5'],
-    bottom: DesignTokens.spacing['1.5'],
+    top: 6,
+    left: 6,
+    right: 6,
+    bottom: 6,
   },
   innerGlowGradient: {
     flex: 1,
   },
   highlight: {
     position: "absolute",
-    top: DesignTokens.spacing['2.5'],
-    left: DesignTokens.spacing['3.5'],
+    top: 10,
+    left: 14,
     width: 18,
     height: 9,
     borderRadius: 9,
@@ -658,10 +666,10 @@ const useStyles = createStyles((colors) => ({
   },
   hintBubble: {
     backgroundColor: DesignTokens.colors.neutral[800],
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     borderRadius: 14,
-    shadowColor: colors.neutral[900],
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.18,
     shadowRadius: 10,
@@ -675,9 +683,9 @@ const useStyles = createStyles((colors) => ({
   },
   hintArrow: {
     position: "absolute",
-    width: DesignTokens.spacing[3],
-    height: DesignTokens.spacing[3],
+    width: 12,
+    height: 12,
     backgroundColor: DesignTokens.colors.neutral[800],
     transform: [{ rotate: "45deg" }],
   },
-}))
+}));

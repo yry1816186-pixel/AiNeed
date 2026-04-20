@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,19 +12,18 @@ import {
   Platform,
   Dimensions,
 } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
+import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { pickImageSecurely, ImageValidationError } from '../../../utils/imagePicker';
-import { clothingApi } from '../../../services/api/clothing.api';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import type { ClothingCategory, ClothingStyle, Season, Occasion } from '../../../types/clothing';
-import { CATEGORY_LABELS } from '../../../types/clothing';
-
+import { pickImageSecurely, ImageValidationError } from "../../../utils/imagePicker";
+import { clothingApi } from "../../../services/api/clothing.api";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import type { ClothingCategory, ClothingStyle, Season, Occasion } from "../../types/clothing";
+import { CATEGORY_LABELS } from "../../types/clothing";
+import { flatColors as colors } from "../../../design-system/theme";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -82,6 +81,7 @@ const ChipSelector: React.FC<{
 );
 
 export const AddClothingScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const [formData, setFormData] = useState<FormData>({
     imageUri: null,
@@ -198,7 +198,11 @@ export const AddClothingScreen: React.FC = () => {
         <View style={styles.imageSection}>
           {formData.imageUri ? (
             <View style={styles.imagePreviewContainer}>
-              <Image source={{ uri: formData.imageUri }} style={styles.imagePreview} resizeMode="cover" />
+              <Image
+                source={{ uri: formData.imageUri }}
+                style={styles.imagePreview}
+                resizeMode="cover"
+              />
               <TouchableOpacity
                 style={styles.removeImageButton}
                 onPress={handleRemoveImage}
@@ -295,41 +299,58 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: Spacing.md,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.text,
+  },
   saveButton: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 8,
     backgroundColor: colors.primary,
   },
   saveButtonDisabled: { backgroundColor: colors.textTertiary },
-  saveButtonText: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.surface },
+  saveButtonText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.surface,
+  },
   saveButtonTextDisabled: { color: colors.surface },
   content: { flex: 1 },
-  imageSection: { backgroundColor: colors.surface, padding: DesignTokens.spacing[5]},
+  imageSection: { backgroundColor: colors.surface, padding: 20 },
   imagePlaceholder: {
     backgroundColor: DesignTokens.colors.neutral[100],
     borderRadius: 16,
-    padding: Spacing['2xl'],
+    padding: 48,
     alignItems: "center",
     justifyContent: "center",
   },
-  imagePlaceholderText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textTertiary, marginTop: Spacing.sm},
-  imagePlaceholderHint: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: Spacing.xs, opacity: 0.7 },
+  imagePlaceholderText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textTertiary,
+    marginTop: 8,
+  },
+  imagePlaceholderHint: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.textTertiary,
+    marginTop: 4,
+    opacity: 0.7,
+  },
   imagePreviewContainer: {
     borderRadius: 16,
     overflow: "hidden",
@@ -342,40 +363,54 @@ const styles = StyleSheet.create({
   },
   removeImageButton: {
     position: "absolute",
-    top: Spacing.sm,
-    right: Spacing.sm,
-    width: Spacing.xl,
-    height: Spacing.xl,
+    top: 8,
+    right: 8,
+    width: 32,
+    height: 32,
     borderRadius: 16,
     backgroundColor: "rgba(0,0,0,0.5)",
     alignItems: "center",
     justifyContent: "center",
   },
-  formSection: { backgroundColor: colors.surface, marginTop: Spacing.md, padding: DesignTokens.spacing[5]},
-  inputGroup: { marginBottom: DesignTokens.spacing[5]},
-  inputLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary, marginBottom: Spacing.sm},
+  formSection: { backgroundColor: colors.surface, marginTop: 16, padding: 20 },
+  inputGroup: { marginBottom: 20 },
+  inputLabel: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+    color: colors.textPrimary,
+    marginBottom: 8,
+  },
   textInput: {
     backgroundColor: colors.background,
     borderRadius: 12,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     fontSize: DesignTokens.typography.sizes.md,
     color: colors.textPrimary,
   },
-  rowInputs: { flexDirection: "row", gap: DesignTokens.spacing[3]},
-  chipSection: { marginBottom: DesignTokens.spacing[5]},
-  chipTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary, marginBottom: DesignTokens.spacing[3]},
-  chipContainer: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm},
+  rowInputs: { flexDirection: "row", gap: 12 },
+  chipSection: { marginBottom: 20 },
+  chipTitle: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+    color: colors.textPrimary,
+    marginBottom: 12,
+  },
+  chipContainer: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   chip: {
     backgroundColor: DesignTokens.colors.neutral[100],
     borderRadius: 20,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
-  chipSelected: { backgroundColor: "colors.infoLight", borderWidth: 1, borderColor: colors.primary }, // custom color
+  chipSelected: {
+    backgroundColor: "colors.infoLight",
+    borderWidth: 1,
+    borderColor: colors.primary,
+  }, // custom color
   chipText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
   chipTextSelected: { color: colors.primary, fontWeight: "500" },
-  bottomSpacer: { height: DesignTokens.spacing[10] },
+  bottomSpacer: { height: 40 },
 });
 
 export default AddClothingScreen;

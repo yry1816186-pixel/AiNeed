@@ -1,7 +1,11 @@
 import { Injectable, Logger, BadRequestException } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
-import { RedisService, REDIS_KEY_PREFIX, REDIS_KEY_SEPARATOR } from "../../../common/redis/redis.service";
+import {
+  RedisService,
+  REDIS_KEY_PREFIX,
+  REDIS_KEY_SEPARATOR,
+} from "../../../common/redis/redis.service";
 
 const DASHBOARD_KEY_PREFIX = `${REDIS_KEY_PREFIX}${REDIS_KEY_SEPARATOR}blogger${REDIS_KEY_SEPARATOR}dashboard`;
 const DASHBOARD_TTL_SECONDS = 300;
@@ -15,7 +19,7 @@ export class BloggerDashboardService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly redisService: RedisService,
+    private readonly redisService: RedisService
   ) {}
 
   private getDaysAgo(period: DashboardPeriod): Date {
@@ -137,9 +141,8 @@ export class BloggerDashboardService {
       return this.getRevenueTrend(userId, days);
     }
 
-    const dbField = metric === "views" ? "viewCount"
-      : metric === "likes" ? "likeCount"
-      : "bookmarkCount";
+    const dbField =
+      metric === "views" ? "viewCount" : metric === "likes" ? "likeCount" : "bookmarkCount";
 
     const dailyData = await this.prisma.communityPost.groupBy({
       by: ["createdAt"],
@@ -154,7 +157,10 @@ export class BloggerDashboardService {
     const trendMap = new Map<string, number>();
     for (const item of dailyData) {
       const dateKey = new Date(item.createdAt).toISOString().split("T")[0]!;
-      trendMap.set(dateKey, (trendMap.get(dateKey) ?? 0) + ((item._sum as Record<string, number | null>)[dbField] ?? 0));
+      trendMap.set(
+        dateKey,
+        (trendMap.get(dateKey) ?? 0) + ((item._sum as Record<string, number | null>)[dbField] ?? 0)
+      );
     }
 
     return this.fillTrendGaps(trendMap, days);
@@ -162,17 +168,25 @@ export class BloggerDashboardService {
 
   private async getFollowerTrend(userId: string, days: number) {
     const trendMap = new Map<string, number>();
-    const currentCount = (await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { followerCount: true },
-    }))?.followerCount ?? 0;
+    const currentCount =
+      (
+        await this.prisma.user.findUnique({
+          where: { id: userId },
+          select: { followerCount: true },
+        })
+      )?.followerCount ?? 0;
 
     const today = new Date();
     for (let i = days - 1; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
       const dateKey = date.toISOString().split("T")[0]!;
-      trendMap.set(dateKey, i === 0 ? currentCount : Math.max(0, currentCount - Math.floor(Math.random() * 5 * (days - i))));
+      trendMap.set(
+        dateKey,
+        i === 0
+          ? currentCount
+          : Math.max(0, currentCount - Math.floor(Math.random() * 5 * (days - i)))
+      );
     }
 
     return this.fillTrendGaps(trendMap, days);
@@ -184,7 +198,11 @@ export class BloggerDashboardService {
       select: { price: true, salesCount: true },
     });
 
-    const totalRevenue = products.reduce((sum: any, p: any) => sum + Number(p.price) * p.salesCount * 0.8, 0);
+    const totalRevenue = products.reduce(
+      (sum: number, p: { price: { toString: () => string }; salesCount: number }) =>
+        sum + Number(p.price) * p.salesCount * 0.8,
+      0
+    );
     const trendMap = new Map<string, number>();
     const today = new Date();
     const dailyAvg = totalRevenue / Math.max(days, 1);

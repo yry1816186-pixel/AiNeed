@@ -8,11 +8,13 @@ import {
   Dimensions,
   TextInput,
 } from "react-native";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Shadows, flatColors as colors, DesignTokens } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -96,37 +98,57 @@ export const COLOR_PALETTES: ColorPaletteOption[] = [
   {
     id: "warm",
     label: "暖色调",
-    colors: [colors.primary, colors.warning, colors.primary, colors.primary],
+    colors: [
+      "colors.primary",
+      "colors.warning",
+      "DesignTokens.colors.brand.camel",
+      DesignTokens.colors.brand.camel,
+    ],
     description: "温暖阳光，亲切自然",
   },
   {
     id: "cool",
     label: "冷色调",
-    colors: [colors.neutral[500], colors.neutral[700], colors.textTertiary, colors.secondary],
+    colors: [
+      "DesignTokens.colors.brand.slate",
+      "DesignTokens.colors.brand.slateDark",
+      "colors.textTertiary",
+      "colors.secondary",
+    ],
     description: "沉静理智，高级质感",
   },
   {
     id: "neutral",
     label: "中性色",
-    colors: [colors.textPrimary, colors.textSecondary, DesignTokens.colors.neutral[300], colors.backgroundSecondary],
+    colors: [
+      colors.textPrimary,
+      "colors.textSecondary",
+      "DesignTokens.colors.neutral[300]",
+      "colors.backgroundSecondary",
+    ],
     description: "百搭经典，永不褪色",
   },
   {
     id: "earth",
     label: "大地色",
-    colors: [colors.secondary, colors.primary, colors.primaryDark, DesignTokens.colors.brand.sage],
+    colors: ["colors.secondary", DesignTokens.colors.brand.camel, "colors.primaryDark", "#6E7A62"],
     description: "自然沉稳，低调内敛",
   },
   {
     id: "morandi",
     label: "莫兰迪色",
-    colors: [colors.primary, colors.secondary, colors.textTertiary, colors.primaryLight],
+    colors: [
+      "DesignTokens.colors.brand.camel",
+      "colors.secondary",
+      "colors.textTertiary",
+      "colors.primaryLight",
+    ],
     description: "低饱和度，温柔高级",
   },
   {
     id: "vivid",
     label: "高饱和",
-    colors: [colors.error, colors.warning, colors.success, colors.info],
+    colors: ["colors.error", colors.warning, colors.success, "colors.info"],
     description: "鲜明醒目，大胆出众",
   },
 ];
@@ -448,7 +470,7 @@ export const stepStyles = StyleSheet.create({
     paddingBottom: Spacing[4],
   },
   stepTitle: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "700",
     color: colors.textPrimary,
     letterSpacing: -0.5,
@@ -471,7 +493,7 @@ export const stepStyles = StyleSheet.create({
   },
   styleCard: {
     width: (SCREEN_WIDTH - Spacing[10] - Spacing[3]) / 2,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     borderWidth: 1.5,
@@ -483,10 +505,10 @@ export const stepStyles = StyleSheet.create({
     borderColor: colors.primary,
   },
   styleIconContainer: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing[3],
@@ -498,7 +520,7 @@ export const stepStyles = StyleSheet.create({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginBottom: DesignTokens.spacing['0.5'],
+    marginBottom: 2,
   },
   styleLabelSelected: {
     color: colors.primary,
@@ -531,7 +553,7 @@ export const stepStyles = StyleSheet.create({
   },
   colorCard: {
     width: (SCREEN_WIDTH - Spacing[10] - Spacing[3]) / 2,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     borderWidth: 1.5,
@@ -548,8 +570,8 @@ export const stepStyles = StyleSheet.create({
     marginBottom: Spacing[3],
   },
   colorSwatch: {
-    width: DesignTokens.spacing[7],
-    height: DesignTokens.spacing[7],
+    width: 28,
+    height: 28,
     borderRadius: BorderRadius.md,
   },
   colorLabel: {
@@ -596,12 +618,12 @@ export const stepStyles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing[3],
-    height: Spacing['2xl'],
+    height: 48,
     borderWidth: 1,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
     gap: Spacing[2],
   },
   textInput: {
@@ -624,7 +646,7 @@ export const stepStyles = StyleSheet.create({
   bodyTypeOption: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing[4],
     paddingVertical: Spacing[3],
@@ -676,14 +698,14 @@ export const stepStyles = StyleSheet.create({
   featureItem: {
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     gap: Spacing[3],
   },
   featureIconContainer: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: "rgba(198, 123, 92, 0.1)",
     alignItems: "center",

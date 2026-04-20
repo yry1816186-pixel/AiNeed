@@ -9,12 +9,16 @@ import { View, Pressable, ViewStyle, Platform } from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Shadows, gradients, SpringConfigs } from '../../design-system/theme';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  gradients,
+  SpringConfigs,
+} from "../../design-system/theme";
+import { useTheme } from "../../shared/contexts/ThemeContext";
 
 // Re-export from primitives for backward compatibility
 export {
@@ -94,10 +98,10 @@ export const Card: React.FC<CardProps> = ({
         return {
           backgroundColor: Colors.neutral.white,
           borderWidth: 1,
-          borderColor: Colors.neutral[200],
+          borderColor: colors.neutral[200],
         };
       case "filled":
-        return { backgroundColor: Colors.neutral[50] };
+        return { backgroundColor: colors.neutral[50] };
       case "glass":
         return { backgroundColor: `rgba(255, 255, 255, ${glassIntensity / 100})` };
       case "gradient":
@@ -115,6 +119,7 @@ export const Card: React.FC<CardProps> = ({
   };
 
   const renderContent = () => {
+    const { colors } = useTheme();
     if (variant === "gradient") {
       const gColors = gradientColors || gradients.brand;
       return (
@@ -150,9 +155,7 @@ export const Card: React.FC<CardProps> = ({
       onLongPress={onLongPress}
       style={{ overflow: "visible" }}
     >
-      <Animated.View style={[animatedStyle, style]}>
-        {renderContent()}
-      </Animated.View>
+      <Animated.View style={[animatedStyle, style]}>{renderContent()}</Animated.View>
     </Pressable>
   );
 };

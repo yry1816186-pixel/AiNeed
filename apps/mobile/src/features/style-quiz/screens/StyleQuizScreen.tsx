@@ -9,9 +9,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import {
   useQuizStore as useStyleQuizStore,
   useStyleQuizCurrentQuiz,
@@ -19,15 +19,17 @@ import {
   useStyleQuizResult,
   useStyleQuizLoading,
   useStyleQuizError,
-} from '../stores/quizStore';
-import type { RootStackParamList } from '../../../types/navigation';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+} from "../stores/index";
+import { QuizProgress } from "../../../components/QuizProgress";
+import type { RootStackParamList } from "../../../types/navigation";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const QUIZ_ID = "default";
 
 export const StyleQuizScreen: React.FC = () => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
 
@@ -35,7 +37,7 @@ export const StyleQuizScreen: React.FC = () => {
   const loadProgress = useStyleQuizStore((s) => s.loadProgress);
   const selectAnswer = useStyleQuizStore((s) => s.selectAnswer);
   const submitAll = useStyleQuizStore((s) => s.submitAll);
-  const resetQuiz = useStyleQuizStore((s) => s.resetQuiz);
+  const reset = useStyleQuizStore((s) => s.reset);
 
   const currentQuiz = useStyleQuizCurrentQuiz();
   const progress = useStyleQuizProgress();
@@ -83,8 +85,8 @@ export const StyleQuizScreen: React.FC = () => {
       }
       setSelectedOption(optionId);
 
-      // Auto-save answer via store (synchronous)
-      selectAnswer(currentQuestion.id, optionId);
+      // Auto-save answer via store (non-blocking)
+      void selectAnswer(QUIZ_ID, currentQuestion.id, optionId);
 
       // Auto-advance after 300ms delay
       if (autoAdvanceTimer.current) {
@@ -108,28 +110,25 @@ export const StyleQuizScreen: React.FC = () => {
   }, [submitAll]);
 
   const handleSkip = useCallback(() => {
-    resetQuiz();
+    reset();
     if (navigation.canGoBack()) {
       navigation.goBack();
     }
-  }, [resetQuiz, navigation]);
+  }, [reset, navigation]);
 
   // Show result after submission
   if (result) {
-    const styleTags = (result as any).styleTags ?? [];
-    const colorPalette = (result as any).colorPalette ?? [];
-
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.resultContainer}>
           <Text style={styles.resultTitle}>你的风格画像</Text>
           <Text style={styles.resultSubtitle}>基于 AI 分析，以下是你的风格测试结果</Text>
 
-          {styleTags.length > 0 && (
+          {result.styleTags && result.styleTags.length > 0 && (
             <View style={styles.resultSection}>
               <Text style={styles.resultSectionTitle}>风格标签</Text>
               <View style={styles.tagRow}>
-                {styleTags.map((tag: any) => (
+                {result.styleTags.map((tag) => (
                   <View key={tag} style={styles.tag}>
                     <Text style={styles.tagText}>{tag}</Text>
                   </View>
@@ -138,11 +137,11 @@ export const StyleQuizScreen: React.FC = () => {
             </View>
           )}
 
-          {colorPalette.length > 0 && (
+          {result.colorPalette && result.colorPalette.length > 0 && (
             <View style={styles.resultSection}>
               <Text style={styles.resultSectionTitle}>色彩偏好</Text>
               <View style={styles.paletteRow}>
-                {colorPalette.map((color: any, i: any) => (
+                {result.colorPalette.map((color, i) => (
                   <View key={`color-${i}`} style={[styles.colorDot, { backgroundColor: color }]} />
                 ))}
               </View>
@@ -175,7 +174,7 @@ export const StyleQuizScreen: React.FC = () => {
     return (
       <View style={styles.container}>
         <View style={[styles.centerContainer, { paddingTop: insets.top }]}>
-          <ActivityIndicator size="large" color={Colors.primary[500]} />
+          <ActivityIndicator size="large" color={colors.primary[500]} />
           <Text style={styles.loadingText}>正在生成你的风格报告...</Text>
         </View>
       </View>
@@ -187,7 +186,7 @@ export const StyleQuizScreen: React.FC = () => {
     return (
       <View style={styles.container}>
         <View style={[styles.centerContainer, { paddingTop: insets.top }]}>
-          <Ionicons name="alert-circle-outline" size={48} color={Colors.neutral[400]} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.neutral[400]} />
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity
             style={styles.retryButton}
@@ -207,7 +206,7 @@ export const StyleQuizScreen: React.FC = () => {
     return (
       <View style={styles.container}>
         <View style={[styles.centerContainer, { paddingTop: insets.top }]}>
-          <ActivityIndicator size="large" color={Colors.primary[500]} />
+          <ActivityIndicator size="large" color={colors.primary[500]} />
           <Text style={styles.loadingText}>正在生成你的风格报告...</Text>
         </View>
       </View>
@@ -217,11 +216,6 @@ export const StyleQuizScreen: React.FC = () => {
   if (!currentQuestion) {
     return null;
   }
-
-  // Access optional properties with type assertion for compatibility
-  const questionTitle = currentQuestion.title ?? '';
-  const questionSubtitle = currentQuestion.subtitle ?? null;
-  const questionImages = currentQuestion.images ?? null;
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -236,13 +230,7 @@ export const StyleQuizScreen: React.FC = () => {
         <Text style={styles.skipTopRightText}>跳过</Text>
       </TouchableOpacity>
 
-      {/* Progress indicator */}
-      <View style={styles.progressContainer}>
-        <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }]} />
-        </View>
-        <Text style={styles.progressText}>{currentQuestionIndex + 1} / {totalQuestions}</Text>
-      </View>
+      <QuizProgress currentStep={currentQuestionIndex + 1} totalSteps={totalQuestions} />
 
       <ScrollView
         style={styles.scrollView}
@@ -250,16 +238,16 @@ export const StyleQuizScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.questionHeader}>
-          <Text style={styles.questionTitle}>{questionTitle}</Text>
-          {questionSubtitle ? (
-            <Text style={styles.questionSubtitle}>{questionSubtitle}</Text>
+          <Text style={styles.questionTitle}>{currentQuestion.title}</Text>
+          {currentQuestion.subtitle ? (
+            <Text style={styles.questionSubtitle}>{currentQuestion.subtitle}</Text>
           ) : null}
         </View>
 
         {/* Image grid (2x2) */}
-        {(questionImages ?? currentQuestion.options ?? []).length > 0 && (
+        {(currentQuestion.images ?? currentQuestion.options ?? []).length > 0 && (
           <View style={styles.imageGrid}>
-            {(questionImages ?? []).map((image: any, _index: any) => (
+            {(currentQuestion.images ?? []).map((image, _index) => (
               <View key={image.id} style={styles.imageGridItem}>
                 <TouchableOpacity
                   style={[
@@ -273,7 +261,7 @@ export const StyleQuizScreen: React.FC = () => {
                   accessibilityState={{ selected: selectedOption === image.id }}
                 >
                   <View style={styles.imagePlaceholder}>
-                    <Ionicons name="image-outline" size={32} color={Colors.neutral[400]} />
+                    <Ionicons name="image-outline" size={32} color={colors.neutral[400]} />
                     <Text style={styles.imageLabel}>{image.label}</Text>
                   </View>
                   {selectedOption === image.id && (
@@ -288,7 +276,7 @@ export const StyleQuizScreen: React.FC = () => {
         )}
 
         {/* Text options grid */}
-        {(!questionImages || questionImages.length === 0) &&
+        {(!currentQuestion.images || currentQuestion.images.length === 0) &&
           currentQuestion.options.map((option) => (
             <TouchableOpacity
               key={option.id}
@@ -337,7 +325,7 @@ export const StyleQuizScreen: React.FC = () => {
 const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
   },
   centerContainer: {
     flex: 1,
@@ -356,48 +344,22 @@ const useStyles = createStyles((colors) => ({
   skipTopRightText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: Colors.neutral[500],
-  },
-  progressContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: Spacing[5],
-    paddingTop: Spacing[3],
-    paddingBottom: Spacing[2],
-  },
-  progressTrack: {
-    flex: 1,
-    height: 3,
-    backgroundColor: Colors.neutral[200],
-    borderRadius: BorderRadius.full,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: Colors.primary[500],
-    borderRadius: BorderRadius.full,
-  },
-  progressText: {
-    marginLeft: Spacing[3],
-    fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
-    fontWeight: "400",
-    minWidth: DesignTokens.spacing[10],
+    color: colors.neutral[500],
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginTop: Spacing[3],
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: Colors.error[500],
+    color: colors.error[500],
     textAlign: "center",
     marginTop: Spacing[3],
     marginBottom: Spacing[4],
   },
   retryButton: {
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     paddingHorizontal: Spacing[6],
     paddingVertical: Spacing[3],
     borderRadius: BorderRadius.lg,
@@ -420,13 +382,13 @@ const useStyles = createStyles((colors) => ({
   questionTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "600",
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     marginBottom: Spacing[1],
   },
   questionSubtitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   imageGrid: {
     flexDirection: "row",
@@ -447,28 +409,28 @@ const useStyles = createStyles((colors) => ({
     ...Shadows.sm,
   },
   imageCardSelected: {
-    borderColor: Colors.primary[500],
+    borderColor: colors.primary[500],
   },
   imagePlaceholder: {
     aspectRatio: 3 / 4,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     justifyContent: "center",
     alignItems: "center",
   },
   imageLabel: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: Colors.neutral[700],
+    color: colors.neutral[700],
     marginTop: Spacing[2],
   },
   checkBadge: {
     position: "absolute",
     top: Spacing[2],
     right: Spacing[2],
-    width: Spacing.lg,
-    height: Spacing.lg,
+    width: 24,
+    height: 24,
     borderRadius: 12,
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     justifyContent: "center",
     alignItems: "center",
   },
@@ -479,20 +441,20 @@ const useStyles = createStyles((colors) => ({
     paddingVertical: Spacing[4],
     marginBottom: Spacing[3],
     borderWidth: 1.5,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
   },
   optionCardSelected: {
-    borderColor: Colors.primary[500],
+    borderColor: colors.primary[500],
     backgroundColor: "rgba(198, 123, 92, 0.05)",
   },
   optionText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: Colors.neutral[700],
+    color: colors.neutral[700],
   },
   optionTextSelected: {
     fontWeight: "600",
-    color: Colors.primary[500],
+    color: colors.primary[500],
   },
   bottomBar: {
     flexDirection: "row",
@@ -502,14 +464,14 @@ const useStyles = createStyles((colors) => ({
     paddingTop: Spacing[3],
     backgroundColor: Colors.neutral.white,
     borderTopWidth: 1,
-    borderTopColor: Colors.neutral[200],
+    borderTopColor: colors.neutral[200],
     ...Shadows.md,
   },
   submitButton: {
     flex: 1,
-    height: Spacing['2xl'],
+    height: 48,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     justifyContent: "center",
     alignItems: "center",
   },
@@ -525,16 +487,16 @@ const useStyles = createStyles((colors) => ({
     paddingBottom: Spacing[8],
   },
   resultTitle: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "600",
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     textAlign: "center",
     marginBottom: Spacing[2],
   },
   resultSubtitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
     textAlign: "center",
     lineHeight: 24,
     marginBottom: Spacing[6],
@@ -545,7 +507,7 @@ const useStyles = createStyles((colors) => ({
   resultSectionTitle: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     marginBottom: Spacing[3],
   },
   tagRow: {
@@ -562,7 +524,7 @@ const useStyles = createStyles((colors) => ({
   tagText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: Colors.primary[500],
+    color: colors.primary[500],
   },
   paletteRow: {
     flexDirection: "row",
@@ -570,17 +532,17 @@ const useStyles = createStyles((colors) => ({
     gap: Spacing[3],
   },
   colorDot: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
   },
   confidenceValue: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "600",
-    color: Colors.primary[500],
+    color: colors.primary[500],
   },
   resultButton: {
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",
@@ -593,6 +555,6 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
     color: Colors.neutral.white,
   },
-}))
+}));
 
 export default StyleQuizScreen;

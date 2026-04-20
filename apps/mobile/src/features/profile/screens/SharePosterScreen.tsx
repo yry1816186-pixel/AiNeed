@@ -1,26 +1,34 @@
-﻿import React, { useRef, useCallback, useState, useEffect } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Share from "react-native-share";
-import { Colors, Spacing, BorderRadius, Shadows , flatColors as colors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { useProfileStore } from '../stores/profileStore';
-import { useAuthStore } from '../../../stores/index';
-import { ScreenLayout, Header } from '../../../shared/components/layout/ScreenLayout';
-import type { RootStackParamList } from '../../../types/navigation';
+import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useProfileStore } from "../stores/profileStore";
+import { useAuthStore } from "../stores/index";
+import { ScreenLayout, Header } from "../../../shared/components/layout/ScreenLayout";
+import type { RootStackParamList } from "../../../types/navigation";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type SharePosterNavProp = NavigationProp<RootStackParamList>;
 
-const PLACEHOLDER_PALETTE = [colors.primary, colors.warning, colors.primary, colors.secondary, "colors.primary"]; // custom color
+const PLACEHOLDER_PALETTE = [
+  colors.primary,
+  colors.warning,
+  DesignTokens.colors.brand.camel,
+  colors.secondary,
+  "DesignTokens.colors.brand.camel",
+]; // custom color
 
 export const SharePosterScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<SharePosterNavProp>();
   const viewShotRef = useRef<View>(null);
   const { profile, colorAnalysis, loadProfile, loadColorAnalysis } = useProfileStore();
-  const user = useAuthStore((s: any) => s.user);
+  const user = useAuthStore((s) => s.user);
   const [isSharing, setIsSharing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -30,7 +38,7 @@ export const SharePosterScreen: React.FC = () => {
         await Promise.all([loadProfile(), loadColorAnalysis()]);
       } catch (error) {
         // Continue with whatever data loaded
-        console.error('Failed to load share data:', error);
+        console.error("Failed to load share data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -91,7 +99,7 @@ export const SharePosterScreen: React.FC = () => {
             }
           />
         }
-        backgroundColor={Colors.neutral[50]}
+        backgroundColor={colors.neutral[50]}
       >
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
@@ -117,7 +125,7 @@ export const SharePosterScreen: React.FC = () => {
           }
         />
       }
-      backgroundColor={Colors.neutral[50]}
+      backgroundColor={colors.neutral[50]}
       footer={
         <View style={styles.footerBar}>
           <TouchableOpacity
@@ -129,7 +137,7 @@ export const SharePosterScreen: React.FC = () => {
             accessibilityRole="button"
           >
             <LinearGradient
-              colors={[colors.primary, colors.primary]}
+              colors={[colors.primary, DesignTokens.colors.brand.camel]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.shareGradient}
@@ -151,7 +159,7 @@ export const SharePosterScreen: React.FC = () => {
         {/* Poster preview card */}
         <View ref={viewShotRef} style={styles.posterCard} collapsable={false}>
           <LinearGradient
-            colors={[colors.primary, colors.primary]}
+            colors={[colors.primary, DesignTokens.colors.brand.camel]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0.5, y: 1 }}
             style={styles.posterGradient}
@@ -229,8 +237,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[6],
   },
   posterAvatar: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: 48,
+    height: 48,
     borderRadius: 24,
     backgroundColor: "rgba(255, 255, 255, 0.3)",
     alignItems: "center",
@@ -260,7 +268,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   posterStyleType: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "600",
     color: colors.surface,
   },
@@ -269,8 +277,8 @@ const styles = StyleSheet.create({
     gap: Spacing[3],
   },
   posterColorDot: {
-    width: DesignTokens.spacing[9],
-    height: DesignTokens.spacing[9],
+    width: 36,
+    height: 36,
     borderRadius: 18,
     borderWidth: 2,
     borderColor: "rgba(255, 255, 255, 0.3)",

@@ -2,7 +2,8 @@ import { create } from "zustand";
 
 import customizationApi from "../../../services/api/customization.api";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { flatColors as colors } from '../../../design-system/theme';
+import { flatColors as colors } from "../../../design-system/theme";
+
 import type {
   CustomizationTemplate as ApiTemplate,
   CustomizationDesign,
@@ -97,7 +98,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
         set({ templates: response.data as Template[] });
       }
     } catch {
-      set({ error: '获取模板失败', isLoadingTemplates: false });
+      set({ error: "获取模板失败", isLoadingTemplates: false });
     } finally {
       set({ isLoadingTemplates: false });
     }
@@ -137,7 +138,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
     });
   },
 
-  addTextLayer: (text: string, fontSize = 24, color = colors.neutral[900]) => {
+  addTextLayer: (text: string, fontSize = 24, color = DesignTokens.colors.neutral.black) => {
     const state = get();
     const newLayer: DesignLayer = {
       id: generateLayerId(),
@@ -238,7 +239,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
         }
       }
     } catch {
-      set({ error: '保存设计失败', isSaving: false });
+      set({ error: "保存设计失败", isSaving: false });
     } finally {
       set({ isSaving: false });
     }
@@ -269,7 +270,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
         });
       }
     } catch {
-      set({ error: '获取报价失败' });
+      set({ error: "获取报价失败" });
     } finally {
       set({ isLoading: false });
     }
@@ -289,7 +290,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
         set({ previewUrl: previewData.previewUrl });
       }
     } catch {
-      set({ error: '生成预览失败' });
+      set({ error: "生成预览失败" });
     } finally {
       set({ isLoading: false });
     }
@@ -310,7 +311,7 @@ export const useCustomizationEditorStore = create<EditorState & EditorActions>((
       }
       return null;
     } catch {
-      set({ error: '提交定制订单失败' });
+      set({ error: "提交定制订单失败" });
       return null;
     } finally {
       set({ isLoading: false });

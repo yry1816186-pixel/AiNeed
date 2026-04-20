@@ -11,9 +11,10 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, theme, DesignTokens, Spacing } from '../../theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { Colors, theme } from "../theme";
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { flatColors as colors } from "../../theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -46,8 +47,8 @@ export function Dialog({
   children,
   variant = "default",
 }: DialogProps) {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const getIconColor = () => {
     if (iconColor) {
       return iconColor;
@@ -58,7 +59,7 @@ export function Dialog({
       case "success":
         return theme.colors.success;
       default:
-        return Colors.primary[500];
+        return colors.primary[500];
     }
   };
 
@@ -211,19 +212,19 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
-    padding: Spacing.lg,
+    padding: 24,
   },
   dialog: {
     backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: Spacing.lg,
+    padding: 24,
     width: SCREEN_WIDTH - 48,
     maxWidth: 340,
     alignItems: "center",
     ...Platform.select({
       ios: {
-        shadowColor: colors.neutral[900],
-        shadowOffset: { width: 0, height: Spacing.sm },
+        shadowColor: DesignTokens.colors.neutral.black,
+        shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.25,
         shadowRadius: 16,
       },
@@ -233,36 +234,36 @@ const useStyles = createStyles((colors) => ({
     }),
   },
   iconContainer: {
-    width: Spacing['3xl'],
-    height: Spacing['3xl'],
+    width: 64,
+    height: 64,
     borderRadius: 32,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: Spacing.md,
+    marginBottom: 16,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: theme.colors.textPrimary,
     textAlign: "center",
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
   },
   message: {
     fontSize: DesignTokens.typography.sizes.base,
     color: theme.colors.textSecondary,
     textAlign: "center",
     lineHeight: 20,
-    marginBottom: Spacing.lg,
+    marginBottom: 24,
   },
   actions: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: DesignTokens.spacing[3],
+    gap: 12,
     width: "100%",
   },
   cancelButton: {
     flex: 1,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingVertical: 12,
     borderRadius: 8,
     backgroundColor: theme.colors.neutral[100],
     alignItems: "center",
@@ -274,9 +275,9 @@ const useStyles = createStyles((colors) => ({
   },
   confirmButton: {
     flex: 1,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     alignItems: "center",
   },
   confirmText: {
@@ -284,4 +285,4 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
     color: colors.textInverse,
   },
-}))
+}));

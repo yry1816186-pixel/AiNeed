@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
+import {
   Controller,
   Get,
   Put,
@@ -12,8 +12,7 @@
   ForbiddenException,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
-import { Prisma } from "@prisma/client";
-import { UserRole } from '../../../types/prisma-enums';
+import { UserRole } from "../../../types/prisma-enums";
 
 import { AdminGuard } from "../../../common/guards/admin.guard";
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -35,7 +34,7 @@ import { AdminAuditService } from "./services/admin-audit.service";
 export class AdminUsersController {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly auditService: AdminAuditService,
+    private readonly auditService: AdminAuditService
   ) {}
 
   @Get()
@@ -53,8 +52,7 @@ export class AdminUsersController {
       sortOrder = "desc",
     } = query;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = { isDeleted: false };
+    const where: Record<string, unknown> = { isDeleted: false };
 
     if (search) {
       where.OR = [
@@ -116,17 +114,19 @@ export class AdminUsersController {
   @ApiResponse({ status: 200, description: "成功" })
   @ApiResponse({ status: 401, description: "未授权" })
   async exportUsers(@Query() query: AdminUserExportDto) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = { isDeleted: false };
+    const where: Record<string, unknown> = { isDeleted: false };
 
     if (query.role) {
       where.role = query.role as UserRole;
     }
     if (query.startDate || query.endDate) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const createdAt: any = {};
-      if (query.startDate) {createdAt.gte = new Date(query.startDate);}
-      if (query.endDate) {createdAt.lte = new Date(query.endDate);}
+      const createdAt: Record<string, Date> = {};
+      if (query.startDate) {
+        createdAt.gte = new Date(query.startDate);
+      }
+      if (query.endDate) {
+        createdAt.lte = new Date(query.endDate);
+      }
       where.createdAt = createdAt;
     }
 
@@ -181,7 +181,7 @@ export class AdminUsersController {
   async banUser(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: AdminUserBanDto,
+    @Body() dto: AdminUserBanDto
   ) {
     const user = await this.prisma.user.findUnique({ where: { id } });
 
@@ -213,10 +213,7 @@ export class AdminUsersController {
 
   @Put(":id/unban")
   @ApiOperation({ summary: "Unban a user" })
-  async unbanUser(
-    @Request() req: RequestWithUser,
-    @Param("id") id: string,
-  ) {
+  async unbanUser(@Request() req: RequestWithUser, @Param("id") id: string) {
     const user = await this.prisma.user.findUnique({ where: { id } });
 
     if (!user || user.isDeleted) {
@@ -245,7 +242,7 @@ export class AdminUsersController {
   async updateRole(
     @Request() req: RequestWithUser,
     @Param("id") id: string,
-    @Body() dto: AdminUserUpdateDto,
+    @Body() dto: AdminUserUpdateDto
   ) {
     if (!dto.role) {
       throw new ForbiddenException("Role is required");

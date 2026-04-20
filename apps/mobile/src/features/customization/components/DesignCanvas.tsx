@@ -1,10 +1,10 @@
-import React, { useCallback, useRef } from "react";
-import { StyleSheet, View } from 'react-native';
-import { Svg, Rect, Image as SvgImage, Text as SvgText, G } from 'react-native-svg';
-import { GestureHandlerRootView, GestureDetector, Gesture } from 'react-native-gesture-handler';
-import { Colors, DesignTokens } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import type { DesignLayer, PrintableAreaBounds } from '../stores/customizationEditorStore';
+﻿import React, { useCallback, useRef } from "react";
+import { StyleSheet, View } from "react-native";
+import { Svg, Rect, Image as SvgImage, Text as SvgText, G } from "react-native-svg";
+import { GestureHandlerRootView, GestureDetector, Gesture } from "react-native-gesture-handler";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import type { DesignLayer, PrintableAreaBounds } from "../stores/customizationEditorStore";
+import { DesignTokens, Colors } from "../../../design-system/theme";
 
 interface DesignCanvasProps {
   template: {
@@ -25,7 +25,6 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
   canvasWidth,
   canvasHeight,
 }) => {
-  const { colors } = useTheme();
   const startRef = useRef({ x: 0, y: 0 });
 
   const panGesture = useCallback(
@@ -111,7 +110,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
         width={(area.width / 100) * canvasWidth}
         height={(area.height / 100) * canvasHeight}
         fill="none"
-        stroke={Colors.neutral[400]}
+        stroke={colors.neutral[400]}
         strokeWidth={1}
         strokeDasharray="8 4"
       />
@@ -143,7 +142,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
           x={0}
           y={(layer.fontSize ?? 24) * layer.scale}
           fontSize={(layer.fontSize ?? 24) * layer.scale}
-          fill={layer.color ?? colors.neutral[900]}
+          fill={layer.color ?? DesignTokens.colors.neutral.black}
           opacity={layer.opacity}
         >
           {layer.content}
@@ -155,7 +154,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
           width={layer.width * layer.scale}
           height={layer.height * layer.scale}
           fill={layer.fillColor ?? DesignTokens.colors.neutral[300]}
-          stroke={layer.strokeColor ?? colors.neutral[900]}
+          stroke={layer.strokeColor ?? DesignTokens.colors.neutral.black}
           strokeWidth={layer.strokeWidth ?? 1}
           opacity={layer.opacity}
         />
@@ -195,7 +194,13 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
             viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
           >
             {/* Background */}
-            <Rect x={0} y={0} width={canvasWidth} height={canvasHeight} fill={colors.backgroundTertiary} />
+            <Rect
+              x={0}
+              y={0}
+              width={canvasWidth}
+              height={canvasHeight}
+              fill={colors.backgroundTertiary}
+            />
             {/* Printable area indicator */}
             {renderPrintableArea()}
             {/* Layers */}
@@ -214,7 +219,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   canvasContainer: {
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     borderRadius: 8,
     overflow: "hidden",
   },

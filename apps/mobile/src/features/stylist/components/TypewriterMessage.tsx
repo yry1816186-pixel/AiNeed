@@ -9,16 +9,15 @@ import Animated, {
   Easing,
   cancelAnimation,
 } from "react-native-reanimated";
-import { useReducedMotion } from '../../../hooks/useReducedMotion';
-import { useTypewriter } from '../../../hooks/useAdvancedAnimations';
-import { Duration } from '../../../design-system/theme/tokens/animations';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { useReducedMotion } from "../../../hooks/useReducedMotion";
+import { useTypewriter } from "../../../hooks/useAdvancedAnimations";
+import { Duration } from "../../../design-system/theme/tokens/animations";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 /** Blinking cursor shown while typewriter is active */
 function TypingCursor() {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const opacity = useSharedValue(1);
   const { reducedMotion } = useReducedMotion();
 
@@ -110,12 +109,12 @@ const useStyles = createStyles((colors) => ({
     color: colors.textPrimary,
   },
   cursor: {
-    marginLeft: DesignTokens.spacing.px,
-    marginBottom: DesignTokens.spacing['0.5'],
+    marginLeft: 1,
+    marginBottom: 2,
   },
   cursorText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
     color: colors.primary,
   },
-}))
+}));

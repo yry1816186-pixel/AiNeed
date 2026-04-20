@@ -11,16 +11,16 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import { communityApi } from '../../../services/api/community.api';
-import type { CommunityStackParamList } from '../../../navigation/types';
-
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, Spacing } from "../../../design-system/theme";
+import { communityApi } from "../../../services/api/community.api";
+import type { CommunityStackParamList } from "../../../navigation/types";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type InspirationWardrobeRoute = RouteProp<CommunityStackParamList, "InspirationWardrobe">;
 
@@ -39,6 +39,7 @@ interface InspirationItem {
 }
 
 export const InspirationWardrobeScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const _route = useRoute<InspirationWardrobeRoute>();
 
@@ -66,7 +67,7 @@ export const InspirationWardrobeScreen: React.FC = () => {
       }
     } catch (error) {
       // Collections non-critical
-      console.error('Failed to load collections:', error);
+      console.error("Failed to load collections:", error);
     }
   }, [selectedCollection]);
 
@@ -231,8 +232,12 @@ export const InspirationWardrobeScreen: React.FC = () => {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         numColumns={NUM_COLUMNS}
-        columnWrapperStyle={{ gap: DesignTokens.spacing['2.5']}}
-        contentContainerStyle={{ gap: DesignTokens.spacing['2.5'], padding: Spacing.md, paddingBottom: DesignTokens.spacing[10]}}
+        columnWrapperStyle={{ gap: DesignTokens.spacing["2.5"] }}
+        contentContainerStyle={{
+          gap: DesignTokens.spacing["2.5"],
+          padding: Spacing.md,
+          paddingBottom: DesignTokens.spacing[10],
+        }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -264,33 +269,64 @@ const s = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary },
-  iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
-  centerContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: Spacing.xl},
-  errorText: { fontSize: DesignTokens.typography.sizes.base, color: colors.error, marginTop: DesignTokens.spacing[3]},
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: colors.textPrimary,
+  },
+  iconBtn: {
+    width: DesignTokens.spacing[9],
+    height: DesignTokens.spacing[9],
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  centerContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: Spacing.xl,
+  },
+  errorText: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.error,
+    marginTop: DesignTokens.spacing[3],
+  },
   retryBtn: {
     marginTop: Spacing.md,
     backgroundColor: colors.primary,
     paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingVertical: DesignTokens.spacing["2.5"],
     borderRadius: 20,
   },
-  retryBtnText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.base, fontWeight: "600" },
+  retryBtnText: {
+    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+  },
   collectionRow: {
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
-    maxHeight: Spacing['2xl'],
+    maxHeight: Spacing["2xl"],
   },
-  collectionScroll: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, gap: Spacing.sm, alignItems: "center" },
+  collectionScroll: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    gap: Spacing.sm,
+    alignItems: "center",
+  },
   collectionChip: {
-    paddingHorizontal: DesignTokens.spacing['3.5'],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: DesignTokens.spacing["3.5"],
+    paddingVertical: DesignTokens.spacing["1.5"],
     borderRadius: 16,
     backgroundColor: colors.background,
   },
   collectionChipActive: { backgroundColor: colors.primary },
-  collectionChipText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary, fontWeight: "500" },
+  collectionChipText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.textSecondary,
+    fontWeight: "500",
+  },
   collectionChipTextActive: { color: colors.surface, fontWeight: "600" },
   gridItem: {
     flex: 1,
@@ -306,11 +342,20 @@ const s = StyleSheet.create({
     right: 0,
     backgroundColor: "rgba(0,0,0,0.5)",
     paddingHorizontal: Spacing.sm,
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingVertical: DesignTokens.spacing["1.5"],
   },
-  gridTitle: { fontSize: DesignTokens.typography.sizes.sm, color: colors.surface, fontWeight: "500" },
+  gridTitle: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.surface,
+    fontWeight: "500",
+  },
   emptyContent: { flex: 1, alignItems: "center", justifyContent: "center", paddingVertical: 60 },
-  emptyTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary, marginTop: Spacing.md},
+  emptyTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginTop: Spacing.md,
+  },
   emptySubtitle: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,

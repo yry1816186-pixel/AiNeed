@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FeatureFlag = any;
+
+interface FeatureFlag {
+  id: string;
+  key: string;
+  type: string;
+  value: Record<string, any>;
+  enabled: boolean;
+  rules: Record<string, any>;
+}
 
 export interface ABTestResult {
   enabled: boolean;
@@ -11,7 +18,9 @@ export class ABTestStrategy {
   evaluate(flag: FeatureFlag, userId: string): ABTestResult {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const variants = (flag.value as Record<string, any>).variants ?? [];
-    if (!variants.length) {return { enabled: false, variant: 'control' };}
+    if (!variants.length) {
+      return { enabled: false, variant: "control" };
+    }
 
     const hash = this.hashUserId(userId, flag.key);
     const bucket = hash % 100;
@@ -30,7 +39,7 @@ export class ABTestStrategy {
     const str = `${userId}:${flagKey}`;
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
-      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash = (hash << 5) - hash + str.charCodeAt(i);
       hash |= 0;
     }
     return Math.abs(hash);

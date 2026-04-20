@@ -1,4 +1,4 @@
-import { ProductTemplateType } from "../../../../types/prisma-enums";
+import { ProductTemplateType } from "@/types/prisma-enums";
 
 import { getBasePrice } from "../templates/customization-templates";
 
@@ -30,12 +30,7 @@ const COMPLEX_DAY_THRESHOLD = 10;
 
 export class PricingEngine {
   calculatePrice(params: PricingParams): PricingResult {
-    const {
-      templateType,
-      layerCount,
-      hasTextLayers,
-      printSide,
-    } = params;
+    const { templateType, layerCount, hasTextLayers, printSide } = params;
 
     const basePrice = this.getBasePrice(templateType);
     const complexitySurcharge = this.calculateComplexitySurcharge(layerCount);
@@ -43,12 +38,7 @@ export class PricingEngine {
     const sideSurcharge = this.calculateSideSurcharge(basePrice, printSide);
     const estimatedDays = this.calculateEstimatedDays(layerCount);
 
-    const totalPrice = this.sumPrices(
-      basePrice,
-      complexitySurcharge,
-      textSurcharge,
-      sideSurcharge,
-    );
+    const totalPrice = this.sumPrices(basePrice, complexitySurcharge, textSurcharge, sideSurcharge);
 
     return {
       basePrice,
@@ -77,10 +67,7 @@ export class PricingEngine {
     return hasTextLayers ? TEXT_SURCHARGE : 0;
   }
 
-  private calculateSideSurcharge(
-    basePrice: number,
-    printSide: "front" | "back" | "both",
-  ): number {
+  private calculateSideSurcharge(basePrice: number, printSide: "front" | "back" | "both"): number {
     if (printSide === "both") {
       return Math.round(basePrice * BOTH_SIDES_MULTIPLIER);
     }
@@ -95,12 +82,7 @@ export class PricingEngine {
     return days;
   }
 
-  private sumPrices(
-    base: number,
-    complexity: number,
-    text: number,
-    side: number,
-  ): number {
+  private sumPrices(base: number, complexity: number, text: number, side: number): number {
     const total = base + complexity + text + side;
     return Math.max(0, total);
   }

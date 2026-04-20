@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from "react";
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { communityApi } from '../../../../services/api/community.api';
-import { theme, Spacing, DesignTokens } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { communityApi } from "../../services/api/community.api";
+import { theme } from "../../../../design-system/theme";
+import { DesignTokens } from "../../../../design-system/theme";
+import { flatColors as colors } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface FollowButtonProps {
   userId: string;
@@ -35,7 +37,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
         onFollowChange?.(newFollowing);
       }
     } catch (error) {
-      console.error('Follow operation failed:', error);
+      console.error("Follow operation failed:", error);
     } finally {
       setLoading(false);
     }
@@ -72,7 +74,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
       accessibilityRole="button"
     >
       {loading ? (
-        <ActivityIndicator size="small" color={colors.textInverse} />
+        <ActivityIndicator size="small" color="#FFFFFF" />
       ) : (
         <Text style={[styles.followText, isSmall && styles.followTextSmall]}>关注</Text>
       )}
@@ -84,18 +86,18 @@ const useStyles = createStyles((colors) => ({
   followBtn: {
     backgroundColor: colors.primary,
     borderRadius: 18,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 24,
+    paddingVertical: 8,
     alignItems: "center",
     justifyContent: "center",
   },
   followBtnSmall: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 16,
     paddingVertical: 5,
     borderRadius: 14,
   },
   followText: {
-    color: colors.textInverse,
+    color: "#FFFFFF",
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
@@ -105,15 +107,15 @@ const useStyles = createStyles((colors) => ({
   followingBtn: {
     backgroundColor: theme.colors.background,
     borderRadius: 18,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 24,
+    paddingVertical: 8,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
     borderColor: theme.colors.border,
   },
   followingBtnSmall: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 16,
     paddingVertical: 5,
     borderRadius: 14,
   },
@@ -125,6 +127,6 @@ const useStyles = createStyles((colors) => ({
   followingTextSmall: {
     fontSize: DesignTokens.typography.sizes.sm,
   },
-}))
+}));
 
 export default FollowButton;

@@ -11,7 +11,7 @@ import {
   Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import Animated, {
   FadeIn,
   useAnimatedStyle,
@@ -21,15 +21,15 @@ import Animated, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import type { NavigationProp as NavProp } from "@react-navigation/native";
-import { useTranslation } from '../../../i18n';
-import { Colors, Spacing, BorderRadius, Shadows } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { profileApi, type UpdateProfileDto } from '../../../services/api/profile.api';
-import { pickImageSecurely, ImageValidationError } from '../../../utils/imagePicker';
-import { PhotoGuideOverlay } from '../../../features/tryon/components/PhotoGuideOverlay';
-import { PrivacyConsentModal } from '../../../shared/components/privacy/PrivacyConsentModal';
-import type { RootStackParamList } from '../../../types/navigation';
+import { useTranslation } from "../../../i18n";
+import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { profileApi, type UpdateProfileDto } from "../../../services/api/profile.api";
+import { pickImageSecurely, ImageValidationError } from "../../../utils/imagePicker";
+import { PhotoGuideOverlay } from "../../../features/tryon/components/PhotoGuideOverlay";
+import { PrivacyConsentModal } from "../../../shared/components/privacy/PrivacyConsentModal";
+import type { RootStackParamList } from "../../../types/navigation";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 const ONBOARDING_COMPLETE_KEY = "@aineed:onboarding_complete";
@@ -473,7 +473,7 @@ const useStyles = createStyles((colors) => ({
   progressTrack: {
     flex: 1,
     height: 3,
-    backgroundColor: Colors.neutral[200],
+    backgroundColor: colors.neutral[200],
     borderRadius: BorderRadius.full,
     overflow: "hidden",
   },
@@ -502,7 +502,7 @@ const useStyles = createStyles((colors) => ({
     paddingBottom: Spacing[4],
   },
   stepTitle: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "600",
     color: colors.textPrimary,
     letterSpacing: -0.5,
@@ -540,7 +540,7 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     gap: Spacing[2],
@@ -565,7 +565,7 @@ const useStyles = createStyles((colors) => ({
     gap: Spacing[2],
   },
   agePill: {
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.full,
     paddingHorizontal: Spacing[5],
     paddingVertical: Spacing[3],
@@ -587,7 +587,7 @@ const useStyles = createStyles((colors) => ({
   },
   uploadArea: {
     borderWidth: 2,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
     borderStyle: "dashed",
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[8],
@@ -734,6 +734,6 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "600",
     color: colors.surface,
   },
-}))
+}));
 
 export default OnboardingScreen;

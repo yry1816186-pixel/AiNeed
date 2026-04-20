@@ -9,7 +9,8 @@ import {
   Image,
   ViewStyle,
   TextStyle,
-  Animated} from "react-native";
+  Animated,
+} from "react-native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
@@ -24,12 +25,14 @@ import {
   interpolate,
   Extrapolate,
   Easing,
-  runOnJS} from "react-native-reanimated";
+  runOnJS,
+} from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors , Spacing, flatColors } from '../../../design-system/theme'
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Colors } from "../../../design-system/theme";
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -38,9 +41,17 @@ const _AnimatedText = AnimatedReanimated.createAnimatedComponent(Text);
 const springConfig = {
   damping: 15,
   stiffness: 150,
-  mass: 0.5};
+  mass: 0.5,
+};
 
-const confettiColors = [flatColors.neutral[300], flatColors.neutral[700], flatColors.warning, flatColors.success, flatColors.error, flatColors.primary]; // custom color
+const confettiColors = [
+  DesignTokens.colors.brand.slateLight,
+  DesignTokens.colors.brand.slateDark,
+  colors.warning,
+  colors.success,
+  colors.error,
+  DesignTokens.colors.brand.camel,
+]; // custom color
 
 export interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap | "custom";
@@ -75,7 +86,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onSecondaryAction,
   illustration,
   style,
-  animated = true}) => {
+  animated = true,
+}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0.8);
@@ -92,7 +104,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         withSequence(
           withTiming(-10, {
             duration: 2000,
-            easing: Easing.inOut(Easing.ease)}),
+            easing: Easing.inOut(Easing.ease),
+          }),
           withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
@@ -112,35 +125,40 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }]}));
+    transform: [{ scale: scale.value }],
+  }));
 
   const floatAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: floatY.value }, { rotateZ: `${rotation.value}deg` }]}));
+    transform: [{ translateY: floatY.value }, { rotateZ: `${rotation.value}deg` }],
+  }));
 
   const getIllustrationIcon = () => {
+    const { colors } = useTheme();
     switch (illustration) {
       case "empty-box":
-        return { icon: "cube-outline", color: Colors.neutral[400] };
+        return { icon: "cube-outline", color: colors.neutral[400] };
       case "search":
-        return { icon: "search-outline", color: Colors.primary[400] };
+        return { icon: "search-outline", color: colors.primary[400] };
       case "error":
-        return { icon: "alert-circle-outline", color: Colors.error[400] };
+        return { icon: "alert-circle-outline", color: colors.error[400] };
       case "no-internet":
-        return { icon: "cloud-offline-outline", color: Colors.warning[400] };
+        return { icon: "cloud-offline-outline", color: colors.warning[400] };
       case "no-notification":
         return {
           icon: "notifications-off-outline",
-          color: Colors.neutral[400]};
+          color: colors.neutral[400],
+        };
       case "no-favorite":
-        return { icon: "heart-outline", color: Colors.error[300] };
+        return { icon: "heart-outline", color: colors.error[300] };
       case "no-order":
-        return { icon: "receipt-outline", color: Colors.neutral[400] };
+        return { icon: "receipt-outline", color: colors.neutral[400] };
       case "no-cart":
-        return { icon: "cart-outline", color: Colors.neutral[400] };
+        return { icon: "cart-outline", color: colors.neutral[400] };
       default:
         return {
           icon: icon || "help-circle-outline",
-          color: Colors.neutral[400]};
+          color: colors.neutral[400],
+        };
     }
   };
 
@@ -163,7 +181,10 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
       {actionLabel && onAction && (
         <TouchableOpacity style={styles.emptyAction} onPress={onAction}>
-          <LinearGradient colors={[colors.neutral[300], colors.neutral[700]]} style={styles.emptyActionGradient}>
+          <LinearGradient
+            colors={[DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark]}
+            style={styles.emptyActionGradient}
+          >
             <Text style={styles.emptyActionText}>{actionLabel}</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -195,9 +216,8 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   onRetry,
   onReport,
   showIllustration = true,
-  style}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  style,
+}) => {
   const shakeX = useSharedValue(0);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.9);
@@ -216,18 +236,20 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   }, []);
 
   const shakeAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shakeX.value }]}));
+    transform: [{ translateX: shakeX.value }],
+  }));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }]}));
+    transform: [{ scale: scale.value }],
+  }));
 
   return (
     <AnimatedView style={[styles.errorContainer, containerAnimatedStyle, style]}>
       {showIllustration && (
         <AnimatedView style={[styles.errorIllustration, shakeAnimatedStyle]}>
           <View style={styles.errorIconContainer}>
-            <Ionicons name="warning" size={64} color={Colors.error[500]} />
+            <Ionicons name="warning" size={64} color={colors.error[500]} />
           </View>
           <View style={styles.errorDecorations}>
             <View style={[styles.errorDot, styles.errorDot1]} />
@@ -256,7 +278,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
         )}
         {onReport && (
           <TouchableOpacity style={styles.reportButton} onPress={onReport}>
-            <Ionicons name="chatbubble-outline" size={18} color={Colors.neutral[600]} />
+            <Ionicons name="chatbubble-outline" size={18} color={colors.neutral[600]} />
             <Text style={styles.reportText}>反馈问题</Text>
           </TouchableOpacity>
         )}
@@ -272,8 +294,6 @@ export interface NetworkErrorProps {
 }
 
 export const NetworkError: React.FC<NetworkErrorProps> = ({ onRetry, onSettings, style }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const pulseScale = useSharedValue(1);
   const opacity = useSharedValue(0);
 
@@ -287,16 +307,18 @@ export const NetworkError: React.FC<NetworkErrorProps> = ({ onRetry, onSettings,
   }, []);
 
   const pulseAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulseScale.value }]}));
+    transform: [{ scale: pulseScale.value }],
+  }));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value}));
+    opacity: opacity.value,
+  }));
 
   return (
     <AnimatedView style={[styles.networkContainer, containerAnimatedStyle, style]}>
       <AnimatedView style={[styles.networkIconContainer, pulseAnimatedStyle]}>
         <View style={styles.networkIconBg}>
-          <Ionicons name="cloud-offline" size={56} color={Colors.neutral[400]} />
+          <Ionicons name="cloud-offline" size={56} color={colors.neutral[400]} />
         </View>
         <View style={styles.networkWaves}>
           <View style={[styles.networkWave, styles.networkWave1]} />
@@ -311,7 +333,10 @@ export const NetworkError: React.FC<NetworkErrorProps> = ({ onRetry, onSettings,
       <View style={styles.networkActions}>
         {onRetry && (
           <TouchableOpacity style={styles.networkRetryButton} onPress={onRetry}>
-            <LinearGradient colors={[colors.neutral[300], colors.neutral[700]]} style={styles.networkRetryGradient}>
+            <LinearGradient
+              colors={[DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark]}
+              style={styles.networkRetryGradient}
+            >
               <Ionicons name="refresh" size={18} color={colors.textInverse} />
               <Text style={styles.networkRetryText}>重试</Text>
             </LinearGradient>
@@ -319,7 +344,7 @@ export const NetworkError: React.FC<NetworkErrorProps> = ({ onRetry, onSettings,
         )}
         {onSettings && (
           <TouchableOpacity style={styles.networkSettingsButton} onPress={onSettings}>
-            <Ionicons name="settings-outline" size={18} color={Colors.neutral[600]} />
+            <Ionicons name="settings-outline" size={18} color={colors.neutral[600]} />
             <Text style={styles.networkSettingsText}>网络设置</Text>
           </TouchableOpacity>
         )}
@@ -337,9 +362,8 @@ export interface MaintenanceScreenProps {
 export const MaintenanceScreen: React.FC<MaintenanceScreenProps> = ({
   estimatedTime,
   message = "我们正在进行系统维护，请稍后再试",
-  style}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  style,
+}) => {
   const rotation = useSharedValue(0);
   const opacity = useSharedValue(0);
 
@@ -353,19 +377,21 @@ export const MaintenanceScreen: React.FC<MaintenanceScreenProps> = ({
   }, []);
 
   const gearAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotateZ: `${rotation.value}deg` }]}));
+    transform: [{ rotateZ: `${rotation.value}deg` }],
+  }));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value}));
+    opacity: opacity.value,
+  }));
 
   return (
     <AnimatedView style={[styles.maintenanceContainer, containerAnimatedStyle, style]}>
       <View style={styles.maintenanceIconContainer}>
         <AnimatedView style={gearAnimatedStyle}>
-          <Ionicons name="settings" size={64} color={Colors.primary[500]} />
+          <Ionicons name="settings" size={64} color={colors.primary[500]} />
         </AnimatedView>
         <View style={styles.maintenanceTools}>
-          <Ionicons name="construct" size={28} color={Colors.warning[500]} />
+          <Ionicons name="construct" size={28} color={colors.warning[500]} />
         </View>
       </View>
 
@@ -374,7 +400,7 @@ export const MaintenanceScreen: React.FC<MaintenanceScreenProps> = ({
 
       {estimatedTime && (
         <View style={styles.estimatedTimeContainer}>
-          <Ionicons name="time-outline" size={18} color={Colors.neutral[500]} />
+          <Ionicons name="time-outline" size={18} color={colors.neutral[500]} />
           <Text style={styles.estimatedTimeText}>预计恢复时间：{estimatedTime}</Text>
         </View>
       )}
@@ -397,9 +423,8 @@ export interface PermissionDeniedProps {
 export const PermissionDenied: React.FC<PermissionDeniedProps> = ({
   permission,
   onOpenSettings,
-  style}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  style,
+}) => {
   const scale = useSharedValue(0.9);
   const opacity = useSharedValue(0);
 
@@ -410,34 +435,40 @@ export const PermissionDenied: React.FC<PermissionDeniedProps> = ({
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }]}));
+    transform: [{ scale: scale.value }],
+  }));
 
   const permissionConfig = {
     camera: {
       icon: "camera-outline",
       title: "需要相机权限",
-      message: "请在设置中允许访问相机，以便您可以使用拍照功能"},
+      message: "请在设置中允许访问相机，以便您可以使用拍照功能",
+    },
     gallery: {
       icon: "images-outline",
       title: "需要相册权限",
-      message: "请在设置中允许访问相册，以便您可以选择和保存照片"},
+      message: "请在设置中允许访问相册，以便您可以选择和保存照片",
+    },
     location: {
       icon: "location-outline",
       title: "需要位置权限",
-      message: "请在设置中允许访问位置，以便我们可以为您推荐附近的门店"},
+      message: "请在设置中允许访问位置，以便我们可以为您推荐附近的门店",
+    },
     notification: {
       icon: "notifications-outline",
       title: "需要通知权限",
-      message: "请在设置中允许发送通知，以便您不会错过重要消息"}};
+      message: "请在设置中允许发送通知，以便您不会错过重要消息",
+    },
+  };
 
   const config = permissionConfig[permission];
 
   return (
     <AnimatedView style={[styles.permissionContainer, containerAnimatedStyle, style]}>
       <View style={styles.permissionIconContainer}>
-        <Ionicons name={config.icon} size={56} color={Colors.primary[500]} />
+        <Ionicons name={config.icon} size={56} color={colors.primary[500]} />
         <View style={styles.permissionLock}>
-          <Ionicons name="lock-closed" size={20} color={Colors.error[500]} />
+          <Ionicons name="lock-closed" size={20} color={colors.error[500]} />
         </View>
       </View>
 
@@ -446,7 +477,10 @@ export const PermissionDenied: React.FC<PermissionDeniedProps> = ({
 
       {onOpenSettings && (
         <TouchableOpacity style={styles.permissionButton} onPress={onOpenSettings}>
-          <LinearGradient colors={[colors.neutral[300], colors.neutral[700]]} style={styles.permissionButtonGradient}>
+          <LinearGradient
+            colors={[DesignTokens.colors.brand.slateLight, DesignTokens.colors.brand.slateDark]}
+            style={styles.permissionButtonGradient}
+          >
             <Ionicons name="settings-outline" size={18} color={colors.textInverse} />
             <Text style={styles.permissionButtonText}>打开设置</Text>
           </LinearGradient>
@@ -471,8 +505,6 @@ interface ConfettiPieceProps {
 }
 
 const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ index }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const initialX = useRef(Math.random() * SCREEN_WIDTH).current;
   const drift1 = useRef((Math.random() - 0.5) * 100).current;
   const drift2 = useRef((Math.random() - 0.5) * 100).current;
@@ -488,7 +520,8 @@ const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ index }) => {
   useEffect(() => {
     confettiY.value = withTiming(SCREEN_HEIGHT + 50, {
       duration: fallDuration,
-      easing: Easing.out(Easing.quad)});
+      easing: Easing.out(Easing.quad),
+    });
     confettiX.value = withSequence(
       withTiming(initialX + drift1, { duration: 500 }),
       withTiming(initialX + drift2, { duration: 500 }),
@@ -515,7 +548,8 @@ const ConfettiPiece: React.FC<ConfettiPieceProps> = ({ index }) => {
       { translateX: confettiX.value },
       { rotateZ: `${confettiRotation.value}deg` },
     ],
-    opacity: confettiOpacity.value}));
+    opacity: confettiOpacity.value,
+  }));
 
   return (
     <AnimatedView
@@ -535,9 +569,8 @@ export const SuccessState: React.FC<SuccessStateProps> = ({
   actionLabel,
   onAction,
   confetti = false,
-  style}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  style,
+}) => {
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
   const checkScale = useSharedValue(0);
@@ -558,15 +591,17 @@ export const SuccessState: React.FC<SuccessStateProps> = ({
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ scale: scale.value }]}));
+    transform: [{ scale: scale.value }],
+  }));
 
   const checkAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: checkScale.value }]}));
+    transform: [{ scale: checkScale.value }],
+  }));
 
   return (
     <AnimatedView style={[styles.successContainer, containerAnimatedStyle, style]}>
       <AnimatedView style={[styles.successIconContainer, checkAnimatedStyle]}>
-        <LinearGradient colors={[colors.success, DesignTokens.colors.semantic.success]} style={styles.successIconGradient}>
+        <LinearGradient colors={[colors.success, "#059669"]} style={styles.successIconGradient}>
           <Ionicons name={icon} size={48} color={colors.textInverse} />
         </LinearGradient>
       </AnimatedView>
@@ -600,8 +635,6 @@ export interface OfflineBannerProps {
 }
 
 export const OfflineBanner: React.FC<OfflineBannerProps> = ({ visible, onRetry, style }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const translateY = useSharedValue(-60);
   const opacity = useSharedValue(0);
 
@@ -617,7 +650,8 @@ export const OfflineBanner: React.FC<OfflineBannerProps> = ({ visible, onRetry, 
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
-    opacity: opacity.value}));
+    opacity: opacity.value,
+  }));
 
   if (!visible) {
     return null;
@@ -627,7 +661,7 @@ export const OfflineBanner: React.FC<OfflineBannerProps> = ({ visible, onRetry, 
     <AnimatedView style={[styles.offlineBanner, animatedStyle, style]}>
       <BlurView intensity={100} style={StyleSheet.absoluteFill as ViewStyle}>
         <View style={styles.offlineContent}>
-          <Ionicons name="cloud-offline" size={18} color={Colors.warning[500]} />
+          <Ionicons name="cloud-offline" size={18} color={colors.warning[500]} />
           <Text style={styles.offlineText}>网络连接已断开</Text>
           {onRetry && (
             <TouchableOpacity style={styles.offlineRetry} onPress={onRetry}>
@@ -644,393 +678,470 @@ const useStyles = createStyles((colors) => ({
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10]},
+    padding: 40,
+  },
   emptyIconContainer: {
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   emptyIconCircle: {
     width: 120,
     height: 120,
     borderRadius: 60,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   emptyTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm},
+    marginBottom: 8,
+  },
   emptyDescription: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   emptyAction: {
     borderRadius: 24,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   emptyActionGradient: {
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: DesignTokens.spacing['3.5'],
-    borderRadius: 24},
+    paddingHorizontal: 32,
+    paddingVertical: 14,
+    borderRadius: 24,
+  },
   emptyActionText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textInverse},
+    color: colors.textInverse,
+  },
   emptySecondaryAction: {
-    marginTop: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['2.5']},
+    marginTop: 12,
+    paddingVertical: 10,
+  },
   emptySecondaryText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.primary[500],
-    fontWeight: "500"},
+    color: colors.primary[500],
+    fontWeight: "500",
+  },
   errorContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10]},
+    padding: 40,
+  },
   errorIllustration: {
-    marginBottom: Spacing.lg,
-    alignItems: "center"},
+    marginBottom: 24,
+    alignItems: "center",
+  },
   errorIconContainer: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: `${Colors.error[500]}15`,
+    backgroundColor: `${colors.error[500]}15`,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   errorDecorations: {
     position: "absolute",
     width: 140,
-    height: 140},
+    height: 140,
+  },
   errorDot: {
     position: "absolute",
-    width: Spacing.sm,
-    height: Spacing.sm,
+    width: 8,
+    height: 8,
     borderRadius: 4,
-    backgroundColor: Colors.error[300]},
+    backgroundColor: colors.error[300],
+  },
   errorDot1: {
-    top: DesignTokens.spacing['2.5'],
-    left: DesignTokens.spacing[5]},
+    top: 10,
+    left: 20,
+  },
   errorDot2: {
     top: 30,
-    right: 15},
+    right: 15,
+  },
   errorDot3: {
-    bottom: DesignTokens.spacing[5],
-    left: 30},
+    bottom: 20,
+    left: 30,
+  },
   errorTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm},
+    marginBottom: 8,
+  },
   errorMessage: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.md},
+    marginBottom: 16,
+  },
   errorCodeContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.neutral[100],
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    backgroundColor: colors.neutral[100],
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 8,
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   errorCodeLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
-    marginRight: Spacing.sm},
+    color: colors.neutral[500],
+    marginRight: 8,
+  },
   errorCodeValue: {
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
-    color: Colors.neutral[700],
-    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace"},
+    color: colors.neutral[700],
+    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
+  },
   errorActions: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3]},
+    gap: 12,
+  },
   retryButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    backgroundColor: Colors.primary[500],
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
-    borderRadius: 24},
+    gap: 8,
+    backgroundColor: colors.primary[500],
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+  },
   retryText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textInverse},
+    color: colors.textInverse,
+  },
   reportButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    backgroundColor: Colors.neutral[100],
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
-    borderRadius: 24},
+    gap: 8,
+    backgroundColor: colors.neutral[100],
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+  },
   reportText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
-    color: Colors.neutral[600]},
+    color: colors.neutral[600],
+  },
   networkContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10]},
+    padding: 40,
+  },
   networkIconContainer: {
-    marginBottom: Spacing.lg,
+    marginBottom: 24,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   networkIconBg: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   networkWaves: {
     position: "absolute",
     width: 160,
-    height: 160},
+    height: 160,
+  },
   networkWave: {
     position: "absolute",
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: Colors.neutral[300],
-    opacity: 0.5},
+    borderColor: colors.neutral[300],
+    opacity: 0.5,
+  },
   networkWave1: {
     top: 0,
-    right: 0},
+    right: 0,
+  },
   networkWave2: {
-    bottom: DesignTokens.spacing[5],
-    left: DesignTokens.spacing['2.5'],
+    bottom: 20,
+    left: 10,
     width: 30,
     height: 30,
-    borderRadius: 15},
+    borderRadius: 15,
+  },
   networkWave3: {
     top: 30,
     left: 0,
     width: 25,
     height: 25,
-    borderRadius: 12.5},
+    borderRadius: 12.5,
+  },
   networkTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm},
+    marginBottom: 8,
+  },
   networkMessage: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   networkActions: {
     alignItems: "center",
-    gap: DesignTokens.spacing[3]},
+    gap: 12,
+  },
   networkRetryButton: {
     borderRadius: 24,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   networkRetryGradient: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
-    borderRadius: 24},
+    gap: 8,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+  },
   networkRetryText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textInverse},
+    color: colors.textInverse,
+  },
   networkSettingsButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    paddingVertical: DesignTokens.spacing['2.5']},
+    gap: 8,
+    paddingVertical: 10,
+  },
   networkSettingsText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[600],
-    fontWeight: "500"},
+    color: colors.neutral[600],
+    fontWeight: "500",
+  },
   maintenanceContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10]},
+    padding: 40,
+  },
   maintenanceIconContainer: {
     width: 100,
     height: 100,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   maintenanceTools: {
     position: "absolute",
     bottom: 0,
     right: 0,
-    width: DesignTokens.spacing[9],
-    height: DesignTokens.spacing[9],
+    width: 36,
+    height: 36,
     borderRadius: 18,
-    backgroundColor: `${Colors.warning[500]}20`,
+    backgroundColor: `${colors.warning[500]}20`,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   maintenanceTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm},
+    marginBottom: 8,
+  },
   maintenanceMessage: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.md},
+    marginBottom: 16,
+  },
   estimatedTimeContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    backgroundColor: Colors.neutral[100],
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    gap: 8,
+    backgroundColor: colors.neutral[100],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 12,
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   estimatedTimeText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[600]},
+    color: colors.neutral[600],
+  },
   maintenanceTips: {
-    backgroundColor: Colors.neutral[50],
-    padding: Spacing.md,
+    backgroundColor: colors.neutral[50],
+    padding: 16,
     borderRadius: 12,
-    width: "100%"},
+    width: "100%",
+  },
   maintenanceTipsTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: Colors.neutral[700],
-    marginBottom: Spacing.sm},
+    color: colors.neutral[700],
+    marginBottom: 8,
+  },
   maintenanceTip: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     lineHeight: 20,
-    marginBottom: Spacing.xs},
+    marginBottom: 4,
+  },
   permissionContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10]},
+    padding: 40,
+  },
   permissionIconContainer: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   permissionLock: {
     position: "absolute",
     bottom: 0,
     right: 0,
-    width: Spacing.xl,
-    height: Spacing.xl,
+    width: 32,
+    height: 32,
     borderRadius: 16,
     backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 4},
+    elevation: 4,
+  },
   permissionTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm},
+    marginBottom: 8,
+  },
   permissionMessage: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   permissionButton: {
     borderRadius: 24,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   permissionButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
-    borderRadius: 24},
+    gap: 8,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+  },
   permissionButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: colors.textInverse},
+    color: colors.textInverse,
+  },
   successContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: DesignTokens.spacing[10]},
+    padding: 40,
+  },
   successIconContainer: {
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   successIconGradient: {
-    width: Spacing['4xl'],
-    height: Spacing['4xl'],
+    width: 80,
+    height: 80,
     borderRadius: 40,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   successTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.sm},
+    marginBottom: 8,
+  },
   successMessage: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.lg},
+    marginBottom: 24,
+  },
   successAction: {
-    paddingVertical: DesignTokens.spacing[3]},
+    paddingVertical: 12,
+  },
   successActionText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.primary[500],
-    fontWeight: "600"},
+    color: colors.primary[500],
+    fontWeight: "600",
+  },
   confettiContainer: {
     ...StyleSheet.absoluteFillObject,
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   confetti: {
     position: "absolute",
-    width: DesignTokens.spacing['2.5'],
-    height: DesignTokens.spacing['2.5'],
+    width: 10,
+    height: 10,
     borderRadius: 2,
-    top: -20},
+    top: -20,
+  },
   offlineBanner: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     paddingTop: Platform.OS === "ios" ? 50 : 30,
-    zIndex: 100},
+    zIndex: 100,
+  },
   offlineContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: DesignTokens.spacing['2.5'],
-    backgroundColor: Colors.warning[50]},
+    gap: 8,
+    paddingVertical: 10,
+    backgroundColor: colors.warning[50],
+  },
   offlineText: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.warning[700],
-    fontWeight: "500"},
+    color: colors.warning[700],
+    fontWeight: "500",
+  },
   offlineRetry: {
-    marginLeft: Spacing.sm,
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.xs,
-    backgroundColor: Colors.warning[500],
-    borderRadius: 12},
+    marginLeft: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    backgroundColor: colors.warning[500],
+    borderRadius: 12,
+  },
   offlineRetryText: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textInverse,
-    fontWeight: "600"}}))
+    fontWeight: "600",
+  },
+}));
 
 export default {
   EmptyState,
@@ -1039,4 +1150,5 @@ export default {
   MaintenanceScreen,
   PermissionDenied,
   SuccessState,
-  OfflineBanner};
+  OfflineBanner,
+};

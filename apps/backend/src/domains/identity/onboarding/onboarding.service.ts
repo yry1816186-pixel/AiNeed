@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
-import { OnboardingStep, Gender } from '../../../types/prisma-enums';
+import { OnboardingStep, Gender } from "@/types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
@@ -52,7 +52,7 @@ export class OnboardingService {
 
   async completeBasicInfo(
     userId: string,
-    dto: { gender: string; ageRange: string; height?: number; weight?: number },
+    dto: { gender: string; ageRange: string; height?: number; weight?: number }
   ) {
     const [user, profile] = await Promise.all([
       this.prisma.user.findUnique({ where: { id: userId } }),
@@ -105,10 +105,7 @@ export class OnboardingService {
       throw new BadRequestException(`当前步骤不是 ${step}，无法跳过`);
     }
 
-    const nextStep =
-      step === "PHOTO"
-        ? OnboardingStep.STYLE_TEST
-        : OnboardingStep.COMPLETED;
+    const nextStep = step === "PHOTO" ? OnboardingStep.STYLE_TEST : OnboardingStep.COMPLETED;
 
     const skippedSteps = [...(profile.skippedOnboardingSteps || [])];
     if (!skippedSteps.includes(step)) {
@@ -137,34 +134,29 @@ export class OnboardingService {
     }
 
     const currentStep = profile.onboardingStep;
-    const percentage = STEP_PERCENTAGE[currentStep as OnboardingStep];
+    const percentage = STEP_PERCENTAGE[currentStep];
     const currentIndex = STEP_ORDER.indexOf(currentStep);
 
-    const steps = STEP_ORDER.filter((s) => s !== OnboardingStep.COMPLETED).map(
-      (step) => {
-        const stepIndex = STEP_ORDER.indexOf(step);
+    const steps = STEP_ORDER.filter((s) => s !== OnboardingStep.COMPLETED).map((step) => {
+      const stepIndex = STEP_ORDER.indexOf(step);
 
-        if (stepIndex < currentIndex) {
-          const isSkipped = (profile.skippedOnboardingSteps || []).includes(step);
-          if (isSkipped) {
-            return { step, status: "skipped" as const };
-          }
+      if (stepIndex < currentIndex) {
+        const isSkipped = (profile.skippedOnboardingSteps || []).includes(step);
+        if (isSkipped) {
+          return { step, status: "skipped" as const };
+        }
+        return { step, status: "completed" as const };
+      }
+
+      if (stepIndex === currentIndex) {
+        if (currentStep === OnboardingStep.COMPLETED && profile.onboardingCompletedAt !== null) {
           return { step, status: "completed" as const };
         }
+        return { step, status: "current" as const };
+      }
 
-        if (stepIndex === currentIndex) {
-          if (
-            currentStep === OnboardingStep.COMPLETED &&
-            profile.onboardingCompletedAt !== null
-          ) {
-            return { step, status: "completed" as const };
-          }
-          return { step, status: "current" as const };
-        }
-
-        return { step, status: "pending" as const };
-      },
-    );
+      return { step, status: "pending" as const };
+    });
 
     return { percentage, steps };
   }

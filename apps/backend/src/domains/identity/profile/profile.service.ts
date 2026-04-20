@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, NotFoundException } from "@nestjs/common";
-import {
-  BodyType,
-  SkinTone,
-  FaceShape,
-  ColorSeason,
-  Gender,
-} from '../../../types/prisma-enums';
 import { Prisma } from "@prisma/client";
+import { BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@/types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { StylePreference } from "../../../common/types/common.types";
@@ -65,7 +59,7 @@ export class ProfileService {
 
   constructor(
     private prisma: PrismaService,
-    private readonly eventEmitter: ProfileEventEmitter,
+    private readonly eventEmitter: ProfileEventEmitter
   ) {}
 
   async getProfile(userId: string) {
@@ -119,12 +113,19 @@ export class ProfileService {
     }
 
     // 更新用户基本信息
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const userUpdateData: any = {};
-    if (dto.nickname !== undefined) {userUpdateData.nickname = dto.nickname;}
-    if (dto.avatar !== undefined) {userUpdateData.avatar = dto.avatar;}
-    if (dto.gender !== undefined) {userUpdateData.gender = dto.gender;}
-    if (dto.birthDate !== undefined) {userUpdateData.birthDate = dto.birthDate;}
+    if (dto.nickname !== undefined) {
+      userUpdateData.nickname = dto.nickname;
+    }
+    if (dto.avatar !== undefined) {
+      userUpdateData.avatar = dto.avatar;
+    }
+    if (dto.gender !== undefined) {
+      userUpdateData.gender = dto.gender;
+    }
+    if (dto.birthDate !== undefined) {
+      userUpdateData.birthDate = dto.birthDate;
+    }
 
     if (Object.keys(userUpdateData).length > 0) {
       await this.prisma.user.update({
@@ -150,19 +151,45 @@ export class ProfileService {
       colorPreferences: string[];
     }> = {};
 
-    if (dto.height !== undefined) {profileData.height = dto.height;}
-    if (dto.weight !== undefined) {profileData.weight = dto.weight;}
-    if (dto.shoulder !== undefined) {profileData.shoulder = dto.shoulder;}
-    if (dto.bust !== undefined) {profileData.bust = dto.bust;}
-    if (dto.waist !== undefined) {profileData.waist = dto.waist;}
-    if (dto.hip !== undefined) {profileData.hip = dto.hip;}
-    if (dto.inseam !== undefined) {profileData.inseam = dto.inseam;}
-    if (dto.bodyType !== undefined) {profileData.bodyType = dto.bodyType;}
-    if (dto.skinTone !== undefined) {profileData.skinTone = dto.skinTone;}
-    if (dto.faceShape !== undefined) {profileData.faceShape = dto.faceShape;}
-    if (dto.colorSeason !== undefined) {profileData.colorSeason = dto.colorSeason;}
-    if (dto.stylePreferences !== undefined) {profileData.stylePreferences = dto.stylePreferences;}
-    if (dto.colorPreferences !== undefined) {profileData.colorPreferences = dto.colorPreferences;}
+    if (dto.height !== undefined) {
+      profileData.height = dto.height;
+    }
+    if (dto.weight !== undefined) {
+      profileData.weight = dto.weight;
+    }
+    if (dto.shoulder !== undefined) {
+      profileData.shoulder = dto.shoulder;
+    }
+    if (dto.bust !== undefined) {
+      profileData.bust = dto.bust;
+    }
+    if (dto.waist !== undefined) {
+      profileData.waist = dto.waist;
+    }
+    if (dto.hip !== undefined) {
+      profileData.hip = dto.hip;
+    }
+    if (dto.inseam !== undefined) {
+      profileData.inseam = dto.inseam;
+    }
+    if (dto.bodyType !== undefined) {
+      profileData.bodyType = dto.bodyType;
+    }
+    if (dto.skinTone !== undefined) {
+      profileData.skinTone = dto.skinTone;
+    }
+    if (dto.faceShape !== undefined) {
+      profileData.faceShape = dto.faceShape;
+    }
+    if (dto.colorSeason !== undefined) {
+      profileData.colorSeason = dto.colorSeason;
+    }
+    if (dto.stylePreferences !== undefined) {
+      profileData.stylePreferences = dto.stylePreferences;
+    }
+    if (dto.colorPreferences !== undefined) {
+      profileData.colorPreferences = dto.colorPreferences;
+    }
 
     if (Object.keys(profileData).length > 0) {
       await this.prisma.userProfile.upsert({
@@ -180,7 +207,7 @@ export class ProfileService {
           skinTone: profileData.skinTone,
           faceShape: profileData.faceShape,
           colorSeason: profileData.colorSeason,
-          stylePreferences: (profileData.stylePreferences ?? []) as any,
+          stylePreferences: (profileData.stylePreferences ?? []) as unknown as any,
           colorPreferences: profileData.colorPreferences ?? [],
         },
         update: profileData as any,
@@ -188,7 +215,9 @@ export class ProfileService {
     }
 
     // Determine changed fields for event emission
-    const changedFields = Object.keys(dto).filter((key) => dto[key as keyof UpdateProfileDto] !== undefined);
+    const changedFields = Object.keys(dto).filter(
+      (key) => dto[key as keyof UpdateProfileDto] !== undefined
+    );
 
     // Emit profile:updated event (fire-and-forget)
     this.eventEmitter.emitProfileUpdated(userId, changedFields).catch(() => {
@@ -214,14 +243,10 @@ export class ProfileService {
       };
     }
 
-    const bodyTypeGuides: Record<
-      BodyType,
-      Omit<BodyAnalysisResult, "bodyType">
-    > = {
+    const bodyTypeGuides: Record<BodyType, Omit<BodyAnalysisResult, "bodyType">> = {
       [BodyType.rectangle]: {
         bodyTypeName: "H型（矩形）体型",
-        description:
-          "您的肩部、腰部和臀部宽度相近，身材匀称。通过穿搭可以创造出更多曲线感。",
+        description: "您的肩部、腰部和臀部宽度相近，身材匀称。通过穿搭可以创造出更多曲线感。",
         recommendations: [
           {
             category: "上衣",
@@ -244,8 +269,7 @@ export class ProfileService {
       },
       [BodyType.triangle]: {
         bodyTypeName: "A型（梨形）体型",
-        description:
-          "您的臀部比肩部宽，下半身较为丰满。穿搭重点是平衡上下身比例。",
+        description: "您的臀部比肩部宽，下半身较为丰满。穿搭重点是平衡上下身比例。",
         recommendations: [
           {
             category: "上衣",
@@ -268,8 +292,7 @@ export class ProfileService {
       },
       [BodyType.inverted_triangle]: {
         bodyTypeName: "Y型（倒三角）体型",
-        description:
-          "您的肩部比臀部宽，上半身较为突出。穿搭重点是平衡上下身比例。",
+        description: "您的肩部比臀部宽，上半身较为突出。穿搭重点是平衡上下身比例。",
         recommendations: [
           {
             category: "上衣",
@@ -292,8 +315,7 @@ export class ProfileService {
       },
       [BodyType.hourglass]: {
         bodyTypeName: "X型（沙漏）体型",
-        description:
-          "您的肩部和臀部宽度相近，腰部纤细，是经典的理想体型。大多数款式都适合您。",
+        description: "您的肩部和臀部宽度相近，腰部纤细，是经典的理想体型。大多数款式都适合您。",
         recommendations: [
           {
             category: "上衣",
@@ -316,8 +338,7 @@ export class ProfileService {
       },
       [BodyType.oval]: {
         bodyTypeName: "O型（苹果）体型",
-        description:
-          "您的腰部较为圆润，四肢相对纤细。穿搭重点是拉长身形并突出四肢优势。",
+        description: "您的腰部较为圆润，四肢相对纤细。穿搭重点是拉长身形并突出四肢优势。",
         recommendations: [
           {
             category: "上衣",
@@ -336,21 +357,15 @@ export class ProfileService {
           },
         ],
         idealStyles: ["V领设计", "垂感面料", "垂直条纹", "深色系"],
-        avoidStyles: [
-          "紧身款式",
-          "过于宽松的款式",
-          "水平条纹",
-          "腰部有装饰的款式",
-        ],
+        avoidStyles: ["紧身款式", "过于宽松的款式", "水平条纹", "腰部有装饰的款式"],
       },
     };
 
-    const guide = bodyTypeGuides[profile.bodyType as BodyType];
+    const guide = bodyTypeGuides[profile.bodyType];
 
     return {
       bodyType: profile.bodyType,
       ...guide,
-      bodyTypeName: guide?.bodyTypeName ?? '',
     };
   }
 
@@ -438,7 +453,7 @@ export class ProfileService {
       },
     };
 
-    return colorGuides[profile.colorSeason as ColorSeason] ?? colorGuides[ColorSeason.spring_warm]!;
+    return colorGuides[profile.colorSeason];
   }
 
   async getStyleRecommendations(userId: string) {
@@ -465,16 +480,12 @@ export class ProfileService {
 
     // 基于体型推荐
     if (bodyAnalysis) {
-      recommendations.push(
-        ...bodyAnalysis.idealStyles.map((s) => `体型推荐：${s}`),
-      );
+      recommendations.push(...bodyAnalysis.idealStyles.map((s) => `体型推荐：${s}`));
     }
 
     // 基于色彩季型推荐
     if (colorAnalysis) {
-      recommendations.push(
-        `推荐色彩：${colorAnalysis.bestColors.slice(0, 3).join("、")}`,
-      );
+      recommendations.push(`推荐色彩：${colorAnalysis.bestColors.slice(0, 3).join("、")}`);
     }
 
     // 场合推荐
@@ -490,18 +501,14 @@ export class ProfileService {
       {
         occasion: "约会聚会",
         suggestions: ["精致连衣裙", "时尚套装", "优雅高跟鞋"],
-      },
+      }
     );
 
     return {
       styles: recommendations,
       occasions,
       tips: profile.bodyType
-        ? [
-            "根据您的体型特点选择合适的款式",
-            "选择适合您肤色季型的颜色",
-            "注重服装的合身度",
-          ]
+        ? ["根据您的体型特点选择合适的款式", "选择适合您肤色季型的颜色", "注重服装的合身度"]
         : ["上传照片可获得更精准的推荐"],
     };
   }
@@ -515,16 +522,20 @@ export class ProfileService {
       return null;
     }
 
-    const metrics: { name: string; value: number | null; status: string }[] =
-      [];
+    const metrics: { name: string; value: number | null; status: string }[] = [];
 
     if (profile.height && profile.weight) {
       const bmi = profile.weight / (profile.height / 100) ** 2;
       let bmiStatus = "正常";
-      if (bmi < 18.5) {bmiStatus = "偏瘦";}
-      else if (bmi < 24) {bmiStatus = "正常";}
-      else if (bmi < 28) {bmiStatus = "偏胖";}
-      else {bmiStatus = "肥胖";}
+      if (bmi < 18.5) {
+        bmiStatus = "偏瘦";
+      } else if (bmi < 24) {
+        bmiStatus = "正常";
+      } else if (bmi < 28) {
+        bmiStatus = "偏胖";
+      } else {
+        bmiStatus = "肥胖";
+      }
 
       metrics.push({
         name: "BMI指数",

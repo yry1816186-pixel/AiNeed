@@ -8,20 +8,32 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { LinearGradient } from '../../../polyfills/expo-linear-gradient';
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing, BorderRadius, Shadows, Typography , flatColors as colors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { useProfileStore } from '../stores/profileStore';
+import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  Typography,
+  flatColors as colors,
+} from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { useProfileStore } from "../stores/profileStore";
 
-import { normalizeColorSeason, seasonLabels, type ColorSeason } from '../../../design-system/theme/tokens/season-colors';
-import { ScreenLayout, Header } from '../../../shared/components/layout/ScreenLayout';
-import { SeasonPalette } from '../../../shared/components/visualization/SeasonPalette';
+import {
+  normalizeColorSeason,
+  seasonLabels,
+  type ColorSeason,
+} from "../../../design-system/theme/tokens/season-colors";
+import { ScreenLayout, Header } from "../../../shared/components/layout/ScreenLayout";
+import { SeasonPalette } from "../../../shared/components/visualization/SeasonPalette";
 import Animated, { FadeIn, SlideInDown } from "react-native-reanimated";
-import type { RootStackParamList } from '../../../types/navigation';
+import type { ProfileStackParamList } from "../../../navigation/types";
+import { navigateAuth } from "../../../navigation/navigationService";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 
-type ColorAnalysisNavProp = NavigationProp<RootStackParamList>;
+type ColorAnalysisNavProp = NavigationProp<ProfileStackParamList>;
 
 const COLOR_SEASON_NAMES: Record<string, { name: string; nameEn: string }> = {
   spring_warm: { name: "暖春型", nameEn: "Warm Spring" },
@@ -119,8 +131,12 @@ export const ColorAnalysisScreen: React.FC = () => {
   }, [loadColorAnalysis]);
 
   const seasonType = colorAnalysis?.colorSeason?.type ?? null;
-  const seasonInfo = seasonType ? (COLOR_SEASON_NAMES[seasonType] ?? COLOR_SEASON_NAMES.spring) : null;
-  const gradient = seasonType ? (SEASON_GRADIENTS[seasonType] ?? SEASON_GRADIENTS.spring) : SEASON_GRADIENTS.spring;
+  const seasonInfo = seasonType
+    ? (COLOR_SEASON_NAMES[seasonType] ?? COLOR_SEASON_NAMES.spring)
+    : null;
+  const gradient = seasonType
+    ? (SEASON_GRADIENTS[seasonType] ?? SEASON_GRADIENTS.spring)
+    : SEASON_GRADIENTS.spring;
 
   const bestColors = colorAnalysis?.bestColors ?? [];
   const neutralColors = colorAnalysis?.neutralColors ?? [];
@@ -157,10 +173,12 @@ export const ColorAnalysisScreen: React.FC = () => {
         <View style={styles.centerContainer}>
           <Ionicons name="color-palette-outline" size={64} color={colors.textTertiary} />
           <Text style={styles.emptyTitle}>还没有色彩分析数据</Text>
-          <Text style={styles.emptySubtitle}>上传照片或完善肤色信息后，AI将为你生成专属色彩季型分析</Text>
+          <Text style={styles.emptySubtitle}>
+            上传照片或完善肤色信息后，AI将为你生成专属色彩季型分析
+          </Text>
           <TouchableOpacity
             style={styles.emptyButton}
-            onPress={() => navigation.navigate("ProfileSetup" as never)}
+            onPress={() => navigateAuth("ProfileSetup")}
             accessibilityLabel="去完善数据"
             accessibilityRole="button"
           >
@@ -285,8 +303,17 @@ export const ColorAnalysisScreen: React.FC = () => {
             {/* 季节色彩已激活标识 */}
             {colorSeason && (
               <Animated.View entering={FadeIn.duration(600)} style={styles.seasonActiveBadge}>
-                <Ionicons name="checkmark-circle" size={14} color={seasonAccent?.accent ?? Colors.primary[500]} />
-                <Text style={[styles.seasonActiveText, { color: seasonAccent?.accent ?? Colors.primary[500] }]}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={14}
+                  color={seasonAccent?.accent ?? Colors.primary[500]}
+                />
+                <Text
+                  style={[
+                    styles.seasonActiveText,
+                    { color: seasonAccent?.accent ?? Colors.primary[500] },
+                  ]}
+                >
                   界面色彩已适配
                 </Text>
               </Animated.View>
@@ -315,7 +342,11 @@ export const ColorAnalysisScreen: React.FC = () => {
         </View>
 
         <View style={styles.paletteCard}>
-          <SeasonPalette season={displaySeasonType} bestColors={bestColors} avoidColors={avoidColors} />
+          <SeasonPalette
+            season={displaySeasonType}
+            bestColors={bestColors}
+            avoidColors={avoidColors}
+          />
         </View>
 
         {neutralColors.length > 0 && (
@@ -439,7 +470,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
     marginTop: Spacing[3],
     backgroundColor: "rgba(255, 255, 255, 0.2)",
-    paddingHorizontal: DesignTokens.spacing['2.5'],
+    paddingHorizontal: DesignTokens.spacing["2.5"],
     paddingVertical: Spacing.xs,
     borderRadius: 12,
     alignSelf: "flex-start",

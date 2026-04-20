@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import {
   View,
   Text,
@@ -17,9 +17,18 @@ import Animated, {
   withSpring,
   withSequence,
 } from "react-native-reanimated";
-import { Colors, Typography, Spacing, BorderRadius, Shadows, SpringConfigs, DesignTokens } from '../../design-system/theme';
+import {
+  Colors,
+  Typography,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  SpringConfigs,
+} from "../../design-system/theme";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { Skeleton as SkeletonBase } from "../skeleton/Skeleton";
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
+import { flatColors as colors } from "../theme";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -75,8 +84,6 @@ export const GlassCard: React.FC<GlassCardProps> = ({
   intensity = 80,
   tint = "light",
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   return (
     <BlurView
       intensity={intensity}
@@ -115,8 +122,6 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   fullWidth = false,
   style,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const scaleAnim = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -124,6 +129,7 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   }));
 
   const handlePressIn = () => {
+    const { colors } = useTheme();
     scaleAnim.value = withSpring(0.96, SpringConfigs.snappy);
   };
 
@@ -132,23 +138,23 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   };
 
   const sizeStyles = {
-    sm: { height: DesignTokens.spacing[9], paddingHorizontal: Spacing[4] },
-    md: { height: DesignTokens.spacing[11], paddingHorizontal: Spacing[5] },
+    sm: { height: 36, paddingHorizontal: Spacing[4] },
+    md: { height: 44, paddingHorizontal: Spacing[5] },
     lg: { height: 52, paddingHorizontal: Spacing[6] },
     xl: { height: 60, paddingHorizontal: Spacing[8] },
   };
 
   const variantStyles: Record<string, ViewStyle> = {
     primary: {
-      backgroundColor: Colors.primary[600],
+      backgroundColor: colors.primary[600],
     },
     secondary: {
-      backgroundColor: Colors.neutral[100],
+      backgroundColor: colors.neutral[100],
     },
     outline: {
       backgroundColor: "transparent",
       borderWidth: 2,
-      borderColor: Colors.primary[500],
+      borderColor: colors.primary[500],
     },
     ghost: {
       backgroundColor: "transparent",
@@ -160,9 +166,9 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
 
   const textStyles: Record<string, TextStyle> = {
     primary: { color: Colors.white },
-    secondary: { color: Colors.neutral[800] },
-    outline: { color: Colors.primary[600] },
-    ghost: { color: Colors.primary[600] },
+    secondary: { color: colors.neutral[800] },
+    outline: { color: colors.primary[600] },
+    ghost: { color: colors.primary[600] },
     gradient: { color: Colors.white },
   };
 
@@ -251,8 +257,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onFavorite,
   isFavorite = false,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const scaleAnim = useSharedValue(1);
   const favoriteAnim = useSharedValue(1);
 
@@ -368,8 +372,6 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   gradient = "primary",
   onPress,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const scaleAnim = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -423,8 +425,6 @@ export interface SectionHeaderProps {
 
 /** @deprecated 在业务页面中直接实现 SectionHeader */
 export const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, action }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   return (
     <View style={styles.sectionHeader}>
       <View style={styles.sectionHeaderText}>
@@ -460,7 +460,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   borderRadius = BorderRadius.md,
   style,
 }) => {
-  return <SkeletonBase width={(width ?? undefined) as any} height={height} borderRadius={borderRadius} style={style} />;
+  return <SkeletonBase width={width} height={height} borderRadius={borderRadius} style={style} />;
 };
 
 /** @deprecated 使用 ui/Badge 替代 */
@@ -472,14 +472,12 @@ export interface BadgeProps {
 
 /** @deprecated 使用 ui/Badge 替代 */
 export const Badge: React.FC<BadgeProps> = ({ text, variant = "primary", size = "md" }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const variantStyles: Record<string, { bg: string; text: string }> = {
-    primary: { bg: Colors.primary[100], text: Colors.primary[700] },
+    primary: { bg: colors.primary[100], text: colors.primary[700] },
     success: { bg: colors.successLight, text: colors.success },
     warning: { bg: colors.warningLight, text: colors.warning },
     error: { bg: colors.errorLight, text: colors.error },
-    neutral: { bg: Colors.neutral[100], text: Colors.neutral[700] },
+    neutral: { bg: colors.neutral[100], text: colors.neutral[700] },
   };
 
   const sizeStyles = {
@@ -522,8 +520,6 @@ export interface AvatarProps {
 
 /** @deprecated 使用业务页面中的头像组件替代 */
 export const Avatar: React.FC<AvatarProps> = ({ name, size = "md", online }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const sizeMap = {
     sm: 32,
     md: 40,
@@ -544,7 +540,7 @@ export const Avatar: React.FC<AvatarProps> = ({ name, size = "md", online }) => 
           style={[
             styles.onlineIndicator,
             {
-              backgroundColor: online ? colors.success : Colors.neutral[400],
+              backgroundColor: online ? colors.success : colors.neutral[400],
               width: avatarSize * 0.25,
               height: avatarSize * 0.25,
               borderRadius: avatarSize * 0.125,
@@ -596,7 +592,7 @@ const useStyles = createStyles((colors) => ({
   },
   productImageContainer: {
     aspectRatio: 1,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     position: "relative",
   },
   productImagePlaceholder: {
@@ -605,7 +601,7 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "center",
   },
   productImageEmoji: {
-    fontSize: DesignTokens.typography.sizes['5xl'],
+    fontSize: DesignTokens.typography.sizes["5xl"],
   },
   discountBadge: {
     position: "absolute",
@@ -625,8 +621,8 @@ const useStyles = createStyles((colors) => ({
     position: "absolute",
     top: Spacing[2],
     right: Spacing[2],
-    width: Spacing.xl,
-    height: Spacing.xl,
+    width: 32,
+    height: 32,
     borderRadius: BorderRadius.full,
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     alignItems: "center",
@@ -640,13 +636,13 @@ const useStyles = createStyles((colors) => ({
   },
   productBrand: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     fontWeight: "500",
     marginBottom: Spacing[1],
   },
   productName: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     fontWeight: "600",
     marginBottom: Spacing[2],
     lineHeight: 18,
@@ -662,12 +658,12 @@ const useStyles = createStyles((colors) => ({
   },
   ratingText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[700],
+    color: colors.neutral[700],
     fontWeight: "600",
   },
   reviewCount: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginLeft: Spacing[1],
   },
   priceContainer: {
@@ -681,7 +677,7 @@ const useStyles = createStyles((colors) => ({
   },
   originalPrice: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
     textDecorationLine: "line-through",
     marginLeft: Spacing[2],
   },
@@ -691,14 +687,14 @@ const useStyles = createStyles((colors) => ({
     gap: Spacing[1],
   },
   tag: {
-    backgroundColor: Colors.primary[50],
+    backgroundColor: colors.primary[50],
     paddingHorizontal: Spacing[2],
     paddingVertical: Spacing[0.5],
     borderRadius: BorderRadius.sm,
   },
   tagText: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.primary[600],
+    color: colors.primary[600],
     fontWeight: "500",
   },
   featureCard: {
@@ -712,8 +708,8 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
   },
   featureIconContainer: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: 48,
+    height: 48,
     borderRadius: BorderRadius.xl,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     alignItems: "center",
@@ -721,7 +717,7 @@ const useStyles = createStyles((colors) => ({
     marginBottom: Spacing[3],
   },
   featureIcon: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
   },
   featureTitle: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -749,17 +745,17 @@ const useStyles = createStyles((colors) => ({
   },
   sectionTitle: {
     fontSize: DesignTokens.typography.sizes.xl,
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     fontWeight: "700",
   },
   sectionSubtitle: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginTop: Spacing[1],
   },
   sectionAction: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: Colors.primary[600],
+    color: colors.primary[600],
     fontWeight: "600",
   },
   badge: {
@@ -790,4 +786,4 @@ const useStyles = createStyles((colors) => ({
     borderWidth: 2,
     borderColor: Colors.white,
   },
-}))
+}));

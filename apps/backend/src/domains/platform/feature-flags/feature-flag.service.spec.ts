@@ -5,16 +5,6 @@ import { FeatureFlagService } from "./feature-flag.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { RedisService, RedisKeyBuilder } from "../../../common/redis/redis.service";
 
-jest.mock("../../../common/redis/redis.service", () => ({
-  RedisKeyBuilder: {
-    cache: jest.fn((module: string, identifier: string) =>
-      `xuno:cache:${module}:${identifier}`
-    ),
-  },
-  REDIS_KEY_PREFIX: "xuno",
-  REDIS_KEY_SEPARATOR: ":",
-}));
-
 describe("FeatureFlagService", () => {
   let service: FeatureFlagService;
   let prisma: {
@@ -29,6 +19,7 @@ describe("FeatureFlagService", () => {
   };
   let redisService: { get: jest.Mock; setex: jest.Mock; del: jest.Mock };
   let evaluationQueue: { add: jest.Mock };
+  let cacheSpy: jest.SpyInstance;
 
   const mockFlag = {
     id: "flag-id-1",
@@ -65,16 +56,24 @@ describe("FeatureFlagService", () => {
       add: jest.fn().mockResolvedValue({ id: "job-1" }),
     };
 
+    cacheSpy = jest
+      .spyOn(RedisKeyBuilder, "cache")
+      .mockReturnValue("xuno:cache:feature-flag:new_ui_design");
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FeatureFlagService,
         { provide: PrismaService, useValue: prisma },
         { provide: RedisService, useValue: redisService },
-        { provide: "BullMQ_feature_flag_evaluations", useValue: evaluationQueue },
+        { provide: "BullQueue_feature_flag_evaluations", useValue: evaluationQueue },
       ],
     }).compile();
 
     service = module.get<FeatureFlagService>(FeatureFlagService);
+  });
+
+  afterEach(() => {
+    cacheSpy.mockRestore();
   });
 
   describe("findAll", () => {
@@ -96,7 +95,7 @@ describe("FeatureFlagService", () => {
       expect(prisma.featureFlag.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { type: "boolean", enabled: true },
-        }),
+        })
       );
     });
   });
@@ -134,7 +133,7 @@ describe("FeatureFlagService", () => {
       const result = await service.create(createDto);
 
       expect(result).toEqual(mockFlag);
-      expect(RedisKeyBuilder.cache).toHaveBeenCalledWith("feature-flag", "new_ui_design");
+      expect(cacheSpy).toHaveBeenCalledWith("feature-flag", "new_ui_design");
       expect(redisService.del).toHaveBeenCalledWith("xuno:cache:feature-flag:new_ui_design");
     });
   });
@@ -170,7 +169,12 @@ describe("FeatureFlagService", () => {
     });
 
     it("should evaluate boolean type flag with enabled false", async () => {
-      const booleanFlag = { ...mockFlag, type: "boolean", value: { enabled: false }, enabled: true };
+      const booleanFlag = {
+        ...mockFlag,
+        type: "boolean",
+        value: { enabled: false },
+        enabled: true,
+      };
       prisma.featureFlag.findUnique.mockResolvedValueOnce(booleanFlag);
       redisService.get.mockResolvedValueOnce(null);
 
@@ -184,7 +188,7 @@ describe("FeatureFlagService", () => {
     it("should clear redis and local cache for a specific key", async () => {
       await service.refreshCache("new_ui_design");
 
-      expect(RedisKeyBuilder.cache).toHaveBeenCalledWith("feature-flag", "new_ui_design");
+      expect(cacheSpy).toHaveBeenCalledWith("feature-flag", "new_ui_design");
       expect(redisService.del).toHaveBeenCalledWith("xuno:cache:feature-flag:new_ui_design");
     });
 

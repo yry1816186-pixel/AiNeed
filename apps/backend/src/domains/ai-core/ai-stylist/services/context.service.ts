@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger } from "@nestjs/common";
-import { PhotoType } from '../../../../types/prisma-enums';
+import { PhotoType } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
-import type {
-  StylistContext,
-  StylistSlots,
-  StylistBodyProfile,
-} from "../types";
+import type { StylistContext, StylistSlots, StylistBodyProfile } from "../types";
 
 import type { StylistSession, StylistContextInternal } from "./session.service";
 
@@ -20,16 +16,7 @@ const VALID_OCCASIONS = [
   "daily",
   "campus",
 ] as const;
-const VALID_STYLES = [
-  "极简",
-  "韩系",
-  "法式",
-  "日系",
-  "轻正式",
-  "街头",
-  "运动",
-  "复古",
-] as const;
+const VALID_STYLES = ["极简", "韩系", "法式", "日系", "轻正式", "街头", "运动", "复古"] as const;
 const VALID_FIT_GOALS = [
   "显高",
   "显瘦",
@@ -44,10 +31,7 @@ type ValidOccasion = (typeof VALID_OCCASIONS)[number];
 type ValidStyle = (typeof VALID_STYLES)[number];
 type ValidFitGoal = (typeof VALID_FIT_GOALS)[number];
 
-const COLOR_KEYWORDS = [
-  "白色", "黑色", "灰色", "蓝色", "米色",
-  "卡其", "粉色", "绿色", "酒红",
-];
+const COLOR_KEYWORDS = ["白色", "黑色", "灰色", "蓝色", "米色", "卡其", "粉色", "绿色", "酒红"];
 
 @Injectable()
 export class AiStylistContextService {
@@ -110,11 +94,13 @@ export class AiStylistContextService {
               : undefined,
           }
         : null,
-      preferences: (preferences as Array<{
-        category: string | null;
-        key: string | null;
-        weight: number;
-      }>).reduce(
+      preferences: (
+        preferences as Array<{
+          category: string | null;
+          key: string | null;
+          weight: number;
+        }>
+      ).reduce(
         (acc: Record<string, Record<string, number>>, preference) => {
           const category = preference.category;
           const key = preference.key;
@@ -131,13 +117,13 @@ export class AiStylistContextService {
           bucket[key] = preference.weight;
           return acc;
         },
-        {} as Record<string, Record<string, number>>,
+        {} as Record<string, Record<string, number>>
       ),
       recentBehaviors: recentBehaviors.map(
         (behavior: { eventType: string; metadata: unknown }) => ({
           type: behavior.eventType,
           data: behavior.metadata,
-        }),
+        })
       ),
     };
   }
@@ -189,9 +175,7 @@ export class AiStylistContextService {
             : session.state.bodyProfile.colorSeason,
         shapeFeatures: this.deduplicateStrings([
           ...session.state.bodyProfile.shapeFeatures,
-          ...(typeof analysisResult.bodyType === "string"
-            ? [analysisResult.bodyType]
-            : []),
+          ...(typeof analysisResult.bodyType === "string" ? [analysisResult.bodyType] : []),
         ]),
       };
       session.state.bodyReady = this.hasBodyProfile(session.state.bodyProfile);
@@ -216,10 +200,7 @@ export class AiStylistContextService {
       .map(([name]) => this.normalizeStyle(name))
       .filter((value): value is string => Boolean(value));
 
-    return this.deduplicateStrings([
-      ...normalizedProfileStyles,
-      ...weightedStyles,
-    ]);
+    return this.deduplicateStrings([...normalizedProfileStyles, ...weightedStyles]);
   }
 
   extractSlotUpdates(message: string): Partial<StylistSlots> {
@@ -282,10 +263,7 @@ export class AiStylistContextService {
       ]);
     }
     if (updates.fitGoals?.length) {
-      current.fitGoals = this.deduplicateStrings([
-        ...current.fitGoals,
-        ...updates.fitGoals,
-      ]);
+      current.fitGoals = this.deduplicateStrings([...current.fitGoals, ...updates.fitGoals]);
     }
     if (updates.preferredColors?.length) {
       current.preferredColors = this.deduplicateStrings([
@@ -348,9 +326,7 @@ export class AiStylistContextService {
     }
 
     const shouldRequestPhoto =
-      !photoSkipped &&
-      !session.state.bodyReady &&
-      this.needsPhotoForPrecision(session);
+      !photoSkipped && !session.state.bodyReady && this.needsPhotoForPrecision(session);
     if (shouldRequestPhoto) {
       missingFields.push("body_profile");
       session.state.currentStage = "awaiting_photo";
@@ -373,9 +349,7 @@ export class AiStylistContextService {
   }
 
   hasBodyProfile(profile?: StylistBodyProfile | null): boolean {
-    return Boolean(
-      profile?.bodyType || profile?.colorSeason || profile?.skinTone,
-    );
+    return Boolean(profile?.bodyType || profile?.colorSeason || profile?.skinTone);
   }
 
   normalizeOccasion(value: string): string {
@@ -444,9 +418,7 @@ export class AiStylistContextService {
   }
 
   private filterValidFitGoals(goals: string[]): string[] {
-    return goals.filter((goal) =>
-      VALID_FIT_GOALS.includes(goal as ValidFitGoal),
-    );
+    return goals.filter((goal) => VALID_FIT_GOALS.includes(goal as ValidFitGoal));
   }
 
   private extractOccasion(message: string): string | undefined {
@@ -496,7 +468,7 @@ export class AiStylistContextService {
     return this.deduplicateStrings(
       styleMap
         .filter(([keyword]) => normalized.includes(keyword.toLowerCase()))
-        .map(([, value]) => value),
+        .map(([, value]) => value)
     );
   }
 
@@ -518,7 +490,7 @@ export class AiStylistContextService {
     return this.deduplicateStrings(
       goalMap
         .filter(([keyword]) => normalized.includes(keyword.toLowerCase()))
-        .map(([, value]) => value),
+        .map(([, value]) => value)
     );
   }
 
@@ -556,16 +528,12 @@ export class AiStylistContextService {
       };
     }
 
-    const underMatch = message.match(
-      /(\d{2,5})\s*(?:元|块|rmb)?\s*(?:以内|以下)/i,
-    );
+    const underMatch = message.match(/(\d{2,5})\s*(?:元|块|rmb)?\s*(?:以内|以下)/i);
     if (underMatch) {
       return { max: Number(underMatch[1]) };
     }
 
-    const aroundMatch = message.match(
-      /(\d{2,5})\s*(?:元|块|rmb)?\s*(?:左右|上下)/i,
-    );
+    const aroundMatch = message.match(/(\d{2,5})\s*(?:元|块|rmb)?\s*(?:左右|上下)/i);
     if (aroundMatch) {
       const center = Number(aroundMatch[1]);
       return {

@@ -7,11 +7,12 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, Spacing, BorderRadius , flatColors as colors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import type { Template } from '../stores/customizationEditorStore';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import { Colors, Spacing, BorderRadius, flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import type { Template } from "../stores/customizationEditorStore";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
 
 interface TemplateSelectorProps {
   templates: Template[];
@@ -37,7 +38,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   if (templates.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="grid-outline" size={40} color={Colors.neutral[300]} />
+        <Ionicons name="grid-outline" size={40} color={colors.neutral[300]} />
         <Text style={styles.emptyText}>暂无可用模板</Text>
       </View>
     );
@@ -64,14 +65,14 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                   template.type === "tshirt"
                     ? "shirt-outline"
                     : template.type === "hat"
-                    ? "baseball-outline"
-                    : template.type === "shoes"
-                    ? "footsteps-outline"
-                    : template.type === "bag"
-                    ? "bag-outline"
-                    : template.type === "phone_case"
-                    ? "phone-portrait-outline"
-                    : "cafe-outline"
+                      ? "baseball-outline"
+                      : template.type === "shoes"
+                        ? "footsteps-outline"
+                        : template.type === "bag"
+                          ? "bag-outline"
+                          : template.type === "phone_case"
+                            ? "phone-portrait-outline"
+                            : "cafe-outline"
                 }
                 size={28}
                 color={isSelected ? colors.surface : colors.primary}
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
   },
   templateCard: {
     width: 120,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[3],
     alignItems: "center",
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing[2],

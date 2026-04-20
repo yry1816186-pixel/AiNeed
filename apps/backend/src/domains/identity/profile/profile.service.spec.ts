@@ -1,21 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NotFoundException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import {
-  BodyType,
-  SkinTone,
-  FaceShape,
-  ColorSeason,
-  Gender,
-} from '../../../types/prisma-enums';
+import { BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@/types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
 import { ProfileService } from "./profile.service";
 import { ProfileEventEmitter } from "./services/profile-event-emitter.service";
-
-
-
 
 describe("ProfileService", () => {
   let service: ProfileService;
@@ -132,9 +123,7 @@ describe("ProfileService", () => {
     it("应该抛出 NotFoundException 当用户不存在时", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.getProfile("non-existent-id")).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.getProfile("non-existent-id")).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -191,9 +180,9 @@ describe("ProfileService", () => {
     it("应该抛出 NotFoundException 当用户不存在时", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.updateProfile("non-existent-id", updateDto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.updateProfile("non-existent-id", updateDto)).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
@@ -373,9 +362,7 @@ describe("ProfileService", () => {
         hip: null,
         bust: null,
       };
-      mockPrismaService.userProfile.findUnique.mockResolvedValue(
-        incompleteProfile,
-      );
+      mockPrismaService.userProfile.findUnique.mockResolvedValue(incompleteProfile);
 
       const result = await service.calculateBodyMetrics("test-user-id");
       const firstMetric = result?.metrics[0];

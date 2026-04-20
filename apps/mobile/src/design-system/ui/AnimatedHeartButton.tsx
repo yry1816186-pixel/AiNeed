@@ -11,9 +11,10 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, SpringConfigs, Duration, DesignTokens } from '../theme';
+import { SpringConfigs, Duration } from "../../theme/tokens/animations";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
-
+import { Colors } from "../../theme";
+import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 export interface AnimatedHeartButtonProps {
   /** Whether the item is currently favorited */
@@ -42,6 +43,8 @@ export const AnimatedHeartButton: React.FC<AnimatedHeartButtonProps> = ({
   size = 24,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { reducedMotion } = useReducedMotion();
   const scale = useSharedValue(1);
   const fillProgress = useSharedValue(isFavorite ? 1 : 0);
@@ -94,7 +97,7 @@ export const AnimatedHeartButton: React.FC<AnimatedHeartButtonProps> = ({
   }));
 
   const iconName = isFavorite ? "heart" : "heart-outline";
-  const iconColor = isFavorite ? Colors.rose[500] : Colors.neutral[400];
+  const iconColor = isFavorite ? Colors.rose[500] : colors.neutral[400];
 
   return (
     <Pressable
@@ -116,14 +119,12 @@ export const AnimatedHeartButton: React.FC<AnimatedHeartButtonProps> = ({
       )}
 
       {/* Count badge */}
-      {count !== undefined && count > 0 && (
-        <Text style={styles.countText}>{count}</Text>
-      )}
+      {count !== undefined && count > 0 && <Text style={styles.countText}>{count}</Text>}
     </Pressable>
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     alignItems: "center",
     justifyContent: "center",
@@ -134,13 +135,13 @@ const styles = StyleSheet.create({
     right: -16,
   },
   plusOneText: {
-    fontSize: DesignTokens.typography.sizes.sm,
+    fontSize: 12,
     fontWeight: "700",
     color: Colors.rose[500],
   },
   countText: {
-    fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.neutral[500],
-    marginTop: DesignTokens.spacing['0.5'],
+    fontSize: 10,
+    color: colors.neutral[500],
+    marginTop: 2,
   },
-});
+}));

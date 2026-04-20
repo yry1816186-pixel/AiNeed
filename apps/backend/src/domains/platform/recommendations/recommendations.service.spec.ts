@@ -1,17 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { Test, TestingModule } from "@nestjs/testing";
-import {
-  BodyType,
-  SkinTone,
-  ColorSeason,
-  ClothingCategory,
-} from '../../../types/prisma-enums';
+import { Test, TestingModule } from "@nestjs/testing";
+import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CacheService } from "../../../modules/cache/cache.service";
 
 import { RecommendationsService } from "./recommendations.service";
-
 
 describe("RecommendationsService", () => {
   let service: RecommendationsService;
@@ -93,12 +87,9 @@ describe("RecommendationsService", () => {
   describe("getPersonalizedRecommendations", () => {
     it("应该返回个性化推荐", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
       // Service returns RecommendedItem[] directly (not wrapped in { items: [...] })
       expect(result.length).toBeGreaterThan(0);
@@ -109,12 +100,9 @@ describe("RecommendationsService", () => {
 
     it("应该返回热门商品当没有用户档案时", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(null);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
       const firstRecommendation = result[0];
 
       expect(firstRecommendation?.score).toBe(60);
@@ -123,9 +111,7 @@ describe("RecommendationsService", () => {
 
     it("应该按分类筛选", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
       await service.getPersonalizedRecommendations("test-user-id", {
         category: ClothingCategory.tops,
@@ -136,15 +122,13 @@ describe("RecommendationsService", () => {
           where: expect.objectContaining({
             category: ClothingCategory.tops,
           }),
-        }),
+        })
       );
     });
 
     it("应该限制返回数量", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
       await service.getPersonalizedRecommendations("test-user-id", {
         limit: 5,
@@ -154,7 +138,7 @@ describe("RecommendationsService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           take: 15, // pageSize * 1.5 = 15
-        }),
+        })
       );
     });
   });
@@ -204,9 +188,7 @@ describe("RecommendationsService", () => {
       const result = await service.getStyleGuide("test-user-id");
 
       expect(result.colorSeason).toBe("春季暖型");
-      expect(result.recommendations.some((r) => r.includes("暖色调"))).toBe(
-        true,
-      );
+      expect(result.recommendations.some((r) => r.includes("暖色调"))).toBe(true);
     });
   });
 
@@ -221,12 +203,9 @@ describe("RecommendationsService", () => {
       };
 
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        itemWithBodyTypeFit,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([itemWithBodyTypeFit]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
       // 体型匹配应该获得加分
       expect(result[0]!.score).toBeGreaterThan(50);
@@ -242,12 +221,9 @@ describe("RecommendationsService", () => {
       };
 
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        itemWithColorSeason,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([itemWithColorSeason]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
       expect(result[0]!.score).toBeGreaterThan(50);
     });
@@ -260,12 +236,9 @@ describe("RecommendationsService", () => {
       };
 
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        itemWithFlatteringColor,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([itemWithFlatteringColor]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
       expect(result[0]!.score).toBeGreaterThanOrEqual(50);
     });
@@ -281,8 +254,7 @@ describe("RecommendationsService", () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
       mockPrismaService.clothingItem.findMany.mockResolvedValue([itemWithStyle]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
       expect(result[0]!.score).toBeGreaterThan(50);
     });
@@ -298,10 +270,9 @@ describe("RecommendationsService", () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
       mockPrismaService.clothingItem.findMany.mockResolvedValue([itemWithSeason]);
 
-      const result = await service.getPersonalizedRecommendations(
-        "test-user-id",
-        { season: "fall" },
-      );
+      const result = await service.getPersonalizedRecommendations("test-user-id", {
+        season: "fall",
+      });
 
       expect(result[0]!.score).toBeGreaterThan(50);
     });
@@ -315,14 +286,11 @@ describe("RecommendationsService", () => {
       };
 
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        itemWithOccasion,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([itemWithOccasion]);
 
-      const result = await service.getPersonalizedRecommendations(
-        "test-user-id",
-        { occasion: "work" },
-      );
+      const result = await service.getPersonalizedRecommendations("test-user-id", {
+        occasion: "work",
+      });
 
       expect(result[0]!.score).toBeGreaterThan(50);
     });
@@ -338,8 +306,7 @@ describe("RecommendationsService", () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
       mockPrismaService.clothingItem.findMany.mockResolvedValue([popularItem]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
       expect(result[0]!.score).toBeGreaterThan(50);
     });
@@ -361,8 +328,7 @@ describe("RecommendationsService", () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
       mockPrismaService.clothingItem.findMany.mockResolvedValue([perfectItem]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
       expect(result[0]!.score).toBeLessThanOrEqual(100);
     });
@@ -371,9 +337,7 @@ describe("RecommendationsService", () => {
   describe("缓存测试", () => {
     it("应该使用缓存存储推荐结果", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
       // 第一次调用
       await service.getPersonalizedRecommendations("test-user-id");
@@ -384,9 +348,7 @@ describe("RecommendationsService", () => {
 
     it("应该为不同的用户生成不同的缓存键", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
       await service.getPersonalizedRecommendations("user-1");
       await service.getPersonalizedRecommendations("user-2");
@@ -397,9 +359,7 @@ describe("RecommendationsService", () => {
 
     it("应该为不同的筛选条件生成不同的缓存键", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
       await service.getPersonalizedRecommendations("test-user-id", {
         category: ClothingCategory.tops,
@@ -423,16 +383,11 @@ describe("RecommendationsService", () => {
       };
 
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        itemWithBodyTypeFit,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([itemWithBodyTypeFit]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
-      expect(
-        result[0]!.matchReasons.some((r) => r.includes("体型")),
-      ).toBe(true);
+      expect(result[0]!.matchReasons.some((r) => r.includes("体型"))).toBe(true);
     });
 
     it("应该生成色彩季型匹配原因", async () => {
@@ -444,16 +399,11 @@ describe("RecommendationsService", () => {
       };
 
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        itemWithColorSeason,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([itemWithColorSeason]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
-      expect(
-        result[0]!.matchReasons.some((r) => r.includes("色彩")),
-      ).toBe(true);
+      expect(result[0]!.matchReasons.some((r) => r.includes("色彩"))).toBe(true);
     });
 
     it("应该生成肤色匹配原因", async () => {
@@ -466,12 +416,9 @@ describe("RecommendationsService", () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
       mockPrismaService.clothingItem.findMany.mockResolvedValue([itemWithColor]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
-      expect(
-        result[0]!.matchReasons.some((r) => r.includes("肤色")),
-      ).toBe(true);
+      expect(result[0]!.matchReasons.some((r) => r.includes("肤色"))).toBe(true);
     });
   });
 
@@ -527,8 +474,7 @@ describe("RecommendationsService", () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
       mockPrismaService.clothingItem.findMany.mockResolvedValue([]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
       // Service returns RecommendedItem[] directly
       expect(result).toEqual([]);
@@ -547,12 +493,9 @@ describe("RecommendationsService", () => {
       };
 
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        itemWithoutAttributes,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([itemWithoutAttributes]);
 
-      const result =
-        await service.getPersonalizedRecommendations("test-user-id");
+      const result = await service.getPersonalizedRecommendations("test-user-id");
 
       expect(result.length).toBeGreaterThan(0);
       expect(result[0]!.score).toBeGreaterThanOrEqual(40);
@@ -560,14 +503,9 @@ describe("RecommendationsService", () => {
 
     it("应该处理 limit 参数", async () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
-      const result = await service.getPersonalizedRecommendations(
-        "test-user-id",
-        { limit: 5 },
-      );
+      const result = await service.getPersonalizedRecommendations("test-user-id", { limit: 5 });
 
       // Service returns array with limit applied
       expect(result.length).toBeLessThanOrEqual(5);

@@ -8,9 +8,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { communityApi } from '../../../services/api/community.api';
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { communityApi } from "../../services/api/community.api";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface TrendingTag {
   name: string;
@@ -23,9 +24,9 @@ interface TrendingCardProps {
 }
 
 const DIRECTION_CONFIG = {
-  up: { icon: "arrow-up", color: DesignTokens.colors.semantic.success },
-  down: { icon: "arrow-down", color: DesignTokens.colors.semantic.error },
-  stable: { icon: "arrow-forward", color: DesignTokens.colors.text.tertiary },
+  up: { icon: "arrow-up", color: "#27AE60" },
+  down: { icon: "arrow-down", color: "#E74C3C" },
+  stable: { icon: "arrow-forward", color: colors.textTertiary },
 } as const;
 
 export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
@@ -46,15 +47,15 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
           direction: (item.direction === "up"
             ? "up"
             : item.direction === "down"
-            ? "down"
-            : "stable") as TrendingTag["direction"],
+              ? "down"
+              : "stable") as TrendingTag["direction"],
           count: item.count,
         }));
         setTags(trendingTags);
       }
     } catch (error) {
       // Trending is supplementary content
-      console.error('Failed to load trending:', error);
+      console.error("Failed to load trending:", error);
     } finally {
       setLoading(false);
     }
@@ -106,21 +107,21 @@ export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
 
 const useStyles = createStyles((colors) => ({
   container: {
-    backgroundColor: colors.surface,
-    paddingVertical: Spacing.sm,
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 8,
   },
   scrollContent: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    gap: Spacing.sm,
+    paddingHorizontal: 12,
+    gap: 8,
     alignItems: "center",
   },
   tagChip: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-    backgroundColor: colors.backgroundTertiary,
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    gap: 4,
+    backgroundColor: DesignTokens.colors.backgrounds.tertiary,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 16,
   },
   tagText: {
@@ -129,9 +130,9 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "500",
   },
   loadingContainer: {
-    paddingVertical: DesignTokens.spacing[3],
+    paddingVertical: 12,
     alignItems: "center",
   },
-}))
+}));
 
 export default TrendingCard;

@@ -1,7 +1,8 @@
-﻿﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface FreeShippingProgressProps {
   currentAmount: number;
@@ -40,31 +41,31 @@ export const FreeShippingProgress: React.FC<FreeShippingProgressProps> = ({
 
 const useStyles = createStyles((colors) => ({
   container: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   progressText: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   freeText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.success,
+    color: "colors.success",
     fontWeight: "500",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   barBackground: {
-    height: Spacing.xs,
+    height: 4,
     borderRadius: 2,
-    backgroundColor: colors.backgroundTertiary,
+    backgroundColor: "colors.backgroundTertiary",
   },
   barFill: {
-    height: Spacing.xs,
+    height: 4,
     borderRadius: 2,
-    backgroundColor: colors.success,
+    backgroundColor: "colors.success",
   },
   barFillComplete: {
-    backgroundColor: colors.success,
+    backgroundColor: "colors.success",
   },
-}))
+}));

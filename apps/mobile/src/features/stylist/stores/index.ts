@@ -1,4 +1,4 @@
-﻿﻿﻿import { create } from "zustand";
+﻿import { create } from "zustand";
 import {
   aiStylistApi,
   type AiStylistSessionResponse,
@@ -104,7 +104,6 @@ interface AiStylistState {
   fetchArchivedSessions: (date: string) => Promise<void>;
   setCurrentSessionId: (id: string | null) => void;
   clearError: () => void;
-  setError: (error: string) => void;
   reset: () => void;
 }
 
@@ -193,7 +192,7 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
         set({
           alternatives: Array.isArray(data)
             ? (data as AlternativeItem[])
-            : ((data as Record<string, unknown>).items as AlternativeItem[]) ?? [],
+            : (((data as Record<string, unknown>).items as AlternativeItem[]) ?? []),
           isAlternativesLoading: false,
         });
       } else {
@@ -283,7 +282,6 @@ export const useAiStylistStore = create<AiStylistState>((set, get) => ({
 
   setCurrentSessionId: (id) => set({ currentSessionId: id }),
   clearError: () => set({ error: null }),
-  setError: (error) => set({ error }),
   reset: () => set(initialState),
 }));
 
@@ -315,8 +313,7 @@ export const useAiStylistChatStore = create<AiStylistChatState>((set) => ({
   isLoading: false,
   error: null,
 
-  addMessage: (message) =>
-    set((state) => ({ messages: [...state.messages, message] })),
+  addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })),
 
   clearMessages: () => set({ messages: [] }),
 

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { AISizeBadge } from "./AISizeBadge";
-import type { SizeRecommendation } from "../../../services/api/commerce.api";
-import { stockNotificationApi } from "../../../services/api/commerce.api";
-import { DesignTokens, Spacing, flatColors as themeColors } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import type { SizeRecommendation } from "../services/api/commerce.api";
+import { stockNotificationApi } from "../services/api/commerce.api";
+import { DesignTokens } from "../theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface SKUSelectorProps {
   visible: boolean;
@@ -34,13 +34,14 @@ export const SKUSelector: React.FC<SKUSelectorProps> = ({
   itemId,
   aiRecommendation,
 }) => {
-  const { colors: themeColorsFromHook } = useTheme();
-  const styles = useStyles(themeColorsFromHook);
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [color, setColor] = useState(selectedColor);
   const [size, setSize] = useState(selectedSize);
   const [qty, setQty] = useState(quantity);
 
   const handleConfirm = () => {
+    const { colors } = useTheme();
     onChange(color, size, qty);
     onClose();
   };
@@ -50,7 +51,7 @@ export const SKUSelector: React.FC<SKUSelectorProps> = ({
       await stockNotificationApi.subscribe(itemId, color, targetSize);
     } catch (error) {
       // silent fail for now
-      console.error('SKU selection failed:', error);
+      console.error("SKU selection failed:", error);
     }
   };
 
@@ -171,51 +172,67 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: Spacing.md,
+    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[100],
   },
-  title: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textPrimary },
+  title: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
   closeText: { fontSize: DesignTokens.typography.sizes.md, color: colors.textTertiary },
-  body: { padding: Spacing.md},
-  section: { marginBottom: DesignTokens.spacing[5]},
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "500", color: colors.textPrimary, marginBottom: Spacing.sm},
-  sizeHeader: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, marginBottom: Spacing.sm},
-  colorRow: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm},
+  body: { padding: 16 },
+  section: { marginBottom: 20 },
+  sectionTitle: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "500",
+    color: colors.textPrimary,
+    marginBottom: 8,
+  },
+  sizeHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 8 },
+  colorRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   colorSwatch: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     alignItems: "center",
     justifyContent: "center",
   },
-  colorSwatchSelected: { borderColor: DesignTokens.colors.brand.terracotta, borderWidth: 2 },
+  colorSwatchSelected: { borderColor: "colors.error", borderWidth: 2 }, // custom color
   colorText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textSecondary },
-  colorTextSelected: { color: DesignTokens.colors.brand.terracotta, fontWeight: "600" },
-  sizeRow: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm},
-  sizeWrapper: { alignItems: "center", marginBottom: Spacing.xs},
+  colorTextSelected: { color: "colors.error", fontWeight: "600" }, // custom color
+  sizeRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  sizeWrapper: { alignItems: "center", marginBottom: 4 },
   sizeButton: {
-    width: Spacing['2xl'],
-    height: Spacing['2xl'],
+    width: 48,
+    height: 48,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
     alignItems: "center",
     justifyContent: "center",
   },
-  sizeButtonSelected: { borderColor: colors.error, backgroundColor: DesignTokens.colors.backgrounds.secondary }, // error-tinted bg
-  sizeButtonDisabled: { backgroundColor: DesignTokens.colors.neutral[100], borderColor: DesignTokens.colors.neutral[100] },
+  sizeButtonSelected: { borderColor: "colors.error", backgroundColor: "#FFF5F5" }, // custom color
+  sizeButtonDisabled: {
+    backgroundColor: DesignTokens.colors.neutral[100],
+    borderColor: DesignTokens.colors.neutral[100],
+  },
   sizeText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
-  sizeTextSelected: { color: DesignTokens.colors.brand.terracotta, fontWeight: "600" },
+  sizeTextSelected: { color: "colors.error", fontWeight: "600" }, // custom color
   sizeTextDisabled: { color: DesignTokens.colors.neutral[300] },
-  recDot: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.semantic.success, fontWeight: "600" },
-  notifyText: { fontSize: DesignTokens.typography.sizes.xs, color: DesignTokens.colors.brand.terracotta, marginTop: DesignTokens.spacing['0.5']},
-  qtyRow: { flexDirection: "row", alignItems: "center", gap: DesignTokens.spacing[3]},
+  recDot: {
+    fontSize: DesignTokens.typography.sizes.xs,
+    color: "colors.success",
+    fontWeight: "600",
+  }, // custom color
+  notifyText: { fontSize: DesignTokens.typography.sizes.xs, color: "colors.error", marginTop: 2 }, // custom color
+  qtyRow: { flexDirection: "row", alignItems: "center", gap: 12 },
   qtyButton: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 6,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
@@ -232,9 +249,13 @@ const useStyles = createStyles((colors) => ({
   },
   stockText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   confirmButton: {
-    backgroundColor: DesignTokens.colors.brand.terracotta,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    backgroundColor: "colors.error", // custom color
+    paddingVertical: 14,
     alignItems: "center",
   },
-  confirmText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "600", color: colors.textInverse },
-}))
+  confirmText: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.textInverse,
+  },
+}));

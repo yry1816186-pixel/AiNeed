@@ -16,7 +16,7 @@ export class MakeupAnalysisService {
    */
   async recommendMakeup(
     skinTone: SkinTone,
-    colorSeason: ColorSeason,
+    colorSeason: ColorSeason
   ): Promise<MakeupRecommendation> {
     const colorPalettes: Record<ColorSeason, MakeupRecommendation> = {
       spring_warm: {
@@ -69,7 +69,7 @@ export class MakeupAnalysisService {
       },
     };
 
-    return colorPalettes[colorSeason] ?? colorPalettes.spring_warm!;
+    return colorPalettes[colorSeason] ?? colorPalettes.spring_warm;
   }
 
   /**
@@ -87,6 +87,6 @@ export class MakeupAnalysisService {
       winter_deep: ["高级冷艳", "红唇经典", "酷飒风格", "气场全开"],
     };
 
-    return styles[colorSeason] ?? styles.spring_warm!;
+    return styles[colorSeason] ?? styles.spring_warm;
   }
 }

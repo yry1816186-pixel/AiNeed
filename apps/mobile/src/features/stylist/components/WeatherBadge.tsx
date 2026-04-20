@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface WeatherBadgeProps {
   temperature: number;
@@ -58,15 +57,15 @@ const useStyles = createStyles((colors) => ({
   container: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 16,
-    paddingHorizontal: DesignTokens.spacing['2.5'],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
   badgeContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
+    gap: 4,
   },
   icon: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -89,7 +88,7 @@ const useStyles = createStyles((colors) => ({
   suggestion: {
     fontSize: DesignTokens.typography.sizes.sm,
     color: DesignTokens.colors.neutral[600],
-    marginTop: Spacing.xs,
+    marginTop: 4,
     lineHeight: 16,
   },
-}))
+}));

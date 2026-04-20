@@ -24,11 +24,10 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
-
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -87,8 +86,6 @@ const SingleCard: React.FC<{
   onDislike: () => void;
   onItemClick: (item: OutfitItem) => void;
 }> = ({ card, index, currentIndex, translateY, onLike, onDislike, onItemClick }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const isActive = index === currentIndex;
   const scale = useSharedValue(1);
   const likeOpacity = useSharedValue(0);
@@ -395,12 +392,12 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: "rgba(255,255,255,0.1)",
     alignItems: "center",
@@ -412,25 +409,25 @@ const useStyles = createStyles((colors) => ({
   },
   progressContainer: {
     flexDirection: "row",
-    gap: DesignTokens.spacing['1.5'],
+    gap: 6,
   },
   progressDot: {
-    width: DesignTokens.spacing['1.5'],
-    height: DesignTokens.spacing['1.5'],
+    width: 6,
+    height: 6,
     borderRadius: 3,
     backgroundColor: "rgba(255,255,255,0.3)",
   },
   progressDotActive: {
     backgroundColor: colors.primary,
-    width: DesignTokens.spacing[5],
+    width: 20,
   },
   headerActions: {
     flexDirection: "row",
-    gap: DesignTokens.spacing[3],
+    gap: 12,
   },
   headerButton: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 16,
     backgroundColor: "rgba(255,255,255,0.1)",
   },
@@ -449,7 +446,7 @@ const useStyles = createStyles((colors) => ({
   },
   cardContent: {
     flex: 1,
-    marginHorizontal: Spacing.sm,
+    marginHorizontal: 8,
     borderRadius: 24,
     overflow: "hidden",
     backgroundColor: DesignTokens.colors.neutral[800],
@@ -465,14 +462,14 @@ const useStyles = createStyles((colors) => ({
     left: 0,
     right: 0,
     paddingTop: 100,
-    paddingHorizontal: DesignTokens.spacing[5],
+    paddingHorizontal: 20,
     paddingBottom: 30,
   },
   cardInfo: {
-    gap: DesignTokens.spacing[3],
+    gap: 12,
   },
   cardTitle: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "700",
     color: colors.textInverse,
     letterSpacing: 0.5,
@@ -484,12 +481,12 @@ const useStyles = createStyles((colors) => ({
   },
   tagsContainer: {
     flexDirection: "row",
-    gap: Spacing.sm,
+    gap: 8,
     flexWrap: "wrap",
   },
   tag: {
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 16,
     backgroundColor: "rgba(255,255,255,0.15)",
   },
@@ -500,11 +497,11 @@ const useStyles = createStyles((colors) => ({
   itemsPreview: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: Spacing.sm,
+    marginTop: 8,
   },
   itemThumbnail: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
     borderWidth: 2,
     borderColor: colors.surface,
@@ -516,8 +513,8 @@ const useStyles = createStyles((colors) => ({
     height: "100%",
   },
   moreItems: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
     borderWidth: 2,
     borderColor: colors.surface,
@@ -535,7 +532,7 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
     color: colors.primaryLight,
-    marginTop: Spacing.xs,
+    marginTop: 4,
   },
   likeOverlay: {
     position: "absolute",
@@ -543,15 +540,15 @@ const useStyles = createStyles((colors) => ({
     left: 30,
   },
   likeBadge: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 24,
+    paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 4,
     borderColor: colors.success,
     backgroundColor: "transparent",
   },
   likeText: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "800",
     color: colors.success,
   },
@@ -561,31 +558,31 @@ const useStyles = createStyles((colors) => ({
     right: 30,
   },
   dislikeBadge: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 24,
+    paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 4,
     borderColor: colors.warning,
     backgroundColor: "transparent",
   },
   dislikeText: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "800",
     color: colors.warning,
   },
   footer: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: Spacing.md,
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingTop: Spacing.md,
+    gap: 16,
+    paddingHorizontal: 20,
+    paddingTop: 16,
   },
   actionButton: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 24,
+    paddingVertical: 14,
     borderRadius: 24,
     backgroundColor: "rgba(255,255,255,0.1)",
-    minWidth: Spacing['4xl'],
+    minWidth: 80,
     alignItems: "center",
   },
   likeButton: {
@@ -599,4 +596,4 @@ const useStyles = createStyles((colors) => ({
   likeButtonText: {
     color: colors.textInverse,
   },
-}))
+}));

@@ -1,11 +1,9 @@
 import { useMemo, memo, type ComponentProps } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
-import type { WeatherData } from '../../../../stores/homeStore';
-import { Spacing, flatColors as colors } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import type { WeatherData } from "../../../stores/homeStore";
+import { flatColors as colors } from "../../../../design-system/theme";
 
 interface WeatherGreetingProps {
   userName: string;
@@ -91,30 +89,30 @@ WeatherGreeting.displayName = "WeatherGreeting";
 
 const useStyles = createStyles((colors) => ({
   container: {
-    marginBottom: DesignTokens.spacing[5],
+    marginBottom: 20,
   },
   greeting: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "400",
     color: colors.textTertiary,
-    marginBottom: DesignTokens.spacing['0.5'],
+    marginBottom: 2,
   },
   userName: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "700",
     color: colors.textPrimary,
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   dateText: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textTertiary,
-    marginBottom: DesignTokens.spacing['2.5'],
+    marginBottom: 10,
   },
   weatherRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: DesignTokens.spacing['1.5'],
-    marginBottom: DesignTokens.spacing['1.5'],
+    gap: 6,
+    marginBottom: 6,
   },
   weatherText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -126,47 +124,32 @@ const useStyles = createStyles((colors) => ({
   },
   skeletonLine1: {
     width: 60,
-    height: DesignTokens.spacing['3.5'],
+    height: 14,
     borderRadius: 4,
     backgroundColor: DesignTokens.colors.neutral[200],
-    marginBottom: DesignTokens.spacing['1.5'],
+    marginBottom: 6,
   },
   skeletonLine2: {
     width: 140,
-    height: DesignTokens.spacing[7],
+    height: 28,
     borderRadius: 6,
     backgroundColor: DesignTokens.colors.neutral[200],
-    marginBottom: DesignTokens.spacing['1.5'],
+    marginBottom: 6,
   },
   skeletonLine3: {
     width: 100,
-    height: DesignTokens.spacing['3.5'],
+    height: 14,
     borderRadius: 4,
     backgroundColor: DesignTokens.colors.neutral[200],
-    marginBottom: DesignTokens.spacing['2.5'],
+    marginBottom: 10,
   },
   skeletonLine4: {
     width: 180,
-    height: DesignTokens.spacing['3.5'],
+    height: 14,
     borderRadius: 4,
     backgroundColor: DesignTokens.colors.neutral[200],
   },
-}))
+}));
 
 export { WeatherGreeting };
 export type { WeatherGreetingProps };
-
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  skeletonLine1: { flex: 1 },
-  skeletonLine2: { flex: 1 },
-  skeletonLine3: { flex: 1 },
-  skeletonLine4: { flex: 1 },
-  greeting: { flex: 1 },
-  userName: { flex: 1 },
-  dateText: { flex: 1 },
-  weatherRow: { flex: 1 },
-  weatherText: { flex: 1 },
-  suggestionText: { flex: 1 },
-});

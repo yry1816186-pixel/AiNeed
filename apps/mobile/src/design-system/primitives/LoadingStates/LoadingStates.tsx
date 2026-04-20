@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import React, { useEffect } from "react";
+﻿import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -15,11 +15,13 @@ import Animated, {
   withTiming,
   withSequence,
   Easing,
+  interpolate,
   interpolateColor,
 } from "react-native-reanimated";
-import { DesignTokens, Spacing } from '../../theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { Colors, theme } from "../theme";
+import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { flatColors as colors } from "../../theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -31,8 +33,9 @@ interface SpinnerProps {
 }
 
 export function Spinner({ size = "large", color, style }: SpinnerProps) {
+  const styles = useStyles(colors);
   const { colors } = useTheme();
-  return <ActivityIndicator size={size} color={color || colors.primary} style={style} />;
+  return <ActivityIndicator size={size} color={color || colors.primary[500]} style={style} />;
 }
 
 // 全屏加载遮罩
@@ -42,9 +45,6 @@ interface LoadingOverlayProps {
 }
 
 export function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
-
   if (!visible) {
     return null;
   }
@@ -52,7 +52,7 @@ export function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
   return (
     <View style={styles.overlay}>
       <View style={styles.overlayContent}>
-        <Spinner size="large" color={colors.textInverse} />
+        <Spinner size="large" color="#fff" />
         {message && <Text style={styles.overlayMessage}>{message}</Text>}
       </View>
     </View>
@@ -68,7 +68,6 @@ interface SkeletonProps {
 }
 
 export function Skeleton({ width = "100%", height = 16, borderRadius = 8, style }: SkeletonProps) {
-  const { colors } = useTheme();
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -86,7 +85,7 @@ export function Skeleton({ width = "100%", height = 16, borderRadius = 8, style 
     backgroundColor: interpolateColor(
       progress.value,
       [0, 1],
-      [colors.placeholderBg, colors.border]
+      [theme.colors.neutral[200], theme.colors.neutral[300]]
     ),
   }));
 
@@ -95,16 +94,13 @@ export function Skeleton({ width = "100%", height = 16, borderRadius = 8, style 
 
   return (
     <Animated.View
-      style={[{ height, borderRadius }, widthStyle, animatedStyle, style]}
+      style={[styles.skeleton, { height, borderRadius }, widthStyle, animatedStyle, style]}
     />
   );
 }
 
 // 预设骨架屏模板
 export function SkeletonText({ lines = 3 }: { lines?: number }) {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
-
   return (
     <View style={styles.skeletonTextContainer}>
       {Array.from({ length: lines }).map((_, index) => (
@@ -120,25 +116,19 @@ export function SkeletonText({ lines = 3 }: { lines?: number }) {
 }
 
 export function SkeletonCard() {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
-
   return (
     <View style={styles.skeletonCard}>
       <Skeleton width="100%" height={120} borderRadius={12} />
       <View style={styles.skeletonCardContent}>
         <Skeleton width="70%" height={16} />
-        <Skeleton width="40%" height={12} style={{ marginTop: Spacing.sm }} />
-        <Skeleton width="50%" height={14} style={{ marginTop: Spacing.sm }} />
+        <Skeleton width="40%" height={12} style={{ marginTop: 8 }} />
+        <Skeleton width="50%" height={14} style={{ marginTop: 8 }} />
       </View>
     </View>
   );
 }
 
 export function SkeletonList({ count = 4 }: { count?: number }) {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
-
   return (
     <View style={styles.skeletonList}>
       {Array.from({ length: count }).map((_, index) => (
@@ -146,7 +136,7 @@ export function SkeletonList({ count = 4 }: { count?: number }) {
           <Skeleton width={48} height={48} borderRadius={24} />
           <View style={styles.skeletonListItemText}>
             <Skeleton width="70%" height={14} />
-            <Skeleton width="50%" height={12} style={{ marginTop: DesignTokens.spacing['1.5'] }} />
+            <Skeleton width="50%" height={12} style={{ marginTop: 6 }} />
           </View>
         </View>
       ))}
@@ -155,17 +145,14 @@ export function SkeletonList({ count = 4 }: { count?: number }) {
 }
 
 export function SkeletonProductGrid() {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
-
   return (
     <View style={styles.skeletonGrid}>
       {Array.from({ length: 4 }).map((_, index) => (
         <View key={index} style={styles.skeletonGridItem}>
           <Skeleton width="100%" height={(SCREEN_WIDTH - 48) / 2} borderRadius={12} />
           <View style={styles.skeletonGridContent}>
-            <Skeleton width="80%" height={14} style={{ marginTop: Spacing.sm }} />
-            <Skeleton width="50%" height={12} style={{ marginTop: Spacing.xs }} />
+            <Skeleton width="80%" height={14} style={{ marginTop: 8 }} />
+            <Skeleton width="50%" height={12} style={{ marginTop: 4 }} />
           </View>
         </View>
       ))}
@@ -185,22 +172,25 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
   },
   overlayMessage: {
-    marginTop: Spacing.md,
+    marginTop: 16,
     fontSize: DesignTokens.typography.sizes.md,
-    color: colors.textInverse,
+    color: "#fff",
     fontWeight: "500",
   },
+  skeleton: {
+    backgroundColor: theme.colors.neutral[200],
+  },
   skeletonTextContainer: {
-    padding: Spacing.md,
+    padding: 16,
   },
   skeletonCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: "#fff",
     borderRadius: 12,
     overflow: "hidden",
     ...Platform.select({
       ios: {
-        shadowColor: colors.textPrimary,
-        shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+        shadowColor: DesignTokens.colors.neutral.black,
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
       },
@@ -210,33 +200,33 @@ const useStyles = createStyles((colors) => ({
     }),
   },
   skeletonCardContent: {
-    padding: DesignTokens.spacing[3],
+    padding: 12,
   },
   skeletonList: {
-    padding: Spacing.md,
+    padding: 16,
   },
   skeletonListItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: Spacing.md,
+    marginBottom: 16,
   },
   skeletonListItemText: {
     flex: 1,
-    marginLeft: DesignTokens.spacing[3],
+    marginLeft: 12,
   },
   skeletonGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    padding: DesignTokens.spacing[3],
-    gap: DesignTokens.spacing[3],
+    padding: 12,
+    gap: 12,
   },
   skeletonGridItem: {
     width: (SCREEN_WIDTH - 48) / 2,
-    backgroundColor: colors.surface,
+    backgroundColor: "#fff",
     borderRadius: 12,
     overflow: "hidden",
   },
   skeletonGridContent: {
-    padding: DesignTokens.spacing[3],
+    padding: 12,
   },
 }));

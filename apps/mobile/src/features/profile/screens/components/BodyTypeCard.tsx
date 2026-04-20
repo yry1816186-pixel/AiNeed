@@ -2,8 +2,12 @@ import React, { useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Svg, Circle, Rect, Text as SvgText, Line, Path } from "react-native-svg";
-import type { BodyAnalysisReport } from "../../../../services/api/profile.api";
-import { DesignTokens, flatColors as colors, Spacing, Shadows, spacing, typography, shadows } from '../../../../design-system/theme';
+import { colors } from "@/src/theme/tokens/colors";
+import { typography } from "@/src/theme/tokens/typography";
+import { spacing } from "@/src/theme/tokens/spacing";
+import { shadows } from "@/src/theme/tokens/shadows";
+import type { BodyAnalysisReport } from "@/src/services/api/profile.api";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface BodyTypeCardProps {
   bodyAnalysis: BodyAnalysisReport | null;
@@ -134,35 +138,35 @@ function BodySilhouette({
       >
         臀
       </SvgText>
-      <Circle cx={centerX} cy={topY - 8} r={14} fill={colors.primary} opacity={0.15} />
+      <Circle cx={centerX} cy={topY - 8} r={14} fill={colors.brand.warmPrimary} opacity={0.15} />
       <Circle
         cx={centerX}
         cy={topY - 8}
         r={14}
         fill="transparent"
-        stroke={colors.primary}
+        stroke={colors.brand.warmPrimary}
         strokeWidth={1.5}
       />
       <SvgText
         x={centerX}
         y={topY - 4}
         textAnchor="middle"
-        fill={colors.primary}
+        fill={colors.brand.warmPrimary}
         fontSize={10}
         fontWeight="600"
       >
         {bodyType === "hourglass"
           ? "X"
           : bodyType === "rectangle"
-          ? "H"
-          : bodyType === "triangle"
-          ? "A"
-          : bodyType === "inverted_triangle"
-          ? "Y"
-          : "O"}
+            ? "H"
+            : bodyType === "triangle"
+              ? "A"
+              : bodyType === "inverted_triangle"
+                ? "Y"
+                : "O"}
       </SvgText>
-      <Path d={pathD} fill={colors.primary} opacity={0.12} />
-      <Path d={pathD} fill="transparent" stroke={colors.primary} strokeWidth={2} />
+      <Path d={pathD} fill={colors.brand.warmPrimary} opacity={0.12} />
+      <Path d={pathD} fill="transparent" stroke={colors.brand.warmPrimary} strokeWidth={2} />
     </Svg>
   );
 }
@@ -175,6 +179,8 @@ export const BodyTypeCard: React.FC<BodyTypeCardProps> = ({
   collapsed,
   onToggle,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const bodyType = bodyAnalysis?.bodyType?.type || "";
   const bodyTypeName = bodyAnalysis?.bodyType?.label || BODY_TYPE_LABELS[bodyType] || "未知";
   const bodyTypeIcon = BODY_TYPE_ICONS[bodyType] || "body-outline";
@@ -218,7 +224,7 @@ export const BodyTypeCard: React.FC<BodyTypeCardProps> = ({
         accessibilityRole="button"
       >
         <View style={styles.cardHeaderLeft}>
-          <Ionicons name={bodyTypeIcon} size={20} color={colors.primary} />
+          <Ionicons name={bodyTypeIcon} size={20} color={colors.brand.warmPrimary} />
           <Text style={styles.cardHeaderTitle}>体型分析</Text>
           <View style={styles.typeBadge}>
             <Text style={styles.typeBadgeText}>{bodyTypeName}</Text>
@@ -308,7 +314,7 @@ export const BodyTypeCard: React.FC<BodyTypeCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   card: {
     backgroundColor: colors.neutral.white,
     borderRadius: spacing.borderRadius.xl,
@@ -333,7 +339,7 @@ const styles = StyleSheet.create({
     color: colors.neutral[800],
   },
   typeBadge: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.warmPrimary.coral[50],
     paddingHorizontal: spacing.scale[2],
     paddingVertical: spacing.scale[1],
     borderRadius: spacing.borderRadius.md,
@@ -341,7 +347,7 @@ const styles = StyleSheet.create({
   typeBadgeText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.semibold,
-    color: colors.primary,
+    color: colors.brand.warmPrimary,
   },
   cardContent: {
     marginTop: spacing.scale[4],
@@ -385,10 +391,10 @@ const styles = StyleSheet.create({
     gap: spacing.scale[2],
   },
   recommendationDot: {
-    width: DesignTokens.spacing['1.5'],
-    height: DesignTokens.spacing['1.5'],
+    width: 6,
+    height: 6,
     borderRadius: 3,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.brand.warmPrimary,
     marginTop: 7,
   },
   recommendationText: {
@@ -403,7 +409,7 @@ const styles = StyleSheet.create({
     gap: spacing.scale[2],
   },
   idealTag: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.warmPrimary.coral[50],
     paddingHorizontal: spacing.scale[3],
     paddingVertical: spacing.scale[1] + 2,
     borderRadius: spacing.borderRadius.lg,
@@ -411,7 +417,7 @@ const styles = StyleSheet.create({
   idealTagText: {
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.medium,
-    color: colors.primary,
+    color: colors.brand.warmPrimary,
   },
   avoidTag: {
     backgroundColor: colors.neutral[100],
@@ -424,4 +430,4 @@ const styles = StyleSheet.create({
     fontWeight: typography.fontWeight.medium,
     color: colors.neutral[500],
   },
-});
+}));

@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import { create } from "zustand";
+﻿import { create } from "zustand";
 
 import {
   notificationApi,
@@ -260,8 +260,7 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
 
   setCurrentStep: (step) => set({ currentStep: step }),
 
-  updateFormData: (data) =>
-    set((state) => ({ formData: { ...state.formData, ...data } })),
+  updateFormData: (data) => set((state) => ({ formData: { ...state.formData, ...data } })),
 
   submitOnboarding: async () => {
     set({ isSubmitting: true, error: null });

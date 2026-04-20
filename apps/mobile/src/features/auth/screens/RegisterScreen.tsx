@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -9,47 +9,52 @@ import {
   ActivityIndicator,
   Keyboard,
   TouchableWithoutFeedback,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { authApi } from '../../../services/api/auth.api';
-import { useTranslation } from '../../../i18n';
-import { useAuthStore } from '../stores/index';
-import { apiClient } from '../../../services/api/client';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import type { RootStackParamList } from '../../../types/navigation';
-
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { authApi } from "../../../services/api/auth.api";
+import { useTranslation } from "../../../i18n";
+import { useAuthStore } from "../stores/index";
+import { apiClient } from "../../../services/api/client";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors, Spacing } from "../../../design-system/theme";
+import type { RootStackParamList } from "../../../types/navigation";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
 function getErrorMessage(error: unknown): string {
-  if (error && typeof error === 'object') {
+  if (error && typeof error === "object") {
     const obj = error as Record<string, unknown>;
-    if (obj.response && typeof obj.response === 'object') {
+    if (obj.response && typeof obj.response === "object") {
       const resp = obj.response as Record<string, unknown>;
-      if (resp.data && typeof resp.data === 'object') {
+      if (resp.data && typeof resp.data === "object") {
         const data = resp.data as Record<string, unknown>;
-        if (typeof data.error === 'string') { return data.error; }
+        if (typeof data.error === "string") {
+          return data.error;
+        }
       }
     }
-    if (typeof obj.message === 'string') { return obj.message; }
+    if (typeof obj.message === "string") {
+      return obj.message;
+    }
   }
-  return '网络连接失败，请检查网络后重试';
+  return "网络连接失败，请检查网络后重试";
 }
 
 export const RegisterScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const { setUser, setToken } = useAuthStore();
   const t = useTranslation();
 
-  const [email, setEmail] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -72,16 +77,16 @@ export const RegisterScreen: React.FC = () => {
       return t.auth.password;
     }
     if (password.length < 6) {
-      return '密码至少需要6个字符';
+      return "密码至少需要6个字符";
     }
     if (!confirmPassword) {
-      return '请确认密码';
+      return "请确认密码";
     }
     if (password !== confirmPassword) {
-      return '两次输入的密码不一致';
+      return "两次输入的密码不一致";
     }
     if (!agreedToTerms) {
-      return '请阅读并同意用户服务协议和隐私政策';
+      return "请阅读并同意用户服务协议和隐私政策";
     }
     return null;
   }, [email, password, confirmPassword, agreedToTerms]);
@@ -113,15 +118,15 @@ export const RegisterScreen: React.FC = () => {
         // Record privacy consent on client side (server already records in transaction)
         try {
           await Promise.all([
-            apiClient.post('/privacy/consent', {
-              consentType: 'terms_of_service',
+            apiClient.post("/privacy/consent", {
+              consentType: "terms_of_service",
               granted: true,
-              version: '1.0.0',
+              version: "1.0.0",
             }),
-            apiClient.post('/privacy/consent', {
-              consentType: 'privacy_policy',
+            apiClient.post("/privacy/consent", {
+              consentType: "privacy_policy",
               granted: true,
-              version: '1.0.0',
+              version: "1.0.0",
             }),
           ]);
         } catch {
@@ -130,12 +135,13 @@ export const RegisterScreen: React.FC = () => {
 
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Onboarding' }],
+          routes: [{ name: "Onboarding" }],
         });
       } else {
         Alert.alert(
           t.auth.register,
-          (typeof response.error === 'string' ? response.error : response.error?.message) || t.common.retry,
+          (typeof response.error === "string" ? response.error : response.error?.message) ||
+            t.common.retry
         );
       }
     } catch (error: unknown) {
@@ -216,12 +222,17 @@ export const RegisterScreen: React.FC = () => {
               <TouchableOpacity
                 onPress={() => setShowPassword((prev) => !prev)}
                 style={styles.eyeButton}
-                hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.sm, right: Spacing.sm}}
+                hitSlop={{
+                  top: Spacing.sm,
+                  bottom: Spacing.sm,
+                  left: Spacing.sm,
+                  right: Spacing.sm,
+                }}
                 disabled={isLoading}
-                accessibilityLabel={showPassword ? '隐藏密码' : '显示密码'}
+                accessibilityLabel={showPassword ? "隐藏密码" : "显示密码"}
               >
                 <Ionicons
-                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
+                  name={showPassword ? "eye-outline" : "eye-off-outline"}
                   size={20}
                   color={colors.textTertiary}
                 />
@@ -247,12 +258,17 @@ export const RegisterScreen: React.FC = () => {
               <TouchableOpacity
                 onPress={() => setShowConfirmPassword((prev) => !prev)}
                 style={styles.eyeButton}
-                hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.sm, right: Spacing.sm}}
+                hitSlop={{
+                  top: Spacing.sm,
+                  bottom: Spacing.sm,
+                  left: Spacing.sm,
+                  right: Spacing.sm,
+                }}
                 disabled={isLoading}
-                accessibilityLabel={showConfirmPassword ? '隐藏确认密码' : '显示确认密码'}
+                accessibilityLabel={showConfirmPassword ? "隐藏确认密码" : "显示确认密码"}
               >
                 <Ionicons
-                  name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
+                  name={showConfirmPassword ? "eye-outline" : "eye-off-outline"}
                   size={20}
                   color={colors.textTertiary}
                 />
@@ -265,26 +281,39 @@ export const RegisterScreen: React.FC = () => {
                 onPress={() => setAgreedToTerms((prev) => !prev)}
                 activeOpacity={0.7}
                 disabled={isLoading}
-                hitSlop={{ top: DesignTokens.spacing[3], bottom: DesignTokens.spacing[3], left: DesignTokens.spacing[3], right: DesignTokens.spacing[3]}}
-                accessibilityLabel={agreedToTerms ? '取消同意' : '同意协议'}
+                hitSlop={{
+                  top: DesignTokens.spacing[3],
+                  bottom: DesignTokens.spacing[3],
+                  left: DesignTokens.spacing[3],
+                  right: DesignTokens.spacing[3],
+                }}
+                accessibilityLabel={agreedToTerms ? "取消同意" : "同意协议"}
               >
-                {agreedToTerms && (
-                  <Ionicons name="checkmark" size={14} color={colors.surface} />
-                )}
+                {agreedToTerms && <Ionicons name="checkmark" size={14} color={colors.surface} />}
               </TouchableOpacity>
               <Text style={styles.termsText}>我已阅读并同意</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('Legal', { type: 'terms' })}
+                onPress={() => navigation.navigate("Legal", { type: "terms" })}
                 disabled={isLoading}
-                hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.xs, right: Spacing.xs}}
+                hitSlop={{
+                  top: Spacing.sm,
+                  bottom: Spacing.sm,
+                  left: Spacing.xs,
+                  right: Spacing.xs,
+                }}
               >
                 <Text style={styles.termsLink}>《用户服务协议》</Text>
               </TouchableOpacity>
               <Text style={styles.termsText}>和</Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('Legal', { type: 'privacy' })}
+                onPress={() => navigation.navigate("Legal", { type: "privacy" })}
                 disabled={isLoading}
-                hitSlop={{ top: Spacing.sm, bottom: Spacing.sm, left: Spacing.xs, right: Spacing.xs}}
+                hitSlop={{
+                  top: Spacing.sm,
+                  bottom: Spacing.sm,
+                  left: Spacing.xs,
+                  right: Spacing.xs,
+                }}
               >
                 <Text style={styles.termsLink}>《隐私政策》</Text>
               </TouchableOpacity>
@@ -310,7 +339,7 @@ export const RegisterScreen: React.FC = () => {
 
             <TouchableOpacity
               style={styles.loginLink}
-              onPress={() => navigation.navigate('Login')}
+              onPress={() => navigation.navigate("Login")}
               disabled={isLoading}
               accessibilityLabel={t.auth.login}
             >
@@ -325,45 +354,58 @@ export const RegisterScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.surface },
-  header: { padding: DesignTokens.spacing[5]},
+  header: { padding: DesignTokens.spacing[5] },
   backButton: {
     width: DesignTokens.spacing[10],
     height: DesignTokens.spacing[10],
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  content: { flex: 1, padding: DesignTokens.spacing[5]},
-  title: { fontSize: DesignTokens.typography.sizes['3xl'], fontWeight: '700', color: colors.textPrimary },
-  subtitle: { fontSize: DesignTokens.typography.sizes.md, color: colors.textSecondary, marginTop: Spacing.sm, marginBottom: Spacing.xl},
-  form: { gap: Spacing.md},
+  content: { flex: 1, padding: DesignTokens.spacing[5] },
+  title: {
+    fontSize: DesignTokens.typography.sizes["3xl"],
+    fontWeight: "700",
+    color: colors.textPrimary,
+  },
+  subtitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    color: colors.textSecondary,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xl,
+  },
+  form: { gap: Spacing.md },
   inputGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: colors.background,
     borderRadius: 12,
     paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: DesignTokens.spacing["3.5"],
     gap: DesignTokens.spacing[3],
   },
   input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary },
-  eyeButton: { padding: Spacing.xs},
+  eyeButton: { padding: Spacing.xs },
   registerButton: {
     backgroundColor: colors.primary,
     borderRadius: 12,
     paddingVertical: Spacing.md,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: Spacing.sm,
     minHeight: 52,
   },
   registerButtonDisabled: { backgroundColor: colors.primaryLight },
-  registerButtonText: { fontSize: DesignTokens.typography.sizes.md, fontWeight: '600', color: colors.surface },
+  registerButtonText: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "600",
+    color: colors.surface,
+  },
   termsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
     marginTop: Spacing.xs,
     marginBottom: Spacing.sm,
   },
@@ -373,8 +415,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1.5,
     borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: Spacing.sm,
     backgroundColor: colors.surface,
   },
@@ -383,8 +425,12 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   termsText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
-  termsLink: { fontSize: DesignTokens.typography.sizes.sm, color: colors.primary, fontWeight: '500' },
-  loginLink: { alignItems: 'center', marginTop: Spacing.md},
+  termsLink: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.primary,
+    fontWeight: "500",
+  },
+  loginLink: { alignItems: "center", marginTop: Spacing.md },
   loginText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
 });
 

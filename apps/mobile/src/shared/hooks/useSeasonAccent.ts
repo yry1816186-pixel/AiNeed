@@ -9,9 +9,14 @@
  *   const accentColor = seasonAccent?.accent ?? Colors.primary[500]; // 回退到品牌色
  */
 import { useEffect } from "react";
-import { useTheme } from '../../shared/contexts/ThemeContext';
+import { useTheme } from "../../contexts/ThemeContext";
 import { useProfileStore } from "../../stores/profileStore";
-import { normalizeColorSeason, type ColorSeason, type SeasonAccentColors } from '../../design-system/theme/tokens/season-colors';
+import {
+  normalizeColorSeason,
+  type ColorSeason,
+  type SeasonAccentColors,
+} from "../../theme/tokens/season-colors";
+import { Colors } from "../../theme";
 
 interface UseSeasonAccentReturn {
   /** 当前色彩季型（null 表示未分析或已清除） */

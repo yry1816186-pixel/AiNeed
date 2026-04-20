@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { OrderStatus } from "../../../../types/prisma-enums";
 
-import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
 
 const REVENUE_STATUSES: OrderStatus[] = ["delivered" as OrderStatus];
 
@@ -81,8 +81,7 @@ export class AdminDashboardService {
     ]);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const safeAmount = (agg: any): number =>
-      Number(agg?._sum?.totalAmount ?? 0);
+    const safeAmount = (agg: any): number => Number(agg?._sum?.totalAmount ?? 0);
 
     return {
       users: {
@@ -131,36 +130,37 @@ export class AdminDashboardService {
 
     const itemMap = new Map(items.map((item: { id: string }) => [item.id, item]));
 
-    return topItems.map((entry: { itemId: string; _sum: { quantity: number | null }; _count: { id: number } }) => ({
-      ...(itemMap.get(entry.itemId) ?? {}),
-      totalSold: entry._sum.quantity ?? 0,
-      orderCount: entry._count.id,
-    }));
+    return topItems.map(
+      (entry: { itemId: string; _sum: { quantity: number | null }; _count: { id: number } }) => ({
+        ...(itemMap.get(entry.itemId) ?? {}),
+        totalSold: entry._sum.quantity ?? 0,
+        orderCount: entry._count.id,
+      })
+    );
   }
 
   async getConversionRates() {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const [totalVisits, totalOrders, totalCarts, cartToOrders] =
-      await Promise.all([
-        this.prisma.userBehavior.count({
-          where: {
-            type: "page_view",
-            createdAt: { gte: thirtyDaysAgo },
-          },
-        }),
-        this.prisma.order.count({
-          where: { createdAt: { gte: thirtyDaysAgo } },
-        }),
-        this.prisma.cartItem.count(),
-        this.prisma.order.count({
-          where: {
-            createdAt: { gte: thirtyDaysAgo },
-            status: { notIn: ["cancelled" as OrderStatus] },
-          },
-        }),
-      ]);
+    const [totalVisits, totalOrders, totalCarts, cartToOrders] = await Promise.all([
+      this.prisma.userBehavior.count({
+        where: {
+          type: "page_view",
+          createdAt: { gte: thirtyDaysAgo },
+        },
+      }),
+      this.prisma.order.count({
+        where: { createdAt: { gte: thirtyDaysAgo } },
+      }),
+      this.prisma.cartItem.count(),
+      this.prisma.order.count({
+        where: {
+          createdAt: { gte: thirtyDaysAgo },
+          status: { notIn: ["cancelled" as OrderStatus] },
+        },
+      }),
+    ]);
 
     return {
       visitToOrder: totalVisits > 0 ? totalOrders / totalVisits : 0,
@@ -189,7 +189,7 @@ export class AdminDashboardService {
     const userIds = usersActiveInPeriod.map((u: { id: string; createdAt: Date }) => u.id);
 
     const userCreatedAtMap = new Map<string, Date>(
-      usersActiveInPeriod.map((u: { id: string; createdAt: Date }) => [u.id, u.createdAt]),
+      usersActiveInPeriod.map((u: { id: string; createdAt: Date }) => [u.id, u.createdAt])
     );
 
     const returnBehaviors = await this.prisma.userBehavior.findMany({
@@ -215,24 +215,32 @@ export class AdminDashboardService {
 
     for (const userId of userIds) {
       const created = userCreatedAtMap.get(userId);
-      if (!created) {continue;}
+      if (!created) {
+        continue;
+      }
 
       const returnDates = userReturnDates.get(userId) ?? [];
       const createdTime = created.getTime();
 
       const hasD1 = returnDates.some(
-        (d: Date) => d.getTime() > createdTime && d.getTime() <= createdTime + oneDayMs,
+        (d: Date) => d.getTime() > createdTime && d.getTime() <= createdTime + oneDayMs
       );
       const hasD7 = returnDates.some(
-        (d: Date) => d.getTime() > createdTime && d.getTime() <= createdTime + 7 * oneDayMs,
+        (d: Date) => d.getTime() > createdTime && d.getTime() <= createdTime + 7 * oneDayMs
       );
       const hasD30 = returnDates.some(
-        (d: Date) => d.getTime() > createdTime && d.getTime() <= createdTime + 30 * oneDayMs,
+        (d: Date) => d.getTime() > createdTime && d.getTime() <= createdTime + 30 * oneDayMs
       );
 
-      if (hasD1) {d1++;}
-      if (hasD7) {d7++;}
-      if (hasD30) {d30++;}
+      if (hasD1) {
+        d1++;
+      }
+      if (hasD7) {
+        d7++;
+      }
+      if (hasD30) {
+        d30++;
+      }
     }
 
     const total = userIds.length;

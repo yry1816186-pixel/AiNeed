@@ -1,24 +1,37 @@
-import { InjectQueue } from '@nestjs/bullmq';
-import { Injectable, Logger } from '@nestjs/common';
-import { Queue, Job } from 'bullmq';
+import { InjectQueue } from "@nestjs/bullmq";
+import { Injectable, Logger } from "@nestjs/common";
+import { Queue, Job } from "bullmq";
 
 import { NotificationService as GatewayNotificationService } from "../../../common/gateway/notification.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { AISafetyService } from "../../ai-core/ai-safety/ai-safety.service";
 
-export const CONTENT_MODERATION_QUEUE = 'content_moderation';
+export const CONTENT_MODERATION_QUEUE = "content_moderation";
 
 const BANNED_KEYWORDS = [
-  '赌博', '赌场', '博彩', '下注',
-  '代购', '仿品', '高仿', 'A货',
-  '色情', '裸体',
-  '毒品', '大麻',
-  '枪支', '武器',
-  '传销', '拉人头',
-  '刷单', '刷评',
-  '诈骗', '骗钱',
-  '政治敏感',
-  '自杀', '自残',
+  "赌博",
+  "赌场",
+  "博彩",
+  "下注",
+  "代购",
+  "仿品",
+  "高仿",
+  "A货",
+  "色情",
+  "裸体",
+  "毒品",
+  "大麻",
+  "枪支",
+  "武器",
+  "传销",
+  "拉人头",
+  "刷单",
+  "刷评",
+  "诈骗",
+  "骗钱",
+  "政治敏感",
+  "自杀",
+  "自残",
 ];
 
 const RANDOM_SAMPLE_RATE = 0.1;
@@ -31,62 +44,64 @@ export class ContentModerationService {
     private readonly prisma: PrismaService,
     private readonly aiSafetyService: AISafetyService,
     private readonly gatewayNotificationService: GatewayNotificationService,
-    @InjectQueue(CONTENT_MODERATION_QUEUE) private readonly moderationQueue: Queue,
+    @InjectQueue(CONTENT_MODERATION_QUEUE) private readonly moderationQueue: Queue
   ) {}
 
   async moderateContent(
     contentType: string,
     contentId: string,
     content: string,
-    images?: string[],
+    images?: string[]
   ): Promise<void> {
     const keywordHit = this.checkBannedKeywords(content);
 
     if (keywordHit) {
-      await this.updateContentModerationStatus(contentType, contentId, 'pending');
+      await this.updateContentModerationStatus(contentType, contentId, "pending");
       await this.prisma.contentModerationLog.create({
         data: {
           contentType,
           contentId,
-          action: 'auto_block',
+          action: "auto_block",
           reason: `命中违禁关键词: ${keywordHit}`,
         },
       });
-      this.logger.warn(`Content blocked by keyword filter: ${contentType}/${contentId}, keyword: ${keywordHit}`);
+      this.logger.warn(
+        `Content blocked by keyword filter: ${contentType}/${contentId}, keyword: ${keywordHit}`
+      );
       return;
     }
 
     const quickCheckPassed = await this.aiSafetyService.quickCheck(content);
 
     if (!quickCheckPassed) {
-      await this.updateContentModerationStatus(contentType, contentId, 'pending');
+      await this.updateContentModerationStatus(contentType, contentId, "pending");
       await this.prisma.contentModerationLog.create({
         data: {
           contentType,
           contentId,
-          action: 'auto_block',
-          reason: 'AI quickCheck 未通过',
+          action: "auto_block",
+          reason: "AI quickCheck 未通过",
         },
       });
       this.logger.warn(`Content blocked by AI quickCheck: ${contentType}/${contentId}`);
       return;
     }
 
-    await this.updateContentModerationStatus(contentType, contentId, 'approved');
+    await this.updateContentModerationStatus(contentType, contentId, "approved");
     await this.prisma.contentModerationLog.create({
       data: {
         contentType,
         contentId,
-        action: 'auto_pass',
-        reason: '关键词和AI快速检查均通过',
+        action: "auto_pass",
+        reason: "关键词和AI快速检查均通过",
       },
     });
 
     if (Math.random() < RANDOM_SAMPLE_RATE) {
       await this.moderationQueue.add(
-        'ai_deep_review',
+        "ai_deep_review",
         { contentType, contentId, content, images },
-        { attempts: 3, backoff: { type: 'exponential', delay: 1000 } },
+        { attempts: 3, backoff: { type: "exponential", delay: 1000 } }
       );
       this.logger.log(`Content sampled for AI deep review: ${contentType}/${contentId}`);
     }
@@ -100,18 +115,19 @@ export class ContentModerationService {
     const validationResult = await this.aiSafetyService.validateResponse(content);
 
     if (!validationResult.isValid) {
-      await this.updateContentModerationStatus(contentType, contentId, 'rejected');
+      await this.updateContentModerationStatus(contentType, contentId, "rejected");
 
       const reasonParts = validationResult.issues.map((i) => `${i.type}: ${i.description}`);
-      const reason = reasonParts.length > 0
-        ? reasonParts.join('; ')
-        : `AI验证未通过 (confidence: ${validationResult.confidenceScore})`;
+      const reason =
+        reasonParts.length > 0
+          ? reasonParts.join("; ")
+          : `AI验证未通过 (confidence: ${validationResult.confidenceScore})`;
 
       await this.prisma.contentModerationLog.create({
         data: {
           contentType,
           contentId,
-          action: 'auto_block',
+          action: "auto_block",
           reason: `AI深度审核: ${reason}`,
         },
       });
@@ -126,11 +142,11 @@ export class ContentModerationService {
     moderatorId: string,
     contentId: string,
     contentType: string,
-    action: 'approve' | 'reject',
-    note?: string,
+    action: "approve" | "reject",
+    note?: string
   ): Promise<void> {
-    const newStatus = action === 'approve' ? 'approved' : 'rejected';
-    const logAction = action === 'approve' ? 'manual_approve' : 'manual_reject';
+    const newStatus = action === "approve" ? "approved" : "rejected";
+    const logAction = action === "approve" ? "manual_approve" : "manual_reject";
 
     await this.updateContentModerationStatus(contentType, contentId, newStatus);
 
@@ -150,19 +166,19 @@ export class ContentModerationService {
       return;
     }
 
-    if (action === 'approve') {
+    if (action === "approve") {
       await this.gatewayNotificationService.sendCustomNotification(authorId, {
-        type: 'system',
-        title: '内容审核通过',
-        message: '您发布的内容已通过审核',
-        data: { contentType, contentId, action: 'content_approved' },
+        type: "system",
+        title: "内容审核通过",
+        message: "您发布的内容已通过审核",
+        data: { contentType, contentId, action: "content_approved" },
       });
     } else {
       await this.gatewayNotificationService.sendCustomNotification(authorId, {
-        type: 'system',
-        title: '内容审核未通过',
-        message: note || '您发布的内容未通过审核，请修改后重新发布',
-        data: { contentType, contentId, action: 'content_rejected' },
+        type: "system",
+        title: "内容审核未通过",
+        message: note || "您发布的内容未通过审核，请修改后重新发布",
+        data: { contentType, contentId, action: "content_rejected" },
       });
     }
 
@@ -173,14 +189,14 @@ export class ContentModerationService {
     const { page = 1, pageSize = 20 } = query;
 
     const where = {
-      moderationStatus: 'pending',
+      moderationStatus: "pending",
       isDeleted: false,
     };
 
     const [items, total] = await Promise.all([
       this.prisma.communityPost.findMany({
         where,
-        orderBy: { createdAt: 'asc' },
+        orderBy: { createdAt: "asc" },
         skip: (page - 1) * pageSize,
         take: pageSize,
         include: {
@@ -211,14 +227,14 @@ export class ContentModerationService {
       where: {
         contentType,
         contentId,
-        status: { not: 'rejected' },
+        status: { not: "rejected" },
       },
     });
 
     if (reportCount >= 3) {
-      await this.updateContentModerationStatus(contentType, contentId, 'pending');
+      await this.updateContentModerationStatus(contentType, contentId, "pending");
 
-      if (contentType === 'post') {
+      if (contentType === "post") {
         await this.prisma.communityPost.update({
           where: { id: contentId },
           data: { isHidden: true },
@@ -229,7 +245,7 @@ export class ContentModerationService {
         data: {
           contentType,
           contentId,
-          action: 'auto_block',
+          action: "auto_block",
           reason: `report_threshold_reached (${reportCount} reports)`,
         },
       });
@@ -237,13 +253,15 @@ export class ContentModerationService {
       const content = await this.getContentText(contentType, contentId);
       if (content) {
         await this.moderationQueue.add(
-          'ai_deep_review',
+          "ai_deep_review",
           { contentType, contentId, content },
-          { attempts: 3, backoff: { type: 'exponential', delay: 1000 } },
+          { attempts: 3, backoff: { type: "exponential", delay: 1000 } }
         );
       }
 
-      this.logger.warn(`Report threshold reached for ${contentType}/${contentId}: ${reportCount} reports`);
+      this.logger.warn(
+        `Report threshold reached for ${contentType}/${contentId}: ${reportCount} reports`
+      );
     }
   }
 
@@ -260,9 +278,9 @@ export class ContentModerationService {
   private async updateContentModerationStatus(
     contentType: string,
     contentId: string,
-    status: string,
+    status: string
   ): Promise<void> {
-    if (contentType === 'post') {
+    if (contentType === "post") {
       await this.prisma.communityPost.update({
         where: { id: contentId },
         data: { moderationStatus: status },
@@ -271,14 +289,14 @@ export class ContentModerationService {
   }
 
   private async getContentAuthorId(contentType: string, contentId: string): Promise<string | null> {
-    if (contentType === 'post') {
+    if (contentType === "post") {
       const post = await this.prisma.communityPost.findUnique({
         where: { id: contentId },
         select: { authorId: true },
       });
       return post?.authorId ?? null;
     }
-    if (contentType === 'comment') {
+    if (contentType === "comment") {
       const comment = await this.prisma.postComment.findUnique({
         where: { id: contentId },
         select: { authorId: true },
@@ -289,14 +307,14 @@ export class ContentModerationService {
   }
 
   private async getContentText(contentType: string, contentId: string): Promise<string | null> {
-    if (contentType === 'post') {
+    if (contentType === "post") {
       const post = await this.prisma.communityPost.findUnique({
         where: { id: contentId },
         select: { content: true },
       });
       return post?.content ?? null;
     }
-    if (contentType === 'comment') {
+    if (contentType === "comment") {
       const comment = await this.prisma.postComment.findUnique({
         where: { id: contentId },
         select: { content: true },
@@ -307,6 +325,8 @@ export class ContentModerationService {
   }
 
   private assertNoModerationLogMutation(): never {
-    throw new Error('ContentModerationLog is append-only. Update and delete operations are not allowed.');
+    throw new Error(
+      "ContentModerationLog is append-only. Update and delete operations are not allowed."
+    );
   }
 }

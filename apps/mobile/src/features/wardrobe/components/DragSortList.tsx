@@ -10,8 +10,9 @@ import {
   PanResponderGestureState,
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens, Spacing , flatColors as colors } from '../../../design-system/theme';
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
 
 interface DragSortItem {
   id: string;
@@ -271,8 +272,8 @@ const styles = StyleSheet.create({
     position: "relative",
     backgroundColor: colors.surface,
     borderRadius: 12,
-    marginVertical: Spacing.xs,
-    shadowColor: colors.neutral[900],
+    marginVertical: 4,
+    shadowColor: DesignTokens.colors.neutral.black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 3,
@@ -284,25 +285,25 @@ const collectionStyles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: DesignTokens.spacing[3],
-    gap: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 12,
+    gap: 10,
   },
   dragHandle: {
-    padding: Spacing.xs,
+    padding: 4,
   },
   iconContainer: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 10,
     backgroundColor: "colors.infoLight",
     alignItems: "center",
     justifyContent: "center",
   },
   info: { flex: 1 },
-  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
-  count: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
-  actions: { flexDirection: "row", gap: Spacing.xs},
-  actionBtn: { padding: Spacing.sm},
+  name: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.text },
+  count: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: 2 },
+  actions: { flexDirection: "row", gap: 4 },
+  actionBtn: { padding: 8 },
 });
 
 export default DragSortList;

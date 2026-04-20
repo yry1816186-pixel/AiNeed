@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
-import { DesignTokens } from '../../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Colors, Spacing, BorderRadius, Shadows } from '../../../../design-system/theme';
-import { Ionicons } from '../../../../polyfills/expo-vector-icons';
-import { LinearGradient } from '../../../../polyfills/expo-linear-gradient';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from "react-native";
+import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -12,7 +11,9 @@ import Animated, {
   FadeIn,
   SlideInUp,
 } from "react-native-reanimated";
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import { Colors, Spacing, BorderRadius, Shadows } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+import { flatColors as colors } from "../../../../design-system/theme";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -27,8 +28,8 @@ const PREVIEW_ITEMS = [
 ] as const;
 
 const DECORATIONS = [
-  { size: 8, color: colors.primary, top: -8, right: DesignTokens.spacing[5], delay: 200 },
-  { size: 12, color: colors.secondary, top: DesignTokens.spacing['2.5'], right: -12, delay: 300 },
+  { size: 8, color: colors.primary, top: -8, right: 20, delay: 200 },
+  { size: 12, color: colors.secondary, top: 10, right: -12, delay: 300 },
   { size: 16, color: colors.gold, bottom: -10, left: -8, delay: 400 },
   { size: 8, color: colors.primaryLight, bottom: 5, right: -16, delay: 500 },
   { size: 12, color: colors.secondaryLight, top: -14, left: 15, delay: 600 },
@@ -54,7 +55,7 @@ export const CompleteStep: React.FC<CompleteStepProps> = ({ onComplete }) => {
         <View style={styles.iconWrapper}>
           <Animated.View style={[styles.iconOuter, iconAnimatedStyle]}>
             <LinearGradient
-              colors={[colors.primary, colors.primary]}
+              colors={[colors.primary, DesignTokens.colors.brand.camel]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.iconGradient}
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing[8],
   },
   mainTitle: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "700",
     color: colors.textPrimary,
     letterSpacing: -0.5,
@@ -169,14 +170,14 @@ const styles = StyleSheet.create({
   },
   previewCard: {
     flex: 1,
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     alignItems: "center",
   },
   previewIconContainer: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: "rgba(198, 123, 92, 0.1)",
     alignItems: "center",

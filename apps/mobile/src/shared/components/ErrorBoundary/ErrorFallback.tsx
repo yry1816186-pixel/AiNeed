@@ -13,8 +13,8 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { Ionicons } from '../../../polyfills/expo-vector-icons';
-import { Colors, BorderRadius, Spacing, Typography } from '../../../design-system/theme';
+import { Ionicons } from "../../../polyfills/expo-vector-icons";
+import { Colors, BorderRadius, Spacing, Typography } from "../../../design-system/theme";
 import {
   StructuredError,
   ErrorCategory,
@@ -23,6 +23,7 @@ import {
 } from "../../utils/errorHandling";
 import type { ErrorInfo } from "react";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme } from "../../contexts/ThemeContext";
 
 // ============================================================================
 // 类型定义
@@ -88,15 +89,15 @@ const getErrorIcon = (category: ErrorCategory): keyof typeof Ionicons.glyphMap =
 const getSeverityColor = (severity: ErrorSeverity): string => {
   switch (severity) {
     case ErrorSeverity.LOW:
-      return Colors.warning[500];
+      return colors.warning[500];
     case ErrorSeverity.MEDIUM:
-      return Colors.warning[600];
+      return colors.warning[600];
     case ErrorSeverity.HIGH:
-      return Colors.error[500];
+      return colors.error[500];
     case ErrorSeverity.CRITICAL:
-      return Colors.error[600];
+      return colors.error[600];
     default:
-      return Colors.error[500];
+      return colors.error[500];
   }
 };
 
@@ -118,6 +119,7 @@ const RecoveryButton: React.FC<RecoveryButtonProps> = ({
   loading,
 }) => {
   const getButtonConfig = () => {
+    const { colors } = useTheme();
     switch (strategy) {
       case RecoveryStrategy.RETRY:
         return {
@@ -202,6 +204,8 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
   maxRetries = 3,
   isRecovering = false,
 }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const severityColor = getSeverityColor(structuredError.severity);
   const iconName = getErrorIcon(structuredError.category);
 
@@ -223,14 +227,14 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
         <View style={[styles.tag, { backgroundColor: `${severityColor}15` }]}>
           <Text style={[styles.tagText, { color: severityColor }]}>{structuredError.category}</Text>
         </View>
-        <View style={[styles.tag, { backgroundColor: `${Colors.neutral[500]}15` }]}>
-          <Text style={[styles.tagText, { color: Colors.neutral[600] }]}>
+        <View style={[styles.tag, { backgroundColor: `${colors.neutral[500]}15` }]}>
+          <Text style={[styles.tagText, { color: colors.neutral[600] }]}>
             {structuredError.severity}
           </Text>
         </View>
         {structuredError.code && (
-          <View style={[styles.tag, { backgroundColor: `${Colors.primary[500]}15` }]}>
-            <Text style={[styles.tagText, { color: Colors.primary[600] }]}>
+          <View style={[styles.tag, { backgroundColor: `${colors.primary[500]}15` }]}>
+            <Text style={[styles.tagText, { color: colors.primary[600] }]}>
               {structuredError.code}
             </Text>
           </View>
@@ -285,7 +289,7 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
             onPress={onReset}
             activeOpacity={0.7}
           >
-            <Ionicons name="refresh-outline" size={20} color={Colors.primary[500]} />
+            <Ionicons name="refresh-outline" size={20} color={colors.primary[500]} />
             <Text style={[styles.buttonText, styles.buttonTextSecondary]}>重置</Text>
           </TouchableOpacity>
         )}
@@ -303,17 +307,17 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
 // 样式
 // ============================================================================
 
-const styles = StyleSheet.create({
+const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: Spacing[6],
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
   },
   iconCircle: {
-    width: Spacing['5xl'],
-    height: Spacing['5xl'],
+    width: Spacing["5xl"],
+    height: Spacing["5xl"],
     borderRadius: 48,
     justifyContent: "center",
     alignItems: "center",
@@ -321,12 +325,12 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.styles.h2,
-    color: Colors.neutral[800],
+    color: colors.neutral[800],
     marginBottom: Spacing[2],
   },
   message: {
     ...Typography.body,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
     marginBottom: Spacing[4],
@@ -349,13 +353,13 @@ const styles = StyleSheet.create({
   },
   retryHint: {
     ...Typography.caption,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginBottom: Spacing[4],
   },
   errorDetails: {
     maxHeight: 200,
     width: "100%",
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     borderRadius: BorderRadius.md,
     padding: Spacing[3],
     marginBottom: Spacing[5],
@@ -363,19 +367,19 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.caption,
     fontWeight: "600",
-    color: Colors.neutral[700],
+    color: colors.neutral[700],
     marginTop: Spacing[2],
     marginBottom: Spacing[1],
   },
   errorText: {
     ...Typography.caption,
-    color: Colors.error[600],
+    color: colors.error[600],
     fontFamily: "monospace",
   },
   errorStack: {
     ...Typography.caption,
     fontSize: DesignTokens.typography.sizes.xs,
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
     fontFamily: "monospace",
     lineHeight: 16,
   },
@@ -386,7 +390,7 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     paddingHorizontal: Spacing[6],
     paddingVertical: Spacing[3],
     borderRadius: BorderRadius.lg,
@@ -396,9 +400,9 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   buttonSecondary: {
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     borderWidth: 1,
-    borderColor: Colors.primary[500],
+    borderColor: colors.primary[500],
   },
   buttonText: {
     color: Colors.neutral.white,
@@ -406,15 +410,15 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   buttonTextSecondary: {
-    color: Colors.primary[500],
+    color: colors.primary[500],
   },
   unrecoverableHint: {
     ...Typography.caption,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: "center",
     marginTop: Spacing[4],
     maxWidth: 280,
   },
-});
+}));
 
 export default ErrorFallback;

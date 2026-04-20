@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import {
-  BodyType,
-  SkinTone,
-  FaceShape,
-  ColorSeason,
-  Gender,
-} from '../../../../types/prisma-enums';
+import { BodyType, SkinTone, FaceShape, ColorSeason, Gender } from "@/types/prisma-enums";
 import { Type } from "class-transformer";
 import {
   IsOptional,
@@ -137,7 +131,7 @@ export class UpdateProfileDto {
   @ApiPropertyOptional({
     description: "性别",
     enum: Gender,
-    example: 'male',
+    example: "male",
   })
   @IsOptional()
   @IsEnum(Gender, { message: "性别必须是有效的 Gender 枚举值" })

@@ -45,13 +45,13 @@ export class PhotosService {
     private configService: ConfigService,
     private malwareScanner: MalwareScannerService,
     private queueService: QueueService,
-    @Optional() private onboardingService: OnboardingService | null,
+    @Optional() private onboardingService: OnboardingService | null
   ) {}
 
   async uploadPhoto(
     userId: string,
     file: Express.Multer.File,
-    type: PhotoType,
+    type: PhotoType
   ): Promise<PhotoUploadResult> {
     this.validateImageFile(file);
 
@@ -66,7 +66,7 @@ export class PhotosService {
     const { url, thumbnailUrl } = await this.storage.uploadEncrypted(
       userId,
       sanitizedFile,
-      "photos",
+      "photos"
     );
 
     const photo = await this.prisma.userPhoto.create({
@@ -83,7 +83,7 @@ export class PhotosService {
     });
 
     // 使用 BullMQ 队列异步分析照片
-    await this.queueService.addImageAnalysisTask(userId, url, 'full');
+    await this.queueService.addImageAnalysisTask(userId, url, "full");
 
     // 推进 onboarding 步骤：照片上传完成后从 PHOTO 推进到 STYLE_TEST
     if (this.onboardingService) {
@@ -130,7 +130,7 @@ export class PhotosService {
 
     // 批量处理所有 thumbnailDataUri，并行请求
     const photosWithDataUri = await Promise.all(
-      photos.map(async (photo: { id: string; url: string | null; thumbnailUrl: string | null; thumbnailDataUri: string | null; analyzedAt: Date | null; createdAt: Date }) => {
+      photos.map(async (photo: any) => {
         const previewAssetUrl = photo.thumbnailUrl ?? photo.url;
 
         if (!previewAssetUrl) {
@@ -140,16 +140,15 @@ export class PhotosService {
         try {
           return {
             ...photo,
-            thumbnailDataUri:
-              await this.storage.fetchRemoteAssetDataUri(previewAssetUrl),
+            thumbnailDataUri: await this.storage.fetchRemoteAssetDataUri(previewAssetUrl),
           };
         } catch (error) {
           this.logger.warn(
-            `Failed to build inline thumbnail for ${photo.id}: ${error instanceof Error ? error.message : String(error)}`,
+            `Failed to build inline thumbnail for ${photo.id}: ${error instanceof Error ? error.message : String(error)}`
           );
           return { ...photo, thumbnailDataUri: undefined };
         }
-      }),
+      })
     );
 
     return photosWithDataUri;
@@ -173,12 +172,11 @@ export class PhotosService {
     try {
       return {
         ...photo,
-        thumbnailDataUri:
-          await this.storage.fetchRemoteAssetDataUri(previewAssetUrl),
+        thumbnailDataUri: await this.storage.fetchRemoteAssetDataUri(previewAssetUrl),
       };
     } catch (error) {
       this.logger.warn(
-        `Failed to build inline thumbnail for ${photo.id}: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to build inline thumbnail for ${photo.id}: ${error instanceof Error ? error.message : String(error)}`
       );
       return photo;
     }
@@ -187,7 +185,7 @@ export class PhotosService {
   async getPhotoAsset(
     photoId: string,
     userId: string,
-    variant: "original" | "thumbnail",
+    variant: "original" | "thumbnail"
   ): Promise<{
     body: Buffer;
     contentType: string;
@@ -205,8 +203,7 @@ export class PhotosService {
       throw new NotFoundException("照片不存在");
     }
 
-    const assetUrl =
-      variant === "thumbnail" ? photo.thumbnailUrl ?? photo.url : photo.url;
+    const assetUrl = variant === "thumbnail" ? (photo.thumbnailUrl ?? photo.url) : photo.url;
 
     if (!assetUrl) {
       throw new NotFoundException("照片资产不存在");
@@ -238,17 +235,11 @@ export class PhotosService {
     await this.prisma.userPhoto.delete({ where: { id: photoId } });
   }
 
-  private async analyzePhotoAsync(
-    photoId: string,
-    imageBuffer: Buffer,
-  ): Promise<void> {
+  private async analyzePhotoAsync(photoId: string, imageBuffer: Buffer): Promise<void> {
     const startTime = Date.now();
     let retryCount = 0;
 
-    const updateStatus = async (
-      status: AnalysisStatus,
-      result?: Record<string, unknown>,
-    ) => {
+    const updateStatus = async (status: AnalysisStatus, result?: Record<string, unknown>) => {
       await this.prisma.userPhoto.update({
         where: { id: photoId },
         data: {
@@ -264,9 +255,7 @@ export class PhotosService {
     const analyzeWithTimeout = async (): Promise<Record<string, unknown>> => {
       return new Promise((resolve, reject) => {
         const timeoutId = setTimeout(() => {
-          reject(
-            new Error(`Analysis timeout after ${this.ANALYSIS_TIMEOUT_MS}ms`),
-          );
+          reject(new Error(`Analysis timeout after ${this.ANALYSIS_TIMEOUT_MS}ms`));
         }, this.ANALYSIS_TIMEOUT_MS);
 
         this.aiAnalysis
@@ -313,43 +302,31 @@ export class PhotosService {
                 expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
               },
             })
-            .catch((err: Error) =>
-              this.logger.warn(`Failed to cache result: ${err.message}`),
-            );
+            .catch((err: Error) => this.logger.warn(`Failed to cache result: ${err.message}`));
         }
 
-        await updateStatus(
-          AnalysisStatus.completed,
-          JSON.parse(JSON.stringify(analysisResult)),
-        );
+        await updateStatus(AnalysisStatus.completed, JSON.parse(JSON.stringify(analysisResult)));
 
         await this.updateUserProfile(photoId, analysisResult);
 
         const duration = Date.now() - startTime;
-        this.logger.log(
-          `Photo analysis completed for ${photoId} in ${duration}ms`,
-        );
+        this.logger.log(`Photo analysis completed for ${photoId} in ${duration}ms`);
         return;
       } catch (error: unknown) {
         retryCount++;
         const duration = Date.now() - startTime;
         const errorMessage = error instanceof Error ? error.message : String(error);
 
-        if (
-          errorMessage.includes("timeout") &&
-          retryCount <= this.MAX_RETRIES
-        ) {
+        if (errorMessage.includes("timeout") && retryCount <= this.MAX_RETRIES) {
           this.logger.warn(
-            `Photo analysis timeout for ${photoId}, retry ${retryCount}/${this.MAX_RETRIES}`,
+            `Photo analysis timeout for ${photoId}, retry ${retryCount}/${this.MAX_RETRIES}`
           );
-          await new Promise((resolve) =>
-            setTimeout(resolve, 1000 * retryCount),
-          );
+          await new Promise((resolve) => setTimeout(resolve, 1000 * retryCount));
           continue;
         }
 
         this.logger.error(
-          `Photo analysis failed for ${photoId} after ${duration}ms: ${errorMessage}`,
+          `Photo analysis failed for ${photoId} after ${duration}ms: ${errorMessage}`
         );
         await updateStatus(AnalysisStatus.failed, { error: errorMessage });
         return;
@@ -357,10 +334,7 @@ export class PhotosService {
     }
   }
 
-  private async updateUserProfile(
-    photoId: string,
-    analysisResult: Record<string, unknown>,
-  ) {
+  private async updateUserProfile(photoId: string, analysisResult: Record<string, unknown>) {
     const photo = await this.prisma.userPhoto.findUnique({
       where: { id: photoId },
       select: { userId: true },
@@ -413,7 +387,7 @@ export class PhotosService {
       return parts.slice(-2).join("/");
     } catch (error) {
       this.logger.warn(
-        `Failed to extract filename from URL '${url.substring(0, 100)}': ${error instanceof Error ? error.message : String(error)}. Using original value as fallback.`,
+        `Failed to extract filename from URL '${url.substring(0, 100)}': ${error instanceof Error ? error.message : String(error)}. Using original value as fallback.`
       );
       return url; // Return original URL as fallback instead of null
     }
@@ -435,9 +409,13 @@ export class PhotosService {
       take: 20,
     });
 
-    if (stuckPhotos.length === 0) {return;}
+    if (stuckPhotos.length === 0) {
+      return;
+    }
 
-    this.logger.warn(`Found ${stuckPhotos.length} photos stuck in processing, resetting to pending`);
+    this.logger.warn(
+      `Found ${stuckPhotos.length} photos stuck in processing, resetting to pending`
+    );
 
     await this.prisma.userPhoto.updateMany({
       where: {

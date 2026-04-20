@@ -6,10 +6,15 @@ import {
   type CameraOptions,
   type ImageLibraryOptions,
 } from "react-native-image-picker";
-import { Ionicons } from '../../../../polyfills/expo-vector-icons';
+import { Ionicons } from "../../../../polyfills/expo-vector-icons";
 import Animated, { SlideInRight } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, flatColors as colors } from '../../../../design-system/theme';
-import { useTheme, createStyles } from '../../../../shared/contexts/ThemeContext';
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  flatColors as colors,
+} from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
 
 interface PhotoStepProps {
@@ -121,7 +126,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing[4],
   },
   stepTitle: {
-    fontSize: DesignTokens.typography.sizes['2xl'],
+    fontSize: DesignTokens.typography.sizes["2xl"],
     fontWeight: "700",
     color: colors.textPrimary,
     letterSpacing: -0.5,
@@ -141,7 +146,7 @@ const styles = StyleSheet.create({
   privacyBox: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     padding: Spacing[4],
     gap: Spacing[3],
@@ -168,7 +173,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: BorderRadius.xl,
     borderWidth: 2,
-    borderColor: Colors.neutral[300],
+    borderColor: colors.neutral[300],
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
@@ -201,11 +206,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.neutral[50],
+    backgroundColor: colors.neutral[50],
     borderRadius: BorderRadius.xl,
     height: 52,
     borderWidth: 1.5,
-    borderColor: Colors.neutral[200],
+    borderColor: colors.neutral[200],
     gap: Spacing[2],
   },
   galleryButtonText: {

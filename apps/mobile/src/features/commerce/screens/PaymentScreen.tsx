@@ -1,20 +1,19 @@
-﻿import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { useScreenTracking } from '../../../hooks/useAnalytics';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import { haptics } from '../../../utils/haptics';
-import { paymentApi, orderApi } from '../../../services/api/commerce.api';
-import type { Order } from '../../../types';
-import type { ProfileStackParamList } from '../../../navigation/types';
-import type { RootStackParamList } from '../../../types/navigation';
-
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { haptics } from "../../../utils/haptics";
+import { paymentApi, orderApi } from "../../../services/api/commerce.api";
+import type { Order } from "../../../types";
+import type { ProfileStackParamList } from "../../../navigation/types";
+import type { RootStackParamList } from "../../../types/navigation";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type PaymentRoute = RouteProp<ProfileStackParamList, "Payment">;
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
@@ -22,6 +21,7 @@ type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type PaymentProvider = "alipay" | "wechat";
 
 export const PaymentScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<PaymentRoute>();
   useScreenTracking("Payment");
@@ -106,35 +106,28 @@ export const PaymentScreen: React.FC = () => {
     }
     const amount = order?.totalAmount ?? 0;
     const providerLabel = selectedProvider === "alipay" ? "支付宝" : "微信支付";
-    Alert.alert(
-      "确认支付",
-      `将通过${providerLabel}支付 ¥${amount.toFixed(2)}，确认继续？`,
-      [
-        { text: "取消", style: "cancel" },
-        {
-          text: "确认支付",
-          onPress: async () => {
-            setPaying(true);
-            try {
-              const response = await paymentApi.createPayment(orderId, selectedProvider);
-              if (response.success && response.data) {
-                startPolling();
-                Alert.alert(
-                  "支付已发起",
-                  `请通过${providerLabel}完成支付`
-                );
-              } else {
-                Alert.alert("支付失败", response.error?.message || "无法发起支付");
-              }
-            } catch {
-              Alert.alert("错误", "网络异常，请重试");
-            } finally {
-              setPaying(false);
+    Alert.alert("确认支付", `将通过${providerLabel}支付 ¥${amount.toFixed(2)}，确认继续？`, [
+      { text: "取消", style: "cancel" },
+      {
+        text: "确认支付",
+        onPress: async () => {
+          setPaying(true);
+          try {
+            const response = await paymentApi.createPayment(orderId, selectedProvider);
+            if (response.success && response.data) {
+              startPolling();
+              Alert.alert("支付已发起", `请通过${providerLabel}完成支付`);
+            } else {
+              Alert.alert("支付失败", response.error?.message || "无法发起支付");
             }
-          },
+          } catch {
+            Alert.alert("错误", "网络异常，请重试");
+          } finally {
+            setPaying(false);
+          }
         },
-      ]
-    );
+      },
+    ]);
   }, [orderId, selectedProvider, startPolling, order]);
 
   const formatPrice = (amount: number) => `¥${amount.toFixed(2)}`;
@@ -195,7 +188,7 @@ export const PaymentScreen: React.FC = () => {
             onPress={() => setSelectedProvider("alipay")}
             activeOpacity={0.7}
           >
-            <View style={[s.providerIcon, { backgroundColor: colors.info /* custom color */ }]}>
+            <View style={[s.providerIcon, { backgroundColor: "colors.info" /* custom color */ }]}>
               <Text style={s.providerIconText}>A</Text>
             </View>
             <View style={s.providerInfo}>
@@ -212,7 +205,9 @@ export const PaymentScreen: React.FC = () => {
             onPress={() => setSelectedProvider("wechat")}
             activeOpacity={0.7}
           >
-            <View style={[s.providerIcon, { backgroundColor: colors.success /* custom color */ }]}>
+            <View
+              style={[s.providerIcon, { backgroundColor: "colors.success" /* custom color */ }]}
+            >
               <Text style={s.providerIconText}>W</Text>
             </View>
             <View style={s.providerInfo}>
@@ -261,50 +256,71 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700", color: colors.textPrimary },
-  iconBtn: { width: DesignTokens.spacing[9], height: DesignTokens.spacing[9], alignItems: "center", justifyContent: "center" },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+    color: colors.text,
+  },
+  iconBtn: { width: 36, height: 36, alignItems: "center", justifyContent: "center" },
   centerContent: { flex: 1, alignItems: "center", justifyContent: "center" },
-  content: { flex: 1, padding: Spacing.md},
+  content: { flex: 1, padding: 16 },
   orderCard: {
     backgroundColor: colors.surface,
     borderRadius: 14,
-    padding: Spacing.md,
-    marginBottom: DesignTokens.spacing[5],
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+    padding: 16,
+    marginBottom: 20,
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
   },
-  sectionTitle: { fontSize: DesignTokens.typography.sizes.md, fontWeight: "700", color: colors.textPrimary, marginBottom: DesignTokens.spacing['3.5']},
+  sectionTitle: {
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "700",
+    color: colors.textPrimary,
+    marginBottom: 14,
+  },
   orderRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingVertical: 6,
   },
   orderLabel: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  orderValue: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary, fontWeight: "500" },
+  orderValue: {
+    fontSize: DesignTokens.typography.sizes.base,
+    color: colors.textPrimary,
+    fontWeight: "500",
+  },
   totalRow: {
     borderTopWidth: 1,
     borderTopColor: colors.divider,
-    marginTop: Spacing.sm,
-    paddingTop: DesignTokens.spacing[3],
+    marginTop: 8,
+    paddingTop: 12,
   },
-  totalLabel: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
-  totalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
+  totalLabel: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.text,
+  },
+  totalPrice: {
+    fontSize: DesignTokens.typography.sizes.xl,
+    fontWeight: "700",
+    color: colors.primary,
+  },
   paymentSection: {
     backgroundColor: colors.surface,
     borderRadius: 14,
-    padding: Spacing.md,
-    shadowColor: colors.neutral[900],
-    shadowOffset: { width: 0, height: DesignTokens.spacing['0.5'] },
+    padding: 16,
+    shadowColor: DesignTokens.colors.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
@@ -312,7 +328,7 @@ const s = StyleSheet.create({
   paymentOption: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: colors.divider,
   },
@@ -320,19 +336,31 @@ const s = StyleSheet.create({
     backgroundColor: colors.subtleBg,
     borderRadius: 10,
     marginHorizontal: -8,
-    paddingHorizontal: Spacing.sm,
+    paddingHorizontal: 8,
   },
   providerIcon: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
-  providerIconText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.lg, fontWeight: "700" },
-  providerInfo: { flex: 1, marginLeft: DesignTokens.spacing[3]},
-  providerName: { fontSize: DesignTokens.typography.sizes.base, fontWeight: "600", color: colors.textPrimary },
-  providerDesc: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary, marginTop: DesignTokens.spacing['0.5']},
+  providerIconText: {
+    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "700",
+  },
+  providerInfo: { flex: 1, marginLeft: 12 },
+  providerName: {
+    fontSize: DesignTokens.typography.sizes.base,
+    fontWeight: "600",
+    color: colors.text,
+  },
+  providerDesc: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.textTertiary,
+    marginTop: 2,
+  },
   radio: {
     width: 22,
     height: 22,
@@ -343,14 +371,14 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   radioSelected: { borderColor: colors.primary },
-  radioInner: { width: DesignTokens.spacing[3], height: DesignTokens.spacing[3], borderRadius: 6, backgroundColor: colors.primary },
+  radioInner: { width: 12, height: 12, borderRadius: 6, backgroundColor: colors.primary },
   pollingBanner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: DesignTokens.spacing[3],
-    marginTop: Spacing.md,
+    gap: 8,
+    paddingVertical: 12,
+    marginTop: 16,
     backgroundColor: colors.subtleBg,
     borderRadius: 10,
   },
@@ -358,23 +386,31 @@ const s = StyleSheet.create({
   footer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
   },
   footerTotal: { flex: 1 },
   footerTotalLabel: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textSecondary },
-  footerTotalPrice: { fontSize: DesignTokens.typography.sizes.xl, fontWeight: "700", color: colors.primary },
+  footerTotalPrice: {
+    fontSize: DesignTokens.typography.sizes.xl,
+    fontWeight: "700",
+    color: colors.primary,
+  },
   payButton: {
     backgroundColor: colors.primary,
-    paddingHorizontal: DesignTokens.spacing[9],
-    paddingVertical: DesignTokens.spacing['3.5'],
+    paddingHorizontal: 36,
+    paddingVertical: 14,
     borderRadius: 24,
   },
   payButtonDisabled: { opacity: 0.6 },
-  payButtonText: { color: colors.surface, fontSize: DesignTokens.typography.sizes.md, fontWeight: "700" },
+  payButtonText: {
+    color: colors.surface,
+    fontSize: DesignTokens.typography.sizes.md,
+    fontWeight: "700",
+  },
 });
 
 export default PaymentScreen;

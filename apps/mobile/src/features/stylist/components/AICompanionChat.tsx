@@ -1,4 +1,4 @@
-﻿﻿﻿import React, { useEffect, useRef, useState, useCallback } from "react";
+﻿import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -24,19 +24,18 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { CompanionState } from "./AICompanionBall";
 import {
   AiStylistAction,
   AiStylistActionType,
   AiStylistResolution,
-} from '../../../services/api/ai-stylist.api';
+} from "../../../services/api/ai-stylist.api";
 import { PreferenceSelector } from "./PreferenceSelector";
 import { OutfitCard } from "./OutfitCard";
 import { AnalysisProgress } from "./AnalysisProgress";
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -178,11 +177,12 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
   }, [state, onStartVoice, onStopVoice]);
 
   const getStateIndicator = () => {
+    const { colors } = useTheme();
     switch (state) {
       case "listening":
         return (
           <View style={styles.stateIndicator}>
-            <View style={[styles.stateDot, { backgroundColor: colors.neutral[500] }]} />
+            <View style={[styles.stateDot, { backgroundColor: DesignTokens.colors.brand.slate }]} />
             <Text style={styles.stateText}>正在聆听...</Text>
           </View>
         );
@@ -258,7 +258,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
             <View style={styles.photoButtons}>
               <Pressable style={styles.photoButton} onPress={() => onUploadPhoto?.("camera")}>
                 <LinearGradient
-                  colors={[colors.secondary, colors.primary]}
+                  colors={[colors.secondary, DesignTokens.colors.brand.camel]}
                   style={styles.photoButtonGradient}
                 >
                   <Ionicons name="camera" size={24} color={colors.textInverse} />
@@ -266,7 +266,10 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
                 </LinearGradient>
               </Pressable>
               <Pressable style={styles.photoButton} onPress={() => onUploadPhoto?.("library")}>
-                <LinearGradient colors={[colors.neutral[500], colors.textTertiary]} style={styles.photoButtonGradient}>
+                <LinearGradient
+                  colors={[DesignTokens.colors.brand.slate, "colors.textTertiary"]}
+                  style={styles.photoButtonGradient}
+                >
                   <Ionicons name="images" size={24} color={colors.textInverse} />
                   <Text style={styles.photoButtonText}>相册</Text>
                 </LinearGradient>
@@ -288,7 +291,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
             </Text>
             <Pressable style={styles.generateButton} onPress={onGenerateOutfit}>
               <LinearGradient
-                colors={[colors.primary, colors.primary]}
+                colors={[colors.primary, DesignTokens.colors.brand.camel]}
                 style={styles.generateButtonGradient}
               >
                 <Ionicons name="sparkles" size={18} color={colors.textInverse} />
@@ -335,7 +338,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
           {messages.length === 0 && (
             <View style={styles.emptyState}>
               <LinearGradient
-                colors={[colors.secondary, colors.primary]}
+                colors={[colors.secondary, DesignTokens.colors.brand.camel]}
                 style={styles.emptyIcon}
               >
                 <Text style={styles.emptyIconText}>AI</Text>
@@ -380,7 +383,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
                 !message.progress &&
                 !message.outfitResult && (
                   <LinearGradient
-                    colors={[colors.secondary, colors.primary]}
+                    colors={[colors.secondary, DesignTokens.colors.brand.camel]}
                     style={styles.assistantAvatar}
                   >
                     <Text style={styles.assistantAvatarText}>AI</Text>
@@ -435,11 +438,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
                 <Ionicons
                   name={state === "listening" ? "mic" : "mic-outline"}
                   size={22}
-                  color={
-                    state === "listening"
-                      ? colors.primary
-                      : DesignTokens.colors.neutral[500]
-                  }
+                  color={state === "listening" ? colors.primary : DesignTokens.colors.neutral[500]}
                 />
               </Pressable>
             )}
@@ -452,7 +451,7 @@ export const AICompanionChat: React.FC<AICompanionChatProps> = ({
               <LinearGradient
                 colors={
                   inputText.trim() && state !== "thinking"
-                    ? [colors.primary, colors.primary]
+                    ? [colors.primary, DesignTokens.colors.brand.camel]
                     : [DesignTokens.colors.neutral[300], DesignTokens.colors.neutral[400]]
                 }
                 style={styles.sendButtonGradient}
@@ -519,9 +518,9 @@ const useStyles = createStyles((colors) => ({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 16,
     paddingTop: Platform.OS === "ios" ? 60 : 40,
-    paddingBottom: Spacing.md,
+    paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
@@ -551,13 +550,13 @@ const useStyles = createStyles((colors) => ({
   stateIndicator: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: Spacing.xs,
+    marginTop: 4,
   },
   stateDot: {
-    width: Spacing.sm,
-    height: Spacing.sm,
+    width: 8,
+    height: 8,
     borderRadius: 4,
-    marginRight: DesignTokens.spacing['1.5'],
+    marginRight: 6,
   },
   stateText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -567,24 +566,24 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
   },
   messagesContent: {
-    padding: Spacing.md,
-    paddingBottom: Spacing.lg,
+    padding: 16,
+    paddingBottom: 24,
   },
   emptyState: {
     alignItems: "center",
     paddingTop: 60,
-    paddingHorizontal: Spacing.xl,
+    paddingHorizontal: 32,
   },
   emptyIcon: {
-    width: Spacing['4xl'],
-    height: Spacing['4xl'],
+    width: 80,
+    height: 80,
     borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: DesignTokens.spacing[5],
+    marginBottom: 20,
   },
   emptyIconText: {
-    fontSize: DesignTokens.typography.sizes['3xl'],
+    fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "800",
     color: colors.textInverse,
   },
@@ -592,7 +591,7 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.xl,
     fontWeight: "700",
     color: DesignTokens.colors.neutral[900],
-    marginBottom: Spacing.sm,
+    marginBottom: 8,
     textAlign: "center",
   },
   emptySubtitle: {
@@ -600,17 +599,17 @@ const useStyles = createStyles((colors) => ({
     color: DesignTokens.colors.neutral[500],
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: Spacing.xl,
+    marginBottom: 32,
   },
   suggestions: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    gap: Spacing.sm,
+    gap: 8,
   },
   suggestionChip: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     borderWidth: 1,
@@ -623,7 +622,7 @@ const useStyles = createStyles((colors) => ({
   },
   messageWrapper: {
     flexDirection: "row",
-    marginBottom: Spacing.md,
+    marginBottom: 16,
     alignItems: "flex-end",
   },
   userMessageWrapper: {
@@ -633,12 +632,12 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "flex-start",
   },
   assistantAvatar: {
-    width: Spacing.xl,
-    height: Spacing.xl,
+    width: 32,
+    height: 32,
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: Spacing.sm,
+    marginRight: 8,
   },
   assistantAvatarText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -647,8 +646,8 @@ const useStyles = createStyles((colors) => ({
   },
   messageBubble: {
     maxWidth: "75%",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderRadius: 18,
   },
   wideBubble: {
@@ -675,7 +674,7 @@ const useStyles = createStyles((colors) => ({
   loadingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: 8,
   },
   loadingText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -684,8 +683,8 @@ const useStyles = createStyles((colors) => ({
   photoPrompt: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 16,
-    padding: Spacing.md,
-    marginVertical: Spacing.sm,
+    padding: 16,
+    marginVertical: 8,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
@@ -694,12 +693,12 @@ const useStyles = createStyles((colors) => ({
     fontWeight: "500",
     color: DesignTokens.colors.neutral[800],
     textAlign: "center",
-    marginBottom: Spacing.md,
+    marginBottom: 16,
   },
   photoButtons: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: Spacing.md,
+    gap: 16,
   },
   photoButton: {
     borderRadius: 12,
@@ -707,7 +706,7 @@ const useStyles = createStyles((colors) => ({
   },
   photoButtonGradient: {
     width: 100,
-    height: Spacing['4xl'],
+    height: 80,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -715,12 +714,12 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.sm,
     fontWeight: "600",
     color: colors.textInverse,
-    marginTop: DesignTokens.spacing['1.5'],
+    marginTop: 6,
   },
   skipPhotoButton: {
-    marginTop: DesignTokens.spacing[3],
+    marginTop: 12,
     alignItems: "center",
-    paddingVertical: Spacing.sm,
+    paddingVertical: 8,
   },
   skipPhotoText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -729,8 +728,8 @@ const useStyles = createStyles((colors) => ({
   generatePrompt: {
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 16,
-    padding: Spacing.md,
-    marginVertical: Spacing.sm,
+    padding: 16,
+    marginVertical: 8,
     alignItems: "center",
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
@@ -739,7 +738,7 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.base,
     color: DesignTokens.colors.neutral[600],
     textAlign: "center",
-    marginBottom: Spacing.md,
+    marginBottom: 16,
     lineHeight: 20,
   },
   generateButton: {
@@ -749,9 +748,9 @@ const useStyles = createStyles((colors) => ({
   generateButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing['3.5'],
-    gap: Spacing.sm,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    gap: 8,
   },
   generateButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
@@ -759,8 +758,8 @@ const useStyles = createStyles((colors) => ({
     color: colors.textInverse,
   },
   inputContainer: {
-    paddingHorizontal: Spacing.md,
-    paddingTop: DesignTokens.spacing[3],
+    paddingHorizontal: 16,
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: DesignTokens.colors.neutral[200],
     backgroundColor: colors.surface,
@@ -770,15 +769,15 @@ const useStyles = createStyles((colors) => ({
     alignItems: "flex-end",
     backgroundColor: DesignTokens.colors.neutral[50],
     borderRadius: 24,
-    paddingLeft: Spacing.sm,
-    paddingRight: Spacing.xs,
-    paddingVertical: Spacing.xs,
+    paddingLeft: 8,
+    paddingRight: 4,
+    paddingVertical: 4,
     borderWidth: 1,
     borderColor: DesignTokens.colors.neutral[200],
   },
   attachButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -788,12 +787,12 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.md,
     color: DesignTokens.colors.neutral[900],
     maxHeight: 100,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.sm,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
   },
   voiceButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -802,14 +801,14 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.primary + "20",
   },
   sendButton: {
-    marginLeft: Spacing.xs,
+    marginLeft: 4,
   },
   sendButtonDisabled: {
     opacity: 0.5,
   },
   sendButtonGradient: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
@@ -832,8 +831,8 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing[4],
+    gap: 12,
+    paddingVertical: 18,
     borderBottomWidth: 1,
     borderBottomColor: DesignTokens.colors.neutral[200],
   },
@@ -844,9 +843,9 @@ const useStyles = createStyles((colors) => ({
   },
   photoOptionCancel: {
     borderBottomWidth: 0,
-    marginTop: Spacing.sm,
+    marginTop: 8,
     backgroundColor: DesignTokens.colors.neutral[100],
-    marginHorizontal: Spacing.md,
+    marginHorizontal: 16,
     borderRadius: 12,
   },
   photoOptionCancelText: {
@@ -854,4 +853,4 @@ const useStyles = createStyles((colors) => ({
     color: DesignTokens.colors.neutral[500],
     fontWeight: "600",
   },
-}))
+}));

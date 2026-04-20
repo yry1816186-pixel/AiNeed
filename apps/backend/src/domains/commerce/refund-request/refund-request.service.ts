@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
-  Injectable,
-  Logger,
-  NotFoundException,
-  BadRequestException,
-} from "@nestjs/common";
+import { Injectable, Logger, NotFoundException, BadRequestException } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { RefundType, RefundRequestStatus, OrderStatus } from '../../../types/prisma-enums';
+import { RefundType, RefundRequestStatus, OrderStatus } from "@/types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { PaymentService } from "../payment/payment.service";
@@ -20,7 +15,7 @@ export class RefundRequestService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: EventEmitter2
   ) {}
 
   /**
@@ -69,15 +64,21 @@ export class RefundRequestService {
     const existingRefunds = await this.prisma.refundRequest.findMany({
       where: {
         orderId: dto.orderId,
-        status: { in: [RefundRequestStatus.PENDING, RefundRequestStatus.APPROVED, RefundRequestStatus.PROCESSING, RefundRequestStatus.COMPLETED] },
+        status: {
+          in: [
+            RefundRequestStatus.PENDING,
+            RefundRequestStatus.APPROVED,
+            RefundRequestStatus.PROCESSING,
+            RefundRequestStatus.COMPLETED,
+          ],
+        },
       },
       select: { amount: true },
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const totalRefunded = existingRefunds.reduce((sum: number, r: any) => sum + Number(r.amount), 0);
+    const totalRefunded = existingRefunds.reduce((sum, r) => sum + Number(r.amount), 0);
     if (totalRefunded + amount > Number(order.finalAmount)) {
       throw new BadRequestException(
-        `退款金额超出订单支付金额，订单金额: ¥${order.finalAmount}，已退款: ¥${totalRefunded.toFixed(2)}，本次申请: ¥${amount.toFixed(2)}`,
+        `退款金额超出订单支付金额，订单金额: ¥${order.finalAmount}，已退款: ¥${totalRefunded.toFixed(2)}，本次申请: ¥${amount.toFixed(2)}`
       );
     }
 
@@ -85,7 +86,7 @@ export class RefundRequestService {
       data: {
         orderId: dto.orderId,
         userId,
-        type: dto.type as unknown as RefundType,
+        type: dto.type as RefundType,
         reason: dto.reason,
         description: dto.description,
         images: dto.images ?? [],
@@ -147,11 +148,7 @@ export class RefundRequestService {
   /**
    * Add tracking number for return-refund (user action after approval).
    */
-  async addTrackingNumber(
-    refundRequestId: string,
-    userId: string,
-    trackingNumber: string,
-  ) {
+  async addTrackingNumber(refundRequestId: string, userId: string, trackingNumber: string) {
     const request = await this.prisma.refundRequest.findUnique({
       where: { id: refundRequestId },
     });
@@ -217,15 +214,16 @@ export class RefundRequestService {
 
     if (orderWithItems && orderWithItems.items.length > 0) {
       await this.prisma.$transaction(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        orderWithItems.items.map((item: any) =>
+        orderWithItems.items.map((item) =>
           this.prisma.clothingItem.update({
             where: { id: item.itemId },
             data: { stock: { increment: item.quantity } },
-          }),
-        ),
+          })
+        )
       );
-      this.logger.log(`Stock restored for order ${request.orderId} after refund ${refundRequestId}`);
+      this.logger.log(
+        `Stock restored for order ${request.orderId} after refund ${refundRequestId}`
+      );
     }
 
     const updated = await this.prisma.refundRequest.update({

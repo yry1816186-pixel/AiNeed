@@ -2,13 +2,6 @@
 import { Injectable } from "@nestjs/common";
 import { BodyType, FaceShape, SkinTone } from "../../../../types/prisma-enums";
 
-export interface UserProfileLike {
-  faceShape?: FaceShape;
-  bodyType?: BodyType;
-  height?: number;
-  skinTone?: SkinTone;
-}
-
 export interface AccessoryRecommendation {
   category: string;
   suggestions: string[];
@@ -20,9 +13,7 @@ export class AccessoryRecommendationService {
   /**
    * 配饰推荐
    */
-  async recommendAccessories(
-    profile: Partial<UserProfileLike>,
-  ): Promise<AccessoryRecommendation[]> {
+  async recommendAccessories(profile: Partial<UserProfile>): Promise<AccessoryRecommendation[]> {
     const recommendations: AccessoryRecommendation[] = [];
 
     // 基于脸型推荐眼镜
@@ -73,7 +64,7 @@ export class AccessoryRecommendationService {
       oblong: ["大框", "飞行员款", "圆形框", "宽框"],
       diamond: ["椭圆形", "猫眼款", "无框", "柔和线条"],
     };
-    return glassesMap[shape] || glassesMap.oval!;
+    return glassesMap[shape] ?? glassesMap.oval;
   }
 
   private getBagByBodyType(bodyType: BodyType, height: number): string[] {
@@ -110,7 +101,7 @@ export class AccessoryRecommendationService {
       tan: ["金色", "古铜色", "深色宝石", "珊瑚色"],
       dark: ["金色", "古铜色", "大胆设计", "彩色宝石"],
     };
-    return jewelryMap[tone] ?? jewelryMap.medium!;
+    return jewelryMap[tone] ?? jewelryMap.medium;
   }
 
   private getScarfByHeight(height: number): string[] {

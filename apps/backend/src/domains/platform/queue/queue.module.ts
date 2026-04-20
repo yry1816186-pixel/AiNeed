@@ -1,23 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BullModule } from '@nestjs/bullmq';
-import { Module, Logger } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { BullModule } from "@nestjs/bullmq";
+import { Module, Logger } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 import { GatewayModule } from "../../../common/gateway/gateway.module";
 import { AIModule } from "../../ai-core/ai/ai.module";
 
-import { QueueName } from './queue-config';
-import { QueueMonitorService } from './queue-monitor.service';
-import { QueueController } from './queue.controller';
-import {
-  QueueProcessor,
-  StyleAnalysisProcessor,
-  WardrobeMatchProcessor,
-} from './queue.processor';
-import { QueueService } from './queue.service';
+import { QueueName } from "./queue-config";
+import { QueueMonitorService } from "./queue-monitor.service";
+import { QueueController } from "./queue.controller";
+import { QueueProcessor, StyleAnalysisProcessor, WardrobeMatchProcessor } from "./queue.processor";
+import { QueueService } from "./queue.service";
 
-
-const logger = new Logger('QueueModule');
+const logger = new Logger("QueueModule");
 
 @Module({
   imports: [
@@ -28,22 +23,22 @@ const logger = new Logger('QueueModule');
     BullModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        const redisUrl = configService.get<string>('REDIS_URL', 'redis://localhost:6379');
+        const redisUrl = configService.get<string>("REDIS_URL", "redis://localhost:6379");
         // Parse Redis URL if it's in the format redis://host:port
-        let host = 'localhost';
+        let host = "localhost";
         let port = 6379;
         let password: string | undefined;
 
         try {
           const url = new URL(redisUrl);
-          host = url.hostname || 'localhost';
+          host = url.hostname || "localhost";
           port = parseInt(url.port) || 6379;
           password = url.password || undefined;
         } catch (error) {
           // If URL parsing fails, use defaults
           const errorMessage = error instanceof Error ? error.message : String(error);
           logger.warn(
-            `Failed to parse REDIS_URL '${redisUrl}': ${errorMessage}. Using default connection settings (localhost:6379).`,
+            `Failed to parse REDIS_URL '${redisUrl}': ${errorMessage}. Using default connection settings (localhost:6379).`
           );
         }
 
@@ -56,7 +51,7 @@ const logger = new Logger('QueueModule');
           defaultJobOptions: {
             attempts: 3,
             backoff: {
-              type: 'exponential',
+              type: "exponential",
               delay: 1000,
             },
             removeOnComplete: {
@@ -83,7 +78,7 @@ const logger = new Logger('QueueModule');
       { name: QueueName.AI_GENERATION },
       { name: QueueName.NOTIFICATION },
       { name: QueueName.DATA_EXPORT },
-      { name: QueueName.CONTENT_MODERATION },
+      { name: QueueName.CONTENT_MODERATION }
     ),
   ],
   controllers: [QueueController],

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { PhotoType } from '../../../../types/prisma-enums';
+import { PhotoType } from "../../../../types/prisma-enums";
 import { Type } from "class-transformer";
 import {
   IsEnum,
@@ -32,7 +32,13 @@ export class GetAlternativesQueryDto {
   @Min(0, { message: "单品索引不能为负数" })
   itemIndex!: number;
 
-  @ApiPropertyOptional({ description: "返回数量上限", example: 10, minimum: 1, maximum: 50, default: 10 })
+  @ApiPropertyOptional({
+    description: "返回数量上限",
+    example: 10,
+    minimum: 1,
+    maximum: 50,
+    default: 10,
+  })
   @IsOptional()
   @Type(() => Number)
   @IsNumber({}, { message: "limit 必须是数字" })
@@ -65,34 +71,34 @@ export class ReplaceItemDto {
  * 创建 AI 造型师会话 DTO
  */
 export class CreateStylistSessionDto {
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     example: "interview",
     description: "入口场景，如：interview(面试)、date(约会)、party(派对)、daily(日常)",
-    maxLength: 50
+    maxLength: 50,
   })
   @IsOptional()
   @IsString({ message: "入口场景必须是字符串" })
   @MaxLength(50, { message: "入口场景长度不能超过50个字符" })
   entry?: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     example: "准备面试穿搭",
     description: "用户目标，描述用户想要达成的造型目标",
-    maxLength: 200
+    maxLength: 200,
   })
   @IsOptional()
   @IsString({ message: "目标必须是字符串" })
   @MaxLength(200, { message: "目标长度不能超过200个字符" })
   goal?: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     description: "上下文信息，包含用户的偏好、体型、场合等额外信息",
     example: {
       bodyType: "slim",
       preferredStyle: "business",
       budget: "medium",
-      season: "spring"
-    }
+      season: "spring",
+    },
   })
   @IsOptional()
   @IsObject({ message: "上下文必须是一个对象" })
@@ -103,21 +109,21 @@ export class CreateStylistSessionDto {
  * 发送 AI 造型师消息 DTO
  */
 export class SendStylistMessageDto {
-  @ApiProperty({ 
+  @ApiProperty({
     example: "我下周有一个重要的面试，需要一套正式的穿搭建议",
     description: "用户发送给 AI 造型师的消息内容",
     minLength: 1,
-    maxLength: 2000
+    maxLength: 2000,
   })
   @IsString({ message: "消息内容必须是字符串" })
   @MinLength(1, { message: "消息内容不能为空" })
   @MaxLength(2000, { message: "消息长度不能超过2000个字符" })
   message!: string;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     description: "附加的照片 ID 列表",
     type: [String],
-    example: ["uuid-1", "uuid-2"]
+    example: ["uuid-1", "uuid-2"],
   })
   @IsOptional()
   @IsArray({ message: "照片 ID 列表必须是数组" })
@@ -147,19 +153,19 @@ export class SendStylistMessageDto {
  * 上传 AI 造型师照片 DTO
  */
 export class UploadStylistPhotoDto {
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     enum: PhotoType,
     description: "照片类型：full_body-全身照、half_body-半身照、face-面部照、outfit-穿搭照",
-    example: PhotoType.full_body
+    example: PhotoType.full_body,
   })
   @IsOptional()
   @IsEnum(PhotoType, { message: "照片类型必须是有效的 PhotoType 枚举值" })
   type?: PhotoType;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     example: "我的日常穿搭照片",
     description: "照片描述",
-    maxLength: 200
+    maxLength: 200,
   })
   @IsOptional()
   @IsString({ message: "描述必须是字符串" })
@@ -171,9 +177,9 @@ export class UploadStylistPhotoDto {
  * 附加照片到会话 DTO
  */
 export class AttachStylistPhotoDto {
-  @ApiProperty({ 
+  @ApiProperty({
     description: "要附加的照片 ID",
-    example: "123e4567-e89b-12d3-a456-426614174000"
+    example: "123e4567-e89b-12d3-a456-426614174000",
   })
   @IsUUID("4", { message: "照片 ID 必须是有效的 UUID v4" })
   @MaxLength(191, { message: "照片 ID 长度不能超过191个字符" })
@@ -184,11 +190,11 @@ export class AttachStylistPhotoDto {
  * 会话查询参数 DTO
  */
 export class GetSessionsQueryDto {
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     description: "页码，从 1 开始",
     example: 1,
     minimum: 1,
-    default: 1
+    default: 1,
   })
   @IsOptional()
   @Type(() => Number)
@@ -196,12 +202,12 @@ export class GetSessionsQueryDto {
   @Min(1, { message: "页码最小为 1" })
   page?: number = 1;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     description: "每页数量",
     example: 20,
     minimum: 1,
     maximum: 100,
-    default: 20
+    default: 20,
   })
   @IsOptional()
   @Type(() => Number)
@@ -210,10 +216,10 @@ export class GetSessionsQueryDto {
   @Max(100, { message: "每页数量最大为 100" })
   limit?: number = 20;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     description: "是否只返回活跃会话",
     example: true,
-    default: false
+    default: false,
   })
   @IsOptional()
   @Type(() => Boolean)
@@ -224,21 +230,21 @@ export class GetSessionsQueryDto {
  * 会话评分 DTO
  */
 export class RateSessionDto {
-  @ApiProperty({ 
+  @ApiProperty({
     description: "会话评分，1-5 星",
     example: 5,
     minimum: 1,
-    maximum: 5
+    maximum: 5,
   })
   @IsNumber({}, { message: "评分必须是数字" })
   @Min(1, { message: "评分最小为 1" })
   @Max(5, { message: "评分最大为 5" })
   rating!: number;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     description: "评分反馈",
     example: "非常有用的建议！",
-    maxLength: 500
+    maxLength: 500,
   })
   @IsOptional()
   @IsString({ message: "反馈必须是字符串" })
@@ -334,14 +340,14 @@ export class SubmitFeedbackDto {
 
   @ApiPropertyOptional({
     enum: ["too_expensive", "not_suitable", "wrong_color", "wrong_style", "other"],
-    description: "不喜欢原因：too_expensive(太贵)、not_suitable(不适合)、wrong_color(颜色不对)、wrong_style(风格不符)、other(其他)",
+    description:
+      "不喜欢原因：too_expensive(太贵)、not_suitable(不适合)、wrong_color(颜色不对)、wrong_style(风格不符)、other(其他)",
   })
   @IsOptional()
   @IsString({ message: "不喜欢原因必须是字符串" })
-  @IsIn(
-    ["too_expensive", "not_suitable", "wrong_color", "wrong_style", "other"],
-    { message: "不喜欢原因必须是有效枚举值" },
-  )
+  @IsIn(["too_expensive", "not_suitable", "wrong_color", "wrong_style", "other"], {
+    message: "不喜欢原因必须是有效枚举值",
+  })
   dislikeReason?: string;
 
   @ApiPropertyOptional({

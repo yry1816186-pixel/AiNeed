@@ -7,14 +7,13 @@ import Animated, {
   withTiming,
   withDelay,
 } from "react-native-reanimated";
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 export const TypingIndicator: React.FC = () => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   const dot1Y = useSharedValue(0);
   const dot2Y = useSharedValue(0);
   const dot3Y = useSharedValue(0);
@@ -45,16 +44,16 @@ const useStyles = createStyles((colors) => ({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-    paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: Spacing.sm,
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   dot: {
-    width: Spacing.sm,
-    height: Spacing.sm,
+    width: 8,
+    height: 8,
     borderRadius: 4,
     backgroundColor: colors.primary,
   },
-}))
+}));
 
 export default TypingIndicator;

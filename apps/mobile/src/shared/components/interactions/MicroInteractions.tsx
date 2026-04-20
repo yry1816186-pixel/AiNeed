@@ -4,7 +4,8 @@ import React, {
   useCallback,
   forwardRef,
   useImperativeHandle,
-  useState} from "react";
+  useState,
+} from "react";
 import {
   View,
   Text,
@@ -15,7 +16,8 @@ import {
   ViewStyle,
   TextStyle,
   Platform,
-  LayoutChangeEvent} from "react-native";
+  LayoutChangeEvent,
+} from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 
 import * as Haptics from "@/src/polyfills/expo-haptics";
@@ -33,12 +35,14 @@ import {
   Easing,
   runOnJS,
   cancelAnimation,
-  useAnimatedRef} from "react-native-reanimated";
+  useAnimatedRef,
+} from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { Colors, Spacing } from '../../../design-system/theme';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
+import { Colors } from "../../../design-system/theme";
+import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -48,12 +52,14 @@ const AnimatedPressable = AnimatedReanimated.createAnimatedComponent(Pressable);
 const springConfig = {
   damping: 15,
   stiffness: 200,
-  mass: 0.5};
+  mass: 0.5,
+};
 
 const bounceSpringConfig = {
   damping: 8,
   stiffness: 300,
-  mass: 0.3};
+  mass: 0.3,
+};
 
 export interface RippleEffectProps {
   color?: string;
@@ -80,8 +86,6 @@ interface RippleCircleProps {
 }
 
 const RippleCircle: React.FC<RippleCircleProps> = ({ color, duration, onComplete, ripple }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -98,7 +102,8 @@ const RippleCircle: React.FC<RippleCircleProps> = ({ color, duration, onComplete
       { translateY: ripple.y },
       { scale: interpolate(progress.value, [0, 1], [0, 4]) },
     ],
-    opacity: interpolate(progress.value, [0, 0.5, 1], [0.5, 0.3, 0])}));
+    opacity: interpolate(progress.value, [0, 0.5, 1], [0.5, 0.3, 0]),
+  }));
 
   return (
     <AnimatedView
@@ -116,7 +121,8 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   onPress,
   onLongPress,
   enableHaptic = true,
-  hapticStyle = "light"}) => {
+  hapticStyle = "light",
+}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [ripples, setRipples] = useState<Ripple[]>([]);
@@ -208,7 +214,8 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   const composedGesture = Gesture.Race(gesture, longPressGesture);
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }]}));
+    transform: [{ scale: scale.value }],
+  }));
 
   return (
     <GestureDetector gesture={composedGesture}>
@@ -247,8 +254,9 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   onPress,
   magneticStrength = 0.3,
   enableHaptic = true,
-  glowColor = Colors.primary[500],
-  enableGlow = true}) => {
+  glowColor = colors.primary[500],
+  enableGlow = true,
+}) => {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const scale = useSharedValue(1);
@@ -297,14 +305,16 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
       { translateY: translateY.value },
       { scale: scale.value },
       { rotateZ: `${rotation.value}deg` },
-    ]}));
+    ],
+  }));
 
   const glowAnimatedStyle = useAnimatedStyle(() => ({
     shadowColor: glowColor,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: interpolate(glowIntensity.value, [0, 1], [0, 0.6]),
     shadowRadius: interpolate(glowIntensity.value, [0, 1], [0, 25]),
-    elevation: interpolate(glowIntensity.value, [0, 1], [0, 15])}));
+    elevation: interpolate(glowIntensity.value, [0, 1], [0, 15]),
+  }));
 
   return (
     <GestureDetector gesture={gesture}>
@@ -330,7 +340,8 @@ export const BounceCard: React.FC<BounceCardProps> = ({
   onPress,
   bounceIntensity = "medium",
   enable3D = true,
-  perspective = 1000}) => {
+  perspective = 1000,
+}) => {
   const scale = useSharedValue(1);
   const rotateX = useSharedValue(0);
   const rotateY = useSharedValue(0);
@@ -340,7 +351,8 @@ export const BounceCard: React.FC<BounceCardProps> = ({
   const intensityMap = {
     light: { scale: 0.98, rotation: 3 },
     medium: { scale: 0.95, rotation: 8 },
-    heavy: { scale: 0.92, rotation: 15 }};
+    heavy: { scale: 0.92, rotation: 15 },
+  };
 
   const config = intensityMap[bounceIntensity];
 
@@ -412,7 +424,8 @@ export const BounceCard: React.FC<BounceCardProps> = ({
         { scale: scale.value },
         { rotateX: `${rotateX.value}deg` },
         { rotateY: `${rotateY.value}deg` },
-      ]};
+      ],
+    };
   });
 
   return (
@@ -449,9 +462,8 @@ export const SwipeAction: React.FC<SwipeActionProps> = ({
   rightActions = [],
   swipeThreshold = 100,
   onSwipeLeft,
-  onSwipeRight}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  onSwipeRight,
+}) => {
   const translateX = useSharedValue(0);
   const actionOpacity = useSharedValue(0);
   const _activeAction = useSharedValue<string | null>(null);
@@ -484,15 +496,18 @@ export const SwipeAction: React.FC<SwipeActionProps> = ({
     });
 
   const contentAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }]}));
+    transform: [{ translateX: translateX.value }],
+  }));
 
   const leftActionStyle = useAnimatedStyle(() => ({
     opacity: interpolate(translateX.value, [0, swipeThreshold], [0, 1]),
-    transform: [{ translateX: interpolate(translateX.value, [-100, 0], [0, -100]) }]}));
+    transform: [{ translateX: interpolate(translateX.value, [-100, 0], [0, -100]) }],
+  }));
 
   const rightActionStyle = useAnimatedStyle(() => ({
     opacity: interpolate(translateX.value, [-swipeThreshold, 0], [1, 0]),
-    transform: [{ translateX: interpolate(translateX.value, [0, 100], [100, 0]) }]}));
+    transform: [{ translateX: interpolate(translateX.value, [0, 100], [100, 0]) }],
+  }));
 
   return (
     <View style={[styles.swipeContainer, style]}>
@@ -548,9 +563,8 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
   refreshing = false,
   style,
   headerHeight = 80,
-  renderHeader}) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  renderHeader,
+}) => {
   const translateY = useSharedValue(0);
   const progress = useSharedValue(0);
   const isRefreshing = useSharedValue(false);
@@ -609,15 +623,17 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
     });
 
   const contentAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }]}));
+    transform: [{ translateY: translateY.value }],
+  }));
 
   const spinnerAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotateZ: `${rotation.value}deg` }]}));
+    transform: [{ rotateZ: `${rotation.value}deg` }],
+  }));
 
   const defaultHeader = (prog: number) => (
     <View style={styles.refreshHeader}>
       <AnimatedView style={spinnerAnimatedStyle}>
-        <Ionicons name="refresh" size={28} color={Colors.primary[500]} />
+        <Ionicons name="refresh" size={28} color={colors.primary[500]} />
       </AnimatedView>
       <Text style={styles.refreshText}>
         {refreshing ? "刷新中..." : prog > 0.5 ? "松开刷新" : "下拉刷新"}
@@ -654,7 +670,8 @@ export const LongPressDrag: React.FC<LongPressDragProps> = ({
   onDragStart,
   onDragEnd,
   onPositionChange,
-  dragDisabled = false}) => {
+  dragDisabled = false,
+}) => {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const scale = useSharedValue(1);
@@ -693,7 +710,8 @@ export const LongPressDrag: React.FC<LongPressDragProps> = ({
       if (onPositionChange) {
         runOnJS(onPositionChange)({
           x: event.translationX,
-          y: event.translationY});
+          y: event.translationY,
+        });
       }
     })
     .onEnd((event) => {
@@ -726,7 +744,8 @@ export const LongPressDrag: React.FC<LongPressDragProps> = ({
       { scale: scale.value },
     ],
     opacity: opacity.value,
-    zIndex: zIndex.value}));
+    zIndex: zIndex.value,
+  }));
 
   return (
     <GestureDetector gesture={composedGesture}>
@@ -750,7 +769,8 @@ export const PinchZoom: React.FC<PinchZoomProps> = ({
   minScale = 0.5,
   maxScale = 3,
   onScaleChange,
-  onDoubleTap}) => {
+  onDoubleTap,
+}) => {
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
   const translateX = useSharedValue(0);
@@ -831,7 +851,8 @@ export const PinchZoom: React.FC<PinchZoomProps> = ({
       { translateX: translateX.value },
       { translateY: translateY.value },
       { scale: scale.value },
-    ]}));
+    ],
+  }));
 
   return (
     <GestureDetector gesture={composedGesture}>
@@ -849,6 +870,7 @@ export interface HapticFeedbackProps {
 }
 
 export const useHapticFeedback = () => {
+  const { colors } = useTheme();
   const impact = useCallback(
     (style: Haptics.ImpactFeedbackStyle = Haptics.ImpactFeedbackStyle.Medium) => {
       Haptics.impactAsync(style);
@@ -872,58 +894,71 @@ export const useHapticFeedback = () => {
 
 const useStyles = createStyles((colors) => ({
   rippleContainer: {
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   ripple: {
     position: "absolute",
     width: 100,
     height: 100,
     borderRadius: 50,
     top: -50,
-    left: -50},
+    left: -50,
+  },
   swipeContainer: {
     position: "relative",
-    overflow: "hidden"},
+    overflow: "hidden",
+  },
   actionsContainer: {
     ...StyleSheet.absoluteFillObject,
-    flexDirection: "row"},
+    flexDirection: "row",
+  },
   leftActions: {
     position: "absolute",
     left: 0,
     top: 0,
     bottom: 0,
-    flexDirection: "row"},
+    flexDirection: "row",
+  },
   rightActions: {
     position: "absolute",
     right: 0,
     top: 0,
     bottom: 0,
-    flexDirection: "row"},
+    flexDirection: "row",
+  },
   actionButton: {
     width: 75,
     height: "100%",
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   actionLabel: {
     fontSize: DesignTokens.typography.sizes.xs,
     color: colors.textInverse,
-    marginTop: Spacing.xs,
-    fontWeight: "500"},
+    marginTop: 4,
+    fontWeight: "500",
+  },
   pullContainer: {
-    flex: 1},
+    flex: 1,
+  },
   headerContainer: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   refreshHeader: {
     alignItems: "center",
-    justifyContent: "center"},
+    justifyContent: "center",
+  },
   refreshText: {
-    marginTop: Spacing.sm,
+    marginTop: 8,
     fontSize: DesignTokens.typography.sizes.sm,
-    color: Colors.neutral[500]}}))
+    color: colors.neutral[500],
+  },
+}));
 
 export default {
   RippleEffect,
@@ -933,4 +968,5 @@ export default {
   PullToRefresh,
   LongPressDrag,
   PinchZoom,
-  useHapticFeedback};
+  useHapticFeedback,
+};

@@ -1,29 +1,21 @@
-import React from "react";
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ViewStyle,
-  ActivityIndicator,
-} from "react-native";
+﻿import React from "react";
+import { TouchableOpacity, Text, StyleSheet, ViewStyle, ActivityIndicator } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Spacing } from '../theme';
-import { DesignTokens } from '../../design-system/theme/tokens/design-tokens';
-import { useTheme, createStyles } from '../../shared/contexts/ThemeContext';
-import { Colors,
+import { flatColors as colors } from "../theme";
+
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+
+// 引入主题令牌
+import {
+  Colors,
   Typography as ThemeTypography,
   Spacing as ThemeSpacing,
   BorderRadius as ThemeBorderRadius,
   Shadows as ThemeShadows,
-  SpringConfigs } from '../../design-system/theme';
-
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
-
+  DesignTokens,
+  SpringConfigs,
+} from "../../design-system/theme";
 
 interface GradientButtonProps {
   title: string;
@@ -59,7 +51,6 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
   fullWidth = true,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const { seasonAccent } = useTheme();
 
@@ -69,29 +60,29 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
   // 渐变配色映射 - 统一使用品牌色体系
   // primary 变体在有季节强调色时使用季节渐变
   const gradientColors: Record<string, [string, string]> = {
-    primary: seasonAccent?.gradient ?? [Colors.primary[400], Colors.primary[600]],
+    primary: seasonAccent?.gradient ?? [colors.primary[400], colors.primary[600]],
     secondary: [Colors.sage[400], Colors.sage[600]],
-    success: [Colors.success[400], Colors.success[600]],
+    success: [colors.success[400], colors.success[600]],
     ocean: [Colors.sky[400], Colors.sky[600]],
   };
 
   // 尺寸配置
   const sizeConfig = {
     small: {
-      paddingVertical: DesignTokens.spacing['2.5'],
-      paddingHorizontal: Spacing.md,
+      paddingVertical: 10,
+      paddingHorizontal: 16,
       fontSize: ThemeTypography.sizes.sm,
       borderRadius: ThemeBorderRadius.lg,
     },
     medium: {
-      paddingVertical: DesignTokens.spacing['3.5'],
-      paddingHorizontal: DesignTokens.spacing[5],
+      paddingVertical: 14,
+      paddingHorizontal: 20,
       fontSize: ThemeTypography.sizes.base,
       borderRadius: ThemeBorderRadius.xl,
     },
     large: {
-      paddingVertical: Spacing.md,
-      paddingHorizontal: Spacing.lg,
+      paddingVertical: 16,
+      paddingHorizontal: 24,
       fontSize: ThemeTypography.sizes.lg,
       borderRadius: ThemeBorderRadius.xl,
     },
@@ -104,6 +95,7 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
 
   // 处理按压事件
   const handlePressIn = () => {
+    const { colors } = useTheme();
     if (!disabled && !loading) {
       scaleValue.value = withSpring(0.95, SpringConfigs.snappy);
     }
@@ -135,7 +127,13 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
             <ActivityIndicator size="small" color={colors.textInverse} />
           ) : (
             <>
-              {icon && <Ionicons name={icon} size={size === "small" ? 18 : 20} color={colors.textInverse} />}
+              {icon && (
+                <Ionicons
+                  name={icon}
+                  size={size === "small" ? 18 : 20}
+                  color={colors.textInverse}
+                />
+              )}
               <Text style={[styles.title, { fontSize: sizeConfig[size].fontSize }]}>{title}</Text>
             </>
           )}
@@ -154,7 +152,7 @@ const useStyles = createStyles((colors) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: Spacing.sm,
+    gap: 8,
   },
   title: {
     fontWeight: ThemeTypography.fontWeights.bold,
@@ -166,6 +164,6 @@ const useStyles = createStyles((colors) => ({
   disabled: {
     opacity: 0.5,
   },
-}))
+}));
 
 export default GradientButton;

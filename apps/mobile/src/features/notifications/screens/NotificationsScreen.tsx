@@ -1,4 +1,4 @@
-﻿﻿import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,20 +9,19 @@ import {
   Alert,
   Image,
 } from "react-native";
-import { Snackbar } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { Snackbar } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@/src/polyfills/expo-vector-icons';
-import { useNotificationStore } from '../stores/notificationStore';
-import { useTranslation } from '../../../i18n';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
-import { DesignTokens } from '../../../design-system/theme/tokens/design-tokens';
-import { flatColors as colors, Spacing } from '../../../design-system/theme';
-import type { RootStackParamList } from '../../../types/navigation';
-import type { NotificationItem } from '../../../services/api/notification.api';
-import { wsService } from '../../../services/websocket';
-
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@/src/polyfills/expo-vector-icons";
+import { useNotificationStore } from "../stores/notificationStore";
+import { useTranslation } from "../../../i18n";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import type { RootStackParamList } from "../../../types/navigation";
+import type { NotificationItem } from "../../../services/api/notification.api";
+import { wsService } from "../../../services/websocket";
+import { flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -37,10 +36,10 @@ const CATEGORY_TABS: { key: NotificationCategory; label: string }[] = [
 ];
 
 const NOTIFICATION_ICONS: Record<string, { icon: string; color: string }> = {
-  order: { icon: "bag-outline", color: DesignTokens.colors.brand.terracotta },
+  order: { icon: "bag-outline", color: DesignTokens.colors.brand.primary },
   recommendation: { icon: "sparkles-outline", color: colors.warning },
   community: { icon: "people-outline", color: colors.success },
-  system: { icon: "information-circle-outline", color: colors.neutral[500] },
+  system: { icon: "information-circle-outline", color: DesignTokens.colors.brand.slate },
 };
 
 // Social notification type config for rendering
@@ -48,7 +47,7 @@ const SOCIAL_NOTIFICATION_CONFIG: Record<string, { icon: string; color: string; 
   like: { icon: "heart", color: colors.error, label: "赞了你的帖子" },
   comment: { icon: "chatbubble", color: colors.success, label: "评论了你的帖子" },
   bookmark: { icon: "bookmark", color: colors.warning, label: "收藏了你的帖子" },
-  new_follower: { icon: "person-add", color: colors.neutral[500], label: "关注了你" },
+  new_follower: { icon: "person-add", color: DesignTokens.colors.brand.slate, label: "关注了你" },
   reply_mention: { icon: "at", color: colors.info, label: "回复了你" },
 };
 
@@ -98,6 +97,7 @@ const formatTime = (dateStr: string): string => {
 };
 
 export const NotificationsScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const t = useTranslation();
   const {
@@ -112,8 +112,8 @@ export const NotificationsScreen: React.FC = () => {
     deleteNotification,
     setCurrentCategory,
   } = useNotificationStore();
-  const error = useNotificationStore(state => state.error);
-  const clearError = useNotificationStore(state => state.clearError);
+  const error = useNotificationStore((state) => state.error);
+  const clearError = useNotificationStore((state) => state.clearError);
 
   useEffect(() => {
     void fetchNotifications(true);
@@ -224,7 +224,8 @@ export const NotificationsScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
-          {t.notifications.title}{unreadCount > 0 ? ` (${unreadCount})` : ""}
+          {t.notifications.title}
+          {unreadCount > 0 ? ` (${unreadCount})` : ""}
         </Text>
         <View style={styles.placeholder} />
       </View>
@@ -354,7 +355,7 @@ export const NotificationsScreen: React.FC = () => {
           {!hasMore && notifications.length > 0 && (
             <Text style={styles.endText}>No more notifications</Text>
           )}
-          <View style={{ height: DesignTokens.spacing[5] }} />
+          <View style={{ height: 20 }} />
         </ScrollView>
       )}
 
@@ -362,7 +363,7 @@ export const NotificationsScreen: React.FC = () => {
         visible={!!error}
         onDismiss={clearError}
         duration={3000}
-        action={{ label: '关闭', onPress: clearError }}
+        action={{ label: "关闭", onPress: clearError }}
       >
         {error}
       </Snackbar>
@@ -376,36 +377,40 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: DesignTokens.spacing[5],
+    padding: 20,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   backButton: {
-    width: DesignTokens.spacing[10],
-    height: DesignTokens.spacing[10],
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: DesignTokens.colors.neutral[100],
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: { fontSize: DesignTokens.typography.sizes.lg, fontWeight: "600", color: colors.textPrimary },
-  placeholder: { width: DesignTokens.spacing[10] },
+  headerTitle: {
+    fontSize: DesignTokens.typography.sizes.lg,
+    fontWeight: "600",
+    color: colors.text,
+  },
+  placeholder: { width: 40 },
 
   // Tabs
   tabsContainer: {
     backgroundColor: colors.surface,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
   tab: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: colors.background,
-    marginRight: Spacing.sm,
+    marginRight: 8,
   },
   tabActive: {
     backgroundColor: colors.primary,
@@ -423,15 +428,15 @@ const styles = StyleSheet.create({
   actionBar: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: DesignTokens.spacing[5],
-    paddingVertical: DesignTokens.spacing['2.5'],
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     backgroundColor: colors.surface,
   },
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-    paddingVertical: Spacing.xs,
+    gap: 4,
+    paddingVertical: 4,
   },
   actionText: {
     fontSize: DesignTokens.typography.sizes.sm,
@@ -445,24 +450,24 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: Spacing['3xl'],
+    paddingVertical: 64,
   },
   emptyText: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
     color: colors.textPrimary,
-    marginTop: Spacing.md,
+    marginTop: 16,
   },
   emptySubtext: {
     fontSize: DesignTokens.typography.sizes.base,
     color: colors.textSecondary,
-    marginTop: Spacing.sm,
+    marginTop: 8,
   },
   endText: {
     textAlign: "center",
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
-    paddingVertical: Spacing.md,
+    paddingVertical: 16,
   },
 
   // Notification card
@@ -470,11 +475,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     backgroundColor: colors.surface,
-    marginHorizontal: DesignTokens.spacing[5],
-    marginTop: Spacing.sm,
+    marginHorizontal: 20,
+    marginTop: 8,
     borderRadius: 16,
-    padding: Spacing.md,
-    gap: DesignTokens.spacing[3],
+    padding: 16,
+    gap: 12,
   },
   notificationCardUnread: {
     backgroundColor: colors.backgroundSecondary,
@@ -482,8 +487,8 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.primary,
   },
   notificationIcon: {
-    width: DesignTokens.spacing[11],
-    height: DesignTokens.spacing[11],
+    width: 44,
+    height: 44,
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
@@ -493,14 +498,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
   },
   notificationTitle: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "500",
     color: colors.textSecondary,
     flex: 1,
-    marginRight: Spacing.sm,
+    marginRight: 8,
   },
   notificationTitleUnread: {
     color: colors.textPrimary,
@@ -516,11 +521,11 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   unreadDot: {
-    width: Spacing.sm,
-    height: Spacing.sm,
+    width: 8,
+    height: 8,
     borderRadius: 4,
     backgroundColor: colors.primary,
-    marginTop: DesignTokens.spacing['1.5'],
+    marginTop: 6,
   },
 });
 

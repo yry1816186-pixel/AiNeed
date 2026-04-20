@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿import { create } from "zustand";
+﻿import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -158,8 +158,7 @@ export const useAppStore = create<AppState>()(
       setPushPermission: (granted) =>
         set({ pushPermissionGranted: granted, hasRequestedPushPermission: true }),
 
-      setHasRequestedPushPermission: (requested) =>
-        set({ hasRequestedPushPermission: requested }),
+      setHasRequestedPushPermission: (requested) => set({ hasRequestedPushPermission: requested }),
 
       setAppVersion: (version) => set({ appVersion: version }),
 

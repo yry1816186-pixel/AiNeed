@@ -1,8 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Feather } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens, Spacing } from '../../../design-system/theme';
-import { useTheme, createStyles } from '../../contexts/ThemeContext';
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
+import { useTheme } from "../../contexts/ThemeContext";
 
 interface EmptyStateProps {
   icon?: keyof typeof Feather.glyphMap;
@@ -19,12 +20,12 @@ export function EmptyState({
   actionLabel,
   onAction,
 }: EmptyStateProps) {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
+  const { colors } = useTheme();
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <Feather name={icon} size={64} color={DesignTokens.colors.text.tertiary} />
+        <Feather name={icon} size={64} color="#a1a1aa" />
       </View>
       <Text style={styles.title}>{title}</Text>
       {description && <Text style={styles.description}>{description}</Text>}
@@ -110,28 +111,28 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: DesignTokens.spacing[10],
+    padding: 40,
   },
   iconContainer: {
-    marginBottom: DesignTokens.spacing[5],
+    marginBottom: 20,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.lg,
     fontWeight: "600",
-    color: DesignTokens.colors.text.primary,
-    marginBottom: Spacing.sm,
+    color: "#18181b",
+    marginBottom: 8,
     textAlign: "center",
   },
   description: {
     fontSize: DesignTokens.typography.sizes.base,
-    color: DesignTokens.colors.text.secondary,
+    color: "#71717a",
     textAlign: "center",
-    marginBottom: DesignTokens.spacing[5],
+    marginBottom: 20,
   },
   button: {
     backgroundColor: colors.primary,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: DesignTokens.spacing[3],
+    paddingHorizontal: 24,
+    paddingVertical: 12,
     borderRadius: 8,
   },
   buttonText: {
@@ -139,6 +140,6 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
   },
-}))
+}));
 
 export default EmptyState;
