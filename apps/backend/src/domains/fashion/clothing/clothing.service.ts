@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { ClothingCategory } from '../../../types/prisma-enums';
+import { Prisma } from "@prisma/client";
+import { ClothingCategory } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import {
@@ -10,12 +11,13 @@ import {
 import { CacheKeyBuilder, CACHE_TTL } from "../../../modules/cache/cache.constants";
 import { CacheService } from "../../../modules/cache/cache.service";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ClothingItemWhereInput = Record<string, any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ClothingItemCreateInput = Record<string, any>;
+type ClothingItemWhereInput = Prisma.ClothingItemWhereInput;
+type ClothingItemCreateInput = Prisma.ClothingItemCreateInput;
 type PrismaDecimal = { toString(): string };
-interface DecimalFilter { gte?: number; lte?: number }
+interface DecimalFilter {
+  gte?: number;
+  lte?: number;
+}
 
 export interface BrandSummary {
   id: string;
@@ -136,25 +138,34 @@ type ClothingItemListItem = {
   } | null;
 };
 
-function normalizeClothingItem(item: ClothingItemWithBrandDetail | null): ClothingItemResponse | null {
-  if (!item) {return null;}
+function normalizeClothingItem(
+  item: ClothingItemWithBrandDetail | null
+): ClothingItemResponse | null {
+  if (!item) {
+    return null;
+  }
   return {
     id: item.id,
     name: item.name,
     brandId: item.brandId,
-    brand: item.brand ? {
-      id: item.brand.id,
-      name: item.brand.name,
-      logo: item.brand.logo,
-    } : null,
+    brand: item.brand
+      ? {
+          id: item.brand.id,
+          name: item.brand.name,
+          logo: item.brand.logo,
+        }
+      : null,
     category: item.category,
-    price: typeof item.price === 'object' ? parseFloat(item.price.toString()) : item.price as number,
+    price:
+      typeof item.price === "object" ? parseFloat(item.price.toString()) : (item.price as number),
     originalPrice: item.originalPrice
-      ? (typeof item.originalPrice === 'object' ? parseFloat(item.originalPrice.toString()) : item.originalPrice as number)
+      ? typeof item.originalPrice === "object"
+        ? parseFloat(item.originalPrice.toString())
+        : (item.originalPrice as number)
       : null,
     currency: item.currency,
     description: item.description ?? null,
-    mainImage: item.mainImage ?? (item.images?.[0] ?? null),
+    mainImage: item.mainImage ?? item.images?.[0] ?? null,
     images: item.images ?? [],
     colors: item.colors ?? [],
     sizes: item.sizes ?? [],
@@ -174,8 +185,13 @@ function normalizeClothingListItem(item: ClothingItemListItem): ClothingItemResp
     brandId: item.brandId,
     brand: item.brand || null,
     category: item.category,
-    price: typeof item.price === 'object' ? parseFloat(item.price.toString()) : item.price as number,
-    originalPrice: item.originalPrice ? (typeof item.originalPrice === 'object' ? parseFloat(item.originalPrice.toString()) : item.originalPrice as number) : null,
+    price:
+      typeof item.price === "object" ? parseFloat(item.price.toString()) : (item.price as number),
+    originalPrice: item.originalPrice
+      ? typeof item.originalPrice === "object"
+        ? parseFloat(item.originalPrice.toString())
+        : (item.originalPrice as number)
+      : null,
     currency: item.currency,
     description: null, // 列表接口不返回描述
     mainImage: item.mainImage,
@@ -192,7 +208,9 @@ function normalizeClothingListItem(item: ClothingItemListItem): ClothingItemResp
 }
 
 function normalizeClothingItems(items: ClothingItemWithBrandDetail[]): ClothingItemResponse[] {
-  return items.map(normalizeClothingItem).filter((item): item is ClothingItemResponse => item !== null);
+  return items
+    .map(normalizeClothingItem)
+    .filter((item): item is ClothingItemResponse => item !== null);
 }
 
 function normalizeClothingListItems(items: ClothingItemListItem[]): ClothingItemResponse[] {
@@ -204,10 +222,7 @@ export class ClothingService {
   private readonly logger = new Logger(ClothingService.name);
   private readonly QUERY_TIMEOUT_MS = 5000; // 5 秒查询超时
 
-  constructor(
-    private prisma: PrismaService,
-    private cacheService: CacheService,
-  ) {}
+  constructor(private prisma: PrismaService, private cacheService: CacheService) {}
 
   async getItems(params: {
     category?: ClothingCategory;
@@ -230,15 +245,7 @@ export class ClothingService {
       sortOrder = "desc",
     } = normalizePaginationParams(params);
 
-    const {
-      category,
-      brandId,
-      minPrice,
-      maxPrice,
-      colors,
-      sizes,
-      tags,
-    } = params;
+    const { category, brandId, minPrice, maxPrice, colors, sizes, tags } = params;
 
     const cacheKey = CacheKeyBuilder.clothingList({
       category,
@@ -271,13 +278,10 @@ export class ClothingService {
           sortOrder
         );
       },
-      CACHE_TTL.CLOTHING_LIST,
+      CACHE_TTL.CLOTHING_LIST
     );
 
-    return (
-      cachedList ??
-      createPaginatedResponse([], 0, page, pageSize)
-    );
+    return cachedList ?? createPaginatedResponse([], 0, page, pageSize);
   }
 
   /**
@@ -302,12 +306,20 @@ export class ClothingService {
     // 构建查询条件
     const where: ClothingItemWhereInput = { isActive: true, isDeleted: false };
 
-    if (category) { where.category = category; }
-    if (brandId) { where.brandId = brandId; }
+    if (category) {
+      where.category = category;
+    }
+    if (brandId) {
+      where.brandId = brandId;
+    }
     if (minPrice !== undefined || maxPrice !== undefined) {
       where.price = {};
-      if (minPrice !== undefined) { where.price.gte = minPrice; }
-      if (maxPrice !== undefined) { where.price.lte = maxPrice; }
+      if (minPrice !== undefined) {
+        where.price.gte = minPrice;
+      }
+      if (maxPrice !== undefined) {
+        where.price.lte = maxPrice;
+      }
     }
     if (colors && colors.length > 0) {
       where.colors = { hasSome: colors };
@@ -334,7 +346,9 @@ export class ClothingService {
     try {
       result = await Promise.race([queryPromise, timeoutPromise]);
     } catch (error) {
-      this.logger.error(`服装列表查询失败或超时: ${error instanceof Error ? error.message : String(error)}`);
+      this.logger.error(
+        `服装列表查询失败或超时: ${error instanceof Error ? error.message : String(error)}`
+      );
       throw error;
     }
 
@@ -383,24 +397,37 @@ export class ClothingService {
     ]);
 
     // 批量获取 brand 信息（避免 N+1 查询）
-    const brandIds = [...new Set(items.map((item: { brandId: string | null }) => item.brandId).filter(Boolean))] as string[];
+    const brandIds = [
+      ...new Set(
+        items
+          .map((item) => item.brandId)
+          .filter((brandId): brandId is string => typeof brandId === "string")
+      ),
+    ];
     const brandsMap = new Map<string, { id: string; name: string; logo: string | null }>();
 
     if (brandIds.length > 0) {
       const brands = await this.prisma.brand.findMany({
         where: { id: { in: brandIds } },
-        select: { id: true, name: true, logo: true }
+        select: { id: true, name: true, logo: true },
       });
-      brands.forEach((brand: { id: string; name: string; logo: string | null }) => brandsMap.set(brand.id, brand));
+      brands.forEach((brand: { id: string; name: string; logo: string | null }) =>
+        brandsMap.set(brand.id, brand)
+      );
     }
 
     // 组装结果
-    const itemsWithBrand: ClothingItemListItem[] = items.map((item: Record<string, unknown>) => ({
+    const itemsWithBrand = items.map((item) => ({
       ...item,
-      brand: item.brandId ? (brandsMap.get(item.brandId as string) || null) : null
-    }));
+      brand: item.brandId ? brandsMap.get(item.brandId) ?? null : null,
+    })) as ClothingItemListItem[];
 
-    return createPaginatedResponse(normalizeClothingListItems(itemsWithBrand), total, Math.floor(skip / take) + 1, take);
+    return createPaginatedResponse(
+      normalizeClothingListItems(itemsWithBrand),
+      total,
+      Math.floor(skip / take) + 1,
+      take
+    );
   }
 
   async getItemById(id: string) {
@@ -436,7 +463,7 @@ export class ClothingService {
           },
         });
       },
-      CACHE_TTL.CLOTHING_DETAIL,
+      CACHE_TTL.CLOTHING_DETAIL
     );
 
     if (item) {
@@ -485,7 +512,7 @@ export class ClothingService {
           orderBy: { createdAt: "desc" },
         });
       },
-      CACHE_TTL.CLOTHING_FEATURED,
+      CACHE_TTL.CLOTHING_FEATURED
     );
 
     return normalizeClothingItems(featuredItems ?? []);
@@ -504,9 +531,7 @@ export class ClothingService {
     const popularTags = await this.cacheService.getOrSet(
       cacheKey,
       async () => {
-        const result = await this.prisma.$queryRaw<
-          { tag: string; count: bigint }[]
-        >`
+        const result = await this.prisma.$queryRaw<{ tag: string; count: bigint }[]>`
           SELECT unnest(tags) as tag, COUNT(*) as count
           FROM "ClothingItem"
           WHERE "isActive" = true AND "isDeleted" = false
@@ -516,7 +541,7 @@ export class ClothingService {
         `;
         return result.map((r: { tag: string; count: bigint }) => r.tag);
       },
-      CACHE_TTL.CLOTHING_TAGS,
+      CACHE_TTL.CLOTHING_TAGS
     );
 
     return popularTags ?? [];
@@ -548,7 +573,7 @@ export class ClothingService {
     }
 
     const counts = await this.prisma.clothingItem.groupBy({
-      by: ['category', 'subcategory'],
+      by: ["category", "subcategory"],
       where: whereForCount,
       _count: { subcategory: true },
     });
@@ -556,7 +581,9 @@ export class ClothingService {
     const grouped: Record<string, Array<{ name: string; count: number }>> = {};
     for (const row of counts) {
       const cat = row.category;
-      if (!grouped[cat]) {grouped[cat] = [];}
+      if (!grouped[cat]) {
+        grouped[cat] = [];
+      }
       grouped[cat].push({ name: row.subcategory!, count: row._count.subcategory });
     }
 
@@ -628,21 +655,24 @@ export class ClothingService {
     return outfits;
   }
 
-  async create(userId: string, data: {
-    name: string;
-    category: ClothingCategory;
-    subcategory?: string;
-    brandId?: string;
-    price: number;
-    originalPrice?: number;
-    description?: string;
-    mainImage?: string;
-    images?: string[];
-    colors?: string[];
-    sizes?: string[];
-    tags?: string[];
-    externalUrl?: string;
-  }) {
+  async create(
+    userId: string,
+    data: {
+      name: string;
+      category: ClothingCategory;
+      subcategory?: string;
+      brandId?: string;
+      price: number;
+      originalPrice?: number;
+      description?: string;
+      mainImage?: string;
+      images?: string[];
+      colors?: string[];
+      sizes?: string[];
+      tags?: string[];
+      externalUrl?: string;
+    }
+  ) {
     const createData: ClothingItemCreateInput = {
       name: data.name,
       category: data.category,
@@ -676,21 +706,24 @@ export class ClothingService {
     return normalizeClothingItem(item as unknown as ClothingItemWithBrandDetail);
   }
 
-  async update(id: string, data: {
-    name?: string;
-    category?: ClothingCategory;
-    subcategory?: string;
-    brandId?: string;
-    price?: number;
-    originalPrice?: number;
-    description?: string;
-    mainImage?: string;
-    images?: string[];
-    colors?: string[];
-    sizes?: string[];
-    tags?: string[];
-    externalUrl?: string;
-  }) {
+  async update(
+    id: string,
+    data: {
+      name?: string;
+      category?: ClothingCategory;
+      subcategory?: string;
+      brandId?: string;
+      price?: number;
+      originalPrice?: number;
+      description?: string;
+      mainImage?: string;
+      images?: string[];
+      colors?: string[];
+      sizes?: string[];
+      tags?: string[];
+      externalUrl?: string;
+    }
+  ) {
     const existing = await this.prisma.clothingItem.findFirst({
       where: { id, isDeleted: false },
     });
@@ -700,18 +733,42 @@ export class ClothingService {
     }
 
     const updateData: Record<string, unknown> = {};
-    if (data.name !== undefined) {updateData.name = data.name;}
-    if (data.category !== undefined) {updateData.category = data.category;}
-    if (data.subcategory !== undefined) {updateData.subcategory = data.subcategory;}
-    if (data.price !== undefined) {updateData.price = data.price;}
-    if (data.originalPrice !== undefined) {updateData.originalPrice = data.originalPrice;}
-    if (data.description !== undefined) {updateData.description = data.description;}
-    if (data.mainImage !== undefined) {updateData.mainImage = data.mainImage;}
-    if (data.images !== undefined) {updateData.images = data.images;}
-    if (data.colors !== undefined) {updateData.colors = data.colors;}
-    if (data.sizes !== undefined) {updateData.sizes = data.sizes;}
-    if (data.tags !== undefined) {updateData.tags = data.tags;}
-    if (data.externalUrl !== undefined) {updateData.externalUrl = data.externalUrl;}
+    if (data.name !== undefined) {
+      updateData.name = data.name;
+    }
+    if (data.category !== undefined) {
+      updateData.category = data.category;
+    }
+    if (data.subcategory !== undefined) {
+      updateData.subcategory = data.subcategory;
+    }
+    if (data.price !== undefined) {
+      updateData.price = data.price;
+    }
+    if (data.originalPrice !== undefined) {
+      updateData.originalPrice = data.originalPrice;
+    }
+    if (data.description !== undefined) {
+      updateData.description = data.description;
+    }
+    if (data.mainImage !== undefined) {
+      updateData.mainImage = data.mainImage;
+    }
+    if (data.images !== undefined) {
+      updateData.images = data.images;
+    }
+    if (data.colors !== undefined) {
+      updateData.colors = data.colors;
+    }
+    if (data.sizes !== undefined) {
+      updateData.sizes = data.sizes;
+    }
+    if (data.tags !== undefined) {
+      updateData.tags = data.tags;
+    }
+    if (data.externalUrl !== undefined) {
+      updateData.externalUrl = data.externalUrl;
+    }
 
     if (data.brandId !== undefined) {
       updateData.brand = { connect: { id: data.brandId } };
@@ -761,12 +818,15 @@ export class ClothingService {
     this.logger.log(`软删除了服装商品: ${id}`);
   }
 
-  async search(query: string, filters?: {
-    category?: ClothingCategory;
-    minPrice?: number;
-    maxPrice?: number;
-    sizes?: string[];
-  }): Promise<ClothingItemResponse[]> {
+  async search(
+    query: string,
+    filters?: {
+      category?: ClothingCategory;
+      minPrice?: number;
+      maxPrice?: number;
+      sizes?: string[];
+    }
+  ): Promise<ClothingItemResponse[]> {
     const where: ClothingItemWhereInput = {
       isActive: true,
       isDeleted: false,
@@ -849,17 +909,22 @@ export class ClothingService {
       }
     }
 
-    const mostWorn = allItems.slice(0, 5).map((item: { id: string; name: string; viewCount: number }) => ({
-      id: item.id,
-      name: item.name,
-      viewCount: item.viewCount,
-    }));
+    const mostWorn = allItems
+      .slice(0, 5)
+      .map((item: { id: string; name: string; viewCount: number }) => ({
+        id: item.id,
+        name: item.name,
+        viewCount: item.viewCount,
+      }));
 
-    const leastWorn = allItems.slice(-5).reverse().map((item: { id: string; name: string; viewCount: number }) => ({
-      id: item.id,
-      name: item.name,
-      viewCount: item.viewCount,
-    }));
+    const leastWorn = allItems
+      .slice(-5)
+      .reverse()
+      .map((item: { id: string; name: string; viewCount: number }) => ({
+        id: item.id,
+        name: item.name,
+        viewCount: item.viewCount,
+      }));
 
     this.logger.log(`用户 ${userId} 获取服装统计`);
     return {
@@ -895,7 +960,10 @@ export class ClothingService {
         data: { likeCount: { decrement: 1 } },
       });
 
-      return { ...normalizeClothingItem(item as unknown as ClothingItemWithBrandDetail), isFavorite: false };
+      return {
+        ...normalizeClothingItem(item as unknown as ClothingItemWithBrandDetail),
+        isFavorite: false,
+      };
     }
 
     await this.prisma.favorite.create({
@@ -908,7 +976,10 @@ export class ClothingService {
       data: { likeCount: { increment: 1 } },
     });
 
-    return { ...normalizeClothingItem(item as unknown as ClothingItemWithBrandDetail), isFavorite: true };
+    return {
+      ...normalizeClothingItem(item as unknown as ClothingItemWithBrandDetail),
+      isFavorite: true,
+    };
   }
 
   async incrementWearCount(id: string) {

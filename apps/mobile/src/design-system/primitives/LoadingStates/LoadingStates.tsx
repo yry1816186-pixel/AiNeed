@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -18,9 +18,7 @@ import Animated, {
   interpolate,
   interpolateColor,
 } from "react-native-reanimated";
-import { Colors, theme } from "../theme";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
-import { flatColors as colors } from "../../theme";
+import { Colors, theme, DesignTokens } from "../theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -33,9 +31,9 @@ interface SpinnerProps {
 }
 
 export function Spinner({ size = "large", color, style }: SpinnerProps) {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
-  return <ActivityIndicator size={size} color={color || colors.primary[500]} style={style} />;
+  const styles = useStyles(colors);
+  return <ActivityIndicator size={size} color={color || Colors.primary[500]} style={style} />;
 }
 
 // 全屏加载遮罩
@@ -45,6 +43,8 @@ interface LoadingOverlayProps {
 }
 
 export function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   if (!visible) {
     return null;
   }
@@ -68,6 +68,8 @@ interface SkeletonProps {
 }
 
 export function Skeleton({ width = "100%", height = 16, borderRadius = 8, style }: SkeletonProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -101,6 +103,8 @@ export function Skeleton({ width = "100%", height = 16, borderRadius = 8, style 
 
 // 预设骨架屏模板
 export function SkeletonText({ lines = 3 }: { lines?: number }) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={styles.skeletonTextContainer}>
       {Array.from({ length: lines }).map((_, index) => (
@@ -116,6 +120,8 @@ export function SkeletonText({ lines = 3 }: { lines?: number }) {
 }
 
 export function SkeletonCard() {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={styles.skeletonCard}>
       <Skeleton width="100%" height={120} borderRadius={12} />
@@ -129,6 +135,8 @@ export function SkeletonCard() {
 }
 
 export function SkeletonList({ count = 4 }: { count?: number }) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={styles.skeletonList}>
       {Array.from({ length: count }).map((_, index) => (
@@ -145,6 +153,8 @@ export function SkeletonList({ count = 4 }: { count?: number }) {
 }
 
 export function SkeletonProductGrid() {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={styles.skeletonGrid}>
       {Array.from({ length: 4 }).map((_, index) => (

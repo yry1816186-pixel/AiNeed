@@ -17,17 +17,14 @@ import { smsApi } from "../../../services/api/sms.api";
 import { useTranslation } from "../../../i18n";
 import { useAuthStore } from "../stores/index";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { flatColors as colors, Spacing, theme } from "../../../design-system/theme";
+import { DesignTokens, flatColors as colors, Spacing, theme } from "../../../design-system/theme";
 import type { RootStackParamList } from "../../../types/navigation";
-import { flatColors as colors } from "../../../design-system/theme";
 
 type PhoneLoginNavigationProp = NavigationProp<RootStackParamList>;
 
 const COUNTDOWN_SECONDS = 60;
 
 export const PhoneLoginScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<PhoneLoginNavigationProp>();
   const { setUser, setToken, onboardingCompleted } = useAuthStore();
   const t = useTranslation();

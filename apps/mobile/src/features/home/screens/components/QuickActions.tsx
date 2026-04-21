@@ -2,7 +2,7 @@ import { memo, type ComponentProps } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../../../theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
@@ -34,6 +34,7 @@ const QuickActions = memo(
     onCart,
     isStyleReportUnlocked,
   }: QuickActionsProps) => {
+    const styles = useStyles(colors);
     const actions: ActionItem[] = [
       {
         key: "ai-stylist",
@@ -49,7 +50,7 @@ const QuickActions = memo(
         title: "虚拟试衣",
         description: "一键试穿效果",
         icon: "shirt-outline",
-        gradient: ["DesignTokens.colors.brand.slate", "colors.secondary"], // custom color
+        gradient: [DesignTokens.colors.brand.slate, colors.secondary],
         onPress: onVirtualTryOn,
         locked: false,
       },
@@ -58,7 +59,7 @@ const QuickActions = memo(
         title: "购物车",
         description: "查看购物车",
         icon: "cart-outline",
-        gradient: ["DesignTokens.colors.brand.camel", colors.primaryLight], // custom color
+        gradient: [DesignTokens.colors.brand.camel, colors.primaryLight],
         onPress: onCart,
         locked: false,
       },
@@ -67,7 +68,7 @@ const QuickActions = memo(
         title: "我的衣橱",
         description: "管理你的衣橱",
         icon: "grid-outline",
-        gradient: [colors.secondary, "colors.secondary"], // custom color
+        gradient: [colors.secondary, colors.secondary],
         onPress: onWardrobe,
         locked: false,
       },
@@ -76,7 +77,7 @@ const QuickActions = memo(
         title: "风格报告",
         description: "专属风格分析",
         icon: "document-text-outline",
-        gradient: [DesignTokens.colors.brand.slate, "colors.textTertiary"], // custom color
+        gradient: [DesignTokens.colors.brand.slate, colors.textTertiary],
         onPress: onStyleReport,
         locked: !isStyleReportUnlocked,
       },

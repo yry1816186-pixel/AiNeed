@@ -22,7 +22,7 @@ import { colors } from "@/src/theme/tokens/colors";
 import { typography } from "@/src/theme/tokens/typography";
 import { spacing } from "@/src/theme/tokens/spacing";
 import { shadows } from "@/src/theme/tokens/shadows";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface SharePosterPreviewProps {

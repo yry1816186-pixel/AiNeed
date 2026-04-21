@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
+import { Prisma } from "@prisma/client";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import {
@@ -12,6 +13,8 @@ const GRACE_KEY_PREFIX = `${REDIS_KEY_PREFIX}${REDIS_KEY_SEPARATOR}blogger${REDI
 const GRACE_TTL_SECONDS = 7 * 24 * 60 * 60;
 
 const ALLOWED_BLOGGER_FIELDS = new Set(["bloggerLevel", "bloggerScore", "bloggerBadge"]);
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
 
 @Injectable()
 export class BloggerScoreService implements OnModuleInit {
@@ -28,33 +31,27 @@ export class BloggerScoreService implements OnModuleInit {
   }
 
   private registerPrismaMiddleware() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.prisma.$use(
-      async (
-        params: Record<string, unknown>,
-        next: (params: Record<string, unknown>) => Promise<any>
-      ) => {
-        if (params.model === "User" && params.action === "update") {
-          if (!this.isInternalUpdate) {
-            const data = params.args?.data;
-            if (data) {
-              const forbiddenFields = Object.keys(data).filter((key) =>
-                ALLOWED_BLOGGER_FIELDS.has(key)
+    this.prisma.$use(async (params: Prisma.MiddlewareParams, next) => {
+      if (params.model === "User" && params.action === "update") {
+        if (!this.isInternalUpdate) {
+          const data = (params.args as { data?: unknown } | undefined)?.data;
+          if (isRecord(data)) {
+            const forbiddenFields = Object.keys(data).filter((key) =>
+              ALLOWED_BLOGGER_FIELDS.has(key)
+            );
+            if (forbiddenFields.length > 0) {
+              this.logger.warn(
+                `Blocked external User.update of blogger fields: ${forbiddenFields.join(", ")}`
               );
-              if (forbiddenFields.length > 0) {
-                this.logger.warn(
-                  `Blocked external User.update of blogger fields: ${forbiddenFields.join(", ")}`
-                );
-                for (const field of forbiddenFields) {
-                  delete data[field];
-                }
+              for (const field of forbiddenFields) {
+                delete data[field];
               }
             }
           }
         }
-        return next(params);
       }
-    );
+      return next(params);
+    });
   }
 
   private withInternalUpdate<T>(fn: () => Promise<T>): Promise<T> {
@@ -167,7 +164,9 @@ export class BloggerScoreService implements OnModuleInit {
 
     if (isLevelChange) {
       this.logger.log(
-        `Blogger ${userId} level updated: ${currentLevel} -> ${isDowngrade ? currentLevel + " (grace)" : newLevel}`
+        `Blogger ${userId} level updated: ${currentLevel} -> ${
+          isDowngrade ? currentLevel + " (grace)" : newLevel
+        }`
       );
     }
 
@@ -190,7 +189,9 @@ export class BloggerScoreService implements OnModuleInit {
         updated++;
       } catch (error) {
         this.logger.error(
-          `Failed to recalculate score for ${blogger.id}: ${error instanceof Error ? error.message : "Unknown"}`
+          `Failed to recalculate score for ${blogger.id}: ${
+            error instanceof Error ? error.message : "Unknown"
+          }`
         );
       }
     }

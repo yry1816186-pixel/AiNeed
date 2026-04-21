@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { NotFoundException, BadRequestException } from "@nestjs/common";
+import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { EncryptionService } from "../../../common/encryption";
@@ -9,7 +9,6 @@ import * as bcrypt from "../../../common/security/bcrypt";
 import { CacheService } from "../../../modules/cache/cache.service";
 
 import { UsersService } from "./users.service";
-
 
 jest.mock("../../../common/security/bcrypt");
 
@@ -122,9 +121,9 @@ describe("UsersService", () => {
     it("should throw error when user not found", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.update("user-1", { nickname: "New Name" }),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.update("user-1", { nickname: "New Name" })).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("should update user successfully", async () => {
@@ -159,7 +158,7 @@ describe("UsersService", () => {
         service.changePassword("user-1", {
           oldPassword: "old123",
           newPassword: "new123",
-        }),
+        })
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -174,7 +173,7 @@ describe("UsersService", () => {
         service.changePassword("user-1", {
           oldPassword: "wrong",
           newPassword: "new123",
-        }),
+        })
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -189,7 +188,7 @@ describe("UsersService", () => {
         service.changePassword("user-1", {
           oldPassword: "same123",
           newPassword: "same123",
-        }),
+        })
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -204,7 +203,7 @@ describe("UsersService", () => {
         service.changePassword("user-1", {
           oldPassword: "old123",
           newPassword: "123",
-        }),
+        })
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -223,7 +222,7 @@ describe("UsersService", () => {
       });
 
       expect(result.success).toBe(true);
-      expect(bcrypt.hash).toHaveBeenCalledWith("NewPass123", 10);
+      expect(bcrypt.hash).toHaveBeenCalledWith("NewPass123");
     });
   });
 
@@ -232,7 +231,7 @@ describe("UsersService", () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.updateAvatar("user-1", "https://example.com/avatar.jpg"),
+        service.updateAvatar("user-1", "https://example.com/avatar.jpg")
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -254,10 +253,7 @@ describe("UsersService", () => {
         updatedAt: new Date(),
       });
 
-      const result = await service.updateAvatar(
-        "user-1",
-        "https://example.com/avatar.jpg",
-      );
+      const result = await service.updateAvatar("user-1", "https://example.com/avatar.jpg");
 
       expect(result.avatar).toBe("https://example.com/avatar.jpg");
     });
@@ -267,9 +263,7 @@ describe("UsersService", () => {
     it("should throw error when user not found", async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.deactivate("user-1")).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.deactivate("user-1")).rejects.toThrow(NotFoundException);
     });
 
     it("should deactivate user successfully", async () => {

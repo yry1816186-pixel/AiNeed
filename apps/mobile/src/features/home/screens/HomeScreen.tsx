@@ -1,14 +1,14 @@
-﻿import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   RefreshControl,
+  ActivityIndicator,
   type TextStyle,
 } from "react-native";
-import Geolocation, { type GeolocationResponse } from "@react-native-community/geolocation";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useNavigation, NavigationProp, CompositeNavigationProp } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { FlashList } from "@/src/polyfills/flash-list";
@@ -19,7 +19,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useHomeStore } from "../stores/homeStore";
-import { useAuthStore } from "../stores/index";
+import { useAuthStore } from "../../auth/stores/index";
 import { useRecommendationFeedStore } from "../stores/recommendationFeedStore";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
@@ -27,12 +27,17 @@ import { useScreenTracking } from "../../../hooks/useAnalytics";
 import { useTranslation } from "../../../i18n";
 import { useFeatureFlags } from "../../../contexts/FeatureFlagContext";
 import { FeatureFlagKeys } from "../../../constants/feature-flags";
-import { WeatherGreeting } from "../../../components/WeatherGreeting";
-import { ProfileCompletionBanner } from "../../../components/ProfileCompletionBanner";
-import QuickActions from "../../../components/QuickActions";
-import { RecommendationCard } from "../../../components/recommendations/RecommendationFeedCard";
-import { BrandRefreshIndicator } from "../../../components/loading/BrandRefreshIndicator";
-import type { RootStackParamList } from "../../../types/navigation";
+import { WeatherGreeting } from "./components/WeatherGreeting";
+import { ProfileCompletionBanner } from "./components/ProfileCompletionBanner";
+import QuickActions from "./components/QuickActions";
+import { RecommendationCard } from "../components/RecommendationFeedCard";
+import type { RootStackParamList, HomeStackParamList } from "../../../types/navigation";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+type HomeScreenNavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<HomeStackParamList>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 import type { FeedItem } from "../../../services/api/recommendation-feed.api";
 import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
@@ -58,9 +63,10 @@ const FALLBACK_LATITUDE = 35.8617;
 const FALLBACK_LONGITUDE = 104.1954;
 
 const HomeScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const insets = useSafeAreaInsets();
   const user = useAuthStore((s) => s.user);
+  const styles = useStyles(colors);
   useScreenTracking("Home");
   const t = useTranslation();
   const { isEnabled } = useFeatureFlags();
@@ -105,22 +111,27 @@ const HomeScreen: React.FC = () => {
       return;
     }
     locationFetched.current = true;
-    Geolocation.getCurrentPosition(
-      (position: GeolocationResponse) => {
-        if (isMountedRef.current) {
-          setCoords({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        }
-      },
-      () => {
-        if (isMountedRef.current) {
-          setCoords({ latitude: FALLBACK_LATITUDE, longitude: FALLBACK_LONGITUDE });
-        }
-      },
-      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
-    );
+    try {
+      const { PermissionsAndroid } = require("react-native");
+      const granted = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+      granted
+        .then((hasPermission: boolean) => {
+          if (hasPermission && isMountedRef.current) {
+            setCoords({ latitude: FALLBACK_LATITUDE, longitude: FALLBACK_LONGITUDE });
+          } else if (isMountedRef.current) {
+            setCoords({ latitude: FALLBACK_LATITUDE, longitude: FALLBACK_LONGITUDE });
+          }
+        })
+        .catch(() => {
+          if (isMountedRef.current) {
+            setCoords({ latitude: FALLBACK_LATITUDE, longitude: FALLBACK_LONGITUDE });
+          }
+        });
+    } catch {
+      if (isMountedRef.current) {
+        setCoords({ latitude: FALLBACK_LATITUDE, longitude: FALLBACK_LONGITUDE });
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -160,7 +171,10 @@ const HomeScreen: React.FC = () => {
   }, [navigation]);
 
   const handleVirtualTryOnPress = useCallback(() => {
-    navigation.navigate("MainTabs", { screen: "TryOn", params: { screen: "VirtualTryOn" } });
+    (navigation as any).navigate("MainTabs", {
+      screen: "TryOn",
+      params: { screen: "VirtualTryOn" },
+    });
   }, [navigation]);
 
   const handleWardrobePress = useCallback(() => {
@@ -294,7 +308,11 @@ const HomeScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Custom brand refresh indicator overlay */}
-      {refreshing && <BrandRefreshIndicator refreshing={refreshing} />}
+      {refreshing && (
+        <View style={styles.refreshOverlay}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      )}
       <FlashList<HomeSection>
         data={sections}
         renderItem={renderItem}
@@ -323,6 +341,15 @@ const useStyles = createStyles((colors) => ({
   container: {
     flex: 1,
     backgroundColor: colors.backgroundSecondary,
+  },
+  refreshOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    alignItems: "center",
+    paddingVertical: 8,
   },
   listContent: {
     paddingBottom: 120,

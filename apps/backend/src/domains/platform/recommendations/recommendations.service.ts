@@ -187,10 +187,7 @@ const OUTFIT_TEMPLATES: Array<{
 export class RecommendationsService {
   private readonly logger = new Logger(RecommendationsService.name);
 
-  constructor(
-    private prisma: PrismaService,
-    private cacheService: CacheService
-  ) {}
+  constructor(private prisma: PrismaService, private cacheService: CacheService) {}
 
   // ==================== 主推荐入口 ====================
 
@@ -439,7 +436,9 @@ export class RecommendationsService {
       ]);
 
       // 收藏的商品ID集合
-      const favoriteItemIds = favorites.map((f) => f.itemId);
+      const favoriteItemIds = favorites
+        .map((f) => f.itemId)
+        .filter((itemId): itemId is string => typeof itemId === "string");
 
       // 浏览过的商品ID -> 用于协同过滤
       const viewedItemIds = behaviors
@@ -447,7 +446,9 @@ export class RecommendationsService {
         .map((b) => b.itemId!);
 
       // 购物车中的商品ID
-      const cartItemIds = cartItems.map((c) => c.itemId);
+      const cartItemIds = cartItems
+        .map((c) => c.itemId)
+        .filter((itemId): itemId is string => typeof itemId === "string");
 
       // 从收藏/浏览商品中提取偏好颜色
       const preferredColors = await this.extractPreferredColors([

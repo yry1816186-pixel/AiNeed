@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   BadRequestException,
 } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 import Decimal from "decimal.js";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -22,7 +23,8 @@ import {
 } from "./dto";
 
 /** Prisma Json 字段类型断言辅助 */
-const asJson = (value: unknown): Record<string, unknown> => value as Record<string, unknown>;
+const asJson = (value: unknown): Prisma.InputJsonValue =>
+  JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
 
 @Injectable()
 export class ConsultantService {
@@ -30,7 +32,7 @@ export class ConsultantService {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly paymentService: PaymentService,
+    private readonly paymentService: PaymentService
   ) {}
 
   // ==================== 顾问档案 ====================
@@ -210,15 +212,31 @@ export class ConsultantService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = {};
 
-    if (dto.studioName !== undefined) {data.studioName = dto.studioName;}
-    if (dto.specialties !== undefined) {data.specialties = asJson(dto.specialties);}
-    if (dto.yearsOfExperience !== undefined) {data.yearsOfExperience = dto.yearsOfExperience;}
-    if (dto.certifications !== undefined) {data.certifications = asJson(dto.certifications);}
-    if (dto.portfolioCases !== undefined) {data.portfolioCases = asJson(dto.portfolioCases);}
-    if (dto.bio !== undefined) {data.bio = dto.bio;}
-    if (dto.avatar !== undefined) {data.avatar = dto.avatar;}
+    if (dto.studioName !== undefined) {
+      data.studioName = dto.studioName;
+    }
+    if (dto.specialties !== undefined) {
+      data.specialties = asJson(dto.specialties);
+    }
+    if (dto.yearsOfExperience !== undefined) {
+      data.yearsOfExperience = dto.yearsOfExperience;
+    }
+    if (dto.certifications !== undefined) {
+      data.certifications = asJson(dto.certifications);
+    }
+    if (dto.portfolioCases !== undefined) {
+      data.portfolioCases = asJson(dto.portfolioCases);
+    }
+    if (dto.bio !== undefined) {
+      data.bio = dto.bio;
+    }
+    if (dto.avatar !== undefined) {
+      data.avatar = dto.avatar;
+    }
     // status 仅管理员可修改，此处暂允许顾问自行设置 inactive
-    if (dto.status === ConsultantStatusDto.INACTIVE) {data.status = "inactive";}
+    if (dto.status === ConsultantStatusDto.INACTIVE) {
+      data.status = "inactive";
+    }
 
     return this.prisma.consultantProfile.update({
       where: { id: profileId },
@@ -264,9 +282,7 @@ export class ConsultantService {
     }
 
     // 计算定金和尾款（服务端计算，防止客户端篡改）
-    const depositAmount = new Decimal(dto.price)
-      .mul(ConsultantService.DEPOSIT_RATE)
-      .toFixed(2);
+    const depositAmount = new Decimal(dto.price).mul(ConsultantService.DEPOSIT_RATE).toFixed(2);
     const finalPaymentAmount = new Decimal(dto.price)
       .mul(1 - ConsultantService.DEPOSIT_RATE)
       .toFixed(2);
@@ -311,9 +327,15 @@ export class ConsultantService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { userId };
 
-    if (status) {where.status = status;}
-    if (serviceType) {where.serviceType = serviceType;}
-    if (consultantId) {where.consultantId = consultantId;}
+    if (status) {
+      where.status = status;
+    }
+    if (serviceType) {
+      where.serviceType = serviceType;
+    }
+    if (consultantId) {
+      where.consultantId = consultantId;
+    }
 
     const [bookings, total] = await Promise.all([
       this.prisma.serviceBooking.findMany({
@@ -421,14 +443,11 @@ export class ConsultantService {
 
         // 取消退款逻辑：根据距预约时间决定退款比例
         if (booking.depositPaidAt) {
-          const hoursUntilBooking =
-            (booking.scheduledAt.getTime() - Date.now()) / (1000 * 60 * 60);
+          const hoursUntilBooking = (booking.scheduledAt.getTime() - Date.now()) / (1000 * 60 * 60);
 
           if (hoursUntilBooking >= 24) {
             // 提前 24h 取消，全额退定金
-            this.logger.log(
-              `预约 ${bookingId} 提前24h取消，全额退定金 ${booking.depositAmount}`,
-            );
+            this.logger.log(`预约 ${bookingId} 提前24h取消，全额退定金 ${booking.depositAmount}`);
             try {
               await this.paymentService.refund(userId, {
                 orderId: bookingId,
@@ -441,10 +460,11 @@ export class ConsultantService {
             }
           } else {
             // 24h 内取消，扣定金 20% 给用户补偿，80% 退回
-            const penaltyAmount = Number(booking.depositAmount) * ConsultantService.LATE_CANCEL_PENALTY_RATE;
+            const penaltyAmount =
+              Number(booking.depositAmount) * ConsultantService.LATE_CANCEL_PENALTY_RATE;
             const refundAmount = Number(booking.depositAmount) - penaltyAmount;
             this.logger.log(
-              `预约 ${bookingId} 24h内取消，退定金80%: ${refundAmount}，扣20%: ${penaltyAmount}`,
+              `预约 ${bookingId} 24h内取消，退定金80%: ${refundAmount}，扣20%: ${penaltyAmount}`
             );
             try {
               await this.paymentService.refund(userId, {
@@ -494,11 +514,7 @@ export class ConsultantService {
     });
   }
 
-  async getBookingsByConsultant(
-    userId: string,
-    consultantId: string,
-    query: BookingQueryDto,
-  ) {
+  async getBookingsByConsultant(userId: string, consultantId: string, query: BookingQueryDto) {
     // 验证当前用户是该顾问
     const consultant = await this.prisma.consultantProfile.findUnique({
       where: { id: consultantId },
@@ -517,8 +533,12 @@ export class ConsultantService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { consultantId };
 
-    if (status) {where.status = status;}
-    if (serviceType) {where.serviceType = serviceType;}
+    if (status) {
+      where.status = status;
+    }
+    if (serviceType) {
+      where.serviceType = serviceType;
+    }
 
     const [bookings, total] = await Promise.all([
       this.prisma.serviceBooking.findMany({
@@ -604,7 +624,9 @@ export class ConsultantService {
     const booking = await this.prisma.serviceBooking.findUnique({
       where: { id: bookingId },
     });
-    if (!booking) {throw new NotFoundException("预约不存在");}
+    if (!booking) {
+      throw new NotFoundException("预约不存在");
+    }
 
     if (booking.depositPaidAt) {
       this.logger.warn(`预约 ${bookingId} 定金已确认，跳过重复操作`);
@@ -627,7 +649,9 @@ export class ConsultantService {
     const booking = await this.prisma.serviceBooking.findUnique({
       where: { id: bookingId },
     });
-    if (!booking) {throw new NotFoundException("预约不存在");}
+    if (!booking) {
+      throw new NotFoundException("预约不存在");
+    }
 
     if (booking.finalPaidAt) {
       this.logger.warn(`预约 ${bookingId} 尾款已确认，跳过重复操作`);
@@ -662,7 +686,9 @@ export class ConsultantService {
     });
 
     this.logger.log(
-      `预约 ${bookingId} 尾款确认，平台佣金: ${platformFee.toFixed(2)}，顾问结算: ${consultantPayout.toFixed(2)}`,
+      `预约 ${bookingId} 尾款确认，平台佣金: ${platformFee.toFixed(
+        2
+      )}，顾问结算: ${consultantPayout.toFixed(2)}`
     );
 
     return updated;
@@ -677,30 +703,32 @@ export class ConsultantService {
     const consultant = await this.prisma.consultantProfile.findUnique({
       where: { id: consultantId },
     });
-    if (!consultant) {throw new NotFoundException("顾问不存在");}
-    if (consultant.userId !== userId)
-      {throw new ForbiddenException("无权查看此顾问收入");}
+    if (!consultant) {
+      throw new NotFoundException("顾问不存在");
+    }
+    if (consultant.userId !== userId) {
+      throw new ForbiddenException("无权查看此顾问收入");
+    }
 
-    const [earnings, totalEarned, pendingAmount, settledAmount] =
-      await Promise.all([
-        this.prisma.consultantEarning.findMany({
-          where: { consultantId },
-          orderBy: { createdAt: "desc" },
-          take: 50,
-        }),
-        this.prisma.consultantEarning.aggregate({
-          where: { consultantId },
-          _sum: { netAmount: true },
-        }),
-        this.prisma.consultantEarning.aggregate({
-          where: { consultantId, status: "pending" },
-          _sum: { netAmount: true },
-        }),
-        this.prisma.consultantEarning.aggregate({
-          where: { consultantId, status: "settled" },
-          _sum: { netAmount: true },
-        }),
-      ]);
+    const [earnings, totalEarned, pendingAmount, settledAmount] = await Promise.all([
+      this.prisma.consultantEarning.findMany({
+        where: { consultantId },
+        orderBy: { createdAt: "desc" },
+        take: 50,
+      }),
+      this.prisma.consultantEarning.aggregate({
+        where: { consultantId },
+        _sum: { netAmount: true },
+      }),
+      this.prisma.consultantEarning.aggregate({
+        where: { consultantId, status: "pending" },
+        _sum: { netAmount: true },
+      }),
+      this.prisma.consultantEarning.aggregate({
+        where: { consultantId, status: "settled" },
+        _sum: { netAmount: true },
+      }),
+    ]);
 
     return {
       earnings,
@@ -723,14 +751,17 @@ export class ConsultantService {
       bankName: string;
       bankAccount: string;
       accountHolder: string;
-    },
+    }
   ) {
     const consultant = await this.prisma.consultantProfile.findUnique({
       where: { id: consultantId },
     });
-    if (!consultant) {throw new NotFoundException("顾问不存在");}
-    if (consultant.userId !== userId)
-      {throw new ForbiddenException("无权操作");}
+    if (!consultant) {
+      throw new NotFoundException("顾问不存在");
+    }
+    if (consultant.userId !== userId) {
+      throw new ForbiddenException("无权操作");
+    }
 
     // 查询可提现余额（pending 状态的收入）
     const pendingAmount = await this.prisma.consultantEarning.aggregate({
@@ -740,9 +771,7 @@ export class ConsultantService {
 
     const available = Number(pendingAmount._sum.netAmount || 0);
     if (amount > available) {
-      throw new BadRequestException(
-        `可提现金额不足，当前可提现: ${available}`,
-      );
+      throw new BadRequestException(`可提现金额不足，当前可提现: ${available}`);
     }
 
     if (amount <= 0) {
@@ -761,9 +790,7 @@ export class ConsultantService {
       },
     });
 
-    this.logger.log(
-      `顾问 ${consultantId} 申请提现 ${amount}，提现ID: ${withdrawal.id}`,
-    );
+    this.logger.log(`顾问 ${consultantId} 申请提现 ${amount}，提现ID: ${withdrawal.id}`);
 
     return withdrawal;
   }
@@ -776,15 +803,18 @@ export class ConsultantService {
   async reviewProfile(
     adminUserId: string,
     profileId: string,
-    dto: { status: "active" | "rejected"; rejectReason?: string },
+    dto: { status: "active" | "rejected"; rejectReason?: string }
   ) {
     const profile = await this.prisma.consultantProfile.findUnique({
       where: { id: profileId },
     });
 
-    if (!profile) {throw new NotFoundException("顾问档案不存在");}
-    if (profile.status !== "pending")
-      {throw new BadRequestException("仅待审核档案可审核");}
+    if (!profile) {
+      throw new NotFoundException("顾问档案不存在");
+    }
+    if (profile.status !== "pending") {
+      throw new BadRequestException("仅待审核档案可审核");
+    }
 
     const adminUser = await this.prisma.user.findUnique({ where: { id: adminUserId } });
     if (adminUser?.role !== "admin") {
@@ -809,7 +839,9 @@ export class ConsultantService {
       where: { id: consultantId },
     });
 
-    if (!consultant) {throw new NotFoundException("顾问不存在");}
+    if (!consultant) {
+      throw new NotFoundException("顾问不存在");
+    }
 
     const completedBookings = await this.prisma.serviceBooking.findMany({
       where: {
@@ -843,13 +875,9 @@ export class ConsultantService {
         beforeImages: booking.review!.beforeImages,
         afterImages: booking.review!.afterImages,
         rating: booking.review!.rating,
-        reviewExcerpt: booking.review!.content
-          ? booking.review!.content.substring(0, 100)
-          : null,
+        reviewExcerpt: booking.review!.content ? booking.review!.content.substring(0, 100) : null,
         reviewTags: booking.review!.tags,
-        clientName: booking.review!.isAnonymous
-          ? "匿名用户"
-          : booking.review!.user.nickname,
+        clientName: booking.review!.isAnonymous ? "匿名用户" : booking.review!.user.nickname,
         price: Number(booking.price),
         completedAt: booking.completedAt,
       }));

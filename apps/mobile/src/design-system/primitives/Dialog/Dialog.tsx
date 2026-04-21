@@ -13,7 +13,6 @@ import {
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, theme } from "../theme";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
-import { flatColors as colors } from "../../theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -47,8 +46,8 @@ export function Dialog({
   children,
   variant = "default",
 }: DialogProps) {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const getIconColor = () => {
     if (iconColor) {
       return iconColor;
@@ -59,7 +58,7 @@ export function Dialog({
       case "success":
         return theme.colors.success;
       default:
-        return colors.primary[500];
+        return Colors.primary[500];
     }
   };
 
@@ -277,7 +276,7 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
     paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: colors.primary[500],
+    backgroundColor: Colors.primary[500],
     alignItems: "center",
   },
   confirmText: {

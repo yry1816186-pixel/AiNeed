@@ -8,6 +8,13 @@ export interface AccessoryRecommendation {
   reason: string;
 }
 
+interface UserProfile {
+  bodyType?: BodyType;
+  faceShape?: FaceShape;
+  skinTone?: SkinTone;
+  height?: number;
+}
+
 @Injectable()
 export class AccessoryRecommendationService {
   /**

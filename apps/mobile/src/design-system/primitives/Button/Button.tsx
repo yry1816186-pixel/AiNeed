@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import {
   Text,
   StyleSheet,
@@ -16,7 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, BorderRadius, Shadows } from "../../theme";
+import { Colors, BorderRadius, Shadows, DesignTokens } from "../../theme";
 import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "gradient" | "danger";
@@ -80,7 +80,7 @@ const sizeConfig: Record<
 const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextStyle }> = {
   primary: {
     container: {
-      backgroundColor: colors.primary[500],
+      backgroundColor: Colors.primary[500],
     },
     text: {
       color: Colors.white,
@@ -88,20 +88,20 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextSty
   },
   secondary: {
     container: {
-      backgroundColor: colors.neutral[100],
+      backgroundColor: Colors.neutral[100],
     },
     text: {
-      color: colors.neutral[800],
+      color: Colors.neutral[800],
     },
   },
   outline: {
     container: {
       backgroundColor: "transparent",
       borderWidth: 1.5,
-      borderColor: colors.primary[500],
+      borderColor: Colors.primary[500],
     },
     text: {
-      color: colors.primary[500],
+      color: Colors.primary[500],
     },
   },
   ghost: {
@@ -109,7 +109,7 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextSty
       backgroundColor: "transparent",
     },
     text: {
-      color: colors.primary[500],
+      color: Colors.primary[500],
     },
   },
   gradient: {
@@ -122,7 +122,7 @@ const variantStyles: Record<ButtonVariant, { container: ViewStyle; text: TextSty
   },
   danger: {
     container: {
-      backgroundColor: colors.error[500],
+      backgroundColor: Colors.error[500],
     },
     text: {
       color: Colors.white,
@@ -222,7 +222,7 @@ export const Button: React.FC<ButtonProps> = ({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === "outline" || variant === "ghost" ? colors.primary[500] : Colors.white}
+          color={variant === "outline" || variant === "ghost" ? Colors.primary[500] : Colors.white}
         />
       ) : (
         <>

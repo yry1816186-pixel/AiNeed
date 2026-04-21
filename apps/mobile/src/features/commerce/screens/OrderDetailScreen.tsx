@@ -20,7 +20,7 @@ import type { Order } from "../../../types";
 import type { ProfileStackParamList, RootStackParamList } from "../../../navigation/types";
 import { navigateHome } from "../../../navigation/navigationService";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = CompositeScreenProps<
   NativeStackNavigationProp<ProfileStackParamList>,
@@ -38,8 +38,8 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: "待支付", color: colors.warning },
   paid: { label: "待发货", color: colors.primary },
   confirmed: { label: "已确认", color: colors.primary },
-  processing: { label: "处理中", color: "DesignTokens.colors.semantic.info" },
-  shipped: { label: "配送中", color: "DesignTokens.colors.semantic.info" },
+  processing: { label: "处理中", color: DesignTokens.colors.semantic.info },
+  shipped: { label: "配送中", color: DesignTokens.colors.semantic.info },
   delivered: { label: "已签收", color: colors.success },
   cancelled: { label: "已取消", color: colors.error },
   refunded: { label: "已退款", color: colors.textTertiary },
@@ -277,7 +277,7 @@ export const OrderDetailScreen: React.FC = () => {
               accessibilityLabel="取消订单"
             >
               {cancelling ? (
-                <ActivityIndicator size="small" color="DesignTokens.colors.semantic.error" />
+                <ActivityIndicator size="small" color={DesignTokens.colors.semantic.error} />
               ) : (
                 <Text style={styles.dangerButtonText}>取消订单</Text>
               )}
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
   headerTitle: {
     fontSize: DesignTokens.typography.sizes.lg,
@@ -469,13 +469,13 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "DesignTokens.colors.backgrounds.tertiary",
+    borderBottomColor: colors.backgroundTertiary,
   },
   itemImage: {
     width: 60,
     height: 60,
     borderRadius: 16,
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
   itemImageFallback: {
     width: 60,
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "DesignTokens.colors.backgrounds.tertiary",
+    backgroundColor: colors.backgroundTertiary,
   },
   itemContent: {
     flex: 1,
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "DesignTokens.colors.neutral[300]",
+    backgroundColor: DesignTokens.colors.neutral[300],
     marginTop: 6,
   },
   timelineDotActive: {
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
     width: 2,
     flex: 1,
     marginTop: 6,
-    backgroundColor: "DesignTokens.colors.neutral[200]",
+    backgroundColor: DesignTokens.colors.neutral[200],
   },
   timelineContent: {
     flex: 1,
@@ -612,13 +612,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "DesignTokens.colors.semantic.error",
+    borderColor: DesignTokens.colors.semantic.error,
     backgroundColor: colors.surface,
   },
   dangerButtonText: {
     fontSize: DesignTokens.typography.sizes.base,
     fontWeight: "600",
-    color: "DesignTokens.colors.semantic.error",
+    color: DesignTokens.colors.semantic.error,
   },
   actionRow: {
     flexDirection: "row",
@@ -630,7 +630,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 16,
     alignItems: "center",
-    backgroundColor: "DesignTokens.colors.semantic.error",
+    backgroundColor: DesignTokens.colors.semantic.error,
   },
   primaryFilledText: {
     fontSize: DesignTokens.typography.sizes.base,

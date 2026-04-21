@@ -6,7 +6,7 @@ from typing import List, Optional
 
 class Settings(BaseSettings):
     ML_SERVICE_HOST: str = "0.0.0.0"
-    ML_SERVICE_PORT: int = 8001
+    ML_SERVICE_PORT: int = 8002
     ML_API_KEY: str = ""
 
     GLM_API_KEY: str = ""

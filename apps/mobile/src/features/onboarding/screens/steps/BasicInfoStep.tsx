@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from "react-native";
 import { Ionicons } from "../../../../polyfills/expo-vector-icons";
 import Animated, { SlideInRight, SlideOutLeft, Layout } from "react-native-reanimated";
@@ -55,7 +55,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
       style={styles.stepContent}
     >
       <View style={styles.stepHeader}>
-        <Text style={styles.stepTitle}>基本信息</Text>
+        <Text style={styles.stepTitle}>认识你</Text>
         <Text style={styles.stepSubtitle}>帮助我们了解你的基本情况，提供更精准的穿搭推荐</Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>

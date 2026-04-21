@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import type { AlternativeItem } from "../stores/aiStylistStore";
 import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
@@ -23,13 +23,17 @@ interface ItemReplacementModalProps {
   onClose: () => void;
 }
 
-const SkeletonCard = () => (
-  <View style={[styles.card, styles.skeletonCard]}>
-    <View style={styles.skeletonImage} />
-    <View style={styles.skeletonText} />
-    <View style={[styles.skeletonText, { width: "60%" }]} />
-  </View>
-);
+const SkeletonCard = () => {
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
+  return (
+    <View style={[styles.card, styles.skeletonCard]}>
+      <View style={styles.skeletonImage} />
+      <View style={styles.skeletonText} />
+      <View style={[styles.skeletonText, { width: "60%" }]} />
+    </View>
+  );
+};
 
 export const ItemReplacementModal: React.FC<ItemReplacementModalProps> = ({
   visible,

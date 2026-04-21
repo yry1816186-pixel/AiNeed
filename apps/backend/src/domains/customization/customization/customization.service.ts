@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 
 import {
   CustomizationType,
@@ -12,17 +13,15 @@ import { PrismaService } from "../../../common/prisma/prisma.service";
 import { PODService } from "./pod/pod-service";
 import { pricingEngine } from "./pricing/pricing-engine";
 import type { PricingResult } from "./pricing/pricing-engine";
-import {
-  getTemplateSeedData,
-  getTemplatesByType,
-} from "./templates/customization-templates";
+import { getTemplateSeedData, getTemplatesByType } from "./templates/customization-templates";
 
 @Injectable()
 export class CustomizationService {
-  constructor(
-    private prisma: PrismaService,
-    private podService: PODService,
-  ) {}
+  private toJsonValue(value: unknown): Prisma.InputJsonValue {
+    return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
+  }
+
+  constructor(private prisma: PrismaService, private podService: PODService) {}
 
   // ==================== Template Methods ====================
 
@@ -45,11 +44,7 @@ export class CustomizationService {
 
   // ==================== Design Methods ====================
 
-  async createDesign(
-    userId: string,
-    templateId: string,
-    canvasData: Record<string, unknown>,
-  ) {
+  async createDesign(userId: string, templateId: string, canvasData: Record<string, unknown>) {
     const template = await this.prisma.customizationTemplate.findUnique({
       where: { id: templateId },
     });
@@ -61,7 +56,7 @@ export class CustomizationService {
       data: {
         userId,
         templateId,
-        canvasData: canvasData as Record<string, unknown>,
+        canvasData: this.toJsonValue(canvasData),
       },
     });
   }
@@ -89,7 +84,7 @@ export class CustomizationService {
       fillColor?: string;
       strokeColor?: string;
       strokeWidth?: number;
-    }>,
+    }>
   ) {
     const design = await this.prisma.customizationDesign.findFirst({
       where: { id: designId, userId },
@@ -131,7 +126,7 @@ export class CustomizationService {
     return this.prisma.customizationDesign.update({
       where: { id: designId },
       data: {
-        canvasData: canvasData as Record<string, unknown>,
+        canvasData: this.toJsonValue(canvasData),
       },
       include: { layers: { orderBy: { zIndex: "asc" } } },
     });
@@ -156,7 +151,7 @@ export class CustomizationService {
   async calculateQuote(
     designId: string,
     userId: string,
-    printSide: "front" | "back" | "both" = "front",
+    printSide: "front" | "back" | "both" = "front"
   ): Promise<{ pricing: PricingResult; quoteId: string }> {
     const design = await this.prisma.customizationDesign.findFirst({
       where: { id: designId, userId },
@@ -198,11 +193,7 @@ export class CustomizationService {
 
   // ==================== Customization Request from Design ====================
 
-  async createCustomizationFromDesign(
-    userId: string,
-    designId: string,
-    quoteId: string,
-  ) {
+  async createCustomizationFromDesign(userId: string, designId: string, quoteId: string) {
     const design = await this.prisma.customizationDesign.findFirst({
       where: { id: designId, userId },
       include: { template: true },
@@ -225,7 +216,7 @@ export class CustomizationService {
         title: `定制${design.template.name}`,
         description: `基于模板「${design.template.name}」的定制设计`,
         referenceImages: [],
-        preferences: { printSide: "front" },
+        preferences: this.toJsonValue({ printSide: "front" }),
         status: CustomizationStatus.quoting,
         designId,
         templateId: design.templateId,
@@ -280,7 +271,7 @@ export class CustomizationService {
       description: string;
       referenceImages?: string[];
       preferences?: Record<string, unknown>;
-    },
+    }
   ) {
     return this.prisma.customizationRequest.create({
       data: {
@@ -289,7 +280,7 @@ export class CustomizationService {
         title: data.title,
         description: data.description,
         referenceImages: data.referenceImages || [],
-        preferences: data.preferences ? (data.preferences as Record<string, unknown>) : {},
+        preferences: this.toJsonValue(data.preferences ?? {}),
         status: CustomizationStatus.draft,
       },
     });
@@ -314,7 +305,7 @@ export class CustomizationService {
     userId: string,
     status?: CustomizationStatus,
     page: number = 1,
-    limit: number = 10,
+    limit: number = 10
   ) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { userId };
@@ -379,7 +370,7 @@ export class CustomizationService {
       description?: string;
       referenceImages?: string[];
       preferences?: Record<string, unknown>;
-    },
+    }
   ) {
     const request = await this.prisma.customizationRequest.findFirst({
       where: { id: requestId, userId, status: CustomizationStatus.draft },
@@ -389,14 +380,24 @@ export class CustomizationService {
       throw new NotFoundException("定制需求不存在或无法修改");
     }
 
+    const updateData: Prisma.CustomizationRequestUpdateInput = {};
+
+    if (data.title !== undefined) {
+      updateData.title = data.title;
+    }
+    if (data.description !== undefined) {
+      updateData.description = data.description;
+    }
+    if (data.referenceImages !== undefined) {
+      updateData.referenceImages = data.referenceImages;
+    }
+    if (data.preferences !== undefined) {
+      updateData.preferences = this.toJsonValue(data.preferences);
+    }
+
     return this.prisma.customizationRequest.update({
       where: { id: requestId },
-      data: {
-        ...(data.title !== undefined && { title: data.title }),
-        ...(data.description !== undefined && { description: data.description }),
-        ...(data.referenceImages !== undefined && { referenceImages: data.referenceImages }),
-        ...(data.preferences !== undefined && { preferences: data.preferences as Record<string, unknown> }),
-      },
+      data: updateData,
     });
   }
 
@@ -449,11 +450,7 @@ export class CustomizationService {
 
   // ==================== Payment + Production Methods ====================
 
-  async confirmAndPay(
-    requestId: string,
-    userId: string,
-    paymentMethod: string,
-  ) {
+  async confirmAndPay(requestId: string, userId: string, paymentMethod: string) {
     const request = await this.prisma.customizationRequest.findFirst({
       where: { id: requestId, userId },
       include: { quotes: true },
@@ -487,7 +484,7 @@ export class CustomizationService {
 
   async handlePaymentCallback(
     requestId: string,
-    paymentResult: { success: boolean; paymentId: string },
+    paymentResult: { success: boolean; paymentId: string }
   ) {
     if (!paymentResult.success) {
       return { status: "payment_failed" };

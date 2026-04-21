@@ -176,7 +176,9 @@ export class AiStylistSessionService {
           };
         } catch (error) {
           this.logger.warn(
-            `Failed to parse session record ${record.id}: ${error instanceof Error ? error.message : String(error)}. Record will be skipped.`
+            `Failed to parse session record ${record.id}: ${
+              error instanceof Error ? error.message : String(error)
+            }. Record will be skipped.`
           );
           return null;
         }
@@ -196,7 +198,9 @@ export class AiStylistSessionService {
       });
     } catch (primaryError) {
       this.logger.warn(
-        `Failed to delete AI stylist session from primary table: ${primaryError instanceof Error ? primaryError.message : String(primaryError)}. Attempting fallback deletion.`
+        `Failed to delete AI stylist session from primary table: ${
+          primaryError instanceof Error ? primaryError.message : String(primaryError)
+        }. Attempting fallback deletion.`
       );
       try {
         await this.prisma.systemConfig.delete({
@@ -204,7 +208,9 @@ export class AiStylistSessionService {
         });
       } catch (fallbackError) {
         this.logger.error(
-          `Failed to delete session config from fallback table: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}. Session cleanup may be incomplete for userId=${userId}, sessionId=${sessionId}`
+          `Failed to delete session config from fallback table: ${
+            fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
+          }. Session cleanup may be incomplete for userId=${userId}, sessionId=${sessionId}`
         );
       }
     }
@@ -272,7 +278,7 @@ export class AiStylistSessionService {
 
   private async writeSessionRecord(session: StylistSession, expiresAt: Date): Promise<void> {
     try {
-      const sessionPayload = session as unknown as Record<string, unknown>;
+      const sessionPayload = JSON.parse(JSON.stringify(session)) as Prisma.InputJsonValue;
 
       await this.prisma.aiStylistSession.upsert({
         where: { id: session.id },
@@ -291,7 +297,9 @@ export class AiStylistSessionService {
       return;
     } catch (error: unknown) {
       this.logger.warn(
-        `AiStylistSession 表写入失败，回退 SystemConfig: ${error instanceof Error ? error.message : String(error)}`
+        `AiStylistSession 表写入失败，回退 SystemConfig: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
     }
 
@@ -321,7 +329,9 @@ export class AiStylistSessionService {
       return;
     } catch (error: unknown) {
       this.logger.warn(
-        `AiStylistSession 过期清理失败，回退 SystemConfig: ${error instanceof Error ? error.message : String(error)}`
+        `AiStylistSession 过期清理失败，回退 SystemConfig: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
     }
 
@@ -356,7 +366,9 @@ export class AiStylistSessionService {
       }
     } catch (error: unknown) {
       this.logger.warn(
-        `AiStylistSession 表读取失败，回退 SystemConfig: ${error instanceof Error ? error.message : String(error)}`
+        `AiStylistSession 表读取失败，回退 SystemConfig: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
     }
 

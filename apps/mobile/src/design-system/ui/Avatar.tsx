@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, Image, ViewStyle } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Colors, gradients } from "../../design-system/theme";
@@ -38,7 +38,6 @@ export const Avatar: React.FC<AvatarProps> = ({ source, name, size = "md", onlin
   const initial = name?.charAt(0)?.toUpperCase() || "?";
 
   const renderAvatar = () => {
-    const { colors } = useTheme();
     if (source) {
       return (
         <Image

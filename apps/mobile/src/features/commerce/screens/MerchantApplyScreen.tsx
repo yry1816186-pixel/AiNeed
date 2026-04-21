@@ -12,8 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { merchantApi } from "../../../services/api/commerce.api";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
-import { flatColors as colors } from "../../../design-system/theme";
+import { DesignTokens } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 type ScreenState = "form" | "pending" | "approved" | "rejected";
@@ -22,8 +21,8 @@ const BUSINESS_LICENSE_REGEX = /^[0-9A-HJ-NP-RTUW-Y]{2}\d{6}[0-9A-HJ-NP-RTUW-Y]{
 const PHONE_REGEX = /^1[3-9]\d{9}$/;
 
 export const MerchantApplyScreen: React.FC = () => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [screenState, setScreenState] = useState<ScreenState>("form");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);

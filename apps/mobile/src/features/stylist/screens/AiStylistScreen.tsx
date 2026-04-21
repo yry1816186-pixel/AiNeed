@@ -15,12 +15,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { useTranslation } from "../../../i18n";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import { useAuthStore } from "../stores/index";
 import { useAiStylistStore } from "../stores/aiStylistStore";
 import type { PresetQuestion } from "../stores/aiStylistStore";
 import type { RootStackParamList } from "../../../types/navigation";
-import { flatColors as colors } from "../../../design-system/theme";
 
 import {
   OutfitPlanView,

@@ -12,7 +12,7 @@ import {
   FlatList,
 } from "react-native";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import type { ClothingItem, ClothingCategory, Season, Occasion } from "../../../types/clothing";
 import { CATEGORY_LABELS, SEASON_LABELS, OCCASION_LABELS } from "../../../types/clothing";

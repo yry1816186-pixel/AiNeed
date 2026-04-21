@@ -1,400 +1,204 @@
-// Auto-generated from Prisma schema
-// Re-run: node scripts/generate-prisma-enums.cjs
+// Re-export Prisma-generated enums and model types so the app uses a single
+// source of truth for runtime enum values and compile-time enum types.
 
-export enum CouponType {
-  PERCENTAGE = 'PERCENTAGE',
-  FIXED = 'FIXED',
-  SHIPPING = 'SHIPPING',
-}
+import {
+  AnalysisStatus as PrismaAnalysisStatus,
+  AiStylistSessionStatus as PrismaAiStylistSessionStatus,
+  AuthProvider as PrismaAuthProvider,
+  BehaviorEventType as PrismaBehaviorEventType,
+  BodyType as PrismaBodyType,
+  BookingStatus as PrismaBookingStatus,
+  ClothingCategory as PrismaClothingCategory,
+  CollectionItemType as PrismaCollectionItemType,
+  ColorSeason as PrismaColorSeason,
+  ConsultantStatus as PrismaConsultantStatus,
+  CouponType as PrismaCouponType,
+  CustomizationStatus as PrismaCustomizationStatus,
+  CustomizationType as PrismaCustomizationType,
+  DeletionStatus as PrismaDeletionStatus,
+  DesignLayerType as PrismaDesignLayerType,
+  EarningStatus as PrismaEarningStatus,
+  ExportStatus as PrismaExportStatus,
+  FaceShape as PrismaFaceShape,
+  Gender as PrismaGender,
+  MerchantRole as PrismaMerchantRole,
+  MessageType as PrismaMessageType,
+  NotificationType as PrismaNotificationType,
+  OnboardingStep as PrismaOnboardingStep,
+  OrderStatus as PrismaOrderStatus,
+  PaymentRecordStatus as PrismaPaymentRecordStatus,
+  PaymentStatus as PrismaPaymentStatus,
+  PhotoType as PrismaPhotoType,
+  PriceRange as PrismaPriceRange,
+  ProductTemplateType as PrismaProductTemplateType,
+  QuizQuestionType as PrismaQuizQuestionType,
+  RecommendationType as PrismaRecommendationType,
+  RefundRecordStatus as PrismaRefundRecordStatus,
+  RefundRequestStatus as PrismaRefundRequestStatus,
+  RefundType as PrismaRefundType,
+  SenderType as PrismaSenderType,
+  ServiceType as PrismaServiceType,
+  SettlementStatus as PrismaSettlementStatus,
+  SkinTone as PrismaSkinTone,
+  StockNotificationStatus as PrismaStockNotificationStatus,
+  SubscriptionStatus as PrismaSubscriptionStatus,
+  TryOnStatus as PrismaTryOnStatus,
+  UserCouponStatus as PrismaUserCouponStatus,
+  UserRole as PrismaUserRole,
+  UserProfile as PrismaGeneratedUserProfile,
+  WithdrawalStatus as PrismaWithdrawalStatus,
+} from "@prisma/client";
 
-export enum UserCouponStatus {
-  AVAILABLE = 'AVAILABLE',
-  USED = 'USED',
-  EXPIRED = 'EXPIRED',
-}
+export const CouponType = PrismaCouponType;
+export type CouponType = PrismaCouponType;
 
-export enum StockNotificationStatus {
-  PENDING = 'PENDING',
-  NOTIFIED = 'NOTIFIED',
-  CANCELLED = 'CANCELLED',
-}
+export const UserCouponStatus = PrismaUserCouponStatus;
+export type UserCouponStatus = PrismaUserCouponStatus;
 
-export enum RefundType {
-  REFUND_ONLY = 'REFUND_ONLY',
-  RETURN_REFUND = 'RETURN_REFUND',
-}
+export const StockNotificationStatus = PrismaStockNotificationStatus;
+export type StockNotificationStatus = PrismaStockNotificationStatus;
 
-export enum RefundRequestStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-  PROCESSING = 'PROCESSING',
-  COMPLETED = 'COMPLETED',
-}
+export const RefundType = PrismaRefundType;
+export type RefundType = PrismaRefundType;
 
-export enum Gender {
-  male = 'male',
-  female = 'female',
-  other = 'other',
-}
+export const RefundRequestStatus = PrismaRefundRequestStatus;
+export type RefundRequestStatus = PrismaRefundRequestStatus;
 
-export enum AuthProvider {
-  email = 'email',
-  phone = 'phone',
-  wechat = 'wechat',
-}
+export const Gender = PrismaGender;
+export type Gender = PrismaGender;
 
-export enum OnboardingStep {
-  BASIC_INFO = 'BASIC_INFO',
-  PHOTO = 'PHOTO',
-  STYLE_TEST = 'STYLE_TEST',
-  COMPLETED = 'COMPLETED',
-}
+export const AuthProvider = PrismaAuthProvider;
+export type AuthProvider = PrismaAuthProvider;
 
-export enum BodyType {
-  rectangle = 'rectangle',
-  triangle = 'triangle',
-  inverted_triangle = 'inverted_triangle',
-  hourglass = 'hourglass',
-  oval = 'oval',
-}
+export const OnboardingStep = PrismaOnboardingStep;
+export type OnboardingStep = PrismaOnboardingStep;
 
-export enum SkinTone {
-  fair = 'fair',
-  light = 'light',
-  medium = 'medium',
-  olive = 'olive',
-  tan = 'tan',
-  dark = 'dark',
-}
+export const BodyType = PrismaBodyType;
+export type BodyType = PrismaBodyType;
 
-export enum FaceShape {
-  oval = 'oval',
-  round = 'round',
-  square = 'square',
-  heart = 'heart',
-  oblong = 'oblong',
-  diamond = 'diamond',
-}
+export const SkinTone = PrismaSkinTone;
+export type SkinTone = PrismaSkinTone;
 
-export enum ColorSeason {
-  spring_warm = 'spring_warm',
-  spring_light = 'spring_light',
-  summer_cool = 'summer_cool',
-  summer_light = 'summer_light',
-  autumn_warm = 'autumn_warm',
-  autumn_deep = 'autumn_deep',
-  winter_cool = 'winter_cool',
-  winter_deep = 'winter_deep',
-}
+export const FaceShape = PrismaFaceShape;
+export type FaceShape = PrismaFaceShape;
 
-export enum FitPreference {
-  tight = 'tight',
-  regular = 'regular',
-  loose = 'loose',
-}
+export const ColorSeason = PrismaColorSeason;
+export type ColorSeason = PrismaColorSeason;
 
-export enum PhotoType {
-  front = 'front',
-  side = 'side',
-  full_body = 'full_body',
-  half_body = 'half_body',
-  face = 'face',
-}
+export const FitPreference = {
+  tight: "tight",
+  regular: "regular",
+  loose: "loose",
+} as const;
+export type FitPreference = (typeof FitPreference)[keyof typeof FitPreference];
 
-export enum AnalysisStatus {
-  pending = 'pending',
-  processing = 'processing',
-  completed = 'completed',
-  failed = 'failed',
-}
+export const PhotoType = PrismaPhotoType;
+export type PhotoType = PrismaPhotoType;
 
-export enum PriceRange {
-  budget = 'budget',
-  mid_range = 'mid_range',
-  premium = 'premium',
-  luxury = 'luxury',
-}
+export const AnalysisStatus = PrismaAnalysisStatus;
+export type AnalysisStatus = PrismaAnalysisStatus;
 
-export enum ClothingCategory {
-  tops = 'tops',
-  bottoms = 'bottoms',
-  dresses = 'dresses',
-  outerwear = 'outerwear',
-  footwear = 'footwear',
-  accessories = 'accessories',
-  activewear = 'activewear',
-  swimwear = 'swimwear',
-}
+export const PriceRange = PrismaPriceRange;
+export type PriceRange = PrismaPriceRange;
 
-export enum TryOnStatus {
-  pending = 'pending',
-  processing = 'processing',
-  completed = 'completed',
-  failed = 'failed',
-}
+export const ClothingCategory = PrismaClothingCategory;
+export type ClothingCategory = PrismaClothingCategory;
 
-export enum CustomizationType {
-  tailored = 'tailored',
-  bespoke = 'bespoke',
-  alteration = 'alteration',
-  design = 'design',
-  pod = 'pod',
-}
+export const TryOnStatus = PrismaTryOnStatus;
+export type TryOnStatus = PrismaTryOnStatus;
 
-export enum CustomizationStatus {
-  draft = 'draft',
-  submitted = 'submitted',
-  quoting = 'quoting',
-  confirmed = 'confirmed',
-  in_progress = 'in_progress',
-  shipped = 'shipped',
-  completed = 'completed',
-  cancelled = 'cancelled',
-}
+export const CustomizationType = PrismaCustomizationType;
+export type CustomizationType = PrismaCustomizationType;
 
-export enum ProductTemplateType {
-  tshirt = 'tshirt',
-  hat = 'hat',
-  shoes = 'shoes',
-  bag = 'bag',
-  phone_case = 'phone_case',
-  mug = 'mug',
-}
+export const CustomizationStatus = PrismaCustomizationStatus;
+export type CustomizationStatus = PrismaCustomizationStatus;
 
-export enum DesignLayerType {
-  image = 'image',
-  text = 'text',
-  shape = 'shape',
-}
+export const ProductTemplateType = PrismaProductTemplateType;
+export type ProductTemplateType = PrismaProductTemplateType;
 
-export enum RecommendationType {
-  daily = 'daily',
-  occasion = 'occasion',
-  seasonal = 'seasonal',
-  trending = 'trending',
-  business = 'business',
-}
+export const DesignLayerType = PrismaDesignLayerType;
+export type DesignLayerType = PrismaDesignLayerType;
 
-export enum InteractionWeight {
-  view = 'view',
-  click = 'click',
-  like = 'like',
-  favorite = 'favorite',
-  addToCart = 'addToCart',
-  purchase = 'purchase',
-  tryOn = 'tryOn',
-  share = 'share',
-  dislike = 'dislike',
-}
+export const RecommendationType = PrismaRecommendationType;
+export type RecommendationType = PrismaRecommendationType;
 
-export enum BehaviorEventType {
-  page_view = 'page_view',
-  item_view = 'item_view',
-  search = 'search',
-  filter = 'filter',
-  click = 'click',
-  scroll = 'scroll',
-  try_on_start = 'try_on_start',
-  try_on_complete = 'try_on_complete',
-  favorite = 'favorite',
-  unfavorite = 'unfavorite',
-  share = 'share',
-  add_to_cart = 'add_to_cart',
-  remove_from_cart = 'remove_from_cart',
-  purchase = 'purchase',
-  recommendation_view = 'recommendation_view',
-  recommendation_click = 'recommendation_click',
-  post_create = 'post_create',
-  post_like = 'post_like',
-  post_comment = 'post_comment',
-  user_follow = 'user_follow',
-}
+export const InteractionWeight = {
+  view: "view",
+  click: "click",
+  like: "like",
+  favorite: "favorite",
+  addToCart: "addToCart",
+  purchase: "purchase",
+  tryOn: "tryOn",
+  share: "share",
+  dislike: "dislike",
+} as const;
+export type InteractionWeight = (typeof InteractionWeight)[keyof typeof InteractionWeight];
 
-export enum AiStylistSessionStatus {
-  active = 'active',
-  archived = 'archived',
-}
+export const BehaviorEventType = PrismaBehaviorEventType;
+export type BehaviorEventType = PrismaBehaviorEventType;
 
-export enum SubscriptionStatus {
-  active = 'active',
-  expired = 'expired',
-  cancelled = 'cancelled',
-  past_due = 'past_due',
-}
+export const AiStylistSessionStatus = PrismaAiStylistSessionStatus;
+export type AiStylistSessionStatus = PrismaAiStylistSessionStatus;
 
-export enum PaymentStatus {
-  pending = 'pending',
-  paid = 'paid',
-  failed = 'failed',
-  refunded = 'refunded',
-  cancelled = 'cancelled',
-}
+export const SubscriptionStatus = PrismaSubscriptionStatus;
+export type SubscriptionStatus = PrismaSubscriptionStatus;
 
-export enum NotificationType {
-  subscription_activated = 'subscription_activated',
-  subscription_expiring = 'subscription_expiring',
-  renewal_failed = 'renewal_failed',
-  try_on_completed = 'try_on_completed',
-  try_on_failed = 'try_on_failed',
-  daily_recommendation = 'daily_recommendation',
-  price_drop = 'price_drop',
-  new_follower = 'new_follower',
-  comment = 'comment',
-  like = 'like',
-  bookmark = 'bookmark',
-  reply_mention = 'reply_mention',
-  blogger_product_sold = 'blogger_product_sold',
-  content_approved = 'content_approved',
-  content_rejected = 'content_rejected',
-  report_resolved = 'report_resolved',
-  system_update = 'system_update',
-  privacy_reminder = 'privacy_reminder',
-}
+export const PaymentStatus = PrismaPaymentStatus;
+export type PaymentStatus = PrismaPaymentStatus;
 
-export enum ExportStatus {
-  pending = 'pending',
-  processing = 'processing',
-  completed = 'completed',
-  expired = 'expired',
-}
+export const NotificationType = PrismaNotificationType;
+export type NotificationType = PrismaNotificationType;
 
-export enum DeletionStatus {
-  pending = 'pending',
-  processing = 'processing',
-  completed = 'completed',
-  cancelled = 'cancelled',
-}
+export const ExportStatus = PrismaExportStatus;
+export type ExportStatus = PrismaExportStatus;
 
-export enum MerchantRole {
-  admin = 'admin',
-  editor = 'editor',
-  viewer = 'viewer',
-}
+export const DeletionStatus = PrismaDeletionStatus;
+export type DeletionStatus = PrismaDeletionStatus;
 
-export enum SettlementStatus {
-  pending = 'pending',
-  processing = 'processing',
-  paid = 'paid',
-}
+export const MerchantRole = PrismaMerchantRole;
+export type MerchantRole = PrismaMerchantRole;
 
-export enum PaymentRecordStatus {
-  pending = 'pending',
-  paid = 'paid',
-  failed = 'failed',
-  refunded = 'refunded',
-  cancelled = 'cancelled',
-  closed = 'closed',
-}
+export const SettlementStatus = PrismaSettlementStatus;
+export type SettlementStatus = PrismaSettlementStatus;
 
-export enum RefundRecordStatus {
-  processing = 'processing',
-  success = 'success',
-  failed = 'failed',
-}
+export const PaymentRecordStatus = PrismaPaymentRecordStatus;
+export type PaymentRecordStatus = PrismaPaymentRecordStatus;
 
-export enum OrderStatus {
-  pending = 'pending',
-  paid = 'paid',
-  processing = 'processing',
-  shipped = 'shipped',
-  delivered = 'delivered',
-  cancelled = 'cancelled',
-  refunded = 'refunded',
-}
+export const RefundRecordStatus = PrismaRefundRecordStatus;
+export type RefundRecordStatus = PrismaRefundRecordStatus;
 
-export enum QuizQuestionType {
-  visual_choice = 'visual_choice',
-  text_choice = 'text_choice',
-  slider = 'slider',
-}
+export const OrderStatus = PrismaOrderStatus;
+export type OrderStatus = PrismaOrderStatus;
 
-export enum ConsultantStatus {
-  pending = 'pending',
-  active = 'active',
-  suspended = 'suspended',
-  inactive = 'inactive',
-}
+export const QuizQuestionType = PrismaQuizQuestionType;
+export type QuizQuestionType = PrismaQuizQuestionType;
 
-export enum ServiceType {
-  styling_consultation = 'styling_consultation',
-  wardrobe_audit = 'wardrobe_audit',
-  shopping_companion = 'shopping_companion',
-  color_analysis = 'color_analysis',
-  special_event = 'special_event',
-}
+export const ConsultantStatus = PrismaConsultantStatus;
+export type ConsultantStatus = PrismaConsultantStatus;
 
-export enum BookingStatus {
-  pending = 'pending',
-  confirmed = 'confirmed',
-  in_progress = 'in_progress',
-  completed = 'completed',
-  cancelled = 'cancelled',
-  no_show = 'no_show',
-}
+export const ServiceType = PrismaServiceType;
+export type ServiceType = PrismaServiceType;
 
-export enum SenderType {
-  user = 'user',
-  consultant = 'consultant',
-}
+export const BookingStatus = PrismaBookingStatus;
+export type BookingStatus = PrismaBookingStatus;
 
-export enum MessageType {
-  text = 'text',
-  image = 'image',
-  file = 'file',
-  system = 'system',
-  proposal = 'proposal',
-}
+export const SenderType = PrismaSenderType;
+export type SenderType = PrismaSenderType;
 
-export enum EarningStatus {
-  pending = 'pending',
-  settled = 'settled',
-  failed = 'failed',
-}
+export const MessageType = PrismaMessageType;
+export type MessageType = PrismaMessageType;
 
-export enum WithdrawalStatus {
-  pending = 'pending',
-  processing = 'processing',
-  completed = 'completed',
-  rejected = 'rejected',
-}
+export const EarningStatus = PrismaEarningStatus;
+export type EarningStatus = PrismaEarningStatus;
 
-export enum CollectionItemType {
-  post = 'post',
-  outfit = 'outfit',
-  try_on = 'try_on',
-}
+export const WithdrawalStatus = PrismaWithdrawalStatus;
+export type WithdrawalStatus = PrismaWithdrawalStatus;
 
-export enum UserRole {
-  user = 'user',
-  admin = 'admin',
-  superadmin = 'superadmin',
-  ops = 'ops',
-  customer_service = 'customer_service',
-  reviewer = 'reviewer',
-}
+export const CollectionItemType = PrismaCollectionItemType;
+export type CollectionItemType = PrismaCollectionItemType;
 
-export interface PrismaUserProfile {
-  id: string;
-  userId: string;
-  bodyType?: BodyType | null;
-  skinTone?: SkinTone | null;
-  faceShape?: FaceShape | null;
-  colorSeason?: ColorSeason | null;
-  height?: number | null;
-  weight?: number | null;
-  shoulder?: number | null;
-  bust?: number | null;
-  waist?: number | null;
-  hip?: number | null;
-  inseam?: number | null;
-  stylePreferences?: any;
-  colorPreferences?: any;
-  priceRangeMin?: number | null;
-  priceRangeMax?: number | null;
-  onboardingStep: OnboardingStep;
-  onboardingCompletedAt?: Date | null;
-  skippedOnboardingSteps: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+export const UserRole = PrismaUserRole;
+export type UserRole = PrismaUserRole;
+
+export type PrismaUserProfile = PrismaGeneratedUserProfile;

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { cartEnhancementApi } from "../../../services/api/commerce.api";
 import { DesignTokens } from "../../../design-system/theme";
-import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface InlineSKUSelectorProps {
@@ -26,8 +25,8 @@ export const InlineSKUSelector: React.FC<InlineSKUSelectorProps> = ({
   onChange,
   onClose,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   const [color, setColor] = useState(currentColor);
   const [size, setSize] = useState(currentSize);
 
@@ -103,7 +102,7 @@ const useStyles = createStyles((colors) => ({
     justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "colors.backgroundTertiary",
+    borderBottomColor: colors.backgroundTertiary,
   },
   title: {
     fontSize: DesignTokens.typography.sizes.md,
@@ -126,14 +125,14 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.backgroundTertiary,
   },
   chipSelected: {
-    backgroundColor: "colors.errorLight",
+    backgroundColor: colors.errorLight,
     borderWidth: 1,
-    borderColor: "colors.error",
+    borderColor: colors.error,
   },
   chipText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textSecondary },
-  chipTextSelected: { color: "colors.error", fontWeight: "500" },
+  chipTextSelected: { color: colors.error, fontWeight: "500" },
   confirm: {
-    backgroundColor: "colors.error",
+    backgroundColor: colors.error,
     paddingVertical: 14,
     alignItems: "center",
   },

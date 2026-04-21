@@ -26,7 +26,7 @@ import { useCouponStore } from "../stores/couponStore";
 import { useScreenTracking } from "../../../hooks/useAnalytics";
 import { useTranslation } from "../../../i18n";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import { haptics } from "../../../utils/haptics";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
 import { EmptyCartView } from "../components/EmptyCartView";

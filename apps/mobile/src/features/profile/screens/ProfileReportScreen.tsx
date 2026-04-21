@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -30,7 +30,7 @@ import { BodyTypeCard } from "../../../components/BodyTypeCard";
 import { ColorSeasonCard } from "../../../components/ColorSeasonCard";
 import { StyleTagsCard } from "../../../components/StyleTagsCard";
 import { SharePosterPreview } from "../../../components/SharePosterPreview";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 type ProfileReportNavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -98,8 +98,8 @@ function getProfileCompletion(profile: UserProfile): number {
 }
 
 export const ProfileReportScreenComponent: React.FC = () => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const navigation = useNavigation<ProfileReportNavigationProp>();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [bodyAnalysis, setBodyAnalysis] = useState<BodyAnalysisReport | null>(null);

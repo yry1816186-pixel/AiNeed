@@ -6,7 +6,7 @@ import { LinearGradient } from "../../../polyfills/expo-linear-gradient";
 import Share from "react-native-share";
 import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import { useProfileStore } from "../stores/profileStore";
 import { useAuthStore } from "../stores/index";
 import { ScreenLayout, Header } from "../../../shared/components/layout/ScreenLayout";

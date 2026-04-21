@@ -3,30 +3,30 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from "reac
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import type { RootStackParamList } from '../../../types/navigation';
-import { useTheme, createStyles } from '../../../shared/contexts/ThemeContext';
+import type { RootStackParamList } from "../../../types/navigation";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { clothingApi } from '../../../services/api/clothing.api';
-import { useScreenTracking } from '../../../hooks/useAnalytics';
-import { useTranslation } from '../../../i18n';
+import { clothingApi } from "../../../services/api/clothing.api";
+import { useScreenTracking } from "../../../hooks/useAnalytics";
+import { useTranslation } from "../../../i18n";
 import {
   searchApi,
   searchEnhancementApi,
   clothingEnhancementApi,
   type FilterOptions as FilterOptionsType,
   type Subcategory,
-} from '../../../services/api/commerce.api';
+} from "../../../services/api/commerce.api";
 import type {
   ClothingItem,
   ClothingFilter,
   ClothingCategory,
   Season,
   Occasion,
-} from '../../../types/clothing';
-import { CategoryNavigation } from '../../commerce/components/CategoryNavigation';
-import { SubcategoryTabs } from '../../commerce/components/SubcategoryTabs';
-import { FilterTags } from '../../commerce/components/FilterTags';
-import { SortBar } from '../../commerce/components/SortBar';
+} from "../../../types/clothing";
+import { CategoryNavigation } from "../../commerce/components/CategoryNavigation";
+import { SubcategoryTabs } from "../../commerce/components/SubcategoryTabs";
+import { FilterTags } from "../../commerce/components/FilterTags";
+import { SortBar } from "../../commerce/components/SortBar";
 import {
   launchImageLibraryAsync,
   launchCameraAsync,
@@ -34,8 +34,8 @@ import {
   requestCameraPermissionsAsync,
   requestMediaLibraryPermissionsAsync,
 } from "@/src/polyfills/expo-image-picker";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { Spacing, flatColors as staticColors } from '../../../design-system/theme';
+import { DesignTokens } from "../../../design-system/theme";
+import { Spacing, flatColors as staticColors } from "../../../design-system/theme";
 
 import {
   FilterPanel,
@@ -45,7 +45,7 @@ import {
   SearchResultList,
   LoadingOverlay,
   PRICE_RANGES,
-} from '../../search/components/SearchScreenParts';
+} from "../../search/components/SearchScreenParts";
 
 const DEBOUNCE_MS = 300;
 
@@ -166,12 +166,8 @@ export const SearchScreen: React.FC = () => {
         const response = await clothingApi.search(trimmed, filter, {
           ...extraParams,
           sort: activeSort || undefined,
-          brands: activeFilterDimensions.brands?.length
-            ? activeFilterDimensions.brands
-            : undefined,
-          colors: activeFilterDimensions.colors?.length
-            ? activeFilterDimensions.colors
-            : undefined,
+          brands: activeFilterDimensions.brands?.length ? activeFilterDimensions.brands : undefined,
+          colors: activeFilterDimensions.colors?.length ? activeFilterDimensions.colors : undefined,
           subcategory: selectedSubcategory || undefined,
           page,
           limit: 20,
@@ -257,7 +253,7 @@ export const SearchScreen: React.FC = () => {
       setHistory([]);
     } catch (error) {
       // keep UI stable even if clear history fails
-      console.error('Failed to clear search history:', error);
+      console.error("Failed to clear search history:", error);
     }
   }, []);
 
@@ -431,7 +427,12 @@ export const SearchScreen: React.FC = () => {
             {query.length > 0 ? (
               <TouchableOpacity
                 onPress={handleClearSearch}
-                hitSlop={{ top: DesignTokens.spacing['2.5'], right: DesignTokens.spacing['2.5'], bottom: DesignTokens.spacing['2.5'], left: DesignTokens.spacing['2.5']}}
+                hitSlop={{
+                  top: DesignTokens.spacing["2.5"],
+                  right: DesignTokens.spacing["2.5"],
+                  bottom: DesignTokens.spacing["2.5"],
+                  left: DesignTokens.spacing["2.5"],
+                }}
               >
                 <Ionicons name="close-circle" size={18} color={staticColors.textTertiary} />
               </TouchableOpacity>
@@ -582,7 +583,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: Spacing.md,
     paddingVertical: DesignTokens.spacing[3],
-    gap: DesignTokens.spacing['2.5'],
+    gap: DesignTokens.spacing["2.5"],
   },
   searchInput: {
     flex: 1,
@@ -608,7 +609,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: Spacing.xs,
     paddingHorizontal: DesignTokens.spacing[3],
-    paddingVertical: DesignTokens.spacing['1.5'],
+    paddingVertical: DesignTokens.spacing["1.5"],
     borderRadius: 16,
     backgroundColor: staticColors.divider,
   },

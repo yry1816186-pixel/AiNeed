@@ -1,9 +1,9 @@
-﻿import React from "react";
+import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { View, ActivityIndicator } from "react-native";
 
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import { StyleSheet } from "react-native";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";
 import { logger } from "../../../utils/logger";
@@ -11,7 +11,6 @@ import { useScreenTracking } from "../../../hooks/useAnalytics";
 import { useFeatureFlags } from "../../../shared/contexts/FeatureFlagContext";
 import { FeatureFlagKeys } from "../../../constants/feature-flags";
 import { useTranslation } from "../../../i18n";
-import { flatColors as colors } from "../../../design-system/theme";
 
 // Wrapper that provides navigation-based back action
 // instead of expo-router's router.back()
@@ -43,7 +42,7 @@ const TryOnScreenWrapper: React.FC<{ isV2TryOn: boolean }> = ({ isV2TryOn }) => 
     <React.Suspense
       fallback={
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <ActivityIndicator size="large" color={theme?.colors?.primary || "colors.primary"} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       }
     >

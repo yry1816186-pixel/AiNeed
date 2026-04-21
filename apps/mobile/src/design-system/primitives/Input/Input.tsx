@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import {
   View,
   TextInput,
@@ -23,7 +23,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius } from "../theme";
+import { Colors, Spacing, BorderRadius, DesignTokens } from "../theme";
 import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
@@ -138,7 +138,7 @@ export const Input: React.FC<InputProps> = ({
     const color = interpolateColor(
       progress,
       [0, 1],
-      [colors.neutral[400], error ? colors.error[500] : colors.primary[500]]
+      [colors.neutral[400], error ? Colors.error[500] : Colors.primary[500]]
     );
     const paddingHorizontal = interpolate(progress, [0, 1], [0, 4]);
 
@@ -155,12 +155,11 @@ export const Input: React.FC<InputProps> = ({
   }));
 
   const getBorderColor = () => {
-    const { colors } = useTheme();
     if (error) {
-      return colors.error[500];
+      return Colors.error[500];
     }
     if (isFocused) {
-      return colors.primary[500];
+      return Colors.primary[500];
     }
     return colors.neutral[200];
   };
@@ -273,6 +272,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   value,
   ...props
 }) => {
+  const { colors } = useTheme();
   return (
     <Input
       variant="filled"
@@ -283,7 +283,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       rightIconName={value && showClearButton ? "close-circle" : undefined}
       onRightIconPress={onClear}
       containerStyle={StyleSheet.flatten([
-        { backgroundColor: colors.neutral[100], borderRadius: BorderRadius.xl },
+        { backgroundColor: Colors.neutral[100], borderRadius: BorderRadius.xl },
         props.containerStyle,
       ])}
       inputStyle={{ backgroundColor: "transparent" }}

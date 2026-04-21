@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Card - UI layer re-export with extended variants
  *
  * This file provides the UI-layer Card with additional theme tokens
@@ -67,6 +67,7 @@ export const Card: React.FC<CardProps> = ({
   glassIntensity = 80,
   hapticFeedback = true,
 }) => {
+  const { colors } = useTheme();
   const scaleAnim = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -119,7 +120,6 @@ export const Card: React.FC<CardProps> = ({
   };
 
   const renderContent = () => {
-    const { colors } = useTheme();
     if (variant === "gradient") {
       const gColors = gradientColors || gradients.brand;
       return (

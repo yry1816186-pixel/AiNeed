@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import {
-  Injectable,
-  Logger,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
@@ -46,10 +42,7 @@ export class SizeRecommendationService {
    * Get AI size recommendation based on body profile + order history.
    * Per D-06: Returns null when no body profile data exists.
    */
-  async getRecommendation(
-    userId: string,
-    itemId: string,
-  ): Promise<RecommendationResult | null> {
+  async getRecommendation(userId: string, itemId: string): Promise<RecommendationResult | null> {
     const userProfile = await this.prisma.userProfile.findUnique({
       where: { userId },
     });
@@ -70,6 +63,12 @@ export class SizeRecommendationService {
       bust: userProfile.bust ?? undefined,
       waist: userProfile.waist ?? undefined,
       hip: userProfile.hip ?? undefined,
+      fitPreference:
+        ((userProfile.stylePreferences as Record<string, unknown> | null)?.fitPreference as
+          | "tight"
+          | "regular"
+          | "loose"
+          | undefined) ?? undefined,
     };
 
     const item = await this.prisma.clothingItem.findUnique({
@@ -82,11 +81,7 @@ export class SizeRecommendationService {
     }
 
     const sizeChart = this.buildSizeRanges(item.sizes);
-    const matchResult = this.matchBodyToSizes(
-      bodyProfile,
-      sizeChart,
-      bodyProfile.fitPreference,
-    );
+    const matchResult = this.matchBodyToSizes(bodyProfile, sizeChart, bodyProfile.fitPreference);
     const historyBonus = await this.getOrderHistoryBonus(userId, item.brandId);
     const returnPenalty = await this.getReturnPenalty(userId, item.brandId);
 
@@ -100,9 +95,7 @@ export class SizeRecommendationService {
     }
 
     if (matchResult.betweenSizes) {
-      reasons.push(
-        `处于 ${matchResult.betweenSizes} 之间，建议 ${matchResult.recommendedSize}`,
-      );
+      reasons.push(`处于 ${matchResult.betweenSizes} 之间，建议 ${matchResult.recommendedSize}`);
     }
 
     if (bodyProfile.fitPreference && bodyProfile.fitPreference !== "regular") {
@@ -153,12 +146,72 @@ export class SizeRecommendationService {
 
   private buildSizeRanges(sizes: string[]): SizeRange[] {
     const defaultChart: SizeRange[] = [
-      { size: "XS", chestMin: 76, chestMax: 80, waistMin: 60, waistMax: 64, hipsMin: 84, hipsMax: 88, heightMin: 150, heightMax: 158 },
-      { size: "S", chestMin: 80, chestMax: 84, waistMin: 64, waistMax: 68, hipsMin: 88, hipsMax: 92, heightMin: 155, heightMax: 162 },
-      { size: "M", chestMin: 84, chestMax: 88, waistMin: 68, waistMax: 72, hipsMin: 92, hipsMax: 96, heightMin: 160, heightMax: 168 },
-      { size: "L", chestMin: 88, chestMax: 92, waistMin: 72, waistMax: 76, hipsMin: 96, hipsMax: 100, heightMin: 165, heightMax: 172 },
-      { size: "XL", chestMin: 92, chestMax: 96, waistMin: 76, waistMax: 80, hipsMin: 100, hipsMax: 104, heightMin: 168, heightMax: 176 },
-      { size: "XXL", chestMin: 96, chestMax: 100, waistMin: 80, waistMax: 84, hipsMin: 104, hipsMax: 108, heightMin: 170, heightMax: 180 },
+      {
+        size: "XS",
+        chestMin: 76,
+        chestMax: 80,
+        waistMin: 60,
+        waistMax: 64,
+        hipsMin: 84,
+        hipsMax: 88,
+        heightMin: 150,
+        heightMax: 158,
+      },
+      {
+        size: "S",
+        chestMin: 80,
+        chestMax: 84,
+        waistMin: 64,
+        waistMax: 68,
+        hipsMin: 88,
+        hipsMax: 92,
+        heightMin: 155,
+        heightMax: 162,
+      },
+      {
+        size: "M",
+        chestMin: 84,
+        chestMax: 88,
+        waistMin: 68,
+        waistMax: 72,
+        hipsMin: 92,
+        hipsMax: 96,
+        heightMin: 160,
+        heightMax: 168,
+      },
+      {
+        size: "L",
+        chestMin: 88,
+        chestMax: 92,
+        waistMin: 72,
+        waistMax: 76,
+        hipsMin: 96,
+        hipsMax: 100,
+        heightMin: 165,
+        heightMax: 172,
+      },
+      {
+        size: "XL",
+        chestMin: 92,
+        chestMax: 96,
+        waistMin: 76,
+        waistMax: 80,
+        hipsMin: 100,
+        hipsMax: 104,
+        heightMin: 168,
+        heightMax: 176,
+      },
+      {
+        size: "XXL",
+        chestMin: 96,
+        chestMax: 100,
+        waistMin: 80,
+        waistMax: 84,
+        hipsMin: 104,
+        hipsMax: 108,
+        heightMin: 170,
+        heightMax: 180,
+      },
     ];
 
     const upperSizes = sizes.map((s) => s.toUpperCase());
@@ -184,12 +237,7 @@ export class SizeRecommendationService {
    * Gaussian distance scoring: gradual falloff outside range instead of binary 0/3.
    * score = 1.0 inside range, exponential decay outside.
    */
-  private gaussianScore(
-    measurement: number,
-    min: number,
-    max: number,
-    sigma: number,
-  ): number {
+  private gaussianScore(measurement: number, min: number, max: number, sigma: number): number {
     if (measurement >= min && measurement <= max) {
       return 1.0;
     }
@@ -203,7 +251,7 @@ export class SizeRecommendationService {
    */
   private applyFitPreference(
     body: BodyProfile,
-    preference?: "tight" | "regular" | "loose",
+    preference?: "tight" | "regular" | "loose"
   ): BodyProfile {
     if (!preference || preference === "regular") {
       return body;
@@ -224,7 +272,7 @@ export class SizeRecommendationService {
   private matchBodyToSizes(
     body: BodyProfile,
     sizeChart: SizeRange[],
-    fitPreference?: "tight" | "regular" | "loose",
+    fitPreference?: "tight" | "regular" | "loose"
   ): {
     recommendedSize: string;
     matchScore: number;
@@ -332,9 +380,11 @@ export class SizeRecommendationService {
 
   private async getOrderHistoryBonus(
     userId: string,
-    brandId: string | null,
+    brandId: string | null
   ): Promise<{ size: string | null }> {
-    if (!brandId) {return { size: null };}
+    if (!brandId) {
+      return { size: null };
+    }
 
     const orderItems = await this.prisma.orderItem.findMany({
       where: {
@@ -349,7 +399,9 @@ export class SizeRecommendationService {
       orderBy: { createdAt: "desc" },
     });
 
-    if (orderItems.length === 0) {return { size: null };}
+    if (orderItems.length === 0) {
+      return { size: null };
+    }
 
     const sizeCounts: Record<string, number> = {};
     for (const oi of orderItems) {
@@ -362,9 +414,11 @@ export class SizeRecommendationService {
 
   private async getReturnPenalty(
     userId: string,
-    brandId: string | null,
+    brandId: string | null
   ): Promise<{ size: string | null }> {
-    if (!brandId) {return { size: null };}
+    if (!brandId) {
+      return { size: null };
+    }
 
     const refundRequests = await this.prisma.refundRequest.findMany({
       where: {
@@ -391,11 +445,15 @@ export class SizeRecommendationService {
       orderBy: { createdAt: "desc" },
     });
 
-    if (refundRequests.length === 0) {return { size: null };}
+    if (refundRequests.length === 0) {
+      return { size: null };
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sizes = refundRequests.flatMap((r: any) => r.order.items.map((i: any) => i.size));
-    if (sizes.length === 0) {return { size: null };}
+    if (sizes.length === 0) {
+      return { size: null };
+    }
 
     return { size: sizes[0] ?? null };
   }
@@ -406,7 +464,7 @@ export class SizeRecommendationService {
    */
   private computeBrandOffset(
     historyBonus: { size: string | null },
-    returnPenalty: { size: string | null },
+    returnPenalty: { size: string | null }
   ): number {
     if (!historyBonus.size || !returnPenalty.size) {
       return 0;
@@ -421,19 +479,23 @@ export class SizeRecommendationService {
     return keptIdx - returnedIdx;
   }
 
-  private boostConfidence(
-    confidence: "high" | "medium" | "low",
-  ): "high" | "medium" | "low" {
-    if (confidence === "low") {return "medium";}
-    if (confidence === "medium") {return "high";}
+  private boostConfidence(confidence: "high" | "medium" | "low"): "high" | "medium" | "low" {
+    if (confidence === "low") {
+      return "medium";
+    }
+    if (confidence === "medium") {
+      return "high";
+    }
     return "high";
   }
 
-  private lowerConfidence(
-    confidence: "high" | "medium" | "low",
-  ): "high" | "medium" | "low" {
-    if (confidence === "high") {return "medium";}
-    if (confidence === "medium") {return "low";}
+  private lowerConfidence(confidence: "high" | "medium" | "low"): "high" | "medium" | "low" {
+    if (confidence === "high") {
+      return "medium";
+    }
+    if (confidence === "medium") {
+      return "low";
+    }
     return "low";
   }
 }

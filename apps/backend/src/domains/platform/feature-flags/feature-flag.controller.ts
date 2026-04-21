@@ -91,7 +91,7 @@ export class FeatureFlagController {
   @ApiOperation({ summary: "Evaluate a feature flag for the current user" })
   @ApiResponse({ status: 200, description: "Evaluation result" })
   async evaluate(@Body() dto: EvaluateFlagDto, @NestRequest() req: Request) {
-    const userId = dto.userId ?? req.user?.id;
+    const userId = dto.userId ?? (req.user as { id?: string } | undefined)?.id;
     return this.featureFlagService.evaluate(dto.key, userId, dto.attributes);
   }
 }

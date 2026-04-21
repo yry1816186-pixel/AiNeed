@@ -13,6 +13,11 @@ import { QueueService } from "../../platform/queue/queue.service";
 import { PhotosService } from "./photos.service";
 import { AiAnalysisService } from "./services/ai-analysis.service";
 
+// Mock image-sanitizer to avoid real sharp calls with fake JPEG buffers
+jest.mock("../../../common/security/image-sanitizer", () => ({
+  stripExifFromBuffer: jest.fn((buffer: Buffer) => Promise.resolve(buffer)),
+}));
+
 import "multer"; // 引入 Express.Multer.File 类型声明
 
 describe("PhotosService", () => {
@@ -66,7 +71,9 @@ describe("PhotosService", () => {
   };
 
   const mockQueueService = {
-    addImageAnalysisTask: jest.fn().mockResolvedValue({ taskId: "mock-task-id", status: "pending" }),
+    addImageAnalysisTask: jest
+      .fn()
+      .mockResolvedValue({ taskId: "mock-task-id", status: "pending" }),
     addJob: jest.fn().mockResolvedValue({ id: "mock-job-id" }),
     getJobStatus: jest.fn().mockResolvedValue(null),
     getQueueStats: jest.fn().mockResolvedValue({ waiting: 0, active: 0, completed: 0, failed: 0 }),
@@ -78,12 +85,25 @@ describe("PhotosService", () => {
     encoding: "7bit",
     mimetype: "image/jpeg",
     // JPEG magic bytes: FF D8 FF (JPEG SOI marker) followed by APP0 marker
-    buffer: Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, ...Array(1013).fill(0)]),
+    buffer: Buffer.from([
+      0xff,
+      0xd8,
+      0xff,
+      0xe0,
+      0x00,
+      0x10,
+      0x4a,
+      0x46,
+      0x49,
+      0x46,
+      0x00,
+      ...Array(1013).fill(0),
+    ]),
     size: 1024,
     destination: "",
     filename: "",
     path: "",
-    stream: null as unknown as Express.Multer.File['stream'],
+    stream: null as unknown as Express.Multer.File["stream"],
   });
 
   const mockPhoto = {
@@ -154,16 +174,10 @@ describe("PhotosService", () => {
       });
       mockPrismaService.userPhoto.create.mockResolvedValue(mockPhoto);
 
-      const result = await service.uploadPhoto(
-        "test-user-id",
-        mockFile,
-        PhotoType.full_body,
-      );
+      const result = await service.uploadPhoto("test-user-id", mockFile, PhotoType.full_body);
 
       expect(result.id).toBe("photo-id");
-      expect(result.url).toBe(
-        "https://storage.example.com/photos/user-id/photo-id.jpg",
-      );
+      expect(result.url).toBe("https://storage.example.com/photos/user-id/photo-id.jpg");
       expect(result.type).toBe(PhotoType.full_body);
       expect(mockStorageService.uploadEncrypted).toHaveBeenCalled();
       expect(mockPrismaService.userPhoto.create).toHaveBeenCalled();
@@ -176,7 +190,7 @@ describe("PhotosService", () => {
       };
 
       await expect(
-        service.uploadPhoto("test-user-id", invalidFile, PhotoType.full_body),
+        service.uploadPhoto("test-user-id", invalidFile, PhotoType.full_body)
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -187,7 +201,7 @@ describe("PhotosService", () => {
       };
 
       await expect(
-        service.uploadPhoto("test-user-id", largeFile, PhotoType.full_body),
+        service.uploadPhoto("test-user-id", largeFile, PhotoType.full_body)
       ).rejects.toThrow(BadRequestException);
     });
   });
@@ -223,10 +237,7 @@ describe("PhotosService", () => {
     it("应该按类型筛选照片", async () => {
       mockPrismaService.userPhoto.findMany.mockResolvedValue([mockPhoto]);
 
-      const result = await service.getUserPhotos(
-        "test-user-id",
-        PhotoType.full_body,
-      );
+      const result = await service.getUserPhotos("test-user-id", PhotoType.full_body);
 
       expect(mockPrismaService.userPhoto.findMany).toHaveBeenCalledWith({
         where: { userId: "test-user-id", type: PhotoType.full_body },
@@ -264,10 +275,7 @@ describe("PhotosService", () => {
     it("应该返回 null 当照片不存在", async () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(null);
 
-      const result = await service.getPhotoById(
-        "non-existent-id",
-        "test-user-id",
-      );
+      const result = await service.getPhotoById("non-existent-id", "test-user-id");
 
       expect(result).toBeNull();
     });
@@ -290,20 +298,16 @@ describe("PhotosService", () => {
     it("应该抛出异常当照片不存在", async () => {
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.deletePhoto("non-existent-id", "test-user-id"),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.deletePhoto("non-existent-id", "test-user-id")).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("应该成功删除没有缩略图的照片", async () => {
       const photoWithoutThumbnail = { ...mockPhoto, thumbnailUrl: null };
-      mockPrismaService.userPhoto.findFirst.mockResolvedValue(
-        photoWithoutThumbnail,
-      );
+      mockPrismaService.userPhoto.findFirst.mockResolvedValue(photoWithoutThumbnail);
       mockStorageService.deleteFile.mockResolvedValue(undefined);
-      mockPrismaService.userPhoto.delete.mockResolvedValue(
-        photoWithoutThumbnail,
-      );
+      mockPrismaService.userPhoto.delete.mockResolvedValue(photoWithoutThumbnail);
 
       await service.deletePhoto("photo-id", "test-user-id");
 

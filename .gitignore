@@ -21,6 +21,9 @@
 !.env.security.example
 *.keystore
 *.jks
+*.pem
+*.key
+credentials.json
 infra/secrets/*.txt
 !infra/secrets/README.md
 .secrets/

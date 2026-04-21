@@ -1,3 +1,6 @@
 {
+  "apps/backend/src/**/*.{ts,tsx}": ["eslint --fix --quiet"],
+  "apps/admin/src/**/*.{ts,tsx}": ["eslint --fix --quiet"],
+  "packages/**/*.{ts,tsx}": ["eslint --fix --quiet"],
   "**/*.{ts,tsx,js,jsx,json,md,css,scss}": ["prettier --write"]
 }

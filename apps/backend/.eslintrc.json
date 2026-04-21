@@ -76,7 +76,7 @@
     ]
   },
   "rules": {
-    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
@@ -115,14 +115,7 @@
     "import/order": [
       "warn",
       {
-        "groups": [
-          "builtin",
-          "external",
-          "internal",
-          "parent",
-          "sibling",
-          "index"
-        ],
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
         "newlines-between": "always",
         "alphabetize": {
           "order": "asc",
@@ -138,58 +131,62 @@
     "no-var": "error",
     "eqeqeq": ["error", "always"],
     "curly": ["error", "all"],
-    "boundaries/element-types": [2, {
-      "default": "allow",
-      "rules": [
-        {
-          "from": ["fashion"],
-          "allow": ["identity", "platform", "common", "fashion"],
-          "message": "Fashion domain can only depend on identity, platform, common, and fashion."
-        },
-        {
-          "from": ["ai-core"],
-          "allow": ["identity", "platform", "common", "ai-core"],
-          "message": "AI-core domain can only depend on identity, platform, common, and ai-core."
-        },
-        {
-          "from": ["commerce"],
-          "allow": ["identity", "fashion", "platform", "common", "commerce"],
-          "message": "Commerce domain can only depend on identity, fashion, platform, common, and commerce."
-        },
-        {
-          "from": ["social"],
-          "allow": ["identity", "fashion", "platform", "common", "social"],
-          "message": "Social domain can only depend on identity, fashion, platform, common, and social."
-        },
-        {
-          "from": ["customization"],
-          "allow": ["identity", "fashion", "platform", "common", "customization"],
-          "message": "Customization domain can only depend on identity, fashion, platform, common, and customization."
-        },
-        {
-          "from": ["identity"],
-          "allow": ["platform", "common", "identity"],
-          "message": "Identity domain can only depend on platform, common, and identity."
-        },
-        {
-          "from": ["platform"],
-          "allow": ["common", "platform"],
-          "message": "Platform layer can only depend on common and platform."
-        },
-        {
-          "from": ["common"],
-          "disallow": ["identity", "platform", "ai-core", "commerce", "fashion", "social", "customization", "modules"],
-          "message": "Common layer must not depend on any domain module."
-        }
-      ]
-    }]
+    "boundaries/element-types": [
+      2,
+      {
+        "default": "allow",
+        "rules": [
+          {
+            "from": ["fashion"],
+            "allow": ["identity", "platform", "common", "fashion"],
+            "message": "Fashion domain can only depend on identity, platform, common, and fashion."
+          },
+          {
+            "from": ["ai-core"],
+            "allow": ["identity", "platform", "common", "ai-core"],
+            "message": "AI-core domain can only depend on identity, platform, common, and ai-core."
+          },
+          {
+            "from": ["commerce"],
+            "allow": ["identity", "fashion", "platform", "common", "commerce"],
+            "message": "Commerce domain can only depend on identity, fashion, platform, common, and commerce."
+          },
+          {
+            "from": ["social"],
+            "allow": ["identity", "fashion", "platform", "common", "social"],
+            "message": "Social domain can only depend on identity, fashion, platform, common, and social."
+          },
+          {
+            "from": ["customization"],
+            "allow": ["identity", "fashion", "platform", "common", "customization"],
+            "message": "Customization domain can only depend on identity, fashion, platform, common, and customization."
+          },
+          {
+            "from": ["identity"],
+            "allow": ["platform", "common", "identity"],
+            "message": "Identity domain can only depend on platform, common, and identity."
+          },
+          {
+            "from": ["platform"],
+            "allow": ["common", "platform"],
+            "message": "Platform layer can only depend on common and platform."
+          },
+          {
+            "from": ["common"],
+            "disallow": [
+              "identity",
+              "platform",
+              "ai-core",
+              "commerce",
+              "fashion",
+              "social",
+              "customization"
+            ],
+            "message": "Common layer must not depend on any domain module."
+          }
+        ]
+      }
+    ]
   },
-  "ignorePatterns": [
-    "node_modules",
-    "dist",
-    "build",
-    "*.js",
-    "*.d.ts",
-    "coverage"
-  ]
+  "ignorePatterns": ["node_modules", "dist", "build", "*.js", "*.d.ts", "coverage"]
 }

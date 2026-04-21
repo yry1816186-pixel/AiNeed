@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from "@nestjs/common";
 
-import { PrismaModule } from "../../../../common/prisma/prisma.module";
+import { PrismaModule } from "../../../common/prisma/prisma.module";
 
 import { AdminAuditController } from "./admin-audit.controller";
 import { AdminConfigController } from "./admin-config.controller";

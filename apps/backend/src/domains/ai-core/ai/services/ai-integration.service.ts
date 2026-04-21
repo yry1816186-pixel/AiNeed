@@ -1,10 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  Logger,
-  OnModuleInit,
-  ServiceUnavailableException,
-} from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit, ServiceUnavailableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ClothingCategory } from "../../../../types/prisma-enums";
 import { Prisma } from "@prisma/client";
@@ -72,15 +67,9 @@ export class AIIntegrationService implements OnModuleInit {
   private readonly aiServiceUrl: string;
   private readonly allowFallbacks: boolean;
 
-  constructor(
-    private configService: ConfigService,
-    private prisma: PrismaService,
-  ) {
+  constructor(private configService: ConfigService, private prisma: PrismaService) {
     this.allowFallbacks = allowUnverifiedAiFallbacks(this.configService);
-    this.aiServiceUrl = this.configService.get<string>(
-      "AI_SERVICE_URL",
-      "http://localhost:8001",
-    );
+    this.aiServiceUrl = this.configService.get<string>("AI_SERVICE_URL", "http://localhost:8001");
   }
 
   async onModuleInit() {
@@ -114,9 +103,7 @@ export class AIIntegrationService implements OnModuleInit {
 
       return response.data.data;
     } catch (error: unknown) {
-      this.logger.error(
-        `图像分析失败: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      this.logger.error(`图像分析失败: ${error instanceof Error ? error.message : String(error)}`);
       if (this.allowFallbacks) {
         return this.getFallbackAnalysis();
       }
@@ -134,9 +121,7 @@ export class AIIntegrationService implements OnModuleInit {
 
       return response.data.data;
     } catch (error: unknown) {
-      this.logger.error(
-        `图像分析失败: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      this.logger.error(`图像分析失败: ${error instanceof Error ? error.message : String(error)}`);
       if (this.allowFallbacks) {
         return this.getFallbackAnalysis();
       }
@@ -152,9 +137,7 @@ export class AIIntegrationService implements OnModuleInit {
 
       return response.data.data;
     } catch (error: unknown) {
-      this.logger.error(
-        `体型分析失败: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      this.logger.error(`体型分析失败: ${error instanceof Error ? error.message : String(error)}`);
       if (this.allowFallbacks) {
         return this.getFallbackBodyAnalysis();
       }
@@ -170,9 +153,7 @@ export class AIIntegrationService implements OnModuleInit {
 
       return response.data.data;
     } catch (error: unknown) {
-      this.logger.error(
-        `体型分析失败: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      this.logger.error(`体型分析失败: ${error instanceof Error ? error.message : String(error)}`);
       if (this.allowFallbacks) {
         return this.getFallbackBodyAnalysis();
       }
@@ -183,7 +164,7 @@ export class AIIntegrationService implements OnModuleInit {
   async findSimilarItems(
     imagePath: string,
     topK: number = 10,
-    categoryFilter?: ClothingCategory,
+    categoryFilter?: ClothingCategory
   ): Promise<SimilarItem[]> {
     try {
       const response = await this.aiClient.post("/api/similar", {
@@ -194,9 +175,7 @@ export class AIIntegrationService implements OnModuleInit {
 
       return response.data.data;
     } catch (error: unknown) {
-      this.logger.error(
-        `相似搜索失败: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      this.logger.error(`相似搜索失败: ${error instanceof Error ? error.message : String(error)}`);
       if (this.allowFallbacks) {
         return [];
       }
@@ -207,7 +186,7 @@ export class AIIntegrationService implements OnModuleInit {
   async findSimilarItemsBuffer(
     imageBuffer: Buffer,
     topK: number = 10,
-    categoryFilter?: ClothingCategory,
+    categoryFilter?: ClothingCategory
   ): Promise<SimilarItem[]> {
     try {
       const response = await this.aiClient.post("/api/similar", {
@@ -229,7 +208,7 @@ export class AIIntegrationService implements OnModuleInit {
   async findSimilarItemsForItem(
     itemId: string,
     topK: number = 10,
-    categoryFilter?: ClothingCategory,
+    categoryFilter?: ClothingCategory
   ): Promise<SimilarItem[]> {
     const item = await this.prisma.clothingItem.findUnique({
       where: { id: itemId },
@@ -248,7 +227,7 @@ export class AIIntegrationService implements OnModuleInit {
     baseItemId: string,
     userBodyType?: string,
     occasion?: string,
-    topK: number = 5,
+    topK: number = 5
   ): Promise<OutfitRecommendation> {
     try {
       const response = await this.aiClient.post("/api/outfit", {
@@ -260,9 +239,7 @@ export class AIIntegrationService implements OnModuleInit {
 
       return response.data.data;
     } catch (error: unknown) {
-      this.logger.error(
-        `搭配推荐失败: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      this.logger.error(`搭配推荐失败: ${error instanceof Error ? error.message : String(error)}`);
       if (this.allowFallbacks) {
         return {};
       }
@@ -272,23 +249,18 @@ export class AIIntegrationService implements OnModuleInit {
 
   async getColorRecommendations(
     colorSeason: string,
-    category?: string,
+    category?: string
   ): Promise<ColorRecommendation> {
     try {
-      const response = await this.aiClient.get(
-        `/api/colors/${encodeURIComponent(colorSeason)}`,
-        {
-          params: {
-            category,
-          },
+      const response = await this.aiClient.get(`/api/colors/${encodeURIComponent(colorSeason)}`, {
+        params: {
+          category,
         },
-      );
+      });
 
       return response.data.data;
     } catch (error: unknown) {
-      this.logger.error(
-        `色彩推荐失败: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      this.logger.error(`色彩推荐失败: ${error instanceof Error ? error.message : String(error)}`);
       if (this.allowFallbacks) {
         return this.getFallbackColorRecommendations(colorSeason);
       }
@@ -344,7 +316,7 @@ export class AIIntegrationService implements OnModuleInit {
   async batchEnrichItems(limit: number = 100): Promise<number> {
     const items = await this.prisma.clothingItem.findMany({
       where: {
-        OR: [{ attributes: { equals: {} } }, { attributes: { equals: null } }],
+        OR: [{ attributes: { equals: {} } }, { attributes: { equals: Prisma.JsonNull } }],
       },
       take: limit,
     });

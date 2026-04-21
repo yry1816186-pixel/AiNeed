@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Module } from "@nestjs/common";
+import { JwtModule } from "@nestjs/jwt";
 
 import { EncryptionModule } from "../../../../common/encryption/encryption.module";
 import { PrismaModule } from "../../../../common/prisma/prisma.module";
@@ -10,7 +11,7 @@ import { BrandPortalController } from "./brand-portal.controller";
 import { BrandPortalService } from "./brand-portal.service";
 
 @Module({
-  imports: [PrismaModule, EncryptionModule],
+  imports: [PrismaModule, EncryptionModule, JwtModule.register({})],
   controllers: [BrandPortalController],
   providers: [BrandPortalService, BrandsService],
   exports: [BrandPortalService],

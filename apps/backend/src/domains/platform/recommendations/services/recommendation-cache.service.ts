@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 export interface CachedRecommendation {
   id: string;
@@ -106,7 +106,9 @@ export class RecommendationCacheService {
 
     const result = await this.prisma.recommendationCache.deleteMany({ where });
     this.logger.log(
-      `Invalidated ${result.count} cache entries for user ${userId}${category ? ` category ${category}` : ""}`
+      `Invalidated ${result.count} cache entries for user ${userId}${
+        category ? ` category ${category}` : ""
+      }`
     );
     return result.count;
   }

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -20,7 +20,7 @@ import {
   interpolate,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { flatColors as colors } from "../../../design-system/theme";
 
@@ -47,6 +47,8 @@ export interface OutfitCardProps {
 }
 
 export const OutfitCard = React.memo(function OutfitCard({ result, onItemPress }: OutfitCardProps) {
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   const [activeOutfitIndex, setActiveOutfitIndex] = useState(0);
   const containerOpacity = useSharedValue(0);
   const containerScale = useSharedValue(0.95);
@@ -164,6 +166,8 @@ const OutfitItemCard = React.memo(function OutfitItemCard({
   index,
   onPress,
 }: OutfitItemCardProps) {
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   const opacity = useSharedValue(0);
   const translateX = useSharedValue(20);
 

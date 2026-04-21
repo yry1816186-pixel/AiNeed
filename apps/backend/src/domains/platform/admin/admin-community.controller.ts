@@ -14,9 +14,9 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
 import { Prisma } from "@prisma/client";
 
-import { AdminGuard } from "../../../../common/guards/admin.guard";
-import { PrismaService } from "../../../../common/prisma/prisma.service";
-import { RequestWithUser } from "../../../../common/types/common.types";
+import { AdminGuard } from "../../../common/guards/admin.guard";
+import { PrismaService } from "../../../common/prisma/prisma.service";
+import { RequestWithUser } from "../../../common/types/common.types";
 import { AuthGuard } from "../../identity/auth/guards/auth.guard";
 import { ContentModerationService } from "../../social/community/content-moderation.service";
 

@@ -1,7 +1,7 @@
-import apiClient from '../../../services/api/client';
+import apiClient from "../../../services/api/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { ApiResponse } from '../../../types';
-import type { OnboardingFormData } from '../stores/onboardingStore';
+import type { ApiResponse } from "../../../types";
+import type { OnboardingFormData } from "../stores/onboardingStore";
 
 export const onboardingService = {
   saveOnboardingData: async (formData: OnboardingFormData): Promise<ApiResponse<unknown>> => {
@@ -23,6 +23,9 @@ export const onboardingService = {
     }
     if (formData.photoUri) {
       updateData.photoUri = formData.photoUri;
+    }
+    if (formData.styleAnswers && formData.styleAnswers.length > 0) {
+      updateData.styleAnswers = formData.styleAnswers;
     }
 
     return apiClient.put("/profile", updateData);

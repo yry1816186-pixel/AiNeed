@@ -160,8 +160,8 @@ services:
     environment:
       VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_ROOT_TOKEN:?VAULT_ROOT_TOKEN is required}
       VAULT_STORAGE_FILE: /vault/file
-    ports:
-      - "8200:8200"
+    expose:
+      - "8200"
     volumes:
       - prod_vault_data:/vault/file
       - ./infra/vault/config:/vault/config:ro
@@ -309,8 +309,8 @@ services:
     image: prom/prometheus:v2.48.0
     container_name: prod-prometheus
     restart: unless-stopped
-    ports:
-      - "9090:9090"
+    expose:
+      - "9090"
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./monitoring/alerts/alert.rules.yml:/etc/prometheus/alert.rules.yml:ro
@@ -393,8 +393,8 @@ services:
     image: grafana/loki:2.9.3
     container_name: prod-loki
     restart: unless-stopped
-    ports:
-      - "3100:3100"
+    expose:
+      - "3100"
     volumes:
       - prod_loki_data:/loki
     command: -config.file=/etc/loki/local-config.yaml
@@ -454,8 +454,8 @@ services:
       - .env.production
     environment:
       DATA_SOURCE_NAME: "postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-stylemind}?sslmode=disable"
-    ports:
-      - "9187:9187"
+    expose:
+      - "9187"
     depends_on:
       postgres:
         condition: service_healthy
@@ -489,8 +489,8 @@ services:
     environment:
       REDIS_ADDR: "redis://redis:6379"
       REDIS_PASSWORD: "${REDIS_PASSWORD:?REDIS_PASSWORD is required}"
-    ports:
-      - "9121:9121"
+    expose:
+      - "9121"
     depends_on:
       redis:
         condition: service_healthy
@@ -519,8 +519,8 @@ services:
     image: prom/node-exporter:v1.7.0
     container_name: prod-node-exporter
     restart: unless-stopped
-    ports:
-      - "9100:9100"
+    expose:
+      - "9100"
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -555,8 +555,8 @@ services:
     image: gcr.io/cadvisor/cadvisor:v0.47.2
     container_name: prod-cadvisor
     restart: unless-stopped
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro

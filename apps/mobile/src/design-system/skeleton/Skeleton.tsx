@@ -79,6 +79,8 @@ export function Skeleton({
   shimmerColor = "rgba(255,255,255,0.4)",
   baseColor,
 }: SkeletonProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const resolvedBaseColor = baseColor || colors.neutral[200];
   const { animatedStyle, shouldAnimate } = useShimmerAnimation(animated);
 
@@ -149,8 +151,8 @@ export function SkeletonText({
   spacing?: number;
   style?: ViewStyle;
 }) {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={style}>
       {Array.from({ length: lines }).map((_, index) => (
@@ -166,6 +168,8 @@ export function SkeletonText({
 }
 
 export function SkeletonCard({ style }: { style?: ViewStyle }) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={[styles.card, style]}>
       <Skeleton width="100%" height={150} borderRadius={8} />
@@ -179,6 +183,8 @@ export function SkeletonCard({ style }: { style?: ViewStyle }) {
 }
 
 export function SkeletonList({ count = 4, style }: { count?: number; style?: ViewStyle }) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={style}>
       {Array.from({ length: count }).map((_, index) => (
@@ -199,6 +205,8 @@ export function SkeletonGrid({
   gap?: number;
   style?: ViewStyle;
 }) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={[styles.grid, { gap }, style]}>
       {Array.from({ length: rows }).map((_, rowIndex) => (
@@ -243,6 +251,8 @@ export const Shimmer: React.FC<{
 export const LoadingShimmer: React.FC<{
   variant?: "card" | "list" | "detail" | "profile";
 }> = ({ variant = "card" }) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   switch (variant) {
     case "card":
       return (

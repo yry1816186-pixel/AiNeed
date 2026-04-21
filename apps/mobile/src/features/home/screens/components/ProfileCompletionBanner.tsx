@@ -2,7 +2,7 @@ import { useState, useCallback, memo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../../../theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
@@ -16,6 +16,7 @@ interface ProfileCompletionBannerProps {
 const ProfileCompletionBanner = memo(
   ({ completionPercent, isComplete, onDismiss, onContinue }: ProfileCompletionBannerProps) => {
     const [visible, setVisible] = useState(true);
+    const styles = useStyles(colors);
 
     const handleDismiss = useCallback(() => {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);

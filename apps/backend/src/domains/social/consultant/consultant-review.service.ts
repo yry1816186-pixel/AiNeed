@@ -174,7 +174,7 @@ export class ConsultantReviewService {
     await this.prisma.consultantProfile.update({
       where: { id: consultantId },
       data: {
-        rating: new any(stats._avg.rating ?? 0).toFixed(1),
+        rating: Number(stats._avg.rating ?? 0).toFixed(1),
         reviewCount: stats._count,
       },
     });

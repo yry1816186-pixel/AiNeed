@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { View, Text, StyleSheet, Dimensions, ViewStyle } from "react-native";
 import Animated, {
   useSharedValue,
@@ -14,15 +14,15 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import {
+  DesignTokens,
   SpringConfigs,
   Duration,
   LoadingAnimations,
-} from "../../../design-system/theme/tokens/animations";
+  Colors,
+} from "../../../design-system/theme";
 import { useReducedMotion } from "../../../hooks/useReducedMotion";
 import { useStaggeredAnimation } from "../../../hooks/useAdvancedAnimations";
-import { Colors } from "../../../theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -56,6 +56,8 @@ function StepIcon({
   index: number;
 }) {
   const { reducedMotion } = useReducedMotion();
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   const scale = useSharedValue(reducedMotion ? 1 : 0.8);
   const opacity = useSharedValue(reducedMotion ? 1 : 0);
   const rotation = useSharedValue(0);
@@ -141,16 +143,16 @@ function StepIcon({
   }));
 
   const iconColor = isComplete
-    ? colors.primary[500]
+    ? Colors.primary[500]
     : isActive
-      ? colors.primary[400]
-      : colors.neutral[400];
+    ? Colors.primary[400]
+    : Colors.neutral[400];
 
   const bgColor = isComplete
-    ? colors.primary[50]
+    ? Colors.primary[50]
     : isActive
-      ? colors.primary[100]
-      : colors.neutral[100];
+    ? Colors.primary[100]
+    : Colors.neutral[100];
 
   return (
     <View style={styles.stepIconContainer}>
@@ -161,7 +163,7 @@ function StepIcon({
         {/* Scan line for body analysis step */}
         {index === 0 && (
           <Animated.View style={[styles.scanLine, scanLineStyle]}>
-            <View style={[styles.scanLineInner, { backgroundColor: colors.primary[400] }]} />
+            <View style={[styles.scanLineInner, { backgroundColor: Colors.primary[400] }]} />
           </Animated.View>
         )}
       </Animated.View>
@@ -172,6 +174,8 @@ function StepIcon({
 /** Progress bar with brand gradient */
 function GradientProgressBar({ progress }: { progress: number }) {
   const { reducedMotion } = useReducedMotion();
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   const animatedWidth = useSharedValue(0);
 
   useEffect(() => {
@@ -190,7 +194,7 @@ function GradientProgressBar({ progress }: { progress: number }) {
     <View style={styles.progressBarTrack}>
       <Animated.View style={[styles.progressBarFill, barStyle]}>
         <LinearGradient
-          colors={[colors.primary[400], colors.primary[600]]}
+          colors={[Colors.primary[400], Colors.primary[600]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={StyleSheet.absoluteFill}
@@ -312,16 +316,16 @@ const useStyles = createStyles((colors) => ({
   },
   stepLabel: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.neutral[500],
+    color: Colors.neutral[500],
     marginTop: 8,
     textAlign: "center",
   },
   stepLabelActive: {
-    color: colors.primary[500],
+    color: Colors.primary[500],
     fontWeight: "600",
   },
   stepLabelComplete: {
-    color: colors.primary[600],
+    color: Colors.primary[600],
     fontWeight: "500",
   },
   connector: {
@@ -330,15 +334,15 @@ const useStyles = createStyles((colors) => ({
     right: -20,
     width: 40,
     height: 2,
-    backgroundColor: colors.neutral[200],
+    backgroundColor: Colors.neutral[200],
   },
   connectorComplete: {
-    backgroundColor: colors.primary[400],
+    backgroundColor: Colors.primary[400],
   },
   progressBarTrack: {
     height: 6,
     borderRadius: 3,
-    backgroundColor: colors.neutral[200],
+    backgroundColor: Colors.neutral[200],
     overflow: "hidden",
   },
   progressBarFill: {
@@ -348,7 +352,7 @@ const useStyles = createStyles((colors) => ({
   },
   currentStepText: {
     fontSize: DesignTokens.typography.sizes.sm,
-    color: colors.primary[500],
+    color: Colors.primary[500],
     fontWeight: "500",
     marginTop: 12,
     textAlign: "center",

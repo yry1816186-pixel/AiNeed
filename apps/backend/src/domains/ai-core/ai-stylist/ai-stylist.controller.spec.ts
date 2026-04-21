@@ -14,7 +14,6 @@ import { SessionArchiveService } from "./services/session-archive.service";
 import { WeatherIntegrationService } from "./services/weather-integration.service";
 import { SystemContextService } from "./system-context.service";
 
-
 describe("AiStylistController", () => {
   let controller: AiStylistController;
 
@@ -31,7 +30,12 @@ describe("AiStylistController", () => {
         bodyReady: false,
         styleReady: true,
         currentStage: "collecting_scene",
-        slots: { preferredStyles: ["极简"], styleAvoidances: [], fitGoals: [], preferredColors: [] },
+        slots: {
+          preferredStyles: ["极简"],
+          styleAvoidances: [],
+          fitGoals: [],
+          preferredColors: [],
+        },
         bodyProfile: { shapeFeatures: [] },
       },
       missingFields: ["occasion"],
@@ -136,9 +140,18 @@ describe("AiStylistController", () => {
 
   const mockItemReplacementService = {
     // getAlternatives returns AlternativeItem[]
-    getAlternatives: jest.fn().mockResolvedValue([
-      { id: "alt-1", name: "替代商品", category: "tops", imageUrl: "https://example.com/alt.jpg", price: 299, score: 85 },
-    ]),
+    getAlternatives: jest
+      .fn()
+      .mockResolvedValue([
+        {
+          id: "alt-1",
+          name: "替代商品",
+          category: "tops",
+          imageUrl: "https://example.com/alt.jpg",
+          price: 299,
+          score: 85,
+        },
+      ]),
     replaceItem: jest.fn().mockResolvedValue({
       success: true,
       message: "替换成功",
@@ -152,15 +165,22 @@ describe("AiStylistController", () => {
       { date: "2026-04-05", sessionCount: 1, hasOutfitPlan: false },
     ]),
     // getSessionsByDate returns ArchivedSession[]
-    getSessionsByDate: jest.fn().mockResolvedValue([
-      { id: "session-1", status: "completed", hasOutfitPlan: true, createdAt: "2026-04-14T10:00:00Z" },
-    ]),
+    getSessionsByDate: jest
+      .fn()
+      .mockResolvedValue([
+        {
+          id: "session-1",
+          status: "completed",
+          hasOutfitPlan: true,
+          createdAt: "2026-04-14T10:00:00Z",
+        },
+      ]),
   };
 
   const mockPresetQuestionsService = {
-    getPresetQuestions: jest.fn().mockResolvedValue([
-      { id: "q1", text: "面试穿搭", icon: "briefcase" },
-    ]),
+    getPresetQuestions: jest
+      .fn()
+      .mockReturnValue([{ id: "q1", text: "面试穿搭", icon: "briefcase" }]),
     isNewUser: jest.fn().mockResolvedValue(false),
   };
 
@@ -204,74 +224,48 @@ describe("AiStylistController", () => {
     it("应该创建会话", async () => {
       const body = { entry: "interview", goal: "面试穿搭" };
 
-      const result = await controller.createSession(
-        mockRequest as never,
-        body,
-      );
+      const result = await controller.createSession(mockRequest as never, body);
 
       expect(result.success).toBe(true);
       expect(result.sessionId).toBe("session-1");
-      expect(mockStylistService.createSession).toHaveBeenCalledWith(
-        "user-123",
-        body,
-      );
+      expect(mockStylistService.createSession).toHaveBeenCalledWith("user-123", body);
     });
 
     it("应该支持空 body 创建会话", async () => {
-      const result = await controller.createSession(
-        mockRequest as never,
-        {},
-      );
+      const result = await controller.createSession(mockRequest as never, {});
 
       expect(result.success).toBe(true);
-      expect(mockStylistService.createSession).toHaveBeenCalledWith(
-        "user-123",
-        {},
-      );
+      expect(mockStylistService.createSession).toHaveBeenCalledWith("user-123", {});
     });
   });
 
   describe("listSessions", () => {
     it("应该返回用户会话列表", async () => {
-      const result = await controller.listSessions(
-        mockRequest as never,
-        undefined,
-        undefined,
-      );
+      const result = await controller.listSessions(mockRequest as never, undefined, undefined);
 
       expect(result.total).toBe(0);
-      expect(mockStylistService.listSessions).toHaveBeenCalledWith(
-        "user-123",
-        { limit: undefined, offset: undefined },
-      );
+      expect(mockStylistService.listSessions).toHaveBeenCalledWith("user-123", {
+        limit: undefined,
+        offset: undefined,
+      });
     });
 
     it("应该支持分页参数", async () => {
-      const result = await controller.listSessions(
-        mockRequest as never,
-        "10",
-        "20",
-      );
+      const result = await controller.listSessions(mockRequest as never, "10", "20");
 
-      expect(mockStylistService.listSessions).toHaveBeenCalledWith(
-        "user-123",
-        { limit: 10, offset: 20 },
-      );
+      expect(mockStylistService.listSessions).toHaveBeenCalledWith("user-123", {
+        limit: 10,
+        offset: 20,
+      });
     });
   });
 
   describe("getSessionStatus", () => {
     it("应该返回会话状态", async () => {
-      const result = await controller.getSessionStatus(
-        mockRequest as never,
-        "session-1",
-      );
+      const result = await controller.getSessionStatus(mockRequest as never, "session-1");
 
       expect(result.success).toBe(true);
-      expect(mockStylistService.getSessionStatus).toHaveBeenCalledWith(
-        "user-123",
-        "session-1",
-      );
+      expect(mockStylistService.getSessionStatus).toHaveBeenCalledWith("user-123", "session-1");
     });
   });
 
@@ -279,18 +273,14 @@ describe("AiStylistController", () => {
     it("应该发送消息到会话", async () => {
       const body = { message: "我要面试穿搭" };
 
-      const result = await controller.sendMessage(
-        mockRequest as never,
-        "session-1",
-        body,
-      );
+      const result = await controller.sendMessage(mockRequest as never, "session-1", body);
 
       expect(result.success).toBe(true);
       expect(mockStylistService.sendMessage).toHaveBeenCalledWith(
         "user-123",
         "session-1",
         "我要面试穿搭",
-        undefined,
+        undefined
       );
     });
 
@@ -301,40 +291,32 @@ describe("AiStylistController", () => {
         longitude: 116.4074,
       };
 
-      const result = await controller.sendMessage(
-        mockRequest as never,
-        "session-1",
-        body,
-      );
+      const result = await controller.sendMessage(mockRequest as never, "session-1", body);
 
       expect(result.success).toBe(true);
       expect(mockWeatherIntegrationService.getWeatherContext).toHaveBeenCalledWith(
         39.9042,
-        116.4074,
+        116.4074
       );
       expect(mockStylistService.sendMessage).toHaveBeenCalledWith(
         "user-123",
         "session-1",
         "我要通勤穿搭",
-        "晴朗 25度",
+        "晴朗 25度"
       );
     });
 
     it("应该不传递天气上下文当未提供经纬度时", async () => {
       const body = { message: "我要通勤穿搭" };
 
-      await controller.sendMessage(
-        mockRequest as never,
-        "session-1",
-        body,
-      );
+      await controller.sendMessage(mockRequest as never, "session-1", body);
 
       expect(mockWeatherIntegrationService.getWeatherContext).not.toHaveBeenCalled();
       expect(mockStylistService.sendMessage).toHaveBeenCalledWith(
         "user-123",
         "session-1",
         "我要通勤穿搭",
-        undefined,
+        undefined
       );
     });
 
@@ -347,17 +329,13 @@ describe("AiStylistController", () => {
         longitude: 116.4074,
       };
 
-      await controller.sendMessage(
-        mockRequest as never,
-        "session-1",
-        body,
-      );
+      await controller.sendMessage(mockRequest as never, "session-1", body);
 
       expect(mockStylistService.sendMessage).toHaveBeenCalledWith(
         "user-123",
         "session-1",
         "我要通勤穿搭",
-        undefined,
+        undefined
       );
     });
   });
@@ -371,19 +349,16 @@ describe("AiStylistController", () => {
         size: 1024,
       } as Express.Multer.File;
 
-      const result = await controller.uploadPhoto(
-        mockRequest as never,
-        "session-1",
-        file,
-        { type: PhotoType.full_body },
-      );
+      const result = await controller.uploadPhoto(mockRequest as never, "session-1", file, {
+        type: PhotoType.full_body,
+      });
 
       expect(result.success).toBe(true);
       expect(mockStylistService.uploadSessionPhoto).toHaveBeenCalledWith(
         "user-123",
         "session-1",
         file,
-        PhotoType.full_body,
+        PhotoType.full_body
       );
     });
 
@@ -395,85 +370,52 @@ describe("AiStylistController", () => {
         size: 1024,
       } as Express.Multer.File;
 
-      const result = await controller.uploadPhoto(
-        mockRequest as never,
-        "session-1",
-        file,
-        {},
-      );
+      const result = await controller.uploadPhoto(mockRequest as never, "session-1", file, {});
 
       expect(mockStylistService.uploadSessionPhoto).toHaveBeenCalledWith(
         "user-123",
         "session-1",
         file,
-        PhotoType.full_body,
+        PhotoType.full_body
       );
     });
 
     it("应该抛出 BadRequestException 当未上传文件时", async () => {
       await expect(
-        controller.uploadPhoto(
-          mockRequest as never,
-          "session-1",
-          null as never,
-          {},
-        ),
+        controller.uploadPhoto(mockRequest as never, "session-1", null as never, {})
       ).rejects.toThrow(BadRequestException);
 
       await expect(
-        controller.uploadPhoto(
-          mockRequest as never,
-          "session-1",
-          null as never,
-          {},
-        ),
+        controller.uploadPhoto(mockRequest as never, "session-1", null as never, {})
       ).rejects.toThrow("请上传图片文件");
     });
   });
 
   describe("resolveSession", () => {
     it("应该生成穿搭方案", async () => {
-      const result = await controller.resolveSession(
-        mockRequest as never,
-        "session-1",
-      );
+      const result = await controller.resolveSession(mockRequest as never, "session-1");
 
       expect(result.success).toBe(true);
       expect(result.result).toBeDefined();
-      expect(mockStylistService.resolveSession).toHaveBeenCalledWith(
-        "user-123",
-        "session-1",
-      );
+      expect(mockStylistService.resolveSession).toHaveBeenCalledWith("user-123", "session-1");
     });
   });
 
   describe("deleteSession", () => {
     it("应该删除会话", async () => {
-      const result = await controller.deleteSession(
-        mockRequest as never,
-        "session-1",
-      );
+      const result = await controller.deleteSession(mockRequest as never, "session-1");
 
       expect(result.success).toBe(true);
-      expect(mockStylistService.deleteSession).toHaveBeenCalledWith(
-        "user-123",
-        "session-1",
-      );
+      expect(mockStylistService.deleteSession).toHaveBeenCalledWith("user-123", "session-1");
     });
   });
 
   describe("getOutfitPlan", () => {
     it("应该获取穿搭方案页数据", async () => {
-      const result = await controller.getOutfitPlan(
-        mockRequest as never,
-        "session-1",
-      );
+      const result = await controller.getOutfitPlan(mockRequest as never, "session-1");
 
       expect(result.sessionId).toBe("session-1");
-      expect(mockOutfitPlanService.getOutfitPlan).toHaveBeenCalledWith(
-        "user-123",
-        "session-1",
-      );
+      expect(mockOutfitPlanService.getOutfitPlan).toHaveBeenCalledWith("user-123", "session-1");
     });
   });
 
@@ -481,11 +423,7 @@ describe("AiStylistController", () => {
     it("应该获取同类商品替代列表", async () => {
       const query = { outfitIndex: 0, itemIndex: 1, limit: 10 };
 
-      const result = await controller.getAlternatives(
-        mockRequest as never,
-        "session-1",
-        query,
-      );
+      const result = await controller.getAlternatives(mockRequest as never, "session-1", query);
 
       // getAlternatives returns AlternativeItem[]
       expect(Array.isArray(result)).toBe(true);
@@ -495,7 +433,7 @@ describe("AiStylistController", () => {
         "session-1",
         0,
         1,
-        10,
+        10
       );
     });
   });
@@ -504,11 +442,7 @@ describe("AiStylistController", () => {
     it("应该替换单品", async () => {
       const body = { outfitIndex: 0, itemIndex: 1, newItemId: "new-item-id" };
 
-      const result = await controller.replaceItem(
-        mockRequest as never,
-        "session-1",
-        body,
-      );
+      const result = await controller.replaceItem(mockRequest as never, "session-1", body);
 
       expect(result.success).toBe(true);
       expect(mockItemReplacementService.replaceItem).toHaveBeenCalledWith(
@@ -516,68 +450,55 @@ describe("AiStylistController", () => {
         "session-1",
         0,
         1,
-        "new-item-id",
+        "new-item-id"
       );
     });
   });
 
   describe("getCalendarDays", () => {
     it("应该获取日历视图数据", async () => {
-      const result = await controller.getCalendarDays(
-        mockRequest as never,
-        "2026",
-        "4",
-      );
+      const result = await controller.getCalendarDays(mockRequest as never, "2026", "4");
 
       // getCalendarDays returns CalendarDay[]
       expect(Array.isArray(result)).toBe(true);
       expect(result).toHaveLength(2);
-      expect(mockSessionArchiveService.getCalendarDays).toHaveBeenCalledWith(
-        "user-123",
-        2026,
-        4,
-      );
+      expect(mockSessionArchiveService.getCalendarDays).toHaveBeenCalledWith("user-123", 2026, 4);
     });
   });
 
   describe("getSessionsByDate", () => {
     it("应该获取指定日期的方案列表", async () => {
-      const result = await controller.getSessionsByDate(
-        mockRequest as never,
-        "2026-04-14",
-      );
+      const result = await controller.getSessionsByDate(mockRequest as never, "2026-04-14");
 
       // getSessionsByDate returns ArchivedSession[]
       expect(Array.isArray(result)).toBe(true);
       expect(result).toHaveLength(1);
       expect(mockSessionArchiveService.getSessionsByDate).toHaveBeenCalledWith(
         "user-123",
-        "2026-04-14",
+        "2026-04-14"
       );
     });
 
     it("应该拒绝无效日期格式", async () => {
       await expect(
-        controller.getSessionsByDate(mockRequest as never, "2026/04/14"),
+        controller.getSessionsByDate(mockRequest as never, "2026/04/14")
       ).rejects.toThrow(BadRequestException);
 
       await expect(
-        controller.getSessionsByDate(mockRequest as never, "invalid-date"),
+        controller.getSessionsByDate(mockRequest as never, "invalid-date")
       ).rejects.toThrow("日期格式必须为 YYYY-MM-DD");
     });
 
     it("应该拒绝不完整的日期格式", async () => {
-      await expect(
-        controller.getSessionsByDate(mockRequest as never, "2026-04"),
-      ).rejects.toThrow(BadRequestException);
+      await expect(controller.getSessionsByDate(mockRequest as never, "2026-04")).rejects.toThrow(
+        BadRequestException
+      );
     });
   });
 
   describe("getPresetQuestions", () => {
     it("应该返回预设问题和新用户标识", async () => {
-      const result = await controller.getPresetQuestions(
-        mockRequest as never,
-      );
+      const result = await controller.getPresetQuestions(mockRequest as never);
 
       expect(result.questions).toHaveLength(1);
       expect(result.isNewUser).toBe(false);
@@ -596,10 +517,7 @@ describe("AiStylistController", () => {
         ],
       };
 
-      const result = await controller.chat(
-        mockRequest as never,
-        body,
-      );
+      const result = await controller.chat(mockRequest as never, body);
 
       expect(result.success).toBe(true);
       expect(mockStylistService.chat).toHaveBeenCalled();
@@ -608,10 +526,7 @@ describe("AiStylistController", () => {
     it("应该处理没有对话历史的请求", async () => {
       const body = { message: "面试穿搭" };
 
-      const result = await controller.chat(
-        mockRequest as never,
-        body,
-      );
+      const result = await controller.chat(mockRequest as never, body);
 
       expect(result.success).toBe(true);
     });
@@ -619,9 +534,7 @@ describe("AiStylistController", () => {
 
   describe("getQuota", () => {
     it("应该返回配额状态", async () => {
-      const result = await controller.getQuota(
-        mockRequest as never,
-      );
+      const result = await controller.getQuota(mockRequest as never);
 
       expect(result.used).toBe(5);
       expect(result.limit).toBe(20);
@@ -668,11 +581,7 @@ describe("AiStylistController", () => {
         itemId: "item-1",
       };
 
-      const result = await controller.submitFeedback(
-        mockRequest as never,
-        "session-1",
-        body,
-      );
+      const result = await controller.submitFeedback(mockRequest as never, "session-1", body);
 
       expect(result.success).toBe(true);
       expect(mockStylistService.submitFeedback).toHaveBeenCalledWith(
@@ -683,7 +592,7 @@ describe("AiStylistController", () => {
         "item-1",
         undefined,
         undefined,
-        undefined,
+        undefined
       );
     });
 
@@ -695,11 +604,7 @@ describe("AiStylistController", () => {
         dislikeDetail: "超出预算",
       };
 
-      const result = await controller.submitFeedback(
-        mockRequest as never,
-        "session-1",
-        body,
-      );
+      const result = await controller.submitFeedback(mockRequest as never, "session-1", body);
 
       expect(result.success).toBe(true);
       expect(mockStylistService.submitFeedback).toHaveBeenCalledWith(
@@ -710,24 +615,18 @@ describe("AiStylistController", () => {
         undefined,
         undefined,
         "too_expensive",
-        "超出预算",
+        "超出预算"
       );
     });
   });
 
   describe("getFeedback", () => {
     it("应该返回会话反馈记录", async () => {
-      const result = await controller.getFeedback(
-        mockRequest as never,
-        "session-1",
-      );
+      const result = await controller.getFeedback(mockRequest as never, "session-1");
 
       expect(result.likes).toEqual([]);
       expect(result.dislikes).toEqual([]);
-      expect(mockStylistService.getSessionFeedback).toHaveBeenCalledWith(
-        "user-123",
-        "session-1",
-      );
+      expect(mockStylistService.getSessionFeedback).toHaveBeenCalledWith("user-123", "session-1");
     });
   });
 

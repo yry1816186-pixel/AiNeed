@@ -14,7 +14,14 @@ import { CouponService } from "./coupon.service";
 describe("CouponService", () => {
   let service: CouponService;
   let prisma: {
-    coupon: { findUnique: jest.Mock; findFirst: jest.Mock; create: jest.Mock; update: jest.Mock; updateMany: jest.Mock; findMany: jest.Mock };
+    coupon: {
+      findUnique: jest.Mock;
+      findFirst: jest.Mock;
+      create: jest.Mock;
+      update: jest.Mock;
+      updateMany: jest.Mock;
+      findMany: jest.Mock;
+    };
     userCoupon: { create: jest.Mock; count: jest.Mock; findUnique: jest.Mock; findMany: jest.Mock };
     $transaction: jest.Mock;
   };
@@ -56,8 +63,17 @@ describe("CouponService", () => {
       $transaction: jest.fn((fn) => {
         if (typeof fn === "function") {
           return fn({
-            userCoupon: { findUnique: jest.fn().mockResolvedValue({ id: "uc-1", couponId: "coupon-1", status: "AVAILABLE" }), update: jest.fn().mockResolvedValue({}) },
-            coupon: { findUnique: jest.fn().mockResolvedValue(mockCoupon), updateMany: jest.fn().mockResolvedValue({ count: 1 }), update: jest.fn().mockResolvedValue({}) },
+            userCoupon: {
+              findUnique: jest
+                .fn()
+                .mockResolvedValue({ id: "uc-1", couponId: "coupon-1", status: "AVAILABLE" }),
+              update: jest.fn().mockResolvedValue({}),
+            },
+            coupon: {
+              findUnique: jest.fn().mockResolvedValue(mockCoupon),
+              updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+              update: jest.fn().mockResolvedValue({}),
+            },
           });
         }
         return Promise.all(fn);
@@ -65,10 +81,7 @@ describe("CouponService", () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CouponService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [CouponService, { provide: PrismaService, useValue: prisma }],
     }).compile();
 
     service = module.get<CouponService>(CouponService);
@@ -107,7 +120,7 @@ describe("CouponService", () => {
           value: 10,
           validFrom: "2025-01-01",
           validUntil: "2027-01-01",
-        }),
+        })
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -127,7 +140,7 @@ describe("CouponService", () => {
       expect(prisma.coupon.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({ name: "Test Coupon" }),
-        }),
+        })
       );
     });
   });
@@ -180,7 +193,7 @@ describe("CouponService", () => {
     it("should calculate percentage discount", () => {
       const result = service.calculateDiscount(
         { type: "PERCENTAGE", value: 10, maxDiscount: null },
-        200,
+        200
       );
 
       expect(result).toBe(20);
@@ -189,7 +202,7 @@ describe("CouponService", () => {
     it("should cap percentage discount at maxDiscount", () => {
       const result = service.calculateDiscount(
         { type: "PERCENTAGE", value: 50, maxDiscount: 50 },
-        200,
+        200
       );
 
       expect(result).toBe(50);
@@ -198,7 +211,7 @@ describe("CouponService", () => {
     it("should calculate fixed discount", () => {
       const result = service.calculateDiscount(
         { type: "FIXED", value: 30, maxDiscount: null },
-        200,
+        200
       );
 
       expect(result).toBe(30);
@@ -207,7 +220,7 @@ describe("CouponService", () => {
     it("should cap fixed discount at order amount", () => {
       const result = service.calculateDiscount(
         { type: "FIXED", value: 300, maxDiscount: null },
-        200,
+        200
       );
 
       expect(result).toBe(200);
@@ -216,7 +229,7 @@ describe("CouponService", () => {
     it("should return shipping value for SHIPPING type", () => {
       const result = service.calculateDiscount(
         { type: "SHIPPING", value: 15, maxDiscount: null },
-        200,
+        200
       );
 
       expect(result).toBe(15);
@@ -225,7 +238,7 @@ describe("CouponService", () => {
     it("should return 0 for unknown type", () => {
       const result = service.calculateDiscount(
         { type: "UNKNOWN", value: 10, maxDiscount: null },
-        200,
+        200
       );
 
       expect(result).toBe(0);
@@ -284,6 +297,10 @@ describe("CouponService", () => {
 
       const result = await service.generateFirstOrderCoupon("user-1");
 
+      expect(result).not.toBeNull();
+      if (!result) {
+        throw new Error("Expected existing first-order coupon");
+      }
       expect(result.id).toBe("uc-existing");
       expect(prisma.userCoupon.create).not.toHaveBeenCalled();
     });

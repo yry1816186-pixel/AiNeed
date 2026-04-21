@@ -4,10 +4,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { UserKeyService } from "../../../common/security/user-key.service";
 
-import {
-  SecurityPIIEncryptionService,
-  PII_FIELDS,
-} from "./pii-encryption.service";
+import { SecurityPIIEncryptionService, PII_FIELDS } from "./pii-encryption.service";
 
 describe("SecurityPIIEncryptionService", () => {
   let service: SecurityPIIEncryptionService;
@@ -18,17 +15,22 @@ describe("SecurityPIIEncryptionService", () => {
   const mockEncryptionService = {
     encrypt: jest.fn((plaintext: string) => `enc:${Buffer.from(plaintext).toString("base64")}`),
     decrypt: jest.fn((ciphertext: string) => {
-      if (!ciphertext.startsWith("enc:")) {return ciphertext;}
+      if (!ciphertext.startsWith("enc:")) {
+        return ciphertext;
+      }
       return Buffer.from(ciphertext.slice(4), "base64").toString("utf8");
     }),
   };
 
   const mockUserKeyService = {
-    encryptForUser: jest.fn((userId: string, plaintext: string) =>
-      `enc:${userId}:${Buffer.from(plaintext).toString("base64")}`,
+    encryptForUser: jest.fn(
+      (userId: string, plaintext: string) =>
+        `enc:${userId}:${Buffer.from(plaintext).toString("base64")}`
     ),
     decryptForUser: jest.fn((userId: string, ciphertext: string) => {
-      if (!ciphertext.startsWith("enc:")) {return ciphertext;}
+      if (!ciphertext.startsWith("enc:")) {
+        return ciphertext;
+      }
       const withoutPrefix = ciphertext.slice(4);
       const colonIndex = withoutPrefix.indexOf(":");
       if (colonIndex === -1) {
@@ -113,9 +115,7 @@ describe("SecurityPIIEncryptionService", () => {
         throw new Error("Encryption error");
       });
 
-      await expect(service.encryptField("sensitive-data")).rejects.toThrow(
-        "PII encryption failed",
-      );
+      await expect(service.encryptField("sensitive-data")).rejects.toThrow("PII encryption failed");
     });
   });
 
@@ -129,7 +129,10 @@ describe("SecurityPIIEncryptionService", () => {
     it("应该使用用户级密钥解密（提供 userId 时）", async () => {
       const result = await service.decryptField("enc:user-123:MTM4MDAxMzgwMDA=", "user-123");
       expect(result).toBe("13800138000");
-      expect(mockUserKeyService.decryptForUser).toHaveBeenCalledWith("user-123", "enc:user-123:MTM4MDAxMzgwMDA=");
+      expect(mockUserKeyService.decryptForUser).toHaveBeenCalledWith(
+        "user-123",
+        "enc:user-123:MTM4MDAxMzgwMDA="
+      );
     });
 
     it("应该跳过 null 值并返回 null", async () => {
@@ -169,7 +172,7 @@ describe("SecurityPIIEncryptionService", () => {
       expect(result.phone).toContain("enc:");
       expect(result.realName).toContain("enc:");
       expect(result.idNumber).toContain("enc:");
-      expect(result.email).toBe("test@example.com");
+      expect(result.email).toContain("enc:");
     });
 
     it("应该加密 UserAddress 模型的 PII 字段", async () => {
@@ -307,7 +310,15 @@ describe("SecurityPIIEncryptionService", () => {
 
   describe("PII_FIELDS 映射", () => {
     it("应该定义 User 模型的 PII 字段", () => {
-      expect(PII_FIELDS.User).toEqual(["phone", "realName", "idNumber"]);
+      expect(PII_FIELDS.User).toEqual([
+        "phone",
+        "realName",
+        "idNumber",
+        "email",
+        "wechatOpenId",
+        "wechatUnionId",
+        "birthDate",
+      ]);
     });
 
     it("应该定义 UserAddress 模型的 PII 字段", () => {
@@ -327,7 +338,15 @@ describe("SecurityPIIEncryptionService", () => {
     });
 
     it("getModelFields 应该返回指定模型的字段", () => {
-      expect(service.getModelFields("User")).toEqual(["phone", "realName", "idNumber"]);
+      expect(service.getModelFields("User")).toEqual([
+        "phone",
+        "realName",
+        "idNumber",
+        "email",
+        "wechatOpenId",
+        "wechatUnionId",
+        "birthDate",
+      ]);
     });
 
     it("getModelFields 对未知模型应返回空数组", () => {
@@ -389,10 +408,11 @@ describe("SecurityPIIEncryptionService", () => {
           SecurityPIIEncryptionService,
           {
             provide: ConfigService,
-            useFactory: () => createConfigService({
-              NODE_ENV: "production",
-              PII_ENCRYPTION_ENABLED: "false",
-            }),
+            useFactory: () =>
+              createConfigService({
+                NODE_ENV: "production",
+                PII_ENCRYPTION_ENABLED: "false",
+              }),
           },
           { provide: EncryptionService, useValue: mockEncryptionService },
           { provide: UserKeyService, useValue: mockUserKeyService },

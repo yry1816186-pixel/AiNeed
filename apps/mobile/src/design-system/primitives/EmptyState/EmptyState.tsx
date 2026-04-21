@@ -2,9 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, theme, Spacing, BorderRadius, Shadows } from "../theme";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
-import { flatColors as colors } from "../../theme";
+import { Colors, theme, Spacing, BorderRadius, Shadows, DesignTokens } from "../theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface EmptyStateProps {
@@ -27,8 +25,8 @@ export function EmptyState({
   style,
   iconGradient,
 }: EmptyStateProps) {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const gradient = iconGradient ?? [colors.primary, DesignTokens.colors.brand.camel];
 
   return (
@@ -87,7 +85,7 @@ export function EmptyRecommendations({ onChat }: { onChat?: () => void }) {
       description="和AI造型师聊聊你的风格偏好，获取专属穿搭推荐"
       actionLabel="和AI聊聊"
       onAction={onChat}
-      iconGradient={[colors.primary[400], colors.primary[600]]}
+      iconGradient={[Colors.primary[400], Colors.primary[600]]}
     />
   );
 }
@@ -157,7 +155,7 @@ export function EmptyNotifications() {
       icon="notifications-off-outline"
       title="暂无通知"
       description="新的通知会显示在这里，不错过任何精彩"
-      iconGradient={[colors.neutral[300], colors.neutral[500]]}
+      iconGradient={[Colors.neutral[300], Colors.neutral[500]]}
     />
   );
 }
@@ -171,7 +169,7 @@ export function EmptyPosts({ onPublish }: { onPublish?: () => void }) {
       description="分享你的穿搭灵感，让更多人看到你的风格"
       actionLabel="发布动态"
       onAction={onPublish}
-      iconGradient={[colors.primary[400], colors.primary[600]]}
+      iconGradient={[Colors.primary[400], Colors.primary[600]]}
     />
   );
 }

@@ -6,8 +6,9 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
+import os
 
-from ml.services.visual_outfit_service import (
+from ml.services.tryon.visual_outfit_service import (
     VisualOutfitService,
     UserImageInfo,
     get_visual_outfit_service

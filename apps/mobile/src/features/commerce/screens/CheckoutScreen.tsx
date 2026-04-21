@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -17,24 +17,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useScreenTracking } from "../../../hooks/useAnalytics";
 import { useTranslation } from "../../../i18n";
-import { useFeatureFlags } from "../../../shared/contexts/FeatureFlagContext";
-import { FeatureFlagKeys } from "../../../constants/feature-flags";
 import { addressApi, cartApi, orderApi, paymentApi } from "../../../services/api/commerce.api";
-import { useCartStore } from "../stores/index";
+import { useCartStore } from "../stores/cart.store";
 import { useCouponStore } from "../stores/couponStore";
 import type { Address } from "../../../types";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { flatColors as colors, Spacing } from "../../../design-system/theme";
+import { DesignTokens, flatColors as colors, Spacing } from "../../../design-system/theme";
 import { CouponSelector } from "../components/CouponSelector";
 import { PaymentWaitingScreen } from "../components/PaymentWaitingScreen";
 import { AreaCascadingPicker } from "../../../components/address/AreaCascadingPicker";
 import type { RootStackParamList } from "../../../types/navigation";
-import { flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
-type CheckoutStep = "summary" | "address" | "payment" | "success";
+type CheckoutStep = "address_payment" | "confirm" | "success";
 
 interface CheckoutItem {
   id: string;
@@ -59,15 +55,12 @@ const EMPTY_ADDRESS: AddressDraft = {
 };
 
 export const CheckoutScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   useScreenTracking("Checkout");
   const t = useTranslation();
-  const { isEnabled } = useFeatureFlags();
-  const isV2Checkout = isEnabled(FeatureFlagKeys.V2_CHECKOUT);
   const { items, clear } = useCartStore();
 
-  const [step, setStep] = useState<CheckoutStep>("summary");
+  const [step, setStep] = useState<CheckoutStep>("address_payment");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [savingAddress, setSavingAddress] = useState(false);
@@ -208,7 +201,7 @@ export const CheckoutScreen: React.FC = () => {
 
     if (!selectedAddress) {
       Alert.alert("请选择地址", "请先选择或新增收货地址。");
-      setStep("address");
+      setStep("address_payment");
       return null;
     }
 
@@ -243,7 +236,7 @@ export const CheckoutScreen: React.FC = () => {
     }
   }, [cartItems, clear, selectedAddress]);
 
-  const steps = [t.checkout.confirmItems, t.checkout.shippingAddress, t.checkout.paymentPreference];
+  const steps = ["地址与配送", "支付与确认"];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -253,12 +246,10 @@ export const CheckoutScreen: React.FC = () => {
             <TouchableOpacity
               style={styles.iconButton}
               onPress={() => {
-                if (step === "summary") {
+                if (step === "address_payment") {
                   navigation.goBack();
-                } else if (step === "address") {
-                  setStep("summary");
                 } else {
-                  setStep("address");
+                  setStep("address_payment");
                 }
               }}
               accessibilityLabel="返回"
@@ -271,7 +262,7 @@ export const CheckoutScreen: React.FC = () => {
 
           <View style={styles.progressRow}>
             {steps.map((label, index) => {
-              const activeIndex = step === "summary" ? 0 : step === "address" ? 1 : 2;
+              const activeIndex = step === "address_payment" ? 0 : 1;
               return (
                 <View key={label} style={styles.progressItem}>
                   <View
@@ -303,88 +294,9 @@ export const CheckoutScreen: React.FC = () => {
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
           >
-            {step === "summary" ? (
+            {step === "address_payment" ? (
               <>
-                {isV2Checkout ? (
-                  <View style={styles.card}>
-                    <Text style={styles.cardTitle}>快速结算</Text>
-                    {cartItems.length === 0 ? (
-                      <Text style={styles.muted}>当前没有勾选任何商品。</Text>
-                    ) : (
-                      <>
-                        <Text style={styles.muted}>共 {cartItems.length} 件商品</Text>
-                        <View style={[styles.spaceRow, styles.totalRow]}>
-                          <Text style={styles.totalLabel}>应付总额</Text>
-                          <Text style={styles.totalValue}>
-                            {"\u00A5"}
-                            {orderTotal.toFixed(2)}
-                          </Text>
-                        </View>
-                      </>
-                    )}
-                  </View>
-                ) : (
-                  <>
-                    <View style={styles.card}>
-                      <Text style={styles.cardTitle}>{t.checkout.confirmItems}</Text>
-                      {cartItems.length === 0 ? (
-                        <Text style={styles.muted}>当前没有勾选任何商品。</Text>
-                      ) : (
-                        cartItems.map((item) => (
-                          <View key={item.id} style={styles.row}>
-                            <View style={styles.flex}>
-                              <Text style={styles.itemName}>{item.name}</Text>
-                              <Text style={styles.muted}>
-                                {item.color || "默认色"} / {item.size || "默认尺码"} x
-                                {item.quantity}
-                              </Text>
-                            </View>
-                            <Text style={styles.price}>
-                              {"\u00A5"}
-                              {(item.price * item.quantity).toFixed(2)}
-                            </Text>
-                          </View>
-                        ))
-                      )}
-                    </View>
-
-                    <View style={styles.card}>
-                      <View style={styles.spaceRow}>
-                        <Text style={styles.muted}>商品小计</Text>
-                        <Text style={styles.value}>
-                          {"\u00A5"}
-                          {itemsTotal.toFixed(2)}
-                        </Text>
-                      </View>
-                      <View style={styles.spaceRow}>
-                        <Text style={styles.muted}>运费</Text>
-                        <Text style={styles.value}>
-                          {shippingFee === 0 ? "免运费" : `\u00A5${shippingFee.toFixed(2)}`}
-                        </Text>
-                      </View>
-                      <View style={[styles.spaceRow, styles.totalRow]}>
-                        <Text style={styles.totalLabel}>应付总额</Text>
-                        <Text style={styles.totalValue}>
-                          {"\u00A5"}
-                          {orderTotal.toFixed(2)}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <TouchableOpacity
-                      style={styles.primaryButton}
-                      onPress={() => setStep("address")}
-                      accessibilityLabel="进入地址选择"
-                    >
-                      <Text style={styles.primaryText}>选择收货地址</Text>
-                    </TouchableOpacity>
-                  </>
-                )}
-              </>
-            ) : null}
-
-            {step === "address" ? (
-              <>
+                {/* Address + delivery card */}
                 <View style={styles.card}>
                   <View style={styles.spaceRow}>
                     <Text style={styles.cardTitle}>{t.checkout.shippingAddress}</Text>
@@ -481,33 +393,77 @@ export const CheckoutScreen: React.FC = () => {
                   )}
                 </View>
 
-                <View style={styles.actionRow}>
-                  <TouchableOpacity
-                    style={styles.secondaryButton}
-                    onPress={() => setStep("summary")}
-                    accessibilityLabel="返回确认商品"
-                  >
-                    <Text style={styles.secondaryText}>上一步</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.primaryButtonFlex}
-                    onPress={() => {
-                      if (!selectedAddress) {
-                        Alert.alert("请选择地址", "请先选择或新增收货地址。");
-                        return;
-                      }
-                      setStep("payment");
-                    }}
-                    accessibilityLabel="进入支付偏好"
-                  >
-                    <Text style={styles.primaryText}>继续提交</Text>
-                  </TouchableOpacity>
+                {/* AI Size Recommendation */}
+                <View style={styles.card}>
+                  <View style={styles.spaceRow}>
+                    <Ionicons name="sparkles" size={16} color={colors.primary} />
+                    <Text style={styles.cardTitle}>AI 尺码推荐</Text>
+                  </View>
+                  <Text style={styles.muted}>根据你的体型数据，推荐选择常规尺码</Text>
                 </View>
+
+                {/* Order Summary */}
+                <View style={styles.card}>
+                  <Text style={styles.cardTitle}>{t.checkout.confirmItems}</Text>
+                  {cartItems.length === 0 ? (
+                    <Text style={styles.muted}>当前没有勾选任何商品。</Text>
+                  ) : (
+                    cartItems.map((item) => (
+                      <View key={item.id} style={styles.row}>
+                        <View style={styles.flex}>
+                          <Text style={styles.itemName}>{item.name}</Text>
+                          <Text style={styles.muted}>
+                            {item.color || "默认色"} / {item.size || "默认尺码"} x{item.quantity}
+                          </Text>
+                        </View>
+                        <Text style={styles.price}>
+                          {"\u00A5"}
+                          {(item.price * item.quantity).toFixed(2)}
+                        </Text>
+                      </View>
+                    ))
+                  )}
+                  <View style={styles.spaceRow}>
+                    <Text style={styles.muted}>商品小计</Text>
+                    <Text style={styles.value}>
+                      {"\u00A5"}
+                      {itemsTotal.toFixed(2)}
+                    </Text>
+                  </View>
+                  <View style={styles.spaceRow}>
+                    <Text style={styles.muted}>运费</Text>
+                    <Text style={styles.value}>
+                      {shippingFee === 0 ? "免运费" : `\u00A5${shippingFee.toFixed(2)}`}
+                    </Text>
+                  </View>
+                  <View style={[styles.spaceRow, styles.totalRow]}>
+                    <Text style={styles.totalLabel}>应付总额</Text>
+                    <Text style={styles.totalValue}>
+                      {"\u00A5"}
+                      {orderTotal.toFixed(2)}
+                    </Text>
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.primaryButton}
+                  onPress={() => {
+                    if (!selectedAddress) {
+                      Alert.alert("请选择地址", "请先选择或新增收货地址。");
+                      return;
+                    }
+                    setStep("confirm");
+                  }}
+                  accessibilityLabel="进入支付确认"
+                >
+                  <Text style={styles.primaryText}>继续提交</Text>
+                </TouchableOpacity>
               </>
             ) : null}
 
-            {step === "payment" ? (
+            {step === "confirm" ? (
               <>
+                {/* Coupon */}
                 <View style={styles.card}>
                   <View style={styles.spaceRow}>
                     <Text style={styles.cardTitle}>优惠券</Text>
@@ -534,6 +490,7 @@ export const CheckoutScreen: React.FC = () => {
                   )}
                 </View>
 
+                {/* Order confirmation */}
                 <View style={styles.card}>
                   <Text style={styles.cardTitle}>订单确认</Text>
                   {selectedAddress ? (
@@ -560,7 +517,7 @@ export const CheckoutScreen: React.FC = () => {
                   {couponStore.selectedCoupon && (
                     <View style={styles.spaceRow}>
                       <Text style={styles.muted}>优惠</Text>
-                      <Text style={[styles.value, { color: "colors.success" /* custom color */ }]}>
+                      <Text style={[styles.value, { color: colors.success }]}>
                         -{"\u00A5"}
                         {couponStore.selectedCoupon.coupon.type === "PERCENTAGE"
                           ? ((itemsTotal * couponStore.selectedCoupon.coupon.value) / 100).toFixed(
@@ -579,6 +536,7 @@ export const CheckoutScreen: React.FC = () => {
                   </View>
                 </View>
 
+                {/* Payment buttons */}
                 <View style={styles.paymentButtonsRow}>
                   <TouchableOpacity
                     style={styles.alipayButton}
@@ -631,7 +589,12 @@ export const CheckoutScreen: React.FC = () => {
                 <Text style={styles.muted}>订单号：{orderId}</Text>
                 <TouchableOpacity
                   style={styles.primaryButton}
-                  onPress={() => navigation.navigate("Orders")}
+                  onPress={() =>
+                    (navigation as any).navigate("MainTabs", {
+                      screen: "Profile",
+                      params: { screen: "Orders" },
+                    })
+                  }
                   accessibilityLabel="查看订单"
                 >
                   <Text style={styles.primaryText}>{t.checkout.viewOrder}</Text>
@@ -890,7 +853,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     backgroundColor: colors.surface,
   },
-  addressCardActive: { borderColor: colors.primary, backgroundColor: "colors.backgroundTertiary" }, // custom color
+  addressCardActive: { borderColor: colors.primary, backgroundColor: colors.backgroundTertiary },
   paymentItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -927,14 +890,14 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: 14,
     alignItems: "center",
-    backgroundColor: "colors.info", // custom color
+    backgroundColor: colors.info,
   },
   wechatButton: {
     flex: 1,
     paddingVertical: Spacing.md,
     borderRadius: 14,
     alignItems: "center",
-    backgroundColor: "colors.success", // custom color
+    backgroundColor: colors.success,
   },
   paymentButtonText: {
     fontSize: DesignTokens.typography.sizes.base,

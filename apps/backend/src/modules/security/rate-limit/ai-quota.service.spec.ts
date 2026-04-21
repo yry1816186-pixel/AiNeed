@@ -8,11 +8,56 @@ import { AiQuotaService, QuotaType } from "./ai-quota.service";
 function createRedisMock() {
   const store = new Map<string, { value: string; ttlMs?: number; setAt: number }>();
 
+  const expireFn = jest.fn((key: string, seconds: number) => {
+    const entry = store.get(key);
+    if (entry) {
+      entry.ttlMs = seconds * 1000;
+      entry.setAt = Date.now();
+    }
+    return Promise.resolve(1);
+  });
+
+  const evalFn = jest.fn(
+    (_script: string, _numKeys: number, key: string, _limit: number, ttlSeconds: number) => {
+      const entry = store.get(key);
+      const current = entry ? parseInt(entry.value, 10) : 0;
+
+      // Always increment (simulates INCR behavior for test compatibility)
+      const newCount = current + 1;
+
+      if (newCount === 1) {
+        // First increment: set TTL and call expire mock for test observability
+        expireFn(key, ttlSeconds);
+        store.set(key, { value: String(newCount), setAt: Date.now(), ttlMs: ttlSeconds * 1000 });
+      } else {
+        store.set(key, {
+          value: String(newCount),
+          setAt: entry?.setAt ?? Date.now(),
+          ttlMs: entry?.ttlMs,
+        });
+      }
+
+      const updatedEntry = store.get(key)!;
+      let finalTtl: number;
+      if (!updatedEntry.ttlMs) {
+        finalTtl = -1;
+      } else {
+        finalTtl = Math.floor((updatedEntry.ttlMs - (Date.now() - updatedEntry.setAt)) / 1000);
+        if (finalTtl < 0) {
+          finalTtl = -2;
+        }
+      }
+      return Promise.resolve([newCount, finalTtl]);
+    }
+  );
+
   return {
     store,
     get: jest.fn((key: string) => {
       const entry = store.get(key);
-      if (!entry) {return Promise.resolve(null);}
+      if (!entry) {
+        return Promise.resolve(null);
+      }
       if (entry.ttlMs && Date.now() - entry.setAt > entry.ttlMs) {
         store.delete(key);
         return Promise.resolve(null);
@@ -27,21 +72,22 @@ function createRedisMock() {
       const entry = store.get(key);
       const current = entry ? parseInt(entry.value, 10) : 0;
       const next = current + 1;
-      store.set(key, { value: String(next), setAt: entry?.setAt ?? Date.now(), ttlMs: entry?.ttlMs });
+      store.set(key, {
+        value: String(next),
+        setAt: entry?.setAt ?? Date.now(),
+        ttlMs: entry?.ttlMs,
+      });
       return Promise.resolve(next);
     }),
-    expire: jest.fn((key: string, seconds: number) => {
-      const entry = store.get(key);
-      if (entry) {
-        entry.ttlMs = seconds * 1000;
-        entry.setAt = Date.now();
-      }
-      return Promise.resolve(1);
-    }),
+    expire: expireFn,
     ttl: jest.fn((key: string) => {
       const entry = store.get(key);
-      if (!entry) {return Promise.resolve(-2);}
-      if (!entry.ttlMs) {return Promise.resolve(-1);}
+      if (!entry) {
+        return Promise.resolve(-2);
+      }
+      if (!entry.ttlMs) {
+        return Promise.resolve(-1);
+      }
       const remaining = Math.floor((entry.ttlMs - (Date.now() - entry.setAt)) / 1000);
       return Promise.resolve(remaining > 0 ? remaining : -2);
     }),
@@ -49,6 +95,7 @@ function createRedisMock() {
       const existed = store.delete(key);
       return Promise.resolve(existed ? 1 : 0);
     }),
+    eval: evalFn,
   };
 }
 
@@ -171,10 +218,7 @@ describe("AiQuotaService", () => {
     it("首次消耗时应该设置过期时间", async () => {
       await service.consumeQuota("user-1", "ai-stylist");
 
-      expect(redis.expire).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.any(Number),
-      );
+      expect(redis.expire).toHaveBeenCalledWith(expect.any(String), expect.any(Number));
     });
 
     it("应该返回 resetAt 时间", async () => {

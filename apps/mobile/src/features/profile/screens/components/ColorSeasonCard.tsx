@@ -11,7 +11,7 @@ import {
   Stop,
 } from "react-native-svg";
 import { colors } from "@/src/theme/tokens/colors";
-import { DesignTokens } from "@/src/theme/tokens/design-tokens";
+import { DesignTokens } from "@/src/design-system/theme";
 import { typography } from "@/src/theme/tokens/typography";
 import { spacing } from "@/src/theme/tokens/spacing";
 import { shadows } from "@/src/theme/tokens/shadows";

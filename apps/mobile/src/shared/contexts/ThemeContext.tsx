@@ -7,13 +7,15 @@ import React, {
   useMemo,
   ReactNode,
 } from "react";
-import { useColorScheme, Appearance, StyleSheet, type ColorValue } from "react-native";
+import { useColorScheme, Appearance, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { DesignTokens, darkTokens } from "../../design-system/theme";
+import { DesignTokens, darkTokens, flatColors as lightFlatColors } from "../../design-system/theme";
 import type { DesignTokensType, DarkTokensType } from "../../design-system/theme";
 import {
   seasonAccentColors,
   normalizeColorSeason,
+  seasonLabels,
+  seasonDescriptions,
   type ColorSeason,
   type SeasonAccentColors,
 } from "../../design-system/theme";
@@ -25,9 +27,16 @@ export type ResolvedTheme = "light" | "dark";
 
 type TokenSet = typeof DesignTokens;
 
-function buildFlatColors(base: TokenSet["colors"]): FlatColors {
+function buildDarkFlatColors(): FlatColors {
+  const base = darkTokens.colors;
   return {
-    brand: base.brand,
+    brand: {
+      ...base.brand,
+      primary: base.brand.terracotta,
+      warmPrimary: "#C67C4E",
+      warmAccent: "#E8A87C",
+      warmSecondary: "#D4917A",
+    } as FlatColors["brand"],
     neutral: base.neutral,
     semantic: base.semantic,
     backgrounds: base.backgrounds,
@@ -51,7 +60,7 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     primaryLight: base.brand.terracottaLight,
     primaryDark: base.brand.terracottaDark,
     subtleBg: base.backgrounds.tertiary,
-    gold: "colors.warning",
+    gold: "#D4A853",
     placeholderBg: base.neutral[200],
     overlay: base.backgrounds.overlay,
     background: base.backgrounds.primary,
@@ -67,15 +76,35 @@ function buildFlatColors(base: TokenSet["colors"]): FlatColors {
     infoLight: base.semantic.infoLight,
     divider: base.borders.light,
     cartLight: "#FFF5F0",
-    purple: DesignTokens.colors.brand.terracottaDark,
     terracottaDark: base.brand.terracottaDark,
-    amber: DesignTokens.colors.semantic.warning,
+    amber: base.semantic.warning,
     secondary: base.brand.sage,
+    secondaryLight: "#A3B096",
+    warmPrimary: "#C67C4E",
+    warmAccent: "#E8A87C",
+    warmSecondary: "#D4917A",
+    like: base.semantic.error,
+    ocean: "#4A90D9",
+    mint: "#7ED4AD",
+    coral: "#FF7F7F",
+    main: "#C67C4E",
+    light: "#F5E6D3",
+    dark: "#8B5E3C",
+    oceanMint: "#5BB5A2",
+    fashion: "#C67C4E",
+    purple: "#9B59B6",
+    gradients: {
+      ...darkTokens.gradients,
+      warm: ["#C67C4E", "#E8A87C"],
+      cool: ["#4A90D9", "#7ED4AD"],
+      hero: ["#C67C4E", "#4A90D9"],
+      coralRose: ["#FF7F7F", "#FF6B6B"],
+      oceanMint: ["#4A90D9", "#7ED4AD"],
+    },
   };
 }
 
-const lightFlatColors = buildFlatColors(DesignTokens.colors);
-const darkFlatColors = buildFlatColors(darkTokens.colors);
+const darkFlatColors = buildDarkFlatColors();
 
 export interface ThemeContextType {
   theme: ResolvedTheme;
@@ -102,7 +131,6 @@ const SEASON_STORAGE_KEY = "@xuno_color_season";
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const { colors, isDark } = useTheme();
   const systemColorScheme = useColorScheme();
   const [mode, setModeState] = useState<ThemeMode>("system");
   const [colorSeason, setColorSeasonState] = useState<ColorSeason | null>(null);
@@ -149,7 +177,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const resolvedTheme: ResolvedTheme = isDark ? "dark" : "light";
 
   const tokens: TokenSet = (isDark ? darkTokens : DesignTokens) as TokenSet;
-  const flatColors: FlatColors = isDark ? darkFlatColors : lightFlatColors;
+  const resolvedFlatColors: FlatColors = isDark ? darkFlatColors : lightFlatColors;
 
   const setMode = useCallback(async (newMode: ThemeMode) => {
     setModeState(newMode);
@@ -188,7 +216,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       mode,
       isDark,
       tokens,
-      colors: flatColors,
+      colors: resolvedFlatColors,
       typography: tokens.typography,
       spacing: tokens.spacing,
       borderRadius: tokens.borderRadius,
@@ -206,7 +234,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       mode,
       isDark,
       tokens,
-      flatColors,
+      resolvedFlatColors,
       setMode,
       toggleTheme,
       colorSeason,

@@ -18,10 +18,9 @@ import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { outfitApi } from "../../../services/api/outfit.api";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 import type { RootStackParamList } from "../../../types/navigation";
 import type { Outfit } from "../../types/outfit";
-import { flatColors as colors } from "../../../design-system/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 

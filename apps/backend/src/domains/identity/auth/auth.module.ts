@@ -18,7 +18,6 @@ import { JwtStrategy } from "./strategies/jwt.strategy";
 import { LocalStrategy } from "./strategies/local.strategy";
 import { WechatAuthStrategy } from "./strategies/wechat.strategy";
 
-
 const logger = new Logger("AuthModule");
 
 @Module({
@@ -34,14 +33,14 @@ const logger = new Logger("AuthModule");
           logger.error(
             "FATAL: JWT_SECRET environment variable is not set. " +
               "Authentication will not work properly. " +
-              "Please set JWT_SECRET in your environment.",
+              "Please set JWT_SECRET in your environment."
           );
           throw new Error("JWT_SECRET environment variable is required");
         }
 
         const expiresIn = configService.get<JwtSignOptions["expiresIn"]>(
           "JWT_ACCESS_EXPIRES_IN",
-          "15m",
+          "15m"
         );
 
         return {
@@ -73,6 +72,6 @@ const logger = new Logger("AuthModule");
       inject: [ConfigService],
     },
   ],
-  exports: [AuthService],
+  exports: [AuthService, TokenBlacklistService],
 })
 export class AuthModule {}

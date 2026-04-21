@@ -1,4 +1,7 @@
-import { useOnboardingStore, OnboardingStep } from "../../features/onboarding/stores/onboardingStore";
+import {
+  useOnboardingStore,
+  OnboardingStep,
+} from "../../features/onboarding/stores/onboardingStore";
 
 // Mocks
 jest.mock("@react-native-async-storage/async-storage", () => ({
@@ -14,6 +17,7 @@ const DEFAULT_FORM_DATA = {
   height: "",
   weight: "",
   photoUri: null as string | null,
+  styleAnswers: [] as string[],
 };
 
 describe("useOnboardingStore", () => {
@@ -55,6 +59,10 @@ describe("useOnboardingStore", () => {
 
     test("formData.photoUri 应为 null", () => {
       expect(useOnboardingStore.getState().formData.photoUri).toBeNull();
+    });
+
+    test("formData.styleAnswers 应为空数组", () => {
+      expect(useOnboardingStore.getState().formData.styleAnswers).toEqual([]);
     });
 
     test("isLoading 应为 false", () => {
@@ -138,6 +146,17 @@ describe("useOnboardingStore", () => {
       });
       expect(useOnboardingStore.getState().formData.photoUri).toBe("file:///photo.jpg");
     });
+
+    test("应支持设置 styleAnswers", () => {
+      useOnboardingStore.getState().updateFormData({
+        styleAnswers: ["minimal", "sporty", "neutral"],
+      });
+      expect(useOnboardingStore.getState().formData.styleAnswers).toEqual([
+        "minimal",
+        "sporty",
+        "neutral",
+      ]);
+    });
   });
 
   // ==================== setLoading ====================
@@ -182,19 +201,19 @@ describe("useOnboardingStore", () => {
   // ==================== goToNextStep ====================
 
   describe("goToNextStep", () => {
-    test("应从 basicInfo 前进到 photo", () => {
-      useOnboardingStore.getState().goToNextStep();
-      expect(useOnboardingStore.getState().currentStep).toBe("photo");
-    });
-
-    test("应从 photo 前进到 styleTest", () => {
-      useOnboardingStore.getState().setCurrentStep("photo");
+    test("应从 basicInfo 前进到 styleTest", () => {
       useOnboardingStore.getState().goToNextStep();
       expect(useOnboardingStore.getState().currentStep).toBe("styleTest");
     });
 
-    test("应从 styleTest 前进到 complete", () => {
+    test("应从 styleTest 前进到 photo", () => {
       useOnboardingStore.getState().setCurrentStep("styleTest");
+      useOnboardingStore.getState().goToNextStep();
+      expect(useOnboardingStore.getState().currentStep).toBe("photo");
+    });
+
+    test("应从 photo 前进到 complete", () => {
+      useOnboardingStore.getState().setCurrentStep("photo");
       useOnboardingStore.getState().goToNextStep();
       expect(useOnboardingStore.getState().currentStep).toBe("complete");
     });
@@ -206,9 +225,9 @@ describe("useOnboardingStore", () => {
     });
 
     test("连续调用应按顺序前进", () => {
-      useOnboardingStore.getState().goToNextStep(); // basicInfo -> photo
-      useOnboardingStore.getState().goToNextStep(); // photo -> styleTest
-      useOnboardingStore.getState().goToNextStep(); // styleTest -> complete
+      useOnboardingStore.getState().goToNextStep(); // basicInfo -> styleTest
+      useOnboardingStore.getState().goToNextStep(); // styleTest -> photo
+      useOnboardingStore.getState().goToNextStep(); // photo -> complete
       expect(useOnboardingStore.getState().currentStep).toBe("complete");
     });
   });
@@ -216,22 +235,22 @@ describe("useOnboardingStore", () => {
   // ==================== goToPrevStep ====================
 
   describe("goToPrevStep", () => {
-    test("应从 photo 回退到 basicInfo", () => {
-      useOnboardingStore.getState().setCurrentStep("photo");
+    test("应从 styleTest 回退到 basicInfo", () => {
+      useOnboardingStore.getState().setCurrentStep("styleTest");
       useOnboardingStore.getState().goToPrevStep();
       expect(useOnboardingStore.getState().currentStep).toBe("basicInfo");
     });
 
-    test("应从 styleTest 回退到 photo", () => {
-      useOnboardingStore.getState().setCurrentStep("styleTest");
-      useOnboardingStore.getState().goToPrevStep();
-      expect(useOnboardingStore.getState().currentStep).toBe("photo");
-    });
-
-    test("应从 complete 回退到 styleTest", () => {
-      useOnboardingStore.getState().setCurrentStep("complete");
+    test("应从 photo 回退到 styleTest", () => {
+      useOnboardingStore.getState().setCurrentStep("photo");
       useOnboardingStore.getState().goToPrevStep();
       expect(useOnboardingStore.getState().currentStep).toBe("styleTest");
+    });
+
+    test("应从 complete 回退到 photo", () => {
+      useOnboardingStore.getState().setCurrentStep("complete");
+      useOnboardingStore.getState().goToPrevStep();
+      expect(useOnboardingStore.getState().currentStep).toBe("photo");
     });
 
     test("在 basicInfo 步骤调用不应越界", () => {
@@ -241,9 +260,9 @@ describe("useOnboardingStore", () => {
 
     test("连续调用应按顺序回退", () => {
       useOnboardingStore.getState().setCurrentStep("complete");
-      useOnboardingStore.getState().goToPrevStep(); // complete -> styleTest
-      useOnboardingStore.getState().goToPrevStep(); // styleTest -> photo
-      useOnboardingStore.getState().goToPrevStep(); // photo -> basicInfo
+      useOnboardingStore.getState().goToPrevStep(); // complete -> photo
+      useOnboardingStore.getState().goToPrevStep(); // photo -> styleTest
+      useOnboardingStore.getState().goToPrevStep(); // styleTest -> basicInfo
       expect(useOnboardingStore.getState().currentStep).toBe("basicInfo");
     });
   });

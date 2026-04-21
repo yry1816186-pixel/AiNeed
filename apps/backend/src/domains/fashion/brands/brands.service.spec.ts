@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { PriceRange, ClothingCategory } from '../../../types/prisma-enums';
+import { PriceRange, ClothingCategory } from "../../../types/prisma-enums";
 
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -86,7 +86,7 @@ describe("BrandsService", () => {
       mockPrismaService.brand.count.mockResolvedValue(1);
 
       const result = await service.getAllBrands();
-      const firstItem = result.items[0];
+      const firstItem = result.items[0] as { name?: string; productCount: number } | undefined;
 
       expect(result.items).toHaveLength(1);
       expect(firstItem?.name).toBe("测试品牌");
@@ -105,7 +105,7 @@ describe("BrandsService", () => {
           where: expect.objectContaining({
             priceRange: PriceRange.luxury,
           }),
-        }),
+        })
       );
     });
 
@@ -120,7 +120,7 @@ describe("BrandsService", () => {
           where: expect.objectContaining({
             categories: { has: ClothingCategory.tops },
           }),
-        }),
+        })
       );
     });
 
@@ -159,9 +159,7 @@ describe("BrandsService", () => {
   describe("getBrandProducts", () => {
     it("应该返回品牌商品列表", async () => {
       mockPrismaService.brand.findUnique.mockResolvedValue(mockBrand);
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       const result = await service.getBrandProducts("test-brand");
@@ -194,7 +192,7 @@ describe("BrandsService", () => {
           where: expect.objectContaining({
             price: { gte: 100, lte: 500 },
           }),
-        }),
+        })
       );
     });
 
@@ -211,7 +209,7 @@ describe("BrandsService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { price: "asc" },
-        }),
+        })
       );
     });
   });
@@ -228,7 +226,7 @@ describe("BrandsService", () => {
       expect(mockPrismaService.brand.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           take: 5,
-        }),
+        })
       );
     });
 
@@ -240,7 +238,7 @@ describe("BrandsService", () => {
       expect(mockPrismaService.brand.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           take: 10,
-        }),
+        })
       );
     });
   });
@@ -257,7 +255,7 @@ describe("BrandsService", () => {
           where: expect.objectContaining({
             categories: { has: ClothingCategory.tops },
           }),
-        }),
+        })
       );
     });
   });

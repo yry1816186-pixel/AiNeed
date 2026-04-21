@@ -1,7 +1,6 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle, TextStyle } from "react-native";
 import { Colors, Spacing, BorderRadius, Typography } from "../../design-system/theme";
-import { flatColors as colors } from "../theme";
 import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 export type BadgeVariant =
@@ -34,14 +33,14 @@ export interface SeasonBadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, { bg: string; text: string }> = {
-  primary: { bg: colors.primary[100], text: colors.primary[700] },
+  primary: { bg: Colors.primary[100], text: Colors.primary[700] },
   secondary: { bg: Colors.sage[100], text: Colors.sage[700] },
   success: { bg: Colors.semantic.successLight, text: "#1B7A3D" },
   warning: { bg: Colors.semantic.warningLight, text: "#8B6914" },
   error: { bg: Colors.semantic.errorLight, text: "#A12525" },
-  neutral: { bg: colors.neutral[100], text: colors.neutral[700] },
+  neutral: { bg: Colors.neutral[100], text: Colors.neutral[700] },
   gold: { bg: Colors.amber[100], text: Colors.amber[700] },
-  season: { bg: colors.neutral[50], text: colors.primary[500] },
+  season: { bg: Colors.neutral[50], text: Colors.primary[500] },
 };
 
 const sizeStyles: Record<
@@ -137,7 +136,7 @@ export const SeasonBadge: React.FC<SeasonBadgeProps> = ({ season, size = "md", s
           <View key={i} style={[styles.seasonDot, { backgroundColor: color }]} />
         ))}
       </View>
-      <Text style={{ fontSize: sStyle.fontSize, color: colors.primary[700], fontWeight: "600" }}>
+      <Text style={{ fontSize: sStyle.fontSize, color: Colors.primary[700], fontWeight: "600" }}>
         {seasonData.label}
       </Text>
     </View>

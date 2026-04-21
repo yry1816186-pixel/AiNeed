@@ -59,10 +59,11 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
   return (
     <Animated.View entering={SlideInRight.duration(350)} style={styles.stepContent}>
       <View style={styles.stepHeader}>
-        <Text style={styles.stepTitle}>上传照片解锁个性化分析</Text>
+        <Text style={styles.stepTitle}>上传照片</Text>
         <Text style={styles.stepSubtitle}>
-          上传一张全身照，帮助我们更好地分析体型和生成试衣效�?
+          上传一张全身照，帮助我们更好地分析体型和生成试衣效果
         </Text>
+        <Text style={styles.optionalHint}>可跳过，随时补传</Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.privacyBox}>
@@ -108,7 +109,7 @@ export const PhotoStep: React.FC<PhotoStepProps> = ({ onNext, onSkip }) => {
 
         {onSkip && (
           <TouchableOpacity style={styles.skipLink} onPress={onSkip} activeOpacity={0.7}>
-            <Text style={styles.skipLinkText}>跳过，稍后上传</Text>
+            <Text style={styles.skipLinkText}>可跳过，随时补传</Text>
           </TouchableOpacity>
         )}
       </ScrollView>
@@ -137,6 +138,12 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginTop: Spacing[2],
     lineHeight: 22,
+  },
+  optionalHint: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.primary,
+    marginTop: Spacing[2],
+    fontWeight: "500",
   },
   scrollContent: {
     paddingHorizontal: Spacing[5],

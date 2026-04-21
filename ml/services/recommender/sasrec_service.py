@@ -128,10 +128,13 @@ class SASRecModel:
         try:
             import torch
             self._torch_available = True
-            self._pt_model = _PyTorchSASRec(cfg)
             logger.info("PyTorch backend available - train_step will use backpropagation")
         except ImportError:
             logger.info("PyTorch not available - train_step will use NumPy gradient descent")
+
+    def _ensure_pt_model(self):
+        if self._pt_model is None and self._torch_available:
+            self._pt_model = _PyTorchSASRec(self.config)
 
         # Item embeddings (NumPy fallback)
         self.item_embeddings: dict[str, np.ndarray] = {}
@@ -509,7 +512,6 @@ class SASRecModel:
 
         self.training = False
 
-        # P0-1: Use torch.no_grad() for inference when PyTorch is available
         if self._torch_available and self._pt_model is not None:
             import torch
             with torch.no_grad():
@@ -555,8 +557,10 @@ class SASRecModel:
             raise RuntimeError("Training already in progress - concurrent training not allowed")
 
         try:
-            if self._torch_available and self._pt_model is not None:
-                return self._train_step_torch(sequences, lr)
+            if self._torch_available:
+                self._ensure_pt_model()
+                if self._pt_model is not None:
+                    return self._train_step_torch(sequences, lr)
             else:
                 return self._train_step_numpy(sequences, lr)
         finally:

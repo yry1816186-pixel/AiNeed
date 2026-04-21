@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 from typing import Dict, Any, Optional, Literal
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
@@ -172,7 +172,7 @@ async def get_task_status(task_id: str) -> Dict[str, Any]:
 @router.get("/")
 async def list_tasks(
     status: Optional[Literal["pending", "processing", "completed", "failed"]] = None,
-    limit: int = Field(default=50, ge=1, le=200),
+    limit: int = Query(default=50, ge=1, le=200),
 ) -> Dict[str, Any]:
     """List tasks with optional status filter, ordered by priority."""
     _cleanup_expired_tasks()

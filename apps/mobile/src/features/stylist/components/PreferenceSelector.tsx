@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import {
@@ -10,7 +10,7 @@ import {
   interpolate,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import { AiStylistAction } from "../../../services/api/ai-stylist.api";
 import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
@@ -148,7 +148,6 @@ export const PreferenceSelector: React.FC<PreferenceSelectorProps> = ({
   };
 
   const handleConfirm = () => {
-    const { colors } = useTheme();
     if (selectedValues.length > 0) {
       onSelect(field, selectedValues);
     }
@@ -227,6 +226,8 @@ interface OptionChipProps {
 }
 
 const OptionChip: React.FC<OptionChipProps> = ({ option, isSelected, index, onPress }) => {
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   const scale = useSharedValue(0.8);
   const opacity = useSharedValue(0);
 

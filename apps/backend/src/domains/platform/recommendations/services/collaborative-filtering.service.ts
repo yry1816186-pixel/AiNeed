@@ -29,14 +29,11 @@ export class CollaborativeFilteringService {
   private readonly CACHE_TTL = 3600;
   private readonly MIN_INTERACTIONS = 5;
 
-  constructor(
-    private prisma: PrismaService,
-    private redis: RedisService,
-  ) {}
+  constructor(private prisma: PrismaService, private redis: RedisService) {}
 
   async getSimilarUsers(
     userId: string,
-    topK: number = 20,
+    topK: number = 20
   ): Promise<Array<{ similarUserId: string; similarity: number }>> {
     try {
       const results = await this.prisma.$queryRaw<
@@ -49,6 +46,7 @@ export class CollaborativeFilteringService {
         LIMIT ${topK}
       `;
       return results.map((r: any) => ({
+        similarUserId: r.similar_user_id,
         similarity: Number(r.similarity),
       }));
     } catch (error) {
@@ -59,22 +57,20 @@ export class CollaborativeFilteringService {
 
   async getRecommendations(
     userId: string,
-    topK: number = 10,
+    topK: number = 10
   ): Promise<Array<{ itemId: string; score: number }>> {
     const similarUsers = await this.getSimilarUsers(userId, 50);
-    if (similarUsers.length === 0) {return [];}
+    if (similarUsers.length === 0) {
+      return [];
+    }
 
-    const userItems = await this.prisma.$queryRaw<
-      Array<{ itemId: string }>
-    >`
+    const userItems = await this.prisma.$queryRaw<Array<{ itemId: string }>>`
       SELECT "itemId" FROM "UserBehavior" WHERE "userId" = ${userId} AND "itemId" IS NOT NULL
     `;
     const excludeItemIds = userItems.map((r: any) => r.itemId);
 
     if (excludeItemIds.length === 0) {
-      const candidates = await this.prisma.$queryRaw<
-        Array<{ itemId: string; score: number }>
-      >`
+      const candidates = await this.prisma.$queryRaw<Array<{ itemId: string; score: number }>>`
         SELECT m."itemId",
                SUM(m.implicit_rating * s.similarity) AS score
         FROM mv_user_item_matrix m
@@ -85,13 +81,12 @@ export class CollaborativeFilteringService {
         LIMIT ${topK}
       `;
       return candidates.map((c: any) => ({
+        itemId: c.itemId,
         score: Number(c.score),
       }));
     }
 
-    const candidates = await this.prisma.$queryRaw<
-      Array<{ itemId: string; score: number }>
-    >`
+    const candidates = await this.prisma.$queryRaw<Array<{ itemId: string; score: number }>>`
       SELECT m."itemId",
              SUM(m.implicit_rating * s.similarity) AS score
       FROM mv_user_item_matrix m
@@ -107,12 +102,10 @@ export class CollaborativeFilteringService {
 
   async getSimilarItems(
     itemId: string,
-    topK: number = 10,
+    topK: number = 10
   ): Promise<Array<{ itemId: string; score: number }>> {
     try {
-      const results = await this.prisma.$queryRaw<
-        Array<{ co_item_id: string; co_count: number }>
-      >`
+      const results = await this.prisma.$queryRaw<Array<{ co_item_id: string; co_count: number }>>`
         SELECT co_item_id, co_count
         FROM mv_item_cooccurrence
         WHERE item_id = ${itemId}
@@ -120,6 +113,7 @@ export class CollaborativeFilteringService {
         LIMIT ${topK}
       `;
       return results.map((r: any) => ({
+        itemId: r.co_item_id,
         score: Number(r.co_count),
       }));
     } catch (error) {
@@ -131,12 +125,9 @@ export class CollaborativeFilteringService {
   async refreshViews(): Promise<void> {
     this.logger.log("Refreshing CF materialized views...");
     try {
-      await this.prisma
-        .$executeRaw`REFRESH MATERIALIZED VIEW CONCURRENTLY mv_user_item_matrix`;
-      await this.prisma
-        .$executeRaw`REFRESH MATERIALIZED VIEW CONCURRENTLY mv_user_similarity`;
-      await this.prisma
-        .$executeRaw`REFRESH MATERIALIZED VIEW CONCURRENTLY mv_item_cooccurrence`;
+      await this.prisma.$executeRaw`REFRESH MATERIALIZED VIEW CONCURRENTLY mv_user_item_matrix`;
+      await this.prisma.$executeRaw`REFRESH MATERIALIZED VIEW CONCURRENTLY mv_user_similarity`;
+      await this.prisma.$executeRaw`REFRESH MATERIALIZED VIEW CONCURRENTLY mv_item_cooccurrence`;
       this.logger.log("CF materialized views refreshed successfully");
     } catch (error) {
       this.logger.warn(`Failed to refresh CF views: ${error}`);
@@ -149,7 +140,7 @@ export class CollaborativeFilteringService {
 
   async getUserBasedRecommendations(
     userId: string,
-    options: { limit?: number; excludeViewed?: boolean } = {},
+    options: { limit?: number; excludeViewed?: boolean } = {}
   ): Promise<RecommendationResult[]> {
     const { limit = 20 } = options;
 
@@ -177,7 +168,7 @@ export class CollaborativeFilteringService {
 
   async getItemBasedRecommendations(
     itemId: string,
-    options: { limit?: number } = {},
+    options: { limit?: number } = {}
   ): Promise<RecommendationResult[]> {
     const { limit = 10 } = options;
 
@@ -210,7 +201,7 @@ export class CollaborativeFilteringService {
   async updateUserItemInteraction(
     userId: string,
     itemId: string,
-    type: "view" | "like" | "favorite" | "purchase",
+    type: "view" | "like" | "favorite" | "purchase"
   ): Promise<void> {
     await this.redis.del(`cf:user:${userId}:recommendations`);
     this.logger.debug(`Updated interaction: ${userId} -> ${itemId} (${type})`);
@@ -218,21 +209,21 @@ export class CollaborativeFilteringService {
 
   async getMFRecommendations(
     userId: string,
-    options: { limit?: number; excludeViewed?: boolean } = {},
+    options: { limit?: number; excludeViewed?: boolean } = {}
   ): Promise<RecommendationResult[]> {
     return this.getUserBasedRecommendations(userId, options);
   }
 
   async getHybridRecommendations(
     userId: string,
-    options: { limit?: number; excludeViewed?: boolean } = {},
+    options: { limit?: number; excludeViewed?: boolean } = {}
   ): Promise<RecommendationResult[]> {
     return this.getUserBasedRecommendations(userId, options);
   }
 
   private async getFallbackRecommendations(
     userId: string,
-    limit: number,
+    limit: number
   ): Promise<RecommendationResult[]> {
     const popularItems = await this.prisma.clothingItem.findMany({
       where: { isActive: true },
@@ -242,6 +233,7 @@ export class CollaborativeFilteringService {
     });
 
     return popularItems.map((item: any) => ({
+      itemId: item.id,
       score: 50,
       reasons: ["热门推荐"],
       confidence: 0.3,

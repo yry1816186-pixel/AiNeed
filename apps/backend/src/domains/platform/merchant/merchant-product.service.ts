@@ -61,8 +61,6 @@ export class MerchantProductService {
           images: data.images,
           tags: data.tags ?? [],
           isActive: data.isActive ?? true,
-          gender: "other" as const,
-          source: "manual" as const,
           brandId,
         },
       });

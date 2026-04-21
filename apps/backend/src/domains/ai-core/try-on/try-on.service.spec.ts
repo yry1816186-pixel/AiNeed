@@ -216,10 +216,8 @@ describe("TryOnService", () => {
       const pendingTryOn = { ...mockTryOn, status: TryOnStatus.processing };
       mockPrismaService.userPhoto.findFirst.mockResolvedValue(mockPhoto);
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockClothingItem);
-      // 第一次调用检查已完成记录返回 null，第二次调用检查处理中记录返回 pendingTryOn
-      mockPrismaService.virtualTryOn.findFirst
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce(pendingTryOn);
+      // 服务只调用一次 findFirst，直接返回处理中的记录
+      mockPrismaService.virtualTryOn.findFirst.mockResolvedValue(pendingTryOn);
 
       const result = await service.createTryOnRequest("test-user-id", "photo-id", "item-id");
 

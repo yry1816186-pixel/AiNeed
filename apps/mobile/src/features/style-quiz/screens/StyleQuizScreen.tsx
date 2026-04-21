@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import {
   useQuizStore as useStyleQuizStore,
   useStyleQuizCurrentQuiz,
@@ -28,8 +28,8 @@ import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 const QUIZ_ID = "default";
 
 export const StyleQuizScreen: React.FC = () => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
 
@@ -174,7 +174,7 @@ export const StyleQuizScreen: React.FC = () => {
     return (
       <View style={styles.container}>
         <View style={[styles.centerContainer, { paddingTop: insets.top }]}>
-          <ActivityIndicator size="large" color={colors.primary[500]} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>正在生成你的风格报告...</Text>
         </View>
       </View>
@@ -206,7 +206,7 @@ export const StyleQuizScreen: React.FC = () => {
     return (
       <View style={styles.container}>
         <View style={[styles.centerContainer, { paddingTop: insets.top }]}>
-          <ActivityIndicator size="large" color={colors.primary[500]} />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>正在生成你的风格报告...</Text>
         </View>
       </View>
@@ -353,13 +353,13 @@ const useStyles = createStyles((colors) => ({
   },
   errorText: {
     fontSize: DesignTokens.typography.sizes.md,
-    color: colors.error[500],
+    color: colors.error,
     textAlign: "center",
     marginTop: Spacing[3],
     marginBottom: Spacing[4],
   },
   retryButton: {
-    backgroundColor: colors.primary[500],
+    backgroundColor: colors.primary,
     paddingHorizontal: Spacing[6],
     paddingVertical: Spacing[3],
     borderRadius: BorderRadius.lg,
@@ -409,7 +409,7 @@ const useStyles = createStyles((colors) => ({
     ...Shadows.sm,
   },
   imageCardSelected: {
-    borderColor: colors.primary[500],
+    borderColor: colors.primary,
   },
   imagePlaceholder: {
     aspectRatio: 3 / 4,
@@ -430,7 +430,7 @@ const useStyles = createStyles((colors) => ({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: colors.primary[500],
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -444,7 +444,7 @@ const useStyles = createStyles((colors) => ({
     borderColor: colors.neutral[200],
   },
   optionCardSelected: {
-    borderColor: colors.primary[500],
+    borderColor: colors.primary,
     backgroundColor: "rgba(198, 123, 92, 0.05)",
   },
   optionText: {
@@ -454,7 +454,7 @@ const useStyles = createStyles((colors) => ({
   },
   optionTextSelected: {
     fontWeight: "600",
-    color: colors.primary[500],
+    color: colors.primary,
   },
   bottomBar: {
     flexDirection: "row",
@@ -471,7 +471,7 @@ const useStyles = createStyles((colors) => ({
     flex: 1,
     height: 48,
     borderRadius: BorderRadius.lg,
-    backgroundColor: colors.primary[500],
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -524,7 +524,7 @@ const useStyles = createStyles((colors) => ({
   tagText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "400",
-    color: colors.primary[500],
+    color: colors.primary,
   },
   paletteRow: {
     flexDirection: "row",
@@ -539,10 +539,10 @@ const useStyles = createStyles((colors) => ({
   confidenceValue: {
     fontSize: DesignTokens.typography.sizes["3xl"],
     fontWeight: "600",
-    color: colors.primary[500],
+    color: colors.primary,
   },
   resultButton: {
-    backgroundColor: colors.primary[500],
+    backgroundColor: colors.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing[4],
     alignItems: "center",

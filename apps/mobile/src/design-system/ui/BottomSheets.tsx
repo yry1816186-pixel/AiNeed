@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import BottomSheet, {
   BottomSheetView,
@@ -12,9 +12,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
-import { Colors, Spacing, BorderRadius, Typography } from "../../design-system/theme";
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { flatColors as colors } from "../theme";
+import { Colors, Spacing, BorderRadius, Typography, DesignTokens } from "../../design-system/theme";
 import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 type _ViewStyle = import("react-native").ViewStyle;
@@ -64,8 +62,8 @@ export function ProductBottomSheet({
   onAddToCart,
   onBuyNow,
 }: ProductBottomSheetProps) {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const snapPoints = useMemo(() => ["60%", "80%"], []);
 
   const renderBackdrop = useCallback(
@@ -192,7 +190,7 @@ export function ProductBottomSheet({
               </TouchableOpacity>
               <TouchableOpacity style={styles.buyNowButton} onPress={onBuyNow} activeOpacity={0.8}>
                 <LinearGradient
-                  colors={[colors.primary[500], colors.primary[600]]}
+                  colors={[Colors.primary[500], Colors.primary[600]]}
                   style={styles.buyNowGradient}
                 >
                   <Text style={styles.buyNowText}>立即购买</Text>
@@ -274,7 +272,7 @@ export function FilterBottomSheet({
           </TouchableOpacity>
           <TouchableOpacity style={styles.applyButton} onPress={onApply}>
             <LinearGradient
-              colors={[colors.primary[500], colors.primary[600]]}
+              colors={[Colors.primary[500], Colors.primary[600]]}
               style={styles.applyGradient}
             >
               <Text style={styles.applyText}>确定</Text>
@@ -407,7 +405,7 @@ const useStyles = createStyles((colors) => ({
   },
   productPrice: {
     ...Typography.heading.lg,
-    color: colors.primary[600],
+    color: Colors.primary[600],
     fontWeight: "800",
   },
   section: {
@@ -435,8 +433,8 @@ const useStyles = createStyles((colors) => ({
     borderColor: colors.neutral[200],
   },
   sizeOptionSelected: {
-    borderColor: colors.primary[500],
-    backgroundColor: colors.primary[50],
+    borderColor: Colors.primary[500],
+    backgroundColor: Colors.primary[50],
   },
   sizeOptionUnavailable: {
     borderColor: colors.neutral[100],
@@ -447,7 +445,7 @@ const useStyles = createStyles((colors) => ({
     color: colors.neutral[600],
   },
   sizeOptionTextSelected: {
-    color: colors.primary[600],
+    color: Colors.primary[600],
     fontWeight: "600",
   },
   sizeOptionTextUnavailable: {
@@ -465,8 +463,8 @@ const useStyles = createStyles((colors) => ({
     gap: Spacing[2],
   },
   colorOptionSelected: {
-    borderColor: colors.primary[500],
-    backgroundColor: colors.primary[50],
+    borderColor: Colors.primary[500],
+    backgroundColor: Colors.primary[50],
   },
   colorDot: {
     width: 16,
@@ -480,7 +478,7 @@ const useStyles = createStyles((colors) => ({
     color: colors.neutral[600],
   },
   colorOptionTextSelected: {
-    color: colors.primary[600],
+    color: Colors.primary[600],
     fontWeight: "600",
   },
   actions: {
@@ -494,12 +492,12 @@ const useStyles = createStyles((colors) => ({
     height: 48,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.primary[100],
+    backgroundColor: Colors.primary[100],
     borderRadius: BorderRadius.xl,
   },
   addToCartText: {
     ...Typography.body.md,
-    color: colors.primary[700],
+    color: Colors.primary[700],
     fontWeight: "600",
   },
   buyNowButton: {

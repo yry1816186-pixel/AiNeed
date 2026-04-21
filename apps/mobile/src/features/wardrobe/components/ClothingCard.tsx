@@ -2,9 +2,15 @@ import React, { memo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../../design-system/theme";
-import { DesignTokens } from "../../../design-system/theme";
-import { flatColors as colors } from "../../../design-system/theme";
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  Typography,
+  Shadows,
+  DesignTokens,
+  flatColors as colors,
+} from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface ClothingCardProps {
@@ -33,7 +39,7 @@ export const ClothingCard = memo(function ClothingCard({
   originalPrice,
   image,
   category,
-  colors,
+  colors: itemColors,
   styleTags,
   score,
   reasons,
@@ -41,6 +47,8 @@ export const ClothingCard = memo(function ClothingCard({
   onFavorite,
   isFavorite = false,
 }: ClothingCardProps) {
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   return (
     <TouchableOpacity
       style={styles.card}
@@ -68,7 +76,7 @@ export const ClothingCard = memo(function ClothingCard({
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
               size={18}
-              color={isFavorite ? Colors.rose[500] : colors.neutral[400]}
+              color={isFavorite ? Colors.rose[500] : Colors.neutral[400]}
             />
           </TouchableOpacity>
         )}
@@ -90,9 +98,9 @@ export const ClothingCard = memo(function ClothingCard({
             <Text style={styles.originalPrice}>¥{originalPrice}</Text>
           )}
         </View>
-        {colors && colors.length > 0 && (
+        {itemColors && itemColors.length > 0 && (
           <View style={styles.colorRow}>
-            {colors.slice(0, 4).map((color, index) => (
+            {itemColors.slice(0, 4).map((color, index) => (
               <View
                 key={index}
                 style={[styles.colorDot, { backgroundColor: getColorCode(color) }]}
@@ -103,7 +111,7 @@ export const ClothingCard = memo(function ClothingCard({
         {reasons && reasons.length > 0 && (
           <View style={styles.reasonsContainer}>
             <View style={styles.reasonIconContainer}>
-              <Ionicons name="sparkles" size={12} color={colors.primary[600]} />
+              <Ionicons name="sparkles" size={12} color={Colors.primary[600]} />
             </View>
             <Text style={styles.reasonText} numberOfLines={1}>
               {reasons[0]}
@@ -119,23 +127,23 @@ export const ClothingCard = memo(function ClothingCard({
  * 颜色代码映射函数
  */
 const COLOR_MAP: Record<string, string> = {
-  black: colors.neutral[900],
+  black: Colors.neutral[900],
   white: Colors.white,
-  red: colors.error, // custom color
+  red: colors.error,
   blue: Colors.sky[500],
   green: Colors.emerald[500],
-  yellow: "#EAB308", // custom color
+  yellow: "#EAB308",
   orange: Colors.amber[500],
   purple: DesignTokens.colors.brand.terracotta,
   pink: DesignTokens.colors.brand.camel,
-  brown: "#92400E", // custom color
-  gray: colors.neutral[500],
-  beige: colors.warningLight, // custom color
+  brown: "#92400E",
+  gray: Colors.neutral[500],
+  beige: colors.warningLight,
   navy: Colors.sky[900],
 };
 
 function getColorCode(colorName: string): string {
-  return COLOR_MAP[colorName.toLowerCase()] || colors.neutral[300];
+  return COLOR_MAP[colorName.toLowerCase()] || Colors.neutral[300];
 }
 
 const useStyles = createStyles((colors) => ({
@@ -170,7 +178,7 @@ const useStyles = createStyles((colors) => ({
     position: "absolute",
     bottom: Spacing.sm,
     left: Spacing.sm,
-    backgroundColor: colors.primary[600],
+    backgroundColor: Colors.primary[600],
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.md,

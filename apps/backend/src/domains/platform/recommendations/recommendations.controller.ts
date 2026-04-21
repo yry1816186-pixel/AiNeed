@@ -20,8 +20,8 @@ import {
   SubmitFeedbackDto,
   SubmitBatchFeedbackDto,
 } from "./dto";
+import { RecommendationOrchestrator } from "./orchestrator/recommendation.orchestrator";
 import { RecommendationsService } from "./recommendations.service";
-import { AdvancedRecommendationService } from "./services/advanced-recommendation.service";
 import { BehaviorTrackingService, type BehaviorAction } from "./services/behavior-tracking.service";
 import { OutfitCompletionService } from "./services/outfit-completion.service";
 import { RecommendationFeedService } from "./services/recommendation-feed.service";
@@ -128,11 +128,11 @@ class DiscoverResponseDto {
 @Controller("recommendations")
 export class RecommendationsController {
   constructor(
-    private recommendationsService: RecommendationsService,
-    private advancedRecommendationService: AdvancedRecommendationService,
-    private outfitCompletionService: OutfitCompletionService,
-    private behaviorTrackingService: BehaviorTrackingService,
-    private feedService: RecommendationFeedService
+    private readonly orchestrator: RecommendationOrchestrator,
+    private readonly fallbackService: RecommendationsService,
+    private readonly outfitCompletionService: OutfitCompletionService,
+    private readonly behaviorTrackingService: BehaviorTrackingService,
+    private readonly feedService: RecommendationFeedService
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -187,13 +187,15 @@ export class RecommendationsController {
     @Query("season") season?: string,
     @Query("limit") limit?: string
   ) {
-    const result = await this.recommendationsService.getPersonalizedRecommendations(userId, {
-      category,
-      occasion,
-      season,
-      limit: limit ? parseInt(limit) : 20,
+    const results = await this.orchestrator.getRecommendations({
+      userId,
+      context: { occasion, season },
+      options: {
+        limit: limit ? parseInt(limit) : 20,
+        category,
+      },
     });
-    return { items: result, total: result.length };
+    return { items: results, total: results.length };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -259,13 +261,17 @@ export class RecommendationsController {
     @CurrentUser("id") userId: string,
     @Query("occasion") occasion?: string,
     @Query("season") season?: string,
-    @Query("limit") limit?: string
+    @Query("limit") limit?: string,
+    @Query("algorithm") algorithm?: string
   ) {
-    return this.advancedRecommendationService.getPersonalizedRecommendations(
+    return this.orchestrator.getRecommendations({
       userId,
-      { occasion, season },
-      limit ? parseInt(limit) : 20
-    );
+      context: { occasion, season },
+      options: {
+        limit: limit ? parseInt(limit) : 20,
+        algorithm: (algorithm as any) || "unified",
+      },
+    });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -274,7 +280,7 @@ export class RecommendationsController {
   @ApiOperation({ summary: "获取每日穿搭推荐" })
   @ApiResponse({ status: 200, description: "每日穿搭推荐" })
   async getDailyOutfit(@CurrentUser("id") userId: string) {
-    return this.advancedRecommendationService.getDailyOutfitRecommendation(userId);
+    return this.orchestrator.getDailyOutfitRecommendation(userId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -312,7 +318,7 @@ export class RecommendationsController {
     @Query("type") occasion: string,
     @Query("limit") limit?: string
   ) {
-    return this.advancedRecommendationService.getOccasionRecommendations(
+    return this.orchestrator.getOccasionRecommendations(
       userId,
       occasion || "daily",
       limit ? parseInt(limit) : 10
@@ -345,9 +351,7 @@ export class RecommendationsController {
     description: "请求过于频繁，每分钟最多20次",
   })
   async getTrendingRecommendations(@Query("limit") limit?: string) {
-    return this.advancedRecommendationService.getTrendingRecommendations(
-      limit ? parseInt(limit) : 20
-    );
+    return this.orchestrator.getTrendingRecommendations(limit ? parseInt(limit) : 20);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -367,7 +371,7 @@ export class RecommendationsController {
     description: "未授权，需要提供有效的 Access Token",
   })
   async getStyleGuide(@CurrentUser("id") userId: string) {
-    return this.recommendationsService.getStyleGuide(userId);
+    return this.orchestrator.getStyleGuide(userId);
   }
 
   @UseGuards(OptionalAuthGuard)
@@ -393,18 +397,13 @@ export class RecommendationsController {
     @CurrentUser("id") userId?: string,
     @Query("limit") limit?: string
   ) {
-    // 如果用户已登录，返回个性化推荐
-    // 否则返回热门推荐
     if (userId) {
-      return this.advancedRecommendationService.getPersonalizedRecommendations(
+      return this.orchestrator.getRecommendations({
         userId,
-        {},
-        limit ? parseInt(limit) : 20
-      );
+        options: { limit: limit ? parseInt(limit) : 20 },
+      });
     } else {
-      return this.advancedRecommendationService.getTrendingRecommendations(
-        limit ? parseInt(limit) : 20
-      );
+      return this.orchestrator.getTrendingRecommendations(limit ? parseInt(limit) : 20);
     }
   }
 
@@ -454,6 +453,14 @@ export class RecommendationsController {
       },
     });
 
+    if (dto.action === "like" || dto.action === "dislike") {
+      await this.orchestrator.recordFeedback(
+        userId,
+        dto.clothingId,
+        dto.action === "like" ? "like" : "dislike"
+      );
+    }
+
     return { success: true, message: "反馈已记录" };
   }
 
@@ -490,6 +497,17 @@ export class RecommendationsController {
       }))
     );
 
+    const feedbackItems = dto.items.filter(
+      (item) => item.action === "like" || item.action === "dislike"
+    );
+    for (const item of feedbackItems) {
+      await this.orchestrator.recordFeedback(
+        userId,
+        item.clothingId,
+        item.action === "like" ? "like" : "dislike"
+      );
+    }
+
     return { success: true, message: `已记录 ${dto.items.length} 条反馈` };
   }
 
@@ -511,8 +529,9 @@ export class RecommendationsController {
     @CurrentUser("id") userId: string,
     @Query("limit") limit?: string
   ) {
-    return this.recommendationsService.getPersonalizedRecommendations(userId, {
-      limit: limit ? parseInt(limit) : 20,
+    return this.orchestrator.getRecommendations({
+      userId,
+      options: { limit: limit ? parseInt(limit) : 20 },
     });
   }
 }

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { View, Text, StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import {
@@ -18,7 +18,7 @@ import {
 import AnimatedReanimated from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
@@ -91,7 +91,7 @@ const STATE_CONFIG = {
       string,
       string,
       string,
-      string,
+      string
     ], // custom color
     innerGradient: ["rgba(255,255,255,0.32)", "rgba(255,255,255,0.06)"] as [string, string],
     glowColor: colors.success,
@@ -121,6 +121,8 @@ interface ParticleProps {
 }
 
 const Particle: React.FC<ParticleProps> = ({ index, color, ballSize, isActive }) => {
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   const angle = useSharedValue(index * 72 * (Math.PI / 180));
   const radius = useSharedValue(ballSize * 0.6);
   const opacity = useSharedValue(0);

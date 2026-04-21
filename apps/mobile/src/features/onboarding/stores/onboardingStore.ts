@@ -10,6 +10,7 @@ export interface OnboardingFormData {
   height: string;
   weight: string;
   photoUri: string | null;
+  styleAnswers: string[];
 }
 
 interface OnboardingState {
@@ -26,7 +27,7 @@ interface OnboardingState {
   goToPrevStep: () => void;
 }
 
-const STEP_ORDER: OnboardingStep[] = ["basicInfo", "photo", "styleTest", "complete"];
+const STEP_ORDER: OnboardingStep[] = ["basicInfo", "styleTest", "photo", "complete"];
 
 const DEFAULT_FORM_DATA: OnboardingFormData = {
   gender: null,
@@ -34,6 +35,7 @@ const DEFAULT_FORM_DATA: OnboardingFormData = {
   height: "",
   weight: "",
   photoUri: null,
+  styleAnswers: [],
 };
 
 interface PersistedOnboardingState {

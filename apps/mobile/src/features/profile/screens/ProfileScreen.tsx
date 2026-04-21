@@ -28,12 +28,12 @@ import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 // 引入增强主题令牌
 import { colors } from "../../../design-system/theme/tokens/colors";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import { typography } from "../../../design-system/theme/tokens/typography";
 import { spacing } from "../../../design-system/theme/tokens/spacing";
 import { shadows } from "../../../design-system/theme/tokens/shadows";
 
-import { seasonLabels, type ColorSeason } from "../../../design-system/theme/tokens/season-colors";
+import { seasonLabels, type ColorSeason } from "../../../design-system/theme";
 import { useScreenTracking } from "../../../hooks/useAnalytics";
 import { useTranslation, useI18n } from "../../../i18n";
 import { withErrorBoundary } from "../../../shared/components/ErrorBoundary";

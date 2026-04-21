@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from "rea
 import { AISizeBadge } from "./AISizeBadge";
 import type { SizeRecommendation } from "../services/api/commerce.api";
 import { stockNotificationApi } from "../services/api/commerce.api";
-import { DesignTokens } from "../theme/tokens/design-tokens";
-import { flatColors as colors } from "../../../design-system/theme";
+import { DesignTokens } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface SKUSelectorProps {
@@ -34,14 +33,13 @@ export const SKUSelector: React.FC<SKUSelectorProps> = ({
   itemId,
   aiRecommendation,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   const [color, setColor] = useState(selectedColor);
   const [size, setSize] = useState(selectedSize);
   const [qty, setQty] = useState(quantity);
 
   const handleConfirm = () => {
-    const { colors } = useTheme();
     onChange(color, size, qty);
     onClose();
   };
@@ -201,9 +199,9 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  colorSwatchSelected: { borderColor: "colors.error", borderWidth: 2 }, // custom color
+  colorSwatchSelected: { borderColor: colors.error, borderWidth: 2 },
   colorText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.textSecondary },
-  colorTextSelected: { color: "colors.error", fontWeight: "600" }, // custom color
+  colorTextSelected: { color: colors.error, fontWeight: "600" },
   sizeRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   sizeWrapper: { alignItems: "center", marginBottom: 4 },
   sizeButton: {
@@ -215,20 +213,20 @@ const useStyles = createStyles((colors) => ({
     alignItems: "center",
     justifyContent: "center",
   },
-  sizeButtonSelected: { borderColor: "colors.error", backgroundColor: "#FFF5F5" }, // custom color
+  sizeButtonSelected: { borderColor: colors.error, backgroundColor: "#FFF5F5" },
   sizeButtonDisabled: {
     backgroundColor: DesignTokens.colors.neutral[100],
     borderColor: DesignTokens.colors.neutral[100],
   },
   sizeText: { fontSize: DesignTokens.typography.sizes.base, color: colors.textPrimary },
-  sizeTextSelected: { color: "colors.error", fontWeight: "600" }, // custom color
+  sizeTextSelected: { color: colors.error, fontWeight: "600" },
   sizeTextDisabled: { color: DesignTokens.colors.neutral[300] },
   recDot: {
     fontSize: DesignTokens.typography.sizes.xs,
-    color: "colors.success",
+    color: colors.success,
     fontWeight: "600",
-  }, // custom color
-  notifyText: { fontSize: DesignTokens.typography.sizes.xs, color: "colors.error", marginTop: 2 }, // custom color
+  },
+  notifyText: { fontSize: DesignTokens.typography.sizes.xs, color: colors.error, marginTop: 2 },
   qtyRow: { flexDirection: "row", alignItems: "center", gap: 12 },
   qtyButton: {
     width: 44,
@@ -249,7 +247,7 @@ const useStyles = createStyles((colors) => ({
   },
   stockText: { fontSize: DesignTokens.typography.sizes.sm, color: colors.textTertiary },
   confirmButton: {
-    backgroundColor: "colors.error", // custom color
+    backgroundColor: colors.error,
     paddingVertical: 14,
     alignItems: "center",
   },

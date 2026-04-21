@@ -1,19 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import { PriceRange, ClothingCategory } from '../../../types/prisma-enums';
+import { Prisma } from "@prisma/client";
+import { PriceRange, ClothingCategory } from "../../../types/prisma-enums";
 
 import { EncryptionService } from "../../../common/encryption/encryption.service";
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type BrandWhereInput = Record<string, any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ClothingItemWhereInput = Record<string, any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type BrandCreateInput = Record<string, any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type BrandUpdateInput = Record<string, any>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type JsonValue = any;
+type BrandWhereInput = Prisma.BrandWhereInput;
+type ClothingItemWhereInput = Prisma.ClothingItemWhereInput;
+type BrandCreateInput = Prisma.BrandCreateInput;
+type BrandUpdateInput = Prisma.BrandUpdateInput;
+type JsonValue = Prisma.JsonValue;
 
 export interface CreateBrandDto {
   name: string;
@@ -70,10 +66,7 @@ export interface BrandWithStats {
 
 @Injectable()
 export class BrandsService {
-  constructor(
-    private prisma: PrismaService,
-    private encryptionService: EncryptionService,
-  ) {}
+  constructor(private prisma: PrismaService, private encryptionService: EncryptionService) {}
 
   async getAllBrands(
     options: {
@@ -81,14 +74,18 @@ export class BrandsService {
       priceRange?: PriceRange;
       page?: number;
       limit?: number;
-    } = {},
+    } = {}
   ) {
     const { category, priceRange, page = 1, limit = 20 } = options;
     const skip = (page - 1) * limit;
 
     const where: BrandWhereInput = { isActive: true };
-    if (priceRange) {where.priceRange = priceRange;}
-    if (category) {where.categories = { has: category };}
+    if (priceRange) {
+      where.priceRange = priceRange;
+    }
+    if (category) {
+      where.categories = { has: category };
+    }
 
     const [brands, total] = await Promise.all([
       this.prisma.brand.findMany({
@@ -128,7 +125,9 @@ export class BrandsService {
       },
     });
 
-    if (!brand) {return null;}
+    if (!brand) {
+      return null;
+    }
 
     return {
       id: brand.id,
@@ -154,7 +153,7 @@ export class BrandsService {
       sortOrder?: "asc" | "desc";
       page?: number;
       limit?: number;
-    } = {},
+    } = {}
   ) {
     const {
       category,
@@ -176,11 +175,17 @@ export class BrandsService {
     }
 
     const where: ClothingItemWhereInput = { brandId: brand.id, isActive: true };
-    if (category) {where.category = category;}
+    if (category) {
+      where.category = category;
+    }
     if (minPrice !== undefined || maxPrice !== undefined) {
       where.price = {};
-      if (minPrice !== undefined) {where.price = { ...where.price, gte: minPrice };}
-      if (maxPrice !== undefined) {where.price = { ...where.price, lte: maxPrice };}
+      if (minPrice !== undefined) {
+        where.price = { ...where.price, gte: minPrice };
+      }
+      if (maxPrice !== undefined) {
+        where.price = { ...where.price, lte: maxPrice };
+      }
     }
 
     const [items, total] = await Promise.all([
@@ -373,10 +378,7 @@ export class BrandsService {
    * @param merchantId Merchant ID for authorization
    * @returns Brand with decrypted PII or null
    */
-  async getBrandForMerchant(
-    brandId: string,
-    merchantId: string,
-  ): Promise<BrandWithPII | null> {
+  async getBrandForMerchant(brandId: string, merchantId: string): Promise<BrandWithPII | null> {
     // Verify merchant has access to this brand
     const merchant = await this.prisma.brandMerchant.findFirst({
       where: { id: merchantId, brandId, isActive: true },
@@ -419,12 +421,8 @@ export class BrandsService {
       productCount: brand._count?.products || 0,
       isActive: brand.isActive,
       // Decrypt PII fields for response
-      contactEmail: brand.contactEmail
-        ? this.encryptionService.decrypt(brand.contactEmail)
-        : null,
-      contactPhone: brand.contactPhone
-        ? this.encryptionService.decrypt(brand.contactPhone)
-        : null,
+      contactEmail: brand.contactEmail ? this.encryptionService.decrypt(brand.contactEmail) : null,
+      contactPhone: brand.contactPhone ? this.encryptionService.decrypt(brand.contactPhone) : null,
       verified: brand.verified,
     };
   }
@@ -441,7 +439,7 @@ export class BrandsService {
       size?: string;
       material?: string;
       price?: number;
-    },
+    }
   ) {
     const brand = await this.prisma.brand.findUnique({ where: { id: brandId } });
     if (!brand) {
@@ -467,7 +465,7 @@ export class BrandsService {
         brandId,
         productId,
         code,
-        payload: payload as unknown as JsonValue,
+        payload: JSON.parse(JSON.stringify(payload)) as Prisma.InputJsonValue,
       },
     });
   }

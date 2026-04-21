@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
@@ -19,14 +19,14 @@ interface ChatBubbleProps {
 }
 
 /**
- * ChatBubble - 国赛一等奖水准聊天气泡
+ * ChatBubble - ����һ�Ƚ�ˮ׼��������
  *
- * 设计特点：
- * - 用户消息：珊瑚粉渐变背景 + 右对齐 + 白色文字
- * - AI消息：白色卡片 + 左对齐 + 深色文字 + 小三角指示器
- * - AI头像支持（渐变圆形）
- * - 时间戳显示（可选）
- * - 入场动画 (FadeInUp)
+ * ����ص㣺
+ * - �û���Ϣ��ɺ���۽��䱳�� + �Ҷ��� + ��ɫ����
+ * - AI��Ϣ����ɫ��Ƭ + ����� + ��ɫ���� + С����ָʾ��
+ * - AIͷ��֧�֣�����Բ�Σ�
+ * - ʱ�����ʾ����ѡ��
+ * - �볡���� (FadeInUp)
  */
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
   message,
@@ -39,24 +39,24 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   return (
     <Animated.View entering={FadeInUp.duration(300).springify()}>
       <View style={[styles.container, !isUser && styles.aiContainer]}>
-        {/* AI头像 */}
+        {/* AIͷ�� */}
         {!isUser && showAvatar && (
           <LinearGradient
-            colors={[colors.warmPrimary.coral[400], colors.warmPrimary.mint[400]]}
+            colors={[Colors.rose[400], Colors.sky[400]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.avatar}
           >
-            <Ionicons name="sparkles" size={16} color={colors.neutral.white} />
+            <Ionicons name="sparkles" size={16} color={Colors.neutral.white} />
           </LinearGradient>
         )}
 
-        {/* 气泡内容 */}
+        {/* �������� */}
         <View style={[styles.bubble, isUser ? styles.userBubble : styles.aiBubble]}>
           {isUser ? (
-            // 用户消息：渐变背景
+            // �û���Ϣ�����䱳��
             <LinearGradient
-              colors={[colors.primary[500], colors.primary[600]]}
+              colors={[Colors.primary[500], Colors.primary[600]]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.userGradient}
@@ -65,7 +65,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
               {timestamp && <Text style={styles.userTimestamp}>{timestamp}</Text>}
             </LinearGradient>
           ) : (
-            // AI消息：白色卡片 + 小三角
+            // AI��Ϣ����ɫ��Ƭ + С����
             <>
               <Text style={styles.aiMessage}>{message}</Text>
               {timestamp && <Text style={styles.aiTimestamp}>{timestamp}</Text>}
@@ -99,7 +99,7 @@ const useStyles = createStyles((colors) => ({
     marginBottom: 4,
   },
 
-  // 气泡样式
+  // ������ʽ
   bubble: {
     borderRadius: ThemeBorderRadius["2xl"],
     overflow: "hidden",
@@ -115,7 +115,7 @@ const useStyles = createStyles((colors) => ({
     borderColor: colors.neutral[200],
   },
 
-  // 用户消息样式
+  // �û���Ϣ��ʽ
   userGradient: {
     padding: 14,
     borderRadius: ThemeBorderRadius["2xl"],
@@ -133,7 +133,7 @@ const useStyles = createStyles((colors) => ({
     textAlign: "right",
   },
 
-  // AI消息样式
+  // AI��Ϣ��ʽ
   aiMessage: {
     fontSize: ThemeTypography.sizes.base,
     color: colors.neutral[900],

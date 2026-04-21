@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { OrderStatus } from "../../../../types/prisma-enums";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
 
 const REVENUE_STATUSES: OrderStatus[] = ["delivered" as OrderStatus];
 
@@ -115,7 +115,11 @@ export class AdminDashboardService {
       take: limit,
     });
 
-    const itemIds = topItems.map((item: { itemId: string }) => item.itemId);
+    const topItemsWithIds = topItems.filter(
+      (item): item is (typeof topItems)[number] & { itemId: string } =>
+        typeof item.itemId === "string"
+    );
+    const itemIds = topItemsWithIds.map((item) => item.itemId);
 
     const items = await this.prisma.clothingItem.findMany({
       where: { id: { in: itemIds } },
@@ -128,15 +132,13 @@ export class AdminDashboardService {
       },
     });
 
-    const itemMap = new Map(items.map((item: { id: string }) => [item.id, item]));
+    const itemMap = new Map(items.map((item) => [item.id, item]));
 
-    return topItems.map(
-      (entry: { itemId: string; _sum: { quantity: number | null }; _count: { id: number } }) => ({
-        ...(itemMap.get(entry.itemId) ?? {}),
-        totalSold: entry._sum.quantity ?? 0,
-        orderCount: entry._count.id,
-      })
-    );
+    return topItemsWithIds.map((entry) => ({
+      ...(itemMap.get(entry.itemId) ?? {}),
+      totalSold: entry._sum.quantity ?? 0,
+      orderCount: entry._count.id,
+    }));
   }
 
   async getConversionRates() {

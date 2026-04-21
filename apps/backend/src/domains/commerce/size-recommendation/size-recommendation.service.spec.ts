@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { NotFoundException } from "@nestjs/common";
+import { NotFoundException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 
-import {
-  SizeRecommendationService,
-  RecommendationResult,
-} from "./size-recommendation.service";
+import { SizeRecommendationService, RecommendationResult } from "./size-recommendation.service";
 
 describe("SizeRecommendationService", () => {
   let service: SizeRecommendationService;
@@ -128,7 +125,7 @@ describe("SizeRecommendationService", () => {
         bust: 88,
         waist: 72,
         hip: 96,
-        fitPreference: "tight",
+        stylePreferences: { fitPreference: "tight" },
       };
       mockPrismaService.userProfile.findUnique.mockResolvedValue(tightProfile);
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockItem);
@@ -138,9 +135,7 @@ describe("SizeRecommendationService", () => {
       const result = await service.getRecommendation("user-1", "item-1");
 
       expect(result).not.toBeNull();
-      expect(result!.reasons).toEqual(
-        expect.arrayContaining([expect.stringContaining("修身")]),
-      );
+      expect(result!.reasons).toEqual(expect.arrayContaining([expect.stringContaining("修身")]));
     });
 
     it("loose preference shifts measurements by +2cm", async () => {
@@ -149,7 +144,7 @@ describe("SizeRecommendationService", () => {
         bust: 80,
         waist: 64,
         hip: 88,
-        fitPreference: "loose",
+        stylePreferences: { fitPreference: "loose" },
       };
       mockPrismaService.userProfile.findUnique.mockResolvedValue(looseProfile);
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(mockItem);
@@ -159,9 +154,7 @@ describe("SizeRecommendationService", () => {
       const result = await service.getRecommendation("user-1", "item-1");
 
       expect(result).not.toBeNull();
-      expect(result!.reasons).toEqual(
-        expect.arrayContaining([expect.stringContaining("宽松")]),
-      );
+      expect(result!.reasons).toEqual(expect.arrayContaining([expect.stringContaining("宽松")]));
     });
 
     it("regular preference does not shift measurements", async () => {
@@ -179,10 +172,10 @@ describe("SizeRecommendationService", () => {
       expect(result).not.toBeNull();
       // No fit preference adjustment message for "regular"
       expect(result!.reasons).not.toEqual(
-        expect.arrayContaining([expect.stringContaining("修身")]),
+        expect.arrayContaining([expect.stringContaining("修身")])
       );
       expect(result!.reasons).not.toEqual(
-        expect.arrayContaining([expect.stringContaining("宽松")]),
+        expect.arrayContaining([expect.stringContaining("宽松")])
       );
     });
   });
@@ -305,9 +298,7 @@ describe("SizeRecommendationService", () => {
       // When top 2 scores differ by < 0.1, betweenSizes should be set
       if (result!.betweenSizes) {
         expect(result!.betweenSizes).toMatch(/^[A-Z]+-[A-Z]+$/);
-        expect(result!.reasons).toEqual(
-          expect.arrayContaining([expect.stringContaining("之间")]),
-        );
+        expect(result!.reasons).toEqual(expect.arrayContaining([expect.stringContaining("之间")]));
       }
     });
   });
@@ -341,9 +332,9 @@ describe("SizeRecommendationService", () => {
       mockPrismaService.userProfile.findUnique.mockResolvedValue(mockProfile);
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getRecommendation("user-1", "item-1"),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getRecommendation("user-1", "item-1")).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("returns M as default when size chart is empty", async () => {
@@ -376,9 +367,7 @@ describe("SizeRecommendationService", () => {
       const result = await service.getRecommendation("user-1", "item-1");
 
       expect(result).not.toBeNull();
-      expect(result!.reasons).toEqual(
-        expect.arrayContaining([expect.stringContaining("曾购买")]),
-      );
+      expect(result!.reasons).toEqual(expect.arrayContaining([expect.stringContaining("曾购买")]));
       // Confidence should be boosted since purchased size matches recommended
       expect(result!.confidence).toBe("high");
     });
@@ -400,9 +389,7 @@ describe("SizeRecommendationService", () => {
       const result = await service.getRecommendation("user-1", "item-1");
 
       expect(result).not.toBeNull();
-      expect(result!.reasons).toEqual(
-        expect.arrayContaining([expect.stringContaining("偏")]),
-      );
+      expect(result!.reasons).toEqual(expect.arrayContaining([expect.stringContaining("偏")]));
     });
   });
 
@@ -419,9 +406,7 @@ describe("SizeRecommendationService", () => {
     it("throws NotFoundException for non-existent item", async () => {
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(null);
 
-      await expect(service.getSizeChart("missing")).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.getSizeChart("missing")).rejects.toThrow(NotFoundException);
     });
   });
 });

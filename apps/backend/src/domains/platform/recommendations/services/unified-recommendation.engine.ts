@@ -1,8 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { BodyType, SkinTone, ColorSeason, ClothingCategory } from "../../../../types/prisma-enums";
 
-import { PrismaService } from "../../../../../../../common/prisma/prisma.service";
-import { AIIntegrationService } from "../../../../ai-core/ai/services/ai-integration.service";
+import { PrismaService } from "../../../../common/prisma/prisma.service";
+import { AIIntegrationService } from "../../../ai-core/ai/services/ai-integration.service";
 import {
   ClothingItemWithBrand,
   ClothingItemAttributes,
@@ -1081,7 +1081,9 @@ export class UnifiedRecommendationEngine {
           userValue: userStyles.join(", "),
           itemValue: matchingStyles.join(", "),
           matchScore: matchingStyles.length / itemAttrs.style.length,
-          explanation: `风格匹配度 ${Math.round((matchingStyles.length / itemAttrs.style.length) * 100)}%`,
+          explanation: `风格匹配度 ${Math.round(
+            (matchingStyles.length / itemAttrs.style.length) * 100
+          )}%`,
         });
       }
     }

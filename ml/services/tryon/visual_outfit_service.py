@@ -15,7 +15,7 @@ import uuid
 import logging
 
 # P1-9: Import externalized prompts
-from .stylist_prompts import VISUAL_OUTFIT_SYSTEM_PROMPT
+from ml.services.stylist.stylist_prompts import VISUAL_OUTFIT_SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)
 

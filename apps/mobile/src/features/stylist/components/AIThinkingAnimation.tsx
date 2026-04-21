@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import Animated, {
   useSharedValue,
@@ -15,8 +15,12 @@ import Animated, {
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
 import { useReducedMotion } from "../../../hooks/useReducedMotion";
 import { useGlow } from "../../../hooks/useAdvancedAnimations";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { SpringConfigs, Duration } from "../../../design-system/theme/tokens/animations";
+import {
+  DesignTokens,
+  SpringConfigs,
+  Duration,
+  flatColors as colors,
+} from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const TERRACOTTA = colors.primary; // #C67B5C

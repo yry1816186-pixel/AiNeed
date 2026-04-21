@@ -4,7 +4,7 @@ import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Cron } from "@nestjs/schedule";
 import { PrismaClient } from "@prisma/client";
-import { OrderStatus } from "@/types/prisma-enums";
+import { OrderStatus } from "../../../types/prisma-enums";
 
 import { StructuredLoggerService, ContextualLogger } from "../../../common/logging";
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -697,8 +697,12 @@ export class PaymentService {
         });
 
         if (orderWithItems && orderWithItems.items.length > 0) {
+          const restockItems = orderWithItems.items.filter(
+            (item): item is typeof item & { itemId: string } => typeof item.itemId === "string"
+          );
+
           await this.prisma.$transaction(
-            orderWithItems.items.map((item) =>
+            restockItems.map((item) =>
               this.prisma.clothingItem.update({
                 where: { id: item.itemId },
                 data: { stock: { increment: item.quantity } },

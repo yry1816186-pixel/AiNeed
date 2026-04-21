@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { NotFoundException, BadRequestException } from "@nestjs/common";
+import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
@@ -11,7 +11,7 @@ describe("CartService", () => {
   let service: CartService;
   let prisma: PrismaService;
 
-  const decimal = (n: number) => ({ toNumber: () => n });
+  const decimal = (n: number) => ({ toNumber: () => n, valueOf: () => n });
 
   const mockPrismaService = {
     cartItem: {
@@ -23,6 +23,7 @@ describe("CartService", () => {
       deleteMany: jest.fn(),
       updateMany: jest.fn(),
       count: jest.fn(),
+      upsert: jest.fn(),
     },
     clothingItem: {
       findUnique: jest.fn(),
@@ -70,9 +71,18 @@ describe("CartService", () => {
           item: {
             id: "item-1",
             name: "Test Item",
-            price: 100,
+            description: null,
+            category: "tops",
+            colors: ["black"],
+            sizes: ["M"],
+            price: decimal(100),
+            originalPrice: null,
+            currency: "CNY",
             images: ["image1.jpg"],
-            brand: { id: "brand-1", name: "Test Brand" },
+            tags: [],
+            viewCount: 0,
+            likeCount: 0,
+            brand: { id: "brand-1", name: "Test Brand", logo: null },
           },
         },
       ];
@@ -94,9 +104,9 @@ describe("CartService", () => {
     it("should throw error when item not found", async () => {
       mockPrismaService.clothingItem.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.addItem(userId, itemId, "black", "M", 1),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.addItem(userId, itemId, "black", "M", 1)).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("should throw error when item is inactive", async () => {
@@ -105,53 +115,57 @@ describe("CartService", () => {
         isActive: false,
       });
 
-      await expect(
-        service.addItem(userId, itemId, "black", "M", 1),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.addItem(userId, itemId, "black", "M", 1)).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("should throw error when color not available", async () => {
       mockPrismaService.clothingItem.findUnique.mockResolvedValue({
         id: itemId,
         isActive: true,
+        stock: 10,
         colors: ["white", "blue"],
       });
 
-      await expect(
-        service.addItem(userId, itemId, "black", "M", 1),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.addItem(userId, itemId, "black", "M", 1)).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("should throw error when size not available", async () => {
       mockPrismaService.clothingItem.findUnique.mockResolvedValue({
         id: itemId,
         isActive: true,
+        stock: 10,
         colors: ["black"],
         sizes: ["S", "L"],
       });
 
-      await expect(
-        service.addItem(userId, itemId, "black", "M", 1),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.addItem(userId, itemId, "black", "M", 1)).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("should update quantity when item already in cart", async () => {
       mockPrismaService.clothingItem.findUnique.mockResolvedValue({
         id: itemId,
         isActive: true,
+        stock: 10,
         colors: ["black"],
         sizes: ["M"],
         price: decimal(100),
         images: ["image1.jpg"],
         brand: null,
       });
-      mockPrismaService.cartItem.findFirst.mockResolvedValue({
+      // addItem uses upsert, not findFirst + update
+      mockPrismaService.cartItem.upsert.mockResolvedValue({
         id: "cart-1",
-        quantity: 1,
-      });
-      mockPrismaService.cartItem.update.mockResolvedValue({
-        id: "cart-1",
+        itemId,
+        color: "black",
+        size: "M",
         quantity: 2,
+        selected: true,
         item: {
           id: itemId,
           name: "Test Item",
@@ -172,21 +186,23 @@ describe("CartService", () => {
 
       const result = await service.addItem(userId, itemId, "black", "M", 1);
 
-      expect(mockPrismaService.cartItem.update).toHaveBeenCalled();
+      expect(mockPrismaService.cartItem.upsert).toHaveBeenCalled();
+      expect(result.quantity).toBe(2);
     });
 
     it("should create new cart item when not exists", async () => {
       mockPrismaService.clothingItem.findUnique.mockResolvedValue({
         id: itemId,
         isActive: true,
+        stock: 10,
         colors: ["black"],
         sizes: ["M"],
         price: decimal(100),
         images: ["image1.jpg"],
         brand: null,
       });
-      mockPrismaService.cartItem.findFirst.mockResolvedValue(null);
-      mockPrismaService.cartItem.create.mockResolvedValue({
+      // addItem uses upsert for both create and update
+      mockPrismaService.cartItem.upsert.mockResolvedValue({
         id: "cart-1",
         itemId,
         color: "black",
@@ -213,7 +229,8 @@ describe("CartService", () => {
 
       const result = await service.addItem(userId, itemId, "black", "M", 1);
 
-      expect(mockPrismaService.cartItem.create).toHaveBeenCalled();
+      expect(mockPrismaService.cartItem.upsert).toHaveBeenCalled();
+      expect(result.quantity).toBe(1);
     });
   });
 
@@ -221,9 +238,9 @@ describe("CartService", () => {
     it("should throw error when cart item not found", async () => {
       mockPrismaService.cartItem.findFirst.mockResolvedValue(null);
 
-      await expect(
-        service.updateItem("user-1", "cart-1", { quantity: 2 }),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.updateItem("user-1", "cart-1", { quantity: 2 })).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it("should throw error when quantity is 0", async () => {
@@ -231,9 +248,9 @@ describe("CartService", () => {
         id: "cart-1",
       });
 
-      await expect(
-        service.updateItem("user-1", "cart-1", { quantity: 0 }),
-      ).rejects.toThrow(BadRequestException);
+      await expect(service.updateItem("user-1", "cart-1", { quantity: 0 })).rejects.toThrow(
+        BadRequestException
+      );
     });
 
     it("should update quantity successfully", async () => {
@@ -242,7 +259,11 @@ describe("CartService", () => {
       });
       mockPrismaService.cartItem.update.mockResolvedValue({
         id: "cart-1",
+        itemId: "item-1",
+        color: "black",
+        size: "M",
         quantity: 2,
+        selected: true,
         item: {
           id: "item-1",
           name: "Test Item",
@@ -274,6 +295,10 @@ describe("CartService", () => {
       });
       mockPrismaService.cartItem.update.mockResolvedValue({
         id: "cart-1",
+        itemId: "item-1",
+        color: "black",
+        size: "M",
+        quantity: 1,
         selected: false,
         item: {
           id: "item-1",
@@ -305,9 +330,7 @@ describe("CartService", () => {
     it("should throw error when cart item not found", async () => {
       mockPrismaService.cartItem.findFirst.mockResolvedValue(null);
 
-      await expect(service.removeItem("user-1", "cart-1")).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.removeItem("user-1", "cart-1")).rejects.toThrow(NotFoundException);
     });
 
     it("should remove item successfully", async () => {
@@ -352,8 +375,8 @@ describe("CartService", () => {
   describe("getCartSummary", () => {
     it("should return correct summary", async () => {
       mockPrismaService.cartItem.findMany.mockResolvedValue([
-        { quantity: 2, selected: true, item: { price: 100 } },
-        { quantity: 1, selected: false, item: { price: 50 } },
+        { quantity: 2, selected: true, item: { price: decimal(100) } },
+        { quantity: 1, selected: false, item: { price: decimal(50) } },
       ]);
 
       const result = await service.getCartSummary("user-1");

@@ -7,12 +7,13 @@ import Animated, {
   withTiming,
   withDelay,
 } from "react-native-reanimated";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import {
+  DesignTokens,
   SpringConfigs,
   ListAnimations,
   Duration,
-} from "../../../design-system/theme/tokens/animations";
+  flatColors as colors,
+} from "../../../design-system/theme";
 import { useReducedMotion } from "../../../hooks/useReducedMotion";
 import type { OutfitPlanDetail } from "../stores/aiStylistStore";
 import type { AiStylistOutfitItem } from "../../../services/api/ai-stylist.api";
@@ -46,6 +47,8 @@ const AnimatedItemCard: React.FC<{
   onItemReplace: (outfitIndex: number, itemIndex: number) => void;
   activeOutfitIndex: number;
 }> = ({ item, itemIdx, cardWidth, onItemPress, onItemReplace, activeOutfitIndex }) => {
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   const { reducedMotion } = useReducedMotion();
   const scale = useSharedValue(reducedMotion ? 1 : 0.3);
   const opacity = useSharedValue(reducedMotion ? 1 : 0);

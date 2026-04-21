@@ -1,10 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Injectable,
-  Logger,
-  OnModuleInit,
-  OnModuleDestroy,
-} from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import neo4j, { Driver, Session, Result } from "neo4j-driver";
 
@@ -19,7 +14,7 @@ export class Neo4jService implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     const url = this.configService.get<string>("NEO4J_URL");
     const user = this.configService.get<string>("NEO4J_USER", "neo4j");
-    const password = this.configService.get<string>("NEO4J_PASSWORD", "neo4j123");
+    const password = this.configService.get<string>("NEO4J_PASSWORD");
 
     if (!url) {
       this.logger.warn("NEO4J_URL not configured, knowledge graph features disabled");
@@ -27,7 +22,7 @@ export class Neo4jService implements OnModuleInit, OnModuleDestroy {
     }
 
     try {
-      this.driver = neo4j.driver(url, neo4j.auth.basic(user, password), {
+      this.driver = neo4j.driver(url, neo4j.auth.basic(user ?? "neo4j", password ?? ""), {
         maxConnectionLifetime: 3 * 60 * 60 * 1000,
         maxConnectionPoolSize: 50,
         connectionAcquisitionTimeout: 30000,
@@ -53,21 +48,23 @@ export class Neo4jService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async ensureConstraints(): Promise<void> {
-    if (!this.driver) {return;}
+    if (!this.driver) {
+      return;
+    }
 
     const session = this.driver.session();
     try {
       await session.run(
-        `CREATE CONSTRAINT item_id IF NOT EXISTS FOR (i:Item) REQUIRE i.id IS UNIQUE`,
+        `CREATE CONSTRAINT item_id IF NOT EXISTS FOR (i:Item) REQUIRE i.id IS UNIQUE`
       );
       await session.run(
-        `CREATE CONSTRAINT category_name IF NOT EXISTS FOR (c:Category) REQUIRE c.name IS UNIQUE`,
+        `CREATE CONSTRAINT category_name IF NOT EXISTS FOR (c:Category) REQUIRE c.name IS UNIQUE`
       );
       await session.run(
-        `CREATE CONSTRAINT style_name IF NOT EXISTS FOR (s:Style) REQUIRE s.name IS UNIQUE`,
+        `CREATE CONSTRAINT style_name IF NOT EXISTS FOR (s:Style) REQUIRE s.name IS UNIQUE`
       );
       await session.run(
-        `CREATE CONSTRAINT user_id IF NOT EXISTS FOR (u:User) REQUIRE u.id IS UNIQUE`,
+        `CREATE CONSTRAINT user_id IF NOT EXISTS FOR (u:User) REQUIRE u.id IS UNIQUE`
       );
       this.logger.log("Neo4j constraints ensured");
     } catch (error) {
@@ -81,10 +78,7 @@ export class Neo4jService implements OnModuleInit, OnModuleDestroy {
     return this.isConnected && this.driver !== null;
   }
 
-  async runQuery(
-    query: string,
-    params: Record<string, unknown> = {},
-  ): Promise<Result> {
+  async runQuery(query: string, params: Record<string, unknown> = {}): Promise<Result> {
     if (!this.driver) {
       throw new Error("Neo4j driver not initialized");
     }
@@ -98,10 +92,7 @@ export class Neo4jService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async runReadQuery<T>(
-    query: string,
-    params: Record<string, unknown> = {},
-  ): Promise<T[]> {
+  async runReadQuery<T>(query: string, params: Record<string, unknown> = {}): Promise<T[]> {
     if (!this.driver) {
       throw new Error("Neo4j driver not initialized");
     }
@@ -121,10 +112,7 @@ export class Neo4jService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  async runWriteQuery(
-    query: string,
-    params: Record<string, unknown> = {},
-  ): Promise<Result> {
+  async runWriteQuery(query: string, params: Record<string, unknown> = {}): Promise<Result> {
     if (!this.driver) {
       throw new Error("Neo4j driver not initialized");
     }

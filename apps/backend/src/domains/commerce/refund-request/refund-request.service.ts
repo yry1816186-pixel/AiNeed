@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, Logger, NotFoundException, BadRequestException } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { RefundType, RefundRequestStatus, OrderStatus } from "@/types/prisma-enums";
+import { RefundType, RefundRequestStatus, OrderStatus } from "../../../types/prisma-enums";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { PaymentService } from "../payment/payment.service";
@@ -78,7 +78,9 @@ export class RefundRequestService {
     const totalRefunded = existingRefunds.reduce((sum, r) => sum + Number(r.amount), 0);
     if (totalRefunded + amount > Number(order.finalAmount)) {
       throw new BadRequestException(
-        `退款金额超出订单支付金额，订单金额: ¥${order.finalAmount}，已退款: ¥${totalRefunded.toFixed(2)}，本次申请: ¥${amount.toFixed(2)}`
+        `退款金额超出订单支付金额，订单金额: ¥${
+          order.finalAmount
+        }，已退款: ¥${totalRefunded.toFixed(2)}，本次申请: ¥${amount.toFixed(2)}`
       );
     }
 
@@ -213,8 +215,12 @@ export class RefundRequestService {
     });
 
     if (orderWithItems && orderWithItems.items.length > 0) {
+      const restockItems = orderWithItems.items.filter(
+        (item): item is typeof item & { itemId: string } => typeof item.itemId === "string"
+      );
+
       await this.prisma.$transaction(
-        orderWithItems.items.map((item) =>
+        restockItems.map((item) =>
           this.prisma.clothingItem.update({
             where: { id: item.itemId },
             data: { stock: { increment: item.quantity } },

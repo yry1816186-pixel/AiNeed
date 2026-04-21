@@ -13,7 +13,7 @@ import {
   Easing as ReanimatedEasing,
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import { AiStylistProgress } from "../../../services/api/ai-stylist.api";
 import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
@@ -36,6 +36,8 @@ interface AnimatedDotProps {
 }
 
 const AnimatedDot: React.FC<AnimatedDotProps> = ({ dotValue }) => {
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   const style = useAnimatedStyle(() => ({
     opacity: dotValue.value,
     transform: [{ scale: interpolate(dotValue.value, [0, 1], [1, 1.3]) }],
@@ -102,7 +104,6 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({ progress }) 
   };
 
   const getCurrentStageIndex = () => {
-    const { colors } = useTheme();
     const stageMap: Record<string, number> = {
       uploading: 0,
       analyzing: 1,

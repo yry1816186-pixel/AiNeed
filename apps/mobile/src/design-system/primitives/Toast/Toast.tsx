@@ -10,9 +10,7 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { theme } from "../theme";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
-import { flatColors as colors } from "../../theme";
+import { theme, DesignTokens } from "../theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
@@ -37,8 +35,8 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function useToast() {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const context = useContext(ToastContext);
   if (!context) {
     throw new Error("useToast must be used within a ToastProvider");
@@ -51,6 +49,8 @@ interface ToastProviderProps {
 }
 
 export function ToastProvider({ children }: ToastProviderProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const show = (type: ToastType, message: string, duration = 3000) => {
@@ -88,6 +88,8 @@ interface ToastItemProps {
 }
 
 function ToastItem({ toast, onDismiss }: ToastItemProps) {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   const translateY = useRef(new Animated.Value(-100)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 

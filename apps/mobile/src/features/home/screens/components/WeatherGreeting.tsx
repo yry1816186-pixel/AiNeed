@@ -1,9 +1,10 @@
 import { useMemo, memo, type ComponentProps } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
-import type { WeatherData } from "../../../stores/homeStore";
+import { DesignTokens } from "../../../../theme/tokens/design-tokens";
+import type { WeatherData } from "../../stores/homeStore";
 import { flatColors as colors } from "../../../../design-system/theme";
+import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface WeatherGreetingProps {
   userName: string;
@@ -48,9 +49,9 @@ const WeatherGreeting = memo(({ userName, weatherData, isLoading }: WeatherGreet
     return WEATHER_ICON_MAP[weatherData.icon] ?? "partly-sunny-outline";
   }, [weatherData?.icon]);
 
-  // 季节强调色，回退到品牌色
   const { seasonAccent } = useTheme();
   const accentColor = seasonAccent?.accent ?? colors.primary;
+  const styles = useStyles(colors);
 
   if (isLoading) {
     return (
@@ -79,6 +80,12 @@ const WeatherGreeting = memo(({ userName, weatherData, isLoading }: WeatherGreet
           {weatherData.suggestion ? (
             <Text style={styles.suggestionText}>今天的天气适合{weatherData.suggestion}</Text>
           ) : null}
+          <View style={[styles.aiInsightRow, { backgroundColor: accentColor + "08" }]}>
+            <Ionicons name="sparkles" size={14} color={accentColor} />
+            <Text style={[styles.aiInsightText, { color: accentColor }]}>
+              今日风格洞察：简约通勤风最适合今天的你
+            </Text>
+          </View>
         </>
       )}
     </View>
@@ -121,6 +128,22 @@ const useStyles = createStyles((colors) => ({
     fontSize: DesignTokens.typography.sizes.sm,
     color: colors.textTertiary,
     fontStyle: "italic",
+  },
+  aiInsightRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 8,
+    backgroundColor: colors.primary + "08",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+  },
+  aiInsightText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: colors.primary,
+    fontWeight: "500",
   },
   skeletonLine1: {
     width: 60,

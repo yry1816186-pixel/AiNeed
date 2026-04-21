@@ -4,8 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { useAiStylistStore } from "../stores/aiStylistStore";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { flatColors as colors } from "../../../design-system/theme";
+import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
 
 const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

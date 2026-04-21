@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, Dimensions, Pressable, ScrollView } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
@@ -14,7 +14,7 @@ import {
 } from "react-native-reanimated";
 import AnimatedReanimated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
@@ -108,6 +108,8 @@ interface ActionItemProps {
 }
 
 const ActionItemComponent: React.FC<ActionItemProps> = ({ action, index, visible, onPress }) => {
+  const { colors: themeColors } = useTheme();
+  const styles = useStyles(themeColors);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.8);
 
@@ -127,8 +129,7 @@ const ActionItemComponent: React.FC<ActionItemProps> = ({ action, index, visible
   }));
 
   const renderIcon = () => {
-    const { colors } = useTheme();
-    const iconColor = colors.textInverse;
+    const iconColor = themeColors.textInverse;
     switch (action.id) {
       case "stylist":
         return <Icons.stylist color={iconColor} />;

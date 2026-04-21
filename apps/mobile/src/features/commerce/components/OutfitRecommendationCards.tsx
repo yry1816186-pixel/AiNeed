@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 import type { RootStackParamList } from "../../../types/navigation";
 import type { ClothingItem } from "../../../types/clothing";
 import { DesignTokens } from "../../../design-system/theme";
-import { flatColors as colors } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface OutfitSet {
@@ -67,7 +66,7 @@ const useStyles = createStyles((colors) => ({
   },
   card: {
     width: 200,
-    backgroundColor: "colors.backgroundSecondary",
+    backgroundColor: colors.backgroundSecondary,
     borderRadius: 12,
     padding: 12,
     marginRight: 12,

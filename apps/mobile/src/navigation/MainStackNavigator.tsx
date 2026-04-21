@@ -1,7 +1,6 @@
-﻿import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 import type {
   HomeStackParamList,
   StylistStackParamList,
@@ -11,13 +10,12 @@ import type {
 } from "./types";
 import { useTheme, createStyles } from "../shared/contexts/ThemeContext";
 import { GuardedScreen } from "./RouteGuards";
-import { PageTransitions } from "../theme/tokens/animations";
+import { PageTransitions } from "../design-system/theme/tokens/animations";
+import { flatColors as colors } from "../design-system/theme";
 
 const OutfitPlanScreenLazy = lazy(() => import("../features/stylist/screens/OutfitPlanScreen"));
 const ChatHistoryScreenLazy = lazy(() => import("../features/stylist/screens/ChatHistoryScreen"));
-const AiStylistChatScreenLazy = lazy(
-  () => import("../features/stylist/screens/AiStylistChatScreen")
-);
+const AIStylistScreen = lazy(() => import("../features/stylist/screens/AiStylistUnifiedScreen"));
 
 const TryOnResultScreenLazy = lazy(() => import("../features/tryon/screens/TryOnResultScreen"));
 
@@ -67,7 +65,6 @@ const RecommendationDetailScreen = lazy(
 const ProductScreen = lazy(() => import("../features/wardrobe/screens/ClothingDetailScreen"));
 const OutfitDetailScreen = lazy(() => import("../features/stylist/screens/OutfitDetailScreen"));
 
-const AIStylistScreen = lazy(() => import("../features/stylist/screens/AiStylistScreen"));
 const SessionCalendarScreen = lazy(
   () => import("../features/stylist/screens/SessionCalendarScreen")
 );
@@ -156,7 +153,7 @@ function G({ route, children }: { route: string; children: React.ReactNode }) {
 // ============================================================
 // Home Stack (Phase 4) — SharedElement for Product
 // ============================================================
-const HomeStack = createSharedElementStackNavigator<HomeStackParamList>();
+const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 
 export function HomeStackNavigator() {
   return (
@@ -207,10 +204,6 @@ export function HomeStackNavigator() {
             <ProductScreen />
           </SuspenseScreen>
         )}
-        sharedElements={(route) => {
-          const { clothingId } = route.params;
-          return [{ id: `product.${clothingId}.image`, animation: "move", resize: "clip" }];
-        }}
       />
       <HomeStack.Screen
         name="OutfitDetail"
@@ -264,7 +257,7 @@ export function StylistStackNavigator() {
         {() => (
           <G route="AiStylistChat">
             <SuspenseScreen>
-              <AiStylistChatScreenLazy />
+              <AIStylistScreen />
             </SuspenseScreen>
           </G>
         )}
@@ -324,7 +317,7 @@ export function TryOnStackNavigator() {
 // ============================================================
 // Community Stack (Phase 6 - 社区 & 博主生态) — SharedElement for PostDetail
 // ============================================================
-const CommunityStack = createSharedElementStackNavigator<CommunityStackParamList>();
+const CommunityStack = createNativeStackNavigator<CommunityStackParamList>();
 
 export function CommunityStackNavigator() {
   return (
@@ -346,10 +339,6 @@ export function CommunityStackNavigator() {
             <PostDetailScreenLazy />
           </SuspenseScreen>
         )}
-        sharedElements={(route) => {
-          const { postId } = route.params;
-          return [{ id: `post.${postId}.image`, animation: "move", resize: "clip" }];
-        }}
       />
       <CommunityStack.Screen
         name="PostCreate"

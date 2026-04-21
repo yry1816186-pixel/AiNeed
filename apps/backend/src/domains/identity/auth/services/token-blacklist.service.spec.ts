@@ -45,11 +45,7 @@ describe("TokenBlacklistService", () => {
 
       await service.blacklistToken(jti, ttl);
 
-      expect(mockRedisService.setex).toHaveBeenCalledWith(
-        `token:blacklist:${jti}`,
-        ttl,
-        "1",
-      );
+      expect(mockRedisService.setex).toHaveBeenCalledWith(`token:blacklist:${jti}`, ttl, "1");
     });
 
     it("should not blacklist when jti is empty", async () => {
@@ -111,11 +107,7 @@ describe("TokenBlacklistService", () => {
 
       await service.blacklistAllUserTokens(userId);
 
-      expect(mockRedisService.lrange).toHaveBeenCalledWith(
-        `user:tokens:${userId}`,
-        0,
-        -1,
-      );
+      expect(mockRedisService.lrange).toHaveBeenCalledWith(`user:tokens:${userId}`, 0, -1);
       expect(mockRedisService.setex).toHaveBeenCalledTimes(3);
       expect(mockRedisService.del).toHaveBeenCalledWith(`user:tokens:${userId}`);
     });
@@ -149,16 +141,13 @@ describe("TokenBlacklistService", () => {
       const jti = "jti-456";
       const ttl = 900;
 
+      // Reset ttl mock - previous tests may have changed it to return a positive value
+      mockRedisService.ttl.mockResolvedValue(-2);
+
       await service.trackUserToken(userId, jti, ttl);
 
-      expect(mockRedisService.lpush).toHaveBeenCalledWith(
-        `user:tokens:${userId}`,
-        jti,
-      );
-      expect(mockRedisService.expire).toHaveBeenCalledWith(
-        `user:tokens:${userId}`,
-        ttl,
-      );
+      expect(mockRedisService.lpush).toHaveBeenCalledWith(`user:tokens:${userId}`, jti);
+      expect(mockRedisService.expire).toHaveBeenCalledWith(`user:tokens:${userId}`, ttl);
     });
 
     it("should not track when jti is empty", async () => {

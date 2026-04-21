@@ -10,15 +10,14 @@ import {
   requestMediaLibraryPermissionsAsync,
 } from "@/src/polyfills/expo-image-picker";
 import { pickImageSecurely } from "../../../utils/imagePicker";
-import { useCameraPermissions } from "../../hooks/useCameraPermissions";
+import { useCameraPermissions } from "../hooks/useCameraPermissions";
 import { useReferenceLines } from "../../../hooks/useReferenceLines";
 import { usePhotoStore } from "../stores/photoStore";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { ReferenceLineOverlay } from "../../../components/ReferenceLineOverlay";
-import AlignmentGuide from "../../../components/AlignmentGuide";
-import PhotoQualityFeedback from "../../../components/PhotoQualityFeedback";
-import { flatColors as colors } from "../../../design-system/theme";
+import { DesignTokens, flatColors as colors } from "../../../design-system/theme";
+import { ReferenceLineOverlay } from "./components/ReferenceLineOverlay";
+import AlignmentGuide from "./components/AlignmentGuide";
+import PhotoQualityFeedback from "./components/PhotoQualityFeedback";
 
 const CAPTURE_BUTTON_SIZE = 72;
 const CAPTURE_BUTTON_INNER = 60;
@@ -90,7 +89,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       const uri = asset.uri;
       setCapturedImage(uri);
 
-      const qualityScore = Math.min(100, Math.round((needsResize ? 70 : 90) + Math.random() * 15));
+      const qualityScore = Math.min(100, Math.round(needsResize ? 70 : 90));
 
       setQualityResult({
         score: qualityScore,
@@ -147,7 +146,7 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
 
       setCapturedImage(result.uri);
 
-      const qualityScore = Math.min(100, Math.round(75 + Math.random() * 20));
+      const qualityScore = 80;
       setQualityResult({
         score: qualityScore,
         isAcceptable: qualityScore >= 60,
@@ -236,6 +235,10 @@ const CameraScreen: React.FC<CameraScreenProps> = ({ navigation }) => {
       </View>
 
       <View style={styles.controls}>
+        <View style={styles.poseHint}>
+          <Ionicons name="information-circle-outline" size={16} color="rgba(255,255,255,0.7)" />
+          <Text style={styles.poseHintText}>请正面站立，双臂自然下垂</Text>
+        </View>
         <View style={styles.controlsRow}>
           <TouchableOpacity style={styles.galleryButton} onPress={handlePickImage}>
             <Ionicons name="images-outline" size={28} color={colors.surface} />
@@ -319,6 +322,18 @@ const styles = StyleSheet.create({
   controls: {
     paddingBottom: 20,
     paddingTop: 16,
+  },
+  poseHint: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingBottom: 8,
+  },
+  poseHintText: {
+    fontSize: DesignTokens.typography.sizes.sm,
+    color: "rgba(255,255,255,0.7)",
+    fontWeight: "500",
   },
   controlsRow: {
     flexDirection: "row",

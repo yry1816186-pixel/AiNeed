@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-﻿import { ConfigService } from "@nestjs/config";
+import { ConfigService } from "@nestjs/config";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
 
@@ -12,8 +12,6 @@ import { PaymentStatus, PaymentProvider, PaymentMethod } from "./dto";
 import { PaymentService } from "./payment.service";
 import { AlipayProvider } from "./providers/alipay.provider";
 import { WechatProvider } from "./providers/wechat.provider";
-
-
 
 describe("PaymentService", () => {
   let service: PaymentService;
@@ -55,7 +53,7 @@ describe("PaymentService", () => {
         clothingItem: {
           update: jest.fn(),
         },
-      }),
+      })
     ),
   };
 
@@ -195,9 +193,7 @@ describe("PaymentService", () => {
         amount: { toNumber: () => 99.0 },
         qrCode: "https://qr.alipay.com/existing",
       };
-      mockPrismaService.paymentRecord.findFirst.mockResolvedValue(
-        existingRecord,
-      );
+      mockPrismaService.paymentRecord.findFirst.mockResolvedValue(existingRecord);
       mockAlipayProvider.queryPayment.mockResolvedValue({
         orderId: "existing_order",
         status: "pending",
@@ -240,7 +236,7 @@ describe("PaymentService", () => {
       mockPrismaService.paymentRecord.findFirst.mockResolvedValue(null);
 
       await expect(service.queryPayment(userId, orderId)).rejects.toThrow(
-        "Payment record not found",
+        "Payment record not found"
       );
     });
   });
@@ -340,7 +336,7 @@ describe("PaymentService", () => {
       });
 
       await expect(service.refund(userId, refundDto)).rejects.toThrow(
-        "Only paid orders can be refunded",
+        "Only paid orders can be refunded"
       );
     });
   });
@@ -368,9 +364,7 @@ describe("PaymentService", () => {
     it("当订单不存在时应该抛出 NotFoundException", async () => {
       mockPrismaService.paymentRecord.findFirst.mockResolvedValue(null);
 
-      await expect(service.closeOrder(userId, orderId)).rejects.toThrow(
-        "Payment record not found",
-      );
+      await expect(service.closeOrder(userId, orderId)).rejects.toThrow("Payment record not found");
     });
   });
 
@@ -481,7 +475,7 @@ describe("PaymentService", () => {
       const invalidDto = { ...createPaymentDto, provider: "invalid" as any };
 
       await expect(service.createPayment(userId, invalidDto)).rejects.toThrow(
-        "Unsupported payment provider",
+        "Unsupported payment provider"
       );
     });
   });
@@ -569,7 +563,7 @@ describe("PaymentService", () => {
         paidAt: new Date(),
         rawData: callbackData,
       });
-      
+
       // 模拟 Redis 锁获取失败（已有其他进程在处理）
       mockRedisClient.set.mockResolvedValueOnce(null);
 
@@ -631,7 +625,7 @@ describe("PaymentService", () => {
       });
 
       await expect(service.refund(userId, { ...refundDto, amount: 100 })).rejects.toThrow(
-        "Refund amount cannot exceed payment amount",
+        "Refund amount cannot exceed payment amount"
       );
     });
 
@@ -786,7 +780,7 @@ describe("PaymentService", () => {
       });
 
       await expect(service.closeOrder(userId, orderId)).rejects.toThrow(
-        "Only pending orders can be closed",
+        "Only pending orders can be closed"
       );
     });
 
@@ -859,7 +853,7 @@ describe("PaymentService", () => {
         expect.objectContaining({
           skip: 90,
           take: 10,
-        }),
+        })
       );
     });
   });
@@ -889,7 +883,7 @@ describe("PaymentService", () => {
         expect.objectContaining({
           where: { id: "record_expired" },
           data: expect.objectContaining({ status: "closed" }),
-        }),
+        })
       );
     });
 
@@ -962,14 +956,14 @@ describe("PaymentService", () => {
         ],
       });
       mockPrismaService.clothingItem.update.mockResolvedValue({});
-      mockPrismaService.$transaction.mockImplementation((_ops) => Promise.resolve());
+      mockPrismaService.$transaction.mockImplementationOnce((_ops) => Promise.resolve());
 
       await service.handleCloseExpiredPayments();
 
       expect(mockPrismaService.order.updateMany).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({ status: "cancelled" }),
-        }),
+        })
       );
     });
   });
@@ -999,11 +993,14 @@ describe("PaymentService", () => {
         userId: "user_sub",
         status: "pending",
         amount: { toNumber: () => 29.9 },
+        currency: "CNY",
+        provider: "alipay",
       });
       mockPrismaService.paymentOrder.findUnique.mockResolvedValue({
         id: "sub_order_123",
         metadata: { planId: "plan_monthly", planName: "月度会员" },
       });
+      mockPrismaService.order.findUnique.mockResolvedValue(null);
 
       const result = await service.handleCallback("alipay", callbackData);
 
@@ -1015,7 +1012,7 @@ describe("PaymentService", () => {
           metadata: expect.objectContaining({
             planId: "plan_monthly",
           }),
-        }),
+        })
       );
     });
   });
@@ -1045,8 +1042,11 @@ describe("PaymentService", () => {
         userId: "user_status",
         status: "pending",
         amount: { toNumber: () => 199.0 },
+        currency: "CNY",
+        provider: "alipay",
       });
       mockPrismaService.paymentOrder.findUnique.mockResolvedValue(null);
+      mockPrismaService.order.findUnique.mockResolvedValue(null);
 
       const result = await service.handleCallback("alipay", callbackData);
 
@@ -1103,7 +1103,7 @@ describe("PaymentService", () => {
       expect(mockPrismaService.paymentRecord.update).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({ status: "refunded" }),
-        }),
+        })
       );
     });
   });

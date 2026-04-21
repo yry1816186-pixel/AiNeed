@@ -6,24 +6,20 @@ import { RecommendationsController } from "./recommendations.controller";
 import { RecommendationsService } from "./recommendations.service";
 
 // Mock the transitive dependency modules that have TS compilation errors
-jest.mock("./services/advanced-recommendation.service", () => ({
-  AdvancedRecommendationService: jest.fn().mockImplementation(() => ({})),
-}));
-jest.mock("./services/outfit-completion.service", () => ({
-  OutfitCompletionService: jest.fn().mockImplementation(() => ({})),
-}));
 jest.mock("./services/behavior-tracking.service", () => ({
   BehaviorTrackingService: jest.fn().mockImplementation(() => ({})),
 }));
 jest.mock("./services/recommendation-feed.service", () => ({
   RecommendationFeedService: jest.fn().mockImplementation(() => ({})),
 }));
+jest.mock("./orchestrator/recommendation.orchestrator", () => ({
+  RecommendationOrchestrator: jest.fn().mockImplementation(() => ({})),
+}));
 
-// Import after mocks are set up
-import { AdvancedRecommendationService } from "./services/advanced-recommendation.service";
 import { BehaviorTrackingService } from "./services/behavior-tracking.service";
-import { OutfitCompletionService } from "./services/outfit-completion.service";
 import { RecommendationFeedService } from "./services/recommendation-feed.service";
+import { RecommendationOrchestrator } from "./orchestrator/recommendation.orchestrator";
+import { OutfitCompletionService } from "./services/outfit-completion.service";
 
 describe("RecommendationsController", () => {
   let controller: RecommendationsController;
@@ -38,11 +34,18 @@ describe("RecommendationsController", () => {
     }),
   };
 
-  const mockAdvancedRecommendationService = {
-    getPersonalizedRecommendations: jest.fn().mockResolvedValue([]),
+  const mockOrchestrator = {
+    getRecommendations: jest.fn().mockResolvedValue({ items: [], strategies: [], metadata: {} }),
     getDailyOutfitRecommendation: jest.fn().mockResolvedValue(null),
     getOccasionRecommendations: jest.fn().mockResolvedValue([]),
     getTrendingRecommendations: jest.fn().mockResolvedValue([]),
+    recordFeedback: jest.fn().mockResolvedValue(undefined),
+    getStyleGuide: jest.fn().mockResolvedValue({
+      bodyType: null,
+      skinTone: null,
+      colorSeason: null,
+      recommendations: [],
+    }),
   };
 
   const mockOutfitCompletionService = {
@@ -63,7 +66,7 @@ describe("RecommendationsController", () => {
       controllers: [RecommendationsController],
       providers: [
         { provide: RecommendationsService, useValue: mockRecommendationsService },
-        { provide: AdvancedRecommendationService, useValue: mockAdvancedRecommendationService },
+        { provide: RecommendationOrchestrator, useValue: mockOrchestrator },
         { provide: OutfitCompletionService, useValue: mockOutfitCompletionService },
         { provide: BehaviorTrackingService, useValue: mockBehaviorTrackingService },
         { provide: RecommendationFeedService, useValue: mockFeedService },
@@ -79,9 +82,7 @@ describe("RecommendationsController", () => {
 
   describe("getRecommendations", () => {
     it("should return recommendations for user", async () => {
-      mockRecommendationsService.getPersonalizedRecommendations.mockResolvedValue([
-        { item: { id: "item-1", name: "Test" }, score: 80, matchReasons: [] },
-      ]);
+      mockOrchestrator.getRecommendations.mockResolvedValue([{ id: "item-1", name: "Test" }]);
 
       const result = await controller.getRecommendations("user-1");
 
@@ -89,15 +90,16 @@ describe("RecommendationsController", () => {
       expect(result.total).toBe(1);
     });
 
-    it("should pass filter options to service", async () => {
-      mockRecommendationsService.getPersonalizedRecommendations.mockResolvedValue([]);
+    it("should pass filter options to orchestrator", async () => {
+      mockOrchestrator.getRecommendations.mockResolvedValue([]);
 
       await controller.getRecommendations("user-1", ClothingCategory.tops, "daily", "spring", "10");
 
-      expect(mockRecommendationsService.getPersonalizedRecommendations).toHaveBeenCalledWith(
-        "user-1",
-        { category: ClothingCategory.tops, occasion: "daily", season: "spring", limit: 10 }
-      );
+      expect(mockOrchestrator.getRecommendations).toHaveBeenCalledWith({
+        userId: "user-1",
+        context: { occasion: "daily", season: "spring" },
+        options: { limit: 10, category: ClothingCategory.tops },
+      });
     });
   });
 
@@ -113,7 +115,7 @@ describe("RecommendationsController", () => {
 
   describe("getStyleGuide", () => {
     it("should return style guide for user", async () => {
-      mockRecommendationsService.getStyleGuide.mockResolvedValue({
+      mockOrchestrator.getStyleGuide.mockResolvedValue({
         bodyType: "X型",
         skinTone: "medium",
         colorSeason: "秋季暖型",
@@ -129,13 +131,13 @@ describe("RecommendationsController", () => {
 
   describe("getTrendingRecommendations", () => {
     it("should return trending items without auth", async () => {
-      mockAdvancedRecommendationService.getTrendingRecommendations.mockResolvedValue([
+      mockOrchestrator.getTrendingRecommendations.mockResolvedValue([
         { id: "item-1", name: "Trending" },
       ]);
 
       await controller.getTrendingRecommendations("10");
 
-      expect(mockAdvancedRecommendationService.getTrendingRecommendations).toHaveBeenCalledWith(10);
+      expect(mockOrchestrator.getTrendingRecommendations).toHaveBeenCalledWith(10);
     });
   });
 
@@ -149,7 +151,7 @@ describe("RecommendationsController", () => {
       expect(mockBehaviorTrackingService.track).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: "user-1",
-          action: "like",
+          action: "post_like",
           clothingId: "item-1",
         })
       );
@@ -174,25 +176,23 @@ describe("RecommendationsController", () => {
 
   describe("getDiscoverRecommendations", () => {
     it("should return personalized recommendations for logged-in user", async () => {
-      mockAdvancedRecommendationService.getPersonalizedRecommendations.mockResolvedValue([
-        { id: "item-1" },
-      ]);
+      mockOrchestrator.getRecommendations.mockResolvedValue([{ id: "item-1" }]);
 
       await controller.getDiscoverRecommendations("user-1");
 
-      expect(mockAdvancedRecommendationService.getPersonalizedRecommendations).toHaveBeenCalledWith(
-        "user-1",
-        {},
-        20
+      expect(mockOrchestrator.getRecommendations).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: "user-1",
+        })
       );
     });
 
     it("should return trending recommendations for anonymous user", async () => {
-      mockAdvancedRecommendationService.getTrendingRecommendations.mockResolvedValue([]);
+      mockOrchestrator.getTrendingRecommendations.mockResolvedValue([]);
 
       await controller.getDiscoverRecommendations(undefined);
 
-      expect(mockAdvancedRecommendationService.getTrendingRecommendations).toHaveBeenCalledWith(20);
+      expect(mockOrchestrator.getTrendingRecommendations).toHaveBeenCalledWith(20);
     });
   });
 });

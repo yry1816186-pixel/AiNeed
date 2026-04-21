@@ -493,30 +493,63 @@ def _compute_region_lab(
 # Season Classification Algorithm
 # ============================================================
 
-def _classify_tone(a_star: float) -> Tuple[ToneType, float]:
-    """Classify warm/cool tone from CIELAB a* axis.
+WARM_B_THRESHOLD = 15.0
 
-    In CIELAB, positive a* = red/warm, negative a* = green/cool.
+
+def _classify_tone(a_star: float, b_star: float = 15.0) -> Tuple[ToneType, float]:
+    """Classify warm/cool tone from CIELAB a* and b* axes.
+
+    In CIELAB:
+    - positive a* = red/warm, negative a* = green/cool
+    - positive b* = yellow/warm, negative b* = blue/cool
+
+    For Asian skin tones, b* (yellowness) is a critical dimension
+    for warm/cool classification. b* > 15 indicates warm undertone.
+    The final classification combines both axes with weighted scoring.
     """
+    a_warm_score = 0.0
     if a_star > 8.0:
-        return ToneType.WARM, min(1.0, 0.5 + a_star / 30.0)
-    if a_star > 3.0:
-        return ToneType.WARM, 0.5 + a_star / 20.0
-    if a_star < -2.0:
-        return ToneType.COOL, min(1.0, 0.5 + abs(a_star) / 20.0)
-    # NEUTRAL range: [-2.0, 3.0]
+        a_warm_score = min(1.0, 0.5 + a_star / 30.0)
+    elif a_star > 3.0:
+        a_warm_score = 0.5 + a_star / 20.0
+    elif a_star < -2.0:
+        a_warm_score = max(0.0, 0.5 - abs(a_star) / 20.0)
+    else:
+        a_warm_score = 0.5
+
+    b_warm_score = 0.0
+    if b_star > WARM_B_THRESHOLD:
+        b_warm_score = min(1.0, 0.5 + (b_star - WARM_B_THRESHOLD) / 20.0)
+    elif b_star > 10.0:
+        b_warm_score = 0.5 + (b_star - 10.0) / 10.0
+    elif b_star < 5.0:
+        b_warm_score = max(0.0, 0.5 - (5.0 - b_star) / 10.0)
+    else:
+        b_warm_score = 0.5
+
+    combined = 0.4 * a_warm_score + 0.6 * b_warm_score
+
+    if combined >= 0.6:
+        return ToneType.WARM, min(1.0, combined)
+    if combined <= 0.4:
+        return ToneType.COOL, min(1.0, 1.0 - combined)
     return ToneType.NEUTRAL, 0.5
 
 
 def _classify_depth(l_star: float) -> Tuple[DepthType, float]:
-    """Classify light/deep from CIELAB L* axis."""
-    if l_star >= 65.0:
-        return DepthType.LIGHT, min(1.0, 0.5 + (l_star - 65.0) / 30.0)
-    if l_star >= 50.0:
-        return DepthType.LIGHT, 0.5 + (l_star - 50.0) / 30.0
-    if l_star >= 40.0:
-        return DepthType.DEEP, 0.5 + (50.0 - l_star) / 20.0
-    return DepthType.DEEP, min(1.0, 0.5 + (40.0 - l_star) / 20.0)
+    """Classify light/deep from CIELAB L* axis.
+
+    Threshold adjusted to 58 for Chinese population whose skin tones
+    are generally darker than Caucasian baselines. L*=65 caused
+    systematic misclassification of medium-deep skin as "light".
+    """
+    if l_star >= 58.0:
+        return DepthType.LIGHT, min(1.0, 0.5 + (l_star - 58.0) / 30.0)
+    if l_star >= 45.0:
+        return DepthType.LIGHT, 0.5 + (l_star - 45.0) / 26.0
+    if l_star >= 35.0:
+        return DepthType.DEEP, 0.5 + (45.0 - l_star) / 20.0
+    return DepthType.DEEP, min(1.0, 0.5 + (35.0 - l_star) / 20.0)
 
 
 def _classify_chroma(chroma: float) -> Tuple[ChromaType, float]:
@@ -683,7 +716,7 @@ def analyze_color_season(
     logger.info("Chroma=%.1f, ITA=%.1f", chroma, ita)
 
     # Step 4: Classify along 3 dimensions
-    tone, tone_conf = _classify_tone(avg_a)
+    tone, tone_conf = _classify_tone(avg_a, avg_b)
     depth, depth_conf = _classify_depth(avg_l)
     chroma_type, chroma_conf = _classify_chroma(chroma)
 

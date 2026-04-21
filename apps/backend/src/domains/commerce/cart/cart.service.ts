@@ -1,13 +1,5 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  Logger,
-} from "@nestjs/common";
+import { Injectable, NotFoundException, BadRequestException, Logger } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import Decimal from "decimal.js";
-
-import { ClothingCategory } from '../../../types/prisma-enums';
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
 import { CouponService } from "../coupon/coupon.service";
@@ -42,47 +34,27 @@ export interface CartItemWithItem {
   };
 }
 
-/**
- * 购物车项数据库返回类型
- */
-interface CartItemWithRelations {
-  id: string;
-  itemId: string;
-  color: string;
-  size: string;
-  quantity: number;
-  selected: boolean;
-  createdAt: Date;
-  item: {
-    id: string;
-    name: string;
-    description: string | null;
-    category: ClothingCategory;
-    colors: string[];
-    sizes: string[];
-    price: Decimal;
-    originalPrice: Decimal | null;
-    currency: string;
-    images: string[];
-    tags: string[];
-    viewCount: number;
-    likeCount: number;
-    brand: {
-      id: string;
-      name: string;
-      logo: string | null;
-    } | null;
+type CartItemWithRelations = Prisma.CartItemGetPayload<{
+  include: {
+    item: {
+      include: {
+        brand: {
+          select: {
+            id: true;
+            name: true;
+            logo: true;
+          };
+        };
+      };
+    };
   };
-}
+}>;
 
 @Injectable()
 export class CartService {
   private readonly logger = new Logger(CartService.name);
 
-  constructor(
-    private prisma: PrismaService,
-    private couponService: CouponService,
-  ) {}
+  constructor(private prisma: PrismaService, private couponService: CouponService) {}
 
   async getCart(userId: string): Promise<CartItemWithItem[]> {
     const items = await this.prisma.cartItem.findMany({
@@ -103,35 +75,14 @@ export class CartService {
       orderBy: { createdAt: "desc" },
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return items.map((item: any) => ({
-      id: item.id,
-      itemId: item.itemId,
-      color: item.color,
-      size: item.size,
-      quantity: item.quantity,
-      selected: item.selected,
-      createdAt: item.createdAt,
-      item: {
-        id: item.item.id,
-        name: item.item.name,
-        description: item.item.description,
-        category: item.item.category,
-        colors: item.item.colors,
-        sizes: item.item.sizes,
-        price: Number(item.item.price),
-        originalPrice:
-          item.item.originalPrice === null
-            ? null
-            : Number(item.item.originalPrice),
-        currency: item.item.currency,
-        images: item.item.images,
-        tags: item.item.tags,
-        viewCount: item.item.viewCount,
-        likeCount: item.item.likeCount,
-        brand: item.item.brand,
-      },
-    }));
+    return items.flatMap((item) => {
+      if (!item.item || !item.itemId) {
+        this.logger.warn(`Skipping invalid cart item ${item.id} for user ${userId}`);
+        return [];
+      }
+
+      return [this.mapToCartItem(item)];
+    });
   }
 
   async addItem(
@@ -139,7 +90,7 @@ export class CartService {
     itemId: string,
     color: string,
     size: string,
-    quantity: number = 1,
+    quantity: number = 1
   ): Promise<CartItemWithItem> {
     const item = await this.prisma.clothingItem.findUnique({
       where: { id: itemId },
@@ -217,7 +168,7 @@ export class CartService {
   async updateItem(
     userId: string,
     cartItemId: string,
-    data: { quantity?: number; selected?: boolean },
+    data: { quantity?: number; selected?: boolean }
   ): Promise<CartItemWithItem> {
     const cartItem = await this.prisma.cartItem.findFirst({
       where: { id: cartItemId, userId },
@@ -304,6 +255,10 @@ export class CartService {
 
     for (const item of items) {
       totalItems += item.quantity;
+      if (!item.item) {
+        continue;
+      }
+
       totalPrice += Number(item.item.price) * item.quantity;
 
       if (item.selected) {
@@ -321,6 +276,10 @@ export class CartService {
   }
 
   private mapToCartItem(item: CartItemWithRelations): CartItemWithItem {
+    if (!item.item || !item.itemId) {
+      throw new BadRequestException("购物车商品关联失效");
+    }
+
     return {
       id: item.id,
       itemId: item.itemId,
@@ -355,7 +314,7 @@ export class CartService {
    */
   async getCartSummaryWithCoupon(
     userId: string,
-    couponCode?: string,
+    couponCode?: string
   ): Promise<{
     totalItems: number;
     selectedItems: number;
@@ -364,7 +323,7 @@ export class CartService {
     discountAmount: number;
     shippingFee: number;
     finalAmount: number;
-    couponStatus?: 'valid' | 'invalid';
+    couponStatus?: "valid" | "invalid";
     couponMessage?: string;
   }> {
     const items = await this.prisma.cartItem.findMany({
@@ -385,6 +344,10 @@ export class CartService {
 
     for (const item of items) {
       totalItems += item.quantity;
+      if (!item.item) {
+        continue;
+      }
+
       totalAmount += Number(item.item.price) * item.quantity;
 
       if (item.selected) {
@@ -394,20 +357,20 @@ export class CartService {
     }
 
     let discountAmount = 0;
-    let couponStatus: 'valid' | 'invalid' | undefined;
+    let couponStatus: "valid" | "invalid" | undefined;
     let couponMessage: string | undefined;
     if (couponCode) {
       const validation = await this.couponService.validateCoupon(
         couponCode,
         userId,
-        selectedAmount,
+        selectedAmount
       );
       if (validation.valid) {
         discountAmount = validation.discount;
-        couponStatus = 'valid';
+        couponStatus = "valid";
       } else {
-        couponStatus = 'invalid';
-        couponMessage = validation.reason || '优惠券不可用';
+        couponStatus = "invalid";
+        couponMessage = validation.reason || "优惠券不可用";
       }
     }
 
@@ -433,10 +396,7 @@ export class CartService {
     return this.prisma.cartItem.findMany({
       where: {
         userId,
-        OR: [
-          { item: { isActive: false } },
-          { item: { isDeleted: true } },
-        ],
+        OR: [{ item: { isActive: false } }, { item: { isDeleted: true } }],
       },
       include: {
         item: {
@@ -476,6 +436,10 @@ export class CartService {
       });
 
       for (const ci of cartItems) {
+        if (!ci.itemId) {
+          continue;
+        }
+
         await tx.favorite.upsert({
           where: {
             userId_itemId: { userId, itemId: ci.itemId },
@@ -496,12 +460,7 @@ export class CartService {
   /**
    * Update item SKU (color/size). Validates new SKU stock.
    */
-  async updateItemSku(
-    userId: string,
-    cartItemId: string,
-    color?: string,
-    size?: string,
-  ) {
+  async updateItemSku(userId: string, cartItemId: string, color?: string, size?: string) {
     const cartItem = await this.prisma.cartItem.findFirst({
       where: { id: cartItemId, userId },
     });
@@ -512,6 +471,10 @@ export class CartService {
 
     const newColor = color ?? cartItem.color;
     const newSize = size ?? cartItem.size;
+
+    if (!cartItem.itemId) {
+      throw new BadRequestException("购物车商品关联失效");
+    }
 
     // Validate stock for new SKU
     const item = await this.prisma.clothingItem.findUnique({

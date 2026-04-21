@@ -18,8 +18,8 @@ from enum import Enum
 from collections import OrderedDict
 import aiohttp
 
-from .secure_api_key import SecureAPIKeyManager, api_key_manager
-from .rate_limiter import rate_limiter
+from ..common.secure_api_key import SecureAPIKeyManager, api_key_manager
+from ..common.rate_limiter import rate_limiter
 
 # Lazy import RAG to avoid circular dependencies
 _fashion_rag = None
@@ -29,7 +29,7 @@ def get_fashion_rag():
     global _fashion_rag
     if _fashion_rag is None:
         try:
-            from .fashion_knowledge_rag import FashionKnowledgeRAG, FashionRAGConfig
+            from ml.services.recommender.fashion_knowledge_rag import FashionKnowledgeRAG, FashionRAGConfig
             config = FashionRAGConfig(
                 qdrant_host=os.getenv("QDRANT_URL", "http://localhost:6333").replace("http://", "").split(":")[0],
                 qdrant_port=int(os.getenv("QDRANT_URL", "http://localhost:6333").split(":")[-1].split("/")[0])

@@ -3,6 +3,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import axios from "axios";
 
 import { PrismaService } from "../../../common/prisma/prisma.service";
+import { QdrantService } from "../../platform/recommendations/services/qdrant.service";
 
 import { SearchService } from "./search.service";
 
@@ -27,6 +28,11 @@ describe("SearchService", () => {
       };
       return config[key] ?? defaultValue;
     }),
+  };
+  const mockQdrantService = {
+    searchSimilar: jest.fn().mockResolvedValue([]),
+    upsertVector: jest.fn().mockResolvedValue(undefined),
+    deleteVector: jest.fn().mockResolvedValue(undefined),
   };
 
   const mockClothingItem = {
@@ -65,6 +71,10 @@ describe("SearchService", () => {
           provide: ConfigService,
           useValue: mockConfigService,
         },
+        {
+          provide: QdrantService,
+          useValue: mockQdrantService,
+        },
       ],
     }).compile();
 
@@ -73,9 +83,7 @@ describe("SearchService", () => {
 
   describe("searchItems", () => {
     it("returns paginated results", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       const result = await service.searchItems("dress");
@@ -86,9 +94,7 @@ describe("SearchService", () => {
     });
 
     it("sorts by ascending price", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.searchItems("dress", { sortBy: "price_asc" });
@@ -96,14 +102,12 @@ describe("SearchService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { price: "asc" },
-        }),
+        })
       );
     });
 
     it("sorts by descending price", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.searchItems("dress", { sortBy: "price_desc" });
@@ -111,14 +115,12 @@ describe("SearchService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { price: "desc" },
-        }),
+        })
       );
     });
 
     it("sorts by popularity", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.searchItems("dress", { sortBy: "popular" });
@@ -126,14 +128,12 @@ describe("SearchService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { viewCount: "desc" },
-        }),
+        })
       );
     });
 
     it("filters by price range", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.searchItems("dress", { minPrice: 100, maxPrice: 500 });
@@ -143,14 +143,12 @@ describe("SearchService", () => {
           where: expect.objectContaining({
             price: { gte: 100, lte: 500 },
           }),
-        }),
+        })
       );
     });
 
     it("supports pagination metadata", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(50);
 
       const result = await service.searchItems("dress", {
@@ -187,13 +185,9 @@ describe("SearchService", () => {
           ],
         },
       });
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
-      const result = await service.searchByImage(
-        "https://example.com/image.jpg",
-      );
+      const result = await service.searchByImage("https://example.com/image.jpg");
 
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
@@ -206,7 +200,7 @@ describe("SearchService", () => {
           where: expect.objectContaining({
             id: { in: ["item-id"] },
           }),
-        }),
+        })
       );
     });
 
@@ -214,14 +208,9 @@ describe("SearchService", () => {
       mockedAxios.post
         .mockRejectedValueOnce(new Error("ml unavailable"))
         .mockRejectedValueOnce(new Error("analysis unavailable"));
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
-      const result = await service.searchByImage(
-        "https://example.com/image.jpg",
-        5,
-      );
+      const result = await service.searchByImage("https://example.com/image.jpg", 5);
 
       expect(result).toHaveLength(1);
       expect(result[0]?.id).toBe("item-id");
@@ -230,7 +219,7 @@ describe("SearchService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           take: 5,
-        }),
+        })
       );
     });
   });
@@ -278,16 +267,14 @@ describe("SearchService", () => {
       expect(mockPrismaService.clothingItem.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           take: 5,
-        }),
+        })
       );
     });
   });
 
   describe("searchItems 分类过滤", () => {
     it("应该按分类过滤", async () => {
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
       mockPrismaService.clothingItem.count.mockResolvedValue(1);
 
       await service.searchItems("dress", { category: "dress" });
@@ -297,7 +284,7 @@ describe("SearchService", () => {
           where: expect.objectContaining({
             category: "dress",
           }),
-        }),
+        })
       );
     });
   });
@@ -307,14 +294,9 @@ describe("SearchService", () => {
       mockedAxios.post.mockResolvedValueOnce({
         data: { results: [] },
       });
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
-      const result = await service.searchByImage(
-        "https://example.com/image.jpg",
-        5,
-      );
+      const result = await service.searchByImage("https://example.com/image.jpg", 5);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
@@ -327,14 +309,9 @@ describe("SearchService", () => {
       mockedAxios.post
         .mockRejectedValueOnce(new Error("timeout"))
         .mockRejectedValueOnce(new Error("timeout"));
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
-      const result = await service.searchByImage(
-        "https://example.com/image.jpg",
-        5,
-      );
+      const result = await service.searchByImage("https://example.com/image.jpg", 5);
 
       expect(result).toHaveLength(1);
     });
@@ -342,18 +319,12 @@ describe("SearchService", () => {
     it("应该正确映射相似度分数", async () => {
       mockedAxios.post.mockResolvedValueOnce({
         data: {
-          results: [
-            { id: "item-id", similarity: 0.95, reasons: ["color match"] },
-          ],
+          results: [{ id: "item-id", similarity: 0.95, reasons: ["color match"] }],
         },
       });
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
-      const result = await service.searchByImage(
-        "https://example.com/image.jpg",
-      );
+      const result = await service.searchByImage("https://example.com/image.jpg");
 
       expect(result[0]?.similarityScore).toBe(0.95);
       expect(result[0]?.matchReasons).toContain("color match");
@@ -368,13 +339,9 @@ describe("SearchService", () => {
           ],
         },
       });
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
-      const result = await service.searchByImage(
-        "https://example.com/image.jpg",
-      );
+      const result = await service.searchByImage("https://example.com/image.jpg");
 
       expect(result).toHaveLength(1);
       expect(result[0]?.id).toBe("item-id");
@@ -383,53 +350,39 @@ describe("SearchService", () => {
 
   describe("属性搜索降级", () => {
     it("应该在 ML 服务不可用时使用属性搜索", async () => {
-      mockedAxios.post
-        .mockRejectedValueOnce(new Error("ML unavailable"))
-        .mockResolvedValueOnce({
-          data: {
-            clothing: {
-              category: "dress",
-              style: ["elegant"],
-              colors: ["blue"],
-            },
+      mockedAxios.post.mockRejectedValueOnce(new Error("ML unavailable")).mockResolvedValueOnce({
+        data: {
+          clothing: {
+            category: "dress",
+            style: ["elegant"],
+            colors: ["blue"],
           },
-        });
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+        },
+      });
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
-      const result = await service.searchByImage(
-        "https://example.com/image.jpg",
-        5,
-      );
+      const result = await service.searchByImage("https://example.com/image.jpg", 5);
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
         expect.stringContaining("/analyze"),
         expect.any(Object),
-        expect.any(Object),
+        expect.any(Object)
       );
     });
 
     it("应该正确计算属性匹配分数", async () => {
-      mockedAxios.post
-        .mockRejectedValueOnce(new Error("ML unavailable"))
-        .mockResolvedValueOnce({
-          data: {
-            clothing: {
-              category: "dress",
-              style: ["minimal"],
-              colors: ["blue"],
-            },
+      mockedAxios.post.mockRejectedValueOnce(new Error("ML unavailable")).mockResolvedValueOnce({
+        data: {
+          clothing: {
+            category: "dress",
+            style: ["minimal"],
+            colors: ["blue"],
           },
-        });
-      mockPrismaService.clothingItem.findMany.mockResolvedValue([
-        mockClothingItem,
-      ]);
+        },
+      });
+      mockPrismaService.clothingItem.findMany.mockResolvedValue([mockClothingItem]);
 
-      const result = await service.searchByImage(
-        "https://example.com/image.jpg",
-        5,
-      );
+      const result = await service.searchByImage("https://example.com/image.jpg", 5);
 
       // 风格匹配 + 颜色匹配 + 基础分
       expect(result[0]?.similarityScore).toBeGreaterThan(30);
@@ -467,7 +420,7 @@ describe("SearchService", () => {
         expect.objectContaining({
           skip: 9990,
           take: 10,
-        }),
+        })
       );
     });
 

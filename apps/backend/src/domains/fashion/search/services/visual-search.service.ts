@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { ClothingCategory } from "../../../../../types/prisma-enums";
+import { ClothingCategory } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import {
@@ -53,10 +53,7 @@ interface ClothingItemCandidate extends ClothingItemWithBrand {
 
 @Injectable()
 export class VisualSearchService {
-  constructor(
-    private prisma: PrismaService,
-    private aiImageService: AIImageService
-  ) {}
+  constructor(private prisma: PrismaService, private aiImageService: AIImageService) {}
 
   async searchByImage(
     imageBuffer: Buffer,

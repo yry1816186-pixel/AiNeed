@@ -5,7 +5,7 @@ import {
   BadRequestException,
   Optional,
 } from "@nestjs/common";
-import { PriceRange } from "../../../../../types/prisma-enums";
+import { PriceRange } from "../../../../types/prisma-enums";
 
 import { PrismaService } from "../../../../common/prisma/prisma.service";
 import {
@@ -312,7 +312,9 @@ export class StyleQuizService {
       }
     } catch (error) {
       this.logger.warn(
-        `Color derivation failed for user ${userId}: ${error instanceof Error ? error.message : String(error)}`
+        `Color derivation failed for user ${userId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
     }
 

@@ -1,7 +1,7 @@
-﻿import React, { useEffect } from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { Colors, Spacing, BorderRadius } from "../../../design-system/theme";
-import { DesignTokens } from "../../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface QuizProgressProps {
@@ -85,10 +85,10 @@ const useStyles = createStyles((colors) => ({
     backgroundColor: colors.neutral[300],
   },
   dotCompleted: {
-    backgroundColor: colors.primary[500],
+    backgroundColor: colors.primary,
   },
   dotCurrent: {
-    backgroundColor: colors.primary[500],
+    backgroundColor: colors.primary,
     width: 10,
     height: 10,
     borderRadius: 5,

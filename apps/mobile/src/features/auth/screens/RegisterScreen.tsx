@@ -19,10 +19,8 @@ import { useTranslation } from "../../../i18n";
 import { useAuthStore } from "../stores/index";
 import { apiClient } from "../../../services/api/client";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { flatColors as colors, Spacing } from "../../../design-system/theme";
+import { DesignTokens, flatColors as colors, Spacing } from "../../../design-system/theme";
 import type { RootStackParamList } from "../../../types/navigation";
-import { flatColors as colors } from "../../../design-system/theme";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
@@ -46,7 +44,6 @@ function getErrorMessage(error: unknown): string {
 }
 
 export const RegisterScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const { setUser, setToken } = useAuthStore();
   const t = useTranslation();

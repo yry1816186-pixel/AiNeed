@@ -25,7 +25,6 @@ export const xunoTheme: ThemeConfig = {
     Button: {
       borderRadius: 10,
       controlHeight: 38,
-      fontWeight: 600,
     },
     Table: {
       colorBgContainer: "#FFFFFF",
@@ -36,7 +35,6 @@ export const xunoTheme: ThemeConfig = {
     },
     Statistic: {
       fontSize: 28,
-      fontWeight: 600,
     },
   },
 };

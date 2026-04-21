@@ -16,7 +16,7 @@ from ml.services.tryon.tryon_prompt_engine import TryonPromptEngine
 from ml.services.tryon.tryon_postprocessor import TryonPostprocessor
 
 # P1-9: Import externalized prompts
-from .stylist_prompts import VIRTUAL_TRYON_PROMPT_TEMPLATE
+from ml.services.stylist.stylist_prompts import VIRTUAL_TRYON_PROMPT_TEMPLATE
 
 logger = logging.getLogger(__name__)
 

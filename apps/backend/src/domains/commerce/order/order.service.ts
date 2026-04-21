@@ -386,8 +386,12 @@ export class OrderService {
     });
 
     // Batch stock restoration in a single transaction (fixes N+1)
+    const restockItems = (orderWithItems?.items || []).filter(
+      (item): item is typeof item & { itemId: string } => typeof item.itemId === "string"
+    );
+
     await this.prisma.$transaction([
-      ...(orderWithItems?.items || []).map((item) =>
+      ...restockItems.map((item) =>
         this.prisma.clothingItem.update({
           where: { id: item.itemId },
           data: { stock: { increment: item.quantity } },

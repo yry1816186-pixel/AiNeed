@@ -61,6 +61,7 @@ model User {
   styleProfiles     StyleProfile[]
   rankingFeedback   RankingFeedback[]
   styleRecommendations StyleRecommendation[]
+  recommendationImpressions RecommendationImpression[]
   notifications     Notification[]
   paymentOrders     PaymentOrder[]
   paymentRecords    PaymentRecord[]
@@ -153,6 +154,7 @@ enum RefundRequestStatus {
 enum Gender {
   male
   female
+  unisex
   other
 }
 
@@ -421,6 +423,11 @@ model ClothingItem {
   sizes       String[]
   tags        String[]
 
+  material    String?  // 面料: 纯棉/羊绒/真丝/涤纶等
+  season      String?  // 季节: spring/summer/autumn/winter/all_season
+  gender      Gender?  // 性别适配: male/female/unisex
+  source      String?  @default("manual") // 数据来源: taobao/jd/manual
+
   price       Decimal  @db.Decimal(10, 2) /// D-P2-13: 非负约束 — 应用层必须校验 price >= 0，数据库层通过 CHECK 约束或触发器保证
   originalPrice Decimal? @db.Decimal(10, 2) /// 非负约束 — 应用层必须校验 originalPrice >= 0
   currency    String   @default("CNY")
@@ -473,6 +480,29 @@ model ClothingItem {
   @@index([isActive, likeCount(sort: Desc)])              // 业务：最受欢迎排行（覆盖单列likeCount）
   @@index([stock])                                        // 业务：低库存预警
   @@index([isDeleted, isActive])                          // 合规：软删除过滤（覆盖单列isDeleted）
+  @@index([season, isActive])                             // 推荐：季节筛选
+  @@index([gender, isActive])                             // 推荐：性别适配筛选
+  @@index([source])                                       // 运营：数据来源追踪
+  @@index([category, season, isActive])                   // 推荐：分类+季节组合筛选
+}
+
+model RecommendationImpression {
+  id              String   @id @default(uuid())
+  userId          String
+  recommendationId String
+  impressionType  String   // view/click/dismiss/try_on/purchase
+  dwellTimeMs     Int?
+  createdAt       DateTime @default(now())
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([recommendationId])
+  @@index([impressionType])
+  @@index([userId, impressionType])
+  @@index([createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("recommendation_impressions")
 }
 
 enum ClothingCategory {

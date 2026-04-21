@@ -24,7 +24,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { authApi } from "../../../services/api/auth.api";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import { Spacing, BorderRadius } from "../../../design-system/theme";
 import type { AuthStackParamList } from "../../../navigation/types";
 

@@ -19,7 +19,7 @@ import { useTranslation } from "../../../i18n";
 import { wechatAuth } from "../../../services/auth/wechat";
 import { useAuthStore } from "../stores/index";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens, flatColors as colors, Spacing, theme } from "../../../design-system/theme";
 import type { AuthStackParamList } from "../../../navigation/types";
 
 type LoginNavigationProp = NavigationProp<AuthStackParamList>;
@@ -390,7 +390,11 @@ const styles = StyleSheet.create({
     color: colors.primary,
     letterSpacing: 1.2,
   },
-  title: { fontSize: DesignTokens.typography.sizes["3xl"], fontWeight: "700", color: colors.text },
+  title: {
+    fontSize: DesignTokens.typography.sizes["3xl"],
+    fontWeight: "700",
+    color: colors.textPrimary,
+  },
   subtitle: {
     fontSize: DesignTokens.typography.sizes.md,
     color: colors.textSecondary,
@@ -407,7 +411,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     gap: 12,
   },
-  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.text },
+  input: { flex: 1, fontSize: DesignTokens.typography.sizes.md, color: colors.textPrimary },
   eyeButton: { padding: 4 },
   forgotPasswordLink: { alignItems: "flex-end" },
   forgotPasswordText: { fontSize: DesignTokens.typography.sizes.base, color: colors.primary },
@@ -421,7 +425,7 @@ const styles = StyleSheet.create({
     minHeight: 52,
     ...theme.Shadows.brand,
   },
-  loginButtonDisabled: { backgroundColor: colors.primaryLight },
+  loginButtonDisabled: { backgroundColor: DesignTokens.colors.semantic.infoLight },
   loginButtonText: {
     fontSize: DesignTokens.typography.sizes.md,
     fontWeight: "600",
@@ -443,7 +447,7 @@ const styles = StyleSheet.create({
     color: colors.textTertiary,
   },
   wechatButton: {
-    backgroundColor: "DesignTokens.colors.semantic.success", // custom color
+    backgroundColor: DesignTokens.colors.semantic.success,
     borderRadius: theme.BorderRadius.md,
     paddingVertical: 16,
     alignItems: "center",

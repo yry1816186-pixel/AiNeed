@@ -23,13 +23,13 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import { useTranslation } from "../../../i18n";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-
 import {
+  DesignTokens,
   SpringConfigs,
   ListAnimations,
   Duration,
-} from "../../../design-system/theme/tokens/animations";
+  flatColors as colors,
+} from "../../../design-system/theme";
 import { useReducedMotion } from "../../../hooks/useReducedMotion";
 import { AIThinkingAnimation } from "../../../components/aistylist/AIThinkingAnimation";
 import { TypewriterMessage } from "../../../components/aistylist/TypewriterMessage";
@@ -38,7 +38,6 @@ import { useAiStylistChatStore } from "../stores/aiStylistChatStore";
 import { useAnalytics, useScreenTracking, AnalyticsEvents } from "../../../hooks/useAnalytics";
 import type { ChatMessage } from "../stores/aiStylistChatStore";
 import type { StylistStackParamList } from "../../../navigation/types";
-import { flatColors as colors } from "../../../design-system/theme";
 
 type AiStylistChatRoute = RouteProp<StylistStackParamList, "AiStylistChat">;
 

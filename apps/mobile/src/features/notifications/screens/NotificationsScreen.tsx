@@ -17,7 +17,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useNotificationStore } from "../stores/notificationStore";
 import { useTranslation } from "../../../i18n";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme";
 import type { RootStackParamList } from "../../../types/navigation";
 import type { NotificationItem } from "../../../services/api/notification.api";
 import { wsService } from "../../../services/websocket";

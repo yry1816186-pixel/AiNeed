@@ -188,7 +188,9 @@ export class BehaviorTrackingService {
       select: { itemId: true },
     });
     for (const item of purchased) {
-      excluded.add(item.itemId);
+      if (item.itemId) {
+        excluded.add(item.itemId);
+      }
     }
 
     const favorited = await this.prisma.favorite.findMany({
@@ -196,7 +198,9 @@ export class BehaviorTrackingService {
       select: { itemId: true },
     });
     for (const item of favorited) {
-      excluded.add(item.itemId);
+      if (item.itemId) {
+        excluded.add(item.itemId);
+      }
     }
 
     const recentViews = await this.prisma.userBehavior.findMany({

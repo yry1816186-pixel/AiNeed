@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Button - UI layer re-export with extended variants
  *
  * This file re-exports the canonical Button from primitives/Button
@@ -20,7 +20,6 @@ import {
   gradients,
 } from "../../design-system/theme";
 import { SpringConfigs } from "../../theme/tokens/animations";
-import { flatColors as colors } from "../theme";
 
 // Re-export from primitives for backward compatibility
 export { Button as PrimitiveButton, IconButton } from "../../design-system/primitives/Button";
@@ -91,10 +90,10 @@ const sizeConfig: Record<
 };
 
 const variantConfig: Record<ButtonVariant, { bg: string; text: string; border?: string }> = {
-  primary: { bg: colors.primary[500], text: Colors.neutral.white },
-  secondary: { bg: colors.neutral[100], text: colors.primary[500] },
-  outline: { bg: "transparent", text: colors.primary[500], border: colors.primary[500] },
-  ghost: { bg: "transparent", text: colors.primary[500] },
+  primary: { bg: Colors.primary[500], text: Colors.neutral.white },
+  secondary: { bg: Colors.neutral[100], text: Colors.primary[500] },
+  outline: { bg: "transparent", text: Colors.primary[500], border: Colors.primary[500] },
+  ghost: { bg: "transparent", text: Colors.primary[500] },
   text: { bg: "transparent", text: Colors.sage[500] },
   gradient: { bg: "transparent", text: Colors.neutral.white },
   danger: { bg: Colors.semantic.error, text: Colors.neutral.white },

@@ -16,6 +16,7 @@ import {
   Spacing,
   BorderRadius,
   Shadows,
+  DesignTokens,
   flatColors as colors,
 } from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
@@ -27,21 +28,21 @@ import { PhotoStep } from "./steps/PhotoStep";
 import { StyleTestStep } from "./steps/StyleTestStep";
 import { CompleteStep } from "./steps/CompleteStep";
 import type { RootStackParamList } from "../../../types/navigation";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { flatColors as colors } from "../../../design-system/theme";
 
 type NavigationPropType = NavigationProp<RootStackParamList>;
 
-const STEP_ORDER: OnboardingStep[] = ["basicInfo", "photo", "styleTest", "complete"];
+const STEP_ORDER: OnboardingStep[] = ["basicInfo", "styleTest", "photo", "complete"];
 
 const STEP_TITLES: Record<OnboardingStep, string> = {
-  basicInfo: "基本信息",
+  basicInfo: "认识你",
+  styleTest: "你的风格",
   photo: "上传照片",
-  styleTest: "风格测试",
   complete: "完成设置",
 };
 
-const SKIPPABLE_STEPS: OnboardingStep[] = ["photo", "styleTest"];
+const SKIPPABLE_STEPS: OnboardingStep[] = ["photo"];
+
+const TOTAL_STEPS = STEP_ORDER.length - 1; // 3 steps, excluding complete
 
 export const OnboardingWizard: React.FC = () => {
   const { colors } = useTheme();
@@ -58,18 +59,17 @@ export const OnboardingWizard: React.FC = () => {
   } = useOnboardingStore();
 
   const stepIndex = STEP_ORDER.indexOf(currentStep);
-  const totalSteps = STEP_ORDER.length;
 
-  const progressValue = useSharedValue((stepIndex + 1) / totalSteps);
+  const progressValue = useSharedValue(Math.min((stepIndex + 1) / TOTAL_STEPS, 1));
 
   const updateProgress = useCallback(
     (step: number) => {
-      progressValue.value = withSpring((step + 1) / totalSteps, {
+      progressValue.value = withSpring(Math.min((step + 1) / TOTAL_STEPS, 1), {
         damping: 15,
         stiffness: 120,
       });
     },
-    [progressValue, totalSteps]
+    [progressValue]
   );
 
   const progressStyle = useAnimatedStyle(() => ({
@@ -80,8 +80,11 @@ export const OnboardingWizard: React.FC = () => {
     if (currentStep === "basicInfo") {
       return formData.gender !== null && formData.ageRange !== null;
     }
+    if (currentStep === "styleTest") {
+      return formData.styleAnswers.length === 3 && formData.styleAnswers.every(Boolean);
+    }
     return true;
-  }, [currentStep, formData.gender, formData.ageRange]);
+  }, [currentStep, formData.gender, formData.ageRange, formData.styleAnswers]);
 
   const handleNext = useCallback(() => {
     if (!canProceed()) {
@@ -172,7 +175,11 @@ export const OnboardingWizard: React.FC = () => {
             exiting={SlideOutLeft}
             style={styles.stepContainer}
           >
-            <StyleTestStep onNext={handleNext} onSkip={handleSkip} />
+            <StyleTestStep
+              formData={formData}
+              updateFormData={updateFormData}
+              onNext={handleNext}
+            />
           </Animated.View>
         );
       case "complete":
@@ -198,7 +205,7 @@ export const OnboardingWizard: React.FC = () => {
           <Animated.View style={[styles.progressFill, progressStyle]} />
         </View>
         <Text style={styles.stepCounter}>
-          {stepIndex + 1}/{totalSteps}
+          {Math.min(stepIndex + 1, TOTAL_STEPS)}/{TOTAL_STEPS}
         </Text>
       </View>
 

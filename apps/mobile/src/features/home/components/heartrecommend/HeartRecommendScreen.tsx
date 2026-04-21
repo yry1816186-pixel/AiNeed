@@ -135,6 +135,14 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
       { name: "羊绒毛衣", brand: "Everlane", category: "tops", price: 999 },
     ];
 
+    const colorSets = [
+      ["黑色"],
+      ["黑色", "白色"],
+      ["黑色", "白色", "米色"],
+      ["黑色", "白色", "米色", "灰色"],
+    ];
+    const scores = [85, 88, 82, 90, 87, 83, 91, 86];
+
     return mockItems.map((item, idx) => ({
       id: `mock-${idx}`,
       name: item.name,
@@ -143,17 +151,16 @@ export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onCl
       currency: "CNY",
       images: [`https://picsum.photos/400/500?random=${idx + 100}`],
       category: item.category,
-      colors: ["黑色", "白色", "米色", "灰色"].slice(0, Math.floor(Math.random() * 3) + 1),
+      colors: colorSets[idx % colorSets.length],
       sizes: ["S", "M", "L", "XL"],
       brand: { id: `brand-${idx}`, name: item.brand },
       tags: ["新品", "热卖", "限量"],
-      score: Math.floor(Math.random() * 20) + 80,
+      score: scores[idx % scores.length],
       matchReasons: ["适合您的风格", "颜色搭配推荐", "尺码合适"],
     }));
   };
 
   const handleSwipeLeft = () => {
-    const { colors } = useTheme();
     const currentProduct = products[currentIndex];
     if (currentProduct) {
       heartRecommendStore.addSwipeAction({

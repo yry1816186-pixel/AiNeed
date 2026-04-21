@@ -13,8 +13,9 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { DesignTokens } from "../../../design-system/theme";
+import { flatColors as colors } from "../../../design-system/theme";
 import { useProfileStore } from "../stores/profileStore";
 import { ScreenLayout, Header } from "../../../shared/components/layout/ScreenLayout";
 import type { RootStackParamList } from "../../../types/navigation";

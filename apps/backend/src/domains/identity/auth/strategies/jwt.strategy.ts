@@ -13,14 +13,13 @@ const logger = new Logger("JwtStrategy");
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private configService: ConfigService,
-    private tokenBlacklistService: TokenBlacklistService,
+    private tokenBlacklistService: TokenBlacklistService
   ) {
     const jwtSecret = configService.get<string>("JWT_SECRET");
 
     if (!jwtSecret) {
       logger.error(
-        "FATAL: JWT_SECRET environment variable is not set. " +
-          "JWT authentication will not work.",
+        "FATAL: JWT_SECRET environment variable is not set. " + "JWT authentication will not work."
       );
       throw new Error("JWT_SECRET environment variable is required");
     }
@@ -33,11 +32,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: { sub: string; email: string; jti?: string }) {
-    if (payload.jti) {
-      const isBlacklisted = await this.tokenBlacklistService.isBlacklisted(payload.jti);
-      if (isBlacklisted) {
-        throw new UnauthorizedException("Token has been revoked");
-      }
+    if (!payload.jti) {
+      throw new UnauthorizedException("Token missing identifier");
+    }
+
+    const isBlacklisted = await this.tokenBlacklistService.isBlacklisted(payload.jti);
+    if (isBlacklisted) {
+      throw new UnauthorizedException("Token has been revoked");
     }
 
     return { id: payload.sub, email: payload.email };

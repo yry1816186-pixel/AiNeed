@@ -78,12 +78,14 @@ export class ColdStartService {
 
   async getDemographicRecommendations(
     userId: string,
-    topK: number = 10,
+    topK: number = 10
   ): Promise<Array<{ itemId: string; score: number; reason: string }>> {
     const profile = await this.prisma.userProfile.findUnique({ where: { userId } });
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
-    if (!user) {return [];}
+    if (!user) {
+      return [];
+    }
 
     const reasons: string[] = [];
 
@@ -106,6 +108,7 @@ export class ColdStartService {
     });
 
     const scored = items.map((item: any) => ({
+      itemId: item.id,
       score: 50 + this.deterministicOffset(userId, item.id, 30),
       reason: reasons.join("，") || "为你精选推荐",
     }));
@@ -115,7 +118,7 @@ export class ColdStartService {
 
   async getHybridRecommendations(
     userId: string,
-    topK: number = 10,
+    topK: number = 10
   ): Promise<Array<{ itemId: string; score: number; reason: string }>> {
     const profile = await this.prisma.userProfile.findUnique({ where: { userId } });
     const hasProfile = !!profile;
@@ -150,7 +153,7 @@ export class ColdStartService {
   }
 
   private async getPopularRecommendations(
-    topK: number,
+    topK: number
   ): Promise<Array<{ itemId: string; score: number; reason: string }>> {
     const items = await this.prisma.clothingItem.findMany({
       where: { isActive: true },
@@ -168,19 +171,23 @@ export class ColdStartService {
 
   private translateColorSeason(season: string): string {
     const map: Record<string, string> = {
-      spring_warm: "暖春", spring_light: "浅春",
-      summer_cool: "凉夏", summer_light: "浅夏",
-      autumn_warm: "暖秋", autumn_deep: "深秋",
-      winter_cool: "冷冬", winter_deep: "深冬",
-      spring: "春", summer: "夏", autumn: "秋", winter: "冬",
+      spring_warm: "暖春",
+      spring_light: "浅春",
+      summer_cool: "凉夏",
+      summer_light: "浅夏",
+      autumn_warm: "暖秋",
+      autumn_deep: "深秋",
+      winter_cool: "冷冬",
+      winter_deep: "深冬",
+      spring: "春",
+      summer: "夏",
+      autumn: "秋",
+      winter: "冬",
     };
     return map[season] || season;
   }
 
-  async handleNewUser(
-    userId: string,
-    profile?: UserProfile,
-  ): Promise<ColdStartStrategy> {
+  async handleNewUser(userId: string, profile?: UserProfile): Promise<ColdStartStrategy> {
     const userBehaviorCount = await this.prisma.userBehavior.count({
       where: { userId },
     });
@@ -202,13 +209,10 @@ export class ColdStartService {
 
   private async getDemographicStrategy(
     userId: string,
-    profile: UserProfile,
+    profile: UserProfile
   ): Promise<ColdStartStrategy> {
     const ageGroup = this.getAgeGroup(profile.age!);
-    const genderRules =
-      this.demographicRules[
-        profile.gender as keyof typeof this.demographicRules
-      ];
+    const genderRules = this.demographicRules[profile.gender as keyof typeof this.demographicRules];
 
     if (!genderRules) {
       return this.getPopularityStrategy(userId);
@@ -227,7 +231,9 @@ export class ColdStartService {
         recommendations.push({
           itemId: item.id,
           score: this.deterministicScore(userId, item.id, 70, 20, style),
-          reason: `适合${this.getAgeGroupName(ageGroup)}${profile.gender === "male" ? "男性" : "女性"}的${style}风格`,
+          reason: `适合${this.getAgeGroupName(ageGroup)}${
+            profile.gender === "male" ? "男性" : "女性"
+          }的${style}风格`,
           strategy: "demographic",
         });
       }
@@ -242,7 +248,7 @@ export class ColdStartService {
 
   private async getSurveyBasedStrategy(
     userId: string,
-    profile: UserProfile,
+    profile: UserProfile
   ): Promise<ColdStartStrategy> {
     const recommendations: ColdStartRecommendation[] = [];
 
@@ -259,10 +265,7 @@ export class ColdStartService {
     }
 
     if (profile.colorPreferences && profile.colorPreferences.length > 0) {
-      const colorItems = await this.getItemsByColors(
-        profile.colorPreferences,
-        6,
-      );
+      const colorItems = await this.getItemsByColors(profile.colorPreferences, 6);
       for (const item of colorItems) {
         recommendations.push({
           itemId: item.id,
@@ -271,7 +274,7 @@ export class ColdStartService {
             item.id,
             70,
             10,
-            profile.colorPreferences.join(","),
+            profile.colorPreferences.join(",")
           ),
           reason: `包含您喜欢的颜色`,
           strategy: "survey",
@@ -283,7 +286,7 @@ export class ColdStartService {
       const priceItems = await this.getItemsByPriceRange(
         profile.priceRange.min,
         profile.priceRange.max,
-        5,
+        5
       );
       for (const item of priceItems) {
         recommendations.push({
@@ -293,7 +296,7 @@ export class ColdStartService {
             item.id,
             65,
             10,
-            `${profile.priceRange.min}-${profile.priceRange.max}`,
+            `${profile.priceRange.min}-${profile.priceRange.max}`
           ),
           reason: `符合您的预算范围`,
           strategy: "survey",
@@ -308,9 +311,7 @@ export class ColdStartService {
     };
   }
 
-  private async getPopularityStrategy(
-    userId: string,
-  ): Promise<ColdStartStrategy> {
+  private async getPopularityStrategy(userId: string): Promise<ColdStartStrategy> {
     const popularItems = await this.prisma.clothingItem.findMany({
       where: { isActive: true },
       orderBy: [{ viewCount: "desc" }, { likeCount: "desc" }],
@@ -320,17 +321,12 @@ export class ColdStartService {
 
     const maxViews = popularItems[0]?.viewCount || 1;
 
-    const recommendations: ColdStartRecommendation[] = popularItems.map(
-      (item: any) => ({
-        itemId: item.id,
-        score:
-          50 +
-          (item.viewCount / maxViews) * 30 +
-          this.deterministicOffset(userId, item.id, 10),
-        reason: "热门推荐",
-        strategy: "popularity",
-      }),
-    );
+    const recommendations: ColdStartRecommendation[] = popularItems.map((item: any) => ({
+      itemId: item.id,
+      score: 50 + (item.viewCount / maxViews) * 30 + this.deterministicOffset(userId, item.id, 10),
+      reason: "热门推荐",
+      strategy: "popularity",
+    }));
 
     return {
       type: "popularity",
@@ -341,7 +337,7 @@ export class ColdStartService {
 
   private async getHybridStrategy(
     userId: string,
-    profile?: UserProfile,
+    profile?: UserProfile
   ): Promise<ColdStartStrategy> {
     const recommendations: ColdStartRecommendation[] = [];
 
@@ -352,7 +348,7 @@ export class ColdStartService {
         ...r,
         score: r.score * 0.3,
         strategy: "hybrid" as const,
-      })),
+      }))
     );
 
     // 2. Survey preferences (25% weight)
@@ -363,7 +359,7 @@ export class ColdStartService {
           ...r,
           score: r.score * 0.25,
           strategy: "hybrid" as const,
-        })),
+        }))
       );
     }
 
@@ -374,7 +370,7 @@ export class ColdStartService {
         ...r,
         score: r.score * 0.25,
         strategy: "hybrid" as const,
-      })),
+      }))
     );
 
     // 4. Body type preference mapping (15% weight)
@@ -384,21 +380,18 @@ export class ColdStartService {
         ...r,
         score: r.score * 0.15,
         strategy: "hybrid" as const,
-      })),
+      }))
     );
 
     // 5. Demographic rules (5% weight - minimal)
     if (profile?.gender && profile?.age) {
-      const demographicStrategy = await this.getDemographicStrategy(
-        userId,
-        profile,
-      );
+      const demographicStrategy = await this.getDemographicStrategy(userId, profile);
       recommendations.push(
         ...demographicStrategy.recommendations.map((r) => ({
           ...r,
           score: r.score * 0.05,
           strategy: "hybrid" as const,
-        })),
+        }))
       );
     }
 
@@ -445,8 +438,12 @@ export class ColdStartService {
   }
 
   private getAgeGroup(age: number): string {
-    if (age < 25) {return "young";}
-    if (age < 45) {return "middle";}
+    if (age < 25) {
+      return "young";
+    }
+    if (age < 45) {
+      return "middle";
+    }
     return "senior";
   }
 
@@ -464,18 +461,12 @@ export class ColdStartService {
     itemId: string,
     base: number,
     variance: number,
-    salt: string,
+    salt: string
   ): number {
-    return (
-      base + this.deterministicOffset(userId, `${itemId}:${salt}`, variance)
-    );
+    return base + this.deterministicOffset(userId, `${itemId}:${salt}`, variance);
   }
 
-  private deterministicOffset(
-    seedA: string,
-    seedB: string,
-    max: number,
-  ): number {
+  private deterministicOffset(seedA: string, seedB: string, max: number): number {
     const combined = `${seedA}:${seedB}`;
     let hash = 0;
     for (let i = 0; i < combined.length; i++) {
@@ -487,7 +478,7 @@ export class ColdStartService {
   }
 
   private deduplicateAndSort(
-    recommendations: ColdStartRecommendation[],
+    recommendations: ColdStartRecommendation[]
   ): ColdStartRecommendation[] {
     const seen = new Set<string>();
     const unique: ColdStartRecommendation[] = [];
@@ -508,7 +499,7 @@ export class ColdStartService {
    */
   private async getColorSeasonFilteredItems(
     userId: string,
-    limit: number,
+    limit: number
   ): Promise<ColdStartRecommendation[]> {
     const profile = await this.prisma.userProfile.findUnique({
       where: { userId },
@@ -522,16 +513,28 @@ export class ColdStartService {
     // Map color season to suitable color palette (CIELAB approximation)
     const seasonPalettes: Record<string, Array<[number, number, number]>> = {
       spring: [
-        [75, 20, 15], [70, 15, 20], [80, 10, 10], [65, 25, 20],
+        [75, 20, 15],
+        [70, 15, 20],
+        [80, 10, 10],
+        [65, 25, 20],
       ],
       summer: [
-        [70, 8, -10], [75, 5, -15], [65, 10, -5], [80, 3, -8],
+        [70, 8, -10],
+        [75, 5, -15],
+        [65, 10, -5],
+        [80, 3, -8],
       ],
       autumn: [
-        [55, 15, 25], [50, 20, 30], [60, 10, 20], [45, 18, 22],
+        [55, 15, 25],
+        [50, 20, 30],
+        [60, 10, 20],
+        [45, 18, 22],
       ],
       winter: [
-        [50, 25, -20], [45, 20, -25], [55, 15, -15], [40, 30, -30],
+        [50, 25, -20],
+        [45, 20, -25],
+        [55, 15, -15],
+        [40, 30, -30],
       ],
     };
 
@@ -555,28 +558,48 @@ export class ColdStartService {
 
     const recommendations: ColdStartRecommendation[] = [];
     const colorNameToRgb: Record<string, [number, number, number]> = {
-      black: [0, 0, 0], white: [255, 255, 255], gray: [128, 128, 128],
-      red: [255, 0, 0], blue: [0, 0, 255], green: [0, 128, 0],
-      yellow: [255, 255, 0], orange: [255, 165, 0], pink: [255, 192, 203],
-      purple: [128, 0, 128], brown: [139, 69, 19], beige: [245, 245, 220],
-      navy: [0, 0, 128], cream: [255, 253, 208], tan: [210, 180, 140],
-      burgundy: [128, 0, 32], coral: [255, 127, 80], olive: [128, 128, 0],
-      maroon: [128, 0, 0], teal: [0, 128, 128], ivory: [255, 255, 240],
-      khaki: [195, 176, 145], charcoal: [54, 69, 79], camel: [193, 154, 107],
+      black: [0, 0, 0],
+      white: [255, 255, 255],
+      gray: [128, 128, 128],
+      red: [255, 0, 0],
+      blue: [0, 0, 255],
+      green: [0, 128, 0],
+      yellow: [255, 255, 0],
+      orange: [255, 165, 0],
+      pink: [255, 192, 203],
+      purple: [128, 0, 128],
+      brown: [139, 69, 19],
+      beige: [245, 245, 220],
+      navy: [0, 0, 128],
+      cream: [255, 253, 208],
+      tan: [210, 180, 140],
+      burgundy: [128, 0, 32],
+      coral: [255, 127, 80],
+      olive: [128, 128, 0],
+      maroon: [128, 0, 0],
+      teal: [0, 128, 128],
+      ivory: [255, 255, 240],
+      khaki: [195, 176, 145],
+      charcoal: [54, 69, 79],
+      camel: [193, 154, 107],
     };
 
     for (const item of items) {
-      if (!item.colors || item.colors.length === 0) {continue;}
+      if (!item.colors || item.colors.length === 0) {
+        continue;
+      }
 
       let bestDeltaE = Infinity;
       for (const colorName of item.colors) {
         const rgb = colorNameToRgb[colorName.toLowerCase()];
-        if (!rgb) {continue;}
+        if (!rgb) {
+          continue;
+        }
         const itemLab = rgbToLab({ r: rgb[0], g: rgb[1], b: rgb[2] });
         for (const paletteLab of palette) {
           const delta = ciede2000(
             { L: itemLab.L, a: itemLab.a, b: itemLab.b },
-            { L: paletteLab[0], a: paletteLab[1], b: paletteLab[2] },
+            { L: paletteLab[0], a: paletteLab[1], b: paletteLab[2] }
           );
           bestDeltaE = Math.min(bestDeltaE, delta);
         }
@@ -596,9 +619,7 @@ export class ColdStartService {
       }
     }
 
-    return recommendations
-      .sort((a, b) => b.score - a.score)
-      .slice(0, limit);
+    return recommendations.sort((a, b) => b.score - a.score).slice(0, limit);
   }
 
   /**
@@ -607,7 +628,7 @@ export class ColdStartService {
    */
   private async getBodyTypeFilteredItems(
     userId: string,
-    limit: number,
+    limit: number
   ): Promise<ColdStartRecommendation[]> {
     const profile = await this.prisma.userProfile.findUnique({
       where: { userId },
@@ -619,11 +640,14 @@ export class ColdStartService {
     }
 
     // Body type -> suitable style/category mapping
-    const bodyTypePreferences: Record<string, {
-      styles: string[];
-      categories: string[];
-      avoid: string[];
-    }> = {
+    const bodyTypePreferences: Record<
+      string,
+      {
+        styles: string[];
+        categories: string[];
+        avoid: string[];
+      }
+    > = {
       rectangle: {
         styles: ["casual", "streetwear", "minimalist"],
         categories: ["tops", "outerwear", "bottoms"],
@@ -659,10 +683,7 @@ export class ColdStartService {
     const items = await this.prisma.clothingItem.findMany({
       where: {
         isActive: true,
-        OR: [
-          { tags: { hasSome: prefs.styles } },
-          { tags: { hasSome: prefs.categories } },
-        ],
+        OR: [{ tags: { hasSome: prefs.styles } }, { tags: { hasSome: prefs.categories } }],
       },
       orderBy: { likeCount: "desc" },
       take: limit,
@@ -768,7 +789,7 @@ export class ColdStartService {
 
   async saveOnboardingAnswers(
     userId: string,
-    answers: Record<string, string[]>,
+    answers: Record<string, string[]>
   ): Promise<UserProfile> {
     const profile: UserProfile = {};
 
@@ -784,9 +805,7 @@ export class ColdStartService {
         vibrant: ["red", "orange", "yellow", "green"],
         dark: ["navy", "black", "burgundy", "charcoal"],
       };
-      profile.colorPreferences = answers.color.flatMap(
-        (c) => colorMapping[c] || [],
-      );
+      profile.colorPreferences = answers.color.flatMap((c) => colorMapping[c] || []);
     }
 
     if (answers.price) {
@@ -798,9 +817,7 @@ export class ColdStartService {
       };
       const priceRanges = answers.price
         .map((p) => priceMapping[p])
-        .filter(
-          (range): range is { min: number; max: number } => Boolean(range),
-        );
+        .filter((range): range is { min: number; max: number } => Boolean(range));
       if (priceRanges.length > 0) {
         profile.priceRange = {
           min: Math.min(...priceRanges.map((r) => r.min)),
