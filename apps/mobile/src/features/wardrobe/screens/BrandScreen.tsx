@@ -28,7 +28,6 @@ type BrandRoute = RouteProp<ProfileStackParamList, "Brand">;
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
 export const BrandScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<BrandRoute>();
   const brandId = route.params?.brandId;

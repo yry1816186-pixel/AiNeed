@@ -51,6 +51,7 @@ export function WaterfallFlashList<T extends WaterfallItem>({
   accessibilityLabel,
   style,
 }: WaterfallFlashListProps<T>) {
+  const styles = useStyles(colors);
   const {
     data,
     isLoading,
@@ -149,6 +150,7 @@ export function WaterfallFlashList<T extends WaterfallItem>({
 }
 
 function LoadingFooter() {
+  const styles = useStyles(colors);
   return (
     <View style={styles.loadingFooter}>
       <ActivityIndicator size="small" color={colors.primary[500]} />

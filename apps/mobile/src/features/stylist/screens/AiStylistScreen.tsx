@@ -30,7 +30,6 @@ import {
 } from "../../../components/aistylist";
 
 export const AiStylistScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const authLoading = useAuthStore((s) => s.isLoading);

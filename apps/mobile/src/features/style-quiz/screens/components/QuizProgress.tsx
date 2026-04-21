@@ -10,7 +10,6 @@ interface QuizProgressProps {
 }
 
 export const QuizProgress: React.FC<QuizProgressProps> = ({ currentStep, totalSteps }) => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const progressAnim = React.useRef(new Animated.Value(0)).current;

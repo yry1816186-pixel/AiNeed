@@ -73,7 +73,6 @@ const FavoriteItem = memo(function FavoriteItem({ item, onPress, onRemove }: Fav
 });
 
 export const FavoritesScreen: React.FC = () => {
-  const styles = useStyles(colors);
   const navigation = useNavigation<NavProp>();
   const { colors } = useTheme();
   const styles = useStyles(colors);

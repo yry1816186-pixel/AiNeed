@@ -46,8 +46,8 @@ export function RetryWrapper({
   accessibilityLabel,
   style,
 }: RetryWrapperProps) {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { maxRetries = 3, retryDelay = 1000, backoffMultiplier = 2 } = config;
   const [state, setState] = useState<RetryState>({ isLoading: false, error: null, retryCount: 0 });
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);

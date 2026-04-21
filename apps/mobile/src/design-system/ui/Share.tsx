@@ -3,8 +3,15 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import Share, { ShareOptions } from "react-native-share";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../design-system/theme";
-import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
+import {
+  flatColors as colors,
+  Colors,
+  Spacing,
+  BorderRadius,
+  Typography,
+  Shadows,
+} from "../../design-system/theme";
+import { createStyles } from "../../shared/contexts/ThemeContext";
 
 interface ShareButtonProps {
   title?: string;
@@ -24,7 +31,6 @@ export function ShareButton({
   onError,
 }: ShareButtonProps) {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
   const handleShare = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -87,6 +93,7 @@ interface ShareProductProps {
 }
 
 export function ShareProduct({ product, variant = "button" }: ShareProductProps) {
+  const styles = useStyles(colors);
   const handleShare = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -130,6 +137,7 @@ interface ShareOutfitProps {
 }
 
 export function ShareOutfit({ outfit }: ShareOutfitProps) {
+  const styles = useStyles(colors);
   const handleShare = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -166,6 +174,7 @@ interface ShareToSocialProps {
 }
 
 export function ShareToSocial({ platform, title, message, image, onSuccess }: ShareToSocialProps) {
+  const styles = useStyles(colors);
   const handleShare = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 

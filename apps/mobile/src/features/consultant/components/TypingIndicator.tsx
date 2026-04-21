@@ -9,12 +9,10 @@ import Animated, {
 } from "react-native-reanimated";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 export const TypingIndicator: React.FC = () => {
   const styles = useStyles(colors);
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const dot1Y = useSharedValue(0);
   const dot2Y = useSharedValue(0);
   const dot3Y = useSharedValue(0);

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Feather } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { createStyles } from "../../contexts/ThemeContext";
 
 interface EmptyStateProps {
   icon?: keyof typeof Feather.glyphMap;
@@ -21,7 +21,6 @@ export function EmptyState({
   onAction,
 }: EmptyStateProps) {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>

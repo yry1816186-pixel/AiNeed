@@ -79,7 +79,6 @@ const CATEGORIES = [
  * but rendered inline as a static preview (no drag/gesture).
  */
 export const AIBallPreview: React.FC<{ size: number }> = React.memo(({ size }) => {
-  const { colors } = useTheme();
   const scale = useSharedValue(1);
   const glow = useSharedValue(0);
 
@@ -105,6 +104,8 @@ export const AIBallPreview: React.FC<{ size: number }> = React.memo(({ size }) =
       cancelAnimation(glow);
     };
   }, []);
+
+  const partStyles = usePartStyles(colors);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -143,13 +144,16 @@ export const AIBallPreview: React.FC<{ size: number }> = React.memo(({ size }) =
  * Dot indicators for the recommendation carousel.
  */
 export const CarouselDots: React.FC<{ count: number; activeIndex: number }> = React.memo(
-  ({ count, activeIndex }) => (
-    <View style={partStyles.dotsRow}>
-      {Array.from({ length: count }).map((_, i) => (
-        <View key={i} style={[partStyles.dot, i === activeIndex && partStyles.dotActive]} />
-      ))}
-    </View>
-  )
+  ({ count, activeIndex }) => {
+    const partStyles = usePartStyles(colors);
+    return (
+      <View style={partStyles.dotsRow}>
+        {Array.from({ length: count }).map((_, i) => (
+          <View key={i} style={[partStyles.dot, i === activeIndex && partStyles.dotActive]} />
+        ))}
+      </View>
+    );
+  }
 );
 
 /**
@@ -159,7 +163,6 @@ export const RecommendationCarouselCard: React.FC<{
   item: RecommendedItem & { occasion: string };
   onPress: () => void;
 }> = React.memo(({ item, onPress }) => {
-  const { colors } = useTheme();
   const gradient = OCCASION_GRADIENTS[item.occasion] ?? OCCASION_GRADIENTS["休闲"];
 
   return (
@@ -252,23 +255,26 @@ export const CategoryCell: React.FC<{
  * Empty state placeholder for community section when no posts are available.
  */
 export const CommunityEmptyState: React.FC<{ onPressExplore: () => void }> = React.memo(
-  ({ onPressExplore }) => (
-    <View style={partStyles.communityEmptyContainer}>
-      <View style={partStyles.communityEmptyIconCircle}>
-        <Ionicons name="people-outline" size={32} color={DesignTokens.colors.neutral[400]} />
+  ({ onPressExplore }) => {
+    const partStyles = usePartStyles(colors);
+    return (
+      <View style={partStyles.communityEmptyContainer}>
+        <View style={partStyles.communityEmptyIconCircle}>
+          <Ionicons name="people-outline" size={32} color={DesignTokens.colors.neutral[400]} />
+        </View>
+        <Text style={partStyles.communityEmptyTitle}>暂无社区内容</Text>
+        <Text style={partStyles.communityEmptySubtitle}>快来成为第一个分享穿搭灵感的人吧</Text>
+        <TouchableOpacity
+          style={partStyles.communityEmptyButton}
+          onPress={onPressExplore}
+          accessibilityLabel="去逛逛"
+          accessibilityRole="button"
+        >
+          <Text style={partStyles.communityEmptyButtonText}>去逛逛</Text>
+        </TouchableOpacity>
       </View>
-      <Text style={partStyles.communityEmptyTitle}>暂无社区内容</Text>
-      <Text style={partStyles.communityEmptySubtitle}>快来成为第一个分享穿搭灵感的人吧</Text>
-      <TouchableOpacity
-        style={partStyles.communityEmptyButton}
-        onPress={onPressExplore}
-        accessibilityLabel="去逛逛"
-        accessibilityRole="button"
-      >
-        <Text style={partStyles.communityEmptyButtonText}>去逛逛</Text>
-      </TouchableOpacity>
-    </View>
-  )
+    );
+  }
 );
 
 // =====================================================

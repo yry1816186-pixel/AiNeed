@@ -2,10 +2,9 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 import type { DesignLayer } from "../stores/customizationEditorStore";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { flatColors as colors } from "../../../design-system/theme";
 
 interface LayerPanelProps {
   layers: DesignLayer[];
@@ -56,8 +55,8 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
                   layer.type === "image"
                     ? "image-outline"
                     : layer.type === "text"
-                      ? "text-outline"
-                      : "shapes-outline"
+                    ? "text-outline"
+                    : "shapes-outline"
                 }
                 size={18}
                 color={isSelected ? colors.primary : colors.textSecondary}

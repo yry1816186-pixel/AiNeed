@@ -45,8 +45,8 @@ export function ErrorState({
   accessibilityLabel,
   style,
 }: ErrorStateProps) {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const config = ERROR_CONFIG[type];
   const displayTitle = title || config.title;
   const displayDesc = description || config.description;

@@ -54,7 +54,6 @@ interface SelectedItem {
 }
 
 export const CreatePostScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

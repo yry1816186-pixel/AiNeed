@@ -18,9 +18,8 @@ const CARD_WIDTH = (SCREEN_WIDTH - HORIZONTAL_PADDING * 2 - CARD_GAP) / NUM_COLU
  * - 2-column grid of clothing items
  */
 export const WardrobeSkeleton: React.FC = () => {
-  const styles = useStyles(colors);
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
     <View style={styles.container}>
       {/* Header */}

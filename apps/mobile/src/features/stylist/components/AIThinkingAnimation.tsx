@@ -42,7 +42,6 @@ const TOTAL_CYCLE = 6000;
 // ============ Reduced Motion: Static text with pulsing gradient bar ============
 
 function ReducedMotionAnimation() {
-  const { colors } = useTheme();
   const opacity = useSharedValue(0.4);
 
   useEffect(() => {

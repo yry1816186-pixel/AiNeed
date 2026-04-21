@@ -20,7 +20,7 @@ import {
   Shadows,
   flatColors as colors,
 } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { launchImageLibrary } from "react-native-image-picker";
 import { useCustomizationEditorStore, type DesignLayer } from "../stores/customizationEditorStore";
@@ -39,7 +39,6 @@ const CANVAS_WIDTH = SCREEN_WIDTH - 32;
 const CANVAS_HEIGHT = Math.round(CANVAS_WIDTH * 1.2);
 
 export const CustomizationEditorScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const [showTextModal, setShowTextModal] = useState(false);
   const [textContent, setTextContent] = useState("");

@@ -13,8 +13,6 @@ import type {
 import { DesignTokens } from "../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from "../design-system/theme";
 
-import { flatColors as colors } from "../design-system/theme";
-
 export type { PrintableAreaBounds } from "../types/customization";
 export type DesignLayer = Omit<CustomizationDesignLayer, "designId">;
 export type Template = ApiTemplate;

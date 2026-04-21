@@ -12,9 +12,9 @@ import {
 } from "react-native-svg";
 import { colors } from "@/src/theme/tokens/colors";
 import { DesignTokens } from "@/src/design-system/theme";
-import { typography } from "@/src/theme/tokens/typography";
-import { spacing } from "@/src/theme/tokens/spacing";
-import { shadows } from "@/src/theme/tokens/shadows";
+import { typography } from "@/src/design-system/theme/tokens/typography";
+import { spacing } from "@/src/design-system/theme/tokens/spacing";
+import { shadows } from "@/src/design-system/theme/tokens/shadows";
 import type { ColorAnalysisReport } from "@/src/services/api/profile.api";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
@@ -216,7 +216,6 @@ export const ColorSeasonCard: React.FC<ColorSeasonCardProps> = ({
   collapsed,
   onToggle,
 }) => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const season = colorAnalysis?.colorSeason?.type || "";

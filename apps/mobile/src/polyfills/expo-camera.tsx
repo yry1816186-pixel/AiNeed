@@ -2,7 +2,7 @@
 import { View, ViewStyle, StyleSheet } from "react-native";
 import { DesignTokens } from "../design-system/theme";
 import { flatColors as colors } from "../design-system/theme";
-import { useTheme, createStyles } from "../shared/contexts/ThemeContext";
+import { createStyles } from "../shared/contexts/ThemeContext";
 
 export interface CameraRef {
   takePictureAsync: () => Promise<{ uri: string }>;
@@ -26,8 +26,6 @@ export const Camera: React.FC<CameraProps> = ({
   onMountError,
   children,
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   React.useEffect(() => {
     onCameraReady?.();

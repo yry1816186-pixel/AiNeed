@@ -11,7 +11,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { communityApi } from "../../services/api/community.api";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface TrendingTag {
   name: string;
@@ -30,8 +30,6 @@ const DIRECTION_CONFIG = {
 } as const;
 
 export const TrendingCard: React.FC<TrendingCardProps> = ({ onPressTag }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const [tags, setTags] = useState<TrendingTag[]>([]);
   const [loading, setLoading] = useState(true);

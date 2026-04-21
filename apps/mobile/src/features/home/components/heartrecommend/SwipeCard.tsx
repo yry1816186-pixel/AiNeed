@@ -13,7 +13,12 @@ import Animated, {
 import { Svg, Circle, Path, Text as SvgText } from "react-native-svg";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, BorderRadius, Shadows } from "../../../../design-system/theme";
+import {
+  flatColors as colors,
+  Colors,
+  BorderRadius,
+  Shadows,
+} from "../../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { SpringConfigs } from "../../../design-system/theme/tokens/animations";
@@ -75,7 +80,6 @@ export const SwipeCard = memo(function SwipeCard({
   isFavorite = false,
   onFavorite,
 }: SwipeCardProps) {
-  const { colors } = useTheme();
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const _scale = useSharedValue(1);

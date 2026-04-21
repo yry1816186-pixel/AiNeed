@@ -21,6 +21,7 @@ export const RecommendationCard = memo(function RecommendationCard({
   style,
   compact = false,
 }: RecommendationCardProps) {
+  const styles = useStyles(colors);
   const handlePress = useCallback(() => onPress(item), [item, onPress]);
 
   const discount =

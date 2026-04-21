@@ -24,7 +24,6 @@ const PLACEHOLDER_PALETTE = [
 ]; // custom color
 
 export const SharePosterScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<SharePosterNavProp>();
   const viewShotRef = useRef<View>(null);
   const { profile, colorAnalysis, loadProfile, loadColorAnalysis } = useProfileStore();

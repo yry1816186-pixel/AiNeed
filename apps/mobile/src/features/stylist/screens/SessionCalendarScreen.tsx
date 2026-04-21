@@ -17,7 +17,6 @@ function getFirstDayOfWeek(year: number, month: number): number {
 }
 
 export const SessionCalendarScreen: React.FC = () => {
-  const { colors } = useTheme();
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);

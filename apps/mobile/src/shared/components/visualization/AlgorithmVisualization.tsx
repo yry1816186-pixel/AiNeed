@@ -43,7 +43,7 @@ import AnimatedReanimated from "react-native-reanimated";
 import { Colors } from "../../../design-system/theme";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -297,8 +297,6 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   style,
 }) => {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const animatedScore = useSharedValue(0);
   const animatedProgress = useSharedValue(0);
   const scale = useSharedValue(0.8);
@@ -357,7 +355,6 @@ export const MatchScore: React.FC<MatchScoreProps> = ({
   }));
 
   const getScoreColor = (value: number) => {
-    const { colors } = useTheme();
     if (value >= 90) {
       return colors.success; // custom color
     }
@@ -486,7 +483,6 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
   showAnimation = true,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const animatedProgress = useSharedValue(0);
   const scale = useSharedValue(0.8);
@@ -552,7 +548,6 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
         </Defs>
 
         {Array.from({ length: levels }).map((_, levelIndex) => {
-          const { colors } = useTheme();
           const levelRadius = (radius * (levelIndex + 1)) / levels;
           const points = dimensions
             .map((_, dimIndex) => {
@@ -576,7 +571,6 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
         })}
 
         {dimensions.map((_, index) => {
-          const { colors } = useTheme();
           const angle = index * angleStep - Math.PI / 2;
           const endX = centerX + radius * Math.cos(angle);
           const endY = centerY + radius * Math.sin(angle);
@@ -603,7 +597,6 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
         />
 
         {dimensions.map((dim, index) => {
-          const { colors } = useTheme();
           const point = getPoint(index, dim.value, dim.maxValue || 100);
           return (
             <Circle
@@ -620,7 +613,6 @@ export const StyleRadarChart: React.FC<StyleRadarChartProps> = ({
 
         {showLabels &&
           dimensions.map((dim, index) => {
-            const { colors } = useTheme();
             const angle = index * angleStep - Math.PI / 2;
             const labelRadius = radius + 25;
             const labelX = centerX + labelRadius * Math.cos(angle);
@@ -664,7 +656,6 @@ export const ColorPaletteAnalysis: React.FC<ColorPaletteAnalysisProps> = ({
   showAnimation = true,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const opacity = useSharedValue(0);
@@ -733,7 +724,6 @@ export const BodyShapeAnalysis: React.FC<BodyShapeAnalysisProps> = ({
   showAnimation = true,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const bodyOpacity = useSharedValue(0);
@@ -857,7 +847,6 @@ export const OutfitCompatibility: React.FC<OutfitCompatibilityProps> = ({
   suggestions,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
@@ -871,7 +860,6 @@ export const OutfitCompatibility: React.FC<OutfitCompatibilityProps> = ({
   }));
 
   const getScoreColor = (score: number) => {
-    const { colors } = useTheme();
     if (score >= 80) {
       return colors.success; // custom color
     }
@@ -953,7 +941,6 @@ export const TrendIndicator: React.FC<TrendIndicatorProps> = ({
   period,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0.8);
   const arrowTranslateY = useSharedValue(0);

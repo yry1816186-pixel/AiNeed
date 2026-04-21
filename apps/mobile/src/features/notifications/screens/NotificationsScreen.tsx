@@ -97,7 +97,6 @@ const formatTime = (dateStr: string): string => {
 };
 
 export const NotificationsScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const t = useTranslation();
   const {

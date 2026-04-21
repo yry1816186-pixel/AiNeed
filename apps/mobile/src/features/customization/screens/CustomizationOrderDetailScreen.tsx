@@ -12,7 +12,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
+import {
+  flatColors as colors,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  DesignTokens,
+} from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import customizationApi from "../../../services/api/customization.api";
 import type { RootStackParamList } from "../../../types/navigation";
@@ -57,7 +63,6 @@ const STATUS_STEPS = [
 ];
 
 export const CustomizationOrderDetailScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<OrderDetailRoute>();
   const { requestId } = route.params;

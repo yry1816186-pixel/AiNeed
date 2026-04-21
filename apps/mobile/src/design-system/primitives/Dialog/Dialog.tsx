@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Colors, theme } from "../theme";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");

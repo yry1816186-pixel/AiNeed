@@ -1,9 +1,15 @@
 ﻿import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography } from "../../design-system/theme";
+import {
+  flatColors as colors,
+  Colors,
+  Spacing,
+  BorderRadius,
+  Typography,
+} from "../../design-system/theme";
 import { DesignTokens } from "../theme/tokens/design-tokens";
-import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
+import { createStyles } from "../../shared/contexts/ThemeContext";
 
 export interface RatingProps {
   value?: number;
@@ -29,8 +35,6 @@ export const Rating: React.FC<RatingProps> = ({
   style,
 }) => {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const sizes = { default: 20, compact: 14, large: 28 };
   const starSize = sizes[variant] || size;
 
@@ -51,7 +55,6 @@ export const Rating: React.FC<RatingProps> = ({
   return (
     <View style={[styles.container, style]}>
       {Array.from({ length: maxStars }).map((_, index) => {
-        const { colors } = useTheme();
         const filled = index < Math.floor(value);
         const halfFilled = !filled && index < value;
         return (

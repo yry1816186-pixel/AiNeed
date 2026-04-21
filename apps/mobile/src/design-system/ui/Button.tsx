@@ -19,7 +19,8 @@ import {
   Shadows,
   gradients,
 } from "../../design-system/theme";
-import { SpringConfigs } from "../../theme/tokens/animations";
+import { SpringConfigs } from "../../design-system/theme/tokens/animations";
+import { flatColors as colors } from "../../design-system/theme";
 
 // Re-export from primitives for backward compatibility
 export { Button as PrimitiveButton, IconButton } from "../../design-system/primitives/Button";

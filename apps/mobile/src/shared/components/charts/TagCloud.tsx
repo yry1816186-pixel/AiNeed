@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { colors } from "../../theme/tokens/colors";
+import { colors } from "../../design-system/theme/tokens/colors";
 
-import { spacing } from "../../theme/tokens/spacing";
+import { spacing } from "../../design-system/theme/tokens/spacing";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
@@ -53,7 +53,6 @@ const getTagStyle = (weight: number, active: boolean) => {
 };
 
 export const TagCloud: React.FC<TagCloudProps> = ({ tags, accessibilityLabel }) => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const defaultA11yLabel = accessibilityLabel || `标签云: ${tags.map((t) => t.label).join(", ")}`;

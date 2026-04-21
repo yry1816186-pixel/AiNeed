@@ -17,7 +17,7 @@ import Animated, {
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import * as Haptics from "@/src/polyfills/expo-haptics";
 import { Colors, BorderRadius, Shadows, DesignTokens } from "../../theme";
-import { SpringConfigs, Duration } from "../../../theme/tokens/animations";
+import { SpringConfigs, Duration } from "../../../design-system/theme/tokens/animations";
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "gradient" | "danger";
 export type ButtonSize = "sm" | "md" | "lg" | "xl";

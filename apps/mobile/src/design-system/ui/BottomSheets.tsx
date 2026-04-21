@@ -12,7 +12,14 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 
-import { Colors, Spacing, BorderRadius, Typography, DesignTokens } from "../../design-system/theme";
+import {
+  flatColors as colors,
+  Colors,
+  Spacing,
+  BorderRadius,
+  Typography,
+  DesignTokens,
+} from "../../design-system/theme";
 import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
 
 type _ViewStyle = import("react-native").ViewStyle;
@@ -62,7 +69,6 @@ export function ProductBottomSheet({
   onAddToCart,
   onBuyNow,
 }: ProductBottomSheetProps) {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const snapPoints = useMemo(() => ["60%", "80%"], []);
 
@@ -221,6 +227,7 @@ export function FilterBottomSheet({
   onApply,
   children,
 }: FilterBottomSheetProps) {
+  const styles = useStyles(colors);
   const snapPoints = useMemo(() => ["70%"], []);
 
   const renderBackdrop = useCallback(
@@ -293,6 +300,7 @@ interface ShareBottomSheetProps {
 }
 
 export function ShareBottomSheet({ visible, onClose, onShare }: ShareBottomSheetProps) {
+  const styles = useStyles(colors);
   const snapPoints = useMemo(() => ["35%"], []);
 
   const platforms = [

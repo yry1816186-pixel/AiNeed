@@ -14,8 +14,15 @@ import {
 } from "react-native";
 import FastImage, { FastImageProps } from "react-native-fast-image";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import {
+  flatColors as colors,
+  Colors,
+  Spacing,
+  BorderRadius,
+  Typography,
+  Shadows,
+} from "../../../design-system/theme";
+import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -34,7 +41,6 @@ const SkeletonPlaceholder: React.FC<{
   animationSpeed: number;
   style?: ViewStyle;
 }> = ({ width, height, borderRadius, animationSpeed, style }) => {
-  const { colors } = useTheme();
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -99,6 +105,7 @@ const ErrorPlaceholder = memo(function ErrorPlaceholder({
   maxRetryCount: number;
   style?: ViewStyle;
 }) {
+  const styles = useStyles(colors);
   const canRetry = enableRetry && retryCount < maxRetryCount;
 
   return (
@@ -229,6 +236,7 @@ export const ImageWithPlaceholder = memo(function ImageWithPlaceholder({
   testID,
   ...props
 }: ImageWithPlaceholderProps) {
+  const styles = useStyles(colors);
   const [status, setStatus] = useState<ImageLoadStatus>("loading");
   const [retryCount, setRetryCount] = useState(0);
   const [imageKey, setImageKey] = useState(0);
@@ -294,7 +302,6 @@ export const ImageWithPlaceholder = memo(function ImageWithPlaceholder({
    */
   const renderPlaceholder = () => {
     const styles = useStyles(colors);
-    const { colors } = useTheme();
     if (status === "loaded") {
       return null;
     }

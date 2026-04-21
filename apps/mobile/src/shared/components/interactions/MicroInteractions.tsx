@@ -42,7 +42,7 @@ import { Colors } from "../../../design-system/theme";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -124,8 +124,6 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   enableHaptic = true,
   hapticStyle = "light",
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const [ripples, setRipples] = useState<Ripple[]>([]);
   const counterRef = useRef(0);
@@ -466,7 +464,6 @@ export const SwipeAction: React.FC<SwipeActionProps> = ({
   onSwipeLeft,
   onSwipeRight,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const translateX = useSharedValue(0);
   const actionOpacity = useSharedValue(0);
@@ -569,7 +566,6 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
   headerHeight = 80,
   renderHeader,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const translateY = useSharedValue(0);
   const progress = useSharedValue(0);
@@ -876,7 +872,6 @@ export interface HapticFeedbackProps {
 }
 
 export const useHapticFeedback = () => {
-  const { colors } = useTheme();
   const impact = useCallback(
     (style: Haptics.ImpactFeedbackStyle = Haptics.ImpactFeedbackStyle.Medium) => {
       Haptics.impactAsync(style);

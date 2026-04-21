@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_GAP = 8;
@@ -195,8 +195,6 @@ export const WaterfallFeed: React.FC<WaterfallFeedProps> = ({
   onRefresh,
 }) => {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
 
   const leftColumn = useMemo(() => posts.filter((_, i) => i % 2 === 0), [posts]);
@@ -227,7 +225,6 @@ export const WaterfallFeed: React.FC<WaterfallFeedProps> = ({
   }, [isLoading, hasMore, onLoadMore]);
 
   const renderFooter = useCallback(() => {
-    const { colors } = useTheme();
     const styles = useStyles(colors);
     if (!isLoading) {
       return null;

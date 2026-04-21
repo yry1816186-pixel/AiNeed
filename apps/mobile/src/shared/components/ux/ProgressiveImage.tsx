@@ -38,6 +38,7 @@ export const ProgressiveImage = memo(function ProgressiveImage({
   accessibilityLabel,
   testID,
 }: ProgressiveImageProps) {
+  const styles = useStyles(colors);
   const thumbnailOpacity = useRef(new Animated.Value(1)).current;
   const fullImageOpacity = useRef(new Animated.Value(0)).current;
 

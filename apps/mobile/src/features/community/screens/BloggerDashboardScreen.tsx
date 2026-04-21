@@ -13,7 +13,10 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import {
+  flatColors as colors,
+  DesignTokens,
+} from "../../../design-system/theme/tokens/design-tokens";
 import { useBloggerStore } from "../stores/bloggerStore";
 import type { TrendMetric } from "../../../services/api/blogger.api";
 import type { RootStackParamList } from "../../../types/navigation";
@@ -35,7 +38,6 @@ const METRIC_OPTIONS: { key: TrendMetric; label: string }[] = [
 ];
 
 function MetricCard({ label, value, change }: { label: string; value: number; change: number }) {
-  const { colors } = useTheme();
   const isPositive = change >= 0;
   return (
     <View style={styles.metricCard}>

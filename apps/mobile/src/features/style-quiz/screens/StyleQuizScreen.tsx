@@ -23,13 +23,11 @@ import {
 import { QuizProgress } from "../../../components/QuizProgress";
 import type { RootStackParamList } from "../../../types/navigation";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 const QUIZ_ID = "default";
 
 export const StyleQuizScreen: React.FC = () => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();

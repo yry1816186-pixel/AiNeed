@@ -33,8 +33,6 @@ export const SKUSelector: React.FC<SKUSelectorProps> = ({
   itemId,
   aiRecommendation,
 }) => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const { colors: themeColors } = useTheme();
   const styles = useStyles(themeColors);
   const [color, setColor] = useState(selectedColor);

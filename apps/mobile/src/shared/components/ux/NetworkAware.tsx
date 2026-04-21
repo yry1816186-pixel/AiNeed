@@ -19,8 +19,8 @@ export function NetworkAware({
   onNetworkChange,
   showBanner = true,
 }: NetworkAwareProps) {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const { isConnected } = useNetworkStatus();
   const translateY = useSharedValue(-60);
   const isOffline = isConnected === false;

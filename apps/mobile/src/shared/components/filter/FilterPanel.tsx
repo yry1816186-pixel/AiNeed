@@ -5,7 +5,7 @@ import { ClothingCategory, CATEGORY_LABELS } from "../../../types/clothing";
 import { haptics } from "../../utils/haptics";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { createStyles } from "../../contexts/ThemeContext";
 
 interface FilterOption {
   label: string;
@@ -90,7 +90,6 @@ export function FilterPanel({
   initialFilters,
 }: FilterPanelProps) {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
   const [selectedCategories, setSelectedCategories] = useState<ClothingCategory[]>(
     initialFilters?.categories || []
   );

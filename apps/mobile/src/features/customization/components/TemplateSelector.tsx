@@ -9,10 +9,9 @@ import {
 } from "react-native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { Colors, Spacing, BorderRadius, flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 import type { Template } from "../stores/customizationEditorStore";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { flatColors as colors } from "../../../design-system/theme";
 
 interface TemplateSelectorProps {
   templates: Template[];
@@ -65,14 +64,14 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                   template.type === "tshirt"
                     ? "shirt-outline"
                     : template.type === "hat"
-                      ? "baseball-outline"
-                      : template.type === "shoes"
-                        ? "footsteps-outline"
-                        : template.type === "bag"
-                          ? "bag-outline"
-                          : template.type === "phone_case"
-                            ? "phone-portrait-outline"
-                            : "cafe-outline"
+                    ? "baseball-outline"
+                    : template.type === "shoes"
+                    ? "footsteps-outline"
+                    : template.type === "bag"
+                    ? "bag-outline"
+                    : template.type === "phone_case"
+                    ? "phone-portrait-outline"
+                    : "cafe-outline"
                 }
                 size={28}
                 color={isSelected ? colors.surface : colors.primary}

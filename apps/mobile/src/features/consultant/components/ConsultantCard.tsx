@@ -5,7 +5,7 @@ import { RatingBadge } from "../../design-system/ui/Rating";
 import { MatchBadge } from "./MatchBadge";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface ConsultantCardProps {
   id: string;
@@ -33,8 +33,6 @@ export const ConsultantCard: React.FC<ConsultantCardProps> = ({
   onPress,
   index = 0,
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   return (
     <Animated.View entering={FadeInUp.duration(300).delay(index * 50)}>

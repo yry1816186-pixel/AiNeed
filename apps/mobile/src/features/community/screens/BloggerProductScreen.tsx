@@ -27,7 +27,6 @@ type BloggerProductRoute = RouteProp<RootStackParamList, "BloggerProduct">;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export const BloggerProductScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<BloggerProductRoute>();
   const productId = route.params?.productId ?? "";

@@ -33,7 +33,6 @@ type ClothingDetailRouteProp = RouteProp<RootStackParamList, "ClothingDetail">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const ClothingDetailScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<ClothingDetailRouteProp>();
   const { clothingId } = route.params;

@@ -14,10 +14,10 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, Spacing } from "../../../design-system/theme";
+import { flatColors as colors, Colors, Spacing } from "../../../design-system/theme";
 import type { ScrollEvent } from "../../../types/events";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -63,13 +63,10 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   scrollEventThrottle = 16,
 }) => {
   const styles = useStyles(colors);
-  const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const scrollY = React.useRef(new Animated.Value(0)).current;
 
   const renderContent = () => {
-    const styles = useStyles(colors);
-    const { colors } = useTheme();
     if (scrollable) {
       return (
         <Animated.ScrollView

@@ -29,10 +29,16 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import * as Haptics from "@/src/polyfills/expo-haptics";
-import { Colors, Spacing, BorderRadius, Typography } from "../../design-system/theme";
-import { SpringConfigs } from "../../theme/tokens/animations";
+import {
+  flatColors as colors,
+  Colors,
+  Spacing,
+  BorderRadius,
+  Typography,
+} from "../../design-system/theme";
+import { SpringConfigs } from "../../design-system/theme/tokens/animations";
 import { DesignTokens } from "../theme/tokens/design-tokens";
-import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
+import { createStyles } from "../../shared/contexts/ThemeContext";
 
 // Re-export from primitives for backward compatibility
 export {
@@ -97,8 +103,6 @@ export const Input: React.FC<InputProps> = ({
   ...textInputProps
 }) => {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const [isFocused, setIsFocused] = React.useState(false);
   const [hasValue, setHasValue] = React.useState(
     !!textInputProps.value || !!textInputProps.defaultValue
@@ -150,7 +154,6 @@ export const Input: React.FC<InputProps> = ({
 
   // Label animated style - uses transform for native driver
   const labelAnimatedStyle = useAnimatedStyle(() => {
-    const { colors } = useTheme();
     const progress = labelProgress.value;
     const translateY = interpolate(progress, [0, 1], [config.height / 2 - 8, 6]);
     const scale = interpolate(progress, [0, 1], [1, 12 / config.fontSize]);
@@ -180,7 +183,6 @@ export const Input: React.FC<InputProps> = ({
     : colors.neutral[200];
 
   const getVariantStyle = (): ViewStyle => {
-    const { colors } = useTheme();
     switch (variant) {
       case "outlined":
         return {

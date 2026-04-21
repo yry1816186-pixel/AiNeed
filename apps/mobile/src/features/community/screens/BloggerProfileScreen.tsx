@@ -16,7 +16,10 @@ import type { RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import {
+  flatColors as colors,
+  DesignTokens,
+} from "../../../design-system/theme/tokens/design-tokens";
 import { communityApi } from "../../../services/api/community.api";
 import { bloggerApi, BloggerProduct } from "../../../services/api/blogger.api";
 import { FollowButton } from "../components/social/FollowButton";
@@ -48,7 +51,6 @@ interface BloggerInfo {
 }
 
 function BloggerBadge({ level }: { level: "blogger" | "big_v" }) {
-  const { colors } = useTheme();
   if (level === "big_v") {
     return (
       <View style={styles.bigVBadge}>

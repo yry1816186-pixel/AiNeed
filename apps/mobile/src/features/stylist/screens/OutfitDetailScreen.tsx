@@ -27,7 +27,6 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 type OutfitDetailRouteProp = RouteProp<RootStackParamList, "OutfitDetail">;
 
 export const OutfitDetailScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation();
   const route = useRoute<OutfitDetailRouteProp>();
   const { outfitId } = route.params;

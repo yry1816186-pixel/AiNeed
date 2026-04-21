@@ -9,9 +9,15 @@ import Animated, {
   Easing,
   interpolate,
 } from "react-native-reanimated";
-import { Colors, Spacing, BorderRadius, Shadows } from "../../design-system/theme";
+import {
+  flatColors as colors,
+  Colors,
+  Spacing,
+  BorderRadius,
+  Shadows,
+} from "../../design-system/theme";
 import { DesignTokens } from "../theme/tokens/design-tokens";
-import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
+import { createStyles } from "../../shared/contexts/ThemeContext";
 
 export type SpinnerSize = "sm" | "md" | "lg";
 
@@ -32,8 +38,6 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   overlay = false,
   text,
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const rotation = useSharedValue(0);
   const pulseProgress = useSharedValue(0);
@@ -119,7 +123,6 @@ export const InlineSpinner: React.FC<{ size?: SpinnerSize; color?: string; style
   color,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const rotation = useSharedValue(0);
   const spinnerSize = sizeMap[size];

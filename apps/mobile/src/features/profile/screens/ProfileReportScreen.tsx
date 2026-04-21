@@ -22,9 +22,9 @@ import type {
 } from "@/src/services/api/profile.api";
 import type { RootStackParamList } from "@/src/types/navigation";
 import { colors } from "@/src/theme/tokens/colors";
-import { typography } from "@/src/theme/tokens/typography";
-import { spacing } from "@/src/theme/tokens/spacing";
-import { shadows } from "@/src/theme/tokens/shadows";
+import { typography } from "@/src/design-system/theme/tokens/typography";
+import { spacing } from "@/src/design-system/theme/tokens/spacing";
+import { shadows } from "@/src/design-system/theme/tokens/shadows";
 import { withErrorBoundary } from "@/src/shared/components/ErrorBoundary";
 import { BodyTypeCard } from "../../../components/BodyTypeCard";
 import { ColorSeasonCard } from "../../../components/ColorSeasonCard";
@@ -98,7 +98,6 @@ function getProfileCompletion(profile: UserProfile): number {
 }
 
 export const ProfileReportScreenComponent: React.FC = () => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation<ProfileReportNavigationProp>();

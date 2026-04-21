@@ -13,10 +13,10 @@ import {
 } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { theme } from "../../../design-system/theme";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 import { communityApi } from "../../services/api/community.api";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 type ImportSource = "community" | "ai_stylist" | "tryon";
 
@@ -66,8 +66,6 @@ export const ImportSheet: React.FC<ImportSheetProps> = ({
   onClose,
   onImported,
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const [activeSource, setActiveSource] = useState<ImportSource>(source ?? "community");
   const [items, setItems] = useState<ImportItem[]>([]);

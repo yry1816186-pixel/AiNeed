@@ -70,7 +70,6 @@ const SCENE_BUTTONS = [
 ];
 
 export const AiStylistChatScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation();
   const route = useRoute<AiStylistChatRoute>();
   const sessionId = route.params?.sessionId;

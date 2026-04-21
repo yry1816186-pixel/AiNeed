@@ -35,7 +35,6 @@ const COUNTDOWN_SECONDS = 60;
 const CODE_LENGTH = 6;
 
 export const ForgotPasswordScreen: React.FC = () => {
-  const styles = useStyles(colors);
   const navigation = useNavigation<ForgotPasswordNavProp>();
   const t = useTranslation();
   const { colors } = useTheme();

@@ -11,7 +11,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { SpringConfigs, Duration } from "../../theme/tokens/animations";
+import { SpringConfigs, Duration } from "../../design-system/theme/tokens/animations";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { Colors } from "../../theme";
 import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
@@ -43,7 +43,6 @@ export const AnimatedHeartButton: React.FC<AnimatedHeartButtonProps> = ({
   size = 24,
   style,
 }) => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const { reducedMotion } = useReducedMotion();

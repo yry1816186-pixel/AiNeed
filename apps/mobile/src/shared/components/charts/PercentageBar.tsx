@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { colors } from "@/src/theme/tokens/colors";
-import { typography } from "@/src/theme/tokens/typography";
-import { spacing } from "@/src/theme/tokens/spacing";
+import { typography } from "@/src/design-system/theme/tokens/typography";
+import { spacing } from "@/src/design-system/theme/tokens/spacing";
 import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
 interface PercentageBarProps {
@@ -18,7 +18,6 @@ export const PercentageBar: React.FC<PercentageBarProps> = ({
   color = colors.brand.primary,
   showPercentage = true,
 }) => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const clampedPercentage = Math.max(0, Math.min(100, percentage));

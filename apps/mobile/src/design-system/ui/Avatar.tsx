@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, ViewStyle } from "react-native";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, gradients } from "../../design-system/theme";
-import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
+import { flatColors as colors, Colors, gradients } from "../../design-system/theme";
+import { createStyles } from "../../shared/contexts/ThemeContext";
 
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -31,8 +31,6 @@ const onlineDotSize: Record<AvatarSize, number> = {
 };
 
 export const Avatar: React.FC<AvatarProps> = ({ source, name, size = "md", online, style }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const avatarSize = sizeMap[size];
   const dotSize = onlineDotSize[size];

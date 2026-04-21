@@ -15,7 +15,10 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { recommendationsApi, type RecommendedItem } from "../../../services/api/tryon.api";
 import { useAuthStore } from "../stores/index";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import {
+  flatColors as colors,
+  DesignTokens,
+} from "../../../design-system/theme/tokens/design-tokens";
 
 import { ImageWithPlaceholder } from "../../../shared/components/common/ImageWithPlaceholder";
 
@@ -46,7 +49,6 @@ const RecommendationCard = memo(function RecommendationCard({
   index,
   onPress,
 }: RecommendationCardProps) {
-  const { colors } = useTheme();
   return (
     <TouchableOpacity
       style={[

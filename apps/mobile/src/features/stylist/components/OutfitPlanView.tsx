@@ -103,8 +103,6 @@ export const OutfitPlanView: React.FC<OutfitPlanViewProps> = ({
   onFeedback,
 }) => {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const [activeOutfitIndex, setActiveOutfitIndex] = useState(0);
   const activeOutfit = plan.outfits[activeOutfitIndex];
 

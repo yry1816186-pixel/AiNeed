@@ -13,10 +13,10 @@ import {
 } from "react-native";
 import { communityApi } from "../../services/api/community.api";
 import { theme } from "../../../design-system/theme";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface Collection {
   id: string;
@@ -38,8 +38,6 @@ export const BookmarkSheet: React.FC<BookmarkSheetProps> = ({
   onClose,
   onBookmarked,
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(false);

@@ -20,7 +20,12 @@ import Animated, {
 } from "react-native-reanimated";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { Colors, BorderRadius, Shadows } from "../../../../design-system/theme";
+import {
+  flatColors as colors,
+  Colors,
+  BorderRadius,
+  Shadows,
+} from "../../../../design-system/theme";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { profileApi } from "../../../services/api/profile.api";
@@ -179,7 +184,6 @@ const PreferenceSetupModal: React.FC<PreferenceSetupModalProps> = ({
   ];
 
   const handleNext = () => {
-    const { colors } = useTheme();
     stepOpacity.value = withTiming(0, { duration: 150 });
     stepTranslateX.value = withTiming(-30, { duration: 150 });
 

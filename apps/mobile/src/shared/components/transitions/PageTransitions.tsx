@@ -82,7 +82,6 @@ interface TransitionContextValue {
 const TransitionContext = createContext<TransitionContextValue | null>(null);
 
 export const useTransition = () => {
-  const { colors } = useTheme();
   const context = useContext(TransitionContext);
   if (!context) {
     throw new Error("useTransition must be used within TransitionProvider");
@@ -95,7 +94,6 @@ export interface TransitionProviderProps {
 }
 
 export const TransitionProvider: React.FC<TransitionProviderProps> = ({ children }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const currentTransition = useSharedValue(0);
   const [transitionType, setTransitionType] = useState<TransitionType>("fade");

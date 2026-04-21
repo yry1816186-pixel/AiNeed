@@ -11,7 +11,7 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import type { FeedCategory } from "../../../services/api/recommendation-feed.api";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface FeedTab {
   key: FeedCategory;
@@ -49,7 +49,6 @@ export function FeedTabs({
   onSubCategoryChange,
 }: FeedTabsProps) {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
   const handleCategoryPress = useCallback(
     (category: FeedCategory) => {
       if (category !== activeCategory) {

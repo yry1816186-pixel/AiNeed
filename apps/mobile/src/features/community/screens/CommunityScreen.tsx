@@ -28,7 +28,6 @@ interface PostData {
 type PostItem = PostCardData;
 
 export const CommunityScreen: React.FC = () => {
-  const { colors } = useTheme();
   useScreenTracking("Community");
   const t = useTranslation();
   const { width: screenWidth } = useWindowDimensions();

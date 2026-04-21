@@ -33,8 +33,8 @@ export function EmptyState({
   accessibilityLabel,
   style,
 }: EmptyStateProps) {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const label = accessibilityLabel || `空状态: ${title}`;
   return (
     <Animated.View

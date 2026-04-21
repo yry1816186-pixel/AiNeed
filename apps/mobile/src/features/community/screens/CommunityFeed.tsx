@@ -11,7 +11,10 @@ import {
 import { FlashList } from "../../polyfills/flash-list";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import {
+  flatColors as colors,
+  DesignTokens,
+} from "../../../design-system/theme/tokens/design-tokens";
 import { PostMasonryCard } from "../../../components/community/PostMasonryCard";
 import type { PostCardData } from "../../../components/community/PostMasonryCard";
 
@@ -52,7 +55,6 @@ function CommunityFeedInner({
   onViewableItemsChanged,
   viewabilityConfig,
 }: CommunityFeedProps) {
-  const { colors } = useTheme();
   const currentPosts = activeMainTab === "discover" ? posts : followingFeed;
 
   const renderFollowingFeedItem = (item: PostCardDataInternal, index: number) => {

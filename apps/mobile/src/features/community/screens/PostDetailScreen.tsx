@@ -20,11 +20,11 @@ import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { SharedElement } from "react-navigation-shared-element";
 import { theme } from "../../../design-system/theme";
 import { communityApi, PostComment } from "../../../services/api/community.api";
-import { DesignTokens } from "../../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { BookmarkSheet } from "../../../components/community/BookmarkSheet";
 import type { RootStackParamList } from "../../../types/navigation";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type _PostDetailRoute = RouteProp<RootStackParamList, "Community">;
@@ -35,8 +35,6 @@ const DEFAULT_COMMENTS: PostComment[] = [];
 
 export const PostDetailScreen: React.FC = () => {
   const styles = useStyles(colors);
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute();
   const postId = (route.params as { postId?: string })?.postId ?? "";

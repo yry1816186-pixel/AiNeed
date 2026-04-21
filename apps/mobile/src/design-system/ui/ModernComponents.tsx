@@ -28,7 +28,7 @@ import {
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import { Skeleton as SkeletonBase } from "../skeleton/Skeleton";
 import { flatColors as colors } from "../theme";
-import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
+import { createStyles } from "../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -53,8 +53,6 @@ export const GradientCard: React.FC<GradientCardProps> = ({
   borderRadius = BorderRadius["2xl"],
   padding = Spacing[6],
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const gradientColors = Colors.gradient[gradient] as unknown as GradientColors;
 
@@ -132,7 +130,6 @@ export const ModernButton: React.FC<ModernButtonProps> = ({
   }));
 
   const handlePressIn = () => {
-    const { colors } = useTheme();
     scaleAnim.value = withSpring(0.96, SpringConfigs.snappy);
   };
 
@@ -478,7 +475,6 @@ export interface BadgeProps {
 
 /** @deprecated 使用 ui/Badge 替代 */
 export const Badge: React.FC<BadgeProps> = ({ text, variant = "primary", size = "md" }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const variantStyles: Record<string, { bg: string; text: string }> = {
     primary: { bg: colors.primary[100], text: colors.primary[700] },
@@ -528,7 +524,6 @@ export interface AvatarProps {
 
 /** @deprecated 使用业务页面中的头像组件替代 */
 export const Avatar: React.FC<AvatarProps> = ({ name, size = "md", online }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const sizeMap = {
     sm: 32,

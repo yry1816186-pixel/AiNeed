@@ -16,7 +16,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import {
+  flatColors as colors,
+  DesignTokens,
+} from "../../../design-system/theme/tokens/design-tokens";
 import { communityApi, type CommunityPost } from "../../../services/api/community.api";
 import type { CommunityStackParamList } from "../../../navigation/types";
 
@@ -111,7 +114,6 @@ export const InfluencerProfileScreen: React.FC = () => {
   }, [profile, followLoading]);
 
   const formatCount = (count: number) => {
-    const { colors } = useTheme();
     if (count >= 10000) {
       return `${(count / 10000).toFixed(1)}w`;
     }

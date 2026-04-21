@@ -4,7 +4,7 @@ import { communityApi } from "../../services/api/community.api";
 import { theme } from "../../../../design-system/theme";
 import { DesignTokens } from "../../../../design-system/theme";
 import { flatColors as colors } from "../../../../design-system/theme";
-import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface FollowButtonProps {
   userId: string;
@@ -19,8 +19,6 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
   size = "medium",
   onFollowChange,
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const [following, setFollowing] = useState(initialFollowing);
   const [loading, setLoading] = useState(false);

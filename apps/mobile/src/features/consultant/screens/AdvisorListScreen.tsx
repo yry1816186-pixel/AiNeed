@@ -19,7 +19,7 @@ import { ParamListBase } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 const SERVICE_TYPES = [
   { label: "全部", value: "" },
@@ -31,8 +31,6 @@ const SERVICE_TYPES = [
 
 export const AdvisorListScreen: React.FC = () => {
   const styles = useStyles(colors);
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const { consultants, matchResults, isLoading, fetchConsultants, matchConsultants } =

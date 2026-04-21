@@ -40,6 +40,7 @@ const ProductCard = memo(function ProductCard({
   onFavorite,
   isFavorite = false,
 }: ProductCardProps) {
+  const styles = useStyles(colors);
   const discount = item.originalPrice
     ? Math.round((1 - item.price / item.originalPrice) * 100)
     : item.discount || 0;
@@ -123,6 +124,7 @@ export const ProductGrid = memo(function ProductGrid({
   _loading = false,
   onEndReached,
 }: ProductGridProps) {
+  const styles = useStyles(colors);
   const renderItem = useCallback(
     ({ item }: { item: Product }) => (
       <ProductCard
@@ -161,6 +163,7 @@ export const HorizontalProductList = memo(function HorizontalProductList({
   products,
   onItemPress,
 }: HorizontalProductListProps) {
+  const styles = useStyles(colors);
   const renderItem = useCallback(
     ({ item }: { item: Product }) => (
       <TouchableOpacity

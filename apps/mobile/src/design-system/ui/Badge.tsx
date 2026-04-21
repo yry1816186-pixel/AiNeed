@@ -76,7 +76,6 @@ export const Badge: React.FC<BadgeProps> = ({
   style,
   textStyle,
 }) => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const vStyle = variantStyles[variant];

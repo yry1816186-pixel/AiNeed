@@ -32,7 +32,7 @@ import { Colors } from "../../../design-system/theme";
 import { DesignTokens } from "../../../theme/tokens/design-tokens";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -89,8 +89,6 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   animated = true,
 }) => {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const scale = useSharedValue(0.8);
   const opacity = useSharedValue(0);
   const floatY = useSharedValue(0);
@@ -134,7 +132,6 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   }));
 
   const getIllustrationIcon = () => {
-    const { colors } = useTheme();
     switch (illustration) {
       case "empty-box":
         return { icon: "cube-outline", color: colors.neutral[400] };
@@ -219,7 +216,6 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   showIllustration = true,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const shakeX = useSharedValue(0);
   const opacity = useSharedValue(0);
@@ -297,7 +293,6 @@ export interface NetworkErrorProps {
 }
 
 export const NetworkError: React.FC<NetworkErrorProps> = ({ onRetry, onSettings, style }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const pulseScale = useSharedValue(1);
   const opacity = useSharedValue(0);
@@ -369,7 +364,6 @@ export const MaintenanceScreen: React.FC<MaintenanceScreenProps> = ({
   message = "我们正在进行系统维护，请稍后再试",
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const rotation = useSharedValue(0);
   const opacity = useSharedValue(0);
@@ -432,7 +426,6 @@ export const PermissionDenied: React.FC<PermissionDeniedProps> = ({
   onOpenSettings,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const opacity = useSharedValue(0);
@@ -581,7 +574,6 @@ export const SuccessState: React.FC<SuccessStateProps> = ({
   confetti = false,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
@@ -647,7 +639,6 @@ export interface OfflineBannerProps {
 }
 
 export const OfflineBanner: React.FC<OfflineBannerProps> = ({ visible, onRetry, style }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const translateY = useSharedValue(-60);
   const opacity = useSharedValue(0);

@@ -10,8 +10,14 @@ import {
   Stop,
   Text as SvgText,
 } from "react-native-svg";
-import { Colors, Spacing, BorderRadius, Typography } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import {
+  flatColors as colors,
+  Colors,
+  Spacing,
+  BorderRadius,
+  Typography,
+} from "../../../design-system/theme";
+import { createStyles } from "../../contexts/ThemeContext";
 
 export interface SeasonPaletteProps {
   season: string;
@@ -90,8 +96,6 @@ export const SeasonPalette: React.FC<SeasonPaletteProps> = ({
   bestColors,
   avoidColors,
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const size = 200;
   const cx = size / 2;

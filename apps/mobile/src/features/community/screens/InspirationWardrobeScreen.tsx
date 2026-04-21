@@ -15,12 +15,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors, Spacing } from "../../../design-system/theme";
 import { communityApi } from "../../../services/api/community.api";
 import type { CommunityStackParamList } from "../../../navigation/types";
-import { flatColors as colors } from "../../../design-system/theme";
 
 type InspirationWardrobeRoute = RouteProp<CommunityStackParamList, "InspirationWardrobe">;
 
@@ -39,7 +38,6 @@ interface InspirationItem {
 }
 
 export const InspirationWardrobeScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation();
   const _route = useRoute<InspirationWardrobeRoute>();
 

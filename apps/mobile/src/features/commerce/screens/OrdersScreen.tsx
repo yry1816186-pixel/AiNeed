@@ -22,7 +22,10 @@ import type { Order, OrderStatus } from "../../../types";
 import type { ProfileStackParamList, RootStackParamList } from "../../../navigation/types";
 import { navigateHome } from "../../../navigation/navigationService";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import {
+  flatColors as colors,
+  DesignTokens,
+} from "../../../design-system/theme/tokens/design-tokens";
 
 type OrdersNavigation = CompositeScreenProps<
   NativeStackNavigationProp<ProfileStackParamList>,

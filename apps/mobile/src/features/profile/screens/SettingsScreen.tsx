@@ -30,7 +30,6 @@ import { flatColors as colors } from "../../../design-system/theme";
 type Navigation = NativeStackNavigationProp<RootStackParamList>;
 
 export const SettingsScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const { user, logout } = useAuthStore();
   const { isDark, setMode } = useTheme();

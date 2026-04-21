@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { Svg, Circle, Rect, Text as SvgText, Line, Path } from "react-native-svg";
 import { colors } from "@/src/theme/tokens/colors";
-import { typography } from "@/src/theme/tokens/typography";
-import { spacing } from "@/src/theme/tokens/spacing";
-import { shadows } from "@/src/theme/tokens/shadows";
+import { typography } from "@/src/design-system/theme/tokens/typography";
+import { spacing } from "@/src/design-system/theme/tokens/spacing";
+import { shadows } from "@/src/design-system/theme/tokens/shadows";
 import type { BodyAnalysisReport } from "@/src/services/api/profile.api";
 import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
 
@@ -179,7 +179,6 @@ export const BodyTypeCard: React.FC<BodyTypeCardProps> = ({
   collapsed,
   onToggle,
 }) => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const bodyType = bodyAnalysis?.bodyType?.type || "";

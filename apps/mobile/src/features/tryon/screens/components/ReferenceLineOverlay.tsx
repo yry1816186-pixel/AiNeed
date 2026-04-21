@@ -8,7 +8,7 @@ import type {
   OverallAlignment,
 } from "../../../hooks/useReferenceLines";
 import { DesignTokens, flatColors as colors } from "../../../../design-system/theme";
-import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../../shared/contexts/ThemeContext";
 
 interface ReferenceLineOverlayProps {
   referenceLines: ReferenceLines | null;
@@ -43,8 +43,6 @@ export const ReferenceLineOverlay: React.FC<ReferenceLineOverlayProps> = ({
   width,
   height,
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const opacityAnim = useRef(new Animated.Value(0)).current;
 

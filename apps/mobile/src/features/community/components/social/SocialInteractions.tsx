@@ -35,7 +35,7 @@ import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens"
 
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { flatColors as colors } from "../../../../design-system/theme";
-import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../../shared/contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -71,8 +71,6 @@ export const AnimatedLikeButton: React.FC<LikeButtonProps> = ({
   style,
 }) => {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const scale = useSharedValue(1);
   const heartScale = useSharedValue(1);
   const particleScale = useSharedValue(0);
@@ -88,7 +86,6 @@ export const AnimatedLikeButton: React.FC<LikeButtonProps> = ({
   const config = sizeConfig[size];
 
   const handlePress = () => {
-    const { colors } = useTheme();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     if (!isLiked) {
@@ -228,7 +225,6 @@ export const ShareSheet: React.FC<ShareSheetProps> = ({
   onCopyLink,
   product,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
@@ -349,7 +345,6 @@ export const CommentInput: React.FC<CommentInputProps> = ({
   placeholder = "写下你的评论...",
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const [text, setText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -368,7 +363,6 @@ export const CommentInput: React.FC<CommentInputProps> = ({
   }, [isFocused]);
 
   const containerAnimatedStyle = useAnimatedStyle(() => {
-    const { colors } = useTheme();
     ("worklet");
     const borderColorValue = borderColor.value;
     return {
@@ -458,7 +452,6 @@ const _AnimatedCommentItem: React.FC<AnimatedCommentItemProps> = ({
   index,
   onLikeComment,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const commentOpacity = useSharedValue(0);
   const commentTranslateX = useSharedValue(20);
@@ -508,7 +501,6 @@ export const CommentSheet: React.FC<CommentSheetProps> = ({
   onCommentSubmit,
   onLikeComment,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const translateY = useSharedValue(SCREEN_HEIGHT);
   const backdropOpacity = useSharedValue(0);
@@ -532,7 +524,6 @@ export const CommentSheet: React.FC<CommentSheetProps> = ({
   }));
 
   const CommentItem: React.FC<{ item: CommentSheetItem; index: number }> = ({ item, index }) => {
-    const { colors } = useTheme();
     const styles = useStyles(colors);
     const commentOpacity = useSharedValue(0);
     const commentTranslateX = useSharedValue(20);

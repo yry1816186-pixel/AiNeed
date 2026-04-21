@@ -7,7 +7,14 @@ import React, {
   useMemo,
   ReactNode,
 } from "react";
-import { useColorScheme, Appearance, StyleSheet } from "react-native";
+import {
+  useColorScheme,
+  Appearance,
+  StyleSheet,
+  type ViewStyle,
+  type TextStyle,
+  type ImageStyle,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DesignTokens, darkTokens, flatColors as lightFlatColors } from "../../design-system/theme";
 import type { DesignTokensType, DarkTokensType } from "../../design-system/theme";
@@ -258,10 +265,10 @@ export function useTheme(): ThemeContextType {
   return context;
 }
 
-export function createStyles<T extends StyleSheet.NamedStyles<T>>(
+export function createStyles<T extends Record<string, ViewStyle | TextStyle | ImageStyle>>(
   factory: (colors: FlatColors) => T
 ): (colors: FlatColors) => T {
-  return (colors: FlatColors) => StyleSheet.create(factory(colors));
+  return factory as (colors: FlatColors) => T;
 }
 
 export { ThemeContext };

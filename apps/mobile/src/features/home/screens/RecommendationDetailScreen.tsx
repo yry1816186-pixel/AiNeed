@@ -20,7 +20,10 @@ import * as Haptics from "@/src/polyfills/expo-haptics";
 import { clothingApi } from "../../../services/api/clothing.api";
 import { cartApi } from "../../../services/api/commerce.api";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
-import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
+import {
+  flatColors as colors,
+  DesignTokens,
+} from "../../../design-system/theme/tokens/design-tokens";
 import type { HomeStackParamList } from "../../../navigation/types";
 import { navigateProfile } from "../../../navigation/navigationService";
 import type { ClothingItem } from "../../../types/clothing";

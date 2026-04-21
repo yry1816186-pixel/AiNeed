@@ -2,7 +2,15 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { LinearGradient } from "@/src/polyfills/expo-linear-gradient";
-import { Colors, theme, Spacing, BorderRadius, Shadows, DesignTokens } from "../theme";
+import {
+  flatColors as colors,
+  Colors,
+  theme,
+  Spacing,
+  BorderRadius,
+  Shadows,
+  DesignTokens,
+} from "../theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 
 interface EmptyStateProps {
@@ -25,7 +33,6 @@ export function EmptyState({
   style,
   iconGradient,
 }: EmptyStateProps) {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const gradient = iconGradient ?? [colors.primary, DesignTokens.colors.brand.camel];
 

@@ -21,7 +21,6 @@ export const IconCard: React.FC<IconCardProps> = ({
   variant = "primary",
   style,
 }) => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const bgColors: Record<string, string> = {

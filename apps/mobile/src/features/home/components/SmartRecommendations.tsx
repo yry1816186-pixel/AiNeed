@@ -36,7 +36,7 @@ import AnimatedReanimated from "react-native-reanimated";
 import { Colors } from "../../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 const { width: _SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -125,7 +125,6 @@ const RecommendationItemCard: React.FC<{
   }));
 
   const handlePressIn = () => {
-    const { colors } = useTheme();
     isPressed.value = true;
     imageScale.value = withSpring(0.98, { damping: 10, stiffness: 300 });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -303,8 +302,6 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
   style,
 }) => {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
   const scrollX = useSharedValue(0);
   const cardOpacity = useSharedValue(0);
 
@@ -351,7 +348,6 @@ export const SmartRecommendationCard: React.FC<SmartRecommendationCardProps> = (
   }));
 
   const renderHeader = () => {
-    const { colors } = useTheme();
     const styles = useStyles(colors);
     const config = typeConfig[type];
 
@@ -499,7 +495,6 @@ export const RecommendationReason: React.FC<RecommendationReasonProps> = ({
   confidence,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0);
   const checkScale = useSharedValue(0);
@@ -597,7 +592,6 @@ export const AIInsightCard: React.FC<AIInsightCardProps> = ({
   onDismiss,
   style,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(0.9);
   const opacity = useSharedValue(0);

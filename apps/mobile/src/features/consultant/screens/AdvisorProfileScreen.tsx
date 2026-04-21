@@ -24,12 +24,10 @@ import type { ConsultantProfile } from "../../../types/consultant";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 export const AdvisorProfileScreen: React.FC = () => {
   const styles = useStyles(colors);
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp<ParamListBase>>();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();

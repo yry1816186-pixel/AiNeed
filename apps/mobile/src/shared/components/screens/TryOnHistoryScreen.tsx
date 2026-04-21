@@ -14,11 +14,11 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { tryOnApi, type TryOnResult } from "../../services/api/tryon.api";
-import { colors } from "../../theme/tokens/colors";
+import { colors } from "../../design-system/theme/tokens/colors";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { typography } from "../../theme/tokens/typography";
-import { spacing } from "../../theme/tokens/spacing";
-import { shadows } from "../../theme/tokens/shadows";
+import { typography } from "../../design-system/theme/tokens/typography";
+import { spacing } from "../../design-system/theme/tokens/spacing";
+import { shadows } from "../../design-system/theme/tokens/shadows";
 import type { TryOnStackParamList } from "../../../navigation/types";
 import { navigateTryOn } from "../../../navigation/navigationService";
 import { useTheme, createStyles } from "../../contexts/ThemeContext";
@@ -28,7 +28,6 @@ type TryOnHistoryNavProp = NativeStackNavigationProp<TryOnStackParamList>;
 type FilterTab = "all" | "completed" | "failed";
 
 export const TryOnHistoryScreen: React.FC = () => {
-  const styles = useStyles(colors);
   const styles = useStyles(colors);
   const { colors } = useTheme();
   const navigation = useNavigation<TryOnHistoryNavProp>();

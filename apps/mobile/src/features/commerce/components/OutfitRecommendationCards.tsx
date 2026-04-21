@@ -20,7 +20,6 @@ interface OutfitRecommendationCardsProps {
 export const OutfitRecommendationCards: React.FC<OutfitRecommendationCardsProps> = ({
   outfits,
 }) => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();

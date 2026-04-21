@@ -26,7 +26,7 @@ import {
 import { Colors, Spacing, BorderRadius } from "../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { createStyles } from "../../contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: _SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -37,8 +37,6 @@ export interface SplashScreenProps {
 }
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const logoScale = useSharedValue(0);
   const logoOpacity = useSharedValue(0);
@@ -206,7 +204,6 @@ const OnboardingDot: React.FC<OnboardingDotProps> = ({ color, isActive }) => {
 };
 
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const [currentIndex, setCurrentIndex] = useState(0);
   const slideOffset = useSharedValue(0);
@@ -351,7 +348,6 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
   onCapture,
   onCancel,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const frameScale = useSharedValue(1);
   const frameOpacity = useSharedValue(0);
@@ -402,7 +398,6 @@ export const CameraGuideAnimation: React.FC<CameraGuideAnimationProps> = ({
   }));
 
   const handlePressIn = () => {
-    const { colors } = useTheme();
     buttonScale.value = withSpring(0.9, { damping: 15, stiffness: 300 });
   };
 
@@ -560,7 +555,6 @@ const AnalysisStepItem: React.FC<AnalysisStepItemProps> = ({
 };
 
 export const AnalysisAnimation: React.FC<AnalysisAnimationProps> = ({ type, onComplete }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const config = ANALYSIS_CONFIG[type];
   const [currentStep, setCurrentStep] = useState(0);
@@ -699,7 +693,6 @@ export const ResultAnimation: React.FC<ResultAnimationProps> = ({
   onContinue,
   onRetry,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const config = ANALYSIS_CONFIG[type];
 

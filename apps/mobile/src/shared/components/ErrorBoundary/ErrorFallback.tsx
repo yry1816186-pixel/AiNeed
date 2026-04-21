@@ -14,7 +14,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
-import { Colors, BorderRadius, Spacing, Typography } from "../../../design-system/theme";
+import {
+  flatColors as colors,
+  Colors,
+  BorderRadius,
+  Spacing,
+  Typography,
+} from "../../../design-system/theme";
 import {
   StructuredError,
   ErrorCategory,
@@ -23,7 +29,7 @@ import {
 } from "../../utils/errorHandling";
 import type { ErrorInfo } from "react";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { createStyles } from "../../contexts/ThemeContext";
 
 // ============================================================================
 // 类型定义
@@ -87,7 +93,6 @@ const getErrorIcon = (category: ErrorCategory): keyof typeof Ionicons.glyphMap =
  * 根据错误严重级别获取颜色
  */
 const getSeverityColor = (severity: ErrorSeverity): string => {
-  const { colors } = useTheme();
   switch (severity) {
     case ErrorSeverity.LOW:
       return colors.warning[500];
@@ -121,7 +126,6 @@ const RecoveryButton: React.FC<RecoveryButtonProps> = ({
 }) => {
   const styles = useStyles(colors);
   const getButtonConfig = () => {
-    const { colors } = useTheme();
     switch (strategy) {
       case RecoveryStrategy.RETRY:
         return {
@@ -206,8 +210,6 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
   maxRetries = 3,
   isRecovering = false,
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const severityColor = getSeverityColor(structuredError.severity);
   const iconName = getErrorIcon(structuredError.category);

@@ -13,7 +13,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "../../../polyfills/expo-vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { Colors, Spacing, BorderRadius, Shadows } from "../../../design-system/theme";
+import {
+  flatColors as colors,
+  Colors,
+  Spacing,
+  BorderRadius,
+  Shadows,
+} from "../../../design-system/theme";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import brandQRApi, { type QRScanResult } from "../../../services/api/brand-qr.api";
 import type { RootStackParamList } from "../../../types/navigation";
@@ -114,7 +120,6 @@ export const BrandQRScanScreen: React.FC = () => {
   );
 
   const renderScanResult = () => {
-    const { colors } = useTheme();
     if (!scanResult) {
       return null;
     }

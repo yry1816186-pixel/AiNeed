@@ -25,11 +25,11 @@ import {
   type TryOnProgressPayload,
 } from "../../services/websocket";
 import type { ClothingItem } from "../../types/clothing";
-import { colors } from "../../theme/tokens/colors";
+import { colors } from "../../design-system/theme/tokens/colors";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
-import { typography } from "../../theme/tokens/typography";
-import { spacing } from "../../theme/tokens/spacing";
-import { shadows } from "../../theme/tokens/shadows";
+import { typography } from "../../design-system/theme/tokens/typography";
+import { spacing } from "../../design-system/theme/tokens/spacing";
+import { shadows } from "../../design-system/theme/tokens/shadows";
 import { TryOnProgress } from "../loading/TryOnProgress";
 import { useTheme, createStyles } from "../../contexts/ThemeContext";
 
@@ -56,8 +56,8 @@ const STYLE_TIPS = [
 type TryOnPhase = "idle" | "uploading" | "queued" | "processing" | "completed" | "failed";
 
 export const TryOnScreen: React.FC = () => {
-  const styles = useStyles(colors);
   const { colors } = useTheme();
+  const styles = useStyles(colors);
   const navigation = useNavigation();
   const route = useRoute();
   const isFocused = useIsFocused();

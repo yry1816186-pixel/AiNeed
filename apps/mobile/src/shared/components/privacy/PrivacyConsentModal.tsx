@@ -3,7 +3,7 @@ import { View, Text, Modal, Pressable, StyleSheet } from "react-native";
 import { Colors, Spacing, BorderRadius } from "../../design-system/theme";
 import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../contexts/ThemeContext";
+import { createStyles } from "../../contexts/ThemeContext";
 
 interface PrivacyConsentModalProps {
   visible: boolean;
@@ -16,8 +16,6 @@ export const PrivacyConsentModal: React.FC<PrivacyConsentModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>

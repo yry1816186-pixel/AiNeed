@@ -25,7 +25,6 @@ type OutfitPlanRoute = RouteProp<StylistStackParamList, "OutfitPlan">;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export const OutfitPlanScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation();
   const route = useRoute<OutfitPlanRoute>();
   const planId = route.params?.planId;

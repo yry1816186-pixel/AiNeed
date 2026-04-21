@@ -4,7 +4,7 @@ import { Svg, Rect, Image as SvgImage, Text as SvgText, G } from "react-native-s
 import { GestureHandlerRootView, GestureDetector, Gesture } from "react-native-gesture-handler";
 import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
 import type { DesignLayer, PrintableAreaBounds } from "../stores/customizationEditorStore";
-import { DesignTokens, Colors } from "../../../design-system/theme";
+import { flatColors as colors, DesignTokens, Colors } from "../../../design-system/theme";
 
 interface DesignCanvasProps {
   template: {
@@ -118,6 +118,7 @@ export const DesignCanvas: React.FC<DesignCanvasProps> = ({
   };
 
   const renderLayer = (layer: DesignLayer) => {
+    const { colors } = useTheme();
     const isSelected = layer.id === selectedLayerId;
 
     const transformProps = {

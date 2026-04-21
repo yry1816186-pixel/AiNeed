@@ -10,7 +10,7 @@ import {
   type GestureResponderEvent,
   type PanResponderGestureState,
 } from "react-native";
-import { DesignTokens } from "../../theme/tokens/design-tokens";
+import { DesignTokens } from "../../design-system/theme/tokens/design-tokens";
 import type { FeedItem } from "../services/recommendation-feed.api";
 
 interface SwipeRecommendationCardProps {

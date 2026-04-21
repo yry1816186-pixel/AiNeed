@@ -10,13 +10,12 @@ import { DesignTokens } from "../../../design-system/theme/tokens/design-tokens"
 import type { FeedItem, FeedCategory } from "../../../services/api/recommendation-feed.api";
 import type { RootStackParamList } from "../../../types/navigation";
 import { flatColors as colors } from "../../../design-system/theme";
-import { useTheme, createStyles } from "../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../shared/contexts/ThemeContext";
 
 const ESTIMATED_ITEM_SIZE = 280;
 
 export function RecommendationFeedScreen() {
   const styles = useStyles(colors);
-  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const {
@@ -67,7 +66,6 @@ export function RecommendationFeedScreen() {
   const keyExtractor = useCallback((item: FeedItem) => item.id, []);
 
   const renderFooter = useCallback(() => {
-    const { colors } = useTheme();
     const styles = useStyles(colors);
     if (isLoading && !isRefreshing && items.length > 0) {
       return (

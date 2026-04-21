@@ -81,7 +81,6 @@ const ChipSelector: React.FC<{
 );
 
 export const AddClothingScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation();
   const [formData, setFormData] = useState<FormData>({
     imageUri: null,

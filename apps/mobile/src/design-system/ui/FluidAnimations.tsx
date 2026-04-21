@@ -32,7 +32,7 @@ import { Colors, Spacing, BorderRadius } from "../../design-system/theme";
 import { DesignTokens } from "../../theme/tokens/design-tokens";
 import type { ScrollEvent } from "../../types/events";
 import { flatColors as colors } from "../theme";
-import { useTheme, createStyles } from "../../shared/contexts/ThemeContext";
+import { createStyles } from "../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const AnimatedView = AnimatedReanimated.createAnimatedComponent(View);
@@ -57,8 +57,6 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
   enableGlow = true,
   glowColor = colors.primary[500],
 }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const scale = useSharedValue(1);
   const rotateX = useSharedValue(0);
@@ -103,7 +101,6 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
   }));
 
   const handlePressIn = () => {
-    const { colors } = useTheme();
     scale.value = withSpring(0.97, { damping: 15, stiffness: 300 });
   };
 
@@ -149,7 +146,6 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   style,
   disabled = false,
 }) => {
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);

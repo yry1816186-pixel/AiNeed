@@ -47,6 +47,7 @@ export const OptimizedImage = memo(function OptimizedImage({
   accessibilityLabel,
   ...accessibilityRest
 }: OptimizedImageProps) {
+  const styles = useStyles(colors);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
 

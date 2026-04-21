@@ -21,7 +21,6 @@ type Navigation = NativeStackNavigationProp<RootStackParamList>;
 type PaymentProvider = "alipay" | "wechat";
 
 export const PaymentScreen: React.FC = () => {
-  const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<PaymentRoute>();
   useScreenTracking("Payment");

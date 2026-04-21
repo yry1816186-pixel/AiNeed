@@ -16,7 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Ionicons } from "@/src/polyfills/expo-vector-icons";
 import { router } from "expo-router";
-import { theme, Colors, Shadows } from "../design-system/theme";
+import { theme, Colors, Shadows, DesignTokens } from "../../../design-system/theme";
 import { recommendationsApi } from "../../services/api/tryon.api";
 import { cartApi } from "../../services/api/commerce.api";
 import { useAuthStore, useHeartRecommendStore } from "../../stores";
@@ -24,7 +24,7 @@ import PreferenceSetupModal from "./PreferenceSetupModal";
 import { SwipeCard, ProductItem } from "./SwipeCard";
 import { EmptyState } from "./ActionButtons";
 import { flatColors as colors } from "../../../../design-system/theme";
-import { useTheme, createStyles } from "../../../../shared/contexts/ThemeContext";
+import { createStyles } from "../../../../shared/contexts/ThemeContext";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const _CARD_WIDTH = SCREEN_WIDTH - 40;
@@ -35,8 +35,6 @@ interface HeartRecommendScreenProps {
 }
 
 export const HeartRecommendScreen: React.FC<HeartRecommendScreenProps> = ({ onClose }) => {
-  const styles = useStyles(colors);
-  const { colors } = useTheme();
   const styles = useStyles(colors);
   const { user, isAuthenticated } = useAuthStore();
   const heartRecommendStore = useHeartRecommendStore();

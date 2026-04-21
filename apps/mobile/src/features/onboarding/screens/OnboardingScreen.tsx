@@ -61,7 +61,6 @@ function getBirthDateFromRange(range: string): string {
 }
 
 export const OnboardingScreen: React.FC = () => {
-  const styles = useStyles(colors);
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const styles = useStyles(colors);
